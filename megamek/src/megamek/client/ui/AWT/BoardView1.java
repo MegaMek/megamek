@@ -20,33 +20,59 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.util.Enumeration;
-
 import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
+import java.util.Properties;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1
     extends Canvas
-    implements BoardListener, MouseListener, MouseMotionListener, KeyListener,
-               Runnable
+    implements BoardListener, MouseListener, MouseMotionListener, KeyListener, Runnable
 {
     private static final int        TRANSPARENT = 0xFFFF00FF;
-    private static final Dimension  HEX_SIZE = new Dimension(84, 72);
 
-    private static final Font       FONT_HEXNUM = new Font("SansSerif", Font.PLAIN, 10);
-    private static final Font       FONT_ELEV = new Font("SansSerif", Font.PLAIN, 9);
-    private static final Font       FONT_MINEFIELD = new Font("SansSerif", Font.PLAIN, 12);
-    private static final Font       FONT_MINEFIELD_SMALL = new Font("SansSerif", Font.PLAIN, 9);
+    // the dimensions of megamek's hex images
+    private static final int 	HEX_W = 84;
+    private static final int 	HEX_H = 72;
+    private static final int	HEX_WC = HEX_W - HEX_W/4;
+    private int cached;
+    // The list of valid zoom factors.  Other values cause map aliasing,
+    // I can't be bothered figuring out why.  - Ben
+    private static final float[] ZOOM_FACTORS =
+    		{	0.30f, 0.41f, 0.50f,
+    			0.60f, 0.68f, 0.79f,
+				0.90f, 1.00f
+				//1.09f, 1.17f
+    		};
+
+    // the index of zoom factor 1.00f
+    private static final int BASE_ZOOM_INDEX = 7;
+
+    // line width of the c3 network lines
+    private static final int C3_LINE_WIDTH = 1;
+
+    private static Font FONT_7 = new Font("SansSerif", Font.PLAIN, 7);
+    private static Font FONT_8 = new Font("SansSerif", Font.PLAIN, 8);
+    private static Font FONT_9 = new Font("SansSerif", Font.PLAIN, 9);
+    private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10);
+    private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12);
+
+    private Dimension  	hex_size = null;
+    private boolean		isJ2RE;
+    
+    private Font       font_hexnum 		= FONT_10;
+    private Font       font_elev 		= FONT_9;
+    private Font       font_minefield 	= FONT_12;
 
     private Game game;
     private Frame frame;
 
-    private Point mousePos = new Point();
-    private Rectangle view = new Rectangle();
-    private Point offset = new Point();
+    private Point 		mousePos = new Point();
+    private Rectangle 	view = new Rectangle();
+    private Point 		offset = new Point();
     private Dimension boardSize;
 
     // scrolly stuff:
@@ -106,6 +132,12 @@ public class BoardView1
     // should be able to turn it off(board editor)
     private boolean              useLOSTool = true;
 
+    // Initial scale factor for sprites and map
+    private boolean				hasZoomed = false;
+    public 	int					zoomIndex;
+    private float 				scale;
+    private Hashtable scaledImageCache = new Hashtable();
+        
     // Displayables (Chat box, etc.)
     private Vector               displayables = new Vector();
 
@@ -141,12 +173,44 @@ public class BoardView1
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-
+        /* MouseWheelListener isn't a v1.3.1 API **
+        try{
+            addMouseWheelListener( new MouseWheelListener(){
+                public void mouseWheelMoved(MouseWheelEvent we){
+                    if (we.getWheelRotation() > 0){
+                            zoomIn();
+                    } else {
+                            zoomOut();
+                    }
+                }
+            });
+        } catch ( Throwable error ){
+            System.out.println("Mouse wheel not supported by this jvm");
+        }
+        /* MouseWheelListener isn't a v1.3.1 API */
+     	
+     	// only use scaling if we're using Java 2, otherwise we get memory leaks etc.
+     	Properties p = System.getProperties();
+     	String javaVersion = p.getProperty( "java.version" );
+     	if ( javaVersion.charAt(2) == '1' ){
+     		isJ2RE = false;
+     		zoomIndex = BASE_ZOOM_INDEX;
+     	} else {
+     		isJ2RE = true;
+     		zoomIndex = Settings.mapZoomIndex;
+     		checkZoomIndex();
+	        hasZoomed = true;
+     	}
+	    scale = ZOOM_FACTORS[ zoomIndex ];
+        
+	    updateFontSizes();
         updateBoardSize();
 
         // tooltip
         tipWindow = new Window(frame);
-
+        
+        hex_size = new Dimension((int)(HEX_W*scale), (int)(HEX_H*scale));
+        
         initPolys();
 
         cursorSprite = new CursorSprite(Color.cyan);
@@ -154,7 +218,7 @@ public class BoardView1
         selectedSprite = new CursorSprite(Color.blue);
         firstLOSSprite = new CursorSprite(Color.red);
         secondLOSSprite = new CursorSprite(Color.red);
-    }
+	}
 
     public void addBoardViewListener(BoardViewListener l) {
         boardViewListeners.addElement(l);
@@ -180,7 +244,7 @@ public class BoardView1
             }
         }
     }
-
+    
     public void addMovingUnit(Entity entity, java.util.Vector movePath) {
         if ( !movePath.isEmpty() ) {
             Object[] o = new Object[2];
@@ -238,10 +302,8 @@ public class BoardView1
             backSize = view.getSize();
             backImage = createImage(backSize.width, backSize.height);
             backGraph = backImage.getGraphics();
-            // clear current graphics
-            g.clearRect(0, 0, size.width, size.height);
         }
-
+        
         // make sure board rectangle contains our current view rectangle
         if (boardImage == null || !boardRect.union(view).equals(boardRect)) {
             updateBoardImage();
@@ -316,8 +378,17 @@ public class BoardView1
         // end kenn
 
         // draw the back buffer onto the screen
-        g.drawImage(backImage, offset.x, offset.y, this);
-
+        // first clear the entire view if the map has been zoomed
+        if ( hasZoomed == true ){
+        	Image tmpImage = createImage( size.width, size.height );
+        	Graphics tmpGraphics = tmpImage.getGraphics();
+        	tmpGraphics.drawImage(backImage, offset.x, offset.y, this);
+        	g.drawImage(tmpImage, 0, 0, this);
+        	hasZoomed=false;
+        } else {
+        	g.drawImage(backImage, offset.x, offset.y, this);
+        }
+        //g.drawString(""+scale, 10, 10);
 
         //         final long finishTime = System.currentTimeMillis();//commentme
         //         System.out.println("BoardView1: updated screen in " + (finishTime - startTime) + " ms."); //commentme
@@ -327,8 +398,8 @@ public class BoardView1
      * Updates the boardSize variable with the proper values for this board.
      */
     private void updateBoardSize() {
-        int width = game.getBoard().width * 63 + 21;
-        int height = game.getBoard().height * 72 + 36;
+    	int width = game.getBoard().width * (int)(HEX_WC*scale) + (int)(HEX_W/4*scale);
+        int height = game.getBoard().height * (int)(HEX_H*scale) + (int)(HEX_H/2*scale);
         boardSize = new Dimension(width, height);
     }
 
@@ -337,7 +408,9 @@ public class BoardView1
      * and the size of board
      */
     private Dimension getOptimalView(Dimension size) {
-        return new Dimension(Math.min(size.width, boardSize.width), Math.min(size.height, boardSize.height));
+        return new Dimension(
+        		Math.min(size.width, boardSize.width),
+        		Math.min(size.height, boardSize.height));
     }
 
     /**
@@ -390,15 +463,110 @@ public class BoardView1
     }
 
     /**
+     * Manages a cache of scaled images.
+     */
+    private Image getScaledImage(Image base, double scale ) {
+        if (base == null) {
+        	return null;
+        }
+        if ( zoomIndex == BASE_ZOOM_INDEX ) {
+        	return base;
+        }
+        Dimension d = getImageBounds(base).getSize();
+        d.width *= scale;
+        d.height *= scale;
+        ScaledCacheKey key = new ScaledCacheKey(base, d);
+        Image scaled = (Image) scaledImageCache.get(key);
+        if (scaled == null) {
+        	scaled = scale(base, d.width, d.height);
+
+	        MediaTracker tracker = new MediaTracker(this);
+	        tracker.addImage( scaled, 1 );
+	        // Wait for image to load
+	        try{
+	        	tracker.waitForID( 1 );
+	        } catch ( InterruptedException e ){ e.printStackTrace(); }
+	          
+	        // Cache the image.  If we run out of memory then flush the cache
+	        try{
+	        	scaledImageCache.put(key, scaled);
+	        } catch ( OutOfMemoryError e ){
+		    	scaledImageCache.clear();
+	        }
+        }
+        return scaled;
+    }
+   
+    /**
+     * The actual scaling code.
+     */
+    private Image scale(Image img, int width, int height) {
+		ImageFilter filter;
+
+		filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
+		                                          img.getHeight(null),
+		                                          width, height);
+		
+		ImageProducer prod;
+		prod = new FilteredImageSource(img.getSource(), filter);
+		return Toolkit.getDefaultToolkit().createImage(prod);
+//    	BufferedImage tmp = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB );
+//    	Graphics g = tmp.getGraphics();
+//    	g.drawImage(img,
+//                    width,
+//                    height,
+//                    this);
+//    	return (Image)tmp;
+    }
+    
+    private static Rectangle getImageBounds(Image im) {
+        return new Rectangle(-im.getWidth(null) / 2, -im.getHeight(null) / 2, im.getWidth(null), im.getHeight(null));
+    }
+
+    /**
+     * The key assigned to each scaled and cached image. Enables easy
+     * retrieval from the hash table.
+     */
+    private static class ScaledCacheKey {
+        private Image base;
+        private Dimension bounds;
+        private boolean reversed;
+
+        public ScaledCacheKey(Image base, Dimension bounds) {
+          this.bounds = bounds;
+          this.base = base;
+        }
+
+        public boolean equals(Object o) {
+          if (this == o) return true;
+          if (!(o instanceof ScaledCacheKey)) return false;
+
+          final ScaledCacheKey scaledCacheKey = (ScaledCacheKey) o;
+
+          if (!base.equals(scaledCacheKey.base)) return false;
+          if (!bounds.equals(scaledCacheKey.bounds)) return false;
+
+          return true;
+        }
+
+        public int hashCode() {
+          int result;
+          result = base.hashCode();
+          result = 29 * result + bounds.hashCode();
+          return result;
+        }
+      }
+    
+    /**
      * Draw an outline around legal deployment hexes
      */
     private void drawDeployment() {
         // only update visible hexes
-        int drawX = view.x / 63 - 1;
-        int drawY = view.y / 72 - 1;
+        int drawX = view.x / (int)(HEX_WC*scale) - 1;
+        int drawY = view.y / (int)(HEX_H*scale) - 1;
 
-        int drawWidth = view.width / 63 + 3;
-        int drawHeight = view.height / 72 + 3;
+        int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
+        int drawHeight = view.height / (int)(HEX_H*scale) + 3;
 
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
@@ -408,10 +576,10 @@ public class BoardView1
                 p.translate(-(view.x), -(view.y));
                 if (game.board.isLegalDeployment(c, m_plDeployer)) {
                     backGraph.setColor(Color.yellow);
-                    int[] xcoords = { p.x + 21, p.x + 62, p.x + 83, p.x + 83,
-                                      p.x + 62, p.x + 21, p.x, p.x };
-                    int[] ycoords = { p.y, p.y, p.y + 35, p.y + 36, p.y + 71,
-                                      p.y + 71, p.y + 36, p.y + 35 };
+                    int[] xcoords = { p.x + (int)(21*scale), p.x + (int)(62*scale), p.x + (int)(83*scale), p.x + (int)(83*scale),
+                            p.x + (int)(62*scale), p.x + (int)(21*scale), p.x, p.x };
+                    int[] ycoords = { p.y, p.y, p.y + (int)(35*scale), p.y + (int)(36*scale), p.y + (int)(71*scale),
+                            p.y + (int)(71*scale), p.y + (int)(36*scale), p.y + (int)(35*scale) };
                     backGraph.drawPolygon(xcoords, ycoords, 8);
                 }
             }
@@ -423,11 +591,11 @@ public class BoardView1
      */
     private void drawMinefields() {
         // only update visible hexes
-        int drawX = view.x / 63 - 1;
-        int drawY = view.y / 72 - 1;
+        int drawX = view.x / (int)(HEX_WC*scale) - 1;
+        int drawY = view.y / (int)(HEX_H*scale) - 1;
 
-        int drawWidth = view.width / 63 + 3;
-        int drawHeight = view.height / 72 + 3;
+        int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
+        int drawHeight = view.height / (int)(HEX_H*scale) + 3;
 
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
@@ -435,51 +603,105 @@ public class BoardView1
                 Coords c = new Coords(j + drawX, i + drawY);
                 Point p = getHexLocation(c);
                 p.translate(-(view.x), -(view.y));
-                if (game.board.contains(c)) {
-                    if (game.containsMinefield(c)) {
-                        Minefield mf = (Minefield) game.getMinefields(c).elementAt(0);
-                        backGraph.drawImage(tileManager.getMinefieldSign(), p.x + 13, p.y + 13, this);
-                        backGraph.setFont(FONT_MINEFIELD_SMALL);
-                        int nbrMfs = game.getNbrMinefields(c);
-                        if (nbrMfs > 1) {
-                            backGraph.setColor(Color.black);
-                            backGraph.drawString("Multiple", p.x + 20, p.y + 51);
-                        } else if (nbrMfs == 1) {
-                            switch (mf.getType()) {
-                            case (Minefield.TYPE_CONVENTIONAL) :
-                                backGraph.setColor(Color.black);
-                                backGraph.drawString("Conventional", p.x + 15, p.y + 51);
-                                break;
-                            case (Minefield.TYPE_THUNDER) :
-                                backGraph.setColor(Color.black);
-                                backGraph.drawString("Thunder (" + mf.getDamage() + ")", p.x + 15, p.y + 51);
-                                break;
-                            case (Minefield.TYPE_THUNDER_INFERNO) :
-                                backGraph.setColor(Color.black);
-                                backGraph.drawString("Thunder-Inf (" + mf.getDamage() + ")", p.x + 9, p.y + 51);
-                                break;
-                            case (Minefield.TYPE_THUNDER_ACTIVE) :
-                                backGraph.setColor(Color.black);
-                                backGraph.drawString("Thunder-Actv (" + mf.getDamage() + ")", p.x + 8, p.y + 51);
-                                break;
-                            case (Minefield.TYPE_COMMAND_DETONATED) :
-                                backGraph.setColor(Color.black);
-                                backGraph.drawString("Command-", p.x + 20, p.y + 51);
-                                backGraph.drawString("detonated", p.x + 22, p.y + 60);
-                                break;
-                            case (Minefield.TYPE_VIBRABOMB) :
-                                backGraph.setColor(Color.black);
-                                backGraph.drawString("Vibrabomb", p.x + 22, p.y + 51);
-                                backGraph.drawString("(" + mf.getSetting() + ")", p.x + 37, p.y + 60);
-                                break;
-                            }
-                        }
-                    }
-                }
+                
+                if (!game.board.contains(c)){ continue; }
+		        if (!game.containsMinefield(c)){ continue; }
+		        
+		        Minefield mf = (Minefield) game.getMinefields(c).elementAt(0);
+		        
+		        Image tmpImage = getScaledImage( tileManager.getMinefieldSign(), scale );
+		        backGraph.drawImage(
+		        		tmpImage,
+		        		p.x + (int)(13*scale), 
+						p.y + (int)(13*scale), 
+						this);
+		        
+				backGraph.setColor(Color.black);
+		        int nbrMfs = game.getNbrMinefields(c);
+	        	if (nbrMfs > 1) {
+	        		drawCenteredString("Multiple", 
+				        		p.x,
+								p.y + (int)(51*scale),
+								font_minefield,
+								backGraph);
+	        	} else if (nbrMfs == 1) {
+		    		switch (mf.getType()) {
+		    			case (Minefield.TYPE_CONVENTIONAL) :
+		    				drawCenteredString(
+		    						"Conventional",
+		    						p.x,
+									p.y + (int)(51*scale),
+									font_minefield,
+									backGraph);
+		    				break;
+		    			case (Minefield.TYPE_THUNDER) :
+		    				drawCenteredString(
+					        		"Thunder (" + mf.getDamage() + ")", 
+									p.x, 
+									p.y + (int)(51*scale),
+									font_minefield,
+									backGraph);
+		    			break;
+		    			case (Minefield.TYPE_THUNDER_INFERNO) :
+		    				drawCenteredString(
+		    						"Thunder-Inf (" + mf.getDamage() + ")", 
+									p.x,
+									p.y + (int)(51*scale),
+									font_minefield,
+									backGraph);
+		    			break;
+		    			case (Minefield.TYPE_THUNDER_ACTIVE) :
+		    				drawCenteredString(
+					        		"Thunder-Actv (" + mf.getDamage() + ")", 
+									p.x,
+									p.y + (int)(51*scale),
+									font_minefield,
+									backGraph);
+		    			break;
+		    			case (Minefield.TYPE_COMMAND_DETONATED) :
+		    				drawCenteredString(
+					        		"Command-", 
+									p.x,
+									p.y + (int)(51*scale),
+									font_minefield,
+									backGraph);
+		    				drawCenteredString(
+					        		"detonated", 
+									p.x,
+									p.y + (int)(60*scale),
+									font_minefield,
+									backGraph);
+		    			break;
+		    			case (Minefield.TYPE_VIBRABOMB) :
+		    				drawCenteredString(
+					        		"Vibrabomb", 
+									p.x,
+									p.y + (int)(51*scale),
+									font_minefield,
+									backGraph);
+		    				drawCenteredString(
+					        		"(" + mf.getSetting() + ")", 
+									p.x,
+									p.y + (int)(60*scale),
+									font_minefield,
+									backGraph);
+		    			break;
+		    		}
+			    }
             }
         }
     }
 
+    private void drawCenteredString( String string, int x, int y, Font font, Graphics graph ){
+    	FontMetrics currentMetrics = getFontMetrics(font);
+    	int stringWidth = currentMetrics.stringWidth(string);
+    	
+    	x += (int)((hex_size.width - stringWidth)/2);
+    	
+    	graph.setFont(font);
+    	graph.drawString( string, x, y );
+    }
+    
     /**
      * Updates the board buffer to contain all the hexes needed by the view.
      */
@@ -487,7 +709,8 @@ public class BoardView1
         // check to make sure image is big enough
         if (boardGraph == null || view.width > boardRect.width
             || view.height > boardRect.height) {
-            boardImage = createImage(view.width, view.height);
+            //boardImage = createImage(view.width, view.height);
+            boardImage = createImage(boardSize.width, boardSize.height);
             boardGraph = boardImage.getGraphics();
 
             System.out.println("boardview1: made a new board buffer " + boardRect);
@@ -504,6 +727,7 @@ public class BoardView1
      */
     private void moveBoardImage() {
         // salvage the old
+
         boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
         boardGraph.copyArea(0, 0, boardRect.width, boardRect.height,
                             boardRect.x - view.x, boardRect.y - view.y);
@@ -536,28 +760,38 @@ public class BoardView1
      * Redraws all hexes in the specified rectangle
      */
     private void drawHexes(Rectangle rect) {
-        int drawX = rect.x / 63 - 1;
-        int drawY = rect.y / 72 - 1;
+    	
+    	// rect is the view
+        int drawX = (int)(rect.x / (HEX_WC*scale))-1;
+        int drawY = (int)(rect.y / (HEX_H*scale))-1;
 
-        int drawWidth = rect.width / 63 + 3;
-        int drawHeight = rect.height / 72 + 3;
+        int drawWidth = (int)(rect.width / (HEX_WC*scale))+3;
+        int drawHeight = (int)(rect.height / (HEX_H*scale))+3;
 
         // only draw what we came to draw
         boardGraph.setClip(rect.x - boardRect.x, rect.y - boardRect.y,
                            rect.width, rect.height);
 
         // clear, if we need to
-        if (rect.x < 21) {
-            boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y, 21 - rect.x, rect.height);
+        if (rect.x < (21*scale)) {
+            boardGraph.clearRect(
+            		rect.x - boardRect.x, rect.y - boardRect.y,
+            		(int)(21*scale) - rect.x, rect.height);
         }
-        if (rect.y < 36) {
-            boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y, rect.width, 36 - rect.y);
+        if (rect.y < (36*scale)) {
+            boardGraph.clearRect(
+            		rect.x - boardRect.x, rect.y - boardRect.y,
+            		rect.width, (int)(36*scale) - rect.y);
         }
-        if (rect.x > boardSize.width - view.width - 21) {
-            boardGraph.clearRect(boardRect.width - 21, rect.y - boardRect.y, 21, rect.height);
+        if (rect.x > boardSize.width - view.width - (21*scale)) {
+            boardGraph.clearRect(
+            		boardRect.width - (int)(21*scale), rect.y - boardRect.y,
+					(int)(21*scale), rect.height);
         }
-        if (rect.y > boardSize.height - view.height - 36) {
-            boardGraph.clearRect(rect.x - boardRect.x, boardRect.height - 36, rect.width, 36);
+        if (rect.y > boardSize.height - view.height - (int)(36*scale)) {
+            boardGraph.clearRect(
+            		rect.x - boardRect.x, boardRect.height - (int)(36*scale),
+            		rect.width, (int)(36*scale));
         }
 
         // draw some hexes
@@ -600,50 +834,83 @@ public class BoardView1
         int depth = hex.depth();
 
         // offset drawing point
+        
         int drawX = hexLoc.x - boardRect.x;
         int drawY = hexLoc.y - boardRect.y;
 
         // draw picture
-        boardGraph.drawImage(tileManager.baseFor(hex), drawX, drawY, this);
+        Image baseImage = tileManager.baseFor(hex);
+        Image scaledImage = getScaledImage(baseImage, scale);
+        
+        boardGraph.drawImage(scaledImage, drawX, drawY, this);
+        
         if (tileManager.supersFor(hex) != null) {
-            for (Iterator i = tileManager.supersFor(hex).iterator(); i.hasNext();) {
-                boardGraph.drawImage((Image)i.next(), drawX, drawY, this);
+            for (Iterator i = tileManager.supersFor(hex).iterator(); i.hasNext();){
+                scaledImage = getScaledImage((Image)i.next(), scale);
+                boardGraph.drawImage(scaledImage, drawX, drawY, this);
             }
         }
-
-        // draw hex number
+        
         boardGraph.setColor(Settings.mapTextColor);
-        boardGraph.setFont(FONT_HEXNUM);
-        boardGraph.drawString(c.getBoardNum(), drawX + 30, drawY + 12);
-        // level | depth
-        boardGraph.setFont(FONT_ELEV);
-        if (level != 0 && depth == 0) {
-            boardGraph.drawString("LEVEL " + level, drawX + 24, drawY + 70);
-        } else if (depth != 0 && level == 0) {
-            boardGraph.drawString("DEPTH " + depth, drawX + 24, drawY + 70);
-        } else if (level != 0 && depth != 0) {
-            boardGraph.drawString("LEVEL " + level, drawX + 24, drawY + 60);
-            boardGraph.drawString("DEPTH " + depth, drawX + 24, drawY + 70);
+        
+        // draw hex number
+        if (scale >= 0.5){
+        	drawCenteredString(
+        			c.getBoardNum(),
+					drawX,
+					drawY + (int)(12*scale),
+					font_hexnum,
+					boardGraph);
         }
+        // level | depth
+        if (level != 0 && depth == 0 && zoomIndex > 3) {
+        	drawCenteredString(
+        			"LEVEL " + level,
+        			drawX,
+        			drawY + (int)(70*scale),
+					font_elev,
+					boardGraph);
+        } else if (depth != 0 && level == 0  && zoomIndex > 3 ) {
+        	drawCenteredString(
+        			"DEPTH " + depth,
+        			drawX,
+					drawY + (int)(70*scale),
+					font_elev,
+					boardGraph);
+        } else if (level != 0 && depth != 0  && zoomIndex > 3) {
+        	drawCenteredString(
+       				"LEVEL " + level,
+        			drawX,
+					drawY + (int)(60*scale),
+					font_elev,
+					boardGraph);
+       		drawCenteredString(
+       				"DEPTH " + depth,
+        			drawX,
+					drawY + (int)(70*scale),
+					font_elev,
+					boardGraph);
+        }
+        
         // draw elevation borders
         boardGraph.setColor(Color.black);
         if (drawElevationLine(c, 0)) {
-            boardGraph.drawLine(drawX + 21, drawY, drawX + 62, drawY);
+            boardGraph.drawLine(drawX + (int)(21*scale), drawY, drawX + (int)(62*scale), drawY);
         }
         if (drawElevationLine(c, 1)) {
-            boardGraph.drawLine(drawX + 62, drawY, drawX + 83, drawY + 35);
+            boardGraph.drawLine(drawX + (int)(62*scale), drawY, drawX + (int)(83*scale), drawY + (int)(35*scale));
         }
         if (drawElevationLine(c, 2)) {
-            boardGraph.drawLine(drawX + 83, drawY + 36, drawX + 62, drawY + 71);
+            boardGraph.drawLine(drawX + (int)(83*scale), drawY + (int)(36*scale), drawX + (int)(62*scale), drawY + (int)(71*scale));
         }
         if (drawElevationLine(c, 3)) {
-            boardGraph.drawLine(drawX + 62, drawY + 71, drawX + 21, drawY + 71);
+            boardGraph.drawLine(drawX + (int)(62*scale), drawY + (int)(71*scale), drawX + (int)(21*scale), drawY + (int)(71*scale));
         }
         if (drawElevationLine(c, 4)) {
-            boardGraph.drawLine(drawX + 21, drawY + 71, drawX, drawY + 36);
+            boardGraph.drawLine(drawX + (int)(21*scale), drawY + (int)(71*scale), drawX, drawY + (int)(36*scale));
         }
         if (drawElevationLine(c, 5)) {
-            boardGraph.drawLine(drawX, drawY + 35, drawX + 21, drawY);
+            boardGraph.drawLine(drawX, drawY + (int)(35*scale), drawX + (int)(21*scale), drawY);
         }
 
     }
@@ -665,7 +932,9 @@ public class BoardView1
      * of the hex graphic
      */
     private Point getHexLocation(int x, int y) {
-        return new Point(x * 63, y * 72 + ((x & 1) == 1 ? 36 : 0));
+        return new Point(
+        		x * (int)(HEX_WC*scale),
+        		y * (int)(HEX_H*scale) + ((x & 1) == 1 ? (int)(HEX_H/2*scale) : 0));
     }
     private Point getHexLocation(Coords c) {
         return getHexLocation(c.x, c.y);
@@ -678,8 +947,8 @@ public class BoardView1
      */
     private Point getCentreHexLocation(int x, int y) {
         Point p = getHexLocation(x, y);
-        p.x += 42;
-        p.y += 36;
+        p.x += (HEX_W/2*scale);
+        p.y += (HEX_H/2*scale);
         return p;
     }
     private Point getCentreHexLocation(Coords c) {
@@ -691,11 +960,11 @@ public class BoardView1
      * Returns the coords at the specified point
      */
     Coords getCoordsAt(Point p) {
-        final int x = (p.x + scroll.x - offset.x) / 63;
-        final int y = ((p.y + scroll.y - offset.y) - ((x & 1) == 1 ? 36 : 0)) / 72;
+        final int x = (p.x + scroll.x - offset.x) / (int)(HEX_WC*scale);
+        final int y = ((p.y + scroll.y - offset.y) - ((x & 1) == 1 ? (int)(HEX_H/2*scale) : 0)) / (int)(HEX_H*scale);
         return new Coords(x, y);
     }
-
+    
     /**
      * Shows the tooltip thinger
      */
@@ -724,7 +993,7 @@ public class BoardView1
                 else {
                     // too big to fit, left justify to the frame (roughly).
                     // how do I extract the first term of HEX_SIZE to use here?--LDE
-                    tipLoc.x = getLocationOnScreen().x + 84;
+                	tipLoc.x = getLocationOnScreen().x + hex_size.width;
                 }
             }
 
@@ -1012,9 +1281,10 @@ public class BoardView1
     private void moveCursor(CursorSprite cursor, Coords newPos) {
         final Rectangle oldBounds = new Rectangle(cursor.getBounds());
         if (newPos != null) {
-            cursor.setLocation(getHexLocation(newPos));
+            //cursor.setLocation(getHexLocation(newPos));
+            cursor.setHexLocation(newPos);
         } else {
-            cursor.setLocation(-100, -100);
+            cursor.setOffScreen();
         }
         // repaint affected area
         repaintBounds(oldBounds);
@@ -1025,7 +1295,7 @@ public class BoardView1
     public void centerOnHex(Coords c) {
         if ( null == c ) return;
         scroll.setLocation(getHexLocation(c));
-        scroll.translate(42 - (view.width / 2), 36 - (view.height / 2));
+        scroll.translate((int)(42*scale) - (view.width / 2), (int)(36*scale) - (view.height / 2));
 
         isScrolling = false;
         checkScrollBounds();
@@ -1324,7 +1594,7 @@ public class BoardView1
      * scrolls the board image on the canvas.
      */
     public boolean doScroll() {
-        if (Settings.explicitScrollOnly || !isScrolling) {
+        if (!isScrolling) {
             return false;
         }
         final Point oldScroll = new Point(scroll);
@@ -1731,6 +2001,103 @@ public class BoardView1
     }
 
     /**
+     * Increases zoomIndex and refreshes the map.
+     * 
+     */
+    public void zoomIn(){
+    	int tmpZoomIndex = zoomIndex + 1;
+    	if ( isJ2RE == true ){
+    		zoomIndex++;
+			zoom();
+		}
+    }
+
+    /**
+     * Decreases zoomIndex and refreshes the map.
+     *
+     */
+    public void zoomOut(){
+    	if ( isJ2RE == true ){
+    		zoomIndex--;
+			zoom();
+		}
+   	}
+
+    /**
+     * zoomIndex is a reference to a static array of scale factors.
+     * The index ranges from 0 to 9 and by default is set to 7 which corresponds
+     * to a scale of 1.0 (draws megamek images at normal size).  To zoom out the
+     * index needs to be set to a lower value.  To zoom in make it larger.
+     * If only zooming a step at a time use the zoomIn and zoomOut methods instead.
+     * 
+     * @param zoomIndex
+     */
+    public void setZoomIndex( int zoomIndex ){
+ 		if ( isJ2RE == true ){
+ 			this.zoomIndex = zoomIndex;
+			zoom();
+    	}
+    }
+
+    public int getZoomIndex(){
+    	return zoomIndex;
+    }
+    
+    private void checkZoomIndex(){
+    	if ( zoomIndex > ZOOM_FACTORS.length-1 ) {
+    		zoomIndex = ZOOM_FACTORS.length-1;
+    	}
+    	if ( zoomIndex < 0 ) zoomIndex = 0;
+    }
+    
+    //
+    // Changes hex dimensions and refreshes the map with the new scale
+    //
+	private void zoom(){
+		checkZoomIndex();
+    	scale = ZOOM_FACTORS[zoomIndex];
+        Settings.mapZoomIndex = zoomIndex;
+
+    	hex_size = new Dimension((int)(HEX_W*scale), (int)(HEX_H*scale));
+
+    	final Dimension size = getSize();
+        //Coords c = getCoordsAt(new Point((int)(size.width/2), (int)(size.height/2)));
+
+    	boardGraph=null;
+    	backGraph=null;
+    	hasZoomed=true;
+
+    	updateBoardSize();
+
+    	view.setLocation(scroll);
+    	view.setSize(getOptimalView(size));
+    	offset.setLocation(getOptimalOffset(size));
+
+    	updateFontSizes();
+    	updateBoardImage();
+    	
+    	update(this.getGraphics());
+    }
+    
+	private void updateFontSizes(){
+	    if ( zoomIndex <= 4 ) {
+	    		font_elev = FONT_7;
+	    		font_hexnum = FONT_7;
+	    		font_minefield = FONT_7;
+	    }
+	    if ( zoomIndex <= 5 & zoomIndex > 4 ){
+	        	font_elev = FONT_8;
+	        	font_hexnum = FONT_8;
+	    		font_minefield = FONT_8;
+	    }
+	    if ( zoomIndex > 5 ){
+	    	font_elev = FONT_9;
+	    	font_hexnum = FONT_9;
+    		font_minefield = FONT_9;
+	    }
+	}
+
+    /**
      * Displays a bit of text in a box.
      *
      * TODO: make multi-line
@@ -1828,7 +2195,13 @@ public class BoardView1
          */
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             if (isReady()) {
-                g.drawImage(image, x, y, observer);
+            	Image tmpImage;
+            	if ( zoomIndex == BASE_ZOOM_INDEX ){
+            		tmpImage = image;
+            	} else {
+            		tmpImage = getScaledImage( image, scale );
+            	}
+            	g.drawImage(tmpImage, x, y, observer);
             } else {
                 // grrr... well be ready next time!
                 prepare();
@@ -1860,15 +2233,16 @@ public class BoardView1
     private class CursorSprite extends Sprite
     {
         private Color color;
-
+        private Coords hexLoc;
+        
         public CursorSprite(Color color) {
             this.color = color;
             this.bounds = new Rectangle(hexPoly.getBounds().width + 1,
-                                        hexPoly.getBounds().height + 1);
+            		hexPoly.getBounds().height + 1);
             this.image = null;
 
             // start offscreen
-            bounds.setLocation(-100, -100);
+            setOffScreen();
         }
 
         public void prepare() {
@@ -1888,31 +2262,48 @@ public class BoardView1
                                                              new KeyAlphaFilter(TRANSPARENT)));
         }
 
-        public void setLocation(int x, int y) {
-            bounds.setLocation(x, y);
+        public void setOffScreen(){
+            bounds.setLocation(-100, -100);
+        	hexLoc = new Coords(-2, -2);
         }
-        public void setLocation(Point point) {
-            bounds.setLocation(point);
+        
+        public void setHexLocation( Coords hexLoc ){
+        	this.hexLoc = hexLoc;
+        	bounds.setLocation(getHexLocation(hexLoc));
+        }
+        
+        public Rectangle getBounds(){
+        	this.bounds = new Rectangle(hexPoly.getBounds().width + 1,
+        			hexPoly.getBounds().height + 1);
+        	bounds.setLocation(getHexLocation( hexLoc ));
+        	
+        	return bounds;
         }
     }
 
-    private class GhostEntitySprite extends Sprite {
+    
+	private class GhostEntitySprite extends Sprite {
         private Entity entity;
         private Rectangle entityRect;
+        private Rectangle modelRect;
 
         public GhostEntitySprite(Entity entity) {
             this.entity = entity;
 
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                                getFontMetrics(font).stringWidth(shortName) + 1,
-                                                getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
+            modelRect = new Rectangle(47, 55,
+                            getFontMetrics(font).stringWidth(shortName) + 1,
+                            getFontMetrics(font).getAscent());
+            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
             this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
+            this.entityRect = new Rectangle(
+            		bounds.x + (int)(20*scale),
+            		bounds.y + (int)(14*scale), 
+					(int)(44*scale), 
+					(int)(44*scale));
             this.image = null;
         }
 
@@ -1944,15 +2335,34 @@ public class BoardView1
                                                              new KeyAlphaFilter(TRANSPARENT)));
         }
 
+        public Rectangle getBounds(){
+        	Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+        	tempBounds.setLocation(getHexLocation(entity.getPosition()));
+        	this.bounds = tempBounds;
+        
+        	this.entityRect = new Rectangle(bounds.x + (int)(20*scale),
+        			bounds.y + (int)(14*scale),
+					(int)(44*scale),
+					(int)(44*scale));
+        	
+        	return bounds;
+        }
+        
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             if (isReady()) {
-                try {
+            	Image tmpImage;
+            	if (zoomIndex == BASE_ZOOM_INDEX ){
+    	            tmpImage = image;
+            	} else {
+            		tmpImage = getScaledImage( image, scale );
+            	}
+            	try {
                     Graphics2D g2 = (Graphics2D) g;
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                    g2.drawImage(image, x, y, observer);
+                    g2.drawImage(tmpImage, x, y, observer);
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
                 } catch (Throwable e) {
-                    g.drawImage(image, x, y, observer);
+                    g.drawImage(tmpImage, x, y, observer);
                 }
             } else {
                 // grrr... well be ready next time!
@@ -1967,6 +2377,7 @@ public class BoardView1
         private int facing;
         private Entity entity;
         private Rectangle entityRect;
+        private Rectangle modelRect;
 
         public MovingEntitySprite(Entity entity, Coords position, int facing) {
             this.entity = entity;
@@ -1974,17 +2385,20 @@ public class BoardView1
 
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                                getFontMetrics(font).stringWidth(shortName) + 1,
-                                                getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
+            modelRect = new Rectangle(47, 55,
+                            getFontMetrics(font).stringWidth(shortName) + 1,
+                            getFontMetrics(font).getAscent());
+            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(position));
 
             this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
+            this.entityRect = new Rectangle(bounds.x + (int)(20*scale),
+            		bounds.y + (int)(14*scale),
+					(int)(44*scale),
+					(int)(44*scale));
             this.image = null;
         }
-
+		
         /**
          * Creates the sprite for this entity.  It is an extra pain to
          * create transparent images in AWT.
@@ -2023,23 +2437,43 @@ public class BoardView1
     {
         private Entity entity;
         private Rectangle entityRect;
+        private Rectangle modelRect;
 
         public WreckSprite(Entity entity) {
             this.entity = entity;
 
             String shortName = entity.getShortName();
+            
             Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                                getFontMetrics(font).stringWidth(shortName) + 1,
-                                                getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
+            modelRect = new Rectangle(47, 55,
+                            		getFontMetrics(font).stringWidth(shortName) + 1,
+                            		getFontMetrics(font).getAscent());
+            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
             this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
+            this.entityRect = new Rectangle(
+            		bounds.x + (int)(20*scale),
+            		bounds.y + (int)(14*scale),
+					(int)(44*scale),
+					(int)(44*scale));
             this.image = null;
         }
 
+        public Rectangle getBounds(){
+        	Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+        	tempBounds.setLocation(getHexLocation(entity.getPosition()));
+        	this.bounds = tempBounds;
+        
+        	this.entityRect = new Rectangle(
+        			bounds.x + (int)(20*scale),
+        			bounds.y + (int)(14*scale),
+					(int)(44*scale),
+					(int)(44*scale));
+        	
+        	return bounds;
+        }
+        
         /**
          * Creates the sprite for this entity.  It is an extra pain to
          * create transparent images in AWT.
@@ -2109,23 +2543,41 @@ public class BoardView1
     {
         private Entity entity;
         private Rectangle entityRect;
+        private Rectangle modelRect;
 
         public EntitySprite(Entity entity) {
             this.entity = entity;
 
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                                getFontMetrics(font).stringWidth(shortName) + 1,
-                                                getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
+            modelRect = new Rectangle(47, 55,
+                            			getFontMetrics(font).stringWidth(shortName) + 1,
+                            			getFontMetrics(font).getAscent());
+            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
             this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
+            this.entityRect = new Rectangle(bounds.x + (int)(20*scale),
+            								bounds.y + (int)(14*scale),
+											(int)(44*scale),
+											(int)(44*scale));
             this.image = null;
         }
 
+        public Rectangle getBounds(){
+        	Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+        	tempBounds.setLocation(getHexLocation(entity.getPosition()));
+        	this.bounds = tempBounds;
+        
+        	this.entityRect = new Rectangle(
+        			bounds.x + (int)(20*scale),
+        			bounds.y + (int)(14*scale),
+					(int)(44*scale),
+					(int)(44*scale));
+        	
+        	return bounds;
+        }
+        
         /**
          * Creates the sprite for this entity.  It is an extra pain to
          * create transparent images in AWT.
@@ -2307,7 +2759,8 @@ public class BoardView1
          * Overrides to provide for a smaller sensitive area.
          */
         public boolean isInside(Point point) {
-            return entityRect.contains(point.x + view.x - offset.x, point.y + view.y - offset.y);
+            return entityRect.contains(	point.x + view.x - offset.x,
+            							point.y + view.y - offset.y);
         }
 
         private String[] getTooltip() {
@@ -2336,7 +2789,7 @@ public class BoardView1
             this.step = step;
 
             // step is the size of the hex that this step is in
-            bounds = new Rectangle(getHexLocation(step.getPosition()), HEX_SIZE);
+            bounds = new Rectangle(getHexLocation(step.getPosition()), hex_size);
             this.image = null;
         }
 
@@ -2474,6 +2927,11 @@ public class BoardView1
                                                              new KeyAlphaFilter(TRANSPARENT)));
         }
 
+        public Rectangle getBounds(){
+            bounds = new Rectangle(getHexLocation(step.getPosition()), hex_size);
+            return bounds;
+        }
+        
         public MoveStep getStep() {
             return step;
         }
@@ -2530,10 +2988,14 @@ public class BoardView1
 
         protected int entityId;
         protected int masterId;
-
+        protected Entity entityE;
+        protected Entity entityM;
+        
         Color spriteColor;
 
         public C3Sprite(Entity e, Entity m) {
+        	this.entityE = e;
+        	this.entityM = m;
             this.entityId = e.getId();
             this.masterId = m.getId();
             this.spriteColor = e.getOwner().getColor();
@@ -2548,18 +3010,8 @@ public class BoardView1
                 this.image = null;
                 return;
             }
-            final Point a = getHexLocation(e.getPosition());
-            final Point t = getHexLocation(m.getPosition());
 
-            final double an = (e.getPosition().radian(m.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
-            final double lw = 1; // line width
-
-            // make a polygon
-            C3Poly = new Polygon();
-            C3Poly.addPoint(a.x + 42 - (int)Math.round(Math.sin(an) * lw), a.y + 36 + (int)Math.round(Math.cos(an) * lw));
-            C3Poly.addPoint(a.x + 42 + (int)Math.round(Math.sin(an) * lw), a.y + 36 - (int)Math.round(Math.cos(an) * lw));
-            C3Poly.addPoint(t.x + 42 + (int)Math.round(Math.sin(an) * lw), t.y + 36 - (int)Math.round(Math.cos(an) * lw));
-            C3Poly.addPoint(t.x + 42 - (int)Math.round(Math.sin(an) * lw), t.y + 36 + (int)Math.round(Math.cos(an) * lw));
+            makePoly();
 
             // set bounds
             this.bounds = new Rectangle(C3Poly.getBounds());
@@ -2578,12 +3030,50 @@ public class BoardView1
             ;
         }
 
+        private void makePoly( ){
+            // make a polygon
+            final Point a = getHexLocation(entityE.getPosition());
+            final Point t = getHexLocation(entityM.getPosition());
+
+            final double an = (entityE.getPosition().radian(entityM.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
+            final double lw = scale*C3_LINE_WIDTH; // line width
+            
+            C3Poly = new Polygon();
+            C3Poly.addPoint(
+            		a.x + (int)(scale*(HEX_W/2) - (int)Math.round(Math.sin(an) * lw)),
+            		a.y + (int)(scale*(HEX_H/2) + (int)Math.round(Math.cos(an) * lw)));
+            C3Poly.addPoint(
+            		a.x + (int)(scale*(HEX_W/2) + (int)Math.round(Math.sin(an) * lw)), 
+            		a.y + (int)(scale*(HEX_H/2) - (int)Math.round(Math.cos(an) * lw)));
+            C3Poly.addPoint(
+            		t.x + (int)(scale*(HEX_W/2) + (int)Math.round(Math.sin(an) * lw)), 
+            		t.y + (int)(scale*(HEX_H/2) - (int)Math.round(Math.cos(an) * lw)));
+            C3Poly.addPoint(
+            		t.x + (int)(scale*(HEX_W/2) - (int)Math.round(Math.sin(an) * lw)), 
+            		t.y + (int)(scale*(HEX_H/2) + (int)Math.round(Math.cos(an) * lw)));
+        }
+
+        public Rectangle getBounds(){
+        	makePoly();
+            // set bounds
+            this.bounds = new Rectangle(C3Poly.getBounds());
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+
+            // move poly to upper right of image
+            C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+            this.image = null;
+            
+            return bounds;
+        }
+        
         public boolean isReady() {
             return true;
         }
 
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-            Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints, C3Poly.npoints);
+        	//makePoly();
+        	
+        	Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints, C3Poly.npoints);
             drawPoly.translate(x, y);
 
             g.setColor(spriteColor);
@@ -2623,47 +3113,28 @@ public class BoardView1
         private String attackerDesc;
         private String targetDesc;
         private Vector weaponDescs = new Vector();
+        private final Entity ae;
+        private final Targetable target;
 
         public AttackSprite(AttackAction attack) {
-
             this.attacks.addElement(attack);
             this.entityId = attack.getEntityId();
             this.targetType = attack.getTargetType();
             this.targetId = attack.getTargetId();
-            final Entity ae = game.getEntity(attack.getEntityId());
-            final Targetable target = game.getTarget(targetType, targetId);
-            this.a = getHexLocation(ae.getPosition());
-            this.t = getHexLocation(target.getPosition());
+            this.ae = game.getEntity(attack.getEntityId());
+            this.target = game.getTarget(targetType, targetId);
+
             // color?
             attackColor = ae.getOwner().getColor();
             //angle of line connecting two hexes
             this.an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
-            // make a polygon
-
-            // OK, that is actually not good. I do not like hard coded figures.
-            // 42 - x distance in pixels from origin of hex bounding box to the center of hex.
-            // 36 - y distance in pixels from origin of hex bounding box to the center of hex.
-            // 18 - is actually 36/2 - we do not want arrows to start and end directly
-            // in the centes of hex and hiding mek under.
-
-            a.x = a.x + 42 + (int)Math.round(Math.cos(an) * 18);
-            t.x = t.x + 42 - (int)Math.round(Math.cos(an) * 18);
-            a.y = a.y + 36 + (int)Math.round(Math.sin(an) * 18);
-            t.y = t.y + 36 - (int)Math.round(Math.sin(an) * 18);
-
-            // Checking if given attack is mutual. In this case we building halved arrow
-            if (isMutualAttack()){
-                attackPoly = new StraightArrowPolygon(a, t, 8, 12, true);
-            } else {
-                attackPoly = new StraightArrowPolygon(a, t, 4, 8, false);
-            }
+            makePoly();
 
             // set bounds
             this.bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
             attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
-
 
             // set names & stuff
             attackerDesc = ae.getDisplayName();
@@ -2694,12 +3165,45 @@ public class BoardView1
             this.image = null;
         }
 
+        private void makePoly(){
+            // make a polygon
+            this.a = getHexLocation(ae.getPosition());
+            this.t = getHexLocation(target.getPosition());
+            // OK, that is actually not good. I do not like hard coded figures.
+            // HEX_W/2 - x distance in pixels from origin of hex bounding box to the center of hex.
+            // HEX_H/2 - y distance in pixels from origin of hex bounding box to the center of hex.
+            // 18 - is actually 36/2 - we do not want arrows to start and end directly
+            // in the centes of hex and hiding mek under.
+
+            a.x = a.x + (int)(HEX_W/2*scale) + (int)Math.round(Math.cos(an) * (int)(18*scale));
+            t.x = t.x + (int)(HEX_W/2*scale) - (int)Math.round(Math.cos(an) * (int)(18*scale));
+            a.y = a.y + (int)(HEX_H/2*scale) + (int)Math.round(Math.sin(an) * (int)(18*scale));
+            t.y = t.y + (int)(HEX_H/2*scale) - (int)Math.round(Math.sin(an) * (int)(18*scale));
+
+            // Checking if given attack is mutual. In this case we building halved arrow
+            if (isMutualAttack()){
+                attackPoly = new StraightArrowPolygon(a, t, (int)(8*scale), (int)(12*scale), true);
+            } else {
+                attackPoly = new StraightArrowPolygon(a, t, (int)(4*scale), (int)(8*scale), false);
+            }
+        }
+        
+        public Rectangle getBounds(){
+        	makePoly();
+            // set bounds
+            this.bounds = new Rectangle(attackPoly.getBounds());
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+            // move poly to upper right of image
+            attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+        	
+        	return bounds;
+        }
 
         /** If we have build full arrow already with single attack and have got
          * counter attack from our target lately - lets change arrow to halved.
          */
         public void rebuildToHalvedPolygon(){
-            attackPoly = new StraightArrowPolygon(a, t, 8, 12, true);
+            attackPoly = new StraightArrowPolygon(a, t, (int)(8*scale), (int)(12*scale), true);
             // set bounds
             this.bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);

@@ -32,6 +32,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
      * This value may be <code>null</code>.
      */
     private Game game = null;
+    private boolean isJ2RE;
 
     private MenuItem fileGameNew = null;
     private MenuItem fileGameOpen = null;
@@ -74,6 +75,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 
     private MenuItem viewMiniMap = null;
     private MenuItem viewMekDisplay = null;
+    private MenuItem viewZoomIn = null;
+    private MenuItem viewZoomOut = null;
     private MenuItem viewLOSSetting = null;
     private MenuItem viewUnitOverview = null;
     private MenuItem viewInitiativeReport = null;
@@ -152,6 +155,14 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         menu = new Menu( "File" );
         this.add( menu );
 
+     	Properties p = System.getProperties();
+     	String javaVersion = p.getProperty( "java.version" );
+     	if ( javaVersion.charAt(2) == '1' ){
+     		isJ2RE = false;
+     	} else {
+     		isJ2RE = true;
+     	}
+        
         // Create the Game sub-menu.
         submenu = new Menu( "Game" );
         menu.add( submenu );
@@ -243,8 +254,15 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         viewUnitOverview = new MenuItem( "Unit Overview" );
         viewUnitOverview.addActionListener( this );
         viewUnitOverview.setActionCommand(Client.VIEW_UNIT_OVERVIEW);
-        viewUnitOverview.setShortcut(new MenuShortcut(KeyEvent.VK_U));
         menu.add( viewUnitOverview );
+        viewZoomIn = new MenuItem( "Zoom In" );
+        viewZoomIn.addActionListener( this );
+        viewZoomIn.setActionCommand(Client.VIEW_ZOOM_IN);
+        menu.add( viewZoomIn );
+        viewZoomOut = new MenuItem( "Zoom Out" );
+        viewZoomOut.addActionListener( this );
+        viewZoomOut.setActionCommand(Client.VIEW_ZOOM_OUT);
+        menu.add( viewZoomOut );
         menu.addSeparator();
         viewTurnReport = new MenuItem( "Turn Report" );
         viewTurnReport.addActionListener( this );
@@ -487,6 +505,13 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             fileBoardSave.setEnabled( true );
             fileBoardSaveAs.setEnabled( true );
             viewMiniMap.setEnabled( true );
+            if ( isJ2RE ){
+            	viewZoomIn.setEnabled( true );
+            	viewZoomOut.setEnabled( true );
+            } else {
+            	viewZoomIn.setEnabled( false);
+            	viewZoomOut.setEnabled( false );
+            }
         }
         // If we don't have a board, then we can't save it.
         // Also, we can't view the mini map.
@@ -496,6 +521,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             fileBoardSave.setEnabled( false );
             fileBoardSaveAs.setEnabled( false );
             viewMiniMap.setEnabled( false );
+            viewZoomIn.setEnabled( false );
+            viewZoomOut.setEnabled( false );
         }
 
         // If we have a unit list, and if we are in the lounge,
@@ -531,11 +558,20 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
              this.phase == Game.PHASE_DEPLOYMENT ) {
             viewLOSSetting.setEnabled( true );
             viewMiniMap.setEnabled( true );
+            if ( isJ2RE == true ){
+	            viewZoomIn.setEnabled( true );
+	            viewZoomOut.setEnabled( true );
+            } else {
+	            viewZoomIn.setEnabled( false );
+	            viewZoomOut.setEnabled( false );
+            }
             viewUnitOverview.setEnabled( true );
             viewPlayerList.setEnabled( true );
         } else {
             viewLOSSetting.setEnabled( false );
             viewMiniMap.setEnabled( false );
+            viewZoomIn.setEnabled( false );
+            viewZoomOut.setEnabled( false );
             viewUnitOverview.setEnabled( false );
             viewPlayerList.setEnabled( false );
         }

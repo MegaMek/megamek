@@ -1679,21 +1679,22 @@ public class Board
 		} while (field != null); 
 		
 		/* search the elevation for the river */
-		while (!riverHexes.isEmpty()) {
-			Iterator iter = riverHexes.iterator();
+		HashSet tmpRiverHexes = (HashSet)riverHexes.clone();
+		while (!tmpRiverHexes.isEmpty()) {
+			Iterator iter = tmpRiverHexes.iterator();
 			field = (Hex)iter.next();
 			if (field.getElevation() < minElevation) {
 				minElevation = field.getElevation();
 			}
-			riverHexes.remove(field);
+			tmpRiverHexes.remove(field);
 			Point thisHex = (Point)reverseHex.get(field);
 			/* and now the six neighbours */
 			for (int i = 0; i < 6; i++) {
-				field = getHexInDir(thisHex.x, thisHex.y, i);
-				if ((field != null) && (field.getElevation() < minElevation)) {
-					minElevation = field.getElevation();
-				}
-				riverHexes.remove(field);
+                            field = getHexInDir(thisHex.x, thisHex.y, i);
+                            if ((field != null) && (field.getElevation() < minElevation)) {
+                                minElevation = field.getElevation();
+                            }
+                            tmpRiverHexes.remove(field);
 			}
 		} /* while */
 		

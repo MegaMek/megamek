@@ -2804,10 +2804,7 @@ public class BoardView1
          * our own mechs and teammates mechs (assuming team vision option).
          */
         private boolean trackThisEntitiesVisibilityInfo(Entity e) {
-            if (e == null || e.getOwner() == null) {
-                //Not sure why these would be null, but I've seen an
-                //error report (bug #985884) where they were so better
-                //safe than sorry I guess.
+            if (getLocalPlayer() == null) {
                 return false;
             }
 

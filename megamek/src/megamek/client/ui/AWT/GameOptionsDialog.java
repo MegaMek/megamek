@@ -42,6 +42,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     private boolean editable = true;
 
     private Vector optionComps = new Vector();
+
+    private int maxOptionWidth = 0;
     
     private AlertDialog savedAlert = null;
     private Panel panOptions = new Panel();
@@ -198,7 +200,11 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
                 addOption(option, gridbag, c);
             }
         }
-        
+
+        // Make the width accomadate the longest game option label
+        //  without needing to scroll horizontally.
+        setSize(Math.min(client.getSize().width, maxOptionWidth + 30), Math.max(getSize().height, 400));
+
         validate();
     }
     
@@ -214,6 +220,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);
+        maxOptionWidth = Math.max(maxOptionWidth, optionComp.getPreferredSize().width);
+
         if (option.getShortName().equals("inf_deploy_last")) {
             if (!(options.getOption("inf_move_last")).booleanValue() || !editable) {
                 optionComp.setEditable(false);

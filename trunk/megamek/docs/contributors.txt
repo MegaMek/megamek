@@ -49,6 +49,7 @@ Lot of people have contributed to the MegaMek project.
      shockmilk <shockmilk@users.sourceforge.net>
      Jan Ferdinand Rehse
      Thomas "DarkViper" Wehner
+     Endreffy Janos <endrosz@freemail.hu>
 
   German Readme:
      Black Ice <WKA_Online@yahoo.de>

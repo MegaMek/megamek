@@ -7,6 +7,7 @@ v0.29.32 (CVS)
 + Patch 932734: "Host Saved Game" now limits filelist to *.sav on Linux
 + Patch 932367: Cursors now sit "underneath" other info
 + Bug 785820: Breached equipment affects movement
++ Minimap now indicates when a hex has both smoke and fire in it.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

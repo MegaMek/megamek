@@ -26,20 +26,18 @@ import megamek.client.util.widget.*;
 import megamek.client.bot.*;
 import megamek.server.*;
 
-public class MegaMek
-    implements ActionListener
-{
-    public static String    VERSION = "0.29.33-dev";
-    public static long      TIMESTAMP = new File("timestamp").lastModified();
+public class MegaMek implements ActionListener {
+    public static String VERSION = "0.29.33-dev";
+    public static long TIMESTAMP = new File("timestamp").lastModified();
 
-    public Frame            frame;
+    public Frame frame;
 
-    public Client			client = null;
-    public Server			server = null;
-    private CommonAboutDialog           about  = null;
-    private CommonHelpDialog            help   = null;
-    private GameOptionsDialog           optdlg = null;
-    private CommonSettingsDialog        setdlg = null;
+    public Client client = null;
+    public Server server = null;
+    private CommonAboutDialog about = null;
+    private CommonHelpDialog help = null;
+    private GameOptionsDialog optdlg = null;
+    private CommonSettingsDialog setdlg = null;
 
     /**
      * Contruct a MegaMek, and display the main menu in the
@@ -47,20 +45,20 @@ public class MegaMek
      */
     public MegaMek() {
         this.frame = new Frame("MegaMek");
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				quit();
-			}
-		});
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                quit();
+            }
+        });
 
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
-        
+
         frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
 
         CommonMenuBar menuBar = new CommonMenuBar();
-        menuBar.addActionListener( this );
-        frame.setMenuBar( menuBar );
+        menuBar.addActionListener(this);
+        frame.setMenuBar(menuBar);
         showMainMenu();
 
         // echo some useful stuff
@@ -68,7 +66,14 @@ public class MegaMek
         System.out.println("Timestamp " + new Date(TIMESTAMP).toString());
         System.out.println("Java vendor " + System.getProperty("java.vendor"));
         System.out.println("Java version " + System.getProperty("java.version"));
-        System.out.println("Platform " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")\n");
+        System.out.println(
+            "Platform "
+                + System.getProperty("os.name")
+                + " "
+                + System.getProperty("os.version")
+                + " ("
+                + System.getProperty("os.arch")
+                + ")\n");
 
         // set visible on middle of screen
         Dimension screenSize = frame.getToolkit().getScreenSize();
@@ -82,29 +87,29 @@ public class MegaMek
         if (System.getProperty("java.vendor").indexOf("Microsoft") != -1) {
             Dimension windowSize = frame.getSize();
             windowSize.height += 25;
-            frame.setSize( windowSize );
+            frame.setSize(windowSize);
         }
 
         // Show the window.
         frame.setVisible(true);
 
         // tell the user about the readme...
-        if (true==Settings.nagForReadme) {
-            String title = "Welcome to MegaMek "+VERSION;
-            String body = 
-                "MegaMek is a complex application -- if you ever need any help you\n"+
-                "should start by reading the documentation, accessible through\n"+
-                "the Help menu.\n"+
-                " \nWould you like to view the documentation now?\n";
-            ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
+        if (true == Settings.nagForReadme) {
+            String title = "Welcome to MegaMek " + VERSION;
+            String body =
+                "MegaMek is a complex application -- if you ever need any help you\n"
+                    + "should start by reading the documentation, accessible through\n"
+                    + "the Help menu.\n"
+                    + " \nWould you like to view the documentation now?\n";
+            ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);
             confirm.show();
 
-            if ( !confirm.getShowAgain() ) {
+            if (!confirm.getShowAgain()) {
                 Settings.nagForReadme = false;
                 Settings.save();
             };
 
-            if ( confirm.getAnswer() ) {
+            if (confirm.getAnswer()) {
                 showHelp();
             };
         };
@@ -146,10 +151,9 @@ public class MegaMek
         quitB = new Button("Quit");
         quitB.setActionCommand("quit");
         quitB.addActionListener(this);
-		
+
         // initialize splash image
-        Image imgSplash = frame.getToolkit().getImage
-            ("data/images/megamek-splash.jpg");
+        Image imgSplash = frame.getToolkit().getImage("data/images/megamek-splash.jpg");
 
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
@@ -161,50 +165,52 @@ public class MegaMek
         }
         // make splash image panel
         BufferedPanel panTitle = new BufferedPanel();
-		BackGroundDrawer bgdTitle = new BackGroundDrawer(imgSplash);
-		panTitle.addBgDrawer(bgdTitle);
-		panTitle.setPreferredSize(imgSplash.getWidth(null), imgSplash.getHeight(null));
-		
-		// layout
+        BackGroundDrawer bgdTitle = new BackGroundDrawer(imgSplash);
+        panTitle.addBgDrawer(bgdTitle);
+        panTitle.setPreferredSize(imgSplash.getWidth(null), imgSplash.getHeight(null));
+
+        // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         frame.setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         c.insets = new Insets(4, 4, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.ipadx = 10;    c.ipady = 5;
+        c.ipadx = 10;
+        c.ipady = 5;
         c.gridx = 0;
 
-		c.gridwidth = 1;
-		c.gridheight = 8;
-		addBag(panTitle, gridbag, c);
-		
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.gridx = 1;
-		c.gridheight = 1;
-		c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridheight = 8;
+        addBag(panTitle, gridbag, c);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridx = 1;
+        c.gridheight = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
 
         c.gridy = 0;
-		addBag(labVersion, gridbag, c);
-		c.gridy++;
+        addBag(labVersion, gridbag, c);
+        c.gridy++;
         addBag(hostB, gridbag, c);
-		c.gridy++;
-		addBag(loadB, gridbag, c);
+        c.gridy++;
+        addBag(loadB, gridbag, c);
         c.gridy++;
         addBag(scenB, gridbag, c);
         c.gridy++;
         addBag(connectB, gridbag, c);
         c.gridy++;
         addBag(botB, gridbag, c);
-		c.gridy++;
-		addBag(editB, gridbag, c);
-		c.gridy++;
-		addBag(quitB, gridbag, c);
-		
-		frame.validate();
+        c.gridy++;
+        addBag(editB, gridbag, c);
+        c.gridy++;
+        addBag(quitB, gridbag, c);
+
+        frame.validate();
     }
 
     /**
@@ -213,11 +219,11 @@ public class MegaMek
     public void showGameOptions() {
         GameOptions options = new GameOptions();
         options.initialize();
-        options.loadOptions( null, null );
-        if ( optdlg == null ) {
-            optdlg = new GameOptionsDialog( frame, options );
+        options.loadOptions(null, null);
+        if (optdlg == null) {
+            optdlg = new GameOptionsDialog(frame, options);
         }
-        optdlg.update( options );
+        optdlg.update(options);
         optdlg.show();
     }
 
@@ -225,8 +231,8 @@ public class MegaMek
      * Display the board editor.
      */
     public void showEditor() {
-    	BoardEditor editor = new BoardEditor();
-    	launch(editor.getFrame());
+        BoardEditor editor = new BoardEditor();
+        launch(editor.getFrame());
         editor.boardNew();
     }
 
@@ -234,8 +240,8 @@ public class MegaMek
      * Display the board editor and open an "open" dialog.
      */
     public void showEditorOpen() {
-    	BoardEditor editor = new BoardEditor();
-    	launch(editor.getFrame());
+        BoardEditor editor = new BoardEditor();
+        launch(editor.getFrame());
         editor.boardLoad();
     }
 
@@ -248,21 +254,20 @@ public class MegaMek
         hd = new HostDialog(frame);
         hd.show();
         // verify dialog data
-        if(hd.name == null || hd.serverPass == null || hd.port == 0) {
+        if (hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.name.toCharArray();
-        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
-            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+            if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
         }
-        if ( !foundValid ) {
-            new AlertDialog( frame, "Host a Game",
-                             "Error: enter a player name." ).show();
+        if (!foundValid) {
+            new AlertDialog(frame, "Host a Game", "Error: enter a player name.").show();
             return;
         }
 
@@ -272,29 +277,34 @@ public class MegaMek
         server = new Server(hd.serverPass, hd.port);
         // initialize client
         client = new Client(hd.name, "localhost", hd.port);
-        client.initializeListeners();
-        launch(client.getFrame());
+        ClientGUI gui = new ClientGUI(client);
+        gui.initialize();
+        try {
+            client.connect();
+        } catch (Exception e) {
+            ;
+        }
+        launch(gui.getFrame());
 
         server.getGame().getOptions().loadOptions(client, hd.serverPass);
         optdlg = null;
     }
 
     public void loadGame() {
-        FileDialog fd =
-            new FileDialog(frame, "Select saved game...", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(frame, "Select saved game...", FileDialog.LOAD);
         fd.setDirectory(".");
         // limit file-list to savedgames only
-        fd.setFilenameFilter( new FilenameFilter() {
-                public boolean accept( File dir, String name ) {
-                    return ( null != name && name.endsWith( ".sav" ) );
-                }
-            } );
+        fd.setFilenameFilter(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return (null != name && name.endsWith(".sav"));
+            }
+        });
         //Using the FilenameFilter class would be the appropriate way to
         // filter for certain extensions, but it's broken under windoze.  See
         // http://developer.java.sun.com/developer/bugParade/bugs/4031440.html
         // for details.  The hack below is better than nothing.
         fd.setFile("*.sav");
-        
+
         fd.show();
         if (fd.getFile() == null) {
             return;
@@ -309,14 +319,13 @@ public class MegaMek
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.name.toCharArray();
-        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
-            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+            if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
         }
-        if ( !foundValid ) {
-            new AlertDialog( frame, "Load a Game",
-                             "Error: enter a player name." ).show();
+        if (!foundValid) {
+            new AlertDialog(frame, "Load a Game", "Error: enter a player name.").show();
             return;
         }
 
@@ -330,8 +339,13 @@ public class MegaMek
             return;
         }
         client = new Client(hd.name, "localhost", hd.port);
-        client.initializeListeners();
-        launch(client.getFrame());
+        ClientGUI gui = new ClientGUI(client);
+        gui.initialize();
+        try {
+            client.connect();
+        } catch (Exception e) {
+            ;
+        }
         optdlg = null;
     }
 
@@ -339,9 +353,7 @@ public class MegaMek
      * Host a game constructed from a scenario file
      */
     public void scenario() {
-        FileDialog fd = new FileDialog(frame,
-                "Select a scenario file...",
-                FileDialog.LOAD);
+        FileDialog fd = new FileDialog(frame, "Select a scenario file...", FileDialog.LOAD);
         fd.setDirectory("data" + File.separatorChar + "scenarios");
 
         // the filter doesn't seem to do anything in windows.  oh well
@@ -380,54 +392,64 @@ public class MegaMek
         hd.yourNameF.setText(sd.localName);
         hd.show();
         // verify dialog data
-        if(hd.name == null || hd.serverPass == null || hd.port == 0) {
+        if (hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.name.toCharArray();
-        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
-            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+            if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
         }
-        if ( !foundValid ) {
-            new AlertDialog( frame, "Host Scenario",
-                             "Error: enter a player name." ).show();
+        if (!foundValid) {
+            new AlertDialog(frame, "Host Scenario", "Error: enter a player name.").show();
             return;
         }
 
         // kick off a RNG check
         megamek.common.Compute.d6();
         // start server
+        if (server != null) {
+            server.die();
+        }
         server = new Server(hd.serverPass, hd.port);
         server.setGame(g);
 
         // apply any scenario damage
         sl.applyDamage(server);
-
+		ClientGUI gui = null;
         if (sd.localName != "") {
             // initialize game
             client = new Client(hd.name, "localhost", hd.port);
-            client.initializeListeners();
-            launch(client.getFrame());
-
+            gui = new ClientGUI(client);
+            gui.initialize();
+            try {
+                client.connect();
+            } catch (Exception e) {
+                ;
+            }
             server.getGame().getOptions().loadOptions(client, hd.serverPass);
-            
+
             // popup options dialog
-            client.getGameOptionsDialog().update(client.game.getOptions());
-            client.getGameOptionsDialog().show();
+            gui.getGameOptionsDialog().update(client.game.getOptions());
+            gui.getGameOptionsDialog().show();
         }
         optdlg = null;
 
         // setup any bots
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
-                BotClient c = new TestBot(pa[x].getName());
-                c.connect("localhost", hd.port);
-                c.initializeListeners();
-                c.retrieveServerInfo();
+                BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port);
+                try {
+                    c.connect();
+                } catch (Exception e) {
+                    ;
+                }
+                c.addGameListener(new BotGUI(gui, c));
+                c.retrieveServerInfo(); 
             }
         }
     }
@@ -441,28 +463,39 @@ public class MegaMek
         cd = new ConnectDialog(frame);
         cd.show();
         // verify dialog data
-        if(cd.name == null || cd.serverAddr == null || cd.port == 0) {
+        if (cd.name == null || cd.serverAddr == null || cd.port == 0) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = cd.name.toCharArray();
-        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
-            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+            if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
         }
-        if ( !foundValid ) {
-            new AlertDialog( frame, "Connect to Game",
-                             "Error: enter a player name." ).show();
+        if (!foundValid) {
+            new AlertDialog(frame, "Connect to Game", "Error: enter a player name.").show();
             return;
         }
 
         // initialize game
         client = new Client(cd.name, cd.serverAddr, cd.port);
-        client.initializeListeners();
-        launch(client.getFrame());
+        ClientGUI gui = new ClientGUI(client);
+        gui.initialize();
+        try {
+            client.connect();
+        } catch (Exception e) {
+            StringBuffer error = new StringBuffer();
+            error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(
+                cd.port).append(
+                ".");
+            new AlertDialog(frame, "Host a Game", error.toString()).show();
+            frame.setVisible(false);
+            client.die();
+        }
+        launch(gui.getFrame());
     }
 
     public void connectBot() {
@@ -471,39 +504,37 @@ public class MegaMek
         cd = new ConnectDialog(frame);
         cd.show();
         // verify dialog data
-        if(cd.name == null || cd.serverAddr == null || cd.port == 0) {
+        if (cd.name == null || cd.serverAddr == null || cd.port == 0) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = cd.name.toCharArray();
-        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
-            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+            if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
         }
-        if ( !foundValid ) {
-            new AlertDialog( frame, "Connect to Game",
-                             "Error: enter a player name." ).show();
+        if (!foundValid) {
+            new AlertDialog(frame, "Connect to Game", "Error: enter a player name.").show();
             return;
         }
 
         // initialize game
-        client = new TestBot(cd.name);
-
-        // verify connection
-        if(!client.connect(cd.serverAddr, cd.port)) {
-            server = null;
-            client = null;
-            new AlertDialog(frame, "Connect to Game", "Error: could not connect.").show();
-            return;
+        client = new TestBot(cd.name, cd.serverAddr, cd.port);
+        try {
+            client.connect();
+        } catch (Exception e) {
+            StringBuffer error = new StringBuffer();
+            error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(
+                cd.port).append(
+                ".");
+            new AlertDialog(frame, "Host a Game", error.toString()).show();
+            frame.setVisible(false);
+            client.die();
         }
-        // wait for full connection
-        client.initializeListeners();
         client.retrieveServerInfo();
-        
-        launch(client.getFrame());
     }
 
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
@@ -516,8 +547,8 @@ public class MegaMek
      */
     private void showAbout() {
         // Do we need to create the "about" dialog?
-        if ( this.about == null ) {
-            this.about = new CommonAboutDialog( this.frame );
+        if (this.about == null) {
+            this.about = new CommonAboutDialog(this.frame);
         }
 
         // Show the about dialog.
@@ -529,7 +560,7 @@ public class MegaMek
      */
     private void showHelp() {
         // Do we need to create the "help" dialog?
-        if ( this.help == null ) {
+        if (this.help == null) {
             help = showHelp(this.frame, "readme.txt");
         }
 
@@ -541,8 +572,8 @@ public class MegaMek
      * display the filename in a CommonHelpDialog
      */
     static public CommonHelpDialog showHelp(Frame frame, String filename) {
-        File helpfile = new File( filename );
-        return new CommonHelpDialog( frame, helpfile );
+        File helpfile = new File(filename);
+        return new CommonHelpDialog(frame, helpfile);
     }
 
     /**
@@ -550,8 +581,8 @@ public class MegaMek
      */
     private void showSettings() {
         // Do we need to create the "settings" dialog?
-        if ( this.setdlg == null ) {
-            this.setdlg = new CommonSettingsDialog( this.frame );
+        if (this.setdlg == null) {
+            this.setdlg = new CommonSettingsDialog(this.frame);
         }
 
         // Show the settings dialog.
@@ -562,15 +593,15 @@ public class MegaMek
      * Called when the quit buttons is pressed or the main menu is closed.
      */
     private void quit() {
-    	System.exit(0);
+        System.exit(0);
     }
-    
+
     /**
      * Hides this window for later.  Listens to the frame until it closes,
      * then calls unlaunch().
      */
     private void launch(Frame launched) {
-    	// listen to new frame
+        // listen to new frame
         launched.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 unlaunch();
@@ -582,18 +613,18 @@ public class MegaMek
         // hide menu frame
         frame.setVisible(false);
     }
-    
+
     /**
      * Un-hides the main menu and tries to clean up the client or server.
      */
     private void unlaunch() {
-		// clean up server, if we have one
-		if (server != null) {
-			server.die();
-			server = null;
-		}
-		// show menu frame
-		frame.setVisible(true);
+        // clean up server, if we have one
+        if (server != null) {
+            server.die();
+            server = null;
+        }
+        // show menu frame
+        frame.setVisible(true);
     }
 
     private static void testDice() {
@@ -612,7 +643,8 @@ public class MegaMek
 
         System.out.println("done testing dice in " + (end - start) + " ms.");
         for (int i = 0; i < sides; i++) {
-            System.out.println("hits on " + i + " : " + hits[i] + "; probability = " + ((double)hits[i] / (double)rolls));
+            System.out.println(
+                "hits on " + i + " : " + hits[i] + "; probability = " + ((double) hits[i] / (double) rolls));
         }
 
         int[][] pairs = new int[7][7];
@@ -641,12 +673,11 @@ public class MegaMek
             if (args[i].equals("-testdice")) {
                 testDice();
                 return;
-            }
-            else if (args[i].equals("-dedicated")) {
+            } else if (args[i].equals("-dedicated")) {
                 // Next argument may be the savegame file's name.
-                String savegameFileName=null;
+                String savegameFileName = null;
                 i++;
-                if ( i >= args.length || args[i].startsWith("-") ) {
+                if (i >= args.length || args[i].startsWith("-")) {
                     // no filename -- bump the argument processing back up
                     i--;
                 } else {
@@ -657,44 +688,39 @@ public class MegaMek
                 megamek.common.Compute.d6();
                 // start server
                 Server server = new Server(Settings.lastServerPass, Settings.lastServerPort);
-                if (null!=savegameFileName) {
+                if (null != savegameFileName) {
                     server.loadGame(new File(savegameFileName));
                 };
                 return;
-            }
-            else if (args[i].equals("-log")) {
+            } else if (args[i].equals("-log")) {
                 // Next argument is the log file's name.
                 i++;
-                if ( i >= args.length || args[i].equals("none")
-                     || args[i].equals("off") ) {
+                if (i >= args.length || args[i].equals("none") || args[i].equals("off")) {
                     logFileName = null;
                 } else {
                     logFileName = args[i];
                 }
-            }
-            else if ( args[i].equals("-testxml") ) {
+            } else if (args[i].equals("-testxml")) {
                 // Next argument is the log file's name.
                 i++;
-                if ( i >= args.length ) {
-                    System.err.println( "The '-testxml' flag requires a file name." );
+                if (i >= args.length) {
+                    System.err.println("The '-testxml' flag requires a file name.");
                 } else {
-                    new TinyXMLTest( "xml", args[i] );
+                    new TinyXMLTest("xml", args[i]);
                 }
                 return;
             }
         }
 
         // Redirect output to logfiles, unless turned off.
-        if ( logFileName != null ) {
+        if (logFileName != null) {
             try {
                 System.out.println("Redirecting output to " + logFileName);
-                PrintStream ps = new PrintStream(new BufferedOutputStream(
-                                 new FileOutputStream(logFileName), 64));
+                PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(logFileName), 64));
                 System.setOut(ps);
                 System.setErr(ps);
             } catch (Exception e) {
-                System.err.println("Unable to redirect output to " +
-                                   logFileName);
+                System.err.println("Unable to redirect output to " + logFileName);
                 e.printStackTrace();
             }
         } // End log-to-file
@@ -707,40 +733,40 @@ public class MegaMek
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if(ev.getActionCommand().equalsIgnoreCase("fileBoardNew")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileBoardNew")) {
             showEditor();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("fileBoardOpen")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileBoardOpen")) {
             showEditorOpen();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("fileGameNew")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameNew")) {
             host();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("fileGameScenario")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameScenario")) {
             scenario();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("fileGameConnect")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameConnect")) {
             connect();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("fileGameConnectBot")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameConnectBot")) {
             connectBot();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("fileGameOpen")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameOpen")) {
             loadGame();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
+        if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
             showGameOptions();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("helpAbout")) {
+        if (ev.getActionCommand().equalsIgnoreCase("helpAbout")) {
             showAbout();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("helpContents")) {
+        if (ev.getActionCommand().equalsIgnoreCase("helpContents")) {
             showHelp();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
+        if (ev.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
             showSettings();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("quit")) {
+        if (ev.getActionCommand().equalsIgnoreCase("quit")) {
             quit();
         }
     }
@@ -750,13 +776,13 @@ public class MegaMek
  * here's a quick class for the host new game diaglogue box
  */
 class HostDialog extends Dialog implements ActionListener {
-    public String            name;
-    public String            serverPass;
-    public int                port;
+    public String name;
+    public String serverPass;
+    public int port;
 
-    protected Label            yourNameL, serverPassL, portL;
-    protected TextField        yourNameF, serverPassF, portF;
-    protected Button        okayB, cancelB;
+    protected Label yourNameL, serverPassL, portL;
+    protected TextField yourNameF, serverPassF, portF;
+    protected Button okayB, cancelB;
 
     public HostDialog(Frame frame) {
         super(frame, "Host New Game...", true);
@@ -787,7 +813,8 @@ class HostDialog extends Dialog implements ActionListener {
         setLayout(gridbag);
 
         c.fill = GridBagConstraints.NONE;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         c.insets = new Insets(5, 5, 5, 5);
 
         c.gridwidth = 1;
@@ -820,8 +847,8 @@ class HostDialog extends Dialog implements ActionListener {
         gridbag.setConstraints(portF, c);
         add(portF);
 
-
-        c.ipadx = 20;    c.ipady = 5;
+        c.ipadx = 20;
+        c.ipady = 5;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(okayB, c);
@@ -833,17 +860,18 @@ class HostDialog extends Dialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
+        setLocation(
+            frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
+            frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
-        if(!e.getActionCommand().equals("cancel")) {
+        if (!e.getActionCommand().equals("cancel")) {
             try {
                 name = yourNameF.getText();
                 serverPass = serverPassF.getText();
                 port = Integer.decode(portF.getText()).intValue();
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage());
             }
 
@@ -860,12 +888,12 @@ class HostDialog extends Dialog implements ActionListener {
  * here's a quick class for the connect to game diaglogue box
  */
 class ConnectDialog extends Dialog implements ActionListener {
-    public String            name, serverAddr;
-    public int                port;
+    public String name, serverAddr;
+    public int port;
 
-    protected Label            yourNameL, serverAddrL, portL;
-    protected TextField        yourNameF, serverAddrF, portF;
-    protected Button        okayB, cancelB;
+    protected Label yourNameL, serverAddrL, portL;
+    protected TextField yourNameF, serverAddrF, portF;
+    protected Button okayB, cancelB;
 
     public ConnectDialog(Frame frame) {
         super(frame, "Connect To Game...", true);
@@ -896,7 +924,8 @@ class ConnectDialog extends Dialog implements ActionListener {
         setLayout(gridbag);
 
         c.fill = GridBagConstraints.NONE;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         c.insets = new Insets(5, 5, 5, 5);
 
         c.gridwidth = 1;
@@ -929,8 +958,8 @@ class ConnectDialog extends Dialog implements ActionListener {
         gridbag.setConstraints(portF, c);
         add(portF);
 
-
-        c.ipadx = 20;    c.ipady = 5;
+        c.ipadx = 20;
+        c.ipady = 5;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(okayB, c);
@@ -942,18 +971,19 @@ class ConnectDialog extends Dialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
+        setLocation(
+            frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
+            frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
-        if(!e.getActionCommand().equals("cancel")) {
+        if (!e.getActionCommand().equals("cancel")) {
             try {
                 name = yourNameF.getText();
                 serverAddr = serverAddrF.getText();
                 port = Integer.decode(portF.getText()).intValue();
 
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage());
             }
 
@@ -969,8 +999,7 @@ class ConnectDialog extends Dialog implements ActionListener {
 /**
  * Allow a user to set types and colors for scenario players
  */
-class ScenarioDialog extends Dialog implements ActionListener
-{
+class ScenarioDialog extends Dialog implements ActionListener {
     public static final int T_ME = 0;
     public static final int T_HUMAN = 1;
     public static final int T_BOT = 2;
@@ -990,11 +1019,10 @@ class ScenarioDialog extends Dialog implements ActionListener
     public int[] playerTypes;
     public String localName = "";
 
-    public ScenarioDialog(Frame frame, Player[] pa)
-    {
+    public ScenarioDialog(Frame frame, Player[] pa) {
         super(frame, "Set Scenario Players...", true);
         m_frame = frame;
-        camoDialog = new CamoChoiceDialog( frame );
+        camoDialog = new CamoChoiceDialog(frame);
         m_players = pa;
         m_labels = new Label[pa.length];
         m_typeChoices = new Choice[pa.length];
@@ -1004,7 +1032,7 @@ class ScenarioDialog extends Dialog implements ActionListener
 
         for (int x = 0; x < pa.length; x++) {
             final Player curPlayer = m_players[x];
-            curPlayer.setColorIndex( x );
+            curPlayer.setColorIndex(x);
 
             m_labels[x] = new Label(pa[x].getName(), Label.LEFT);
 
@@ -1016,37 +1044,35 @@ class ScenarioDialog extends Dialog implements ActionListener
 
             m_camoButtons[x] = new ImageButton();
             final ImageButton curButton = m_camoButtons[x];
-            curButton.setLabel( "No Camo" );
-            curButton.setPreferredSize( 84, 72 );
-            curButton.setBackground( new Color(Player.colorRGBs[x]) );
-            curButton.setActionCommand( "camo" );
+            curButton.setLabel("No Camo");
+            curButton.setPreferredSize(84, 72);
+            curButton.setBackground(new Color(Player.colorRGBs[x]));
+            curButton.setActionCommand("camo");
 
             // When a camo button is pressed, remove any previous
             // listener from the dialog, update the dialog for the
             // button's player, and add a new listener.
-            curButton.addActionListener( new ActionListener() {
-                    private final CamoChoiceDialog dialog = camoDialog;
-                    private final ImageButton button = curButton;
-                    private final Color background = defaultBackground;
-                    private final Player player = curPlayer;
-                    public void actionPerformed(ActionEvent e) {
-                        if ( null != prevListener ) {
-                            dialog.removeItemListener( prevListener );
-                        }
-                        if ( null == player.getCamoFileName() ) {
-                            dialog.setCategory( Player.NO_CAMO );
-                            dialog.setItemName
-                                ( Player.colorNames[player.getColorIndex()] );
-                        } else {
-                            dialog.setCategory( player.getCamoCategory() );
-                            dialog.setItemName( player.getCamoFileName() );
-                        }
-                        prevListener = new CamoChoiceListener
-                            ( dialog, button, background, player );
-                        dialog.addItemListener( prevListener );
-                        dialog.show();
+            curButton.addActionListener(new ActionListener() {
+                private final CamoChoiceDialog dialog = camoDialog;
+                private final ImageButton button = curButton;
+                private final Color background = defaultBackground;
+                private final Player player = curPlayer;
+                public void actionPerformed(ActionEvent e) {
+                    if (null != prevListener) {
+                        dialog.removeItemListener(prevListener);
                     }
-                } );
+                    if (null == player.getCamoFileName()) {
+                        dialog.setCategory(Player.NO_CAMO);
+                        dialog.setItemName(Player.colorNames[player.getColorIndex()]);
+                    } else {
+                        dialog.setCategory(player.getCamoCategory());
+                        dialog.setItemName(player.getCamoFileName());
+                    }
+                    prevListener = new CamoChoiceListener(dialog, button, background, player);
+                    dialog.addItemListener(prevListener);
+                    dialog.show();
+                }
+            });
 
         }
 
@@ -1057,11 +1083,11 @@ class ScenarioDialog extends Dialog implements ActionListener
         choicePanel.add(new Label("Camo"));
         for (int x = 0; x < pa.length; x++) {
             Panel typePanel = new Panel();
-            typePanel.setLayout( new GridLayout(0,1) );
+            typePanel.setLayout(new GridLayout(0, 1));
             typePanel.add(m_labels[x]);
             typePanel.add(m_typeChoices[x]);
-            choicePanel.add( typePanel );
-            choicePanel.add( m_camoButtons[x] );
+            choicePanel.add(typePanel);
+            choicePanel.add(m_camoButtons[x]);
         }
         add(choicePanel, BorderLayout.CENTER);
 
@@ -1078,20 +1104,19 @@ class ScenarioDialog extends Dialog implements ActionListener
         add(butPanel, BorderLayout.SOUTH);
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
+        setLocation(
+            frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
+            frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
     }
 
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("okay")) {
             boolean bMeSet = false;
             for (int x = 0; x < m_players.length; x++) {
                 playerTypes[x] = m_typeChoices[x].getSelectedIndex();
                 if (playerTypes[x] == T_ME) {
                     if (bMeSet) {
-                        new AlertDialog(m_frame, "Scenario Error",
-                                "Only one faction can be set to 'Me'.").show();
+                        new AlertDialog(m_frame, "Scenario Error", "Only one faction can be set to 'Me'.").show();
                         return;
                     }
                     bMeSet = true;
@@ -1100,8 +1125,7 @@ class ScenarioDialog extends Dialog implements ActionListener
             }
             bSet = true;
             setVisible(false);
-        }
-        else if (e.getActionCommand().equals("cancel")) {
+        } else if (e.getActionCommand().equals("cancel")) {
             setVisible(false);
         }
     }

@@ -34,7 +34,7 @@ import megamek.common.*;
 public class BoardSelectionDialog 
     extends Dialog implements ActionListener, ItemListener
 {
-    private Client client;
+    private ClientGUI client;
     private MapSettings mapSettings;
     
     private RandomMapDialog randomMapDialog;
@@ -75,10 +75,10 @@ public class BoardSelectionDialog
     
 
     /** Creates new BoardSelectionDialog */
-    public BoardSelectionDialog(Client client) {
+    public BoardSelectionDialog(ClientGUI client) {
         super(client.frame, "Edit Board Layout...", true);
         this.client = client;
-        this.mapSettings = (MapSettings)client.getMapSettings().clone();
+        this.mapSettings = (MapSettings)client.getClient().getMapSettings().clone();
         setResizable(true);
         
         randomMapDialog = new RandomMapDialog(client.frame, this, mapSettings);
@@ -346,7 +346,7 @@ public class BoardSelectionDialog
         lisBoardsAvailable.removeAll();
         lisBoardsAvailable.add("Updating...");
         
-        client.sendMapQuery(mapSettings);
+        client.getClient().sendMapQuery(mapSettings);
     }
     
     /**
@@ -382,7 +382,7 @@ public class BoardSelectionDialog
             return;
         }
         
-        client.sendMapSettings(mapSettings);
+        client.getClient().sendMapSettings(mapSettings);
         this.setVisible(false);
     }
     
@@ -442,6 +442,6 @@ public class BoardSelectionDialog
         lisBoardsAvailable.removeAll();
         lisBoardsAvailable.add("Updating...");
         
-        client.sendMapQuery(mapSettings);
+        client.getClient().sendMapQuery(mapSettings);
     }
 }

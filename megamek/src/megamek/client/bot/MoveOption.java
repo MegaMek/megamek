@@ -52,7 +52,7 @@ public class MoveOption extends MovePath implements Cloneable {
 
     public static class Table extends HashMap {
 
-        public void put(MoveOption es) {
+        public void put(MovePath es) {
             this.put(es.getKey(), es);
         }
 
@@ -220,7 +220,7 @@ public class MoveOption extends MovePath implements Cloneable {
                 } else {
                     addStep(MovePath.STEP_CHARGE, en);
                 }
-                compileLastStep();
+                compileLastStep(false);
                 return true;
             }
         }

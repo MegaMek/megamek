@@ -38,7 +38,7 @@ public class BoardView1
     private static final int 	HEX_W = 84;
     private static final int 	HEX_H = 72;
     private static final int	HEX_WC = HEX_W - HEX_W/4;
-    private int cached;
+    
     // The list of valid zoom factors.  Other values cause map aliasing,
     // I can't be bothered figuring out why.  - Ben
     private static final float[] ZOOM_FACTORS =
@@ -487,12 +487,7 @@ public class BoardView1
 	        	tracker.waitForID( 1 );
 	        } catch ( InterruptedException e ){ e.printStackTrace(); }
 	          
-	        // Cache the image.  If we run out of memory then flush the cache
-	        try{
-	        	scaledImageCache.put(key, scaled);
-	        } catch ( OutOfMemoryError e ){
-		    	scaledImageCache.clear();
-	        }
+	        scaledImageCache.put(key, scaled);
         }
         return scaled;
     }
@@ -530,7 +525,6 @@ public class BoardView1
     private static class ScaledCacheKey {
         private Image base;
         private Dimension bounds;
-        private boolean reversed;
 
         public ScaledCacheKey(Image base, Dimension bounds) {
           this.bounds = bounds;
@@ -1378,6 +1372,11 @@ public class BoardView1
         }
     }
 
+	public void boardNewAttack(BoardEvent e) {
+		AttackAction aa = (AttackAction)e.getSource();
+		addAttack(aa);
+	}
+    
     /**
      * Adds an attack to the sprite list.
      */

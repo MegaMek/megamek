@@ -67,7 +67,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
     
     private Entity entity;
     private boolean okay = false;
-    private Client client;
+    private ClientGUI client;
 
     private PilotOptions options;
     
@@ -81,7 +81,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private boolean editable;
     
     /** Creates new CustomMechDialog */
-    public CustomMechDialog(Client client, Entity entity, boolean editable) {
+    public CustomMechDialog(ClientGUI client, Entity entity, boolean editable) {
         super(client.frame, "Customize pilot/mech stats...", true);
         
         this.entity = entity;
@@ -141,7 +141,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
         add(choDeployment);
         refreshDeployment();
 
-        if ( client.game.getOptions().booleanOption("pilot_advantages") ) {
+        if ( client.getClient().game.getOptions().booleanOption("pilot_advantages") ) {
           scrOptions.add(panOptions);
         
           c.weightx = 1.0;    c.weighty = 1.0;
@@ -185,7 +185,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
 
             // Get the Protomechs of this entity's player
             // that *aren't* in the entity's unit.
-            Enumeration otherUnitEntities = client.game.getSelectedEntities
+            Enumeration otherUnitEntities = client.getClient().game.getSelectedEntities
                 ( new EntitySelector() {
                         private final int ownerId =
                             CustomMechDialog.this.entity.getOwnerId();
@@ -305,7 +305,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 }
                 
                 // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
-                if (!client.game.getOptions().booleanOption("is_eq_limits")
+                if (!client.getClient().game.getOptions().booleanOption("is_eq_limits")
                     && entity.getTechLevel() == TechConstants.T_IS_LEVEL_1
                     && atCheck.getTechType() == TechConstants.T_IS_LEVEL_2) {
                     bTechMatch = true;
@@ -317,7 +317,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 //      to be combined to othter munition types.
                 int muniType = atCheck.getMunitionType();
                 muniType &= ~AmmoType.M_INCENDIARY;
-                if ( !client.game.getOptions().booleanOption("clan_ignore_eq_limits")
+                if ( !client.getClient().game.getOptions().booleanOption("clan_ignore_eq_limits")
                      && entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2
                      && ( muniType == AmmoType.M_SEMIGUIDED ||
                           muniType == AmmoType.M_THUNDER_AUGMENTED ||
@@ -327,7 +327,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     bTechMatch = false;
 		}
 
-                if ( !client.game.getOptions().booleanOption("minefields") &&
+                if ( !client.getClient().game.getOptions().booleanOption("minefields") &&
                 	AmmoType.canDeliverMinefield(atCheck) ) {
                     continue;
                 }
@@ -575,7 +575,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private void refreshC3() {
         choC3.removeAll();
         int listIndex = 0;
-        entityCorrespondance = new int[client.game.getNoOfEntities() + 2];
+        entityCorrespondance = new int[client.getClient().game.getNoOfEntities() + 2];
 
         if(entity.hasC3i()) {
             choC3.add("Create new network (6 free)");
@@ -609,7 +609,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             entityCorrespondance[listIndex++] = -1;
 
         }
-        for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
+        for (Enumeration i = client.getClient().getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
             // ignore enemies or self
             if(entity.isEnemyOf(e) || entity.equals(e)) {
@@ -727,12 +727,12 @@ extends Dialog implements ActionListener, DialogOptionListener {
             // change entity
             entity.setCrew(new Pilot(name, gunnery, piloting));
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
-                Entity chosen = client.getEntity
+                Entity chosen = client.getClient().getEntity
                     ( entityCorrespondance[choC3.getSelectedIndex()] );
                 int entC3nodeCount = 
-                    client.game.getC3SubNetworkMembers( entity ).size();
+                    client.getClient().game.getC3SubNetworkMembers( entity ).size();
                 int choC3nodeCount = 
-                    client.game.getC3NetworkMembers( chosen ).size();
+                    client.getClient().game.getC3NetworkMembers( chosen ).size();
                 if ( entC3nodeCount + choC3nodeCount <= Entity.MAX_C3_NODES ) {
                     entity.setC3Master( chosen );
                 }
@@ -754,7 +754,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 }
             }
             else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
-                entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
+                entity.setC3NetId(client.getClient().getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
 
             // If the player wants to swap unit numbers, update both
@@ -766,7 +766,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 char temp = this.entity.getUnitNumber();
                 this.entity.setUnitNumber( other.getUnitNumber() );
                 other.setUnitNumber( temp );
-                client.sendUpdateEntity( other );
+                client.getClient().sendUpdateEntity( other );
             }
 
             // Set the entity's deployment round.

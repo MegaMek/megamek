@@ -442,4 +442,12 @@ public class Ruler extends Dialog implements BoardListener {
       setText();
       show();
    }
+
+   public void boardChangedEntity(BoardEvent b) {
+        ;
+    }
+
+    public void boardNewAttack(BoardEvent a) {
+        ;
+    }
 }

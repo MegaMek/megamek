@@ -43,7 +43,8 @@ public class PhysicalDisplay
 
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
-    private Client          client;
+    private ClientGUI          clientgui;
+    private Client			  client;
         
     // buttons
     private Container         panButtons;
@@ -77,8 +78,9 @@ public class PhysicalDisplay
      * Creates and lays out a new movement phase display 
      * for the specified client.
      */
-    public PhysicalDisplay(Client client) {
-        this.client = client;
+    public PhysicalDisplay(ClientGUI clientgui) {
+        this.clientgui = clientgui;
+        this.client = clientgui.getClient();
         client.addGameListener(this);
         
         client.game.board.addBoardListener(this);
@@ -158,7 +160,7 @@ public class PhysicalDisplay
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
 //         c.gridwidth = GridBagConstraints.REMAINDER;
-//         addBag(client.bv, gridbag, c);
+//         addBag(clientgui.bv, gridbag, c);
 
 //         c.weightx = 1.0;    c.weighty = 0;
 //         c.gridwidth = 1;
@@ -172,7 +174,7 @@ public class PhysicalDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
         
-        client.bv.addKeyListener( this );
+        clientgui.bv.addKeyListener( this );
         addKeyListener(this);
         
     }
@@ -234,13 +236,13 @@ public class PhysicalDisplay
         client.game.board.select(null);
         client.game.board.cursor(null);
 
-        client.mechD.displayEntity(entity);
-        client.mechD.showPanel("movement");
+        clientgui.mechD.displayEntity(entity);
+        clientgui.mechD.showPanel("movement");
 
-        client.bv.centerOnHex(entity.getPosition());
+        clientgui.bv.centerOnHex(entity.getPosition());
 
         // Update the menu bar.
-        client.getMenuBar().setEntity( ce() );
+        clientgui.getMenuBar().setEntity( ce() );
 
         // does it have a club?
         Mounted club = Compute.clubMechHas(entity);
@@ -264,7 +266,7 @@ public class PhysicalDisplay
         setNextEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
-        client.setDisplayVisible(true);
+        clientgui.setDisplayVisible(true);
         client.game.board.select(null);
         client.game.board.highlight(null);
     }
@@ -279,14 +281,14 @@ public class PhysicalDisplay
              && null != next
              && null != ce()
              && next.getOwnerId() != ce().getOwnerId() ) {
-            client.setDisplayVisible(false);
+            clientgui.setDisplayVisible(false);
         };
         cen = Entity.NONE;
         target(null);
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        client.bv.clearMovementData();
+        clientgui.bv.clearMovementData();
         disableButtons();
     }
     
@@ -314,7 +316,7 @@ public class PhysicalDisplay
             String title = "Don't physical attack?";
             String body = "This unit has not used any physical attacks.\n\n" +
                 "Are you really done?\n";
-            ConfirmDialog response = client.doYesNoBotherDialog(title, body);
+            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if ( !response.getShowAgain() ) {
                 Settings.nagForNoAction = false;
                 Settings.save();
@@ -337,7 +339,7 @@ public class PhysicalDisplay
         if (attacks.size() > 0) {
           attacks.removeAllElements();
         }
-        client.mechD.wPan.displayMech(ce());
+        clientgui.mechD.wPan.displayMech(ce());
         updateTarget();
 
         Entity entity = client.game.getEntity(cen);
@@ -351,7 +353,7 @@ public class PhysicalDisplay
   final ToHitData leftArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.LEFT);
   final ToHitData rightArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.RIGHT);
 
-  if (client.doYesNoDialog( "Punch " + target.getDisplayName() + "?",
+  if (clientgui.doYesNoDialog( "Punch " + target.getDisplayName() + "?",
     "To Hit [RA]: " + rightArm.getValueAsString() + " (" + Compute.oddsAbove(rightArm.getValue()) + "%)   (" + rightArm.getDesc() + ")"
     + "\nDamage [RA]: "+Compute.getPunchDamageFor(ce(),PunchAttackAction.RIGHT)+rightArm.getTableDesc()
     + "\n   and/or"
@@ -389,7 +391,7 @@ public class PhysicalDisplay
     attackSide = KickAttackAction.RIGHT;
   };
 
-  if (client.doYesNoDialog( "Kick " + target.getDisplayName() + "?",
+  if (clientgui.doYesNoDialog( "Kick " + target.getDisplayName() + "?",
     "To Hit: " + attackLeg.getValueAsString() + " (" + Compute.oddsAbove(attackLeg.getValue()) + "%)   (" + attackLeg.getDesc() + ")"
     + "\nDamage: "+Compute.getKickDamageFor(ce(),attackSide)+attackLeg.getTableDesc()
   ) ) {
@@ -404,7 +406,7 @@ public class PhysicalDisplay
      */
     private void push() {
   ToHitData toHit = Compute.toHitPush(client.game, cen, target);
-  if (client.doYesNoDialog( "Push " + target.getDisplayName() + "?",
+  if (clientgui.doYesNoDialog( "Push " + target.getDisplayName() + "?",
     "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
   ) ) {
     disableButtons();
@@ -419,7 +421,7 @@ public class PhysicalDisplay
     private void club() {
   Mounted club = Compute.clubMechHas(ce());
   ToHitData toHit = Compute.toHitClub(client.game, cen, target, club);
-  if (client.doYesNoDialog( "Club " + target.getDisplayName() + "?",
+  if (clientgui.doYesNoDialog( "Club " + target.getDisplayName() + "?",
     "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
     + "\nDamage: "+Compute.getClubDamageFor(ce(),club)+toHit.getTableDesc()
   ) ) {
@@ -451,7 +453,7 @@ public class PhysicalDisplay
 
         // If the entity can't brush off, display an error message and abort.
         if ( !canHitLeft && !canHitRight ) {
-            client.doAlertDialog( "Code shouldn't get here!",
+            clientgui.doAlertDialog( "Code shouldn't get here!",
                                   "You've selected a 'brush off' attack that automatically fails!  Try again." );
             return;
         }
@@ -505,7 +507,7 @@ public class PhysicalDisplay
             choices[1] = right.toString();
             choices[2] = both.toString();
             dlg = new SingleChoiceDialog
-                ( client.frame, title, warn.toString(), choices );
+                ( clientgui.frame, title, warn.toString(), choices );
             dlg.show();
             if ( dlg.getAnswer() ) {
                 disableButtons();
@@ -534,7 +536,7 @@ public class PhysicalDisplay
             choices = new String[1];
             choices[0] = left.toString();
             dlg = new SingleChoiceDialog
-                ( client.frame, title, warn.toString(), choices );
+                ( clientgui.frame, title, warn.toString(), choices );
             dlg.show();
             if ( dlg.getAnswer() ) {
                 disableButtons();
@@ -551,7 +553,7 @@ public class PhysicalDisplay
             choices = new String[1];
             choices[0] = right.toString();
             dlg = new SingleChoiceDialog
-                ( client.frame, title, warn.toString(), choices );
+                ( clientgui.frame, title, warn.toString(), choices );
             dlg.show();
             if ( dlg.getAnswer() ) {
                 disableButtons();
@@ -590,7 +592,7 @@ public class PhysicalDisplay
             .append( toHit.getTableDesc() );
 
         // Give the user to cancel the attack.
-        if ( client.doYesNoDialog(at.toString(), damage.toString()) ) {
+        if ( clientgui.doYesNoDialog(at.toString(), damage.toString()) ) {
             disableButtons();
             attacks.addElement( act );
             ready();
@@ -601,7 +603,7 @@ public class PhysicalDisplay
      * Dodge like that guy in that movie that I won't name for copywrite reasons!
      */
     private void dodge() {
-      if (client.doYesNoDialog("Dodge?", "Enable dodge? You will not be able to do other physical attacks this round.") ) {
+      if (clientgui.doYesNoDialog("Dodge?", "Enable dodge? You will not be able to do other physical attacks this round.") ) {
         disableButtons();
         
         Entity entity = client.game.getEntity(cen);
@@ -775,7 +777,7 @@ public class PhysicalDisplay
                     .getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
-                new SingleChoiceDialog( client.frame,
+                new SingleChoiceDialog( clientgui.frame,
                                         "Choose Target",
                                         question.toString(),
                                         names );
@@ -920,45 +922,45 @@ public class PhysicalDisplay
                 selectEntity(e.getId());
             }
     	} else {
-            client.setDisplayVisible(true);
-            client.mechD.displayEntity(e);
+            clientgui.setDisplayVisible(true);
+            clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-            	client.bv.centerOnHex(e.getPosition());
+            	clientgui.bv.centerOnHex(e.getPosition());
             }
     	}
     }
 	
     public void setThrashEnabled(boolean enabled) {
         butThrash.setEnabled(enabled);
-        client.getMenuBar().setPhysicalThrashEnabled(enabled);
+        clientgui.getMenuBar().setPhysicalThrashEnabled(enabled);
     }
     public void setPunchEnabled(boolean enabled) {
         butPunch.setEnabled(enabled);
-        client.getMenuBar().setPhysicalPunchEnabled(enabled);
+        clientgui.getMenuBar().setPhysicalPunchEnabled(enabled);
     }
     public void setKickEnabled(boolean enabled) {
         butKick.setEnabled(enabled);
-        client.getMenuBar().setPhysicalKickEnabled(enabled);
+        clientgui.getMenuBar().setPhysicalKickEnabled(enabled);
     }
     public void setPushEnabled(boolean enabled) {
         butPush.setEnabled(enabled);
-        client.getMenuBar().setPhysicalPushEnabled(enabled);
+        clientgui.getMenuBar().setPhysicalPushEnabled(enabled);
     }
     public void setClubEnabled(boolean enabled) {
         butClub.setEnabled(enabled);
-        client.getMenuBar().setPhysicalClubEnabled(enabled);
+        clientgui.getMenuBar().setPhysicalClubEnabled(enabled);
     }
     public void setBrushOffEnabled(boolean enabled) {
         butBrush.setEnabled(enabled);
-        client.getMenuBar().setPhysicalBrushOffEnabled(enabled);
+        clientgui.getMenuBar().setPhysicalBrushOffEnabled(enabled);
     }
     public void setDodgeEnabled(boolean enabled) {
         butDodge.setEnabled(enabled);
-        client.getMenuBar().setPhysicalDodgeEnabled(enabled);
+        clientgui.getMenuBar().setPhysicalDodgeEnabled(enabled);
     }
     public void setNextEnabled(boolean enabled) {
         butNext.setEnabled(enabled);
-        client.getMenuBar().setPhysicalNextEnabled(enabled);
+        clientgui.getMenuBar().setPhysicalNextEnabled(enabled);
     }
 
     /**

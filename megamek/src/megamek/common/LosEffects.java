@@ -213,8 +213,6 @@ public class LosEffects {
     }
 
     public static LosEffects calculateLos(Game game, AttackInfo ai) {
-        // good time to ensure hex cache
-		IdealHex.ensureCacheSize(game.board.width + 1, game.board.height + 1);
         
 		if (ai.attOnLand && ai.targetUnderWater ||
 			ai.attUnderWater && ai.targetOnLand) {

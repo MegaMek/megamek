@@ -52,24 +52,24 @@ public class MovePath implements Cloneable, Serializable {
     public static class Key {
         private Coords coords;
         private int facing;
-        private boolean isJump;
+        private int type;
 
-        public Key(Coords coords, int facing, boolean isJump) {
+        public Key(Coords coords, int facing, int type) {
             this.coords = coords;
             this.facing = facing;
-            this.isJump = isJump;
+            this.type = type;
         }
 
         public boolean equals(Object obj) {
             Key s1 = (Key) obj;
             if (s1 != null) {
-                return isJump == s1.isJump && facing == s1.facing && coords.equals(s1.coords);
+                return type == type && facing == s1.facing && coords.equals(s1.coords);
             }
             return false;
         }
 
         public int hashCode() {
-            return isJump ? 1 : 0 + 7 * (facing + 31 * coords.hashCode());
+            return type + 7 * (facing + 31 * coords.hashCode());
         }
     }
 
@@ -97,7 +97,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public Key getKey() {
-        return new Key(getFinalCoords(), getFinalFacing(), isJumping());
+        return new Key(getFinalCoords(), getFinalFacing(), getFinalProne()?0:isJumping()?1:2);
     }
 
     /**
@@ -568,8 +568,9 @@ public class MovePath implements Cloneable, Serializable {
             }
             loopcount++;
             if (loopcount % 256 == 0 && keepLooping && candidates.size() > 0) {
-                if (mpc.compare(bestPath, candidates.get(0)) < 0) {
-                    bestPath = (MovePath) candidates.get(0);
+				MovePath front = (MovePath)candidates.get(0);
+                if (front.getFinalCoords().distance(dest) < bestPath.getFinalCoords().distance(dest)) {
+                    bestPath = front;
                     keepLooping = System.currentTimeMillis() < endTime;
                 } else {
                     keepLooping = false;
@@ -627,13 +628,10 @@ public class MovePath implements Cloneable, Serializable {
         ArrayList result = new ArrayList();
         MoveStep last = getLastStep();
         if (isJumping()) {
-            // Spinning to the right looks silly.
             MovePath left = (MovePath) this.clone();
             MovePath right = (MovePath) this.clone();
 
             // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
-            // Many of these moves may be illegal, but the player
-            // can (and will) try it; we should let them.
             result.add( ((MovePath) this.clone())
                         .addStep(MovePath.STEP_FORWARDS) );
             for ( int turn = 0; turn < 2; turn++ ) {

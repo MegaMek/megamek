@@ -251,13 +251,11 @@ public class ScenarioLoader
                 g.addEntity(entities[y].getId(), entities[y]);
             }
         }
-        
+		// game's ready
+		g.getOptions().initialize();
+
         // set wind
         g.determineWind();
-        
-        // game's ready
-        g.getOptions().initialize();
-
 
   // Set up the teams (for initiative)
         Server.setupTeams(g);

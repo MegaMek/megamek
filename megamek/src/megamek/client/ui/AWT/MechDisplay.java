@@ -41,17 +41,19 @@ public class MechDisplay extends BufferedPanel
     public WeaponPanel          wPan;
     public SystemPanel          sPan;
     public ExtraPanel           ePan;
-    private Client              client;
+    private ClientGUI           clientgui;
+    private Client				client;
 
     private Entity              currentlyDisplaying = null;
 
     /**
      * Creates and lays out a new mech display.
      */
-    public MechDisplay(Client client) {
+    public MechDisplay(ClientGUI clientgui) {
         super(new GridBagLayout());
 
-        this.client = client;
+        this.clientgui = clientgui;
+        this.client = clientgui.getClient();
 
         tabStrip = new MechPanelTabStrip(this);
 
@@ -60,11 +62,11 @@ public class MechDisplay extends BufferedPanel
         displayP.add("movement", mPan);
         aPan = new ArmorPanel();
         displayP.add("armor", aPan);
-        wPan = new WeaponPanel(client);
+        wPan = new WeaponPanel(clientgui);
         displayP.add("weapons", wPan);
-        sPan = new SystemPanel(client);
+        sPan = new SystemPanel(clientgui);
         displayP.add("systems", sPan);
-        ePan = new ExtraPanel(client);
+        ePan = new ExtraPanel(clientgui);
         displayP.add("extras", ePan);
 
         // layout main panel
@@ -83,7 +85,7 @@ public class MechDisplay extends BufferedPanel
         ((CardLayout)displayP.getLayout()).show(displayP, "movement");
         //tabStrip.setTab(0);
         
-        client.mechW.addKeyListener(client.menuBar);
+        clientgui.mechW.addKeyListener(clientgui.menuBar);
     }
 
     public void addBag(Component comp, GridBagConstraints c) {
@@ -104,7 +106,7 @@ public class MechDisplay extends BufferedPanel
     public void displayEntity(Entity en) {
 
         // 2003-12-30, nemchenk
-        client.mechW.setTitle(en.getShortName());
+        clientgui.mechW.setTitle(en.getShortName());
 
         this.currentlyDisplaying = en;
 
@@ -318,11 +320,11 @@ class WeaponPanel extends BufferedPanel
     private Vector weapons;
     private Vector vAmmo;
     private Entity entity;
-    private Client client;
+    private ClientGUI client;
 
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 10);
 
-    public WeaponPanel(Client client) {
+    public WeaponPanel(ClientGUI client) {
         super(new GridBagLayout());
 
         this.client = client;
@@ -621,7 +623,7 @@ class WeaponPanel extends BufferedPanel
         if ( en instanceof Mech && en.infernos.isStillBurning() ) { // hit with inferno ammo
             currentHeatBuildup += en.infernos.getHeat();
         }
-        if ( entity.getPosition() != null && client.game.getBoard().getHex(entity.getPosition()).levelOf(Terrain.FIRE) == 2 ) {
+        if ( entity.getPosition() != null && client.getClient().game.getBoard().getHex(entity.getPosition()).levelOf(Terrain.FIRE) == 2 ) {
             currentHeatBuildup += 5; // standing in fire
         }
         if ( en instanceof Mech && en.isStealthActive() ) {
@@ -657,7 +659,7 @@ class WeaponPanel extends BufferedPanel
                 wn += " " + mounted.curMode();
             }
             weaponList.add(wn);
-            if (mounted.isUsedThisRound() && client.game.getPhase() == Game.PHASE_FIRING) {
+            if (mounted.isUsedThisRound() && client.getClient().game.getPhase() == Game.PHASE_FIRING) {
                 // add heat from weapons fire to heat tracker
                 currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();
             }
@@ -770,7 +772,7 @@ class WeaponPanel extends BufferedPanel
         }
 
         // update ammo selector
-        boolean bOwner = (client.getLocalPlayer() == entity.getOwner());
+        boolean bOwner = (client.getClient().getLocalPlayer() == entity.getOwner());
         m_chAmmo.removeAll();
         if (wtype.getAmmoType() == AmmoType.T_NA || !bOwner) {
             m_chAmmo.setEnabled(false);
@@ -880,7 +882,7 @@ class WeaponPanel extends BufferedPanel
             }
 
             // Alert the server of the update.
-            this.client.sendAmmoChange( entity.getId(),
+            this.client.getClient().sendAmmoChange( entity.getId(),
                                         entity.getEquipmentNum(mWeap),
                                         entity.getEquipmentNum(mAmmo) );
         }
@@ -906,41 +908,41 @@ class SystemPanel
     public Choice m_chMode;
     public Button m_bDumpAmmo;
     //public Label modeLabel;
-    private Client client;
+    private ClientGUI clientgui;
 
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
 
     Entity en;
 
-    public SystemPanel(Client client) {
+    public SystemPanel(ClientGUI clientgui) {
         super();
 
         FontMetrics fm = getFontMetrics(FONT_VALUE);
 
-        this.client = client;
+        this.clientgui = clientgui;
         locLabel = new TransparentLabel("Location", fm, Color.white,TransparentLabel.CENTER);
         slotLabel = new TransparentLabel("Slot", fm, Color.white,TransparentLabel.CENTER);
 
         locList = new List(8, false);
         locList.addItemListener(this);
-        locList.addKeyListener(client.menuBar);
+        locList.addKeyListener(clientgui.menuBar);
 
         slotList = new List(12, false);
         slotList.addItemListener(this);
-        slotList.addKeyListener(client.menuBar);
+        slotList.addKeyListener(clientgui.menuBar);
         //slotList.setEnabled(false);
 
         m_chMode = new Choice();
         m_chMode.add("   ");
         m_chMode.setEnabled(false);
         m_chMode.addItemListener(this);
-        m_chMode.addKeyListener(client.menuBar);
+        m_chMode.addKeyListener(clientgui.menuBar);
 
         m_bDumpAmmo = new Button("Dump");
         m_bDumpAmmo.setEnabled(false);
         m_bDumpAmmo.setActionCommand("dump");
         m_bDumpAmmo.addActionListener(this);
-        m_bDumpAmmo.addKeyListener(client.menuBar);
+        m_bDumpAmmo.addKeyListener(clientgui.menuBar);
 
         modeLabel = new TransparentLabel("Mode", fm, Color.white,TransparentLabel.RIGHT);
         //modeLabel.setEnabled(false);
@@ -1097,9 +1099,9 @@ class SystemPanel
             modeLabel.setEnabled(false);
             Mounted m = getSelectedEquipment();
 
-            boolean bOwner = (client.getLocalPlayer() == en.getOwner());
+            boolean bOwner = (clientgui.getClient().getLocalPlayer() == en.getOwner());
             if ( m != null && bOwner && m.getType() instanceof AmmoType
-                 && Game.PHASE_DEPLOYMENT != client.game.getPhase()
+                 && Game.PHASE_DEPLOYMENT != clientgui.getClient().game.getPhase()
                  && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive() ) {
                 m_bDumpAmmo.setEnabled(true);
             }
@@ -1123,14 +1125,14 @@ class SystemPanel
 
 
                 // send the event to the server
-                client.sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
+				clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
 
                 // notify the player
                 if (m.getType().hasInstantModeSwitch()) {
-                    client.systemMessage("Switched " + m.getName() + " to " + m.curMode());
+					clientgui.systemMessage("Switched " + m.getName() + " to " + m.curMode());
                 }
                 else {
-                    client.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
+					clientgui.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
                             " at end of turn.");
                 }
                 displaySlots();
@@ -1143,7 +1145,7 @@ class SystemPanel
     {
         if (ae.getActionCommand().equals("dump")) {
             Mounted m = getSelectedEquipment();
-            boolean bOwner = (client.getLocalPlayer() == en.getOwner());
+            boolean bOwner = (clientgui.getClient().getLocalPlayer() == en.getOwner());
             if (m == null || !bOwner || !(m.getType() instanceof AmmoType) ||
                         m.getShotsLeft() <= 0) {
                 return;
@@ -1156,7 +1158,7 @@ class SystemPanel
                 bDumping = false;
                 String title = "Cancel Dumping Ammo?";
                 String body = "Do you want to cancel dumping " + m.getName() + "?";
-                bConfirmed = client.doYesNoDialog(title, body);
+                bConfirmed = clientgui.doYesNoDialog(title, body);
             }
             else {
                 bDumping = true;
@@ -1168,12 +1170,12 @@ class SystemPanel
                     + "It will also explode as the result of any rear torso hit that\n"
                     + "turn.  Additionally, you will not be able to run or jump while\n"
                     + "you are dumping ammo.";
-                bConfirmed = client.doYesNoDialog(title, body);
+                bConfirmed = clientgui.doYesNoDialog(title, body);
             }
 
             if (bConfirmed) {
                 m.setPendingDump(bDumping);
-                client.sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
+				clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
             }
         }
     }
@@ -1254,12 +1256,12 @@ class ExtraPanel
     public java.awt.List narcList;
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
 
-    private Client client;
+    private ClientGUI clientgui;
 
-    public ExtraPanel(Client client) {
+    public ExtraPanel(ClientGUI clientgui) {
         super();
 
-        this.client = client;
+        this.clientgui = clientgui;
 
         FontMetrics fm = getFontMetrics(FONT_VALUE);
 
@@ -1267,7 +1269,7 @@ class ExtraPanel
             ("Affected By:", fm, Color.white,TransparentLabel.CENTER);
 
         narcList = new List(3, false);
-        narcList.addKeyListener(client.menuBar);
+        narcList.addKeyListener(clientgui.menuBar);
 
         // transport stuff
         //unusedL = new Label( "Unused Space:", Label.CENTER );
@@ -1276,13 +1278,13 @@ class ExtraPanel
             ("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
         unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         unusedR.setEditable(false);
-        unusedR.addKeyListener(client.menuBar);
+        unusedR.addKeyListener(clientgui.menuBar);
 
         carrysL = new TransparentLabel
             ( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
         carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         carrysR.setEditable(false);
-        carrysR.addKeyListener(client.menuBar);
+        carrysR.addKeyListener(clientgui.menuBar);
 
         // layout choice panel
         GridBagLayout gridbag = new GridBagLayout();
@@ -1406,11 +1408,11 @@ class ExtraPanel
         // Walk through the list of teams.  There
         // can't be more teams than players.
         StringBuffer buff = null;
-        Enumeration loop = client.game.getPlayers();
+        Enumeration loop = clientgui.getClient().game.getPlayers();
         while ( loop.hasMoreElements() ) {
             Player player = (Player) loop.nextElement();
             int team = player.getTeam();
-            if ( !player.equals(client.getLocalPlayer()) &&
+            if ( !player.equals(clientgui.getClient().getLocalPlayer()) &&
                  en.isNarcedBy( team ) ) {
                 buff = new StringBuffer( "NARCed by " );
                 buff.append( player.getName() );

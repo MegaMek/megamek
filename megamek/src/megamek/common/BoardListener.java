@@ -28,4 +28,6 @@ public interface BoardListener
     public void boardChangedHex(BoardEvent b);
     public void boardFirstLOSHex(BoardEvent b);
     public void boardSecondLOSHex(BoardEvent b, Coords c);
+    public void boardChangedEntity(BoardEvent b);
+    public void boardNewAttack(BoardEvent a);
 }

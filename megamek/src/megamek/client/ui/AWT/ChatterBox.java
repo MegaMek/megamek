@@ -42,8 +42,8 @@ implements GameListener, KeyListener {
     private TextField           inputField;
     private Button              butDone;
     
-    public ChatterBox(Client client) {
-        this.client = client;
+    public ChatterBox(ClientGUI clientgui) {
+        this.client = clientgui.getClient();
         client.addGameListener(this);
         
         chatArea = new TextArea(" \n", 5, 40, TextArea.SCROLLBARS_VERTICAL_ONLY);
@@ -143,4 +143,20 @@ implements GameListener, KeyListener {
         ;
     }
     
+    public void gameBoardChanged(GameEvent e) {
+        ;
+    }
+
+    public void gameDisconnected(GameEvent e) {
+        ;
+    }
+
+    public void gameEnd(GameEvent e) {
+        ;
+    }
+
+    public void gameReport(GameEvent e) {
+        ;
+    }
+
 }

@@ -14,6 +14,7 @@
 
 package megamek.client;
 
+// Defines Iterator class for JDK v1.1
 import com.sun.java.util.collections.*;
 import java.awt.*;
 import java.awt.event.*;

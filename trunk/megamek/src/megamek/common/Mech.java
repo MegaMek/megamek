@@ -903,6 +903,44 @@ public abstract class Mech
                 return new HitData(Mech.LOC_RLEG);
             }
         }
+        if(table == ToHitData.HIT_SWARM) {
+            // Swarm attack locations.
+            switch(Compute.d6(2)) {
+            case 2:
+                return new HitData(Mech.LOC_HEAD, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 3:
+                return new HitData(Mech.LOC_CT, true,
+                                   HitData.EFFECT_CRITICAL);
+            case 4:
+                return new HitData(Mech.LOC_RT, true,
+                                   HitData.EFFECT_CRITICAL);
+            case 5:
+                return new HitData(Mech.LOC_RT, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 6:
+                return new HitData(Mech.LOC_RARM, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 7:
+                return new HitData(Mech.LOC_CT, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 8:
+                return new HitData(Mech.LOC_LARM, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 9:
+                return new HitData(Mech.LOC_LT, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 10:
+                return new HitData(Mech.LOC_LT, true,
+                                   HitData.EFFECT_CRITICAL);
+            case 11:
+                return new HitData(Mech.LOC_CT, true,
+                                   HitData.EFFECT_CRITICAL);
+            case 12:
+                return new HitData(Mech.LOC_HEAD, false,
+                                   HitData.EFFECT_CRITICAL);
+            }
+        }
         return null;
     }
     

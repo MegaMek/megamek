@@ -37,6 +37,8 @@ public class MechDisplay extends Panel
     public WeaponPanel            wPan;
     public SystemPanel            sPan;
     
+    private Entity              currentlyDisplaying = null;
+    
     /**
      * Creates and lays out a new mech display.
      */
@@ -89,13 +91,30 @@ public class MechDisplay extends Panel
     }
     
     /**
-     * Displays the specified mech in the panel.
+     * @deprecated use displayEntity instead
      */
     public void displayMech(Entity en) {
+        displayEntity(en);
+    }
+    
+    /**
+     * Displays the specified entity in the panel.
+     */
+    public void displayEntity(Entity en) {
+        this.currentlyDisplaying = en;
+        
         mPan.displayMech(en);
         aPan.displayMech(en);
         wPan.displayMech(en);
         sPan.displayMech(en);
+    }
+    
+    /**
+     * Returns the entity we'return currently displaying
+     */
+    
+    public Entity getCurrentEntity() {
+        return currentlyDisplaying;
     }
     
     /**

@@ -277,12 +277,19 @@ public class Game implements Serializable
     }
     
     /**
-     * Returns the entity at the given coordinate, if any.  Only returns
+     * @deprecated use getFirstEntity instead
+     */
+    public Entity getEntity(Coords c) {
+        return getFirstEntity(c);
+    }
+    
+    /**
+     * Returns the first entity at the given coordinate, if any.  Only returns
      * targetable (non-dead) entities.
      * 
      * @param c the coordinates to search at
      */
-    public Entity getEntity(Coords c) {
+    public Entity getFirstEntity(Coords c) {
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if (c.equals(entity.getPosition()) && entity.isTargetable()) {
@@ -291,7 +298,23 @@ public class Game implements Serializable
         }
         return null;
     }
-  
+    
+    /**
+     * Returns an Enumeration of the active entities at the given coordinates.
+     */
+    public Enumeration getEntities(Coords c) {
+        Vector vector = new Vector();
+        
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if (c.equals(entity.getPosition()) && entity.isTargetable()) {
+                vector.addElement(entity);
+            }
+        }
+
+        return vector.elements();
+    }
+
     /**
      * Moves an entity into the graveyard so it stops getting sent
      * out every phase.

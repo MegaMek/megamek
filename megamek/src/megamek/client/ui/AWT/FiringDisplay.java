@@ -495,7 +495,7 @@ public class FiringDisplay
     /**
      * Targets an entity
      */
-    private void target(int en) {
+    void target(int en) {
         this.ten = en;
         updateTarget();
     }
@@ -505,6 +505,12 @@ public class FiringDisplay
      */
     private void updateTarget() {
         butFire.setEnabled(false);
+        
+        // make sure we're showing the current entity in the mech display
+        if (ce() != null && !ce().equals(client.mechD.getCurrentEntity())) {
+            client.mechD.displayEntity(ce());
+        }
+        
         // update target panel
         final int weaponId = client.mechD.wPan.getSelectedWeaponNum();
         if (ten != Entity.NONE && weaponId != -1) {

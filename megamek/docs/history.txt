@@ -79,6 +79,7 @@ v next
 + 610307: ammo changes are properly applied while resolving weapons fire
 + 565005: latecomers see the report if joining during a report phase
 + damage taken during a fall modifies later get-up attempts
++ added no-tac and floating-tac game options for mechs (thx John Rowat)
 
 v 0.26.13 (09-13-02, 11pm)
 + 607207: getting up and failing now correctly uses movement points

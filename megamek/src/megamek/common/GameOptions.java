@@ -51,6 +51,8 @@ public class GameOptions implements Serializable {
         OptionGroup level3 = new OptionGroup("Optional Rules (Level 3)");
         addGroup(level3);
         addOption(level3, new GameOption("double_blind", "Double blind", "If checked, enemy units will only be visible if they are in line of sight of one or more of your units.", false));
+        addOption(level3, new GameOption("floating_crits", "Through-armor criticals will 'float'", "If checked, rolls of '2' on hit location will result in a new location being rolled for a critical hit, instead of just hitting the local torso.\n\nUnchecked by default.", false));
+        addOption(level3, new GameOption("no_tac", "No through-armor criticals", "If checked, rolls of '2' on hit location will only result in a torso hit, and no critical roll.  Only applies to mechs.  Supercedes the floating criticals option.\n\nUnchecked by default.", false));
     }
     
     private void addGroup(OptionGroup group) {

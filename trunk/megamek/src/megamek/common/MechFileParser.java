@@ -17,6 +17,8 @@ package megamek.common;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.zip.*;
+
+import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
 
  /*

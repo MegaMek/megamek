@@ -15,7 +15,6 @@
 package megamek.common;
 
 import java.io.*;
-import java.awt.*;
 
 /**
  * Represents a single type of terrain or condition in a hex.  The type of a

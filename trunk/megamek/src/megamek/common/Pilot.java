@@ -267,4 +267,11 @@ public class Pilot
 
         return multiplier;
     }
+    
+	public int modifyPhysicalDamagaForMeleeSpecialist() {
+		if ( !getOptions().booleanOption("melee_specialist") )
+		    return 0;
+
+		return 1;
+	}
 }

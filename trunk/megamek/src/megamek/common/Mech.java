@@ -1391,7 +1391,7 @@ public abstract class Mech
     /**
      * Mounts the specified weapon in the specified location.
      */
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
         throws LocationFullException 
     {
         // if there's no actual location, then don't add criticals

@@ -1,13 +1,22 @@
 package megamek.common;
 
-import java.io.*;
-import java.util.zip.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import com.sun.java.util.collections.*;
-import java.awt.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import megamek.client.UnitLoadingDialog;
+import megamek.common.loaders.EntityLoadingException;
+
+import com.sun.java.util.collections.HashMap;
+import com.sun.java.util.collections.HashSet;
+import com.sun.java.util.collections.Map;
+import com.sun.java.util.collections.Set;
+import com.sun.java.util.collections.Vector;
 
 /*
  * Setting this up as static so a client and server running in the same

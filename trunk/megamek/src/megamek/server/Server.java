@@ -159,17 +159,32 @@ public class Server
     }
         
     /**
-     * Recieves a client name, sent from a pending connection, and connects
+     * Recieves a player name, sent from a pending connection, and connects
      * that connection.
      */
-    private void receiveClientName(Packet packet, int connId) {
+    private void receivePlayerName(Packet packet, int connId) {
         final Connection conn = getPendingConnection(connId);
+        String name = (String)packet.getObject(0);
+        boolean returning = false;
 
         // this had better be from a pending connection
         if (conn == null) {
             System.out.println("server: got a client name from a non-pending connection");
             return;
         }
+        
+        // check if they're connecting with the same name as a ghost player
+        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+            Player player = (Player)i.nextElement();
+            if (player.isGhost() && player.getName().equals(name)) {
+                returning = true;
+                player.setGhost(false);
+                // switch id
+                connId = player.getId();
+                conn.setId(connId);
+            }
+        }
+        
 
         // right, switch the connection into the "active" bin
         connectionsPending.removeElement(conn);
@@ -177,8 +192,10 @@ public class Server
         connectionIds.put(new Integer(conn.getId()), conn);
 
         // add and validate the player info
-        game.addPlayer(connId, new Player(connId, (String)packet.getObject(0)));
-        validatePlayerInfo(connId);
+        if (!returning) {
+            game.addPlayer(connId, new Player(connId, name));
+            validatePlayerInfo(connId);
+        }
 
         // send info that the player has connected
         send(createPlayerConnectPacket(connId));
@@ -3048,7 +3065,7 @@ public class Server
         // act on it
         switch(packet.getCommand()) {
         case Packet.COMMAND_CLIENT_NAME :
-            receiveClientName(packet, connId);
+            receivePlayerName(packet, connId);
             break;
         case Packet.COMMAND_PLAYER_UPDATE :
             receivePlayerInfo(packet, connId);

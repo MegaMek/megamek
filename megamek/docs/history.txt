@@ -81,6 +81,8 @@ v CVS
 + redirecting output to logfile for easier review
 + 654324: temp fix for mis-sized targcomps
 + infantry BV adjusted for gunnery skill
++ AMS fires even on missing salvos
++ AMS can shoot down more missiles than it has ammo
 
 v 0.27.13 (12-20-02, 5pm)
 + 652291: Mechs can "stomp" (kick) vehicles in their hex.

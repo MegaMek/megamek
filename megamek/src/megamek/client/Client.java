@@ -1080,6 +1080,9 @@ public class Client extends Panel
                 break;
             case Packet.COMMAND_END_OF_GAME :
                 String sReport = (String)c.getObject(0);
+                game.setVictoryPlayerId(c.getIntValue(1));
+                game.setVictoryTeam(c.getIntValue(2));
+                // save victory report
                 saveEntityStatus(sReport);
 
                 // Make a list of the player's living units.

@@ -7663,7 +7663,11 @@ implements Runnable {
      * Creates a packet indicating end of game, including detailed unit status
      */
     private Packet createEndOfGamePacket() {
-        return new Packet(Packet.COMMAND_END_OF_GAME, getDetailedVictoryReport());
+        Object[] array = new Object[3];
+        array[0] = new Integer(getDetailedVictoryReport());
+        array[1] = new Integer(game.getVictoryPlayerId());
+        array[2] = new Integer(game.getVictoryTeam());
+        return new Packet(Packet.COMMAND_END_OF_GAME, array);
     }
     
     /**

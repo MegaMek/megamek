@@ -5690,6 +5690,7 @@ implements Runnable, ConnectionHandler {
             glancing = true;
             glancingMissileMod = -4;
             glancingCritMod = -2;
+            phaseReport.append(" - Glancing Blow - ");
         } else {
             glancing = false;
             glancingMissileMod = 0;
@@ -6985,6 +6986,7 @@ implements Runnable, ConnectionHandler {
         } else {
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
+            if (glancing) phaseReport.append(" - Glancing Blow - ");
         }
 
         // do we hit?
@@ -7094,6 +7096,7 @@ implements Runnable, ConnectionHandler {
         } else {
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
+            if (glancing) phaseReport.append(" - Glancing Blow - ");
         }
 
         // do we hit?
@@ -7203,6 +7206,7 @@ implements Runnable, ConnectionHandler {
             // report the roll
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
+            if (glancing) phaseReport.append(" - Glancing Blow - ");
         }
 
         // do we hit?
@@ -7404,6 +7408,7 @@ implements Runnable, ConnectionHandler {
         phaseReport.append( " and deals " )
             .append( hits)
             .append( " points of damage in 5 point clusters.");
+        if (glancing) phaseReport.append (" (Glancing Blow) ");
         while ( hits > 0 ) {
             int damage = Math.min(5, hits);
             hits -= damage;
@@ -7484,7 +7489,8 @@ implements Runnable, ConnectionHandler {
             // report the roll
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
-        }
+            if (glancing) phaseReport.append(" - Glancing Blow - ");
+       }
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -7749,7 +7755,8 @@ implements Runnable, ConnectionHandler {
             // report the roll
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
-        }
+            if (glancing) phaseReport.append(" - Glancing Blow - ");
+       }
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -7805,7 +7812,12 @@ implements Runnable, ConnectionHandler {
         int damage = ChargeAttackAction.getDamageFor(ae);
         int damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game.getOptions().booleanOption("maxtech_charge_damage"));
         PilotingRollData chargePSR = null;
-
+        if (glancing) {
+            // Glancing Blow rule doesn't state whether damage to attacker on charge
+            // or DFA is halved as well, assume yes. TODO: Check with PM
+            damage = (int)Math.floor((double)damage/2.0);
+            damageTaken = (int)Math.floor((double)damageTaken/2.0);
+        }
         // Is the target inside a building?
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
 
@@ -7825,6 +7837,7 @@ implements Runnable, ConnectionHandler {
         }
 
         phaseReport.append("hits.");
+        if (glancing) phaseReport.append(" - Glancing Blow - ");
         phaseReport.append("\n    Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
         while (damage > 0) {
             int cluster = Math.min(5, damage);
@@ -7938,6 +7951,7 @@ implements Runnable, ConnectionHandler {
             // report the roll
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
+            if (glancing) phaseReport.append(" - Glancing Blow - ");
         }
 
         // do we hit?
@@ -7995,6 +8009,11 @@ implements Runnable, ConnectionHandler {
             }
         }
 
+        if (glancing) {
+            // Glancing Blow rule doesn't state whether damage to attacker on charge
+            // or DFA is halved as well, assume yes. TODO: Check with PM
+            damageTaken = (int)Math.floor((double)damageTaken/2.0);
+        }
         phaseReport.append("\n    Attacker takes " ).append( damageTaken ).append( " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
@@ -9117,14 +9136,14 @@ implements Runnable, ConnectionHandler {
             // roll all critical hits against this location
             for (int i = 0; i < crits; i++) {
                 desc.append( "\n" )
-                    .append( criticalEntity(te, hit.getLocation()) );
+                    .append( criticalEntity(te, hit.getLocation(), hit.glancingMod()) );
             }
             crits = 0;
 
             for (int i = 0; i < specCrits; i++) {
                 desc.append( "\n" )
                     .append( criticalEntity(te, hit.getLocation(),
-                                            hit.getSpecCritMod()) );
+                                            hit.getSpecCritMod()+hit.glancingMod()) );
             }
             specCrits = 0;
 

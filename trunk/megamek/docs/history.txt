@@ -26,6 +26,8 @@ v0.29.36 (CVS)
 + Removed a lot of unnecessary imports
 + RFE 826274: game option to stop Hover vehicles charging
 + access static fields only in a static way
++ damage dealt directly to legs IS due to extreme gravity should transfer
+    to armor of next location, not IS
 
 v0.29.35 (2004-05-20, 2pm)
 + Time to start tracking memory usage in the log file.  Where is it all going?

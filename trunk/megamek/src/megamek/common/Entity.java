@@ -420,6 +420,19 @@ public abstract class Entity
 	}
 	
 	/**
+	 * Returns the total amount of armor on the entity.
+	 */
+	public int getTotalArmor() {
+        int totalArmor = 0;
+        for (int i = 0; i < locations(); i++) {
+          if (getArmor(i) > 0) {
+            totalArmor += getArmor(i);
+          }
+        }
+        return totalArmor;
+	}
+	
+	/**
 	 * Returns the amount of internal structure in the 
 	 * location specified, or ARMOR_NA, or ARMOR_DESTROYED.
 	 */
@@ -434,6 +447,19 @@ public abstract class Entity
 		internal[loc] = val;
 	}
   
+	/**
+	 * Returns the total amount of internal structure on the entity.
+	 */
+	public int getTotalInternal() {
+        int totalInternal = 0;
+        for (int i = 0; i < locations(); i++) {
+          if (getInternal(i) > 0) {
+            totalInternal += getInternal(i);
+          }
+        }
+        return totalInternal;
+	}
+    
   /**
    * Is this location destroyed?
    */

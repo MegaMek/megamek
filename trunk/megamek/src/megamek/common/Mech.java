@@ -381,11 +381,9 @@ public class Mech
 	public int getInternal(int loc) {
 		if(loc == LOC_CTR) {
 			loc = LOC_CT;
-		}
-		if(loc == LOC_RTR) {
+		} else if(loc == LOC_RTR) {
 			loc = LOC_RT;
-		}
-		if(loc == LOC_LTR) {
+		} else if(loc == LOC_LTR) {
 			loc = LOC_LT;
 		}
 		return super.getInternal(loc);
@@ -397,16 +395,27 @@ public class Mech
 	public void setInternal(int val, int loc) {
 		if(loc == LOC_CTR) {
 			loc = LOC_CT;
-		}
-		if(loc == LOC_RTR) {
+		} else if(loc == LOC_RTR) {
 			loc = LOC_RT;
-		}
-		if(loc == LOC_LTR) {
+		} else if(loc == LOC_LTR) {
 			loc = LOC_LT;
 		}
 		super.setInternal(val, loc);
 	}
 	
+	/**
+	 * Special mech version, accouting for rear torso locations
+	 */
+	public int getTotalInternal() {
+        int totalInternal = 0;
+        for (int i = 0; i < locations(); i++) {
+          if (!isRearLocation(i) && getInternal(i) > 0) {
+            totalInternal += getInternal(i);
+          }
+        }
+        return totalInternal;
+	}
+    
 	/**
 	 * Returns the Compute.ARC that the weapon fires into.
 	 */
@@ -784,22 +793,10 @@ public class Mech
     double obv = 0; // offensive bv
     
     // total armor points
-    int totalArmor = 0;
-    for (int i = 0; i < locations(); i++) {
-      if (getArmor(i) > 0) {
-        totalArmor += getArmor(i);
-      }
-    }
-    dbv += totalArmor * 2;
+    dbv += getTotalArmor() * 2;
     
     // total internal structure
-    int totalInternal = 0;
-    for (int i = 0; i < locations(); i++) {
-      if (!isRearLocation(i) && getInternal(i) > 0) {
-        totalInternal += getInternal(i);
-      }
-    }
-    dbv += totalInternal * 1.5;
+    dbv += getTotalInternal() * 1.5;
     
     // add weight
     dbv += getWeight();

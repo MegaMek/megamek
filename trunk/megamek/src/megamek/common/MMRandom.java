@@ -41,6 +41,7 @@ public abstract class MMRandom {
      * any errors.
      */
     public static MMRandom generate(int type) {
+        System.err.println("MMRandom: generating RNG type #" + type);
         try {
             switch (type) {
                 case R_CRYPTO :
@@ -52,7 +53,7 @@ public abstract class MMRandom {
                     return new MMRandom.SunRandom();
             }
         }
-        catch (ClassNotFoundException ex) {
+        catch (Exception ex) {
             System.err.println("MMRandom: could not create desired RNG #" + type);
             System.err.println("MMRandom: using SunRandom (#0) instead");
             
@@ -110,7 +111,11 @@ public abstract class MMRandom {
         /**
          * Contruct, making a new thread to init the RNG
          */
-        public CryptoRandom() throws ClassNotFoundException {
+        public CryptoRandom() throws ClassNotFoundException, NoSuchMethodException {
+            // hack: just check to see if there's java.util.Random@nextInt(int)
+            new java.util.Random().getClass().getMethod("nextInt", new Class[] {Integer.TYPE});
+            
+            // all clear, get on with the normal init
             random = new java.security.SecureRandom();
             
             Thread initRNG = new Thread( new Runnable() {

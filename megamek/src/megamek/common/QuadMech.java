@@ -156,6 +156,30 @@ public class QuadMech extends Mech
       return ((loc == Mech.LOC_RLEG) || (loc == Mech.LOC_LLEG) || (loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM));
     }
     
+    /**
+     * Returns the Compute.ARC that the weapon fires into.
+     */
+    public int getWeaponArc(int wn) {
+        final Mounted mounted = getEquipment(wn);
+        // rear mounted?
+        if (mounted.isRearMounted()) {
+            return Compute.ARC_REAR;
+        }
+        // front mounted
+        switch(mounted.getLocation()) {
+        case LOC_HEAD :
+        case LOC_CT :
+        case LOC_RT :
+        case LOC_LT :
+        case LOC_RLEG :
+        case LOC_LLEG :
+        case LOC_LARM :
+        case LOC_RARM :
+            return Compute.ARC_FORWARD;
+        default :
+            return Compute.ARC_360;
+        }
+    }
   /**
    * Sets the internal structure for the mech.
    * 

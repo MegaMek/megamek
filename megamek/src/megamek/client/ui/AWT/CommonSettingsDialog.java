@@ -46,6 +46,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
 
     private Checkbox    keepServerlog;
     private TextField   serverlogFilename;
+    private TextField   serverlogMaxSize;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -119,19 +120,6 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         unitStartChar.addItem( "\u03B1, \u03B2, \u03B3, \u03B4..." );
         panSetting.add( unitStartChar );
         panSetting.add( new Label("ProtoMech unit codes.") );
-        tempPanel.add( panSetting );
-
-        // client-side gamelog settings
-        panSetting = new Panel();
-        keepServerlog
-            = new Checkbox( "Keep a copy of the game log." );
-        keepServerlog.addItemListener(this);
-        tempPanel.add( keepServerlog );
-        serverlogFilename
-            = new TextField(20);
-        panSetting.add( serverlogFilename );
-        panSetting.add( new Label("Game log filename (this file will be appended to.)") );
-        tempPanel.add( panSetting );
 
         panSetting = new Panel();
         maxPathfinderTime
@@ -142,6 +130,25 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         getFocus
             = new Checkbox( "Get Focus when a new phase begins.");
         tempPanel.add( getFocus );
+        tempPanel.add( panSetting );
+
+        // client-side gamelog settings
+        keepServerlog
+            = new Checkbox( "Keep a copy of the game log." );
+        keepServerlog.addItemListener(this);
+        tempPanel.add( keepServerlog );
+        panSetting = new Panel();
+        serverlogFilename
+            = new TextField(20);
+        panSetting.add( serverlogFilename );
+        panSetting.add( new Label("Game log filename (this file will be appended to.)") );
+        tempPanel.add( panSetting );
+        panSetting = new Panel();
+        serverlogMaxSize
+            = new TextField(5);
+        panSetting.add( serverlogMaxSize );
+        panSetting.add( new Label("Maximum game log size (MB).") );
+        tempPanel.add( panSetting );
 
 // scrolling options
         tempPanel.add( new Label("Clicking on the MiniMap and using the numpad arrow keys always scrolls the main display.") );
@@ -263,6 +270,8 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         keepServerlog.setState( Settings.keepServerlog );
         serverlogFilename.setEnabled(keepServerlog.getState());
         serverlogFilename.setText( Settings.serverlogFilename );
+        serverlogMaxSize.setEnabled(keepServerlog.getState());
+        serverlogMaxSize.setText( Integer.toString(Settings.serverlogMaxSize) );
 
 
         getFocus.setState( Settings.getFocus );
@@ -305,6 +314,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
 
         Settings.keepServerlog          = keepServerlog.getState();
         Settings.serverlogFilename      = serverlogFilename.getText();
+        Settings.serverlogMaxSize       = Integer.parseInt(serverlogMaxSize.getText());
 
         Settings.save();
         this.setVisible( false );
@@ -338,6 +348,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         Object source = event.getItemSelectable();
         if ( source.equals(keepServerlog) ) {
             serverlogFilename.setEnabled(keepServerlog.getState());
+            serverlogMaxSize.setEnabled(keepServerlog.getState());
         }
     }
 }

@@ -101,7 +101,8 @@ public class Settings
     public static boolean    soundMute              = false;
 
     public static boolean    keepServerlog          = false;
-    public static String    serverlogFilename       = "gamelog.txt";
+    public static String     serverlogFilename      = "gamelog.txt";
+    public static int        serverlogMaxSize       = 1;
 
     // I *intentionally* use a hardcoded "/" instead of File.separator.
     // (a) I'm defining an "abstract pathname" that generates a URI, so it
@@ -498,6 +499,10 @@ scan:
                         st.nextToken();
                         serverlogFilename = st.sval;
                     }
+                    else if(key.equals("serverlogmaxsize")) {
+                        st.nextToken();
+                        serverlogMaxSize = (int)st.nval;
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -617,6 +622,7 @@ scan:
 
             cw.write("keepserverlog " + keepServerlog + "\r\n");
             cw.write("serverlogfilename " + serverlogFilename + "\r\n");
+            cw.write("serverlogmaxsize " + serverlogMaxSize + "\r\n");
 
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

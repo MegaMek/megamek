@@ -4460,8 +4460,23 @@ implements Runnable, ConnectionHandler {
         
         return wr;
     }
-    
-    private boolean tryIgniteHex(Coords c, boolean bInferno, int nTargetRoll) {
+
+    /**
+     * Try to ignite the hex, taking into account exisiting fires and the
+     * effects of Inferno rounds.
+     *
+     * @param   c - the <code>Coords</code> of the hex being lit.
+     * @param   bInferno - <code>true</code> if the weapon igniting the
+     *          hex is an Inferno round.  If some other weapon or ammo
+     *          is causing the roll, this should be <code>false</code>.
+     * @param   nTargetRoll - the <code>int</code> target number for the
+     *          ignition roll.
+     * @param   nTargetRoll - the <code>int</code> roll target for the attempt.
+     * @param   bReportAttempt - <code>true</code> if the attempt roll should
+     *          be added to the report.
+     */    
+    private boolean tryIgniteHex( Coords c, boolean bInferno, int nTargetRoll,
+                                  boolean bReportAttempt ) {
 
         Hex hex = game.board.getHex(c);                                 
         boolean bAnyTerrain = false;
@@ -4482,13 +4497,28 @@ implements Runnable, ConnectionHandler {
         if ( hex.contains( Terrain.FIRE ) ) {
             return true;
         }
-        else if (ignite(hex, nTargetRoll, bAnyTerrain)) {
+        else if ( ignite(hex, nTargetRoll, bAnyTerrain, bReportAttempt) ) {
             phaseReport.append("           The hex ignites!\n");
             sendChangedHex(c);
             return true;
         }
         return false;
     }
+
+    /**
+     * Try to ignite the hex, taking into account exisiting fires and the
+     * effects of Inferno rounds.  This version of the method will not report
+     * the attempt roll.
+     *
+     * @param   c - the <code>Coords</code> of the hex being lit.
+     * @param   bInferno - <code>true</code> if the weapon igniting the
+     *          hex is an Inferno round.  If some other weapon or ammo
+     *          is causing the roll, this should be <code>false</code>.
+     * @param   nTargetRoll - the <code>int</code> roll target for the attempt.
+     */    
+   private boolean tryIgniteHex(Coords c, boolean bInferno, int nTargetRoll) {
+       return tryIgniteHex(c, bInferno, nTargetRoll, false);
+   }
     
     private boolean tryClearHex(Coords c, int nTarget) {
         
@@ -5268,7 +5298,7 @@ implements Runnable, ConnectionHandler {
                         tn += bldg.getType() - 1;
                     }
                     phaseReport.append( "\n" );
-                    tryIgniteHex( target.getPosition(), bInferno, tn );
+                    tryIgniteHex( target.getPosition(), bInferno, tn, true );
                 }
                 return;
             }
@@ -8384,8 +8414,17 @@ implements Runnable, ConnectionHandler {
     /**
      * Returns true if the hex is set on fire with the specified roll.  Of
      * course, also checks to see that fire is possible in the specified hex.
+     *
+     * @param   hex - the <code>Hex</code> to be lit.
+     * @param   roll - the <code>int</code> target number for the ignition roll
+     * @param   bAnyTerrain - <code>true</code> if the fire can be lit in any
+     *          terrain.  If this value is <code>false</code> the hex will be
+     *          lit only if it contains Woods or a Building.
+     * @param   bReportAttempt - <code>true</code> if the attempt roll should
+     *          be added to the report.
      */
-    public boolean ignite(Hex hex, int roll, boolean bAnyTerrain) {
+   public boolean ignite( Hex hex, int roll, boolean bAnyTerrain,
+                          boolean bReportAttempt ) {
 
         // The hex might be null due to spreadFire translation
         // goes outside of the board limit.
@@ -8403,14 +8442,36 @@ implements Runnable, ConnectionHandler {
              !(hex.contains(Terrain.BUILDING)) ) {
             return false;
         }
-        
+
         int fireRoll = Compute.d6(2);
+        if (bReportAttempt) {
+            phaseReport.append( "           Needs " )
+                .append( roll )
+                .append( " to ignite, rolls " )
+                .append( fireRoll )
+                .append( "\n" );
+        }
         if (fireRoll >= roll) {
             hex.addTerrain(new Terrain(Terrain.FIRE, 1));
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Returns true if the hex is set on fire with the specified roll.  Of
+     * course, also checks to see that fire is possible in the specified hex.
+     * This version of the method will not report the attempt roll.
+     *
+     * @param   hex - the <code>Hex</code> to be lit.
+     * @param   roll - the <code>int</code> target number for the ignition roll
+     * @param   bAnyTerrain - <code>true</code> if the fire can be lit in any
+     *          terrain.  If this value is <code>false</code> the hex will be
+     *          lit only if it contains Woods or a Building.
+     */
+    public boolean ignite(Hex hex, int roll, boolean bAnyTerrain)  {
+       return ignite(hex, roll, bAnyTerrain, false);
     }
     
     // default signature, assuming only woods can burn

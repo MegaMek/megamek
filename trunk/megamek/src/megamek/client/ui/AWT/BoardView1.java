@@ -230,15 +230,10 @@ public class BoardView1
         if (view.intersects(sprite.getBounds())) {
             final int drawX = sprite.getBounds().x - view.x;
             final int drawY = sprite.getBounds().y - view.y;
-            if (sprite.getImage() == null) {
-                sprite.draw();
+            if (!sprite.isReady()) {
+                sprite.prepare();
             }
-            // check again
-            if (sprite.getImage() == null) {
-                // whatever... :P
-                return;
-            }
-            backGraph.drawImage(sprite.getImage(), drawX, drawY, this);
+            sprite.drawOnto(backGraph, drawX, drawY, this);
         }
     }
     
@@ -1062,24 +1057,31 @@ public class BoardView1
     
     
     /**
-     * Stores a buffered image to draw
+     * Everything in the main map view is either the board or it's a sprite
+     * displayed on top of the board.  Most sprites store a transparent image
+     * which they draw onto the screen when told to.  Sprites keep a bounds
+     * rectangle, so it's easy to tell when they'return onscreen.
      */
     private abstract class Sprite implements ImageObserver
     {
         protected Rectangle bounds;
         protected Image image;
         
-        public abstract void draw();
+        /**
+         * Do any necessary preparation.  This is called after creation,
+         * but before drawing, when a device context is ready to draw with.
+         */
+        public abstract void prepare();
         
         /**
-         * Overrides imageUpdate in ImageObserver interface.  This shouldn't
-         * ever be called, as all images should be loaded, but just in case,
-         * this'll handle it.
+         * When we draw our buffered images, it's necessary to implement
+         * the ImageObserver interface.  This provides the necesasry 
+         * functionality.
          */
         public boolean imageUpdate(Image image, int infoflags, int x, int y, 
                                    int width, int height) {
             if (infoflags == ImageObserver.ALLBITS) {
-                draw();
+                prepare();
                 repaint();
                 return false;
             } else {
@@ -1087,25 +1089,56 @@ public class BoardView1
             }
         }
         
+        /**
+         * Returns our bounding rectangle.  The coordinates here are stored
+         * with the top left corner of the _board_ being 0, 0, so these do
+         * not always correspond to screen coordinates.
+         */
         public Rectangle getBounds() {
             return bounds;
         }
         
-        public Image getImage() {
-            return image;
+        /**
+         * Are we ready to draw?  By default, checks to see that our buffered
+         * image has been created.
+         */
+        public boolean isReady() {
+            return image != null;
         }
         
+        /**
+         * Draws this sprite onto the specified graphics context.
+         */
+        public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+            if (isReady()) {
+                g.drawImage(image, x, y, observer);
+            } else {
+                // grrr... well be ready next time!
+                prepare();
+            }
+        }
+        
+        /**
+         * Returns true if the point is inside this sprite.  Uses board
+         * coordinates, not screen coordinates.   By default, just checks our
+         * bounding rectangle, though some sprites override this for a smaller
+         * sensitive area.
+         */
         public boolean isInside(Point point) {
             return bounds.contains(point);
         }
         
+        /**
+         * Since most sprites being drawn correspond to something in the game,
+         * this returns a little info for a tooltip.
+         */
         private String[] getTooltip() {
             return null;
         }
     }
     
     /**
-     * Sprite for a cursor
+     * Sprite for a cursor.  Just a hexagon outline in a specified color.
      */
     private class CursorSprite extends Sprite
     {
@@ -1121,7 +1154,7 @@ public class BoardView1
             bounds.setLocation(-100, -100);
         }
         
-        public void draw() {
+        public void prepare() {
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
             Graphics graph = tempImage.getGraphics();
@@ -1147,7 +1180,9 @@ public class BoardView1
     }
     
     /**
-     * Sprite for an entity
+     * Sprite for an entity.  Changes whenever the entity changes.  Consists
+     * of an image, drawn from the Tile Manager; facing and possibly secondary
+     * facing arrows; armor and internal bars; and an identification label.
      */
     private class EntitySprite extends Sprite
     {
@@ -1174,7 +1209,7 @@ public class BoardView1
          * Creates the sprite for this entity.  It is an extra pain to 
          * create transparent images in AWT.
          */
-        public void draw() {
+        public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
@@ -1306,7 +1341,7 @@ public class BoardView1
         }
         
         /**
-         * Return true if the point is on a non-transparent pixel
+         * Overrides to provide for a smaller sensitive area.
          */
         public boolean isInside(Point point) {
             return entityRect.contains(point.x + view.x - offset.x, point.y + view.y - offset.y);
@@ -1326,7 +1361,9 @@ public class BoardView1
     }
     
     /**
-     * Sprite for a step in a movement path
+     * Sprite for a step in a movement path.  Only one sprite should exist for
+     * any hex in a path.  Contains a colored number, and arrows indicating
+     * entering, exiting or turning.
      */
     private class StepSprite extends Sprite
     {
@@ -1340,7 +1377,7 @@ public class BoardView1
             this.image = null;
         }
         
-        public void draw() {
+        public void prepare() {
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
             Graphics graph = tempImage.getGraphics();
@@ -1431,7 +1468,8 @@ public class BoardView1
     }
     
     /**
-     * Sprite and info for an attack
+     * Sprite and info for an attack.  Does not actually use the image buffer
+     * as this can be horribly inefficient for long diagonal lines.
      */
     private class AttackSprite extends Sprite
     {
@@ -1482,26 +1520,44 @@ public class BoardView1
             this.image = null;
         }
         
-        public void draw() {
-            // create image for buffer
-            Image tempImage = createImage(bounds.width, bounds.height);
-            if (tempImage == null) {
-                return;
-            }
-            Graphics graph = tempImage.getGraphics();
+//        public void prepare() {
+//            // create image for buffer
+//            Image tempImage = createImage(bounds.width, bounds.height);
+//            if (tempImage == null) {
+//                return;
+//            }
+//            Graphics graph = tempImage.getGraphics();
+//            
+//            // fill with key color
+//            graph.setColor(new Color(TRANSPARENT));
+//            graph.fillRect(0, 0, bounds.width, bounds.height);
+//            // draw attack poly
+//            graph.setColor(game.getEntity(entityId).getOwner().getColor());
+//            graph.fillPolygon(attackPoly);
+//            graph.setColor(Color.white);
+//            graph.drawPolygon(attackPoly);
+//            
+//            // create final image
+//            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
+//                    new KeyAlphaFilter(TRANSPARENT)));
+//        }
+        
+        public void prepare() {
+            ;
+        }
+        
+        public boolean isReady() {
+            return true;
+        }
+        
+        public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+            Polygon drawPoly = new Polygon(attackPoly.xpoints, attackPoly.ypoints, attackPoly.npoints);
+            drawPoly.translate(x, y);
             
-            // fill with key color
-            graph.setColor(new Color(TRANSPARENT));
-            graph.fillRect(0, 0, bounds.width, bounds.height);
-            // draw attack poly
-            graph.setColor(game.getEntity(entityId).getOwner().getColor());
-            graph.fillPolygon(attackPoly);
-            graph.setColor(Color.white);
-            graph.drawPolygon(attackPoly);
-            
-            // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
+            g.setColor(game.getEntity(entityId).getOwner().getColor());
+            g.fillPolygon(drawPoly);
+            g.setColor(Color.white);
+            g.drawPolygon(drawPoly);
         }
         
         /**

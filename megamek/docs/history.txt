@@ -78,6 +78,7 @@ v CVS
 + 632830: fixed typo causing small south deployment zone
 + inf_move_multi no longer messes up deployment phase
 + deployment phase works properly after /reset or victory
++ deployment phase not used when a scenario is loaded
 
 v 0.27.5 (11-01-02, 10:30pm)
 + Add non-canon options to balance Infantry impact on the init phase.

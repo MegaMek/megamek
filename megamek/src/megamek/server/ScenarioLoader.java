@@ -79,6 +79,7 @@ public class ScenarioLoader
         
         // game's ready
         g.getOptions().initialize();
+        g.setHasDeployed(true);
         g.phase = Game.PHASE_INITIATIVE;
         return g;
     }

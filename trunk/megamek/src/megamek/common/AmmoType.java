@@ -66,15 +66,15 @@ public class AmmoType extends EquipmentType {
     //      to be combined to othter munition types.
     public static final int     M_STANDARD          = 0;
     public static final int     M_CLUSTER           = 1;
-    public static final int     M_ARMOR_PIERCING    = 1 << 1; 
-    public static final int     M_FLECHETTE         = 1 << 2; 
-    public static final int     M_INCENDIARY        = 1 << 3; 
-    public static final int     M_PRECISION         = 1 << 4; 
-    public static final int     M_EXTENDED_RANGE    = 1 << 5; 
-    public static final int     M_HIGH_EXPLOSIVE    = 1 << 6; 
-    public static final int     M_FLARE             = 1 << 7; 
-    public static final int     M_FRAGMENTATION     = 1 << 8; 
-    public static final int     M_INFERNO           = 1 << 9; 
+    public static final int     M_ARMOR_PIERCING    = 1 << 1;
+    public static final int     M_FLECHETTE         = 1 << 2;
+    public static final int     M_INCENDIARY        = 1 << 3;
+    public static final int     M_PRECISION         = 1 << 4;
+    public static final int     M_EXTENDED_RANGE    = 1 << 5;
+    public static final int     M_HIGH_EXPLOSIVE    = 1 << 6;
+    public static final int     M_FLARE             = 1 << 7;
+    public static final int     M_FRAGMENTATION     = 1 << 8;
+    public static final int     M_INFERNO           = 1 << 9;
     public static final int     M_SEMIGUIDED        = 1 << 10;
     public static final int     M_SWARM             = 1 << 11;
     public static final int     M_SWARM_I           = 1 << 12;
@@ -88,16 +88,16 @@ public class AmmoType extends EquipmentType {
     public static final int     M_HAYWIRE           = 1 << 20;
     public static final int     M_NEMESIS           = 1 << 21;
     public static final int     M_NARC_EX           = 1 << 22;
-    
-    /*public static final String[] MUNITION_NAMES = { "Standard", 
-        "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Precision", 
+
+    /*public static final String[] MUNITION_NAMES = { "Standard",
+        "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Precision",
         "Extended Range", "High Explosive", "Flare", "Fragmentation", "Inferno",
-        "Semiguided", "Swarm", "SwarmI", "Thunder", "Thunder/Augmented", 
-        "Thunder/Inferno", "Thunder/Vibrabomb", "Thunder/Active", "Explosive", 
+        "Semiguided", "Swarm", "SwarmI", "Thunder", "Thunder/Augmented",
+        "Thunder/Inferno", "Thunder/Vibrabomb", "Thunder/Active", "Explosive",
         "ECM", "Haywire", "Nemesis" };
         */
     private static Vector[] m_vaMunitions = new Vector[NUM_TYPES];
-    
+
     public static Vector getMunitionsFor(int nAmmoType) {
         return m_vaMunitions[nAmmoType];
     }
@@ -117,7 +117,7 @@ public class AmmoType extends EquipmentType {
     public int getAmmoType() {
         return ammoType;
     }
-    
+
     public int getMunitionType() {
         return munitionType;
     }
@@ -145,34 +145,34 @@ public class AmmoType extends EquipmentType {
 	return range;
     }
 
-    // By default, all ballistic type weapons are 9.  If some are impossible 
+    // By default, all ballistic type weapons are 9.  If some are impossible
     // (i.e. Gauss Rifle or SRM-2, they will override)
     public int getFireTN() {
 	return 9;
     }
-    
+
     // By default, adds no new modifiers (these are for ammo based modifiers)
     public TargetRoll getModifiersFor(Game game, Entity en, Targetable targ) {
 	return new TargetRoll();
     }
-    
+
     // Note, we don't do any pre-stuff here, as that's done by the weapon
 /* TODO: uncomment me delete the empty method.
-    public abstract void resolveAttack(Game game, 
-				       WeaponResult wr, 
-				       UsesAmmoType weap, 
+    public abstract void resolveAttack(Game game,
+				       WeaponResult wr,
+				       UsesAmmoType weap,
 				       EquipmentState weap_state);
 */
-    public void resolveAttack(Game game, 
-				       WeaponResult wr, 
-				       UsesAmmoType weap, 
+    public void resolveAttack(Game game,
+				       WeaponResult wr,
+				       UsesAmmoType weap,
         EquipmentState weap_state) {}
 
     // Created using the base type, using the default number of shots
     public EquipmentState getNewState(Mounted location) {
 	return new AmmoState(location, this, shots);
     }
-    
+
     // Be default, all ammo explodes, with shots remaining * damagePerShot
     public void doCriticalDamage(EquipmentState state) {
 	if (isExplosive()) {
@@ -182,8 +182,8 @@ public class AmmoType extends EquipmentType {
 /* TODO : implement me
 	    super.doCriticalDamage(state); // Set it as destroyed
 */
-	    // Do weapon explosion damage 
-// ########### 
+	    // Do weapon explosion damage
+// ###########
 	}
     }
 
@@ -277,6 +277,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
         EquipmentType.addType(createISNarcExplosiveAmmo());
+        EquipmentType.addType(createISArrowIVAmmo());
 
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
@@ -319,6 +320,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLATM12Ammo());
         EquipmentType.addType(createCLATM12ERAmmo());
         EquipmentType.addType(createCLATM12HEAmmo());
+        EquipmentType.addType(createCLArrowIVAmmo());
         base = createCLSRM1Ammo();
         srmAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -417,7 +419,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for SRM launchers.
         munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Inferno", 
+        munitions.addElement( new MunitionMutator( "Inferno",
                                                    1, M_INFERNO ) );
         munitions.addElement( new MunitionMutator( "Fragmentation",
                                                    1, M_FRAGMENTATION ) );
@@ -438,15 +440,15 @@ public class AmmoType extends EquipmentType {
         munitions.removeAllElements();
         munitions.addElement( new MunitionMutator( "Fragmentation",
                                                    1, M_FRAGMENTATION ) );
-        munitions.addElement( new MunitionMutator( "Thunder", 
+        munitions.addElement( new MunitionMutator( "Thunder",
                                                    1, M_THUNDER ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Augmented", 
+        munitions.addElement( new MunitionMutator( "Thunder-Augmented",
                                                    2, M_THUNDER_AUGMENTED ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Inferno", 
+        munitions.addElement( new MunitionMutator( "Thunder-Inferno",
                                                    2, M_THUNDER_INFERNO ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Active", 
+        munitions.addElement( new MunitionMutator( "Thunder-Active",
                                                    2, M_THUNDER_ACTIVE ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Vibrabomb", 
+        munitions.addElement( new MunitionMutator( "Thunder-Vibrabomb",
                                                    2, M_THUNDER_VIBRABOMB ) );
 
         // Walk through both the base types and the
@@ -463,7 +465,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for AC rounds.
         munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Precision", 
+        munitions.addElement( new MunitionMutator( "Precision",
                                                    2, M_PRECISION ) );
         munitions.addElement( new MunitionMutator( "Armor-Piercing",
                                                    2, M_ARMOR_PIERCING ) );
@@ -494,12 +496,12 @@ public class AmmoType extends EquipmentType {
                 m_vaMunitions[nType] = new Vector();
             }
             m_vaMunitions[nType].addElement(at);
-        }   
+        }
     }
-    
+
     public static AmmoType createISAC2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "AC/2 Ammo";
         ammo.internalName = "IS Ammo AC/2";
         ammo.mepName = "IS Ammo AC/2";
@@ -510,13 +512,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 45;
         ammo.bv = 5;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISAC5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "AC/5 Ammo";
         ammo.internalName = "IS Ammo AC/5";
         ammo.mepName = "IS Ammo AC/5";
@@ -527,13 +529,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 20;
         ammo.bv = 9;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISAC10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "AC/10 Ammo";
         ammo.internalName = "IS Ammo AC/10";
         ammo.mepName = "IS Ammo AC/10";
@@ -544,13 +546,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 10;
         ammo.bv = 15;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISAC20Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "AC/20 Ammo";
         ammo.internalName = "IS Ammo AC/20";
         ammo.mepName = "IS Ammo AC/20";
@@ -561,13 +563,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 5;
         ammo.bv = 20;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISVehicleFlamerAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Vehicle Flamer Ammo";
         ammo.internalName = "IS Vehicle Flamer Ammo";
         ammo.mepName = "IS Ammo Vehicle Flamer";
@@ -578,13 +580,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_VEHICLE_FLAMER;
         ammo.shots = 20;
         ammo.bv = 1;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISMGAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Machine Gun Ammo";
         ammo.internalName = "IS Ammo MG - Full";
         ammo.mepName = "IS Ammo MG - Full";
@@ -596,13 +598,13 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG;
         ammo.shots = 200;
         ammo.bv = 1;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISMGAmmoHalf() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Half Machine Gun Ammo";
         ammo.internalName = "IS Machine Gun Ammo - Half";
         ammo.mepName = "IS Ammo MG - Half";
@@ -615,13 +617,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 0.5f;
         ammo.tonnage = 0.5f;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 5 Ammo";
         ammo.internalName = "IS Ammo LRM-5";
         ammo.mepName = "IS Ammo LRM-5";
@@ -632,13 +634,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 24;
         ammo.bv = 6;
-        
+
         return ammo;
     }
 
     public static AmmoType createISFragLRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 5 Fragmentation Ammo";
         ammo.internalName = "IS Fragmentation Ammo LRM-5";
         ammo.mepName = "N/A";
@@ -654,10 +656,10 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    
+
     public static AmmoType createISThunderLRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder LRM 5 Ammo";
         ammo.internalName = "IS Ammo Thunder LRM-5";
         ammo.mepName = "N/A";
@@ -670,13 +672,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 6;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISThunderAugmentedLRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Augmented LRM 5 Ammo";
         ammo.internalName = "IS Ammo Thunder-Augmented LRM-5";
         ammo.mepName = "N/A";
@@ -689,13 +691,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 6;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createISThunderInfernoLRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Inferno LRM 5 Ammo";
         ammo.internalName = "IS Ammo Thunder-Inferno LRM-5";
         ammo.mepName = "N/A";
@@ -708,13 +710,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 6;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createISThunderActiveLRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Active LRM 5 Ammo";
         ammo.internalName = "IS Ammo Thunder-Active LRM-5";
         ammo.mepName = "N/A";
@@ -727,13 +729,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 6;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createISThunderVibraLRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Vibrabomb LRM 5 Ammo";
         ammo.internalName = "IS Ammo Thunder-Vibrabomb LRM-5";
         ammo.mepName = "N/A";
@@ -746,13 +748,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 6;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createISLRM10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 10 Ammo";
         ammo.internalName = "IS Ammo LRM-10";
         ammo.mepName = "IS Ammo LRM-10";
@@ -763,13 +765,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 12;
         ammo.bv = 11;
-        
+
         return ammo;
     }
 
     public static AmmoType createISFragLRM10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 10 Fragmentation Ammo";
         ammo.internalName = "IS Fragmentation Ammo LRM-10";
         ammo.mepName = "N/A";
@@ -785,10 +787,10 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    
+
     public static AmmoType createISThunderLRM10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder LRM 10 Ammo";
         ammo.internalName = "IS Ammo Thunder LRM-10";
         ammo.mepName = "N/A";
@@ -801,13 +803,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 11;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISThunderAugmentedLRM10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Augmented LRM 10 Ammo";
         ammo.internalName = "IS Ammo Thunder-Augmented LRM-10";
         ammo.mepName = "N/A";
@@ -820,13 +822,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 11;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISThunderInfernoLRM10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Inferno LRM 10 Ammo";
         ammo.internalName = "IS Ammo Thunder-Inferno LRM-10";
         ammo.mepName = "N/A";
@@ -839,13 +841,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 11;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISThunderActiveLRM10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Active LRM 10 Ammo";
         ammo.internalName = "IS Ammo Thunder-Active LRM-10";
         ammo.mepName = "N/A";
@@ -858,13 +860,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 11;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISThunderVibraLRM10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Vibrabomb LRM 10 Ammo";
         ammo.internalName = "IS Ammo Thunder-Vibrabomb LRM-10";
         ammo.mepName = "N/A";
@@ -877,13 +879,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 11;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 15 Ammo";
         ammo.internalName = "IS Ammo LRM-15";
         ammo.mepName = "IS Ammo LRM-15";
@@ -894,13 +896,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 8;
         ammo.bv = 17;
-        
+
         return ammo;
     }
 
     public static AmmoType createISFragLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 15 Fragmentation Ammo";
         ammo.internalName = "IS Fragmentation Ammo LRM-15";
         ammo.mepName = "N/A";
@@ -916,10 +918,10 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    
+
     public static AmmoType createISThunderLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder LRM 15 Ammo";
         ammo.internalName = "IS Ammo Thunder LRM-15";
         ammo.mepName = "N/A";
@@ -932,13 +934,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 17;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-     
+
     public static AmmoType createISThunderAugmentedLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Augmented LRM 15 Ammo";
         ammo.internalName = "IS Ammo Thunder-Augmented LRM-15";
         ammo.mepName = "N/A";
@@ -951,13 +953,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 17;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-   
+
     public static AmmoType createISThunderInfernoLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Inferno LRM 15 Ammo";
         ammo.internalName = "IS Ammo Thunder-Inferno LRM-15";
         ammo.mepName = "N/A";
@@ -970,13 +972,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 17;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISThunderActiveLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Active LRM 15 Ammo";
         ammo.internalName = "IS Ammo Thunder-Active LRM-15";
         ammo.mepName = "N/A";
@@ -989,13 +991,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 17;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISThunderVibraLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Thunder-Vibrabomb LRM 15 Ammo";
         ammo.internalName = "IS Ammo Thunder-Vibrabomb LRM-15";
         ammo.mepName = "N/A";
@@ -1008,13 +1010,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 17;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLRM20Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 20 Ammo";
         ammo.internalName = "IS Ammo LRM-20";
         ammo.mepName = "IS Ammo LRM-20";
@@ -1025,13 +1027,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 6;
         ammo.bv = 23;
-        
+
         return ammo;
     }
 
     public static AmmoType createISSRM2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 2 Ammo";
         ammo.internalName = "IS Ammo SRM-2";
         ammo.mepName = "IS Ammo SRM-2";
@@ -1042,13 +1044,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 50;
         ammo.bv = 3;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISSRM4Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 4 Ammo";
         ammo.internalName = "IS Ammo SRM-4";
         ammo.mepName = "IS Ammo SRM-4";
@@ -1059,13 +1061,13 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 25;
         ammo.bv = 5;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISSRM6Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 6 Ammo";
         ammo.internalName = "IS Ammo SRM-6";
         ammo.mepName = "IS Ammo SRM-6";
@@ -1076,7 +1078,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 15;
         ammo.bv = 7;
-        
+
         return ammo;
     }
 
@@ -1084,7 +1086,7 @@ public class AmmoType extends EquipmentType {
 
     public static AmmoType createISLB2XAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 2-X AC Ammo";
         ammo.internalName = "IS LB 2-X AC Ammo";
         ammo.mepName = "IS Ammo 2-X";
@@ -1096,13 +1098,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 5;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLB5XAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 5-X AC Ammo";
         ammo.internalName = "IS LB 5-X AC Ammo";
         ammo.mepName = "IS Ammo 5-X";
@@ -1114,13 +1116,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 10;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLB10XAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 10-X AC Ammo";
         ammo.internalName = "IS LB 10-X AC Ammo";
         ammo.mepName = "IS Ammo 10-X";
@@ -1132,13 +1134,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLB20XAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 20-X AC Ammo";
         ammo.internalName = "IS LB 20-X AC Ammo";
         ammo.mepName = "IS Ammo 20-X";
@@ -1150,13 +1152,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 27;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLB2XClusterAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.internalName = "IS LB 2-X Cluster Ammo";
         ammo.mepName = "IS Ammo 2-X (CL)";
@@ -1171,13 +1173,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 5;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLB5XClusterAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 5-X Cluster Ammo";
         ammo.internalName = "IS LB 5-X Cluster Ammo";
         ammo.mepName = "IS Ammo 5-X (CL)";
@@ -1192,13 +1194,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 10;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLB10XClusterAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 10-X Cluster Ammo";
         ammo.internalName = "IS LB 10-X Cluster Ammo";
         ammo.mepName = "IS Ammo 10-X (CL)";
@@ -1213,13 +1215,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLB20XClusterAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 20-X Cluster Ammo";
         ammo.internalName = "IS LB 20-X Cluster Ammo";
         ammo.mepName = "IS Ammo 20-X (CL)";
@@ -1234,13 +1236,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 27;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISUltra2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Ultra AC/2 Ammo";
         ammo.internalName = "IS Ultra AC/2 Ammo";
         ammo.mepName = "IS Ammo Ultra AC/2";
@@ -1252,13 +1254,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 7;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISUltra5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Ultra AC/5 Ammo";
         ammo.internalName = "IS Ultra AC/5 Ammo";
         ammo.mepName = "IS Ammo Ultra AC/5";
@@ -1270,13 +1272,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISUltra10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Ultra AC/10 Ammo";
         ammo.internalName = "IS Ultra AC/10 Ammo";
         ammo.mepName = "IS Ammo Ultra AC/10";
@@ -1288,13 +1290,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 29;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISUltra20Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Ultra AC/20 Ammo";
         ammo.internalName = "IS Ultra AC/20 Ammo";
         ammo.mepName = "IS Ammo Ultra AC/20";
@@ -1306,13 +1308,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 32;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISRotary2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Rotary AC/2 Ammo";
         ammo.internalName = "ISRotaryAC2 Ammo";
         ammo.mepName = ammo.internalName;
@@ -1324,13 +1326,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 15;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISRotary5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Rotary AC/5 Ammo";
         ammo.internalName = "ISRotaryAC5 Ammo";
         ammo.mepName = ammo.internalName;
@@ -1342,13 +1344,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 31;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISPrecision2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Precision AC/2 Ammo";
         ammo.internalName = "IS Precision Ammo AC/2";
         ammo.mepName = "IS Precision Ammo AC/2";
@@ -1361,13 +1363,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 22;
         ammo.bv = 5;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISArmorPiercing2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Armor-Piercing AC/2 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/2";
         ammo.mepName = "IS Armor Piercing Ammo AC/2";
@@ -1380,13 +1382,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 22;
         ammo.bv = 5;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISFlechette2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Flechette AC/2 Ammo";
         ammo.internalName = "IS Flechette Ammo AC/2";
         ammo.mepName = "IS Flechette Ammo AC/2";
@@ -1399,13 +1401,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 5;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISPrecision5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Precision AC/5 Ammo";
         ammo.internalName = "IS Precision Ammo AC/5";
         ammo.mepName = "IS Precision Ammo AC/5";
@@ -1418,13 +1420,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 9;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISArmorPiercing5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Armor-Piercing AC/5 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/5";
         ammo.mepName = "IS Armor Piercing Ammo AC/5";
@@ -1437,13 +1439,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 9;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISFlechette5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Flechette AC/5 Ammo";
         ammo.internalName = "IS Flechette Ammo AC/5";
         ammo.mepName = "IS Flechette Ammo AC/5";
@@ -1456,13 +1458,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 9;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISPrecision10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Precision AC/10 Ammo";
         ammo.internalName = "IS Precision Ammo AC/10";
         ammo.mepName = "IS Precision Ammo AC/10";
@@ -1475,13 +1477,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 15;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISArmorPiercing10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Armor-Piercing AC/10 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/10";
         ammo.mepName = "IS Armor Piercing Ammo AC/10";
@@ -1494,13 +1496,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 15;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISFlechette10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Flechette AC/10 Ammo";
         ammo.internalName = "IS Flechette Ammo AC/10";
         ammo.mepName = "IS Flechette Ammo AC/10";
@@ -1513,13 +1515,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 15;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISPrecision20Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Precision AC/20 Ammo";
         ammo.internalName = "IS Precision Ammo AC/20";
         ammo.mepName = "IS Precision Ammo AC/20";
@@ -1532,13 +1534,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 2;
         ammo.bv = 20;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISArmorPiercing20Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Armor-Piercing AC/20 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/20";
         ammo.mepName = "IS Armor Piercing Ammo AC/20";
@@ -1551,13 +1553,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 2;
         ammo.bv = 20;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createISFlechette20Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Flechette AC/20 Ammo";
         ammo.internalName = "IS Flechette Ammo AC/20";
         ammo.mepName = "IS Flechette Ammo AC/20";
@@ -1570,13 +1572,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 20;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISGaussAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Gauss Ammo";
         ammo.internalName = "IS Gauss Ammo";
         ammo.mepName = "IS Ammo Gauss";
@@ -1588,13 +1590,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 37;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISLTGaussAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Light Gauss Ammo";
         ammo.internalName = "IS Light Gauss Ammo";
         ammo.mepName = "N/A";
@@ -1606,13 +1608,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 16;
         ammo.bv = 20;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISHVGaussAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Heavy Gauss Ammo";
         ammo.internalName = "ISHeavyGauss Ammo";
         ammo.mepName = ammo.internalName;
@@ -1624,13 +1626,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 43;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISStreakSRM2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Streak SRM 2 Ammo";
         ammo.internalName = "IS Streak SRM 2 Ammo";
         ammo.mepName = "IS Ammo Streak-2";
@@ -1642,13 +1644,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 4;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISStreakSRM4Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Streak SRM 4 Ammo";
         ammo.internalName = "IS Streak SRM 4 Ammo";
         ammo.mepName = "IS Ammo Streak-4";
@@ -1660,13 +1662,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 7;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISStreakSRM6Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Streak SRM 6 Ammo";
         ammo.internalName = "IS Streak SRM 6 Ammo";
         ammo.mepName = "IS Ammo Streak-6";
@@ -1678,13 +1680,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 11;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISMRM10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "MRM 10 Ammo";
         ammo.internalName = "IS MRM 10 Ammo";
         ammo.mepName = "N/A";
@@ -1696,13 +1698,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 7;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISMRM20Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "MRM 20 Ammo";
         ammo.internalName = "IS MRM 20 Ammo";
         ammo.mepName = "N/A";
@@ -1714,13 +1716,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISMRM30Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "MRM 30 Ammo";
         ammo.internalName = "IS MRM 30 Ammo";
         ammo.mepName = "N/A";
@@ -1732,13 +1734,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 21;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISMRM40Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "MRM 40 Ammo";
         ammo.internalName = "IS MRM 40 Ammo";
         ammo.mepName = "N/A";
@@ -1750,13 +1752,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 28;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISAMSAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "AMS Ammo";
         ammo.internalName = "ISAMS Ammo";
         ammo.mepName = "IS Ammo AMS";
@@ -1768,10 +1770,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 11;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISNarcAmmo() {
         AmmoType ammo = new AmmoType();
         ammo.name = "Narc Pods";
@@ -1785,10 +1787,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 0;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createISNarcExplosiveAmmo() {
         AmmoType ammo = new AmmoType();
         ammo.name = "Narc Explosive Pods";
@@ -1803,13 +1805,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 0;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLGaussAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Gauss Ammo";
         ammo.internalName = "Clan Gauss Ammo";
         ammo.mepName = "Clan Ammo Gauss";
@@ -1821,13 +1823,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 33;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLLB2XAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 2-X AC Ammo";
         ammo.internalName = "Clan LB 2-X AC Ammo";
         ammo.mepName = "Clan Ammo 2-X";
@@ -1839,13 +1841,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 6;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLLB5XAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 5-X AC Ammo";
         ammo.internalName = "Clan LB 5-X AC Ammo";
         ammo.mepName = "Clan Ammo 5-X";
@@ -1857,13 +1859,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 12;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLLB10XAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 10-X AC Ammo";
         ammo.internalName = "Clan LB 10-X AC Ammo";
         ammo.mepName = "Clan Ammo 10-X";
@@ -1875,13 +1877,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLLB20XAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 20-X AC Ammo";
         ammo.internalName = "Clan LB 20-X AC Ammo";
         ammo.mepName = "Clan Ammo 20-X";
@@ -1893,13 +1895,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 33;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLLB2XClusterAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.internalName = "Clan LB 2-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 2-X (CL)";
@@ -1914,13 +1916,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 6;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLLB5XClusterAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 5-X Cluster Ammo";
         ammo.internalName = "Clan LB 5-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 5-X (CL)";
@@ -1935,13 +1937,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 12;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLLB10XClusterAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 10-X Cluster Ammo";
         ammo.internalName = "Clan LB 10-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 10-X (CL)";
@@ -1956,13 +1958,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLLB20XClusterAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LB 20-X Cluster Ammo";
         ammo.internalName = "Clan LB 20-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 20-X (CL)";
@@ -1977,13 +1979,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 33;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLVehicleFlamerAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Vehicle Flamer Ammo";
         ammo.internalName = "Clan Vehicle Flamer Ammo";
         ammo.mepName = "Clan Ammo Vehicle Flamer";
@@ -1995,13 +1997,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLHeavyMGAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Heavy Machine Gun Ammo";
         ammo.internalName = "Clan Heavy Machine Gun Ammo - Full";
         ammo.mepName = "N/A";
@@ -2014,13 +2016,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLHeavyMGAmmoHalf() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Half Heavy Machine Gun Ammo";
         ammo.internalName = "Clan Heavy Machine Gun Ammo - Half";
         ammo.mepName = "N/A";
@@ -2034,13 +2036,13 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLMGAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Machine Gun Ammo";
         ammo.internalName = "Clan Machine Gun Ammo - Full";
         ammo.mepName = "Clan Ammo MG - Full";
@@ -2053,13 +2055,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLMGAmmoHalf() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Half Machine Gun Ammo";
         ammo.internalName = "Clan Machine Gun Ammo - Half";
         ammo.mepName = "Clan Ammo MG - Half";
@@ -2073,13 +2075,13 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLLightMGAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Light Machine Gun Ammo";
         ammo.internalName = "Clan Light Machine Gun Ammo - Full";
         ammo.mepName = "N/A";
@@ -2092,13 +2094,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLLightMGAmmoHalf() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Half Light Machine Gun Ammo";
         ammo.internalName = "Clan Light Machine Gun Ammo - Half";
         ammo.mepName = "N/A";
@@ -2111,13 +2113,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLUltra2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Ultra AC/2 Ammo";
         ammo.internalName = "Clan Ultra AC/2 Ammo";
         ammo.mepName = "Clan Ammo Ultra AC/2";
@@ -2129,13 +2131,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 6;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLUltra5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Ultra AC/5 Ammo";
         ammo.internalName = "Clan Ultra AC/5 Ammo";
         ammo.mepName = "Clan Ammo Ultra AC/5";
@@ -2147,13 +2149,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 15;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLUltra10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Ultra AC/10 Ammo";
         ammo.internalName = "Clan Ultra AC/10 Ammo";
         ammo.mepName = "Clan Ammo Ultra AC/10";
@@ -2165,13 +2167,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLUltra20Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Ultra AC/20 Ammo";
         ammo.internalName = "Clan Ultra AC/20 Ammo";
         ammo.mepName = "Clan Ammo Ultra AC/20";
@@ -2183,7 +2185,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 35;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
@@ -2254,10 +2256,10 @@ public class AmmoType extends EquipmentType {
         return ammo;
 
     }
-    
+
     public static AmmoType createCLLRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 5 Ammo";
         ammo.internalName = "Clan Ammo LRM-5";
         ammo.mepName = "Clan Ammo LRM-5";
@@ -2269,7 +2271,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 7;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
@@ -2340,10 +2342,10 @@ public class AmmoType extends EquipmentType {
         return ammo;
 
     }
-    
+
     public static AmmoType createCLLRM10Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 10 Ammo";
         ammo.internalName = "Clan Ammo LRM-10";
         ammo.mepName = "Clan Ammo LRM-10";
@@ -2355,7 +2357,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
@@ -2429,7 +2431,7 @@ public class AmmoType extends EquipmentType {
 
     public static AmmoType createCLLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 15 Ammo";
         ammo.internalName = "Clan Ammo LRM-15";
         ammo.mepName = "Clan Ammo LRM-15";
@@ -2441,7 +2443,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 21;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
@@ -2515,7 +2517,7 @@ public class AmmoType extends EquipmentType {
 
     public static AmmoType createCLLRM20Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 20 Ammo";
         ammo.internalName = "Clan Ammo LRM-20";
         ammo.mepName = "Clan Ammo LRM-20";
@@ -2527,13 +2529,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 27;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLSRM1Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 1 Ammo";
         ammo.internalName = "Clan Ammo SRM-1";
         ammo.mepName = "Clan Ammo SRM-1";
@@ -2545,13 +2547,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLSRM2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 2 Ammo";
         ammo.internalName = "Clan Ammo SRM-2";
         ammo.mepName = "Clan Ammo SRM-2";
@@ -2563,13 +2565,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 3;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLSRM3Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 3 Ammo";
         ammo.internalName = "Clan Ammo SRM-3";
         ammo.mepName = "Clan Ammo SRM-3";
@@ -2581,13 +2583,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 4;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLSRM4Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 4 Ammo";
         ammo.internalName = "Clan Ammo SRM-4";
         ammo.mepName = "Clan Ammo SRM-4";
@@ -2599,13 +2601,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 5;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLSRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 5 Ammo";
         ammo.internalName = "Clan Ammo SRM-5";
         ammo.mepName = "Clan Ammo SRM-5";
@@ -2617,13 +2619,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 5;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLSRM6Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 6 Ammo";
         ammo.internalName = "Clan Ammo SRM-6";
         ammo.mepName = "Clan Ammo SRM-6";
@@ -2635,7 +2637,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
@@ -2772,7 +2774,7 @@ public class AmmoType extends EquipmentType {
 
     public static AmmoType createCLStreakSRM2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Streak SRM 2 Ammo";
         ammo.internalName = "Clan Streak SRM 2 Ammo";
         ammo.mepName = "Clan Ammo Streak-2";
@@ -2784,7 +2786,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 5;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
@@ -2804,10 +2806,10 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    
+
     public static AmmoType createCLStreakSRM4Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Streak SRM 4 Ammo";
         ammo.internalName = "Clan Streak SRM 4 Ammo";
         ammo.mepName = "Clan Ammo Streak-4";
@@ -2819,7 +2821,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 10;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
@@ -2842,7 +2844,7 @@ public class AmmoType extends EquipmentType {
 
     public static AmmoType createCLStreakSRM6Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Streak SRM 6 Ammo";
         ammo.internalName = "Clan Streak SRM 6 Ammo";
         ammo.mepName = "Clan Ammo Streak-6";
@@ -2854,13 +2856,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 15;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLAMSAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "AMS Ammo";
         ammo.internalName = "CLAMS Ammo";
         ammo.mepName = "Clan Ammo AMS";
@@ -2872,10 +2874,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 21;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
-    
+
     public static AmmoType createCLNarcAmmo() {
         AmmoType ammo = new AmmoType();
         ammo.name = "Narc Pods";
@@ -2892,7 +2894,7 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
- 
+
     public static AmmoType createCLNarcExplosiveAmmo() {
         AmmoType ammo = new AmmoType();
         ammo.name = "Narc Explosive Pods";
@@ -2913,7 +2915,7 @@ public class AmmoType extends EquipmentType {
 
     public static AmmoType createCLATM3Ammo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 3 Ammo";
         ammo.internalName = "Clan Ammo ATM-3";
         ammo.mepName = "Clan Ammo ATM-3";
@@ -2925,13 +2927,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM3ERAmmo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 3 ER Ammo";
         ammo.internalName = "Clan Ammo ATM-3 ER";
         ammo.mepName = "Clan Ammo ATM-3 ER";
@@ -2944,13 +2946,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM3HEAmmo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 3 HE Ammo";
         ammo.internalName = "Clan Ammo ATM-3 HE";
         ammo.mepName = "Clan Ammo ATM-3 HE";
@@ -2963,13 +2965,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM6Ammo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 6 Ammo";
         ammo.internalName = "Clan Ammo ATM-6";
         ammo.mepName = "Clan Ammo ATM-6";
@@ -2981,13 +2983,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM6ERAmmo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 6 ER Ammo";
         ammo.internalName = "Clan Ammo ATM-6 ER";
         ammo.mepName = "Clan Ammo ATM-6 ER";
@@ -3000,13 +3002,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM6HEAmmo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 6 HE Ammo";
         ammo.internalName = "Clan Ammo ATM-6 HE";
         ammo.mepName = "Clan Ammo ATM-6 HE";
@@ -3019,13 +3021,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM9Ammo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 9 Ammo";
         ammo.internalName = "Clan Ammo ATM-9";
         ammo.mepName = "Clan Ammo ATM-9";
@@ -3037,13 +3039,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM9ERAmmo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 9 ER Ammo";
         ammo.internalName = "Clan Ammo ATM-9 ER";
         ammo.mepName = "Clan Ammo ATM-9 ER";
@@ -3056,13 +3058,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM9HEAmmo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 9 HE Ammo";
         ammo.internalName = "Clan Ammo ATM-9 HE";
         ammo.mepName = "Clan Ammo ATM-9 HE";
@@ -3075,13 +3077,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM12Ammo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 12 Ammo";
         ammo.internalName = "Clan Ammo ATM-12";
         ammo.mepName = "Clan Ammo ATM-12";
@@ -3093,13 +3095,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM12ERAmmo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 12 ER Ammo";
         ammo.internalName = "Clan Ammo ATM-12 ER";
         ammo.mepName = "Clan Ammo ATM-12 ER";
@@ -3112,13 +3114,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-         
+
         return ammo;
     }
- 
+
     public static AmmoType createCLATM12HEAmmo() {
         AmmoType ammo = new AmmoType();
-         
+
         ammo.name = "ATM 12 HE Ammo";
         ammo.internalName = "Clan Ammo ATM-12 HE";
         ammo.mepName = "Clan Ammo ATM-12 HE";
@@ -3138,7 +3140,7 @@ public class AmmoType extends EquipmentType {
     // Start BattleArmor ammo
     public static AmmoType createBASRM2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 2 Ammo";
         ammo.internalName = "BA-SRM2 Ammo";
         ammo.mepName = ammo.internalName;
@@ -3151,12 +3153,12 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 2;
         ammo.hittable = false;
         ammo.bv = 0;
-        
+
         return ammo;
     }
     public static AmmoType createBASRM2OSAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 2 Ammo";
         ammo.internalName = BattleArmor.IS_DISPOSABLE_SRM2_AMMO;
         ammo.mepName = ammo.internalName;
@@ -3169,12 +3171,12 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.hittable = false;
         ammo.bv = 0;
-        
+
         return ammo;
     }
     public static AmmoType createBAInfernoSRMAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Inferno SRM Ammo";
         ammo.internalName = "BA-Inferno SRM Ammo";
         ammo.mepName = ammo.internalName;
@@ -3188,12 +3190,12 @@ public class AmmoType extends EquipmentType {
         ammo.hittable = false;
         ammo.bv = 0;
         ammo.munitionType = M_INFERNO;
-        
+
         return ammo;
     }
     public static AmmoType createBAAdvancedSRM2Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Advanced SRM 2 Ammo";
         ammo.internalName = "BA-Advanced SRM2 Ammo";
         ammo.mepName = ammo.internalName;
@@ -3206,12 +3208,12 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 2;
         ammo.hittable = false;
         ammo.bv = 0;
-        
+
         return ammo;
     }
     public static AmmoType createBAMicroBombAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Micro Bomb Ammo";
         ammo.internalName = "BA-Micro Bomb Ammo";
         ammo.mepName = ammo.internalName;
@@ -3224,12 +3226,12 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.hittable = false;
         ammo.bv = 0;
-        
+
         return ammo;
     }
     public static AmmoType createCLTorpedoLRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Torpedo/LRM 5 Ammo";
         ammo.internalName = "Clan Torpedo/LRM5 Ammo";
         ammo.mepName = ammo.internalName;
@@ -3242,12 +3244,12 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.hittable = false;
         ammo.bv = 0;
-        
+
         return ammo;
     }
     public static AmmoType createFenrirSRM4Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "SRM 4 Ammo";
         ammo.internalName = "Fenrir SRM-4 Ammo";
         ammo.mepName = ammo.internalName;
@@ -3260,12 +3262,12 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.hittable = false;
         ammo.bv = 0;
-        
+
         return ammo;
     }
     public static AmmoType createBACompactNarcAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Compact Narc Ammo";
         ammo.internalName = BattleArmor.IS_DISPOSABLE_NARC_AMMO;
         ammo.mepName = ammo.internalName;
@@ -3278,12 +3280,12 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 2;
         ammo.hittable = false;
         ammo.bv = 0;
-        
+
         return ammo;
     }
     public static AmmoType createBAMineLauncherAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Mine Launcher Ammo";
         ammo.internalName = "BA-Mine Launcher Ammo";
         ammo.mepName = ammo.internalName;
@@ -3295,13 +3297,13 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
-        
+
         return ammo;
     }
 
     public static AmmoType createBALRM5Ammo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "LRM 5 Ammo";
         ammo.internalName = "BA Ammo LRM-5";
         ammo.mepName = "BA Ammo LRM-5";
@@ -3313,7 +3315,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 6;
         ammo.bv = 0;
-        
+
         return ammo;
     }
 
@@ -3321,7 +3323,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createCLPROHeavyMGAmmo() {
         // Need special processing to allow non-standard ammo loads.
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Heavy Machine Gun Ammo";
         ammo.internalName = "Clan Heavy Machine Gun Ammo - Proto";
         ammo.mepName = "N/A";
@@ -3334,13 +3336,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLPROMGAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Machine Gun Ammo";
         ammo.internalName = "Clan Machine Gun Ammo - Proto";
         ammo.mepName = "N/A";
@@ -3353,13 +3355,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
 
     public static AmmoType createCLPROLightMGAmmo() {
         AmmoType ammo = new AmmoType();
-        
+
         ammo.name = "Light Machine Gun Ammo";
         ammo.internalName = "Clan Light Machine Gun Ammo - Proto";
         ammo.mepName = "N/A";
@@ -3372,16 +3374,52 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
+
         return ammo;
     }
+    public static AmmoType createISArrowIVAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Arrow IV Ammo";
+        ammo.internalName = "ISArrowIVAmmo";
+        ammo.mepName = "ISArrowIV Ammo";
+        ammo.mtfName = "ISArrowIV Ammo";
+        ammo.tdbName = "ISArrowIV Ammo";
+        ammo.damagePerShot=1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_ARROW_IV;
+        ammo.shots = 5;
+        ammo.bv = 11;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLArrowIVAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Arrow IV Ammo";
+        ammo.internalName = "CLArrowIVAmmo";
+        ammo.mepName = "CLArrowIV Ammo";
+        ammo.mtfName = "CLArrowIV Ammo";
+        ammo.tdbName = "CLArrowIV Ammo";
+        ammo.damagePerShot=1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_ARROW_IV;
+        ammo.shots = 5;
+        ammo.bv = 11;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+      }
+
 
     public String toString() {
         return "Ammo: " + name;
     }
 
     public static boolean canClearMinefield(AmmoType at) {
-	
+
         if (at != null &&
             (at.getAmmoType() == T_LRM ||
              at.getAmmoType() == T_MRM) &&
@@ -3389,12 +3427,12 @@ public class AmmoType extends EquipmentType {
             at.getMunitionType() == M_STANDARD) {
             return true;
         }
-		
+
         return false;
     }
 
     public static boolean canDeliverMinefield(AmmoType at) {
-	
+
         if (at != null &&
             at.getAmmoType() == T_LRM &&
             ( (at.getMunitionType() == M_THUNDER)
@@ -3404,7 +3442,7 @@ public class AmmoType extends EquipmentType {
               || (at.getMunitionType() == M_THUNDER_ACTIVE) ) ) {
             return true;
         }
-		
+
         return false;
     }
 

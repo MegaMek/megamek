@@ -22,6 +22,7 @@ public class WeaponType extends EquipmentType {
     public static final int     DAMAGE_MISSILE = -2;
     public static final int     DAMAGE_VARIABLE = -3;
     public static final int     DAMAGE_SPECIAL = -4;
+    public static final int     DAMAGE_ARTILLERY = -5;
     public static final int     WEAPON_NA = Integer.MIN_VALUE;
 
     // weapon flags (note: many weapons can be identified by their ammo type)
@@ -32,6 +33,7 @@ public class WeaponType extends EquipmentType {
     public static final int     F_AUTO_TARGET   = 0x0010; // for weapons that target automatically (AMS)
     public static final int     F_NO_FIRES      = 0x0020; // cannot start fires
     public static final int     F_ONESHOT       = 0x8000; //weapon is oneShot.
+    public static final int     F_ARTILLERY     = 0x10000;
 
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
@@ -195,6 +197,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISRL10());
         EquipmentType.addType(createISRL15());
         EquipmentType.addType(createISRL20());
+        EquipmentType.addType(createISArrowIVSystem());
 
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -239,6 +242,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLATM12());
         EquipmentType.addType(createCLAMS());
         EquipmentType.addType(createCLNarc());
+        EquipmentType.addType(createCLArrowIVSystem());
         //Protomech weapons
         EquipmentType.addType(createCLPROLRM1() );
         EquipmentType.addType(createCLPROLRM2() );
@@ -4139,6 +4143,49 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 119;
         weapon.flags |= F_PROTOMECH;
         return weapon;
+    }
+    public static WeaponType createISArrowIVSystem() {
+      WeaponType weapon = new WeaponType();
+      weapon.name = "Arrow IV";
+      weapon.internalName = "ISArrowIV";
+      weapon.mtfName = "ISArrowIVSystem";
+      weapon.mepName = "ISArrowIVSystem";//not true, I just don't know
+      weapon.tdbName = "ISArrowIVSystem";//not true
+      weapon.heat = 10;
+      weapon.damage = DAMAGE_ARTILLERY;
+      weapon.rackSize = 20;
+      weapon.ammoType = AmmoType.T_ARROW_IV;
+      weapon.minimumRange = 0;
+      weapon.shortRange = 4;
+      weapon.mediumRange = 5;
+      weapon.longRange = 6;
+      weapon.tonnage = 15f;
+      weapon.criticals = 15;
+      weapon.bv = 171;
+      weapon.flags |= F_ARTILLERY;
+      return weapon;
+    }
+    public static WeaponType createCLArrowIVSystem() {
+      WeaponType weapon = new WeaponType();
+      weapon.name = "Arrow IV";
+      weapon.internalName = "CLArrowIV";
+      weapon.mtfName = "CLArrowIVSystem";
+      weapon.mepName = "CLArrowIVSystem";//not true
+      weapon.tdbName = "CLArrowIVSystem";//not true
+      weapon.heat = 10;
+      weapon.damage = DAMAGE_ARTILLERY;
+      weapon.rackSize = 20;
+      weapon.ammoType = AmmoType.T_ARROW_IV;
+      weapon.minimumRange = 0;
+      weapon.shortRange = 4;
+      weapon.mediumRange = 5;
+      weapon.longRange = 6;
+      weapon.tonnage = 12f;
+      weapon.criticals = 12;
+      weapon.bv = 171;
+      weapon.flags |= F_ARTILLERY;
+      return weapon;
+
     }
 
     public String toString() {

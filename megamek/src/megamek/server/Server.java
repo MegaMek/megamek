@@ -1135,6 +1135,10 @@ implements Runnable {
         GameTurn nextTurn = game.changeToNextTurn();
         send(createTurnIndexPacket());
         
+        if (game.getFirstEntity() == null) {
+            sendTurnErrorSkipMessage();
+        }
+
         if (getPlayer(nextTurn.getPlayerNum()).isGhost()) {
             sendGhostSkipMessage();
         }
@@ -1147,6 +1151,16 @@ implements Runnable {
     private void sendGhostSkipMessage() {
         Player ghost = getPlayer(game.getTurn().getPlayerNum());
         sendServerChat("Player '" + ghost.getName() + "' is disconnected.  You may skip his/her current turn with the /skip command.");
+    }
+    
+    /**
+     * Sends out a notification message indicating that the current turn is an
+     * error and should be skipped.
+     */
+    private void sendTurnErrorSkipMessage() {
+        Player player = getPlayer(game.getTurn().getPlayerNum());
+        sendServerChat("Player '" + player.getName() + "' has no units to move.  You should skip his/her/your current turn with the /skip command. "
+        + "You may want to report this error.  See the MegaMek homepage (http://megamek.sf.net/) for details.");
     }
     
     /**
@@ -1180,10 +1194,12 @@ implements Runnable {
     }
     
     /**
-     * Returns true if the current turn may be skipped.
+     * Returns true if the current turn may be skipped.  Ghost players' turns
+     * are skippable, and a turn should be skipped if there's nothing to move.
      */
     public boolean isTurnSkippable() {
-        return getPlayer(game.getTurn().getPlayerNum()).isGhost();
+        return game.getFirstEntity() == null 
+            || getPlayer(game.getTurn().getPlayerNum()).isGhost();
     }
     
     /**

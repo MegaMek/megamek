@@ -37,6 +37,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Choice      unitStartChar;
     private TextField   maxPathfinderTime;
     private Checkbox    explicitScrollOnly;
+    private Checkbox    alwaysScrollOnRightClick;
     private Checkbox    getFocus;
 
     private static final String CANCEL = "CANCEL";
@@ -123,6 +124,10 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         explicitScrollOnly
             = new Checkbox( "Use only Right-Click-Drag-and-Drop and the MiniMap to scroll." );
         tempPanel.add( explicitScrollOnly );
+        
+        alwaysScrollOnRightClick
+		    = new Checkbox( "Right click always scrolls the map. (No effect when Right-Click-Drag-and-Drop scrolling used)" );
+		    tempPanel.add( alwaysScrollOnRightClick );
 
         panSetting = new Panel();
         maxPathfinderTime
@@ -213,6 +218,8 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         shiftScrollSensitivity.setText( Integer.toString(Settings.shiftScrollSensitivity ) );
 
         explicitScrollOnly.setState( Settings.explicitScrollOnly );
+        
+        alwaysScrollOnRightClick.setState( Settings.alwaysScrollOnRightClick );
 
         maxPathfinderTime.setText( Integer.toString(Settings.maxPathfinderTime ) );
 
@@ -244,6 +251,8 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.unitStartChar=   unitStartChar.getSelectedItem().charAt(0);
         Settings.shiftScrollSensitivity =   Integer.parseInt(shiftScrollSensitivity.getText());
         Settings.explicitScrollOnly= explicitScrollOnly.getState();
+        Settings.alwaysScrollOnRightClick = alwaysScrollOnRightClick.getState();
+
 
         Settings.maxPathfinderTime =   Integer.parseInt(maxPathfinderTime.getText());
 

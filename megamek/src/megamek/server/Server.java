@@ -111,6 +111,11 @@ public class Server
         registerCommand(new WhoCommand(this));
     }
     
+    public void setGame(Game g)
+    {
+        game = g;
+    }
+    
     /**
      * Make a default message o' the day containing the version string, and
      * if it was found, the build timestamp

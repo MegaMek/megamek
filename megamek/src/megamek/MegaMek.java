@@ -61,7 +61,7 @@ public class MegaMek
      * Display the main menu.
      */
     public void showMainMenu() {
-        Button hostB, connectB, botB, editB;
+        Button hostB, connectB, botB, editB, scenB;
         Label labVersion = new Label();
             
         frame.removeAll();
@@ -71,6 +71,10 @@ public class MegaMek
         hostB = new Button("Host a New Game...");
         hostB.setActionCommand("game_host");
         hostB.addActionListener(this);
+        
+        scenB = new Button("Host a Scenario...");
+        scenB.setActionCommand("game_scen");
+        scenB.addActionListener(this);
         
         connectB = new Button("Connect to a Game...");
         connectB.setActionCommand("game_connect");
@@ -96,6 +100,7 @@ public class MegaMek
 
         addBag(labVersion, gridbag, c);
         addBag(hostB, gridbag, c);
+        addBag(scenB, gridbag, c);
         addBag(connectB, gridbag, c);
         addBag(botB, gridbag, c);
         addBag(editB, gridbag, c);
@@ -165,6 +170,84 @@ public class MegaMek
         }
         // wait for full connection
         client.retrieveServerInfo();
+    }
+    
+    /**
+     * Host a game constructed from a scenario file
+     */
+    public void scenario() {
+        FileDialog fd = new FileDialog(frame, 
+                "Select a scenario file...",
+                FileDialog.LOAD);
+        fd.setDirectory("data" + File.separatorChar + "scenarios");
+        
+        // the filter doesn't seem to do anything in windows.  oh well
+        FilenameFilter ff = new FilenameFilter() {
+            public boolean accept(File f, String s) {
+                return s.endsWith(".mms");
+            }
+        };
+        fd.setFilenameFilter(ff);
+        fd.show();
+        if (fd.getFile() == null) {
+            return;
+        }
+        ScenarioLoader sl = new ScenarioLoader(new File(fd.getDirectory(), fd.getFile()));
+        Game g = null;
+        try {
+            g = sl.createGame();
+        } catch (Exception e) {
+            new AlertDialog(frame, "Host Scenario", "Error: " + e.getMessage()).show();
+            return;
+        }
+        
+        // get player types and colors set
+        Player[] pa = new Player[g.getPlayersVector().size()];
+        g.getPlayersVector().copyInto(pa);
+        
+        ScenarioDialog sd = new ScenarioDialog(frame, pa);
+        sd.show();
+        if (!sd.bSet) {
+            return;
+        }
+        
+        // host with the scenario.  essentially copied from host()
+        HostDialog hd = new HostDialog(frame);
+        hd.yourNameF.setText(sd.localName);
+        hd.show();
+        // verify dialog data
+        if(hd.name == null || hd.serverPass == null || hd.port == 0) {
+            return;
+        }
+
+        // start server
+        server = new Server(hd.serverPass, hd.port);
+        server.setGame(g);
+
+        // initialize game
+        client = new Client(frame, hd.name);
+        
+        // verify connection
+        if(!client.connect("localhost", hd.port)) {
+            server = null;
+            client = null;
+            new AlertDialog(frame, "Host a Game", "Error: could not connect to local server.").show();
+            return;
+        }
+        
+        // wait for full connection
+        client.retrieveServerInfo();
+        
+        // setup any bots
+        for (int x = 0; x < pa.length; x++) {
+            if (sd.playerTypes[x] == sd.T_BOT) {
+                Frame f = new Frame("MegaMek Bot");
+                BotClient bc = new BotClient(f, pa[x].getName());
+                bc.connect("localhost", hd.port);
+                bc.retrieveServerInfo();
+                //f.hide();
+            }
+        }
     }
     
     /**
@@ -267,6 +350,9 @@ public class MegaMek
         }
         if(ev.getActionCommand().equalsIgnoreCase("game_host")) {
             host();
+        }
+        if(ev.getActionCommand().equalsIgnoreCase("game_scen")) {
+            scenario();
         }
         if(ev.getActionCommand().equalsIgnoreCase("game_connect")) {
             connect();
@@ -536,6 +622,104 @@ class ConnectDialog extends Dialog implements ActionListener {
             setVisible(false);
         }
         if(e.getActionCommand().equals("cancel")) {
+            setVisible(false);
+        }
+    }
+}
+
+/**
+ * Allow a user to set types and colors for scenario players
+ */
+class ScenarioDialog extends Dialog implements ActionListener
+{
+    public static final int T_ME = 0;
+    public static final int T_HUMAN = 1;
+    public static final int T_BOT = 2;
+    
+    private Player[] m_players;
+    private Label[] m_labels;
+    private Choice[] m_typeChoices;
+    private Choice[] m_colorChoices;
+    private Frame m_frame;
+    
+    public boolean bSet = false;
+    public int[] playerTypes;
+    public String localName = "";
+    
+    public ScenarioDialog(Frame frame, Player[] pa)
+    {
+        super(frame, "Set Scenario Players...", true);
+        m_frame = frame;
+        m_players = pa;
+        m_labels = new Label[pa.length];
+        m_typeChoices = new Choice[pa.length];
+        m_colorChoices = new Choice[pa.length];
+        playerTypes = new int[pa.length];
+        
+        for (int x = 0; x < pa.length; x++) {
+            m_labels[x] = new Label(pa[x].getName(), Label.LEFT);
+            m_typeChoices[x] = new Choice();
+            m_typeChoices[x].add("Me");
+            m_typeChoices[x].add("Other Human");
+            m_typeChoices[x].add("Bot");
+            m_colorChoices[x] = new Choice();
+            for (int i = 0; i < Player.colorNames.length; i++) {
+                m_colorChoices[x].add(Player.colorNames[i]);
+            }
+            m_colorChoices[x].select(x);
+        }
+        
+        setLayout(new BorderLayout());
+        Panel choicePanel = new Panel();
+        choicePanel.setLayout(new GridLayout(pa.length + 1, 3));
+        choicePanel.add(new Label("Player"));
+        choicePanel.add(new Label("Type"));
+        choicePanel.add(new Label("Color"));
+        for (int x = 0; x < pa.length; x++) {
+            choicePanel.add(m_labels[x]);
+            choicePanel.add(m_typeChoices[x]);
+            choicePanel.add(m_colorChoices[x]);
+        }
+        add(choicePanel, BorderLayout.CENTER);
+        
+        Panel butPanel = new Panel();
+        butPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        Button bOkay = new Button("Okay");
+        bOkay.setActionCommand("okay");
+        bOkay.addActionListener(this);
+        Button bCancel = new Button("Cancel");
+        bCancel.setActionCommand("cancel");
+        bCancel.addActionListener(this);
+        butPanel.add(bOkay);
+        butPanel.add(bCancel);
+        add(butPanel, BorderLayout.SOUTH);
+        pack();
+        setResizable(false);
+        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
+                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
+    }
+    
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getActionCommand().equals("okay")) {
+            boolean bMeSet = false;
+            for (int x = 0; x < m_players.length; x++) {
+                playerTypes[x] = m_typeChoices[x].getSelectedIndex();
+                if (playerTypes[x] == T_ME) {
+                    if (bMeSet) {
+                        new AlertDialog(m_frame, "Scenario Error", 
+                                "Only one faction can be set to 'Me'.").show();
+                        return;
+                    }
+                    bMeSet = true;
+                    localName = m_players[x].getName();
+                }
+                m_players[x].setColorIndex(m_colorChoices[x].getSelectedIndex());
+            }
+            bSet = true;
+            setVisible(false);   
+        }
+        else if (e.getActionCommand().equals("cancel")) {
             setVisible(false);
         }
     }

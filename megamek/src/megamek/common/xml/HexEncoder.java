@@ -43,6 +43,45 @@ public class HexEncoder {
     public static void encode( Hex hex, Writer out )
         throws IOException
     {
+        Terrain terrain = null;
+        int loop = 0;
+
+        // First, validate our input.
+        if ( null == hex ) {
+            throw new IllegalArgumentException( "The hex is null." );
+        }
+        if ( null == out ) {
+            throw new IllegalArgumentException( "The writer is null." );
+        }
+
+        // Start the XML stream for this hex
+        out.write( "<hex version=\"1.0\" >" );
+
+        // OK, so elevation and theme aren't *strictly speaking* part of
+        // terrain, but it's convenient to store this info here.  Cope.
+        out.write( "<terrains count=\"" );
+        out.write( hex.terrainsPresent() );
+        out.write( "\" elevation=\"" );
+        out.write( hex.getElevation() );
+        out.write( "\" theme=\"" );
+        out.write( hex.getTheme() );
+        out.write( "\" >" );
+        for ( loop = 0; loop < Terrain.SIZE; loop++ ) {
+            // If the hex has this kind of terrain, encode it.
+            if ( hex.contains(loop) ) {
+                terrain = hex.getTerrain(loop);
+                out.write( "<terrain type=\"" );
+                out.write( terrain.getType() );
+                out.write( "\" level=\"" );
+                out.write( terrain.getLevel() );
+                out.write( "\" exits=\"" );
+                out.write( terrain.getExits() );
+                out.write( "\" exitsSpecified=\"" );
+                out.write( terrain.hasExitsSpecified() ? "true" : "false" );
+                out.write( "\" />" );
+            }
+        }
+        out.write( "</terrains>" );
     }
 
     /**

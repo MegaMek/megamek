@@ -6160,18 +6160,7 @@ implements Runnable {
         if (doBlind()) {
             Entity eTarget = game.getEntity(nEntityID);
             Vector vPlayers = game.getPlayersVector();
-            Vector vCanSee = new Vector();
-            vCanSee.addElement(eTarget.getOwner());
-            Vector vEntities = game.getEntitiesVector();
-            for (int x = 0; x < vEntities.size(); x++) {
-                Entity e = (Entity)vEntities.elementAt(x);
-                if (vCanSee.contains(e.getOwner()) || !e.isActive()) {
-                    continue;
-                }
-                if (Compute.canSee(game, e, eTarget)) {
-                    vCanSee.addElement(e.getOwner());
-                }
-            }
+            Vector vCanSee = whoCanSee(eTarget);
             // send an entity update to everyone who can see
             Packet pack = createEntityPacket(nEntityID);
             for (int x = 0; x < vCanSee.size(); x++) {
@@ -6190,6 +6179,49 @@ implements Runnable {
         else {
             // everyone can see
             send(createEntityPacket(nEntityID));
+        }
+    }
+    
+    /**
+     * Returns a vector of which players can see this entity.
+     */
+    private Vector whoCanSee(Entity entity) {
+        boolean bTeamVision = game.getOptions().booleanOption("team_vision");
+        Vector vPlayers = game.getPlayersVector();
+        Vector vEntities = game.getEntitiesVector();
+        
+        Vector vCanSee = new Vector();
+        vCanSee.addElement(entity.getOwner());
+        if (bTeamVision) {
+            addTeammates(vCanSee, entity.getOwner());
+        }
+        
+        for (int i = 0; i < vEntities.size(); i++) {
+            Entity e = (Entity)vEntities.elementAt(i);
+            if (vCanSee.contains(e.getOwner()) || !e.isActive()) {
+                continue;
+            }
+            if (Compute.canSee(game, e, entity)) {
+                vCanSee.addElement(e.getOwner());
+                if (bTeamVision) {
+                    addTeammates(vCanSee, e.getOwner());
+                }
+            }
+        }
+        return vCanSee;
+    }
+    
+    /**
+     * Adds teammates of a player to the Vector.  
+     * Utility function for whoCanSee.  
+     */
+    private void addTeammates(Vector vector, Player player) {
+        Vector vPlayers = game.getPlayersVector();
+        for (int j = 0; j < vPlayers.size(); j++) {
+            Player p = (Player)vPlayers.elementAt(j);
+            if (!player.isEnemyOf(p) && !vector.contains(p)) {
+                vector.addElement(p);
+            }
         }
     }
     
@@ -6218,9 +6250,11 @@ implements Runnable {
         Vector vCanSee = new Vector();
         Vector vAllEntities = game.getEntitiesVector();
         Vector vMyEntities = new Vector();
+        boolean bTeamVision = game.getOptions().booleanOption("team_vision");
+        
         for (int x = 0; x < vAllEntities.size(); x++) {
             Entity e = (Entity)vAllEntities.elementAt(x);
-            if (e.getOwner() == pViewer) {
+            if (e.getOwner() == pViewer || (bTeamVision && !e.getOwner().isEnemyOf(pViewer))) {
                 vMyEntities.addElement(e);
             }
         }

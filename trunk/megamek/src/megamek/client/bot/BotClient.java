@@ -615,7 +615,7 @@ public class BotClient extends Client
         do {
             // if it can target To...
             Mounted w = fen.getEquipment(weap);
-            ToHitData th = Compute.toHitWeapon(game, from, ten, weap, new Vector(0));    
+            ToHitData th = Compute.toHitWeapon(game, from, ten, weap);    
             // TODO: try all secondary facings for firer; take the best
             
              // calculate expected value of attack
@@ -756,7 +756,7 @@ public class BotClient extends Client
         while (ents.hasMoreElements()) {
             Entity e = (Entity)ents.nextElement();
             if (e.getOwner().isEnemyOf(game.getPlayer(this.local_pn))) {
-                ToHitData th = Compute.toHitWeapon(game, from, e, weaponID, new Vector(0));    
+                ToHitData th = Compute.toHitWeapon(game, from, e, weaponID);    
                 if (th.getValue() != ToHitData.IMPOSSIBLE) {
                     double odds = Compute.oddsAbove(th.getValue())/ 100.0;
                     double expectedDmg;

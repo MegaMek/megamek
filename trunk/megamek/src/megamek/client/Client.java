@@ -537,9 +537,10 @@ public class Client extends Panel
     /** 
      * Change whose turn it is.
      */
-    protected void changeTurn(GameTurn turn) {
-        game.setTurn(turn);
-        processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, getPlayer(turn.getPlayerNum()), ""));
+    protected void changeTurnIndex(int index) {
+        game.setTurnIndex(index);
+        Player player = getPlayer(game.getTurn().getPlayerNum());
+        processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, player, ""));
     }
     
     /**
@@ -721,6 +722,13 @@ public class Client extends Panel
             game.setPlayer(pindex, newPlayer);
         }
         processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, ""));
+    }
+    
+    /**
+     * Loads the turn list from the data in the packet
+     */
+    protected void receiveTurns(Packet packet) {
+        game.setTurnVector((Vector)packet.getObject(0));
     }
 
     /**
@@ -942,7 +950,10 @@ public class Client extends Panel
                 changePhase(c.getIntValue(0));
                 break;
             case Packet.COMMAND_TURN :
-                changeTurn((GameTurn)c.getObject(0));
+                changeTurnIndex(c.getIntValue(0));
+                break;
+            case Packet.COMMAND_SENDING_TURNS :
+                receiveTurns(c);
                 break;
             case Packet.COMMAND_SENDING_BOARD :
                 receiveBoard(c);
@@ -952,6 +963,9 @@ public class Client extends Panel
                 break;
             case Packet.COMMAND_SENDING_REPORT :
                 eotr = (String)c.getObject(0);
+                if (curPanel instanceof ReportDisplay) {
+                    ((ReportDisplay)curPanel).refresh();
+                }
                 break;
             case Packet.COMMAND_ENTITY_ATTACK :
                 receiveAttack(c);

@@ -17,6 +17,8 @@ package megamek.common;
 import java.util.*;
 import java.io.*;
 
+import megamek.common.actions.*;
+
 /**
  * The game class is the root of all data about the game in progress.
  * Both the Client and the Server should have one of these objects and it
@@ -52,9 +54,6 @@ public class Game implements Serializable
     public static final int UNIT_SALVAGEABLE    = 0x0200;
     public static final int UNIT_DEVASTATED     = 0x0400;
     
-    public int phase = PHASE_UNKNOWN;
-    private GameTurn turn;
-    
     private GameOptions options = new GameOptions();
 
     public Board board = new Board();
@@ -62,26 +61,43 @@ public class Game implements Serializable
     private Vector entities = new Vector();
     private Hashtable entityIds = new Hashtable();
     
-    private Vector graveyard = new Vector(); // for dead entities
-
-    /**
-     * Track units that have been retreated.
-     */
+    /** Keeps track of dead units */
+    private Vector graveyard = new Vector();
+    /** Track units that have been retreated. */
     private Vector sanctuary = new Vector();
-
-    /**
-     * Track units that have been utterly devastated.
-     */
+    /** Track units that have been utterly devastated. */
     private Vector smithereens = new Vector();
 
     private Vector players = new Vector();
     private Hashtable playerIds = new Hashtable();
     
-    // have the entities been deployed?
+    /** have the entities been deployed? */
     private boolean m_bHasDeployed = false;
     
-	private int windDirection;
-	private String stringWindDirection;
+    /** how's the weather? */
+    private int windDirection;
+    private String stringWindDirection;
+    
+    /** what round is it? */
+    private int roundCount = 0;
+    
+    /** The current turn list */
+    private Vector turnVector = new Vector();
+    private int turnIndex = 0;
+    
+    /** The present phase */
+    public int phase = PHASE_UNKNOWN;
+
+    // phase state
+    private Vector actions = new Vector();
+    private Vector pendingCharges = new Vector();
+    private Vector pilotRolls = new Vector();
+    
+    // reports
+    private StringBuffer roundReport = new StringBuffer();
+    private StringBuffer phaseReport = new StringBuffer();
+    
+    private boolean forceVictory = false;
 	
     /**
      * Constructor
@@ -221,16 +237,58 @@ public class Game implements Serializable
      * Returns the current GameTurn object
      */
     public GameTurn getTurn() {
-        return turn;
+        if (turnIndex < 0 || turnIndex >= turnVector.size()) {
+            return null;
+        }
+        return (GameTurn)turnVector.elementAt(turnIndex);
     }
   
-    /**
-     * Sets the turn
-     */
-    public void setTurn(GameTurn turn) {
-        this.turn = turn;
+    /** Changes to the next turn, returning it. */
+    public GameTurn changeToNextTurn() {
+        turnIndex++;
+        return getTurn();
     }
     
+    /** Resets the turn index to -1 (awaiting first turn) */
+    public void resetTurnIndex() {
+        turnIndex = -1;
+    }
+    
+    /** Returns true if there is a turn after the current one */
+    public boolean hasMoreTurns() {
+        return turnVector.size() > (turnIndex + 1);
+    }
+    
+    /** Inserts a turn after the current one */
+    public void insertTurn(GameTurn turn) {
+        turnVector.insertElementAt(turn, turnIndex);
+    }
+    
+    /** Returns an Enumeration of the current turn list */
+    public Enumeration getTurns() {
+        return turnVector.elements();
+    }
+    
+    /** Returns the current turn index */
+    public int getTurnIndex() {
+        return turnIndex;
+    }
+  
+    /** Sets the current turn index */
+    public void setTurnIndex(int turnIndex) {
+        this.turnIndex = turnIndex;
+    }
+  
+    /** Returns the current turn vector */
+    public Vector getTurnVector() {
+        return turnVector;
+    }
+  
+    /** Sets the current turn vector */
+    public void setTurnVector(Vector turnVector) {
+        this.turnVector = turnVector;
+    }
+  
     public int getPhase() {
         return phase;
     }
@@ -387,11 +445,20 @@ public class Game implements Serializable
      * Resets this game by removing all entities.
      */
     public void reset() {
+        roundCount = 0;
+        
         entities.removeAllElements();
+        entityIds.clear();
+
         sanctuary.removeAllElements();
         graveyard.removeAllElements();
         smithereens.removeAllElements();
-        entityIds.clear();
+        
+        resetActions();
+        resetCharges();
+        resetPSRs();
+        
+        forceVictory = false;
     }
     
     /**
@@ -506,7 +573,7 @@ public class Game implements Serializable
      * none can.
      */
     public Entity getFirstEntity() {
-        return getFirstEntity(turn);
+        return getFirstEntity(getTurn());
     }
     
     /**
@@ -514,7 +581,7 @@ public class Game implements Serializable
      * none can.
      */
     public Entity getFirstEntity(GameTurn turn) {
-        return getEntity(getFirstEntityNum(turn));
+        return getEntity(getFirstEntityNum(getTurn()));
     }
     
     /**
@@ -522,7 +589,7 @@ public class Game implements Serializable
      * or -1 if none can.
      */
     public int getFirstEntityNum() {
-        return getFirstEntityNum(turn);
+        return getFirstEntityNum(getTurn());
     }
     
     /**
@@ -549,11 +616,11 @@ public class Game implements Serializable
      * @param start the index number to start at
      */
     public Entity getNextEntity(int start) {
-        return getEntity(getNextEntityNum(turn, start));
+        return getEntity(getNextEntityNum(getTurn(), start));
     }
 
     public int getNextEntityNum(int start) {
-        return getNextEntityNum(turn, start);
+        return getNextEntityNum(getTurn(), start);
     }
 
     /**
@@ -733,5 +800,107 @@ public class Game implements Serializable
         return result;
 
     } // End private boolean checkForMagneticClamp()
-
+    
+    /** Adds the specified action to the actions list for this phase. */
+    public void addAction(EntityAction ea) {
+        actions.addElement(ea);
+    }
+    
+    /** Returns an Enumeration of actions scheduled for this phase. */
+    public Enumeration getActions() {
+        return actions.elements();
+    }
+    
+    /** Resets the actions list. */
+    public void resetActions() {
+        actions.removeAllElements();
+    }
+    
+    public int actionsSize() {
+        return actions.size();
+    }
+    
+    /** Adds a pending displacement attack to the list for this phase. */
+    public void addCharge(AttackAction ea) {
+        pendingCharges.addElement(ea);
+    }
+    
+    /** 
+     * Returns an Enumeration of displacement attacks scheduled for the end
+     * of the physical phase.
+     */
+    public Enumeration getCharges() {
+        return pendingCharges.elements();
+    }
+    
+    /** Resets the pending charges list. */
+    public void resetCharges() {
+        pendingCharges.removeAllElements();
+    }
+    
+    /** Adds a pending PSR to the list for this phase. */
+    public void addPSR(PilotingRollData psr) {
+        pilotRolls.addElement(psr);
+    }
+    
+    /** Returns an Enumeration of pending PSRs. */
+    public Enumeration getPSRs() {
+        return pilotRolls.elements();
+    }
+    
+    /** Resets the PSR list. */
+    public void resetPSRs() {
+        pilotRolls.removeAllElements();
+    }
+    
+    /** Getter for property roundCount.
+     * @return Value of property roundCount.
+     */
+    public int getRoundCount() {
+        return roundCount;
+    }
+    
+    /** Increments the round counter */
+    public void incrementRoundCount() {
+        roundCount++;
+    }
+    
+    /** Getter for property forceVictory.
+     * @return Value of property forceVictory.
+     */
+    public boolean isForceVictory() {
+        return forceVictory;
+    }
+    
+    /** Setter for property forceVictory.
+     * @param forceVictory New value of property forceVictory.
+     */
+    public void setForceVictory(boolean forceVictory) {
+        this.forceVictory = forceVictory;
+    }
+    
+    /** Getter for property roundReport.
+     * @return Value of property roundReport.
+     */
+    public java.lang.StringBuffer getRoundReport() {
+        return roundReport;
+    }
+    
+    /** Resets the round report */
+    public void resetRoundReport() {
+        this.roundReport = new StringBuffer();
+    }
+    
+    /** Getter for property phaseReport.
+     * @return Value of property phaseReport.
+     */
+    public java.lang.StringBuffer getPhaseReport() {
+        return phaseReport;
+    }
+    
+    /** Resets the round report */
+    public void resetPhaseReport() {
+        this.phaseReport = new StringBuffer();
+    }
+    
 }

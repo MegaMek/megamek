@@ -542,7 +542,7 @@ public class FiringDisplay
         // update target panel
         final int weaponId = client.mechD.wPan.getSelectedWeaponNum();
         if (target != null && weaponId != -1) {
-            ToHitData toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, attacks);
+            ToHitData toHit = Compute.toHitWeapon(client.game, cen, target, weaponId);
             client.mechD.wPan.wTargetR.setText(target.getDisplayName());
             client.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()));
             Mounted m = ce().getEquipment(weaponId);

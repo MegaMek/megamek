@@ -1490,14 +1490,6 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Can only raise the heat level of Meks.");
         }
 
-        // Can't target infantry in buildings (from the outside).
-        // TODO: you can target infantry from within the *same* building.
-        if ( targetInBuilding &&
-             te instanceof Infantry &&
-             !ae.getPosition().equals(target.getPosition()) ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Can not target infantry that from outside the building.");
-        }
-
         // Handle solo attack weapons.
         if ( wtype.hasFlag(WeaponType.F_SOLO_ATTACK) ) {
             for ( Enumeration i = game.getActions();
@@ -1536,6 +1528,13 @@ public class Compute
         // check LOS
         LosEffects los = calculateLos(game, attackerId, target);
         ToHitData losMods = losModifiers(los);
+
+        // Must target infantry in buildings from the inside.
+        if ( targetInBuilding &&
+             te instanceof Infantry &&
+             null == los.getThruBldg() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attack on infantry crosses building exterior wall.");
+        }
         
         // if LOS is blocked, block the shot
         if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
@@ -1632,7 +1631,23 @@ public class Compute
         }
 
         // determine range
-        final int range = ae.getPosition().distance(target.getPosition());
+        int range = ae.getPosition().distance(target.getPosition());
+
+        // If the attack is completely inside a building, add the difference
+        // in elevations between the attacker and target to the range.
+        // Make certain the player knows what's going on.
+        final int aElev = ae.getElevation();
+        final int tElev = target.getElevation();
+        if ( null != los.getThruBldg() ) {
+            int elevDiff = aElev - tElev;
+            if ( aElev < tElev ) {
+                elevDiff = tElev - aElev;
+            }
+            if ( elevDiff > 0 ) {
+                toHit.addModifier( 0, "elevation difference inside building adds " + elevDiff + " to range" );
+                range += elevDiff;
+            }
+        }
 
         int c3range = range;
         Entity c3spotter = ae;
@@ -1761,16 +1776,29 @@ public class Compute
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ( range <= 1 &&
+        if ( range == 1 &&
              ( target.getTargetType() == Targetable.TYPE_BUILDING ||
                target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
             return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
                                   "Targeting adjacent building." );
         }
 
+        // Attacks against buildings from inside automatically hit.
+        if ( null != los.getThruBldg() &&
+             ( target.getTargetType() == Targetable.TYPE_BUILDING ||
+               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                                  "Targeting building from inside (are you SURE this is a good idea?)." );
+        }
+
         // Check for minimum range.
-        if (range <= minimumRange) {
+        if ( range <= minimumRange ) {
             int minPenalty = minimumRange - range + 1;
+
+            // Attacks inside buildings don't use minimum range mods.
+            if ( null != los.getThruBldg() ) {
+                toHit.addModifier( 0, "attack in building, no minimum range" );
+            }
             // Infantry LRMs suffer double minimum range penalties.
             if ( isWeaponInfantry &&
                  wtype.getAmmoType() == AmmoType.T_LRM ) {
@@ -1778,6 +1806,7 @@ public class Compute
             } else {
                 toHit.addModifier(minPenalty, "minumum range");
             }
+
         }
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
@@ -2008,9 +2037,28 @@ public class Compute
              (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
             toHit.addModifier(-1, "targeting computer");
         }
-        
-        // change hit table for partial cover
-        if (los.targetCover) {
+
+        // Change hit table for elevation differences inside building.
+        if ( null != los.getThruBldg() && aElev != tElev ) {
+
+            // Tanks get hit in a random side.
+            if ( target instanceof Tank ) {
+                toHit.setSideTable( ToHitData.SIDE_RANDOM );
+            }
+
+            // Meks have special tables for shots from above and below.
+            else if ( target instanceof Mech ) {
+                if ( aElev > tElev ) {
+                    toHit.setHitTable( ToHitData.HIT_ABOVE );
+                } else {
+                    toHit.setHitTable( ToHitData.HIT_BELOW );
+                }
+            }
+
+        }
+
+        // Change hit table for partial cover.
+        else if (los.targetCover) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
         
@@ -2104,13 +2152,40 @@ public class Compute
     public static LosEffects losStraight(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         Coords[] in = intervening(ae.getPosition(), target.getPosition());
-        
         LosEffects los = new LosEffects();
-        
-        for (int i = 0; i < in.length; i++) {
-            los.add(losForCoords(game, attackerId, target, in[i]));
+        boolean targetInBuilding = false;
+        if ( target instanceof Entity ) {
+            targetInBuilding = isInBuilding(game, (Entity) target);
         }
-        
+
+        // If the target and attacker are both in a
+        // building, set that as the first LOS effect.
+        if ( targetInBuilding && isInBuilding( game, ae ) ) {
+            los.setThruBldg( game.board.getBuildingAt( in[0] ) );
+        }
+
+        for (int i = 0; i < in.length; i++) {
+            los.add( losForCoords(game, attackerId, target,
+                                  in[i], los.getThruBldg()) );
+        }
+
+        // Infantry inside a building can only be
+        // targeted by units in the same building.
+        if ( target instanceof Infantry &&
+             targetInBuilding &&
+             null == los.getThruBldg() ) {
+            los.blocked = true;
+        }
+
+
+        // If a target Entity is at a different elevation as its
+        // attacker, and if the attack is through a building, the
+        // target has cover.
+        if ( null != los.getThruBldg() &&
+             ae.getElevation() != target.getElevation() ) {
+            los.setTargetCover( true );
+        }
+
         return los;
     }
     
@@ -2144,10 +2219,23 @@ public class Compute
         final Entity ae = game.getEntity(attackerId);
         Coords[] in = intervening(ae.getPosition(), target.getPosition());
         LosEffects los = new LosEffects();
-        
+        boolean targetInBuilding = false;
+        if ( target instanceof Entity ) {
+            targetInBuilding = isInBuilding(game, (Entity) target);
+        }
+        final boolean isElevDiff = 
+            ( ae.getElevation() != target.getElevation() );
+
+        // If the target and attacker are both in a
+        // building, set that as the first LOS effect.
+        if ( targetInBuilding && isInBuilding( game, ae ) ) {
+            los.setThruBldg( game.board.getBuildingAt( in[0] ) );
+        }
+
         // add non-divided line segments
         for (int i = 3; i < in.length - 2; i += 3) {
-            los.add(losForCoords(game, attackerId, target, in[i]));
+            los.add( losForCoords(game, attackerId, target,
+                                  in[i], los.getThruBldg()) );
         }
         
         // if blocked already, return that
@@ -2158,11 +2246,39 @@ public class Compute
         // go through divided line segments
         for (int i = 1; i < in.length - 2; i += 3) {
             // get effects of each side
-            LosEffects left = losForCoords(game, attackerId, target, in[i]);
-            LosEffects right = losForCoords(game, attackerId, target, in[i+1]);
+            LosEffects left = losForCoords( game, attackerId, target, 
+                                            in[i], los.getThruBldg() );
+            LosEffects right = losForCoords( game, attackerId, target,
+                                             in[i+1], los.getThruBldg() );
+
+            // If a target Entity is at a different elevation as its
+            // attacker, and if the attack is through a building, the
+            // target has cover.
+            if ( targetInBuilding && isElevDiff ) {
+                 if ( null != left.getThruBldg() ) {
+                     left.setTargetCover(true);
+                 }
+                 if ( null != right.getThruBldg() ) {
+                     right.setTargetCover(true);
+                 }
+            }
+
+            // Include all previous LOS effects.
             left.add(los);
             right.add(los);
-            
+
+            // Infantry inside a building can only be
+            // targeted by units in the same building.
+            if ( target instanceof Infantry &&
+                 targetInBuilding ) {
+                if ( null == left.getThruBldg() ) {
+                    left.blocked = true;
+                }
+                else if ( null == right.getThruBldg() ) {
+                    right.blocked = true;
+                }
+            }
+
             // which is better?
             int lVal = losModifiers(left).getValue();
             int rVal = losModifiers(right).getValue();
@@ -2180,15 +2296,29 @@ public class Compute
      * Returns a LosEffects object representing the LOS effects of anything at
      * the specified coordinate.  
      */
-    public static LosEffects losForCoords(Game game, int attackerId, Targetable target, Coords coords) {
+    private static LosEffects losForCoords(Game game, int attackerId,
+                                           Targetable target, Coords coords,
+                                           Building thruBldg) {
         LosEffects los = new LosEffects();        
         // ignore hexes not on board
         if (!game.board.contains(coords)) {
             return los;
         }
+
+        // Is there a building in this hex?
+        Building bldg = game.board.getBuildingAt(coords);
+
+        // We're only tracing thru a single building if there
+        // is a building in this hex, and if it isn't the same
+        // building that we'be been tracing LOS thru.
+        if ( bldg != null && bldg.equals(thruBldg) ) {
+            los.setThruBldg( thruBldg );
+        }
+
         final Entity ae = game.getEntity(attackerId);
         // ignore hexes the attacker or target are in
-        if (coords.equals(ae.getPosition()) || coords.equals(target.getPosition())) {
+        if ( coords.equals(ae.getPosition()) ||
+             coords.equals(target.getPosition()) ) {
             return los;
         }
         int attEl = ae.absHeight();
@@ -2204,11 +2334,16 @@ public class Compute
         int hexEl = hex.surface();
 
         // Handle building elevation.
+        // Attacks thru a building are not blocked by that building.
         // ASSUMPTION: bridges don't block LOS.
         int bldgEl = 0;
-        if ( hex.contains( Terrain.BLDG_ELEV ) ) {
+        if ( null == los.getThruBldg() &&
+             hex.contains( Terrain.BLDG_ELEV ) ) {
             bldgEl = hex.levelOf( Terrain.BLDG_ELEV );
         }
+
+        // TODO: Identify when LOS travels *above* a building's hex.
+        //       Alternatively, force all building hexes to be same height.
 
         // check for block by terrain
         if ((hexEl + bldgEl > attEl && hexEl + bldgEl > targEl)
@@ -2287,6 +2422,10 @@ public class Compute
         final int armArc = (arm == PunchAttackAction.RIGHT)
                            ? Compute.ARC_RIGHTARM : Compute.ARC_LEFTARM;
         final boolean targetInBuilding = isInBuilding( game, te );
+        Building bldg = null;
+        if ( targetInBuilding ) {
+            bldg = game.board.getBuildingAt( te.getPosition() );
+        }
         ToHitData toHit;
 
         // arguments legal?
@@ -2358,9 +2497,14 @@ public class Compute
         }
 
         // Can't target units in buildings (from the outside).
-        // TODO: you can target units from within the *same* building.
         if ( targetInBuilding ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            if ( !isInBuilding(game, ae) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            } 
+            else if ( !game.board.getBuildingAt( ae.getPosition() )
+                      .equals( bldg ) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
+            }
         }
 
         // okay, modifiers...
@@ -2518,6 +2662,10 @@ public class Compute
         final int targetHeight = target.absHeight();
         final int targetElevation = target.getElevation();
         final boolean targetInBuilding = isInBuilding( game, te );
+        Building bldg = null;
+        if ( targetInBuilding ) {
+            bldg = game.board.getBuildingAt( te.getPosition() );
+        }
 
         int[] kickLegs = new int[2];
         if ( ae.entityIsQuad() ) {
@@ -2610,9 +2758,14 @@ public class Compute
         }
         
         // Can't target units in buildings (from the outside).
-        // TODO: you can target units from within the *same* building.
         if ( 0 != range && targetInBuilding ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            if ( !isInBuilding(game, ae) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            } 
+            else if ( !game.board.getBuildingAt( ae.getPosition() )
+                      .equals( bldg ) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
+            }
         }
 
         // Attacks against adjacent buildings automatically hit.
@@ -2768,6 +2921,10 @@ public class Compute
         final int targetElevation = target.getElevation();
         final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
         final boolean targetInBuilding = isInBuilding( game, te );
+        Building bldg = null;
+        if ( targetInBuilding ) {
+            bldg = game.board.getBuildingAt( te.getPosition() );
+        }
         ToHitData toHit;
 
         // arguments legal?
@@ -2803,7 +2960,13 @@ public class Compute
         // Can't target units in buildings (from the outside).
         // TODO: you can target units from within the *same* building.
         if ( targetInBuilding ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            if ( !isInBuilding(game, ae) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            } 
+            else if ( !game.board.getBuildingAt( ae.getPosition() )
+                      .equals( bldg ) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
+            }
         }
 
         if (bothArms) {
@@ -3009,6 +3172,10 @@ public class Compute
         final int attackerElevation = ae.getElevation();
         final int targetElevation = target.getElevation();
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
+        Building bldg = null;
+        if ( targetInBuilding ) {
+            bldg = game.board.getBuildingAt( te.getPosition() );
+        }
         ToHitData toHit = null;
 
         // arguments legal?
@@ -3111,9 +3278,14 @@ public class Compute
         }
 
         // Can't target units in buildings (from the outside).
-        // TODO: you can target units from within the *same* building.
         if ( targetInBuilding ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            if ( !isInBuilding(game, ae) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            } 
+            else if ( !game.board.getBuildingAt( ae.getPosition() )
+                      .equals( bldg ) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
+            }
         }
 
         // Attacks against adjacent buildings automatically hit.
@@ -3320,6 +3492,10 @@ public class Compute
         final int targetElevation = target.getElevation();
         final int targetHeight = target.absHeight();
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
+        Building bldg = null;
+        if ( targetInBuilding ) {
+            bldg = game.board.getBuildingAt( te.getPosition() );
+        }
         ToHitData toHit = null;
         
         // arguments legal?
@@ -3388,9 +3564,14 @@ public class Compute
         }
 
         // Can't target units in buildings (from the outside).
-        // TODO: you can target units from within the *same* building.
         if ( targetInBuilding ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            if ( !isInBuilding(game, ae) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            } 
+            else if ( !game.board.getBuildingAt( ae.getPosition() )
+                      .equals( bldg ) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
+            }
         }
 
         // Attacks against adjacent buildings automatically hit.
@@ -3639,7 +3820,6 @@ public class Compute
         }        
 
         // Can't target units in buildings (from the outside).
-        // TODO: you can target units from within the *same* building.
         if ( targetInBuilding ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
         }

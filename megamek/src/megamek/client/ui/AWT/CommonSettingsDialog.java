@@ -33,6 +33,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Checkbox    soundMute;
     private Checkbox    showMapHexPopup;
     private TextField   tooltipDelay;
+    private TextField   shiftScrollSensitivity;
     private Choice      unitStartChar;
 
     private static final String CANCEL = "CANCEL";
@@ -79,12 +80,14 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         showMapHexPopup
             = new Checkbox( "Show map hex popup." );
         this.add( showMapHexPopup );
+
         panSetting = new Panel();
         tooltipDelay
             = new TextField(4);
         panSetting.add( tooltipDelay );
         panSetting.add( new Label("Tooltip popup delay.") );
         this.add( panSetting );
+
         panSetting = new Panel();
         unitStartChar
             = new Choice();
@@ -96,6 +99,13 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         unitStartChar.addItem( "\u03B1, \u03B2, \u03B3, \u03B4..." );
         panSetting.add( unitStartChar );
         panSetting.add( new Label("ProtoMech unit codes.") );
+        this.add( panSetting );
+
+        panSetting = new Panel();
+        shiftScrollSensitivity
+            = new TextField(4);
+        panSetting.add( shiftScrollSensitivity );
+        panSetting.add( new Label("Shift-Scroll sensitivity.") );
         this.add( panSetting );
 
         // Add the dialog controls.
@@ -153,6 +163,9 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
                 break;
             }
         }
+
+        shiftScrollSensitivity.setText( Integer.toString(Settings.shiftScrollSensitivity ) );
+
         super.show();
     }
 
@@ -178,6 +191,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.showMapHexPopup= showMapHexPopup.getState();
         Settings.tooltipDelay =   Integer.parseInt(tooltipDelay.getText());
         Settings.unitStartChar=   unitStartChar.getSelectedItem().charAt(0);
+        Settings.shiftScrollSensitivity =   Integer.parseInt(shiftScrollSensitivity.getText());
         Settings.save();
         this.setVisible( false );
     }

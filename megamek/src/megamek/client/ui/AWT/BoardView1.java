@@ -53,6 +53,10 @@ public class BoardView1
     private boolean isScrolling = false;
     private Thread scroller = new Thread(this);
     private Point scroll = new Point();
+    private boolean initShiftScroll;
+    private boolean shiftKeyHeld = false;
+    private int previousMouseX;
+    private int previousMouseY;
 
     // back buffer to draw to
     private Image backImage;
@@ -1579,6 +1583,10 @@ public class BoardView1
         case KeyEvent.VK_RIGHT :
             scroll.x += 36;
             break;
+        case KeyEvent.VK_SHIFT :
+            shiftKeyHeld = true;
+            initShiftScroll = true;
+            break;
         }
         if (isTipShowing()) {
             hideTooltip();
@@ -1588,7 +1596,9 @@ public class BoardView1
         repaint();
     }
     public void keyReleased(KeyEvent ke) {
-        ;
+        if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
+            shiftKeyHeld = false;
+        }
     }
     public void keyTyped(KeyEvent ke) {
         ;
@@ -1686,6 +1696,19 @@ public class BoardView1
         mousePos = me.getPoint();
         if (isTipShowing()) {
             hideTooltip();
+        }
+        if (shiftKeyHeld) {
+            if (initShiftScroll) {
+                previousMouseX = me.getX();
+                previousMouseY = me.getY();
+                initShiftScroll = false;
+            }
+            scroll.x += Settings.shiftScrollSensitivity * (me.getX() - previousMouseX);
+            scroll.y += Settings.shiftScrollSensitivity * (me.getY() - previousMouseY);
+            previousMouseX = me.getX();
+            previousMouseY = me.getY();
+            checkScrollBounds();
+            repaint();
         }
         lastIdle = System.currentTimeMillis();
         isTipPossible = true;

@@ -1502,6 +1502,10 @@ public class Game implements Serializable
     public Vector getAttacksVector() {
     	return attacks;
     }
+    //HACK.
+    public void setAttacksVector(Vector v) {
+    	attacks=v;
+    }
 
     /**
      * Returns an Enumeration of displacement attacks scheduled for the end

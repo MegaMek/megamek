@@ -11810,14 +11810,13 @@ implements Runnable, ConnectionHandler {
      * TODO: Refactor the new entity annoucement out of here.
      */
     private void handleAttacks() {
-    	System.out.print("Server#handle attacks:  there are #");
-        System.out.println(game.getAttacksVector().size());
     	int lastAttackerId=0;
-    	for(Enumeration i=game.getAttacks();i.hasMoreElements();) {
+    	Vector currentAttacks,keptAttacks;
+    	currentAttacks=game.getAttacksVector();
+    	keptAttacks=new Vector();
+    	for(Enumeration i=currentAttacks.elements();i.hasMoreElements();) {
     		AttackHandler ah = (AttackHandler)i.nextElement();
-    		System.out.println("handling an attack");
     		if(ah.cares(game.getPhase())) {
-    			System.out.println("it cares");
     			int aId=ah.getAttackerId();
     			if(aId!=lastAttackerId) {
     				phaseReport.append("\nWeapons fire for ").append(game.getEntity(aId).getDisplayName()).
@@ -11825,11 +11824,13 @@ implements Runnable, ConnectionHandler {
     			}
     			lastAttackerId=aId;
     			boolean keep = ah.handle(game.getPhase());
-    			if(!keep) {
-    				game.removeAttack(ah);
+    			if(keep) {
+    				keptAttacks.add(ah);
     			}
     		}
     	}
+    	//HACK, but anything else seems to run into weird problems.
+    	game.setAttacksVector(keptAttacks);
     }
 }
 

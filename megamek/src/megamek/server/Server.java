@@ -2536,7 +2536,7 @@ implements Runnable, ConnectionHandler {
             } else if (entity instanceof Tank) {
                 phaseReport.append( entity.getDisplayName()).append( " is abandoned by its crew.\n");
             }
-            ejectEntity(entity, false);
+            phaseReport.append(ejectEntity(entity, false));
 
             return;
         }
@@ -8392,7 +8392,7 @@ implements Runnable, ConnectionHandler {
         StringBuffer desc = new StringBuffer();
         Pilot crew = en.getCrew();
 
-        if (!crew.isDead()) {
+        if (!crew.isDead() && !crew.isEjected()) {
             crew.setHits( crew.getHits() + damage );
             desc.append( "        Pilot of " )
                 .append( en.getDisplayName() )
@@ -8546,17 +8546,17 @@ implements Runnable, ConnectionHandler {
     private String damageEntity(Entity te, HitData hit, int damage,
                                 boolean ammoExplosion, int bFrag,
                                 boolean damageIS, boolean areaSatArty) {
+        StringBuffer desc = new StringBuffer();
         boolean autoEject = false;
         if (ammoExplosion) {
             if (te instanceof Mech) {
                 Mech mech = (Mech)te;
                 if (mech.isAutoEject()) {
                     autoEject = true;
-                    ejectEntity(te, true);
+                    desc.append(ejectEntity(te, true));
                 }
             }
         }
-        StringBuffer desc = new StringBuffer();
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
         boolean wasDamageIS = false;
@@ -9615,7 +9615,11 @@ implements Runnable, ConnectionHandler {
 			.append( " ")
 			.append( entity.getLocationAbbr(loc) )
             .append( " BREACHED>>>" );
-        //equipment and crits will be marked in applyDamage?
+        if (entity instanceof Tank) {
+            desc.append( destroyEntity(entity, "hull breach in vacuum", true, true) );
+            return desc.toString();
+        }
+        // equipment and crits will be marked in applyDamage?
         // equipment marked missing
         for (Enumeration i = entity.getEquipment(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
@@ -12941,11 +12945,12 @@ implements Runnable, ConnectionHandler {
             }   
         }
     }
-    public void ejectEntity(Entity entity, boolean autoEject) {
-
+    public String ejectEntity(Entity entity, boolean autoEject) {
+        
+        StringBuffer desc = new StringBuffer();
         // An entity can only eject it's crew once.
         if (entity.getCrew().isEjected()) 
-            return;
+            return "";
 
         // Mek pilots may get hurt during ejection,
         // and run around the board afterwards.
@@ -12984,32 +12989,32 @@ implements Runnable, ConnectionHandler {
                     rollTarget.addModifier(-2, "landing off the board");
             }
             if (autoEject) {
-                phaseReport.append("\n").append(entity.getDisplayName())
+                desc.append("\n").append(entity.getDisplayName())
                     .append(" suffers an ammunition explosion, but the autoeject system was engaged.");     
             }
             // okay, print the info
-            phaseReport.append("\n" ).append( entity.getDisplayName() )
+            desc.append("\n" ).append( entity.getDisplayName() )
                 .append( " must make a piloting skill check (" )
                 .append( rollTarget.getLastPlainDesc() ).append( ")" ).append( ".\n");
             // roll
             final int diceRoll = Compute.d6(2);
-            phaseReport.append("Needs " ).append( rollTarget.getValueAsString()
+            desc.append("Needs " ).append( rollTarget.getValueAsString()
             ).append( " [" ).append( rollTarget.getDesc() ).append( "]"
             ).append( ", rolls " ).append( diceRoll ).append( " : ");
             if (diceRoll < rollTarget.getValue()) {
-                phaseReport.append("fails.\n");
-                phaseReport.append(damageCrew(entity, 1));
+                desc.append("fails.\n");
+                desc.append(damageCrew(entity, 1));
                 if (resolveCrewDamage(entity, false)) {
-                    phaseReport.append("\n");
+                    desc.append("\n");
                 }
             } else {
-                phaseReport.append("succeeds.\n");
+                desc.append("succeeds.\n");
             }
             // ASSUMPTION: Pilot dies if he ejects unconsciously, BMRr does not
             // specify either way.
             if (entity.getCrew().isDoomed()
                 || entity.getCrew().isUnconscious()) {
-                phaseReport.append("but the pilot does not survive!\n");
+                desc.append("but the pilot does not survive!\n");
             }
             else {
                 // Add the pilot as an infantry unit on the battlefield.
@@ -13027,18 +13032,18 @@ implements Runnable, ConnectionHandler {
                     // Did the pilot land in water?
                     if ( game.board.getHex( targetCoords).levelOf
                          ( Terrain.WATER ) > 0 ) {
-                        phaseReport.append("and the pilot ejects, but lands in water!!!\n");
-                        destroyEntity( pilot, "a watery grave", false );
+                        desc.append("and the pilot ejects, but lands in water!!!\n");
+                        desc.append(destroyEntity( pilot, "a watery grave", false ));
                     } else {
-                        phaseReport.append("and the pilot ejects safely!\n");
+                        desc.append("and the pilot ejects safely!\n");
                     }
 */
-                    phaseReport.append("and the pilot ejects safely!\n");
+                    desc.append("and the pilot ejects safely!\n");
                     doEntityDisplacementMinefieldCheck( pilot,
                                                         entity.getPosition(),
                                                         targetCoords );
                 } else {
-                    phaseReport.append("and the pilot ejects safely and lands far from the battle!");
+                    desc.append("and the pilot ejects safely and lands far from the battle!");
                     game.removeEntity( pilot.getId(), Entity.REMOVE_IN_RETREAT );
                     send(createRemoveEntityPacket(pilot.getId(), Entity.REMOVE_IN_RETREAT) );                  
                 }
@@ -13048,13 +13053,14 @@ implements Runnable, ConnectionHandler {
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected( true );
-        destroyEntity(entity, "ejection", true, true);        
+        desc.append(destroyEntity(entity, "ejection", true, true));        
 
         // only remove the unit that ejected in the movement phase
         if (game.getPhase() == Game.PHASE_MOVEMENT) {
             game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
             send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
         }
+        return desc.toString();
     }
     
     private void resolveMechWarriorPickUp() {

@@ -97,4 +97,4 @@ Next Steps:
 Reuse the new pathing code.
 Intellegent deployment and mine placement.
 More strategy: have the bots concentrate on controlling specified locations.
-Attempt to be as good as an intermidiate player on a 4x4 map in an 
+Attempt to be as good as an intermidiate player on a 4x4 map in an 16 on 16 battle.

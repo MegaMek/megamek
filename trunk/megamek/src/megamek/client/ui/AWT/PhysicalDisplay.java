@@ -23,19 +23,13 @@ import megamek.common.*;
 import megamek.common.actions.*;
 
 public class PhysicalDisplay 
-    extends AbstractPhaseDisplay
+    extends StatusBarPhaseDisplay
     implements BoardListener, GameListener, ActionListener,
     KeyListener
 {
     private static final int    NUM_BUTTON_LAYOUTS = 3;
     // parent game
     private Client          client;
-        
-    // displays
-    private Label             labStatus;
-    private Panel             panStatus;
-    private Button            butDisplay;
-    private Button            butMap;
         
     // buttons
     private Container         panButtons;
@@ -77,7 +71,7 @@ public class PhysicalDisplay
     
         attacks = new Vector();
 
-        setupStatusBar();
+        setupStatusBar("Waiting to begin Physical Attack phase...");
             
         butSpace = new Button("");
         butSpace.setEnabled(false);
@@ -162,40 +156,6 @@ public class PhysicalDisplay
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
-    }
-    
-    /**
-     * Sets up the status bar with toggle buttons for the mek display and map.
-     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
-     */
-    private void setupStatusBar() {
-        panStatus = new Panel();
-
-        labStatus = new Label("Waiting to begin Physical Attack phase...", Label.CENTER);
-        
-        butDisplay = new Button("D");
-        butDisplay.addActionListener(this);
-        
-        butMap = new Button("M");
-        butMap.addActionListener(this);
-        
-        // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panStatus.setLayout(gridbag);
-            
-        c.insets = new Insets(0, 1, 0, 1);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 1.0;    c.weighty = 0.0;
-        gridbag.setConstraints(labStatus, c);
-        panStatus.add(labStatus);
-        
-        c.weightx = 0.0;    c.weighty = 0.0;
-        gridbag.setConstraints(butDisplay, c);
-        panStatus.add(butDisplay);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        panStatus.add(butMap);
     }
 
     private void setupButtonPanel() {
@@ -775,9 +735,9 @@ public class PhysicalDisplay
 
             if (client.isMyTurn()) {
                 beginMyTurn();
-                labStatus.setText("It's your turn to declare physical attacks.");
+                setStatusBarText("It's your turn to declare physical attacks.");
             } else {
-                labStatus.setText("It's " + ev.getPlayer().getName() + "'s turn to declare physical attacks.");
+                setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to declare physical attacks.");
             }
         } else {
             System.err.println("PhysicalDisplay: got turnchange event when it's not the physical attacks phase");
@@ -800,13 +760,9 @@ public class PhysicalDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource() == butDisplay) {
-            client.toggleDisplay();
-        }
-        else if (ev.getSource() == butMap) {
-            client.toggleMap();
-        }
-        
+        if ( statusBarActionPerformed(ev, client) )
+          return;
+          
         if (!client.isMyTurn()) {
             // odd...
             return;

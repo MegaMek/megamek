@@ -22,7 +22,7 @@ import java.util.*;
 import megamek.common.*;
 
 public class MovementDisplay
-    extends AbstractPhaseDisplay
+    extends StatusBarPhaseDisplay
     implements BoardListener,  ActionListener,
     KeyListener, GameListener
 {
@@ -30,12 +30,6 @@ public class MovementDisplay
 
     // parent game
     public Client client;
-
-    // displays
-    private Label             statusL;
-    private Panel             panStatus;
-    private Button            butDisplay;
-    private Button            butMap;
 
     // buttons
     private Panel             panButtons;
@@ -97,7 +91,7 @@ public class MovementDisplay
 
         client.game.board.addBoardListener(this);
 
-        setupStatusBar();
+        setupStatusBar("Waiting to begin Movement phase...");
 
         butSpace = new Button("");
         butSpace.setEnabled(false);
@@ -209,40 +203,6 @@ public class MovementDisplay
         comp.addKeyListener(this);
     }
     
-    /**
-     * Sets up the status bar with toggle buttons for the mek display and map.
-     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
-     */
-    private void setupStatusBar() {
-        panStatus = new Panel();
-
-        statusL = new Label("Waiting to begin Movement phase...", Label.CENTER);
-        
-        butDisplay = new Button("D");
-        butDisplay.addActionListener(this);
-        
-        butMap = new Button("M");
-        butMap.addActionListener(this);
-        
-        // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panStatus.setLayout(gridbag);
-            
-        c.insets = new Insets(0, 1, 0, 1);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 1.0;    c.weighty = 0.0;
-        gridbag.setConstraints(statusL, c);
-        panStatus.add(statusL);
-        
-        c.weightx = 0.0;    c.weighty = 0.0;
-        gridbag.setConstraints(butDisplay, c);
-        panStatus.add(butDisplay);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        panStatus.add(butMap);
-    }
-
     private void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridLayout(2, 4));
@@ -1005,9 +965,9 @@ public class MovementDisplay
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            statusL.setText("It's your turn to move.");
+            setStatusBarText("It's your turn to move.");
         } else {
-            statusL.setText("It's " + ev.getPlayer().getName() + "'s turn to move.");
+            setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to move.");
         }
     }
     public void gamePhaseChange(GameEvent ev) {
@@ -1026,13 +986,9 @@ public class MovementDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource() == butDisplay) {
-            client.toggleDisplay();
-        }
-        else if (ev.getSource() == butMap) {
-            client.toggleMap();
-        }
-        
+        if ( statusBarActionPerformed(ev, client) )
+          return;
+          
         if (!client.isMyTurn()) {
             // odd...
             return;

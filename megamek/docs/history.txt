@@ -13,6 +13,7 @@ v0.29.50 (CVS)
 + Bug 1027253: NPE while pushing off the map.
 + RFE 904853: adapt Target selector for multiple units in one hex from physical
     attacks phase to Weapons attack phase
++ RFE 887439: Secret tonnage setting on Thunder-Vibrabombs
 
 v0.29.49 (2004-09-20 7:45am)
 + RFE 1022892, Patch 1023640: Maxtech Missile Hit Penalties, MaxTech revised page 23.

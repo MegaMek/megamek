@@ -154,7 +154,7 @@ public class DeploymentDisplay
      */
     private void beginMyTurn() {
         client.setDisplayVisible(true);
-        selectEntity(client.getFirstEntityNum());
+        selectEntity(client.getFirstDeployableEntityNum());
         butNext.setEnabled(true);
         Player p = client.getLocalPlayer();
         // mark deployment hexes if not 'All'
@@ -195,7 +195,10 @@ public class DeploymentDisplay
      */
     private void deploy() {
         disableButtons();
-        client.deploy(cen, ce().getPosition(), ce().getFacing(), ce().getLoadedUnits());
+        
+        Entity en = ce();
+        client.deploy(cen, en.getPosition(), en.getFacing(), en.getLoadedUnits());
+        en.setDeployed(true);
     }
 
     /**
@@ -278,7 +281,7 @@ public class DeploymentDisplay
     }
     
     public void gamePhaseChange(GameEvent ev) {
-        if (client.game.phase != Game.PHASE_DEPLOYMENT) {
+        if (client.game.getPhase() != Game.PHASE_DEPLOYMENT) {
             if (client.isMyTurn()) {
                 endMyTurn();
             }
@@ -314,9 +317,10 @@ public class DeploymentDisplay
                 // Please note, the Server never got this unit's load orders.
                 ce().unload( other );
                 other.setTransportId( Entity.NONE );
-                other.newRound();
+                other.newRound(client.game.getRoundCount());
             }
-            selectEntity(client.getNextEntityNum(cen));
+            
+            selectEntity(client.getNextDeployableEntityNum(cen));
         } else if (ev.getSource() == butTurn) {
             turnMode = true;
         } 
@@ -324,9 +328,9 @@ public class DeploymentDisplay
 
             // What undeployed units can we load?
             Vector choices = new Vector();
-            int otherId = client.getNextEntityNum( cen );
+            int otherId = client.getNextDeployableEntityNum( cen );
             Entity other = client.getEntity( otherId );
-            while ( otherId != cen ) {
+            while ( (otherId != cen) && (otherId != -1) ) {
 
                 // Is the other entity deployed?
                 if ( other.getPosition() == null ) {
@@ -339,7 +343,7 @@ public class DeploymentDisplay
                 } // End other not yet deployed.
 
                 // Check the next entity.
-                otherId = client.getNextEntityNum( otherId );
+                otherId = client.getNextDeployableEntityNum( otherId );
                 other = client.getEntity( otherId );
 
             } // End have list of choices.
@@ -404,7 +408,7 @@ public class DeploymentDisplay
                     // Please note, the Server never got this load order.
                     if ( ce().unload( other ) ) {
                         other.setTransportId( Entity.NONE );
-                        other.newRound();
+                        other.newRound(client.game.getRoundCount());
                         client.mechD.displayEntity(ce());
                     }
                     else {

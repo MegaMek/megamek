@@ -128,7 +128,7 @@ public abstract class Entity
     public boolean              rolledForEngineExplosion = false; //So that we don't roll twice in one round
     public boolean              dodging;
     
-    public boolean				spotting;
+    public boolean        spotting;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -188,6 +188,16 @@ public abstract class Entity
      */
     private int removalCondition = REMOVE_UNKNOWN;
 
+    /**
+     * The round this unit will be deployed
+     */
+    private int deployRound = 0;
+
+    /**
+     * Marks an entity as having been deployed
+     */
+    private boolean deployed = false;
+    
     /**
      * Generates a new, blank, entity.
      */
@@ -399,23 +409,34 @@ public abstract class Entity
      *          from a transport this turn.  <code>false</code> otherwise.
      */
     public boolean isActive() {
-        return !shutDown && !destroyed &&
-            getCrew().isActive() && !this.unloadedThisTurn;
+      return this.isActive(-1);
+    }
+    
+    public boolean isActive(int turn) {
+      boolean isActive = !shutDown && !destroyed && getCrew().isActive() && !this.unloadedThisTurn;
+      
+      if ( (turn > -1) && isActive ) {
+        isActive = !deployed && shouldDeploy(turn);
+      } else {
+        isActive = isActive && deployed;
+      }
+      
+      return isActive;
     }
     
     /**
      * Returns true if this entity is selectable for action.  Transported
      * entities can not be selected.
      */
-    public boolean isSelectable() {
-        return !done && isActive() && (conveyance == Entity.NONE) ;
+    public boolean isSelectableThisTurn(Game game) {
+        return !done && isActive(game.getPhase() == Game.PHASE_DEPLOYMENT ? game.getRoundCount() : -1) && (conveyance == Entity.NONE) ;
     }
 
     /**
      * Returns true if this entity is targetable for attacks
      */
     public boolean isTargetable() {
-        return !destroyed && !doomed && !crew.isDead();
+        return !destroyed && !doomed && !crew.isDead() && deployed;
     }
     
     public boolean isProne() {
@@ -1944,10 +1965,10 @@ public abstract class Entity
         }
     }
     
-    public void newRound()
+    public void newRound(int roundNumber)
     {
         unloadedThisTurn = false;
-        done = !this.isActive();
+        done = !this.isActive(roundNumber);
         delta_distance = 0;
         mpUsed = 0;
         moved = Entity.MOVE_NONE;
@@ -1961,11 +1982,11 @@ public abstract class Entity
         m_lNarcedBy |= m_lPendingNarc;
 
         for (Enumeration i = getEquipment(); i.hasMoreElements();) {
-            ((Mounted)i.nextElement()).newRound();
+            ((Mounted)i.nextElement()).newRound(roundNumber);
         }
 
         // Update the inferno tracker.
-        this.infernos.newRound();
+        this.infernos.newRound(roundNumber);
     }
     
     /**
@@ -2886,31 +2907,71 @@ public abstract class Entity
         }
     }
 
-	/**
-	 * @return whether this entity is spotting this round.
-	 */
-	public boolean isSpotting() {
-		return spotting;
-	}
+  /**
+   * @return whether this entity is spotting this round.
+   */
+  public boolean isSpotting() {
+    return spotting;
+  }
 
-	/**
-	 * @param spotting
-	 */
-	public void setSpotting(boolean spotting) {
-		this.spotting = spotting;
-	}
-	
-	/**
-	 * Um, basically everything can spot for LRM indirect fire.
-	 * @return true, I would think.
-	 */
-	public boolean canSpot() {
-		return true;
-	}
+  /**
+   * @param spotting
+   */
+  public void setSpotting(boolean spotting) {
+    this.spotting = spotting;
+  }
+  
+  /**
+   * Um, basically everything can spot for LRM indirect fire.
+   * @return true, I would think.
+   */
+  public boolean canSpot() {
+    return true;
+  }
 
     public String toString() {
         return "Entity [" + getDisplayName() + ", " + getId() + "]";
     }
 
-    
+/**
+ * The round the unit will be deployed. We will deploy at the end of a round. So if depoyRound is set to 5, we will deploy when round 5 is over.
+ * Any value of zero or less is automatically set to 1
+ *
+ * @param    deployRound         an int
+ *
+ */
+  public void setDeployRound(int deployRound) {
+    this.deployRound = deployRound;
+  }
+  
+/**
+ * The round the unit will be deployed
+ * 
+ * @return   an int
+ * 
+ */
+  public int getDeployRound() {
+    return deployRound;
+  }
+
+/**
+ * Toggles if an entity has been deployed
+ */
+  public void setDeployed(boolean deployed) {
+    this.deployed = deployed;
+  }
+
+/**
+ * Checks to see if an entity has been deployed
+ */ 
+  public boolean isDeployed() {
+    return deployed;
+  }
+  
+ /**
+  * Returns true if the entity should be deployed
+  */
+  public boolean shouldDeploy(int round) {
+    return ( !deployed && (getDeployRound() <= round) );
+  }
 }

@@ -24,7 +24,7 @@ import java.io.*;
  * constants: <code>STANDARD_ROUND</code> and <code>ARROW_IV_ROUND</code>.
  */
 public class InfernoTracker
-	implements Serializable, RoundUpdated
+  implements Serializable, RoundUpdated
 {
     // Private helper classes, methods, and attributes.
 
@@ -32,9 +32,9 @@ public class InfernoTracker
      * This class defines the effects of a single hit by an Inferno round.
      */
     /* package */ static class Inferno
-	implements Serializable {
+  implements Serializable {
         private int         heatPerRound;
-	private int         burnRoundsPerHit;      
+  private int         burnRoundsPerHit;      
 
         public Inferno() {
             heatPerRound = 6;
@@ -144,7 +144,7 @@ public class InfernoTracker
     /**
      * The infernos have burned for a round.
      */
-    public void newRound() {
+    public void newRound(int roundNumber) {
 
         // BMRr, pg. 77 makes me think that Inferno IVs
         // burn in parallel with standard rounds.

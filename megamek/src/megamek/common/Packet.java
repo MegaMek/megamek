@@ -55,6 +55,7 @@ implements Serializable {
     
     public static final int        COMMAND_PHASE_CHANGE         = 15;
     public static final int        COMMAND_TURN                 = 16;
+    public static final int        COMMAND_ROUND_UPDATE         = 34; //reorder me
 
     public static final int        COMMAND_SENDING_BOARD        = 17;
     public static final int        COMMAND_SENDING_ENTITIES     = 18;

@@ -25,11 +25,11 @@ import megamek.client.*;
  */
 public class Compute
 {
-	public static final int        RANGE_MINIMUM    = 0;
-	public static final int        RANGE_SHORT      = 1;
-	public static final int        RANGE_MEDIUM     = 2;
-	public static final int        RANGE_LONG       = 3;
-	public static final int        RANGE_OUT_OF     = Integer.MAX_VALUE;
+  public static final int        RANGE_MINIMUM    = 0;
+  public static final int        RANGE_SHORT      = 1;
+  public static final int        RANGE_MEDIUM     = 2;
+  public static final int        RANGE_LONG       = 3;
+  public static final int        RANGE_OUT_OF     = Integer.MAX_VALUE;
     
     public static final int        ARC_360          = 0;
     public static final int        ARC_FORWARD      = 1;
@@ -953,7 +953,7 @@ public class Compute
                     }
 
                     // The other unit should be able to have a turn.
-                    if ( !other.isSelectable() ) {
+                    if ( !other.isSelectableThisTurn(game) ) {
                         return false;
                     }
 
@@ -1327,12 +1327,12 @@ public class Compute
      */
     public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId, Vector prevAttacks) {
          // ignore prevAttacks
-		return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
-	}
+    return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+  }
 
     public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId) {
-		return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
-	}
+    return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+  }
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
@@ -1468,7 +1468,7 @@ public class Compute
         
         // check if indirect fire is valid
         if (isIndirect && !game.getOptions().booleanOption("indirect_fire")) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire option not enabled");
+      return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire option not enabled");
         }
         
         // if we're doing indirect fire, find a spotter
@@ -1511,10 +1511,10 @@ public class Compute
                                  "Nearby terrain blocks leg weapons.");
         }
 
-		// Weapon in arc?
-		if (!isInArc(game, attackerId, weaponId, target)) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
-		}
+    // Weapon in arc?
+    if (!isInArc(game, attackerId, weaponId, target)) {
+      return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
+    }
 
         // Leg attacks, Swarm attacks, and
         // Mine Launchers don't use gunnery.
@@ -1600,28 +1600,28 @@ public class Compute
         }
         
         // determine some more variables
-		int aElev = ae.getElevation();
-		int tElev = target.getElevation();
-		int distance = effectiveDistance(game, ae, target);
+    int aElev = ae.getElevation();
+    int tElev = target.getElevation();
+    int distance = effectiveDistance(game, ae, target);
 
-		// Attacks against adjacent buildings automatically hit.
-		if ( distance == 1 &&
-			 ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-			   target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
-			return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
-								  "Targeting adjacent building." );
-		}
+    // Attacks against adjacent buildings automatically hit.
+    if ( distance == 1 &&
+       ( target.getTargetType() == Targetable.TYPE_BUILDING ||
+         target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
+      return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                  "Targeting adjacent building." );
+    }
 
-		// Attacks against buildings from inside automatically hit.
-		if ( null != los.getThruBldg() &&
-			 ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-			   target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
-			return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
-								  "Targeting building from inside (are you SURE this is a good idea?)." );
-		}
-		
-		// add range mods
-		toHit.append(getRangeMods(game, ae, weaponId, target));
+    // Attacks against buildings from inside automatically hit.
+    if ( null != los.getThruBldg() &&
+       ( target.getTargetType() == Targetable.TYPE_BUILDING ||
+         target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
+      return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                  "Targeting building from inside (are you SURE this is a good idea?)." );
+    }
+    
+    // add range mods
+    toHit.append(getRangeMods(game, ae, weaponId, target));
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( !isAttackerInfantry && te != null && te instanceof BattleArmor ) {
@@ -1630,7 +1630,7 @@ public class Compute
         
         // Indirect fire has a +1 mod
         if (isIndirect) {
-			toHit.addModifier( 1, "indirect fire" );
+      toHit.addModifier( 1, "indirect fire" );
         }
 
         // attacker movement
@@ -1653,7 +1653,7 @@ public class Compute
         
         // spotter movement, if applicable
         if (isIndirect) {
-        	toHit.append(getAttackerMovementModifier(game, spotter.getId()));
+          toHit.append(getAttackerMovementModifier(game, spotter.getId()));
         }
         
         // attacker terrain
@@ -1674,7 +1674,7 @@ public class Compute
         toHit.append(losMods);
         
         // secondary targets modifier...
-		toHit.append(getSecondaryTargetMod(game, ae, target));
+    toHit.append(getSecondaryTargetMod(game, ae, target));
 
         // heat
         if (ae.getHeatFiringModifier() != 0) {
@@ -1682,13 +1682,13 @@ public class Compute
         }
 
         // actuator & sensor damage to attacker
-		toHit.append(getDamageWeaponMods(ae, weapon));
+    toHit.append(getDamageWeaponMods(ae, weapon));
         
         // target immobile
-		toHit.append(getImmobileMod(target, aimingAt, aimingMode));
+    toHit.append(getImmobileMod(target, aimingAt, aimingMode));
         
         // attacker prone
-		toHit.append(getProneMods(game, ae, weaponId));
+    toHit.append(getProneMods(game, ae, weaponId));
 
         // target prone
         if (te != null && te.isProne()) {
@@ -1724,14 +1724,14 @@ public class Compute
         
         // add targeting computer (except with LBX cluster ammo)
         if (aimingMode == FiringDisplay.AIM_MODE_TARG_COMP &&
-        	aimingAt != Mech.LOC_NONE) {
-        	toHit.addModifier(3, "aiming with targeting computer");
+          aimingAt != Mech.LOC_NONE) {
+          toHit.addModifier(3, "aiming with targeting computer");
         } else {
-	        if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-    	         (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
-        	    toHit.addModifier(-1, "targeting computer");
-        	}
-	    }
+          if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
+               (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
+              toHit.addModifier(-1, "targeting computer");
+          }
+      }
 
         // Change hit table for elevation differences inside building.
         if ( null != los.getThruBldg() && aElev != tElev ) {
@@ -1780,9 +1780,9 @@ public class Compute
      * movement are considered.
      */
     public static Entity findSpotter(Game game, Entity attacker, Targetable target) {
-    	Entity spotter = null;
-    	ToHitData bestMods = new ToHitData(ToHitData.IMPOSSIBLE, "");
-    	
+      Entity spotter = null;
+      ToHitData bestMods = new ToHitData(ToHitData.IMPOSSIBLE, "");
+      
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity other = (Entity)i.nextElement();
             if (!other.isSpotting() || attacker.isEnemyOf(other)) {
@@ -1799,26 +1799,26 @@ public class Compute
                 bestMods = mods;
             }
         }
-		
+    
         return spotter;
     }
-	
-	private static ToHitData getImmobileMod(Targetable target) {
-		return getImmobileMod(target, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
-	}
+  
+  private static ToHitData getImmobileMod(Targetable target) {
+    return getImmobileMod(target, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+  }
 
-	private static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
-		if (target.isImmobile()) {
-			if ((aimingAt == Mech.LOC_HEAD) && 
-				(aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
-            	return new ToHitData(3, "aiming at head");
-			} else {
+  private static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
+    if (target.isImmobile()) {
+      if ((aimingAt == Mech.LOC_HEAD) && 
+        (aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
+              return new ToHitData(3, "aiming at head");
+      } else {
             return new ToHitData(-4, "target immobile");
             }
         } else {
-			return null;
+      return null;
         }
-	}
+  }
 
     /**
      * Determines the to-hit modifier due to range for an attack with the 
@@ -1836,9 +1836,9 @@ public class Compute
         boolean isLRMInfantry = isWeaponInfantry && wtype.getAmmoType() == AmmoType.T_LRM;
         boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
             && weapon.curMode().equals("Indirect");
-		
+    
         ToHitData mods = new ToHitData();
-		
+    
         // modify the ranges for ATM missile systems based on the ammo selected
         // TODO: this is not the right place to hardcode these
         if (wtype.getAmmoType() == AmmoType.T_ATM) {
@@ -1902,109 +1902,109 @@ public class Compute
         }
         int c3dist = effectiveDistance(game, c3spotter, target);
         int c3range = rangeBracket(c3dist, weaponRanges);
-		
+    
         // determine which range we're using
         int usingRange = Math.min(range, c3range);
-         
-        // add range modifier
-        if (usingRange == range) {
-            // no c3 adjustment
-            if (range == RANGE_MEDIUM) {
-                mods.addModifier(2, "medium range");
-            }
-            else if (range == RANGE_LONG) {
-                mods.addModifier(4, "long range");
-            }
-        }
-        else {
-            // report c3 adjustment
-            if (c3range == RANGE_SHORT) {
-                mods.addModifier(0, "short range due to C3 spotter");
-            }
-            else if (c3range == RANGE_MEDIUM) {
-                mods.addModifier(2, "medium range due to C3 spotter");
-            }
-        }
-        
-        // add infantry LRM maximum range penalty
-        if (isLRMInfantry && distance == weaponRanges[RANGE_LONG]) {
-            mods.addModifier(1, "infantry LRM maximum range");
-        }
-        
-        // add infantry zero-range modifier
-        // TODO: this is not the right place to hardcode these
-        if (isWeaponInfantry && distance == 0) {
-            // Infantry platoons attacking with infantry weapons can attack
-            // in the same hex with a base of 2, except for flamers and
-            // SRMs, which have a base of 3 and LRMs, which suffer badly.
-            if (wtype.hasFlag(WeaponType.F_FLAMER)) {
-                mods.addModifier(-1, "infantry flamer assault");
-            } else if (wtype.getAmmoType() == AmmoType.T_SRM ) {
-                mods.addModifier(-1, "infantry SRM assault");
-            } else if (wtype.getAmmoType() != AmmoType.T_LRM) {
-                mods.addModifier(-2, "infantry assault");
-            }
-        }
-        
-        // add minumum range modifier
-        int minRange = weaponRanges[RANGE_MINIMUM];
-        if (minRange > 0 && distance <= minRange) {
-            int minPenalty = (minRange - distance) + 1;
-            // Infantry LRMs suffer double minimum range penalties.
-            if (isLRMInfantry) {
-                mods.addModifier(minPenalty * 2, "infantry LRM minumum range");
-            } else {
-                mods.addModifier(minPenalty, "minumum range");
-            }
-        }
-        
-        // add any target stealth modifier
-        if ((target instanceof Entity) && ((Entity)target).isStealthActive()) {
-            mods.append(((Entity)target).getStealthModifier(usingRange));
-        }
 
-        return mods;
+    // add range modifier
+    if (usingRange == range) {
+      // no c3 adjustment
+      if (range == RANGE_MEDIUM) {
+        mods.addModifier(2, "medium range");
+      }
+      else if (range == RANGE_LONG) {
+        mods.addModifier(4, "long range");
+      }
     }
-	
-    /**
-     * Finds the effective distance between an attacker and a target.
-     * Includes the distance bonus if the attacker and target are in the
-     * same building and on different levels.
-     * 
-     * @return the effective distance
-     */
-    public static int effectiveDistance(Game game, Entity attacker, Targetable target) {
-        int distance = attacker.getPosition().distance(target.getPosition());
-		
-        // If the attack is completely inside a building, add the difference
-        // in elevations between the attacker and target to the range.
-        // TODO: should the player be explcitly notified?
-        if ( isInSameBuilding(game, attacker, target) ) {
-            int aElev = attacker.getElevation();
-            int tElev = target.getElevation();
-            distance += Math.abs(aElev - tElev);
-        }
-
-        return distance;
+    else {
+      // report c3 adjustment
+      if (c3range == RANGE_SHORT) {
+        mods.addModifier(0, "short range due to C3 spotter");
+      }
+      else if (c3range == RANGE_MEDIUM) {
+        mods.addModifier(2, "medium range due to C3 spotter");
+      }
+    }
+        
+    // add infantry LRM maximum range penalty
+    if (isLRMInfantry && distance == weaponRanges[RANGE_LONG]) {
+      mods.addModifier(1, "infantry LRM maximum range");
+    }
+        
+    // add infantry zero-range modifier
+    // TODO: this is not the right place to hardcode these
+    if (isWeaponInfantry && distance == 0) {
+      // Infantry platoons attacking with infantry weapons can attack
+      // in the same hex with a base of 2, except for flamers and
+      // SRMs, which have a base of 3 and LRMs, which suffer badly.
+      if (wtype.hasFlag(WeaponType.F_FLAMER)) {
+        mods.addModifier(-1, "infantry flamer assault");
+      } else if (wtype.getAmmoType() == AmmoType.T_SRM ) {
+        mods.addModifier(-1, "infantry SRM assault");
+      } else if (wtype.getAmmoType() != AmmoType.T_LRM) {
+        mods.addModifier(-2, "infantry assault");
+      }
+    }
+        
+    // add minumum range modifier
+    int minRange = weaponRanges[RANGE_MINIMUM];
+    if (minRange > 0 && distance <= minRange) {
+      int minPenalty = (minRange - distance) + 1;
+      // Infantry LRMs suffer double minimum range penalties.
+      if (isLRMInfantry) {
+        mods.addModifier(minPenalty * 2, "infantry LRM minumum range");
+      } else {
+        mods.addModifier(minPenalty, "minumum range");
+      }
+    }
+        
+    // add any target stealth modifier
+    if ((target instanceof Entity) && ((Entity)target).isStealthActive()) {
+      mods.append(((Entity)target).getStealthModifier(usingRange));
     }
 
-    /**
-     * Returns the range bracket a distance falls into.
-     */
-    public static int rangeBracket(int distance, int[] ranges) {
-        if (null == ranges || distance > ranges[RANGE_LONG]) {
-            return RANGE_OUT_OF;
-        }
-        else if (distance > ranges[RANGE_MEDIUM]) {
-            return RANGE_LONG;
-        }
-        else if (distance > ranges[RANGE_SHORT]) {
-            return RANGE_MEDIUM;
-        }
-        else {
-            return RANGE_SHORT;
-        }
+    return mods;
+  }
+  
+  /**
+   * Finds the effective distance between an attacker and a target.
+   * Includes the distance bonus if the attacker and target are in the
+   * same building and on different levels.
+   * 
+   * @return the effective distance
+   */
+  public static int effectiveDistance(Game game, Entity attacker, Targetable target) {
+    int distance = attacker.getPosition().distance(target.getPosition());
+    
+    // If the attack is completely inside a building, add the difference
+    // in elevations between the attacker and target to the range.
+    // TODO: should the player be explcitly notified?
+    if ( isInSameBuilding(game, attacker, target) ) {
+      int aElev = attacker.getElevation();
+      int tElev = target.getElevation();
+      distance += Math.abs(aElev - tElev);
     }
+
+    return distance;
+  }
+
+  /**
+   * Returns the range bracket a distance falls into.
+   */
+  public static int rangeBracket(int distance, int[] ranges) {
+    if (null == ranges || distance > ranges[RANGE_LONG]) {
+      return RANGE_OUT_OF;
+    }
+    else if (distance > ranges[RANGE_MEDIUM]) {
+      return RANGE_LONG;
+    }
+    else if (distance > ranges[RANGE_SHORT]) {
+      return RANGE_MEDIUM;
+    }
+    else {
+      return RANGE_SHORT;
+    }
+  }
 
     /**
      * Attempts to find a C3 spotter that is closer to the target than the
@@ -2012,46 +2012,46 @@ public class Compute
      * @return A closer C3 spotter, or the attack if no spotters are found
      */
     private static Entity findC3Spotter(Game game, Entity attacker, Targetable target) {
-		if (!attacker.hasC3() && !attacker.hasC3i()) {
-			return attacker;
-		}
-		Entity c3spotter = attacker;
-		int c3range = attacker.getPosition().distance(target.getPosition());
-		for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-			Entity friend = (Entity)i.nextElement();
-			if (!attacker.onSameC3NetworkAs(friend) || !canSee(game, friend, target)) {
-				continue; // useless to us...
-			}
-			int buddyRange = effectiveDistance(game, friend, target);
-			if(buddyRange < c3range) {
-				c3range = buddyRange;
-				c3spotter = friend;
-			}
-		}
-		return c3spotter;
-	}
+    if (!attacker.hasC3() && !attacker.hasC3i()) {
+      return attacker;
+    }
+    Entity c3spotter = attacker;
+    int c3range = attacker.getPosition().distance(target.getPosition());
+    for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+      Entity friend = (Entity)i.nextElement();
+      if (!friend.isSelectableThisTurn(game) || !attacker.onSameC3NetworkAs(friend) || !canSee(game, friend, target)) {
+        continue; // useless to us...
+      }
+      int buddyRange = effectiveDistance(game, friend, target);
+      if(buddyRange < c3range) {
+        c3range = buddyRange;
+        c3spotter = friend;
+      }
+    }
+    return c3spotter;
+  }
 
-	/**
+  /**
      * Gets the modifiers, if any, that the mech receives from being prone.
      * @return any applicable modifiers due to being prone
      */
     private static ToHitData getProneMods(Game game, Entity attacker, int weaponId) {
-		if (!attacker.isProne()) {
-			return null; // no modifier
-		}
+    if (!attacker.isProne()) {
+      return null; // no modifier
+    }
 
-		ToHitData mods = new ToHitData();
-		Mounted weapon = attacker.getEquipment(weaponId);
+    ToHitData mods = new ToHitData();
+    Mounted weapon = attacker.getEquipment(weaponId);
         if ( attacker.entityIsQuad() ) {
             int legsDead = ((Mech)attacker).countDestroyedLegs();
             if (legsDead == 0) {
-				// No legs destroyed: no penalty and can fire all weapons
-            	return null; // no modifier
+        // No legs destroyed: no penalty and can fire all weapons
+              return null; // no modifier
             } else if ( legsDead >= 3 ) {
-				return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed.");
-			}
-			// we have one or two dead legs...
-			
+        return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed.");
+      }
+      // we have one or two dead legs...
+      
             // Need an intact front leg
             if (attacker.isLocationDestroyed(Mech.LOC_RARM) && attacker.isLocationDestroyed(Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both front legs destroyed.");
@@ -2062,7 +2062,7 @@ public class Compute
                 int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 if (isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-					return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other front leg already.");
+          return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other front leg already.");
                 }
             }
             // can't fire rear leg weapons
@@ -2089,15 +2089,15 @@ public class Compute
 
             // arm-mounted weapons have addidional trouble
             if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
-	            if ( l3ProneFiringArm == weapon.getLocation() ) {
-	              return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and propping up with this arm.");
-	            }
+              if ( l3ProneFiringArm == weapon.getLocation() ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and propping up with this arm.");
+              }
               
                 int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
-				// check previous attacks for weapons fire from the other arm
-				if (isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-					return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already.");
-				}
+        // check previous attacks for weapons fire from the other arm
+        if (isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
+          return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already.");
+        }
             }
             // can't fire leg weapons
             if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
@@ -2110,64 +2110,64 @@ public class Compute
             }
         }
         return mods;
-	}
+  }
 
-	/**
-	 * Checks to see if there is an attack previous to the one with this
-	 * weapon from the specified arm.
-	 * @return true if there is a previous attack from this arm
-	 */
-	private static boolean isFiringFromArmAlready(Game game, int weaponId, final Entity attacker, int armLoc) {
-		for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-		    Object o = i.nextElement();
-		    if (!(o instanceof WeaponAttackAction)) {
-		        continue;
-		    }
-		    WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-		    // stop when we get to this weaponattack (does this always work?)
-		    if (prevAttack.getEntityId() == attacker.getId() && prevAttack.getWeaponId() == weaponId) {
-		        break;
-		    }
-		    if (prevAttack.getEntityId() == attacker.getId() && attacker.getEquipment(prevAttack.getWeaponId()).getLocation() == armLoc) {
-		    	return true;
-		    }
-		}
-		return false;
-	}
+  /**
+   * Checks to see if there is an attack previous to the one with this
+   * weapon from the specified arm.
+   * @return true if there is a previous attack from this arm
+   */
+  private static boolean isFiringFromArmAlready(Game game, int weaponId, final Entity attacker, int armLoc) {
+    for (Enumeration i = game.getActions(); i.hasMoreElements();) {
+        Object o = i.nextElement();
+        if (!(o instanceof WeaponAttackAction)) {
+            continue;
+        }
+        WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+        // stop when we get to this weaponattack (does this always work?)
+        if (prevAttack.getEntityId() == attacker.getId() && prevAttack.getWeaponId() == weaponId) {
+            break;
+        }
+        if (prevAttack.getEntityId() == attacker.getId() && attacker.getEquipment(prevAttack.getWeaponId()).getLocation() == armLoc) {
+          return true;
+        }
+    }
+    return false;
+  }
 
-	/**
+  /**
      * Adds any damage modifiers from arm critical hits or sensor damage.
-	 * @return Any applicable damage modifiers
-	 */
-	private static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon) {
-		ToHitData mods = new ToHitData();
-		
-		if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, weapon.getLocation()) > 0) {
+   * @return Any applicable damage modifiers
+   */
+  private static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon) {
+    ToHitData mods = new ToHitData();
+    
+    if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, weapon.getLocation()) > 0) {
             mods.addModifier(4, "shoulder actuator destroyed");
         } else {
-	        // no shoulder hits, add other arm hits
-	        int actuatorHits = 0;
-	        if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, weapon.getLocation()) > 0) {
-	            actuatorHits++;
-	        }
-	        if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, weapon.getLocation()) > 0) {
-	            actuatorHits++;
-	        }
-	        if (actuatorHits > 0) {
-				mods.addModifier(actuatorHits, actuatorHits + " destroyed arm actuators");
-	        }
-		}
+          // no shoulder hits, add other arm hits
+          int actuatorHits = 0;
+          if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, weapon.getLocation()) > 0) {
+              actuatorHits++;
+          }
+          if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, weapon.getLocation()) > 0) {
+              actuatorHits++;
+          }
+          if (actuatorHits > 0) {
+        mods.addModifier(actuatorHits, actuatorHits + " destroyed arm actuators");
+          }
+    }
         
-		// sensors critical hit to attacker
-		int sensorHits = attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-		if (sensorHits > 0) {
-			mods.addModifier(2, "attacker sensors damaged");
-		}
-		
+    // sensors critical hit to attacker
+    int sensorHits = attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+    if (sensorHits > 0) {
+      mods.addModifier(2, "attacker sensors damaged");
+    }
+    
         return mods;
-	}
+  }
 
-	/**
+  /**
      * Determines if the current target is a secondary target, and if so,
      * returns the appropriate modifier.
      * 
@@ -2175,9 +2175,9 @@ public class Compute
      * @author Ben
      */
     private static ToHitData getSecondaryTargetMod(Game game, Entity attacker, Targetable target) {
-		boolean curInFrontArc = isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
+    boolean curInFrontArc = isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
 
-		int primaryTarget = Entity.NONE;
+    int primaryTarget = Entity.NONE;
         for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();
             if (!(o instanceof WeaponAttackAction)) {
@@ -2199,25 +2199,25 @@ public class Compute
         }
         
         if (primaryTarget == Entity.NONE || primaryTarget == target.getTargetId()) {
-        	// current target is primary target
-        	return null; // no modifier
+          // current target is primary target
+          return null; // no modifier
         }
         
         // current target is secondary
 
         // Infantry can't attack secondary targets (BMRr, pg. 32).
         if (attacker instanceof Infantry) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "Can't have multiple targets.");
+          return new ToHitData(ToHitData.IMPOSSIBLE, "Can't have multiple targets.");
         }
 
         if (curInFrontArc) {
-			return new ToHitData(1, "secondary target modifier");
+      return new ToHitData(1, "secondary target modifier");
         } else {
-			return new ToHitData(2, "secondary target modifier");
+      return new ToHitData(2, "secondary target modifier");
         }
-	}
+  }
 
-	/**
+  /**
      * Returns ToHitData indicating the modifiers to fire for the specified
      * LOS effects data.
      */
@@ -2534,7 +2534,7 @@ public class Compute
      *
      * @see #calculateLos(Game, int, Targetable)
      */
-	public static LosEffects calculateLos(Game game, Coords c1, Coords c2, boolean mechInFirst, boolean mechInSecond) {
+  public static LosEffects calculateLos(Game game, Coords c1, Coords c2, boolean mechInFirst, boolean mechInSecond) {
         // good time to ensure hex cache
         IdealHex.ensureCacheSize(game.board.width + 1, game.board.height + 1);
          
@@ -2636,11 +2636,11 @@ public class Compute
         }
         int attEl = game.board.getHex(c1).floor();
         if (mechInFirst) {
-        	attEl++;
+          attEl++;
         }
         int targEl = game.board.getHex(c2).floor();
         if (mechInSecond) {
-        	targEl++;
+          targEl++;
         }
  
         Hex hex = game.board.getHex(c3);
@@ -2905,8 +2905,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-		// target immobile
-		toHit.append(getImmobileMod(te));
+    // target immobile
+    toHit.append(getImmobileMod(te));
         
         modifyPhysicalBTHForAdvantages(ae, te, toHit);
         
@@ -3159,8 +3159,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-		// target immobile
-		toHit.append(getImmobileMod(te));
+    // target immobile
+    toHit.append(getImmobileMod(te));
         
         modifyPhysicalBTHForAdvantages(ae, te, toHit);
         
@@ -3449,8 +3449,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-		// target immobile
-		toHit.append(getImmobileMod(te));
+    // target immobile
+    toHit.append(getImmobileMod(te));
         
         modifyPhysicalBTHForAdvantages(ae, te, toHit);
         
@@ -3685,8 +3685,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-		// target immobile
-		toHit.append(getImmobileMod(te));
+    // target immobile
+    toHit.append(getImmobileMod(te));
         
         modifyPhysicalBTHForAdvantages(ae, te, toHit);
         
@@ -3979,8 +3979,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-		// target immobile
-		toHit.append(getImmobileMod(te));
+    // target immobile
+    toHit.append(getImmobileMod(te));
         
         modifyPhysicalBTHForAdvantages(ae, te, toHit);
         
@@ -4239,8 +4239,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-		// target immobile
-		toHit.append(getImmobileMod(te));
+    // target immobile
+    toHit.append(getImmobileMod(te));
         
         modifyPhysicalBTHForAdvantages(ae, te, toHit);
         
@@ -5712,26 +5712,26 @@ public class Compute
         return ( (number & 1) == 1 );
     }
 
-	/**
-	 * Determines whether the attacker and the target are in the same
-	 * building.  
-	 * @return true if the target can and does occupy the same building,
-	 * false otherwise. 
-	 */
-	public static boolean isInSameBuilding(Game game, Entity attacker, Targetable target) {
-		if (!(target instanceof Entity)) {
-			return false;
-		}
-		Entity targetEntity = (Entity)target;
-		if (!isInBuilding(game, attacker) || !isInBuilding(game, targetEntity)) {
-			return false;
-		}
-		
-		Building attkBldg = game.board.getBuildingAt(attacker.getPosition());
-		Building targBldg = game.board.getBuildingAt(target.getPosition());
-		
-		return attkBldg.equals(targBldg);
-	}
+  /**
+   * Determines whether the attacker and the target are in the same
+   * building.  
+   * @return true if the target can and does occupy the same building,
+   * false otherwise. 
+   */
+  public static boolean isInSameBuilding(Game game, Entity attacker, Targetable target) {
+    if (!(target instanceof Entity)) {
+      return false;
+    }
+    Entity targetEntity = (Entity)target;
+    if (!isInBuilding(game, attacker) || !isInBuilding(game, targetEntity)) {
+      return false;
+    }
+    
+    Building attkBldg = game.board.getBuildingAt(attacker.getPosition());
+    Building targBldg = game.board.getBuildingAt(target.getPosition());
+    
+    return attkBldg.equals(targBldg);
+  }
 
     /**
      * Determine if the given unit is inside of a building at the given

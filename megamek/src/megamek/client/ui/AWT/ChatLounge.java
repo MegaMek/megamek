@@ -558,14 +558,16 @@ public class ChatLounge extends AbstractPhaseDisplay
                 lisEntities.add(entity.getOwner().getName() 
                 + " (" + entity.getCrew().getGunnery()
                 + "/" + entity.getCrew().getPiloting() + " pilot" + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "") + ")"
-                + " Class: " + weight);
+                + " Class: " + weight
+                + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
             }
             else
             {
                 lisEntities.add(strTreeSet + entity.getDisplayName()
                 + " (" + entity.getCrew().getGunnery()
                 + "/" + entity.getCrew().getPiloting() + " pilot" + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "") + ")"
-                + " BV=" + entity.calculateBattleValue() + strTreeView);
+                + " BV=" + entity.calculateBattleValue() + strTreeView
+                + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
             }
             
             
@@ -759,12 +761,12 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
     
     public void changeCamo(String camo) {
-    	String curCamo = client.getLocalPlayer().getCamoFileName();
+      String curCamo = client.getLocalPlayer().getCamoFileName();
         if ((camo == null && curCamo != null)
             || (camo != null && !camo.equals(curCamo))) {
-			client.getLocalPlayer().setCamoFileName(camo);
-			client.sendPlayerInfo();
-    	}
+      client.getLocalPlayer().setCamoFileName(camo);
+      client.sendPlayerInfo();
+      }
     }
 
     /**
@@ -839,7 +841,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshCamos();
     }
     public void gamePhaseChange(GameEvent ev) {
-        if (client.game.phase !=  Game.PHASE_LOUNGE) {
+        if (client.game.getPhase() !=  Game.PHASE_LOUNGE) {
             // unregister stuff.
             client.removeGameListener(this);
             client.game.board.removeBoardListener(this);
@@ -899,6 +901,24 @@ public class ChatLounge extends AbstractPhaseDisplay
     //
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource() == butDone) {
+          boolean anyDelayed = false;
+          
+          Enumeration enum = client.getEntities();
+          
+          while ( enum.hasMoreElements() ) {
+            Entity en = (Entity)enum.nextElement();
+            
+            if ( en.getDeployRound() > 0 ) {
+              anyDelayed = true;
+              break;
+            }
+          }
+          
+          if ( anyDelayed && (client.getLocalPlayer().getStartingPos() == 0) ) {
+            new AlertDialog(client.frame, "Need deployment", "Players with delayed deployment can not use the 'any' starting position. Please select a direction to start from.").show();
+            return;
+          }
+           
             boolean done = !client.getLocalPlayer().isDone();
             client.sendDone(done);
             refreshDoneButton(done);

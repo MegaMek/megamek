@@ -19,6 +19,6 @@ package megamek.common;
  */
 public interface RoundUpdated {
 
-    public void newRound();
+    public void newRound(int roundNumber);
 
 }

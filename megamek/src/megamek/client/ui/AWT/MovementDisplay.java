@@ -827,7 +827,7 @@ public class MovementDisplay
                     // then enable the "Load" button.
                     if ( ce().getWalkMP() > 0 &&
                          ce().canLoad(other) &&
-                         other.isSelectable() ) {
+                         other.isSelectableThisTurn(client.game) ) {
                         butLoad.setEnabled( true );
                     }
 
@@ -959,7 +959,7 @@ public class MovementDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
-        if (client.game.phase != Game.PHASE_MOVEMENT) {
+        if (client.game.getPhase() != Game.PHASE_MOVEMENT) {
             // ignore
             return;
         }
@@ -974,10 +974,10 @@ public class MovementDisplay
         }
     }
     public void gamePhaseChange(GameEvent ev) {
-        if (client.isMyTurn() && client.game.phase != Game.PHASE_MOVEMENT) {
+        if (client.isMyTurn() && client.game.getPhase() != Game.PHASE_MOVEMENT) {
             endMyTurn();
         }
-        if (client.game.phase !=  Game.PHASE_MOVEMENT) {
+        if (client.game.getPhase() !=  Game.PHASE_MOVEMENT) {
             client.removeGameListener(this);
             client.game.board.removeBoardListener(this);
             client.bv.removeKeyListener(this);

@@ -88,6 +88,10 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
+v next
++ added quad backward lateral shifts--LDE
++ 561339: switching between reverse and forward movement now resets defensive modifier--LDE
+
 v 0.26.2 (06-14-02, 5pm)
 + actually applied level 2 patch to Server.java
 + added quad lateral shifts

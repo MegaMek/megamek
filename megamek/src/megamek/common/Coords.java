@@ -308,7 +308,16 @@ public class Coords
         Coords other = (Coords)object;
         return other.x == this.x && other.y == this.y;
     }
-    
+
+    /**
+     * Get the hash code for these coords.
+     *
+     * @return  The <code>int</code> hash code for these coords.
+     */
+    public int hashCode() {
+        return this.x*100 + this.y;
+    }
+
     public String toString() {
         return "Coords (" + x + ", " + y + "); " + getBoardNum();
     }

@@ -34,7 +34,12 @@ implements Serializable {
     public Hex[]                data;
     
     protected transient Vector boardListeners;
-    
+
+    /**
+     * Record the infernos placed on the board.
+     */
+    private Hashtable           infernos = new Hashtable();
+
     /**
      * Creates a new board with zero as its width and
      * height parameters.
@@ -741,4 +746,100 @@ implements Serializable {
             System.err.println(ex);
         }
     }
+
+    /**
+     * Record that the given coordinates have recieved a hit from an inferno.
+     *
+     * @param   coords - the <code>Coords</code> of the hit.
+     * @param   round  - the kind of round that hit the hex.
+     * @param   hits   - the <code>int</code> number of rounds that hit.
+     *          If a negative number is passed, then an
+     *          <code>IllegalArgumentException</code> will be thrown.
+     */
+    public void addInfernoTo( Coords coords, 
+                              InfernoTracker.Inferno round,
+                              int hits ) {
+        // Declare local variables.
+        InfernoTracker tracker = null;
+
+        // Make sure the # of hits is valid.
+        if ( hits < 0 ) {
+            throw new IllegalArgumentException
+                ( "Board can't track negative hits. " );
+        }
+
+        // Do nothing if the coords aren't on this board.
+        if ( !this.contains( coords ) ) {
+            return;
+        }
+
+        // Do we already have a tracker for those coords?
+        tracker = (InfernoTracker) this.infernos.get( coords );
+        if ( null == tracker ) {
+            // Nope.  Make one.
+            tracker = new InfernoTracker();
+            this.infernos.put( coords, tracker );
+            System.err.print( "Adding an inferno tracker for " ); //killme
+            System.err.println( coords.getBoardNum() );//killme
+        }
+
+        // Update the tracker.
+        tracker.add( round, hits );
+        System.err.print( "Adding " );//killme
+        System.err.print( hits );//killme
+        System.err.print( " Inferno rounds to " );//killme
+        System.err.println( coords.getBoardNum() );//killme
+
+    }
+
+    /**
+     * Determine if the given coordinatess has a burning inferno.
+     *
+     * @param   coords - the <code>Coords</code> being checked.
+     * @return  <code>true</code> if those coordinates have a burning
+     *          inferno round. <code>false</code> if no inferno has hit
+     *          those coordinates or if it has burned out.
+     */
+    public boolean isInfernoBurning( Coords coords ) {
+        boolean result = false;
+        InfernoTracker tracker = null;
+
+        // Get the tracker for those coordinates
+        // and see if the fire is still burning.
+        tracker = (InfernoTracker) this.infernos.get( coords );
+        if ( null != tracker ) {
+            if ( tracker.isStillBurning() ) {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Record that a new round of burning has passed for the given coordinates.
+     * This routine also determines if the fire is still burning.
+     *
+     * @param   coords - the <code>Coords</code> being checked.
+     * @return  <code>true</code> if those coordinates have a burning
+     *          inferno round. <code>false</code> if no inferno has hit
+     *          those coordinates or if it has burned out.
+     */
+    public boolean burnInferno( Coords coords ) {
+        boolean result = false;
+        InfernoTracker tracker = null;
+
+        // Get the tracker for those coordinates, record the round
+        // of burning and see if  the fire is still burning.
+        tracker = (InfernoTracker) this.infernos.get( coords );
+        if ( null != tracker ) {
+            tracker.newRound();
+            if ( tracker.isStillBurning() ) {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
 }

@@ -632,7 +632,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         
         misc.name = "Fire Protection";
-        misc.internalName = "BA-Fire Protection";
+        misc.internalName = BattleArmor.FIRE_PROTECTION;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
         misc.tonnage = 0;

@@ -127,6 +127,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLBXAC20());
         EquipmentType.addType(createISGaussRifle());
         EquipmentType.addType(createISLightGaussRifle());
+        EquipmentType.addType(createISHeavyGaussRifle());
         EquipmentType.addType(createISUltraAC2());
         EquipmentType.addType(createISUltraAC5());
         EquipmentType.addType(createISUltraAC10());
@@ -851,6 +852,29 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE;
         weapon.explosive = true;
         weapon.bv = 159;
+        
+        return weapon;
+    }
+    
+    public static WeaponType createISHeavyGaussRifle() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Heavy Gauss Rifle";
+        weapon.internalName = "ISHeavyGaussRifle";
+        weapon.mepName = weapon.internalName;
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.ammoType = AmmoType.T_GAUSS_HEAVY;
+        weapon.minimumRange = 4;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 13;
+        weapon.longRange = 20;
+        weapon.tonnage = 18.0f;
+        weapon.criticals = 11;
+        weapon.flags |= F_DIRECT_FIRE;
+        weapon.explosive = true;
+        weapon.bv = 346;
         
         return weapon;
     }

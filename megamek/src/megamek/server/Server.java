@@ -2008,9 +2008,9 @@ implements Runnable {
             return;
         }
         
-        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE 
-        || wtype.getDamage() == WeaponType.DAMAGE_VARIABLE
-        || (ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
+        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE || isWeaponInfantry
+            || (ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) 
+            || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
              if (isWeaponInfantry || ammo != null) {
                 // missiles; determine number of missiles hitting
                 int hits;
@@ -2021,15 +2021,15 @@ implements Runnable {
                     hits = platoon.getDamage( platoon.getShootingStrength() );
                     hitType = " shot(s)";
 
-		    // Flamer-equipped infantry can do heat damage.
-		    if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
-			 game.getOptions().booleanOption("flamer_heat") ) {
-			phaseReport.append("hits; target gains " + hits +
-					   " more heat during heat phase.");
-			te.heatBuildup += hits;
-			// That's all for this weapon.
-			return;
-		    }
+                    // Flamer-equipped infantry can do heat damage.
+                    if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
+                     game.getOptions().booleanOption("flamer_heat") ) {
+                        phaseReport.append("hits; target gains " + hits +
+                           " more heat during heat phase.");
+                        te.heatBuildup += hits;
+                        // That's all for this weapon.
+                        return;
+                    }
 
                 } else if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
                     hits = wtype.getRackSize();
@@ -2133,7 +2133,38 @@ implements Runnable {
             // normal weapon; deal damage
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
             phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
-            phaseReport.append(damageEntity(te, hit, wtype.getDamage()));
+            
+            // HGR do range-based damage.  Hardcoded until another weapon acts like this.
+            int nDamage = wtype.getDamage();
+            if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
+                int nRange = ae.getPosition().distance(te.getPosition());
+                if (nRange <= wtype.getShortRange()) {
+                    nDamage = 25;
+                } else if (nRange <= wtype.getMediumRange()) {
+                    nDamage = 20;
+                } else {
+                    nDamage = 10;
+                }
+                
+                // if MP were used this round, unit is 'unbraced' and must make PSR
+                if (ae.mpUsed > 0) {
+                    // the mod is weight-based
+                    int nMod;
+                    if (te.getWeight() <= Mech.WEIGHT_LIGHT) {
+                        nMod = 2;
+                    } else if (te.getWeight() <= Mech.WEIGHT_MEDIUM) {
+                        nMod = 1;
+                    } else if (te.getWeight() <= Mech.WEIGHT_HEAVY) {
+                        nMod = 0;
+                    } else {
+                        nMod = -1;
+                    }
+                    
+                    pilotRolls.addElement(new PilotingRollData(ae.getId(), nMod, "fired HeavyGauss unbraced"));
+                }
+            }
+            
+            phaseReport.append(damageEntity(te, hit, nDamage));
         }
         
         phaseReport.append("\n");

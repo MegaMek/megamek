@@ -40,6 +40,7 @@ public class AmmoType extends EquipmentType {
     public static final int     T_AC_LBX            = 19;
     public static final int     T_AC_ULTRA          = 20;
     public static final int     T_GAUSS_LIGHT       = 21;
+    public static final int     T_GAUSS_HEAVY       = 22;
     
     // ammo flags
     public static final int     F_CLUSTER           = 0x0001; // for lbx
@@ -111,6 +112,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISUltra20Ammo());
         EquipmentType.addType(createISGaussAmmo());
         EquipmentType.addType(createISLTGaussAmmo());
+        EquipmentType.addType(createISHVGaussAmmo());
         EquipmentType.addType(createISStreakSRM2Ammo());
         EquipmentType.addType(createISStreakSRM4Ammo());
         EquipmentType.addType(createISStreakSRM6Ammo());
@@ -593,6 +595,22 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_GAUSS_LIGHT;
         ammo.shots = 16;
         ammo.bv = 20;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createISHVGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Heavy Gauss Ammo";
+        ammo.internalName = "ISHeavyGauss Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = ammo.internalName;
+        ammo.damagePerShot = 25;  // actually variable
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_GAUSS_HEAVY;
+        ammo.shots = 4;
+        ammo.bv = 43;
         
         return ammo;
     }

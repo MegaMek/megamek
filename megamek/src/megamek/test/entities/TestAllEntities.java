@@ -35,7 +35,8 @@ public class TestAllEntities implements MechSummaryCache.Listener
             for (Enumeration e = root.elements(); e.hasMoreElements(); )
             {
                 ParsedXML child = (ParsedXML) e.nextElement();
-                if (child.getName().equals(BASE_NODE))
+                if (child.getTypeName().equals("tag")
+                    && child.getName().equals(BASE_NODE))
                 {
                     readOptions(child);
                 }
@@ -117,6 +118,7 @@ public class TestAllEntities implements MechSummaryCache.Listener
         System.out.println(mechOption.printOptions());
         System.out.println("\nTank Options:");
         System.out.println(tankOption.printOptions());
+
         for (int i = 0; i < ms.length; i++)
         {
             if (ms[i].getUnitType().equals("Mek") ||

@@ -1,6 +1,8 @@
 package megamek.test.entities;
 
 import java.util.Enumeration;
+import java.util.Vector;
+import java.util.StringTokenizer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +51,7 @@ public class TestXMLOption implements TestEntityOption
     private boolean showOverweighted = true;
     private float minUnderweight = 1.0f;
     private boolean showUnderweighted = false;
-    private String[] ignoreFailedEquip = {};
+    private Vector ignoreFailedEquip = new Vector();
     private boolean skip = false;
     private boolean showCorrectArmor = true;
     private boolean showCorrectCritical = true;
@@ -73,8 +75,8 @@ public class TestXMLOption implements TestEntityOption
     private static float getContentAsFloat(ParsedXML node)
     {
         if (node.elements().hasMoreElements())
-            return Float.parseFloat(((ParsedXML) node.elements().nextElement())
-                    .getContent().trim());
+            return Float.valueOf(((ParsedXML) node.elements().nextElement())
+                    .getContent().trim()).floatValue();
         return 0;
     }
 
@@ -120,9 +122,13 @@ public class TestXMLOption implements TestEntityOption
                 showFailedEquip = getContentAsBoolean(child);
             else if (child.getName().equals(IGNORE_FAILED_EQUIP))
             {
-                ignoreFailedEquip = getContent(child).split("\\s*,\\s*");
-                for(int i = 0; i < ignoreFailedEquip.length; i++)
-                    ignoreFailedEquip[i] = ignoreFailedEquip[i].trim();
+                StringTokenizer st = new StringTokenizer(getContent(child), ",");
+                while (st.hasMoreTokens()) {
+                    ignoreFailedEquip.addElement(st.nextToken());
+                }
+
+                for(int i = 0; i < ignoreFailedEquip.size(); i++)
+                    ignoreFailedEquip.setElementAt(((String)ignoreFailedEquip.elementAt(i)).trim(), i);
             }
             else if (child.getName().equals(SKIP))
                 skip = getContentAsBoolean(child);
@@ -218,8 +224,8 @@ public class TestXMLOption implements TestEntityOption
 
     public boolean ignoreFailedEquip(String name)
     {
-        for(int i = 0; i < ignoreFailedEquip.length; i++)
-            if (ignoreFailedEquip[i].equals(name))
+        for(int i = 0; i < ignoreFailedEquip.size(); i++)
+            if (ignoreFailedEquip.elementAt(i).equals(name))
                 return true;
         return false;
     }
@@ -254,30 +260,31 @@ public class TestXMLOption implements TestEntityOption
 
     public String printIgnoredFailedEquip()
     {
+        System.out.println("--->printIgnoredFailedEquip");
         String ret = "";
-        for(int i = 0; i < ignoreFailedEquip.length; i++)
-            ret += "  "+ignoreFailedEquip[i]+"\n";
+        for(int i = 0; i < ignoreFailedEquip.size(); i++)
+            ret += "  "+ignoreFailedEquip.elementAt(i)+"\n";
         return ret;
     }
 
     public String printOptions()
     {
         return 
-            "Skip: "+Boolean.toString(skip())+"\n"+
+            "Skip: "+skip()+"\n"+
             "Show Overweighted Entity: "+
-            Boolean.toString(showOverweightedEntity())+"\n"+
+            showOverweightedEntity()+"\n"+
             "Max Overweight: "+
             Float.toString(getMaxOverweight())+"\n"+
             "Show Underweighted Entity: "+
-            Boolean.toString(showUnderweightedEntity())+"\n"+
+            showUnderweightedEntity()+"\n"+
             "Min Underweight: "+
             Float.toString(getMinUnderweight())+"\n"+
             "Show bad Armor Placement: "+
-            Boolean.toString(showCorrectArmor())+"\n"+
+            showCorrectArmor()+"\n"+
             "Show bad Critical Allocation: "+
-            Boolean.toString(showCorrectCritical())+"\n"+
+            showCorrectCritical()+"\n"+
             "Show Failed to Load Equipment: "+
-            Boolean.toString(showFailedEquip())+"\n"+
+            showFailedEquip()+"\n"+
             "Weight Ceiling Engine: "+
             Float.toString(1 / getWeightCeilingEngine())+"\n"+
             "Weight Ceiling Structure: "+

@@ -721,7 +721,12 @@ class WeaponPanel
             for (int x = 0, n = vAmmo.size(); x < n; x++) {
                 m_chAmmo.add(formatAmmo((Mounted)vAmmo.elementAt(x)));
             }
-            m_chAmmo.select(nCur);
+            if (nCur == -1) {
+                m_chAmmo.disable();
+            }
+            else {
+                m_chAmmo.select(nCur);
+            }
         }
     }
     

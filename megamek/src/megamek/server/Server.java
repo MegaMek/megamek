@@ -7017,12 +7017,21 @@ implements Runnable {
                 side = "front";
                 table = ToHitData.SIDE_FRONT;
         }
+        
+        int waterDepth = game.board.getHex(fallPos).levelOf(Terrain.WATER);
+        int damageHeight = height;
+        
+        // HACK: if the dest hex is water, assume that the fall height given is
+        // to the floor of the hex, and modifiy it so that it's to the surface
+        if (waterDepth > 0) {
+            damageHeight = Math.max(height - waterDepth, 0);
+        }
 
         // calculate damage
-        int damage = (int)Math.round(entity.getWeight() / 10.0) * (height + 1);
+        int damage = (int)Math.round(entity.getWeight() / 10.0) * (damageHeight + 1);
         
-        // TODO: only fall to surface of water
-        if (game.board.getHex(fallPos).levelOf(Terrain.WATER) > 0) {
+        // half damage for water falls
+        if (waterDepth > 0) {
             damage = (int)Math.ceil(damage / 2.0);
         }
         

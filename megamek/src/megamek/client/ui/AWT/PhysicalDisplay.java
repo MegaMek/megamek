@@ -251,7 +251,6 @@ public class PhysicalDisplay
         butDone.setEnabled(true);
         butMore.setEnabled(true);
         client.setDisplayVisible(true);
-        moveMechDisplay();
         client.game.board.select(null);
         client.game.board.highlight(null);
         selectEntity(client.getFirstEntityNum());
@@ -631,17 +630,6 @@ public class PhysicalDisplay
         return client.game.getEntity(cen);
     }
 
-    /**
-     * Moves the mech display window to the proper position.
-     */
-    private void moveMechDisplay() {
-        if (client.bv.isShowing()) {
-            client.mechW.setLocation(client.bv.getLocationOnScreen().x + client.bv.getSize().width 
-                               - client.mechD.getSize().width - 20, 
-                               client.bv.getLocationOnScreen().y + 20);
-        }
-    }
-    
     //
     // BoardListener
     //

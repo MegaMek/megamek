@@ -1211,7 +1211,7 @@ implements Runnable, ConnectionHandler {
                 Enumeration i = game.getEntities();
                 while (i.hasMoreElements()) {
                     Entity en = (Entity) i.nextElement();
-                    en.checkPlaceOffBoard();
+                    en.deployOffBoard();
                 }
                 checkForObservers();
                 resetActivePlayersDone();
@@ -1219,10 +1219,31 @@ implements Runnable, ConnectionHandler {
 
                 i = game.getPlayers();
                 Vector turn = new Vector();
+
+                // Walk through the players of the game, and add
+                // a turn for all players with artillery weapons.
                 while (i.hasMoreElements()) {
-                    Player p = (Player) i.nextElement();
-                    GameTurn gt = new GameTurn(p.getId());
-                    turn.addElement(gt);
+
+                    // Get the next player.
+                    final Player p = (Player) i.nextElement();
+
+                    // Does the player have any artillery-equipped units?
+                    EntitySelector playerArtySelector = new EntitySelector() {
+                            private Player owner = p;
+                            public boolean accept (Entity entity) {
+                                if ( owner.equals( entity.getOwner() ) &&
+                                     isEligibleForTargetingPhase( entity ) )
+                                    return true;
+                                return false;
+                            }
+                        };
+                    if ( game.getSelectedEntities( playerArtySelector )
+                         .hasMoreElements() ) {
+
+                        // Yes, the player has arty-equipped units.
+                        GameTurn gt = new GameTurn(p.getId());
+                        turn.addElement(gt);
+                    }
                 }
                 game.setTurnVector(turn);
                 game.resetTurnIndex();

@@ -44,9 +44,9 @@ public class Coords
     public int            y;
 
     /**
-     * Allow at most 15 boards (255 hexes) in the 'y' direction.
+     * Allow at most 30 boards (510 hexes) in the 'y' direction.
      */
-    private static final int SHIFT = 8;
+    private static final int SHIFT = 9;
     private static final int MASK = ( 1 << Coords.SHIFT ) - 1;
 
     /**

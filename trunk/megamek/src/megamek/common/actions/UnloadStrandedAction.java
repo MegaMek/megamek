@@ -14,7 +14,6 @@
 
 package megamek.common.actions;
 
-import java.io.Serializable;
 
 /**
  * Concrete implementation of and entity action for unloading entities that

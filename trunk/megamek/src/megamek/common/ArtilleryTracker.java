@@ -12,7 +12,6 @@
  *  for more details.
  */
 package megamek.common;
-import megamek.*;
 import java.util.*;
 import java.io.Serializable;
 /**

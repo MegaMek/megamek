@@ -15,8 +15,6 @@
 package megamek.common;
 
 import java.io.*;
-import java.util.Enumeration;
-import megamek.client.UnitOverview;
 
 /**
  * This class represents the lowest of the low, the ground pounders, 

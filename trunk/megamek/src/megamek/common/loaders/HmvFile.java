@@ -28,7 +28,6 @@ import megamek.common.EquipmentType;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
-import megamek.common.Entity.MovementType;
 
 /**
  * Based on the hmpread.c program and the MtfFile object.  This class

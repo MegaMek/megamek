@@ -30,7 +30,6 @@ import java.awt.MediaTracker;
 import java.io.File;
 import megamek.client.util.ImageFileFactory;
 import megamek.client.util.RotateFilter;
-import megamek.client.util.TintFilter;
 import megamek.client.util.widget.BufferedPanel;
 import megamek.client.util.widget.BackGroundDrawer;
 import megamek.common.util.DirectoryItems;

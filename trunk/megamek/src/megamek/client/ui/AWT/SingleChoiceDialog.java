@@ -15,8 +15,6 @@
 package megamek.client;
 
 import java.awt.*;
-import java.awt.event.*;
-import megamek.common.Settings;
 
 /**
  * A (somewhat primitive) dialog that asks a question and lets the user

@@ -17,8 +17,6 @@ package megamek.client;
 import java.awt.*;
 import java.awt.event.*;
 
-import megamek.common.*;
-import megamek.client.util.*;
 
 /**
  * Ask for the setting for a vibrabomb.

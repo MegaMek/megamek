@@ -56,6 +56,7 @@ Lot of people have contributed to the MegaMek project.
      Hopalong
      Martis Truesight
      Taerkar
+     coralbeach
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>

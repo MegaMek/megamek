@@ -69,8 +69,11 @@ public class BufferedPanel extends Panel implements ComponentListener {
      /**
       * Create a new off screen image at the current size of the panel.
       */
-     protected void createBuffer() {
-	  offScr = createImage(getSize().width, getSize().height);
+     protected synchronized void createBuffer() {
+         // Attempting to reduce the system's resource use.
+         if ( offScr == null ) {
+             offScr = createImage(getSize().width, getSize().height);
+         }
      }
 
      /**
@@ -86,31 +89,28 @@ public class BufferedPanel extends Panel implements ComponentListener {
       * get repainted.
       */
      public void paint(Graphics g) {
-	  // create and off-screen image if needed.
-	  if(offScr == null) {
-	       createBuffer();
-	  }
-	  // Get a Graphics object to draw with.
-	  Graphics offG = offScr.getGraphics();
-	  // set clipping to current size.
-	  offG.setClip(0, 0, getSize().width, getSize().height);
-	  // Clear the panel as needed 
-	  clearGraphics(offG);
-	  //Draw background
-	  Enumeration enum = bgDrawers.elements();
-       while(enum.hasMoreElements()){
-          BackGroundDrawer bgd = (BackGroundDrawer) enum.nextElement();
-          bgd.drawInto(offG, getSize().width, getSize().height);
-      }
-	  // Let the parent panel repaint the components inside.
-	  super.paint(offG);
-	  // draw the off-screen image to the sreen.
-	  g.drawImage(offScr, 0, 0, null);
+         // create and off-screen image if needed.
+         createBuffer();
+         // Get a Graphics object to draw with.
+         Graphics offG = offScr.getGraphics();
+         // set clipping to current size.
+         offG.setClip(0, 0, getSize().width, getSize().height);
+         // Clear the panel as needed 
+         clearGraphics(offG);
+         //Draw background
+         Enumeration enum = bgDrawers.elements();
+         while(enum.hasMoreElements()){
+             BackGroundDrawer bgd = (BackGroundDrawer) enum.nextElement();
+             bgd.drawInto(offG, getSize().width, getSize().height);
+         }
+         // Let the parent panel repaint the components inside.
+         super.paint(offG);
+         // draw the off-screen image to the sreen.
+         g.drawImage(offScr, 0, 0, null);
 
-	  //crean up the local graphics reference.
-	  offG.dispose();
+         //crean up the local graphics reference.
+         offG.dispose();
      }
-
 
      private void clearGraphics(Graphics offG) {
 	  Color c = offG.getColor();

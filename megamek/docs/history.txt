@@ -10,6 +10,7 @@ v0.29.37 (CVS)
 	game-option set
 + Bug 970608: low/high gravity & MASC or TSM now works correctly	
 + Use an Enumeration rather than Vector#elementAt() whenever possible.
++ Bug 967231: Oops! Had made it possible to load enemy inf :)
 
 v0.29.36 (2004-06-06, 10:30pm)
 + Bug 957390: a bot miscue from the last checkin

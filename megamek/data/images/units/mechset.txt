@@ -30,12 +30,12 @@ exact "default_infantry" "default_infantry.gif"
 exact "Jenner JR7-F" "jenner.gif"
 
 # by grfx_slade
-exact "Archer ARC-2R" "archer.gif
+exact "Archer ARC-2R" "archer.gif"
 
 #by RAw
 exact "Commando COM-3A" "commando.gif"
 exact "Javelin JVN-N" "javelin.gif"
-exact "Warhammer WHM-R" "warhammer0.gif"
+exact "Warhammer WHM-3R" "warhammer0.gif"
 
 # end of special variants
 # Normal pics

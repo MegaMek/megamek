@@ -133,7 +133,7 @@ public abstract class Entity
     /**
      * The components of this entity that can transport other entities.
      */
-    private List                transports = new Vector();
+    private Vector                transports = new Vector();
 
     /**
      * The ID of the <code>Entity</code> that has loaded this unit.
@@ -2037,7 +2037,7 @@ public abstract class Entity
      * @param	component - One of this new entity's <code>Transporter</code>s.
      */
     /* package */ void addTransporter( Transporter component ) {
-	transports.add( component );
+	transports.addElement( component );
     }
 
     /**
@@ -2051,9 +2051,9 @@ public abstract class Entity
     public boolean canLoad( Entity unit ) {
 	// Walk through this entity's transport components;
 	// if one of them can load the unit, we can.
-	Iterator iter = this.transports.iterator();
-	while ( iter.hasNext() ) {
-	    Transporter next = (Transporter)iter.next();
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
 	    if ( next.canLoad( unit ) ) {
 		return true;
 	    }
@@ -2074,9 +2074,9 @@ public abstract class Entity
 	// Walk through this entity's transport components;
 	// find the one that can load the unit.
 	// Stop looking after the first match.
-	Iterator iter = this.transports.iterator();
-	while ( iter.hasNext() ) {
-	    Transporter next = (Transporter)iter.next();
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
 	    if ( next.canLoad( unit ) ) {
 		next.load( unit );
 		return;
@@ -2098,15 +2098,17 @@ public abstract class Entity
      *          lying data structure; modifying one does not affect the other.
      *
      */
-    public List getLoadedUnits() {
-	List result = new LinkedList();
+    public Vector getLoadedUnits() {
+	Vector result = new Vector();
 
 	// Walk through this entity's transport components;
 	// add all of their lists to ours.
-	Iterator iter = this.transports.iterator();
-	while ( iter.hasNext() ) {
-	    Transporter next = (Transporter)iter.next();
-	    result.addAll( next.getLoadedUnits() );
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
+            for (Enumeration i = next.getLoadedUnits().elements(); i.hasMoreElements();) {
+                result.addElement(i.nextElement());
+            }
 	}
 
 	// Return the list.
@@ -2124,9 +2126,9 @@ public abstract class Entity
 	// Walk through this entity's transport components;
 	// try to remove the unit from each in turn.
 	// Stop after the first match.
-	Iterator iter = this.transports.iterator();
-	while ( iter.hasNext() ) {
-	    Transporter next = (Transporter)iter.next();
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
 	    if ( next.unload( unit ) ) {
 		return true;
 	    }
@@ -2146,12 +2148,12 @@ public abstract class Entity
 
 	// Walk through this entity's transport components;
 	// add all of their string to ours.
-	Iterator iter = this.transports.iterator();
-	while ( iter.hasNext() ) {
-	    Transporter next = (Transporter)iter.next();
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
 	    result.append( next.getUnusedString() );
             // Add a newline character between strings.
-            if ( iter.hasNext() ) {
+            if ( iter.hasMoreElements() ) {
                 result.append( '\n' );
             }
 	}
@@ -2175,9 +2177,9 @@ public abstract class Entity
 	// Walk through this entity's transport components;
 	// check each for blockage in turn.
 	// Stop after the first match.
-	Iterator iter = this.transports.iterator();
-	while ( iter.hasNext() ) {
-	    Transporter next = (Transporter)iter.next();
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
 	    if ( next.isWeaponBlockedAt( loc, isRear ) ) {
 		return true;
 	    }
@@ -2206,9 +2208,9 @@ public abstract class Entity
 	// Walk through this entity's transport components;
 	// check each for an exterior unit in turn.
 	// Stop after the first match.
-	Iterator iter = this.transports.iterator();
-	while ( iter.hasNext() ) {
-	    Transporter next = (Transporter)iter.next();
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
             Entity exterior = next.getExteriorUnitAt( loc, isRear );
 	    if ( null != exterior ) {
 		return exterior;

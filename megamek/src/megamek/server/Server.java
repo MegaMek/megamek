@@ -567,7 +567,7 @@ public class Server
                Mounted mounted = (Mounted)i.nextElement();
                WeaponType wtype = (WeaponType)mounted.getType();
 
-               if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
+               if (wtype.getAmmoType() != AmmoType.T_NA) {
                    if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0) {
                        entity.loadWeapon(mounted);
                    }
@@ -1734,13 +1734,13 @@ public class Server
             // missiles; determine number of missiles hitting
             int hits = Compute.missilesHit(wtype.getRackSize());
             phaseReport.append(hits + " missiles hit" + toHit.getTableDesc() + ".");
-            if (wtype.getAmmoType() == AmmoType.TYPE_SRM) {
+            if (wtype.getAmmoType() == AmmoType.T_SRM) {
                 // for SRMs, do each missile seperately
                 for (int j = 0; j < hits; j++) {
                     HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                     phaseReport.append(damageEntity(te, hit, 2));
                 }
-            } else if (wtype.getAmmoType() == AmmoType.TYPE_LRM) {
+            } else if (wtype.getAmmoType() == AmmoType.T_LRM) {
                 // LRMs, do salvos of 5
                 while (hits > 0) {
                     int salvo = Math.min(5, hits);
@@ -1749,7 +1749,7 @@ public class Server
                     hits -= salvo;
                 }
             }
-        } else if (wtype.getName().indexOf("Flamer") != -1 && game.getOptions().booleanOption("flamer_heat")) {
+        } else if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
              phaseReport.append("hits; target gains 2 more heat during heat phase.");
              te.heatBuildup += 2;
         } else {
@@ -1962,7 +1962,7 @@ public class Server
 
         phaseReport.append("\n");
         
-        if (caa.getClub().getName().startsWith("Tree")) {
+        if (caa.getClub().getType().hasFlag(MiscType.F_TREE_CLUB)) {
             phaseReport.append("The " + caa.getClub().getName() + " breaks.\n");
             ae.removeMisc(caa.getClub().getName());
         }

@@ -567,7 +567,7 @@ class WeaponPanel
             String wn = mounted.getDesc() 
                         + " [" + en.getLocationAbbr(mounted.getLocation()) + "]";
             // determine shots left & total shots left
-            if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
+            if (wtype.getAmmoType() != AmmoType.T_NA) {
                 int shotsLeft = mounted.getLinked() == null ? 0 : mounted.getLinked().getShotsLeft();
                 EquipmentType typeUsed = mounted.getLinked() == null ? null : mounted.getLinked().getType();
                 int totalShotsLeft = 0;

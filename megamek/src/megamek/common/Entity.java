@@ -101,7 +101,7 @@ public abstract class Entity
 
     protected CriticalSlot[][]  crits; // [loc][slot]
 
-    private int                 movementType  = MovementType.NONE;
+    protected int                 movementType  = MovementType.NONE;
     
     /**
      * Generates a new, blank, entity.
@@ -932,7 +932,7 @@ public abstract class Entity
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             WeaponType wtype = (WeaponType)mounted.getType();
-            if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
+            if (wtype.getAmmoType() != AmmoType.T_NA) {
                 loadWeapon(mounted);
             }
         }
@@ -1152,7 +1152,7 @@ public abstract class Entity
     public int getNumberOfCriticals(int loc) {
       int[] noOfSlots = getNoOfSlots();
       
-      if ( (null == noOfSlots) || (loc >= noOfSlots.length) ) {
+      if ( (null == noOfSlots) || (loc >= noOfSlots.length) || loc == LOC_NONE ) {
         return 0;
       }
       

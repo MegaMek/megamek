@@ -26,9 +26,14 @@ package megamek.common;
  * @version 
  */
 public class MiscType extends EquipmentType {
-    // some static links to these for convenience
-    public final static MiscType HEAT_SINK = createHeatSink();
-    public final static MiscType JUMP_JET = createJumpJet();
+    // equipment flags (okay, like every type of equipment has its own flag)
+    // TODO: l2 equipment flags
+    public static final int     F_HEAT_SINK         = 0x0001;
+    public static final int     F_DOUBLE_HEAT_SINK  = 0x0002;
+    public static final int     F_JUMP_JET          = 0x0004;
+    public static final int     F_CLUB              = 0x0008;
+    public static final int     F_HATCHET           = 0x0010;
+    public static final int     F_TREE_CLUB         = 0x0020;
 
     /** Creates new MiscType */
     public MiscType() {
@@ -41,7 +46,7 @@ public class MiscType extends EquipmentType {
             return tonnage;
         }
         // check for known formulas
-        if (internalName.equals("Jump Jet")) {
+        if (hasFlag(F_JUMP_JET)) {
             if (entity.getWeight() >= 55.0) {
                 return 0.5f;
             } else if (entity.getWeight() >= 85.0) {
@@ -49,7 +54,7 @@ public class MiscType extends EquipmentType {
             } else {
                 return 2.0f;
             }
-        } else if (internalName.equals("Hatchet")) {
+        } else if (hasFlag(F_HATCHET)) {
             return (float)Math.ceil(entity.getWeight() / 15.0);
         }
         // okay, I'm out of ideas
@@ -61,7 +66,7 @@ public class MiscType extends EquipmentType {
             return criticals;
         }
         // check for known formulas
-        if (internalName.equals("Hatchet")) {
+        if (hasFlag(F_HATCHET)) {
             return (int)Math.ceil(entity.getWeight() / 15.0);
         }
         // right, well I'll just guess then
@@ -73,7 +78,7 @@ public class MiscType extends EquipmentType {
             return bv;
         }
         // check for known formulas
-        if (internalName.equals("Hatchet")) {
+        if (hasFlag(F_HATCHET)) {
             return (float)Math.ceil(entity.getWeight() / 15.0);
         }
         // maybe it's 0
@@ -86,8 +91,8 @@ public class MiscType extends EquipmentType {
      */
     public static void initializeTypes() {
         // all tech level 1 stuff
-        EquipmentType.addType(HEAT_SINK);
-        EquipmentType.addType(JUMP_JET);
+        EquipmentType.addType(createHeatSink());
+        EquipmentType.addType(createJumpJet());
         EquipmentType.addType(createTreeClub());
         EquipmentType.addType(createGirderClub());
         EquipmentType.addType(createLimbClub());
@@ -103,6 +108,7 @@ public class MiscType extends EquipmentType {
         misc.mtfName = misc.name;
         misc.tonnage = 1.0f;
         misc.criticals = 1;
+        misc.flags |= F_HEAT_SINK;
         misc.bv = 0;
         
         return misc;
@@ -117,6 +123,7 @@ public class MiscType extends EquipmentType {
         misc.mtfName = misc.name;
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
+        misc.flags |= F_JUMP_JET;
         misc.bv = 0;
         
         return misc;
@@ -131,6 +138,7 @@ public class MiscType extends EquipmentType {
         misc.mtfName = misc.mepName;
         misc.tonnage = 0;
         misc.criticals = 0;
+        misc.flags |= F_TREE_CLUB | F_CLUB;
         misc.bv = 0;
         
         return misc;
@@ -145,6 +153,7 @@ public class MiscType extends EquipmentType {
         misc.mtfName = misc.mepName;
         misc.tonnage = 0;
         misc.criticals = 0;
+        misc.flags |= F_CLUB;
         misc.bv = 0;
         
         return misc;
@@ -159,6 +168,7 @@ public class MiscType extends EquipmentType {
         misc.mtfName = misc.mepName;
         misc.tonnage = 0;
         misc.criticals = 0;
+        misc.flags |= F_CLUB;
         misc.bv = 0;
         
         return misc;
@@ -173,6 +183,7 @@ public class MiscType extends EquipmentType {
         misc.mtfName = misc.name;
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
+        misc.flags |= F_HATCHET;
         misc.bv = BV_VARIABLE;
         
         return misc;

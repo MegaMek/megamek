@@ -56,16 +56,16 @@ public class Coords
     }
     
     /**
-     * Constructs a new coordinate pair that is a duplicate of
-     * the parameter.
+     * Constructs a new coordinate pair that is a duplicate of the
+     * parameter.
      */
     public Coords(Coords c) {
         this(c.x, c.y);
     }
     
     /**
-     * Returns a new coordinate that represents the coordinate
-     * 1 unit in the specified direction.
+     * Returns a new coordinate that represents the coordinate 1 unit
+     * in the specified direction.
      * 
      * @return the new coordinate, if the direction is valid;
      *  otherwise, a new copy of this coordinate.
@@ -91,17 +91,17 @@ public class Coords
     }
     
     /**
-     * Tests whether the x coordinate of this coordinate is
-     * odd.  This is significant in determining where this
-     * coordinate lies in relation to other coordinates.
+     * Tests whether the x coordinate of this coordinate is odd.  This
+     * is significant in determining where this coordinate lies in
+     * relation to other coordinates.
      */
     public boolean isXOdd() {
         return (x & 1) == 1;
     }
     
     /**
-     * Returns the direction in which another 
-     * coordinate lies; 0 if the coordinates are equal.
+     * Returns the direction in which another coordinate lies; 0 if
+     * the coordinates are equal.
      * 
      * @param d the destination coordinate.
      */
@@ -127,8 +127,8 @@ public class Coords
     /**
      * Old version.
      * 
-     * Returns the approximate direction in which another 
-     * coordinate lies; 0 if the coordinates are equal.
+     * Returns the approximate direction in which another coordinate
+     * lies; 0 if the coordinates are equal.
      * 
      * @param d the destination coordinate.
      */

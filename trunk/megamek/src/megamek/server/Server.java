@@ -2031,6 +2031,11 @@ implements Runnable {
                     hits = Compute.missilesHit(wtype.getRackSize());
                 }                    
                 
+		// LBX ACs use shots, not missles.
+		if ( wtype.getAmmoType() = AmmoType.T_AC_LBX ) {
+		    hitType = " shot(s)";
+		}
+
                 phaseReport.append(hits + hitType + " hit" + toHit.getTableDesc() + ".");
                 
                 // adjust for AMS

@@ -180,17 +180,22 @@ public class BotClient extends Client
         deploy(entNum, cDeploy, nDir);
      }
         
+     /**
+      * Gets valid & empty starting coords around the specified point
+      */
      private Coords getCoordsAround(Coords c)
      {
         // check the requested coords
-        if (game.board.contains(c) && game.getFirstEntity(c) == null) {
+        if (game.board.isLegalDeployment(c, this.getLocalPlayer())
+        && game.getFirstEntity(c) == null) {
             return c;
         }
         
         // check the surrounding coords
         for (int x = 0; x < 6; x++) {
             Coords c2 = c.translated(x);
-            if (game.board.contains(c2) && game.getFirstEntity(c2) == null) {
+            if (game.board.isLegalDeployment(c2, this.getLocalPlayer())
+            && game.getFirstEntity(c2) == null) {
                 return c2;
             }
         }

@@ -109,6 +109,7 @@ v 0.28.6-dev (CVS)
 + 688179: a few double-blind exceptions squashed
 + 688701: can't target youself for a physical (or other) attack
 + 687695: the bot doesn't crash on its first move any more
++ bot no longer tries invalid deployments
 
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable

@@ -13263,8 +13263,6 @@ implements Runnable, ConnectionHandler {
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
             pilot.setDone(true);
-            // ASSUMPTION: Pilot dies if he ejects unconsciously, BMRr does not
-            // specify either way.
             if (entity.getCrew().isDoomed()) {
                 desc.append("but the pilot does not survive!\n");
                 desc.append(destroyEntity(pilot, "deadly ejection", false, false));

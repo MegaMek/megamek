@@ -192,6 +192,7 @@ public class PhysicalCalculator {
 				}
 			}
 		}
+        if(best == null) best = new PhysicalOption(entity);   
 		return best;
 	}
 

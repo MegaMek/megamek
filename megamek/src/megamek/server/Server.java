@@ -1855,8 +1855,13 @@ implements Runnable {
         final Entity te = game.getEntity(waa.getTargetId());
         final Mounted weapon = ae.getEquipment(waa.getWeaponId());
         final WeaponType wtype = (WeaponType)weapon.getType();
-        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA;
+ 	// 2002-09-16 Infantry weapons have unlimited ammo.
+ 	final boolean isWeaponInfantry = 
+ 	    (wtype.getFlags() & WeaponType.F_INFANTRY) == WeaponType.F_INFANTRY;
+	final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
+ 	    !isWeaponInfantry;
         Mounted ammo = null;
+	Infantry platoon = null;
         if (usesAmmo) {
             if (waa.getAmmoId() > -1) {
                 ammo = ae.getEquipment(waa.getAmmoId());
@@ -1975,10 +1980,16 @@ implements Runnable {
         }
         
         if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE || (ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
-            if (ammo != null) {
+             if (isWeaponInfantry || ammo != null) {
                 // missiles; determine number of missiles hitting
                 int hits;
-                if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+		String hitType = " missles";
+		if ( isWeaponInfantry ) {
+		    // Infantry damage depends on # men left in platoon.
+		    platoon = (Infantry) ae;
+		    hits = platoon.getDamage( platoon.getShootingStrength() );
+		    hitType = " shots";
+		} else if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
                     hits = wtype.getRackSize();
                 } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
                     // I'm going to assume these are MRMs
@@ -1988,33 +1999,39 @@ implements Runnable {
                 } else {
                     hits = Compute.missilesHit(wtype.getRackSize());
                 }
-                phaseReport.append(hits + " missiles hit" + toHit.getTableDesc() + ".");
-                if (wtype.getAmmoType() == AmmoType.T_SRM || wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
-                    // for SRMs, do each missile seperately
-                    for (int j = 0; j < hits; j++) {
-                        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                        phaseReport.append(damageEntity(te, hit, 2));
+		phaseReport.append(hits + hitType + " hit" + toHit.getTableDesc() + ".");
+		if ( isWeaponInfantry || wtype.getAmmoType() == AmmoType.T_LRM ||
+ 		     wtype.getAmmoType() == AmmoType.T_MRM ) {
+		    // Infantry weapons, LRMs, MRMs do salvos of 5
+		    while (hits > 0) {
+			int salvo = Math.min(5, hits);
+			HitData hit = te.rollHitLocation(toHit.getHitTable(),
+ 							 toHit.getSideTable());
+			phaseReport.append(damageEntity(te, hit, salvo));
+			hits -= salvo;
                     }
                 } else if (atype.hasFlag(AmmoType.F_CLUSTER)) {
                     // for LBX cluster ammo
                     for (int j = 0; j < hits; j++) {
-                        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                        HitData hit = te.rollHitLocation(toHit.getHitTable(),
+							 toHit.getSideTable());
                         phaseReport.append(damageEntity(te, hit, 1));
                     }
                 } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
                     // Fire Mode - uAC ammo
                     for (int j = 0; j < hits; j++) {
-                        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                        HitData hit = te.rollHitLocation(toHit.getHitTable(),
+							 toHit.getSideTable());
                         phaseReport.append(damageEntity(te, hit, wtype.getDamage()));
                         
                     }
-                } else if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_MRM) {
-                    // LRMs, MRMs do salvos of 5
-                    while (hits > 0) {
-                        int salvo = Math.min(5, hits);
-                        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                        phaseReport.append(damageEntity(te, hit, salvo));
-                        hits -= salvo;
+                } else if (wtype.getAmmoType() == AmmoType.T_SRM || 
+			   wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                    // for SRMs, do each missile seperately
+                    for (int j = 0; j < hits; j++) {
+                        HitData hit = te.rollHitLocation(toHit.getHitTable(),
+							 toHit.getSideTable());
+			phaseReport.append(damageEntity(te, hit, 2));
                     }
                 }
             }
@@ -2889,11 +2906,26 @@ implements Runnable {
      */
     private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
         String desc = new String();
+ 	boolean isInfantry = (te instanceof Infantry);
+ 	Hex te_hex = null;
         
         int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
         
         //int loc = hit.getLocation();
         HitData nextHit = null;
+
+ 	// Is the infantry in the open?
+ 	if ( isInfantry && !te.isDestroyed() && !te.isDoomed() ) {
+ 	    te_hex = game.board.getHex( te.getPosition() );
+ 	    if ( !te_hex.contains( Terrain.WOODS ) &&
+ 		 !te_hex.contains( Terrain.BUILDING ) ) {
+ 		// PBI.  Damage is doubled.
+ 		damage = damage * 2;
+ 		desc += "\n        Infantry caught in the open!!!  Damage doubled." ;
+ 	    }
+ 	}
+
+ 	// Allocate the damage
         while (damage > 0 && !te.isDestroyed() && !te.isDoomed()) {
             // let's resolve some damage!
             desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(hit) + ".";
@@ -2926,21 +2958,33 @@ implements Runnable {
             if (damage > 0) {
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
-                    // triggers a critical hit
+		    // Triggers a critical hit on Vehicles and Mechs.
+ 		    if ( !isInfantry ) {
                     crits++;
+ 		    }
                     if (te.getInternal(hit) > damage) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - damage, hit);
                         te.damageThisPhase += damage;
                         damage = 0;
+ 			// Infantry platoons have men not "Internals".
+ 			if ( isInfantry ) {
+ 			    desc += " " + te.getInternal(hit) + " men alive.";
+ 			} else {
                         desc += " " + te.getInternal(hit) + " Internal Structure remaining";
+ 			}
                     } else {
                         // damage transfers, maybe
                         int absorbed = Math.max(te.getInternal(hit), 0);
                         destroyLocation(te, hit.getLocation());
                         te.damageThisPhase += absorbed;
                         damage -= absorbed;
+ 			// Infantry have only one section.
+ 			if ( isInfantry ) {
+ 			    desc += " <<<PLATOON KILLED>>>,";
+ 			} else {
                         desc += " <<<SECTION DESTROYED>>>,";
+ 			}
                         if (hit.getLocation() == Mech.LOC_RT || hit.getLocation() == Mech.LOC_LT) {
                             int numEngineHits = 0;
                             numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);

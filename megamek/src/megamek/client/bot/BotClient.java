@@ -260,6 +260,11 @@ public class BotClient extends Client
      public PhysicalOption getBestPhysical(Entity entity) {
         boolean canHit = false;
         
+        // Infantry can't conduct physical attacks.
+	if ( entity instanceof Infantry ) {
+	    return null;
+	}
+
         // if you're charging, it's already declared
         if (entity.isCharging() || entity.isMakingDfa()) {
             return null;
@@ -287,14 +292,15 @@ public class BotClient extends Client
     {
         Entity ten = game.getEntity(to);
         Entity fen = game.getEntity(from);
-        
-        if (!(fen instanceof Mech)) {
-            return null;
-        }
-        
         double bestDmg=0, dmg;
         int damage;
         int bestType = PhysicalOption.PUNCH_LEFT;
+        
+        // Infantry can't conduct physical attacks.
+	if ( fen instanceof Infantry ) {
+            return null;
+        }
+        
         ToHitData odds = Compute.toHitPunch(game, from, to, PunchAttackAction.LEFT);
         if (odds.getValue() != ToHitData.IMPOSSIBLE) {
             damage = Compute.getPunchDamageFor(fen, PunchAttackAction.LEFT);
@@ -333,6 +339,16 @@ public class BotClient extends Client
                 bestDmg = dmg;
             }
         }
+
+	// Infantry in the open suffer double damage.
+	if ( ten instanceof Infantry ) {
+	    Hex e_hex = game.getBoard().getHex( ten.getPosition() );
+	    if ( !e_hex.contains(Terrain.WOODS) &&
+		 !e_hex.contains(Terrain.BUILDING) ) {
+		bestDmg *= 2;
+	    }
+	}
+
         if (bestDmg > 0) {
             return new PhysicalOption(ten, bestDmg, bestType);    
         }
@@ -547,7 +563,31 @@ public class BotClient extends Client
              // calculate expected value of attack
             if (th.getValue() != ToHitData.IMPOSSIBLE) {
                 double odds = Compute.oddsAbove(th.getValue())/ 100.0;
-                double expectedDmg = getExpectedDamage((WeaponType)w.getType());
+		double expectedDmg;
+
+		// Is the atttacker an Infantry platoon?
+		if ( fen instanceof Infantry ) {
+		    // Get the expected damage, given its current 
+		    // manpower level.
+		    Infantry inf = (Infantry) fen;
+		    expectedDmg = 
+			inf.getDamage(inf.getShootingStrength());
+		} else {
+		    // Get the expected damage of the weapon.
+		    expectedDmg = 
+			getExpectedDamage((WeaponType)w.getType());
+		}
+
+		// Infantry in the open suffer double damage.
+		if ( ten instanceof Infantry ) {
+		    Hex e_hex = game.getBoard().getHex( ten.getPosition() );
+		    if ( !e_hex.contains(Terrain.WOODS) &&
+			 !e_hex.contains(Terrain.BUILDING) ) {
+			expectedDmg *= 2;
+		    }
+		}
+
+		// Modify the expected damage by the odds.
                 total += odds * expectedDmg;
 
 //                sendChat(" -> threat " + w.getType().getName() + " needs " + th.getValue() + ": " + (odds*expectedDmg));                                   
@@ -663,7 +703,32 @@ public class BotClient extends Client
                 ToHitData th = Compute.toHitWeapon(game, from, game.getEntityID(e), weaponID, new Vector(0));    
                 if (th.getValue() != ToHitData.IMPOSSIBLE) {
                     double odds = Compute.oddsAbove(th.getValue())/ 100.0;
-                    double expectedDmg = odds * getExpectedDamage((WeaponType)mw.getType());
+                    double expectedDmg;
+
+		    // Are we an Infantry platoon?
+		    if ( en instanceof Infantry ) {
+			// Get the expected damage, given our current 
+			// manpower level.
+			Infantry inf = (Infantry) en;
+			expectedDmg = 
+			    inf.getDamage(inf.getShootingStrength());
+		    } else {
+			// Get the expected damage of the weapon.
+			expectedDmg = 
+			    getExpectedDamage((WeaponType)mw.getType());
+		    }
+
+		    // Infantry in the open suffer double damage.
+		    if ( e instanceof Infantry ) {
+			Hex e_hex = game.getBoard().getHex( e.getPosition() );
+			if ( !e_hex.contains(Terrain.WOODS) &&
+			     !e_hex.contains(Terrain.BUILDING) ) {
+			    expectedDmg *= 2;
+			}
+		    }
+
+		    // Modify the expected damage by the odds.
+		    expectedDmg = odds * expectedDmg;
                     if (expectedDmg > bestValue) {
                         bestTarget = e;
                         bestValue = expectedDmg;

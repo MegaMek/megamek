@@ -29,7 +29,11 @@ public abstract class UnitStatusFormatter
         StringBuffer sb = new StringBuffer(2048);
         sb.append("=============================================================\n");
         sb.append(formatHeader(e));
-        sb.append("-------------------------------------------------------------\n");
+        sb.append("--- Armor: ")
+            .append(e.getTotalArmor())
+            .append("/")
+            .append(e.getTotalOArmor())
+            .append("-------------------------------------------\n");
         sb.append(formatArmor(e));
         if ( e instanceof Mech ||
              e instanceof Protomech ) {

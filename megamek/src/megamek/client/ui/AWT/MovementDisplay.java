@@ -734,11 +734,11 @@ public class MovementDisplay
         Enumeration choices = client.game.getEntities( pos );
 
         // Convert the choices into a List of targets.
-        java.util.List targets = new Vector();
+        Vector targets = new Vector();
         while ( choices.hasMoreElements() ) {
             choice = (Entity) choices.nextElement();
             if ( !ce().equals( choice ) ) {
-                targets.add( choice );
+                targets.addElement( choice );
             }
         }
 
@@ -746,7 +746,7 @@ public class MovementDisplay
         if ( targets.size() == 1 ) {
 
             // Return  that choice.
-            choice = (Entity) targets.get( 0 );
+            choice = (Entity) targets.elementAt( 0 );
 
         }
 
@@ -759,7 +759,7 @@ public class MovementDisplay
             question.append( " contains the following units." );
             question.append( "\n\nWhich unit do you want to target?" );
             for ( int loop = 0; loop < names.length; loop++ ) {
-                names[loop] = ( (Entity)targets.get(loop) ).getShortName();
+                names[loop] = ( (Entity)targets.elementAt(loop) ).getShortName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( client.frame,
@@ -768,7 +768,7 @@ public class MovementDisplay
                                         names );
             choiceDialog.show();
             if ( choiceDialog.getAnswer() == true ) {
-                choice = (Entity) targets.get( choiceDialog.getChoice() );
+                choice = (Entity) targets.elementAt( choiceDialog.getChoice() );
             }
         } // End have-choices
 
@@ -895,7 +895,7 @@ public class MovementDisplay
                 other = (Entity)entities.nextElement();
                 if ( ce().getOwner() == other.getOwner() &&
                      !ce().equals(other) ) {
-                    loadedUnits.add( other );
+                    loadedUnits.addElement( other );
                     break;
                 }
                 other = null;

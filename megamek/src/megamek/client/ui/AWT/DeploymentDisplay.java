@@ -331,7 +331,7 @@ public class DeploymentDisplay
         else if ( ev.getSource() == butLoad ) {
 
             // What undeployed units can we load?
-            java.util.List choices = new Vector();
+            Vector choices = new Vector();
             int otherId = client.getNextEntityNum( cen );
             Entity other = client.getEntity( otherId );
             while ( otherId != cen ) {
@@ -341,7 +341,7 @@ public class DeploymentDisplay
 
                     // Can the current entity load the other entity?
                     if ( ce().canLoad( other ) ) {
-                        choices.add( other );
+                        choices.addElement( other );
                     }
 
                 } // End other not yet deployed.
@@ -361,7 +361,7 @@ public class DeploymentDisplay
                 question.append( ce().getUnusedString() );
                 question.append( "\n\nWhich unit do you want to load?" );
                 for ( int loop = 0; loop < names.length; loop++ ) {
-                    names[loop] = ( (Entity)choices.get(loop) ).getShortName();
+                    names[loop] = ( (Entity)choices.elementAt(loop) ).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
                     new SingleChoiceDialog( client.frame,
@@ -370,7 +370,7 @@ public class DeploymentDisplay
                                             names );
                 choiceDialog.show();
                 if ( choiceDialog.getAnswer() == true ) {
-                    other = (Entity) choices.get( choiceDialog.getChoice() );
+                    other = (Entity) choices.elementAt( choiceDialog.getChoice() );
                     // Please note, the Server may never get this load order.
                     ce().load( other );
                     other.setTransportId( cen );
@@ -389,7 +389,7 @@ public class DeploymentDisplay
         else if ( ev.getSource() == butUnload ) {
 
             // Do we have anyone to unload?
-            java.util.List choices = ce().getLoadedUnits();
+            Vector choices = ce().getLoadedUnits();
             if ( choices.size() > 0 ) {
                 Entity other = null;
                 String[] names = new String[ choices.size() ];
@@ -399,7 +399,7 @@ public class DeploymentDisplay
                 question.append( ce().getUnusedString() );
                 question.append( "\n\nWhich unit do you want to unload?" );
                 for ( int loop = 0; loop < names.length; loop++ ) {
-                    names[loop] = ( (Entity)choices.get(loop) ).getShortName();
+                    names[loop] = ( (Entity)choices.elementAt(loop) ).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
                     new SingleChoiceDialog( client.frame,
@@ -408,7 +408,7 @@ public class DeploymentDisplay
                                             names );
                 choiceDialog.show();
                 if ( choiceDialog.getAnswer() == true ) {
-                    other = (Entity) choices.get( choiceDialog.getChoice() );
+                    other = (Entity) choices.elementAt( choiceDialog.getChoice() );
                     // Please note, the Server never got this load order.
                     if ( ce().unload( other ) ) {
                         other.setTransportId( Entity.NONE );

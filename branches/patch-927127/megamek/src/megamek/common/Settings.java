@@ -81,6 +81,7 @@ public class Settings
     public static int       lastConnectPort         = 2346;
     
     public static Color     mapTextColor            = Color.black;
+    public static int	    mapZoomIndex            = 7;
     
     public static Color     moveDefaultColor        = Color.cyan;
     public static Color     moveRunColor            = Color.yellow;
@@ -283,6 +284,10 @@ scan:
                     else if(key.equals("rulercolors")) {
                         rulerColor1 = loadColor(st, rulerColor1);
                         rulerColor2 = loadColor(st, rulerColor2);
+                    }
+                    else if(key.equals("mapzoomindex")) {
+                        st.nextToken();
+                        mapZoomIndex = (int)st.nval;
                     }
                     else if(key.equals("minimumdialogsize")) {
                         st.nextToken();
@@ -497,6 +502,7 @@ scan:
             cw.write("soundbingfilename \"" + soundBingFilename + "\"\r\n");
             cw.write("memorydumpon " + memoryDumpOn + "\r\n");
             cw.write("minimumdialogsize " + minimumSizeWidth + " " + minimumSizeHeight + "\r\n");
+            cw.write("mapzoomindex " + mapZoomIndex + "\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();
                 mekHitLocLog.close();

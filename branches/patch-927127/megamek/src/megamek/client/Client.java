@@ -30,13 +30,15 @@ import megamek.common.util.Distractable;
 import megamek.client.util.widget.*;
 
 public class Client extends Panel
-    implements Runnable, MouseListener, WindowListener, ActionListener
+    implements Runnable, MouseListener, WindowListener, ActionListener, KeyListener
 {
 	// Action commands.
 	public static final String VIEW_MEK_DISPLAY      = "viewMekDisplay";
 	public static final String VIEW_MINI_MAP         = "viewMiniMap";
 	public static final String VIEW_LOS_SETTING      = "viewLOSSetting";
 	public static final String VIEW_UNIT_OVERVIEW    = "viewUnitOverview";
+	public static final String VIEW_ZOOM_IN    		 = "viewZoomIn";
+	public static final String VIEW_ZOOM_OUT   		 = "viewZoomOut";
 
     // a frame, to show stuff in
     public Frame                frame;
@@ -213,6 +215,25 @@ public class Client extends Panel
         }
     }
 
+    public void keyPressed(KeyEvent ke) {
+        switch(ke.getKeyCode()) {
+        case KeyEvent.VK_PAGE_DOWN :
+            bv.zoomIn();
+            break;
+        case KeyEvent.VK_PAGE_UP :
+        	bv.zoomOut();
+            break;
+        }
+    }
+    
+    public void keyTyped(KeyEvent ke) {
+        ;
+    }
+    
+    public void keyReleased(KeyEvent ke) {
+    	;
+    }
+    
     /**
      * Display a system message in the chat box.
      *
@@ -250,7 +271,7 @@ public class Client extends Panel
                 die();
             }
         });
-
+        frame.addKeyListener(this);
     }
 
     /**
@@ -372,6 +393,10 @@ public class Client extends Panel
 			toggleMap();
 		} else if (event.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
 			toggleUnitOverview();
+		} else if (event.getActionCommand().equals(VIEW_ZOOM_IN)) {
+			bv.zoomIn();
+		} else if (event.getActionCommand().equals(VIEW_ZOOM_OUT)) {
+			bv.zoomOut();
 		} else if (event.getActionCommand().equals(VIEW_LOS_SETTING)) {
 			showLOSSettingDialog();
 		}
@@ -400,6 +425,8 @@ public class Client extends Panel
 		bv.addDisplayable(uo);
 
         bv.addMouseListener(this);
+        bv.addKeyListener(this);
+
         bv.add(popup);
 
         cb = new ChatterBox(this);
@@ -408,6 +435,7 @@ public class Client extends Panel
         mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
         mechW.setResizable(true);
         mechW.addWindowListener(this);
+        mechW.addKeyListener(this);
         mechD = new MechDisplay(this);
         mechW.add(mechD);
 
@@ -428,7 +456,9 @@ public class Client extends Panel
             doAlertDialog("Fatal Error", "Could not initialise minimap:\n"+e);
             die();
         };
+        minimap.addKeyListener(this);
         minimapW.addWindowListener(this);
+        minimapW.addKeyListener(this);
         minimapW.add(minimap);
 
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);

@@ -769,10 +769,11 @@ public class MoveStep implements Serializable {
             }
         }
         
-    	// Mechs with busted Gyro may make only one facing change
-    	if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1
-    		&& !isFirstStep() )
-    		movementType = Entity.MOVE_ILLEGAL;			
+        // Mechs with busted Gyro may make only one facing change
+        if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1
+    	    && !isFirstStep() ) {
+            movementType = Entity.MOVE_ILLEGAL;
+        }
 
         // mechs with 1 MP are allowed to get up, except if they've used that 1MP up already
         if (MovePath.STEP_GET_UP==stepType && 1==entity.getRunMP() && entity.mpUsed<1) {
@@ -900,7 +901,7 @@ public class MoveStep implements Serializable {
         final Hex srcHex = game.board.getHex(prev);
         final Hex destHex = game.board.getHex(getPosition());
 
-		mp = 1;
+        mp = 1;
 
         // jumping always costs 1
         if (parent.isJumping()) {

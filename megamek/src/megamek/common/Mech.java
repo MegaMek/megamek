@@ -391,7 +391,7 @@ public class Mech
      * Returns the Compute.ARC that the weapon fires into.
      */
     public int getWeaponArc(int wn) {
-        final Mounted mounted = getWeapon(wn);
+        final Mounted mounted = getEquipment(wn);
         // rear mounted?
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
@@ -420,7 +420,7 @@ public class Mech
      */
     public boolean isSecondaryArcWeapon(int weaponId) {
         // leg-mounted weapons fire into the primary arc, always
-        if (getWeapon(weaponId).getLocation() == LOC_RLEG || getWeapon(weaponId).getLocation() == LOC_LLEG) {
+        if (getEquipment(weaponId).getLocation() == LOC_RLEG || getEquipment(weaponId).getLocation() == LOC_LLEG) {
             return false;
         }
         // other weapons into the secondary
@@ -754,53 +754,26 @@ public class Mech
      * 
      * Throw exception if full, maybe?
      */
-    public void addWeapon(Mounted mounted, int loc, boolean rearMounted) {
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) {
+        // if there's no actual location, then don't add criticals
+        if (loc == LOC_NONE) {
+            super.addEquipment(mounted, loc, rearMounted);
+            return;
+        }
+        
+        // check criticals for space
         if(getEmptyCriticals(loc) < mounted.getType().getCriticals(this)) {
-            System.err.println("mech: tried to add weapon to full location");
+            System.err.println("mech: tried to add equipment to full location");
             return;
         }
         
-        super.addWeapon(mounted, loc, rearMounted);
-        
-        int num = getWeaponNum(mounted);
+        // add it
+        super.addEquipment(mounted, loc, rearMounted);
 
+        // add criticals
+        int num = getEquipmentNum(mounted);
         for(int i = 0; i < mounted.getType().getCriticals(this); i++) {
-            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_WEAPON, num));
-        }        
-    }    
-
-    
-    /**
-     * Adds the specified ammo to the specified location.
-     */
-    public void addAmmo(Mounted mounted, int loc) {
-        if(getEmptyCriticals(loc) < 1) {
-            System.err.println("mech: tried to add ammo to full location");
-            return;
-        }
-        
-        super.addAmmo(mounted, loc);
-        
-        int num = getAmmoNum(mounted);
-
-        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_AMMO, num));
-    }    
-  
-    /**
-     * Adds the specified ammo to the specified location.
-     */
-    public void addMisc(Mounted mounted, int loc) {
-        if(getEmptyCriticals(loc) < 1) {
-            System.err.println("mech: tried to add misc eq. to full location");
-            return;
-        }
-        
-        super.addMisc(mounted, loc);
-        
-        int num = getMiscNum(mounted);
-
-        for(int i = 0; i < mounted.getType().getCriticals(this); i++) {
-            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_MISC, num));
+            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num));
         }        
     }    
   

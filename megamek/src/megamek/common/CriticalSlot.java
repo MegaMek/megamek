@@ -20,13 +20,11 @@ public class CriticalSlot
     implements Serializable
 {
     public final static int        TYPE_SYSTEM       = 0;
-    public final static int        TYPE_WEAPON       = 1;
-    public final static int        TYPE_AMMO         = 2;
-    public final static int        TYPE_MISC         = 3;
+    public final static int        TYPE_EQUIPMENT    = 1;
     
     private int                    type;
     private int                    index;
-    private boolean                doomed; // hit
+    private boolean                hit; // hit
     private boolean                missing; // location destroyed
     private boolean                destroyed;
     
@@ -43,12 +41,12 @@ public class CriticalSlot
         return index;
     }
     
-    public boolean isDoomed() {
-        return doomed;
+    public boolean isHit() {
+        return hit;
     }
     
-    public void setDoomed(boolean doomed) {
-        this.doomed = doomed;
+    public void setHit(boolean hit) {
+        this.hit = hit;
     }
     
     public boolean isDestroyed() {
@@ -71,14 +69,14 @@ public class CriticalSlot
      * Has this slot been damaged?
      */
     public boolean isDamaged() {
-        return doomed || missing || destroyed;
+        return hit || missing || destroyed;
     }
     
     /**
      * Can this slot be hit by a critical hit roll?
      */
     public boolean isHitable() {
-        return !doomed && !destroyed;
+        return !hit && !destroyed;
     }
     
     /**

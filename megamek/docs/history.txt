@@ -98,6 +98,8 @@ v next
 + heat sink and jump jet criticals display properly
 + .mtf reader reads AC/2s properly
 + weapons on sections that are destroyed are again counted as destroyed
++ unified equiment (weapons/ammo/misc) in the code more
++ changed a few functions dealing with equipment/criticals
 
 v 0.25.7 (04-08-02, 9pm)
 + hitting esc or next unit after a torso twist now cancels the torso twist

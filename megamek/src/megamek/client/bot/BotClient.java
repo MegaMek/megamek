@@ -534,7 +534,7 @@ public class BotClient extends Client
         double total = 0.0;
         do {
             // if it can target To...
-            Mounted w = fen.getWeapon(weap);
+            Mounted w = fen.getEquipment(weap);
             ToHitData th = Compute.toHitWeapon(game, from, to, weap, new Vector(0));    
             // TODO: try all secondary facings for firer; take the best
             
@@ -586,7 +586,7 @@ public class BotClient extends Client
             if (currentHeat + ((WeaponType)firOpts[i].weapon.getType()).getHeat() - capacity <= allowableHeatLevel) {
                 attacks.addElement(new WeaponAttackAction(
                         entNum, 
-                        game.getEntityID(firOpts[i].target), en.getWeaponNum(firOpts[i].weapon)));
+                        game.getEntityID(firOpts[i].target), en.getEquipmentNum(firOpts[i].weapon)));
                 currentHeat += ((WeaponType)firOpts[i].weapon.getType()).getHeat();
             }
         }
@@ -644,7 +644,7 @@ public class BotClient extends Client
          // for now assume I'm facing front
          Entity en = game.getEntity(from);
          
-        int weaponID = en.getWeaponNum(mw);
+        int weaponID = en.getEquipmentNum(mw);
             
         // for each target I could attack
         // which has the highest expected damage?

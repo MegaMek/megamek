@@ -30,7 +30,7 @@ import java.io.*;
  */
 public class Mounted implements Serializable{
     
-    private boolean usedThisTurn = false;
+    private boolean usedThisRound = false;
     private boolean destroyed = false;
     private transient boolean hit = false;
     private transient boolean missing = false;
@@ -82,7 +82,7 @@ public class Mounted implements Serializable{
         StringBuffer desc = new StringBuffer(type.getDesc());
         if (destroyed) {
             desc.insert(0, "*");
-        } else if (usedThisTurn) {
+        } else if (usedThisRound) {
             desc.insert(0, "+");
         }
         if (rearMounted) {
@@ -97,15 +97,15 @@ public class Mounted implements Serializable{
     }
     
     public boolean isReady() {
-        return !usedThisTurn && !destroyed;
+        return !usedThisRound && !destroyed;
     }
     
-    public boolean isUsedThisTurn() {
-        return usedThisTurn;
+    public boolean isUsedThisRound() {
+        return usedThisRound;
     }
     
-    public void setUsedThisTurn(boolean usedThisTurn) {
-        this.usedThisTurn = usedThisTurn;
+    public void setUsedThisRound(boolean usedThisRound) {
+        this.usedThisRound = usedThisRound;
     }
     
     public boolean isDestroyed() {

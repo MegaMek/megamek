@@ -443,7 +443,7 @@ public class Server
 
             for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
                 Mounted mounted = (Mounted)i.nextElement();
-                mounted.setUsedThisTurn(false);
+                mounted.setUsedThisRound(false);
             }
         }
     }
@@ -1557,7 +1557,7 @@ public class Server
             } else if (o instanceof FindClubAction) {
                 FindClubAction fca = (FindClubAction)o;
                 game.getEntity(fca.getEntityId()).setFindingClub(true);
-                game.getEntity(fca.getEntityId()).addMisc(new Mounted(EquipmentType.getByInternalName("Tree Club")), Mech.LOC_LARM);
+                game.getEntity(fca.getEntityId()).addEquipment(new Mounted(EquipmentType.getByInternalName("Tree Club")), Mech.LOC_NONE);
                 phaseReport.append("\n" + game.getEntity(fca.getEntityId()).getDisplayName() + " uproots a tree for use as a club.\n");
             } else {
                 // hmm, error
@@ -1572,7 +1572,7 @@ public class Server
     private void resolveWeaponAttack(WeaponAttackAction waa, int lastEntityId) {
         final Entity ae = game.getEntity(waa.getEntityId());
         final Entity te = game.getEntity(waa.getTargetId());
-        final Mounted mounted = ae.getWeapon(waa.getWeaponId());
+        final Mounted mounted = ae.getEquipment(waa.getWeaponId());
         final WeaponType wtype = (WeaponType)mounted.getType();
 
         if (lastEntityId != waa.getEntityId()) {
@@ -1592,27 +1592,30 @@ public class Server
                 phaseReport.append(" but the weapon is out of ammo");
                 return;
             }
+            // use ammo
             mounted.getLinked().setShotsLeft(mounted.getLinked().getShotsLeft() - 1);
         }
 
         // build up some heat
         ae.heatBuildup += wtype.getHeat();
 
-        // set the weapon as having fired
-        mounted.setUsedThisTurn(true);
-
         // should we even bother?
         if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
             phaseReport.append(" but the target is already destroyed!\n");
             return;
         }
+        
         // compute to-hit
         ToHitData toHit = Compute.toHitWeapon(game, waa, attacks);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the shot is impossible (" + toHit.getDesc() + ")\n");
+            mounted.setUsedThisRound(true);
             return;
         }
         phaseReport.append("; needs " + toHit.getValue() + ", ");
+        
+        // set the weapon as having fired
+        mounted.setUsedThisRound(true);
 
         // roll
         int roll = Compute.d6(2);
@@ -2554,7 +2557,7 @@ public class Server
             int slot = Compute.random.nextInt(en.getNumberOfCriticals(loc));
             CriticalSlot cs = en.getCritical(loc, slot);
             if (cs != null && cs.isHitable()) {
-                cs.setDoomed(true);
+                cs.setHit(true);
                 switch(cs.getType()) {
                 case CriticalSlot.TYPE_SYSTEM :
                     desc += "\n            <<<CRITICAL HIT>>> on " + Mech.systemNames[cs.getIndex()] + ".";
@@ -2568,7 +2571,7 @@ public class Server
                         if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc) > 2) {
                             // third engine hit
                             en.setDoomed(true);
-                            desc += "\n*** " + en.getDisplayName() + "ENGINE DESTROYED! ***";
+                            desc += "\n*** " + en.getDisplayName() + " ENGINE DESTROYED! ***";
                         }
                         break;
                     case Mech.SYSTEM_GYRO :
@@ -2592,17 +2595,11 @@ public class Server
                         break;
                     }
                     break;
-                case CriticalSlot.TYPE_WEAPON :
-                    desc += "\n            <<<CRITICAL HIT>>> on " + en.getWeapon(cs.getIndex()).getName() + ".";
-                    en.getWeapon(cs.getIndex()).setDestroyed(true);
-                    break;
-                case CriticalSlot.TYPE_AMMO :
-                    desc += "\n            <<<CRITICAL HIT>>> on " + en.getAmmo(cs.getIndex()).getName() + ".";
-                    desc += explodeAmmo(en, loc, slot);
-                    break;
-                case CriticalSlot.TYPE_MISC :
-                    desc += "\n            <<<CRITICAL HIT>>> on " + en.getMisc(cs.getIndex()).getName() + ".";
-                    en.getMisc(cs.getIndex()).setDestroyed(true);
+                case CriticalSlot.TYPE_EQUIPMENT :
+                    desc += "\n            <<<CRITICAL HIT>>> on " + en.getEquipment(cs.getIndex()).getName() + ".";
+                    if (en.getEquipment(cs.getIndex()).getType() instanceof AmmoType) {
+                        desc += explodeAmmo(en, loc, slot);
+                    }
                     break;
                 }
                 hits--;
@@ -2659,13 +2656,13 @@ public class Server
      */
     private String explodeAmmo(Entity en, int loc, int slot) {
         String desc = "";
-        if (en.getCritical(loc, slot).getType() != CriticalSlot.TYPE_AMMO) {
+        // check amount of damage
+        Mounted mounted = en.getEquipment(en.getCritical(loc, slot).getIndex());
+        if (!(mounted.getType() instanceof AmmoType)) {
             System.err.println("server: explodeAmmo called on non-ammo"
                                + " crititical slot (" + loc + " , " + slot + ")");
             return "";
         }
-        // check amount of damage
-        Mounted mounted = en.getAmmo(en.getCritical(loc, slot).getIndex());
         AmmoType atype = (AmmoType)mounted.getType();
         if (mounted.isHit()) {
             System.err.println("server: explodeAmmo called on already exploded ammo"
@@ -2700,17 +2697,20 @@ public class Server
         for (int j = 0; j < entity.locations(); j++) {
             for (int k = 0; k < entity.getNumberOfCriticals(j); k++) {
                 CriticalSlot cs = entity.getCritical(j, k);
-                if (cs != null && !cs.isDestroyed()
-                && cs.getType() == CriticalSlot.TYPE_AMMO) {
-                    Mounted mounted = entity.getAmmo(entity.getCritical(j, k).getIndex());
-                    AmmoType atype = (AmmoType)mounted.getType();
-                    if (!mounted.isHit() && (rack < atype.getDamagePerShot() * atype.getRackSize()
-                    || damage < atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft())) {
-                        rack = atype.getDamagePerShot() * atype.getRackSize();
-                        damage = atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft();
-                        boomloc = j;
-                        boomslot = k;
-                    }
+                if (cs == null || cs.isDestroyed() || cs.isHit() || cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                    continue;
+                }
+                Mounted mounted = entity.getEquipment(entity.getCritical(j, k).getIndex());
+                if (!(mounted.getType() instanceof AmmoType)) {
+                    continue;
+                }
+                AmmoType atype = (AmmoType)mounted.getType();
+                if (!mounted.isHit() && (rack < atype.getDamagePerShot() * atype.getRackSize()
+                || damage < atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft())) {
+                    rack = atype.getDamagePerShot() * atype.getRackSize();
+                    damage = atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft();
+                    boomloc = j;
+                    boomslot = k;
                 }
             }
         }

@@ -408,3 +408,4 @@ chassis "Hauptmann" "hauptman.gif"
 
 # brandfuchs
 chassis "Uziel" "uziel.gif"
+exact   "Hauptmann HA1-OC" "hauptmann2.gif"

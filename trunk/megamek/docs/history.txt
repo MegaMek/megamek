@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.71 (CVS)
++ RFE 1167547: Differentiating between club/hatchet attacks
 
 v0.29.70 (2005-03-20 4:00pm)
 + Bug 1163060: Warhawk variant images not showing.

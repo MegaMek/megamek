@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.66 (CVS)
+
 v0.29.65 (2005-02-14 7:45am)
 + Bug 749240: The APM forum says +1 MP road bonus is *after* calculating flank.
 + Bug 1115577: Correctly identify the first step (again, *sigh*).

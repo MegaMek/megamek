@@ -535,11 +535,11 @@ public class FiringDisplay
         }
         // auto spot if we can and the option is set
         if (attacks.isEmpty() && 
-        		client.game.getOptions().booleanOption("auto_spot") &&
-				client.game.getPhase() == Game.PHASE_FIRING) {
-        	if (!ce().isINarcedWith( INarcPod.HAYWIRE )) {
-        		doSpot();
-        	}
+            client.game.getOptions().booleanOption("auto_spot") &&
+		    client.game.getPhase() == Game.PHASE_FIRING) {
+            if (!ce().isINarcedWith( INarcPod.HAYWIRE )) {
+                    doSpot();
+            }
         }
 
         // stop further input (hopefully)
@@ -757,9 +757,9 @@ public class FiringDisplay
     	if (o instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction)o;
             ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-        	attacks.removeElement(o);
-        	clientgui.mechD.wPan.displayMech(ce());
-        	client.game.removeAction(o);
+            attacks.removeElement(o);
+            clientgui.mechD.wPan.displayMech(ce());
+            client.game.removeAction(o);
             clientgui.bv.refreshAttacks();
             clientgui.bv.repaint(100);
             clientgui.minimap.drawMap();

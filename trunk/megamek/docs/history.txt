@@ -15,6 +15,11 @@ v0.29.38 (CVS)
 + Bug 975949: When targeting a stealthed Mech, you can only target it,
     not anything else (BMRr, pg. 147)
     Stealthed Mechs can't be secondary targets (BMRr, pg. 147)
++ Data 979738: added Mech pictures that are exactly centered
++ Data 958365: added Gargoyle and Hankyu pics
++ Data 958659: added Orion IIC, Templar, Templar Tancred, Thunderhawk, 
+    Direwolf A, Salamander, redone Thunder pics
+
 
 v0.29.37 (2004-06-14 8:15am)
 + Patch 946202: Optional Rule: Woods Burn Down, thanks AlbinoSqrl

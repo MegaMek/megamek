@@ -157,7 +157,11 @@ chassis "Bulldog" "bulldog.gif"
 chassis "LRM Carrier" "lrmcarrier.gif"
 chassis "Rommel Tank" "rommel.gif"
 chassis "SRM Carrier" "srmcarrier.gif"
-chassis "Sturmfeur" "Sturmfeur.gif"
+chassis "Sturmfeur" "sturmfeur.gif"
 chassis "Von Luckner Heavy Tank" "vonluckner.gif"
 chassis "Manticore" "manticore.gif"
-chassis "Schrek PPC Carrier" "Schrek.gif"
+chassis "Schrek PPC Carrier" "schrek.gif"
+
+# unknown... :(
+chassis "Warhawk" "masakari.gif"
+chassis "Dire Wolf" "direwolf.gif"

@@ -313,6 +313,9 @@ implements Runnable {
                 break;
         }
         send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.phase)));
+        if (game.phaseHasTurns(game.getPhase())) {
+            send(new Packet(Packet.COMMAND_TURN, game.getTurn()));
+        }
     }
     
     
@@ -382,10 +385,18 @@ implements Runnable {
             player.setGhost(true);
             player.setDone(true);
             send(createPlayerUpdatePacket(player.getId()));
-            checkReady();
         } else {
             game.removePlayer(player.getId());
             send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
+        }
+        
+        // make sure the game advances
+        if (game.phaseHasTurns(game.getPhase())) {
+            if (game.getTurn().getPlayerNum() == player.getId()) {
+                endCurrentTurn();
+            }
+        } else {
+            checkReady();
         }
         
         System.out.println("s: player " + connId + " disconnected");

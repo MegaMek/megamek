@@ -5751,6 +5751,7 @@ implements Runnable, ConnectionHandler {
                   weapon.setHit(true);
               } else {
                   phaseReport.append("misses BECAUSE THE RAC JAMS.\n");
+                  weapon.setJammed(true);
               }
               return true;
           }

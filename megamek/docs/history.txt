@@ -73,6 +73,7 @@ v CVS
 + Applied skids patch to CVS tree.
 + Successive consciousness checks should be made from low rolls to high.
 + fixed lockup when fire tries to spread beyond the edge of the map
++ smoke and woods in the same hex no longer both apply modifiers to LOS
 
 v 0.27.6 (11-08-01, 6pm)
 + Added Kai's fire patch (only working for missed shots, presently)

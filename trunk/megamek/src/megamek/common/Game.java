@@ -14,11 +14,10 @@
 
 package megamek.common;
 
-//import java.util.*;
-import com.sun.java.util.collections.HashMap;
-import com.sun.java.util.collections.Map;
-import com.sun.java.util.collections.Collections;
-import com.sun.java.util.collections.Iterator;
+/* Do not use the Sun collections (com.sun.java.util.collections.*) framework
+ * in this class until Java 1.1 compatibility is abandoned or a
+ * non-serialization based save feature is implemented.
+ */
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -118,7 +117,7 @@ public class Game implements Serializable
     private boolean mechInFirstHex = true;
     private boolean mechInSecondHex = true;
 
-    private Map minefields = Collections.synchronizedMap(new HashMap());
+    private Hashtable minefields = new Hashtable();
     private Vector vibrabombs = new Vector();
 
     /**
@@ -176,18 +175,7 @@ public class Game implements Serializable
      *          containing minefilds.  This will not be <code>null</code>.
      */
     public Enumeration getMinedCoords() {
-        // Create an anonymous inner class to wrap the minefiled's
-        // key set's iterator in an Enumeration.
-        return new Enumeration() {
-                private Iterator iter =
-                    Game.this.minefields.keySet().iterator();
-                public boolean hasMoreElements() {
-                    return iter.hasNext();
-                }
-                public Object nextElement() {
-                    return iter.next();
-                }
-            };
+        return minefields.keys();
     }
     public void addMinefield(Minefield mf) {
       Vector mfs = (Vector) minefields.get(mf.getCoords());

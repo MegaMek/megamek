@@ -1172,8 +1172,7 @@ public class Compute
         }
         
         // check if shoulder is functional
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                        Mech.ACTUATOR_SHOULDER, armLoc) == 0) {
+        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, armLoc) == 0) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder destroyed");
         }  
         
@@ -1427,6 +1426,7 @@ public class Compute
         return toHit;
     }
     
+    
     /**
      * Damage that the specified mech does with a kick
      */
@@ -1449,6 +1449,179 @@ public class Compute
             damage = 0;
         }
         return (int)Math.floor(damage * multiplier);
+    }
+    
+    public static ToHitData toHitClub(Game game, ClubAttackAction caa) {
+        return toHitClub(game, caa.getEntityId(), caa.getTargetId(), 
+                         caa.getClub());
+    }
+    
+    /**
+     * To-hit number for the specified club to hit
+     */
+    public static ToHitData toHitClub(Game game, int attackerId, int targetId, Mounted club) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        final int attackerElevation = game.board.getHex(ae.getPosition()).getElevation();
+        final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
+        //HACK: this makes certain assumptions about the names of valid clubs
+        final boolean bothArms = club.getType().getName().endsWith("Club");
+        ToHitData toHit;
+
+        // arguments legal?
+        if (ae == null || te == null) {
+            throw new IllegalArgumentException("Attacker or target id not valid");
+        }
+        
+        if (bothArms) {
+            // check if both arms are present
+            if (ae.isLocationDestroyed(Mech.LOC_RARM)
+                || ae.isLocationDestroyed(Mech.LOC_LARM)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
+            }
+            // check if attacker has fired arm-mounted weapons
+            if (ae.weaponFiredFrom(Mech.LOC_RARM) 
+            || ae.weaponFiredFrom(Mech.LOC_LARM)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
+            }
+            // need shoulder and hand actuators
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM) == 0
+            || ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM) == 0) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder actuator destroyed");
+            }
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, Mech.LOC_RARM) == 0
+            || ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, Mech.LOC_LARM) == 0) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
+            }
+        } else {
+            // check if both arm is present
+            if (ae.isLocationDestroyed(club.getLocation())) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
+            }
+            // check if attacker has fired arm-mounted weapons
+            if (ae.weaponFiredFrom(club.getLocation())) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
+            }
+            // need shoulder and hand actuators
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, club.getLocation()) == 0) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder actuator destroyed");
+            }
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, club.getLocation()) == 0) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
+            }
+        }
+        
+        // club must not be damaged
+        if (ae.getDestroyedCriticals(CriticalSlot.TYPE_MISC, ae.getMiscNum(club), club.getLocation()) > 0) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Club is damaged");
+        }
+        
+        // check range
+        if (ae.getPosition().distance(te.getPosition()) > 1 ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
+        }
+        
+        // check elevation (target must be within one level)
+        if (Math.abs(attackerElevation - targetElevation) > 1) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
+        }
+        
+        // can't physically attack mechs making dfa attacks
+        if (te.isMakingDfa()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
+        }
+
+        // check facing
+        if (!isInArc(ae.getPosition(), ae.getFacing(), 
+                     te.getPosition(), Compute.ARC_FORWARD)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+        }
+        
+        // can't club while prone
+        if (ae.isProne()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+        }
+        
+        // can't club a prone mech one level lower
+        if (te.isProne() && attackerElevation == (targetElevation + 1)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone and lower");
+        }
+        
+        // okay, modifiers...
+        toHit = new ToHitData(4, "4 (base)");
+        
+        // attacker movement
+        toHit.append(getAttackerMovementModifier(game, attackerId));
+        
+        // target movement
+        toHit.append(getTargetMovementModifier(game, targetId));
+        
+        // attacker terrain
+        toHit.append(getAttackerTerrainModifier(game, attackerId));
+        
+        // target terrain
+        toHit.append(getTargetTerrainModifier(game, targetId));
+        
+        // damaged or missing actuators
+        if (bothArms) {
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                    Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM) == 0) {
+                toHit.addModifier(2, "Upper arm actuator destroyed");
+            }
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                    Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM) == 0) {
+                toHit.addModifier(2, "Upper arm actuator destroyed");
+            }
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                    Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) == 0) {
+                toHit.addModifier(2, "Lower arm actuator missing or destroyed");
+            }
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                    Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) == 0) {
+                toHit.addModifier(2, "Lower arm actuator missing or destroyed");
+            }
+        } else {
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                    Mech.ACTUATOR_UPPER_ARM, club.getLocation()) == 0) {
+                toHit.addModifier(2, "Upper arm actuator destroyed");
+            }
+            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                    Mech.ACTUATOR_LOWER_ARM, club.getLocation()) == 0) {
+                toHit.addModifier(2, "Lower arm actuator missing or destroyed");
+            }
+        }
+
+        // target immobile
+        if (te.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
+        
+        // elevation
+        if (attackerElevation == (targetElevation + 1)) {
+                toHit.setHitTable(ToHitData.HIT_PUNCH);
+        } else if (attackerElevation == (targetElevation - 1)) {
+            if (te.isProne()) {
+                toHit.setHitTable(ToHitData.HIT_NORMAL);
+            } else {
+                toHit.setHitTable(ToHitData.HIT_KICK);
+            }
+        } else {
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
+        }
+        
+        // factor in target side
+        toHit.setSideTable(targetSideTable(ae.getPosition(), te.getPosition(),
+                                            te.getFacing()));
+
+        // done!
+        return toHit;
+    }
+    
+    /**
+     * Damage that the specified mech does with a club attack
+     */
+    public static int getClubDamageFor(Entity entity, Mounted club) {
+        return (int)Math.floor(entity.getWeight() / 5.0);
     }
     
     public static ToHitData toHitPush(Game game, PushAttackAction paa) {
@@ -2150,6 +2323,24 @@ public class Compute
         return ToHitData.SIDE_FRONT;
     }
     
+    /**
+     * Returns the club a mech possesses, or null if none.
+     */
+    public static Mounted clubMechHas(Entity entity) {
+        for (Enumeration i = entity.getMisc(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getType().getName().equals("Tree Club")) {
+                return mounted;
+            } else if (mounted.getType().getName().equals("Girder Club")) {
+                return mounted;
+            } else if (mounted.getType().getName().equals("Limb Club")) {
+                return mounted;
+            } else if (mounted.getType().getName().equals("Hatchet")) {
+                return mounted;
+            }
+        }
+        return null;
+    }
     
     /**
      * Roll the number of missiles (or whatever) on the missile
@@ -2257,27 +2448,6 @@ public class Compute
             }
         }
         
-        if (missiles == 10) {
-            switch(d6(2)) {
-            case 2 :
-            case 3 :
-                return 3;
-            case 4 :
-                return 4;
-            case 5 :
-            case 6 :
-            case 7 :
-            case 8 :
-                return 6;
-            case 9 :
-            case 10 :
-                return 8;
-            case 11 :
-            case 12 :
-                return 10;
-            }
-        }
-        
         if (missiles == 15) {
             switch(d6(2)) {
             case 2 :
@@ -2298,7 +2468,7 @@ public class Compute
                 return 15;
             }
         }
-        
+
         if (missiles == 20) {
             switch(d6(2)) {
             case 2 :

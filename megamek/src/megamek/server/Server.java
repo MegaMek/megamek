@@ -1693,6 +1693,10 @@ public class Server
                 KickAttackAction kaa = (KickAttackAction)o;
                 resolveKickAttack(kaa, cen);
                 cen = kaa.getEntityId();
+            } else if (o instanceof ClubAttackAction) {
+                ClubAttackAction caa = (ClubAttackAction)o;
+                resolveClubAttack(caa, cen);
+                cen = caa.getEntityId();
             } else if (o instanceof PushAttackAction) {
                 PushAttackAction paa = (PushAttackAction)o;
                 resolvePushAttack(paa, cen);
@@ -1810,6 +1814,53 @@ public class Server
         phaseReport.append("\n");
     }
 
+    /**
+     * Handle a punch attack
+     */
+    private void resolveClubAttack(ClubAttackAction caa, int lastEntityId) {
+        final Entity ae = game.getEntity(caa.getEntityId());
+        final Entity te = game.getEntity(caa.getTargetId());
+        
+        // restore club attack
+        caa.getClub().restore();
+
+        if (lastEntityId != caa.getEntityId()) {
+            phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+        }
+
+        phaseReport.append("    " + caa.getClub().getName() + " attack on " + te.getDisplayName());
+
+        // should we even bother?
+        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+            phaseReport.append(" but the target is already destroyed!\n");
+            return;
+        }
+        // compute to-hit
+        ToHitData toHit = Compute.toHitClub(game, caa);
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            phaseReport.append(", but the attack is impossible (" + toHit.getDesc() + ")\n");
+            return;
+        }
+        phaseReport.append("; needs " + toHit.getValue() + ", ");
+
+        // roll
+        int roll = Compute.d6(2);
+        phaseReport.append("rolls " + roll + " : ");
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            phaseReport.append("misses.\n");
+            return;
+        }
+        int damage = Compute.getClubDamageFor(ae, caa.getClub());
+
+        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+        phaseReport.append(damageEntity(te, hit, damage));
+
+        phaseReport.append("\n");
+    }
+    
     /**
      * Handle a push attack
      */

@@ -18,12 +18,23 @@
  * Created on April 1, 2003, 2:48 PM
  */
 
-package megamek.common;
+package megamek.common.loaders;
 
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
+
+import megamek.common.BipedMech;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.LocationFullException;
+import megamek.common.Mech;
+import megamek.common.Mounted;
+import megamek.common.QuadMech;
+import megamek.common.TechConstants;
+import megamek.common.loaders.*;
 
 import gd.xml.*;
 import gd.xml.tiny.*;
@@ -392,7 +403,7 @@ public class TdbFile implements MechLoader {
             } else {
                 throw new EntityLoadingException("Unsupported tech base: " + techBase);
             }
-            mech.weight = (float)Integer.parseInt(tonnage);
+            mech.setWeight((float)Integer.parseInt(tonnage));
             mech.setOriginalWalkMP(Integer.parseInt(walkMP));
             if (jumpMP != null)
                 mech.setOriginalJumpMP(Integer.parseInt(jumpMP));

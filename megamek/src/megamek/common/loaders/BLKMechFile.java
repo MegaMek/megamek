@@ -23,13 +23,19 @@
  * @author  njrkrynn
  * @version 
  */
-package megamek.common;
+package megamek.common.loaders;
 
-import java.io.*;
-
+import megamek.common.BipedMech;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.LocationFullException;
+import megamek.common.Mech;
+import megamek.common.QuadMech;
+import megamek.common.TechConstants;
 import megamek.common.util.*;
 
-public class BLKMechFile implements MechLoader {
+public class BLKMechFile extends BLKFile implements MechLoader {
 
     //armor locatioms
     public static final int HD = 0;
@@ -50,29 +56,11 @@ public class BLKMechFile implements MechLoader {
     //
     
     
-    BuildingBlock dataFile;
-    
-    /** Creates new BLkFile */
-    public BLKMechFile(InputStream is) {
-        
-        dataFile = new BuildingBlock(is);
-        
-    }
-    
     public BLKMechFile(BuildingBlock bb)
     {
         dataFile = bb;
     }
       
-    //if it's a block file it should have this...
-    public boolean isMine() {
-     
-        if (dataFile.exists("blockversion") ) return true;
-        
-        return false;
-        
-    }
-
     public Entity getEntity() throws EntityLoadingException {
     
       int chassisType = 0;
@@ -113,7 +101,7 @@ public class BLKMechFile implements MechLoader {
             }
         
         if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find block.");
-            mech.weight = dataFile.getDataAsFloat("tonnage")[0];
+            mech.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
             
         if (!dataFile.exists("walkingMP")) throw new EntityLoadingException("Could not find block.");
             mech.setOriginalWalkMP(dataFile.getDataAsInt("walkingMP")[0]);

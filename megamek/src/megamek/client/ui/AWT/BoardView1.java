@@ -16,9 +16,10 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.awt.image.*;
+import java.util.*;
 
+import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
 
@@ -29,17 +30,20 @@ public class BoardView1
     extends Canvas
     implements BoardListener, MouseListener, MouseMotionListener, Runnable
 {
-    private static final int    PIC_MAX				= 10;
-    private static final int    PIC_MECH_LIGHT		= 1;
-    private static final int    PIC_MECH_MEDIUM		= 2;
-    private static final int    PIC_MECH_HEAVY		= 3;
-    private static final int    PIC_MECH_ASSAULT	= 4;
+    private static final int        PIC_MAX				= 4;
+    private static final int        PIC_MECH_LIGHT		= 0;
+    private static final int        PIC_MECH_MEDIUM		= 1;
+    private static final int        PIC_MECH_HEAVY		= 2;
+    private static final int        PIC_MECH_ASSAULT	= 3;
     
-    private static final int    TRANSPARENT = 0xFFFF000F;
+    private static final int        TRANSPARENT = 0xFFFF00FF;
+    private static final Dimension  HEX_SIZE = new Dimension(84, 72);
     private Game game;
     private Frame frame;
     
     private Point mousePos = new Point();
+    private Rectangle view = null;
+    private Dimension boardSize;
     
     // scrolly stuff:
     private boolean isScrolling = false;
@@ -55,22 +59,20 @@ public class BoardView1
     private Image boardImage;
     private Rectangle boardRect;
     private Graphics boardGraph;
-
-    private Dimension boardSize;
     
-    // entity buffers
+    // entity sprites
     private Vector entitySprites = new Vector();
     private Hashtable entitySpriteIds = new Hashtable();
     
-    // images for the three selection cursors
+    // sprites for the three selection cursors
     private CursorSprite cursorSprite;
     private CursorSprite highlightSprite;
     private CursorSprite selectedSprite;
     
-    // buffer for current movement
+    // sprite for current movement
     private PathSprite movementSprite;
     
-    // vector of buffers for all firing lines
+    // vector of sprites for all firing lines
     private Vector attackSprites = new Vector();
     
     // tooltip stuff
@@ -111,9 +113,9 @@ public class BoardView1
         
         initPolys();
         
-        cursorSprite = new CursorSprite(Color.pink);
+        cursorSprite = new CursorSprite(Color.cyan);
         highlightSprite = new CursorSprite(Color.white);
-        selectedSprite = new CursorSprite(Color.magenta);
+        selectedSprite = new CursorSprite(Color.blue);
     }
  
     
@@ -146,11 +148,14 @@ public class BoardView1
 		update(g);
     }
 
+    /**
+     * Draw the screen!
+     */
     public void update(Graphics g) {
         final long start = System.currentTimeMillis();
         
         final Dimension size = getSize();
-        final Rectangle view = new Rectangle(scroll, size);
+        view = new Rectangle(scroll, size);
         
 		if (!imagesLoading) {
 			g.drawString("loading images...", 20, 50);
@@ -170,22 +175,27 @@ public class BoardView1
         
         // make sure board rectangle contains our current view rectangle
         if (boardImage == null || !boardRect.union(view).equals(boardRect)) {
-            updateBoardImage(view);
+            updateBoardImage();
         }
         
         // draw the board onto the back buffer
         backGraph.drawImage(boardImage, 0, 0, this);
         
         // draw onscreen entities
-        drawSprites(entitySprites, view);
+        drawSprites(entitySprites);
         
         // draw onscreen attacks
-        drawSprites(attackSprites, view);
+        drawSprites(attackSprites);
+        
+        // draw movement, if valid
+        if (movementSprite != null) {
+            drawSprite(movementSprite);
+        }
         
         // draw cursors
-        drawSprite(cursorSprite, view);
-        drawSprite(highlightSprite, view);
-        drawSprite(selectedSprite, view);
+        drawSprite(cursorSprite);
+        drawSprite(highlightSprite);
+        drawSprite(selectedSprite);
         
         // draw the back buffer onto the screen
         g.drawImage(backImage, 0, 0, this);
@@ -196,25 +206,32 @@ public class BoardView1
     }
     
     /**
+     * Repaint the bounds of a sprite, offset by view
+     */
+    private void repaintBounds(Rectangle bounds) {
+        repaint(bounds.x - view.x, bounds.y - view.y, bounds.width, bounds.height);
+    }
+    
+    /**
      * Looks through a vector of buffered images and draws them if they're
      * onscreen.
      */
-    private void drawSprites(Vector spriteVector, Rectangle view) {
+    private void drawSprites(Vector spriteVector) {
         for (final Enumeration i = spriteVector.elements(); i.hasMoreElements();) {
             final Sprite sprite = (Sprite)i.nextElement();
-            drawSprite(sprite, view);
+            drawSprite(sprite);
         }
     }
     
     /**
      * Draws a sprite, if it is in the current view
      */
-    private void drawSprite(Sprite sprite, Rectangle view) {
+    private void drawSprite(Sprite sprite) {
         if (view.intersects(sprite.getBounds())) {
             final int drawX = sprite.getBounds().x - view.x;
             final int drawY = sprite.getBounds().y - view.y;
             if (sprite.getImage() == null) {
-                sprite.draw(this);
+                sprite.draw();
             }
             backGraph.drawImage(sprite.getImage(), drawX, drawY, this);
         }
@@ -223,27 +240,83 @@ public class BoardView1
     /**
      * Updates the board buffer to contain all the hexes needed by the view.
      */
-    private void updateBoardImage(Rectangle view) {
+    private void updateBoardImage() {
         // check to make sure image is big enough
-        if (boardGraph == null) {
+        if (boardGraph == null || view.width > boardRect.width 
+            || view.height > boardRect.height) {
             boardImage = createImage(view.width, view.height);
             boardGraph = boardImage.getGraphics();
             
             System.out.println("boardview1: made a new board buffer " + boardRect);
+            boardRect = new Rectangle(view);
+            drawHexes(view);
         }
-        boardRect = new Rectangle(view);
-        redrawBoard();
+        if (!boardRect.union(view).equals(boardRect)) {
+            moveBoardImage();
+        }
     }
     
     /**
-     * Redraws the whole board, based on boardRect
+     * Moves the board view to another area.
      */
-    private void redrawBoard() {
-        int drawX = boardRect.x / 63;
-        int drawY = boardRect.y / 72;
+    private synchronized void moveBoardImage() {
+        // salvage the old
+        boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
+        boardGraph.copyArea(0, 0, boardRect.width, boardRect.height,
+                            boardRect.x - view.x, boardRect.y - view.y);
         
-        int drawWidth = boardRect.width / 63 + 1;
-        int drawHeight = boardRect.height / 72 + 1;
+        // what's left to paint?
+        Rectangle unLeft = new Rectangle(view.x, view.y, boardRect.x - view.x, view.height); 
+        Rectangle unRight = new Rectangle(boardRect.x + boardRect.width, view.y, view.x -boardRect.x, view.height); 
+        Rectangle unTop = new Rectangle(view.x, view.y, view.width, boardRect.y - view.y); 
+        Rectangle unBottom = new Rectangle(view.x, boardRect.y + boardRect.height, view.width, view.y - boardRect.y); 
+        
+        // update boardRect
+        boardRect = new Rectangle(view);
+        
+        /*
+		// clear the edges, if necessary
+		if (boardRect.x < 21) {
+			boardGraph.clearRect(0, 0, 21 - boardRect.x, boardRect.height);
+		}
+		if (boardRect.y < 36) {
+			boardGraph.clearRect(0, 0, boardRect.width, 36 - boardRect.y);
+		}
+		if (boardRect.x > (boardSize.width - boardRect.width - 21)) {
+			boardGraph.clearRect(boardRect.width - 21, 0, boardRect.width, boardRect.height);
+		}
+		if (boardRect.y > (boardSize.height - boardRect.height - 36)) {
+			boardGraph.clearRect(0,  boardRect.height - 36, boardRect.width, boardRect.height);
+		}
+        */
+
+        // paint needed areas
+        if (unLeft.width > 0) {
+            drawHexes(unLeft);
+        } else if (unRight.width > 0) {
+            drawHexes(unRight);
+        }
+        if (unTop.height > 0) {
+            drawHexes(unTop);
+        } else if (unBottom.height > 0) {
+            drawHexes(unBottom);
+        }
+        
+    }
+    
+    /**
+     * Redraws all hexes in the specified rectangle
+     */
+    private void drawHexes(Rectangle rect) {
+        int drawX = rect.x / 63 - 1;
+        int drawY = rect.y / 72 - 1;
+        
+        int drawWidth = rect.width / 63 + 3;
+        int drawHeight = rect.height / 72 + 3;
+        
+        // only draw what we came to draw
+        boardGraph.setClip(rect.x - boardRect.x, rect.y - boardRect.y,
+                           rect.width, rect.height);
         
         // draw some hexes
         for (int i = 0; i < drawHeight; i++) {
@@ -251,7 +324,6 @@ public class BoardView1
                 drawHex(new Coords(j + drawX, i + drawY));
             }
         }
-        
     }
     
     /**
@@ -330,16 +402,21 @@ public class BoardView1
      * Shows the tooltip thinger
      */
     private void showTooltip() {
+        // retrieve tip text
+        String[] tipText = getTipText(mousePos);
+        if (tipText == null) {
+            return;
+        }
+        
+        // update tip text
+        tipWindow.removeAll();
+        tipWindow.add(new TooltipCanvas(tipText));
+        tipWindow.pack();
+        
         // set tip location
         final Point tipLoc = new Point(getLocationOnScreen());
         tipLoc.translate(mousePos.x, mousePos.y + 20);
         tipWindow.setLocation(tipLoc);
-        
-        // update tip text
-        tipWindow.setBackground(SystemColor.info);
-        tipWindow.removeAll();
-        tipWindow.add(new TooltipCanvas(getTipText(mousePos)));
-        tipWindow.pack();
         
         tipWindow.show();
     }
@@ -347,7 +424,7 @@ public class BoardView1
     /**
      * The text to be displayed when the mouse is at a certain point
      */
-    private String getTipText(Point point) {
+    private String[] getTipText(Point point) {
         // check if it's on an attack
         for (final Enumeration i = attackSprites.elements(); i.hasMoreElements();) {
             final Sprite sprite = (Sprite)i.nextElement();
@@ -365,12 +442,16 @@ public class BoardView1
         }
         
         // then return a tip for the hex it's on
-        Coords mcoords = getCoordsAt(point);
+        final Coords mcoords = getCoordsAt(point);
+        if (!game.board.contains(mcoords)) {
+            return null;
+        }
         Hex mhex = game.board.getHex(mcoords);
-        String tipString = "Hex " + mcoords.getBoardNum() 
-                          + "; level " + mhex.getElevation()
-                          + "; " + Terrain.TERRAIN_NAMES[mhex.getTerrainType()];
-        return tipString;
+        String[] strings = new String[1];
+        strings[0] = "Hex " + mcoords.getBoardNum() 
+                    + "; level " + mhex.getElevation()
+                    + "; " + Terrain.TERRAIN_NAMES[mhex.getTerrainType()];
+        return strings;
     }
     
     /**
@@ -401,30 +482,27 @@ public class BoardView1
         }
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    /**
+     * Clears the sprite for an entity and prepares it to be re-drawn.  Replaces
+     * the old sprite with the new!
+     */
     public void redrawEntity(Entity entity) {
-        EntitySprite buff = (EntitySprite)entitySpriteIds.get(new Integer(entity.getId()));
+        EntitySprite sprite = (EntitySprite)entitySpriteIds.get(new Integer(entity.getId()));
         
-        if (buff != null) {
-            entitySprites.removeElement(buff);
+        if (sprite != null) {
+            entitySprites.removeElement(sprite);
         }
         
-        buff = new EntitySprite(entity);
-        entitySprites.addElement(buff);
-        entitySpriteIds.put(new Integer(entity.getId()), buff);
-        repaint();
+        sprite = new EntitySprite(entity);
+        entitySprites.addElement(sprite);
+        entitySpriteIds.put(new Integer(entity.getId()), sprite);
+        
+        repaint(100);
     }
-
+    
+    /**
+     * Clears all old entity sprites out of memory and sets up new ones.
+     */
     private void redrawAllEntities() {
         entitySprites.removeAllElements();
         entitySpriteIds.clear();
@@ -433,7 +511,23 @@ public class BoardView1
             final Entity entity = (Entity)i.nextElement();
             redrawEntity(entity);
         }
-        repaint();
+
+        repaint(100);
+    }
+    
+    /**
+     * Moves the cursor to the new position, or hides it, if newPos is null
+     */
+    private void moveCursor(CursorSprite cursor, Coords newPos) {
+        final Rectangle oldBounds = new Rectangle(cursor.getBounds());
+        if (newPos != null) {
+		    cursor.setLocation(getHexLocation(newPos));
+        } else {
+		    cursor.setLocation(-100, -100);
+        }
+        // experimental only-repaint-affected-area technique
+        repaintBounds(oldBounds);
+        repaintBounds(cursor.getBounds());
     }
     
     
@@ -441,13 +535,40 @@ public class BoardView1
         ;
     }
     
+    /**
+     * Clears the old movement data and draws the new
+     */
     public void drawMovementData(Entity entity, MovementData md) {
-        ;
-    }
-    public void clearMovementData() {
-        ;
+        // get old sprite bounds
+        Rectangle oldBounds = null;
+        if (movementSprite != null) {
+            oldBounds = movementSprite.getBounds();
+        }
+        // make new sprite
+        movementSprite = new PathSprite(entity, md);
+        // repaint
+        if (oldBounds != null) {
+            repaintBounds(oldBounds);
+        }
+        repaintBounds(movementSprite.getBounds());
     }
     
+    /**
+     * Clears current movement data from the screen
+     */
+    public void clearMovementData() {
+        if (movementSprite == null) {
+            // nothing to clear
+            return;
+        }
+        final Rectangle oldBounds = movementSprite.getBounds();
+        movementSprite = null;
+        repaintBounds(oldBounds);
+    }
+    
+    /**
+     * Adds an attack to the sprite list.
+     */
     public void addAttack(AttackAction aa) {
         // one already exists, from attacker to target, use that
         for (final Enumeration i = attackSprites.elements(); i.hasMoreElements();) {
@@ -462,6 +583,10 @@ public class BoardView1
         // okay, add a new one
         attackSprites.addElement(new AttackSprite(aa));
     }
+    
+    /**
+     * Clears out all attacks that were being drawn
+     */
     public void clearAllAttacks() {
         attackSprites.removeAllElements();
     }
@@ -495,86 +620,23 @@ public class BoardView1
 		
 		// check cache in image
 		if (tintCache[type][facing][cindex] == null) {
-			tintCache[type][facing][cindex] = tint(imageCache[type][facing], 
-                                                   en.getOwner().getColorRGB());
+            tintCache[type][facing][cindex] = 
+                    createImage(new FilteredImageSource(
+                            imageCache[type][facing].getSource(),
+                            new TintFilter(en.getOwner().getColorRGB())));
+            // um and actually, load it, please.
+            try {
+                tracker.addImage(tintCache[type][facing][cindex], 3);
+                tracker.waitForID(3);
+            } catch (InterruptedException ex) {
+                System.err.println("boardview.getEntityImage: interrupted waiting for tinted image to load");
+            }
 		}
 		
 		return tintCache[type][facing][cindex];
 	}
 	
-	/**
-	 * Tints an image to a certain color
-	 */
-	public Image tint(Image img, int color) {
-		int[] pixels = new int[84 * 72];
-		
-		int cred   = (color >> 16) & 0xff;
-		int cgreen = (color >>  8) & 0xff;
-		int cblue  = (color      ) & 0xff;
-		
-		PixelGrabber pg = new PixelGrabber(img, 0, 0, 84, 72, pixels, 0, 84);
-		try {
-		    pg.grabPixels();
-		} catch (InterruptedException e) {
-			System.err.println("graphics: interrupted waiting for pixels!");
-		    return null;
-		}
-		if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
-		    System.err.println("graphics: image fetch aborted or errored");
-		    return null;
-		}
-		for (int i = 0; i < pixels.length; i++) {
-			int alpha = (pixels[i] >> 24) & 0xff;
-			int black = (pixels[i]) & 0xff;  // assume black & white
-			if (alpha != 0xff) {
-                continue;
-            }
-			// alter pixel to tint
-			int red   = (cred   * black) / 255;
-			int green = (cgreen * black) / 255;
-			int blue  = (cblue  * black) / 255;
-					
-			pixels[i] = (alpha << 24) + (red << 16) + (green << 8) + blue;
-		}
-		return createImage(new MemoryImageSource(84, 72, pixels, 0, 84));
-	}
     
-    /**
-     * Returns a new image, where any pixels of the specified color are
-     * transparent.  (Stupid AWT)
-     */
-    private Image makeTransparent(Image image, int color, int width, int height) {
-        final int[] pixels = makeTransparentPixels(image, color, width, height);
-        return createImage(new MemoryImageSource(width, height, pixels, 0, width));
-    }
-    
-    /**
-     * Returns a new image, where any pixels of the specified color are
-     * transparent.  (Stupid AWT)
-     */
-    private int[] makeTransparentPixels(Image image, int color, int width, int height) {
-        int[] pixels = new int[width * height];
-        
-		PixelGrabber pg = new PixelGrabber(image, 0, 0, width, height, pixels, 0, width);
-		try {
-		    pg.grabPixels();
-		} catch (InterruptedException e) {
-			System.err.println("graphics: interrupted waiting for pixels!");
-		    return null;
-		}
-		if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
-		    System.err.println("graphics: image fetch aborted or errored");
-		    return null;
-		}
-        
-        for (int i = 0; i < pixels.length; i++) {
-            if (pixels[i] == color) {
-                pixels[i] &= 0x00ffffff;
-            }
-        }
-        
-        return pixels;
-    }
 
     
     
@@ -582,29 +644,13 @@ public class BoardView1
 		;
 	}
 	public void boardHexCursor(BoardEvent b) {
-        if (b.getCoords() != null) {
-		    cursorSprite.setLocation(getHexLocation(b.getCoords()));
-        } else {
-		    cursorSprite.setLocation(-100, -100);
-        }
-        repaint();
+        moveCursor(cursorSprite, b.getCoords());
 	}
 	public void boardHexSelected(BoardEvent b) {
-        System.out.println("hex selected = " + b.getCoords());
-        if (b.getCoords() != null) {
-		    selectedSprite.setLocation(getHexLocation(b.getCoords()));
-        } else {
-		    selectedSprite.setLocation(-100, -100);
-        }
-        repaint();
+        moveCursor(selectedSprite, b.getCoords());
 	}
 	public void boardHexHighlighted(BoardEvent b) {
-        if (b.getCoords() != null) {
-		    highlightSprite.setLocation(getHexLocation(b.getCoords()));
-        } else {
-		    highlightSprite.setLocation(-100, -100);
-        }
-        repaint();
+        moveCursor(highlightSprite, b.getCoords());
 	}
 	public void boardChangedHex(BoardEvent b) {
 		;
@@ -764,18 +810,18 @@ public class BoardView1
 		final Thread currentThread = Thread.currentThread();
 		while (scroller == currentThread) {
 			try {
-				Thread.sleep(10);
+				Thread.sleep(20);
 			} catch(InterruptedException ex) {
 				// duh?
 			}
             if (!isShowing()) {
                 continue;
             }
-			if (backGraph != null) {
+			if (backSize != null) {
 				doScroll();
                 checkTooltip();
 			} else {
-				repaint();
+				repaint(100);
 			}
 		}
 	}
@@ -790,20 +836,15 @@ public class BoardView1
             hideTooltip();
         }
 		game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers()); 
-		//board.drag(hexAt(me.getPoint()));
 	}
 	public void mouseReleased(MouseEvent me) {
         isScrolling = false;
         isTipPossible = true;
-		//System.out.println("moure click count: " + me.getClickCount());
 		if (me.getClickCount() == 1) {
 			game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_CLICK, me.getModifiers()); 
-			//board.select(hexAt(me.getPoint()));
 		} else {
 			game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DOUBLECLICK, me.getModifiers()); 
-			//board.select(hexAt(me.getPoint()));
 		}
-		//mousePos.setLocation(getSize().width / 2, getSize().height / 2);
 	}
 	public void mouseEntered(MouseEvent me) {
 		;
@@ -822,10 +863,8 @@ public class BoardView1
 		mousePos = me.getPoint();
         isTipPossible = false;
         isScrolling = true;
-		if (backSize != null) {
+		if (view != null) {
 			doScroll();
-		} else {
-			repaint();
 		}
 		game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers()); 
 	}
@@ -847,11 +886,11 @@ public class BoardView1
      */
     private class TooltipCanvas extends Canvas
     {
-        private String string;
+        private String[] tipStrings;
         private Dimension size;
         
-        public TooltipCanvas(String string) {
-            this.string = string;
+        public TooltipCanvas(String[] tipStrings) {
+            this.tipStrings = tipStrings;
             
             // setup
             setFont(new Font("SansSerif", Font.PLAIN, 12));
@@ -859,17 +898,26 @@ public class BoardView1
 		    setForeground(SystemColor.infoText);
             
             // determine size
-            FontMetrics fm = getFontMetrics(getFont());
-		    size = new Dimension(fm.stringWidth(string) + 5, fm.getAscent() + 4);
+            final FontMetrics fm = getFontMetrics(getFont());
+            int width = 0;
+            for (int i = 0; i < tipStrings.length; i++) {
+                if (fm.stringWidth(tipStrings[i]) > width) {
+                    width = fm.stringWidth(tipStrings[i]);
+                }
+            }
+		    size = new Dimension(width + 5, fm.getAscent() * tipStrings.length + 4);
             setSize(size);
         }
         
         public void paint(Graphics g) {
+            final FontMetrics fm = getFontMetrics(getFont());
 		    g.setColor(getBackground());
             g.fillRect(0, 0, size.width, size.height);
             g.setColor(getForeground());
             g.drawRect(0, 0, size.width - 1, size.height - 1);
-            g.drawString(string, 2, size.height - 3);
+            for (int i = 0; i < tipStrings.length; i++) {
+                g.drawString(tipStrings[i], 2, (i + 1) * fm.getAscent());
+            }
         }
     }
     
@@ -877,12 +925,28 @@ public class BoardView1
     /**
      * Stores a buffered image to draw
      */
-    private abstract class Sprite
+    private abstract class Sprite implements ImageObserver
     {
         private Rectangle bounds;
         private Image image;
         
-        public abstract void draw(ImageObserver observer);
+        public abstract void draw();
+        
+        /**
+         * Overrides imageUpdate in ImageObserver interface.  This shouldn't
+         * ever be called, as all images should be loaded, but just in case,
+         * this'll handle it.
+         */
+        public boolean imageUpdate(Image image, int infoflags, int x, int y, 
+                                   int width, int height) {
+            if (infoflags == ImageObserver.ALLBITS) {
+                draw();
+                repaint();
+                return false;
+            } else {
+                return true;
+            }
+        }
         
         public Rectangle getBounds() {
             return bounds;
@@ -896,7 +960,7 @@ public class BoardView1
             return bounds.contains(point);
         }
         
-        private String getTooltip() {
+        private String[] getTooltip() {
             return null;
         }
     }
@@ -918,7 +982,7 @@ public class BoardView1
             bounds.setLocation(-100, -100);
         }
         
-        public void draw(ImageObserver observer) {
+        public void draw() {
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
             Graphics graph = tempImage.getGraphics();
@@ -931,8 +995,8 @@ public class BoardView1
 		    graph.drawPolygon(hexPoly);
             
             // create final image
-            this.image = makeTransparent(tempImage, TRANSPARENT, 
-                                         bounds.width, bounds.height);
+            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
         }
         
         public void setLocation(int x, int y) {
@@ -949,7 +1013,7 @@ public class BoardView1
     private class EntitySprite extends Sprite
     {
         private Entity entity;
-        private int[] pixels;
+        private Rectangle entityRect;
         
         public EntitySprite(Entity entity) {
             this.entity = entity;
@@ -959,10 +1023,11 @@ public class BoardView1
 		    Rectangle modelRect = new Rectangle(47, 55,  
                                  getFontMetrics(font).stringWidth(model) + 1, 
                                  getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(0, 0, 84, 72).union(modelRect);
+            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
             
             this.bounds = tempBounds;
+            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
             this.image = null;
         }
         
@@ -970,17 +1035,21 @@ public class BoardView1
          * Creates the sprite for this entity.  It is an extra pain to 
          * create transparent images in AWT.
          */
-        public void draw(ImageObserver observer) {
+        public void draw() {
             // figure out size
 		    String model = entity.getModel();
 		    Font font = new Font("SansSerif", Font.PLAIN, 10);
 		    Rectangle modelRect = new Rectangle(47, 55,  
                                  getFontMetrics(font).stringWidth(model) + 1, 
                                  getFontMetrics(font).getAscent());
-            Rectangle wholeRect = new Rectangle(0, 0, 84, 72).union(modelRect);
+            Rectangle wholeRect = new Rectangle(HEX_SIZE).union(modelRect);
             
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
+            if (tempImage == null) {
+                // argh!  but I want it!
+                return;
+            }
             Graphics graph = tempImage.getGraphics();
             
             // fill with key color
@@ -988,7 +1057,7 @@ public class BoardView1
             graph.fillRect(0, 0, bounds.width, bounds.height);
             
             // draw entity image
-            graph.drawImage(getEntityImage(entity), 0, 0, observer);
+            graph.drawImage(getEntityImage(entity), 0, 0, this);
             
             // draw box with model
             Color col;
@@ -1043,20 +1112,22 @@ public class BoardView1
 		    }	
             
             // create final image
-            this.pixels = makeTransparentPixels(tempImage, TRANSPARENT, bounds.width, bounds.height);
-            this.image = createImage(new MemoryImageSource(bounds.width, bounds.height, pixels, 0, bounds.width));
+            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
         }
         
         /**
          * Return true if the point is on a non-transparent pixel
          */
         public boolean isInside(Point point) {
-            final int index = point.x - bounds.x + (bounds.width * (point.y - bounds.y));
-            return super.isInside(point) && (pixels[index] & 0xFF000000) != 0;
+            return entityRect.contains(point.x + view.x, point.y + view.y);
         }
         
-        public String getTooltip() {
-            return entity.getDisplayName();
+        public String[] getTooltip() {
+            String[] tipStrings = new String[2];
+            tipStrings[0] = entity.getName() + "  (" + entity.getOwner().getName() + ")";
+            tipStrings[1] = "heat " + entity.heat;
+            return tipStrings;
         }
     }
     
@@ -1065,8 +1136,106 @@ public class BoardView1
      */
     private class PathSprite extends Sprite
     {
-        public void draw(ImageObserver observer) {
-            final int TRANSPARENT = 0xFFFF00FF;
+        private MovementData md;
+        
+        public PathSprite(Entity entity, MovementData md) {
+            this.md = md;
+            Compute.compile(game, entity.getId(), md);
+            
+            // go thru the data, determining the total area of the path
+            Rectangle pathRect = new Rectangle(getHexLocation(entity.getPosition()), HEX_SIZE);
+            for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
+                final MovementData.Step step = (MovementData.Step)i.nextElement();
+                Point hexPoint = getHexLocation(step.getPosition());
+                
+                // for now, just add the whole hex in
+                pathRect = pathRect.union(new Rectangle(hexPoint, HEX_SIZE));
+            }
+            
+            bounds = pathRect;
+            this.image = null;
+        }
+        
+        public void draw() {
+            // create image for buffer
+            Image tempImage = createImage(bounds.width, bounds.height);
+            Graphics graph = tempImage.getGraphics();
+            
+            // fill with key color
+            graph.setColor(new Color(TRANSPARENT));
+            graph.fillRect(0, 0, bounds.width, bounds.height);
+
+            for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
+                final MovementData.Step step = (MovementData.Step)i.nextElement();
+                // setup some variables
+		    	final Point stepPos = getHexLocation(step.getPosition());
+                stepPos.translate(-bounds.x, -bounds.y);
+                final Polygon facingPoly = facingPolys[step.getFacing()];
+                final Polygon movePoly = movementPolys[step.getFacing()];
+                Polygon myPoly;
+                Color col;
+                // set color
+                switch (step.getMovementType()) {
+                case Entity.MOVE_RUN :
+                    col = Color.yellow;
+                    break;
+                case Entity.MOVE_JUMP :
+                    col = Color.cyan;
+                    break;
+                case Entity.MOVE_ILLEGAL :
+                    col = Color.red;
+                    break;
+                default :
+                    col = Color.green;
+                    break;
+                }
+                
+                // draw arrows and cost for the step
+                switch (step.getType()) {
+                case MovementData.STEP_FORWARDS :
+                case MovementData.STEP_BACKWARDS :
+		    		// draw arrows showing them entering the next
+                    myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, 
+                                         movePoly.npoints);
+		    		graph.setColor(Color.darkGray);
+                    myPoly.translate(stepPos.x + 1, stepPos.y + 1);
+                    graph.drawPolygon(myPoly);
+		    		graph.setColor(col);
+                    myPoly.translate(-1, -1);
+                    graph.drawPolygon(myPoly);
+		    		// draw movement cost
+                    String costString = new Integer(step.getMpUsed()).toString()
+                                        + (step.isDanger() ? "*" : "");
+                    if (step.isPastDanger()) {
+		    		    costString = "(" + costString + ")";
+                    }
+		    		graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                    int costX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
+		    		graph.setColor(Color.darkGray);
+		    		graph.drawString(costString, costX, stepPos.y + 39);
+		    		graph.setColor(col);
+		    		graph.drawString(costString, costX - 1, stepPos.y + 38);
+                    break;
+                case MovementData.STEP_TURN_LEFT:
+                case MovementData.STEP_TURN_RIGHT:
+		    		// draw arrows showing the facing
+                    myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints, 
+                                         facingPoly.npoints);
+		    		graph.setColor(Color.darkGray);
+                    myPoly.translate(stepPos.x + 1, stepPos.y + 1);
+                    graph.drawPolygon(myPoly);
+		    		graph.setColor(col);
+                    myPoly.translate(-1, -1);
+                    graph.drawPolygon(myPoly);
+                    break;
+                default :
+                    break;
+                }
+            }
+            
+            // create final image
+            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
         }
     }
     
@@ -1107,7 +1276,7 @@ public class BoardView1
             this.image = null;
         }
         
-        public void draw(ImageObserver observer) {
+        public void draw() {
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
             Graphics graph = tempImage.getGraphics();
@@ -1122,8 +1291,8 @@ public class BoardView1
 		    graph.drawPolygon(attackPoly);
             
             // create final image
-            this.image = makeTransparent(tempImage, TRANSPARENT, 
-                                         bounds.width, bounds.height);
+            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
         }
         
         /**
@@ -1131,15 +1300,18 @@ public class BoardView1
          */
         public boolean isInside(Point point) {
             return super.isInside(point) 
-                   && attackPoly.contains(point.x - bounds.x, point.y - bounds.y);
+                   && attackPoly.contains(point.x + view.x - bounds.x, 
+                                          point.y + view.y - bounds.y);
         }
         
         public AttackAction getAttack() {
             return attack;
         }
         
-        public String getTooltip() {
-            return "attack: " + attack.getEntityId() + " on " + attack.getTargetId();
+        public String[] getTooltip() {
+            String[] tipStrings = new String[1];
+            tipStrings[0] = "attack: " + attack.getEntityId() + " on " + attack.getTargetId();
+            return tipStrings;
         }
     }
 }

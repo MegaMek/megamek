@@ -125,7 +125,10 @@ public abstract class Entity
     protected boolean           findingClub = false;
     protected boolean           armsFlipped = false;
     protected boolean           unjammingRAC = false;
-
+    protected boolean           hasSpotlight = false;
+    protected boolean           isIlluminated = false;
+    protected boolean           spotlightIsActive = false;
+    
     protected DisplacementAttackAction displacementAttack = null;
 
     public int                  heat = 0;
@@ -3879,4 +3882,39 @@ public abstract class Entity
         this.captured = arg;
     }
 
+    public void setSpotlight (boolean arg) {
+        this.hasSpotlight = arg;
+    }
+    
+    public boolean hasSpotlight () {
+        return this.hasSpotlight;
+    }
+    
+    public void setSpotlightState (boolean arg) {
+        if (this.hasSpotlight) this.spotlightIsActive = arg;
+        if (arg) this.isIlluminated = true;
+    }
+    
+    public boolean isIlluminated() {
+        return this.isIlluminated;
+    }
+    
+    public void setIlluminated (boolean arg) {
+        this.isIlluminated = arg;
+    }
+    
+    public void illuminateTarget (Entity target) {
+        if (this.hasSpotlight && this.spotlightIsActive && target != null) {
+            if (!target.isIlluminated()) target.setIlluminated (true);
+            this.isIlluminated = true;
+            //TODO: Illuminate targets along LOS to target
+        }
+    }
+    
+    public void illuminateTarget (Hex target) {
+        if (this.hasSpotlight && this.spotlightIsActive && target != null) {
+            this.isIlluminated = true;
+            //TODO: Illuminate targets along LOS to target
+        }
+    }
 }

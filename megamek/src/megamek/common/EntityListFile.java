@@ -230,6 +230,9 @@ public class EntityListFile {
                 // Add this location to the output string.
                 output.append( "      <location index=\"" );
                 output.append( String.valueOf(loc) );
+                if ( isDestroyed ) {
+                    output.append( "\" isDestroyed=\"true" );
+                }
                 output.append( "\"> " );
                 output.append( entity.getLocationName(loc) );
                 if ( blownOff ) {
@@ -245,6 +248,21 @@ public class EntityListFile {
                 blownOff = false;
 
             } // End output-location
+
+            // If the location is completely destroyed, log it anyway.
+            else if ( isDestroyed ) {
+
+                // Add this location to the output string.
+                output.append( "      <location index=\"" );
+                output.append( String.valueOf(loc) );
+                output.append( "\" isDestroyed=\"true\" /> " );
+                output.append( entity.getLocationName(loc) );
+                output.append( NL );
+
+            } // End location-completely-destroyed
+
+            // Reset the "location is destroyed" flag.
+            isDestroyed = false;
 
         } // Handle the next location
 

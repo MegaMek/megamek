@@ -9353,6 +9353,12 @@ implements Runnable, ConnectionHandler {
         //    desc += breachLocation(en, en.getDependentLocation(loc));
         //}
         en.setLocationStatus(loc, Entity.LOC_BREACHED);
+        
+        if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT) +
+        	en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT) +
+			en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT) >= 3) {
+        	desc.append( destroyEntity(en, "engine destruction") );
+        }
 
         return desc.toString();
     }

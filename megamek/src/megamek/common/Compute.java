@@ -251,10 +251,6 @@ public class Compute
     public static void compile(Game game, int entityId, MovementData md) {
         final Entity entity = game.getEntity(entityId);
         
-        if (entity instanceof QuadMech) {
-            md.transformLateralShifts();
-        }
-        
         // some flags
         int curFacing = entity.getFacing();
         Coords lastPos;
@@ -278,6 +274,10 @@ public class Compute
         // check for backwards movement
         if (md.contains(MovementData.STEP_BACKWARDS)) {
             isRunProhibited = true;
+        }
+        
+        if (entity instanceof QuadMech && !isJumping) {
+            md.transformLateralShifts();
         }
         
         // first pass: set position, facing and mpUsed; figure out overallMoveType

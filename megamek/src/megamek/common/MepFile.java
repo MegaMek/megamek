@@ -146,10 +146,10 @@ public class MepFile implements MechLoader {
             
             int firstSpace = this.name.indexOf(" ");
             if (firstSpace != -1) {
-                mech.setName(this.name.substring(firstSpace).trim());
+                mech.setChassis(this.name.substring(firstSpace).trim());
                 mech.setModel(this.name.substring(5, firstSpace).trim());
             } else {
-                mech.setName(this.name.substring(5).trim());
+                mech.setChassis(this.name.substring(5).trim());
                 mech.setModel(this.name.substring(5).trim());
             }
             

@@ -316,7 +316,7 @@ class MovementPanel
      * updates fields for the specified mech
      */
     public void displayMech(Entity en) {
-        this.mechTypeL.setText(en.getModel() + " " + en.getName());
+        this.mechTypeL.setText(en.getShortName());
 
         this.statusR.setText(en.isProne() ? "prone" : "normal");
         this.playerR.setText(en.getOwner().getName());

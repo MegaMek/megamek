@@ -2299,7 +2299,7 @@ implements Runnable {
             entityUpdate(e.getId());
         }
         else {
-            System.err.println("Received invalid deployment for " + e.getName());
+            System.err.println("Received invalid deployment for " + e.getShortName());
         }
         
 	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");

@@ -61,7 +61,7 @@ public class BLKInfantryFile implements MechLoader {
         Infantry t = new Infantry();
         
         if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find name block.");
-        t.setName(dataFile.getDataAsString("Name")[0]);
+        t.setChassis(dataFile.getDataAsString("Name")[0]);
         
         if (!dataFile.exists("model")) throw new EntityLoadingException("Could not find model block.");
             t.setModel(dataFile.getDataAsString("Model")[0]);

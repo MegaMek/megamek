@@ -14,10 +14,10 @@
 
 package megamek.client;
 
+import com.sun.java.util.collections.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.util.*;
 
 import megamek.client.util.*;
 import megamek.common.*;
@@ -31,12 +31,6 @@ public class BoardView1
     implements BoardListener, MouseListener, MouseMotionListener, KeyListener,
     Runnable
 {
-    private static final int        PIC_MAX             = 4;
-    private static final int        PIC_MECH_LIGHT      = 0;
-    private static final int        PIC_MECH_MEDIUM     = 1;
-    private static final int        PIC_MECH_HEAVY      = 2;
-    private static final int        PIC_MECH_ASSAULT    = 3;
-    
     private static final int        TIP_DELAY = 1000;
     private static final int        TRANSPARENT = 0xFFFF00FF;
     private static final Dimension  HEX_SIZE = new Dimension(84, 72);
@@ -84,24 +78,12 @@ public class BoardView1
     private boolean isTipPossible = false;
     private long lastIdle;
     
-    
-    // make sure those .gifs get decoded!
-    private MediaTracker        tracker = new MediaTracker(this);
-    private boolean             imagesLoading = false;
-    private boolean             imagesLoaded = false;
+    private TilesetManager tileManager = new TilesetManager(this);
 
-    // player-tinted mech image cache
-    private Image[][]            imageCache = new Image[PIC_MAX][6]; // [type][facing]
-    private Image[][][]          tintCache = new Image[PIC_MAX][6][Player.colorRGBs.length]; // [type][facing][color]
-    
-    private Image fire;
-    private Image fog;
-    
     // polygons for a few things
     private Polygon              hexPoly;
     private Polygon[]            facingPolys;
     private Polygon[]            movementPolys;
-    
     
     /**
      * Construct a new board view for the specified game
@@ -126,39 +108,6 @@ public class BoardView1
         selectedSprite = new CursorSprite(Color.blue);
     }
  
-    
-    /**
-     * loadAllImages
-     */
-    public void loadAllImages() {
-        imagesLoaded = false;
-        
-        for (int i = 0; i < 6; i++) {
-            imageCache[PIC_MECH_LIGHT][i] = getToolkit().getImage("data/mex/light-" + i + ".gif");
-            imageCache[PIC_MECH_MEDIUM][i] = getToolkit().getImage("data/mex/medium-" + i + ".gif");
-            imageCache[PIC_MECH_HEAVY][i] = getToolkit().getImage("data/mex/heavy-" + i + ".gif");
-            imageCache[PIC_MECH_ASSAULT][i] = getToolkit().getImage("data/mex/assault-" + i + ".gif");
-            
-            tracker.addImage(imageCache[PIC_MECH_LIGHT][i], 1);
-            tracker.addImage(imageCache[PIC_MECH_MEDIUM][i], 1);
-            tracker.addImage(imageCache[PIC_MECH_HEAVY][i], 1);
-            tracker.addImage(imageCache[PIC_MECH_ASSAULT][i], 1);
-            
-        }
-    
-        for (int i = 0; i < game.board.terrains.length; i++) {
-            tracker.addImage(game.board.terrains[i].getImage(this), 2);
-        }
-        
-        fire = getToolkit().getImage("data/hexes/fire2.gif");
-        tracker.addImage(fire, 2);
-
-        fog = getToolkit().getImage("data/hexes/fog.gif");
-        tracker.addImage(fog, 2);
-
-        imagesLoading = true;
-    }
-
     public void paint(Graphics g) {
         update(g);
     }
@@ -174,13 +123,14 @@ public class BoardView1
         view.setLocation(scroll);
         view.setSize(getOptimalView(size));
         offset.setLocation(getOptimalOffset(size));
-
-        if (!imagesLoading) {
-            g.drawString("loading images...", 20, 50);
-            loadAllImages();
-            return;
-        } else if (!imagesLoaded) {
-            imagesLoaded = tracker.checkAll(true);
+        
+        if (!tileManager.isLoaded()) {
+            if (!tileManager.isStarted()) {
+                g.drawString("loading images...", 20, 50);
+                System.out.println("boardview1: load all images called");
+                tileManager.loadAllImages(game);
+                return;
+            }
             return;
         }
 
@@ -214,9 +164,6 @@ public class BoardView1
         drawSprites(attackSprites);
         
         // draw movement, if valid
-//        if (movementSprite != null) {
-//            drawSprite(movementSprite);
-//        }
         drawSprites(pathSprites);
         
         // draw cursors
@@ -266,9 +213,9 @@ public class BoardView1
      * Looks through a vector of buffered images and draws them if they're
      * onscreen.
      */
-    private void drawSprites(Vector spriteVector) {
-        for (final Enumeration i = spriteVector.elements(); i.hasMoreElements();) {
-            final Sprite sprite = (Sprite)i.nextElement();
+    private synchronized void drawSprites(Vector spriteVector) {
+        for (final Iterator i = spriteVector.iterator(); i.hasNext();) {
+            final Sprite sprite = (Sprite)i.next();
             drawSprite(sprite);
         }
     }
@@ -285,7 +232,7 @@ public class BoardView1
             }
             // check again
             if (sprite.getImage() == null) {
-                System.err.println("BoardView.drawSprite: could not acquire image; cancelling");
+                // whatever... :P
                 return;
             }
             backGraph.drawImage(sprite.getImage(), drawX, drawY, this);
@@ -485,16 +432,16 @@ public class BoardView1
      */
     private String[] getTipText(Point point) {
         // check if it's on an attack
-        for (final Enumeration i = attackSprites.elements(); i.hasMoreElements();) {
-            final AttackSprite sprite = (AttackSprite)i.nextElement();
+        for (Iterator i = attackSprites.iterator(); i.hasNext();) {
+            final AttackSprite sprite = (AttackSprite)i.next();
             if (sprite.isInside(point)) {
                 return sprite.getTooltip();
             }
         }
         
         // check if it's on an entity
-        for (final Enumeration i = entitySprites.elements(); i.hasMoreElements();) {
-            final EntitySprite sprite = (EntitySprite)i.nextElement();
+        for (Iterator i = entitySprites.iterator(); i.hasNext();) {
+            final EntitySprite sprite = (EntitySprite)i.next();
             if (sprite.isInside(point)) {
                 return sprite.getTooltip();
             }
@@ -566,7 +513,7 @@ public class BoardView1
         entitySprites.removeAllElements();
         entitySpriteIds.clear();
         
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+        for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             redrawEntity(entity);
         }
@@ -610,12 +557,12 @@ public class BoardView1
         md.clearAllFlags();
         Compute.compile(game, entity.getId(), md);
         
-        for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
+        for (java.util.Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
-            for (Enumeration j = temp.elements(); j.hasMoreElements();) {
-                final StepSprite sprite = (StepSprite)j.nextElement();
+            for (Iterator j = temp.iterator(); j.hasNext();) {
+                final StepSprite sprite = (StepSprite)j.next();
                 if (sprite.getStep().equals(step)) {
                     pathSprites.addElement(sprite);
                     found = true;
@@ -633,8 +580,8 @@ public class BoardView1
     public void clearMovementData() {
         Vector temp = pathSprites;
         pathSprites = new Vector();
-        for (Enumeration i = temp.elements(); i.hasMoreElements();) {
-            final Sprite sprite = (Sprite)i.nextElement();
+        for (Iterator i = temp.iterator(); i.hasNext();) {
+            final Sprite sprite = (Sprite)i.next();
             repaintBounds(sprite.getBounds());
         }
     }
@@ -643,8 +590,8 @@ public class BoardView1
      * Adds an attack to the sprite list.
      */
     public void addAttack(AttackAction aa) {
-        for (final Enumeration i = attackSprites.elements(); i.hasMoreElements();) {
-            final AttackSprite sprite = (AttackSprite)i.nextElement();
+        for (final Iterator i = attackSprites.iterator(); i.hasNext();) {
+            final AttackSprite sprite = (AttackSprite)i.next();
             
             // can we just add this attack to an existing one?
             if (sprite.getEntityId() == aa.getEntityId() 
@@ -670,27 +617,14 @@ public class BoardView1
     
     
     
-    /**
-     * Returns the image type index for the specified entity
-     */
-    public int getEntityImageIndex(Entity en) {
-        if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_LIGHT) {
-            return PIC_MECH_LIGHT;
-        } else if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_MEDIUM) {
-            return PIC_MECH_MEDIUM;
-        } else if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_HEAVY) {
-            return PIC_MECH_HEAVY;
-        } else if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_ASSAULT) {
-            return PIC_MECH_ASSAULT;
-        } else {
-            return -1;
-        }
-    }
     
     /**
      * Returns the image from the cache
      */
     public Image getEntityImage(Entity en) {
+        return tileManager.imageFor(en);
+        
+        /*
         final int type = getEntityImageIndex(en);
         final int facing = en.getSecondaryFacing();
         final int cindex = en.getOwner().getColorIndex();
@@ -711,6 +645,7 @@ public class BoardView1
         }
         
         return tintCache[type][facing][cindex];
+         */
     }
     
     
@@ -741,8 +676,7 @@ public class BoardView1
         backSize = null;
         boardImage = null;
         boardGraph = null;
-        imagesLoading = false;
-        imagesLoaded = false;
+        tileManager.reset();
     }
     
     public void boardNewEntities(BoardEvent e) {
@@ -1164,7 +1098,6 @@ public class BoardView1
                 graph = tempImage.getGraphics();
             } catch (NullPointerException ex) {
                 // argh!  but I want it!
-                System.err.println("BoardView.EntitySprite: could not acquire image");
                 return;
             }
             
@@ -1358,7 +1291,7 @@ public class BoardView1
      */
     private class AttackSprite extends Sprite
     {
-        private Vector attacks = new Vector();
+        private java.util.Vector attacks = new java.util.Vector();
         private Polygon attackPoly;
         
         private int entityId;
@@ -1457,8 +1390,8 @@ public class BoardView1
             String[] tipStrings = new String[1 + weaponDescs.size()];
             int tip = 1;
             tipStrings[0] = attackerDesc + " on " + targetDesc;
-            for (Enumeration i = weaponDescs.elements(); i.hasMoreElements();) {
-                tipStrings[tip++] = (String)i.nextElement();
+            for (Iterator i = weaponDescs.iterator(); i.hasNext();) {
+                tipStrings[tip++] = (String)i.next();
             }
             return tipStrings;
         }

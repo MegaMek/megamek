@@ -773,6 +773,7 @@ implements Runnable {
                     deploy(entity, getStartingCoords(entity.getOwner().getStartingPos()), center, 10);
                 }
                 */
+                game.setHasDeployed(false);
                 game.determineWindDirection();
                 break;
             case Game.PHASE_INITIATIVE :
@@ -1945,6 +1946,34 @@ implements Runnable {
         else {
             System.err.println("Received invalid deployment for " + e.getName());
         }
+        
+	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
+	// Is the entity Infantry?
+	if ( e instanceof Infantry ) {
+	    // Increment the counter.
+	    turnInfMoved++;
+
+	    // Record the player moving the infantry.
+	    turnLastPlayerId = e.getOwnerId();
+
+	    // Do infantry move in blocks?
+	    if ( infMoveMulti ) {
+
+		// Are we at the end of a block?
+		if ( Game.INF_MOVE_MULTI == turnInfMoved ||
+		     !game.hasInfantry(turnLastPlayerId) ) {
+
+		    // Yup.  Reset the counter.
+		    turnInfMoved = 0;
+		}
+		else {
+		    // Nope.  Decrement the turn index.
+		    turnIndex--;
+		}
+
+	    } // End inf_move_multi
+
+	} // End entity-is-infantry
     }
     
     /**
@@ -4557,7 +4586,7 @@ implements Runnable {
     /**
      * Process a packet
      */
-    void handle(int connId, Packet packet) {
+    synchronized void handle(int connId, Packet packet) {
         //System.out.println("s(" + cn + "): received command");
         if (packet == null) {
             System.out.println("server.connection.handle: got null packet");

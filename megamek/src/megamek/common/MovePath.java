@@ -128,11 +128,11 @@ public class MovePath implements Serializable {
         }
         MoveStep prev = getStep(steps.size() - 2);
         
-        step.compile(game, entity, prev);
-
-        if (!game.getBoard().contains(step.getPosition())) {
+        try {
+            step.compile(game, entity, prev);
+        } catch (RuntimeException re) {
 			step.setMovementType(Entity.MOVE_ILLEGAL);
-		}
+        }
         
         if (!step.isLegal()) {
             return this;

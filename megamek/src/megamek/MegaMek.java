@@ -285,6 +285,10 @@ public class MegaMek
             
             // wait for full connection
             client.retrieveServerInfo();
+            
+            // popup options dialog
+            client.getGameOptionsDialog().update(client.game.getOptions());
+            client.getGameOptionsDialog().show();
         }
         
        
@@ -425,7 +429,7 @@ public class MegaMek
             try {
                 System.out.println("Redirecting output to " + logFileName);
                 PrintStream ps = new PrintStream(new BufferedOutputStream(
-                                 new FileOutputStream(logFileName)));
+                                 new FileOutputStream(logFileName), 64));
                 System.setOut(ps);
                 System.setErr(ps);
             } catch (Exception e) {

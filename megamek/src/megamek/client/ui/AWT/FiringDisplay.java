@@ -48,8 +48,8 @@ public class FiringDisplay
     private Button            butNextTarg;
     private Button            butFlipArms;
     
+    private Button            butReport;
     private Button            butSpace;
-    private Button            butSpace1;
     private Button            butFireMode; // Fire Mode - Add a Fire Mode Button - Rasia
     
     private Button            butNext;
@@ -119,11 +119,12 @@ public class FiringDisplay
         butFlipArms.addActionListener(this);
         butFlipArms.setEnabled(false);
         
+        butReport = new Button("Report..");
+        butReport.addActionListener(this);
+        butReport.setEnabled(true);
+        
         butSpace = new Button(".");
         butSpace.setEnabled(false);
-
-        butSpace1 = new Button(".");
-        butSpace1.setEnabled(false);
 
         // Fire Mode - Adding a Fire Mode Button to the 2nd Menu - Rasia
         butFireMode = new Button("Mode");
@@ -197,16 +198,16 @@ public class FiringDisplay
             panButtons.add(butNextTarg);
             panButtons.add(butNext);
             panButtons.add(butTwist);
-            panButtons.add(butFlipArms);
+            panButtons.add(butReport);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
         case 1 :
             panButtons.add(butAim);
             panButtons.add(butFindClub);
-            panButtons.add(butSpace);
+            panButtons.add(butFlipArms);
             panButtons.add(butNext);
-            panButtons.add(butSpace1);
+            panButtons.add(butSpace);
             panButtons.add(butFireMode); // Fire Mode - Adding a Fire mode Button - Rasia
             panButtons.add(butMore);
             panButtons.add(butDone);
@@ -689,6 +690,9 @@ public class FiringDisplay
         
         if (ev.getSource() == butDone) {
             ready();
+        } else if (ev.getSource() == butReport) {
+            new MiniReportDisplay(client.frame, client.eotr).show();
+            return;
         } else if (ev.getSource() == butFire) {
             fire();
         } else if (ev.getSource() == butSkip) {

@@ -85,6 +85,9 @@ VERSION HISTORY:
 v 0.28.8-dev
 + Added ability to go prone
 + Added movement path sprites for getting up and dropping prone
++ 694497: ability to view turn report in popup window during other phases
++ 690845: server options can be set in scenario games
++ 630298: can use shift+arrow keys to torso twist
 
 v 0.28.7 (02-28-02, 9:00 pm)
 + Roads exit into Pavement hexes.

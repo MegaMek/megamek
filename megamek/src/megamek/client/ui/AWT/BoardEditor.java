@@ -27,9 +27,9 @@ public class BoardEditor extends Container
 
     private Frame               frame = new Frame();
     
-    private Game        game = new Game();
+    private Game                game = new Game();
     private Board               board = game.getBoard();
-    private BoardView1          bv = new BoardView1(game, frame);
+    private BoardView1          bv;
     private CommonMenuBar       menuBar = new CommonMenuBar();
     private CommonAboutDialog   about  = null;
     private CommonHelpDialog    help   = null;
@@ -79,13 +79,20 @@ public class BoardEditor extends Container
     private Button              butBoardSave, butBoardSaveAs;
     private Button              butMiniMap;
     
-    private Dialog               minimapW;
-    private MiniMap              minimap;
+    private Dialog              minimapW;
+    private MiniMap             minimap;
     
     /**
      * Creates and lays out a new Board Editor frame.
      */
     public BoardEditor() {
+        try {
+            bv = new BoardView1(game, frame);
+        } catch (IOException e) {
+            new AlertDialog(frame,"Fatal Error", "Could not initialise:\n"+e);
+            frame.dispose();
+        };
+
         Settings.load();
 
         this.addKeyListener(bv);
@@ -258,8 +265,13 @@ public class BoardEditor extends Container
         minimapW = new Dialog(frame, "MiniMap", false);
         minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
         minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
-        minimap = new MiniMap(minimapW, game, bv);
         minimapW.addWindowListener(this);
+        try {
+            minimap = new MiniMap(minimapW, game, bv);
+        } catch (IOException e) {
+            new AlertDialog(frame,"Fatal Error", "Could not initialise minimap:\n"+e);
+            frame.dispose();
+        };
         minimapW.add(minimap);
 
         setMapVisible(true);

@@ -69,10 +69,11 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     /**
      * Creates and lays out a new mech display.
      */
-    public MiniMap(Dialog d, Game g, BoardView1 bview) {
+    public MiniMap(Dialog d, Game g, BoardView1 bview) throws IOException {
         m_game = g;
         m_bview = bview;
         m_dialog = d;
+        initializeColors();
         m_game.board.addBoardListener(this);
         addMouseListener(this);
         addComponentListener(this);
@@ -80,14 +81,8 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         m_dialog.setResizable(false);
     }
     
-    public MiniMap(Dialog d, Client c, BoardView1 bview) {
+    public MiniMap(Dialog d, Client c, BoardView1 bview) throws IOException {
         this (d, c.game, bview);
-        try {
-            initializeColors();
-        } catch (IOException e) {
-            c.doAlertDialog("Fatal Error", "Could not initialise minimap:\n"+e);
-            c.die();
-        };
         
         c.addGameListener(this);
         c.minimapW.addKeyListener(c.menuBar);

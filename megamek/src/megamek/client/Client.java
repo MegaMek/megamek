@@ -369,7 +369,12 @@ public class Client extends Panel
         minimapW = new Dialog(frame, "MiniMap", false);
         minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
         minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
-        minimap = new MiniMap(minimapW, this, bv);
+        try {
+            minimap = new MiniMap(minimapW, this, bv);
+        } catch (IOException e) {
+            doAlertDialog("Fatal Error", "Could not initialise minimap:\n"+e);
+            die();
+        };
         minimapW.addWindowListener(this);
         minimapW.add(minimap);
 

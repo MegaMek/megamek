@@ -95,6 +95,7 @@ v next
 + 546527: can't fire from depth 1 water while prone
 + added ant build.xml
 + megamek now prominently displays version number
++ mechs can flee during movement, provided certain conditions are met
 
 v 0.25.3 (04-28-02, 5pm)
 + added Dima Nemchenko's patch for confirm dialogs on physical attacks

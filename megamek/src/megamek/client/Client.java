@@ -372,6 +372,7 @@ public class Client extends Panel
             switchPanel(new PhysicalDisplay(this));
             break;
         case Game.PHASE_INITIATIVE :
+            game.resetActions();
         case Game.PHASE_MOVEMENT_REPORT :
         case Game.PHASE_FIRING_REPORT :
         case Game.PHASE_END :
@@ -832,6 +833,7 @@ public class Client extends Panel
             } else if (ea instanceof AttackAction) {
                 bv.addAttack((AttackAction)ea);
             }
+            game.addAction(ea);
         }
     }
     

@@ -228,6 +228,21 @@ public class MegaMek
         if(hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
+
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = hd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Host a Game",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         // kick off a RNG check
         megamek.common.Compute.d6();
         // start server
@@ -259,6 +274,21 @@ public class MegaMek
         if (hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
+
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = hd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Load a Game",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         // kick off a RNG check
         megamek.common.Compute.d6();
         // start server
@@ -322,6 +352,20 @@ public class MegaMek
             return;
         }
 
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = hd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Host Scenario",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         // kick off a RNG check
         megamek.common.Compute.d6();
         // start server
@@ -366,6 +410,21 @@ public class MegaMek
         if(cd.name == null || cd.serverAddr == null || cd.port == 0) {
             return;
         }
+
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = cd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Connect to Game",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         // initialize game
         client = new Client(cd.name, cd.serverAddr, cd.port);
 		launch(client.getFrame());
@@ -380,6 +439,21 @@ public class MegaMek
         if(cd.name == null || cd.serverAddr == null || cd.port == 0) {
             return;
         }
+
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = cd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Connect to Game",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         // initialize game
         client = new TestBot(cd.name);
 
@@ -387,7 +461,7 @@ public class MegaMek
         if(!client.connect(cd.serverAddr, cd.port)) {
             server = null;
             client = null;
-            new AlertDialog(frame, "Connect to a Game", "Error: could not connect.").show();
+            new AlertDialog(frame, "Connect to Game", "Error: could not connect.").show();
             return;
         }
         // wait for full connection

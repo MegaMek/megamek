@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.8-dev
+v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.
 + Added minefield option under Game Options.
 + Splash screen image code now uses natural image size

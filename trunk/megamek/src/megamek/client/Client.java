@@ -90,6 +90,7 @@ public class Client extends Panel
         		
         // layout
         setLayout(new BorderLayout());
+        frame.setTitle(playername + " - MegaMek");
         
         // report frame
         reportFrame = new Frame("MegaMek Reports");
@@ -325,6 +326,14 @@ public class Client extends Panel
 		processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, getPlayer(turn), ""));
 	}
 	
+    /**
+     * Pops up a dialog box asking a yes/no question
+     * @returns true if yes
+     */
+    public boolean doYesNoDialog(String title, String question) {
+        return true;
+    }
+	
 	/**
 	 * Send movement data for the given entity to the server.
 	 */
@@ -336,7 +345,7 @@ public class Client extends Panel
     
         send(new Packet(Packet.COMMAND_ENTITY_MOVE, data));
 	}
-	
+    
     /**
      * Send a weapon fire command to the server.
      */

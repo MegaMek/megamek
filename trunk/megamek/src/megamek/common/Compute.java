@@ -1184,6 +1184,12 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
         
+        // check if both arms are present
+        if (ae.isLocationDestroyed(Mech.LOC_RARM)
+            || ae.isLocationDestroyed(Mech.LOC_LARM)) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
+        }
+        
         // check if attacker has fired arm-mounted weapons
         for (Enumeration i = ae.weapons.elements(); i.hasMoreElements();) {
             MountedWeapon weapon = (MountedWeapon)i.nextElement();

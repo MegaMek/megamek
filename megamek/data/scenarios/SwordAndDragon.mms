@@ -47,9 +47,12 @@ Location_Davion=NW
 # The format is MechRef,PilotName,PilotGunnery,PilotPiloting
 
 Unit_Kurita_1=Awesome AWS-8Q,Kaneda Smythe,3,3
-Unit_Kurita_2=Dragon DRG-1C,Elliot Marlin,4,4
-Unit_Kurita_3=Panther PNT-9R,Hideyoshi Watanabe,4,4
-Unit_Kurita_4=Panther PNT-9R,Susan Takeda,4,3
+Unit_Kurita_2=Clan Anti-Mech Foot Point (Flamer),Elliot Marlin,4,4
+Unit_Kurita_3=Achileus (Laser),Hideyoshi Watanabe,4,4
+Unit_Kurita_4=Gorgon,Susan Takeda,4,3
+Unit_Kurita_5=Badger Tracked Transport D,Test,4,3
+Unit_Kurita_6=Annihilator ANH-1A,Ammo Test,4,3
+
 
 Unit_Davion_1=Griffin GRF-1N,Peter Fizer,3,3
 Unit_Davion_2=Crusader CRD-3D,Maverick,4,4
@@ -75,5 +78,77 @@ Unit_Davion_4=Wolverine WVR-6K,Gordon Lopez,4,4
 # Unit_Kurita_1_Damage=3
 
 
+# Advanced Dammage Modification
+# 
+# Mech Locations
+# 	HEAD=0,CT=1,RT=2,LT=3,RARM=4,LARM=5,RLEG=6,LLEG=7
+# Example for Mechs:
+#   N0:1 Meand Normal Armor Location 0 Set to 1
+#   I2:3 Meand Internal Armor Location 2 Set to 2
+#   R2:3 Meand Rear Armor Location 2 Set to 3
+#
+# Tank Locations
+# 	Body=0,FRONT=1,RIGHT=2,LEFT=3,REAR=4,TURRET=5
+#
+# Infantry Location
+#	Men = 0 (Will set the number of men in the platoon)
+#
+# Battle Armor
+#      Unit#=0(First Unit Number) to Armor 
+#      EG Unit_Kurita_3_DamageSpecific=N2:1,N3:0
+#          Will set unit 3 to have 1 Armor Remaning
+#          while unit 4 Destroyed
+#
+# Proto Mechs
+#      Head=0,Torso =1,RARM=2,LARM=3,LEGS=4,Main Gun=5
+#      
+Unit_Kurita_1_DamageSpecific=I1:10,N2:2
+Unit_Kurita_2_DamageSpecific=N0:1
+Unit_Kurita_4_DamageSpecific=N2:1,N2:2
+Unit_Kurita_3_DamageSpecific=N2:1,N3:0
+Unit_Kurita_5_DamageSpecific=N4:1,N1:1
 
 
+# Critical Hits
+# eg Unit_Kurita_1_CritHit=1:8
+# This does a crit hit on location 1 slot 8.  
+#
+# Mech Crit Hits
+# 	HEAD=0,CT=1,RT=2,LT=3,RARM=4,LARM=5,RLEG=6,LLEG=7
+# 	Slots starting from 1 to the number of filled critical slots
+#
+# Vehicle Crit Hits
+#       Location is zero.
+#       Slots is one of the following:
+# 	1 = Crew stunned for 3 turns
+# 	2 = Main weapon jams for 1 turn
+# 	3 = Engine Destroyed Immobile
+# 	4 = Crew killed (tank dead)
+# 	5 = Fuel Tank/Engine Shielding (tank dead) 
+# 	6 = Power Plant Hit (tank dead)
+#
+# Proto Mechs
+# 	Head=0,Torso=1,RARM=2,LARM=3,LEGS=4,Main Gun=5
+# 	Slots starting from 1 to the number of critical hit boxes
+#
+#       In addition, you can specify whether the Torso weapons
+#       should be damaged by dmaging the following torso "slots":
+#               Torso Weapon A=5,Torso Weapon B=6
+#
+#
+Unit_Kurita_1_CritHit=1:3,1:2
+Unit_Kurita_4_CritHit=2:1,1:5
+Unit_Kurita_5_CritHit=0:3
+Unit_Kurita_6_CritHit=2:10
+
+# Set Ammo Ammount(Only Works for Mechs)
+#
+# Note will not be able to specifiy a value larger then Inital Ammout
+# 
+# Loc and Slots are the same as Crit Locations
+#
+# For a Mech this would
+# Unit_Kurita_6_SetAmmoTo=2:11-3
+# Would set Ammo at Slot 2:11 to 3 points
+# 
+Unit_Kurita_6_SetAmmoTo=2:11-1

@@ -41,6 +41,7 @@ public abstract class BotClient extends Client {
 
     public BotClient(String playerName) {
         super(playerName);
+        this.setHelpFileName( "ai-readme.txt" );
     }
 
     BotConfiguration config = new BotConfiguration();
@@ -134,7 +135,7 @@ public abstract class BotClient extends Client {
             };
 
             if ( confirm.getAnswer() ) {
-                megamek.MegaMek.showHelp(this.frame, "ai-readme.txt").show();
+                this.showHelp();
             };
         };
         sendChat("Hi, I'm a bot client!");

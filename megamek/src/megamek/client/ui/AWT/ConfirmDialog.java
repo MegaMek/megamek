@@ -154,9 +154,11 @@ public class ConfirmDialog
         boolean updateSize = false;
         if ( size.width < Settings.minimumSizeWidth ) {
             size.width = Settings.minimumSizeWidth;
+            updateSize = true;
         }
         if ( size.height < Settings.minimumSizeHeight ) {
-            size.height = Settings.minimumSizeHeight;
+            size.height = Settings.minimumSizeHeight; 
+            updateSize = true;
         }
         if ( updateSize ) {
             setSize( size );

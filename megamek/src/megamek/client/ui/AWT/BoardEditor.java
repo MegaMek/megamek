@@ -121,7 +121,7 @@ public class BoardEditor extends Container
             };
 
             if ( confirm.getAnswer() ) {
-                megamek.MegaMek.showHelp(this.frame, "editor-readme.txt").show();
+                showHelp();
             };
         };
     }

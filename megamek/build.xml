@@ -111,7 +111,7 @@
   
   <target name="clean" description="Remove all compiled and generated files">
     <!-- Delete the ${build} directory tree -->
-    <delete dir="${builddir}"/>
+    <delete dir="${builddir}/megamek"/>
     <delete dir="${docdir}"/>
     <delete file="${timestampfile}"/>
     <delete file="${jarfile}"/>

@@ -48,6 +48,7 @@ public class Client extends Panel
     private CommonAboutDialog           about   = null;
     private CommonHelpDialog            help    = null;
     private CommonSettingsDialog        setdlg  = null;
+    private String                      helpFileName = "readme.txt";
 
     // we need these to communicate with the server
     private String              name;
@@ -343,12 +344,30 @@ public class Client extends Panel
     }
 
     /**
-     * Called when the user selects the "Help->Contents" menu item.
+     * Change the default help file name for this client.
+     * <p/>
+     * This method should only be called by the constructor
+     * of subclasses.
+     *
+     * @param   fileName the <code>String</code> name of the help file
+     *          for this <code>Client</code> subclass.  This value should
+     *          not be <code>null</code>.
      */
-    private void showHelp() {
+    protected void setHelpFileName( String fileName ) {
+        if ( null != fileName ) {
+            this.helpFileName = fileName;
+        }
+    }
+
+    /**
+     * Called when the user selects the "Help->Contents" menu item.
+     * <p/>
+     * This method can be called by subclasses.
+     */
+    protected void showHelp() {
         // Do we need to create the "help" dialog?
         if ( this.help == null ) {
-            File helpfile = new File( "readme.txt" );
+            File helpfile = new File( helpFileName );
             this.help = new CommonHelpDialog( this.frame, helpfile );
         }
 

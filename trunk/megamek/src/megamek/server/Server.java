@@ -8400,8 +8400,6 @@ implements Runnable {
             boards.addElement( MapSettings.BOARD_SURPRISE );
             com.sun.java.util.collections.Collections.sort(tempList, sortComp);
             for ( int loop = 0; loop < tempList.size(); loop++ ) {
-                System.err.print( "Adding map " );//killme
-                System.err.println( tempList.elementAt(loop) );//killme
                 boards.addElement( tempList.elementAt(loop) );
             }
         }

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v 0.29.26 (CVS)
+
 v 0.29.25 (2004-02-08 10:00pm)
 + Data 887963: added images for Berserker, Lao Hu, and Naginata; updated
         images for Bushwacker, Fafnir, and Uziel

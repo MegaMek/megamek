@@ -1536,6 +1536,16 @@ public abstract class Entity
         return false;
     }
     
+    public boolean hasTargComp() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
+                return !(m.isDestroyed() || m.isMissing());
+            }
+        }
+        return false;
+    }
+    
     /**
      * Returns whether this 'mech is part of a C3 network.
      */
@@ -1621,12 +1631,7 @@ public abstract class Entity
         }
         return 0;
     }
-
-
-    public boolean LosIsThroughEnemyECM(Entity e, Entity m) {
-       return false;
-    }
-
+    
     public Entity getC3Top() {
       Entity m = this;
       while(m.getC3Master() != null && !m.getC3Master().equals(m) && m.getC3Master().hasC3() && 

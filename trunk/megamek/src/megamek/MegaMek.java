@@ -125,7 +125,7 @@ public class MegaMek
 		
         // initialize splash image
         Image imgSplash = frame.getToolkit().getImage
-            ("data/images/megamek_splash.jpg");
+            ("data/images/megamek-splash.jpg");
 
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);

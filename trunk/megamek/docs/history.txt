@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.60 (CVS)
+v0.29.60 (2005-01-10 7:30am)
 + Bug 1066865: Offboard Artillery tanks causing game to freeze
 + Bug 1093900: Glancing Blows always crit
 + RFE 1093906: Glancing Blows Message

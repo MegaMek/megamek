@@ -24,7 +24,7 @@ public class Tank
     extends Entity
     implements Serializable
 {
-    private boolean m_bHasTurret = false;
+    private boolean m_bHasNoTurret = false;
     private boolean m_bTurretLocked = false;
     private int m_nTurretOffset = 0;
     private int m_nStunnedTurns = 0;
@@ -50,26 +50,26 @@ public class Tank
     public String[] getLocationNames() { return LOCATION_NAMES; }
     
     
-    public boolean hasTurret() 
+    public boolean hasNoTurret() 
     { 
-        return m_bHasTurret; 
+        return m_bHasNoTurret; 
     }
     
-    public void setHasTurret(boolean b)
+    public void setHasNoTurret(boolean b)
     {
-        m_bHasTurret = b;
+        m_bHasNoTurret = b;
     }
 
     /**
      * Returns the number of locations in the entity
      */
     public int locations() {
-        //return m_bHasTurret ? 5 : 4;
-        return 6;
+        return m_bHasNoTurret ? 5 : 6;
+        //return 6;
     }
     
     public boolean canChangeSecondaryFacing() {
-        return m_bHasTurret && !m_bTurretLocked;
+        return !m_bHasNoTurret && !m_bTurretLocked;
     }
     
     public boolean isValidSecondaryFacing(int n) {
@@ -83,7 +83,7 @@ public class Tank
     public void setSecondaryFacing(int sec_facing) {
         if (!m_bTurretLocked) {
             super.setSecondaryFacing(sec_facing);
-            if (m_bHasTurret) {
+            if (!m_bHasNoTurret) {
                 m_nTurretOffset = sec_facing - getFacing();
             }
         }
@@ -332,21 +332,21 @@ public class Tank
                     return new HitData(nArmorLoc);
                 }
             case 10:
-                if (!m_bHasTurret) {
+                if (m_bHasNoTurret) {
                     return new HitData(nArmorLoc);
                 }
                 else {
                     return new HitData(LOC_TURRET);
                 }
             case 11:
-                if (!m_bHasTurret) {
+                if (m_bHasNoTurret) {
                     return new HitData(nArmorLoc);
                 }
                 else {
                     return new HitData(LOC_TURRET, false, HitData.EFFECT_VEHICLE_TURRETLOCK);
                 }
             case 12:
-                if (!m_bHasTurret || bSide) {
+                if (m_bHasNoTurret || bSide) {
                     return new HitData(nArmorLoc, false, HitData.EFFECT_CRITICAL);
                 }
                 else {
@@ -381,7 +381,7 @@ public class Tank
         dbv += getTotalArmor();
         
         // total internal structure        
-        dbv += getTotalInternal() * 2;
+        dbv += getTotalInternal() / 2;
         
         double typeModifier;
         switch (getMovementType()) {

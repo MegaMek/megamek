@@ -26,6 +26,8 @@ import megamek.common.*;
 public class LaserWeapon extends EnergyWeapon {
 	public LaserWeapon() {
 		super();
-		this.flags |=WeaponType.F_LASER;		
+		this.flags |=WeaponType.F_LASER | WeaponType.F_DIRECT_FIRE;
+	    ammoType = AmmoType.T_NA;
+	    minimumRange = WEAPON_NA;		
 	}
 }

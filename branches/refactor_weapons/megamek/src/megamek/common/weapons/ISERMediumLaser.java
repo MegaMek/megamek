@@ -12,31 +12,34 @@
  *  for more details.
  */
 /*
- * Created on Sep 2, 2004
+ * Created on Sep 12, 2004
  *
  */
 package megamek.common.weapons;
+
 /**
  * @author Andrew Hunter
  *
  */
-public class ISMediumLaser extends LaserWeapon {
-	public ISMediumLaser() {
+public class ISERMediumLaser extends LaserWeapon {
+	/**
+	 * 
+	 */
+	public ISERMediumLaser() {
 		super();
-		this.name = "Medium Laser";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Medium Laser");
-        this.addLookupName("ISMediumLaser");
-        this.heat = 3;
+		this.name = "ER Medium Laser";
+        this.setInternalName("ISERMediumLaser");
+        this.addLookupName("IS ER Medium Laser");
+        this.heat = 5;
         this.damage = 5;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.waterShortRange = 2;
-        this.waterMediumRange = 4;
-        this.waterLongRange = 6;
+        this.shortRange = 4;
+        this.mediumRange = 8;
+        this.longRange = 12;
+        this.waterShortRange = 3;
+        this.waterMediumRange = 5;
+        this.waterLongRange = 8;
         this.tonnage = 1.0f;
         this.criticals = 1;
-        this.bv = 46;
+        this.bv = 62;
 	}
 }

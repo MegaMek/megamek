@@ -194,6 +194,25 @@ public class EquipmentType {
     }
     private static void initializeWeaponTypes() {
     	addType(new ISMediumLaser());
+    	addType(new ISLargeLaser());
+    	addType(new ISSmallLaser());
+    	addType(new ISLargePulseLaser());
+    	addType(new ISERLargeLaser());
+    	addType(new ISERMediumLaser());
+    	addType(new ISMediumPulseLaser());
+    	addType(new ISSmallPulseLaser());
+    	addType(new ISERSmallLaser());
+    	addType(new CLERLargeLaser());
+    	addType(new CLHeavyLargeLaser());
+    	addType(new CLLargePulseLaser());
+    	addType(new CLERMediumLaser());
+    	addType(new CLHeavyMediumLaser());
+    	addType(new CLMediumPulseLaser());
+    	addType(new CLERSmallLaser());
+    	addType(new CLSmallPulseLaser());
+    	addType(new CLHeavySmallLaser());
+    	addType(new CLERMicroLaser());
+    	addType(new CLMicroPulseLaser());
     }
     
 }

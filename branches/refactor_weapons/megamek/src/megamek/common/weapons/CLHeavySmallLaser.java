@@ -12,31 +12,35 @@
  *  for more details.
  */
 /*
- * Created on Sep 2, 2004
+ * Created on Sep 12, 2004
  *
  */
 package megamek.common.weapons;
+
 /**
  * @author Andrew Hunter
  *
  */
-public class ISMediumLaser extends LaserWeapon {
-	public ISMediumLaser() {
+public class CLHeavySmallLaser extends LaserWeapon {
+	/**
+	 * 
+	 */
+	public CLHeavySmallLaser() {
 		super();
-		this.name = "Medium Laser";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Medium Laser");
-        this.addLookupName("ISMediumLaser");
+		this.name = "Heavy Small Laser";
+        this.setInternalName("CLHeavySmallLaser");
+        this.addLookupName("Clan Small Heavy Laser");
         this.heat = 3;
-        this.damage = 5;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.waterShortRange = 2;
-        this.waterMediumRange = 4;
-        this.waterLongRange = 6;
-        this.tonnage = 1.0f;
+        this.damage = 6;
+        this.toHitModifier = 1;
+        this.shortRange = 1;
+        this.mediumRange = 2;
+        this.longRange = 3;
+        this.waterShortRange = 1;
+        this.waterMediumRange = 2;
+        this.waterLongRange = 2;
+        this.tonnage = 0.5f;
         this.criticals = 1;
-        this.bv = 46;
+        this.bv = 15;
 	}
 }

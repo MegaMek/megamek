@@ -64,19 +64,32 @@ public abstract class MMRandom {
     
     /**
      * Simulates six-sided die rolls.
+     *
+     * @param   nDice - the <code>int</code> number of dice to roll.
+     *          If this value is less than or equal to zero, an
+     *          <code>IllegalArgumentException</code> will be thrown.
+     * @return  a <code>Roll</code> object containing the roll results.
+     * @throws  <code>IllegalArgumentException</code> will be thrown
+     *          if the input is <= 0.
      */
-    public int d6(int nDice) {
-        int total = 0;
-        for (int i = 0; i < nDice; i++) {
-            total += randomInt(6) + 1;
+    public Roll d6(int nDice) {
+        if (0 >= nDice) {
+            throw new IllegalArgumentException
+                ("Must ask for a positive number of rolls, not " + nDice);
         }
-        return total;
+
+        // Use the Roll object to record the rolls.
+        MMRoll roll = new MMRoll (this, 6, 1);
+        for (int i = 1; i < nDice; i++) {
+            roll.addRoll (this);
+        }
+        return roll;
     }
 
     /**
      * A single die
      */
-    public int d6() {
+    public Roll d6() {
         return d6(1);
     }
         
@@ -138,7 +151,7 @@ public abstract class MMRandom {
     static class Pool36Random extends SunRandom {
         public static final int NUM_SHUFFLES = 360;
         
-        int[] pool = new int[36];
+        MMShuffle[] pool = new MMShuffle[36];
         int index = 0;
         
         public Pool36Random() {
@@ -147,12 +160,12 @@ public abstract class MMRandom {
         }
         
         /** Watches for 2 as nDice and then does its special thing. */
-        public int d6(int nDice) {
+        public Roll d6(int nDice) {
             if (nDice != 2) {
                 return super.d6(nDice);
             }
             // check pool
-            if (index <= pool.length) {
+            if (index >= pool.length) {
                 shufflePool();
             }
             // return next pool number
@@ -164,7 +177,7 @@ public abstract class MMRandom {
             index = 0;
             for (int i = 1; i <= 6; i++) {
                 for (int j = 1; j <= 6; j++) {
-                    pool[index++] = i + j;
+                    pool[index++] = new MMShuffle (i, j);
                 }
             }
         }
@@ -174,7 +187,9 @@ public abstract class MMRandom {
          * the index.  Uses the regular RNG to shuffle (OH NO!)
          */
         void shufflePool() {
-            int temp, src, dest;
+            MMShuffle temp;
+            int src;
+            int dest;
             
             // alakazam!
             for (int i = 0; i < NUM_SHUFFLES; i++) {
@@ -184,6 +199,11 @@ public abstract class MMRandom {
                 temp = pool[src];
                 pool[src] = pool[dest];
                 pool[dest] = temp;
+            }
+
+            // Label each of the "rolls" with their new deal order.
+            for (int j = 0; j < pool.length; j++) {
+                pool[j].setDeal (j+1);
             }
             
             // reset index

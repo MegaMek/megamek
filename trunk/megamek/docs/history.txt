@@ -88,7 +88,7 @@ v CVS
 + 660514: Clan AMS has 24 shots
 + fixed a few equipment name problems when loading MEP files
 + handle mechs that don't have the full amount of engine heat sinks correctly
-+ hatchets, AMS, tcomp affect BV correctly
++ hatchets, AMS, tcomp, TSM, MASC affect BV correctly
 
 v 0.27.13 (12-20-02, 5pm)
 + 652291: Mechs can "stomp" (kick) vehicles in their hex.

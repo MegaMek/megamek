@@ -1073,6 +1073,7 @@ public abstract class Mech
         dbv += dEquipmentBV;
         
         // subtract for explosive ammo
+        double ammoPenalty = 0;
         for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             int loc = mounted.getLocation();
@@ -1111,8 +1112,9 @@ public abstract class Mech
                 tonnage = 1.0f;
             }
             
-            dbv -= (int)(20.0 * tonnage);
+            ammoPenalty += 20.0 * tonnage;
         }
+        dbv = Math.max(1, dbv - ammoPenalty);
         
         
         // total up maximum heat generated
@@ -1146,11 +1148,25 @@ public abstract class Mech
         }
         // adjust for heat efficiency
         if (maximumHeat > getHeatCapacity()) {
-            dbv -= ((maximumHeat - getHeatCapacity()) * 5);
+            double heatPenalty = ((maximumHeat - getHeatCapacity()) * 5);
+            dbv = Math.max(1, dbv - heatPenalty);
         }
         
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getRunMP(), false).getValue();
+        int runMP = getRunMP();
+        // factor in masc or tsm
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            MiscType mtype = (MiscType)((Mounted)i.nextElement()).getType();
+            // assumption: there are no mechs with 1 MP and MASC and TSM both
+            if (mtype.hasFlag(MiscType.F_MASC)) {
+                runMP = getWalkMP() * 2;
+                break;
+            }
+            if (mtype.hasFlag(MiscType.F_TSM)) {
+                runMP = (int)Math.ceil((getWalkMP() + 1) * 1.5);
+            }
+        }
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false).getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true).getValue();
         int targetMovementModidifer = Math.max(tmmRan, tmmJumped);
         if (targetMovementModidifer > 5) {
@@ -1233,13 +1249,21 @@ public abstract class Mech
         
         // adjust for heat efficiency
         if (maximumHeat > getHeatCapacity()) {
-            double x = (getHeatCapacity()  * weaponBV) / maximumHeat;
+            double x = (getHeatCapacity() * weaponBV) / maximumHeat;
             double y = (weaponBV - x) / 2;
             weaponBV = x + y;
         }
         
         // adjust further for speed factor
         double speedFactor = getRunMP() + getJumpMP() - 5;
+        // +1 for MASC or TSM
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            MiscType mtype = (MiscType)((Mounted)i.nextElement()).getType();
+            if (mtype.hasFlag(MiscType.F_MASC) || mtype.hasFlag(MiscType.F_TSM)) {
+                speedFactor++;
+                break; // they seem not to be cumulative
+            }
+        }
         speedFactor /= 10;
         speedFactor++;
         speedFactor = Math.pow(speedFactor, 1.2);

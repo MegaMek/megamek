@@ -61,6 +61,9 @@ public class BoardEditor extends Container
     
     private Button              butAddTerrain;
     
+    private Label               labTheme;
+    private TextField           texTheme;
+    
     private Label               blankL;
     
     private Label               labBoard;
@@ -127,6 +130,10 @@ public class BoardEditor extends Container
         panTerrExits.add(butTerrExits);
         panTerrExits.add(texTerrExits);
         
+        labTheme = new Label("Theme:", Label.LEFT);
+        texTheme = new TextField("", 15);
+        texTheme.addTextListener(this);
+        
         labBoard = new Label("Board:", Label.LEFT);
         butBoardNew = new Button("New...");
         butBoardNew.addActionListener(this);
@@ -171,6 +178,8 @@ public class BoardEditor extends Container
         addBag(panTerrainType, gridbag, c);
         addBag(panTerrExits, gridbag, c);
         addBag(butAddTerrain, gridbag, c);
+        addBag(labTheme, gridbag, c);
+        addBag(texTheme, gridbag, c);
     
         c.weightx = 1.0;    c.weighty = 1.0;
         addBag(blankL, gridbag, c);
@@ -211,6 +220,8 @@ public class BoardEditor extends Container
             lisTerrain.select(0);
             refreshTerrainFromList();
         }
+        
+        texTheme.setText(curHex.getTheme());
         
         repaint();
         canHex.repaint();
@@ -357,8 +368,14 @@ public class BoardEditor extends Container
             // I want a file, y'know!
             return;
         }
+        
         curpath = fd.getDirectory();
         curfile = fd.getFile();
+
+        // make sure the file ends in board
+        if (!curfile.toLowerCase().endsWith(".board")) {
+            curfile += ".board";
+        }
         
         frame.setTitle("MegaMek Editor : " + curfile);
         
@@ -430,6 +447,9 @@ public class BoardEditor extends Container
                 curHex.setElevation(value);
                 canHex.repaint();
             }
+        } else if (te.getSource() == texTheme) {
+            curHex.setTheme(texTheme.getText());
+            canHex.repaint();
         }
     }
     
@@ -496,7 +516,7 @@ public class BoardEditor extends Container
             ed.show();
             texTerrExits.setText(Integer.toString(ed.getExits()));
             addSetTerrain();
-        }
+        } 
     }
 
     

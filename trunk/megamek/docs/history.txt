@@ -91,6 +91,9 @@ v 0.28.12-dev
 + 709127 and 712227: Incorporated changes into vehicles.zip; note that I
   believe that several vehicles listed in the 3050+ TROs were in service in
   3025 (e.g. the Heavy APCs, the Light SRM Carrier, and the Zhukov Heavy Tank).
++ added "fluff" terrain type with no intended game effect
++ hex theme settable from the map editor
++ ".board" extention checked for in map editor
 
 v 0.28.11 (03-29-03, 7:30pm)
 + 708743: minimap now initialized correctly even if "disabled"

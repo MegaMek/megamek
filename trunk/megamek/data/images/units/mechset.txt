@@ -34,8 +34,8 @@ exact "Archer ARC-2R" "archer.gif"
 
 #by RAw
 exact "Commando COM-3A" "commando.gif"
-exact "Javelin JVN-N" "javelin.gif"
-exact "Warhammer WHM-3R" "warhammer0.gif"
+exact "Javelin JVN-10N" "javelin.gif"
+exact "Warhammer WHM-6R" "warhammer0.gif"
 
 # end of special variants
 # Normal pics
@@ -111,6 +111,7 @@ chassis "Enforcer" "enforcer.gif"
 chassis "Dervish" "dervish.gif"
 chassis "Shadow Hawk" "shadowhawk.gif"
 chassis "Battlemaster" "battlemaster.gif"
+chassis "BattleMaster" "battlemaster.gif"
 chassis "Charger" "charger.gif"
 chassis "Cyclops" "cyclops.gif"
 chassis "Grasshopper" "grasshopper.gif"

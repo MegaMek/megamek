@@ -24,10 +24,13 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import com.sun.java.util.collections.HashMap;
+import com.sun.java.util.collections.Map;
+import com.sun.java.util.collections.TreeMap;
 
 import megamek.client.util.widget.BufferedPanel;
 import megamek.common.*;
 import megamek.common.util.Distractable;
+import megamek.common.util.StringUtil;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
@@ -107,7 +110,7 @@ public class ClientGUI
     private Hashtable phaseComponents = new Hashtable();
 
 	//TODO: there's a better place for this
-	private HashMap bots = new HashMap();
+	private Map bots = new TreeMap(StringUtil.stringComparator());
     /**
      * Construct a client which will display itself in a new frame.  It will
      * not try to connect to a server yet.  When the frame closes, this client
@@ -1361,7 +1364,7 @@ public class ClientGUI
         }
     }
 
-    public HashMap getBots() {
+    public Map getBots() {
         return bots;
     }
 

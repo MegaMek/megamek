@@ -153,5 +153,4 @@ public class CamoChoiceListener implements ItemListener {
         // Send a message to a server, if called for.
         if ( null != client ) client.sendPlayerInfo();
     }
-
 }

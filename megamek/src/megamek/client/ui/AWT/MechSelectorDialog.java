@@ -24,6 +24,7 @@ import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
 
 import com.sun.java.util.collections.Arrays;
+import com.sun.java.util.collections.Iterator;
 
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
@@ -66,6 +67,9 @@ public class MechSelectorDialog
 
     private Panel m_pUpper = new Panel();
 	BufferedPanel m_pPreview = new BufferedPanel();
+	
+	private Label m_labelPlayer = new Label("Player:", Label.RIGHT);
+	private Choice m_chPlayer = new Choice();
 
     public MechSelectorDialog(ClientGUI cl, UnitLoadingDialog uld)
     {
@@ -77,6 +81,8 @@ public class MechSelectorDialog
         for (int x = 0; x < m_saSorts.length; x++) {
             m_chSort.addItem(m_saSorts[x]);
         }
+		updatePlayerChoice();
+		
         m_pParams.setLayout(new GridLayout(4, 2));
         m_pParams.add(m_labelWeightClass);
         m_pParams.add(m_chWeightClass);
@@ -88,6 +94,8 @@ public class MechSelectorDialog
         m_pParams.add(m_chSort);
         
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+		m_pButtons.add(m_labelPlayer);
+		m_pButtons.add(m_chPlayer);
         m_pButtons.add(m_bPick);
         m_pButtons.add(m_bCancel);
         
@@ -124,6 +132,14 @@ public class MechSelectorDialog
                     m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2);
         populateChoices();
         addWindowListener(this);
+    }
+
+    private void updatePlayerChoice() {
+        m_chPlayer.removeAll();
+        m_chPlayer.addItem(m_clientgui.getClient().getName());
+		for (Iterator i = m_clientgui.getBots().values().iterator(); i.hasNext();) {
+			m_chPlayer.addItem(((Client)i.next()).getName());
+		}
     }
 
     public void run() {
@@ -227,6 +243,7 @@ public class MechSelectorDialog
     }
     
     public void show() {
+        updatePlayerChoice();
         setLocation(m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2,
                     m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2);
         super.show();
@@ -253,8 +270,16 @@ public class MechSelectorDialog
             MechSummary ms = m_mechsCurrent[m_mechList.getSelectedIndex()];
             try {
                 Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-                e.setOwner(m_client.getLocalPlayer());
-                m_client.sendAddEntity(e);
+                Client c = null;
+                if (m_chPlayer.getSelectedIndex() > 0) {
+                    String name = m_chPlayer.getSelectedItem();
+                    c = (Client)m_clientgui.getBots().get(name);
+                }
+                if (c == null) {
+                    c = m_client;
+                }
+                e.setOwner(c.getLocalPlayer());
+                c.sendAddEntity(e);
             } catch (EntityLoadingException ex) {
                 System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
                 ex.printStackTrace();

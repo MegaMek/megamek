@@ -178,6 +178,45 @@ public class DeploymentDisplay
         client.game.board.cursor(null);
         // RACE : if player clicks fast enough, ce() is null.
         if ( null != ce() ) {
+            // set facing according to starting position
+            switch (client.getLocalPlayer().getStartingPos()) {
+            case 8:
+            	ce().setFacing(1);
+            	ce().setSecondaryFacing(1);
+            	break;
+            case 7:
+            	ce().setFacing(1);
+            	ce().setSecondaryFacing(1);
+            	break;
+            case 6:
+            	ce().setFacing(0);
+            	ce().setSecondaryFacing(0);
+            	break;
+            case 5:
+            	ce().setFacing(5);
+            	ce().setSecondaryFacing(5);
+            	break;
+            case 4:
+            	ce().setFacing(5);
+            	ce().setSecondaryFacing(5);
+            	break;
+            case 3:
+            	ce().setFacing(4);
+            	ce().setSecondaryFacing(4);
+            	break;
+            case 2:
+            	ce().setFacing(3);
+            	ce().setSecondaryFacing(3);
+            	break;
+            case 1:
+            	ce().setFacing(2);
+            	ce().setSecondaryFacing(2);
+            	break;
+            case 0:
+            	ce().setFacing(0);
+            	ce().setSecondaryFacing(0);
+            	break;
+            }
             clientgui.mechD.displayEntity(ce());
             clientgui.mechD.showPanel("movement");
         

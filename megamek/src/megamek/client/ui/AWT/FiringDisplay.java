@@ -813,11 +813,14 @@ public class FiringDisplay
     
     public void boardHexSelected(BoardEvent b) {
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
+            boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire");
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
-            } else if (client.game.getFirstEntity(b.getCoords()) != null) {
+            } else if (friendlyFire && client.game.getFirstEntity(b.getCoords()) != null) { 
                 target(client.game.getFirstEntity(b.getCoords()));
+            } else if ( client.game.getFirstEnemyEntity(b.getCoords(), ce()) != null) {
+                target(client.game.getFirstEnemyEntity(b.getCoords(), ce()));
             }
         }
     }

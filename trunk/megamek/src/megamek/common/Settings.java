@@ -164,6 +164,14 @@ public class Settings
     /** The number of milliseconds to search for an optimum path. */
     public static int       maxPathfinderTime        = MovePath.DEFAULT_PATHFINDER_TIME_LIMIT;
 
+    public static int mechDisplaySmallFontSize = 9;
+    public static int mechDisplayMediumFontSize = 10;
+    public static int mechDisplayLargeFontSize = 12;
+
+    public static int mechDisplayArmorSmallFontSize = 9; //no effect?
+    public static int mechDisplayArmorMediumFontSize = 10;
+    public static int mechDisplayArmorLargeFontSize = 12;
+
     /** The system defaults for MegaMek settings. */
     private static Properties system = null;
 
@@ -446,7 +454,31 @@ scan:
                     else if (key.equals("getfocus")) {
                         st.nextToken();
                         getFocus = Boolean.valueOf(st.sval).booleanValue();
-                    }                    
+                    }
+                    else if(key.equals("mechdisplaysmallfontsize")) {
+                        st.nextToken();
+                        mechDisplaySmallFontSize = (int)st.nval;
+                    }
+                    else if(key.equals("mechdisplaymediumfontsize")) {
+                        st.nextToken();
+                        mechDisplayMediumFontSize = (int)st.nval;
+                    }
+                    else if(key.equals("mechdisplaylargefontsize")) {
+                        st.nextToken();
+                        mechDisplayLargeFontSize = (int)st.nval;
+                    }
+                    else if(key.equals("mechdisplayarmorsmallfontsize")) {
+                        st.nextToken();
+                        mechDisplayArmorSmallFontSize = (int)st.nval;
+                    }
+                    else if(key.equals("mechdisplayarmormediumfontsize")) {
+                        st.nextToken();
+                        mechDisplayArmorMediumFontSize = (int)st.nval;
+                    }
+                    else if(key.equals("mechdisplayarmorlargefontsize")) {
+                        st.nextToken();
+                        mechDisplayArmorLargeFontSize = (int)st.nval;
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -552,6 +584,12 @@ scan:
             cw.write("explicitscrollonly " + explicitScrollOnly + "\r\n");
             cw.write("alwaysscrollonrightclick " + alwaysScrollOnRightClick + "\r\n");
             cw.write("getfocus " + getFocus + "\r\n");
+            cw.write("mechdisplaysmallfontsize " + mechDisplaySmallFontSize + "\r\n");
+            cw.write("mechdisplaymediumfontsize " + mechDisplayMediumFontSize + "\r\n");
+            cw.write("mechdisplaylargefontsize " + mechDisplayLargeFontSize + "\r\n");
+            cw.write("mechdisplayarmorsmallfontsize " + mechDisplayArmorSmallFontSize + "\r\n");
+            cw.write("mechdisplayarmormediumfontsize " + mechDisplayArmorMediumFontSize + "\r\n");
+            cw.write("mechdisplayarmorlargefontsize " + mechDisplayArmorLargeFontSize + "\r\n");
 
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

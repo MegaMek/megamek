@@ -146,8 +146,8 @@ public class MechMapSet implements DisplayMapSet{
                                            
     private Image  heatImage; 
     
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, 9);
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorSmallFontSize);
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize);
     
     
     public MechMapSet(Component c){

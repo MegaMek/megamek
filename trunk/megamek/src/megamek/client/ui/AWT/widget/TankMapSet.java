@@ -78,8 +78,8 @@ public class TankMapSet implements DisplayMapSet{
                                            new int[]{139,160,187,187,160,139},6);
 
     
-    private static final Font       FONT_LABEL = new Font("SansSerif", Font.PLAIN, 9);
-    private static final Font       FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
+    private static final Font       FONT_LABEL = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorSmallFontSize);
+    private static final Font       FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize);
  
   
   

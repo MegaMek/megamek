@@ -32,8 +32,8 @@ public class Mounted implements Serializable{
     
     private boolean usedThisRound = false;
     private boolean destroyed = false;
-    private transient boolean hit = false;
-    private transient boolean missing = false;
+    private boolean hit = false;
+    private boolean missing = false;
     
     private int shotsLeft; // for ammo
     private int firingMode; //Fire Mode - for detecting what mode a weapon is firing in

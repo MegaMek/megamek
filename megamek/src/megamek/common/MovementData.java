@@ -41,7 +41,7 @@ public class MovementData
 
     private Vector steps = new Vector();
     
-    private transient boolean compiled = false;
+    private boolean compiled = false;
     
     /**
      * Generates a new, empty, movement data object.

@@ -28,8 +28,8 @@ public class Pilot
     private boolean     dead;
     
     // these are only used on the server:
-    private transient int rollsNeeded; // how many KO rolls needed this turn
-    private transient boolean koThisRound; // did I go KO this game round?
+    private int rollsNeeded; // how many KO rolls needed this turn
+    private boolean koThisRound; // did I go KO this game round?
     
     
     public Pilot() {

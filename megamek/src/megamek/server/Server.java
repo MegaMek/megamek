@@ -179,7 +179,7 @@ public class Server
             send(createPlayerUpdatePacket(player.getId()));
         } else {
             game.removePlayer(player.getId());
-    		send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
+            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
         }
 
         System.out.println("s: player " + connId + " disconnected");
@@ -382,7 +382,7 @@ public class Server
      */
     private void resetEntityFacing() {
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-        	Entity entity = (Entity)e.nextElement();
+            Entity entity = (Entity)e.nextElement();
             entity.setSecondaryFacing(entity.getFacing());
         }
     }
@@ -640,16 +640,16 @@ public class Server
         }
     }
 
-	/**
-	 * Changes it to make it the specified player's turn.
-	 */
-	private void changeTurn(int turn) {
+    /**
+     * Changes it to make it the specified player's turn.
+     */
+    private void changeTurn(int turn) {
         final Player player = getPlayer(game.getTurn());
 
-	    game.setTurn(turn);
-	    player.setReady(false);
-	    send(new Packet(Packet.COMMAND_TURN, new Integer(turn)));
-	}
+        game.setTurn(turn);
+        player.setReady(false);
+        send(new Packet(Packet.COMMAND_TURN, new Integer(turn)));
+    }
 
     /**
      * Deploys an entity near a selected point on the board.
@@ -921,9 +921,9 @@ public class Server
 
             // check piloting skill for getting up
             if (step.getType() == MovementData.STEP_GET_UP) {
-				entity.setProne(false);
+                entity.setProne(false);
                 doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "getting up"));
-				entity.heatBuildup += 1;
+                entity.heatBuildup += 1;
             } else if (firstStep) {
                 // running with destroyed hip or gyro needs a check
                 if (overallMoveType == Entity.MOVE_RUN
@@ -983,11 +983,11 @@ public class Server
         }
 
         // set entity parameters
-		entity.setPosition(curPos);
-		entity.setFacing(curFacing);
-		entity.setSecondaryFacing(curFacing);
-		entity.delta_distance = distance;
-		entity.moved = moveType;
+        entity.setPosition(curPos);
+        entity.setFacing(curFacing);
+        entity.setSecondaryFacing(curFacing);
+        entity.delta_distance = distance;
+        entity.moved = moveType;
 
         // but the danger isn't over yet!  landing from a jump can be risky!
         if (overallMoveType == Entity.MOVE_JUMP
@@ -1202,15 +1202,15 @@ public class Server
             if (diceRoll >= toHit.getValue()) {
                 phaseReport.append(", hits!\n");
                 // deal damage to target
-		        int damage = (int)Math.ceil(entity.getWeight() / 10);
-		        phaseReport.append(target.getDisplayName() + " takes "
+                int damage = (int)Math.ceil(entity.getWeight() / 10);
+                phaseReport.append(target.getDisplayName() + " takes "
                                    + damage + " from the collision.");
-		        while (damage > 0) {
-		        	int cluster = Math.min(5, damage);
-		        	HitData hit = entity.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
-		        	phaseReport.append(damageEntity(target, hit, cluster));
-		        	damage -= cluster;
-		        }
+                while (damage > 0) {
+                    int cluster = Math.min(5, damage);
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+                    phaseReport.append(damageEntity(target, hit, cluster));
+                    damage -= cluster;
+                }
                 phaseReport.append("\n");
 
                 // attacker falls as normal, on his back
@@ -1264,7 +1264,7 @@ public class Server
             // send an outgoing packet to everybody
             send(createAttackPacket(ea));
         }
-		send(createEntityPacket(entity.getId()));
+        send(createEntityPacket(entity.getId()));
     }
 
     /**
@@ -1318,7 +1318,7 @@ public class Server
                 ae.loadWeapon(w);
             }
             if (w.getAmmoFeed().shots == 0) {
-	    	    phaseReport.append(" but the weapon is out of ammo");
+                phaseReport.append(" but the weapon is out of ammo");
                 return;
             }
             w.getAmmoFeed().shots--;
@@ -2106,32 +2106,32 @@ public class Server
         return desc;
     }
 
-	/**
-	 * Marks all equipment in a location on an entity as destroyed.
-	 */
-	private void destroyLocation(Entity en, int loc) {
-		en.setArmor(Entity.ARMOR_DESTROYED, loc);
-		en.setInternal(Entity.ARMOR_DESTROYED, loc);
-		for (int i = 0; i < en.weapons.size(); i++) {
-			if (en.getWeapon(i).getLocation() == loc) {
-				en.getWeapon(i).setDestroyed(true);
-			}
-		}
-		for (int i = 0; i < en.ammo.size(); i++) {
-			if (en.getAmmo(i).location == loc) {
-				en.getAmmo(i).exploded = true;
-			}
-		}
+    /**
+     * Marks all equipment in a location on an entity as destroyed.
+     */
+    private void destroyLocation(Entity en, int loc) {
+        en.setArmor(Entity.ARMOR_DESTROYED, loc);
+        en.setInternal(Entity.ARMOR_DESTROYED, loc);
+        for (int i = 0; i < en.weapons.size(); i++) {
+            if (en.getWeapon(i).getLocation() == loc) {
+                en.getWeapon(i).setDestroyed(true);
+            }
+        }
+        for (int i = 0; i < en.ammo.size(); i++) {
+            if (en.getAmmo(i).location == loc) {
+                en.getAmmo(i).exploded = true;
+            }
+        }
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             if (cs != null) {
                 cs.setDoomed(true);
             }
         }
-		if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
-			destroyLocation(en, en.getDependentLocation(loc));
-		}
-	}
+        if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
+            destroyLocation(en, en.getDependentLocation(loc));
+        }
+    }
 
     /**
      * Explodes the ammo in the specified location and slot.
@@ -2155,7 +2155,7 @@ public class Server
             return "";
         }
         // if there is damage, it's probably a lot
-	    desc += "\n*** AMMO EXPLOSION!  " + damage + " DAMAGE! ***";
+        desc += "\n*** AMMO EXPLOSION!  " + damage + " DAMAGE! ***";
         ammo.exploded = true;
         desc += damageEntity(en, new HitData(loc), damage) + "\n\n";
         // if the mech survives, the pilot takes damage
@@ -2375,7 +2375,7 @@ public class Server
         final Object[] data = new Object[2];
         data[0] = new Integer(playerId);
         data[1] = getPlayer(playerId);
-		return new Packet(Packet.COMMAND_PLAYER_ADD, data);
+        return new Packet(Packet.COMMAND_PLAYER_ADD, data);
     }
 
     /**
@@ -2385,7 +2385,7 @@ public class Server
         final Object[] data = new Object[2];
         data[0] = new Integer(playerId);
         data[1] = getPlayer(playerId);
-		return new Packet(Packet.COMMAND_PLAYER_UPDATE, data);
+        return new Packet(Packet.COMMAND_PLAYER_UPDATE, data);
     }
 
     /**
@@ -2417,7 +2417,7 @@ public class Server
         Object[] data = new Object[2];
         data[0] = new Integer(playerId);
         data[1] = new Boolean(getPlayer(playerId).isReady());
-		return new Packet(Packet.COMMAND_PLAYER_READY, data);
+        return new Packet(Packet.COMMAND_PLAYER_READY, data);
     }
     /**
      * Creates a packet containing the game settingss
@@ -2437,7 +2437,7 @@ public class Server
      * Creates a packet containing a single entity, for update
      */
     private Packet createEntityPacket(int entityId) {
-		final Entity entity = game.getEntity(entityId);
+        final Entity entity = game.getEntity(entityId);
         final Object[] data = new Object[2];
         data[0] = new Integer(entityId);
         data[1] = entity;
@@ -2527,9 +2527,9 @@ public class Server
         public Socket     socket;
         //public Player     player;
 
-        public int				id;
+        public int                id;
 
-        public Thread			receiver;
+        public Thread            receiver;
 
 
         public Connection(Socket socket, int id) {
@@ -2605,63 +2605,63 @@ public class Server
          * Process a packet
          */
         private void handle(Packet c) {
-			//System.out.println("s(" + cn + "): received command");
-			// act on it
-			switch(c.getCommand()) {
+            //System.out.println("s(" + cn + "): received command");
+            // act on it
+            switch(c.getCommand()) {
             case Packet.COMMAND_CLIENT_NAME :
                 receiveClientName(c, id);
                 break;
-			case Packet.COMMAND_PLAYER_UPDATE :
-				receivePlayerInfo(c);
+            case Packet.COMMAND_PLAYER_UPDATE :
+                receivePlayerInfo(c);
                 validatePlayerInfo(id);
                 send(createPlayerUpdatePacket(id));
-				break;
-			case Packet.COMMAND_ENTITY_READY :
-				receiveEntityReady(c, id);
-				send(createEntityPacket(c.getIntValue(0)));
-				break;
-			case Packet.COMMAND_PLAYER_READY :
+                break;
+            case Packet.COMMAND_ENTITY_READY :
+                receiveEntityReady(c, id);
+                send(createEntityPacket(c.getIntValue(0)));
+                break;
+            case Packet.COMMAND_PLAYER_READY :
                 receivePlayerReady(c, id);
                 send(createPlayerReadyPacket(id));
-				checkReady();
-				break;
-			case Packet.COMMAND_CHAT :
+                checkReady();
+                break;
+            case Packet.COMMAND_CHAT :
                 String chat = (String)c.getObject(0);
                 sendChatToAll(getPlayer(id).getName(), chat);
-				break;
-			case Packet.COMMAND_ENTITY_MOVE :
-				doEntityMovement(c, id);
-				break;
-			case Packet.COMMAND_ENTITY_ATTACK :
-				receiveAttack(c);
-				break;
-			case Packet.COMMAND_ENTITY_ADD :
-				receiveEntityAdd(c, id);
+                break;
+            case Packet.COMMAND_ENTITY_MOVE :
+                doEntityMovement(c, id);
+                break;
+            case Packet.COMMAND_ENTITY_ATTACK :
+                receiveAttack(c);
+                break;
+            case Packet.COMMAND_ENTITY_ADD :
+                receiveEntityAdd(c, id);
                 resetPlayerReady();
                 transmitAllPlayerReadys();
-				break;
-			case Packet.COMMAND_ENTITY_REMOVE :
-				receiveEntityDelete(c, id);
+                break;
+            case Packet.COMMAND_ENTITY_REMOVE :
+                receiveEntityDelete(c, id);
                 resetPlayerReady();
                 transmitAllPlayerReadys();
-				break;
-			case Packet.COMMAND_SENDING_GAME_SETTINGS :
-				gameSettings = (GameSettings)c.getObject(0);
+                break;
+            case Packet.COMMAND_SENDING_GAME_SETTINGS :
+                gameSettings = (GameSettings)c.getObject(0);
                 resetPlayerReady();
                 transmitAllPlayerReadys();
                 send(createSettingsPacket());
-				break;
-			}
+                break;
+            }
         }
 
 
-		/**
-		 * listen for packets & handle them
-		 */
-		public void run() {
-			while (receiver == Thread.currentThread()) {
-				handle(readCommand());
-			}
-		}
-	}
+        /**
+         * listen for packets & handle them
+         */
+        public void run() {
+            while (receiver == Thread.currentThread()) {
+                handle(readCommand());
+            }
+        }
+    }
 }

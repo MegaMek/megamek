@@ -151,9 +151,9 @@ public class MepFile
     
         mech.weight = (float)Integer.decode(this.tonnage.trim()).intValue();
     
-		mech.setOriginalWalkMP(Integer.parseInt(this.walkMP.trim()));
-		mech.setOriginalJumpMP(Integer.parseInt(this.jumpMP.trim()));
-		mech.heatSinks = Integer.parseInt(this.heatSinks.trim()) - 10;
+        mech.setOriginalWalkMP(Integer.parseInt(this.walkMP.trim()));
+        mech.setOriginalJumpMP(Integer.parseInt(this.jumpMP.trim()));
+        mech.heatSinks = Integer.parseInt(this.heatSinks.trim()) - 10;
 
         decodeArmorAndInternals(mech, Mech.LOC_HEAD, headArmor);
         decodeArmorAndInternals(mech, Mech.LOC_LARM, larmArmor);

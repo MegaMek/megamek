@@ -17,7 +17,7 @@ package megamek.common;
 import java.io.*;
 
 public class Pilot
-	implements Serializable
+    implements Serializable
 {
     private String      name;
     private int         gunnery;
@@ -30,9 +30,9 @@ public class Pilot
     // these are only used on the server:
     private transient int rollsNeeded; // how many KO rolls needed this turn
     private transient boolean koThisRound; // did I go KO this game round?
-	
-	
-	public Pilot() {
+    
+    
+    public Pilot() {
         name = "Unnamed";
         gunnery = 4;
         piloting = 5;
@@ -41,7 +41,7 @@ public class Pilot
         dead = false;
         rollsNeeded = 0;
         koThisRound = false;
-	}
+    }
   
     public String getName() {
         return name;
@@ -66,19 +66,19 @@ public class Pilot
     public boolean isUnconcious() {
         return unconcious;
     }
-	
+    
     public void setUnconcious(boolean unconcious) {
         this.unconcious = unconcious;
     }
-	
+    
     public boolean isDead() {
         return dead;
     }
-	
+    
     public void setDead(boolean dead) {
         this.dead = dead;
     }
-	
+    
     public boolean isActive() {
         return !unconcious && !dead;
     }
@@ -90,7 +90,7 @@ public class Pilot
     public void setRollsNeeded(int rollsNeeded) {
         this.rollsNeeded = rollsNeeded;
     }
-	
+    
     public boolean isKoThisRound() {
         return koThisRound;
     }
@@ -98,45 +98,45 @@ public class Pilot
     public void setKoThisRound(boolean koThisRound) {
         this.koThisRound = koThisRound;
     }
-	
-	/**
-	 * Returns a digest string describing the pilot
-	 */
-	public String getDesc() {
-		String s = new String(name);
-		if (hits > 0) {
-			s += " (" + hits + " hits taken";
+    
+    /**
+     * Returns a digest string describing the pilot
+     */
+    public String getDesc() {
+        String s = new String(name);
+        if (hits > 0) {
+            s += " (" + hits + " hits taken";
             if (isUnconcious()) {
-		        s += " [ko]";
+                s += " [ko]";
             } else if (isDead()) {
-		        s += " [dead]";
+                s += " [dead]";
             }
-			s += ")";
-		}
-		return s;
-	}
-	
-	/**
-	 * Returns the conciousness roll number
-	 * 
-	 * TODO: maybe this should be in Rules?
-	 */
-	public int getConciousnessNumber() {
-		switch(hits) {
-		case 0:
-			return 2;
-		case 1:
-			return 3;
-		case 2:
-			return 5;
-		case 3:
-			return 7;
-		case 4:
-			return 10;
-		case 5:
-			return 11;
-		default:
-			return Integer.MAX_VALUE;
-		}
-	}
+            s += ")";
+        }
+        return s;
+    }
+    
+    /**
+     * Returns the conciousness roll number
+     * 
+     * TODO: maybe this should be in Rules?
+     */
+    public int getConciousnessNumber() {
+        switch(hits) {
+        case 0:
+            return 2;
+        case 1:
+            return 3;
+        case 2:
+            return 5;
+        case 3:
+            return 7;
+        case 4:
+            return 10;
+        case 5:
+            return 11;
+        default:
+            return Integer.MAX_VALUE;
+        }
+    }
 }

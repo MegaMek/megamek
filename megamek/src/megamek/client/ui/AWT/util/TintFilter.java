@@ -28,22 +28,22 @@ public class TintFilter extends RGBImageFilter
     private int cblue;
     
     public TintFilter(int tintColor) {
-		this.cred   = (tintColor >> 16) & 0xff;
-		this.cgreen = (tintColor >>  8) & 0xff;
-		this.cblue  = (tintColor      ) & 0xff;
+        this.cred   = (tintColor >> 16) & 0xff;
+        this.cgreen = (tintColor >>  8) & 0xff;
+        this.cblue  = (tintColor      ) & 0xff;
     }
     
     public int filterRGB(int x, int y, int RGB) {
-		final int alpha = (RGB >> 24) & 0xff;
-		final int black = (RGB) & 0xff;  // assume black & white
-		if (alpha != 0xff) {
+        final int alpha = (RGB >> 24) & 0xff;
+        final int black = (RGB) & 0xff;  // assume black & white
+        if (alpha != 0xff) {
             return RGB;
         }
-		// alter pixel to tint
-		int red   = (cred   * black) / 255;
-		int green = (cgreen * black) / 255;
-		int blue  = (cblue  * black) / 255;
-					
-		return (alpha << 24) | (red << 16) | (green << 8) | blue;
+        // alter pixel to tint
+        int red   = (cred   * black) / 255;
+        int green = (cgreen * black) / 255;
+        int blue  = (cblue  * black) / 255;
+                    
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
 }

@@ -15,16 +15,16 @@
 package megamek.common;
 
 public interface BoardListener
-	extends java.util.EventListener
+    extends java.util.EventListener
 {
-	public void boardHexMoused(BoardEvent b);
+    public void boardHexMoused(BoardEvent b);
 
-	public void boardHexCursor(BoardEvent b);
-	public void boardHexHighlighted(BoardEvent b);
-	public void boardHexSelected(BoardEvent b);
+    public void boardHexCursor(BoardEvent b);
+    public void boardHexHighlighted(BoardEvent b);
+    public void boardHexSelected(BoardEvent b);
 
-	public void boardNewBoard(BoardEvent b);
-	public void boardNewVis(BoardEvent b);
-	
-	public void boardChangedHex(BoardEvent b);
+    public void boardNewBoard(BoardEvent b);
+    public void boardNewVis(BoardEvent b);
+    
+    public void boardChangedHex(BoardEvent b);
 }

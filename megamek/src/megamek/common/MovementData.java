@@ -22,46 +22,46 @@ import java.util.*;
  * Holds movement data for an entity.
  */
 public class MovementData
-	implements Serializable 
+    implements Serializable 
 {
-	public static final int		STEP_FORWARDS		= 1;
-	public static final int		STEP_BACKWARDS		= 2;
-	public static final int		STEP_TURN_LEFT		= 3;
-	public static final int		STEP_TURN_RIGHT		= 4;
-	public static final int		STEP_GET_UP			= 5;
-	public static final int		STEP_GO_PRONE		= 6;
-	public static final int		STEP_START_JUMP 	= 7;
-	public static final int		STEP_CHARGE      	= 8;
-	public static final int		STEP_DFA         	= 9;
+    public static final int        STEP_FORWARDS        = 1;
+    public static final int        STEP_BACKWARDS        = 2;
+    public static final int        STEP_TURN_LEFT        = 3;
+    public static final int        STEP_TURN_RIGHT        = 4;
+    public static final int        STEP_GET_UP            = 5;
+    public static final int        STEP_GO_PRONE        = 6;
+    public static final int        STEP_START_JUMP     = 7;
+    public static final int        STEP_CHARGE          = 8;
+    public static final int        STEP_DFA             = 9;
     
     private Vector steps = new Vector();
     
     private transient boolean compiled = false;
-	
-	/**
-	 * Generates a new, empty, movement data object.
-	 */
-	public MovementData() {
-		;
-	}
-	
-	/**
-	 * Generates a new movement data object that is a copy
-	 * of the specified movement data.
-	 * 
-	 * @param md the movement data to copy.
-	 */
-	public MovementData(MovementData md) {
-		this();
-		append(md);
-	}
-	
-	/**
-	 * Returns the number of steps in this movement
-	 */
-	public int length() {
-		return steps.size();
-	}
+    
+    /**
+     * Generates a new, empty, movement data object.
+     */
+    public MovementData() {
+        ;
+    }
+    
+    /**
+     * Generates a new movement data object that is a copy
+     * of the specified movement data.
+     * 
+     * @param md the movement data to copy.
+     */
+    public MovementData(MovementData md) {
+        this();
+        append(md);
+    }
+    
+    /**
+     * Returns the number of steps in this movement
+     */
+    public int length() {
+        return steps.size();
+    }
     
     public boolean isCompiled() {
         return compiled;
@@ -70,15 +70,15 @@ public class MovementData
     public void setCompiled(boolean compiled) {
         this.compiled = compiled;
     }
-	
-	/**
-	 * Add a new step to the movement data.
-	 * 
-	 * @param type the type of movement.
-	 */
-	public void addStep(int type) {
+    
+    /**
+     * Add a new step to the movement data.
+     * 
+     * @param type the type of movement.
+     */
+    public void addStep(int type) {
         steps.addElement(new Step(type));
-	}
+    }
     
     public Enumeration getSteps() {
         return steps.elements();
@@ -88,31 +88,31 @@ public class MovementData
         return (Step)steps.elementAt(index);
     }
     
-	/**
-	 * Appends the specified movement data onto the end of the
-	 * current data.
-	 * 
-	 * @param md the movement data to append.
-	 */
-	public void append(MovementData md) {
+    /**
+     * Appends the specified movement data onto the end of the
+     * current data.
+     * 
+     * @param md the movement data to append.
+     */
+    public void append(MovementData md) {
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             this.steps.addElement(i.nextElement());
         }
         compiled = false;
-	}
-	
-	/**
-	 * Returns a new movement data object representing the data
-	 * that would result if you appended the curent movement
-	 * data to the data specified.
-	 * 
-	 * @param md the movement data to append.
-	 */
-	public MovementData getAppended(MovementData md) {
-		MovementData newMd = new MovementData(this);
-		newMd.append(md);
-		return newMd;
-	}
+    }
+    
+    /**
+     * Returns a new movement data object representing the data
+     * that would result if you appended the curent movement
+     * data to the data specified.
+     * 
+     * @param md the movement data to append.
+     */
+    public MovementData getAppended(MovementData md) {
+        MovementData newMd = new MovementData(this);
+        newMd.append(md);
+        return newMd;
+    }
   
     /**
      * Check for any of the specified type of step in the data
@@ -152,7 +152,7 @@ public class MovementData
         }
         return curPos;
     }
-	
+    
     /**
      * Returns the final facing if a mech were to perform all the steps
      * in these data.
@@ -186,13 +186,13 @@ public class MovementData
         }
         
     }
-	
+    
     /**
      * Returns the direction (either MovementData.STEP_TURN_LEFT or 
      * STEP_TURN_RIGHT) that the destination facing lies in.
      */
     public static int getDirection(int facing, int destFacing) {
-	    int rotate = destFacing - facing;
+        int rotate = destFacing - facing;
         if (rotate < 0) {
           rotate += 6;
         }
@@ -203,28 +203,28 @@ public class MovementData
         }
     }
     
-	/**
-	 * Returns the adjusted facing, given the start facing.
-	 */
-	public static int getAdjustedFacing(int facing, int movement) {
-		if(movement == STEP_TURN_RIGHT) {
-			return (facing + 1) % 6;
-		}
-		if(movement == STEP_TURN_LEFT) {
+    /**
+     * Returns the adjusted facing, given the start facing.
+     */
+    public static int getAdjustedFacing(int facing, int movement) {
+        if(movement == STEP_TURN_RIGHT) {
+            return (facing + 1) % 6;
+        }
+        if(movement == STEP_TURN_LEFT) {
             if (facing == 0 ) {
                 return 5;
             } else {
                 return facing - 1;
             }
-		}
-		return facing;
-	}
+        }
+        return facing;
+    }
     
     /**
      * A single step in the entity's movment.
      */
     public class Step
-    	implements Serializable
+        implements Serializable
     {
         private int type;
         

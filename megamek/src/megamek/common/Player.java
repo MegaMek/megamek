@@ -22,12 +22,12 @@ import java.net.*;
  * This represents a player in the game.
  */
 public final class Player
-	implements Serializable
+    implements Serializable
 {
-    public static int		colorRGBs[] = {0x8393CA, 0x00BFF3, 0xCCCCCC, 0x3CB878,
+    public static int        colorRGBs[] = {0x8393CA, 0x00BFF3, 0xCCCCCC, 0x3CB878,
                                            0x998675, 0xFBAF5D, 0xF49AC1, 0xFFFFFF, 
                                            0xFFF568};
-    public static String	colorNames[] = {"Blue", "Cyan", "Gray", "Green",
+    public static String    colorNames[] = {"Blue", "Cyan", "Gray", "Green",
                                             "Brown", "Orange", "Pink", 
                                             "White", "Yellow"};
 
@@ -43,7 +43,7 @@ public final class Player
     private int             initiative = 0;
     private int             order = 0;
     private int             startingPos = 0;
-    	
+        
     public Player(int id, String name) {
         this.name = name;
         this.id = id;
@@ -62,7 +62,7 @@ public final class Player
     }
   
     public void setReady(boolean ready) {
-	    this.ready = ready;
+        this.ready = ready;
     }
   
     public boolean isGhost() {
@@ -70,7 +70,7 @@ public final class Player
     }
   
     public void setGhost(boolean ghost) {
-	    this.ghost = ghost;
+        this.ghost = ghost;
     }
   
     public boolean isObserver() {
@@ -78,7 +78,7 @@ public final class Player
     }
   
     public void setObserver(boolean observer) {
-		this.observer = observer;
+        this.observer = observer;
     }
   
     public int getColorIndex() {
@@ -88,7 +88,7 @@ public final class Player
     public void setColorIndex(int index) {
         this.colorIndex = index;
     }
-	
+    
     public int getInitiative() {
         return initiative;
     }
@@ -96,7 +96,7 @@ public final class Player
     public void setInitiative(int initiative) {
         this.initiative = initiative;
     }
-	
+    
     public int getOrder() {
         return order;
     }
@@ -104,7 +104,7 @@ public final class Player
     public void setOrder(int order) {
         this.order = order;
     }
-	
+    
     public int getStartingPos() {
         return startingPos;
     }
@@ -112,19 +112,19 @@ public final class Player
     public void setStartingPos(int startingPos) {
         this.startingPos = startingPos;
     }
-	
-	public Color getColor() {
-		return new Color(colorRGBs[colorIndex]);
-	}
-	
-	public int getColorRGB() {
-		return colorRGBs[colorIndex];
-	}
     
-	/**
-	 * Two players are equal if their ids are equal
-	 */
-	public boolean equals(Object object) {
+    public Color getColor() {
+        return new Color(colorRGBs[colorIndex]);
+    }
+    
+    public int getColorRGB() {
+        return colorRGBs[colorIndex];
+    }
+    
+    /**
+     * Two players are equal if their ids are equal
+     */
+    public boolean equals(Object object) {
         if (this == object) {
             return true;
         } else if (object == null || getClass() != object.getClass()) {
@@ -132,7 +132,7 @@ public final class Player
         }
         Player other = (Player)object;
         return other.getId() == this.id;
-	}
+    }
     
     public int hashCode() {
         return getId();

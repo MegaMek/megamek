@@ -22,50 +22,50 @@ public abstract class AbstractPhaseDisplay
   extends Panel
   implements BoardListener, GameListener
 {
-	//
-	// BoardListener
-	//
-	public void boardHexMoused(BoardEvent b) {
+    //
+    // BoardListener
+    //
+    public void boardHexMoused(BoardEvent b) {
     ;
-	}
-	public void boardHexSelected(BoardEvent b) {
+    }
+    public void boardHexSelected(BoardEvent b) {
     ;
   }
-	public void boardHexCursor(BoardEvent b) {
-		;
-	}
-	public void boardHexHighlighted(BoardEvent b) {
-		;
-	}
-	public void boardChangedHex(BoardEvent b) {
-		;
-	}
-	public void boardNewVis(BoardEvent b) {
-		;
-	}
-	public void boardNewBoard(BoardEvent b) {
-		;
-	}
+    public void boardHexCursor(BoardEvent b) {
+        ;
+    }
+    public void boardHexHighlighted(BoardEvent b) {
+        ;
+    }
+    public void boardChangedHex(BoardEvent b) {
+        ;
+    }
+    public void boardNewVis(BoardEvent b) {
+        ;
+    }
+    public void boardNewBoard(BoardEvent b) {
+        ;
+    }
 
   //
-	// GameListener
-	//
-	public void gamePlayerChat(GameEvent ev) {
-		;
-	}
-	public void gamePlayerStatusChange(GameEvent ev) {
-		;
-	}
-	public void gameTurnChange(GameEvent ev) {
+    // GameListener
+    //
+    public void gamePlayerChat(GameEvent ev) {
+        ;
+    }
+    public void gamePlayerStatusChange(GameEvent ev) {
+        ;
+    }
+    public void gameTurnChange(GameEvent ev) {
     ;
-	}
-	public void gamePhaseChange(GameEvent ev) {
+    }
+    public void gamePhaseChange(GameEvent ev) {
     ;
-	}
-	public void gameNewEntities(GameEvent ev) {
+    }
+    public void gameNewEntities(GameEvent ev) {
     ;
-	}
-	public void gameNewSettings(GameEvent ev) {
+    }
+    public void gameNewSettings(GameEvent ev) {
     ;
-	}
+    }
 }

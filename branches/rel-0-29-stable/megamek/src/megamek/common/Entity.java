@@ -2131,12 +2131,73 @@ public abstract class Entity
       public boolean needsRollToStand() {
         return true;
       }
-    
+
+    /**
+     * Returns an entity's base piloting skill roll needed
+     */
+    public PilotingRollData getBasePilotingRoll() {
+        final int entityId = getId();
+        
+        PilotingRollData roll;
+        
+        // gyro operational?
+        if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
+        }
+        // both legs present?
+        if ( this instanceof BipedMech ) {
+          if ( ((BipedMech)this).countDestroyedLegs() == 2 )
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, "Both legs destroyed");
+        } else if ( this instanceof QuadMech ) {
+          if ( ((QuadMech)this).countDestroyedLegs() >= 3 )
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, ((Mech)this).countDestroyedLegs() + " legs destroyed");
+        }
+        // entity shut down?
+        if (isShutDown()) {
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Reactor shut down");
+        }
+        // Pilot dead?
+        if ( getCrew().isDead() ) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
+        }
+        // pilot awake?
+        else if (!getCrew().isActive()) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
+        }
+        
+        // okay, let's figure out the stuff then
+        roll = new PilotingRollData(entityId, getCrew().getPiloting(), "Base piloting skill");
+        
+        //Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll
+        //object and adjust as necessary
+          roll = addEntityBonuses(roll);
+        
+        return roll;
+    }
+
     /**
      * Add in any piloting skill mods
      */
       public abstract PilotingRollData addEntityBonuses(PilotingRollData roll);
-      
+
+    /**
+     * Checks if the entity is being swarmed.  If so, returns the
+     *  target roll for the piloting skill check to dislodge them.
+     */
+    public PilotingRollData checkDislodgeSwarmers() {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        if (Entity.NONE == getSwarmAttackerId()) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            return roll;
+        }
+
+        // append the reason modifier
+        roll.append(new PilotingRollData(getId(), 0, "attempting to dislodge swarmers by dropping prone"));
+        
+        return roll;
+    }
+
     /**
      * The maximum elevation change the entity can cross
      */

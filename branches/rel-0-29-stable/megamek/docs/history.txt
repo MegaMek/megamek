@@ -113,6 +113,10 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.29-stable-2 (CVS)
++ Bug 763169: Dropping prone now has chance to dislodge swarmers.
++ Bug 756126 (possible): Only needed hex images loaded during board load
+
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.
 

@@ -2083,6 +2083,7 @@ implements Runnable {
         Hex prevHex = null;
         final boolean isInfantry = (entity instanceof Infantry);
         AttackAction charge = null;
+        PilotingRollData rollTarget;
         
         // Compile the move
         Compute.compile(game, entity.getId(), md);
@@ -2821,10 +2822,24 @@ implements Runnable {
             // dropping prone intentionally?
             if (step.getType() == MovementData.STEP_GO_PRONE) {
                 mpUsed = step.getMpUsed();
-                entity.setProne(true);
-                // check to see if we washed off infernos
-                checkForWashedInfernos(entity, curPos);
-                break;
+                rollTarget = entity.checkDislodgeSwarmers();
+                if (rollTarget.getValue() == TargetRoll.CHECK_FALSE) {
+                    // Not being swarmed
+                    entity.setProne(true);
+                    // check to see if we washed off infernos
+                    checkForWashedInfernos(entity, curPos);
+                    break;
+                } else {
+                    // Being swarmed
+                    entity.setPosition(curPos);
+                    if (doDislodgeSwarmerSkillCheck(entity, rollTarget, curPos)) {
+                        // Entity falls
+                        curFacing = entity.getFacing();
+                        curPos = entity.getPosition();
+                        fellDuringMovement = true;
+                        break;
+                    }
+                }
             }
             
             // update lastPos, prevStep, prevFacing & prevHex
@@ -3101,7 +3116,27 @@ implements Runnable {
         }
         
     }
-    
+
+    private boolean doDislodgeSwarmerSkillCheck(Entity entity, PilotingRollData roll, Coords curPos) {
+        // okay, print the info
+        phaseReport.append("\n" ).append( entity.getDisplayName() )
+            .append( " must make a piloting skill check (" )
+            .append( roll.getLastPlainDesc() ).append( ")" ).append( ".\n");
+        // roll
+        final int diceRoll = Compute.d6(2);
+        phaseReport.append("Needs " ).append( roll.getValueAsString()
+        ).append( " [" ).append( roll.getDesc() ).append( "]"
+        ).append( ", rolls " ).append( diceRoll ).append( " : ");
+        if (diceRoll < roll.getValue() || true) {
+            phaseReport.append("fails.\n");
+            return false;
+        } else {
+            phaseReport.append("succeeds.\n");
+            doEntityFallsInto(entity, curPos, curPos, roll);
+            return true;
+        }
+    }
+
     /**
      * Do a piloting skill check for a Mech while it is moving.
      * Failing this roll will cause the Mech to fall.
@@ -3243,6 +3278,11 @@ implements Runnable {
         // hmmm... somebody there... problems.
         if (fallElevation >= 2) {
             // accidental death from above
+            // TODO : code me!!!
+            System.err.println( "MegaMek should perform an accidental DFA for "
+                                + entity.getShortName() +
+                                " to land on " + violation.getShortName()
+                                + " but it doesn't.  We're working on it." );
         } else {
             // damage as normal
             doEntityFall(entity, dest, fallElevation, roll);

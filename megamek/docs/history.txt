@@ -11,7 +11,8 @@ v0.29.58 (CVS)
 + Bug 1083617: Ejected Pilot does not die in vaccuum
 + Bug 1061712: No PSR for destroyed frontleg on quad mech
 + Quads now get their front legs breached as well when standing in lvl1 water
-    with no armor on their legs
+    with no armor on their legs, when the "breach legs in lvl1 water" option
+    is checked.
 + Added Mechs for Batchall.de (German Clan Battletech Community).
 + Corrected a spelling mistake in conjunction with extreme G's.
 + Bug 1040858: breaching a leg results only in one PSR, should do more

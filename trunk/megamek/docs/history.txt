@@ -80,6 +80,7 @@ v CVS
 + deployment phase works properly after /reset or victory
 + deployment phase not used when a scenario is loaded
 + 635209: prone mechs should not make piloting skill checks to avoid falling
++ out-of-range shots shouldn't cause fires when they miss
 
 v 0.27.5 (11-01-02, 10:30pm)
 + Add non-canon options to balance Infantry impact on the init phase.

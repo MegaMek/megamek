@@ -681,7 +681,7 @@ public class FiringDisplay
             return;
         }
         
-        if (ce().isHaywireINarced()) {
+        if (ce().isINarcedWith( INarcPod.HAYWIRE )) {
             String title = "Can not spot";
             String body = "This unit can not spot for indirect fire,\n" +
                 "because it has an iNarc Haywire Pod attached.";

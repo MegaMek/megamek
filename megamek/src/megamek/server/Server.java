@@ -12799,7 +12799,7 @@ implements Runnable, ConnectionHandler {
                                             (game, entity.getId(), targ)
                                             ).isBlocked() &&
                                          entity.isActive() &&
-                                         !entity.isHaywireINarced()) {
+                                         !entity.isINarcedWith(INarcPod.HAYWIRE)) {
                                         return true;
                                     }
                                     return false;

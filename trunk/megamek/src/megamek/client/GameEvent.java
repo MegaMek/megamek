@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -63,4 +63,44 @@ extends java.util.EventObject {
     public int getType() {
         return type;
     }
-}
+
+    public String toString() {
+        StringBuffer buff = new StringBuffer();
+        switch ( this.type ) {
+        case GAME_PLAYER_STATUSCHANGE:
+            buff.append( "Status Change");
+            break;
+        case GAME_PLAYER_CHAT:
+            buff.append( "Chat");
+            break;
+        case GAME_PHASE_CHANGE:
+            buff.append( "Phase Change");
+            break;
+        case GAME_TURN_CHANGE:
+            buff.append( "Turn Change");
+            break;
+        case GAME_NEW_ENTITIES:
+            buff.append( "New Entities");
+            break;
+        case GAME_NEW_SETTINGS:
+            buff.append( "New Settings");
+            break;
+        default:
+            buff.append( "Unknown" );
+            break;
+        }
+        buff.append( " game event " );
+        if ( null != this.player ) {
+            buff.append( "for " )
+                .append( this.player.getName() )
+                .append( " (id: " )
+                .append( this.player.getId() )
+                .append( ") " );
+        }
+        if ( null != this.message ) {
+            buff.append( this.message );
+        }
+        return buff.toString();
+    }
+
+}                            

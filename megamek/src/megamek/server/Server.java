@@ -3413,7 +3413,13 @@ implements Runnable {
         // should we even bother?
         if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
             phaseReport.append("    Death from above cancelled as the target has been destroyed.\n");
-            doEntityDisplacement(ae, ae.getPosition(), daa.getTargetPos(), new PilotingRollData(ae.getId(), 4, "executed death from above"));
+            if (ae.isProne()) {
+                // attacker prone during weapons phase
+                doEntityFall(ae, daa.getTargetPos(), 2, 3, Compute.getBasePilotingRoll(game, ae.getId()));
+            } else {
+                // same effect as successful DFA
+                doEntityDisplacement(ae, ae.getPosition(), daa.getTargetPos(), new PilotingRollData(ae.getId(), 4, "executed death from above"));
+            }
             return;
         }
         
@@ -3500,7 +3506,8 @@ implements Runnable {
                 phaseReport.append(destroyEntity(te, "impossible displacement"));
             }
         }
-        doEntityDisplacement(ae, src, dest, new PilotingRollData(ae.getId(), 4, "executed death from above"));
+        // HACK: to avoid automatic falls, displace from dest to dest
+        doEntityDisplacement(ae, dest, dest, new PilotingRollData(ae.getId(), 4, "executed death from above"));
     }
     
     /**

@@ -836,6 +836,13 @@ public abstract class Entity
     public int getWalkMP() {
         return getWalkMP(true);
     }
+    /**
+     * Returns this entity's walking/cruising mp, factored
+     * for heat and possibly gravity.
+     * 
+     * @param gravity: Should the movement be factored for gravity
+     */
+    
     
     public int getWalkMP( boolean gravity ) {
         float j = walkMP;

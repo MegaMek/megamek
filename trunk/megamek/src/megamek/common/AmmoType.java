@@ -60,6 +60,7 @@ public class AmmoType extends EquipmentType {
     // ammo flags
     public static final int     F_MG                = 0x0001;
     public static final int     F_BATTLEARMOR       = 0x1000; // only used by BA squads
+    public static final int     F_PROTOMECH         = 0x0040; // only used by Protomechs
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -2111,6 +2112,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MG_LIGHT;
         ammo.flags |= F_MG;
         ammo.shots = 100;
+        ammo.tonnage = 0.5f;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
@@ -3332,7 +3334,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags |= F_MG;
+        ammo.flags |= F_MG | F_PROTOMECH;
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
@@ -3351,7 +3353,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags |= F_MG;
+        ammo.flags |= F_MG | F_PROTOMECH;
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
@@ -3370,7 +3372,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags |= F_MG;
+        ammo.flags |= F_MG | F_PROTOMECH;
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;

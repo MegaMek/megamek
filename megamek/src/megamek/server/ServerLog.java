@@ -42,7 +42,7 @@ public class ServerLog {
         try {
             logfile = new File(filename);
             maxFilesize = maxSize;
-            writer = new BufferedWriter(new FileWriter(logfile, append));
+            writer = new BufferedWriter(new FileWriter(filename, append));
             append("Log file opened " + new Date().toString());
         } catch (IOException ex) {
             //TODO: I dunno.  report this... to the log? ;)

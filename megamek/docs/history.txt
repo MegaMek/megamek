@@ -13,6 +13,7 @@ v0.29.35 (CVS)
 + Escape out '"' in playername in config file. Should probably be used for
 	other config elements.
 + Bug 953660: Fixed error in Drawing Board and Mech Engineer parsers.
++ Bug 955257: Fixed the wrong index in Compute.getBattleArmorHits
 
 v0.29.34 (2004-05-11, 10:30pm)
 + Bug 945047, Patch 946170: Lvl3-rules smoke now stack with terrain right.

@@ -296,7 +296,7 @@ public class FiringDisplay
             // Update the menu bar.
             client.getMenuBar().setEntity( ce() );
             
-		// 2003-12-29, nemchenk -- only twist if crew conscious
+            // 2003-12-29, nemchenk -- only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
 
             setFindClubEnabled(Compute.canMechFindClub(client.game, en));
@@ -579,6 +579,7 @@ public class FiringDisplay
         client.game.addAction(waa);
         client.bv.addAttack(waa);
         client.bv.repaint(100);
+        client.minimap.drawMap();
         
         // set the weapon as used
         mounted.setUsedThisRound(true);

@@ -1,5 +1,9 @@
 VERSION HISTORY:
 ----------------
+v 0.29.22 (CVS)
++ In ChatLounge.java, s/Mech/Unit/ in buttons and dialogs.
++ From coralbeach: split unofficial and Dark Age (TM) units in "data/mechfiles"
+
 v 0.29.21 (2004-01-10 11:45am)
 + Patch 867652: cleaned up megamek-icon.gif
 + Patch 868927: Hide MechDisplay at end of turn

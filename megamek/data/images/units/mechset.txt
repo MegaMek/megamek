@@ -21,7 +21,7 @@ majortom88
 
 
 # The format goes as follows:
-# {chassis/exact} [model] [image filename] 
+# {chassis/exact} [model] [image filename]
 
 # Use exact to specify the unit exactly, for example:
 # exact "Marauder MAD-3R" "marauder.gif"
@@ -33,7 +33,7 @@ majortom88
 # Images should be greyscale, 84x72 pixel gifs with the chassis centered. The tinting
 # process is subtractive, so make images light.
 
-# these 7 must be in here 
+# these 8 must be in here
 exact "default_light" "default_light.gif"
 exact "default_medium" "default_medium.gif"
 exact "default_heavy" "default_heavy.gif"
@@ -52,13 +52,13 @@ chassis "Advanced Clan Armor" "elementals-b.gif"
 chassis "Anti-Mech Jump Platoon" "jump_infantry.gif"
 chassis "Anti-Mech Motorized Platoon" "motorized_infantry.gif"
 chassis "Cavalier" "isbattlearmor-b.gif"
-chassis "Clan Anti-Mech Jump Platoon" "jump_infantry.gif"
-chassis "Clan Anti-Mech Motorized Platoon" "motorized_infantry.gif"
+chassis "Clan Anti-Mech Jump Point" "jump_infantry.gif"
+chassis "Clan Anti-Mech Motorized Point" "motorized_infantry.gif"
 chassis "Clan Elemental" "elementals-b.gif"
 chassis "Clan Gnome" "elementals-b.gif"
-chassis "Clan Jump Platoon" "jump_infantry.gif"
+chassis "Clan Jump Point" "jump_infantry.gif"
 #chassis "Clan Motorized Combat Engineers"
-chassis "Clan Motorized Platoon" "motorized_infantry.gif"
+chassis "Clan Motorized Point" "motorized_infantry.gif"
 chassis "Clan Salamander" "elementals-b.gif"
 chassis "Fa Shih" "isbattlearmor-b.gif"
 chassis "Fenrir" "quadbattlearmor.gif"

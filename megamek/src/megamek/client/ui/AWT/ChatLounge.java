@@ -461,21 +461,21 @@ public class ChatLounge extends AbstractPhaseDisplay
         butSaveList.addActionListener(this);
         butSaveList.setEnabled(false);
 
-        butLoad = new Button("Add A Mech...");
+        butLoad = new Button("Add A Unit...");
         butLoad.setActionCommand("load_mech");
         butLoad.addActionListener(this);
 
-        butCustom = new Button("Configure Mech...");
+        butCustom = new Button("Configure Unit...");
         butCustom.setActionCommand("custom_mech");
         butCustom.addActionListener(this);
         butCustom.setEnabled(false);
             
-        butMechReadout = new Button("View Mech...");
+        butMechReadout = new Button("View Unit...");
         butMechReadout.setActionCommand("Mech_readout");
         butMechReadout.addActionListener(this);
         butMechReadout.setEnabled(false);
             
-        butDelete = new Button("Delete Mech");
+        butDelete = new Button("Delete Unit");
         butDelete.setActionCommand("delete_mech");
         butDelete.addActionListener(this);
         butDelete.setEnabled(false);
@@ -1033,7 +1033,7 @@ public class ChatLounge extends AbstractPhaseDisplay
   ta.setEditable(false);
   ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
   ta.setText(mechView.getMechReadout());
-        final Dialog dialog = new Dialog(client.frame, "Mech Quick View", false);
+        final Dialog dialog = new Dialog(client.frame, "Unit Quick View", false);
         Button btn = new Button("Ok");
         dialog.add("South", btn);
         btn.addActionListener(new java.awt.event.ActionListener() {

@@ -49,7 +49,6 @@ public class MoveState implements Cloneable, Serializable {
     //
     Coords lastPos; // prev
     boolean hasJustStood;
-    boolean lastWasBackwards; // prev
     boolean thisStepBackwards;
     int overallMoveType;
     boolean isJumping;
@@ -72,6 +71,7 @@ public class MoveState implements Cloneable, Serializable {
        this.mpUsed = prev.mpUsed;
        this.isPavementStep = prev.isPavementStep;
        this.onlyPavement = prev.onlyPavement;
+       this.thisStepBackwards = prev.thisStepBackwards;
        this.isJumping = prev.isJumping;
        this.isRunProhibited = prev.isRunProhibited;
     }
@@ -243,13 +243,6 @@ public class MoveState implements Cloneable, Serializable {
      */
     public Coords getLastPos() {
         return lastPos;
-    }
-
-    /**
-     * @return
-     */
-    public boolean isLastWasBackwards() {
-        return lastWasBackwards;
     }
 
     /**
@@ -432,13 +425,6 @@ public class MoveState implements Cloneable, Serializable {
      */
     public void setLastPos(Coords coords) {
         lastPos = coords;
-    }
-
-    /**
-     * @param b
-     */
-    public void setLastWasBackwards(boolean b) {
-        lastWasBackwards = b;
     }
 
     /**

@@ -96,6 +96,7 @@ v next
 + added Cord Awtry's patch for a next target button
 + weapons with no ammo left can't fire
 + added some new fields for use in 3050+ weapons
++ 543593: intiative rewritten to fix lockups
 
 v 0.25.2
 + 543237: heat modifier to fire now applies at the correct levels

@@ -1529,6 +1529,39 @@ implements Runnable {
                 break;
             }
              
+// + HentaiZonga
+            if (step.getType() == MovementData.STEP_UNJAM_RAC) {
+                entity.setUnjammingRAC(true);
+                attacks.addElement(new UnjamAction(entity.getId()));
+
+                break;
+            }
+// - HentaiZonga
+
+            // check for charge
+            if (step.getType() == MovementData.STEP_CHARGE) {
+                //FIXME: find the acutal target, not just the likely target
+                Entity target = game.getFirstEntity(step.getPosition());
+                distance = step.getDistance();
+                mpUsed = step.getMpUsed();
+                ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition());
+                entity.setDisplacementAttack(caa);
+                pendingCharges.addElement(caa);
+                break;
+            }
+            
+            // check for dfa
+            if (step.getType() == MovementData.STEP_DFA) {
+                //FIXME: find the acutal target, not just the likely target
+                Entity target = game.getFirstEntity(step.getPosition());
+                distance = step.getDistance();
+                mpUsed = step.getMpUsed();
+                DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getId(), target.getPosition());
+                entity.setDisplacementAttack(daa);
+                pendingCharges.addElement(daa);
+                break;
+            }
+
             // step...
             moveType = step.getMovementType();
             curPos = step.getPosition();
@@ -1841,37 +1874,6 @@ implements Runnable {
 		    break;
 		}
             }
-            
-// + HentaiZonga
-            if (step.getType() == MovementData.STEP_UNJAM_RAC) {
-                entity.setUnjammingRAC(true);
-                attacks.addElement(new UnjamAction(entity.getId()));
-
-                break;
-            }
-// - HentaiZonga
-
-            // check for charge
-            if (step.getType() == MovementData.STEP_CHARGE) {
-                //FIXME: find the acutal target, not just the likely target
-                Entity target = game.getFirstEntity(step.getPosition());
-                
-                ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition());
-                entity.setDisplacementAttack(caa);
-                pendingCharges.addElement(caa);
-                break;
-            }
-            
-            // check for dfa
-            if (step.getType() == MovementData.STEP_DFA) {
-                //FIXME: find the acutal target, not just the likely target
-                Entity target = game.getFirstEntity(step.getPosition());
-
-                DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getId(), target.getPosition());
-                entity.setDisplacementAttack(daa);
-                pendingCharges.addElement(daa);
-                break;
-            }
 
             // check if we've moved into rubble
             if (!lastPos.equals(curPos)
@@ -1925,8 +1927,9 @@ implements Runnable {
             
             // update lastPos, prevFacing & prevHex
             lastPos = new Coords(curPos);
-	    if ( !curHex.equals(prevHex) )
+	    if (!curHex.equals(prevHex)) {
 		prevFacing = curFacing;
+            }
 	    prevHex = curHex;
         }
         

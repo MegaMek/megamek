@@ -9,6 +9,7 @@ v 0.29.25 (CVS)
 + Moved adding BattleArmorHandles from MechFileParser to Mech#setOmni(boolean)
 + Bug 879363: Firefly FFL-7A-WDR (in unofficial.zip) was missing a DHS.
 + Shrank the Protomech public interface.
++ Patch 870394: Added a KeyListener to the CommonMenuBar
 
 v 0.29.24 (2004-01-31 12:45pm)
 + V minor change (a bit more readable) to suvarov's fix for my AMS null vector :)

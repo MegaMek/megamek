@@ -76,6 +76,7 @@ v next
 + 612248: bots work tolerably with vehicles
 + 612429: turretless vehicles have their secondary facing set correctly
 + 613606: locked turrets should no longer cause a crash
++ fix allowing clan heavy and light MG ammo (thx to suvarov454)
 
 v 0.26.14 (09-14-02, 9:30pm)
 + 609840: immobilized vehicles can't complete their charges

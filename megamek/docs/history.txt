@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.29.53 (CVS)
++ Bug 1044431: Quad 'Mechs should fire only to the front arc (except
+   for rear mounted weapons)
 
 v0.29.52 (2004-01-10 8:15pm)
 + Bug 1039773: the club needs to be restored after transmission.

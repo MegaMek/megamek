@@ -1518,9 +1518,13 @@ implements Runnable {
             entity.ready = false;
         }
         
-        // duhh.. send an outgoing packet to everybody
-        //send(createEntityPacket(entity.getId()));
+        // send a packet updating everybody on this entity's movement
         entityUpdate(entity.getId());
+        
+        // if using double blind, update the player on new units he might see
+        if (doBlind()) {
+            send(entity.getOwner().getId(), createFilteredEntitiesPacket(entity.getOwner()));
+        }
     }
     
     /**

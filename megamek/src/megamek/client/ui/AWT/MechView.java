@@ -64,7 +64,12 @@ public class MechView {
         } else {
             sBasic.append( "Inner Sphere" );
         }
-        sBasic.append("\n\n");
+        sBasic.append("\n");
+        if (mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
+            sBasic.append( "Linked c3 BV: ")
+                .append( ((Mech)mech).calculateBattleValue(true) );
+        }
+        sBasic.append("\n");
         sBasic.append( "Movement: " )
             .append( mech.getWalkMP() )
             .append( "/" )

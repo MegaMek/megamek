@@ -743,10 +743,23 @@ public abstract class Mech
      * Rolls up a hit location
      */
     public HitData rollHitLocation(int table, int side) {
+        int roll = -1;
         if(table == ToHitData.HIT_NORMAL) {
+            roll = Compute.d6(2);
+            try {
+                if ( Settings.mekHitLocLog != null ) {
+                    Settings.mekHitLocLog.print( table );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.print( side );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.println( roll );
+                }
+            } catch ( Throwable thrown ) {
+                thrown.printStackTrace();
+            }
             if(side == ToHitData.SIDE_FRONT) {
                 // normal front hits
-                switch(Compute.d6(2)) {
+                switch( roll ) {
                 case 2:
                     return tac(table, side, Mech.LOC_CT, false);
                 case 3:
@@ -771,7 +784,7 @@ public abstract class Mech
             }
             if(side == ToHitData.SIDE_LEFT) {
                 // normal left side hits
-                switch(Compute.d6(2)) {
+                switch( roll ) {
                 case 2:
                     return tac(table, side, Mech.LOC_LT, false);
                 case 3:
@@ -797,7 +810,7 @@ public abstract class Mech
             }
             if(side == ToHitData.SIDE_RIGHT) {
                 // normal right side hits
-                switch(Compute.d6(2)) {
+                switch( roll ) {
                 case 2:
                     return tac(table, side, Mech.LOC_RT, false);
                 case 3:
@@ -823,7 +836,7 @@ public abstract class Mech
             }
             if(side == ToHitData.SIDE_REAR) {
                 // normal rear hits
-                switch(Compute.d6(2)) {
+                switch( roll ) {
                 case 2:
                     return tac(table, side, Mech.LOC_CT, true);
                 case 3:
@@ -848,9 +861,21 @@ public abstract class Mech
             }
         }
         if(table == ToHitData.HIT_PUNCH) {
+            roll = Compute.d6(1);
+            try {
+                if ( Settings.mekHitLocLog != null ) {
+                    Settings.mekHitLocLog.print( table );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.print( side );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.println( roll );
+                }
+            } catch ( Throwable thrown ) {
+                thrown.printStackTrace();
+            }
             if(side == ToHitData.SIDE_FRONT) {
                 // front punch hits
-                switch(Compute.d6(1)) {
+                switch( roll ) {
                 case 1:
                     return new HitData(Mech.LOC_LARM);
                 case 2:
@@ -867,7 +892,7 @@ public abstract class Mech
             }
             if(side == ToHitData.SIDE_LEFT) {
                 // left side punch hits
-                switch(Compute.d6(1)) {
+                switch( roll ) {
                 case 1:
                 case 2:
                     return new HitData(Mech.LOC_LT);
@@ -882,7 +907,7 @@ public abstract class Mech
             }
             if(side == ToHitData.SIDE_RIGHT) {
                 // right side punch hits
-                switch(Compute.d6(1)) {
+                switch( roll ) {
                 case 1:
                 case 2:
                     return new HitData(Mech.LOC_RT);
@@ -897,7 +922,7 @@ public abstract class Mech
             }
             if(side == ToHitData.SIDE_REAR) {
                 // rear punch hits
-                switch(Compute.d6(1)) {
+                switch( roll ) {
                 case 1:
                     return new HitData(Mech.LOC_LARM, true);
                 case 2:
@@ -914,9 +939,21 @@ public abstract class Mech
             }
         }
         if(table == ToHitData.HIT_KICK) {
+            roll = Compute.d6(1);
+            try {
+                if ( Settings.mekHitLocLog != null ) {
+                    Settings.mekHitLocLog.print( table );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.print( side );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.println( roll );
+                }
+            } catch ( Throwable thrown ) {
+                thrown.printStackTrace();
+            }
             if(side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_REAR) {
                 // front/rear kick hits
-                switch(Compute.d6(1)) {
+                switch( roll ) {
                 case 1:
                 case 2:
                 case 3:
@@ -937,8 +974,20 @@ public abstract class Mech
             }
         }
         if(table == ToHitData.HIT_SWARM) {
+            roll = Compute.d6(2);
+            try {
+                if ( Settings.mekHitLocLog != null ) {
+                    Settings.mekHitLocLog.print( table );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.print( side );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.println( roll );
+                }
+            } catch ( Throwable thrown ) {
+                thrown.printStackTrace();
+            }
             // Swarm attack locations.
-            switch(Compute.d6(2)) {
+            switch( roll ) {
             case 2:
                 return new HitData(Mech.LOC_HEAD, false,
                                    HitData.EFFECT_CRITICAL);

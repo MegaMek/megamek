@@ -66,7 +66,12 @@ public class Settings
             Color.magenta, Color.orange, Color.pink, Color.red, Color.white, 
             Color.yellow };
     
-    
+    /**
+     * Name of file to log all Mek hit location rolls.
+     */
+    public static String   mekHitLocLogName         = null;
+    public static PrintWriter mekHitLocLog          = null;
+
     /**
      * Loads the settings from disk
      */
@@ -169,7 +174,19 @@ scan:
                         st.nextToken();
                         mapTileset = st.sval;
                     }
-                    
+                    else if ( key.equals("mekhitloclog") ) {
+                        st.nextToken();
+                        mekHitLocLogName = new String(st.sval);
+                        try {
+                            mekHitLocLog = new PrintWriter
+                                ( new BufferedWriter
+                                    ( new FileWriter(mekHitLocLogName) ) );
+                            mekHitLocLog.println( "Table\tSide\tRoll" );
+                        } catch ( Throwable thrown ) {
+                            thrown.printStackTrace();
+                            mekHitLocLog = null;
+                        }
+                    }
                 }
             }
             
@@ -233,6 +250,11 @@ scan:
             cw.write("movejump " + writeColor(moveJumpColor) + "\r\n");
             cw.write("moveillegal " + writeColor(moveIllegalColor) + "\r\n");
             cw.write("maptileset \"" + mapTileset + "\"\r\n");
+            if ( mekHitLocLog != null ) {
+                mekHitLocLog.flush();
+                mekHitLocLog.close();
+                cw.write("mekhitloclog \"" + mekHitLocLogName + "\"\r\n");
+            }
             
             cw.close();
         } catch(Exception e) {

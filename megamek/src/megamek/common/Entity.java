@@ -3798,6 +3798,11 @@ public abstract class Entity
         if (!isActive()) {
             return false;
         }
+        
+        // check if we have iNarc pods attached that can be brushed off
+        if (hasINarcPodsAttached() && this instanceof Mech) {
+            return true;
+        }
 
         // Try to find a valid entity target.
         Enumeration e = game.getEntities();

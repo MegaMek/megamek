@@ -271,14 +271,7 @@ public class Protomech
     public int getJumpMP() {
         int jump=this.jumpMP;
         int torsoCrits=this.getCritsHit(LOC_TORSO);
-        float j=this.jumpMP;
-        if (game != null) {
-            j = jump / game.getOptions().floatOption("gravity");
-            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
-            if (j > this.jumpMP) j = jump;
-            jump = (int) j;
-        }
-     	switch(torsoCrits)
+        switch(torsoCrits)
      	{
      		case 0:
      		break;
@@ -289,8 +282,8 @@ public class Protomech
      		jump=jump/2;
      		break;
      	}
-
-        return jump;
+        if (applyGravityEffectsOnMP(jump) > jump) return jump;
+        else return applyGravityEffectsOnMP(jump);
     }
 
     /**

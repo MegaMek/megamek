@@ -89,6 +89,10 @@ v 0.25
 
 VERSION HISTORY:
 ----------------
+v next
++ refined command interface.  type "/help" for a list.
++ removed unused terrain types, added "moon" & "moon_rough"
+
 v 0.24.5 (03-30-02, 3pm)
 + "esc" clears fire even when focus is not on the map
 + prone mechs are at the terrain elevation for LOS, not 1 higher

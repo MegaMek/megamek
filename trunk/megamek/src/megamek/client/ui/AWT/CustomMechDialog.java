@@ -805,8 +805,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 new AlertDialog(clientgui.frame, "Number Format Error", "Please enter values between 0 and 7 for the skill values.").show();
                 return;
             }
-            boolean isOffBoard = chOffBoard.getState();
-            if (isOffBoard){
+            if (chOffBoard.getState()){
                 try {
                     offBoardDistance = Integer.parseInt(fldOffBoardDistance.getText());
                 } catch (NumberFormatException e) {
@@ -819,9 +818,14 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 }
                 entity.setOffBoardDistance(offBoardDistance);
                 entity.setOffBoardDirection(choOffBoardDirection.getSelectedIndex());
+                entity.setDeployed(true);
             }
-            entity.setOffBoard(isOffBoard);
-            entity.setDeployed(isOffBoard);
+            else {
+                entity.setOffBoardDistance(0);
+                entity.setOffBoardDirection(Entity.NONE);
+                entity.setDeployed(false);
+            }
+
             // change entity
             entity.setCrew(new Pilot(name, gunnery, piloting));
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {

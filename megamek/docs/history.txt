@@ -71,7 +71,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v (next)
+v 0.27.1 (10-04-02, 2:30pm)
 + implemented autosaving every turn and loading from saved games
 + bots can now attach to players in mid-game
 + Suvarov454's infantry patch applied

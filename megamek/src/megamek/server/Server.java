@@ -4194,6 +4194,7 @@ implements Runnable, ConnectionHandler {
                 ).append( dest.getBoardNum() ).append( ".\n");
                 entity.setPosition(dest);
                 doEntityDisplacementMinefieldCheck(entity, src, dest);
+                doSetLocationsExposure(entity, destHex, destHex.hasPavement(), false);
                 if (roll != null) {
                     game.addPSR(roll);
                 }
@@ -4213,6 +4214,7 @@ implements Runnable, ConnectionHandler {
                 }
                 doEntityFall(entity, dest, fallElevation, pilotRoll);
                 doEntityDisplacementMinefieldCheck(entity, src, dest);
+                doSetLocationsExposure(entity, destHex, destHex.hasPavement(), false);
                 return;
             }
         }
@@ -4297,7 +4299,7 @@ implements Runnable, ConnectionHandler {
                     // TODO : a Mech suffers a Head Blown Off crit.
                     phaseReport.append(destroyEntity(entity, "impossible displacement", (entity instanceof Mech), (entity instanceof Mech)));
                 }
-            }
+            }   
             return;
         }
     }
@@ -8282,8 +8284,8 @@ implements Runnable, ConnectionHandler {
                     te.setArmor(Entity.ARMOR_DESTROYED, hit);
                     te.damageThisPhase += absorbed;
                     damage -= absorbed;
-                    desc.append( " Armor destroyed," );
-                    desc.append( breachCheck(te, hit.getLocation(),
+                    desc.append( " Armor destroyed," )
+                        .append( breachCheck(te, hit.getLocation(),
                                              1, false) );
                 }
             }

@@ -499,6 +499,23 @@ public class Game implements Serializable
         }
         return -1;
     }
+
+    /**
+     * Get the entities for the player.
+     *
+     * @param   player - the <code>Player</code> whose entities are required.
+     * @return  a <code>Vector</code> of <code>Entity</code>s.
+     */
+    public Vector getPlayerEntities( Player player ) {
+        Vector output = new Vector();
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if ( player.equals(entity.getOwner()) ) {
+                output.addElement( entity );
+            }
+        }
+        return output;
+    }
     
     /**
      * Returns the next selectable entity that belongs to the player,

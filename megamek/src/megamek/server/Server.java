@@ -325,6 +325,7 @@ public class Server
             for (int i = 0; i < colorUsed.length; i++) {
                 if (!colorUsed[i]) {
                     player.setColorIndex(i);
+                    break;
                 }
             }
         }

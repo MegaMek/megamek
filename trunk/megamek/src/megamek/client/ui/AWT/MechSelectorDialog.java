@@ -123,18 +123,22 @@
  				loadMechsFromDirectory(vMechs, f);
  			}
             else {
-            	MechFileParser mfp = new MechFileParser(f);
-            	Mech m = mfp.getMech();
-            	if (m == null) continue;
-                MechSummary ms = new MechSummary();
-                ms.setName(m.getName());
-                ms.setRef(m.getModel());
-                ms.setSourceFile(f);
-                ms.setYear(m.getYear());
-                ms.setType(m.getTechLevel());
-                ms.setTons((int)m.getWeight());
-                ms.setBV(m.calculateBattleValue());
-                vMechs.addElement(ms);
+                try {
+                    MechFileParser mfp = new MechFileParser(f);
+                    Mech m = mfp.getMech();
+                    MechSummary ms = new MechSummary();
+                    ms.setName(m.getName());
+                    ms.setRef(m.getModel());
+                    ms.setSourceFile(f);
+                    ms.setYear(m.getYear());
+                    ms.setType(m.getTechLevel());
+                    ms.setTons((int)m.getWeight());
+                    ms.setBV(m.calculateBattleValue());
+                    vMechs.addElement(ms);
+                } catch (EntityLoadingException ex) {
+                    System.err.println("couldn't load file " + f.getName() + " : " + ex.getMessage());
+                    continue;
+                }
             } 
         }
     }
@@ -207,22 +211,27 @@
     			ms.getBV();
 	}
 	
-	public void actionPerformed(ActionEvent ae) {
-		if (ae.getSource() == m_bCancel) {
-			this.setVisible(false);
-		}
-		else if (ae.getSource() == m_bPick) {
-			int x = m_mechList.getSelectedIndex();
-			if (x == -1) {
-				return;
-			}
-			MechSummary ms = m_mechsCurrent[m_mechList.getSelectedIndex()];
-			Mech m = new MechFileParser(ms.getSourceFile()).getMech();
-			m.setOwner(m_client.getLocalPlayer());
-            m_client.sendAddEntity(m);
-			this.setVisible(false);
-		}
-	}
+        public void actionPerformed(ActionEvent ae) {
+            if (ae.getSource() == m_bCancel) {
+                this.setVisible(false);
+            }
+            else if (ae.getSource() == m_bPick) {
+                int x = m_mechList.getSelectedIndex();
+                if (x == -1) {
+                    return;
+                }
+                MechSummary ms = m_mechsCurrent[m_mechList.getSelectedIndex()];
+                try {
+                    Mech m = new MechFileParser(ms.getSourceFile()).getMech();
+                    m.setOwner(m_client.getLocalPlayer());
+                    m_client.sendAddEntity(m);
+                } catch (EntityLoadingException ex) {
+                    // some sort of error?
+                    return;
+                }
+                this.setVisible(false);
+            }
+        }
 	
 	public void itemStateChanged(ItemEvent ie)
 	{

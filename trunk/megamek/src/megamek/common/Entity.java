@@ -60,6 +60,9 @@ public abstract class Entity
     protected String            name;
     protected int               year;
     protected int		techLevel;
+    
+    protected String            displayName = null;
+    protected String            shortName = null;
 
     protected transient Player  owner;
     protected int               ownerId;
@@ -220,6 +223,8 @@ public abstract class Entity
     public void setOwner(Player player) {
         this.owner = player;
         this.ownerId = player.getId();
+        
+        generateDisplayName();
     }
   
     public int getOwnerId() {
@@ -414,16 +419,69 @@ public abstract class Entity
     
     /**
     * Returns the display name for this entity.
-    * 
-    * The display name is in the format [Model] [Name] ([Player Name]).
     */
     public String getDisplayName() {
-        if (getOwner() != null) {
-            return getModel() + " " + getName() + " (" + getOwner().getName() + ")";
+        if (displayName == null) {
+            generateDisplayName();
+        }
+        
+        return displayName;
+    }
+    
+    /**
+     * Generates the display name for this entity.
+     * 
+     * The display name is in the format [Model] [Name] ([Player Name]) for
+     * non-omnis, and in the format [Name] [Model] ([Player Name]) for omnis.
+     */
+    private void generateDisplayName() {
+        StringBuffer nbuf = new StringBuffer();
+        
+        if (isOmni()) {
+            nbuf.append(name);
+            nbuf.append(" ");
+            nbuf.append(model);
         } else {
-            return getModel() + " " + getName() + " (<NULL>)";
+            nbuf.append(model);
+            nbuf.append(" ");
+            nbuf.append(name);
+        }
+        
+        if (getOwner() != null) {
+            nbuf.append(" (");
+            nbuf.append(getOwner().getName());
+            nbuf.append(")");
+        }
+        
+        this.displayName = nbuf.toString();
+    }
+    
+    /**
+     * A short name, suitable for displaying above a unit icon
+     */
+    public String getShortName() {
+        if (shortName == null) {
+            generateShortName();
+        }
+        
+        return shortName;
+    }
+    
+    /**
+     * Generate the short name for a unit
+     */
+    private void generateShortName() {
+        StringBuffer nbuf = new StringBuffer();
+        
+        if (isOmni()) {
+            nbuf.append(name);
+            nbuf.append(" ");
+            nbuf.append(model);
+        } else {
+            nbuf.append(model);
         }
 
+        this.shortName = nbuf.toString();
     }
     
     /**
@@ -899,19 +957,25 @@ public abstract class Entity
     /**
      * Creates a new mount for this equipment and adds it in.
      */
-    public void addEquipment(EquipmentType etype, int loc) {
+    public void addEquipment(EquipmentType etype, int loc) 
+        throws LocationFullException 
+    {
         addEquipment(etype, loc, false);
     }
     
     /**
      * Creates a new mount for this equipment and adds it in.
      */
-    public void addEquipment(EquipmentType etype, int loc, boolean rearMounted) {
+    public void addEquipment(EquipmentType etype, int loc, boolean rearMounted) 
+        throws LocationFullException 
+    {
         Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted);
     }
     
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted) {
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted) 
+        throws LocationFullException 
+    {
         mounted.setLocation(loc, rearMounted);
         equipmentList.addElement(mounted);
         

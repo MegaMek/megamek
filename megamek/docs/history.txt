@@ -19,6 +19,7 @@ v0.29.43 (CVS)
 + Reinstated "always scroll using right click" option, because the scrolling 
     reworking didn't quite work as intended.
 + Data 969297: corrected ammo load of "Ammo Carrier (SP Sniper).
++ Bug 999784: never de-reference a null GameTurn.
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

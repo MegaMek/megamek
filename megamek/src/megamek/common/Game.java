@@ -380,7 +380,9 @@ public class Game implements Serializable
         int count = 0;
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            if (entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed() && entity.getCrew().getOptions().booleanOption("tactical_genius")) {
+            if (entity.getCrew().getOptions().booleanOption("tactical_genius")
+                && entity.getOwner().equals(player) && !entity.isDestroyed()
+                && entity.isDeployed() && !entity.getCrew().isUnconscious()) {
                 return true;
             }
         }

@@ -581,7 +581,7 @@ public class ClientGUI
             done.setVisible(true);
         }
         if (curPanel instanceof ReportDisplay) {
-            ((ReportDisplay) curPanel).resetReadyButton();
+            //            ((ReportDisplay) curPanel).resetButtons();
         }
 
         // Make the new panel the focus.
@@ -686,7 +686,7 @@ public class ClientGUI
                 panSecondary.add(secondary, component);
                 break;
             case Game.PHASE_INITIATIVE :
-                component = new ReportDisplay(client, client.game.hasTacticalGenius(client.getLocalPlayer()));
+                component = new ReportDisplay(client);
                 main = "ReportDisplay";
                 secondary = main;
                 panMain.add(main, component);
@@ -1312,8 +1312,6 @@ public class ClientGUI
             case Game.PHASE_FIRING_REPORT :
             case Game.PHASE_END :
             case Game.PHASE_VICTORY :
-                 ((ReportDisplay) curPanel).showRerollButton(showRerollButton);
-
                 setMapVisible(false);
 
                 // nemchenk, 2004-01-01 -- hide MechDisplay at the end
@@ -1378,6 +1376,10 @@ public class ClientGUI
     }
 
     public void gameReport(GameEvent e) {
+        // Normally the Report Display is updated when the panel is
+        //  switched during a phase change.  This update is for
+        //  Tactical Genius reroll requests, and therefore only
+        //  resets the done button.
         if (curPanel instanceof ReportDisplay) {
             ((ReportDisplay) curPanel).refresh();
             ((ReportDisplay) curPanel).resetReadyButton();

@@ -2108,7 +2108,7 @@ implements Runnable {
                 entity.heatBuildup += 1;
                 entity.setProne(false);
                 wasProne = false;
-                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 4, "getting up"), true);
+                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "getting up"), true);
             } else if (firstStep) {
                 // running with destroyed hip or gyro needs a check
                 if (overallMoveType == Entity.MOVE_RUN && !entity.isProne()

@@ -85,6 +85,7 @@ Lot of people have contributed to the MegaMek project.
      Jeff Wrbelis <starcaptaintorc@users.sourceforge.net>
      Fritz Ullmann <brandfuchs@users.sourceforge.net>
      Brandon Robertson <majortom88@users.sourceforge.net>
+     James Lacy <freakboy2571@users.sourceforge.net>
 
   And Of Course...
      FASA, WizKids and FanPro for creating and publishing the original game of 

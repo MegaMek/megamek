@@ -115,16 +115,18 @@ public class MegaMek
         botB.setActionCommand("fileGameConnectBot");
         botB.addActionListener(this);
 
-		editB = new Button("Map Editor");
-		editB.setActionCommand("fileBoardNew");
-		editB.addActionListener(this);
+        editB = new Button("Map Editor");
+        editB.setActionCommand("fileBoardNew");
+        editB.addActionListener(this);
 
-		quitB = new Button("Quit");
-		quitB.setActionCommand("quit");
-		quitB.addActionListener(this);
+        quitB = new Button("Quit");
+        quitB.setActionCommand("quit");
+        quitB.addActionListener(this);
 		
-		// initialize splash image
-		Image imgSplash = frame.getToolkit().getImage("data/images/megamek-splash.gif");
+        // initialize splash image
+        Image imgSplash = frame.getToolkit().getImage
+            ("data/images/megamek_splash.jpg");
+
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
         tracker.addImage(imgSplash, 0);

@@ -84,12 +84,10 @@ v 0.25
 - game ends when only one player is left
 - observer mode
 - players that connect with the same name as a "ghost" take control of that player
-- game handles "ghost" players properly (skips them)
-? map selection
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.24.4 (03-27-02, 10:20pm)
 + 534490: hitting back up should not clear movement if you are not jumping
 + fixed some display glitches with movement paths
 + torso twisting doesn't rotate leg firing arcs (thx Niels Naumann)
@@ -98,6 +96,8 @@ v next
 + players can join the game at any time, to watch
 + 534820: mechs with 0 MP don't get the minimum 1 step movement rule applied
 + board editor working with new boardview
++ pilot skills displayed in lobby instead of just "(custom)"
++ map selection
 
 v 0.24.3 (03-24-02, 9:30pm) 
 + 532083: transfer damage no longer counts double towards damage this phase

@@ -33,8 +33,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Choice choColor, choTeam;
     private Panel panColor;
       
-    private Label labBoardW, labBoardH, labSheetW, labSheetH;
-    private TextField tfdBoardW, tfdBoardH, tfdSheetW, tfdSheetH;
+    private Label labBoardSize;
+    private Label labMapSize;
+    private List lisBoardsSelected;
     private Button butChangeBoard;
     private Panel panBoardSettings;
       
@@ -160,19 +161,12 @@ public class ChatLounge extends AbstractPhaseDisplay
      * Sets up the board settings panel
      */
     private void setupBoardSettings() {
-        labBoardW = new Label("Board Width (hexes):", Label.RIGHT);
-        labBoardH = new Label("Board Height (hexes):", Label.RIGHT);
-        labSheetW = new Label("Map Width (boards):", Label.RIGHT);
-        labSheetH = new Label("Map Height (boards):", Label.RIGHT);
+        labBoardSize = new Label("Board Size: # x # hexes", Label.CENTER);
+        labMapSize = new Label("Map Size: # x # boards", Label.CENTER);
+        
+        lisBoardsSelected = new List(5);
             
-        tfdBoardW = new TextField();
-        tfdBoardW.setEnabled(false);
-        tfdBoardH = new TextField();
-        tfdBoardH.setEnabled(false);
-        tfdSheetW = new TextField();
-        tfdSheetH = new TextField();
-            
-        butChangeBoard = new Button("Change");
+        butChangeBoard = new Button("Edit / View");
         butChangeBoard.setActionCommand("change_board");
         butChangeBoard.addActionListener(this);
             
@@ -186,49 +180,33 @@ public class ChatLounge extends AbstractPhaseDisplay
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = 1;
-        gridbag.setConstraints(labBoardW, c);
-        panBoardSettings.add(labBoardW);
-            
-        c.weightx = 0.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(tfdBoardW, c);
-        panBoardSettings.add(tfdBoardW);
+        gridbag.setConstraints(labBoardSize, c);
+        panBoardSettings.add(labBoardSize);
+            
+        gridbag.setConstraints(labMapSize, c);
+        panBoardSettings.add(labMapSize);
+            
+        c.weightx = 1.0;    c.weighty = 1.0;
+        gridbag.setConstraints(lisBoardsSelected, c);
+        panBoardSettings.add(lisBoardsSelected);
             
         c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = 1;
-        gridbag.setConstraints(labBoardH, c);
-        panBoardSettings.add(labBoardH);
-            
-        c.weightx = 0.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(tfdBoardH, c);
-        panBoardSettings.add(tfdBoardH);
-            
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = 1;
-        gridbag.setConstraints(labSheetW, c);
-        panBoardSettings.add(labSheetW);
-            
-        c.weightx = 0.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(tfdSheetW, c);
-        panBoardSettings.add(tfdSheetW);
-            
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = 1;
-        gridbag.setConstraints(labSheetH, c);
-        panBoardSettings.add(labSheetH);
-            
-        c.weightx = 0.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(tfdSheetH, c);
-        panBoardSettings.add(tfdSheetH);
-            
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butChangeBoard, c);
         panBoardSettings.add(butChangeBoard);
+     
+        refreshBoardSettings();
+    }
+    
+    private void refreshBoardSettings() {
+        labBoardSize.setText("Board Size: " + client.getMapSettings().getBoardWidth() + " x " + client.getMapSettings().getBoardHeight() + " hexes");
+        labMapSize.setText("Map Size: " + client.getMapSettings().getMapWidth() + " x " + client.getMapSettings().getMapHeight() + " boards");
+        lisBoardsSelected.removeAll();
+        int index = 0;
+        for (Enumeration i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
+            lisBoardsSelected.add((index++) + ": " + (String)i.nextElement());
+        }
+        lisBoardsSelected.select(0);
     }
   
     /**
@@ -362,10 +340,6 @@ public class ChatLounge extends AbstractPhaseDisplay
      * Refreshes the game settings with new info from the client
      */
     private void refreshGameSettings() {
-        tfdBoardW.setText(new Integer(client.gameSettings.boardWidth).toString());
-        tfdBoardH.setText(new Integer(client.gameSettings.boardHeight).toString());
-        tfdSheetW.setText(new Integer(client.gameSettings.sheetWidth).toString());
-        tfdSheetH.setText(new Integer(client.gameSettings.sheetHeight).toString());
     }
   
     /**
@@ -378,7 +352,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             lisEntities.add(entity.getDisplayName() 
-                            + (entity.getCrew().isCustom() ? " (custom pilot) " : "")
+                            + " (" + entity.getCrew().getGunnery() 
+                            + "/" + entity.getCrew().getPiloting() + " pilot)"
                             + " BV=" + entity.calculateBattleValue());
             entityCorrespondance[listIndex++] = entity.getId();
         }
@@ -476,6 +451,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
     public void gameNewSettings(GameEvent ev) {
         refreshGameSettings();
+        refreshBoardSettings();
     }
     
     //
@@ -549,11 +525,8 @@ public class ChatLounge extends AbstractPhaseDisplay
             }
         } else if (ev.getActionCommand().equalsIgnoreCase("change_board")) {
             // board settings 
-            //client.gameSettings.boardWidth = Integer.parseInt(tfdBoardW.getText());
-            //client.gameSettings.boardHeight = Integer.parseInt(tfdBoardH.getText());
-            client.gameSettings.sheetWidth = Integer.parseInt(tfdSheetW.getText());
-            client.gameSettings.sheetHeight = Integer.parseInt(tfdSheetH.getText());
-            client.sendGameSettings();
+            client.getBoardSelectionDialog().update(client.getMapSettings(), true);
+            client.getBoardSelectionDialog().show();
         } else if (ev.getActionCommand().startsWith("starting_pos_")) {
             // starting position
             client.getLocalPlayer().setStartingPos(Integer.parseInt(ev.getActionCommand().substring(13)));

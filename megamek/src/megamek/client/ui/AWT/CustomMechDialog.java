@@ -543,7 +543,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
 
         if (option.getShortName().equals("weapon_specialist")) {
             optionComp.addValue("None");
-            Hashtable uniqueWeapons = new Hashtable(entity.getWeaponList().size());
+            Hashtable uniqueWeapons = new Hashtable();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 Mounted m = (Mounted)entity.getWeaponList().elementAt(i);
                 uniqueWeapons.put(m.getName(),new Boolean(true));

@@ -10,6 +10,7 @@ v0.29.33 (CVS)
         optimizations still to come.
 + Bug 929309: Woods clearing reports cleaned up.
 + Bug 939860: print error message (don't throw) if owner can't be found.
++ Bug 937734: a player connecting after the init phase no longer NPEs later
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

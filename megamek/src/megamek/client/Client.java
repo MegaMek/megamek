@@ -1026,8 +1026,12 @@ public class Client extends Panel
         case Game.PHASE_END:
         case Game.PHASE_VICTORY:
             // Reuse the ReportDisplay for other phases.
-            component = (Component) phaseComponents.get
-                ( String.valueOf(Game.PHASE_INITIATIVE) );
+            component = (Component) phaseComponents.get( String.valueOf(Game.PHASE_INITIATIVE) );
+            if ( null == component ) {
+                // no ReportDisplay to re-use -- set up a new one...
+                initializePanel(Game.PHASE_INITIATIVE);
+                component = (Component) phaseComponents.get( String.valueOf(Game.PHASE_INITIATIVE) );
+            };
             main = "ReportDisplay";
             secondary = main;
             break;

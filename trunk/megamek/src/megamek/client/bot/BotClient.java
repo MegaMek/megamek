@@ -157,7 +157,7 @@ public abstract class BotClient extends Client {
             } else if (game.getPhase() == Game.PHASE_DEPLOY_MINEFIELDS) {
                 Vector mines = calculateMinefieldDeployment();
                 for (int i = 0; i < mines.size(); i++) {
-                    game.addMinefield((Minefield)mines.get(i));
+                    game.addMinefield((Minefield)mines.elementAt(i));
                 }
                 sendDeployMinefields(mines);
 				sendPlayerInfo();

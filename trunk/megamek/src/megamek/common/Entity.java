@@ -2806,21 +2806,15 @@ public abstract class Entity
         if (!lastPos.equals(curPos)
             && step.getMovementType() != Entity.MOVE_JUMP
             && curHex.contains(Terrain.SWAMP)) {
-            // infantry get +5 to the PSR
-            if (this instanceof Infantry) {
-                // append the reason modifier
-                roll.append(new PilotingRollData(getId(), 5, "entering Swamp"));
             // non-hovers need a simple PSR
-            } else if (this.getMovementType() != MovementType.HOVER) {
+            if (this.getMovementType() != MovementType.HOVER) {
                 // append the reason modifier
                 roll.append(new PilotingRollData(getId(), 0, "entering Swamp"));
             // hovers don't care about swamp    
             } else {
                 roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");                
             }
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
-        }
+        }    
         return roll;
     }
 

@@ -91,6 +91,7 @@ v 0.25.0 (04-11-02, 10:45am)
 + all mech display panels now working properly in weapons phase
 + added pop-up prompt to read the documentation when using the bot
 + mech tooltip now shows movement and pilot skills
++ using latest mech pack from shrike@dropshipcommand.com
 
 v 0.24.8 (04-10-02, 8pm)
 + fixed a bug where the server thought everybody was on the same team

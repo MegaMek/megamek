@@ -466,9 +466,14 @@ public abstract class Entity
      */
     public int elevation() {
         Coords  pos = getPosition();
+
+        if ( Entity.NONE == this.getTransportId() ) {
+            pos = game.getEntity( this.getTransportId() ).getPosition();
+        }
+
         if ( null == pos ) {
             throw new IllegalStateException
-                ("Entity #" + this.getId() + "does not know its position.");
+                ("Entity #" + this.getId() + " does not know its position.");
         }
         else if ( !game.board.contains(pos) ) {
             throw new IllegalStateException

@@ -3364,6 +3364,12 @@ public class Compute
             reason.append("Target is swarming a Mek.");
         }
 
+        // Can't swarm a friendly Mek.
+        // Seehttp://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=632321&page=0&view=collapsed&sb=5&o=0&fpart=
+        else if ( !attacker.isEnemyOf( defender ) ) {
+            reason.append( "Can only swarm an enemy." );
+        }
+
         // Handle BattleArmor attackers.
         else if ( attacker instanceof BattleArmor ) {
             BattleArmor inf = (BattleArmor) attacker;

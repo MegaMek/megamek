@@ -531,7 +531,7 @@ public class Compute
         if ( isInferno &&
              (te instanceof Infantry
               || (te instanceof Tank &&
-                  game.getOptions().booleanOption("vechicles_safe_from_infernos"))
+                  game.getOptions().booleanOption("vehicles_safe_from_infernos"))
               || (te instanceof Protomech &&
                   game.getOptions().booleanOption("protos_safe_from_infernos")))
               ) {

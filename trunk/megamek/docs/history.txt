@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.52 (CVS)
+
 v0.29.51 (2004-10-03 8:15am)
 + Bug 1028638: a quad 'Mechs front legs are as restrictive as its rear legs
 + Bug 1029620: Mackie mechfile should be in mechs.zip, not unofficial.zip

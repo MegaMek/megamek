@@ -27,6 +27,12 @@ public class Settings
     public static int       windowSizeWidth         = 800;
     public static int       windowSizeHeight        = 600;
     
+    public static boolean   minimapEnabled          = true;
+    public static int       minimapPosX             = 0;
+    public static int       minimapPosY             = 0;
+    public static int       minimapSizeWidth        = 168;
+    public static int       minimapSizeHeight       = 204;
+    
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;
     
@@ -79,6 +85,22 @@ scan:
                         windowSizeWidth = (int)st.nval;
                         st.nextToken();
                         windowSizeHeight = (int)st.nval;
+                    }
+                    if (key.equals("minimapenabled")) {
+                        st.nextToken();
+                        minimapEnabled = Boolean.valueOf(st.sval).booleanValue();
+                    }
+                    if(key.equals("minimappos")) {
+                        st.nextToken();
+                        minimapPosX = (int)st.nval;
+                        st.nextToken();
+                        minimapPosY = (int)st.nval;
+                    }
+                    if(key.equals("minimapsize")) {
+                        st.nextToken();
+                        minimapSizeWidth = (int)st.nval;
+                        st.nextToken();
+                        minimapSizeHeight = (int)st.nval;
                     }
                     if(key.equals("playername")) {
                         st.nextToken();
@@ -134,6 +156,9 @@ scan:
             cw.write("\r\n");
             cw.write("windowpos " + windowPosX + " " + windowPosY + "\r\n");
             cw.write("windowsize " + windowSizeWidth + " " + windowSizeHeight + "\r\n");
+            cw.write("minimapenabled " + minimapEnabled + "\r\n");
+            cw.write("minimappos " + minimapPosX + " " + minimapPosY + "\r\n");
+            cw.write("minimapsize " + minimapSizeWidth + " " + minimapSizeHeight + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");

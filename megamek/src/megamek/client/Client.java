@@ -67,7 +67,7 @@ public class Client extends Panel
     // some dialogs...
     private BoardSelectionDialog    boardSelectionDialog;
     private GameOptionsDialog       gameOptionsDialog;
-	private MechSelectorDialog 		mechSelectorDialog;
+    private MechSelectorDialog 		mechSelectorDialog;
 
     // message pump listening to the server
     private Thread              pump;
@@ -139,10 +139,13 @@ public class Client extends Panel
         mechW.setResizable(true);
         mechD = new MechDisplay();
         mechW.add(mechD);
-        minimapW = new Dialog(frame, "MiniMap", false);
-        minimapW.setSize(168, 204);
-        minimap = new MiniMap(minimapW, this, bv);
-        minimapW.add(minimap);
+        if (Settings.minimapEnabled) {
+            minimapW = new Dialog(frame, "MiniMap", false);
+            minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
+            minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
+            minimap = new MiniMap(minimapW, this, bv);
+            minimapW.add(minimap);
+        }
         
         // load at init time because it's heavy
         mechSelectorDialog = new MechSelectorDialog(this, 

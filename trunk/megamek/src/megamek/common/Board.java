@@ -223,7 +223,12 @@ implements Serializable {
 
         // Initialize all buildings.
         buildings.removeAllElements();
-        bldgByCoords.clear();
+        if (bldgByCoords == null) {
+            bldgByCoords = new Hashtable();
+        }
+        else {
+            bldgByCoords.clear();
+        }
 
         // Walk through the hexes, creating buildings.
         for (int y = 0; y < height; y++) {

@@ -34,69 +34,100 @@ public class MechView {
     private Entity mech;
     private boolean isMech;
     private boolean isInf;
-    
+    private boolean hasEndoSteel;
+    private boolean hasFerroFibrous;
+    StringBuffer sBasic = new StringBuffer();
+    StringBuffer sLoadout = new StringBuffer();
+
     public MechView(Entity entity) {
         mech = entity;
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
-    }
+	hasEndoSteel = false;
+	hasFerroFibrous = false;
 
-    public boolean isValid() {
-        return true;
-    }
+	sLoadout.append( getWeapons() )
+	    .append("\n")
+	    .append(getAmmo())
+	    .append("\n")
+	    .append(getMisc()); //has to occur before basic is processed
 
-    public String getMechReadout() {
-        StringBuffer sMech = new StringBuffer( mech.getShortName() );
+        sBasic.append( mech.getShortName() );
+	sBasic.append("\n");
         if ( !isInf ) {
-            sMech.append( "    " )
-                .append( Math.round(mech.getWeight()) )
+            sBasic.append( Math.round(mech.getWeight()) )
                 .append(" tons   " );
         }
         if (mech.isClan()) {
-            sMech.append( " Clan\n" );
+            sBasic.append( "Clan" );
         } else {
-            sMech.append( " Inner Sphere\n" );
+            sBasic.append( "Inner Sphere" );
         }
-        sMech.append( "Movement: " )
+	sBasic.append("\n\n");
+        sBasic.append( "Movement: " )
             .append( mech.getWalkMP() )
             .append( "/" )
             .append( mech.getRunMP() )
             .append( "/" )
             .append( mech.getJumpMP() )
-            .append( "    " );
+            .append( "\n" );
         if ( isMech ) {
             Mech aMech = (Mech) mech;
-            sMech.append( "Engine: " )
+            sBasic.append( "Engine: " )
                 .append( aMech.engineRating() );
             if (aMech.hasXL()) {
-                sMech.append( " XL" );
+                sBasic.append( " XL" );
             }
-            sMech.append( "   Heat Sinks: " )
+	    sBasic.append("\n");
+            sBasic.append( "Heat Sinks: " )
                 .append( aMech.heatSinks() );
             if (aMech.getHeatCapacity() > aMech.heatSinks()) {
-                sMech.append( " [" )
+                sBasic.append( " [" )
                     .append( aMech.getHeatCapacity() )
                     .append( "]" );
             }
+	    sBasic.append("\n");
         }
-        sMech.append( formatArmor() )
-            .append( formatWeapons() )
-            .append( formatAmmo() )
-            .append( formatMisc() );
-        return sMech.toString();
+        sBasic.append("\n")
+	    .append( getInternalAndArmor() );
+    }
+
+    public String getMechReadoutBasic() {
+        return sBasic.toString();
+    }
+
+    public String getMechReadoutLoadout() {
+	return sLoadout.toString();
+    }
+
+    public String getMechReadout() {
+        return getMechReadoutBasic() + "\n" + getMechReadoutLoadout();
     }
     
-    private String formatArmor() {
+    private String getInternalAndArmor() {
+        StringBuffer sIntArm = new StringBuffer();
+
         int maxArmor = mech.getTotalInternal() * 2 + 3;
-        StringBuffer sArmor = new StringBuffer( "\nArmor:  " );
-        sArmor.append( mech.getTotalArmor() );
+        sIntArm.append( "Internal: " )
+            .append( mech.getTotalInternal() );
+	if (hasEndoSteel) {
+	    sIntArm.append("  (Endo Steel)");
+	}
+	sIntArm.append( "\n" );
+	sIntArm.append("Armor: ")
+	    .append( mech.getTotalArmor() );
         if ( isMech ) {
-            sArmor.append( "/" )
+            sIntArm.append( "/" )
                 .append( maxArmor );
+	    if (hasFerroFibrous) {
+		sIntArm.append("  (Ferro-Fibrous)");
+	    }
         }
-        sArmor.append( " IS: " )
+	sIntArm.append( "\n" );
+        sIntArm.append( " IS: " )
             .append( mech.getTotalInternal() )
             .append( "\n" );
+
         // Walk through the entity's locations.
         for ( int loc = 0; loc < mech.locations(); loc++ ) {
 
@@ -107,25 +138,25 @@ public class MechView {
                                         (loc == Tank.LOC_BODY))) ) {
                 continue;
             }
-            sArmor.append( mech.getLocationAbbr(loc) )
-                .append( ": " );
+            sIntArm.append( mech.getLocationAbbr(loc) )
+                .append( ":  " );
             if ( Entity.ARMOR_NA != mech.getArmor(loc) ) {
-                sArmor.append( renderArmor(mech.getArmor(loc)) )
-                    .append( " " );
+                sIntArm.append( renderArmor(mech.getArmor(loc)) )
+                    .append( "  " );
             }
-            sArmor.append( renderArmor(mech.getInternal(loc)) );
+            sIntArm.append( renderArmor(mech.getInternal(loc)) );
             if ( mech.hasRearArmor(loc) ) {
-                sArmor.append( " (" )
+                sIntArm.append( "  (" )
                     .append( renderArmor(mech.getArmor(loc, true)) )
                     .append( ")" );
             }
-            sArmor.append( "\n" );
+            sIntArm.append( "\n" );
         }
-        return sArmor.toString();
+        return sIntArm.toString();
     }
 
-    private String formatWeapons() {
-        StringBuffer sWeapons = new StringBuffer( "\nWeapons:\n" );
+    private String getWeapons() {
+        StringBuffer sWeapons = new StringBuffer();
         Vector vWeapons = mech.getWeaponList();
         for (int j = 0; j < vWeapons.size(); j++)       {
             Mounted mounted = (Mounted) vWeapons.elementAt(j);
@@ -137,13 +168,9 @@ public class MechView {
         return sWeapons.toString();
     }
     
-    private String formatAmmo() {
+    private String getAmmo() {
         Enumeration eAmmo = mech.getAmmo();
-        if (!eAmmo.hasMoreElements()) {
-            return "";
-
-        }
-        StringBuffer sAmmo = new StringBuffer( "Ammo:\n" );
+        StringBuffer sAmmo = new StringBuffer();
         while (eAmmo.hasMoreElements()) {
             Mounted mounted = (Mounted)eAmmo.nextElement();
             sAmmo.append( mounted.getDesc() )
@@ -154,27 +181,26 @@ public class MechView {
         return sAmmo.toString();
     }
 
-    private String formatMisc() {
-        StringBuffer sMisc = new StringBuffer
-            ("\nOther (Heat Sinks, JJ, and clan CASE excluded):\n");
+    private String getMisc() {
+        StringBuffer sMisc = new StringBuffer();
         Enumeration eMisc = mech.getMisc();
-        boolean itemFound = false;
         while (eMisc.hasMoreElements()) {
             Mounted mounted = (Mounted)eMisc.nextElement();
-            if ( mounted.getDesc().indexOf("Jump Jet") == -1 &&
-                 ( mounted.getDesc().indexOf("CASE") == -1 ||
-                   !mech.isClan() ) &&
-                 mounted.getDesc().indexOf("Heat Sink") == -1 ) {
-
+            if ( mounted.getDesc().indexOf("Endo Steel") != -1 ) {
+                hasEndoSteel = true;
+            }
+            else if ( mounted.getDesc().indexOf("Ferro-Fibrous") != -1 ) {
+                hasFerroFibrous = true;
+            }
+            else if ( mounted.getDesc().indexOf("Jump Jet") == -1 &&
+                      ( !mech.isClan() ||
+                        mounted.getDesc().indexOf("CASE") == -1 ) &&
+                      mounted.getDesc().indexOf("Heat Sink") == -1 ) {
                 sMisc.append( mounted.getDesc() )
                     .append( "  [" )
                     .append( mech.getLocationAbbr(mounted.getLocation()) )
                     .append( "]\n" );
-                itemFound = true;
-            }
-        }
-        if ( !itemFound ) {
-            return "";
+	    }
         }
         return sMisc.toString();
     }

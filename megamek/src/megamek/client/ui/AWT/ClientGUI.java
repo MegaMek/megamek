@@ -636,7 +636,7 @@ public class ClientGUI
                 panSecondary.add(secondary, component);
                 break;
             case Game.PHASE_TARGETING :
-                component = new TargetingPhaseDisplay(this);
+                component = new TargetingPhaseDisplay(this, false);
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView";
                 secondary = "TargetingPhaseDisplay";
@@ -655,8 +655,8 @@ public class ClientGUI
                 panSecondary.add(secondary, component);
                 break;
             case Game.PHASE_OFFBOARD :
-                component = new OffboardAttackPhaseDisplay(this);
-                ((OffboardAttackPhaseDisplay) component).initializeListeners();
+                component = new TargetingPhaseDisplay(this, true);
+                ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView";
                 secondary = "OffboardDisplay";
                 if (!mainNames.contains(main)) {

@@ -58,18 +58,19 @@ movement:
 - for unavoidable stacking situations, implement "domino effect" rules
 - mechs should always be able to move 1 square forwards, if standing
 - mechs should always be able to try to get up if one leg & gyro is intact
+- go prone action
+
+weapon attacks:
+-- check:sometimes, fire for a mech is skipped
+- make sure you always get cover when standing next to level 2 (v. strange)
+- multiple targets modifier
+? "pick up club" action
 
 physical attacks:
 - pushing
 - charging
 - death from above!
 - somehow show the to-hit numbers
-
-weapon attacks:
--- check:sometimes, fire for a mech is skipped
-- make sure you always get cover when standing next to level 2 (v. strange)
-- mulitple targets modifier
-? notify the player that attacks are reset due to torso twisting
 
 falling:
 - account for water
@@ -101,6 +102,11 @@ v 0.23
 
 VERSION HISTORY:
 ----------------
+v next
++ falling does damage again (oops)
++ changed torso twisting a little
++ attempted to get initiative working again
+
 v 0.22.3 (02-21-02, 12pm)
 + connections handled differently on the server
 + units moving backwards can't change elevation levels

@@ -765,20 +765,19 @@ public class Server
 					hnoe = noe[i];
 				}
 			}
-			// cycurPose through order list
-            for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-                final Player player = (Player)i.nextElement();
-                
-				if (noe[order[player.getId()]] > 0) {
-					// if you have less than twice the next lowest,
-					// move 1, otherwise, move more.
-					// if you have less than half the maximum,
-					// move none
-					int ntm = Math.max(1, (int)Math.floor(noe[order[player.getId()]] / lnoe));
-					for (int j = 0; j < ntm; j++) {
-						turns[ti++] = order[player.getId()];
-						noe[order[player.getId()]]--;
-					}
+			// cycle through order list
+            for (int i = 0; i < order.length; i++) {
+                if (noe[order[i]] <= 0) {
+                    continue;
+                }
+				// if you have less than twice the next lowest,
+				// move 1, otherwise, move more.
+				// if you have less than half the maximum,
+				// move none
+				int ntm = Math.max(1, (int)Math.floor(noe[order[i]] / lnoe));
+				for (int j = 0; j < ntm; j++) {
+					turns[ti++] = order[i];
+					noe[order[i]]--;
 				}
 			}
 		}
@@ -1976,7 +1975,7 @@ public class Server
 		
 		// calculate damage
 		//TODO: account for water
-		int damage = (int)Math.round(entity.getWeight() / 10) * height;
+		int damage = (int)Math.round(entity.getWeight() / 10);// * height;
 		
 		// report falling
 		phaseReport.append("    " + entity.getDisplayName() + " falls on its " + side + ", suffering " + damage + " damage.");

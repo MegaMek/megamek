@@ -87,6 +87,7 @@ VERSION HISTORY:
 ----------------
 v next
 + a few more hovercraft movement fixes
++ blk format now supports both mtf and mep equipment designations
 
 v 0.26.10 (08-16-02, 10pm)
 + big horkin' vehicle patch.  Ground vehicles are mostly implemented

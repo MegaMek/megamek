@@ -149,7 +149,11 @@ public class BLKTankFile implements MechLoader {
 
         for (int x = 0; x < saEquip.length; x++) {
             String equipName = saEquip[x].trim();
-            EquipmentType etype = EquipmentType.getByMepName(equipName);
+            EquipmentType etype = EquipmentType.getByMtfName(equipName);
+            
+            if (etype == null) {
+                etype = EquipmentType.getByMepName(equipName);
+            }
             
             if (etype == null) {
                 // try w/ prefix

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.42 (CVS)
+v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other
         units" game option added.
 + Bug 994182: customize mechdialog allows ammochoice for lvl1 mechs

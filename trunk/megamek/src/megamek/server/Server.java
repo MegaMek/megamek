@@ -585,6 +585,7 @@ implements Runnable, ConnectionHandler {
     }
 
     public boolean loadGame(File f) {
+        System.out.println("s: loading saved game file '"+f+"'");
         try {
             ObjectInputStream ois = new ObjectInputStream(
                     new FileInputStream(f));

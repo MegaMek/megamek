@@ -932,8 +932,14 @@ public class Server
             if (player.getInitiativeSize() <= level || (level > 0 && player.getInitiative(level - 1) != previousInit)) {
                 continue;
             }
-            if (player.getInitiative(level) == init) {
-                order[oi++] = player.getId();
+            // catch errors?
+            try {
+                if (player.getInitiative(level) == init) {
+                    order[oi++] = player.getId();
+                }
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                // uh, how'd this happen?
+                System.err.println("Server: ArrayIndexOutOfBoundsException ordering initiative.  oi=" + oi + ", order.length = " + order.length);
             }
         }
         return oi;

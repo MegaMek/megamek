@@ -1576,9 +1576,14 @@ public class BoardView1
 
             Coords mp = m.getPosition();
             if(e.getPosition() == null || m.getPosition() == null) {
-                 C3Poly = new Polygon();
-                 this.bounds = new Rectangle(C3Poly.getBounds());
-                 return;
+                C3Poly = new Polygon();
+                C3Poly.addPoint(0, 0);
+                C3Poly.addPoint(1,0);
+                C3Poly.addPoint(0,1);
+                this.bounds = new Rectangle(C3Poly.getBounds());
+                bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+                this.image = null;
+                return;
             }
             final Point a = getHexLocation(e.getPosition());
             final Point t = getHexLocation(m.getPosition());

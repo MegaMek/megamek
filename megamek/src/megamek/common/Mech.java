@@ -210,6 +210,9 @@ public abstract class Mech
         } else
             nMASCLevel = Math.max(0, nMASCLevel - 1);        
 
+	// Clear the MASC flag 
+	usedMASC = false;
+
         setSecondaryFacing(getFacing());
         
         // resolve ammo dumps 

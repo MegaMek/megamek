@@ -31,7 +31,7 @@ public class PhysicalDisplay
     private Client          client;
     	
     // displays
-    private BoardView		bv;
+    private BoardView1		bv;
     private Label			labStatus;
     	
     // buttons

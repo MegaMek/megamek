@@ -111,7 +111,7 @@ v 0.23.0 (03-02-02, 6:30pm)
 + new intervening formula from (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
 + pushing & resulting effects implemented
 + you may choose to display either BV or tonnage in the lounge
-+ invalid filenames in the mech loading routine handleds
++ invalid filenames in the mech loading routine handled
 
 v 0.22.3 (02-21-02, 12pm)
 + connections handled differently on the server

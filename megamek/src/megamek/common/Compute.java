@@ -387,8 +387,8 @@ public class Compute
         // set moveType, illegal, trouble flags
         compileIllegal(game, entityId, md, overallMoveType, isRunProhibited);
 
-        // avoid stacking violations
-        compileStackingViolations(game, entityId, md);
+        // check the last step for legality
+        compileLastStep(game, entityId, md);
         
         // check for illegal jumps
         if (isJumping) {
@@ -488,32 +488,41 @@ public class Compute
     }
     
     /**
-     * Check thru movement data and flag stacking violations.  Step backwards
-     * until we get to the first (last) legal step.  Then check if we have a
-     * stacking violation.  If we do, then that step's illegal.  Check the next
-     * step backwards.
+     * Check the last steps for stacking violations or other problems.
+     * Step backwards until we get to the first (last) legal step.  Then check 
+     * if we have a violation.  If we do, then that step's illegal.  Check the 
+     * next step backwards.  Otherwise, stop checking.
      */
-    private static void compileStackingViolations(Game game, int entityId, MovementData md) {
+    private static void compileLastStep(Game game, int entityId, MovementData md) {
         final Entity entity = game.getEntity(entityId);
         
-        boolean lastMoveLegal = false;
         for (int i = md.length() - 1; i >= 0; i--) {
             final MovementData.Step step = md.getStep(i);
+            final Hex destHex = game.board.getHex(step.getPosition());
             
-            // find the last legal step
-            if (lastMoveLegal || step.getMovementType() == Entity.MOVE_ILLEGAL) {
+            // skip steps that are not the last step
+            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
                 continue;
             }
             
+            // check for stacking violations
             final Entity violation = stackingViolation(game, entityId, step.getPosition());
             if (violation != null
                     && step.getType() != MovementData.STEP_CHARGE
                     && step.getType() != MovementData.STEP_DFA) {
                 // can't move here
                 step.setMovementType(Entity.MOVE_ILLEGAL);
-            } else {
-                lastMoveLegal = true;
+                continue;
             }
+            
+            // check again for illegal terrain, in case of jumping
+            if (entity.isHexProhibited(destHex)) {
+                step.setMovementType(Entity.MOVE_ILLEGAL);
+                continue;
+            }
+            
+            // we've found the last step and it was legal, so stop checking
+            break;
         }
     }
     
@@ -732,7 +741,8 @@ public class Compute
         }
         
         // certain movement types have terrain restrictions
-        if (entity.isHexProhibited(destHex)) {
+        if (entityMoveType != Entity.MOVE_JUMP 
+        && entity.isHexProhibited(destHex)) {
             return false;
         }
         

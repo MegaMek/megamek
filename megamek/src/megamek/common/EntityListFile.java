@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -60,7 +60,8 @@ public class EntityListFile {
     /**
      * Produce a string describing the equipment in a critical slot.
      *
-     * @param   index - the <code>int</code> index of the slot.
+     * @param   index - the <code>String</code> index of the slot.  This
+     *          value should be a positive integer or "N/A".
      * @param   mount - the <code>Mounted</code> object of the equipment.
      *          This value should be <code>null</code> for a slot with
      *          system equipment.
@@ -73,12 +74,12 @@ public class EntityListFile {
      *          critical hits.
      * @return  a <code>String</code> describing the slot.
      */
-    private static String formatSlot( int index, Mounted mount,
+    private static String formatSlot( String index, Mounted mount,
                                       boolean isHit, boolean isDestroyed ) {
         StringBuffer output = new StringBuffer();
 
         output.append( "         <slot index=\"" );
-        output.append( String.valueOf(index) );
+        output.append( index );
         output.append( "\" type=\"" );
         if ( mount == null ) {
             output.append( "System" );
@@ -177,7 +178,7 @@ public class EntityListFile {
 
                 } else {
 
-                    // Yup.  If the equipment isn\"t a system, get it.
+                    // Yup.  If the equipment isn't a system, get it.
                     Mounted mount = null;
                     if ( CriticalSlot.TYPE_EQUIPMENT == slot.getType() ) {
                         mount = entity.getEquipment( slot.getIndex() );
@@ -188,7 +189,7 @@ public class EntityListFile {
                     // have been blown off.
                     if ( isDestroyed && isMech && slot.isMissing() &&
                          !slot.isHit() && !slot.isDestroyed() ) {
-                        thisLoc.append( formatSlot( loop+1,
+                        thisLoc.append( formatSlot( String.valueOf(loop+1),
                                                     mount,
                                                     slot.isHit(),
                                                     slot.isDestroyed() ) );
@@ -198,7 +199,7 @@ public class EntityListFile {
 
                     // Record damaged slots in undestroyed locations.
                     else if ( !isDestroyed && slot.isDamaged() ) {
-                        thisLoc.append( formatSlot( loop+1,
+                        thisLoc.append( formatSlot( String.valueOf(loop+1),
                                                     mount,
                                                     slot.isHit(),
                                                     slot.isDestroyed() ) );
@@ -223,6 +224,25 @@ public class EntityListFile {
                 } // End have-slot
 
             } // Check the next slot in this location
+
+            // Tanks don't have slots, so we have to handle the ammo specially.
+            if ( entity instanceof Tank ) {
+                Enumeration ammo = entity.getAmmo();
+                while ( ammo.hasMoreElements() ) {
+
+                    // Is this ammo in the current location?
+                    Mounted mount = (Mounted) ammo.nextElement();
+                    if ( mount.getLocation() == loc ) {
+                        thisLoc.append( formatSlot( "N/A",
+                                                    mount,
+                                                    false,
+                                                    false ) );
+                        haveSlot = true;
+                    }
+
+                } // Check the next ammo.
+
+            } // End is-tank
 
             // Did we record information for this location?
             if ( thisLoc.length() > 0 ) {
@@ -276,6 +296,12 @@ public class EntityListFile {
             output.insert( 0, NL );
             output.insert
                 ( 0, "      The first slot in a location is at index=\"1\"." );
+
+            // Tanks do wierd things with ammo.
+            if ( entity instanceof Tank ) {
+                output.insert( 0, NL );
+                output.insert( 0, "      Tanks have special needs, so don't delete any ammo slots." );
+            }
         }
 
         // Convert the output into a String and return it.

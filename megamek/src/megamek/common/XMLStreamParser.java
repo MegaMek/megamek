@@ -70,6 +70,11 @@ public class XMLStreamParser implements XMLResponder {
     private boolean             locDestroyed = false;
 
     /**
+     * Counter for the amount of ammo already handled for the current location.
+     */
+    private int                 locAmmoCount = 0;
+
+    /**
      * Marks all equipment in a location on an <code>Entity<code> as destroyed.
      *
      * @param   en - the <code>Entity</code> whose location is destroyed.
@@ -541,6 +546,9 @@ public class XMLStreamParser implements XMLResponder {
                         // We're now parsing the indexed location.
                         this.loc = indexVal;
 
+                        // Reset the ammo count.
+                        this.locAmmoCount = 0;
+
                         // Is the location destroyed?
                         this.locDestroyed = false;
                         try {
@@ -703,6 +711,90 @@ public class XMLStreamParser implements XMLResponder {
                     }
                     if ( index.equals( NA ) ) {
                         indexVal = Entity.ARMOR_NA;
+
+                        // Tanks don't have slots, so we have
+                        // to handle the ammo specially.
+                        if ( entity instanceof Tank ) {
+
+                            // Get the saved ammo load.
+                            EquipmentType newLoad = 
+                                EquipmentType.getByInternalName( type );
+                            if ( newLoad instanceof AmmoType ) {
+                                int counter = -1;
+                                Enumeration ammo = entity.getAmmo();
+                                while ( ammo.hasMoreElements() &&
+                                        counter < this.locAmmoCount ) {
+
+                                    // Is this mounted in the current location?
+                                    Mounted mounted = 
+                                        (Mounted) ammo.nextElement();
+                                    if ( mounted.getLocation() == loc ) {
+
+                                        // Increment the loop counter.
+                                        counter++;
+
+                                        // Is this the one we want to handle?
+                                        if ( counter == this.locAmmoCount ) {
+
+                                            // Increment the counter of ammo
+                                            // handled for this location.
+                                            this.locAmmoCount++;
+
+                                            // Reset transient values.
+                                            mounted.restore();
+
+                                            // Try to get a good shots value.
+                                            int shotsVal = -1;
+                                            try {
+                                                shotsVal = Integer.parseInt
+                                                    ( shots );
+                                            } catch ( NumberFormatException
+                                                      excep ) {
+                                                // Handled by the next if test.
+                                            }
+                                            if ( shots.equals( NA ) ) {
+                                                shotsVal = Entity.ARMOR_NA;
+                                                this.warning.append( "Expected to find number of shots for " )
+                                                    .append( type )
+                                                    .append( ", but found " )
+                                                    .append( shots )
+                                                    .append( " instead.\n" );
+                                            }
+                                            else if ( shotsVal < 0 || shotsVal > 200 ) {
+                                                this.warning.append( "Found invalid shots value for slot: " )
+                                                    .append( shots )
+                                                    .append( ".\n" );
+                                            } else {
+
+                                                // Change to the saved
+                                                // ammo type and shots.
+                                                mounted.changeAmmoType
+                                                    ( (AmmoType) newLoad );
+                                                mounted.setShotsLeft
+                                                    ( shotsVal );
+
+                                            } // End have-good-shots-value
+
+                                            // Stop looking for a match.
+                                            break;
+
+                                        } // End found-match-for-slot
+
+                                    } // End ammo-in-this-loc
+
+                                } // Check the next ammo.
+                            
+                            } else {
+                                // Bad XML equipment.
+                                this.warning.append( "XML file lists " )
+                                    .append( type )
+                                    .append( " equipment at location " )
+                                    .append( this.loc )
+                                    .append( ".  XML parser expected ammo.\n" );
+                            } // End not-ammo-type
+
+                        } // End is-tank
+
                         // TODO: handle slotless equipment.
                         return;
                     }
@@ -824,8 +916,7 @@ public class XMLStreamParser implements XMLResponder {
 
                                     // Change to the saved ammo type and shots.
                                     mounted.changeAmmoType((AmmoType) newLoad);
-                                    mounted.setShotsLeft
-                                        ( mounted.getShotsLeft() );
+                                    mounted.setShotsLeft( shotsVal );
 
                                 } // End have-good-shots-value
 

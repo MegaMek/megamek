@@ -222,7 +222,7 @@ public class BoardView1
         if (!this.isTileImagesLoaded()) {
             g.drawString("loading images...", 20, 50);
             if (!tileManager.isStarted()) {
-                System.out.println("boardview1: loadinf images for board");
+                System.out.println("boardview1: loading images for board");
                 tileManager.loadNeededImages(game);
             }
             return;

@@ -765,16 +765,25 @@ public class BoardView1
      * Adds a c3 line to the sprite list.
      */
     public void addC3Link(Entity e) {
+        if (e.getPosition() == null) return;
+        
         if(e.hasC3i()) {
             for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
                 final Entity fe = (Entity)i.nextElement();
-                if ( e.OnSameC3NetworkAs(fe)) {
+                if (fe.getPosition() == null) return;
+                if ( e.onSameC3NetworkAs(fe)) {
                     C3Sprites.addElement(new C3Sprite(e, fe));
                 }
             }
         }
         else if(e.getC3Master() != null) {
-            C3Sprites.addElement(new C3Sprite(e, e.getC3Master()));
+            Entity eMaster = e.getC3Master();
+            if (eMaster.getPosition() == null) return;
+            
+            // ECM cuts off the network
+            if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())) {
+                C3Sprites.addElement(new C3Sprite(e, e.getC3Master()));
+            }
         }
     }
 

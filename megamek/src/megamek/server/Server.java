@@ -885,6 +885,7 @@ implements Runnable {
                 changePhase(Game.PHASE_FIRING);
                 break;
             case Game.PHASE_FIRING :
+                assignAMS();
                 resolveWeaponAttacks();
                 checkFor20Damage();
                 resolveCrewDamage();
@@ -1798,6 +1799,40 @@ implements Runnable {
     }
     
     /**
+     * Auto-target active AMS systems
+     */
+    private void assignAMS() {
+        
+        // sort all missile-based attacks by the target
+        Hashtable htAttacks = new Hashtable();
+        for (Enumeration i = attacks.elements(); i.hasMoreElements(); ) {
+            Object o = i.nextElement();
+            if (o instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction)o;
+                Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+                if (((WeaponType)weapon.getType()).getDamage() == WeaponType.DAMAGE_MISSILE) {
+                    Entity target = game.getEntity(waa.getTargetId());
+                    Vector v = (Vector)htAttacks.get(target);
+                    if (v == null) {
+                        v = new Vector();
+                        htAttacks.put(target, v);
+                    }
+                    v.addElement(waa);
+                }
+            }
+        }
+        
+        // let each target assign its AMS
+        for (Enumeration i = htAttacks.keys(); i.hasMoreElements(); ) {
+            Entity e = (Entity)i.nextElement();
+            Vector vAttacks = (Vector)htAttacks.get(e);
+            e.assignAMS(vAttacks, attacks);
+        }
+    }
+
+        
+    
+    /**
      * Resolve all fire for the round
      */
     private void resolveWeaponAttacks() {
@@ -1980,13 +2015,13 @@ implements Runnable {
              if (isWeaponInfantry || ammo != null) {
                 // missiles; determine number of missiles hitting
                 int hits;
-		String hitType = " missles";
-		if ( isWeaponInfantry ) {
-		    // Infantry damage depends on # men left in platoon.
-		    platoon = (Infantry) ae;
-		    hits = platoon.getDamage( platoon.getShootingStrength() );
-		    hitType = " shots";
-		} else if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                String hitType = " missles";
+                if ( isWeaponInfantry ) {
+                    // Infantry damage depends on # men left in platoon.
+                    platoon = (Infantry) ae;
+                    hits = platoon.getDamage( platoon.getShootingStrength() );
+                    hitType = " shots";
+                } else if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
                     hits = wtype.getRackSize();
                 } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
                     // I'm going to assume these are MRMs
@@ -1995,40 +2030,72 @@ implements Runnable {
                     hits = Compute.missilesHit(2);
                 } else {
                     hits = Compute.missilesHit(wtype.getRackSize());
+                }                    
+                
+                phaseReport.append(hits + hitType + " hit" + toHit.getTableDesc() + ".");
+                
+                // adjust for AMS
+                Vector vCounters = waa.getCounterEquipment();
+                if (vCounters != null) {
+                    for (int x = 0; x < vCounters.size(); x++) {
+                        Mounted counter = (Mounted)vCounters.elementAt(x);
+                        if (counter.getType() instanceof WeaponType && 
+                                ((WeaponType)counter.getType()).getAmmoType() == AmmoType.T_AMS) {
+
+                            if (!counter.isReady() || counter.isMissing()) {
+                                continue;
+                            }
+                            int amsHits = Compute.d6(((WeaponType)counter.getType()).getDamage());
+                            
+                            if (amsHits > hits) amsHits = hits;
+                            hits -= amsHits;
+                            phaseReport.append("\n\tAMS shoots down " + amsHits + " missiles.");
+                            
+                            // build up some heat
+                            ae.heatBuildup += ((WeaponType)counter.getType()).getHeat();
+        
+                            // decrement the ammo
+                            Mounted mAmmo = counter.getLinked();
+                            mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
+                            
+                            // set the ams as having fired
+                            weapon.setUsedThisRound(true);
+                        }
+                    }
                 }
-		phaseReport.append(hits + hitType + " hit" + toHit.getTableDesc() + ".");
-		if ( isWeaponInfantry || wtype.getAmmoType() == AmmoType.T_LRM ||
- 		     wtype.getAmmoType() == AmmoType.T_MRM ) {
-		    // Infantry weapons, LRMs, MRMs do salvos of 5
-		    while (hits > 0) {
-			int salvo = Math.min(5, hits);
-			HitData hit = te.rollHitLocation(toHit.getHitTable(),
- 							 toHit.getSideTable());
-			phaseReport.append(damageEntity(te, hit, salvo));
-			hits -= salvo;
+                
+                if ( isWeaponInfantry || wtype.getAmmoType() == AmmoType.T_LRM ||
+                         wtype.getAmmoType() == AmmoType.T_MRM ) {
+                    // Infantry weapons, LRMs, MRMs do salvos of 5
+                    while (hits > 0) {
+                    int salvo = Math.min(5, hits);
+                    HitData hit = te.rollHitLocation(toHit.getHitTable(),
+                                     toHit.getSideTable());
+                    phaseReport.append(damageEntity(te, hit, salvo));
+                    hits -= salvo;
                     }
                 } else if (atype.hasFlag(AmmoType.F_CLUSTER)) {
                     // for LBX cluster ammo
                     for (int j = 0; j < hits; j++) {
                         HitData hit = te.rollHitLocation(toHit.getHitTable(),
-							 toHit.getSideTable());
+                                toHit.getSideTable());
                         phaseReport.append(damageEntity(te, hit, 1));
                     }
                 } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
                     // Fire Mode - uAC ammo
                     for (int j = 0; j < hits; j++) {
                         HitData hit = te.rollHitLocation(toHit.getHitTable(),
-							 toHit.getSideTable());
+                                toHit.getSideTable());
                         phaseReport.append(damageEntity(te, hit, wtype.getDamage()));
                         
                     }
                 } else if (wtype.getAmmoType() == AmmoType.T_SRM || 
-			   wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                        wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
                     // for SRMs, do each missile seperately
                     for (int j = 0; j < hits; j++) {
                         HitData hit = te.rollHitLocation(toHit.getHitTable(),
-							 toHit.getSideTable());
-			phaseReport.append(damageEntity(te, hit, 2));
+                                toHit.getSideTable());
+                        phaseReport.append(damageEntity(te, hit, 2));
                     }
                 }
             }

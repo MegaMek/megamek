@@ -118,6 +118,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISMRM20Ammo());
         EquipmentType.addType(createISMRM30Ammo());
         EquipmentType.addType(createISMRM40Ammo());
+        EquipmentType.addType(createISAMSAmmo());
         
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
@@ -146,6 +147,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLSRM2Ammo());
         EquipmentType.addType(createCLSRM4Ammo());
         EquipmentType.addType(createCLSRM6Ammo());
+        EquipmentType.addType(createCLAMSAmmo());
     }
     
     public static AmmoType createISAC2Ammo() {
@@ -707,6 +709,22 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createISAMSAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "AMS Ammo";
+        ammo.internalName = "ISAMS Ammo";
+        ammo.mepName = ammo.internalName;  // ?
+        ammo.mtfName = ammo.internalName;
+        ammo.damagePerShot = 1; // only used for ammo crits
+        ammo.rackSize = 2; // only used for ammo crits
+        ammo.ammoType = AmmoType.T_AMS;
+        ammo.shots = 12;
+        ammo.bv = 11;
+        
+        return ammo;
+    }
+    
     public static AmmoType createCLGaussAmmo() {
         AmmoType ammo = new AmmoType();
         
@@ -1148,6 +1166,22 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 15;
         ammo.bv = 15;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createCLAMSAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "AMS Ammo";
+        ammo.internalName = "CLAMS Ammo";
+        ammo.mepName = ammo.internalName;  // ?
+        ammo.mtfName = ammo.internalName;
+        ammo.damagePerShot = 1; // only used for ammo crits
+        ammo.rackSize = 2; // only used for ammo crits
+        ammo.ammoType = AmmoType.T_AMS;
+        ammo.shots = 12;
+        ammo.bv = 21;
         
         return ammo;
     }

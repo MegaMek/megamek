@@ -485,7 +485,7 @@ public class FiringDisplay
      */
     private void refreshAll() {
         client.bv.redrawEntity(ce());
-        client.mechD.displayMech(ce());
+        client.mechD.displayEntity(ce());
         client.mechD.showPanel("weapons");
         selectedWeapon = ce().getFirstWeapon();
         client.mechD.wPan.selectWeapon(selectedWeapon);
@@ -517,8 +517,12 @@ public class FiringDisplay
             ToHitData toHit = Compute.toHitWeapon(client.game, cen, ten, weaponId, attacks);
             client.mechD.wPan.wTargetR.setText(te().getDisplayName());
             client.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(te().getPosition()));
-            if (ce().getEquipment(weaponId).isUsedThisRound()) {
+            Mounted m = ce().getEquipment(weaponId);
+            if (m.isUsedThisRound()) {
                 client.mechD.wPan.wToHitR.setText("Already fired");
+                butFire.setEnabled(false);
+            } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
+                client.mechD.wPan.wToHitR.setText("Auto-firing weapon");
                 butFire.setEnabled(false);
             } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
                 client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
@@ -612,8 +616,8 @@ public class FiringDisplay
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
-            } else if (client.game.getEntity(b.getCoords()) != null && client.game.getEntity(b.getCoords()).isTargetable()) {
-                target(client.game.getEntity(b.getCoords()).getId());
+            } else if (client.game.getFirstEntity(b.getCoords()) != null) {
+                target(client.game.getFirstEntity(b.getCoords()).getId());
             }
         }
     }

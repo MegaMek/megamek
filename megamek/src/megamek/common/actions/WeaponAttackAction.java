@@ -14,6 +14,9 @@
 
 package megamek.common.actions;
 
+import java.util.Vector;
+import megamek.common.Mounted;
+
 /**
  * Represents intention to fire a weapon at the target.
  */
@@ -22,6 +25,10 @@ public class WeaponAttackAction
 {
     private int weaponId;
     private int ammoId = -1;
+    
+    // equipment that affects this attack (AMS, ECM?, etc)
+    // only used server-side
+    private transient Vector vCounterEquipment = null;
     
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
         super(entityId, targetId);
@@ -36,11 +43,22 @@ public class WeaponAttackAction
         return ammoId;
     }
     
+    public Vector getCounterEquipment() {
+        return vCounterEquipment;
+    }
+    
     public void setWeaponId(int weaponId) {
         this.weaponId = weaponId;
     }
     
     public void setAmmoId(int ammoId) {
         this.ammoId = ammoId;
+    }
+    
+    public void addCounterEquipment(Mounted m) {
+        if (vCounterEquipment == null) {
+            vCounterEquipment = new Vector();
+        }
+        vCounterEquipment.addElement(m);
     }
 }

@@ -429,8 +429,8 @@ implements Runnable, ConnectionHandler {
                 game.getPhase() == Game.PHASE_OFFBOARD ||
                 game.getPhase() == Game.PHASE_PHYSICAL) {
                 // can't go above, need board to have been sent
-                send(createAttackPacket(game.getActionsVector(), false));
-                send(createAttackPacket(game.getChargesVector(), true));
+                send(connId, createAttackPacket(game.getActionsVector(), false));
+                send(connId, createAttackPacket(game.getChargesVector(), true));
             }
             if (game.phaseHasTurns(game.getPhase())) {
                 send(connId, createTurnVectorPacket());

@@ -403,9 +403,10 @@ class WeaponPanel
     implements ItemListener
 {
     public java.awt.List weaponList;
+    public Choice m_chAmmo;
     public Panel displayP, rangeP, targetP, buttonP;
         
-    public Label wNameL, wHeatL, wDamL, wMinL, wShortL,
+    public Label wAmmo, wNameL, wHeatL, wDamL, wMinL, wShortL,
         wMedL, wLongL;
     public Label wNameR, wHeatR, wDamR, wMinR, wShortR,
         wMedR, wLongR;
@@ -420,6 +421,7 @@ class WeaponPanel
     // I need to keep a pointer to the weapon list of the
     // currently selected mech.
     private Vector weapons;
+    private Vector vAmmo;
     private Entity entity;
         
     public WeaponPanel() {
@@ -428,6 +430,27 @@ class WeaponPanel
         // weapon list
         weaponList = new java.awt.List(4, false);
         weaponList.addItemListener(this);
+        
+        // ammo choice panel
+        wAmmo = new Label("Ammo", Label.LEFT);
+        m_chAmmo = new Choice();
+        m_chAmmo.addItemListener(this);
+        
+        Panel ammoP = new Panel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(1, 1, 1, 1);
+        c.gridwidth = 1;
+        c.weightx = 0.0;    c.weighty = 0.0;
+        c.fill = GridBagConstraints.NONE;
+        ((GridBagLayout)ammoP.getLayout()).setConstraints(wAmmo, c);
+        ammoP.add(wAmmo);
+        
+        c.gridwidth = 3;
+        c.gridx = 1;
+        c.weightx = 1.0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        ((GridBagLayout)ammoP.getLayout()).setConstraints(m_chAmmo, c);
+        ammoP.add(m_chAmmo);
             
         // weapon display panel
         wNameL = new Label("Name", Label.LEFT);
@@ -439,7 +462,7 @@ class WeaponPanel
             
         displayP = new Panel(new GridBagLayout());
             
-        GridBagConstraints c = new GridBagConstraints();
+        c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
         
@@ -468,6 +491,7 @@ class WeaponPanel
         c.gridwidth = GridBagConstraints.REMAINDER;            
         ((GridBagLayout)displayP.getLayout()).setConstraints(wDamR, c);
         displayP.add(wDamR);
+        
         
         // range panel
         wMinL = new Label("Min", Label.CENTER);
@@ -529,6 +553,10 @@ class WeaponPanel
         add(weaponList);
         
         c.weightx = 1.0;    c.weighty = 0.0;
+        ((GridBagLayout)getLayout()).setConstraints(ammoP, c);
+        add(ammoP);
+        
+        c.weightx = 1.0;    c.weighty = 0.0;
         ((GridBagLayout)getLayout()).setConstraints(displayP, c);
         add(displayP);
         
@@ -562,6 +590,9 @@ class WeaponPanel
             
         // update weapon list
         weaponList.removeAll();
+        m_chAmmo.removeAll();
+        m_chAmmo.disable();
+        
         for(int i = 0; i < weapons.size(); i++) {
             Mounted mounted = (Mounted)weapons.elementAt(i);
             WeaponType wtype = (WeaponType)mounted.getType();
@@ -616,6 +647,8 @@ class WeaponPanel
     public void displaySelected() {
         // short circuit if not selected
         if(weaponList.getSelectedIndex() == -1) {
+            m_chAmmo.removeAll();
+            m_chAmmo.disable();
             wNameR.setText("");
             wHeatR.setText("--");
             wDamR.setText("--");
@@ -657,7 +690,45 @@ class WeaponPanel
         } else {
             wLongR.setText("" + wtype.getLongRange());
         }
+        
+        // update ammo selector
+        m_chAmmo.removeAll();
+        if (wtype.getAmmoType() == AmmoType.T_NA) {
+            m_chAmmo.disable();
+        }
+        else {
+            m_chAmmo.enable();
+            vAmmo = new Vector();
+            int nCur = -1;
+            int i = 0;
+            for (Enumeration j = entity.getAmmo(); j.hasMoreElements();) {
+                Mounted mountedAmmo = (Mounted)j.nextElement();
+                AmmoType atype = (AmmoType)mountedAmmo.getType();
+                if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0) {
+                    continue;
+                }
+                if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
+                    vAmmo.addElement(mountedAmmo);
+                    if (mounted.getLinked() == mountedAmmo) {
+                        nCur = i;
+                    }
+                    i++;
+                }
+            }
+            for (int x = 0, n = vAmmo.size(); x < n; x++) {
+                m_chAmmo.add(formatAmmo((Mounted)vAmmo.elementAt(x)));
+            }
+            m_chAmmo.select(nCur);
+        }
     }
+    
+    private String formatAmmo(Mounted m)
+    {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append("[").append(entity.getLocationAbbr(m.getLocation())).append("] ");
+        sb.append(m.getDesc().replaceFirst("Ammo", ""));
+        return sb.toString();
+    }            
         
     // 
     // ItemListener
@@ -665,6 +736,15 @@ class WeaponPanel
     public void itemStateChanged(ItemEvent ev) {
         if(ev.getItemSelectable() == weaponList) {
             displaySelected();
+        }
+        else if (ev.getItemSelectable() == m_chAmmo) {
+            int n = weaponList.getSelectedIndex();
+            if (n == -1) {
+                return;
+            }
+            Mounted mWeap = (Mounted)weapons.elementAt(n);
+            Mounted mAmmo = (Mounted)vAmmo.elementAt(m_chAmmo.getSelectedIndex());
+            entity.loadWeapon(mWeap, mAmmo);
         }
     }
         

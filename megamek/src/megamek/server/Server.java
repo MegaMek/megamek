@@ -1824,8 +1824,19 @@ public boolean isPassworded() {
         final Mounted weapon = ae.getEquipment(waa.getWeaponId());
         final WeaponType wtype = (WeaponType)weapon.getType();
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA;
-        Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        Mounted ammo = null;
+        if (usesAmmo) {
+            if (waa.getAmmoId() > -1) {
+                System.out.println(waa.getAmmoId());
+                ammo = ae.getEquipment(waa.getAmmoId());
+            }
+            else {
+                ammo = weapon.getLinked();
+            }
+            System.out.println("Resolving with ammo: " + ammo.getDesc());
+        }
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
+                
 
         if (lastEntityId != waa.getEntityId()) {
             phaseReport.append("\nWeapons fire for " + ae.getDisplayName() + "\n");

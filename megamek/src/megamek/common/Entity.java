@@ -1105,9 +1105,27 @@ public abstract class Entity
             }
             if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
                 mounted.setLinked(mountedAmmo);
+                break;
             }
         }
     }
+    
+    /**
+     * Sets the ammo load to a specific ton
+     */
+    public void loadWeapon(Mounted mounted, Mounted mountedAmmo)
+    {
+        if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0) {
+            return;
+        }
+        
+        WeaponType wtype = (WeaponType)mounted.getType();
+        AmmoType atype = (AmmoType)mountedAmmo.getType();
+        if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
+            mounted.setLinked(mountedAmmo);
+        }
+    }
+        
     
     /**
      * Checks whether a weapon has been fired from the specified location this

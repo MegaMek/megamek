@@ -404,6 +404,7 @@ implements Runnable, ConnectionHandler {
                 break;
             case Game.PHASE_INITIATIVE :
             case Game.PHASE_MOVEMENT_REPORT :
+            case Game.PHASE_OFFBOARD_REPORT:
             case Game.PHASE_FIRING_REPORT :
             case Game.PHASE_END :
             case Game.PHASE_VICTORY :
@@ -424,6 +425,8 @@ implements Runnable, ConnectionHandler {
                 break;
             }
             if (game.getPhase() == Game.PHASE_FIRING ||
+                game.getPhase() == Game.PHASE_TARGETING ||
+                game.getPhase() == Game.PHASE_OFFBOARD ||
                 game.getPhase() == Game.PHASE_PHYSICAL) {
                 // can't go above, need board to have been sent
                 send(createAttackPacket(game.getActionsVector(), false));
@@ -1040,7 +1043,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // Is this a general move turn?
-        boolean isGeneralMoveTurn = 
+        boolean isGeneralMoveTurn =
             ( !(turn instanceof GameTurn.SpecificEntityTurn) &&
               !(turn instanceof GameTurn.UnitNumberTurn) &&
               !(turn instanceof GameTurn.UnloadStrandedTurn) &&
@@ -1104,7 +1107,7 @@ implements Runnable, ConnectionHandler {
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
-                GameTurn newTurn = 
+                GameTurn newTurn =
                     new GameTurn.EntityClassTurn( playerId, multiMask );
                 game.insertNextTurn(newTurn);
                 turnsChanged = true;
@@ -1198,6 +1201,8 @@ implements Runnable, ConnectionHandler {
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
+            case Game.PHASE_TARGETING:
+            case Game.PHASE_OFFBOARD:
                 resetEntityPhase(phase);
                 checkForObservers();
                 setIneligible(phase);
@@ -1227,6 +1232,7 @@ implements Runnable, ConnectionHandler {
                 log.append( roundReport.toString() );
             case Game.PHASE_MOVEMENT_REPORT :
             case Game.PHASE_FIRING_REPORT :
+            case Game.PHASE_OFFBOARD_REPORT :
                 resetActivePlayersDone();
                 send(createReportPacket());
                 break;
@@ -1252,6 +1258,8 @@ implements Runnable, ConnectionHandler {
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
+            case Game.PHASE_TARGETING:
+            case Game.PHASE_OFFBOARD :
                 return game.hasMoreTurns();
             default :
                 return true;
@@ -1284,6 +1292,7 @@ implements Runnable, ConnectionHandler {
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
+            case Game.PHASE_TARGETING :
                 changeToNextTurn();
                 break;
         }
@@ -1327,7 +1336,7 @@ implements Runnable, ConnectionHandler {
                 if ( doDeploy ) {
                   changePhase(Game.PHASE_DEPLOYMENT);
                 } else {
-                  changePhase(Game.PHASE_MOVEMENT);
+                  changePhase(Game.PHASE_TARGETING);
                 }
                 break;
             case Game.PHASE_MOVEMENT :
@@ -1345,11 +1354,11 @@ implements Runnable, ConnectionHandler {
                     changePhase(Game.PHASE_MOVEMENT_REPORT);
                 } else {
                     roundReport.append("<nothing>\n");
-                    changePhase(Game.PHASE_FIRING);
+                    changePhase(Game.PHASE_OFFBOARD);
                 }
                 break;
             case Game.PHASE_MOVEMENT_REPORT :
-                changePhase(Game.PHASE_FIRING);
+                changePhase(Game.PHASE_OFFBOARD);
                 break;
             case Game.PHASE_FIRING :
                 resolveAllButWeaponAttacks();
@@ -1386,6 +1395,27 @@ implements Runnable, ConnectionHandler {
                     roundReport.append("<nothing>\n");
                 }
                 changePhase(Game.PHASE_END);
+                break;
+            case Game.PHASE_TARGETING :
+                System.out.println("Targeting phase");
+                enqueueIndirectArtilleryAttacks();
+                changePhase(Game.PHASE_MOVEMENT);
+                break;
+            case Game.PHASE_OFFBOARD :
+                roundReport.append("\nOffboard Attack Phase\n-----------------\n");
+                System.out.println("Offboard phase");
+                resolveIndirectArtilleryAttacks();
+                if (phaseReport.length() > 0) {
+                    roundReport.append(phaseReport.toString());
+                    changePhase(Game.PHASE_OFFBOARD_REPORT);
+                } else {
+                    roundReport.append("<nothing>\n");
+                    changePhase(Game.PHASE_FIRING);
+                }
+                break;
+            case Game.PHASE_OFFBOARD_REPORT:
+                System.out.println("Offboard Report");
+                changePhase(Game.PHASE_FIRING);
                 break;
             case Game.PHASE_END :
                 if (victory()) {
@@ -1485,6 +1515,8 @@ implements Runnable, ConnectionHandler {
                 break;
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
+            case Game.PHASE_TARGETING :
+            case Game.PHASE_OFFBOARD :
                 if ( toSkip != null ) {
                     processAttack(toSkip, new Vector(0));
                 }
@@ -1946,6 +1978,10 @@ implements Runnable, ConnectionHandler {
                 return isEligibleForFiring(entity);
             case Game.PHASE_PHYSICAL :
                 return isEligibleForPhysical(entity);
+            case Game.PHASE_TARGETING :
+                return isEligibleForTargetingPhase(entity);
+            case Game.PHASE_OFFBOARD :
+                return isEligibleForOffboard(entity);
             default:
                 return true;
         }
@@ -4285,7 +4321,8 @@ implements Runnable, ConnectionHandler {
 
         // is this the right phase?
         if (game.getPhase() != Game.PHASE_FIRING
-        && game.getPhase() != Game.PHASE_PHYSICAL) {
+        && game.getPhase() != Game.PHASE_PHYSICAL
+        && game.getPhase() != Game.PHASE_TARGETING) {
             System.err.println("error: server got attack packet in wrong phase");
             return;
         }
@@ -4431,7 +4468,9 @@ implements Runnable, ConnectionHandler {
      * weapons fire that happens.  Torso twists, for example.
      */
     private void resolveAllButWeaponAttacks() {
-        roundReport.append("\nWeapon Attack Phase\n-------------------\n");
+        if(game.getPhase()==Game.PHASE_FIRING) {
+            roundReport.append("\nWeapon Attack Phase\n-------------------\n");
+        }
 
         Vector clearAttempts = new Vector();
         Vector triggerPodActions = new Vector();
@@ -11141,7 +11180,7 @@ implements Runnable, ConnectionHandler {
                 sendServerChat( message.toString() );
             } else {
                 foundValid = true;
-                game.addAction( new UnloadStrandedAction( connId, 
+                game.addAction( new UnloadStrandedAction( connId,
                                                           entityIds[index] ) );
             }
         }
@@ -11187,7 +11226,7 @@ implements Runnable, ConnectionHandler {
                     Entity transporter =
                         game.getEntity( entity.getTransportId() );
                     this.unloadUnit( transporter, entity,
-                                     transporter.getPosition(), 
+                                     transporter.getPosition(),
                                      transporter.getFacing() );
                 }
             }
@@ -11198,5 +11237,77 @@ implements Runnable, ConnectionHandler {
         game.resetActions();
         changeToNextTurn();
     }
+    private boolean isEligibleForTargetingPhase(Entity entity) {
+        for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
+              Mounted mounted = (Mounted)i.nextElement();
+              WeaponType wtype = (WeaponType)mounted.getType();
+              if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                  return true;
+              }
+          }
+          return false;
 
-}
+    }
+    private boolean isEligibleForOffboard(Entity entity) {
+        return false;//only things w/ tag are, and we don't yet have TAG.
+    }
+    private void resolveIndirectArtilleryAttacks()  {
+        System.out.println("Offboard phase checking for attacks we got " + game.getArtillerySize());
+        Vector results = new Vector(game.getArtillerySize());
+
+        // loop thru received attack actions, getting weapon results
+        System.out.println("OK, here's the check.");
+        for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
+        System.out.println("Is it an AAA?");
+            ArtilleryAttackAction aaa = (ArtilleryAttackAction) i.nextElement();
+            System.out.println("checking an arty for landing" + aaa.turnsTilHit);
+            aaa.turnsTilHit--;
+            if (aaa.turnsTilHit < 0) {
+                System.out.println("Fire in the hole");
+                WeaponAttackAction waa = aaa.getWAA();
+                results.addElement(preTreatWeaponAttack(waa));
+
+            }
+        }
+
+            // loop through weapon results and resolve
+            int cen = Entity.NONE;
+            for (Enumeration i = results.elements();i.hasMoreElements();) {
+                WeaponResult wr = (WeaponResult) i.nextElement();
+                resolveWeaponAttack(wr, cen);
+                cen = wr.waa.getEntityId();
+            }
+
+        Vector gameArtilleryAttacks=game.getArtilleryVector();  //Not exactly great practice, messing with the vector thru this.   I care?
+        for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
+            ArtilleryAttackAction aaa = (ArtilleryAttackAction)i.nextElement();
+
+                if(aaa.turnsTilHit<0) {
+                    gameArtilleryAttacks.remove(aaa);
+                }
+
+        }
+
+
+        // and clear the attacks Vector
+        game.resetActions();
+
+    }
+
+    private void enqueueIndirectArtilleryAttacks() {
+        resolveAllButWeaponAttacks();
+        ArtilleryAttackAction aaa;
+        for (Enumeration i = game.getActions();i.hasMoreElements();) {
+            System.out.println("An action being checked for artillery type and enqued");
+            EntityAction ea = (EntityAction) i.nextElement();
+            Entity entity = game.getEntity(ea.getEntityId());
+            if (ea instanceof WeaponAttackAction) {
+            System.out.println("yay, it's a WAA");
+                WeaponAttackAction waa = (WeaponAttackAction) ea;
+                aaa = new ArtilleryAttackAction(waa, game);
+                game.addArtilleryAttack(aaa);
+            }
+        }
+        game.resetActions();
+    }
+    }

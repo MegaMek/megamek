@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -92,7 +92,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem deployTurn = null;
     private MenuItem deployLoad = null;
     private MenuItem deployUnload = null;
- 
+
     private MenuItem moveWalk = null;
     private MenuItem moveNext = null;
     private MenuItem moveTurn = null;
@@ -129,7 +129,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem physicalBrushOff   = null;
     private MenuItem physicalDodge      = null;
     private MenuItem physicalThrash     = null;
-    
+
     private Client client;
 
     /**
@@ -145,7 +145,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         this();
         client=parent;
     };
-    
+
     public CommonMenuBar() {
         Menu menu = null;
         Menu submenu = null;
@@ -310,9 +310,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         deployUnload = createMenuItem(menu, "Unload", DeploymentDisplay.DEPLOY_UNLOAD);
 
         menu.addSeparator();
-        
+
         menu.add( submenu );
-        
+
         // *** Create the move menu.
         menu = new Menu( "Move" );
         this.add( menu );
@@ -332,7 +332,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         moveUnload = createMenuItem(submenu, "Unload", MovementDisplay.MOVE_UNLOAD);
         submenu.addSeparator();
         moveCharge = createMenuItem(submenu, "Charge", MovementDisplay.MOVE_CHARGE);
-        moveDFA = createMenuItem(submenu, "Death From Above", MovementDisplay.MOVE_DFA);                
+        moveDFA = createMenuItem(submenu, "Death From Above", MovementDisplay.MOVE_DFA);
         submenu.addSeparator();
         moveFlee = createMenuItem(submenu, "Flee", MovementDisplay.MOVE_FLEE);
         moveEject = createMenuItem(submenu, "Eject", MovementDisplay.MOVE_EJECT);
@@ -549,12 +549,14 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             viewMekDisplay.setEnabled( false );
         }
 
-        // We can only view the LOS/Range tool setting and 
+        // We can only view the LOS/Range tool setting and
         // the mini map in certain phases.
         if ( this.phase == Game.PHASE_DEPLOY_MINEFIELDS ||
              this.phase == Game.PHASE_MOVEMENT ||
              this.phase == Game.PHASE_FIRING ||
              this.phase == Game.PHASE_PHYSICAL ||
+             this.phase == Game.PHASE_OFFBOARD ||
+             this.phase == Game.PHASE_TARGETING ||
              this.phase == Game.PHASE_DEPLOYMENT ) {
             viewLOSSetting.setEnabled( true );
             viewMiniMap.setEnabled( true );
@@ -581,6 +583,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
              this.phase == Game.PHASE_MOVEMENT ||
              this.phase == Game.PHASE_FIRING ||
              this.phase == Game.PHASE_PHYSICAL ||
+             this.phase == Game.PHASE_OFFBOARD ||
+             this.phase == Game.PHASE_TARGETING ||
              this.phase == Game.PHASE_END ||
              this.phase == Game.PHASE_DEPLOYMENT ) {
             viewTurnReport.setEnabled( true );
@@ -767,9 +771,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 	public synchronized void setPhysicalThrashEnabled(boolean enabled) {
     	physicalThrash.setEnabled(enabled);
 	}
-	
+
 	//Manages fire menu items...
-	
+
 	public synchronized void setFireFireEnabled(boolean enabled) {
     	fireFire.setEnabled(enabled);
 	}
@@ -797,7 +801,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 	public synchronized void setFireSpotEnabled(boolean enabled) {
     	fireSpot.setEnabled(enabled);
 	}
-    
+
     //
     // KeyListener
     //
@@ -807,7 +811,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             // for every menu accelerator...
             for (Enumeration shortcuts = shortcuts(); shortcuts.hasMoreElements() ;) {
                 MenuShortcut shortcut = (MenuShortcut) shortcuts.nextElement();
-                
+
                 // is this keyPress the same as a menu accelerator?
                 if ((shortcut.getKey() == ev.getKeyCode()) && (shortcut.usesShiftModifier() == ev.isShiftDown()) ) {
                     // fire off the menu action event if the menu is active

@@ -3399,7 +3399,7 @@ public class Compute
          {1,2,2,2,2,3,3,3,4,4,4},
          {1,2,2,3,3,3,4,4,4,5,5}};
         
-        return hit_table[shots - 2][nRoll];
+        return hit_table[shots - 2][nRoll - 2];
     }
 
     /**

@@ -273,7 +273,7 @@ public abstract class Entity
         return crew;
     }
   
-    protected void setCrew(Pilot crew) {
+    public void setCrew(Pilot crew) {
         this.crew = crew;
     }
   

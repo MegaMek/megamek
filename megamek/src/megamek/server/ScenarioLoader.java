@@ -103,14 +103,14 @@ public class ScenarioLoader
     private Coords getCoordsAround(Coords c, Game g)
     {
         // check the requested coords
-        if (g.board.contains(c) && g.getEntity(c) == null) {
+        if (g.board.contains(c) && g.getFirstEntity(c) == null) {
             return c;
         }
         
         // check the surrounding coords
         for (int x = 0; x < 6; x++) {
             Coords c2 = c.translated(x);
-            if (g.board.contains(c2) && g.getEntity(c2) == null) {
+            if (g.board.contains(c2) && g.getFirstEntity(c2) == null) {
                 return c2;
             }
         }
@@ -175,8 +175,8 @@ public class ScenarioLoader
             }
             System.out.println("Loading " + ms.getName());
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-            e.crew = new Pilot(st.nextToken(), Integer.parseInt(st.nextToken()), 
-                    Integer.parseInt(st.nextToken()));
+            e.setCrew(new Pilot(st.nextToken(), Integer.parseInt(st.nextToken()), 
+                    Integer.parseInt(st.nextToken())));
             int nFacing = -1;
             if (st.hasMoreTokens()) {
                 // facing specified

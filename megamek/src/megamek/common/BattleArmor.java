@@ -88,11 +88,18 @@ public class BattleArmor
     private boolean     isStealthy = false;
 
     /**
+     * Flag that is <code>true</code> when this unit is equipped with mimetic
+     * Camo.
+     */
+    private boolean     isMimetic = false;
+
+    /**
      * Modifiers to <code>ToHitData</code> for stealth.
      */
-    private TargetRoll  shortStealthMod = null;
-    private TargetRoll  mediumStealthMod = null;
-    private TargetRoll  longStealthMod = null;
+    private int         shortStealthMod = 0;
+    private int         mediumStealthMod = 0;
+    private int         longStealthMod = 0;
+    private String      stealthName = null;
 
     // Public and Protected constants, constructors, and methods.
 
@@ -147,6 +154,16 @@ public class BattleArmor
      * The internal name for Expert Stealth equipment.
      */
     public static final String EXPERT_STEALTH = "Expert Stealth";
+
+    /**
+     * The internal name for Mimetic Camo equipment.
+     */
+    public static final String MIMETIC_CAMO = "Mimetic Camo";
+
+    /**
+     * The internal name for Single-Hex ECM equipment.
+     */
+    public static final String SINGLE_HEX_ECM = "Single-Hex ECM";
 
     /**
      * The maximum number of men in an Inner Sphere battle armor squad.
@@ -441,25 +458,30 @@ public class BattleArmor
 
         // Is the item a stealth equipment?
         String name = mounted.getType().getInternalName();
-        if ( name.equals( BattleArmor.STEALTH ) ) {
+        if ( BattleArmor.STEALTH.equals( name ) ) {
             this.isStealthy = true;
-            this.shortStealthMod = new TargetRoll( 0, "stealth" );
-            this.mediumStealthMod = new TargetRoll( 1, "stealth" );
-            this.longStealthMod = new TargetRoll( 2, "stealth" );
+            this.shortStealthMod  = 0;
+            this.mediumStealthMod = 1;
+            this.longStealthMod   = 2;
+            this.stealthName = "stealth";
         }
-        else if ( name.equals( BattleArmor.ADVANCED_STEALTH ) ) {
+        else if ( BattleArmor.ADVANCED_STEALTH.equals( name ) ) {
             this.isStealthy = true;
-            this.shortStealthMod = new TargetRoll( 1, "advanced stealth" );
-            this.mediumStealthMod = new TargetRoll( 1, "advanced stealth" );
-            this.longStealthMod = new TargetRoll( 2, "advanced stealth" );
+            this.shortStealthMod  = 1;
+            this.mediumStealthMod = 1;
+            this.longStealthMod   = 2;
+            this.stealthName = "advanced stealth";
         }
-        else if ( name.equals( BattleArmor.EXPERT_STEALTH ) ) {
+        else if ( BattleArmor.EXPERT_STEALTH.equals( name ) ) {
             this.isStealthy = true;
-            this.shortStealthMod = new TargetRoll( 1, "expert stealth" );
-            this.mediumStealthMod = new TargetRoll( 2, "expert stealth" );
-            this.longStealthMod = new TargetRoll( 3, "expert stealth" );
+            this.shortStealthMod  = 1;
+            this.mediumStealthMod = 2;
+            this.longStealthMod   = 3;
+            this.stealthName = "expert stealth";
         }
-
+        else if ( BattleArmor.MIMETIC_CAMO.equals( name ) ) {
+            this.isMimetic = true;
+        }
     }
 
     /**
@@ -570,6 +592,72 @@ public class BattleArmor
         // Unit isn't burdened.
         return false;
     }
+
+    /**
+     * Determine if this unit has an active stealth system.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return  <code>true</code> if this unit has a stealth system that
+     *          is currently active, <code>false</code> if there is no
+     *          stealth system or if it is inactive.
+     */
+    public boolean isStealthActive() {
+        return (isStealthy || isMimetic);
+    }
+
+    /**
+     * Determine the stealth modifier for firing at this unit from the
+     * given range.  If the value supplied for <code>range</code> is not
+     * one of the <code>Entity</code> class range constants, an
+     * <code>IllegalArgumentException</code> will be thrown.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @param   range - a <code>char</code> value that must match one
+     *          of the <code>Entity</code> class range constants.
+     * @return  a <code>TargetRoll</code> value that contains the stealth
+     *          modifier for the given range.
+     */
+    public TargetRoll getStealthModifier( char range ) {
+        TargetRoll result = null;
+
+        // Stealth must be active.
+        if ( !isStealthActive() ) {
+            result = new TargetRoll( 0, "stealth not active"  );
+        }
+
+        // Mimetic camo works on the amount this unit moved.
+        else if ( isMimetic ) {
+            result = new TargetRoll( 3 - this.delta_distance,
+                                     "mimetic camoflage" );
+        }
+        
+        // Stealthy units alreay have their to-hit mods defined.
+        else if ( isStealthy ) {
+            switch ( range ) {
+            case Entity.RANGE_SHORT:
+                result = new TargetRoll( this.shortStealthMod,
+                                         this.stealthName );
+                break;
+            case Entity.RANGE_MEDIUM:
+                result = new TargetRoll( this.mediumStealthMod,
+                                         this.stealthName );
+                break;
+            case Entity.RANGE_LONG:
+                result = new TargetRoll( this.longStealthMod,
+                                         this.stealthName );
+                break;
+            default:
+                throw new IllegalArgumentException
+                    ( "Unknown range constant: " + range );
+            }
+        }
+
+        // Return the result.
+        return result;
+
+    } // End public TargetRoll getStealthModifier( char )
 
 } // End public class BattleArmor extends Infantry implements Serializable
 

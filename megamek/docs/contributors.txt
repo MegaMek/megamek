@@ -101,6 +101,9 @@ Lot of people have contributed to the MegaMek project.
      Jan Hansen <felsen@users.sourceforge.net>
      Brock Peterman <bh-21@users.sourceforge.net>
      R. Newton <anubaji@users.sourceforge.net>
+     Jan Rzadkowski <st0ny@users.sourceforge.net>
+     Santander
+     Ploppy
 
   And Of Course...
      FASA, WizKids and FanPro for creating and publishing the original game of 

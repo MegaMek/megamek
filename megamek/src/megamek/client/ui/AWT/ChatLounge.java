@@ -22,6 +22,7 @@ import java.io.*;
 import megamek.client.util.widget.*;
 
 import megamek.common.*;
+import megamek.client.util.StringUtil;
 
 public class ChatLounge extends AbstractPhaseDisplay
     implements ActionListener, ItemListener, BoardListener, GameListener
@@ -819,18 +820,26 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     public static Vector getCamoList() {
-      Vector camoList = new Vector();
+      com.sun.java.util.collections.Vector tempList = new com.sun.java.util.collections.Vector();
+      com.sun.java.util.collections.Comparator sortComp = StringUtil.stringComparator();
       
-      camoList.addElement(Player.NO_CAMO);
-
       File camoLib = new File("data/camo");
       String[] fileList = camoLib.list();
       for (int i = 0; i < fileList.length; i++) {
         if (fileList[i].endsWith(".jpg")) {
-          camoList.addElement(fileList[i].substring(0, fileList[i].indexOf(".jpg")));
+          tempList.addElement(fileList[i].substring(0, fileList[i].indexOf(".jpg")));
         }
       }
 
+      com.sun.java.util.collections.Collections.sort(tempList, sortComp);
+
+      Vector camoList = new Vector();
+      
+      for (int i = 0; i < tempList.size(); i++) {
+      	camoList.addElement(tempList.elementAt(i));
+      }
+
+      camoList.insertElementAt(Player.NO_CAMO, 0);
       return camoList;
     }
     

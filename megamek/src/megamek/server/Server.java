@@ -8622,10 +8622,11 @@ implements Runnable, ConnectionHandler {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
 
-            // only unconscious pilots of mechs and proto's can roll to wake up
+            // only unconscious pilots of mechs and protos and MechWarrirs
+            // can roll to wake up
             if ( !e.isTargetable() || !e.crew.isUnconscious() ||
                  e.crew.isKoThisRound() ||
-                !(e instanceof Mech || e instanceof Protomech)) {
+                !(e instanceof Mech || e instanceof Protomech || e instanceof MechWarrior)) {
                 continue;
             }
             anyRolls = true;
@@ -13264,8 +13265,7 @@ implements Runnable, ConnectionHandler {
             pilot.setDone(true);
             // ASSUMPTION: Pilot dies if he ejects unconsciously, BMRr does not
             // specify either way.
-            if (entity.getCrew().isDoomed()
-                || entity.getCrew().isUnconscious()) {
+            if (entity.getCrew().isDoomed()) {
                 desc.append("but the pilot does not survive!\n");
                 desc.append(destroyEntity(pilot, "deadly ejection", false, false));
             }

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.29 (CVS)
+v 0.29.29 (2004-03-21 4:35pm)
 + Bug 802115: Failed MASC now marks mech as "done".
 + Bug 915164: Cust. Mech button disabled for other players mechs in blind drop.
 + RFE 916248: Right-clicking no longer scrolls the board.

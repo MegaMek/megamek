@@ -1590,24 +1590,14 @@ public abstract class Entity
         
         return num;
     }
-    
-    /**
-     * Returns true if the entity has a hip crit
-     */
-      public boolean hasHipCrit() {
-        boolean hasCrit = false;
 
-        for ( int i = 0; i < locations(); i++ ) {    
-          if ( locationIsLeg(i) ) {
-            if ( getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, i) > 0 ) {
-              hasCrit = true;
-              break;
-            }
-          }
-        }
-        
-        return hasCrit;
-      }
+    /**
+     * Returns true if the entity has a hip crit.
+     * Overridden by sub-classes.
+     */
+    public boolean hasHipCrit() {
+        return false;
+    }
 
     /**
      * Returns true if the entity has a leg actuator crit
@@ -2500,7 +2490,7 @@ public abstract class Entity
      * @param component - One of this new entity's <code>Transporter</code>s.
      */
     /* package */ void addTransporter( Transporter component ) {
-  transports.addElement( component );
+        transports.addElement( component );
     }
 
     /**
@@ -2512,18 +2502,18 @@ public abstract class Entity
      *          <code>false</code> otherwise.
      */
     public boolean canLoad( Entity unit ) {
-  // Walk through this entity's transport components;
-  // if one of them can load the unit, we can.
-  Enumeration iter = this.transports.elements();
-  while ( iter.hasMoreElements() ) {
+        // Walk through this entity's transport components;
+        // if one of them can load the unit, we can.
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-      if ( next.canLoad( unit ) ) {
-    return true;
-      }
-  }
+            if ( next.canLoad( unit ) ) {
+                return true;
+            }
+        }
 
-  // If we got here, none of our transports can carry the unit.
-  return false;
+        // If we got here, none of our transports can carry the unit.
+        return false;
     }
 
     /**
@@ -2534,22 +2524,22 @@ public abstract class Entity
      *          <code>IllegalArgumentException</code> exception will be thrown.
      */
     public void load( Entity unit ) throws IllegalArgumentException {
-  // Walk through this entity's transport components;
-  // find the one that can load the unit.
-  // Stop looking after the first match.
-  Enumeration iter = this.transports.elements();
-  while ( iter.hasMoreElements() ) {
+        // Walk through this entity's transport components;
+        // find the one that can load the unit.
+        // Stop looking after the first match.
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-      if ( next.canLoad( unit ) ) {
-    next.load( unit );
-    return;
-      }
-  }
+            if ( next.canLoad( unit ) ) {
+                next.load( unit );
+                return;
+            }
+        }
 
-  // If we got to this point, then we can't load the unit.
-  throw new IllegalArgumentException( this.getShortName() +
-              " can not load " + 
-              unit.getShortName() );
+        // If we got to this point, then we can't load the unit.
+        throw new IllegalArgumentException( this.getShortName() +
+                                            " can not load " + 
+                                            unit.getShortName() );
     }
 
     /**
@@ -2562,20 +2552,20 @@ public abstract class Entity
      *
      */
     public Vector getLoadedUnits() {
-  Vector result = new Vector();
+        Vector result = new Vector();
 
-  // Walk through this entity's transport components;
-  // add all of their lists to ours.
-  Enumeration iter = this.transports.elements();
-  while ( iter.hasMoreElements() ) {
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
             for (Enumeration i = next.getLoadedUnits().elements(); i.hasMoreElements();) {
                 result.addElement(i.nextElement());
             }
-  }
+        }
 
-  // Return the list.
-  return result;
+        // Return the list.
+        return result;
     }
 
     /**

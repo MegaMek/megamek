@@ -111,7 +111,7 @@ public class BLKInfantryFile implements MechLoader {
             throw new EntityLoadingException("Incorrect armor array length");   
         }
         
-        t.setHasTurret(armor.length == 5);
+        t.setHasNoTurret(armor.length == 4);
         
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];

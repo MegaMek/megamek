@@ -361,6 +361,17 @@ public class Tank
         }
     }
     
+    public int elevation()
+    {
+        if (getMovementType() == Entity.MovementType.HOVER &&
+                game.board.getHex(getPosition()).contains(Terrain.WATER)) {
+            return 0;
+        }
+        else {
+            return super.elevation();
+        }
+    }
+    
     public int getMaxElevationChange()
     {
         return 1;

@@ -882,13 +882,12 @@ public class FiringDisplay
 
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
             boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire");
+            final Targetable targ = this.chooseTarget( b.getCoords() );
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
-            } else if (friendlyFire && client.game.getFirstEntity(b.getCoords()) != null) { 
-                target(client.game.getFirstEntity(b.getCoords()));
-            } else if ( client.game.getFirstEnemyEntity(b.getCoords(), ce()) != null) {
-                target(client.game.getFirstEnemyEntity(b.getCoords(), ce()));
+            } else if ( targ != null ) {
+                target( targ );
             }
         }
     }
@@ -1434,5 +1433,74 @@ public class FiringDisplay
         client.game.board.removeBoardListener(this);
         clientgui.mechD.wPan.weaponList.removeItemListener(this);
     }
+    
+    /**
+     * Have the player select a target from the entities at the given coords.
+     *
+     * @param   pos - the <code>Coords</code> containing targets.
+     */
+    private Targetable chooseTarget( Coords pos ) {
+          
+        boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire");
+        // Assume that we have *no* choice.
+        Targetable choice = null;
+        Enumeration choices = null;
+        
+        // Get the available choices, depending on friendly fire
+        if (friendlyFire) {
+            choices = client.game.getEntities( pos );
+        } else choices = client.game.getEnemyEntities(pos, ce() );
+        
+        // Convert the choices into a List of targets.
+        Vector targets = new Vector();
+        while ( choices.hasMoreElements() ) {
+            choice = (Targetable) choices.nextElement();
+            if ( !ce().equals( choice ) ) {
+                targets.addElement( choice );
+            }
+        }
+
+        // Is there a building in the hex?
+        Building bldg = client.game.board.getBuildingAt( pos );
+        if ( bldg != null ) {
+            targets.addElement( new BuildingTarget(pos, client.game.board, false) );
+        }
+
+        // Do we have a single choice?
+        if ( targets.size() == 1 ) {
+
+            // Return  that choice.
+            choice = (Targetable) targets.elementAt( 0 );
+
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        else if ( targets.size() > 1 ) {
+            String[] names = new String[ targets.size() ];
+            StringBuffer question = new StringBuffer();
+            question.append( "Hex " );
+            question.append( pos.getBoardNum() );
+            question.append( " contains the following targets." );
+            question.append( "\n\nWhich target do you want to attack?" );
+            for ( int loop = 0; loop < names.length; loop++ ) {
+                names[loop] = ( (Targetable)targets.elementAt(loop) )
+                    .getDisplayName();
+            }
+            SingleChoiceDialog choiceDialog =
+                new SingleChoiceDialog( clientgui.frame,
+                                        "Choose Target",
+                                        question.toString(),
+                                        names );
+            choiceDialog.show();
+            if ( choiceDialog.getAnswer() == true ) {
+                choice = (Targetable) targets.elementAt
+                    ( choiceDialog.getChoice() );
+            }
+        } // End have-choices
+
+        // Return the chosen unit.
+        return choice;
+
+    } // End private Targetable chooseTarget( Coords )
 
 }

@@ -69,6 +69,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v CVS
++ new naming system for mechset.txt, allowing omnimechs, etc
+
 v 0.27.9 (12-01-02, 12:19pm)
 + 642892: charging units don't move into the target's hex until resolution
 + Clearing fire now correctly clears flip arms.--LDE

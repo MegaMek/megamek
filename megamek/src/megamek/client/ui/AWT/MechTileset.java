@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -27,10 +27,12 @@ import java.io.*;
 import megamek.common.*;
 
 /**
- * This will match a mech with the appropriate image
+ * MechTileset is a misleading name, as this matches any unit, not just mechs
+ * with the appropriate image.  It requires data/mex/mechset.txt, the format of
+ * which is explained in that file.
  *
  * @author  Ben
- * @version 
+ * @version
  */
 public class MechTileset {
     private String LIGHT_STRING = "default_light";
@@ -51,7 +53,7 @@ public class MechTileset {
     private MechEntry default_inf;
     
     private HashMap exact = new HashMap();
-    private HashMap wildcard = new HashMap();
+    private HashMap chassis = new HashMap();
     
     /** Creates new MechTileset */
     public MechTileset() {
@@ -70,23 +72,24 @@ public class MechTileset {
      * Returns the MechEntry corresponding to the entity
      */
     private MechEntry entryFor(Entity entity) {
-        String model = entity.getModel();
-        int dash;
-        String beforeTheDash;
-        
         // first, check for exact matches
-        if (exact.containsKey(model)) {
-            return (MechEntry)exact.get(model);
+        
+        System.out.println("checking for '" + entity.getShortName() + "'...");
+        
+        if (exact.containsKey(entity.getShortName())) {
+            return (MechEntry)exact.get(entity.getShortName());
         }
         
-        // next, before-the-dash wildcard matches
-        dash = model.indexOf('-');
-        beforeTheDash = dash == -1 ? null : model.substring(0, dash); 
-        if (beforeTheDash != null && wildcard.containsKey(beforeTheDash)) {
-            return (MechEntry)wildcard.get(beforeTheDash);
+        // next, chassis matches
+        if (chassis.containsKey(entity.getChassis())) {
+            return (MechEntry)chassis.get(entity.getChassis());
         }
         
-        // next, the generic model
+        // last, the generic model
+        return genericFor(entity);
+    }
+    
+    public MechEntry genericFor(Entity entity) {
         if (entity.entityIsQuad()) {
             return default_quad;
         }
@@ -96,7 +99,7 @@ public class MechTileset {
         if (entity instanceof Infantry) {
             return default_inf;
         }
-        // weight?
+        // mech, by weight
         if (entity.getWeight() <= Mech.WEIGHT_LIGHT) {
             return default_light;
         } else if (entity.getWeight() <= Mech.WEIGHT_MEDIUM) {
@@ -122,16 +125,23 @@ public class MechTileset {
             st.quoteChar('"');
             st.wordChars('_', '_');
             while(st.nextToken() != StreamTokenizer.TT_EOF) {
-                String model = null;
+                String name = null;
                 String imageName = null;
-                if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("mech")) {
+                if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("chassis")) {
                     st.nextToken();
-                    model = st.sval;
+                    name = st.sval;
                     st.nextToken();
                     imageName = st.sval;
                     // add to list
-                    addEntry(model, imageName);
-                 }
+                    chassis.put(name, new MechEntry(name, imageName));
+                } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("exact")) {
+                    st.nextToken();
+                    name = st.sval;
+                    st.nextToken();
+                    imageName = st.sval;
+                    // add to list
+                    exact.put(name, new MechEntry(name, imageName));
+                }
             }
             r.close();
         } catch (IOException ex) {
@@ -147,28 +157,23 @@ public class MechTileset {
         default_inf = (MechEntry)exact.get(INF_STRING);
     }
     
-    private void addEntry(String model, String imageName) {
-        if (model.endsWith("-*")) {
-            wildcard.put(model.substring(0, model.indexOf("-*")), new MechEntry(model, imageName));
-        } else {
-            exact.put(model, new MechEntry(model, imageName));
-        }
-    }
-    
-    
+    /**
+     * Stores the name, image file name, and image (once loaded) for a mech or
+     * other entity
+     */
     private class MechEntry {
-        private String model;
+        private String name;
         private String imageFile;
         private Image image;
         
-        public MechEntry(String model, String imageFile) {
-            this.model = model;
+        public MechEntry(String name, String imageFile) {
+            this.name = name;
             this.imageFile = imageFile;
             this.image = null;
         }
         
-        public String getModel() {
-            return model;
+        public String getName() {
+            return name;
         }
         
         public Image getImage() {
@@ -177,6 +182,6 @@ public class MechTileset {
         
         public void loadImage(Component comp) {
             image = comp.getToolkit().getImage("data/mex/" + imageFile);
-        }        
+        }
     }
 }

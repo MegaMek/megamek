@@ -404,7 +404,7 @@ public class BotClient extends Client
 	     } // End check-inf_move_last
 
             MoveOption mo = calculateBestMove(entNum);
-            sendChat("Could move " + game.getEntity(entNum).getName() + " with " + mo.moves + ": dmg " + mo.damagePotential + ", threat " + mo.threat);
+            sendChat("Could move " + game.getEntity(entNum).getShortName() + " with " + mo.moves + ": dmg " + mo.damagePotential + ", threat " + mo.threat);
 
             if (opt == null) {
                 opt = mo;
@@ -423,7 +423,7 @@ public class BotClient extends Client
 	 }
 
          // okay, now we've got a move -- submit it
-         sendChat("Move " + game.getEntity(theEnt).getName() + ": " + opt.moves);
+         sendChat("Move " + game.getEntity(theEnt).getShortName() + ": " + opt.moves);
          
          moveEntity(theEnt, opt.moves);
          sendReady(true);

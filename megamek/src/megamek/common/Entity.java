@@ -62,8 +62,8 @@ public abstract class Entity
 
     protected float             weight;
     protected boolean           omni = false;
+    protected String            chassis;
     protected String            model;
-    protected String            name;
     protected int               year;
     protected int		techLevel;
     
@@ -171,14 +171,14 @@ public abstract class Entity
     }
     
     /**
-     * Returns the unit name for this entity.
+     * Returns the chassis name for this entity.
      */
-    public String getName() {
-        return name;
+    public String getChassis() {
+        return chassis;
     }
   
-    protected void setName(String name) {
-        this.name = name;
+    protected void setChassis(String chassis) {
+        this.chassis = chassis;
     }
     
     /**
@@ -471,46 +471,33 @@ public abstract class Entity
         if (displayName == null) {
             generateDisplayName();
         }
-        
         return displayName;
     }
     
     /**
      * Generates the display name for this entity.
      * 
-     * The display name is in the format [Model] [Name] ([Player Name]) for
-     * non-omnis, and in the format [Name] [Model] ([Player Name]) for omnis.
+     * The display name is in the format [Chassis] [Model] ([Player Name]).
      */
     private void generateDisplayName() {
         StringBuffer nbuf = new StringBuffer();
-        
-        if (isOmni()) {
-            nbuf.append(name);
-            nbuf.append(" ");
-            nbuf.append(model);
-        } else {
-            nbuf.append(model);
-            nbuf.append(" ");
-            nbuf.append(name);
-        }
+        nbuf.append(chassis).append(" ").append(model);
         
         if (getOwner() != null) {
-            nbuf.append(" (");
-            nbuf.append(getOwner().getName());
-            nbuf.append(")");
+            nbuf.append(" (").append(getOwner().getName()).append(")");
         }
         
         this.displayName = nbuf.toString();
     }
     
     /**
-     * A short name, suitable for displaying above a unit icon
+     * A short name, suitable for displaying above a unit icon.  The short name
+     * is basically the same as the display name, minus the player name.
      */
     public String getShortName() {
         if (shortName == null) {
             generateShortName();
         }
-        
         return shortName;
     }
     
@@ -519,15 +506,7 @@ public abstract class Entity
      */
     private void generateShortName() {
         StringBuffer nbuf = new StringBuffer();
-        
-        if (isOmni()) {
-            nbuf.append(name);
-            nbuf.append(" ");
-            nbuf.append(model);
-        } else {
-            nbuf.append(model);
-        }
-
+        nbuf.append(chassis).append(" ").append(model);
         this.shortName = nbuf.toString();
     }
     

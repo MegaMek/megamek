@@ -1441,7 +1441,7 @@ public class BoardView1
         
         private String[] getTooltip() {
             String[] tipStrings = new String[3];
-            tipStrings[0] = entity.getName() + " (" + entity.getOwner().getName() + "); "
+            tipStrings[0] = entity.getChassis() + " (" + entity.getOwner().getName() + "); "
             + entity.getCrew().getGunnery() + "/" + entity.getCrew().getPiloting() + " pilot";
             tipStrings[1] = "Move " + entity.getMovementAbbr(entity.moved) + ":" + entity.delta_distance 
             + " (+" + Compute.getTargetMovementModifier(game, entity.getId()).getValue() + ");" 

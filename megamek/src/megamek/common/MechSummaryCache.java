@@ -167,7 +167,7 @@ public class MechSummaryCache
                 MechFileParser mfp = new MechFileParser(f);
                 Entity m = mfp.getEntity();
                 MechSummary ms = new MechSummary();
-                ms.setName(m.getName());
+                ms.setName(m.getShortName());
                 ms.setRef(m.getModel());
                 ms.setSourceFile(f);
                 ms.setEntryName(null);
@@ -213,7 +213,7 @@ public class MechSummaryCache
                 MechFileParser mfp = new MechFileParser(zFile.getInputStream(zEntry), zEntry.getName());
                 Entity m = mfp.getEntity();
                 MechSummary ms = new MechSummary();
-                ms.setName(m.getName());
+                ms.setName(m.getShortName());
                 ms.setRef(m.getModel());
                 ms.setSourceFile(fZipFile);
                 ms.setEntryName(zEntry.getName());

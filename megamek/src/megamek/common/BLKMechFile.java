@@ -92,7 +92,7 @@ public class BLKMechFile implements MechLoader {
       //Do I even write the year for these??
         
         if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find block.");
-            mech.setName(dataFile.getDataAsString("Name")[0]);
+            mech.setChassis(dataFile.getDataAsString("Name")[0]);
         
         if (!dataFile.exists("model")) throw new EntityLoadingException("Could not find block.");
             mech.setModel(dataFile.getDataAsString("Model")[0]);

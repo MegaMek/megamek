@@ -494,7 +494,7 @@ public class Tank
     
     public void autoSetInternal()
     {
-        int nInternal = (int)Math.round(weight / 10.0);
+        int nInternal = (int)Math.ceil(weight / 10.0);
         
         for (int x = 1; x < locations(); x++) {
             initializeInternal(nInternal, x);

@@ -336,10 +336,11 @@ public class XMLStreamParser implements XMLResponder {
                     StringBuffer key = new StringBuffer( chassis );
                     ms = MechSummaryCache.getInstance()
                         .getMech( key.toString() );
-                    if ( ms == null && model != null && model.length() > 0 ) {
+                    if ( model != null && model.length() > 0 ) {
                         key.append( " " ).append( model );
                         ms = MechSummaryCache.getInstance()
                             .getMech( key.toString() );
+                        // That didn't work.  Try swaping model and chassis.
                         if ( ms == null ) {
                             key = new StringBuffer( model );
                             key.append( " " ).append( chassis );

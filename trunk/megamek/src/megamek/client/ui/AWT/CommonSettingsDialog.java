@@ -27,6 +27,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Checkbox    autoEndFiring;
     private Checkbox    nagForMASC;
     private Checkbox    nagForPSR;
+    private Checkbox    nagForNoAction;
     private Checkbox    animateMove;
     private Checkbox    showWrecks;
     private Checkbox    soundMute;
@@ -61,6 +62,9 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         nagForPSR
             = new Checkbox( "Confirm all movement that requires a PSR." );
         this.add( nagForPSR );
+        nagForNoAction
+            = new Checkbox( "Confirm done when no movement/firing/physicals declared." );
+        this.add( nagForNoAction );
         animateMove
             = new Checkbox( "Animate movement." );
         this.add( animateMove );
@@ -118,6 +122,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         autoEndFiring.setState( Settings.autoEndFiring );
         nagForMASC.setState( Settings.nagForMASC );
         nagForPSR.setState( Settings.nagForPSR );
+        nagForNoAction.setState( Settings.nagForNoAction );
         animateMove.setState( Settings.showMoveStep );
         showWrecks.setState( Settings.showWrecks );
         soundMute.setState( Settings.soundMute );
@@ -141,6 +146,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.autoEndFiring =  autoEndFiring.getState();
         Settings.nagForMASC =     nagForMASC.getState();
         Settings.nagForPSR =      nagForPSR.getState();
+        Settings.nagForNoAction = nagForNoAction.getState();
         Settings.showMoveStep =   animateMove.getState();
         Settings.showWrecks =     showWrecks.getState();
         Settings.soundMute =      soundMute.getState();

@@ -476,6 +476,16 @@ public class FiringDisplay
      * queue to the server.
      */
     private void ready() {
+        if (attacks.isEmpty() && Settings.nagForNoAction) {
+            // comfirm this action
+            String title = "Don't fire?";
+            String body = "This unit has not fired any weapons.\n\n" +
+                "Are you really done?\n";
+            if (!client.doYesNoDialog(title, body)) {
+                return;
+            }
+        }
+
         // stop further input (hopefully)
         disableButtons();
 

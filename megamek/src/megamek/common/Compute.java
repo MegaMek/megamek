@@ -1556,13 +1556,13 @@ public class Compute
         if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
         || (hexEl + 2 > attEl && ae.getPosition().distance(coords) == 1)
         || (hexEl + 2 > targEl && te.getPosition().distance(coords) == 1)) {
-            if (hex.levelOf(Terrain.WOODS) == 1) {
+            // smoke overrides any woods in the hex
+            if (hex.contains(Terrain.SMOKE)) {
+                los.smoke++;
+            } else if (hex.levelOf(Terrain.WOODS) == 1) {
                 los.lightWoods++;
             } else if (hex.levelOf(Terrain.WOODS) > 1) {
                 los.heavyWoods++;
-            }
-            if (hex.contains(Terrain.SMOKE)) {
-                los.smoke++;
             }
         }
         
@@ -2703,15 +2703,14 @@ public class Compute
             toHit.addModifier(-1, "target in water");
         }
 
-        if (hex.levelOf(Terrain.WOODS) == 1) {
+        if (hex.contains(Terrain.SMOKE)) {
+            toHit.addModifier(2, "target in smoke");
+        } else if (hex.levelOf(Terrain.WOODS) == 1) {
             toHit.addModifier(1, "target in light woods");
         } else if (hex.levelOf(Terrain.WOODS) > 1) {
             toHit.addModifier(2, "target in heavy woods");
         }
 
-        if (hex.contains(Terrain.SMOKE)) {
-            toHit.addModifier(2, "target in smoke");
-        }
         
         return toHit;
     }

@@ -270,10 +270,7 @@ implements Runnable, ConnectionHandler {
      * Returns a free entity id.  Perhaps this should be in Game instead.
      */
     public int getFreeEntityId() {
-        while (game.getEntity(entityCounter) != null) {
-            entityCounter++;
-        }
-        return entityCounter;
+        return game.getNextEntityId();
     }
 
     /**

@@ -126,7 +126,11 @@ public class Game implements Serializable
     private Hashtable minefields = new Hashtable();
     private Vector vibrabombs = new Vector();
     private Vector offboardArtilleryAttacks = new Vector();
-
+    
+    
+    private int lastEntityId;
+    
+    
     /**
      * Constructor
      */
@@ -914,6 +918,9 @@ public class Game implements Serializable
         entity.setGame(this);
         entities.addElement(entity);
         entityIds.put(new Integer(id), entity);
+        
+        
+        if(id > lastEntityId) lastEntityId = id;
     }
 
     public void setEntity(int id, Entity entity) {
@@ -925,8 +932,21 @@ public class Game implements Serializable
             entities.setElementAt(entity, entities.indexOf(oldEntity));
         }
         entityIds.put(new Integer(id), entity);
+        
+        
+        if(id > lastEntityId) lastEntityId = id;
     }
-
+    
+    
+    /**
+     * @return int containing an unused entity id
+     */
+    public int getNextEntityId()
+    {
+      return lastEntityId + 1;
+    }
+    
+    
     /**
      * Returns true if an entity with the specified id number exists in this
      * game.
@@ -1026,12 +1046,17 @@ public class Game implements Serializable
      */
     private void reindexEntities() {
         entityIds.clear();
+        lastEntityId = 0;
         if ( entities != null ) {
             // Add these entities to the game.
             for (Enumeration i = entities.elements(); i.hasMoreElements();) {
                 final Entity entity = (Entity)i.nextElement();
-                entityIds.put(new Integer(entity.getId()), entity);
+                final int id = entity.getId();
+                entityIds.put(new Integer(id), entity);
                 entity.setGame(this);
+                
+                
+                if(id > lastEntityId) lastEntityId = id;
             }
         }
     }

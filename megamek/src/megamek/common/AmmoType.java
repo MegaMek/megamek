@@ -2160,6 +2160,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 6;
         ammo.bv = 0;
         

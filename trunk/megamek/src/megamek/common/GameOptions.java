@@ -91,6 +91,8 @@ public class GameOptions extends Options implements Serializable {
         addOption(ruleBreakers, new GameOption("no_clan_physical", "No physical attacks for the clans", "If checked, clan Meks may not make physical attacks.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("no_hover_charge", "No charge attacks for Hover vehicles", "If checked, Hover vehicles may not make rams/charges.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("woods_burn_down", "Woods have a chance to burn down", "If checked, woods will burn down as if cleared on a roll of 11+.\n\nUnchecked by default.", false));
+        addOption(ruleBreakers, new GameOption("vechicles_safe_from_infernos", "Vehicles may not be the target of an Inferno missle attack.", "If checked, Vehicles cannot be the target of an Inferno SRM attack.\n\nUnchecked by default.", false));
+        addOption(ruleBreakers, new GameOption("protos_safe_from_infernos", "Protomechs may not be the target of an Inferno missle attack.", "If checked, Protomechs cannot be the target of an Inferno SRM attack.\n\nUnchecked by default.", false));
     }
 
     public void loadOptions(Client client, String password) {

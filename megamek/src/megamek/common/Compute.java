@@ -541,27 +541,20 @@ public class Compute
 	// Walk through the entities in the given hex.
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
-	    final boolean isEnemy = 
-		inHex.getOwner().isEnemyOf(entering.getOwner());
 
 	    // Don't compare the entering entity to itself.
 	    if ( !(inHex.equals(entering)) ) {
 
-		// Only Infantry can enter the hex of an enemy entity.
-		if ( !isInfantry && isEnemy ) {
-		    return inHex;
-		}
-
 		// If the entering entity is a mech,
 		// then any other mech in the hex is a violation.
-		else if ( isMech && (inHex instanceof Mech) ) {
+		if ( isMech && (inHex instanceof Mech) ) {
                     return inHex;
 		}
 
 		// Otherwise, if there are two present entities controlled
 		// by this player, returns a random one of the two.
 		// Somewhat arbitrary, but how else should we resolve it?
-		if ( !isEnemy ) {
+		if ( !inHex.getOwner().isEnemyOf(entering.getOwner()) ) {
 		    if (firstEntity == null) {
 			firstEntity = inHex;
 		    } else {

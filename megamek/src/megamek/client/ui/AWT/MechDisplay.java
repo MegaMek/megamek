@@ -1406,7 +1406,8 @@ class ExtraPanel
             int team = player.getTeam();
             if ( !player.equals(client.getLocalPlayer()) &&
                  en.isNarcedBy( team ) ) {
-                buff = new StringBuffer( player.getName() );
+                buff = new StringBuffer( "NARCed by " );
+                buff.append( player.getName() );
                 buff.append( " [" )
                     .append( Player.teamNames[team] )
                     .append( "]" );

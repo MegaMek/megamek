@@ -367,14 +367,23 @@ public class Client extends Panel
             break;
         case Game.PHASE_MOVEMENT :
             switchPanel(new MovementDisplay(this));
+            if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                setMapVisible(true);
+            }
             break;
         case Game.PHASE_FIRING :
             switchPanel(new FiringDisplay(this));
+            if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                setMapVisible(true);
+            }
             break;
         case Game.PHASE_PHYSICAL :
             game.resetActions();
             bv.refreshAttacks();
             switchPanel(new PhysicalDisplay(this));
+            if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                setMapVisible(true);
+            }
             break;
         case Game.PHASE_INITIATIVE :
             game.resetActions();
@@ -385,6 +394,7 @@ public class Client extends Panel
         case Game.PHASE_END :
         case Game.PHASE_VICTORY :
             switchPanel(new ReportDisplay(this));
+            setMapVisible(false);
             break;
         }
         this.validate();
@@ -436,8 +446,14 @@ public class Client extends Panel
     }
     
     /** Toggles the minimap window
+         Also, toggles the minimap enabled setting
      */
     public void toggleMap() {
+        if (minimapW.isVisible()) {
+            Settings.minimapEnabled = false;
+        } else {
+            Settings.minimapEnabled = true;
+        }
         minimapW.setVisible(!minimapW.isVisible());
     }
     

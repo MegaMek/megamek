@@ -13042,11 +13042,23 @@ implements Runnable, ConnectionHandler {
                     doEntityDisplacementMinefieldCheck( pilot,
                                                         entity.getPosition(),
                                                         targetCoords );
-                    this.entityUpdate(pilot.getId());
+                    if (game.getOptions().booleanOption("vacuum")) {
+                        desc.append("Unfortunately, the pilot is not wearing a pressure suit.");
+                        desc.append(destroyEntity(pilot, "explosive decompression", false, false));
+                    }
+                    // Update the entity, unless the pilot died.
+                    if (!pilot.isDoomed()) {
+                        this.entityUpdate(pilot.getId());
+                    }
                 } else {
                     desc.append("and the pilot ejects safely and lands far from the battle!");
-                    game.removeEntity( pilot.getId(), Entity.REMOVE_IN_RETREAT );
-                    send(createRemoveEntityPacket(pilot.getId(), Entity.REMOVE_IN_RETREAT) );                  
+                    if (game.getOptions().booleanOption("vacuum")) {
+                        desc.append("Unfortunately, the pilot is not wearing a pressure suit.");
+                        desc.append(destroyEntity(pilot, "explosive decompression", false, false));
+                    } else {
+                        game.removeEntity( pilot.getId(), Entity.REMOVE_IN_RETREAT );
+                        send(createRemoveEntityPacket(pilot.getId(), Entity.REMOVE_IN_RETREAT) );
+                    }
                 }
             } // Pilot safely ejects.
 

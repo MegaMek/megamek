@@ -1767,13 +1767,18 @@ public class BoardView1
     /**
      * Sprite and info for an attack.  Does not actually use the image buffer
      * as this can be horribly inefficient for long diagonal lines.
+     *
+     * Appears as an arrow. Arrow becoming cut in half when two Meks attacking
+     * each other.
      */
     private class AttackSprite extends Sprite
     {
         private java.util.Vector attacks = new java.util.Vector();
-        private Polygon attackPoly;
+        private Point a;
+        private Point t;
+        private double an;
+        private StraightArrowPolygon attackPoly;
         private Color attackColor;
-        
         private int entityId;
         private int targetType;
         private int targetId;
@@ -1782,36 +1787,46 @@ public class BoardView1
         private Vector weaponDescs = new Vector();
         
         public AttackSprite(AttackAction attack) {
+
             this.attacks.addElement(attack);
             this.entityId = attack.getEntityId();
             this.targetType = attack.getTargetType();
             this.targetId = attack.getTargetId();
-            
             final Entity ae = game.getEntity(attack.getEntityId());
             final Targetable target = game.getTarget(targetType, targetId);
-            final Point a = getHexLocation(ae.getPosition());
-            final Point t = getHexLocation(target.getPosition());
-            
+            this.a = getHexLocation(ae.getPosition());
+            this.t = getHexLocation(target.getPosition());
             // color?
             attackColor = ae.getOwner().getColor();
-        
-            final double an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
-            final double lw = 3; // line width
-        
+            //angle of line connecting two hexes
+            this.an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
             // make a polygon
-            attackPoly = new Polygon();
-            attackPoly.addPoint(a.x + 42 - (int)Math.round(Math.sin(an) * lw), a.y + 36 + (int)Math.round(Math.cos(an) * lw));
-            attackPoly.addPoint(a.x + 42 + (int)Math.round(Math.sin(an) * lw), a.y + 36 - (int)Math.round(Math.cos(an) * lw));
-            attackPoly.addPoint(t.x + 42 + (int)Math.round(Math.sin(an) * lw), t.y + 36 - (int)Math.round(Math.cos(an) * lw));
-            attackPoly.addPoint(t.x + 42 - (int)Math.round(Math.sin(an) * lw), t.y + 36 + (int)Math.round(Math.cos(an) * lw));
+
+            // OK, that is actually not good. I do not like hard coded figures.
+            // 42 - x distance in pixels from origin of hex bounding box to the center of hex.
+            // 36 - y distance in pixels from origin of hex bounding box to the center of hex.
+            // 18 - is actually 36/2 - we do not want arrows to start and end directly
+            // in the centes of hex and hiding mek under.
+
+            a.x = a.x + 42 + (int)Math.round(Math.cos(an) * 18);
+            t.x = t.x + 42 - (int)Math.round(Math.cos(an) * 18);
+            a.y = a.y + 36 + (int)Math.round(Math.sin(an) * 18);
+            t.y = t.y + 36 - (int)Math.round(Math.sin(an) * 18);
+
+            // Checking if given attack is mutual. In this case we building halved arrow
+            if (isMutualAttack()){
+                attackPoly = new StraightArrowPolygon(a, t, 8, 12, true);
+            } else {
+                attackPoly = new StraightArrowPolygon(a, t, 4, 8, false);
+            }
             
             // set bounds
             this.bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
-            
             // move poly to upper right of image
             attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
             
+
             // set names & stuff
             attackerDesc = ae.getDisplayName();
             targetDesc = target.getDisplayName();
@@ -1823,28 +1838,31 @@ public class BoardView1
             this.image = null;
         }
         
-//        public void prepare() {
-//            // create image for buffer
-//            Image tempImage = createImage(bounds.width, bounds.height);
-//            if (tempImage == null) {
-//                return;
-//            }
-//            Graphics graph = tempImage.getGraphics();
-//            
-//            // fill with key color
-//            graph.setColor(new Color(TRANSPARENT));
-//            graph.fillRect(0, 0, bounds.width, bounds.height);
-//            // draw attack poly
-//            graph.setColor(game.getEntity(entityId).getOwner().getColor());
-//            graph.fillPolygon(attackPoly);
-//            graph.setColor(Color.white);
-//            graph.drawPolygon(attackPoly);
-//            
-//            // create final image
-//            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-//                    new KeyAlphaFilter(TRANSPARENT)));
-//        }
-        
+
+        /** If we have build full arrow already with single attack and have got
+         * counter attack from our target lately - lets change arrow to halved.
+         */
+        public void rebuildToHalvedPolygon(){
+           attackPoly = new StraightArrowPolygon(a, t, 8, 12, true);
+           // set bounds
+           this.bounds = new Rectangle(attackPoly.getBounds());
+           bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+           // move poly to upper right of image
+           attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+        }
+        /** Cheking if attack is mutual and changing target arrow to half-arrow
+         */
+        private boolean isMutualAttack(){
+            for (final Iterator i = attackSprites.iterator(); i.hasNext();) {
+                 final AttackSprite sprite = (AttackSprite)i.next();
+                 if (sprite.getEntityId() == this.targetId && sprite.getTargetId() == this.entityId) {
+                     sprite.rebuildToHalvedPolygon();
+                     return true;
+                 }
+            }
+            return false;
+        }
+
         public void prepare() {
             ;
         }
@@ -1859,7 +1877,7 @@ public class BoardView1
             
             g.setColor(attackColor);
             g.fillPolygon(drawPoly);
-            g.setColor(Color.white);
+            g.setColor(Color.gray.darker());
             g.drawPolygon(drawPoly);
         }
         

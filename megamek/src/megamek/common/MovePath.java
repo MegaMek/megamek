@@ -163,13 +163,6 @@ public class MovePath implements Cloneable, Serializable {
             step.setMovementType(Entity.MOVE_ILLEGAL);
         }
 
-        if (!step.isLegal()) {
-            return this;
-        }
-
-        // set moveType, illegal, trouble flags
-        step.compileIllegal(game, entity, prev);
-
         // check for illegal jumps
         Coords start = entity.getPosition();
         Coords land = step.getPosition();

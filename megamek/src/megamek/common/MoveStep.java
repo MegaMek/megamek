@@ -345,6 +345,9 @@ public class MoveStep implements Serializable {
              && getType() != MovePath.STEP_DFA ) {
             setStackingViolation(true);
         }
+
+        // set moveType, illegal, trouble flags
+        this.compileIllegal(game, entity, prev);
     }
 
     /**
@@ -834,7 +837,7 @@ public class MoveStep implements Serializable {
                 movementType = Entity.MOVE_RUN;
             }
         }
-        
+
         // Mechs with busted Gyro may make only one facing change
         if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                    Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1
@@ -858,7 +861,6 @@ public class MoveStep implements Serializable {
             && stepType == MovePath.STEP_FORWARDS) {
             movementType = Entity.MOVE_RUN;
         }
-        
 
         // Is the entity unloading passeners?
         if (stepType == MovePath.STEP_UNLOAD) {
@@ -1175,7 +1177,7 @@ public class MoveStep implements Serializable {
         }
 
         // ugh, stacking checks. well, maybe we're immune!
-        if ( parent.isJumping()
+        if ( !parent.isJumping()
              && type != MovePath.STEP_CHARGE
              && type != MovePath.STEP_DFA ) {
             // can't move a mech into a hex with an enemy mech
@@ -1233,6 +1235,8 @@ public class MoveStep implements Serializable {
 
     //Used by BoardView to see if we can re-use an old movement sprite.
     public boolean canReuseSprite(MoveStep other) {
+        // Assume that we *can't* reuse the sprite, and prove ourself wrong.
+        boolean reuse = false;
         if (this.type == other.type &&
             this.facing == other.facing &&
             this.mpUsed == other.mpUsed &&
@@ -1247,10 +1251,9 @@ public class MoveStep implements Serializable {
             !other.isStackingViolation &&
             !this.terrainInvalid &&
             !other.terrainInvalid ) {
-            return true;
-        } else {
-            return false;
+            reuse = true;
         }
+        return reuse;
     }
 
 }

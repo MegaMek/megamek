@@ -16,7 +16,10 @@ package megamek.common.xml;
 
 import java.io.Writer;
 import java.io.IOException;
+import java.io.FileOutputStream;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
 
@@ -68,8 +71,8 @@ public class BoardEncoder {
         out.write( "\" roadsAutoExit=\"" );
         out.write( board.getRoadsAutoExit() ? "true" : "false" );
         out.write( "\" >" );
-        for ( x = 0; x < board.width; x++ ) {
-            for ( y = 0; y < board.height; y++ ) {
+        for ( y = 0; y < board.height; y++ ) {
+            for ( x = 0; x < board.width; x++ ) {
                 HexEncoder.encode( board.getHex(x,y), out );
             }
         }
@@ -131,7 +134,145 @@ public class BoardEncoder {
      *          contain a valid <code>Board</code>.
      */
     public static Board decode( ParsedXML node, Game game ) {
-        return null;
+        String attrStr = null;
+        int attrVal = 0;
+        Board retVal = null;
+        Vector buildings = new Vector();
+        Hashtable infernos = new Hashtable();
+        int height = 0;
+        int width = 0;
+        Hex[] hexes = null;
+        boolean roadsAutoExit = false;
+
+        // Did we get a null node?
+        if ( null == node ) {
+            throw new IllegalArgumentException( "The board is null." );
+        }
+
+        // Make sure that the node is for a Board object.
+        if ( !node.getName().equals( "board" ) ) {
+            throw new IllegalStateException( "Not passed a board node." );
+        }
+
+        // TODO : perform version checking.
+
+        // Walk the board node's children.
+        Enumeration children = node.elements();
+        while ( children.hasMoreElements() ) {
+            ParsedXML child = (ParsedXML) children.nextElement();
+
+            // Did we find the boardData node?
+            if ( child.getName().equals( "boardData" ) ) {
+
+                // There should be only one boardData node.
+                if ( null != retVal ) {
+                    throw new IllegalStateException
+                        ( "More than one 'boardData' node in a board node." );
+                }
+
+                // Get the number of boardData.
+                attrStr = child.getAttribute( "height" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the boardData for a board node." );
+                }
+
+                // Try to pull the height from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+
+                // Do we have a valid value?
+                if ( height < 0 || height > Board.BOARD_MAX_HEIGHT ) {
+                    throw new IllegalStateException
+                        ( "Illegal value for height: " + attrStr );
+                }
+                height = attrVal;
+
+                // Get the number of boardData.
+                attrStr = child.getAttribute( "width" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the boardData for a board node." );
+                }
+
+                // Try to pull the width from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+
+                // Do we have a valid value?
+                if ( width < 0 || width > Board.BOARD_MAX_WIDTH ) {
+                    throw new IllegalStateException
+                        ( "Illegal value for width: " + attrStr );
+                }
+                width = attrVal;
+
+                // Read the "roadsAutoExit" attribute.
+                roadsAutoExit = Boolean.getBoolean
+                    ( child.getAttribute( "roadsAutoExit" ) );
+
+                // Create an array to hold all the boardData.
+                hexes = new Hex[height * width];
+
+                // Walk through the subnodes, parsing out hex nodes.
+                int numHexes = 0;
+                Enumeration subnodes = child.elements();
+                while ( subnodes.hasMoreElements() ) {
+
+                    // Is this a "hex" node?
+                    ParsedXML subnode = (ParsedXML) subnodes.nextElement();
+                    if ( subnode.getName().equals( "hex" ) ) {
+
+                        // Are there too many hex nodes?
+                        if ( hexes.length == numHexes ) {
+                            throw new IllegalStateException
+                                ( "Too many hexes in a board node." );
+                        }
+
+                        // Parse out this hex node.
+                        hexes[numHexes] = HexEncoder.decode( subnode, game );
+
+                        // Increment the number of boardData.
+                        numHexes++;
+
+                    } // End found-"hex"-node
+
+                } // Look at the next subnode.
+
+                // Have we found enough hex nodes?
+                if ( numHexes < hexes.length ) {
+                    throw new IllegalStateException
+                        ( "Not enough hexes in a board node." );
+                }
+
+            } // End found-"boardData"-node
+
+        } // Look at the next child.
+
+        // Did we find all needed child nodes?
+        // TODO : perform data validation.
+
+        // Construct the board.
+        retVal = new Board( width, height, hexes, buildings, infernos );
+        /* begin killme block */
+        try {
+            retVal.save( new FileOutputStream("retVal.board") );
+        } catch ( IOException ioErr ) {
+            ioErr.printStackTrace();
+        }
+        /* end killme block */
+
+        // Return the board for this node.
+        return retVal;
     }
 
 }

@@ -280,17 +280,6 @@ public class PacketEncoder {
                     }
 
                     try {
-                        // Wrap a "top level" node around the unzipped data
-                        // for the XML parser to handle the stream correctly.
-                        Vector streams = new Vector(3);
-                        streams.add
-                            ( new ByteArrayInputStream(START.getBytes()) );
-                        streams.add( parseStream );
-                        streams.add
-                            ( new ByteArrayInputStream(END.getBytes()) );
-                        parseStream = new SequenceInputStream
-                            ( streams.elements() );
-
                         /* BEGIN debug code **
                         try {
                             parseStream.mark(64000);
@@ -308,8 +297,6 @@ public class PacketEncoder {
                         
                         // Parse the XML.
                         ParsedXML dummyNode = TinyParser.parseXML(parseStream);
-
-                        // Get the data elements.
                         dataElements = dummyNode.elements();
                     }
                     catch ( ParseException parseErr ) {

@@ -47,14 +47,26 @@ public class Coords
      */
     private static final int SHIFT = 8;
     private static final int MASK = ( 1 << Coords.SHIFT ) - 1;
-    
+
+    /**
+     * The maximum height of a board in number of hexes.
+     */
+    public static final int MAX_BOARD_HEIGHT =
+        Integer.MAX_VALUE & Coords.MASK;
+
+    /**
+     * The maximum width of a board in number of hexes.
+     */
+    public static final int MAX_BOARD_WIDTH =
+        ( Integer.MAX_VALUE - Coords.MAX_BOARD_HEIGHT ) >> Coords.SHIFT;
+
     /**
      * Constructs a new coordinate pair at (0, 0).
      */
     public Coords() {
         this(0, 0);
     }
-    
+
     /**
      * Constructs a new coordinate pair at (x, y).
      */

@@ -27,7 +27,10 @@ public class Board
     public static final int     BOARD_HEX_DOUBLECLICK   = 2;
     public static final int     BOARD_HEX_DRAG          = 3;
     public static final String  BOARD_REQUEST_ROTATION  = "rotate:";
-    
+
+    public static final int     BOARD_MAX_WIDTH         = Coords.MAX_BOARD_WIDTH;
+    public static final int     BOARD_MAX_HEIGHT        = Coords.MAX_BOARD_HEIGHT;
+
     public int                  width;
     public int                  height;
     
@@ -75,8 +78,46 @@ public class Board
         lastCursor = null;
         highlighted = null;
         selected = null;
+        firstLOS = null;
         
         boardListeners = new Vector();
+    }
+    
+    /**
+     * Creates a new board of the specified dimensions, hexes, buildings,
+     * and inferno trackers.  Do *not* use this method unless you have
+     * carefully examined this class.
+     *
+     * @param width     The <code>int</code> width dimension in hexes.
+     * @param height    The <code>int</code> height dimension in hexes.
+     * @param hexes     The array of <code>Hex</code>es for this board.
+     *                  This object is used directly without being copied.
+     *                  This value should only be <code>null</code> if
+     *                  either <code>width</code> or <code>height</code> is
+     *                  zero.
+     * @param bldgs     The <code>Vector</code> of <code>Building</code>s
+     *                  for this board.  This object is used directly without
+     *                  being copied.
+     * @param infMap    The <code>Hashtable</code> that map <code>Coords</code>
+     *                  to <code>Vector</code>s of <code>InfernoTracker</code>s
+     *                  for this board.  This object is used directly without
+     *                  being copied.
+     */
+    public Board( int width, int height, Hex[] hexes,
+                  Vector bldgs, Hashtable infMap ) {
+        this.width = width;
+        this.height = height;
+        data = hexes;
+        buildings = bldgs;
+        infernos = infMap;
+        lastCursor = null;
+        highlighted = null;
+        selected = null;
+        firstLOS = null;
+        
+        boardListeners = new Vector();
+
+        createBldgByCoords();
     }
     
     /**
@@ -1979,19 +2020,13 @@ public class Board
     } /* generateRandom */
 
     /**
-     * Override the default deserialization to populate the transient
-     * <code>bldgByCoords</code> member.
-     *
-     * @param   in - the <code>ObjectInputStream</code> to read.
-     * @throws  <code>IOException</code>
-     * @throws  <code>ClassNotFoundException</code>
+     * Populate the <code>bldgByCoords</code> member from the current
+     * <code>Vector</code> of buildings.  Use this method after de-
+     * serializing a <code>Board</code> object.
      */
-    private void readObject( ObjectInputStream in )
-        throws IOException, ClassNotFoundException 
-    {
-        in.defaultReadObject();
+    private void createBldgByCoords() {
 
-        // Restore bldgByCoords from buildings.
+        // Make a new hashtable.
         bldgByCoords = new Hashtable();
 
         // Walk through the vector of buildings.
@@ -2007,6 +2042,23 @@ public class Board
 
         }
 
+    }
+
+    /**
+     * Override the default deserialization to populate the transient
+     * <code>bldgByCoords</code> member.
+     *
+     * @param   in - the <code>ObjectInputStream</code> to read.
+     * @throws  <code>IOException</code>
+     * @throws  <code>ClassNotFoundException</code>
+     */
+    private void readObject( ObjectInputStream in )
+        throws IOException, ClassNotFoundException 
+    {
+        in.defaultReadObject();
+
+        // Restore bldgByCoords from buildings.
+        createBldgByCoords();
     }
 
 }

@@ -407,8 +407,10 @@ public class MovementDisplay
         butDone.setLabel("Done");
         updateProneButtons();
         updateRACButton();
-        loadedUnits = ce().getLoadedUnits();
-        updateLoadButtons();
+        if (ce() != null) {
+            loadedUnits = ce().getLoadedUnits();
+            updateLoadButtons();
+        }
     }
 
     /**

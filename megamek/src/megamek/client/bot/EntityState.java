@@ -383,16 +383,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     int targHeight = te.isProne() ? 0 : 1;
     int attEl = 0;
     int targEl = 0;
-    try {
-      attEl = ae.elevation() + attHeight;
-      targEl = te.elevation() + targHeight;
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.out.println(this);
-      System.out.println(ae.getName() + " " + ae.getPosition());
-      System.out.println(te.getName() + " " + te.getPosition());
-      System.out.println(this.tb.enemies.get(ae).old.curPos);
-    }
+    attEl = ae.elevation() + attHeight;
+    targEl = te.elevation() + targHeight;
     int ilw = 0;  // intervening light woods
     int ihw = 0;  // intervening heavy woods
     Coords in[] = Compute.intervening(this.curPos, te.getPosition());
@@ -413,7 +405,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     toHitd.append(Compute.getAttackerMovementModifier(game, te.getId()));
     toHitd.append(Compute.getTargetMovementModifier(game, ae.getId()));
     //this.defensive_mod = Compute.getTargetMovementModifier(game, ae.getId()).getValue();
-    if (!this.isPhysical) {
+    if (!(this.isPhysical && this.isJumping)) {
       toHitd.append(Compute.getTargetTerrainModifier(game, ae.getId()));
       //this.defensive_mod += Compute.getTargetTerrainModifier(game, ae.getId()).getValue();
     }
@@ -423,8 +415,6 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     if (attHex.contains(Terrain.WATER) && attHex.surface() > attEl) {
       toHita.addModifier(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
       toHitd.addModifier(ToHitData.IMPOSSIBLE, "Defender in depth 2+ water");
-      //this.offensive_mod += ToHitData.IMPOSSIBLE;
-      //this.defensive_mod += ToHitData.IMPOSSIBLE;
     } else if (attHex.surface() == attEl && ae.height() > 0) {
       apc = true;
     }
@@ -435,12 +425,91 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       } else if (targHex.surface() > targEl) {
         toHita.addModifier(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
         toHitd.addModifier(ToHitData.IMPOSSIBLE, "Defender in depth 2+ water");
-        //this.offensive_mod += ToHitData.IMPOSSIBLE;
-        //this.defensive_mod += ToHitData.IMPOSSIBLE;
       }
     }
-    
-    for (int i = 0; i < in.length; i++) {
+    /*
+    double degree = ae.getPosition().degree(te.getPosition());
+    if (degree > 180) degree = (degree + 180)%360;
+    if (degree == 30 || degree == 90 || degree == 150) {
+      Vector result = new Vector();
+      in = Compute.toLineOrder(in, ae.getPosition());
+      result.addElement(in[0]); //attacker spot
+      int w_total = 0;
+      for (int i = 1; i < in.length - 2 && toHita.getValue() != ToHitData.IMPOSSIBLE; i+=3) {
+        Coords c1 = in[i];
+        Coords c2 = in[i+1];
+        result.addElement(in[i+2]);
+        if (!game.board.contains(c1)) {
+          result.add(c2);
+        } else if (!game.board.contains(c2)) {
+          result.add(c1);
+        } else {
+          final Hex h = game.board.getHex(c1);
+          final int hexEl = h.floor();
+          final Hex h1 = game.board.getHex(c2);
+          final int hexEl1 = h1.floor();
+          int w = 0;
+          int w1 = 0;
+          if ((hexEl > attEl && hexEl > targEl)
+          || (i == 1 && hexEl > attEl)
+          || (i == in.length - 3 && hexEl > targEl)) {
+            toHita.addModifier(ToHitData.IMPOSSIBLE, "");
+            toHitd.addModifier(ToHitData.IMPOSSIBLE, "");
+          } else if ((hexEl1 > attEl && hexEl1 > targEl)
+          || (i == 1 && hexEl1 > attEl)
+          || (i == in.length - 3 && hexEl1 > targEl)) {
+            toHita.addModifier(ToHitData.IMPOSSIBLE, "");
+            toHitd.addModifier(ToHitData.IMPOSSIBLE, "");
+          } else {
+            if (h.levelOf(Terrain.WOODS) > 0) {
+              if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
+              || (i == 1 && hexEl + 2 > attEl)
+              || (i == in.length - 3 && hexEl + 2 > targEl)) {
+                w = h.levelOf(Terrain.WOODS);
+              }
+            }
+            if (h1.levelOf(Terrain.WOODS) > 0) {
+              if ((hexEl1 + 2 > attEl && hexEl1 + 2 > targEl)
+              || (i == 1 && hexEl1 + 2 > attEl)
+              || (i == in.length - 3 && hexEl1 + 2 > targEl)) {
+                w1 = h1.levelOf(Terrain.WOODS);
+              }
+            }
+            if (i == in.length -3) {
+              if (w1 + w_total > 2) {
+                result.addElement(c2);
+                toHita.addModifier(ToHitData.IMPOSSIBLE, "");
+                toHitd.addModifier(ToHitData.IMPOSSIBLE, "");
+                continue;
+              } else if (w + w_total > 2) {
+                result.addElement(c1);
+                toHita.addModifier(ToHitData.IMPOSSIBLE, "");
+                toHitd.addModifier(ToHitData.IMPOSSIBLE, "");
+                continue;
+              } else if (hexEl == targEl && attEl <= targEl && te.height() > 0) {
+                result.addElement(c1);
+                continue;
+              } else if (hexEl1 == targEl && attEl <= targEl && te.height() > 0) {
+                result.addElement(c2);
+                continue;
+              }
+            }
+            if (w1 > w) {
+              result.addElement(c2);
+              w_total += w1;
+            } else {
+              result.addElement(c1);
+              w_total += w;
+            }
+          }
+        }
+      }
+      in = new Coords[result.size()];
+      result.copyInto(in);
+    }
+     */
+   
+    for (int i = 0; i < in.length && toHita.getValue() != ToHitData.IMPOSSIBLE; i++) {
       // don't count attacker or target hexes
       if (in[i].equals(this.curPos) || in[i].equals(te.getPosition())) {
         continue;
@@ -547,17 +616,17 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     //self threat and self damage are considered transient
     double temp_threat = (this.threat + this.movement_threat + this.self_threat + (double)this.getMovementheatBuildup()/20)/this.centity.strategy.attack;
     double temp_damage = (this.damage + this.self_damage)*this.centity.strategy.attack;
-    double ratio = (this.threat + this.movement_threat)/(this.centity.avg_armor + .25*this.centity.avg_iarmor);
     if (this.threat + this.movement_threat > 4*this.centity.avg_armor) {
+      double ratio = (this.threat + this.movement_threat)/(this.centity.avg_armor + .25*this.centity.avg_iarmor);
       if (ratio > 2) {
         temp_threat += this.centity.bv/15.0; //likely to die
         this.Doomed = true;
         this.inDanger = true;
       } else if (ratio > 1) {
-        temp_threat += this.centity.bv/25.0; //in danger
+        temp_threat += this.centity.bv/30.0; //in danger
         this.inDanger = true;
       } else {
-        temp_threat += this.centity.bv/70.0; //in danger
+        temp_threat += this.centity.bv/75.0; //in danger
         this.inDanger = true;        
       }
     } else if (this.threat + this.movement_threat > 30) {
@@ -619,7 +688,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       Hex h = game.board.getHex(this.curPos);
       Hex h1 = game.board.getHex(enemy.curPos);
       if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
-        max += ((h1.getElevation() - h.getElevation() == 1 || this.isProne)?2:1)*((enemy_firing_arcs[0]==CEntity.SIDE_FRONT)?.2:.05)*ce.entity.getWeight()*Compute.oddsAbove(3+modifier)/100
+        max += ((h1.getElevation() - h.getElevation() == 1 || this.isProne)?5:1)*((enemy_firing_arcs[0]==CEntity.SIDE_FRONT)?.2:.05)*ce.entity.getWeight()*Compute.oddsAbove(3+modifier)/100
             + (1 - enemy.centity.base_psr_odds)*enemy.entity.getWeight()/10.0;
       }
     }

@@ -4,9 +4,9 @@ by Steve Hawkins <hawk0166@umn.edu> building off of the work of Michael Hanson
 <hanson@cs.stanford.edu> -- including this file.  
 It is a work in progress.
 
-Please do not email the authors about problems with the bot.  Posting in forums
-is fine, but the authors do not wish to be contacted directly about it.  Most
-email about the bot will be ignored.
+The bot does not work in games with units other than mechs, such as tanks or
+infantry.  The bot does not have double-blind support, and will disconnect any 
+time it cannot see an opponent.
 
   Starting A Game Against The Bot
     To play against the bot, host a game, and then start another copy of MegaMek

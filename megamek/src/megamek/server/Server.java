@@ -1991,7 +1991,7 @@ implements Runnable, ConnectionHandler {
             case Game.PHASE_FIRING :
                 return isEligibleForFiring(entity);
             case Game.PHASE_PHYSICAL :
-                return isEligibleForPhysical(entity);
+                return entity.isEligibleForPhysical();
             case Game.PHASE_TARGETING :
                 return isEligibleForTargetingPhase(entity);
             case Game.PHASE_OFFBOARD :
@@ -2048,144 +2048,12 @@ implements Runnable, ConnectionHandler {
         return true;
     }
 
-    /**
-     * Check if the entity has any valid targets for physical attacks.
+    /*
+     * public boolean isEligibleForPhysical()
+     *
+     * This method moved to Entity class.  Perhaps the other
+     * isEligible methods should also be moved?
      */
-    private boolean isEligibleForPhysical(Entity entity) {
-        boolean canHit = false;
-        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
-
-        // only mechs and protos have physical attacks (except tank charges)
-        if (!(entity instanceof Mech || entity instanceof Protomech)) {
-            return false;
-        }
-
-        // if you're charging or finding a club, it's already declared
-        if (entity.isUnjammingRAC()
-            || entity.isCharging()
-            || entity.isMakingDfa()
-            || entity.isFindingClub()
-            || entity.isSpotting()) {
-            return false;
-        }
-
-        // check game options
-        if (game.getOptions().booleanOption("no_clan_physical") &&
-            entity.isClan()) {
-            return false;
-        }
-        if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
-            return true;
-        }
-
-        // dead mek walking
-        if (!entity.isActive()) {
-            return false;
-        }
-
-        // Try to find a valid entity target.
-        Enumeration e = game.getEntities();
-        while ( !canHit && e.hasMoreElements() ) {
-            Entity target = (Entity)e.nextElement();
-
-            // don't shoot at friendlies unless you are into that sort of thing
-            // and do not shoot yourself even then
-            if (!(entity.isEnemyOf(target) || (friendlyFire && entity.getId() != target.getId() ))) {
-                continue;
-            }
-
-            // No physical attack works at distances > 1.
-            if ( target.getPosition() == null ||
-                 entity.getPosition().distance(target.getPosition()) > 1 ) {
-                continue;
-            }
-
-            canHit |= canPhysicalTarget(game, entity.getId(), target);
-
-        }
-
-        // If there are no valid Entity targets, check for add valid buildings.
-        Enumeration bldgs = game.board.getBuildings();
-        while ( !canHit && bldgs.hasMoreElements() ) {
-            final Building bldg = (Building) bldgs.nextElement();
-
-            // Walk through the hexes of the building.
-            Enumeration hexes = bldg.getCoords();
-            while ( !canHit && hexes.hasMoreElements() ) {
-                final Coords coords = (Coords) hexes.nextElement();
-
-                // No physical attack works at distances > 1.
-                if ( entity.getPosition().distance(coords) > 1 ) {
-                    continue;
-                }
-
-                // Can the entity target *this* hex of the building?
-                final BuildingTarget target = new BuildingTarget( coords,
-                                                                  game.board,
-                                                                  false );
-
-                canHit |= canPhysicalTarget(game, entity.getId(), target);
-
-            } // Check the next hex of the building
-
-        } // Check the next building
-
-        return canHit;
-    }
-
-    private boolean canPhysicalTarget(Game game, int entityId, Targetable target) {
-        boolean canHit = false;
-
-        canHit |= Compute.toHitPunch
-            ( game, entityId, target,
-             PunchAttackAction.LEFT ).getValue()
-            != ToHitData.IMPOSSIBLE;
-
-        canHit |= Compute.toHitPunch
-            ( game, entityId, target,
-             PunchAttackAction.RIGHT ).getValue()
-            != ToHitData.IMPOSSIBLE;
-
-        canHit |= Compute.toHitKick
-            ( game, entityId, target,
-             KickAttackAction.LEFT ).getValue()
-            != ToHitData.IMPOSSIBLE;
-
-        canHit |= Compute.toHitKick
-            ( game, entityId, target,
-             KickAttackAction.RIGHT ).getValue()
-            != ToHitData.IMPOSSIBLE;
-
-        canHit |= BrushOffAttackAction.toHitBrushOff
-            ( game, entityId, target,
-              BrushOffAttackAction.LEFT ).getValue()
-            != ToHitData.IMPOSSIBLE;
-
-        canHit |= BrushOffAttackAction.toHitBrushOff
-            ( game, entityId, target,
-              BrushOffAttackAction.RIGHT ).getValue()
-            != ToHitData.IMPOSSIBLE;
-
-        canHit |= new ThrashAttackAction(entityId, target).toHit(game).getValue()
-            != ToHitData.IMPOSSIBLE;
-        
-        canHit |= Compute.toHitProto(game, entityId, target).getValue()
-            != ToHitData.IMPOSSIBLE;
-        
-        Mounted club = Compute.clubMechHas( game.getEntity(entityId) );
-        if ( null != club ) {
-            canHit |= Compute.toHitClub
-                ( game, entityId, target,
-                  club ).getValue()
-                != ToHitData.IMPOSSIBLE;
-        }
-
-        canHit |= Compute.toHitPush
-            ( game, entityId, target ).getValue()
-            != ToHitData.IMPOSSIBLE;
-
-        return canHit;
-    }
 
     /**
      * Have the loader load the indicated unit.

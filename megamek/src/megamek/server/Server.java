@@ -3688,7 +3688,7 @@ implements Runnable {
                 continue;
             }
             anyRolls = true;
-            for (int hit = totalHits - rollsNeeded; hit < totalHits; hit++) {
+            for (int hit = totalHits - rollsNeeded + 1; hit <= totalHits; hit++) {
                 int roll = Compute.d6(2);
 		int rollTarget = Compute.getConciousnessNumber( hit );
                 phaseReport.append("\nPilot of " + e.getDisplayName()

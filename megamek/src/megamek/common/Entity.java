@@ -551,6 +551,12 @@ public abstract class Entity
     public void setInternal(int val, int loc) {
         internal[loc] = val;
     }
+    
+    /**
+     * Set the internal structure to the appropriate value for the mech's
+     * weight class
+     */
+    public abstract void autoSetInternal();
   
     /**
      * Returns the total amount of internal structure on the entity.

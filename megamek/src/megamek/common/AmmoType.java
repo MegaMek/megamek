@@ -72,6 +72,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AC/2 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo AC/2";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.TYPE_AC;
@@ -87,6 +88,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AC/5 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo AC/5";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.TYPE_AC;
@@ -102,6 +104,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AC/10 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo AC/10";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.TYPE_AC;
@@ -117,6 +120,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AC/20 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo AC/20";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.TYPE_AC;
@@ -132,6 +136,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Machine Gun Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo MG - Full";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.TYPE_MG;
@@ -147,6 +152,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Machine Gun Ammo";
         ammo.internalName = ammo.name + " half";
         ammo.mepName = "Ammo MG - Half";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.TYPE_MG;
@@ -163,6 +169,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 5 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo LRM-5";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.TYPE_LRM;
@@ -178,6 +185,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 10 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo LRM-10";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.TYPE_LRM;
@@ -193,6 +201,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 15 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo LRM-15";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.TYPE_LRM;
@@ -208,6 +217,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 20 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo LRM-20";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.TYPE_LRM;
@@ -223,6 +233,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 2 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo SRM-2";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.TYPE_SRM;
@@ -238,6 +249,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 4 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo SRM-4";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.TYPE_SRM;
@@ -253,6 +265,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 6 Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo SRM-6";
+        ammo.mtfName = ammo.name;
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.TYPE_SRM;

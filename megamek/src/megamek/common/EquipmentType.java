@@ -40,6 +40,7 @@ public class EquipmentType {
 
     protected String    internalName;
     protected String    mepName;
+    protected String    mtfName;
 
     protected float     tonnage;
     protected int       criticals;
@@ -50,6 +51,7 @@ public class EquipmentType {
     protected static Vector allTypes;
     protected static Hashtable internalNameHash;
     protected static Hashtable mepNameHash;
+    protected static Hashtable mtfNameHash;
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -112,6 +114,28 @@ public class EquipmentType {
         }
     }
     
+    public static EquipmentType getByMtfName(String key) {
+        if (mtfNameHash == null) {
+            initializeMtfNameHash();
+        }
+        
+        return (EquipmentType)mtfNameHash.get(key);
+    }
+    
+    public static void initializeMtfNameHash() {
+        if (allTypes == null) {
+            initializeTypes();
+        }
+        
+        mtfNameHash = new Hashtable(allTypes.size());
+        
+        for (Enumeration i = allTypes.elements(); i.hasMoreElements();) {
+            EquipmentType type = (EquipmentType)i.nextElement();
+            
+            mtfNameHash.put(type.getMtfName(), type);
+        }
+    }
+    
     
     
     
@@ -128,6 +152,10 @@ public class EquipmentType {
     
     public String getMepName() {
         return mepName;
+    }
+    
+    public String getMtfName() {
+        return mtfName;
     }
     
     public float getTonnage(Entity entity) {

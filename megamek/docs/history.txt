@@ -61,6 +61,9 @@ physical attacks:
 ? show the to-hit numbers, somehow
 - opposing pushes should counter each other
 
+ammo explosions:
+- should only be applied to the internal structure of a mech (mean!)
+
 pilots:
 - successive consciousness checks should be made from low rolls to high
 
@@ -88,6 +91,7 @@ v next
 + 536097: mechs need both arms in order to fire while prone.  (dumb rule)
 + numbers for starting position replaced by compass diresctions
 + teams selection added
++ mech loading code handles .mtf files from "hmpread" now
 
 v 0.24.6 (04-07-02, 1:18pm)
 + refined command interface.  type "/help" for a list.

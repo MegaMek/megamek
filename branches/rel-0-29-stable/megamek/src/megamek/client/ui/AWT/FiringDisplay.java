@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -539,7 +539,7 @@ public class FiringDisplay
         client.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
     }
-    
+
     /**
      * The entity spends the rest of its turn finding a club
      */
@@ -547,7 +547,18 @@ public class FiringDisplay
         if (ce() == null) {
             return;
         }
-        
+
+        // comfirm this action
+        String title = "Find A Club?";
+        String body = "Do you want to find a club?\n\n" +
+            "Finding a club is an exclusive action.  If you choose\n" +
+            "to find a club, any declared attacks will be cancelled,\n" +
+            "and you may declare no further attacks.\n\n" +
+            "Pressing 'Yes' will confirm, and end your turn.";
+        if (!client.doYesNoDialog(title, body)) {
+            return;
+        }
+		
         attacks.removeAllElements();
         attacks.addElement(new FindClubAction(cen));
         

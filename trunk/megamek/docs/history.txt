@@ -85,6 +85,8 @@ v CVS
 + AMS can shoot down more missiles than it has ammo
 + gauss rifles count as explosive ammo for BV calculations
 + ultra ACs and streak SRMs affect BV correctly
++ 660514: Clan AMS has 24 shots
+
 
 v 0.27.13 (12-20-02, 5pm)
 + 652291: Mechs can "stomp" (kick) vehicles in their hex.

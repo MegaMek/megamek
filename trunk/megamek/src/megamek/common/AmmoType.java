@@ -1257,7 +1257,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1; // only used for ammo crits
         ammo.rackSize = 2; // only used for ammo crits
         ammo.ammoType = AmmoType.T_AMS;
-        ammo.shots = 12;
+        ammo.shots = 24;
         ammo.bv = 21;
         
         return ammo;

@@ -299,11 +299,11 @@ public class Client extends Panel
 
         bv = new BoardView1(game, frame);
 
-		ChatterBox2 cb2 = new ChatterBox2(this);
+/*		ChatterBox2 cb2 = new ChatterBox2(this);
 		bv.addDisplayable(cb2);
         addGameListener(cb2);
         bv.addKeyListener(cb2);
-        
+*/        
         uo = new UnitOverview(this);
 		bv.addDisplayable(uo);
 

@@ -100,7 +100,7 @@ public class DeploymentDisplay
 
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(1, 6));
+        panButtons.setLayout(new GridLayout(2, 4));
         panButtons.add(butNext);
         panButtons.add(butTurn);
         panButtons.add(butLoad);
@@ -125,9 +125,12 @@ public class DeploymentDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
 
+        c.weightx = 1.0;    c.weighty = 0;
+        c.gridwidth = 1;
+        addBag(client.cb.getComponent(), gridbag, c);
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
-        c.ipady = 20;
         addBag(panButtons, gridbag, c);
 
         addKeyListener(this);

@@ -1066,7 +1066,7 @@ public class Client extends Panel
                 } );
 
             // use base directory by default
-            dlgSaveList.setDirectory(".");
+            dlgLoadList.setDirectory(".");
 
             // Default to the player's name.
             dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );

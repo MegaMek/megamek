@@ -652,6 +652,36 @@ public boolean isPassworded() {
             roundReport.append(entity.victoryReport());
             roundReport.append('\n');
         }
+        roundReport.append("\nDetailed unit status saved to entitystatus.txt\n");
+    }
+    
+    /**
+     * Generates a detailed report for campaign use
+     */
+    private String getDetailedVictoryReport() {
+        StringBuffer sb = new StringBuffer();
+        
+        Vector vAllUnits = new Vector();
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            vAllUnits.addElement(i.nextElement());
+        }
+        
+        for (Enumeration i = game.getGraveyardEntities(); i.hasMoreElements();) {
+            vAllUnits.addElement(i.nextElement());
+        }
+        
+        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+            Player p = (Player)i.nextElement();
+            sb.append("++++++++++ " + p.getName() + " ++++++++++\n");
+            for (int x = 0; x < vAllUnits.size(); x++) {
+                Entity e = (Entity)vAllUnits.elementAt(x);
+                if (e.getOwner() == p) {
+                    sb.append(UnitStatusFormatter.format(e));
+                }
+            }
+        }
+        
+        return sb.toString();
     }
     
     /**
@@ -794,6 +824,7 @@ public boolean isPassworded() {
         case Game.PHASE_VICTORY :
             prepareVictoryReport();
             send(createReportPacket());
+            send(createEndOfGamePacket());
             break;
         }
     }
@@ -3549,6 +3580,13 @@ public boolean isPassworded() {
      */
     private Packet createRemoveEntityPacket(int entityId) {
         return new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(entityId));
+    }
+    
+    /**
+     * Creates a packet indicating end of game, including detailed unit status
+     */
+    private Packet createEndOfGamePacket() {
+        return new Packet(Packet.COMMAND_END_OF_GAME, getDetailedVictoryReport());
     }
 
     /**

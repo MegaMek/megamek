@@ -54,6 +54,8 @@ implements Serializable {
     public static final int        COMMAND_SENDING_MAP_SETTINGS = 22;
     public static final int        COMMAND_QUERY_MAP_SETTINGS   = 23;
     
+    public static final int        COMMAND_END_OF_GAME          = 24;
+    
     
     private int command;
     private Object[] data;

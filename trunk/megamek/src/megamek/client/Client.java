@@ -669,6 +669,22 @@ public class Client extends Panel
     }
     
     /**
+     * Saves server entity status data to a local file
+     */
+    private void saveEntityStatus(String sStatus)
+    {
+        try {
+            FileWriter fw = new FileWriter("entitystatus.txt");
+            fw.write(sStatus);
+            fw.flush();
+            fw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    /**
      * Reads a complete net command from the given input stream
      */
     private Packet readPacket() {
@@ -796,6 +812,10 @@ public class Client extends Panel
                 if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
                     boardSelectionDialog.update((MapSettings)c.getObject(0), false);
                 }
+                break;
+            case Packet.COMMAND_END_OF_GAME :
+                String sReport = (String)c.getObject(0);
+                saveEntityStatus(sReport);
                 break;
             }
         }

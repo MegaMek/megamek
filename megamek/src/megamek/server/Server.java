@@ -4301,6 +4301,12 @@ implements Runnable, ConnectionHandler {
         ).append( dest.getBoardNum() ).append( ".\n");
 
         // if hex was empty, deal damage and we're done
+        // TODO: Check if there's a protomech or tank in the target hex,
+        // if so, the latest BMRr errata says we should make an
+        // Accidental fall from above.
+        // if multiple targets, determine randomly which to hit
+        // vehicles are automatic misses, protos are treated as
+        // battlemechs.
         if (violation == null) {
             doEntityFall(entity, dest, fallElevation, roll);
             return;
@@ -4439,6 +4445,10 @@ implements Runnable, ConnectionHandler {
                 return;
             } else {
                 // cliff: fall off it, deal damage, prone immediately
+                // TODO: we need to check here if we might fall into a tank
+                // or protomech, which are not necessarily stacking violations
+                // but cause a AFFA none the less (Protos are treated as mechs,
+                // tanks are automatic misses
                 phaseReport.append("    "
                 ).append( entity.getDisplayName() ).append( " falls "
                 ).append( fallElevation ).append( " levels into hex "

@@ -39,7 +39,6 @@ public class TargetRoll {
     private ArrayList modifiers = new ArrayList();
     
     private int total;
-    private StringBuffer allDesc;
 
     /** Creates new TargetRoll */
     public TargetRoll() {
@@ -80,6 +79,30 @@ public class TargetRoll {
      * Returns a description of all applicable modifiers
      */
     public String getDesc() {
+        boolean first = true;
+        StringBuffer allDesc = new StringBuffer();
+        
+        for (Iterator i = modifiers.iterator(); i.hasNext();) {
+            Modifier modifier = (Modifier)i.next();
+            
+            // check for break condition
+            if (modifier.value == IMPOSSIBLE || modifier.value == AUTOMATIC_FAIL 
+            || modifier.value == AUTOMATIC_SUCCESS) {
+                return modifier.desc;
+            }
+            
+            // add desc
+            if (first) {
+                first = false;
+            } else {
+                allDesc.append((modifier.value < 0 ? " - " : " + "));
+            }
+            allDesc.append(Math.abs(modifier.value));
+            allDesc.append(" (");
+            allDesc.append(modifier.desc);
+            allDesc.append(")");
+        }
+        
         return allDesc.toString();
     }
     
@@ -136,9 +159,7 @@ public class TargetRoll {
      * the first modifier listed as a base
      */
     private void recalculate() {
-        boolean first = true;
         total = 0;
-        allDesc = new StringBuffer();
         
         for (Iterator i = modifiers.iterator(); i.hasNext();) {
             Modifier modifier = (Modifier)i.next();
@@ -147,23 +168,11 @@ public class TargetRoll {
             if (modifier.value == IMPOSSIBLE || modifier.value == AUTOMATIC_FAIL 
             || modifier.value == AUTOMATIC_SUCCESS) {
                 total = modifier.value;
-                allDesc = new StringBuffer(modifier.desc);
                 break;
             }
             
             // add modifier
             total += modifier.value;
-            
-            // add desc
-            if (first) {
-                first = false;
-            } else {
-                allDesc.append((modifier.value < 0 ? " - " : " + "));
-            }
-            allDesc.append(Math.abs(modifier.value));
-            allDesc.append(" (");
-            allDesc.append(modifier.desc);
-            allDesc.append(")");
         }
     }
     

@@ -681,7 +681,7 @@ public class WeaponType extends EquipmentType {
       weapon.name = "RL 10";
       weapon.internalName = "RL10";
       weapon.mtfName = "ISRocketLauncher10";
-      weapon.tdbName = "ISRocketLauncher10";
+      weapon.tdbName = "IS RLauncher-10";
       weapon.mepName = "ISRocketLauncher10";
       weapon.heat = 3;
       weapon.damage= DAMAGE_MISSILE;
@@ -706,7 +706,7 @@ public class WeaponType extends EquipmentType {
       weapon.internalName = "RL15";
       weapon.mtfName = "ISRocketLauncher15";
       weapon.mepName = "ISRocketLauncher15";
-      weapon.tdbName = "ISRocketLauncher15";
+      weapon.tdbName = "IS RLauncher-15";
       weapon.heat = 4;
       weapon.damage= DAMAGE_MISSILE;
       weapon.rackSize= 15;
@@ -730,7 +730,7 @@ public class WeaponType extends EquipmentType {
      weapon.internalName = "RL20";
      weapon.mtfName = "ISRocketLauncher20";
      weapon.mepName = "ISRocketLauncher20";
-     weapon.tdbName = "ISRocketLauncher20";
+     weapon.tdbName = "IS RLauncher-20";
      weapon.heat = 5;
      weapon.damage= DAMAGE_MISSILE;
      weapon.rackSize= 20;

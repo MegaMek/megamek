@@ -909,7 +909,10 @@ public class Game implements Serializable
     public void removeEntity( int id, int condition ) {
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
-            System.err.println("Game#removeEntity: could not find entity to remove");
+            //This next statement has been cluttering up double-blind
+            // logs for quite a while now.  I'm assuming it's no longer
+            // useful.
+            //System.err.println("Game#removeEntity: could not find entity to remove");
             return;
         }
 

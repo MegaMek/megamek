@@ -94,6 +94,7 @@ v 0.28.8-dev
 + Applied latest version of oscarmm's Mech Viewer patch.
 + Typo in Client#loadListFile method.
 + 696097: When removing turns, keep the client's turn lists in synch.
++ server no longer can assign duplicate entity or player ids
 
 v 0.28.7 (02-28-02, 9:00 pm)
 + Roads exit into Pavement hexes.

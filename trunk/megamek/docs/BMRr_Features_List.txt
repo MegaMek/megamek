@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 25th October 2004.  MegaMek Version 0.22.54. Best viewed in 1024x768.
+The Great MegaMek Feature list. 25th December 2004.  MegaMek Version 0.22.58. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -290,7 +290,7 @@ Special Case Rules (Minefields)
 - Conventional Minefields	Yes		None	
 - Command Detonated Minefields	No		None
 - Vibra Bomb Minefields		Yes		None
-- Clearing Minefields		Partial		The UI does not have a way of adding a ClearMinefieldAction.
+- Clearing Minefields		Yes		None
 
 Special Case Rules (Night Combat)
 

@@ -47,11 +47,12 @@ implements Serializable {
     public static final int     BRIDGE          = 14;
     public static final int     BRIDGE_CF       = 15;
     public static final int     BRIDGE_ELEV     = 16;
+    public static final int     FLUFF           = 17;
     
     private static final String[] names = {"none", "woods", "rough", "rubble",
     "water", "pavement", "road", "fire", "smoke", "swamp",
     "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
-    "bridge_elev"};
+    "bridge_elev", "fluff"};
     
     public static final int     SIZE            = names.length;
     

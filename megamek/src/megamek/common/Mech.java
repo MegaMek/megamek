@@ -287,7 +287,11 @@ public class Mech
      */
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
-        return rotate == 0 || rotate == 1 || rotate == -1 || rotate == -5;
+        if (isProne()) {
+            return rotate == 0;
+        } else {
+            return rotate == 0 || rotate == 1 || rotate == -1 || rotate == -5;
+        }
     }
 
     /**
@@ -295,19 +299,15 @@ public class Mech
      */
     public int clipSecondaryFacing(int dir) {
         if (isValidSecondaryFacing(dir)) {
-          return dir;
+            return dir;
         }
-        int rotate = dir - getFacing();
-        if (rotate < 0) {
-          rotate += 6;
+        // can't twist while prone
+        if (isProne()) {
+            return getFacing();
         }
-        if (rotate >= 3) {
-          return MovementData.getAdjustedFacing(getFacing(), 
-                                                MovementData.STEP_TURN_LEFT);
-        } else {
-          return MovementData.getAdjustedFacing(getFacing(),
-                                                MovementData.STEP_TURN_RIGHT);
-        }
+        // otherwise, twist once in the appropriate direction
+        final int rotate = (dir + (6 - getFacing())) % 6;
+        return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
     }
     
     public boolean hasRearArmor(int loc) {

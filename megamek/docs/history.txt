@@ -99,7 +99,8 @@ v 0.28.11 (03-29-03, 7:30pm)
 + Players shouldn't be allowed to declare infantry to clear woods, some weapons
   to ignite fires, or use flamers to raise the heat of infantry or tanks.
 + 708217: Meks with active stealth can't be on C3 networks.
-+ 708661: actions reset when switching units using the right click menu 
++ 708661: actions reset when switching units using the right click menu
++ cleaned up some unfinished code (argh)
 
 v 0.28.10 (03-22-02, 2pm)
 + updated build.xml, build.bat for TinyXML.jar

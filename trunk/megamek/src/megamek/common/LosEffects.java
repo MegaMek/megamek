@@ -287,7 +287,7 @@ public class LosEffects {
      * add the effects of all those hexes.
      */
     private static LosEffects losStraight(Game game, AttackInfo ai) {
-        Coords[] in = Compute.intervening(ai.attackPos, ai.targetPos);
+        Coords[] in = Coords.intervening(ai.attackPos, ai.targetPos);
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
@@ -349,7 +349,7 @@ public class LosEffects {
      * what weapon is attacking.
      */
     private static LosEffects losDivided(Game game, AttackInfo ai) {
-		Coords[] in = Compute.intervening(ai.attackPos, ai.targetPos);
+		Coords[] in = Coords.intervening(ai.attackPos, ai.targetPos);
 		LosEffects los = new LosEffects();
 		boolean targetInBuilding = false;
 		if (ai.targetEntity) {

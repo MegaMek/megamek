@@ -48,23 +48,7 @@ public class StringUtil {
                 public int compare(java.lang.Object o1, java.lang.Object o2) {
                     String s1 = ((String) o1).toLowerCase();
                     String s2 = ((String) o2).toLowerCase();
-
-                    for (int i = 0; i < Math.min(s1.length(), s2.length()); i++) {
-                        if (s1.charAt(i) < s2.charAt(i)) {
-                            return -1;
-                        } else if (s1.charAt(i) > s2.charAt(i)) {
-                            return 1;
-                        }
-                    }
-
-                    if (s1.length() < s2.length()) {
-                        return -1;
-                    } else if (s1.length() > s2.length()) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-
+                    return s1.compareTo(s2);
                 }
             };
     }
@@ -79,13 +63,7 @@ public class StringUtil {
      * @return  The <code>boolean</code> equivalent of the input.
      */
     public static boolean parseBoolean( String input ) {
-        if ( null == input ) {
-            return false;
-        }
-        else if ( input.equalsIgnoreCase("true") ) {
-            return true;
-        }
-        return false;
+        return Boolean.valueOf(input).booleanValue();
     }
 
 }

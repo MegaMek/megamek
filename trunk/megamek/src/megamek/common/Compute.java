@@ -80,25 +80,6 @@ public class Compute
         return odds[n];
     }
 
-    /** Returns the odds of rolling n exactly on 2d6
-     */
-    public static double oddsOf(int n) {
-        switch (n) {
-        case 2:return 1.0/36;
-        case 3:return 2.0/36;
-        case 4:return 3.0/36;
-        case 5:return 4.0/36;
-        case 6:return 5.0/36;
-        case 7:return 6.0/36;
-        case 8:return 5.0/36;
-        case 9:return 4.0/36;
-        case 10:return 3.0/36;
-        case 11:return 2.0/36;
-        case 12:return 1.0/36;
-        }
-        return 0;
-    }
-
     /**
      * Returns an entity if the specified entity would cause a stacking
      * violation entering a hex, or returns null if it would not.
@@ -268,7 +249,7 @@ public class Compute
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
-        final Coords[] intervening = intervening(src, dest);
+        final Coords[] intervening = Coords.intervening(src, dest);
         final int direction = src.direction(dest);
 
         // arguments valid?
@@ -3053,63 +3034,6 @@ public class Compute
         return LosEffects.calculateLos(game, ae.getId(), target).canSee();
     }
 
-    /**
-     * Returns an array of the Coords of hexes that are crossed by a straight
-     * line from the center of src to the center of dest, including src & dest.
-     *
-     * The returned coordinates are in line order, and if the line passes
-     * directly between two hexes, it returns them both.
-     *
-     * Based on the degree of the angle, the next hex is going to be one of
-     * three hexes.  We check those three hexes, sides first, add the first one
-     * that intersects and continue from there.
-     *
-     * Based off of some of the formulas at Amit's game programming site.
-     * (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
-     */
-    public static Coords[] intervening(Coords src, Coords dest) {
-        IdealHex iSrc = IdealHex.get(src);
-        IdealHex iDest = IdealHex.get(dest);
-
-        int[] directions = new int[3];
-        directions[2] = src.direction(dest); // center last
-        directions[1] = (directions[2] + 5) % 6;
-        directions[0] = (directions[2] + 1) % 6;
-
-        Vector hexes = new Vector();
-        Coords current = src;
-
-        hexes.addElement(current);
-        while(!dest.equals(current)) {
-            current = nextHex(current, iSrc, iDest, directions);
-            hexes.addElement(current);
-        }
-
-        Coords[] hexArray = new Coords[hexes.size()];
-        hexes.copyInto(hexArray);
-        return hexArray;
-    }
-
-    /**
-     * Returns the first further hex found along the line from the centers of
-     * src to dest.  Checks the three directions given and returns the closest.
-     *
-     * This relies on the side directions being given first.  If it checked the
-     * center first, it would end up missing the side hexes sometimes.
-     *
-     * Not the most elegant solution, but it works.
-     */
-    public static Coords nextHex(Coords current, IdealHex iSrc, IdealHex iDest, int[] directions) {
-        for (int i = 0; i < directions.length; i++) {
-            Coords testing = current.translated(directions[i]);
-            if (IdealHex.get(testing).isIntersectedBy(iSrc.cx, iSrc.cy, iDest.cx, iDest.cy)) {
-                return testing;
-            }
-        }
-        // if we're here then something's fishy!
-        throw new RuntimeException("Couldn't find the next hex!");
-    }
-
     public static int targetSideTable(Entity attacker, Targetable target) {
         if (target.getTargetType() != Targetable.TYPE_ENTITY) {
             return ToHitData.SIDE_FRONT;
@@ -3268,7 +3192,7 @@ public class Compute
         if (vEnemyCoords.size() == 0) return false;
 
         // get intervening Coords.  See the comments for intervening() and losDivided()
-        Coords[] coords = intervening(a, b);
+        Coords[] coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration ranges = vECMRanges.elements();
         for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements(); ) {
@@ -3459,95 +3383,23 @@ public class Compute
      * @return  the <code>int</code> number of shots that hit the target.
      */
     public static int getBattleArmorHits( int shots ) {
-        // 2003-01-02 : Battle Armor attacks don't get modifiers.
-        int nMod = 0;
-
-        int nRoll = d6(2) + nMod;
-        nRoll = Math.min(Math.max(nRoll, 2), 12);
-
+        int nRoll = d6(2);
+        
         if (shots == 1) {
             return 1;
         }
-
-        else if (shots == 2) {
-            switch(nRoll) {
-            case 2 :
-            case 3 :
-            case 4 :
-            case 5 :
-            case 6 :
-                return 1;
-            case 7 :
-            case 8 :
-            case 9 :
-            case 10 :
-            case 11 :
-            case 12 :
-                return 2;
-            }
+        
+        if (shots > 5) {
+            throw new IllegalArgumentException("shots were greater than 5");
         }
-
-        else if (shots == 3) {
-            switch(nRoll) {
-            case 2 :
-            case 3 :
-                return 1;
-            case 4 :
-            case 5 :
-            case 6 :
-            case 7 :
-            case 8 :
-                return 2;
-            case 9 :
-            case 10 :
-            case 11 :
-            case 12 :
-                return 3;
-            }
-        }
-
-        else if (shots == 4) {
-            switch(nRoll) {
-            case 2 :
-                return 1;
-            case 3 :
-            case 4 :
-            case 5 :
-            case 6 :
-                return 2;
-            case 7 :
-            case 8 :
-            case 9 :
-                return 3;
-            case 10 :
-            case 11 :
-            case 12 :
-                return 4;
-            }
-        }
-
-        else if (shots == 5) {
-            switch(nRoll) {
-            case 2 :
-                return 1;
-            case 3 :
-            case 4 :
-                return 2;
-            case 5 :
-            case 6 :
-            case 7 :
-                return 3;
-            case 8 :
-            case 9 :
-            case 10 :
-                return 4;
-            case 11 :
-            case 12 :
-                return 5;
-            }
-        }
-
-        return 0;
+        
+        final int[][] hit_table = 
+        {{1,1,1,1,1,2,2,2,2,2,2},
+         {1,1,2,2,2,2,2,3,3,3,3},
+         {1,2,2,2,2,3,3,3,4,4,4},
+         {1,2,2,3,3,3,4,4,4,5,5}};
+        
+        return hit_table[shots - 2][nRoll];
     }
 
     /**

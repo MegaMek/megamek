@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Vector;
 
 /**
  * Coords stores x and y values.  Since these are hexes,
@@ -266,5 +267,62 @@ public class Coords
 
     public String toString() {
         return "Coords (" + x + ", " + y + "); " + getBoardNum();
+    }
+
+    /**
+     * Returns an array of the Coords of hexes that are crossed by a straight
+     * line from the center of src to the center of dest, including src & dest.
+     *
+     * The returned coordinates are in line order, and if the line passes
+     * directly between two hexes, it returns them both.
+     *
+     * Based on the degree of the angle, the next hex is going to be one of
+     * three hexes.  We check those three hexes, sides first, add the first one
+     * that intersects and continue from there.
+     *
+     * Based off of some of the formulas at Amit's game programming site.
+     * (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
+     */
+    public static Coords[] intervening(Coords src, Coords dest) {
+        IdealHex iSrc = IdealHex.get(src);
+        IdealHex iDest = IdealHex.get(dest);
+    
+        int[] directions = new int[3];
+        directions[2] = src.direction(dest); // center last
+        directions[1] = (directions[2] + 5) % 6;
+        directions[0] = (directions[2] + 1) % 6;
+    
+        Vector hexes = new Vector();
+        Coords current = src;
+    
+        hexes.addElement(current);
+        while(!dest.equals(current)) {
+            current = Coords.nextHex(current, iSrc, iDest, directions);
+            hexes.addElement(current);
+        }
+    
+        Coords[] hexArray = new Coords[hexes.size()];
+        hexes.copyInto(hexArray);
+        return hexArray;
+    }
+
+    /**
+     * Returns the first further hex found along the line from the centers of
+     * src to dest.  Checks the three directions given and returns the closest.
+     *
+     * This relies on the side directions being given first.  If it checked the
+     * center first, it would end up missing the side hexes sometimes.
+     *
+     * Not the most elegant solution, but it works.
+     */
+    private static Coords nextHex(Coords current, IdealHex iSrc, IdealHex iDest, int[] directions) {
+        for (int i = 0; i < directions.length; i++) {
+            Coords testing = current.translated(directions[i]);
+            if (IdealHex.get(testing).isIntersectedBy(iSrc.cx, iSrc.cy, iDest.cx, iDest.cy)) {
+                return testing;
+            }
+        }
+        // if we're here then something's fishy!
+        throw new RuntimeException("Couldn't find the next hex!");
     }
 }

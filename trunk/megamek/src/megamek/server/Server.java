@@ -290,10 +290,12 @@ public class Server
         final Connection conn = getClient(connId);
         final Player player = getPlayer(connId);
 
-        conn.die();
-
-        connections.removeElement(conn);
-        connectionIds.remove(new Integer(connId));
+        // if the connection's even still there, remove it
+        if (conn != null) {
+            conn.die();
+            connections.removeElement(conn);
+            connectionIds.remove(new Integer(connId));
+        }
 
         // in the lounge, just remove all entities for that player
         if (game.phase == Game.PHASE_LOUNGE) {
@@ -2879,7 +2881,7 @@ public class Server
         entity.setId(entityCounter++);
         game.addEntity(entity.getId(), entity);
 
-        send(createEntitiesPacket());
+        send(createAddEntityPacket(entity.getId()));
      }
 
     /**
@@ -2904,11 +2906,11 @@ public class Server
      * Deletes an entity owned by a certain player from the list
      */
     private void receiveEntityDelete(Packet c, int connIndex) {
-        int enum = c.getIntValue(0);
-        Entity entity = game.getEntity(enum);
+        int entityId = c.getIntValue(0);
+        Entity entity = game.getEntity(entityId);
         if (entity != null && entity.getOwner() == getPlayer(connIndex)) {
-            game.removeEntity(enum);
-            send(createEntitiesPacket());
+            game.removeEntity(entityId);
+            send(createRemoveEntityPacket(entityId));
         } else {
             // hey! that's not your entity
         }
@@ -3045,6 +3047,24 @@ public class Server
      */
     private Packet createEntitiesPacket() {
         return new Packet(Packet.COMMAND_SENDING_ENTITIES, game.getEntitiesVector());
+    }
+
+    /**
+     * Creates a packet detailing the addition of an entity
+     */
+    private Packet createAddEntityPacket(int entityId) {
+        final Entity entity = game.getEntity(entityId);
+        final Object[] data = new Object[2];
+        data[0] = new Integer(entityId);
+        data[1] = entity;
+        return new Packet(Packet.COMMAND_ENTITY_ADD, data);
+    }
+
+    /**
+     * Creates a packet detailing the removal of an entity
+     */
+    private Packet createRemoveEntityPacket(int entityId) {
+        return new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(entityId));
     }
 
     /**

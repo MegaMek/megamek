@@ -494,7 +494,7 @@ public class Client extends Panel
     protected void receiveEntities(Packet c) {
         Vector newEntities = (Vector)c.getObject(0);
         // re-link player in each entity
-        for(Enumeration i = newEntities.elements(); i.hasMoreElements();) {
+        for (Enumeration i = newEntities.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             entity.restore();
             entity.setOwner(getPlayer(entity.getOwnerId()));
@@ -517,10 +517,34 @@ public class Client extends Panel
         // re-link player
         entity.restore();
         entity.setOwner(getPlayer(entity.getOwnerId()));
-            
+        
         game.setEntity(eindex, entity);
         //XXX Hack alert!
         bv.boardChangedEntity(new BoardEvent(game.board, oc, entity, 0, 0)); //XXX
+        //XXX
+    }
+    
+    protected void receiveEntityAdd(Packet packet) {
+        int entityId = packet.getIntValue(0);
+        Entity entity = (Entity)packet.getObject(1);
+        // re-link player
+        entity.restore();
+        entity.setOwner(getPlayer(entity.getOwnerId()));
+        
+        game.addEntity(entityId, entity);
+        
+        processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
+        //XXX Hack alert!
+        bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX
+        //XXX
+    }
+    
+    protected void receiveEntityRemove(Packet packet) {
+        int entityId = packet.getIntValue(0);
+        game.removeEntity(entityId);
+        processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
+        //XXX Hack alert!
+        bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX
         //XXX
     }
     
@@ -612,8 +636,14 @@ public class Client extends Panel
             case Packet.COMMAND_CHAT :
                 processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_CHAT, null, (String)c.getObject(0)));
                 break;
+            case Packet.COMMAND_ENTITY_ADD :
+                receiveEntityAdd(c);
+                break;
             case Packet.COMMAND_ENTITY_UPDATE :
                 receiveEntityUpdate(c);
+                break;
+            case Packet.COMMAND_ENTITY_REMOVE :
+                receiveEntityRemove(c);
                 break;
             case Packet.COMMAND_PHASE_CHANGE :
                 changePhase(c.getIntValue(0));

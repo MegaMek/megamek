@@ -28,7 +28,7 @@ import megamek.server.commands.*;
 public class Server
     implements Runnable
 {
-    public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
+//    public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
     public final static String  DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
     
     // server setup

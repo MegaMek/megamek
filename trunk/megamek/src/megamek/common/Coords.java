@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -23,7 +23,7 @@ import java.io.Serializable;
  * Directions work clockwise around the hex, starting with
  * zero at the top.
  * 
-  *          -y
+ *          -y
  *          0
  *        _____
  *     5 /     \ 1
@@ -170,7 +170,7 @@ public class Coords
         double r = Math.atan((double)(dst.cx - src.cx) / (double)(src.cy - dst.cy));
         // flip if we're upside down
         if (src.cy < dst.cy) {
-            r = (r + Math.PI) % (Math.PI * 2 );
+            r = (r + Math.PI) % (Math.PI * 2);
         }
         // account for negative angles
         if (r < 0) {

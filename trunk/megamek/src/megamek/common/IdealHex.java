@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -15,9 +15,9 @@
 package megamek.common;
 
 /**
-* Represents a hex, not in the game but in an ideal coordinate system.  Used 
-* forsome calcuations.
-*/
+ * Represents a hex, not in the game but in an ideal coordinate system.  Used 
+ * for some calcuations.
+ */
 public class IdealHex 
 {
     // used for turns()
@@ -77,11 +77,13 @@ public class IdealHex
     /**
      * Tests whether a line intersects a point or the point passes
      * to the left or right of the line.
+     *
+     * Deals with floating point imprecision.  Thx deadeye00 (Derek Evans)
      */
     public static int turns(double x0, double y0, double x1, double y1, 
                              double x2, double y2) {
         final double cross = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
-        return ((cross > 0.0) ? LEFT : ((cross == 0.0) ? STRAIGHT : RIGHT));
+        return ((cross > 0.000001) ? LEFT : ((cross < -0.000001) ? RIGHT : STRAIGHT));
     }
 
 }

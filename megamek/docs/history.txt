@@ -14,6 +14,7 @@ v0.29.33 (CVS)
 + Bug 931003: spelling fix in TestBot.java
 + Bug 911777: Artillery attacks now resolve on correct side table.
 + Brought ChatterBox2.java up-to-date with recent commits
++ Corrected some more stray references to client.bv
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

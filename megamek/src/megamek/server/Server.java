@@ -2460,6 +2460,7 @@ implements Runnable, ConnectionHandler {
             phaseReport.append("\n" ).append( entity.getDisplayName()).append( " ejects.\n");
             phaseReport.append(destroyEntity(entity, "ejection"));
 
+            /* this is done in destroyEntity()
             // Is the unit carrying passengers?
             final Vector passengers = entity.getLoadedUnits();
             if ( !passengers.isEmpty() ) {
@@ -2485,6 +2486,7 @@ implements Runnable, ConnectionHandler {
                 phaseReport.append( " ends its swarm attack.\n" );
                 this.entityUpdate( swarmerId );
             }
+            */
 
             // Now remove the unit that ejected.
             game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
@@ -9167,6 +9169,11 @@ implements Runnable, ConnectionHandler {
             final int swarmerId = entity.getSwarmAttackerId();
             if ( Entity.NONE != swarmerId ) {
                 final Entity swarmer = game.getEntity( swarmerId );
+
+                // remove the swarmer from the move queue
+                game.removeTurnFor(swarmer);
+                send(createTurnVectorPacket());
+
                 swarmer.setSwarmTargetId( Entity.NONE );
                 entity.setSwarmAttackerId( Entity.NONE );
                 sb.append( swarmer.getDisplayName() );

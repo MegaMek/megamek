@@ -579,11 +579,23 @@ public class Compute
             mp += 3;
         }
         // account for elevation?
-        if (srcHex.floor() != destHex.floor()) {
-            int delta_e = Math.abs(srcHex.floor() - destHex.floor());
+        int nSrcEl = srcHex.floor();
+        int nDestEl = destHex.floor();
+        int nMove = entity.getMovementType();
+        
+        // hovercraft on water don't care about depth
+        if (nMove == Entity.MovementType.HOVER) {
+            if (srcHex.contains(Terrain.WATER)) {
+                nSrcEl = 0;
+            }
+            if (destHex.contains(Terrain.WATER)) {
+                nDestEl = 0;
+            }
+        }
+        if (nSrcEl != nDestEl) {
+            int delta_e = Math.abs(nSrcEl - nDestEl);
             
-            // ground vehicles are charged double
-            int nMove = entity.getMovementType();
+            // ground vehicles are charged double            
             if (nMove == Entity.MovementType.TRACKED || nMove == Entity.MovementType.WHEELED ||
                     nMove == Entity.MovementType.HOVER) {
                 delta_e *= 2;

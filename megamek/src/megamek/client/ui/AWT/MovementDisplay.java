@@ -1127,7 +1127,11 @@ public class MovementDisplay
             }
 
         } else {
-            setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to move.");
+            if (ev.getPlayer() == null && client.game.getTurn() instanceof GameTurn.UnloadStrandedTurn) {
+                setStatusBarText("Please wait for another player to unload their stranded units...");
+            } else {
+                setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to move.");
+            }
         }
     }
     public void gamePhaseChange(GameEvent ev) {

@@ -355,7 +355,8 @@ public class GameTurn implements Serializable {
             for ( int index = 0;
                   index < this.entityIds.length && !retVal;
                   index++ ) {
-                if ( playerId ==
+                if ( game.getEntity( this.entityIds[index] ) != null &&
+                     playerId ==
                      game.getEntity( this.entityIds[index] ).getOwnerId() ) {
                     retVal = true;
                 }

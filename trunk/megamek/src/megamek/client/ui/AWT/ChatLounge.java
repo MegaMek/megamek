@@ -515,6 +515,7 @@ public class ChatLounge
         MechSummaryCache.addListener(new MechSummaryCache.Listener() {
             public void doneLoading() {
                 butLoad.setEnabled(true);
+                MechSummaryCache.removeListener(this);
             }
         });
         butLoad.setEnabled(MechSummaryCache.isInitialized());

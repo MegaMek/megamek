@@ -38,6 +38,7 @@ v0.29.58 (CVS)
 + RFE 1022884, Patch 1061868: MaxTech Glancing Blows rule. Hits that roll exactly the required to-hit-number
   do less damage.
 + Data 1083453: Pictures for Akuma and Bloodkite
++ Data 870515: MTF Equipment List
   
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

@@ -65,6 +65,7 @@ Lot of people have contributed to the MegaMek project.
      Martis Truesight
      Taerkar
      coralbeach
+     Robert Heath <blasty_mcnasty@users.sourceforge.net>
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>

@@ -2083,7 +2083,26 @@ public abstract class Entity
       public  int getMovementType() {
         return movementType;
       }
-      
+
+    public String getMovementTypeAsString() {
+        switch (getMovementType()) {
+        case Entity.MovementType.NONE:
+            return "None";
+        case Entity.MovementType.BIPED:
+            return "Biped";
+        case Entity.MovementType.QUAD:
+            return "Quad";
+        case Entity.MovementType.TRACKED:
+            return "Tracked";
+        case Entity.MovementType.WHEELED:
+            return "Wheeled";
+        case Entity.MovementType.HOVER:
+            return "Hover";
+        default:
+            return "ERROR";
+        }
+    }
+
     /**
      * Set the movement type of the entity
      */

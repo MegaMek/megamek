@@ -117,6 +117,7 @@ v 0.28.20-dev
 + Bug 743355, Data 742085: applied updated infantry.zip from Hopalong.
 + Bug 712311: use only lower case letters in the image file names.
 + Bug 743256: don't use Vector#add, use Vector#addElement.
++ Feature 730413: Mech preview now shows vehicle traction type.
 
 v 0.28.19 (05-25-03, 12am)
 + Mech readout window in lobby closes with "x" in corner too

@@ -397,25 +397,13 @@ public class DeploymentDisplay
 
             // What undeployed units can we load?
             Vector choices = new Vector();
-            int otherId = client.getNextDeployableEntityNum( cen );
-            Entity other = client.getEntity( otherId );
-            while ( (otherId != cen) && (otherId != -1) ) {
-
-                // Is the other entity deployed?
-                if ( other.getPosition() == null ) {
-
-                    // Can the current entity load the other entity?
-                    if ( ce().canLoad( other ) ) {
-                        choices.addElement( other );
-                    }
-
-                } // End other not yet deployed.
-
-                // Check the next entity.
-                otherId = client.getNextDeployableEntityNum( otherId );
-                other = client.getEntity( otherId );
-
-            } // End have list of choices.
+            Vector entities = client.game.getEntitiesVector();
+            for (int i=0; i < entities.size(); i++) {
+                if ( ((Entity)entities.elementAt(i)).isSelectableThisTurn(client.game) && ce().canLoad((Entity)entities.elementAt(i))) {
+                    choices.addElement(entities.elementAt(i));
+                };
+            };
+            Entity other;
 
             // Do we have anyone to load?
             if ( choices.size() > 0 ) {

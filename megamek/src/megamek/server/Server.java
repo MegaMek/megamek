@@ -777,6 +777,8 @@ public class Server
     
     /**
      * Determine turn order by number of entities that are selectable this phase
+     *
+     * TODO: this is a real mess
      */
     private void determineTurnOrder() {
         // determine turn order
@@ -1086,8 +1088,9 @@ public class Server
         entity.moved = moveType;
 
         // but the danger isn't over yet!  landing from a jump can be risky!
-        if (overallMoveType == Entity.MOVE_JUMP
-                && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
+        if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {
+            // check for damaged criticals
+            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
                     || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_RLEG) > 0
                     || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_RLEG) > 0
                     || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_RLEG) > 0
@@ -1095,8 +1098,9 @@ public class Server
                     || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_LLEG) > 0
                     || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_LLEG) > 0
                     || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG) > 0
-                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_LLEG) > 0)) {
-            doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "landing with damaged leg actuator or gyro"));
+                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_LLEG) > 0) {
+                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "landing with damaged leg actuator or gyro"));
+            }
         }
 
         // build up heat from movement
@@ -1436,7 +1440,7 @@ public class Server
             return;
         }
         // compute to-hit
-        ToHitData toHit = Compute.toHitWeapon(game, waa);
+        ToHitData toHit = Compute.toHitWeapon(game, waa, attacks);
         phaseReport.append("; needs " + toHit.getValue() + ", ");
 
         // roll
@@ -1832,7 +1836,7 @@ public class Server
             phaseReport.append("misses.\n");
             if (targetDest != null) {
                 // move target to preferred hex
-                doEntityDisplacement(te, src, targetDest, null);
+                doEntityDisplacement(te, dest, targetDest, null);
                 // attacker falls into destination hex
                 phaseReport.append(ae.getDisplayName() + " falls into hex " + dest.getBoardNum() + ".\n");
                 doEntityFall(ae, dest, 2, 3, PilotingRollData.AUTOMATIC_FALL);

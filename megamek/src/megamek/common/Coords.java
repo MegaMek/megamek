@@ -228,6 +228,31 @@ public class Coords
     }
     
     /**
+     * Returns the distance to another coordinate.
+     * @author John Uckele (btzealot55@yahoo.com)
+     */
+    public int distance2(Coords c) {
+        //variables
+        int dx, dy, x, y;
+        //x-y conversion
+        y=2*this.y-this.x%2;
+        x=2*this.x;
+        c.y=2*c.y-c.x%2;
+        c.x*=2;
+        //distance calculations
+        dx=Math.abs(x-c.x);
+        dy=Math.abs(y-c.y)-dx;
+        //return values
+        if (dy<=0)
+        {
+            return dx;
+        }
+        else
+        {
+            return dx + dy;
+        }
+    }
+    /**
      * Returns a string representing a coordinate in "board number" format.
      */
     public String getBoardNum() {

@@ -221,15 +221,15 @@ public class BotClient extends Client
     //-----------------------------------------------------------------
     public static class MoveOption {
         public MoveOption() {
-            moves = new MovementData();    
+            moves = new MovePath();    
         }
         public MoveOption(MoveOption base) {
-            moves = new MovementData(base.moves);            
+            moves = new MovePath(base.moves);            
         }
         public double value() {
             return damagePotential - threat;
         }
-        public MovementData moves;
+        public MovePath moves;
         public double threat;
         public double damagePotential;
     }
@@ -501,7 +501,7 @@ public class BotClient extends Client
             // am I prone?  if so, all I can do is get up
             if (en.isProne()) {
                 MoveOption opt = new MoveOption(current);
-                opt.moves.addStep(MovementData.STEP_GET_UP);
+                opt.moves.addStep(MovePath.STEP_GET_UP);
                 int mp = en.getWalkMP() == 1 ? 1 : 2;
                 en.setProne(false); // assume we get up successfully
                 calculateRunWalkMoveOptions(entity, options, opt, mpsUsed + mp);
@@ -518,7 +518,7 @@ public class BotClient extends Client
                         // make sure there's no mech there
                         if (game.getFirstEntity(targetHex) == null) {
                             MoveOption opt = new MoveOption(current);
-                            opt.moves.addStep(MovementData.STEP_FORWARDS);
+                            opt.moves.addStep(MovePath.STEP_FORWARDS);
                             if (mpsUsed <= en.getWalkMP() && mpsUsed + cost > en.getWalkMP())
                                     en.heatBuildup += 1;
                             Coords oldPosition = en.getPosition();
@@ -534,15 +534,15 @@ public class BotClient extends Client
                 int oldFacing = en.getFacing();
                 MoveOption opt = new MoveOption(current);
                 // sendChat(" -> step left");
-                en.setFacing(MovementData.getAdjustedFacing(oldFacing, MovementData.STEP_TURN_LEFT));
-                opt.moves.addStep(MovementData.STEP_TURN_LEFT);
+                en.setFacing(MovePath.getAdjustedFacing(oldFacing, MovePath.STEP_TURN_LEFT));
+                opt.moves.addStep(MovePath.STEP_TURN_LEFT);
                 calculateRunWalkMoveOptions(entity, options, opt, mpsUsed + 1);
 
                 // turn right
                 opt = new MoveOption(current);
                 // sendChat(" -> step right");
-                en.setFacing(MovementData.getAdjustedFacing(oldFacing, MovementData.STEP_TURN_RIGHT));
-                opt.moves.addStep(MovementData.STEP_TURN_RIGHT);
+                en.setFacing(MovePath.getAdjustedFacing(oldFacing, MovePath.STEP_TURN_RIGHT));
+                opt.moves.addStep(MovePath.STEP_TURN_RIGHT);
                 calculateRunWalkMoveOptions(entity, options, opt, mpsUsed + 1);
                 en.setFacing(oldFacing);
             }

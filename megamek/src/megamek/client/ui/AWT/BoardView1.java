@@ -852,7 +852,7 @@ public class BoardView1
      * expensive to check for and reuse old step sprites than to make a whole
      * new one, we do that.
      */
-    public void drawMovementData(Entity entity, MovementData md) {
+    public void drawMovementData(Entity entity, MovePath md) {
         Vector temp = pathSprites;
 
         clearMovementData();
@@ -861,7 +861,7 @@ public class BoardView1
         Compute.compile(game, entity.getId(), md);
 
         for (java.util.Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            final MoveStep step = (MoveStep)i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
             for (Iterator j = temp.iterator(); j.hasNext();) {
@@ -1754,10 +1754,10 @@ public class BoardView1
      */
     private class StepSprite extends Sprite
     {
-        private MovementData.Step step;
+        private MoveStep step;
 
-        public StepSprite(MovementData.Step step) {
-            this.step = (MovementData.Step)step.clone();
+        public StepSprite(MoveStep step) {
+            this.step = (MoveStep)step.clone();
 
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), HEX_SIZE);
@@ -1802,14 +1802,14 @@ public class BoardView1
 
             // draw arrows and cost for the step
             switch (step.getType()) {
-            case MovementData.STEP_FORWARDS :
-            case MovementData.STEP_BACKWARDS :
-            case MovementData.STEP_CHARGE :
-            case MovementData.STEP_DFA :
-            case MovementData.STEP_LATERAL_LEFT :
-            case MovementData.STEP_LATERAL_RIGHT :
-            case MovementData.STEP_LATERAL_LEFT_BACKWARDS :
-            case MovementData.STEP_LATERAL_RIGHT_BACKWARDS :
+            case MovePath.STEP_FORWARDS :
+            case MovePath.STEP_BACKWARDS :
+            case MovePath.STEP_CHARGE :
+            case MovePath.STEP_DFA :
+            case MovePath.STEP_LATERAL_LEFT :
+            case MovePath.STEP_LATERAL_RIGHT :
+            case MovePath.STEP_LATERAL_LEFT_BACKWARDS :
+            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS :
                 // draw arrows showing them entering the next
                 myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
                                      movePoly.npoints);
@@ -1822,7 +1822,7 @@ public class BoardView1
                 // draw movement cost
                 drawMovementCost(step, stepPos, graph, col, true);
                 break;
-            case MovementData.STEP_GO_PRONE:
+            case MovePath.STEP_GO_PRONE:
                 // draw arrow indicating dropping prone
                 Polygon downPoly = movementPolys[7];
                 myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints, downPoly.npoints);
@@ -1835,7 +1835,7 @@ public class BoardView1
                 offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 break;
-            case MovementData.STEP_GET_UP:
+            case MovePath.STEP_GET_UP:
                 // draw arrow indicating standing up
                 Polygon upPoly = movementPolys[6];
                 myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints, upPoly.npoints);
@@ -1848,8 +1848,8 @@ public class BoardView1
                 offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 break;
-            case MovementData.STEP_TURN_LEFT:
-            case MovementData.STEP_TURN_RIGHT:
+            case MovePath.STEP_TURN_LEFT:
+            case MovePath.STEP_TURN_RIGHT:
                 // draw arrows showing the facing
                 myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints,
                                      facingPoly.npoints);
@@ -1860,7 +1860,7 @@ public class BoardView1
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
                 break;
-            case MovementData.STEP_LOAD:
+            case MovePath.STEP_LOAD:
                 // Announce load.
                 String load = "Load";
                 if (step.isPastDanger()) {
@@ -1873,7 +1873,7 @@ public class BoardView1
                 graph.setColor(col);
                 graph.drawString(load, loadX - 1, stepPos.y + 38);
                 break;
-            case MovementData.STEP_UNLOAD:
+            case MovePath.STEP_UNLOAD:
                 // Announce unload.
                 String unload = "Unload";
                 if (step.isPastDanger()) {
@@ -1897,11 +1897,11 @@ public class BoardView1
                     new KeyAlphaFilter(TRANSPARENT)));
         }
 
-        public MovementData.Step getStep() {
+        public MoveStep getStep() {
             return step;
         }
 
-        private void drawMovementCost(MovementData.Step step, Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
+        private void drawMovementCost(MoveStep step, Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
             String costString = null;
             StringBuffer costStringBuf = new StringBuffer();
             costStringBuf.append( step.getMpUsed() );

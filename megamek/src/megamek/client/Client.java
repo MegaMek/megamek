@@ -719,7 +719,7 @@ public class Client extends Panel
     /**
      * Send movement data for the given entity to the server.
      */
-    public void moveEntity(int enum, MovementData md) {
+    public void moveEntity(int enum, MovePath md) {
         Object[] data = new Object[2];
     
         data[0] = new Integer(enum);

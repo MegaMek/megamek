@@ -332,7 +332,10 @@ implements Runnable {
         sendCurrentInfo(connId);
 
         try {
-            sendServerChat("Machine IP is " + InetAddress.getLocalHost().getHostAddress());
+            InetAddress[] addresses = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
+            for (int i = 0; i < addresses.length; i++) {
+                sendServerChat(connId, "Machine IP is " + addresses[i].getHostAddress());
+            }
         } catch (UnknownHostException  e) {
             // oh well.
         }
@@ -340,6 +343,7 @@ implements Runnable {
         System.out.println("s: player " + connId
         + " (" + getPlayer(connId).getName() + ") connected from "
         + getClient(connId).getSocket().getInetAddress());
+        
         sendServerChat(getPlayer(connId).getName() + " connected from "
         + getClient(connId).getSocket().getInetAddress());
         

@@ -118,6 +118,7 @@ VERSION HISTORY:
 v 0.28.19-dev (CVS)
 + Mech readout window in lobby closes with "x" in corner too
 + proper "waiting to..." message in physical attack phase
++ server sends all IP addys on multi-homed hosts to connecting players
 
 v 0.28.18 (05-18-03, 11:35pm)
 + Bug 732188: Poor terrain matches shouldn't throw out the base image.

@@ -2811,7 +2811,9 @@ public abstract class Entity
             } else {
                 roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");                
             }
-        }    
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+        }
         return roll;
     }
 

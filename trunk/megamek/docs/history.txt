@@ -6,6 +6,7 @@ v 0.29.29 (CVS)
 + RFE 916248: Right-clicking no longer scrolls the board.
 + RFE 916953: Board can now be scrolled by holding down the shift key
         while moving the mouse.
++ Java 1.1 bug with Arrow IV implementation fixed.
 
 v 0.29.28 (2004-03-14 3:30pm)
 + Bug 911899: TEMPORARY solution - treat special Arrow IV ammo as normal ammo.

@@ -3582,15 +3582,15 @@ public class AmmoType extends EquipmentType {
             case AmmoType.T_ARROW_IV:
                 // The munition name appears in the middle of all names.
                 nameBuf = new StringBuffer( base.name );
-                index = base.internalName.lastIndexOf( "Ammo" );
+                index = base.name.lastIndexOf( "Ammo" );
                 nameBuf.insert( index, ' ' );
-                nameBuf.insert( index, this.name );
                 // Do special processing for munition names ending in "IV".
-                if ( this.name.endsWith("IV") ) {
-                    index = base.internalName.indexOf( "IV" );
-                    nameBuf.deleteCharAt( index );
-                    nameBuf.deleteCharAt( index );
-                    nameBuf.deleteCharAt( index );
+                if ( this.name.endsWith("-IV") ) {
+                    StringBuffer tempName = new StringBuffer(this.name);
+                    tempName.setLength(tempName.length() - 3);
+                    nameBuf.insert( index, tempName.toString() );
+                } else {
+                    nameBuf.insert( index, this.name );
                 }
                 munition.name = nameBuf.toString();
                 nameBuf = new StringBuffer( base.internalName );

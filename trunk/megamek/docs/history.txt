@@ -135,6 +135,8 @@ v 0.29.9-dev
   disabling its drawing if it's hidden (it can slow down the game on large maps)
 + Bug 797819: Pre-loaded infantry can now be deployed when using "Infantry move
   after meks" option.
++ Bug 795729: inactive units may not eject, spot for IDF, or dump ammo
++ Fixed bug with Artemis IV hanging the server
   
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.

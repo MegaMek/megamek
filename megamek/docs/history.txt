@@ -23,6 +23,7 @@ v 0.29.15 (CVS)
 + Partial bug 826249: Typed chat message is deleted only on escape.
 + Displays wrecks after Mechs and vehicles. Images in data/mex/wrecks/.
   Optional in Client Settings.
++ Bugs 787045, 810017: Fix ammo in Tyr Infantry Support Tank.
 
 v 0.29.14 (10-13-03, 5pm)
 + Fixed NPE in menu bar.

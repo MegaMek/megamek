@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.64 (CVS)
+v0.29.64 (2005-02-06 9:30am)
 + RFE 1112483: CTL+R shortcut added to Turn Report menu command
 + Data 1060895: Added new wreck images.
 + Data 1096465: Updated images for Templar and Templar Tancred.

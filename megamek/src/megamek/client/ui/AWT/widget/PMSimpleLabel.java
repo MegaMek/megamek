@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -15,6 +15,8 @@
 package megamek.client.util.widget;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 
 
 public class PMSimpleLabel  implements PMLabel{
@@ -49,19 +51,14 @@ public class PMSimpleLabel  implements PMLabel{
 	    color = c;
      }
      
-    public void setString(String s){
-        string = s;
-        // The width use to just be the stringWidth, but this
-        //  sometimes caused cropping when setString was called.
-        //  The value of 140% was chosen by trial and error, and
-        //  may be incorrect.  In fact, this whole fix is
-        //  basically a kludge, since I don't know why it
-        //  is needed.
-        width = (int)Math.ceil(fm.stringWidth(string) * 1.4);
-        height = fm.getHeight();
-        descent = fm.getMaxDescent();
-    }
-
+     public void setString(String s){
+     	string = s;
+     	width = fm.stringWidth(string);
+	    height = fm.getHeight();
+	    descent = fm.getMaxDescent();
+     	
+     }
+     
 
      /*
       * Set the color of the label of the font.
@@ -87,14 +84,14 @@ public class PMSimpleLabel  implements PMLabel{
       * Draw the label.
       */
      public void drawInto(Graphics g) {
-         if(!visible) return;
-         Font font = g.getFont();
-         Color temp = g.getColor();
-         g.setColor(color);
-         g.setFont(fm.getFont());
-         g.drawString(string, x, y);
-         g.setColor(temp);
-         g.setFont(font);
+     	  if(!visible) return;
+	      Font f = g.getFont();
+	      Color temp = g.getColor();
+	      g.setColor(color);
+	      g.setFont(fm.getFont());
+	      g.drawString(string, x, y);
+	      g.setColor(temp);
+	      g.setFont(f);
      }
      
      public void setVisible(boolean v){

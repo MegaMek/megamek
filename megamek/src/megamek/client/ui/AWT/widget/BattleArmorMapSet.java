@@ -20,6 +20,7 @@ package megamek.client.util.widget;
 
 import java.awt.*;
 import java.util.*;
+import megamek.client.*;
 import megamek.common.*;
 
 /**
@@ -49,7 +50,7 @@ public class BattleArmorMapSet implements DisplayMapSet{
 	
 	private int stepY = 53;
 	
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize);
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);	
 	
 	/**
      * This constructor have to be called anly from addNotify() method

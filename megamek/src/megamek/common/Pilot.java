@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -14,10 +14,7 @@
 
 package megamek.common;
 
-import java.io.Serializable;
-import java.util.Enumeration;
-import megamek.common.options.OptionGroup;
-import megamek.common.options.GameOption;
+import java.io.*;
 
 public class Pilot
     implements Serializable
@@ -27,7 +24,7 @@ public class Pilot
     private int         piloting;
     private int         hits; // hits taken
       
-    private boolean     unconscious;
+    private boolean     unconcious;
     private boolean     doomed;  // scheduled to die at end of phase
     private boolean     dead;
     
@@ -35,10 +32,6 @@ public class Pilot
     private int rollsNeeded; // how many KO rolls needed this turn
     private boolean koThisRound; // did I go KO this game round?
     
-    private PilotOptions options = new PilotOptions();
-
-    /** The number of hits that a pilot can take before he dies. */
-    static public final int DEATH       = 6;
     
     public Pilot() {
         this("Unnamed", 4, 5);
@@ -49,12 +42,10 @@ public class Pilot
         this.gunnery = gunnery;
         this.piloting = piloting;
         hits = 0;
-        unconscious = false;
+        unconcious = false;
         dead = false;
         rollsNeeded = 0;
         koThisRound = false;
-        
-        options.initialize();
     }
   
     public String getName() {
@@ -77,12 +68,12 @@ public class Pilot
         this.hits = hits;
     }
   
-    public boolean isUnconscious() {
-        return unconscious;
+    public boolean isUnconcious() {
+        return unconcious;
     }
     
-    public void setUnconscious(boolean unconscious) {
-        this.unconscious = unconscious;
+    public void setUnconcious(boolean unconcious) {
+        this.unconcious = unconcious;
     }
     
     public boolean isDead() {
@@ -110,7 +101,7 @@ public class Pilot
     }
     
     public boolean isActive() {
-        return !unconscious && !dead;
+        return !unconcious && !dead;
     }
     
     public int getRollsNeeded() {
@@ -131,126 +122,18 @@ public class Pilot
         this.koThisRound = koThisRound;
     }
     
-    public void setOptions(PilotOptions options) { 
-      this.options = options; 
-    }
-    
-    public PilotOptions getOptions() { 
-      return options; 
-    }
-
-    public void clearAdvantages() {
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-          OptionGroup group = (OptionGroup)i.nextElement();
-          
-          if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-            continue;
-            
-          for (Enumeration j = group.options(); j.hasMoreElements();) {
-              GameOption option = (GameOption)j.nextElement();
-              
-              option.clearValue();
-          }
-      }
-      
-    }
-    
-    public int countAdvantages() {
-      int count = 0;
-      
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-          OptionGroup group = (OptionGroup)i.nextElement();
-          
-          if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-            continue;
-            
-          for (Enumeration j = group.options(); j.hasMoreElements();) {
-              GameOption option = (GameOption)j.nextElement();
-              
-              if ( option.booleanValue() )
-                count++;
-          }
-      }
-      
-      return count;
-    }
-
-    /**
-        Returns the LVL3 Rules "Pilot Advantages" this pilot has
-    */
-    public Enumeration getAdvantages() {
-        for (Enumeration i = options.groups(); i.hasMoreElements();) {
-            OptionGroup group = (OptionGroup)i.nextElement();
-
-            if ( group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-                return group.options();
-        };
-
-        // no pilot advantages -- return an empty Enumeration
-        return new java.util.Vector().elements();
-    };
-
-    /**
-        Returns a string of all the LVL3 Pilot Advantage "codes" for this pilot,
-        using sep as the separator
-    */
-    public String getAdvantageList(String sep) {
-      StringBuffer adv = new StringBuffer();
-      
-      if (null == sep) {
-        sep = "";
-      }
-      
-    for (Enumeration j = getAdvantages(); j.hasMoreElements();) {
-        GameOption option = (GameOption)j.nextElement();
-
-        if ( option.booleanValue() ) {
-            if ( adv.length() > 0 ) {
-                adv.append(sep);
-            }
-
-            adv.append(option.getShortName());
-            if (option.getType() == GameOption.STRING ||
-                option.getType() == GameOption.CHOICE) {
-                adv.append(" ").append(option.stringValue());
-            }
-        }
-    }
-      
-      return adv.toString();
-    }
-
-    // Helper function to reverse getAdvantageList() above
-    public static String parseAdvantageName(String s) {
-        s = s.trim();
-        int index = s.indexOf(" ");
-        if (index == -1)
-            index = s.length();
-        return s.substring(0,index);
-    }
-
-    // Helper function to reverse getAdvantageList() above
-    public static Object parseAdvantageValue(String s) {
-        s = s.trim();
-        int index = s.indexOf(" ");
-        if (index == -1)
-            return new Boolean(true);
-        else
-            return s.substring(index + 1,s.length());
-    }
-    
     public String getDesc() {
         String s = new String(name);
         if (hits > 0) {
             s += " (" + hits + " hit(s)";
-            if (isUnconscious()) {
+            if (isUnconcious()) {
                 s += " [ko]";
             } else if (isDead()) {
                 s += " [dead]";
             }
             s += ")";
         }
-        else if (isUnconscious()) {
+        else if (isUnconcious()) {
             s += " [ko]";
         } else if (isDead()) {
             s += " [dead]";
@@ -270,7 +153,7 @@ public class Pilot
      */
     public double getBVSkillMultiplier() {
         double multiplier = 1.0;
-
+        
         if (gunnery < 4) {
             multiplier += 0.20 * (4 - gunnery);
         } else {
@@ -278,14 +161,7 @@ public class Pilot
         }
         
         multiplier += 0.05 * (5 - piloting);
-
+         
         return multiplier;
     }
-    
-	public int modifyPhysicalDamagaForMeleeSpecialist() {
-		if ( !getOptions().booleanOption("melee_specialist") )
-		    return 0;
-
-		return 1;
-	}
 }

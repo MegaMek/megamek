@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -35,10 +35,9 @@ public class MechView {
     private boolean isMech;
     private boolean isInf;
     private boolean isVehicle;
-    private boolean isProto;
     private boolean hasEndoSteel;
     private boolean hasFerroFibrous;
-
+    private boolean hasMASC;
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
 
@@ -47,7 +46,6 @@ public class MechView {
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
         isVehicle = entity instanceof Tank;
-        isProto = entity instanceof Protomech;
         hasEndoSteel = false;
         hasFerroFibrous = false;
 
@@ -55,31 +53,41 @@ public class MechView {
             .append("\n")
             .append(getAmmo())
             .append("\n")
-            .append(getMisc()) //has to occur before basic is processed
-            .append("\n")
-            .append(getFailed());
+            .append(getMisc()); //has to occur before basic is processed
 
         sBasic.append( mech.getShortName() );
         sBasic.append("\n");
         if ( !isInf ) {
             sBasic.append( Math.round(mech.getWeight()) )
-                .append(" tons  " );
+                .append(" tons   " );
         }
-        sBasic.append(TechConstants.T_NAMES[mech.getTechLevel()]);
+        if (mech.isClan()) {
+            sBasic.append( "Clan" );
+        } else {
+            sBasic.append( "Inner Sphere" );
+        }
         sBasic.append("\n");
         if ( mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
             sBasic.append( "Linked c3 BV: ");
-            sBasic.append( mech.calculateBattleValue(true) );
+            // TODO: refactor this code.
+            if ( isMech ) {
+                sBasic.append( ((Mech)mech).calculateBattleValue(true) );
+            } else {
+                sBasic.append( ((Tank)mech).calculateBattleValue(true) );
+            }
         }
         sBasic.append("\n");
         sBasic.append( "Movement: " )
             .append( mech.getWalkMP() )
             .append( "/" )
-            .append( mech.getRunMPasString() );
-        if (mech.getJumpMP() > 0) {
-            sBasic.append( "/" )
-                .append( mech.getJumpMP() );
+            .append( mech.getRunMPwithoutMASC() );
+        if (hasMASC) {
+            sBasic.append( "(")
+                .append( mech.getWalkMP() * 2)
+                .append( ")");
         }
+        sBasic.append( "/" )
+            .append( mech.getJumpMP() );
         if (isVehicle) {
             sBasic.append(" (")
                 .append(entity.getMovementTypeAsString())
@@ -147,15 +155,12 @@ public class MechView {
 
             // Skip empty sections.
             if ( Entity.ARMOR_NA == mech.getInternal(loc) ||
-                 ( isVehicle && (( loc == Tank.LOC_TURRET &&
-                                   ((Tank)mech).hasNoTurret() ) ||
-                                 (loc == Tank.LOC_BODY))) ) {
+                 (!isMech && !isInf && (( loc == Tank.LOC_TURRET &&
+                                          ((Tank)mech).hasNoTurret() ) ||
+                                        (loc == Tank.LOC_BODY))) ) {
                 continue;
             }
 
-            if ( mech.getLocationAbbr(loc).length() < 2 ) {
-                sIntArm.append( " " );
-            }
             sIntArm.append( mech.getLocationAbbr(loc) )
                 .append( ": " );
             sIntArm.append( renderArmor(mech.getInternal(loc)) )
@@ -178,26 +183,10 @@ public class MechView {
         Vector vWeapons = mech.getWeaponList();
         for (int j = 0; j < vWeapons.size(); j++)       {
             Mounted mounted = (Mounted) vWeapons.elementAt(j);
-            WeaponType wtype = (WeaponType)mounted.getType();
-
             sWeapons.append( mounted.getDesc() )
                 .append( "  [" )
                 .append( mech.getLocationAbbr(mounted.getLocation()) )
-                .append( "]" );
-            if (mech.isClan() && 
-                mounted.getType().getInternalName().substring(0,2).equals("IS")) {
-                sWeapons.append(" (IS)");
-            }
-            if (!mech.isClan() &&
-                mounted.getType().getInternalName().substring(0,2).equals("CL")) {
-                sWeapons.append(" (Clan)");
-            }
-            if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
-                sWeapons.append(" <")
-                    .append(mounted.getLinked().getDesc())
-                    .append(">");
-            }
-            sWeapons.append("\n");
+                .append( "]\n" );
         }
         return sWeapons.toString();
     }
@@ -207,12 +196,10 @@ public class MechView {
         StringBuffer sAmmo = new StringBuffer();
         while (eAmmo.hasMoreElements()) {
             Mounted mounted = (Mounted)eAmmo.nextElement();
-            if (mounted.getLocation() != Entity.LOC_NONE) {
-                sAmmo.append( mounted.getDesc() )
-                    .append( "  [" )
-                    .append( mech.getLocationAbbr(mounted.getLocation()) )
-                    .append( "]\n" );
-            }
+            sAmmo.append( mounted.getDesc() )
+                .append( "  [" )
+                .append( mech.getLocationAbbr(mounted.getLocation()) )
+                .append( "]\n" );
         }
         return sAmmo.toString();
     }
@@ -236,19 +223,13 @@ public class MechView {
                 }
                 continue;
             }
+            if (mounted.getDesc().indexOf("MASC") != -1) {
+                hasMASC = true;
+            }
             sMisc.append( mounted.getDesc() )
                 .append( "  [" )
                 .append( mech.getLocationAbbr(mounted.getLocation()) )
-                .append( "]" );
-            if (mech.isClan() && 
-                mounted.getType().getInternalName().substring(0,2).equals("IS")) {
-                sMisc.append(" (IS)");
-            }
-            if (!mech.isClan() &&
-                mounted.getType().getInternalName().substring(0,2).equals("CL")) {
-                sMisc.append(" (Clan)");
-            }
-            sMisc.append("\n");
+                .append( "]\n" );
         }
 
         String capacity = mech.getUnusedString();
@@ -259,19 +240,7 @@ public class MechView {
         }
         return sMisc.toString();
     }
-
-    private String getFailed() {
-        StringBuffer sFailed = new StringBuffer();
-        Enumeration eFailed = mech.getFailedEquipment();
-        if (eFailed.hasMoreElements()) {
-            sFailed.append("The following equipment\n slots failed to load:\n");
-            while (eFailed.hasMoreElements()) {
-                sFailed.append(eFailed.nextElement()).append("\n");
-            }
-        }
-        return sFailed.toString();
-    }    
-
+    
     private static String renderArmor(int nArmor)
     {
         if (nArmor <= 0) {
@@ -283,6 +252,10 @@ public class MechView {
     }
 
     private static final String SPACES = "                                   ";
+    private static String makeLength(String s, int n) {
+        return makeLength(s, n, false);
+    }
+
     private static String makeLength(String s, int n, boolean bRightJustify)
     {
         int l = s.length();

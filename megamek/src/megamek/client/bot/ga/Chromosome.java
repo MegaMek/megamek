@@ -1,26 +1,21 @@
 package megamek.client.bot.ga;
 
-import com.sun.java.util.collections.Comparable;
+/**
+  Chromosome is the base class for all chromosomes. It defines each
+  chromosome's genes, fitness, fitness rank, and provides simple methods
+  for copying and returning chromosome values as strings.
 
-public class Chromosome implements Comparable {
-    public double fitness; //absolute fitness value
-    public int[] genes;
+  ChromString and ChromFloat both extend Chromosome and model individual
+  candidate solutions. You will probably never need to subclass these classes.
+*/
 
-    public Chromosome(int iGenesDim) {
-        genes = new int[iGenesDim];
-    }
-    
-    public String toString() {
-        return genes.toString();
-    }
 
-    public void copyChromGenes(Chromosome chromosome) {
-        System.arraycopy(chromosome.genes, 0, genes, 0, genes.length);
-    }
-    
-    public int compareTo(Object o) {
-		double delta = fitness - ((Chromosome)o).fitness;
-		return delta>0?1:delta<0?-1:0;
-    }
-
+/** abstract basetype for all chromosomes */
+public abstract class Chromosome
+{
+  public double fitness;   //absolute (not relative) fitness value
+  public int fitnessRank;  //0 = worst fit, PopDim = best fit
+  public abstract String getGenesAsStr();
+  public abstract void copyChromGenes(Chromosome chromosome);
 }
+

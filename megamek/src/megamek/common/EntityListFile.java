@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -24,6 +24,13 @@ import gd.xml.ParseException;
  * to, and load a list of <code>Entity</code>s from a file.
  */
 public class EntityListFile {
+
+    /**
+     * Define the line separator. I am *intentionally* forcing a DOS
+     * line separator... *nix can handle DOS better than vice versa.
+     * TODO: am I hosing Mac users?
+     */
+    private static final String NL = "\r\n";
 
     /**
      * Produce a string describing this armor value.  Valid output values
@@ -86,11 +93,6 @@ public class EntityListFile {
                 output.append( String.valueOf
                                 (mount.getShotsLeft()) );
             }
-            if ( mount.getType() instanceof WeaponType &&
-                 ((WeaponType)mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
-                output.append( "\" munition=\"" );
-                output.append( mount.getLinked().getType().getInternalName() );
-            }
         }
         if ( isHit ) {
             output.append( "\" isHit=\"" );
@@ -99,7 +101,7 @@ public class EntityListFile {
         output.append( "\" isDestroyed=\"" );
         output.append( String.valueOf(isDestroyed) );
         output.append( "\"/>" );
-        output.append( Settings.NL );
+        output.append( NL );
 
         // Return a String.
         return output.toString();
@@ -136,20 +138,20 @@ public class EntityListFile {
                     thisLoc.append( "         <armor points=\"" );
                     thisLoc.append( formatArmor(entity.getArmor(loc)) );
                     thisLoc.append( "\"/>" );
-                    thisLoc.append( Settings.NL );
+                    thisLoc.append( NL );
                 }
                 if ( entity.getOInternal(loc) != entity.getInternal(loc) ) {
                     thisLoc.append( "         <armor points=\"" );
                     thisLoc.append( formatArmor(entity.getInternal(loc)) );
                     thisLoc.append( "\" type=\"Internal\"/>" );
-                    thisLoc.append( Settings.NL );
+                    thisLoc.append( NL );
                 }
                 if ( entity.hasRearArmor(loc) && entity.getOArmor(loc, true) !=
                      entity.getArmor(loc, true) ) {
                     thisLoc.append( "         <armor points=\"" );
                     thisLoc.append( formatArmor(entity.getArmor(loc, true)) );
                     thisLoc.append( "\" type=\"Rear\"/>" );
-                    thisLoc.append( Settings.NL );
+                    thisLoc.append( NL );
                 }
             }
 
@@ -170,7 +172,7 @@ public class EntityListFile {
                         thisLoc.append( "         <slot index=\"" );
                         thisLoc.append( String.valueOf(loop+1) );
                         thisLoc.append( "\" type=\"Empty\"/>" );
-                        thisLoc.append( Settings.NL );
+                        thisLoc.append( NL );
                         haveSlot = true;
                     }
 
@@ -215,18 +217,7 @@ public class EntityListFile {
                         thisLoc.append( "\" shots=\"" );
                         thisLoc.append( String.valueOf(mount.getShotsLeft()) );
                         thisLoc.append( "\"/>" );
-                        thisLoc.append( Settings.NL );
-                        haveSlot = true;
-                    }
-
-                    // Record the munition type of oneshot launchers
-                    else if ( !isDestroyed && mount != null &&
-                              mount.getType() instanceof WeaponType &&
-                              ((WeaponType)mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
-                        thisLoc.append( formatSlot( String.valueOf(loop+1),
-                                                    mount,
-                                                    slot.isHit(),
-                                                    slot.isDestroyed() ) );
+                        thisLoc.append( NL );
                         haveSlot = true;
                     }
 
@@ -234,10 +225,8 @@ public class EntityListFile {
 
             } // Check the next slot in this location
 
-            // Tanks don't have slots, and Protomechs only have
-            // system slots, so we have to handle the ammo specially.
-            if ( entity instanceof Tank ||
-                 entity instanceof Protomech ) {
+            // Tanks don't have slots, so we have to handle the ammo specially.
+            if ( entity instanceof Tank ) {
                 Enumeration ammo = entity.getAmmo();
                 while ( ammo.hasMoreElements() ) {
 
@@ -253,7 +242,7 @@ public class EntityListFile {
 
                 } // Check the next ammo.
 
-            } // End is-tank-or-proto
+            } // End is-tank
 
             // Did we record information for this location?
             if ( thisLoc.length() > 0 ) {
@@ -269,10 +258,10 @@ public class EntityListFile {
                 if ( blownOff ) {
                     output.append( " has been blown off." );
                 }
-                output.append( Settings.NL );
+                output.append( NL );
                 output.append( thisLoc.toString() );
                 output.append( "      </location>" );
-                output.append( Settings.NL );
+                output.append( NL );
 
                 // Reset the location buffer.
                 thisLoc = new StringBuffer();
@@ -288,7 +277,7 @@ public class EntityListFile {
                 output.append( String.valueOf(loc) );
                 output.append( "\" isDestroyed=\"true\" /> " );
                 output.append( entity.getLocationName(loc) );
-                output.append( Settings.NL );
+                output.append( NL );
 
             } // End location-completely-destroyed
 
@@ -304,13 +293,13 @@ public class EntityListFile {
 
         // If we recorded a slot, remind the player that slots start at 1.
         if ( haveSlot ) {
-            output.insert( 0, Settings.NL );
+            output.insert( 0, NL );
             output.insert
                 ( 0, "      The first slot in a location is at index=\"1\"." );
 
             // Tanks do wierd things with ammo.
             if ( entity instanceof Tank ) {
-                output.insert( 0, Settings.NL );
+                output.insert( 0, NL );
                 output.insert( 0, "      Tanks have special needs, so don't delete any ammo slots." );
             }
         }
@@ -357,11 +346,11 @@ public class EntityListFile {
 
         // Output the doctype and header stuff.
         output.write( "<?xml version=\"1.0\"?>" );
-        output.write( Settings.NL );
-        output.write( Settings.NL );
+        output.write( NL );
+        output.write( NL );
         output.write( "<unit>" );
-        output.write( Settings.NL );
-        output.write( Settings.NL );
+        output.write( NL );
+        output.write( NL );
 
         // Walk through the list of entities.
         Enumeration items = list.elements();
@@ -373,10 +362,8 @@ public class EntityListFile {
             output.write( entity.getChassis() );
             output.write( "\" model=\"" );
             output.write( entity.getModel() );
-            output.write( "\" type=\"" );
-            output.write( entity.getMovementTypeAsString() );
             output.write( "\">" );
-            output.write( Settings.NL );
+            output.write( NL );
 
             // Add the crew this entity.
             final Pilot crew = entity.getCrew();
@@ -393,12 +380,8 @@ public class EntityListFile {
                 output.write( "\" hits=\"" );
                 output.write( String.valueOf(crew.getHits()) );
             }
-            if ( crew.countAdvantages() > 0 ) {
-                output.write( "\" advantages=\"" );
-                output.write( String.valueOf(crew.getAdvantageList("::")) );
-            }
             output.write( "\"/>" );
-            output.write( Settings.NL );
+            output.write( NL );
 
             // Add the locations of this entity (if any are needed).
             String loc = getLocString( entity );
@@ -408,14 +391,14 @@ public class EntityListFile {
 
             // Finish writing this entity to the file.
             output.write( "   </entity>" );
-            output.write( Settings.NL );
-            output.write( Settings.NL );
+            output.write( NL );
+            output.write( NL );
 
         } // Handle the next entity
 
         // Finish writing.
         output.write( "</unit>" );
-        output.write( Settings.NL );
+        output.write( NL );
         output.flush();
         output.close();
     }

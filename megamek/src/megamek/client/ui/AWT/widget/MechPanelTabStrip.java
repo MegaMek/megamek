@@ -95,7 +95,7 @@ public class MechPanelTabStrip extends PicMap {
 		               { 
 		                 public void actionPerformed(ActionEvent e)
 		                     { 
-		                       if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
+		                       if (e.getActionCommand() == PMHotArea.MOUSE_CLICK_LEFT){
 		                       	  setTab(0);
 		                       	  md.showPanel("movement");
 		                       } 
@@ -105,7 +105,7 @@ public class MechPanelTabStrip extends PicMap {
 		               { 
 		                 public void actionPerformed(ActionEvent e)
 		                      {
-		                      	if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
+		                      	if (e.getActionCommand() == PMHotArea.MOUSE_CLICK_LEFT){
 		                       	  setTab(1);
 		                       	  md.showPanel("armor");
 		                        } 
@@ -115,7 +115,7 @@ public class MechPanelTabStrip extends PicMap {
 		               { 
 		                 public void actionPerformed(ActionEvent e)
 		                      {
-		                      	if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
+		                      	if (e.getActionCommand() == PMHotArea.MOUSE_CLICK_LEFT){
 		                       	  setTab(2);
 		                       	  md.showPanel("systems");
 		                        } 
@@ -125,7 +125,7 @@ public class MechPanelTabStrip extends PicMap {
 		               { 
 		                 public void actionPerformed(ActionEvent e)
 		                      {
-		                      	if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
+		                      	if (e.getActionCommand() == PMHotArea.MOUSE_CLICK_LEFT){
 		                       	  setTab(3);
 		                       	  md.showPanel("weapons");
 		                        } 
@@ -135,7 +135,7 @@ public class MechPanelTabStrip extends PicMap {
 		               { 
 		                 public void actionPerformed(ActionEvent e)
 		                      {
-		                      	if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
+		                      	if (e.getActionCommand() == PMHotArea.MOUSE_CLICK_LEFT){
 		                       	  setTab(4);
 		                       	  md.showPanel("extras");
 		                        } 
@@ -151,10 +151,6 @@ public class MechPanelTabStrip extends PicMap {
 	}
 	
 	private void drawIdleImage(int tab){
-        if (tabs[tab] == null) {
-            // hmm, display not initialized yet...
-            return;
-        }
 		Graphics g = tabs[tab].getIdleImage().getGraphics();
 		
 		if( activeTab == tab){

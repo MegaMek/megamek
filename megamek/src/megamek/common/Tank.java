@@ -16,8 +16,7 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
-import java.util.Vector;
-import megamek.common.util.StringUtil;
+
 /**
  * You know what tanks are, silly.
  */
@@ -61,25 +60,6 @@ public class Tank
     {
         m_bHasNoTurret = b;
     }
-    
-    /**
-    * Returns this entity's walking/cruising mp, factored
-    * for heat, extreme temperatures, and gravity.
-    */
-    public int getWalkMP() {
-        int i;
-        int j;
-        j = applyGravityEffectsOnMP(getOriginalWalkMP());
-        if (game != null) {
-            i = game.getTemperatureDifference();
-            return Math.max(j - i, 0);
-        }
-        return j;
-    }    
-
-    public boolean isTurretLocked() {
-        return m_bTurretLocked;
-    }
 
     /**
      * Returns the number of locations in the entity
@@ -117,15 +97,7 @@ public class Tank
             super.setSecondaryFacing(nTurretFacing);
         }
     }
-
-    public boolean isMovementHit() {
-        return m_bImmobile;
-    }
-
-    public boolean isMovementHitPending() {
-        return m_bImmobileHit;
-    }
-
+    
     public void immobilize()
     {
         m_bImmobileHit = true;
@@ -173,50 +145,33 @@ public class Tank
     {
         m_bTurretLocked = true;
     }
-
-    public int getStunnedTurns() {
-        return m_nStunnedTurns;
-    }
-
-    public void setStunnedTurns( int turns ) {
-        m_nStunnedTurns = turns;
-        this.crew.setUnconscious(true);
-    }
-
+    
     public void stunCrew()
     {
-        setStunnedTurns( 3 );
+        m_nStunnedTurns = 3;
+        this.crew.setUnconcious(true);
     }
-
-    public int getJammedTurns() {
-        return m_nJammedTurns;
+    
+    public void setJammedWeapon(Mounted m)
+    {
+        m_jammedGun = m;
+        m_jammedGun.setJammed(true);
+        m_nJammedTurns = 1;
     }
-
-    public void setJammedTurns( int turns ) {
-        // Set the jammed gun, if none are currently jammed.
-        if ( null == m_jammedGun ) {
-            m_jammedGun = this.getMainWeapon();
-            // We *may* be in the middle of de-serializing this tank.
-            if ( null != m_jammedGun ) {
-                m_jammedGun.setJammed(true);
-            }
-        }
-        m_nJammedTurns = turns;
-    }
-
+    
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
     }
     
-    public void newRound(int roundNumber)
+    public void newRound()
     {
-        super.newRound(roundNumber);
+        super.newRound();
         
         // check for crew stun
         if (m_nStunnedTurns > 0) {
             m_nStunnedTurns--;
             if (m_nStunnedTurns == 0) {
-                this.crew.setUnconscious(false);
+                this.crew.setUnconcious(false);
             }
         }
         
@@ -346,10 +301,6 @@ public class Tank
     /**
      * Rolls up a hit location
      */
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
-    	return rollHitLocation(table, side);
-    }     
-    
     public HitData rollHitLocation(int table, int side) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
@@ -453,11 +404,6 @@ public class Tank
         for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             EquipmentType etype = mounted.getType();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed())
-                continue;
-
             if ((etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
             || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
             || etype.hasFlag(MiscType.F_ECM)) {
@@ -503,10 +449,6 @@ public class Tank
             WeaponType wtype = (WeaponType)mounted.getType();
             double dBV = wtype.getBV(this);
 
-            // don't count destroyed equipment
-            if (mounted.isDestroyed())
-                continue;
-
             // don't count AMS, it's defensive
             if (wtype.getAmmoType() == AmmoType.T_AMS) {
                 continue;
@@ -546,10 +488,6 @@ public class Tank
             Mounted mounted = (Mounted)i.nextElement();
             AmmoType atype = (AmmoType)mounted.getType();
             
-            // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0)
-                continue;
-
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {
                 continue;
@@ -572,8 +510,7 @@ public class Tank
         // some hackery and magic numbers here.  could be better
         // also, each 'has' loops through all equipment.  inefficient to do it 3 times
         double xbv = 0.0;
-        if ((hasC3MM() && calculateFreeC3MNodes() < 2) ||
-            (hasC3M() && calculateFreeC3Nodes() < 3) ||
+        if ((hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
             (hasC3i() && calculateFreeC3Nodes() < 5) ||
             assumeLinkedC3) {
@@ -601,8 +538,6 @@ public class Tank
         report.append('\n');
         report.append("Driver : " + crew.getDesc());
         report.append('\n');
-        report.append("Kills: " + getKillNumber());
-        report.append('\n');
         
         return report.toString();
     }
@@ -615,8 +550,8 @@ public class Tank
     /**
      * Tanks don't have MASC
      */
-    public int getRunMPwithoutMASC(boolean gravity) {
-        return getRunMP(gravity);
+    public int getRunMPwithoutMASC() {
+        return getRunMP();
     }
     
     public int getHeatCapacity() {
@@ -648,60 +583,4 @@ public class Tank
     {
         return 1;
     }
-
-    /**
-     * Determine if the unit can be repaired, or only harvested for spares.
-     *
-     * @return  A <code>boolean</code> that is <code>true</code> if the unit
-     *          can be repaired (given enough time and parts); if this value
-     *          is <code>false</code>, the unit is only a source of spares.
-     * @see     Entity#isSalvage()
-     */
-    public boolean isRepairable() {
-        // A tank is repairable if it is salvageable,
-        // and none of its body internals are gone.
-        boolean retval = this.isSalvage();
-        int loc = Tank.LOC_FRONT;
-        while ( retval && loc < Tank.LOC_TURRET ) {
-            int loc_is = this.getInternal( loc );
-            loc++;
-            retval = (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
-        }
-        return retval;
-    }
-
-    public void generateIconName(java.awt.FontMetrics fm) {
-        iconName = getShortName();
-
-        if (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            Vector v = StringUtil.splitString(iconName, " ");
-            iconName = (String) v.elementAt(0);
-        }
-
-        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            iconName = iconName.substring(0, iconName.length() - 1);
-        }
-    }
-
-    /**
-     * Restores the entity after serialization
-     */
-    public void restore() {
-        super.restore();
-
-        // Restore our jammed gun, if necessary.
-        if ( m_nJammedTurns > 0 && null == m_jammedGun ) {
-            m_jammedGun = this.getMainWeapon();
-        }
-    }
-
-    public boolean canCharge() {
-        // Tanks can charge, except Hovers when the option is set
-        return super.canCharge() && !(game.getOptions().booleanOption("no_hover_charge") && MovementType.HOVER==getMovementType());
-    };
-
-    public boolean canDFA() {
-        // Tanks can't DFA
-        return false;
-    };
 }

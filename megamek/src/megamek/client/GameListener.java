@@ -14,6 +14,8 @@
 
 package megamek.client;
 
+import megamek.common.*;
+
 public interface GameListener
     extends java.util.EventListener
 {
@@ -23,9 +25,4 @@ public interface GameListener
     public void gamePhaseChange(GameEvent e);
     public void gameNewEntities(GameEvent e);
     public void gameNewSettings(GameEvent e);
-    public void gameDisconnected(GameEvent e);
-    public void gameBoardChanged(GameEvent e);
-    public void gameEnd(GameEvent e);
-    public void gameReport(GameEvent e);
-    public void gameMapQuery(GameEvent e);
 }

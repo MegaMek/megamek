@@ -28,22 +28,12 @@ package megamek.common;
  */
 public interface TechConstants {
 
-    /*
-     * These can apply to entities or individual pieces of equipment
-     */
     public static final int         T_IS_LEVEL_1    = 0;
     public static final int         T_IS_LEVEL_2    = 1;
     public static final int         T_CLAN_LEVEL_2  = 2;
-
-    /*
-     * These apply to entities only
-     */
-    //An entity with an Inner Sphere chassis that mounts some Clan equipment
-    public static final int         T_MIXED_BASE_IS_LEVEL_2 = 3;
-    //An entity with a Clan chassis that mounts some Inner Sphere equipment
-    public static final int         T_MIXED_BASE_CLAN_LEVEL_2 = 4;
+    public static final int         T_MIXED_LEVEL_2 = 3;
     
     public static final String[]    T_NAMES = {"IS level 1", "IS level 2", 
-        "Clan level 2", "Mixed (IS) level 2", "Mixed (Clan) level 2"};
+        "Clan level 2", "Mixed level 2"};
 }
 

@@ -17,8 +17,8 @@ package megamek.client.util.widget;
 
 import java.awt.*;
 import java.util.*;
+import megamek.client.*;
 import megamek.common.*;
-import megamek.common.options.GameOption;
 
 /**
  * Set of elements to reperesent general unit information in MechDisplay
@@ -27,16 +27,15 @@ import megamek.common.options.GameOption;
 public class GeneralInfoMapSet implements DisplayMapSet{
     private Component comp;
     private PMAreasGroup content = new PMAreasGroup();
-    private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL, weightL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL, movementTypeL;
-    private PMSimpleLabel statusR, playerR, teamR, weightR, pilotR, mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR;
-    private PMSimpleLabel[] advantagesR;
-    private Vector    bgDrawers = new Vector();
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize);
-    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, Settings.mechDisplayLargeFontSize);
-    private final static int MAX_STR_LENGTH = 18;
-
-
-    /**
+    private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL, weightL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL;
+	private PMSimpleLabel  statusR, playerR, teamR, weightR, pilotR, mpR0, mpR1, mpR2, mpR3,  curMoveR, heatR;
+	private Vector    bgDrawers = new Vector();
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);	
+    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, 12);	
+	private final static int MAX_STR_LENGTH = 18;
+	
+	
+	/**
      * This constructor have to be called anly from addNotify() method
      */
 	public GeneralInfoMapSet( Component c){
@@ -87,67 +86,55 @@ public class GeneralInfoMapSet implements DisplayMapSet{
 		content.addArea(weightR);
 		
 		
-		mpL0 = createLabel("Movement:", fm, 0, 100);
+		pilotL = createLabel("Pilot:", fm, 0, 100);
+		content.addArea(pilotL);
+		
+		pilotR = createLabel("***", fm, pilotL.getSize().width + 10, 100);
+		content.addArea(pilotR);
+		
+		mpL0 = createLabel("Movement:", fm, 0, 115);
 		content.addArea(mpL0);
 		
-		mpL1 = createLabel("Walk:", fm, 0 , 115);
-		mpL1.moveTo( mpL0.getSize().width - mpL1.getSize().width, 115);
+		mpL1 = createLabel("Walk:", fm, 0 , 130);
+		mpL1.moveTo( mpL0.getSize().width - mpL1.getSize().width, 130);
 		content.addArea(mpL1);
 		
-		mpL2 = createLabel("Run:", fm, 0 , 130);
-		mpL2.moveTo( mpL0.getSize().width - mpL2.getSize().width, 130);
+		mpL2 = createLabel("Run:", fm, 0 , 145);
+		mpL2.moveTo( mpL0.getSize().width - mpL2.getSize().width, 145);
 		content.addArea(mpL2);
 		
-		mpL3 = createLabel("Jump:", fm, 0 , 145);
-		mpL3.moveTo( mpL0.getSize().width - mpL3.getSize().width, 145);
+		mpL3 = createLabel("Jump:", fm, 0 , 160);
+		mpL3.moveTo( mpL0.getSize().width - mpL3.getSize().width, 160);
 		content.addArea(mpL3);
 		
 		
-		mpR0 = createLabel("", fm, mpL0.getSize().width + 10, 100);
+		mpR0 = createLabel("", fm, mpL0.getSize().width + 10, 115);
 		content.addArea(mpR0);
 		
-		mpR1 = createLabel("***", fm, mpL0.getSize().width + 10, 115);
+		mpR1 = createLabel("***", fm, mpL0.getSize().width + 10, 130);
 		content.addArea(mpR1);
 		
-		mpR2 = createLabel("***", fm, mpL0.getSize().width + 10, 130);
+		mpR2 = createLabel("***", fm, mpL0.getSize().width + 10, 145);
 		content.addArea(mpR2);
 				
-		mpR3 = createLabel("***", fm, mpL0.getSize().width + 10, 145);
+		mpR3 = createLabel("***", fm, mpL0.getSize().width + 10, 160);
 		content.addArea(mpR3);
 		
-		curMoveL = createLabel("Currently:", fm, 0, 160);
+		curMoveL = createLabel("Currently:", fm, 0, 175);
 		content.addArea(curMoveL);
 		
-		curMoveR = createLabel("***", fm, curMoveL.getSize().width + 10, 160);
+		curMoveR = createLabel("***", fm, curMoveL.getSize().width + 10, 175);
 		content.addArea(curMoveR);
 		
 				
-		heatL = createLabel("Heat:", fm, 0, 175);
+		heatL = createLabel("Heat:", fm, 0, 190);
 		content.addArea(heatL);
 		
-		heatR = createLabel("***", fm, heatL.getSize().width + 10, 175);
+		heatR = createLabel("***", fm, heatL.getSize().width + 10, 190);
 		content.addArea(heatR);
-
-                movementTypeL = createLabel("Type:", fm, 0, 190);
-		content.addArea(movementTypeL);
-		movementTypeR = createLabel("***", fm, movementTypeL.getSize().width + 10, 190);
-		content.addArea(movementTypeR);
-
-        pilotL = createLabel("Pilot:", fm, 0, 215);
-        content.addArea(pilotL);
-        pilotR = createLabel("***", fm, pilotL.getSize().width + 10, 215);
-        content.addArea(pilotR);
-
-        int vSpace = 230;
-        advantagesR = new PMSimpleLabel[6];
-        for (int i=0; i < advantagesR.length; i++) {
-            advantagesR[i] = createLabel(new Integer(i).toString(), fm, pilotL.getSize().width + 10, vSpace);
-            content.addArea(advantagesR[i]);
-            vSpace += 15;
-        };
-    }
-
-     /**
+	}
+	
+	 /**
      * updates fields for the unit
      */
     public void setEntity(Entity en) {
@@ -168,30 +155,9 @@ public class GeneralInfoMapSet implements DisplayMapSet{
     	
         statusR.setString(en.isProne() ? "prone" : "normal");
         playerR.setString(en.getOwner().getName());
-        if (en.getOwner().getTeam() == 0) {
-            teamL.setVisible(false);
-            teamR.setVisible(false);
-        } else {
-            teamL.setVisible(true);
-            teamR.setString("Team " + en.getOwner().getTeam());
-            teamR.setVisible(true);
-        }
+        teamR.setString(en.getOwner().getTeam() == 0 ? "No Team" : "Team " + en.getOwner().getTeam());
         weightR.setString(Integer.toString((int)en.getWeight()));
-        
-        pilotR.setString(en.crew.getDesc() + " (" + en.crew.getGunnery() + "/" + en.crew.getPiloting() + ")" );
-
-        for (int i=0; i < advantagesR.length; i++ ) {
-            advantagesR[i].setString("");
-        }
-        if (en.crew.countAdvantages() > 0) {
-            int i=0;
-            for (Enumeration advantages = en.crew.getAdvantages(); advantages.hasMoreElements();) {
-                GameOption option = (GameOption)advantages.nextElement();
-                if (option.booleanValue()) {
-                    advantagesR[i++].setString(option.getFullName());
-                };
-            };
-        };
+        pilotR.setString(en.crew.getDesc());
         
         if (en.mpUsed > 0) {
         	mpR0.setString("("+ en.mpUsed + " used)");
@@ -199,10 +165,10 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         	mpR0.setString("");
         }
         mpR1.setString(Integer.toString(en.getWalkMP()));
-        mpR2.setString(en.getRunMPasString());
+        mpR2.setString(Integer.toString(en.getRunMP()));
         mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
 
-        curMoveR.setString(en.getMovementString(en.moved) + (en.moved == Entity.MOVE_NONE ? "" : " " + en.delta_distance));
+        curMoveR.setString(en.getMovementString(en.moved) + (en.moved == en.MOVE_NONE ? "" : " " + en.delta_distance));
         
         int heatCap = en.getHeatCapacity();
         int heatCapWater = en.getHeatCapacityWithWater();
@@ -214,22 +180,15 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         
         heatR.setString(Integer.toString(en.heat) + " (" + heatCapacityStr + " capacity)");
         
-        if (en instanceof Mech){
-        	heatL.setVisible(true);
-        	heatR.setVisible(true);
-        } else {
+        if (en instanceof Infantry){
         	heatL.setVisible(false);
         	heatR.setVisible(false);
-        }
-
-        if (en instanceof Tank) {
-            movementTypeL.setVisible(true);
-            movementTypeR.setString(en.getMovementTypeAsString());
-            movementTypeR.setVisible(true);
         } else {
-            movementTypeL.setVisible(false);
-            movementTypeR.setVisible(false);
+        	heatL.setVisible(true);
+        	heatR.setVisible(true);
         }
+    
+    
     }
         
 	public PMAreasGroup getContentGroup(){

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -21,7 +21,6 @@
 package megamek.common;
 
 import com.sun.java.util.collections.*;
-import java.io.Serializable;
 
 /**
  * Keeps track of a target for a roll.  Allows adding modifiers with 
@@ -31,7 +30,7 @@ import java.io.Serializable;
  * @author  Ben
  * @version 
  */
-public class TargetRoll implements Serializable {
+public class TargetRoll {
     
     public final static int IMPOSSIBLE          = Integer.MAX_VALUE;
     public final static int AUTOMATIC_FAIL      = Integer.MAX_VALUE - 1;
@@ -132,7 +131,7 @@ public class TargetRoll implements Serializable {
         Modifier last = (Modifier)modifiers.get(modifiers.size() - 1);
         return last.desc;
     }
-    
+
     public Iterator getModifiers() {
         return modifiers.iterator();
     }
@@ -142,9 +141,6 @@ public class TargetRoll implements Serializable {
     }
 
     public void addModifier(Modifier modifier) {
-        if (modifier.value == CHECK_FALSE) {
-            removeAutos();
-        }
         modifiers.add(modifier);
         recalculate();
     }
@@ -153,9 +149,6 @@ public class TargetRoll implements Serializable {
      * Append another TargetRoll to the end of this one
      */
     public void append(TargetRoll other) {
-    	if (other == null) {
-    		return;
-    	}
         for (Iterator i = other.getModifiers(); i.hasNext();) {
             addModifier((Modifier)i.next());
         }
@@ -188,10 +181,8 @@ public class TargetRoll implements Serializable {
             Modifier modifier = (Modifier)i.next();
             
             // check for break condition
-            if (modifier.value == IMPOSSIBLE
-                || modifier.value == AUTOMATIC_FAIL 
-                || modifier.value == AUTOMATIC_SUCCESS
-                || modifier.value == CHECK_FALSE) {
+            if (modifier.value == IMPOSSIBLE || modifier.value == AUTOMATIC_FAIL 
+            || modifier.value == AUTOMATIC_SUCCESS) {
                 total = modifier.value;
                 break;
             }
@@ -201,7 +192,7 @@ public class TargetRoll implements Serializable {
         }
     }
     
-    private class Modifier implements Serializable {
+    private class Modifier {
         int value;
         String desc;
         

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -19,9 +19,6 @@ import java.io.*;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.util.StringTokenizer;
-
-import megamek.common.loaders.*;
 
 /**
  * This class parses an XML input stream.  If the stream is well formed, no
@@ -136,7 +133,6 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  GUNNERY = "gunnery";
     public static final String  PILOTING= "piloting";
     public static final String  HITS    = "hits";
-    public static final String  ADVS    = "advantages";
     public static final String  INDEX   = "index";
     public static final String  IS_DESTROYED    = "isDestroyed";
     public static final String  POINTS  = "points";
@@ -144,7 +140,6 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  IS_REAR = "isRear";
     public static final String  SHOTS   = "shots";
     public static final String  IS_HIT  = "isHit";
-    public static final String  MUNITION= "munition";
 
     /**
      * Special values recognized by this parser.
@@ -418,8 +413,7 @@ public class XMLStreamParser implements XMLResponder {
                 String gunnery = (String) attr.get( GUNNERY );
                 String piloting = (String) attr.get( PILOTING );
                 String hits = (String) attr.get( HITS );
-                String advantages = (String) attr.get( ADVS );
-                
+
                 // Did we find required attributes?
                 if ( gunnery == null || gunnery.length() == 0 ) {
                     this.warning.append
@@ -466,24 +460,6 @@ public class XMLStreamParser implements XMLResponder {
                     }
                     crew = new Pilot( pilotName, gunVal, pilotVal );
 
-                    if ( (null != advantages) && (advantages.trim().length() > 0) ) {
-                      StringTokenizer st = new StringTokenizer(advantages, "::");
-                      while (st.hasMoreTokens()) {
-                          String adv = st.nextToken();
-                          String advName = Pilot.parseAdvantageName(adv);
-                          Object value = Pilot.parseAdvantageValue(adv);
-                          
-                          try {
-                              crew.getOptions().getOption(advName).setValue(value);
-                          } catch ( Exception e ) {
-                              this.warning.append("Error restoring advantage: ")
-                                  .append( adv )
-                                  .append( ".\n" );
-                          }
-                      }
-
-                    }
-                    
                     // Was the crew wounded?
                     if ( hits != null ) {
                         // Try to get a good hits value.
@@ -712,7 +688,6 @@ public class XMLStreamParser implements XMLResponder {
                 String shots = (String) attr.get( SHOTS );
                 String hit = (String) attr.get( IS_HIT );
                 String destroyed = (String) attr.get( IS_DESTROYED );
-                String munition = (String) attr.get( MUNITION );
 
                 // Did we find required attributes?
                 if ( index == null || index.length() == 0 ) {
@@ -737,14 +712,13 @@ public class XMLStreamParser implements XMLResponder {
                     if ( index.equals( NA ) ) {
                         indexVal = Entity.ARMOR_NA;
 
-                        // Tanks don't have slots, and Protomechs only have
-                        // system slots, so we have to handle the ammo specially.
-                        if ( entity instanceof Tank ||
-                             entity instanceof Protomech ) {
+                        // Tanks don't have slots, so we have
+                        // to handle the ammo specially.
+                        if ( entity instanceof Tank ) {
 
                             // Get the saved ammo load.
                             EquipmentType newLoad = 
-                                EquipmentType.get( type );
+                                EquipmentType.getByInternalName( type );
                             if ( newLoad instanceof AmmoType ) {
                                 int counter = -1;
                                 Enumeration ammo = entity.getAmmo();
@@ -916,7 +890,7 @@ public class XMLStreamParser implements XMLResponder {
 
                             // Get the saved ammo load.
                             EquipmentType newLoad = 
-                                EquipmentType.get( type );
+                                EquipmentType.getByInternalName( type );
                             if ( newLoad instanceof AmmoType ) {
 
                                 // Try to get a good shots value.
@@ -974,23 +948,6 @@ public class XMLStreamParser implements XMLResponder {
                                 .append( ", but Entity has " )
                                 .append( mounted.getType().getInternalName() )
                                 .append( "there .\n" );
-                        }
-
-                        // Check for munition attribute.
-                        if (munition != null) {
-                            // Retrieve munition by name.
-                            EquipmentType munType = EquipmentType.get( munition );
-
-                            // Make sure munition is  a type of ammo.
-                            if ( munType instanceof AmmoType ) {
-                                // Change to the saved munition type.
-                                mounted.getLinked().changeAmmoType((AmmoType) munType);
-                            } else {
-                                // Bad XML equipment.
-                                this.warning.append( "XML file expects " )
-                                    .append( " ammo for munition argument of ")
-                                    .append( " slot tag.\n" );
-                            }
                         }
 
                     } // End have-equipment

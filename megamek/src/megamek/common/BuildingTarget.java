@@ -14,6 +14,9 @@
 
 package megamek.common;
 
+import java.util.Vector;
+import java.util.Enumeration;
+
 
 /**
  * This class represents a single, targetable hex of a building.  The building

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -15,6 +15,7 @@
 package megamek.client.util;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 
 /*
@@ -26,6 +27,8 @@ public class AdvancedLabel extends Component {
     private Vector stringVector = new Vector();
     private Color[] colorArray;
 
+    private int lines = 0;
+
     private int lineHeight;
     private int maxLineWidth;
     private int ascent;
@@ -33,33 +36,31 @@ public class AdvancedLabel extends Component {
 
     private boolean sized = false;
 
-    private static final int leftMargin = 2;
-    private static final int rightMargin = 2;
+    final private int leftMargin = 2;
+    final private int rightMargin = 2;
 
     public AdvancedLabel(String text) {
-        colorArray = null;
-        setText(text);
-    }
-
-    public AdvancedLabel(String text, Color[] lineColors) {
-        colorArray = lineColors;
-        setText(text);
-    }
-
-    public void paint(Graphics g) {
-        getSizes();
-        for (int i = 0; i < stringVector.size(); i++) {
-            if (colorArray != null)
-                g.setColor(colorArray[i]);
-            g.drawString((String) stringVector.elementAt(i), leftMargin, lineHeight * (i + 1));
+        this(text,null);
+        colorArray = new Color[lines];
+        for (int i = 0; i < lines; i++) {
+            colorArray[i] = getForeground();
         }
     }
-
-    public void setText(String text) {
-        stringVector.removeAllElements();
+    
+    public AdvancedLabel(String text, Color[] lineColors) {
         StringTokenizer st = new StringTokenizer(text, "\n");
         while (st.hasMoreTokens()) {
             stringVector.addElement(st.nextToken());
+            lines++;
+        }
+        colorArray = lineColors;
+    }
+    
+    public void paint(Graphics g) {
+        getSizes();
+        for (int i = 0; i < stringVector.size(); i++) {
+            g.setColor(colorArray[i]);
+            g.drawString((String)stringVector.elementAt(i),leftMargin,lineHeight*(i+1));
         }
     }
 
@@ -68,12 +69,12 @@ public class AdvancedLabel extends Component {
      */
     private void getSizes() {
         FontMetrics fm = getFontMetrics(getFont());
-        lineHeight = (int) fm.getHeight();
+        lineHeight = (int)fm.getHeight();
         for (int i = 0; i < stringVector.size(); i++) {
-            maxLineWidth = Math.max(maxLineWidth, (int) fm.stringWidth((String) stringVector.elementAt(i)));
+            maxLineWidth = Math.max(maxLineWidth, (int)fm.stringWidth((String)stringVector.elementAt(i)));
         }
-        ascent = (int) fm.getAscent();
-        descent = (int) fm.getDescent();
+        ascent = (int)fm.getAscent();
+        descent = (int)fm.getDescent();
         sized = true;
     }
 
@@ -86,7 +87,7 @@ public class AdvancedLabel extends Component {
             getSizes();
         }
         int totalWidth = maxLineWidth + leftMargin + rightMargin;
-        int totalHeight = stringVector.size() * lineHeight + stringVector.size() * descent;
+        int totalHeight = lines * lineHeight + lines * descent;
         Dimension d = new Dimension(totalWidth, totalHeight);
         return d;
     }

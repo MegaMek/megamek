@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.util.*;
+import java.io.IOException;
 
 /**
  * Represtents a set of handles on an OmniMech used by Battle Armor units

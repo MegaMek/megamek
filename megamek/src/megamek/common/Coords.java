@@ -15,7 +15,6 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Vector;
 
 /**
  * Coords stores x and y values.  Since these are hexes,
@@ -42,32 +41,14 @@ public class Coords
     
     public int            x;
     public int            y;
-
-    /**
-     * Allow at most 15 boards (255 hexes) in the 'y' direction.
-     */
-    private static final int SHIFT = 8;
-    private static final int MASK = ( 1 << Coords.SHIFT ) - 1;
-
-    /**
-     * The maximum height of a board in number of hexes.
-     */
-    public static final int MAX_BOARD_HEIGHT =
-        Integer.MAX_VALUE & Coords.MASK;
-
-    /**
-     * The maximum width of a board in number of hexes.
-     */
-    public static final int MAX_BOARD_WIDTH =
-        ( Integer.MAX_VALUE - Coords.MAX_BOARD_HEIGHT ) >> Coords.SHIFT;
-
+    
     /**
      * Constructs a new coordinate pair at (0, 0).
      */
     public Coords() {
         this(0, 0);
     }
-
+    
     /**
      * Constructs a new coordinate pair at (x, y).
      */
@@ -163,6 +144,37 @@ public class Coords
     }
     
     /**
+     * Old version.
+     * 
+     * Returns the approximate direction in which another coordinate
+     * lies; 0 if the coordinates are equal.
+     * 
+     * @param d the destination coordinate.
+     */
+    public int direction1(Coords d) {
+        if (x < d.x) {
+            if (y < d.y || (y == d.y && !isXOdd())) {
+                return 2;
+            } else {
+                return 1;
+            }
+        } else if (x == d.x) {
+            if (y < d.y) {
+                return 3;
+            } else {
+                return 0;
+            }
+        } else {
+            // x > d.x
+            if (y < d.y || (y == d.y && !isXOdd())) {
+                return 4;
+            } else {
+                return 5;
+            }
+        }
+    }
+    
+    /**
      * Returns the radian direction of another Coords.
      * 
      * @param d the destination coordinate.
@@ -220,6 +232,48 @@ public class Coords
     }
     
     /**
+     * Returns the distance to another coordinate.
+     * 
+     * My old, inaccurate formula (what's wrong?)
+     */
+    public int distance1(Coords c) {
+        int dx, dy, xf;
+        dx = Math.abs(this.x - c.x);
+        dy = Math.abs(this.y - c.y);
+        xf = (dx / 2) + (isXOdd() == c.isXOdd() ? 0 : 1);
+        if (dy < xf) {
+            return dx;
+        } else {
+            return dx + dy - xf;
+        }
+    }
+    
+    /**
+     * Returns the distance to another coordinate.
+     * @author John Uckele (btzealot55@yahoo.com)
+     */
+    public int distance2(Coords c) {
+        //variables
+        int dx, dy, x, y;
+        //x-y conversion
+        y=2*this.y-this.x%2;
+        x=2*this.x;
+        c.y=2*c.y-c.x%2;
+        c.x*=2;
+        //distance calculations
+        dx=Math.abs(x-c.x);
+        dy=Math.abs(y-c.y)-dx;
+        //return values
+        if (dy<=0)
+        {
+            return dx;
+        }
+        else
+        {
+            return dx + dy;
+        }
+    }
+    /**
      * Returns a string representing a coordinate in "board number" format.
      */
     public final String getBoardNum() {
@@ -250,79 +304,11 @@ public class Coords
      * @return  The <code>int</code> hash code for these coords.
      */
     public int hashCode() {
-        return (x << Coords.SHIFT) ^ y;
-    }
-
-    /**
-     * Get the coordinates object for a given hash code.
-     *
-     * @param   hash - the hash code for the desired object.
-     * @return  the <code>Coords</code> that match the hash code.
-     */
-    public static Coords getFromHashCode( int hash ) {
-        int hashy = ( hash & Coords.MASK );
-        int hashx = ( hash ^ hashy ) >>> Coords.SHIFT;
-        return new Coords (hashx, hashy);
+        // Allow at most 15 boards (255 hexes) in the 'y' direction.
+        return (x << 8) ^ y;
     }
 
     public String toString() {
         return "Coords (" + x + ", " + y + "); " + getBoardNum();
-    }
-
-    /**
-     * Returns an array of the Coords of hexes that are crossed by a straight
-     * line from the center of src to the center of dest, including src & dest.
-     *
-     * The returned coordinates are in line order, and if the line passes
-     * directly between two hexes, it returns them both.
-     *
-     * Based on the degree of the angle, the next hex is going to be one of
-     * three hexes.  We check those three hexes, sides first, add the first one
-     * that intersects and continue from there.
-     *
-     * Based off of some of the formulas at Amit's game programming site.
-     * (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
-     */
-    public static Coords[] intervening(Coords src, Coords dest) {
-        IdealHex iSrc = IdealHex.get(src);
-        IdealHex iDest = IdealHex.get(dest);
-    
-        int[] directions = new int[3];
-        directions[2] = src.direction(dest); // center last
-        directions[1] = (directions[2] + 5) % 6;
-        directions[0] = (directions[2] + 1) % 6;
-    
-        Vector hexes = new Vector();
-        Coords current = src;
-    
-        hexes.addElement(current);
-        while(!dest.equals(current)) {
-            current = Coords.nextHex(current, iSrc, iDest, directions);
-            hexes.addElement(current);
-        }
-    
-        Coords[] hexArray = new Coords[hexes.size()];
-        hexes.copyInto(hexArray);
-        return hexArray;
-    }
-
-    /**
-     * Returns the first further hex found along the line from the centers of
-     * src to dest.  Checks the three directions given and returns the closest.
-     *
-     * This relies on the side directions being given first.  If it checked the
-     * center first, it would end up missing the side hexes sometimes.
-     *
-     * Not the most elegant solution, but it works.
-     */
-    private static Coords nextHex(Coords current, IdealHex iSrc, IdealHex iDest, int[] directions) {
-        for (int i = 0; i < directions.length; i++) {
-            Coords testing = current.translated(directions[i]);
-            if (IdealHex.get(testing).isIntersectedBy(iSrc.cx, iSrc.cy, iDest.cx, iDest.cy)) {
-                return testing;
-            }
-        }
-        // if we're here then something's fishy!
-        throw new RuntimeException("Couldn't find the next hex!");
     }
 }

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -25,7 +25,6 @@ import java.util.zip.*;
  */
 public class Packet
 implements Serializable {
-    public static final int        COMMAND_CLOSE_CONNECTION     = 0;
     public static final int        COMMAND_SERVER_GREETING      = 1;
     public static final int        COMMAND_CLIENT_NAME          = 2;
     public static final int        COMMAND_LOCAL_PN             = 3;
@@ -34,9 +33,6 @@ implements Serializable {
     public static final int        COMMAND_PLAYER_REMOVE        = 5;
     public static final int        COMMAND_PLAYER_UPDATE        = 6;
     public static final int        COMMAND_PLAYER_READY         = 7;
-    // This next one not currently used, and has same number as
-    //  unload stranded?
-    public static final int        COMMAND_PLAYER_DISMOUNT      = 40;  // reorder me
     
     public static final int        COMMAND_CHAT                 = 8;
     
@@ -50,7 +46,6 @@ implements Serializable {
     public static final int        COMMAND_ENTITY_MODECHANGE    = 26;  // reorder me
     public static final int        COMMAND_ENTITY_AMMOCHANGE    = 33;  // reorder me
     
-    public static final int        COMMAND_ENTITY_VISIBILITY_INDICATOR = 41;  // reorder me
     public static final int        COMMAND_CHANGE_HEX           = 25;  // reorder me
 
     public static final int        COMMAND_BLDG_ADD             = 29; // reorder me
@@ -60,7 +55,6 @@ implements Serializable {
     
     public static final int        COMMAND_PHASE_CHANGE         = 15;
     public static final int        COMMAND_TURN                 = 16;
-    public static final int        COMMAND_ROUND_UPDATE         = 34; //reorder me
 
     public static final int        COMMAND_SENDING_BOARD        = 17;
     public static final int        COMMAND_SENDING_ENTITIES     = 18;
@@ -72,18 +66,11 @@ implements Serializable {
     public static final int        COMMAND_QUERY_MAP_SETTINGS   = 23;
                                                                 
     public static final int        COMMAND_END_OF_GAME          = 24;
-    public static final int        COMMAND_DEPLOY_MINEFIELDS    = 35;
-    public static final int        COMMAND_REVEAL_MINEFIELD     = 36;
-    public static final int        COMMAND_REMOVE_MINEFIELD     = 37;
-    public static final int        COMMAND_SENDING_MINEFIELDS   = 38;
-
-    public static final int        COMMAND_REROLL_INITIATIVE    = 39;    
-    public static final int        COMMAND_UNLOAD_STRANDED      = 40;    
+    
     
     private int command;
     private Object[] data;
     private boolean zipped = false;
-    public int byteLength = 0;
     
     /**
      * Contructs a new Packet with just the command and no
@@ -151,11 +138,6 @@ implements Serializable {
         if (zipped) {
             return;
         }
-
-        // Don't zip if we have no data.
-        if ( null == data ) {
-            return;
-        }
         
 //        long start = System.currentTimeMillis();
         
@@ -171,7 +153,7 @@ implements Serializable {
             
             data = new Object[1];
             byte[] bytes = baos.toByteArray();
-            this.byteLength = bytes.length;
+            
 //            System.out.println("zipData: data is " + bytes.length + " total bytes in data.");
 //            System.out.println("zipData: data is " + zipEntry.getSize() + " bytes uncompressed, " + zipEntry.getCompressedSize() + " bytes compressed, " + bytes.length + " total bytes in data.");
             
@@ -201,13 +183,13 @@ implements Serializable {
         // unzip
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream((byte[])data[0]);
+
             GZIPInputStream zis = new GZIPInputStream(bais);
+
             ObjectInputStream ois = new ObjectInputStream(zis);
-
             data = (Object[])ois.readObject();
-
             ois.close();
-
+        
             // reset the flag
             zipped = false;
         } catch (IOException ex) {
@@ -245,15 +227,6 @@ implements Serializable {
             return 0;
         }
     }
-    /**
-     * Dermine if the packet has been zipped.
-     *
-     * @return  <code>true</code> if the packet has been zipped.
-     *          <code>false</code> if the packet has no data or if it
-     *          has not been zipped.
-     */
-    public boolean isZipped() {
-        return zipped;
-    }
-
+    
+    
 }

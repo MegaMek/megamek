@@ -32,17 +32,12 @@ public class ServerLog {
     
     public static final String LOG_FILE = "serverlog.txt";
     
-    private long maxFilesize = Long.MAX_VALUE;
-    private File logfile;
-    
     Writer writer;
 
-    /** Appends to/Creates ServerLog named @filename */
-    public ServerLog(String filename, boolean append, long maxSize) {
+    /** Creates new ServerLog */
+    public ServerLog() {
         try {
-            logfile = new File(filename);
-            maxFilesize = maxSize;
-            writer = new BufferedWriter(new FileWriter(filename, append));
+            writer = new BufferedWriter(new FileWriter(LOG_FILE));
             append("Log file opened " + new Date().toString());
         } catch (IOException ex) {
             //TODO: I dunno.  report this... to the log? ;)
@@ -50,13 +45,8 @@ public class ServerLog {
         }
     }
     
-    /** Creates new ServerLog */
-    public ServerLog() {
-        this(LOG_FILE,false,Long.MAX_VALUE);
-    }
-
     public void append(String toLog) {
-        if (writer == null || logfile.length() > maxFilesize) {
+        if (writer == null) {
             return;
         }
         try {

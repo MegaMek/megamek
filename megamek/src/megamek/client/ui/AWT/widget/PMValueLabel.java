@@ -16,12 +16,16 @@
 package megamek.client.util.widget;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
  
 
 /*
  * A class for showing centered labels with desired value.
  */
 public class PMValueLabel extends PMSimpleLabel {
+      
+      boolean visible = true;
 
      /*
       * Create the label.
@@ -39,7 +43,7 @@ public class PMValueLabel extends PMSimpleLabel {
      }
      
      public void setVisible(boolean v){
-     	super.setVisible (v);
+     	visible = v;
      }
 
      /*

@@ -1,5 +1,5 @@
-/*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+/**
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -57,97 +57,47 @@ public final class Player extends TurnOrdered
     // these are game-specific, and maybe should be seperate from the player object
     private int             startingPos = 0;
 
-    // number of minefields
-    private int num_mf_conv  = 0;
-    private int num_mf_cmd   = 0;
-    private int num_mf_vibra = 0;
+    private int num_mechs    = 0;
+    private int num_tanks    = 0;
+    private int num_infantry = 0;
 
-    /**
-     * The "no camo" category.
-     */
-    public static final String NO_CAMO = "-- No Camo --";
-    
-    /**
-     * The category for camos in the root directory.
-     */
-    public static final String ROOT_CAMO = "-- General --";
+    public void resetMechCount() {
+        num_mechs = 0;
+    }
 
-    private String camoCategory = Player.NO_CAMO;
+    public void resetTankCount() {
+        num_tanks = 0;
+    }
 
-    private String camoFileName = null;
+    public void resetInfantryCount() {
+        num_infantry = 0;
+    }
 
-    private Vector visibleMinefields = new Vector();
-    
-    private boolean admitsDefeat = false;
-    
-    public Vector getMinefields() {
-    	return visibleMinefields;
+    public int incrementMechCount() {
+        return ++num_mechs;
     }
-    
-    public void addMinefield(Minefield mf) {
-    	visibleMinefields.addElement(mf);
+
+    public int incrementTankCount() {
+        return ++num_tanks;
     }
-    
-    public void addMinefields(Vector minefields) {
-    	for (int i = 0; i < minefields.size(); i++) {
-	    	visibleMinefields.addElement(minefields.elementAt(i));
-    	}
+
+    public int incrementInfantryCount() {
+        return ++num_infantry;
     }
-    
-    public void removeMinefield(Minefield mf) {
-    	visibleMinefields.removeElement(mf);
-	}
-    
-    public void removeMinefields() {
-    	visibleMinefields.removeAllElements();
-	}
-    
-    public boolean containsMinefield(Minefield mf) {
-    	return visibleMinefields.contains(mf);
-    }
-    
-	public boolean hasMinefields() {
-    	return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0);
-    }
-    
-    public void setNbrMFConventional(int nbrMF) {
-    	num_mf_conv = nbrMF;
-    }
-    
-    public void setNbrMFCommand(int nbrMF) {
-    	num_mf_cmd = nbrMF;
-    }
-    
-    public void setNbrMFVibra(int nbrMF) {
-    	num_mf_vibra = nbrMF;
-    }
-    
-    public int getNbrMFConventional() {
-    	return num_mf_conv;
-    }
-    
-    public int getNbrMFCommand() {
-    	return num_mf_cmd;
-    }
-    
-    public int getNbrMFVibra() {
-    	return num_mf_vibra;
-    }
-    
-    public void setCamoCategory(String name) {
-      this.camoCategory = name;
-    }
-    
-    public String getCamoCategory() {
-      return camoCategory;
-    }
-    
-    public void setCamoFileName(String name) {
-      this.camoFileName = name;
-    }
-    
-    public String getCamoFileName() {
-      return camoFileName;
+
+    public void updateTurnCount()
+    {
+        // This assumes that all unit counts are correct
+        boolean infMulti = game.getOptions().booleanOption("inf_move_multi");
+
+        if (infMulti)
+            turns_infantry = (int)Math.ceil( ((double)num_infantry) /
+                                             ((double)Game.INF_MOVE_MULTI) );
+        else
+            turns_infantry = num_infantry;
+
+        turns_tank = num_tanks;
+        turns_mech = num_mechs;
     }
 
     public Player(int id, String name) {
@@ -265,13 +215,5 @@ public final class Player extends TurnOrdered
 
     public int hashCode() {
         return getId();
-    }
-    
-    public void setAdmitsDefeat(boolean admitsDefeat) {
-    	this.admitsDefeat = admitsDefeat;
-    }
-    
-    public boolean admitsDefeat() {
-    	return admitsDefeat;
     }
 }

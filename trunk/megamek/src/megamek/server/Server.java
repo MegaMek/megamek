@@ -7444,12 +7444,6 @@ implements Runnable, ConnectionHandler {
             // See Bug 912094
             return;
         }
-        
-        // attacker lost all movement points?
-        if (ae.getRunMP() == 0) {
-            phaseReport.append("    Charge cancelled because attacker has insufficient movement point.\n");
-            return;
-        }
 
         // attacker fell down?
         if (ae.isProne()) {

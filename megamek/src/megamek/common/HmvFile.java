@@ -24,7 +24,7 @@ import java.util.Hashtable;
 
 /**
  * Based on the hmpread.c program and the MtfFile object.  This class
- * can not load any Mixed tech or Level 3 Mechs or any vehicles.
+ * can not load any Mixed tech or Level 3 vehicles.
  *
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
  */
@@ -159,18 +159,19 @@ public class HmvFile
         EquipmentType equipmentType = getEquipmentType(weaponType, techType);
         if (equipmentType != null)
         {
-          addEquipmentType(equipmentType, weaponCount, weaponLocation);
+            addEquipmentType(equipmentType, weaponCount, weaponLocation);
 
-          if (weaponAmmo > 0)
-          {
-			AmmoType ammoType = getAmmoType(weaponType, techType);
-			if (ammoType != null)
-			{
-              addEquipmentType(ammoType, weaponAmmo / ammoType.getShots(),
-                               HMVWeaponLocation.BODY);
-			}
-		  }
-	    }
+            if (weaponAmmo > 0)
+            {
+                AmmoType ammoType = getAmmoType(weaponType, techType);
+                if (ammoType != null)
+                {
+                    addEquipmentType(ammoType,
+                                     weaponAmmo / ammoType.getShots(),
+                                     HMVWeaponLocation.BODY);
+                }
+            }
+        }
 
         // ??
         dis.skipBytes(4);
@@ -301,6 +302,10 @@ public class HmvFile
     {
       equipmentAtLocation = new Hashtable();
       equipment.put(weaponLocation, equipmentAtLocation);
+    }
+    Integer prevCount = (Integer) equipmentAtLocation.get( equipmentType );
+    if ( null != prevCount ) {
+        weaponCount += prevCount.intValue();
     }
     equipmentAtLocation.put(equipmentType, new Integer(weaponCount));
   }

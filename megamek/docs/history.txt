@@ -16,6 +16,7 @@ v0.29.66 (CVS)
 + Added Narc capable ammunition, to take advantage of Narc, you now have to set
     your missile launchers to load Narc capable munition.
 + Added game option to set how many infantry/ProtoMech units move per 'Mech
++ Bug 1126196: Tanks with 0 MPs get no road bonus.
 
 v0.29.65 (2005-02-14 7:45am)
 + Bug 749240: The APM forum says +1 MP road bonus is *after* calculating flank.

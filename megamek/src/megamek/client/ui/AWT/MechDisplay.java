@@ -82,6 +82,8 @@ public class MechDisplay extends BufferedPanel
 
         ((CardLayout)displayP.getLayout()).show(displayP, "movement");
         //tabStrip.setTab(0);
+        
+        client.mechW.addKeyListener(client.menuBar);
     }
 
     public void addBag(Component comp, GridBagConstraints c) {
@@ -332,6 +334,7 @@ class WeaponPanel extends BufferedPanel
         // weapon list
         weaponList = new java.awt.List(4, false);
         weaponList.addItemListener(this);
+        weaponList.addKeyListener(client.menuBar);
 
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
@@ -349,6 +352,7 @@ class WeaponPanel extends BufferedPanel
         wAmmo = new TransparentLabel("Ammo", fm, clr, TransparentLabel.LEFT);
         m_chAmmo = new Choice();
         m_chAmmo.addItemListener(this);
+        m_chAmmo.addKeyListener(client.menuBar);
 
         c.insets = new Insets(1, 9, 1, 1);
 
@@ -526,6 +530,7 @@ class WeaponPanel extends BufferedPanel
         // to-hit text
         toHitText = new TextArea("", 2, 20, TextArea.SCROLLBARS_VERTICAL_ONLY);
         toHitText.setEditable(false);
+        toHitText.addKeyListener(client.menuBar);
 
         c.insets = new Insets(1, 9, 15, 9);
         c.gridx = 0; c.gridy = 10; c.gridwidth = GridBagConstraints.REMAINDER;
@@ -913,18 +918,25 @@ class SystemPanel
 
         locList = new List(8, false);
         locList.addItemListener(this);
+        locList.addKeyListener(client.menuBar);
+
         slotList = new List(12, false);
         slotList.addItemListener(this);
+        slotList.addKeyListener(client.menuBar);
         //slotList.setEnabled(false);
 
         m_chMode = new Choice();
         m_chMode.add("   ");
         m_chMode.setEnabled(false);
         m_chMode.addItemListener(this);
+        m_chMode.addKeyListener(client.menuBar);
+
         m_bDumpAmmo = new Button("Dump");
         m_bDumpAmmo.setEnabled(false);
         m_bDumpAmmo.setActionCommand("dump");
         m_bDumpAmmo.addActionListener(this);
+        m_bDumpAmmo.addKeyListener(client.menuBar);
+
         modeLabel = new TransparentLabel("Mode", fm, Color.white,TransparentLabel.RIGHT);
         //modeLabel.setEnabled(false);
 
@@ -1247,6 +1259,7 @@ class ExtraPanel
             ("Affected By:", fm, Color.white,TransparentLabel.CENTER);
 
         narcList = new List(3, false);
+        narcList.addKeyListener(client.menuBar);
 
         // transport stuff
         //unusedL = new Label( "Unused Space:", Label.CENTER );
@@ -1255,10 +1268,13 @@ class ExtraPanel
             ("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
         unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         unusedR.setEditable(false);
+        unusedR.addKeyListener(client.menuBar);
+
         carrysL = new TransparentLabel
             ( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
         carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         carrysR.setEditable(false);
+        carrysR.addKeyListener(client.menuBar);
 
         // layout choice panel
         GridBagLayout gridbag = new GridBagLayout();

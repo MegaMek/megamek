@@ -115,6 +115,10 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.28.18-dev (CVS)
++ Bug 732188: Poor terrain matches shouldn't throw out the base image.
++ Bug 732044: Use more intelligent hit locations on skids.
+
 v 0.28.17 (05-11-03, 1pm)
 + bug 731676: allow skipping a player w/ no entities to move
 + Bug 731933 fixed, mostly.
@@ -130,8 +134,6 @@ v 0.28.17 (05-11-03, 1pm)
 + Bug 724533: Displaced DFA'd units can't displace their own attacker
 + Added swords
 + Reordered "data/hexes/defaulthexset.txt" to better support rooftop fluff.
-+ Bug 732188: Poor terrain matches shouldn't throw out the base image.
-+ Bug 732044: Use more intelligent hit locations on skids.
 
 v 0.28.16 (05-03-03, 4pm)
 + RNG type changable in game options

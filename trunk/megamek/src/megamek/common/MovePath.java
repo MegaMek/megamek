@@ -627,13 +627,27 @@ public class MovePath implements Cloneable, Serializable {
         ArrayList result = new ArrayList();
         MoveStep last = getLastStep();
         if (isJumping()) {
-            MovePath next = (MovePath) this.clone();
-            for (int i = 0; i < 5; i++) {
-                result.add(next);
-                result.add(((MovePath) next.clone()).addStep(MovePath.STEP_FORWARDS));
-                next = (MovePath) next.clone();
-                next.addStep(MovePath.STEP_TURN_RIGHT);
+            // Spinning to the right looks silly.
+            MovePath left = (MovePath) this.clone();
+            MovePath right = (MovePath) this.clone();
+
+            // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
+            // Many of these moves may be illegal, but the player
+            // can (and will) try it; we should let them.
+            result.add( ((MovePath) this.clone())
+                        .addStep(MovePath.STEP_FORWARDS) );
+            for ( int turn = 0; turn < 2; turn++ ) {
+                left.addStep(MovePath.STEP_TURN_LEFT);
+                right.addStep(MovePath.STEP_TURN_RIGHT);
+                result.add( ((MovePath) left.clone())
+                            .addStep(MovePath.STEP_FORWARDS) );
+                result.add( ((MovePath) right.clone())
+                            .addStep(MovePath.STEP_FORWARDS) );
             }
+            right.addStep(MovePath.STEP_TURN_RIGHT);
+            result.add( right.addStep(MovePath.STEP_FORWARDS) );
+
+            // We've got all our next steps.            
             return result;
         }
         if (getFinalProne()) {

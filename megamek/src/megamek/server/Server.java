@@ -2192,8 +2192,7 @@ implements Runnable {
                     // the pre-skid move distance.
                     entity.delta_distance = distance-1;
 
-                    // All attacks against a skidding target are at +2,
-                    // and are *NOT* based upon distance moved at all.
+                    // Attacks against a skidding target have additional +2.
                     moveType = Entity.MOVE_SKID;
 
                     // What is the first hex in the skid?
@@ -2259,7 +2258,7 @@ implements Runnable {
                         if ( entity instanceof Tank &&
                              entity.getMovementType() ==
                              Entity.MovementType.HOVER ) {
-                            Terrain land = game.board.getHex(curPos).
+                            Terrain land = curHex.
                                 getTerrain(Terrain.WATER);
                             if ( land != null ) {
                                 curElevation += land.getLevel();
@@ -2310,7 +2309,29 @@ implements Runnable {
                                 // ASSUMPTION: buildings block damage for
                                 //             *EACH* entity charged.
                                 ToHitData toHit = new ToHitData();
-                                toHit.setHitTable( ToHitData.HIT_NORMAL );
+
+                                // Calculate hit location.
+                                if ( entity instanceof Tank &&
+                                     entity.getMovementType() ==
+                                     Entity.MovementType.HOVER &&
+                                     0 < nextHex.levelOf(Terrain.WATER) ) {
+                                    if ( 2 <= nextHex.levelOf(Terrain.WATER) ||
+                                         target.isProne() ) {
+                                        // Hovercraft can't hit the Mek.
+                                        continue;
+                                    }
+                                    else {
+                                        toHit.setHitTable(ToHitData.HIT_PUNCH);
+                                    }
+                                }
+                                else if ( entity.getHeight() <
+                                          target.getHeight() ) {
+                                    toHit.setHitTable(ToHitData.HIT_KICK);
+                                } else {
+                                    toHit.setHitTable(ToHitData.HIT_NORMAL);
+                                }
+
+                                // Resolve the hit.
                                 toHit.setSideTable
                                     (Compute.targetSideTable(entity, target));
                                 resolveChargeDamage

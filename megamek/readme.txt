@@ -1,7 +1,7 @@
 INTRODUCTION
 ------------
 MegaMek is a version of BattleTech that you can play with your friends 
-over the internet.  It it written in Java.  All of the level 1 (3025) 
+over the internet.  It is written in Java.  All of the level 1 (3025) 
 equipment and nearly all of the level 1 rules are functioning. In addition,
 many of the level 2 rules and equipment are finished, and even a few
 level 3 rules are available in the options.

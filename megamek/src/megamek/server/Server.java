@@ -2768,7 +2768,7 @@ public class Server
                 Mounted mounted = en.getEquipment(cs.getIndex());
                 EquipmentType eqType = mounted.getType();
                 desc += "\n            <<<CRITICAL HIT>>> on " + mounted.getDesc() + ".";
-                if (eqType.isExplosive()) {
+                if (eqType.isExplosive() && !mounted.isHit()) {
                     desc += explodeEquipment(en, loc, slot);
                 }
                 mounted.setHit(true);
@@ -2851,9 +2851,6 @@ public class Server
             desc.append(damageCrew(en, 2));
             desc.append("\n");
         }
-        
-        // make sure all the criticals of the system are marked hit
-        en.hitAllCriticals(loc, slot);
         
         return desc.toString();
     }

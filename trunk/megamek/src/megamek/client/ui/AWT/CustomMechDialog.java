@@ -848,7 +848,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             entity.setCrew(new Pilot(name, gunnery, piloting));
             if (entity instanceof Mech) {
                 Mech mech = (Mech)entity;
-                mech.setAutoEject(autoEject);
+                mech.setAutoEject(!autoEject);
             }
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
                 Entity chosen = client.getEntity

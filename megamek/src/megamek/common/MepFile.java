@@ -138,7 +138,12 @@ public class MepFile
     }
   
     public Mech getMech() {
-        Mech mech = new Mech();
+        Mech mech = null;
+        
+        if ( "Quad".equals(chassisType) )
+          mech = new QuadMech();
+        else
+          mech = new BipedMech();
     
         if(this.techYear == null || !this.techYear.equalsIgnoreCase("3025")) {
             return null;

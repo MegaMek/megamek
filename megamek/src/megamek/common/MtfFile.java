@@ -148,7 +148,15 @@ public class MtfFile {
     }
     
     public Mech getMech() {
-        Mech mech = new Mech();
+        if ( null != chassisConfig )
+          chassisConfig = chassisConfig.substring(7).trim();
+         
+        Mech mech = null;
+        
+        if ( "Quad".equals(chassisConfig) )
+          mech = new QuadMech();
+        else
+          mech = new BipedMech();
 
         if (techYear == null || !techYear.substring(4).equalsIgnoreCase("3025")) {
             return null;

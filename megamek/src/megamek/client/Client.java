@@ -626,6 +626,9 @@ public class Client extends Panel
         if (o instanceof TorsoTwistAction) {
             TorsoTwistAction tta = (TorsoTwistAction)o;
             game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
+        } else if (o instanceof FlipArmsAction) {
+            FlipArmsAction faa = (FlipArmsAction)o;
+            game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
         } else if (o instanceof AttackAction) {
             bv.addAttack((AttackAction)o);
         }

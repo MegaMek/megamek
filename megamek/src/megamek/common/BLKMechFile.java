@@ -76,15 +76,24 @@ public class BLKMechFile {
 
     public Mech getMech() {
     
-        Mech mech = new Mech();
+      int chassisType = 0;
+      if (!dataFile.exists("chassis_type")) {
+        chassisType = 0;
+      } else {
+        chassisType = dataFile.getDataAsInt("chassis_type")[0];
+      }
         
-        //Do I even write the year for these??
+      Mech mech = null;
         
+      if ( chassisType == 1 )
+        mech = new QuadMech();
+      else
+        mech = new BipedMech();
 
-    if (dataFile.exists("year")) {
+      //Do I even write the year for these??
                     
+      if (dataFile.exists("year")) {
             if (dataFile.getDataAsInt("year")[0] != 3025) return null;
-            
         }
         
         

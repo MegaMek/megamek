@@ -46,6 +46,7 @@ public class FiringDisplay
     private Button            butAim;
     private Button            butFindClub;
     private Button            butNextTarg;
+    private Button            butFlipArms;
     
     private Button            butSpace;
     private Button            butSpace1;
@@ -113,6 +114,10 @@ public class FiringDisplay
         butNextTarg = new Button("Next Target");
         butNextTarg.addActionListener(this);
         butNextTarg.setEnabled(false);
+        
+        butFlipArms = new Button("Flip Arms");
+        butFlipArms.addActionListener(this);
+        butFlipArms.setEnabled(false);
         
         butSpace = new Button(".");
         butSpace.setEnabled(false);
@@ -190,7 +195,7 @@ public class FiringDisplay
             panButtons.add(butNextTarg);
             panButtons.add(butNext);
             panButtons.add(butTwist);
-            panButtons.add(butSpace1);
+            panButtons.add(butFlipArms);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -226,6 +231,8 @@ public class FiringDisplay
             
             butTwist.setEnabled(ce().canChangeSecondaryFacing());
             butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
+            butFlipArms.setEnabled(ce().canFlipArms());
+            updateFlipArmsButtonName();
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
             System.err.println("FiringDisplay: sending ready signal...");
@@ -279,54 +286,47 @@ public class FiringDisplay
         butNext.setEnabled(false);
         butDone.setEnabled(false);
         butNextTarg.setEnabled(false);
+        butFlipArms.setEnabled(false);
     }
     
     /**
      * Cache the list of visible targets. This is used for the 'next target' button.
      *
-     * We'll sort it by range to us... the sorting isn't the most efficient, but how many
-     * targets can we really have and still play the game?
+     * We'll sort it by range to us.
      */
       private void cacheVisibleTargets() {
         clearVisibleTargets();
         
         Vector vec = client.game.getEnemyEntities( ce() );
         Coords myPos = ce().getPosition();
-        boolean flipLocs = false;
+        com.sun.java.util.collections.Comparator sortComp = new com.sun.java.util.collections.Comparator() {
+          public int compare(java.lang.Object x, java.lang.Object y) {
+            Entity entX = (Entity)x;
+            Entity entY = (Entity)y;
         
-        lastTargetID = -1;
+            int rangeToX = ce().getPosition().distance(entX.getPosition());
+            int rangeToY = ce().getPosition().distance(entY.getPosition());
         
+            if ( rangeToX == rangeToY ) return ((entX.getId() < entY.getId()) ? -1 : 1);
+          
+            return ((rangeToX < rangeToY) ? -1 : 1);
+          }
+        };
+          
+        com.sun.java.util.collections.TreeSet tree = new com.sun.java.util.collections.TreeSet(sortComp);
         visibleTargets = new Entity[vec.size()];
-        vec.copyInto(visibleTargets);
-        
-        butNextTarg.setEnabled(visibleTargets.length > 0);
-        
-        for ( int i = 0; i < visibleTargets.length - 1; i++ ) {
-          Entity entI = (Entity)visibleTargets[i];
-          
-          if (entI == ce()) {
-              continue;
-          }
-          
-          int rangeToI = myPos.distance(entI.getPosition());
-          
-          for ( int j = i + 1; j < visibleTargets.length; j++ ) {
-            flipLocs = false;
-            
-            Entity entJ = (Entity)visibleTargets[j];
-            int rangeToJ = myPos.distance(entJ.getPosition());
-            
-            if ( rangeToJ < rangeToI )
-              flipLocs = true;
-            else if ( (rangeToJ == rangeToI) && (entJ.getId() < entI.getId()) )
-              flipLocs = true;
               
-            if ( flipLocs ) {
-              visibleTargets[i] = entJ;
-              visibleTargets[j] = entI;
-            }
+        for ( int i = 0; i < vec.size(); i++ ) {
+          tree.add((Entity)vec.elementAt(i));
           }
+        
+        com.sun.java.util.collections.Iterator it = tree.iterator();
+        int count = 0;
+        while ( it.hasNext() ) {
+          visibleTargets[count++] = (Entity)it.next();
         }
+
+        butNextTarg.setEnabled(visibleTargets.length > 0);
       }
 
       private void clearVisibleTargets() {
@@ -454,7 +454,7 @@ public class FiringDisplay
      */
     private void refreshAll() {
         client.bv.redrawEntity(ce());
-        client.mechD.displayMech(ce());
+        client.mechD.displayMech(client.game, ce());
         client.mechD.showPanel("weapons");
         selectedWeapon = ce().getFirstWeapon();
         client.mechD.wPan.selectWeapon(selectedWeapon);
@@ -507,7 +507,11 @@ public class FiringDisplay
      * Torso twist in the proper direction.
      */
     private void torsoTwist(Coords target) {
-        int direction = ce().clipSecondaryFacing(ce().getPosition().direction(target));
+        int direction = ce().getFacing();
+        
+        if ( null != target )
+          direction = ce().clipSecondaryFacing(ce().getPosition().direction(target));
+          
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
             attacks.addElement(new TorsoTwistAction(cen, direction));
@@ -557,6 +561,7 @@ public class FiringDisplay
         
         if (b.getType() == b.BOARD_HEX_DRAGGED) {
             if (shiftheld || twisting) {
+                updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }
             client.game.board.cursor(b.getCoords());
@@ -568,6 +573,7 @@ public class FiringDisplay
     public void boardHexSelected(BoardEvent b) {
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld) {
+                updateFlipArms(false);
                 torsoTwist(b.getCoords());
             } else if (client.game.getEntity(b.getCoords()) != null && client.game.getEntity(b.getCoords()).isTargetable()) {
                 target(client.game.getEntity(b.getCoords()).getId());
@@ -637,9 +643,28 @@ public class FiringDisplay
             findClub();
         } else if (ev.getSource() == butNextTarg) {
           jumpToNextTarget();
+        } else if (ev.getSource() == butFlipArms) {
+          updateFlipArms(!ce().getArmsFlipped());
         }
     }
     
+    private void updateFlipArms(boolean armsFlipped) {
+      twisting = false;
+
+      torsoTwist(null);
+      
+      ce().setArmsFlipped(armsFlipped);
+      clearAttacks();
+      attacks.addElement(new FlipArmsAction(cen, armsFlipped));
+      updateTarget();
+      refreshAll();
+
+      updateFlipArmsButtonName();
+    }
+    
+    private void updateFlipArmsButtonName() {
+      butFlipArms.setLabel( "Flip " + (ce().getArmsFlipped() ? "Front" : "Rear"));
+    }
 
     //
     // KeyListener
@@ -659,6 +684,7 @@ public class FiringDisplay
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {
             shiftheld = true;
             if (client.isMyTurn() && client.game.board.lastCursor != null) {
+                updateFlipArms(false);
                 torsoTwist(client.game.board.lastCursor);
             }
         }

@@ -24,6 +24,15 @@ import java.util.*;
 public abstract class Entity 
     implements Serializable 
 {
+    public interface MovementType {
+      public static final int NONE    = 0; //Future expansion. Turrets?
+      public static final int BIPED   = 1;
+      public static final int QUAD    = 2;
+      public static final int TRACKED = 3;
+      public static final int WHEELED = 4;
+      public static final int HOVER   = 5;
+    }
+    
     public static final int        NONE                = -1;
 
     public static final int        MOVE_ILLEGAL        = -1;
@@ -69,7 +78,8 @@ public abstract class Entity
     protected boolean           prone = false;
     protected boolean           charging = false;
     protected boolean           makingDfa = false;
-    protected boolean           findingClub = false;  //TODO: put this somehwere else, maybe
+    protected boolean           findingClub = false;
+    protected boolean           armsFlipped = false;
     
     public int                  heat = 0;
     public int                  heatBuildup = 0;
@@ -91,6 +101,7 @@ public abstract class Entity
 
     protected CriticalSlot[][]  crits; // [loc][slot]
 
+    private int                 movementType  = MovementType.NONE;
     
     /**
      * Generates a new, blank, entity.
@@ -284,6 +295,20 @@ public abstract class Entity
     }
         
     /**
+     * Set whether or not the mech's arms are flipped to the rear
+     */
+      public void setArmsFlipped(boolean armsFlipped) {
+        this.armsFlipped = armsFlipped;
+      }
+     
+    /**
+     * Returns true if the mech's arms are flipped to the rear
+     */
+      public boolean getArmsFlipped() {
+        return this.armsFlipped;
+      }
+     
+    /**
      * Returns the current position of this entity on
      * the board.
      */
@@ -367,6 +392,13 @@ public abstract class Entity
     public abstract int clipSecondaryFacing(int dir);
     
     /**
+     * Returns true if the entity can flip its arms
+     */
+      public boolean canFlipArms() {
+        return false;
+      }
+
+    /**
      * Returns this entity's original walking movement points
      */
     protected int getOriginalWalkMP() {
@@ -437,22 +469,56 @@ public abstract class Entity
     /**
      * Returns the name of the location specified.
      */
-    public abstract String getLocationName(HitData hit);
-
-    /**
-     * Returns the abbreviated name of the location specified.
-     */
-    public abstract String getLocationAbbr(HitData hit);
+    public String getLocationName(HitData hit) {
+      return getLocationName(hit.getLocation());
+    }
+    
+    protected abstract String[] getLocationNames();
 
     /**
      * Returns the name of the location specified.
      */
-    public abstract String getLocationName(int loc);
+    public String getLocationName(int loc) {
+      String[] locationNames = getLocationNames();
+      
+      if ( (null == locationNames) || (loc >= locationNames.length) )
+        return "";
+    
+      return locationNames[loc];
+    }
+    
+    protected abstract String[] getLocationAbbrs();
 
     /**
      * Returns the abbreviated name of the location specified.
      */
-    public abstract String getLocationAbbr(int loc);
+    public String getLocationAbbr(HitData hit) {
+      return getLocationAbbr(hit.getLocation()) + (hit.isRear() && hasRearArmor(hit.getLocation()) ? "R" : "") + (hit.getEffect() == HitData.EFFECT_CRITICAL ? " (critical)" : "");
+    }
+
+    /**
+     * Returns the abbreviated name of the location specified.
+     */
+    public String getLocationAbbr(int loc) {
+      String[] locationAbbrs = getLocationAbbrs();
+      
+      if ( (null == locationAbbrs) || (loc >= locationAbbrs.length) )
+        return "";
+    
+      return locationAbbrs[loc];
+    }
+  
+    /**
+     * Returns the location that the specified abbreviation indicates
+     */
+    public int getLocationFromAbbr(String abbr) {
+        for (int i = 0; i < locations(); i++) {
+            if (getLocationAbbr(i).equalsIgnoreCase(abbr)) {
+                return i;
+            }
+        }
+      return this.LOC_NONE;
+    }
 
     /**
      * Rolls the to-hit number 
@@ -688,6 +754,13 @@ public abstract class Entity
         return getInternal(loc) == ARMOR_DESTROYED;
     }
     
+    /**
+     * Returns true is the location is a leg
+     */
+    public boolean locationIsLeg(int loc) {
+      return false;
+    }
+      
     /**
      * Returns a string representing the armor in the location
      */
@@ -960,11 +1033,6 @@ public abstract class Entity
     }
     
     /**
-     * Returns the number of total critical slots in a location
-     */
-    public abstract int getNumberOfCriticals(int loc);
-    
-    /**
      * Returns the number of empty critical slots in a location
      */
     public int getEmptyCriticals(int loc) {
@@ -1077,6 +1145,20 @@ public abstract class Entity
         return hits;
     }
     
+    protected abstract int[] getNoOfSlots();
+  /**
+   * Returns the number of total critical slots in a location
+   */
+    public int getNumberOfCriticals(int loc) {
+      int[] noOfSlots = getNoOfSlots();
+      
+      if ( (null == noOfSlots) || (loc >= noOfSlots.length) ) {
+        return 0;
+      }
+      
+      return noOfSlots[loc];
+    }
+    
     /**
      * Returns the number of critical slots present in the section, destroyed
      * or not.
@@ -1097,6 +1179,45 @@ public abstract class Entity
     }
     
     /**
+     * Returns true if the entity has a hip crit
+     */
+      public boolean hasHipCrit() {
+        boolean hasCrit = false;
+
+        for ( int i = 0; i < locations(); i++ ) {    
+          if ( locationIsLeg(i) ) {
+            if ( getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, i) > 0 ) {
+              hasCrit = true;
+              break;
+            }
+          }
+        }
+        
+        return hasCrit;
+      }
+
+    /**
+     * Returns true if the entity has a leg actuator crit
+     */
+      public boolean hasLegActuatorCrit() {
+        boolean hasCrit = false;
+
+        for ( int i = 0; i < locations(); i++ ) {    
+          if ( locationIsLeg(i) ) {
+            if ( (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, i) > 0) ||
+                  (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, i) > 0) ||
+                  (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, i) > 0) ||
+                  (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, i) > 0) ) {
+              hasCrit = true;
+              break;
+            }
+          }
+        }
+        
+        return hasCrit;
+      }
+    
+    /**
      * Returns true if there is at least 1 functional system of the type
      * specified in the location
      */
@@ -1105,6 +1226,21 @@ public abstract class Entity
             CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM
             && ccs.getIndex() == system && !ccs.isDestroyed()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns true if the the location has a system of the type,
+     * whether is destroyed or not
+     */
+    public boolean hasSystem(int system, int loc) {
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            CriticalSlot ccs = getCritical(loc, i);
+            if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM
+            && ccs.getIndex() == system) {
                 return true;
             }
         }
@@ -1143,5 +1279,42 @@ public abstract class Entity
         Entity other = (Entity)object;
         return other.getId() == this.id;
     }
+    
+    /**
+     * Get the movement type of the entity
+     */
+      public  int getMovementType() {
+        return movementType;
+      }
+      
+    /**
+     * Set the movement type of the entity
+     */
+      public void setMovementType(int movementType) {
+        this.movementType = movementType;
+      }
+      
+    /**
+     * Helper function to determine if a entity is a biped
+     */
+      public boolean entityIsBiped() { return (getMovementType() == Entity.MovementType.BIPED); } 
+
+    /**
+     * Helper function to determine if a entity is a quad
+     */
+      public boolean entityIsQuad() { return (getMovementType() == Entity.MovementType.QUAD); } 
+      
+    /**
+     * Returns true is the entity needs a roll to stand up
+     */
+      public boolean needsRollToStand() {
+        return true;
+      }
+    
+    /**
+     * Add in any piloting skill mods
+     */
+      public abstract PilotingRollData addEntityBonuses(PilotingRollData roll);
+    
 }
 

@@ -1244,14 +1244,13 @@ public class Server
                 entity.heatBuildup += 1;
                 entity.setProne(false);
                 wasProne = false;
-                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "getting up"));
+                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "getting up"), true);
             } else if (firstStep) {
                 // running with destroyed hip or gyro needs a check
                 if (overallMoveType == Entity.MOVE_RUN
                         && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
-                            || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_RLEG) > 0
-                            || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_LLEG) > 0)) {
-                    doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
+                            || entity.hasHipCrit())) {
+                    doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"), false);
                 }
                 firstStep = false;
             }
@@ -1335,16 +1334,8 @@ public class Server
         // but the danger isn't over yet!  landing from a jump can be risky!
         if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {
             // check for damaged criticals
-            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
-                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_RLEG) > 0
-                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_RLEG) > 0
-                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_RLEG) > 0
-                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_RLEG) > 0
-                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_LLEG) > 0
-                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_LLEG) > 0
-                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG) > 0
-                    || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_LLEG) > 0) {
-                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "landing with damaged leg actuator or gyro"));
+            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0 || entity.hasLegActuatorCrit()) {
+                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "landing with damaged leg actuator or gyro"), false);
             }
         }
 
@@ -1364,9 +1355,15 @@ public class Server
     }
 
     /**
-     * Do a piloting skill check while standing still (during the movement phase)
+     * Do a piloting skill check while standing still (during the movement phase).
+     * We have a special case for getting up because quads need not roll to stand
+     * if they have no damaged legs.
      */
-    private void doSkillCheckInPlace(Entity entity, PilotingRollData reason) {
+    private void doSkillCheckInPlace(Entity entity, PilotingRollData reason, boolean gettingUp) {
+      if ( gettingUp && entity.needsRollToStand() ) {
+        phaseReport.append("\n" + entity.getDisplayName() + " does not need to make " +
+                    " a piloting skill check to stand up because it has all four of its legs.");
+      } else {
         final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
 
         // append the reason modifier
@@ -1387,6 +1384,7 @@ public class Server
         } else {
             phaseReport.append("succeeds.\n");
         }
+    }
     }
 
     /**
@@ -1613,6 +1611,9 @@ public class Server
             if (ea instanceof TorsoTwistAction) {
                 TorsoTwistAction tta = (TorsoTwistAction)ea;
                 game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
+            } else if (ea instanceof FlipArmsAction) {
+                FlipArmsAction faa = (FlipArmsAction)ea;
+                game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
             }
 
             // send an outgoing packet to everybody
@@ -1640,6 +1641,9 @@ public class Server
             } else if (o instanceof TorsoTwistAction) {
                 TorsoTwistAction tta = (TorsoTwistAction)o;
                 game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
+            } else if (o instanceof FlipArmsAction) {
+                FlipArmsAction faa = (FlipArmsAction)o;
+                game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
             } else if (o instanceof FindClubAction) {
                 FindClubAction fca = (FindClubAction)o;
                 entity.setFindingClub(true);
@@ -2572,6 +2576,11 @@ public class Server
                 // is the internal structure gone?
                 if (te.getInternal(hit) <= 0) {
                     destroyLocation(te, hit.getLocation());
+
+                    if (te.locationIsLeg(hit.getLocation())) {
+                        pilotRolls.addElement(new PilotingRollData(te.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
+                    }
+
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
                         // entity destroyed.
@@ -2626,7 +2635,14 @@ public class Server
             hits = 2;
             desc += " 2 locations.";
         } else if (roll == 12) {
-            if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM || loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
+            if (en.locationIsLeg(loc)) {
+                desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
+                if (en.getInternal(loc) > 0) {
+                    destroyLocation(en, loc);
+                    pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
+                }
+                return desc;
+            } else if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) {
                 desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
                 destroyLocation(en, loc);
                 return desc;

@@ -2046,6 +2046,19 @@ implements Runnable {
         if (md.contains(MovementData.STEP_EJECT)) {
             phaseReport.append("\n" ).append( entity.getDisplayName()).append( " ejects.\n");
             phaseReport.append(destroyEntity(entity, "ejection"));
+
+            // Is the unit being swarmed?
+            final int swarmerId = entity.getSwarmAttackerId();
+            if ( Entity.NONE != swarmerId ) {
+                final Entity swarmer = game.getEntity( swarmerId );
+                swarmer.setSwarmTargetId( Entity.NONE );
+                entity.setSwarmAttackerId( Entity.NONE );
+                phaseReport.append( swarmer.getDisplayName() );
+                phaseReport.append( " ends its swarm attack.\n" );
+                this.entityUpdate( swarmerId );
+            }
+
+            // Now remove the unit that ejected.
             game.removeEntity( entity.getId(), Entity.REMOVE_SALVAGEABLE );
             send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_SALVAGEABLE));
             return;
@@ -2242,6 +2255,8 @@ implements Runnable {
                                 phaseReport.append("*** " )
                                     .append( entity.getDisplayName() )
                                     .append( " has skidded off the field. ***\n");
+
+                                // TODO: remove passengers and swarmers.
 
                                 // The entity's movement is completed.
                                 return;
@@ -4112,6 +4127,12 @@ implements Runnable {
             if ( Entity.NONE != entityTarget.getSwarmAttackerId() ) {
                 phaseReport.append( "succeds, but the defender is " );
                 phaseReport.append( "already swarmed by another unit.\n" );
+            }
+            // Did the target get destroyed by weapons fire?
+            else if ( entityTarget.isDoomed() || entityTarget.isDestroyed() ||
+                      entityTarget.getCrew().isDead() ) {
+                phaseReport.append( "succeds, but the defender was " );
+                phaseReport.append( "destroyed by weapons fire.\n" );
             } else {
                 phaseReport.append( "succeeds!  Defender swarmed.\n" );
                 ae.setSwarmTargetId( wr.waa.getTargetId() );
@@ -5506,6 +5527,7 @@ implements Runnable {
                 send(createRemoveEntityPacket(te.getId(),
                                               Entity.REMOVE_IN_RETREAT));
                 phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " has been forced from the field. ***\n");
+                // TODO: remove passengers and swarmers.
                 ae.setPosition(src);
             } else {
                 phaseReport.append("succeeds, but target can't be moved.\n");
@@ -5706,6 +5728,8 @@ implements Runnable {
                 send(createRemoveEntityPacket(te.getId(),
                                               Entity.REMOVE_IN_RETREAT));
                 phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
+                // TODO: remove passengers and swarmers.
+
                 doEntityDisplacement(ae, ae.getPosition(), src, chargePSR);
             } else {
                 // they stil have to roll
@@ -5864,6 +5888,7 @@ implements Runnable {
             send(createRemoveEntityPacket(te.getId(),
                                           Entity.REMOVE_IN_RETREAT));
             phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
+            // TODO: remove passengers and swarmers.
         } else {
             if (targetDest != null) {
                 doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));

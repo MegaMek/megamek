@@ -1405,8 +1405,8 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can not clear woods.");
         }
 
-        // Some weapons can't cause fires.
-        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) &&
+        // Some weapons can't cause fires, but Infernos always can.
+        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno &&
              Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can not cause fires.");
         }

@@ -91,8 +91,8 @@ public class MechDisplay extends Panel
     /**
      * Displays the specified mech in the panel.
      */
-    public void displayMech(Game game, Entity en) {
-        mPan.displayMech(game, en);
+    public void displayMech(Entity en) {
+        mPan.displayMech(en);
         aPan.displayMech(en);
         wPan.displayMech(en);
         sPan.displayMech(en);
@@ -292,7 +292,7 @@ class MovementPanel
     /**
      * updates fields for the specified mech
      */
-    public void displayMech(Game game, Entity en) {
+    public void displayMech(Entity en) {
         this.mechTypeL.setText(en.getModel() + " " + en.getName());
 
         this.statusR.setText(en.isProne() ? "prone" : "normal");
@@ -301,10 +301,18 @@ class MovementPanel
         this.weightR.setText(Integer.toString((int)en.getWeight()));
         this.pilotR.setText(en.crew.getDesc());
 
-        this.mpR.setText(Integer.toString(en.getWalkMP()) + "/" + Integer.toString(en.getRunMP()) + "/" + Integer.toString(en.getJumpMPWithTerrain()));
+        StringBuffer mp = new StringBuffer();
+        mp.append(en.getWalkMP());
+        mp.append('/');
+        mp.append(en.getRunMP());
+        mp.append('/');
+        mp.append(en.getJumpMPWithTerrain());
         if (en.mpUsed > 0) {
-            this.mpR.setText(this.mpR.getText() + " (" + en.mpUsed + " used)");
+            mp.append(" (");
+            mp.append(en.mpUsed);
+            mp.append(" used)");
         }
+        this.mpR.setText(mp.toString());
         this.curMoveR.setText(en.getMovementString(en.moved) + (en.moved == en.MOVE_NONE ? "" : " " + en.delta_distance));
         
         int heatCap = en.getHeatCapacity();
@@ -594,7 +602,7 @@ class WeaponPanel
         // update weapon list
         weaponList.removeAll();
         m_chAmmo.removeAll();
-        m_chAmmo.disable();
+        m_chAmmo.setEnabled(false);
         
         for(int i = 0; i < weapons.size(); i++) {
             Mounted mounted = (Mounted)weapons.elementAt(i);
@@ -654,7 +662,7 @@ class WeaponPanel
         // short circuit if not selected
         if(weaponList.getSelectedIndex() == -1) {
             m_chAmmo.removeAll();
-            m_chAmmo.disable();
+            m_chAmmo.setEnabled(false);
             wNameR.setText("");
             wHeatR.setText("--");
             wDamR.setText("--");
@@ -700,10 +708,10 @@ class WeaponPanel
         // update ammo selector
         m_chAmmo.removeAll();
         if (wtype.getAmmoType() == AmmoType.T_NA) {
-            m_chAmmo.disable();
+            m_chAmmo.setEnabled(false);
         }
         else {
-            m_chAmmo.enable();
+            m_chAmmo.setEnabled(true);
             vAmmo = new Vector();
             int nCur = -1;
             int i = 0;
@@ -725,7 +733,7 @@ class WeaponPanel
                 m_chAmmo.add(formatAmmo((Mounted)vAmmo.elementAt(x)));
             }
             if (nCur == -1) {
-                m_chAmmo.disable();
+                m_chAmmo.setEnabled(false);
             }
             else {
                 m_chAmmo.select(nCur);

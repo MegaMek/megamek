@@ -734,12 +734,14 @@ public class BoardView1
 									p.y + (int)(51*scale),
 									font_minefield,
 									backGraph);
-		    				drawCenteredString(
+                  if (mf.getPlayerId() == localPlayer.getId()) {
+                      drawCenteredString(
 					        		"(" + mf.getSetting() + ")", 
-									p.x,
-									p.y + (int)(60*scale),
-									font_minefield,
-									backGraph);
+									    p.x,
+									    p.y + (int)(60*scale),
+									    font_minefield,
+									    backGraph);
+                  }
 		    			break;
 		    		}
 			    }

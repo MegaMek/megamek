@@ -1324,7 +1324,7 @@ public class BoardView1
      * scrolls the board image on the canvas.
      */
     public boolean doScroll() {
-        if (!isScrolling) {
+        if (Settings.explicitScrollOnly || !isScrolling) {
             return false;
         }
         final Point oldScroll = new Point(scroll);

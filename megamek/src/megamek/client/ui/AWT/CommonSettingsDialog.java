@@ -36,6 +36,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private TextField   shiftScrollSensitivity;
     private Choice      unitStartChar;
     private TextField   maxPathfinderTime;
+    private Checkbox    explicitScrollOnly;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -57,27 +58,35 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         minimapEnabled
             = new Checkbox( "The minimap can be shown." );
         this.add( minimapEnabled );
+        
         autoEndFiring
             = new Checkbox( "Skip 'Done' when firing all weapons." );
         this.add( autoEndFiring );
+        
         nagForMASC
             = new Checkbox( "Confirm all movement that uses MASC." );
         this.add( nagForMASC );
+        
         nagForPSR
             = new Checkbox( "Confirm all movement that requires a PSR." );
         this.add( nagForPSR );
+        
         nagForNoAction
             = new Checkbox( "Confirm done when no movement/firing/physicals declared." );
         this.add( nagForNoAction );
+        
         animateMove
             = new Checkbox( "Animate movement." );
         this.add( animateMove );
+        
         showWrecks
             = new Checkbox( "Show wrecks." );
         this.add( showWrecks );
+        
         soundMute
             = new Checkbox( "Mute sound." );
         this.add( soundMute );
+        
         showMapHexPopup
             = new Checkbox( "Show map hex popup." );
         this.add( showMapHexPopup );
@@ -108,6 +117,10 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         panSetting.add( shiftScrollSensitivity );
         panSetting.add( new Label("Shift-Scroll sensitivity.") );
         this.add( panSetting );
+
+        explicitScrollOnly
+            = new Checkbox( "Only scroll using Shift key and MiniMap." );
+        this.add( explicitScrollOnly );
 
         /* restore me when pathfinder is working. *
         panSetting = new Panel();
@@ -163,9 +176,6 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         soundMute.setState( Settings.soundMute );
         showMapHexPopup.setState( Settings.showMapHexPopup );
         tooltipDelay.setText( Integer.toString(Settings.tooltipDelay ) );
-        /* restore me when pathfinder is working. *
-        maxPathfinderTime.setText( Integer.toString(Settings.maxPathfinderTime ) );
-        /* restore me when pathfinder is working. */
 
         // Select the correct char set (give a nice default to start).
         unitStartChar.select(0);
@@ -178,6 +188,12 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         }
 
         shiftScrollSensitivity.setText( Integer.toString(Settings.shiftScrollSensitivity ) );
+
+        explicitScrollOnly.setState( Settings.explicitScrollOnly );
+
+        /* restore me when pathfinder is working. *
+        maxPathfinderTime.setText( Integer.toString(Settings.maxPathfinderTime ) );
+        /* restore me when pathfinder is working. */
 
         super.show();
     }
@@ -205,9 +221,12 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.tooltipDelay =   Integer.parseInt(tooltipDelay.getText());
         Settings.unitStartChar=   unitStartChar.getSelectedItem().charAt(0);
         Settings.shiftScrollSensitivity =   Integer.parseInt(shiftScrollSensitivity.getText());
+        Settings.explicitScrollOnly= explicitScrollOnly.getState();
+
         /* restore me when pathfinder is working. *
         Settings.maxPathfinderTime =   Integer.parseInt(maxPathfinderTime.getText());
         /* restore me when pathfinder is working. */
+
         Settings.save();
         this.setVisible( false );
     }

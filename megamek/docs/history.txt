@@ -43,23 +43,19 @@ mech display:
 - weapons panel doesn't fit right under sun java
 
 mechs:
-- split criticals for large weapons
+- allow split criticals for large weapons in MEP files (or in general)
 - any more .mep parsing problems?
 - parse XML files (from BTTC, even)
 
 initiative:
 ? ineligible units should maybe count in the action queue, but be skipped
-- roll-off ties
 - possibly stagger within packs
 ? might show whole initiative sequence in status bar
 
 movement:
-? a better pathfinder
 ? mech can try moving again if failed getting up
-? make jump jets above water work when jumping out of water
-? pavement movement and skidding?
-- mechs should always be able to move 1 square forwards, if standing
-- mechs should always be able to try to get up if one leg & gyro is intact
+- jump jets above water should work when jumping out of water
+- pavement movement and skidding?
 - go prone action
 
 weapon attacks:
@@ -110,6 +106,8 @@ v next
 + invalid domino effect prevented
 + mechs making DFA attacks don't get the benefit of terrain modifiers
 + fixed bug with making too many consciousness rolls
++ mechs with 1 MP are allowed to get up
++ mechs with at least 1 MP can take 1 step forward, regardless of terrain cost
 
 v 0.23.6 (03-17-02, 8:15pm)
 + center on unit works in new display

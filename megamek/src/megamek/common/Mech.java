@@ -275,11 +275,27 @@ public abstract class Mech
     }
     
     /**
-     * Returns true if this mech has an XL engine.  For now, just checks if 
-     * there are any engine critical slots in the right torso.
+     * Returns true if this mech has an XL engine.
      */
     public boolean hasXL() {
-        return getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT) > 0;
+        int count = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
+                                         Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+        if ((isClan() && count == 2) || (!isClan() && count == 3)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if this mech has a light engine.
+     */
+    public boolean hasLightEngine() {
+        int count = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
+                                         Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+        if (!isClan() && count == 2) {
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -1133,6 +1149,8 @@ public abstract class Mech
         double internalMultiplier;
         if (hasXL()) {
             internalMultiplier = isClan() ? 1.125 : 0.75;
+        } else if (hasLightEngine()) {
+            internalMultiplier = 1.125;
         } else {
             internalMultiplier = 1.5;
         }

@@ -98,6 +98,7 @@ v 0.28.12-dev
 + applied Oscarmm's patch adding heat tracking to the firing display
 + The way the BMRr handles Mek Stealth Armor has been superceded.
 + New images for Rubble hexes.
++ Applied Oscarmm's Light Engine BV patch.
 
 v 0.28.11 (03-29-03, 7:30pm)
 + 708743: minimap now initialized correctly even if "disabled"

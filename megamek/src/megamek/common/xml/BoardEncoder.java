@@ -143,6 +143,7 @@ public class BoardEncoder {
         int height = 0;
         int width = 0;
         Hex[] hexes = null;
+        Coords coords = null;
         boolean roadsAutoExit = false;
         Enumeration subnodes = null;
         ParsedXML subnode = null;
@@ -175,7 +176,7 @@ public class BoardEncoder {
             else if ( childName.equals( "boardData" ) ) {
 
                 // There should be only one boardData node.
-                if ( null != retVal ) {
+                if ( null != hexes ) {
                     throw new IllegalStateException
                         ( "More than one 'boardData' node in a board node." );
                 }
@@ -195,13 +196,13 @@ public class BoardEncoder {
                     throw new IllegalStateException
                         ( "Couldn't get an integer from " + attrStr );
                 }
+                height = attrVal;
 
                 // Do we have a valid value?
                 if ( height < 0 || height > Board.BOARD_MAX_HEIGHT ) {
                     throw new IllegalStateException
                         ( "Illegal value for height: " + attrStr );
                 }
-                height = attrVal;
 
                 // Get the number of boardData.
                 attrStr = child.getAttribute( "width" );
@@ -218,13 +219,13 @@ public class BoardEncoder {
                     throw new IllegalStateException
                         ( "Couldn't get an integer from " + attrStr );
                 }
+                width = attrVal;
 
                 // Do we have a valid value?
                 if ( width < 0 || width > Board.BOARD_MAX_WIDTH ) {
                     throw new IllegalStateException
                         ( "Illegal value for width: " + attrStr );
                 }
-                width = attrVal;
 
                 // Read the "roadsAutoExit" attribute.
                 roadsAutoExit = StringUtil.parseBoolean
@@ -272,7 +273,7 @@ public class BoardEncoder {
                 while ( subnodes.hasMoreElements() ) {
                     subnode = (ParsedXML) subnodes.nextElement();
                     if ( subnode.getName().equals("inferno") ) {
-                        Coords coords = null;
+                        coords = null;
                         InfernoTracker tracker = new InfernoTracker();
 
                         // Try to find the inferno detail nodes.
@@ -281,29 +282,71 @@ public class BoardEncoder {
                             ParsedXML detail = (ParsedXML) 
                                 details.nextElement();
 
-                            // Have we found the coords?
+                            // Have we found the coords detail?
                             if ( detail.getName().equals("coords") ) {
-                                coords = CoordsEncoder.decode
-                                    ( detail, game );
+                                coords = CoordsEncoder.decode( detail, game );
                             }
 
-                            // Have we found the Arrow IV inferno entry?
-                            if ( detail.getName().equals("coords") ) {
-                                coords = CoordsEncoder.decode
-                                    ( detail, game );
-                            }
+                            // Have we found the Arrow IV inferno detail?
+                            else if ( detail.getName().equals("arrowiv") ) {
+
+                                // Get the burn turns attribute.
+                                attrStr = detail.getAttribute( "turns" );
+                                if ( null == attrStr ) {
+                                    throw new IllegalStateException
+                                        ( "Couldn't decode the burn turns for an Arrow IV inferno round." );
+                                }
+
+                                // Try to pull the value from the string
+                                try {
+                                    attrVal = Integer.parseInt( attrStr );
+                                }
+                                catch ( NumberFormatException exp ) {
+                                    throw new IllegalStateException
+                                        ( "Couldn't get an integer from " + attrStr );
+                                }
+
+                                // Add the number of Arrow IV burn turns.
+                                tracker.add( InfernoTracker.INFERNO_IV_TURN,
+                                             attrVal );
+
+                            } // End found-arrowiv-detail
 
                             // Have we found the standard inferno entry?
-                            if ( detail.getName().equals("coords") ) {
-                                coords = CoordsEncoder.decode
-                                    ( detail, game );
-                            }
+                            else if ( detail.getName().equals("standard") ) {
+
+                                // Get the burn turns attribute.
+                                attrStr = detail.getAttribute( "turns" );
+                                if ( null == attrStr ) {
+                                    throw new IllegalStateException
+                                        ( "Couldn't decode the burn turns for a standard inferno round." );
+                                }
+
+                                // Try to pull the value from the string
+                                try {
+                                    attrVal = Integer.parseInt( attrStr );
+                                }
+                                catch ( NumberFormatException exp ) {
+                                    throw new IllegalStateException
+                                        ( "Couldn't get an integer from " + attrStr );
+                                }
+
+                                // Add the number of standard burn turns.
+                                tracker.add( InfernoTracker.STANDARD_TURN,
+                                             attrVal );
+
+                            } // End found-standard-detail
 
                         } // Handle the next detail node.
 
                         // We *did* find the coords, right?
+                        if ( null == coords ) {
+                            throw new IllegalStateException
+                                ( "Couldn't decode the coordinates for an inferno round." );
+                        }
 
-                        // Add this inferno tracker to the map.
+                        // Add this inferno tracker to the hashtable.
+                        infernos.put( coords, tracker );
 
                     } // End found-"inferno"-subnode
 
@@ -317,8 +360,10 @@ public class BoardEncoder {
                 while ( subnodes.hasMoreElements() ) {
                     subnode = (ParsedXML) subnodes.nextElement();
                     if ( subnode.getName().equals("building") ) {
-                        buildings.addElement
-                            ( BuildingEncoder.decode( subnode, game ) );
+                        Building bldg = BuildingEncoder.decode(subnode, game);
+                        if ( null != bldg ) {
+                            buildings.addElement( bldg );
+                        }
                     }
                 } // Handle the next building
             }

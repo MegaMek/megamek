@@ -82,7 +82,7 @@ public class Board
         
         boardListeners = new Vector();
     }
-    
+
     /**
      * Creates a new board of the specified dimensions, hexes, buildings,
      * and inferno trackers.  Do *not* use this method unless you have
@@ -99,9 +99,8 @@ public class Board
      *                  for this board.  This object is used directly without
      *                  being copied.
      * @param infMap    The <code>Hashtable</code> that map <code>Coords</code>
-     *                  to <code>Vector</code>s of <code>InfernoTracker</code>s
-     *                  for this board.  This object is used directly without
-     *                  being copied.
+     *                  to <code>InfernoTracker</code>s for this board.  This
+     *                  object is used directly without being copied.
      */
     public Board( int width, int height, Hex[] hexes,
                   Vector bldgs, Hashtable infMap ) {
@@ -119,7 +118,7 @@ public class Board
 
         createBldgByCoords();
     }
-    
+
     /**
      * Creates a new data set for the board, with the
      * specified dimensions and data; notifies listeners

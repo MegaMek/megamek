@@ -1351,7 +1351,6 @@ public class Compute
         }
         final Mounted weapon = ae.getEquipment(weaponId);
         final WeaponType wtype = (WeaponType)weapon.getType();
-        Coords[] in = intervening(ae.getPosition(), target.getPosition());
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
@@ -1959,6 +1958,9 @@ public class Compute
      */
     public static LosEffects calculateLos(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
+        
+        // good time to ensure hex cache
+        IdealHex.ensureCacheSize(game.board.width, game.board.height);
         
         // LOS fails if one of the entities is not deployed.
         if (null == ae.getPosition() || null == target.getPosition()) {
@@ -3614,8 +3616,8 @@ public class Compute
      * (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
      */
     public static Coords[] intervening(Coords src, Coords dest) {
-        IdealHex iSrc = new IdealHex(src);
-        IdealHex iDest = new IdealHex(dest);
+        IdealHex iSrc = IdealHex.get(src);
+        IdealHex iDest = IdealHex.get(dest);
         
         int[] directions = new int[3];
         directions[2] = (int)Math.round((double)src.degree(dest) / 60.0) % 6; // center last
@@ -3648,7 +3650,7 @@ public class Compute
     public static Coords nextHex(Coords current, Coords src, IdealHex iSrc, IdealHex iDest, int[] directions) {
         for (int i = 0; i < directions.length; i++) {
             Coords testing = current.translated(directions[i]);
-            if (new IdealHex(testing).isIntersectedBy(iSrc.cx, iSrc.cy, iDest.cx, iDest.cy)) {
+            if (IdealHex.get(testing).isIntersectedBy(iSrc.cx, iSrc.cy, iDest.cx, iDest.cy)) {
                 return testing;
             }
         }

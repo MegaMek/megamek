@@ -14,9 +14,14 @@
 
 package megamek.common;
 
+import java.util.Hashtable;
+
 /**
  * Represents a hex, not in the game but in an ideal coordinate system.  Used 
- * for some calcuations.  This ideal hex is 2.0 tall.
+ * for Compute.intervening() calculations and a few others.
+ * This ideal hex is 2.0 units tall.
+ * Tries to keep a cache of IdealHexes requested, as intervening() sure wants 
+ * a lot of hexes sometimes.
  */
 public class IdealHex 
 {
@@ -25,12 +30,17 @@ public class IdealHex
     public static final int    STRAIGHT        = 0;
     public static final int    RIGHT           = -1;
     
-    private final double XCONST = Math.tan(Math.PI / 6.0);
+    private static final double XCONST = (double)Math.tan(Math.PI / 6.0);
             
     public double[] x = new double[6];
     public double[] y = new double[6];
     public double cx;
     public double cy;
+    
+    // cache for hexes
+    private static IdealHex[] cache = null;
+    private static int cacheWidth = 0;
+    private static int cacheHeight = 0;
             
     public IdealHex(Coords c) {
         // determine origin
@@ -85,6 +95,38 @@ public class IdealHex
         final double cross = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
         return ((cross > 0.000001) ? LEFT : ((cross < -0.000001) ? RIGHT : STRAIGHT));
     }
-
+    
+    /**
+     * Ensures that the cache will be at least the specified dimensions.  If it
+     * is not, a new cache is created.  Hopefully this won't happen too much.
+     * Must be called at least once before get(), since the initial size is 0.
+     */
+    public static void ensureCacheSize(int width, int height) {
+        if (cacheWidth < width || cacheHeight < height) {
+            cache = new IdealHex[width * height];
+            cacheWidth = width;
+            cacheHeight = height;
+        }
+    }
+    
+    /**
+     * Gets a hex from the cache, if it exists in the cache.  If the hex is not
+     * cached yet, creates it.  If the cache is too small, does not resize it.
+     */
+    public static IdealHex get(Coords coords) {
+        if (cache == null || coords.x > cacheWidth || coords.y > cacheHeight) {
+            return new IdealHex(coords);
+        }
+        // okay, check cache
+        int index = (coords.y * cacheWidth) + coords.x;
+        IdealHex hex = cache[index];
+        if (hex != null) {
+            return hex;
+        } else {
+            hex = new IdealHex(coords);
+            cache[index] = hex;
+            return hex;
+        }
+    }
 }
  

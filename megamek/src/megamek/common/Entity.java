@@ -2985,15 +2985,18 @@ public abstract class Entity
      *          <code>false</code> otherwise.
      */
     public boolean canLoad( Entity unit ) {
-        // Walk through this entity's transport components;
-        // if one of them can load the unit, we can.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
-            if ( next.canLoad( unit ) ) {
-                return true;
+        // one can only load one's own units!
+        if (unit.getOwnerId() == this.getOwnerId()) {
+            // Walk through this entity's transport components;
+            // if one of them can load the unit, we can.
+            Enumeration iter = this.transports.elements();
+            while ( iter.hasMoreElements() ) {
+                Transporter next = (Transporter)iter.nextElement();
+                if ( next.canLoad( unit ) ) {
+                    return true;
+                }
             }
-        }
+        };
 
         // If we got here, none of our transports can carry the unit.
         return false;

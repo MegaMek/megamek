@@ -8,6 +8,7 @@ v0.29.33 (CVS)
 + Artillery actions can't count on entities lasting until the shot lands.
 + Patch 920175: Added albinosqrl's level 3 smoke/fire rules.  Speed
         optimizations still to come.
++ Bug 929309: Woods clearing reports cleaned up.
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

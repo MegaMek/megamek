@@ -5055,30 +5055,31 @@ implements Runnable, ConnectionHandler {
        return tryIgniteHex(c, bInferno, nTargetRoll, false);
    }
 
-    private boolean tryClearHex(Coords c, int nTarget) {
-
+    private void tryClearHex(Coords c, int nTarget) {
         Hex h = game.board.getHex(c);
-        int woodsRoll = Compute.d6(2);
-        phaseReport.append("    Checking to clear woods; needs " ).append( nTarget )
-                .append( ", rolls " ).append( woodsRoll ).append( ": ");
-
-        if(woodsRoll >= nTarget) {
-            int woods = h.levelOf(Terrain.WOODS);
-            if(woods > 1) {
-                 h.removeTerrain(Terrain.WOODS);
-                 h.addTerrain(new Terrain(Terrain.WOODS, woods - 1));
-                 phaseReport.append(" Heavy Woods converted to Light Woods!\n");
-            }
-            else if(woods == 1) {
-                 h.removeTerrain(Terrain.WOODS);
-                 h.addTerrain(new Terrain(Terrain.ROUGH, 1));
-                 phaseReport.append(" Light Woods converted to Rough!\n");
-            }
-            sendChangedHex(c);
-            return true;
+        int woods = h.levelOf(Terrain.WOODS);
+        if (woods == Terrain.LEVEL_NONE) {
+            phaseReport.append("      Woods already cleared.\n" );
         } else {
-            phaseReport.append(" fails!\n");
-            return false;
+            int woodsRoll = Compute.d6(2);
+            phaseReport.append("      Checking to clear woods; needs " )
+                .append( nTarget ).append( ", rolls " )
+                .append( woodsRoll ).append( ": ");
+            if(woodsRoll >= nTarget) {
+                if(woods > 1) {
+                    h.removeTerrain(Terrain.WOODS);
+                    h.addTerrain(new Terrain(Terrain.WOODS, woods - 1));
+                    phaseReport.append(" Heavy Woods converted to Light Woods!\n");
+                }
+                else if(woods == 1) {
+                    h.removeTerrain(Terrain.WOODS);
+                    h.addTerrain(new Terrain(Terrain.ROUGH, 1));
+                    phaseReport.append(" Light Woods converted to Rough!\n");
+                }
+                sendChangedHex(c);
+            } else {
+                phaseReport.append(" fails!\n");
+            }
         }
     }
 
@@ -9660,9 +9661,9 @@ implements Runnable, ConnectionHandler {
         if (!game.getOptions().booleanOption("maxtech_fire")) {
             // only remove the 3 smoke hexes if under L2 rules!
             int windDir = game.getWindDirection();
-        removeSmoke(x, y, windDir);
-        removeSmoke(x, y, (windDir + 1) % 6);
-        removeSmoke(x, y, (windDir + 5) % 6);
+            removeSmoke(x, y, windDir);
+            removeSmoke(x, y, (windDir + 1) % 6);
+            removeSmoke(x, y, (windDir + 5) % 6);
         }
         phaseReport.append("Fire at " ).append( fireCoords.getBoardNum() ).append( " goes out due to lack of fuel!\n");
     }

@@ -118,6 +118,7 @@ v 0.29-stable-5 (10-19-03, 2:15 am)
 + Bug 824473: Retain building damage from saved games and restarts.
 + Bugs 798306, 822293, 825064: Restore Entity & Owner in Entity#setGame.
 + RFE 787056: Set the default Mech Display window width to 235.
++ Bugs 787045, 810017: Fix ammo in Tyr Infantry Support Tank.
 
 v 0.29-stable-4 (09-30-03, 4:30 pm)
 + Bug 802741: "check false" should *not* be added as a modifier.

@@ -1278,7 +1278,7 @@ implements Runnable, ConnectionHandler {
                 setupTeams(game);
                 applyBoardSettings();
                 game.setupRoundDeployment();
-                game.determineWindDirection();
+                game.determineWind();
                 // If we add transporters for any Magnetic Clamp
                 // equiped squads, then update the clients' entities.
                 if ( game.checkForMagneticClamp() ) {
@@ -1943,7 +1943,13 @@ implements Runnable, ConnectionHandler {
         }
         roundReport.append("\n\n");
         if (!abbreviatedReport) {
-            roundReport.append("  Wind direction is "+game.getStringWindDirection()+"\n");
+            roundReport.append("  Wind direction is ")
+                .append(game.getStringWindDirection());
+            if (game.getWindStrength() != -1) {
+                roundReport.append(".  Wind strength is ")
+                    .append(game.getStringWindStrength());
+            }
+            roundReport.append(".\n");
         }
     }
 
@@ -9372,6 +9378,28 @@ implements Runnable, ConnectionHandler {
         }
     }
 
+    /*
+     * This debug/profiling function will print the current time
+     * (in milliseconds) to the log.  If the boolean is true, the
+     * garbage collector will be called in an attempt to minimize
+     * timing errors.  You should try and minimize applications
+     * being run in the background when using this function.
+     * Note that MS Windows only has 10 milisecond resolution.
+     *
+     * The function should be optimized completely out of the code
+     * when the first if-statement below reads "if (false)...", so
+     * performance shouldn't be impacted if you leave calls to this
+     * function in the code (I think).
+     */
+    private void debugTime(String s, boolean collectGarbage) {
+        //Change the "false" below to "true" to enable this function
+        if (false) {
+            if (collectGarbage)
+                System.gc();
+            System.out.println(s + ": " + System.currentTimeMillis());
+        }
+    }
+
     /** Make fires spread, smoke spread, and make sure that all fires
      * started this turn are marked as "burning" for next turn.
      *
@@ -9401,6 +9429,11 @@ implements Runnable, ConnectionHandler {
         // Build vector to send for updated buildings at once.
         Vector burningBldgs = new Vector();
 
+        // If we're in L3 rules, process smoke FIRST, before any fires spread or smoke is produced.
+        if (game.getOptions().booleanOption("maxtech_fire")) {
+            resolveSmoke();
+        }
+
         // Cycle through all buildings, checking for fire.
         // ASSUMPTION: buildings don't lose 2 CF on the turn a fire starts.
         // ASSUMPTION: multi-hex buildings lose 2 CF max, regardless of # fires
@@ -9426,6 +9459,8 @@ implements Runnable, ConnectionHandler {
             }
         }
 
+        debugTime("resolve fire 1", true);
+
         // Cycle through all hexes, checking for fire.
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
 
@@ -9444,7 +9479,7 @@ implements Runnable, ConnectionHandler {
                     removeFire(currentXCoord, currentYCoord, currentHex);
                 }
 
-                // Was the fire was started on a previous turn?
+                // Was the fire started on a previous turn?
                 else if (currentHex.levelOf(Terrain.FIRE) == 2)
                 {
                     if ( infernoBurning ) {
@@ -9458,6 +9493,9 @@ implements Runnable, ConnectionHandler {
                 }  // End the Else If Hex was on fire previously
             }  // end the loop through Y coordinates
         }  // end the loop through X coordinates
+
+        debugTime("resolve fire 1 end, begin resolve fire 2", true);
+
         //  Loop a second time, to set all fires to level 2 before next turn, and add smoke.
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
 
@@ -9480,18 +9518,30 @@ implements Runnable, ConnectionHandler {
                         burningBldgs.addElement( bldg );
                     }
                 }
-                if (currentHex.contains(Terrain.FIRE)) {
+                // If the L3 smoke rule is off, add smoke normally, otherwise call the L3 method
+                if (currentHex.contains(Terrain.FIRE) && !game.getOptions().booleanOption("maxtech_fire")) {
                     addSmoke(currentXCoord, currentYCoord, windDirection);
                     addSmoke(currentXCoord, currentYCoord, (windDirection+1)%6);
                     addSmoke(currentXCoord, currentYCoord, (windDirection+5)%6);
                     board.initializeAround(currentXCoord,currentYCoord);
                 }
+                else if (currentHex.contains(Terrain.FIRE) && game.getOptions().booleanOption("maxtech_fire")) {
+                    addL3Smoke(currentXCoord, currentYCoord);
+                    board.initializeAround(currentXCoord, currentYCoord);
+                }
             }
         }
+
+        debugTime("resolve fire 2 end", false);
 
         // If any buildings are burning, update the clients.
         if ( !burningBldgs.isEmpty() ) {
             send( createUpdateBuildingCFPacket(burningBldgs) );
+        }
+
+        // If we're in L3 rules, shift the wind.
+        if (game.getOptions().booleanOption("maxtech_fire")) {
+            game.determineWind();
         }
 
     }  // End the ResolveFire() method
@@ -9521,11 +9571,15 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Spreads the fire, and reports the spread, to the specified hex, if
-     * possible and the fire roll is made.
+     * possible, if the hex isn't already on fire, and the fire roll is made.
      */
     public void spreadFire(Coords coords, int roll) {
         Hex hex = game.getBoard().getHex(coords);
-        if (ignite(hex, roll)) {
+        if (hex == null) {
+            // Don't attempt to spread fire off the board.
+            return;
+        }
+        if (!(hex.contains(Terrain.FIRE)) && ignite(hex, roll)) {
             sendChangedHex(coords);
             phaseReport.append("Fire spreads to " ).append( coords.getBoardNum() ).append( "!\n");
         }
@@ -9599,15 +9653,17 @@ implements Runnable, ConnectionHandler {
         return ignite(hex, roll, false);
     }
 
-
     public void removeFire(int x, int y, Hex hex) {
         Coords fireCoords = new Coords(x, y);
-        int windDir = game.getWindDirection();
         hex.removeTerrain(Terrain.FIRE);
         sendChangedHex(fireCoords);
+        if (!game.getOptions().booleanOption("maxtech_fire")) {
+            // only remove the 3 smoke hexes if under L2 rules!
+            int windDir = game.getWindDirection();
         removeSmoke(x, y, windDir);
         removeSmoke(x, y, (windDir + 1) % 6);
         removeSmoke(x, y, (windDir + 5) % 6);
+        }
         phaseReport.append("Fire at " ).append( fireCoords.getBoardNum() ).append( " goes out due to lack of fuel!\n");
     }
 
@@ -9622,13 +9678,194 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-    public void removeSmoke(int x, int y, int windDir) {
+    // Called under L3 fire rules. Called once.
+    public void addL3Smoke(int x, int y) {
+        Board board = game.getBoard();
+        Coords smokeCoords = new Coords(x, y);
+        Hex smokeHex = game.getBoard().getHex(smokeCoords);
+        boolean infernoBurning = board.isInfernoBurning( smokeCoords );
+        if (smokeHex == null) {
+            return;
+        }
+        // Have to check if it's inferno smoke or from a heavy/hardened building - heavy smoke from those
+        if(infernoBurning || Building.MEDIUM < smokeHex.levelOf(Terrain.BUILDING)) {
+            if (smokeHex.levelOf(Terrain.SMOKE) == 2){
+                phaseReport.append("Heavy smoke continues to fill ").append( smokeCoords.getBoardNum() ).append( ".\n");
+            } else {
+                if (smokeHex.levelOf(Terrain.SMOKE) == 1){
+                    //heavy smoke overrides light
+                    smokeHex.removeTerrain(Terrain.SMOKE);
+                }
+                smokeHex.addTerrain(new Terrain(Terrain.SMOKE, 2));
+                sendChangedHex(smokeCoords);
+                phaseReport.append("Heavy smoke fills ").append( smokeCoords.getBoardNum() ).append( "!\n");
+            }
+        }
+        else {
+            if (smokeHex.levelOf(Terrain.SMOKE) == 2){
+                phaseReport.append("Heavy smoke overpowers light smoke in ").append( smokeCoords.getBoardNum() ).append( ".\n");
+            } else if (smokeHex.levelOf(Terrain.SMOKE) == 1){
+                phaseReport.append("Light smoke continues to fill ").append( smokeCoords.getBoardNum() ).append( ".\n");
+            } else {
+                smokeHex.addTerrain(new Terrain(Terrain.SMOKE, 1));
+                sendChangedHex(smokeCoords);
+                phaseReport.append("Light smoke fills ").append( smokeCoords.getBoardNum() ).append( "!\n");
+            }
+        }
+    }
+
+    public void removeSmoke(int x, int y, int windDir) { // L2 smoke removal
         Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
         Hex nextHex = game.getBoard().getHex(smokeCoords);
         if (nextHex != null && nextHex.contains(Terrain.SMOKE)) {
             nextHex.removeTerrain(Terrain.SMOKE);
             sendChangedHex(smokeCoords);
             phaseReport.append("Smoke clears from " ).append( smokeCoords.getBoardNum() ).append( "!\n");
+        }
+    }
+
+    /**
+     * Under L3 rules, smoke drifts in the direction of the wind and has a chance to dissipate.
+     * This function will keep track of hexes to have smoke removed and added, since there's no other way
+     * to tell if a certain smoke cloud has drifted that turn.
+     * This method creates the class SmokeDrift to store hex and size data for the smoke clouds.
+     * This method calls functions driftAddSmoke, driftSmokeDissipate, driftSmokeReport
+     */
+    private void resolveSmoke() {
+        Board board = game.getBoard();
+        int width = board.width;
+        int height = board.height;
+        int windDir = game.getWindDirection();
+        int windStr = game.getWindStrength();
+        Vector SmokeToAdd = new Vector();
+
+        class SmokeDrift { // hold the hex and level of the smoke cloud
+            public Coords coords;
+            public int size;
+
+            public SmokeDrift(Coords c, int s) {
+                coords = c;
+                size = s;
+            }
+                        
+            public SmokeDrift(SmokeDrift sd) {
+                sd.coords = coords;
+                sd.size = size;
+            }
+        }
+
+        // Cycle through all hexes, checking for smoke, IF the wind is higher than calm! Calm means no drift!
+        if(windStr > 0) {
+
+            debugTime("resolve smoke 1", true);
+
+            for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
+
+                for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
+                    Coords currentCoords = new Coords(currentXCoord, currentYCoord);
+                    Hex currentHex = board.getHex(currentXCoord, currentYCoord);
+
+                    // check for existence of smoke, then add it to the vector...if the wind is not Calm!
+                    if (currentHex.contains(Terrain.SMOKE)){
+                        int smokeLevel = currentHex.levelOf(Terrain.SMOKE);
+                        Coords smokeCoords = driftAddSmoke(currentXCoord, currentYCoord, windDir, windStr);
+                        //                        System.out.println(currentCoords.toString() + " to " + smokeCoords.toString());
+                        Hex smokeHex = game.getBoard().getHex(smokeCoords);
+                        if( board.contains(smokeCoords)) { // don't add it to the vector if it's not on board!
+                            SmokeToAdd.addElement(new SmokeDrift(new Coords(smokeCoords), smokeLevel));
+                        }
+                        else {
+                            // report that the smoke has blown off the map
+                            phaseReport.append("Smoke at ").append( currentCoords.getBoardNum() ).append(" has blown off the map!\n");
+                        }
+                        currentHex.removeTerrain(Terrain.SMOKE);
+                        sendChangedHex(currentCoords);
+
+                    }
+
+                }  // end the loop through Y coordinates
+            }  // end the loop through X coordinates
+
+            debugTime("resolve smoke 1 end, resolve smoke 2 begin", true);
+
+            // Cycle through the vector and add the drifted smoke
+            for (int sta = 0; sta < SmokeToAdd.size(); sta++ ) {
+                SmokeDrift drift = (SmokeDrift)SmokeToAdd.elementAt(sta);
+                Coords smokeCoords = drift.coords;
+                int smokeSize = drift.size;
+                Hex smokeHex = game.getBoard().getHex(smokeCoords);
+                smokeHex.addTerrain(new Terrain(Terrain.SMOKE, smokeSize));
+                sendChangedHex(smokeCoords);
+            }
+
+            debugTime("resolve smoke 2 end, resolve smoke 3 begin", true);
+
+            // Cycle through the vector again and dissipate the smoke, then reporting it
+            for (int dis = 0; dis < SmokeToAdd.size(); dis++ ) {
+                SmokeDrift drift = (SmokeDrift)SmokeToAdd.elementAt(dis);
+                Coords smokeCoords = drift.coords;
+                int smokeSize = drift.size;
+                Hex smokeHex = game.getBoard().getHex(smokeCoords);
+                int roll = Compute.d6(2);
+
+                boolean smokeDis = driftSmokeDissipate(smokeHex, roll, smokeSize, windStr);
+                driftSmokeReport(smokeCoords, smokeSize, smokeDis);
+                sendChangedHex(smokeCoords);
+            }
+
+            debugTime("resolve smoke 3 end", false);
+
+        } // end smoke resolution        
+    }
+
+    public Coords driftAddSmoke(int x, int y, int windDir, int windStr){
+        Coords src = new Coords(x, y);
+        Coords nextCoords = src.translated(windDir);
+
+        // if the wind is High, it blows 2 hexes! If it's Calm, there's no drift!
+        if (windStr == 3) {
+            nextCoords = nextCoords.translated(windDir);
+        }
+
+        return nextCoords;
+    }
+
+    /*
+     * This method does not currently support "smoke clouds" as specified
+     * in MaxTech (revised ed.) under "Dissipation" on page 51.  The
+     * added complexity was not worth it given that smoke-delivering
+     * weapons were not even implemented yet (and might never be).
+     */ 
+    public boolean driftSmokeDissipate(Hex smokeHex, int roll, int smokeSize, int windStr) {
+        // Dissipate in various winds
+        if (roll > 10 || (roll > 9 && windStr == 2) || (roll > 7 && windStr == 3)) {
+            smokeHex.removeTerrain(Terrain.SMOKE);
+
+            if (smokeSize == 2) {
+                smokeHex.addTerrain(new Terrain(Terrain.SMOKE, 1));
+                return true;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    public void driftSmokeReport(Coords smokeCoords, int size, boolean dis) {
+        if (size == 2 && dis == true) {
+            phaseReport.append("Heavy smoke drifts to ").append( smokeCoords.getBoardNum() ).append(" and dissipates to light smoke!\n");
+        }
+        else if (size == 2 && dis == false) {
+            phaseReport.append("Heavy smoke drifts to ").append( smokeCoords.getBoardNum() ).append("!\n");
+        }
+        else if (size == 1 && dis == true) {
+            phaseReport.append("Light smoke drifts to ").append( smokeCoords.getBoardNum() ).append(" and dissipates completely!\n");
+        }
+        else if (size == 1 && dis == false) {
+            phaseReport.append("Light smoke drifts to ").append( smokeCoords.getBoardNum() ).append("!\n");
         }
     }
 

@@ -82,8 +82,10 @@ public class Game implements Serializable
     private boolean deploymentComplete = false;
 
     /** how's the weather? */
-    private int windDirection;
+    private int windDirection = -1;
+    private int windStrength = -1;
     private String stringWindDirection;
+    private String stringWindStrength;
 
     /** what round is it? */
     private int roundCount = 0;
@@ -1182,10 +1184,57 @@ public class Game implements Serializable
         return getFirstDeployableEntityNum(turn);
     }
 
-
-    public void determineWindDirection() {
-        windDirection = Compute.d6(1)-1;
+    public void determineWind() {
         String[] dirNames = {"North", "Northeast", "Southeast", "South", "Southwest", "Northwest"};
+        String[] strNames = {"Calm", "Light", "Moderate", "High"};
+
+        if (windDirection == -1) {
+            // Initial wind direction.  If using level 2 rules, this
+            //  will be the wind direction for the whole battle.
+            windDirection = Compute.d6(1)-1;
+        } else if (getOptions().booleanOption("maxtech_fire")) {
+            // Wind direction changes on a roll of 1 or 6
+            switch (Compute.d6()) {
+            case 1: //rotate clockwise
+                windDirection = (windDirection + 1) % 6;
+                break;
+            case 6: //rotate counter-clockwise
+                windDirection = (windDirection + 5) % 6;
+            }
+        }
+        if (getOptions().booleanOption("maxtech_fire")) {
+            if (windStrength == -1) {
+                // Initial wind strength
+                switch (Compute.d6()) {
+                case 1:
+                    windStrength = 0;
+                    break;
+                case 2:
+                case 3:
+                    windStrength = 1;
+                    break;
+                case 4:
+                case 5:
+                    windStrength = 2;
+                    break;
+                case 6:
+                    windStrength = 3;
+                }
+            } else {
+                // Wind strength changes on a roll of 1 or 6
+                switch (Compute.d6()) {
+                case 1: //weaker
+                    if (windStrength > 0)
+                        windStrength--;
+                    break;
+                case 6: //stronger
+                    if (windStrength < 3)
+                        windStrength++;
+                }
+            }
+            stringWindStrength = strNames[windStrength];
+        }
+
         stringWindDirection = dirNames[windDirection];
     }
 
@@ -1195,6 +1244,14 @@ public class Game implements Serializable
 
     public String getStringWindDirection() {
         return stringWindDirection;
+    }
+
+    public int getWindStrength() {
+        return windStrength;
+    }
+
+    public String getStringWindStrength() {
+        return stringWindStrength;
     }
 
     /**

@@ -292,14 +292,14 @@ public class MoveOption extends MovePath implements Cloneable {
 
         // calc & add attacker los mods
         LosEffects los = LosEffects.calculateLos(game, ae.getId(), te);
-        toHita.append(los.losModifiers());
+        toHita.append(los.losModifiers(game));
         // save variables
         pc = los.isTargetCover();
         apc = los.isAttackerCover();
         // reverse attacker & target partial cover & calc defender los mods
         los.setTargetCover(apc);
         los.setAttackerCover(pc);
-        toHitd.append(los.losModifiers());
+        toHitd.append(los.losModifiers(game));
 
         // heatBuildup
         if (ae.getHeatFiringModifier() != 0) {

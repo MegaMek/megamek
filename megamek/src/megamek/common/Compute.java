@@ -604,12 +604,12 @@ public class Compute
         ToHitData losMods;
         if (!isIndirect) {
             los = LosEffects.calculateLos(game, attackerId, target);
-            losMods = los.losModifiers();
+            losMods = los.losModifiers(game);
         } else {
             los = LosEffects.calculateLos(game, spotter.getId(), target);
             // do not count attacker partial cover in indirect fire
             los.setAttackerCover(false);
-            losMods = los.losModifiers();
+            losMods = los.losModifiers(game);
         }
 
         // if LOS is blocked, block the shot
@@ -848,7 +848,7 @@ public class Compute
         Hex targHex = game.board.getHex(target.getPosition());
         if (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) { //target in partial water
             los.targetCover = true;
-            losMods = los.losModifiers();
+            losMods = los.losModifiers(game);
         }
 
         // add in LOS mods that we've been keeping
@@ -971,7 +971,7 @@ public class Compute
             }
             // what are this guy's mods to the attack?
             LosEffects los = LosEffects.calculateLos(game, other.getId(), target);
-            ToHitData mods = los.losModifiers();
+            ToHitData mods = los.losModifiers(game);
             los.setTargetCover(false);
             mods.append(getAttackerMovementModifier(game, other.getId()));
             // is this guy a better spotter?
@@ -2884,17 +2884,30 @@ public class Compute
             toHit.addModifier(-1, "target in water");
         }
 
-        if (hex.contains(Terrain.SMOKE)) {
-            toHit.addModifier(2, "target in smoke");
+        // Smoke and woods. With L3, the effects STACK.
+        if (!game.getOptions().booleanOption("maxtech_fire")) { // L2
+            if (hex.contains(Terrain.SMOKE)) {
+                toHit.addModifier(2, "target in smoke");
+            } else if (hex.levelOf(Terrain.WOODS) == 1) {
+                toHit.addModifier(1, "target in light woods");
+            } else if (hex.levelOf(Terrain.WOODS) > 1) {
+                toHit.addModifier(2, "target in heavy woods");
+            }
+            return toHit;
+        } else { // L3
+            if (hex.levelOf(Terrain.SMOKE) == 1) {
+                toHit.addModifier(1, "target in light smoke");
+            } else if (hex.levelOf(Terrain.SMOKE) > 1) {
+                toHit.addModifier(2, "target in heavy smoke");
+            }
+            
+            if (hex.levelOf(Terrain.WOODS) == 1) {
+                toHit.addModifier(1, "target in light woods");
+            } else if (hex.levelOf(Terrain.WOODS) > 1) {
+                toHit.addModifier(2, "target in heavy woods");
+            }
+            return toHit;
         }
-        else if (hex.levelOf(Terrain.WOODS) == 1) {
-            toHit.addModifier(1, "target in light woods");
-        } else if (hex.levelOf(Terrain.WOODS) > 1) {
-            toHit.addModifier(2, "target in heavy woods");
-        }
-
-
-        return toHit;
     }
 
     /**

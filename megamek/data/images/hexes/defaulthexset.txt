@@ -511,6 +511,7 @@ super * "fluff:2:03" "" "fluff/beacon1.gif"
 super * "fluff:2:04" "" "fluff/beacon2.gif"
 
 super * "smoke:1" "" "boring/smoke.gif"
+super * "smoke:2" "" "boring/heavysmoke.gif"
 super * "fire:1" "" "boring/fire.gif"
 super * "fire:2" "" "boring/fire.gif"
 

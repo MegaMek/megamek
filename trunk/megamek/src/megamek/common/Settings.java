@@ -172,6 +172,8 @@ public class Settings
     public static int mechDisplayArmorMediumFontSize = 10;
     public static int mechDisplayArmorLargeFontSize = 12;
 
+    public static int chatLoungeTabFontSize = 16;
+
     /** Whether to display the Chat Lounge in tabs or not. */
     public static boolean chatLoungeTabs = true;
 
@@ -510,6 +512,10 @@ scan:
                         st.nextToken();
                         chatLoungeTabs = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if(key.equals("chatloungetabfontsize")) {
+                        st.nextToken();
+                        chatLoungeTabFontSize = (int)st.nval;
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -632,6 +638,7 @@ scan:
             cw.write("serverlogmaxsize " + serverlogMaxSize + "\r\n");
 
             cw.write("chatloungetabs " + chatLoungeTabs + "\r\n");
+            cw.write("chatloungetabfontsize " + chatLoungeTabFontSize + "\r\n");
 
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

@@ -1897,12 +1897,28 @@ public class Compute
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed.");
                 }
             } else {
-                // must have an arm intact
+                int l3ProneFiringArm = -1;
+                
                 if (ae.isLocationDestroyed(Mech.LOC_RARM) || ae.isLocationDestroyed(Mech.LOC_LARM)) {
+                  if ( game.getOptions().booleanOption("maxtech_prone_fire") ) {
+                    //Can fire with only one arm
+                    if (ae.isLocationDestroyed(Mech.LOC_RARM) && ae.isLocationDestroyed(Mech.LOC_LARM)) {
+                        return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both arms destroyed.");
+                    }
+                    
+                    l3ProneFiringArm = ae.isLocationDestroyed(Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
+                  } else {
+                    // must have an arm intact
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed.");
+                  }
                 }
+
                 // arm-mounted weapons have addidional trouble
                 if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
+                  if ( l3ProneFiringArm == weapon.getLocation() ) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and propping up with this arm.");
+                  }
+                  
                     int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
                     // check previous attacks for weapons fire from the other arm
                     for (Enumeration i = game.getActions(); i.hasMoreElements();) {
@@ -1926,6 +1942,10 @@ public class Compute
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone.");
                 }
                 toHit.addModifier(2, "attacker prone");
+                
+                if ( l3ProneFiringArm != -1 ) {
+                  toHit.addModifier(1, "attacker propping on single arm");
+                }
             }
         }
 

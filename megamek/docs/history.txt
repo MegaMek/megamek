@@ -8,6 +8,7 @@ v0.29.40 (2004-07-11 6:15pm)
 + Bug 953501: Attempted fix for the "memory leak".
 + RFE 988158: Add more armor info to entitystatus.txt.
 + More lessons learned from GCJ.
++ Track Kills for use in MegamekNET and in the end-of-game report.
 
 v0.29.39 (2004-07-04 8:30pm)
 + Bug 982019: Fix for Hauptmann HA1-OA and Templar Grayson and Tancred pics.

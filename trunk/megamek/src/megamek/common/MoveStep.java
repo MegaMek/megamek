@@ -22,6 +22,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Enumeration;
 
 /**
  * A single step in the entity's movment.
@@ -220,13 +221,7 @@ public class MoveStep implements Serializable {
                     setOnlyPavement(false);
                 }
 
-                setMp(
-                    Compute.getMovementCostFor(
-                        game,
-                        entity.getId(),
-                        prev.getPosition(),
-                        getPosition(),
-                        parent.isJumping()));
+                calcMovementCostFor(game, prev.getPosition());
 
                 // check for water
                 if (!isPavementStep()
@@ -271,14 +266,8 @@ public class MoveStep implements Serializable {
                     setOnlyPavement(false);
                 }
 
-                setMp(
-                    Compute.getMovementCostFor(
-                        game,
-                        entity.getId(),
-                        prev.getPosition(),
-                        getPosition(),
-                        parent.isJumping())
-                        + 1);
+                calcMovementCostFor(game, prev.getPosition());
+                setMp(getMp() + 1);
                 // check for water
                 if (!isPavementStep() && game.board.getHex(getPosition()).levelOf(Terrain.WATER) > 0) {
                     setRunProhibited(true);
@@ -422,9 +411,9 @@ public class MoveStep implements Serializable {
 	 */
     public void moveInDir(int dir) {
         position = position.translated(dir);
-		if (!parent.game.getBoard().contains(position)) {
-		    throw new RuntimeException("Coordinate off the board.");
-		}
+        if (!parent.game.getBoard().contains(position)) {
+            throw new RuntimeException("Coordinate off the board.");
+        }
     }
 
     /**
@@ -709,12 +698,13 @@ public class MoveStep implements Serializable {
         if (null == prev) {
             setFirstStep(true);
         } else {
-            // infantry get a first step if all they've done is spin on the spot:
+            // infantry get a first step if all they've done is spin on the
+            // spot:
             //   getMpUsed() is the MPs used in the whole MovePath
             //   getMp() is the MPs used in the last (illegal) step (this step)
             //   if the difference between the whole path and this step is 0
             //   then this must be their first step
-            setFirstStep(parent.isInfantry() && (getMpUsed()-getMp()) == 0);
+            setFirstStep(parent.isInfantry() && (getMpUsed() - getMp()) == 0);
 
             prevStepOnPavement = prev.isPavementStep();
             isTurning = prev.isTurning();
@@ -753,7 +743,7 @@ public class MoveStep implements Serializable {
             } else if (
                 entity instanceof Tank
                     && isOnlyPavement()
-                    && getMpUsed() <= entity.getRunMP() + (Compute.isOdd(entity.getWalkMP()) ? 1 : 2)
+                    && getMpUsed() <= entity.getRunMP() + (entity.getWalkMP() % 2 == 1 ? 1 : 2)
                     && !isRunProhibited()) {
                 movementType = Entity.MOVE_RUN;
             }
@@ -814,9 +804,7 @@ public class MoveStep implements Serializable {
         }
 
         // check if this movement is illegal for reasons other than points
-        if (!Compute.isMovementPossible( game, entity.getId(), lastPos, curPos,
-                                         this, movementType )
-            || isUnloaded) {
+        if (!isMovementPossible(game, lastPos, curPos) || isUnloaded) {
             movementType = Entity.MOVE_ILLEGAL;
         }
 
@@ -878,4 +866,232 @@ public class MoveStep implements Serializable {
         return heat;
     }
 
+    /**
+	 * Amount of movement points required to move from start to dest
+	 */
+    public int calcMovementCostFor(Game game, Coords prev) {
+        final int moveType = parent.getEntity().getMovementType();
+        final Hex srcHex = game.board.getHex(prev);
+        final Hex destHex = game.board.getHex(getPosition());
+
+        // jumping always costs 1
+        if (parent.isJumping()) {
+            return 1;
+        }
+
+        mp = 1;
+
+        // Account for terrain, unless we're moving along a road.
+        if (!isPavementStep) {
+
+            if (destHex.levelOf(Terrain.ROUGH) > 0) {
+                mp++;
+            }
+            if (destHex.levelOf(Terrain.RUBBLE) > 0) {
+                mp++;
+            }
+            if (destHex.levelOf(Terrain.WOODS) == 1) {
+                mp++;
+            } else if (destHex.levelOf(Terrain.WOODS) > 1) {
+                mp += 2;
+            }
+
+            // non-hovers check for water depth
+            if (moveType != Entity.MovementType.HOVER) {
+                if (destHex.levelOf(Terrain.WATER) == 1) {
+                    mp++;
+                } else if (destHex.levelOf(Terrain.WATER) > 1) {
+                    mp += 3;
+                }
+            }
+
+            // Swamp adds to movement cost and force a "get stuck" check.
+            /*
+			 * TODO: uncomment me in v0.29.1 if (
+			 * destHex.contains(Terrain.SWAMP) ) { mp += 1; }
+			 */
+        } // End not-along-road
+
+        // account for elevation?
+        // TODO: allow entities to occupy different levels of buildings.
+        int nSrcEl = parent.getEntity().elevationOccupied(srcHex);
+        int nDestEl = parent.getEntity().elevationOccupied(destHex);
+        int nMove = parent.getEntity().getMovementType();
+
+        if (nSrcEl != nDestEl) {
+            int delta_e = Math.abs(nSrcEl - nDestEl);
+
+            // Infantry and ground vehicles are charged double.
+            if (parent.isInfantry()
+                || (nMove == Entity.MovementType.TRACKED
+                    || nMove == Entity.MovementType.WHEELED
+                    || nMove == Entity.MovementType.HOVER)) {
+                delta_e *= 2;
+            }
+            mp += delta_e;
+        }
+
+        // If we entering a building, all non-infantry pay additional MP.
+        if (nDestEl < destHex.levelOf(Terrain.BLDG_ELEV) && !(parent.isInfantry())) {
+            Building bldg = game.board.getBuildingAt(getPosition());
+            mp += bldg.getType();
+        }
+
+        return mp;
+    }
+
+    /**
+	 * Is movement possible from start to dest?
+	 */
+    public boolean isMovementPossible(Game game, Coords src, Coords dest) {
+        final Hex srcHex = game.board.getHex(src);
+        final Hex destHex = game.board.getHex(dest);
+
+        if (src.distance(dest) > 1) {
+            throw new IllegalArgumentException("Coordinates must be adjacent.");
+        }
+
+        if (movementType == Entity.MOVE_ILLEGAL) {
+            // that was easy
+            return false;
+        }
+        // super-easy
+        if (parent.getEntity().isImmobile()) {
+            return false;
+        }
+        // another easy check
+        if (!game.board.contains(dest)) {
+            return false;
+        }
+
+        // Can't back up across an elevation change.
+        if (isThisStepBackwards() && parent.getEntity().elevationOccupied(destHex) != parent.getEntity().elevationOccupied(srcHex)) {
+            return false;
+        }
+
+        // Swarming entities can't move.
+        if (Entity.NONE != parent.getEntity().getSwarmTargetId()) {
+            return false;
+        }
+
+        // The entity is trying to load. Check for a valid move.
+        if (type == MovePath.STEP_LOAD) {
+
+            // Transports can't load after the first step.
+            if (!firstStep) {
+                return false;
+            }
+
+            // Find the unit being loaded.
+            Entity other = null;
+            Enumeration entities = game.getEntities(src);
+            while (entities.hasMoreElements()) {
+
+                // Is the other unit friendly and not the current entity?
+                other = (Entity) entities.nextElement();
+                if (parent.getEntity().getOwner() == other.getOwner() && !parent.getEntity().equals(other)) {
+
+                    // The moving unit should be able to load the other unit.
+                    if (!parent.getEntity().canLoad(other)) {
+                        return false;
+                    }
+
+                    // The other unit should be able to have a turn.
+                    if (!other.isSelectableThisTurn(game)) {
+                        return false;
+                    }
+
+                    // We can stop looking.
+                    break;
+                } else {
+                    // Nope. Discard it.
+                    other = null;
+                }
+
+            } // Check the next entity in this position.
+
+            // We were supposed to find someone to load.
+            if (other == null) {
+                return false;
+            }
+
+        } // End STEP_LOAD-checks
+
+        // mechs dumping ammo can't run
+        boolean bDumping = false;
+        for (Enumeration e = parent.getEntity().getAmmo(); e.hasMoreElements();) {
+            if (((Mounted) e.nextElement()).isDumping()) {
+                bDumping = true;
+                break;
+            }
+        }
+        if (bDumping && (movementType == Entity.MOVE_RUN || movementType == Entity.MOVE_JUMP)) {
+            return false;
+        }
+
+        // check elevation difference > max
+        int nSrcEl = parent.getEntity().elevationOccupied(srcHex);
+        int nDestEl = parent.getEntity().elevationOccupied(destHex);
+        int nMove = parent.getEntity().getMovementType();
+
+        if (movementType != Entity.MOVE_JUMP && Math.abs(nSrcEl - nDestEl) > parent.getEntity().getMaxElevationChange()) {
+            return false;
+        }
+        // units moving backwards may not change elevation levels (I think this
+        // rule's dumb)
+        if ((type == MovePath.STEP_BACKWARDS
+            || type == MovePath.STEP_LATERAL_LEFT_BACKWARDS
+            || type == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)
+            && nSrcEl != nDestEl) {
+            return false;
+        }
+
+        // Can't run into water unless hovering, or using a bridge.
+        if (movementType == Entity.MOVE_RUN
+            && nMove != Entity.MovementType.HOVER
+            && destHex.levelOf(Terrain.WATER) > 0
+            && !firstStep
+            && !isPavementStep) {
+            return false;
+        }
+
+        // ugh, stacking checks. well, maybe we're immune!
+        if (movementType != Entity.MOVE_JUMP && type != MovePath.STEP_CHARGE && type != MovePath.STEP_DFA) {
+            // can't move a mech into a hex with an enemy mech
+            if (parent.getEntity() instanceof Mech && Compute.isEnemyMechIn(game, parent.getEntity().getId(), dest)) {
+                return false;
+            }
+
+            // Can't move out of a hex with an enemy unit unless we started
+            // there, BUT we're allowed to turn, unload, or go prone.
+            if (Compute.isEnemyUnitIn(game, parent.getEntity().getId(), src)
+                && !src.equals(parent.getEntity().getPosition())
+                && type != MovePath.STEP_TURN_LEFT
+                && type != MovePath.STEP_TURN_RIGHT
+                && type != MovePath.STEP_UNLOAD
+                && type != MovePath.STEP_GO_PRONE) {
+                return false;
+            }
+
+        }
+
+        // can't jump over too-high terrain
+        if (movementType == Entity.MOVE_JUMP
+            && destHex.getElevation() > (parent.getEntity().getElevation() + parent.getEntity().getJumpMPWithTerrain())) {
+            return false;
+        }
+
+        // Certain movement types have terrain restrictions; terrain
+        // restrictions are lifted when moving along a road or bridge.
+        if (movementType != Entity.MOVE_JUMP && parent.getEntity().isHexProhibited(destHex) && !isPavementStep) {
+            return false;
+        }
+
+        // If we are *in* restricted terrain, we can only leave via roads.
+        if (movementType != Entity.MOVE_JUMP && parent.getEntity().isHexProhibited(srcHex) && !isPavementStep) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -27,6 +27,7 @@ import megamek.common.MovePath;
 import megamek.common.Terrain;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 
@@ -279,7 +280,7 @@ public class TestBot extends BotClient {
                                         Compute.toHitDfa(
                                             game,
                                             option.getEntity().getId(),
-                                            target.getEntity().getId(),
+                                            target.getEntity(),
                                             option);
                                     damage = 2 * Compute.getDfaDamageFor(option.getEntity());
                                     self_threat =
@@ -295,16 +296,11 @@ public class TestBot extends BotClient {
                                     self_threat *= 100 / option.getCEntity().getEntity().getWeight();
                                 } else {
                                     self.current.setState();
-                                    toHit =
-                                        Compute.toHitCharge(
-                                            game,
-                                            option.getEntity().getId(),
-                                            target.getEntity().getId(),
-                                            option);
-                                    damage = Compute.getChargeDamageFor(option.getEntity(), option.getHexesMoved());
+                                    toHit = new ChargeAttackAction(option.getEntity(), target.getEntity()).toHit(game, option);
+                                    damage = ChargeAttackAction.getChargeDamageFor(option.getEntity(), option.getHexesMoved());
                                     self_threat =
                                         option.getCEntity().getThreatUtility(
-                                            Compute.getChargeDamageTakenBy(option.getEntity(), target.getEntity()),
+                                            ChargeAttackAction.getChargeDamageTakenBy(option.getEntity(), target.getEntity()),
                                             CEntity.SIDE_FRONT)
                                             * (Compute.oddsAbove(toHit.getValue()) / 100);
                                     option.setState();

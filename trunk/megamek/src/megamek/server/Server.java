@@ -1988,8 +1988,7 @@ implements Runnable, ConnectionHandler {
               BrushOffAttackAction.RIGHT ).getValue()
             != ToHitData.IMPOSSIBLE;
 
-        canHit |= Compute.toHitThrash
-            ( game, entityId, target ).getValue()
+        canHit |= new ThrashAttackAction(entityId, target).toHit(game).getValue()
             != ToHitData.IMPOSSIBLE;
                 
         Mounted club = Compute.clubMechHas( game.getEntity(entityId) );
@@ -2709,7 +2708,7 @@ implements Runnable, ConnectionHandler {
                             // building and displace the entity inside.
                             // ASSUMPTION: you don't charge the building
                             //             if Tanks or Mechs were charged.
-                            int chargeDamage = Compute.getChargeDamageFor
+                            int chargeDamage = ChargeAttackAction.getChargeDamageFor
                                 ( entity );
                             if ( !bldgSuffered ) {
                                 phaseReport.append( "      " )
@@ -2717,7 +2716,7 @@ implements Runnable, ConnectionHandler {
                                                              chargeDamage ) );
 
                                 // Apply damage to the attacker.
-                                int toAttacker = Compute.getChargeDamageTakenBy
+                                int toAttacker = ChargeAttackAction.getChargeDamageTakenBy
                                     ( entity, bldg );
                                 HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
                                                                       Compute.targetSideTable(curPos, nextPos, entity.getFacing(), false)
@@ -6212,7 +6211,7 @@ implements Runnable, ConnectionHandler {
             .append( te.getDisplayName() );
 
         // compute to-hit
-        ToHitData toHit = Compute.toHitThrash(game, baa);
+        ToHitData toHit = baa.toHit(game);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append( ", but the thrash is impossible (" )
                 .append( toHit.getDesc() )
@@ -6522,7 +6521,7 @@ implements Runnable, ConnectionHandler {
         }
         
         // compute to-hit
-        ToHitData toHit = Compute.toHitCharge(game, caa);
+        ToHitData toHit = caa.toHit(game);
         
         // if the attacker's prone, fudge the roll
         int roll;
@@ -6555,7 +6554,7 @@ implements Runnable, ConnectionHandler {
         else if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
         
             // The building takes the full brunt of the attack.
-            int damage = Compute.getChargeDamageFor(ae);
+            int damage = ChargeAttackAction.getChargeDamageFor(ae);
             phaseReport.append( "hits.\n  " )
                 .append( damageBuilding( bldg, damage ) );
         
@@ -6563,7 +6562,7 @@ implements Runnable, ConnectionHandler {
             this.damageInfantryIn( bldg, damage );
 
             // Apply damage to the attacker.
-            int toAttacker = Compute.getChargeDamageTakenBy( ae, bldg );
+            int toAttacker = ChargeAttackAction.getChargeDamageTakenBy( ae, bldg );
             HitData hit = ae.rollHitLocation( ToHitData.HIT_NORMAL,
                                               Compute.targetSideTable(target.getPosition(), ae.getPosition(), ae.getFacing(), false)
                                                   );
@@ -6587,8 +6586,8 @@ implements Runnable, ConnectionHandler {
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction) {
 
         // we hit...
-        int damage = Compute.getChargeDamageFor(ae);
-        int damageTaken = Compute.getChargeDamageTakenBy(ae, te);
+        int damage = ChargeAttackAction.getChargeDamageFor(ae);
+        int damageTaken = ChargeAttackAction.getChargeDamageTakenBy(ae, te);
         PilotingRollData chargePSR = null;
 
         // Is the target inside a building?

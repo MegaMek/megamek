@@ -4002,7 +4002,7 @@ public abstract class Entity
      * @return  <code>true</code> if it has.
      */
     public boolean isCaptured() {
-        return this.captured;
+        return this.captured && !this.isDestroyed();
     }
 
     /**

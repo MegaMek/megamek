@@ -29,7 +29,7 @@ import megamek.server.*;
 import megamek.test.*;
 
 public class MegaMek implements ActionListener {
-    public static String VERSION = "0.29.43";
+    public static String VERSION = "0.29.44-cvs";
     public static long TIMESTAMP = new File("timestamp").lastModified();
 
     private static final NumberFormat commafy = NumberFormat.getInstance();

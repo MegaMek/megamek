@@ -84,7 +84,7 @@ public class BLKBattleArmorFile extends BLKFile implements MechLoader {
                 break;
             }
         }
-        if (nMotion == -1) throw new EntityLoadingException("Invalid movment type: " + sMotion);
+        if (nMotion == -1) throw new EntityLoadingException("Invalid movement type: " + sMotion);
         t.setMovementType(nMotion);
 
         if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");

@@ -561,9 +561,9 @@ public class MegaMek implements ActionListener {
     /**
      * Called when the user selects the "Help->Contents" menu item.
      */
-    public void showHelp() {
+    private void showHelp() {
         if (this.help == null) {
-            help = showHelp(this.frame, "readme.txt");
+			help = showHelp(this.frame, "readme");
         }
         // Show the help dialog.
         this.help.show();
@@ -572,8 +572,12 @@ public class MegaMek implements ActionListener {
     /**
      * display the filename in a CommonHelpDialog
      */
-    static public CommonHelpDialog showHelp(Frame frame, String filename) {
-        File helpfile = new File(filename);
+    private static CommonHelpDialog showHelp(Frame frame, String filename) {
+		Locale l = Locale.getDefault();
+		File helpfile = new File(filename + "-" + l.getDisplayLanguage(Locale.ENGLISH) + ".txt");
+        if (!helpfile.exists()) {
+			helpfile = new File(filename + ".txt");
+        }
         return new CommonHelpDialog(frame, helpfile);
     }
 

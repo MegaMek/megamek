@@ -41,7 +41,6 @@ public class MiscType extends EquipmentType {
     public static final int     F_C3S               = 0x0400;
     public static final int     F_C3I               = 0x0800;
     public static final int     F_ARTEMIS           = 0x1000;
-
     public static final int     F_ECM               = 0x2000;
     
     /** Creates new MiscType */
@@ -139,6 +138,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createC3I());
         EquipmentType.addType(createISArtemis());
         EquipmentType.addType(createCLArtemis());
+        EquipmentType.addType(createGECM());
+        EquipmentType.addType(createCLECM());
     }
     
     public static MiscType createHeatSink() {
@@ -455,12 +456,12 @@ public class MiscType extends EquipmentType {
         misc.hittable = true;
         misc.spreadable = false;
         misc.flags |= F_ECM;
-        misc.bv = 0;
+        misc.bv = 61;
         
         return misc;
     }
 
-    public static MiscType createECM() {
+    public static MiscType createCLECM() {
         MiscType misc = new MiscType();
         
         misc.name = "ECM Suite";
@@ -472,7 +473,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = true;
         misc.spreadable = false;
         misc.flags |= F_ECM;
-        misc.bv = 0;
+        misc.bv = 61;
         
         return misc;
     }

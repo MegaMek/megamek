@@ -2673,6 +2673,8 @@ implements Runnable {
         int hits = 1, amsHits = 0, nCluster = 1, nSalvoBonus = 0;
         int nDamPerHit = wtype.getDamage();
         boolean bSalvo = false;
+        // ecm check is heavy, so only do it once
+        boolean bCheckedECM = false, bECMAffected = false;
         String sSalvoType = " shot(s) ";
 
         if (isWeaponInfantry) {
@@ -2690,12 +2692,18 @@ implements Runnable {
             if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_MRM) {
                 nCluster = 5;
             }
-            
+
             // calculate # of missiles hitting
             if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_SRM) {
+                
                 // check for narc
                 if (te.isNarcedBy(ae.getOwner().getTeam())) {
-                    nSalvoBonus += 2;
+                    // check ECM interference
+                    bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+                    bCheckedECM = true;
+                    if (!bECMAffected) {
+                        nSalvoBonus += 2;
+                    }
                 }
                 
                 // check for artemis
@@ -2703,7 +2711,14 @@ implements Runnable {
                 if (mLinker != null && mLinker.getType() instanceof MiscType && 
                         !mLinker.isDestroyed() && !mLinker.isMissing() &&
                         mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    nSalvoBonus += 2;
+                            
+                    // check ECM interference
+                    if (!bCheckedECM) {
+                        bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+                    }
+                    if (!bECMAffected) {
+                        nSalvoBonus += 2;
+                    }
                 }
                  
             }
@@ -2776,6 +2791,9 @@ implements Runnable {
         // Report the number of hits.
         if (bSalvo) {
             phaseReport.append(hits + sSalvoType + "hit" + toHit.getTableDesc());
+            if (bECMAffected) {
+                phaseReport.append(" (ECM prevents bonus)");
+            }
             if (nSalvoBonus > 0) {
                 phaseReport.append(" (w/ +").append(nSalvoBonus).append(" bonus)");
             }

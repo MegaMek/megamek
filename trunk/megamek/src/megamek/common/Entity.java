@@ -1524,6 +1524,19 @@ public abstract class Entity
     }
     
     /**
+     * Does the mech have a functioning ECM unit?
+     */
+    public boolean hasActiveECM() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_ECM)) {
+                return !(m.isDestroyed() || m.isMissing());
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Returns whether this 'mech is part of a C3 network.
      */
 
@@ -1584,7 +1597,7 @@ public abstract class Entity
             if (game != null) {
                 for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
                     final Entity e = (Entity)i.nextElement();
-                    if (!equals(e) && OnSameC3NetworkAs(e)) {
+                    if (!equals(e) && onSameC3NetworkAs(e)) {
                         nodes--;
                         if(nodes <= 0) return 0;
                     }
@@ -1616,7 +1629,8 @@ public abstract class Entity
 
     public Entity getC3Top() {
       Entity m = this;
-      while(m.getC3Master() != null && !m.getC3Master().equals(m) && m.getC3Master().hasC3() && !LosIsThroughEnemyECM(m, m.getC3Master())) {
+      while(m.getC3Master() != null && !m.getC3Master().equals(m) && m.getC3Master().hasC3() && 
+            !(Compute.isAffectedByECM(m, m.getPosition(), m.getC3Master().getPosition()))) {
         m = m.getC3Master();
       }
       return m;
@@ -1691,12 +1705,15 @@ public abstract class Entity
 
     }
 
-    public boolean OnSameC3NetworkAs(Entity e) {
-      // C3i is easy - if they both have C3i, and their net ID's match, they're on the same network!
+    public boolean onSameC3NetworkAs(Entity e) {
       if(isEnemyOf(e)) return false;
       if (isShutDown() || e.isShutDown()) return false;
 
-      if(hasC3i() && e.hasC3i()) return getC3NetID().equals(e.getC3NetID());
+      // C3i is easy - if they both have C3i, and their net ID's match, they're on the same network!
+      if(hasC3i() && e.hasC3i() && getC3NetID().equals(e.getC3NetID())) {
+        // check for ECM interference
+        return !(Compute.isAffectedByECM(e, e.getPosition(), getPosition()));
+      }
 
       // simple sanity check - do they both have C3, and are they both on the same network?
       if (!hasC3() || !e.hasC3()) return false;

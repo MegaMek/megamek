@@ -1128,7 +1128,7 @@ public abstract class Mech
                 Mounted mLinker = mounted.getLinkedBy();
                 if (mLinker.getType() instanceof MiscType && 
                         mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.3;
+                    dBV *= 1.2;
                 }
             } 
             

@@ -58,17 +58,17 @@ public class LOSDialog
         CheckboxGroup radioGroup1 = new CheckboxGroup();
         checkboxes1 = new Checkbox[2];
         
-		checkboxes1[0] = new Checkbox("Mech", mechInFirst, radioGroup1);
-		c.gridwidth = 1;
-		c.anchor = GridBagConstraints.WEST;
-		gridbag.setConstraints(checkboxes1[0], c);
-		add(checkboxes1[0]);
+        checkboxes1[0] = new Checkbox("Mech", mechInFirst, radioGroup1);
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(checkboxes1[0], c);
+        add(checkboxes1[0]);
 
-		checkboxes1[1] = new Checkbox("Non-mech", !mechInFirst, radioGroup1);
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.anchor = GridBagConstraints.WEST;
-		gridbag.setConstraints(checkboxes1[1], c);
-		add(checkboxes1[1]);
+        checkboxes1[1] = new Checkbox("Non-mech", !mechInFirst, radioGroup1);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(checkboxes1[1], c);
+        add(checkboxes1[1]);
 
         labMessage = new Label("In second hex:", Label.LEFT);
         c.weightx = 1.0;    c.weighty = 1.0;
@@ -80,17 +80,17 @@ public class LOSDialog
         CheckboxGroup radioGroup2 = new CheckboxGroup();
         checkboxes2 = new Checkbox[2];
         
-		checkboxes2[0] = new Checkbox("Mech", mechInSecond, radioGroup2);
-		c.gridwidth = 1;
-		c.anchor = GridBagConstraints.WEST;
-		gridbag.setConstraints(checkboxes2[0], c);
-		add(checkboxes2[0]);
+        checkboxes2[0] = new Checkbox("Mech", mechInSecond, radioGroup2);
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(checkboxes2[0], c);
+        add(checkboxes2[0]);
 
-		checkboxes2[1] = new Checkbox("Non-mech", !mechInSecond, radioGroup2);
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.anchor = GridBagConstraints.WEST;
-		gridbag.setConstraints(checkboxes2[1], c);
-		add(checkboxes2[1]);
+        checkboxes2[1] = new Checkbox("Non-mech", !mechInSecond, radioGroup2);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(checkboxes2[1], c);
+        add(checkboxes2[1]);
 
         butOK.addActionListener(this);
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -104,30 +104,29 @@ public class LOSDialog
         setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
                     parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
 
+        // we'd like the OK button to have focus, but that can only be done on displayed
+        // dialogs in Windows. So, this rather elaborate setup: as soon as the first focusable
+        // component receives the focus, it shunts the focus to the OK button, and then
+        // removes the FocusListener to prevent this happening again
+        checkboxes1[0].addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                butOK.requestFocus();
+            }
+            public void focusLost(FocusEvent e) {
+                checkboxes1[0].removeFocusListener(this); // refers to listener
+            }
+        });
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         this.setVisible(false);
     }
 
     public boolean getMechInFirst() {
-		return this.checkboxes1[0].getState() == true;
+        return this.checkboxes1[0].getState() == true;
     }
 
     public boolean getMechInSecond() {
-		return this.checkboxes2[0].getState() == true;
-    }
-
-    /** Shows the dialog, and allows focus to be set on the OK button, even though we're modal
-    */
-    public void show() {
-        // quickly show the dialog non-modal, set the focus, and hide
-        super.show();
-        butOK.requestFocus();
-        hide();
-
-        // make the dialog modal and re-show (focus will still be set)
-        setModal(true);
-        super.show();
+        return this.checkboxes2[0].getState() == true;
     }
 } 

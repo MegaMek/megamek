@@ -3,7 +3,7 @@ VERSION HISTORY:
 v0.29.32 (CVS)
 + Bug 933545: Mech stacking violation bug fixed.
 + Bug 933550: Prone mechs can eject again.
-+ Patch 932742: All hexes highlighted when ANY deployment option selected
++ Patch 932742: All hexes highlighted when "ANY" deployment option selected
 + Patch 932734: "Host Saved Game" now limits filelist to *.sav on Linux
 + Patch 932367: Cursors now sit "underneath" other info
 + Bug 785820: Breached equipment affects movement
@@ -15,6 +15,7 @@ v0.29.32 (CVS)
 + Refactored code from the bot to MovePath to refine the A* path finder.
 + Refactored lots of other code.
 + Players can set the time for the pathfinder to "think".
++ Bug 936861: LOS dialog locks up MM client
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

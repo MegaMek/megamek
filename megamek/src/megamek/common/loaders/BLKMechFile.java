@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -90,15 +90,23 @@ public class BLKMechFile extends BLKFile implements MechLoader {
             
         if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find block.");
             
-            if (dataFile.getDataAsString("type")[0].equals("IS")) {
-                if (mech.getYear() == 3025) {
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
-                } else {
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
-                }
+        if (dataFile.getDataAsString("type")[0].equals("IS")) {
+            if (mech.getYear() == 3025) {
+                mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
             } else {
-                mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+                mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
             }
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan")) {
+            mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {
+            mech.setTechLevel(TechConstants.T_MIXED_BASE_IS_LEVEL_2);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis)")) {
+            mech.setTechLevel(TechConstants.T_MIXED_BASE_CLAN_LEVEL_2);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
+            throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+        } else {
+            throw new EntityLoadingException("Unsupported tech level: " + dataFile.getDataAsString("type")[0]);
+        }
         
         if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find block.");
             mech.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
@@ -214,15 +222,11 @@ public class BLKMechFile extends BLKFile implements MechLoader {
                 critName = critName.substring(4);
             }
             
-            EquipmentType etype = EquipmentType.getByMtfName(critName);
-            
-            if (etype == null) {
-                etype = EquipmentType.getByMepName(critName);
-            }
+            EquipmentType etype = EquipmentType.get(critName);
             
             if (etype == null) {
                 // try w/ prefix
-                etype = EquipmentType.getByMepName(prefix + critName);
+                etype = EquipmentType.get(prefix + critName);
             }
             if (etype != null) {
                 try {

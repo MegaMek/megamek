@@ -61,7 +61,7 @@ public class MechSelectorDialog
     private Button m_bPick = new Button("Select Mech");
     private Button m_bCancel = new Button("Cancel");
     private Panel m_pButtons = new Panel();
-    private TextArea m_mechViewLeft = new TextArea("",18,24,TextArea.SCROLLBARS_HORIZONTAL_ONLY);
+    private TextArea m_mechViewLeft = new TextArea("",18,25,TextArea.SCROLLBARS_HORIZONTAL_ONLY);
     private TextArea m_mechViewRight = new TextArea(18,28);
     private Panel m_pLeft = new Panel();
 
@@ -127,7 +127,7 @@ public class MechSelectorDialog
         m_mechList.addItemListener(this);
         m_bPick.addActionListener(this);
         m_bCancel.addActionListener(this);
-        setSize(760, 320);
+        setSize(770, 320);
         setLocation(m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2,
                     m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2);
         populateChoices();
@@ -158,16 +158,28 @@ public class MechSelectorDialog
     
     
     private void populateChoices() {
+        /* If you change any of the strings below, be sure to check
+         * the filterMechs method below as some strings may need to
+         * be changed there as well.
+         */
+
         m_chWeightClass.addItem("Light");
         m_chWeightClass.addItem("Medium");
         m_chWeightClass.addItem("Heavy");
         m_chWeightClass.addItem("Assault");
         m_chWeightClass.addItem("All");
-        
-        for (int i = 0; i < TechConstants.T_NAMES.length; i++) {
-            m_chType.addItem(TechConstants.T_NAMES[i]);
-        }
+
+        m_chType.addItem("IS level 1");
+        m_chType.addItem("IS level 2");
         m_chType.addItem("IS All");
+        m_chType.addItem("Clan level 2");
+        m_chType.addItem("IS and Clan");
+        m_chType.addItem("Mixed (IS) level 2");
+        m_chType.addItem("Mixed (Clan) level 2");
+        // More than 8 items causes the drop down to sprout a vertical
+        //  scroll bar.  I guess we'll sacrifice this next one to stay
+        //  under the limit.  Stupid AWT Choice class!
+        //        m_chType.addItem("Mixed All");
         m_chType.addItem("All");
 
         m_chUnitType.addItem("Mek");
@@ -182,7 +194,7 @@ public class MechSelectorDialog
     {
         Vector vMechs = new Vector();
         String sClass = m_chWeightClass.getSelectedItem();
-        int nWeight;
+        int nWeight = 0;
         if (sClass.equals("Light")) {
             nWeight = Entity.WEIGHT_LIGHT;
         }
@@ -194,10 +206,9 @@ public class MechSelectorDialog
         }
         else if (sClass.equals("Assault")) {
             nWeight = Entity.WEIGHT_ASSAULT;
-        } else {
-            nWeight = 0;  // use for "All Weights" choice
         }
         int nType = m_chType.getSelectedIndex();
+        String sType = m_chType.getSelectedItem();
         String sUnitType = m_chUnitType.getSelectedItem();
         MechSummary[] mechs = MechSummaryCache.getInstance().getAllMechs();
         if ( mechs == null ) {
@@ -205,16 +216,27 @@ public class MechSelectorDialog
             return;
         }
         for (int x = 0; x < mechs.length; x++) {
-            // watch out for hard-coded constants below
-            if ( (nWeight == 0 || mechs[x].getWeightClass() == nWeight) && 
-                 (nType == 5
-                  || (nType == 4
-                      && mechs[x].getType() <= TechConstants.T_IS_LEVEL_2 )
-                  || mechs[x].getType() == nType) && 
-                 ( sUnitType.equals( "All" ) ||
-                   mechs[x].getUnitType().equals(sUnitType) ) ) {
-                vMechs.addElement(mechs[x]);
-            }
+            if ( /* Weight */
+                (sClass.equals("All") || mechs[x].getWeightClass() == nWeight)
+                && /* Technology Level */
+                (sType.equals("All")
+                 || (sType.equals("IS All") &&
+                     mechs[x].getType() <= TechConstants.T_IS_LEVEL_2)
+                 || (sType.equals("IS and Clan") &&
+                     (mechs[x].getType() <= TechConstants.T_IS_LEVEL_2 ||
+                      mechs[x].getType() == TechConstants.T_CLAN_LEVEL_2))
+                 || (sType.equals("Mixed All") &&
+                     (mechs[x].getType() ==
+                      TechConstants.T_MIXED_BASE_IS_LEVEL_2 ||
+                      mechs[x].getType() ==
+                      TechConstants.T_MIXED_BASE_CLAN_LEVEL_2))
+                 || TechConstants.T_NAMES[mechs[x].getType()].equals(sType))
+                && /* Unit Type (Mek, Infantry, etc.) */
+                ( sUnitType.equals( "All" ) ||
+                  mechs[x].getUnitType().equals(sUnitType) ) )
+                {
+                    vMechs.addElement(mechs[x]);
+                }
         }
         m_mechsCurrent = new MechSummary[vMechs.size()];
         vMechs.copyInto(m_mechsCurrent);
@@ -325,11 +347,11 @@ public class MechSelectorDialog
         m_mechViewLeft.setText("");
         m_mechViewRight.setText("");
 
-		// Remove preview image.        
-		if (MechSummaryCache.isInitialized()) {
-        	m_pPreview.removeBgDrawers();
-			m_pPreview.paint(m_pPreview.getGraphics());
-		}
+        // Remove preview image.        
+        if (MechSummaryCache.isInitialized()) {
+            m_pPreview.removeBgDrawers();
+            m_pPreview.paint(m_pPreview.getGraphics());
+        }
     }
     
     void previewMech(Entity entity) {

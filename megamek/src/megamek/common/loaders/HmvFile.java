@@ -29,7 +29,6 @@ import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
 import megamek.common.Entity.MovementType;
-import megamek.common.loaders.*;
 
 /**
  * Based on the hmpread.c program and the MtfFile object.  This class
@@ -195,19 +194,19 @@ public class HmvFile
                             if ( ammoType.getTechType() ==
                                  TechConstants.T_IS_LEVEL_1 ) {
                                 ammoType = (AmmoType) EquipmentType
-                                    .getByMtfName( "ISMG Ammo (100)" );
+                                    .get( "ISMG Ammo (100)" );
                             } else {
                                 ammoType = (AmmoType) EquipmentType
-                                    .getByMtfName( "CLMG Ammo (100)" );
+                                    .get( "CLMG Ammo (100)" );
                             }
                             break;
                         case AmmoType.T_MG_LIGHT:
                             ammoType = (AmmoType) EquipmentType
-                                .getByMtfName( "CLLightMG Ammo (100)" );
+                                .get( "CLLightMG Ammo (100)" );
                             break;
                         case AmmoType.T_MG_HEAVY:
                             ammoType = (AmmoType) EquipmentType
-                                .getByMtfName( "CLHeavyMG Ammo (100)" );
+                                .get( "CLHeavyMG Ammo (100)" );
                             break;
                         default:
                             // Only MG ammo comes in half ton lots.
@@ -971,7 +970,7 @@ public class HmvFile
     String equipmentName = getEquipmentName(equipment, techType);
     if (equipmentName != null)
     {
-      equipmentType = EquipmentType.getByMtfName(equipmentName);
+      equipmentType = EquipmentType.get(equipmentName);
     }
 
     return equipmentType;
@@ -1022,7 +1021,7 @@ public class HmvFile
     String ammoName = getAmmoName(ammo, techType);
     if (ammoName != null)
     {
-      ammoType = (AmmoType) EquipmentType.getByMtfName(ammoName);
+      ammoType = (AmmoType) EquipmentType.get(ammoName);
     }
 
     return ammoType;

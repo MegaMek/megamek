@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -34,7 +34,6 @@ import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
-import megamek.common.loaders.*;
 
 import gd.xml.*;
 import gd.xml.tiny.*;
@@ -380,7 +379,6 @@ public class TdbFile implements MechLoader {
             mech.setYear(Integer.parseInt(techYear));
             mech.setOmni(isOmni);
 
-            //TODO: this ought to be a better test
             if (LAMTonnage != null) {
                 throw new EntityLoadingException("Unsupported tech: LAM?");
             }
@@ -400,6 +398,11 @@ public class TdbFile implements MechLoader {
                     mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
                 else
                     throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
+            } else if (techBase.equals("Mixed (IS Chassis)") ||
+                       techBase.equals("Inner Sphere 'C'")) {
+                mech.setTechLevel(TechConstants.T_MIXED_BASE_IS_LEVEL_2);
+            } else if (techBase.equals("Mixed (Clan Chassis)")) {
+                mech.setTechLevel(TechConstants.T_MIXED_BASE_CLAN_LEVEL_2);
             } else {
                 throw new EntityLoadingException("Unsupported tech base: " + techBase);
             }
@@ -503,7 +506,26 @@ public class TdbFile implements MechLoader {
                 critName = critName.substring(0,critName.indexOf(" - Narc"));
             }
             try {
-                EquipmentType etype = EquipmentType.getByTdbName(critName,mech.isClan());
+                EquipmentType etype = EquipmentType.get(critName);
+                if (etype == null) {
+                    String hashPrefix;
+                    if (critName.substring(0,3).equals("(C)")) {
+                        //equipment specifically marked as clan
+                        hashPrefix = "Clan ";
+                        critName = critName.substring(4);
+                    } else if (critName.substring(0,4).equals("(IS)")) {
+                        //equipment specifically marked as inner sphere
+                        hashPrefix = "IS ";
+                        critName = critName.substring(5);
+                    } else if (mech.isClan()) {
+                        //assume equipment is clan because mech is clan 
+                        hashPrefix = "Clan ";
+                    } else {
+                        //assume equipment is inner sphere
+                        hashPrefix = "IS ";
+                    }
+                    etype = EquipmentType.get(hashPrefix + critName);
+                }
                 if (etype != null) {
                     if (etype.isSpreadable()) {
                         // do we already have one of these?  Key on Type
@@ -557,7 +579,7 @@ public class TdbFile implements MechLoader {
                 } else {
                     if (!critName.equals("Empty")) {
                         // Can't load this piece of equipment!
-                        System.out.println("              ***Cannot load equipment:" + critName);
+                        mech.addFailedEquipment(critName);
                     }
                 }
             } catch (LocationFullException ex) {

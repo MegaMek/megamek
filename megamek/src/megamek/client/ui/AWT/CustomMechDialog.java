@@ -298,9 +298,9 @@ extends Dialog implements ActionListener, DialogOptionListener {
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = (AmmoType)vAllTypes.elementAt(x);
                 boolean bTechMatch = (entity.getTechLevel() == atCheck.getTechType());
-                // allow level 2 units to use level 1 ammo
-                if (!bTechMatch && entity.getTechLevel() == TechConstants.T_IS_LEVEL_2 && 
-                        atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
+                // allow all levels of IS units to use level 1 ammo
+                if (!bTechMatch && !entity.isClan() &&
+                    atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
                     bTechMatch = true;
                 }
                 
@@ -318,7 +318,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 int muniType = atCheck.getMunitionType();
                 muniType &= ~AmmoType.M_INCENDIARY;
                 if ( !client.getClient().game.getOptions().booleanOption("clan_ignore_eq_limits")
-                     && entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2
+                     && entity.isClan()
                      && ( muniType == AmmoType.M_SEMIGUIDED ||
                           muniType == AmmoType.M_THUNDER_AUGMENTED ||
                           muniType == AmmoType.M_THUNDER_INFERNO   ||

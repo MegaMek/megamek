@@ -68,6 +68,7 @@ physical attacks:
 displacement issues:
 - hide under the desk
 - cry
+- domino effect: mechs with movement available can roll to step out of the way
 
 pilots:
 - successive consciousness checks should be made from low rolls to high
@@ -101,6 +102,9 @@ v next
 + 543589: shots from destroyed or already-fired weapons prevented
 + 543239: firing not prevented when out of range or to-hit 13+
 + 544122: no pushing after firing weapons from either arm
++ 543456: modal dialogs now not resizable
++ mech images are automatically rotated
++ custom mech images can be specified in data/mex/mechset.txt
 
 v 0.25.1 (04-12-02, 3:30pm)
 + weapon critical hits should actually disable the weapon

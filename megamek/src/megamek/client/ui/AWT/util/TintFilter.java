@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -23,27 +23,29 @@ import java.awt.image.*;
  */
 public class TintFilter extends RGBImageFilter
 {
-    private int cred;
-    private int cgreen;
-    private int cblue;
+    private double cred;
+    private double cgreen;
+    private double cblue;
     
     public TintFilter(int tintColor) {
-        this.cred   = (tintColor >> 16) & 0xff;
-        this.cgreen = (tintColor >>  8) & 0xff;
-        this.cblue  = (tintColor      ) & 0xff;
+        cred   = ((tintColor >> 16) & 0xff) / 255.0;
+        cgreen = ((tintColor >>  8) & 0xff) / 255.0;
+        cblue  = ((tintColor      ) & 0xff) / 255.0;
+        
+        canFilterIndexColorModel = true;
     }
     
     public int filterRGB(int x, int y, int RGB) {
-        final int alpha = (RGB >> 24) & 0xff;
-        final int black = (RGB) & 0xff;  // assume black & white
-        if (alpha != 0xff) {
-            return RGB;
+        final int alpha = RGB & 0xff000000;
+        if (alpha != 0xff000000) {
+            return 0;
         }
+        final int black = (RGB) & 0xff;  // assume black & white
         // alter pixel to tint
-        int red   = (cred   * black) / 255;
-        int green = (cgreen * black) / 255;
-        int blue  = (cblue  * black) / 255;
+        int red   = (int)Math.round(cred   * black);
+        int green = (int)Math.round(cgreen * black);
+        int blue  = (int)Math.round(cblue  * black);
                     
-        return (alpha << 24) | (red << 16) | (green << 8) | blue;
+        return alpha | (red << 16) | (green << 8) | blue;
     }
 }

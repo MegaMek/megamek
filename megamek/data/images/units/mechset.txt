@@ -1,0 +1,23 @@
+#
+# Mech Tileset
+#
+# The format goes as follows:
+# mech [model] [image filename] 
+# 
+# You can specify the model exactly, for example:
+# mech "MAD-3R" "marauder.gif"
+# 
+# You can also put a * wildcard character right after the dash, for example:
+# mech "MAD-*" "marauder.gif"
+#
+# Images should be greyscale, 84x72 pixel gifs with the mech centered.  The
+# tinting process is subtractive, so make images light.
+# 
+
+# these 4 must be in here
+mech "default_light" "default_light.gif"
+mech "default_medium" "default_medium.gif"
+mech "default_heavy" "default_heavy.gif"
+mech "default_assault" "default_assault.gif"
+
+# put custom pictures here:

@@ -424,6 +424,7 @@ public class Client extends Panel
     }
     
     private void switchPanel(Component panel) {
+        // TODO: reuse existing panels.
         curPanel = panel;
         this.add(curPanel);
         curPanel.requestFocus();
@@ -634,27 +635,36 @@ public class Client extends Panel
         alert.show();
     }
     
-	/**
-	* Pops up a dialog box asking a yes/no question
-	* @returns true if yes
-	*/
-	public boolean doYesNoDialog(String title, String question) {
+    /**
+     * Pops up a dialog box asking a yes/no question
+     * @returns true if yes
+     */
+    public boolean doYesNoDialog(String title, String question) {
 	ConfirmDialog confirm = new ConfirmDialog(frame,title,question);
-		confirm.show();
-		return confirm.getAnswer();
-	};
-	
-	/**
-	 * Send mode-change data to the server
-	 */
-	public void sendModeChange(int nEntity, int nEquip, int nMode)
-	{
-	   Object[] data = { new Integer(nEntity), new Integer(nEquip), 
-	           new Integer(nMode) };
-	   send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
+        confirm.show();
+        return confirm.getAnswer();
+    };
+
+    /**
+     * Send mode-change data to the server
+     */
+    public void sendModeChange(int nEntity, int nEquip, int nMode)
+    {
+        Object[] data = { new Integer(nEntity), new Integer(nEquip), 
+                          new Integer(nMode) };
+        send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
     }
 
-    
+    /**
+     * Send mode-change data to the server
+     */
+    public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo)
+    {
+        Object[] data = { new Integer(nEntity), new Integer(nWeapon), 
+                          new Integer(nAmmo) };
+        send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
+    }
+
     /**
      * Send movement data for the given entity to the server.
      */

@@ -758,14 +758,12 @@ class WeaponPanel extends BufferedPanel
                 }
                 if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
                     vAmmo.addElement(mountedAmmo);
+                    m_chAmmo.add( formatAmmo(mountedAmmo) );
                     if (mounted.getLinked() == mountedAmmo) {
                         nCur = i;
                     }
                     i++;
                 }
-            }
-            for (int x = 0, n = vAmmo.size(); x < n; x++) {
-                m_chAmmo.add(formatAmmo((Mounted)vAmmo.elementAt(x)));
             }
             if (nCur == -1) {
                 m_chAmmo.setEnabled(false);
@@ -843,6 +841,17 @@ class WeaponPanel extends BufferedPanel
             // Update the range display to account for the weapon's loaded ammo.
             AmmoType atype = (AmmoType) mAmmo.getType();
             updateRangeDisplayForAmmo( atype );
+
+            // When in the Firing Phase, update the targeting information.
+            // TODO: make this an accessor function instead of a member access.
+            if ( this.client.curPanel instanceof FiringDisplay ) {
+                ( (FiringDisplay) this.client.curPanel ).updateTarget();
+            }
+
+            // Alert the server of the update.
+            this.client.sendAmmoChange( entity.getId(),
+                                        entity.getEquipmentNum(mWeap),
+                                        entity.getEquipmentNum(mAmmo) );
         }
     }
         

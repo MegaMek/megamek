@@ -1490,17 +1490,35 @@ implements Runnable {
             roundReport.append("\nInitiative Phase for Deployment");
         }
         roundReport.append("\n------------------------------\n");
-        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            roundReport.append(player.getName() ).append( " rolls a ");
-            for (int j = 0; j < player.getInitiative().size(); j++) {
-                if (j != 0) {
-                    roundReport.append(" / ");
+
+        for (Enumeration i = game.getTeams(); i.hasMoreElements();) {
+            final Team team = (Team)i.nextElement();
+
+            // If there is only one player, list them as the 'team', and
+            // use the team iniative
+            if (team.getSize() == 1) {
+                final Player player = (Player)team.getPlayers().nextElement();
+
+                roundReport.append(player.getName()).append(" rolls a ").
+                    append(team.getInitiative().toString()).append(".\n");
+            } else {
+                // Multiple players.  List the team, then break it down.
+                roundReport.append(Player.teamNames[team.getId()]).
+                    append(" rolls a ").
+                    append(team.getInitiative().toString()).
+                    append(".\n");
+
+                for( Enumeration j = team.getPlayers(); j.hasMoreElements();) {
+                    final Player player = (Player)j.nextElement();
+                    roundReport.append("\t").append(player.getName()).
+                        append(" rolls a ").
+                        append(player.getInitiative().toString()).
+                        append(".\n");
                 }
-                roundReport.append(player.getInitiative().getRoll(j));
+
             }
-            roundReport.append(".\n");
         }
+
         roundReport.append("\nThe turn order is:\n  ");
         boolean firstTurn = true;
         for (Enumeration i = game.getTurns(); i.hasMoreElements();) {

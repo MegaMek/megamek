@@ -124,6 +124,7 @@ v 0.29.6 (CVS)
 + Saved game load dialog starts in base directory
 + Bug 775472: wait for new hex images (like smoke) to load before drawing
 + Bug 779344: Entity.ARMOR_DOOMED made human-readable in display
++ Added a LOS tool setting dialog.
 
 v 0.29.5 (07-27-03, 9pm)
 + Bug 759032: fixed NPE in MovementDisplay

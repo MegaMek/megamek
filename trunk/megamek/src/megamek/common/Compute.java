@@ -2530,19 +2530,19 @@ public class Compute
      * Returns a LosEffects object representing the LOS effects of two
      * specified coordinates.
      * <P>
-     * Assumes a Mech firing at another Mech, both at ground level.
+     * Assumes entities at ground level.
      *
      * @see #calculateLos(Game, int, Targetable)
      */
-    public static LosEffects calculateLos(Game game, Coords c1, Coords c2) {
+	public static LosEffects calculateLos(Game game, Coords c1, Coords c2, boolean mechInFirst, boolean mechInSecond) {
         // good time to ensure hex cache
         IdealHex.ensureCacheSize(game.board.width + 1, game.board.height + 1);
          
         double degree = c1.degree(c2);
         if (degree % 60 == 30) {
-            return losDivided(game, c1, c2);
+            return losDivided(game, c1, c2, mechInFirst, mechInSecond);
         } else {
-            return losStraight(game, c1, c2);
+            return losStraight(game, c1, c2, mechInFirst, mechInSecond);
         }
     }
 
@@ -2551,17 +2551,17 @@ public class Compute
      * specified coordinates.  Since intervening() returns all the coordinates,
      * we just add the effects of all those hexes.
      * <P>
-     * Assumes a Mech firing at another Mech, both at ground level.
+     * Assumes entities at ground level.
      *
      * @see #losStraight(Game, int, Targetable)
      */
-    public static LosEffects losStraight(Game game, Coords c1, Coords c2) {
+    public static LosEffects losStraight(Game game, Coords c1, Coords c2, boolean mechInFirst, boolean mechInSecond) {
         Coords[] in = intervening(c1, c2);
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
  
         for (int i = 0; i < in.length; i++) {
-            los.add(losForCoords(game, c1, c2, in[i]));
+            los.add(losForCoords(game, c1, c2, in[i], mechInFirst, mechInSecond));
         }
  
         return los;
@@ -2576,17 +2576,17 @@ public class Compute
      * and, when they are in line order, it's not hard to figure out which
      * hexes are split and which are not.
      * <P>
-     * Assumes a Mech firing at another Mech, both at ground level.
+     * Assumes entities at ground level.
      *
      * @see #losDivided(Game, int, Targetable)
      */
-    public static LosEffects losDivided(Game game, Coords c1, Coords c2) {
+    public static LosEffects losDivided(Game game, Coords c1, Coords c2, boolean mechInFirst, boolean mechInSecond) {
         Coords[] in = intervening(c1, c2);
         LosEffects los = new LosEffects();
  
         // add non-divided line segments
         for (int i = 3; i < in.length - 2; i += 3) {
-            los.add( losForCoords(game, c1, c2, in[i]));
+            los.add( losForCoords(game, c1, c2, in[i], mechInFirst, mechInSecond));
         }
          
         // if blocked already, return that
@@ -2597,8 +2597,8 @@ public class Compute
         // go through divided line segments
         for (int i = 1; i < in.length - 2; i += 3) {
             // get effects of each side
-            LosEffects left = losForCoords(game, c1, c2, in[i]);
-            LosEffects right = losForCoords(game, c1, c2, in [i + 1]);
+            LosEffects left = losForCoords(game, c1, c2, in[i], mechInFirst, mechInSecond);
+            LosEffects right = losForCoords(game, c1, c2, in [i + 1], mechInFirst, mechInSecond);
  
             // Include all previous LOS effects.
             left.add(los);
@@ -2623,7 +2623,7 @@ public class Compute
      *
      * @see #losForCoords(Game, int, Targetable, Coords, Building)
      */
-    private static LosEffects losForCoords(Game game, Coords c1, Coords c2, Coords c3){
+    private static LosEffects losForCoords(Game game, Coords c1, Coords c2, Coords c3, boolean mechInFirst, boolean mechInSecond){
         LosEffects los = new LosEffects();        
         // ignore hexes not on board
         if (!game.board.contains(c3)) {
@@ -2634,8 +2634,14 @@ public class Compute
         if ( c3.equals(c1) || c3.equals(c2) ) {
             return los;
         }
-        int attEl = game.board.getHex(c1).floor() + 1;
-        int targEl = game.board.getHex(c2).floor() + 1;
+        int attEl = game.board.getHex(c1).floor();
+        if (mechInFirst) {
+        	attEl++;
+        }
+        int targEl = game.board.getHex(c2).floor();
+        if (mechInSecond) {
+        	targEl++;
+        }
  
         Hex hex = game.board.getHex(c3);
         int hexEl = hex.surface();
@@ -2676,14 +2682,16 @@ public class Compute
         // check for target partial cover
         if ( c2.distance(c3) == 1 &&
              hexEl + bldgEl == targEl &&
-             attEl <= targEl) {
+             attEl <= targEl &&
+             mechInSecond) {
             los.targetCover = true;
         }
  
         // check for attacker partial cover
         if (c1.distance(c3) == 1 &&
             hexEl + bldgEl == attEl &&
-            attEl >= targEl) {
+            attEl >= targEl &&
+            mechInFirst) {
             los.attackerCover = true;
         }
          

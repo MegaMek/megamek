@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -27,8 +27,11 @@ import megamek.common.options.GameOption;
 public class GeneralInfoMapSet implements DisplayMapSet{
     private Component comp;
     private PMAreasGroup content = new PMAreasGroup();
-    private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL, weightL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL, movementTypeL;
-    private PMSimpleLabel statusR, playerR, teamR, weightR, pilotR, mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR;
+    private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
+        weightL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
+        movementTypeL, ejectL;
+    private PMSimpleLabel statusR, playerR, teamR, weightR, pilotR,
+        mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR;
     private PMSimpleLabel[] advantagesR;
     private Vector    bgDrawers = new Vector();
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize);
@@ -39,104 +42,109 @@ public class GeneralInfoMapSet implements DisplayMapSet{
     /**
      * This constructor have to be called anly from addNotify() method
      */
-	public GeneralInfoMapSet( Component c){
-		comp = c;
-		setAreas();
-		setBackGround();
-	}
+    public GeneralInfoMapSet( Component c){
+        comp = c;
+        setAreas();
+        setBackGround();
+    }
 
 
 
-	private void setAreas(){
-		FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
+    private void setAreas(){
+        FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
 		
-		mechTypeL0 = createLabel("Loc0st LCT-1L", fm, 0, 10);
-		mechTypeL0.setColor(Color.yellow);
-		content.addArea(mechTypeL0);
+        mechTypeL0 = createLabel("Loc0st LCT-1L", fm, 0, 10);
+        mechTypeL0.setColor(Color.yellow);
+        content.addArea(mechTypeL0);
 		
 		
-		mechTypeL1 = createLabel("***", fm, 0, 25);
-		mechTypeL1.setColor(Color.yellow);
-		content.addArea(mechTypeL1);
+        mechTypeL1 = createLabel("***", fm, 0, 25);
+        mechTypeL1.setColor(Color.yellow);
+        content.addArea(mechTypeL1);
 		
-		fm = comp.getFontMetrics(FONT_VALUE);
+        fm = comp.getFontMetrics(FONT_VALUE);
 
-		playerL = createLabel("Player:", fm, 0, 40);
-		content.addArea(playerL);
+        playerL = createLabel("Player:", fm, 0, 40);
+        content.addArea(playerL);
 		
-		playerR = createLabel("?", fm, playerL.getSize().width + 10, 40);
-		content.addArea(playerR);		
+        playerR = createLabel("?", fm, playerL.getSize().width + 10, 40);
+        content.addArea(playerR);		
 		
-		teamL = createLabel("Team:", fm, 0, 55);
-		content.addArea(teamL);
+        teamL = createLabel("Team:", fm, 0, 55);
+        content.addArea(teamL);
 		
-		teamR = createLabel("?", fm, teamL.getSize().width + 10, 55);
-		content.addArea(teamR);
+        teamR = createLabel("?", fm, teamL.getSize().width + 10, 55);
+        content.addArea(teamR);
 		
 				
-		statusL = createLabel("Status:", fm, 0, 70);
-		content.addArea(statusL);
+        statusL = createLabel("Status:", fm, 0, 70);
+        content.addArea(statusL);
 
-		statusR = createLabel("***", fm, statusL.getSize().width + 10, 70);
-		content.addArea(statusR);
+        statusR = createLabel("***", fm, statusL.getSize().width + 10, 70);
+        content.addArea(statusR);
 
-		weightL = createLabel("Weight:", fm, 0, 85);
-		content.addArea(weightL);
+        weightL = createLabel("Weight:", fm, 0, 85);
+        content.addArea(weightL);
 		
-		weightR = createLabel("***", fm, weightL.getSize().width + 10, 85);
-		content.addArea(weightR);
-		
-		
-		mpL0 = createLabel("Movement:", fm, 0, 100);
-		content.addArea(mpL0);
-		
-		mpL1 = createLabel("Walk:", fm, 0 , 115);
-		mpL1.moveTo( mpL0.getSize().width - mpL1.getSize().width, 115);
-		content.addArea(mpL1);
-		
-		mpL2 = createLabel("Run:", fm, 0 , 130);
-		mpL2.moveTo( mpL0.getSize().width - mpL2.getSize().width, 130);
-		content.addArea(mpL2);
-		
-		mpL3 = createLabel("Jump:", fm, 0 , 145);
-		mpL3.moveTo( mpL0.getSize().width - mpL3.getSize().width, 145);
-		content.addArea(mpL3);
+        weightR = createLabel("***", fm, weightL.getSize().width + 10, 85);
+        content.addArea(weightR);
 		
 		
-		mpR0 = createLabel("", fm, mpL0.getSize().width + 10, 100);
-		content.addArea(mpR0);
+        mpL0 = createLabel("Movement:", fm, 0, 100);
+        content.addArea(mpL0);
 		
-		mpR1 = createLabel("***", fm, mpL0.getSize().width + 10, 115);
-		content.addArea(mpR1);
+        mpL1 = createLabel("Walk:", fm, 0 , 115);
+        mpL1.moveTo( mpL0.getSize().width - mpL1.getSize().width, 115);
+        content.addArea(mpL1);
 		
-		mpR2 = createLabel("***", fm, mpL0.getSize().width + 10, 130);
-		content.addArea(mpR2);
+        mpL2 = createLabel("Run:", fm, 0 , 130);
+        mpL2.moveTo( mpL0.getSize().width - mpL2.getSize().width, 130);
+        content.addArea(mpL2);
+		
+        mpL3 = createLabel("Jump:", fm, 0 , 145);
+        mpL3.moveTo( mpL0.getSize().width - mpL3.getSize().width, 145);
+        content.addArea(mpL3);
+		
+		
+        mpR0 = createLabel("", fm, mpL0.getSize().width + 10, 100);
+        content.addArea(mpR0);
+		
+        mpR1 = createLabel("***", fm, mpL0.getSize().width + 10, 115);
+        content.addArea(mpR1);
+		
+        mpR2 = createLabel("***", fm, mpL0.getSize().width + 10, 130);
+        content.addArea(mpR2);
 				
-		mpR3 = createLabel("***", fm, mpL0.getSize().width + 10, 145);
-		content.addArea(mpR3);
+        mpR3 = createLabel("***", fm, mpL0.getSize().width + 10, 145);
+        content.addArea(mpR3);
 		
-		curMoveL = createLabel("Currently:", fm, 0, 160);
-		content.addArea(curMoveL);
+        curMoveL = createLabel("Currently:", fm, 0, 160);
+        content.addArea(curMoveL);
 		
-		curMoveR = createLabel("***", fm, curMoveL.getSize().width + 10, 160);
-		content.addArea(curMoveR);
+        curMoveR = createLabel("***", fm, curMoveL.getSize().width + 10, 160);
+        content.addArea(curMoveR);
 		
 				
-		heatL = createLabel("Heat:", fm, 0, 175);
-		content.addArea(heatL);
+        heatL = createLabel("Heat:", fm, 0, 175);
+        content.addArea(heatL);
 		
-		heatR = createLabel("***", fm, heatL.getSize().width + 10, 175);
-		content.addArea(heatR);
+        heatR = createLabel("***", fm, heatL.getSize().width + 10, 175);
+        content.addArea(heatR);
 
-                movementTypeL = createLabel("Type:", fm, 0, 190);
-		content.addArea(movementTypeL);
-		movementTypeR = createLabel("***", fm, movementTypeL.getSize().width + 10, 190);
-		content.addArea(movementTypeR);
+        movementTypeL = createLabel("Type:", fm, 0, 190);
+        content.addArea(movementTypeL);
+        movementTypeR = createLabel("***", fm, movementTypeL.getSize().width + 10, 190);
+        content.addArea(movementTypeR);
 
         pilotL = createLabel("Pilot:", fm, 0, 215);
         content.addArea(pilotL);
         pilotR = createLabel("***", fm, pilotL.getSize().width + 10, 215);
         content.addArea(pilotR);
+
+        ejectL = createLabel( "Autoeject Status:", fm, 0, 230);
+        content.addArea( ejectL );
+        ejectR = createLabel("***", fm, ejectL.getSize().width + 10, 230);
+        content.addArea( ejectR );
 
         int vSpace = 230;
         advantagesR = new PMSimpleLabel[24];
@@ -179,6 +187,15 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         weightR.setString(Integer.toString((int)en.getWeight()));
         
         pilotR.setString(en.crew.getDesc() + " (" + en.crew.getGunnery() + "/" + en.crew.getPiloting() + ")" );
+
+        ejectR.setString( "N/A" );
+        if (en instanceof Mech) {
+            if (((Mech)en).isAutoEject()) {
+                ejectR.setString( "Active" );
+            } else {
+                ejectR.setString( "Inactive" );
+            }
+        }                
 
         for (int i=0; i < advantagesR.length; i++ ) {
             advantagesR[i].setString("");

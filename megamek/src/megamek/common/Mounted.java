@@ -374,4 +374,36 @@ public class Mounted implements Serializable, RoundUpdated {
     public void setFired(boolean val) {
       fired=val;
     }
+
+    /**
+     * Confirm that the given entity can fire the indicated equipment.
+     *
+     * @return  <code>true</code> if the equipment can be fired by the
+     *          entity; <code>false</code> otherwise.
+     */
+    public boolean canFire() {
+    
+        // Equipment operational?
+        if ( !isReady() || isBreached() || isMissing() ) {
+            return false;
+        }
+    
+        // Oneshot fired?
+        EquipmentType equip = getType();
+        if( ( ( equip instanceof WeaponType &&
+                equip.hasFlag(WeaponType.F_ONESHOT) ) ||
+              ( equip instanceof MiscType &&
+                equip.hasFlag(MiscType.F_AP_POD) ) )
+            && isFired() ) {
+            return false;
+        }
+    
+        // Is the entity even active?
+        if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
+            return false;
+        }
+    
+        // Otherwise, the equipment can be fired.
+        return true;
+    }
 }

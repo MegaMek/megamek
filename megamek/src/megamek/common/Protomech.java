@@ -259,16 +259,6 @@ public class Protomech
 
     } // End public void newRound()
 
-
-
-    /**
-     * Returns this entity's running/flank mp as a string.
-     */
-    public String getRunMPasString() {
-
-            return Integer.toString(getRunMP());
-       }
-
     /**
      * This pmech's jumping MP modified for missing jump jets
      */
@@ -321,7 +311,8 @@ public class Protomech
 
         return 999;
     }
-   protected String[] getLocationNames() {
+   
+    public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
     /**
@@ -590,23 +581,6 @@ public class Protomech
         addEquipment(mounted, loc, rearMounted, shots);
         return mounted;
 
-    }
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
-        throws LocationFullException
-    {
-        mounted.setLocation(loc, rearMounted);
-        equipmentList.addElement(mounted);
-
-        // add it to the proper sub-list
-        if (mounted.getType() instanceof WeaponType) {
-            weaponList.addElement(mounted);
-        }
-        if (mounted.getType() instanceof AmmoType) {
-            ammoList.addElement(mounted);
-        }
-        if (mounted.getType() instanceof MiscType) {
-            miscList.addElement(mounted);
-        }
     }
 
     /**

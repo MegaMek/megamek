@@ -21,6 +21,8 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 
+import megamek.common.loaders.*;
+
 /**
  * This class parses an XML input stream.  If the stream is well formed, no
  * <code>Exception</code> will be thrown.  If the stream adheres to the format

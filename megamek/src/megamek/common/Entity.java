@@ -2912,7 +2912,7 @@ public abstract class Entity
      *
      * @param component - One of this new entity's <code>Transporter</code>s.
      */
-    /* package */ void addTransporter( Transporter component ) {
+    public void addTransporter( Transporter component ) {
         transports.addElement( component );
     }
 
@@ -3421,5 +3421,17 @@ public abstract class Entity
     public char getUnitNumber() {
         return this.unitNumber;
     }
+    
+	/**
+	 * Returns whether an entity can flee from its current position.  Currently
+	 * returns true if the entity is on the edge of the board.
+	 */
+	public boolean canFlee() {
+		Coords pos = getPosition();
+		return pos != null && getWalkMP() > 0 && !isProne()
+			&& !isShutDown() && !getCrew().isUnconcious()
+			&& (pos.x == 0 || pos.x == game.board.width - 1
+				|| pos.y == 0 || pos.y == game.board.height - 1);
+	}
 
 }

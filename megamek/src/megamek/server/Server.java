@@ -8641,7 +8641,7 @@ implements Runnable, ConnectionHandler {
                 .append( damage )
                 .append( " damage to " );
                 
-            if (damageIS) desc.append ( "Internal Struture of ");
+            if (damageIS) desc.append ( "Internal Structure of ");
 
             desc.append(te.getLocationAbbr(hit) )
                 .append( "." );

@@ -795,9 +795,8 @@ extends Dialog implements ActionListener, DialogOptionListener {
             try {
                 gunnery = Integer.parseInt(fldGunnery.getText());
                 piloting =  Integer.parseInt(fldPiloting.getText());
-                offBoardDistance = Integer.parseInt(fldOffBoardDistance.getText());
             } catch (NumberFormatException e) {
-                new AlertDialog(clientgui.frame, "Number Format Error", "Please enter valid numbers for skill values and off-board distance.").show();
+                new AlertDialog(clientgui.frame, "Number Format Error", "Please enter valid numbers for skill values.").show();
                 return;
             }
             
@@ -806,17 +805,25 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 new AlertDialog(clientgui.frame, "Number Format Error", "Please enter values between 0 and 7 for the skill values.").show();
                 return;
             }
-            if (offBoardDistance < 17) {
-                new AlertDialog(clientgui.frame, "Number Format Error", "Offboard units need to be at least one mapsheet (17 hexes) away.").show();
-                return;
+            boolean isOffBoard = chOffBoard.getState();
+            if (isOffBoard){
+                try {
+                    offBoardDistance = Integer.parseInt(fldOffBoardDistance.getText());
+                } catch (NumberFormatException e) {
+                    new AlertDialog(clientgui.frame, "Number Format Error", "Please enter valid numbers for skill values.").show();
+                    return;
+                }
+                if (offBoardDistance < 17) {
+                    new AlertDialog(clientgui.frame, "Number Format Error", "Offboard units need to be at least one mapsheet (17 hexes) away.").show();
+                    return;
+                }
+                entity.setOffBoardDistance(offBoardDistance);
+                entity.setOffBoardDirection(choOffBoardDirection.getSelectedIndex());
             }
+            entity.setOffBoard(isOffBoard);
+            entity.setDeployed(isOffBoard);
             // change entity
             entity.setCrew(new Pilot(name, gunnery, piloting));
-            entity.setOffBoard(chOffBoard.getState());
-            entity.setDeployed(chOffBoard.getState());
-            entity.setOffBoardDistance(offBoardDistance);
-            entity.setOffBoardDirection(choOffBoardDirection.getSelectedIndex());
-            refreshOffBoard();
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
                 Entity chosen = client.getEntity
                     ( entityCorrespondance[choC3.getSelectedIndex()] );
@@ -874,12 +881,5 @@ extends Dialog implements ActionListener, DialogOptionListener {
         }
         
         this.setVisible(false);
-    }
-    
-    private void refreshOffBoard() {
-        if (entity.isOffBoard()) {
-            choOffBoardDirection.setEnabled(true);
-            fldOffBoardDistance.setEnabled(true);
-        }
     }
 }

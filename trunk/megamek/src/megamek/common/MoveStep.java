@@ -201,6 +201,7 @@ public class MoveStep implements Serializable {
      */
     protected void compile(final Game game, final Entity entity, MoveStep prev)
     {
+        final boolean isInfantry = entity instanceof Infantry;
         copy(game, prev);
 
         // Is this the first step?
@@ -231,7 +232,7 @@ public class MoveStep implements Serializable {
 
                 // Infantry can turn for free.
                 setMp( ( parent.isJumping() || isHasJustStood()
-                         || parent.isInfantry() ) ? 0 : 1 );
+                         || isInfantry ) ? 0 : 1 );
                 adjustFacing(getType());
                 break;
             case MovePath.STEP_FORWARDS :
@@ -767,13 +768,14 @@ public class MoveStep implements Serializable {
     void compileIllegal(final Game game, final Entity entity,
                         final MoveStep prev) {
         final int stepType = getType();
+        final boolean isInfantry = entity instanceof Infantry;
 
         Coords curPos = getPosition();
         Coords lastPos = prev.getPosition();
         boolean isUnjammingRAC = entity.isUnjammingRAC();
 
         // Infantry get a first step if all they've done is spin on the spot.
-        if (parent.isInfantry() && (getMpUsed() - getMp()) == 0) {
+        if (isInfantry && (getMpUsed() - getMp()) == 0) {
             setFirstStep( true );
 
             //   getMpUsed() is the MPs used in the whole MovePath
@@ -987,6 +989,7 @@ public class MoveStep implements Serializable {
         final int moveType = parent.getEntity().getMovementType();
         final Hex srcHex = game.board.getHex(prev);
         final Hex destHex = game.board.getHex(getPosition());
+        final boolean isInfantry = parent.getEntity() instanceof Infantry;
 
         mp = 1;
 
@@ -1034,7 +1037,7 @@ public class MoveStep implements Serializable {
             int delta_e = Math.abs(nSrcEl - nDestEl);
 
             // Infantry and ground vehicles are charged double.
-            if (parent.isInfantry()
+            if (isInfantry
                 || (nMove == Entity.MovementType.TRACKED
                     || nMove == Entity.MovementType.WHEELED
                     || nMove == Entity.MovementType.HOVER)) {
@@ -1045,7 +1048,7 @@ public class MoveStep implements Serializable {
 
         // If we entering a building, all non-infantry pay additional MP.
         if (nDestEl < destHex.levelOf(Terrain.BLDG_ELEV)
-            && !(parent.isInfantry())) {
+            && !(isInfantry)) {
             Building bldg = game.board.getBuildingAt(getPosition());
             mp += bldg.getType();
         }

@@ -79,6 +79,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     private MenuItem viewTurnReport = null;
     private MenuItem viewGameOptions = null;
     private MenuItem viewClientSettings = null;
+    private MenuItem viewPlayerList = null;
 
 	private int nbrConv = 0;
 	private int nbrCommand = 0;
@@ -245,6 +246,11 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         viewClientSettings.setActionCommand( "viewClientSettings" );
         viewClientSettings.addActionListener( this );
         menu.add( viewClientSettings );
+        menu.addSeparator();
+        viewPlayerList = new MenuItem( "Player List" );
+        viewPlayerList.setActionCommand( "viewPlayerList" );
+        viewPlayerList.addActionListener( this );
+        menu.add( viewPlayerList );
 
         // *** Create the deployo menu.
         menu = new Menu( "Deploy" );
@@ -518,9 +524,11 @@ public class CommonMenuBar extends MenuBar implements ActionListener
              this.phase == Game.PHASE_DEPLOYMENT ) {
             viewLOSSetting.setEnabled( true );
             viewMiniMap.setEnabled( true );
+            viewPlayerList.setEnabled( true );
         } else {
             viewLOSSetting.setEnabled( false );
             viewMiniMap.setEnabled( false );
+            viewPlayerList.setEnabled( false );
         }
 
         // We can only view the turn report in certain phases.

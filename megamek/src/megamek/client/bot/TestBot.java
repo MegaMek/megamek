@@ -263,6 +263,9 @@ public class TestBot extends BotClientWrapper {
   public void calculateMoveTurn() {
     int initiative = 0;
     EntityState min = null;
+    boolean infMoveLast = game.getOptions().booleanOption("inf_move_last");
+    boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
+
     //I'm not quite sure where to put this, but we need to make sure that if
     //an entity falls, and gets another turn, that it takes it -- Ben
     if (game.getTurn().getEntityNum() != GameTurn.ENTITY_ANY) {
@@ -288,6 +291,7 @@ public class TestBot extends BotClientWrapper {
     } else {
       enemies_moved = initiative;
       Vector possible = new Vector();
+      Vector inf_possible = new Vector();
       Iterator i = this.getEntitiesOwned().iterator();
       int selectable = 0;
       EntityState[] best = null;
@@ -304,7 +308,44 @@ public class TestBot extends BotClientWrapper {
         } catch (Exception e) {
           e.printStackTrace();
         }
-        possible.add(mt.result);
+
+	// Are we moving a non-Infantry entity in
+	// the middle of an Infantry move block?
+	if ( infMoveMulti && (this.turnInfMoved % Game.INF_MOVE_MULTI) > 0 &&
+	     !(entity instanceof Infantry) ) {
+
+	    // Does this player still have infantry to move?
+	    if ( game.hasInfantry(this.local_pn) ) {
+
+		// Yup.  Ignore this entity.
+		continue;
+
+	    }
+	    else {
+		// Nope.  Reset the infantry counter and add
+		// the entity to the list of possible moves.
+		this.turnInfMoved = 0;
+		possible.add(mt.result);
+	    }
+
+	} // End check-inf_move_multi
+
+	// If infantry move last, and the current entity is Infantry, then
+	// make sure that all other entities for the player have moved.
+	else if ( infMoveLast && this.turnInfMoved == 0 &&
+		  (entity instanceof Infantry) ) {
+
+	    // Save this Infantry's move for later.
+	    inf_possible.add(mt.result);
+
+	} // End check-inf_move_last
+
+	// If this entity can still move, add its
+	// move result to the list of possible moves.
+	else if ( !cen.moved ) {
+	    possible.add(mt.result);
+	}
+
         if (cen.entity.isImmobile() && !cen.moved) {
           cen.moved = true;
           this.calculateMoveTurn();
@@ -315,6 +356,15 @@ public class TestBot extends BotClientWrapper {
           short_circuit = true;
         }
       }
+
+      // If only infantry can move, then choose from that list.
+      if ( possible.size() <= 0 ) {
+	  possible = inf_possible;
+      }
+
+      // Discard the infantry moves.
+      inf_possible = null;
+
       //should ignore mechs that are not engaged
       //and only do the below when there are 2 or mechs left to move
       if (!short_circuit) {
@@ -354,6 +404,12 @@ public class TestBot extends BotClientWrapper {
     System.out.println(min.entity.getName()+" "+min.entity.getId()+" to "+min.getKey()+" from "+this.enemies.get(min.entity).old.getKey()+" "+min+"\n Utility: "+min.getUtility()+" \n"+threat+"\n");
     sendChat("Moved " + min.entity.getName()+" to "+min.curPos);
     this.my_mechs_moved++;
+
+    // Record when Infantry are moved.
+    if ( min.entity instanceof Infantry ) {
+	this.turnInfMoved++;
+    }
+
     moveEntity(min.entity.getId(), min.getMovementData());
     min.centity.moved = true;
     min.centity.old = min;
@@ -409,6 +465,12 @@ public class TestBot extends BotClientWrapper {
         option = (EntityState)move_array[i];
       }
       option.setState();
+
+      // 2002-10-28 Suvarov454 : Discard impossible locations.
+      if ( !game.getBoard().contains(option.entity.getPosition()) ) {
+	  continue;
+      }
+
       if (option.damages == null) option.damages = new double[enemy_array.length];
       if (option.threats == null) option.threats = new double[enemy_array.length];
       if (option.max_threats == null) option.max_threats = new double[enemy_array.length];
@@ -1164,6 +1226,8 @@ public class TestBot extends BotClientWrapper {
     int[] results = null;
     Vector winner = null;
     int arc = 0;
+    boolean infMoveLast = game.getOptions().booleanOption("inf_move_last");
+    boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
     
     if (entity_num == -1) { return; }
     
@@ -1171,6 +1235,26 @@ public class TestBot extends BotClientWrapper {
       Entity en = game.getEntity(entity_num);
       CEntity cen = this.enemies.get(en);
       
+      // Are we firing a non-Infantry entity in
+      // the middle of an Infantry block?
+      if ( infMoveMulti && (turnInfMoved % Game.INF_MOVE_MULTI) > 0 &&
+	   !(en instanceof Infantry) ) {
+
+	  // Does this player still have infantry to fire?
+	  if ( game.hasInfantry(this.local_pn) ) {
+
+	      // Yup.  Ignore this entity and check the next one.
+	      entity_num = game.getNextEntityNum(getLocalPlayer(), entity_num);
+	      continue;
+
+	  }
+	  else {
+	      // Nope.  Reset the infantry counter.
+	      turnInfMoved = 0;
+	  }
+
+      } // End check-inf_move_multi
+
       //if (en.canFlipArms())  //more logic
       
       int attacks[] = new int[3];

@@ -339,7 +339,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
   }
   
   public boolean isStepLegal() {
-    if (game.board.getHex(this.curPos) == null) return false;
+    if ( !game.board.contains(this.curPos) ) return false;
     if (this.overallMoveType != Entity.MOVE_JUMP
     && game.getEntity(this.curPos) != null
     && this.entity.isEnemyOf(game.getEntity(this.curPos))) {

@@ -327,7 +327,6 @@ public class MovementDisplay
                 client.game.board.cursor(b.getCoords());
 
                 // either turn or move
-                client.bv.clearMovementData();
                 cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), b.getCoords()));
                 client.bv.drawMovementData(ce(), cmd);
             }
@@ -335,7 +334,6 @@ public class MovementDisplay
             final Entity target = client.game.getEntity(b.getCoords());
 
             client.game.board.select(b.getCoords());
-            client.bv.clearMovementData();
 
             Coords moveto = b.getCoords();
             client.bv.drawMovementData(ce(), cmd);
@@ -514,7 +512,7 @@ public class MovementDisplay
             shiftheld = true;
             if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
                 // switch to turning
-                client.bv.clearMovementData();
+                //client.bv.clearMovementData();
                 cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), client.game.board.lastCursor));
                 client.bv.drawMovementData(ce(), cmd);
             }

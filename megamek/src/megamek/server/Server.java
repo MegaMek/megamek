@@ -301,6 +301,7 @@ public class Server
             entity.moved = Entity.MOVE_NONE;
             
             entity.setCharging(false);
+            entity.setMakingDfa(false);
 
             entity.crew.setKoThisRound(false);
 
@@ -610,8 +611,8 @@ public class Server
         case Game.PHASE_FIRING :
             resolveWeaponAttacks();
             checkFor20Damage();
-            resolvePilotingRolls();
             resolveCrewDamage();
+            resolvePilotingRolls();
             // check phase report
             if (phaseReport.length() > 0) {
                 roundReport.append(phaseReport);
@@ -627,8 +628,8 @@ public class Server
         case Game.PHASE_PHYSICAL :
             resolvePhysicalAttacks();
             checkFor20Damage();
-            resolvePilotingRolls();
             resolveCrewDamage();
+            resolvePilotingRolls();
             // check phase report
             if (phaseReport.length() > 0) {
                 roundReport.append(phaseReport);
@@ -884,7 +885,7 @@ public class Server
      */
     private boolean isEligibleForFiring(Entity entity, int phase) {
         // if you're charging, no shooting
-        if (entity.isCharging()) {
+        if (entity.isCharging() || entity.isMakingDfa()) {
             return false;
         }
         
@@ -898,7 +899,7 @@ public class Server
         boolean canHit = false;
         
         // if you're charging, it's already declared
-        if (entity.isCharging()) {
+        if (entity.isCharging() || entity.isMakingDfa()) {
             return false;
         }
 
@@ -916,11 +917,6 @@ public class Server
                 continue;
             }
             
-            // can't physically attack charging targets
-            if (target.isCharging()) {
-                continue;
-            }
-
             canHit |= Compute.toHitPunch(game, entity.getId(), target.getId(),
                                          PunchAttackAction.LEFT).getValue()
                       != ToHitData.IMPOSSIBLE;
@@ -1017,7 +1013,7 @@ public class Server
                 Entity target = game.getEntity(step.getPosition());
 
                 distance = step.getDistance();
-                entity.setCharging(true);
+                entity.setMakingDfa(true);
                 
                 pendingCharges.addElement(new DfaAttackAction(entity.getId(), target.getId(), target.getPosition()));
                 break;
@@ -1669,6 +1665,12 @@ public class Server
     private void resolveChargeAttack(ChargeAttackAction caa, int lastEntityId) {
         final Entity ae = game.getEntity(caa.getEntityId());
         final Entity te = game.getEntity(caa.getTargetId());
+        
+        // is the attacker dead?  because that sure messes up the calculations
+        if (ae == null) {
+            return;
+        }
+        
         final int direction = ae.getFacing();
 
         if (lastEntityId != caa.getEntityId()) {
@@ -1676,9 +1678,12 @@ public class Server
         }
 
         phaseReport.append("    Charging " + te.getDisplayName());
+        
+        // entity isn't charging any more
+        ae.setCharging(false);
 
         // should we even bother?
-        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+        if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
             phaseReport.append(" but the target is already destroyed!\n");
             return;
         }
@@ -1691,11 +1696,18 @@ public class Server
 
         // compute to-hit
         ToHitData toHit = Compute.toHitCharge(game, caa);
-        phaseReport.append("; needs " + toHit.getValue() + ", ");
 
-        // roll
-        int roll = Compute.d6(2);
-        phaseReport.append("rolls " + roll + " : ");
+        // hack: if the attacker's prone, fudge the roll
+        int roll;
+        if (ae.isProne()) {
+            roll = -12;
+            phaseReport.append("; but the attaker is prone : ");
+        } else {
+            // roll
+            roll = Compute.d6(2);
+            phaseReport.append("; needs " + toHit.getValue() + ", ");
+            phaseReport.append("rolls " + roll + " : ");
+        }
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -1749,6 +1761,12 @@ public class Server
     private void resolveDfaAttack(DfaAttackAction daa, int lastEntityId) {
         final Entity ae = game.getEntity(daa.getEntityId());
         final Entity te = game.getEntity(daa.getTargetId());
+        
+        // is the attacker dead?  because that sure messes up the calculations
+        if (ae == null) {
+            return;
+        }
+        
         final int direction = ae.getFacing();
 
         if (lastEntityId != daa.getEntityId()) {
@@ -1757,8 +1775,11 @@ public class Server
 
         phaseReport.append("    Attempting death from above on " + te.getDisplayName());
 
+        // entity isn't charging any more
+        ae.setMakingDfa(false);
+
         // should we even bother?
-        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+        if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
             phaseReport.append(" but the target is already destroyed!\n");
             return;
         }
@@ -1768,14 +1789,21 @@ public class Server
             phaseReport.append(" but the target has moved.\n");
             return;
         }
-
+        
         // compute to-hit
         ToHitData toHit = Compute.toHitDfa(game, daa);
-        phaseReport.append("; needs " + toHit.getValue() + ", ");
 
-        // roll
-        int roll = Compute.d6(2);
-        phaseReport.append("rolls " + roll + " : ");
+        // hack: if the attacker's prone, fudge the roll
+        int roll;
+        if (ae.isProne()) {
+            roll = -12;
+            phaseReport.append("; but the attacker is prone : ");
+        } else {
+            // roll
+            roll = Compute.d6(2);
+            phaseReport.append("; needs " + toHit.getValue() + ", ");
+            phaseReport.append("rolls " + roll + " : ");
+        }
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -2407,6 +2435,12 @@ public class Server
      */
     private void doEntityFall(Entity entity, Coords fallPos, int height,
         int facing, int roll) {
+        // we don't need to deal damage yet, if the entity is doing DFA
+        if (entity.isMakingDfa()) {
+            phaseReport.append("But, since the 'mech is making a death from above attack, damage will be dealt during the physical phase.\n");
+            entity.setProne(true);
+            return;
+        }            
         // facing after fall
         String side;
         int table;

@@ -11,11 +11,32 @@ THE GAME" section, below.  If you're having trouble getting MegaMek started,
 see "RUNNING MEGAMEK," further below.
 
 
+CONNECTING
+----------
+MegaMek is a network game.  One player hosts a game and the rest of the
+players connect.  The connecting players can connect from anywhere with a 
+TCP/IP connection to the host, including the same computer (see hotseat, below.)
+
+To host a game, press the "Host a New Game..." button in the main menu.  Fill
+in your name and click "Okay".  Once the lobby screen comes up, other players
+can connect and the game can begin.  The other players will need to know the IP
+address of the host computer.  If you do not know your current IP address, there
+are some web pages, such as www.whatismyip.com that will tell you.
+
+To connect to a game, press the connect button on the main menu and fill in your
+player name and the host's IP address.
+
+To play in a hotseat fashion, you can run the host and any number of other 
+players on the same computer.  First, launch and host a game.  Then, launch
+another copy of the game for each connecting player, and in the "Server Address"
+field of the connect dialog, type "localhost".  Each player will need to switch
+to his/her copy of the game to play their turn.
+
 
 PLAYING THE GAME
 ----------------
 
-Pre-game Lounge:
+Pre-game Lobby:
 
 Here you can chat, specify what mechs you wish to use, select map setting,
 declare starting positions, and change your player's color.  When everybody
@@ -61,6 +82,14 @@ Prone units can change facing without getting up.  To get up, click the
 changes within the same hex are free to a unit trying to get up.  To get up 
 and back up, click "Get Up," then "Back Up," then the destination hex and/or 
 facing.  You cannot get up and jump in the same turn.
+
+Charging and death from above attacks are also declared during the movement 
+phase.  Click the "Charge" or "D.F.A." button and then click on the mech you
+wish to target.  If the attack is valid, it will be sent to the server 
+immediately (but resolve during the physical attack phase.)  If the program is
+not using the path you want for your attack, you may plot a path near the 
+target using the appropriate type of movement and then use the charge or dfa
+button to complete the attack.
 
 The Esc key clears all current movement.
 
@@ -140,9 +169,8 @@ discrepancies, please contact the author (see "CONTACT" below.)
     movement, you're down for the round.
     
 - If the line of fire lies along the edge of two hexes, in the board game,
-    the defender chooses which hex to use.  Currenty, MegaMek uses the
-    modifiers for both hexes.  I'd like it eventually to choose one or the
-    other, favoring the defender.
+    the defender chooses which hex to use.  Currenty, MegaMek arbitrarily picks
+    a hex.  In the future, this will be modified to favor the defender.
     
 - When punching, you automatically punch with both arms, if possible.  This
     means you can not punch two different targets in the same round.
@@ -153,7 +181,12 @@ discrepancies, please contact the author (see "CONTACT" below.)
     handled now is that pushing, and the accompanying unit displacement,
     happen as it's resolved, in the same phase as other physical attacks.
     This means pushing could interrupt an attack from a mech that "won"
-    initiative, which seems wrong.
+    initiative, which seems wrong.  Any suggestions?
+
+- There are several situations, notably death from above, where a unit is
+    displaced out of a hex, and that unit's owner may pick the hex to move to.
+    MegaMek currently picks the hex for you, choosing high elevations over low
+    ones, to avoid falling damage.
     
 - Some more that I've forgotten...
 

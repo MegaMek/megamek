@@ -172,6 +172,7 @@ public class MegaMek
         if(!client.connect("localhost", hd.port)) {
             server = null;
             client = null;
+            new AlertDialog(frame, "Host a Game", "Error: could not connect to local server.").show();
             return;
         }
         // wait for full connection
@@ -199,6 +200,7 @@ public class MegaMek
         if(!client.connect(cd.serverAddr, cd.port)) {
             server = null;
             client = null;
+            new AlertDialog(frame, "Connect to a Game", "Error: could not connect.").show();
             return;
         }
         // wait for full connection

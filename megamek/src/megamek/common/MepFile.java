@@ -62,8 +62,12 @@ public class MepFile
   
   
     public MepFile(String filename) {
+        this(new File(filename));
+    }
+    
+    public MepFile(File file) {
         try {
-            BufferedReader r = new BufferedReader(new FileReader(filename));
+            BufferedReader r = new BufferedReader(new FileReader(file));
       
             version = r.readLine();
             name = r.readLine();

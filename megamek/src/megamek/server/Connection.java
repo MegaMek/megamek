@@ -109,7 +109,7 @@ public class Connection {
      * Waits for a packet to appear in the queue and then sends it.
      */
     private synchronized void sendFromQueue() {
-        while (sendQueue.size() == 0) {
+        while (!hasPending()) {
             try {
                 wait();
             } catch (InterruptedException ex) {
@@ -118,6 +118,13 @@ public class Connection {
         Packet packet = (Packet)sendQueue.elementAt(0);
         sendQueue.removeElementAt(0);
         sendPacket(packet);
+    }
+    
+    /**
+     * Returns true if this connection has pending data
+     */
+    public boolean hasPending() {
+        return sendQueue.size() > 0;
     }
 
     /**

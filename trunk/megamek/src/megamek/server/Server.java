@@ -13277,7 +13277,7 @@ implements Runnable, ConnectionHandler {
             Enumeration pickupEntities = game.getEntities(e.getPosition());
             while (pickupEntities.hasMoreElements() ) {
                 Entity pe = (Entity) pickupEntities.nextElement();
-                if (pe.isDoomed()) {
+                if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious()) {
                     continue;
                 }
                 if (!pickedUp && pe.getOwnerId() == e.getOwnerId() && pe.getId() != e.getId()) {
@@ -13296,7 +13296,7 @@ implements Runnable, ConnectionHandler {
                 Enumeration pickupEnemyEntities = game.getEnemyEntities(e.getPosition(), e);
                 while (pickupEnemyEntities.hasMoreElements() ) {
                     Entity pe = (Entity) pickupEnemyEntities.nextElement();
-                    if (pe.isDoomed()) {
+                    if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious()) {
                         continue;
                     }
                     if (!pickedUp) {

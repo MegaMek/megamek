@@ -115,6 +115,9 @@ VERSION HISTORY:
 ----------------
 v 0.29.4 (CVS)
 + Added all new files from xylaan (no net change).
++ Bug 773000: Tank hit locations
++ Bug 773001: Tank locations on armor diagram
++ Added files for 'camo' schemes from nalleolsson (no code changes)
 
 v 0.29.3 (06-14-03, 9pm)
 + Did some to-hit code refactoring (no net change).
@@ -159,8 +162,6 @@ v 0.29.2 (06-07-03, 12am)
   changes to the status bar to happen in one and only one place.
 + Added save/load of advantages for unit list
 + Bug 767439: Made CT of engine boomed mechs marked as destroyed
-+ Bug 773000: Tank hit locations
-+ Bug 773001: Tank locations on armor diagram
 
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.
@@ -1575,3 +1576,4 @@ version 0.06
 
 versions before 0.06
 + i dunno
+

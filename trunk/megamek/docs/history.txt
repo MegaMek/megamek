@@ -8,6 +8,7 @@ v 0.29.27 (CVS)
 + RFE 889959: configuration file for the MiniMap
 + Bug 898207: players should have to enter in a non-blank, non-whitespace name
 + Bug 899181: unconcious and shut down meks can't find clubs.
++ Better width calculation for Game Options dialog.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

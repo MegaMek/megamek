@@ -66,11 +66,11 @@ public class Settings
     public static boolean   getFocus                = false;
 
     // scrolling settings
-    public static boolean   rightDragScroll         = true;
-    public static boolean   ctlScroll               = false;
-    public static boolean   clickEdgeScroll         = false;
-    public static boolean   autoEdgeScroll          = false;
-    public static int       scrollSensitivity       = 3;
+    public  static boolean   rightDragScroll        = true;
+    public  static boolean   ctlScroll              = false;
+    public  static boolean   clickEdgeScroll        = false;
+    public  static boolean   autoEdgeScroll         = false;
+    private static int       scrollSensitivity      = 3;
     
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor         = 0;
@@ -452,7 +452,7 @@ scan:
                     }
                     else if(key.equals("scrollsensitivity")) {
                         st.nextToken();
-                        scrollSensitivity = (int)st.nval;
+                        setScrollSensitivity((int)st.nval);
                     }
                     else if (key.equals("getfocus")) {
                         st.nextToken();
@@ -729,6 +729,17 @@ scan:
             escapedString = escapedString.concat(""+string.charAt(i));
         };
         return escapedString;
+    };
+    
+    public static void setScrollSensitivity(int sensitivity) {
+        if (sensitivity > 0) {
+            scrollSensitivity = sensitivity;
+        } else {
+            scrollSensitivity = 1;
+        };
+    };
+    public static int getScrollSensitivity() {
+        return scrollSensitivity;
     };
 
 }

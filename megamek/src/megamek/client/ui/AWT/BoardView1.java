@@ -1653,8 +1653,8 @@ public class BoardView1
         
         if ( isScrolling && Settings.rightDragScroll) {
             if (! (oldMousePosition == null || mousePos.equals(oldMousePosition)) ) {
-                scroll.x -= Settings.scrollSensitivity * (mousePos.x - oldMousePosition.x);
-                scroll.y -= Settings.scrollSensitivity * (mousePos.y - oldMousePosition.y);
+                scroll.x -= Settings.getScrollSensitivity() * (mousePos.x - oldMousePosition.x);
+                scroll.y -= Settings.getScrollSensitivity() * (mousePos.y - oldMousePosition.y);
                 checkScrollBounds();
                 oldMousePosition.setLocation(mousePos);
                 s = !oldScroll.equals(scroll);
@@ -1663,7 +1663,7 @@ public class BoardView1
         };
 
         if (isScrolling && (Settings.clickEdgeScroll || Settings.autoEdgeScroll) ) {
-            final int sf = Settings.scrollSensitivity; // scroll factor
+            final int sf = Settings.getScrollSensitivity(); // scroll factor
             // adjust x scroll
             // scroll when the mouse is at the edges
             if (mousePos.x < 100) {
@@ -2069,7 +2069,7 @@ public class BoardView1
         };
 
         // disable edge-scrolling if no option set
-        if ( !Settings.clickEdgeScroll ) {
+        if ( !Settings.clickEdgeScroll && !Settings.rightDragScroll ) {
             mask |= InputEvent.BUTTON3_MASK;
         };
         
@@ -2103,8 +2103,8 @@ public class BoardView1
                 previousMouseY = me.getY();
                 initCtlScroll = false;
             }
-            scroll.x += Settings.scrollSensitivity * (me.getX() - previousMouseX);
-            scroll.y += Settings.scrollSensitivity * (me.getY() - previousMouseY);
+            scroll.x += Settings.getScrollSensitivity() * (me.getX() - previousMouseX);
+            scroll.y += Settings.getScrollSensitivity() * (me.getY() - previousMouseY);
             previousMouseX = me.getX();
             previousMouseY = me.getY();
             checkScrollBounds();

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.20 (CVS)
+v 0.29.20 (2004-01-02 10:40pm)
 + Bug 797649, Patch 862927: Stop accepting arbitrary block delimiters.
 + Patch 851394: initial ProtoMech implementation.  NOT BATTLE READY!!!
 + Fix bugs in encoding Buildings.  Don't compress XML in PacketTool.

@@ -1608,7 +1608,13 @@ public class BoardView1
                 return;
             }
         }
-        isScrolling = true;
+        if ( (me.getModifiers() & (InputEvent.CTRL_MASK |
+                                   InputEvent.ALT_MASK |
+                                   InputEvent.BUTTON2_MASK |
+                                   InputEvent.BUTTON3_MASK) ) == 0 ) {
+            // left-clicking scrolls the board
+            isScrolling = true;
+        }
         if (isTipShowing()) {
             hideTooltip();
         }
@@ -1652,7 +1658,13 @@ public class BoardView1
 			}
 		}
         mousePos = me.getPoint();
-        isScrolling = true;
+        if ( (me.getModifiers() & (InputEvent.CTRL_MASK |
+                                   InputEvent.ALT_MASK |
+                                   InputEvent.BUTTON2_MASK |
+                                   InputEvent.BUTTON3_MASK) ) == 0 ) {
+            // left-clicking scrolls the board
+            isScrolling = true;
+        }
         if (backSize != null) {
             if (doScroll()) {
 				repaint();

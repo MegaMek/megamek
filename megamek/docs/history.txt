@@ -1,4 +1,4 @@
-VERSION HISTORY:
+nVERSION HISTORY:
 ----------------
 v0.29.34 (CVS)
 + Bug 945047, Patch 946170: Lvl3-rules smoke now stack with terrain right.
@@ -8,7 +8,9 @@ v0.29.34 (CVS)
 + Bug 950435: UnitOverview now "floats on top" of the battlefield
 + Data 911874: a MiniMap colours file to match the default hexset
 + Bug 940016: CommonSettingsDialog now has a scroll pane
++ Bug 949292: Drawing Board files parse error fixed.
 + Bug 949292: Drawing Board and Mech Engineer parse errors fixed.
++ Bug 951005: fix NotSerializableException with TargetRolls
 
 v0.29.33 (2004-05-02, 7:00pm)
 + Bug 937996: Fix NPE when starting a scenario against the bot

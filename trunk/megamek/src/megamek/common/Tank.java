@@ -51,7 +51,10 @@ public class Tank
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     public String[] getLocationNames() { return LOCATION_NAMES; }
     
-    
+    private int engineType = 0;
+    private int armorType = 0;
+    private int structureType = 0;
+
     public boolean hasNoTurret() 
     { 
         return m_bHasNoTurret; 
@@ -705,4 +708,34 @@ public class Tank
         // Tanks can't DFA
         return false;
     };
+
+    public int getEngineType()
+    {
+        return engineType;
+    }
+
+    public void setEngineType(int type)
+    {
+        engineType = type;
+    }
+
+    public int getArmorType()
+    {
+        return armorType;
+    }
+
+    public void setArmorType(int type)
+    {
+        armorType = type;
+    }
+
+    public int getStructureType()
+    {
+        return structureType;
+    }
+
+    public void setStructureType(int type)
+    {
+        structureType = type;
+    }
 }

@@ -3685,4 +3685,15 @@ public abstract class Entity
         return canHit;
     }
 
+    public int getTroopCarryingSpace()
+    {
+        int space = 0;
+        for(Enumeration e = transports.elements(); e.hasMoreElements(); )
+            {
+                Transporter t = (Transporter) e.nextElement();
+                if (t instanceof TroopSpace)
+                space += ((TroopSpace) t).totalSpace;
+            }
+        return space;
+    }
 }

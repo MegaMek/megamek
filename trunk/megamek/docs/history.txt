@@ -13,6 +13,8 @@ v0.29.49 (CVS)
 + Bug 1026079, Patch 1029379: Skidding should generate heat, but doesn't.
 + Bug 1029604: only add a single Inferno round to a hex when a Thunder-Inferno
     minefield is triggered.
++ Patch 1028632: Mech and Vehicle verification code added.  Currently run
+    as an external command.  Thanks to Reinhard Vicinus for this patch!
 
 v0.29.48 (2004-09-06 2:45pm)
 + RFE 1018683: have unit list expand to fill available space.

@@ -199,7 +199,7 @@ public class MtfFile implements MechLoader {
                                                   : TechConstants.T_CLAN_LEVEL_2);
                     break;
                 default :
-                    throw new EntityLoadingException("Unsupported tech level");
+                    throw new EntityLoadingException("Unsupported tech base and/or level: " + this.techBase.substring(9) + " (level " + this.rulesLevel.substring(12) + ")");
             }
 
             mech.weight = (float)Integer.parseInt(tonnage.substring(5));

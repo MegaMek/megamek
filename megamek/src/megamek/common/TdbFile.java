@@ -46,7 +46,8 @@ public class TdbFile implements MechLoader {
     private static final String  MODEL    = "model";
     private static final String  VARIANT    = "variant";
     private static final String  TECHNOLOGY    = "technology";
-    private static final String  TONNAGE    = "tonnage";
+    private static final String  MOVEMECHMOD    = "movemechmod";
+    private static final String  TONNAGE    = "tonnage"; // also attribute
     private static final String  TYPE    = "type";
     private static final String  OMNI    = "isomni";
     private static final String  WALK   = "walk";
@@ -75,8 +76,8 @@ public class TdbFile implements MechLoader {
     private static final String  DOUBLE   = "Double";
     private static final String  TRUE_LOWER    = "true";
     
-    private String creatorName;
-    private String creatorVersion;
+    private String creatorName = "Unknown";
+    private String creatorVersion = "Unknown";
     private String name;
     private boolean isOmni = false;
     private String model;
@@ -86,6 +87,7 @@ public class TdbFile implements MechLoader {
     private String techBase;
     private static final String techYear = "3068"; // TDB doesn't have era
     private String rulesLevel;
+    private String LAMTonnage;
     
     private String tonnage;
     
@@ -193,6 +195,8 @@ public class TdbFile implements MechLoader {
             name = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(MODEL)) {
             model = ((ParsedXML)children.nextElement()).getContent();
+        } else if (node.getName().equals(OMNI)) {
+            isOmni = ((ParsedXML)children.nextElement()).getContent().equals(TRUE_LOWER);
         } else if (node.getName().equals(VARIANT)) {
             variant = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(TECHNOLOGY)) {
@@ -202,8 +206,11 @@ public class TdbFile implements MechLoader {
             tonnage = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(TYPE)) {
             chassisConfig = ((ParsedXML)children.nextElement()).getContent();
-        } else if (node.getName().equals(OMNI)) {
-            isOmni = ((ParsedXML)children.nextElement()).getContent().equals(TRUE_LOWER);
+        } else if (node.getName().equals(MOVEMECHMOD)) {
+            // This tag seems to indicate the pod space on an omnimech
+            //  or the tonnage of the conversion equipment for
+            //  a LAM (Land Air Mech).
+            LAMTonnage = node.getAttribute(TONNAGE);
         } else if (node.getName().equals(WALK)) {
             walkMP = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(JUMP)) {
@@ -267,37 +274,46 @@ public class TdbFile implements MechLoader {
         if (node.getName().equals(LOCATION)) {
             int loc = -1;
             int i = 0;
+            int armor = -1;
+            int rearArmor = -1;
+            if (node.getAttribute(ARMOR) != null) {
+                armor = Integer.parseInt(node.getAttribute(ARMOR));
+            }
+            if (node.getAttribute(REAR_ARMOR) != null) {
+                rearArmor = Integer.parseInt(node.getAttribute(REAR_ARMOR));
+            }
             if (node.getAttribute(NAME).equals("LA") || node.getAttribute(NAME).equals("FLL")) {
                 loc = Mech.LOC_LARM;
-                larmArmor = Integer.parseInt(node.getAttribute(ARMOR));
+                larmArmor = armor;
             } else if (node.getAttribute(NAME).equals("RA") || node.getAttribute(NAME).equals("FRL")) {
                 loc = Mech.LOC_RARM;
-                rarmArmor = Integer.parseInt(node.getAttribute(ARMOR));
+                rarmArmor = armor;
             } else if (node.getAttribute(NAME).equals("LT")) {
                 loc = Mech.LOC_LT;
-                ltArmor = Integer.parseInt(node.getAttribute(ARMOR));
-                ltrArmor = Integer.parseInt(node.getAttribute(REAR_ARMOR));
+                ltArmor = armor;
+                ltrArmor = rearArmor;
             } else if (node.getAttribute(NAME).equals("RT")) {
                 loc = Mech.LOC_RT;
-                rtArmor = Integer.parseInt(node.getAttribute(ARMOR));
-                rtrArmor = Integer.parseInt(node.getAttribute(REAR_ARMOR));
+                rtArmor = armor;
+                rtrArmor = rearArmor;
             } else if (node.getAttribute(NAME).equals("CT")) {
                 loc = Mech.LOC_CT;
-                ctArmor = Integer.parseInt(node.getAttribute(ARMOR));
-                ctrArmor = Integer.parseInt(node.getAttribute(REAR_ARMOR));
+                ctArmor = armor;
+                ctrArmor = rearArmor;
             } else if (node.getAttribute(NAME).equals("H")) {
                 loc = Mech.LOC_HEAD;
-                headArmor = Integer.parseInt(node.getAttribute(ARMOR));
+                headArmor = armor;
             } else if (node.getAttribute(NAME).equals("LL") || node.getAttribute(NAME).equals("RLL")) {
                 loc = Mech.LOC_LLEG;
-                llegArmor = Integer.parseInt(node.getAttribute(ARMOR));
+                llegArmor = armor;
             } else if (node.getAttribute(NAME).equals("RL") || node.getAttribute(NAME).equals("RRL")) {
                 loc = Mech.LOC_RLEG;
-                rlegArmor = Integer.parseInt(node.getAttribute(ARMOR));
+                rlegArmor = armor;
             }
 
-            if (loc == -1)
-                throw new EntityLoadingException("   Bad Mech location");
+            if (loc == -1) {
+                throw new EntityLoadingException("   Bad Mech location: " + node.getAttribute(NAME));
+            }
             while (children.hasMoreElements()) {
                 ParsedXML critSlotNode = (ParsedXML)children.nextElement();
                 critData[loc][i][0] = ((ParsedXML)critSlotNode.elements().nextElement()).getContent();
@@ -317,7 +333,8 @@ public class TdbFile implements MechLoader {
         try {
             Mech mech;
             
-            if (!creatorName.equals("The Drawing Board")
+            if (creatorName == "Unknown"
+                || !creatorName.equals("The Drawing Board")
                 || Integer.parseInt(creatorVersion) != 2) {
                 // MegaMek no longer supports older versions of The
                 //  Drawing Board (pre 2.0.23) due to incomplete xml
@@ -353,6 +370,9 @@ public class TdbFile implements MechLoader {
             mech.setOmni(isOmni);
 
             //TODO: this ought to be a better test
+            if (LAMTonnage != null) {
+                throw new EntityLoadingException("Unsupported tech: LAM?");
+            }
             if (techBase.equals("Inner Sphere")) {
                 switch (Integer.parseInt(rulesLevel)) {
                 case 1 :
@@ -362,15 +382,15 @@ public class TdbFile implements MechLoader {
                     mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
                     break;
                 default :
-                    throw new EntityLoadingException("Unsupported tech level");
+                    throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
                 }
             } else if (techBase.equals("Clan")) {
                 if (Integer.parseInt(rulesLevel) == 2)
                     mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
                 else
-                    throw new EntityLoadingException("Unsupported tech level");
+                    throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
             } else {
-                throw new EntityLoadingException("Unsupported tech base");
+                throw new EntityLoadingException("Unsupported tech base: " + techBase);
             }
             mech.weight = (float)Integer.parseInt(tonnage);
             mech.setOriginalWalkMP(Integer.parseInt(walkMP));

@@ -42,6 +42,7 @@ v 0.29.27 (CVS)
 + Bug 905261: missing minimapcolours no longer NPEs. Also, better exception handling in Client#initializeDialogs()
 + New "SINKHOLE" MiniMap colour/setting
 + Patch 870086: mechW now stays open when the same player moves several units
++ Bug 908952: MiniMap no longer NPEs when the target is a non-Entity (woods etc)
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

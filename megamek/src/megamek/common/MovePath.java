@@ -1,5 +1,6 @@
 /**
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -156,14 +157,6 @@ public class MovePath implements Cloneable, Serializable {
         }
         MoveStep prev = getStep(steps.size() - 2);
 
-        // TODO: more elegant method possible here?
-        if (prev != null && prev.isStackingViolation()) {
-            //If the previous step was a stacking violation, mark it
-            // as legal in case this step moves us out of the stacking
-            // violation.
-            prev.compileIllegal(game, entity, getStep(steps.size() - 3));
-        }
-
         try {
             step.compile(game, entity, prev);
         } catch (RuntimeException re) {
@@ -178,15 +171,29 @@ public class MovePath implements Cloneable, Serializable {
         step.compileIllegal(game, entity, prev);
 
         // check for illegal jumps
+        Coords start = entity.getPosition();
+        Coords land = step.getPosition();
+        int distance = start.distance(land);
         if (isJumping()) {
-            Coords start = entity.getPosition();
-            Coords land = step.getPosition();
-            int distance = start.distance(land);
-
             if (step.getMpUsed() > distance) {
                 step.setMovementType(Entity.MOVE_ILLEGAL);
             }
         }
+
+        // If the new step is legal and is a different position than
+        // the previous step, then update the older steps, letting
+        // them know that they are no longer the end of the path.
+        if ( step.isLegal() && null != prev
+             && !start.equals( prev.getPosition() ) ) {
+
+            // Loop through the steps from back to front.
+            // Stop looping when the step says to, or we run out of steps.
+            int index = steps.size() - 2;
+            while ( index >= 0 && getStep( index ).setEndPos( false ) )
+                index--;
+
+        } // End step-is-legal
+
         return this;
     }
 
@@ -204,13 +211,20 @@ public class MovePath implements Cloneable, Serializable {
             }
             this.addStep(step);
         }
-        compileLastStep();
+        clipToPossible();
     }
 
     public void removeLastStep() {
         if (steps.size() > 0) {
             steps.removeElementAt(steps.size() - 1);
         }
+
+        // Find the new last step in the path.
+        int index = steps.size() - 1;
+        while ( index >= 0
+                && getStep( index ).setEndPos( true )
+                && !getStep( index ).isLegal() )
+            index--;
     }
 
     public void clear() {
@@ -441,23 +455,6 @@ public class MovePath implements Cloneable, Serializable {
             return getStep(0).getType() == MovePath.STEP_START_JUMP;
         }
         return false;
-    }
-
-    public void compileLastStep() {
-        compileLastStep(true);
-    }
-
-    public void compileLastStep(boolean clip) {
-        if (clip)
-            clipToPossible(); //get rid of "trailing garbage"
-
-        for (int i = length() - 1; i >= 0; i--) {
-            final MoveStep step = getStep(i);
-            if (step.checkAndSetIllegal(game, entity)) {
-                continue;
-            }
-            break;
-        }
     }
 
     /**

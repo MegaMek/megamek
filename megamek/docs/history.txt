@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.25 (CVS)
+v 0.29.25 (2004-02-08 10:00pm)
 + Data 887963: added images for Berserker, Lao Hu, and Naginata; updated
         images for Bushwacker, Fafnir, and Uziel
 + Data 887869: added all changes that coralbeach submitted (images by Vertigo)

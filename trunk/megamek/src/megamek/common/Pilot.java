@@ -30,6 +30,7 @@ public class Pilot
     private boolean     unconscious;
     private boolean     doomed;  // scheduled to die at end of phase
     private boolean     dead;
+    private boolean     ejected;
     
     // these are only used on the server:
     private int rollsNeeded; // how many KO rolls needed this turn
@@ -74,7 +75,10 @@ public class Pilot
     }
   
     public void setHits(int hits) {
-        this.hits = hits;
+        // Ejected pilots stop taking hits.
+        if (!ejected) {
+            this.hits = hits;
+        }
     }
   
     public boolean isUnconscious() {
@@ -90,10 +94,13 @@ public class Pilot
     }
     
     public void setDead(boolean dead) {
-        this.dead = dead;
-        if (dead) {
-            rollsNeeded = 0;
-            hits = 6;
+        // Ejected pilots stop taking hits.
+        if (!ejected) {
+            this.dead = dead;
+            if (dead) {
+                rollsNeeded = 0;
+                hits = 6;
+            }
         }
     }
     
@@ -102,10 +109,13 @@ public class Pilot
     }
     
     public void setDoomed(boolean b) {
-        doomed = b;
-        if (doomed) {
-            rollsNeeded = 0;
-            hits = 6;
+        // Ejected pilots stop taking hits.
+        if (!ejected) {
+            doomed = b;
+            if (doomed) {
+                rollsNeeded = 0;
+                hits = 6;
+            }
         }
     }
     
@@ -114,12 +124,19 @@ public class Pilot
     }
     
     public int getRollsNeeded() {
-        return rollsNeeded;
+        // Ejected pilots don't need to roll.
+        if (!ejected) {
+            return rollsNeeded;
+        }
+        return 0;
     }
     
     public void setRollsNeeded(int rollsNeeded) {
-        if ( !doomed ) {
-            this.rollsNeeded = rollsNeeded;
+        // Ejected pilots stop taking hits.
+        if (!ejected) {
+            if ( !doomed ) {
+                this.rollsNeeded = rollsNeeded;
+            }
         }
     }
     
@@ -282,10 +299,31 @@ public class Pilot
         return multiplier;
     }
     
-	public int modifyPhysicalDamagaForMeleeSpecialist() {
-		if ( !getOptions().booleanOption("melee_specialist") )
-		    return 0;
+    public int modifyPhysicalDamagaForMeleeSpecialist() {
+        if ( !getOptions().booleanOption("melee_specialist") )
+            return 0;
 
-		return 1;
-	}
+        return 1;
+    }
+
+    /**
+     * Determine if this pilot has abandoned her vehicle.
+     *
+     * @return  <code>true</code> if the pilot has abandoned her vehicle,
+     *          <code>false</code> if the pilot is still in the vehicle.
+     */
+    public boolean isEjected()
+    {
+        return this.ejected;
+    }
+
+    /**
+     * Specify if this pilot has abandoned her vehicle.
+     *
+     * @param   abandoned the <code>boolean</code> value to set.
+     */
+    public void setEjected( boolean abandoned )
+    {
+        this.ejected = abandoned;
+    }
 }

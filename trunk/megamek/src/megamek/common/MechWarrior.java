@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -31,12 +31,20 @@ public class MechWarrior extends Infantry {
         setChassis("MechWarrior");
         setModel(originalRide.getCrew().getName());
         setWeight(1);
+
+        // Generate the display name, then add the original ride's name.
+        StringBuffer newName = new StringBuffer( this.getDisplayName() );
+        newName.append( " of " )
+            .append( originalRide.getDisplayName() );
+        this.displayName = newName.toString();
+
+        // Finish initializing this unit.
         setOwner(originalRide.getOwner());
         initializeInternal(1, Infantry.LOC_INFANTRY);
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalId());
     }
-    
+
     public boolean isSelectableThisTurn(Game game) {
         return (pickedUpById == Entity.NONE)
             && super.isSelectableThisTurn( game );

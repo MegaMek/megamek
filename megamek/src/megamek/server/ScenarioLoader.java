@@ -138,8 +138,8 @@ public class ScenarioLoader
         g.getOptions().initialize();
 
 
-	// Set up the teams (for initiative)
-	setupTeams(g);
+  // Set up the teams (for initiative)
+  setupTeams(g);
 
         g.phase = Game.PHASE_INITIATIVE;
         return g;
@@ -241,6 +241,17 @@ public class ScenarioLoader
             }
             
             out[x].setStartingPos(nDir);
+            
+            //Check for team setup
+              int team = Player.TEAM_NONE;
+              
+              try {
+                team = Integer.parseInt(p.getProperty("Team_" + out[x].getName()));
+              } catch ( Exception e ) {
+                team = Player.TEAM_NONE;
+              }
+              
+            out[x].setTeam(team);
         }
         
         return out;

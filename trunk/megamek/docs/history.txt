@@ -1,5 +1,8 @@
 VERSION HISTORY:
 ----------------
+v0.29.64 (CVS)
++ RFE 1112483: CTL+R shortcut added to Turn Report menu command
+
 v0.29.63 (2005-01-30 2:00pm)
 + Bug 1107959: ejected pilot moves same turn
 + Bug 1089323: Atillery Freezes Game if destroyed/fled

@@ -66,7 +66,7 @@ public class HeatSinkCommand extends ServerCommand {
                } else if(sinks<0) {
                    server.sendServerChat(connId, "Error: Can't have negative active sinks");
                } else {
-                   target.setActiveSinks(sinks);
+                   target.setActiveSinksNextRound(sinks);
                    server.sendServerChat("Player " + server.getGame().getPlayer(connId).getName() + " turned on " + sinks + " heat sinks in entity " + target.getDisplayName());
                }
             }

@@ -49,6 +49,8 @@ public class MechSelectorDialog
     private Choice m_chWeightClass = new Choice();
     private Label m_labelType = new Label("Type: ", Label.RIGHT);
     private Choice m_chType = new Choice();
+    private Label m_labelUnitType = new Label("Unit Type: ", Label.RIGHT);
+    private Choice m_chUnitType = new Choice();
     private Label m_labelSort = new Label("Sort: ", Label.RIGHT);
     private Choice m_chSort = new Choice();
     private Panel m_pParams = new Panel();
@@ -68,11 +70,13 @@ public class MechSelectorDialog
         for (int x = 0; x < m_saSorts.length; x++) {
             m_chSort.addItem(m_saSorts[x]);
         }
-        m_pParams.setLayout(new GridLayout(3, 2));
+        m_pParams.setLayout(new GridLayout(4, 2));
         m_pParams.add(m_labelWeightClass);
         m_pParams.add(m_chWeightClass);
         m_pParams.add(m_labelType);
         m_pParams.add(m_chType);
+        m_pParams.add(m_labelUnitType);
+        m_pParams.add(m_chUnitType);
         m_pParams.add(m_labelSort);
         m_pParams.add(m_chSort);
         
@@ -96,6 +100,7 @@ public class MechSelectorDialog
         
         m_chWeightClass.addItemListener(this);
         m_chType.addItemListener(this);
+        m_chUnitType.addItemListener(this);
         m_chSort.addItemListener(this);
         m_mechList.addItemListener(this);
         m_bPick.addActionListener(this);
@@ -119,6 +124,11 @@ public class MechSelectorDialog
         for (int i = 0; i < TechConstants.T_NAMES.length; i++) {
             m_chType.addItem(TechConstants.T_NAMES[i]);
         }
+
+        m_chUnitType.addItem("All");
+        m_chUnitType.addItem("Mek");
+        m_chUnitType.addItem("Tank");
+        m_chUnitType.addItem("Infantry");
     }
     
     
@@ -140,10 +150,17 @@ public class MechSelectorDialog
             nWeight = Entity.WEIGHT_ASSAULT;
         }
         int nType = m_chType.getSelectedIndex();
+        String sUnitType = m_chUnitType.getSelectedItem();
         MechSummary[] mechs = MechSummaryCache.getInstance().getAllMechs();
+        if ( mechs == null ) {
+            System.err.println( "No units to filter!" );
+            return;
+        }
         for (int x = 0; x < mechs.length; x++) {
-            if (mechs[x].getWeightClass() == nWeight && 
-                    mechs[x].getType() == nType) {
+            if ( mechs[x].getWeightClass() == nWeight && 
+                 mechs[x].getType() == nType && 
+                 ( sUnitType.equals( "All" ) ||
+                   mechs[x].getUnitType().equals(sUnitType) ) ) {
                 vMechs.addElement(mechs[x]);
             }
         }
@@ -216,7 +233,7 @@ public class MechSelectorDialog
         if (ie.getSource() == m_chSort) {
             sortMechs();
         }
-        else if (ie.getSource() == m_chWeightClass || ie.getSource() == m_chType) {
+        else if (ie.getSource() == m_chWeightClass || ie.getSource() == m_chType || ie.getSource() == m_chUnitType) {
             filterMechs();
         } else if (ie.getSource() == m_mechList) {
             MechSummary ms = m_mechsCurrent[m_mechList.getSelectedIndex()];

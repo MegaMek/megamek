@@ -575,6 +575,7 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 24;
         ammo.bv = 6;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
         
         return ammo;
     }
@@ -705,7 +706,8 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 12;
         ammo.bv = 11;
-        
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
         return ammo;
     }
     
@@ -835,7 +837,8 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 8;
         ammo.bv = 17;
-        
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
         return ammo;
     }
     
@@ -965,7 +968,8 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 12;
         ammo.bv = 23;
-        
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
         return ammo;
     }
     

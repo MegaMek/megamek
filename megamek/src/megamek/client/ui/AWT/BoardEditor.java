@@ -185,7 +185,6 @@ public class BoardEditor extends Container
 
 		butBoardLoad = new Button("Load...");
 		butBoardLoad.addActionListener(this);
-		butBoardLoad.setEnabled( false );
 
 		butBoardSave = new Button("Save");
 		butBoardSave.addActionListener(this);
@@ -595,9 +594,6 @@ public class BoardEditor extends Container
         }
         
         public void update(Graphics g) {
-            if ( bv.isTileImagesLoaded() ) {
-                butBoardLoad.setEnabled( true );
-            }
             if(curHex != null) {
                 g.drawImage(bv.baseFor(curHex), 0, 0, this);
                 if (bv.supersFor(curHex) != null) {

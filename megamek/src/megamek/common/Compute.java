@@ -2791,6 +2791,11 @@ public class Compute
         if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
+        
+        // can't make physical attacks while spotting
+        if (ae.isSpotting()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
+        }
 
         //Quads can't punch
         if ( ae.entityIsQuad() ) {
@@ -3039,10 +3044,15 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
-  // non-mechs can't kick
-  if (!(ae instanceof Mech)) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't kick");
-  }
+        // non-mechs can't kick
+        if (!(ae instanceof Mech)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't kick");
+        }
+        
+        // can't make physical attacks while spotting
+        if (ae.isSpotting()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
+        }
 
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
@@ -3299,6 +3309,11 @@ public class Compute
         //Quads can't club
         if ( ae.entityIsQuad() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
+        }
+
+        // can't make physical attacks while spotting
+        if (ae.isSpotting()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
         }
 
         // Can't target a transported entity.
@@ -3568,6 +3583,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
         }
         
+        // can't make physical attacks while spotting
+        if (ae.isSpotting()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
+        }
+
         //Can only push mechs
         if ( te !=null && !(te instanceof Mech) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not a mech");
@@ -3894,6 +3914,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
+        // can't make physical attacks while spotting
+        if (ae.isSpotting()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
+        }
+
         // Can't target a entity conducting a swarm attack.
         if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
@@ -4088,6 +4113,11 @@ public class Compute
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
+        // can't make physical attacks while spotting
+        if (ae.isSpotting()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
         }
 
         // Can't target a entity conducting a swarm attack.

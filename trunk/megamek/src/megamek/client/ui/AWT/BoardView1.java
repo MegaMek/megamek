@@ -358,6 +358,9 @@ public class BoardView1
         final Hex hex = game.board.getHex(c);
         final Point hexLoc = getHexLocation(c);
         
+        int level = hex.getElevation();
+        int depth = hex.depth();
+        
         // offset drawing point
         int drawX = hexLoc.x - boardRect.x;
         int drawY = hexLoc.y - boardRect.y;
@@ -370,17 +373,19 @@ public class BoardView1
             }
         }
         
-        // draw text stuff
+        // draw hex number
         boardGraph.setColor(Settings.mapTextColor);
         boardGraph.setFont(FONT_HEXNUM);
         boardGraph.drawString(c.getBoardNum(), drawX + 30, drawY + 12);
-        if (hex.getElevation() != 0) {
-            boardGraph.setFont(FONT_ELEV);
-            boardGraph.drawString("LEVEL " + hex.getElevation(), drawX + 24, drawY + 70);
-        }
-        if (hex.depth() != 0) {
-            boardGraph.setFont(FONT_ELEV);
-            boardGraph.drawString("DEPTH " + hex.depth(), drawX + 24, drawY + 70);
+        // level | depth
+        boardGraph.setFont(FONT_ELEV);
+        if (level != 0 && depth == 0) {
+            boardGraph.drawString("LEVEL " + level, drawX + 24, drawY + 70);
+        } else if (depth != 0 && level == 0) {
+            boardGraph.drawString("DEPTH " + depth, drawX + 24, drawY + 70);
+        } else if (level != 0 && depth != 0) {
+            boardGraph.drawString("LEVEL " + level, drawX + 24, drawY + 60);
+            boardGraph.drawString("DEPTH " + depth, drawX + 24, drawY + 70);
         }
         // draw elevation borders
         boardGraph.setColor(Color.black);

@@ -61,6 +61,14 @@ public class Settings
 
     public static int       shiftScrollSensitivity  = 3;
     
+    /**
+     * Controls whether the main window scrolls whenever we approach its edge (implicit)
+     * or only when we use the Shift key (explicit)
+     * 
+     * @see     megamek.client.BoardView1#doScroll()
+     */    
+    public static boolean   explicitScrollOnly      = false;
+    
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor         = 0;
     public static String    lastPlayerCamoName      = null;
@@ -397,6 +405,10 @@ scan:
                         st.nextToken();
                         maxPathfinderTime = (int)st.nval;
                     }
+                    else if(key.equals("explicitscrollonly")) {
+                        st.nextToken();
+                        explicitScrollOnly = Boolean.valueOf(st.sval).booleanValue();
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -495,6 +507,7 @@ scan:
             cw.write("unitstartchar " + (int) unitStartChar + "\r\n");
             cw.write("shiftscrollsensitivity " + shiftScrollSensitivity + "\r\n");
             cw.write("maxpathfindertime " + maxPathfinderTime + "\r\n" );
+            cw.write("explicitscrollonly " + explicitScrollOnly + "\r\n");
 
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

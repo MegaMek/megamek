@@ -27,6 +27,7 @@ v 0.29.27 (CVS)
 + Have the nagForNoAction screen include the "Do not bother me again" checkbox.
 + Fixed bug with "no move" animation.
 + Blind Drop now lists unit type (inf/proto/veh/mech)
++ Protomech sprites now torso twist just like mechs.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

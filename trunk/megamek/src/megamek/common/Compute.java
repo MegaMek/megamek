@@ -3220,7 +3220,8 @@ public class Compute
      */
     public static boolean canSee(Game game, Entity ae, Targetable target)
     {
-        return LosEffects.calculateLos(game, ae.getId(), target).canSee();
+        return LosEffects.calculateLos(game, ae.getId(), target).canSee()
+            && ae.getCrew().isActive();
     }
 
     public static int targetSideTable(Entity attacker, Targetable target) {

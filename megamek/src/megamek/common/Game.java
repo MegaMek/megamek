@@ -636,6 +636,25 @@ public class Game implements Serializable
     }
 
     /**
+     * Returns an out-of-game entity.
+     *
+     * @param   id the <code>int</code> ID of the out-of-game entity.
+     * @return  the out-of-game <code>Entity</code> with that ID.  If no
+     *          out-of-game entity has that ID, returns a <code>null</code>.
+     */
+    public Entity getOutOfGameEntity (int id) {
+        Entity match = null;
+        Enumeration iter = vOutOfGame.elements();
+        while (null == match && iter.hasMoreElements()) {
+            Entity entity = (Entity) iter.nextElement();
+            if (id == entity.getId()) {
+                match = entity;
+            }
+        }
+        return match;
+    }
+
+    /**
      * Swap out the current list of dead (or fled) units for a new one.
      *
      * @param   vOutOfGame - the new <code>Vector</code> of dead or fled units.

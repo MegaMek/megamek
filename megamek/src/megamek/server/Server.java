@@ -3899,7 +3899,7 @@ implements Runnable, ConnectionHandler {
                 sendChangedHex(dest);
                 break;
             }
-        } else return;
+        }
     }
 
     /**
@@ -5235,12 +5235,6 @@ implements Runnable, ConnectionHandler {
         WeaponResult wr = new WeaponResult();
         wr.waa = waa;
 
-        // If it's an artillery attack, stick the entity into
-        // the weaponresult, so we can resolve the attack
-        // if the attacker dies while the shell is in flight
-        if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-		    wr.artyEntity = ae;
-	    }
         // has this weapon fired already?
         if (weapon.isUsedThisRound()) {
             wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon has already been used this round");
@@ -5470,13 +5464,11 @@ implements Runnable, ConnectionHandler {
      * Resolve a single Weapon Attack object
      */
     private void resolveWeaponAttack(WeaponResult wr, int lastEntityId) {
-        //      System.out.println("rwa");
-      // Check if we have an entity stored in the wr,
-      // then it's an offboard shot and the shootign entity
+      // If it's an artillery shot, the shooting entity
       // might have died in the meantime
-      Entity ae = wr.artyEntity;
+      Entity ae = game.getEntity( wr.waa.getEntityId() );
       if (ae == null) {
-          ae = game.getEntity(wr.waa.getEntityId());
+          ae = game.getOutOfGameEntity( wr.waa.getEntityId() );
       }
       final Targetable target = game.getTarget(wr.waa.getTargetType(),
                                                wr.waa.getTargetId());
@@ -13439,7 +13431,8 @@ implements Runnable, ConnectionHandler {
             public boolean accept(Entity entity) {
                 if (entity.isStuck()) {
                     return true;
-                } else return false;
+                }
+                return false;
             }
         });
         PilotingRollData rollTarget;

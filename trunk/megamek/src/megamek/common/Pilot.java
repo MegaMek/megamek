@@ -33,9 +33,13 @@ public class Pilot
     
     
     public Pilot() {
-        name = "Unnamed";
-        gunnery = 4;
-        piloting = 5;
+        this("Unnamed", 4, 5);
+    }
+  
+    public Pilot(String name, int gunnery, int piloting) {
+        this.name = name;
+        this.gunnery = gunnery;
+        this.piloting = piloting;
         hits = 0;
         unconcious = false;
         dead = false;
@@ -114,6 +118,30 @@ public class Pilot
             s += ")";
         }
         return s;
+    }
+    
+    /**
+     * Returns whether this pilot has non-standard piloting or gunnery values
+     */
+    public boolean isCustom() {
+        return gunnery != 4 || piloting != 5;
+    }
+    
+    /**
+     * Returns the BV multiplyer for this pilot's gunnery/piloting
+     */
+    public double getBVSkillMultiplier() {
+        double multiplier = 1.0;
+        
+        if (gunnery < 4) {
+            multiplier += 0.20 * (4 - gunnery);
+        } else {
+            multiplier += 0.10 * (4 - gunnery);
+        }
+        
+        multiplier += 0.05 * (5 - piloting);
+         
+        return multiplier;
     }
     
     /**

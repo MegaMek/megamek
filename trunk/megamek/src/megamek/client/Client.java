@@ -421,6 +421,13 @@ public class Client extends Panel
     }
       
     /**
+     * Sends an "update entity" packet
+     */
+    public void sendUpdateEntity(Entity entity) {
+        send(new Packet(Packet.COMMAND_ENTITY_UPDATE, entity));
+    }
+      
+    /**
      * Sends a "delete entity" packet
      */
     public void sendDeleteEntity(int enum) {

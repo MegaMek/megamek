@@ -33,7 +33,6 @@ public class BoardView1
     implements BoardListener, MouseListener, MouseMotionListener, KeyListener,
     Runnable
 {
-    private static final int        TIP_DELAY = 1000;
     private static final int        TRANSPARENT = 0xFFFF00FF;
     private static final Dimension  HEX_SIZE = new Dimension(84, 72);
 
@@ -741,7 +740,7 @@ public class BoardView1
         // first, we have to determine how much text we are going to have
         // are we on a hex?
         final Coords mcoords = getCoordsAt(point);
-        if (game.board.contains(mcoords)) {
+        if (Settings.showMapHexPopup && game.board.contains(mcoords)) {
             mhex = game.board.getHex(mcoords);
             stringsSize += 1;
         }
@@ -876,10 +875,10 @@ public class BoardView1
         if (isTipShowing()) {
             if (!isTipPossible) {
                 hideTooltip();
-            }
-        } else if (isTipPossible && System.currentTimeMillis() - lastIdle > TIP_DELAY) {
-            showTooltip();
-        }
+            }       
+        } else if (isTipPossible && System.currentTimeMillis() - lastIdle > Settings.tooltipDelay) {
+                showTooltip();
+        }       
     }
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing) {

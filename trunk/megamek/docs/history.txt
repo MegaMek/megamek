@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.21 (CVS)
+v 0.29.21 (2004-01-10 11:45am)
 + Patch 867652: cleaned up megamek-icon.gif
 + Patch 868927: Hide MechDisplay at end of turn
 + Patch 867864: only twist turrets if crew conscious

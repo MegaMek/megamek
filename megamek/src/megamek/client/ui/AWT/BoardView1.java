@@ -79,8 +79,8 @@ public class BoardView1
     private boolean isScrolling = false;
     private Thread scroller = new Thread(this);
     private Point scroll = new Point();
-    private boolean initShiftScroll;
-    private boolean shiftKeyHeld = false;
+    private boolean initCtlScroll;
+    private boolean ctlKeyHeld = false;
     private int previousMouseX;
     private int previousMouseY;
 
@@ -1645,6 +1645,7 @@ public class BoardView1
     /**
      * If the mouse is at the edges of the screen, this
      * scrolls the board image on the canvas.
+     * NOTE: CTL scroll is handled in mouseMoved()
      */
     public boolean doScroll() {
         final Point oldScroll = new Point(scroll);
@@ -1920,9 +1921,9 @@ public class BoardView1
         case KeyEvent.VK_RIGHT :
             scroll.x += 36;
             break;
-        case KeyEvent.VK_SHIFT :
-            shiftKeyHeld = true;
-            initShiftScroll = true;
+        case KeyEvent.VK_CONTROL :
+            ctlKeyHeld = true;
+            initCtlScroll = true;
             break;
         }
 
@@ -1935,8 +1936,8 @@ public class BoardView1
     }
 
     public void keyReleased(KeyEvent ke) {
-        if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
-            shiftKeyHeld = false;
+        if (ke.getKeyCode() == KeyEvent.VK_CONTROL) {
+            ctlKeyHeld = false;
         }
     }
     public void keyTyped(KeyEvent ke) {
@@ -2082,11 +2083,11 @@ public class BoardView1
         if (isTipShowing()) {
             hideTooltip();
         }
-        if (shiftKeyHeld && Settings.tabScroll) {
-            if (initShiftScroll) {
+        if (ctlKeyHeld && Settings.ctlScroll) {
+            if (initCtlScroll) {
                 previousMouseX = me.getX();
                 previousMouseY = me.getY();
-                initShiftScroll = false;
+                initCtlScroll = false;
             }
             scroll.x += Settings.scrollSensitivity * (me.getX() - previousMouseX);
             scroll.y += Settings.scrollSensitivity * (me.getY() - previousMouseY);

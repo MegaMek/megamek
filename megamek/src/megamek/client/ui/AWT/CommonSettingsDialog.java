@@ -38,7 +38,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Checkbox    getFocus;
     
     private Checkbox    rightDragScroll;
-    private Checkbox    tabScroll;
+    private Checkbox    ctlScroll;
     private Checkbox    clickEdgeScroll;
     private Checkbox    autoEdgeScroll;
     private TextField   scrollSensitivity;
@@ -117,34 +117,6 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         panSetting.add( new Label("ProtoMech unit codes.") );
         tempPanel.add( panSetting );
 
-// scrolling options
-        tempPanel.add( new Label("Clicking on the MiniMap and using the cursor keys always scrolls the main display.") );
-        tempPanel.add( new Label("Additionaly, you may choose to scroll:") );
-
-        rightDragScroll
-            = new Checkbox( "By right-clicking on the map and dragging." );
-        tempPanel.add( rightDragScroll );
-        
-        tabScroll
-            = new Checkbox( "By holding down TAB and dragging." );
-            tempPanel.add( tabScroll );
-
-        clickEdgeScroll
-            = new Checkbox( "By right-clicking near the edge of the map." );
-            tempPanel.add( clickEdgeScroll );
-
-        autoEdgeScroll
-            = new Checkbox( "Whenever you target near the edge of the map." );
-            tempPanel.add( autoEdgeScroll );
-
-        scrollSensitivity
-            = new TextField(4);
-        panSetting.add( scrollSensitivity );
-        panSetting.add( new Label("Scroll sensitivity.") );
-        tempPanel.add( panSetting );
-// scrolling options
-
-
         panSetting = new Panel();
         maxPathfinderTime
             = new TextField(5);
@@ -154,6 +126,34 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         getFocus
             = new Checkbox( "Get Focus when a new phase begins.");
         tempPanel.add( getFocus );
+
+// scrolling options
+        tempPanel.add( new Label("Clicking on the MiniMap and using the cursor keys always scrolls the main display.") );
+        tempPanel.add( new Label("Additionaly, you may choose to scroll:") );
+
+        rightDragScroll
+            = new Checkbox( "By right-clicking on the map and dragging." );
+        tempPanel.add( rightDragScroll );
+        
+        ctlScroll
+            = new Checkbox( "By holding down CTL and dragging." );
+            tempPanel.add( ctlScroll );
+
+        clickEdgeScroll
+            = new Checkbox( "By right-clicking near the edge of the map." );
+            tempPanel.add( clickEdgeScroll );
+
+        autoEdgeScroll
+            = new Checkbox( "Whenever you target near the edge of the map." );
+            tempPanel.add( autoEdgeScroll );
+
+        panSetting = new Panel();
+        scrollSensitivity
+            = new TextField(4);
+        panSetting.add( scrollSensitivity );
+        panSetting.add( new Label("Scroll sensitivity.") );
+        tempPanel.add( panSetting );
+// scrolling options
 
         scrOptions.add(tempPanel);
 
@@ -234,7 +234,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         maxPathfinderTime.setText( Integer.toString(Settings.maxPathfinderTime ) );
 
         rightDragScroll.setState( Settings.rightDragScroll );
-        tabScroll.setState( Settings.tabScroll );
+        ctlScroll.setState( Settings.ctlScroll );
         clickEdgeScroll.setState( Settings.clickEdgeScroll );
         autoEdgeScroll.setState( Settings.autoEdgeScroll );
         scrollSensitivity.setText( Integer.toString(Settings.scrollSensitivity ) );
@@ -268,7 +268,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.unitStartChar=   unitStartChar.getSelectedItem().charAt(0);
 
         Settings.rightDragScroll   = rightDragScroll.getState();
-        Settings.tabScroll         = tabScroll.getState();
+        Settings.ctlScroll         = ctlScroll.getState();
         Settings.clickEdgeScroll   = clickEdgeScroll.getState();
         Settings.autoEdgeScroll    = autoEdgeScroll.getState();
         Settings.scrollSensitivity = Integer.parseInt(scrollSensitivity.getText());

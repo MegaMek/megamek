@@ -2746,7 +2746,7 @@ implements Runnable {
 	            		}
 	            	}
 	         	}
-	         	checkVibrabombs(entity, curPos);
+	         	checkVibrabombs(entity, curPos, false, lastPos, curPos);
             }
 
             // infantry discovers minefields if they end their move
@@ -3155,7 +3155,11 @@ implements Runnable {
 	}
 	
 	// Checks to see if an entity sets off any vibrabombs.
-	private void checkVibrabombs(Entity entity, Coords coords) {
+	private void checkVibrabombs(Entity entity, Coords coords, boolean displaced) {
+		checkVibrabombs(entity, coords, displaced, null, null);
+	}
+
+	private void checkVibrabombs(Entity entity, Coords coords, boolean displaced, Coords lastPos, Coords curPos) {
 		// Only mechs can set off vibrabombs.
 		if (!(entity instanceof Mech)) {
 			return;
@@ -3170,7 +3174,7 @@ implements Runnable {
 			
 			// Mech weighing 10 tons or less can't set off the bomb
 			if (mass <= mf.getSetting() - 10) {
-				break;
+				continue;
 			} 
 			
 			int effectiveDistance = (mass - mf.getSetting()) / 10;
@@ -3181,6 +3185,15 @@ implements Runnable {
 				explodeVibrabomb(mf);
 			}
 			
+			// Hack; when moving, the Mech isn't in the hex during
+			// the movement.
+			if (!displaced && actualDistance == 0) {
+				phaseReport.append(entity.getShortName() + " is hit by a vibrabomb attack.");
+		        HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+		        phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+		        
+	           	resolvePilotingRolls(entity, true, lastPos, curPos);
+			}
 		}
 	}
 
@@ -3669,7 +3682,7 @@ implements Runnable {
 	    		enterMinefield(entity, mf, src, dest, false);
 	    	}
     	}
-    	checkVibrabombs(entity, dest);
+    	checkVibrabombs(entity, dest, true);
     }
 
     /**

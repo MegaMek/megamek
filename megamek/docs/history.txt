@@ -11,6 +11,7 @@ v 0.29.17 (CVS)
 + Bug 834364: Board.java changes for Map Generator use collections.jar classes.
 + Bug 834457: MicroSoft JRE can't use PNG files.  Sad, really.
 + Bug 837237, Patch 838203: you can define "rear of leg/arm" hit locations!
++ The Board#reverseHex variable is only used during map generation.
 
 v 0.29.16 (10-29-03, 8am)
 - Bug 744962: For some reason, the entity still thinks the pilot is not dead.

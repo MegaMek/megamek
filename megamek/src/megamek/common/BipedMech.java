@@ -73,11 +73,12 @@ public class BipedMech extends Mech {
         
         for ( int i = 0; i < locations(); i++ ) {
             if ( locationIsLeg(i) ) {
-                if ( !isLocationDestroyed(i) ) {
+                if ( !isLocationBad(i) ) {
                     if ( legHasHipCrit(i) ) {
                         hipHits++;
-                        if (!game.getOptions().booleanOption("maxtech_leg_damage"))
+                        if (!game.getOptions().booleanOption("maxtech_leg_damage")) {
                             continue;
+                        }
                     }
                     actuatorHits += countLegActuatorCrits(i);
                 } else {
@@ -123,7 +124,7 @@ public class BipedMech extends Mech {
      * Returns this mech's running/flank mp modified for leg loss & stuff.
      */
     public int getRunMP() {
-        if ( countDestroyedLegs() == 0 ) {
+        if ( countBadLegs() == 0 ) {
             return super.getRunMP();
         } else {
             return getWalkMP();
@@ -134,7 +135,7 @@ public class BipedMech extends Mech {
      * Returns run MP without considering MASC modified for leg loss & stuff.
      */
     public int getRunMPwithoutMASC() {
-        if ( countDestroyedLegs() == 0 ) {
+        if ( countBadLegs() == 0 ) {
             return super.getRunMPwithoutMASC();
         } else {
             return getWalkMP();
@@ -180,25 +181,25 @@ public class BipedMech extends Mech {
         for ( int i = 0; i < locsToCheck.length; i++ ) {
             int loc = locsToCheck[i];
             
-            if (isLocationDestroyed(loc)) {
+            if (isLocationBad(loc)) {
                 roll.addModifier(5, getLocationName(loc) + " destroyed");
             } else {
                 // check for damaged hip actuators
-                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
+                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
                     if (!game.getOptions().booleanOption("maxtech_leg_damage"))
                         continue;
                 }
                 // upper leg actuators?
-                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
+                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
                     roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
                 }
                 // lower leg actuators?
-                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
+                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
                     roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
                 }
                 // foot actuators?
-                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
+                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
                     roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
                 }
             }

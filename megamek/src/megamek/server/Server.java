@@ -6225,12 +6225,12 @@ implements Runnable, ConnectionHandler {
                     if ( ae.isProne() ) {
                         // As a sanity check, make certain
                         // that no arm has been destroyed.
-                        if ( ae.isLocationDestroyed(Mech.LOC_RARM) ) {
+                        if ( ae.isLocationBad(Mech.LOC_RARM) ) {
                             phaseReport.append( ae.getDisplayName() ).append
                                 ( " can't punch: right arm destroyed.\n" );
                             continue;
                         }
-                        else if ( ae.isLocationDestroyed(Mech.LOC_LARM) ) {
+                        else if ( ae.isLocationBad(Mech.LOC_LARM) ) {
                             phaseReport.append( ae.getDisplayName() ).append
                                 ( " can't punch: left arm destroyed.\n" );
                             continue;

@@ -723,8 +723,8 @@ public class MovePath implements Cloneable, Serializable {
             if (firstFacing > 3) {
                 firstFacing = 6 - firstFacing;
             }
-            if (first.isUsingManAce()) {
-                firstFacing = Math.max(firstFacing, firstFacing -1);
+            if (first.canShift()) {
+                firstFacing = Math.max(0, firstFacing - 1);
             }
             return firstFacing;
         }

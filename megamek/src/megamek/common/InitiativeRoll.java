@@ -33,6 +33,8 @@ import java.io.*;
 public class InitiativeRoll implements com.sun.java.util.collections.Comparable, Serializable {
     
     private Vector rolls = new Vector();
+    private Vector originalRolls = new Vector();
+    private Vector wasRollReplaced = new Vector(); //booleans
 
     /** Creates new InitaitiveRoll */
     public InitiativeRoll() {
@@ -40,12 +42,26 @@ public class InitiativeRoll implements com.sun.java.util.collections.Comparable,
 
     public void clear() {
        rolls.removeAllElements();
+       originalRolls.removeAllElements();
+       wasRollReplaced.removeAllElements();
     }
-    
+
     public void addRoll() {
-       rolls.addElement(new Integer(Compute.d6(2)));
+        Integer roll = new Integer(Compute.d6(2));
+        rolls.addElement(roll);
+        originalRolls.addElement(roll);
+        wasRollReplaced.addElement(new Boolean(false));
     }
-    
+
+    // Replace the previous init roll with a new one, and make a note
+    //  that it was replaced.  Used for Tactical Genius special
+    //  pilot ability (lvl 3).
+    public void replaceRoll() {
+        Integer roll = new Integer(Compute.d6(2));
+        rolls.setElementAt(roll, size() - 1);
+        wasRollReplaced.setElementAt(new Boolean(true), size() - 1);
+    }
+
     public int size() {
         return rolls.size();
     }
@@ -95,13 +111,24 @@ public class InitiativeRoll implements com.sun.java.util.collections.Comparable,
     public String toString()
     {
         StringBuffer buff = new StringBuffer();
-        
-        for ( Enumeration i = rolls.elements(); i.hasMoreElements(); ) {
-            Integer r = (Integer)i.nextElement();
-            buff.append( r.toString() );
-            if ( i.hasMoreElements() ) {
+
+        boolean tacticalGenius = false;
+        for (int i = 0; i < rolls.size(); i++) {
+            Integer r = (Integer)rolls.elementAt(i);
+            Integer o = (Integer)originalRolls.elementAt(i);
+
+            if (((Boolean)wasRollReplaced.elementAt(i)).booleanValue()) {
+                buff.append(o.toString()).append("(").append(r.toString()).append(")");
+                tacticalGenius = true;
+            } else {
+                buff.append( r.toString() );
+            }
+            if (i != rolls.size() - 1) {
                 buff.append( " / " );
             }
+        }
+        if (tacticalGenius) {
+            buff.append("  (Tactical Genius ability used)");
         }
         return buff.toString();
     }

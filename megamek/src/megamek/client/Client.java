@@ -689,7 +689,7 @@ public class Client extends Panel
         case Game.PHASE_FIRING_REPORT :
         case Game.PHASE_END :
         case Game.PHASE_VICTORY :
-            switchPanel(new ReportDisplay(this));
+            switchPanel(new ReportDisplay(this, game.showRerollInitiativeButton(getLocalPlayer())));
             setMapVisible(false);
 
             // nemchenk, 2004-01-01 -- hide MechDisplay at the end
@@ -1085,6 +1085,14 @@ public class Client extends Panel
     public void sendDone(boolean done) {
         send(new Packet(Packet.COMMAND_PLAYER_READY, new Boolean(done)));
     }
+
+    /**
+     * Sends a "reroll initiative" message to the server.
+     */
+    public void sendRerollInitiativeRequest() {
+        Player player = game.getPlayer( local_pn );
+        send(new Packet(Packet.COMMAND_REROLL_INITIATIVE, player));
+    }
     
     /**
      * Sends the info associated with the local player.
@@ -1477,6 +1485,7 @@ public class Client extends Panel
                 eotr = (String)c.getObject(0);
                 if (curPanel instanceof ReportDisplay) {
                     ((ReportDisplay)curPanel).refresh();
+                    ((ReportDisplay)curPanel).resetReadyButton();
                 }
                 break;
             case Packet.COMMAND_ENTITY_ATTACK :

@@ -4,6 +4,7 @@ v 0.29.26 (CVS)
 + Updated "BMRr Feature List.txt" to show recent progress.
 + Bug 893185: Protomechs get to roll to regain conciousness.
 + Bug 848517: Anti-mek infantry can only swarm enemy units.
++ Added level 3 "Tactical Genius" pilot advantage.
 
 v 0.29.25 (2004-02-08 10:00pm)
 + Data 887963: added images for Berserker, Lao Hu, and Naginata; updated

@@ -956,17 +956,28 @@ implements Runnable, ConnectionHandler {
      * players are done, and if so, moves on to the next phase.
      */
     private void checkReady() {
-        // are there any active players?
-        boolean allAboard = true;
         // check if all active players are done
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             if (!player.isGhost() && !player.isObserver() && !player.isDone()) {
-                allAboard = false;
+                return;
             }
         }
+
+        // Tactical Genius pilot special ability (lvl 3)
+        if (game.getInitiativeRerollRequests().size() > 0) {
+            resetActivePlayersDone();
+            TurnOrdered.rollInitAndResolveTies(game.getTeamsVector(), game.getInitiativeRerollRequests());
+            
+            determineTurnOrder(Game.PHASE_INITIATIVE);
+            writeInitiativeReport(true);
+            send(createReportPacket());
+            game.getInitiativeRerollRequests().removeAllElements();
+            return;  // don't end the phase yet, players need to see new report
+        }
+
         // need at least one entity in the game for the lounge phase to end
-        if (allAboard && !game.phaseHasTurns(game.getPhase())
+        if (!game.phaseHasTurns(game.getPhase())
         && (game.getPhase() != Game.PHASE_LOUNGE || game.getNoOfEntities() > 0)) {
             endCurrentPhase();
         }
@@ -1055,7 +1066,7 @@ implements Runnable, ConnectionHandler {
 
                 //setIneligible(phase);
                 determineTurnOrder(phase);
-                writeInitiativeReport();
+                writeInitiativeReport(false);
                 send(createReportPacket());
                 autoSave();
                 break;
@@ -1691,16 +1702,18 @@ implements Runnable, ConnectionHandler {
     /**
      * Write the initiative results to the report
      */
-    private void writeInitiativeReport() {
+    private void writeInitiativeReport(boolean abbreviatedReport) {
         // write to report
-        if ((game.getLastPhase() == Game.PHASE_DEPLOYMENT) || game.isDeploymentComplete() || !game.shouldDeployThisRound()) {
-            roundReport.append("\nInitiative Phase for Round #").append(game.getRoundCount());
-        } else {
-          if ( game.getRoundCount() == 0 ) {
-            roundReport.append("\nInitiative Phase for Deployment");
-          } else {
-            roundReport.append("\nInitiative Phase for Deployment for Round #").append(game.getRoundCount());
-          }
+        if (!abbreviatedReport) {
+            if ((game.getLastPhase() == Game.PHASE_DEPLOYMENT) || game.isDeploymentComplete() || !game.shouldDeployThisRound()) {
+                roundReport.append("\nInitiative Phase for Round #").append(game.getRoundCount());
+            } else {
+                if ( game.getRoundCount() == 0 ) {
+                    roundReport.append("\nInitiative Phase for Deployment");
+                } else {
+                    roundReport.append("\nInitiative Phase for Deployment for Round #").append(game.getRoundCount());
+                }
+            }
         }
         roundReport.append("\n------------------------------\n");
 
@@ -1744,7 +1757,9 @@ implements Runnable, ConnectionHandler {
             }
         }
         roundReport.append("\n\n");
-        roundReport.append("  Wind direction is "+game.getStringWindDirection()+"\n");
+        if (!abbreviatedReport) {
+            roundReport.append("  Wind direction is "+game.getStringWindDirection()+"\n");
+        }
     }
 
     /**
@@ -9351,6 +9366,17 @@ implements Runnable, ConnectionHandler {
         }
     }
 
+    private void receiveInitiativeRerollRequest(Packet pkt, int connIndex) {
+        Player player = getPlayer(connIndex);
+        if (game.hasTacticalGenius(player)) {
+            game.addInitiativeRerollRequest(game.getTeamForPlayer(player));
+        }
+        if ( null != player ) {
+            player.setDone(true);
+        }
+        checkReady();
+    }
+
     /**
      * Sets game options, providing that the player has specified the password
      * correctly.
@@ -9792,6 +9818,10 @@ implements Runnable, ConnectionHandler {
                 receivePlayerDone(packet, connId);
                 send(createPlayerDonePacket(connId));
                 checkReady();
+                break;
+            case Packet.COMMAND_REROLL_INITIATIVE :
+                receiveInitiativeRerollRequest(packet, connId);
+                send(createPlayerDonePacket(connId));
                 break;
             case Packet.COMMAND_CHAT :
                 String chat = (String)packet.getObject(0);

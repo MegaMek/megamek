@@ -99,6 +99,7 @@ public class Game implements Serializable
     private Vector actions = new Vector();
     private Vector pendingCharges = new Vector();
     private Vector pilotRolls = new Vector();
+    private Vector initiativeRerollRequests = new Vector();
     
     // reports
     private StringBuffer roundReport = new StringBuffer();
@@ -117,6 +118,7 @@ public class Game implements Serializable
 
     private Map minefields = Collections.synchronizedMap(new HashMap());
     private Vector vibrabombs = new Vector();
+
     /**
      * Constructor
      */
@@ -262,6 +264,23 @@ public class Game implements Serializable
     }
 
     /**
+     * Return a players team
+     *  Note: may return null if player has no team
+     */
+    public Team getTeamForPlayer(Player p) {
+        for (Enumeration i = teams.elements(); i.hasMoreElements();) {
+            final Team team = (Team)i.nextElement();
+            for (Enumeration j = team.getPlayers(); j.hasMoreElements();) {
+                final Player player = (Player)j.nextElement();
+                if (p == player) {
+                    return team;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Return an enumeration of player in the game
      */
     public Enumeration getPlayers() {
@@ -351,6 +370,21 @@ public class Game implements Serializable
             }
         }
         return count;
+    }
+
+    /**
+     * Returns true if the player has a valid unit with the Tactical Genius
+     *  pilot special ability.
+     */
+    public boolean hasTacticalGenius(Player player) {
+        int count = 0;
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if (entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed() && entity.getCrew().getOptions().booleanOption("tactical_genius")) {
+                return true;
+            }
+        }
+        return false;
     }    
   
     /**
@@ -1352,6 +1386,25 @@ public class Game implements Serializable
         return actions;
     }
     
+    public void addInitiativeRerollRequest(Team t) {
+        initiativeRerollRequests.addElement(t);
+    }
+
+    public Vector getInitiativeRerollRequests() {
+        return initiativeRerollRequests;
+    }
+
+    /** Used to determine whether a "Reroll" button should be
+     * displayed on the initiative ReportDisplay panel.
+     */
+    public boolean showRerollInitiativeButton(Player p) {
+        if (phase == Game.PHASE_INITIATIVE &&
+            hasTacticalGenius(p)) {
+            return true;
+        }
+        return false;
+    }
+
     /** Adds a pending displacement attack to the list for this phase. */
     public void addCharge(AttackAction ea) {
         pendingCharges.addElement(ea);

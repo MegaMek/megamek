@@ -193,6 +193,7 @@ public class MechView {
                     .append(mounted.getLinked().getDesc())
                     .append(">");
             }
+            sWeapons.append(" ").append(wtype.getHeat()).append(" Heat");
             sWeapons.append("\n");
         }
         return sWeapons.toString();

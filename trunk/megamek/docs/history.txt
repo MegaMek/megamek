@@ -10,6 +10,8 @@ v0.29.35 (CVS)
 + Bug 950386: added the ability to edit bot units
 + Bugs 941075, 790783, 800960: were either fixed or are no longer relevant
 + First wave of changes to help shore up bot code.
++ Escape out '"' in playername in config file. Should probably be used for
+	other config elements.
 
 v0.29.34 (2004-05-11, 10:30pm)
 + Bug 945047, Patch 946170: Lvl3-rules smoke now stack with terrain right.

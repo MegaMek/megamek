@@ -81,7 +81,7 @@ public class Settings
     public static String    mechDirectory           = "data" + File.separator + "mechfiles";
 
     public static boolean   soundMute               = false;
-    public static String    soundBingFilename       = "data/sounds/call.wav";
+    public static String    soundBingFilename       = "data" + File.separator + "sounds" + File.separator + "call.wav";
 
     /**
      * The player wants to track memory use. Setting this to <code>true</code>
@@ -93,6 +93,20 @@ public class Settings
      * @see     megamek.client.Client#memDump(String)
      */
     public static boolean   memoryDumpOn            = false;
+    
+    /**
+     * Controls whether the hex info popup is shown when the mouse hovers over the main map
+     * 
+     * @see     megamek.client.BoardView1
+     */
+    public static boolean   showMapHexPopup          = true;
+
+    /**
+     * Controls whether the hex info popup is shown when the mouse hovers over the main map
+     * 
+     * @see     megamek.client.BoardView1
+     */
+    public static int       tooltipDelay             = 1000;
 
     /**
      * The MegaMek-standard "newline" string is that of Windows.  Basically,
@@ -291,6 +305,14 @@ scan:
                         st.nextToken();
                         memoryDumpOn = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if(key.equals("showmaphexpopup")) {
+                        st.nextToken();
+                        showMapHexPopup = Boolean.valueOf(st.sval).booleanValue();
+                    }
+                    else if(key.equals("tooltipdelay")) {
+                        st.nextToken();
+                        tooltipDelay = (int)st.nval;
+                    }
                 }
             }
             
@@ -373,7 +395,8 @@ scan:
                 mekHitLocLog.close();
                 cw.write("mekhitloclog \"" + mekHitLocLogName + "\"\r\n");
             }
-            
+            cw.write("showmaphexpopup " + showMapHexPopup + "\r\n");
+            cw.write("tooltipdelay " + tooltipDelay + "\r\n");
             cw.close();
         } catch(Exception e) {
             System.err.println(e.getMessage());

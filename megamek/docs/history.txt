@@ -90,6 +90,7 @@ v next
 + 608767: prevented several more ways for a turret to rotate while locked
 + 608767: stunned vehicle crews don't roll for wakeup
 + disabled vehicles are counted as immobile for bth purposes
++ 608581: no more critical hits on CASE
 
 v 0.26.12 (09-07-02, 11am)
 + fixed crashbug when no ammo was available to a weapon

@@ -27,10 +27,16 @@ public class CriticalSlot
     private boolean                hit; // hit
     private boolean                missing; // location destroyed
     private boolean                destroyed;
+    private boolean                hittable; // false = hits rerolled
     
     public CriticalSlot(int type, int index) {
+        this(type, index, true);
+    }
+    
+    public CriticalSlot(int type, int index, boolean hittable) {
         this.type = type;
         this.index = index;
+        this.hittable = hittable;
     }
     
     public int getType() {
@@ -75,8 +81,8 @@ public class CriticalSlot
     /**
      * Can this slot be hit by a critical hit roll?
      */
-    public boolean isHitable() {
-        return !hit && !destroyed;
+    public boolean isHittable() {
+        return hittable && !hit && !destroyed;
     }
     
     /**

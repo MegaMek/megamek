@@ -327,6 +327,14 @@ public class Client extends Panel
 	}
 	
     /**
+     * Pops up a dialog box showing an alert
+     */
+    public void doAlertDialog(String title, String message) {
+        AlertDialog alert = new AlertDialog(frame, title, message);
+        alert.show();
+    }
+	
+    /**
      * Pops up a dialog box asking a yes/no question
      * @returns true if yes
      */

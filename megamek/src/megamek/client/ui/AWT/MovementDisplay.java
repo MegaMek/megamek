@@ -280,6 +280,8 @@ public class MovementDisplay
 					client.bv.drawMovementData(ce(), cmd);
 				}
 			} else if (b.getType() == b.BOARD_HEX_CLICKED) {
+                final Entity target = client.game.getEntity(b.getCoords());
+                
 				client.game.board.select(b.getCoords());
 				client.bv.clearMovementData();
 				
@@ -288,6 +290,21 @@ public class MovementDisplay
 				md = new MovementData(cmd);
                 butMove.setLabel("Move");
 				butMove.setEnabled(true);
+                
+                // check for charge/dfa
+                if (target != null && !target.equals(ce())
+                    && (!target.getOwner().equals(ce().getOwner())
+                        || client.gameSettings.friendlyFire)) {
+                    if (gear == Compute.GEAR_JUMP 
+                        && Compute.isValidDFA(client.game, cen,  md)) {
+                        // prompt for DFA
+                        client.doAlertDialog("Death From Above!", "Do you want to execute a DFA?");
+                    } else if (gear == Compute.GEAR_LAND 
+                               && Compute.isValidCharge(client.game, md)) {
+                        // prompt for charge
+                        client.doAlertDialog("Charge!", "Do you want to charge?");
+                    }
+                }
 			}
 		}
 	}
@@ -329,22 +346,18 @@ public class MovementDisplay
 		if (ev.getActionCommand().equalsIgnoreCase("ready") && client.isMyTurn()) {
 			client.sendEntityReady(cen);
 			client.sendReady(true);
-		}
-		if (ev.getActionCommand().equalsIgnoreCase("move") && client.isMyTurn()) {
+		} else if (ev.getActionCommand().equalsIgnoreCase("move") && client.isMyTurn()) {
 			moveTo(md);
-		}
-		if (ev.getActionCommand().equalsIgnoreCase("next") && client.isMyTurn()) {
+		} else if (ev.getActionCommand().equalsIgnoreCase("next") && client.isMyTurn()) {
 			clearAllMoves();
 			selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
-		}
-		if (ev.getActionCommand().equalsIgnoreCase("walk") && client.isMyTurn()) {
+		} else if (ev.getActionCommand().equalsIgnoreCase("walk") && client.isMyTurn()) {
             if (gear == Compute.GEAR_JUMP) {
 			    clearAllMoves();
             }
 			gear = Compute.GEAR_LAND;
 			butJump.setEnabled(ce().getJumpMP() > 0);
-		}
-		if (ev.getActionCommand().equalsIgnoreCase("jump") && client.isMyTurn()) {
+		} else if (ev.getActionCommand().equalsIgnoreCase("jump") && client.isMyTurn()) {
             if (gear != Compute.GEAR_JUMP) {
 			    clearAllMoves();
             }
@@ -354,16 +367,14 @@ public class MovementDisplay
 			gear = Compute.GEAR_JUMP;
             butWalk.setEnabled(true);
 			butBackup.setEnabled(true);
-		}
-		if (ev.getActionCommand().equalsIgnoreCase("backup") && client.isMyTurn()) {
+		} else if (ev.getActionCommand().equalsIgnoreCase("backup") && client.isMyTurn()) {
             if (gear == Compute.GEAR_JUMP) {
 			    clearAllMoves();
             }
 			gear = Compute.GEAR_BACKUP;
             butWalk.setEnabled(true);
 			butJump.setEnabled(ce().getJumpMP() > 0);
-		}
-		if (ev.getActionCommand().equalsIgnoreCase("prone") && client.isMyTurn()) {
+		} else if (ev.getActionCommand().equalsIgnoreCase("prone") && client.isMyTurn()) {
 			clearAllMoves();
 			gear = Compute.GEAR_LAND;
             if (!md.contains(MovementData.STEP_GET_UP)) {
@@ -372,7 +383,7 @@ public class MovementDisplay
 			client.bv.drawMovementData(ce(), cmd);
             butMove.setLabel("Move");
 			butMove.setEnabled(true);
-		}
+		} 
 	}
 	
 

@@ -3556,6 +3556,7 @@ implements Runnable {
         boolean anyRolls = false;
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
+	    final int totalHits = e.getCrew().getHits();
             final int rollsNeeded = e.getCrew().getRollsNeeded();
             e.crew.setRollsNeeded(0);
             
@@ -3563,13 +3564,15 @@ implements Runnable {
                 continue;
             }
             anyRolls = true;
-            for (int j = 0; j < rollsNeeded; j++) {
+            for (int hit = totalHits - rollsNeeded; hit < totalHits; hit++) {
                 int roll = Compute.d6(2);
+		int rollTarget = Compute.getConciousnessNumber( hit );
                 phaseReport.append("\nPilot of " + e.getDisplayName()
-                + " \"" + e.getCrew().getName() + "\""
-                + " needs a " + e.getCrew().getConciousnessNumber()
-                + " to stay concious.  Rolls " + roll + " : ");
-                if (roll >= e.crew.getConciousnessNumber()) {
+				   + " \"" + e.getCrew().getName()
+				   + "\" needs a " + rollTarget
+				   + " to stay concious.  Rolls " + roll
+				   + " : ");
+                if (roll >= rollTarget) {
                     phaseReport.append("successful!");
                 } else {
                     e.crew.setUnconcious(true);
@@ -3599,8 +3602,13 @@ implements Runnable {
             }
             anyRolls = true;
             int roll = Compute.d6(2);
-            roundReport.append("\nPilot of " + e.getDisplayName() + " \"" + e.crew.getName() + "\" needs a " + e.crew.getConciousnessNumber() + " to regain conciousness.  Rolls " + roll + " : ");
-            if (roll >= e.crew.getConciousnessNumber()) {
+	    int rollTarget = Compute.getConciousnessNumber( e.crew.getHits() );
+            roundReport.append("\nPilot of " + e.getDisplayName()
+			       + " \"" + e.crew.getName()
+			       + "\" needs a " + rollTarget
+			       + " to regain conciousness.  Rolls " + roll
+			       + " : ");
+	    if (roll >= rollTarget) {
                 roundReport.append("successful!");
                 e.crew.setUnconcious(false);
             } else {

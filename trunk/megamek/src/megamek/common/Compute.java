@@ -4826,7 +4826,7 @@ public class Compute
         Entity entity = game.getEntity(entityId);
         Coords pos = entity.getPosition();
         return pos != null && entity.getWalkMP() > 0 && !entity.isProne()
-            && !entity.isShutDown() && !entity.getPilot().isUnconcious()
+            && !entity.isShutDown() && !entity.getCrew().isUnconcious()
             && (pos.x == 0 || pos.x == game.board.width - 1 
                 || pos.y == 0 || pos.y == game.board.height - 1);
     }

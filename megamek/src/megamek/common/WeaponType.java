@@ -107,9 +107,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createInfRifle());
         EquipmentType.addType(createInfMG());
         EquipmentType.addType(createInfSRM());
-        /* Need more detail on INF LRM.
         EquipmentType.addType(createInfLRM());
-        */
         EquipmentType.addType(createInfLaser());
         EquipmentType.addType(createInfFlamer());
         
@@ -2039,9 +2037,9 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_LRM;
         weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 2;
-        weapon.mediumRange = 4;
-        weapon.longRange = 6;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY;

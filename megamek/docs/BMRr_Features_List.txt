@@ -309,7 +309,8 @@ Special Case Rules (Underwater Operations)
 - Line Of Sight			Yes		None
 - Weapons Attacks		Yes		None
 - Physical Attacks		Yes		None
-- Hull Integrity		Yes		None
+- Hull Integrity		Yes		Meks standing in Level 1 SHOULDN'T CHECK FOR BREACHES!!!
+                                                Select the "Check for leg breaches" option to override.
 
 Equipment
 

@@ -95,6 +95,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(ruleBreakers, new GameOption("woods_burn_down", "Woods have a chance to burn down", "If checked, woods will burn down as if cleared on a roll of 11+.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("vechicles_safe_from_infernos", "Vehicles may not be the target of an Inferno missle attack.", "If checked, Vehicles cannot be the target of an Inferno SRM attack.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("protos_safe_from_infernos", "Protomechs may not be the target of an Inferno missle attack.", "If checked, Protomechs cannot be the target of an Inferno SRM attack.\n\nUnchecked by default.", false));
+        addOption(ruleBreakers, new GameOption("check_leg_breaches", "Check for Leg breaches in Level 1 water", "If checked, a Mek standing in Level 1 water will check for hull breaches (which is **against** the rules on page 94 of the BMRr).\n\nUnchecked by default.", false));
     }
 
     public void loadOptions(Client client, String password) {

@@ -521,9 +521,17 @@ public class Compute
         }
 
         // Can't target infantry with Inferno rounds (BMRr, pg. 141).
-        if ( te instanceof Infantry && isInferno ) {
+        //  Also, enforce options for keeping vehicles and protos safe
+        //  if those options are checked.
+        if ( isInferno &&
+             (te instanceof Infantry
+              || (te instanceof Tank &&
+                  game.getOptions().booleanOption("vechicles_safe_from_infernos"))
+              || (te instanceof Protomech &&
+                  game.getOptions().booleanOption("protos_safe_from_infernos")))
+              ) {
             return new ToHitData( ToHitData.IMPOSSIBLE,
-                  "Can not target infantry with Inferno rounds." );
+                                  "Can not target that unit type with Inferno rounds." );
         }
 
         // Can't raise the heat of infantry or tanks.

@@ -25,20 +25,20 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Game;
 import megamek.common.Hex;
+import megamek.common.IAimingModes;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
+import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.MinefieldTarget;
 import megamek.common.Mounted;
-import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrain;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
-import megamek.client.FiringDisplay;
 
 /**
  * Represents intention to fire a weapon at the target.
@@ -49,7 +49,7 @@ public class WeaponAttackAction
     private int weaponId;
     private int ammoId = -1;
     private int aimedLocation = Mech.LOC_NONE;
-    private int aimMode = FiringDisplay.AIM_MODE_NONE;
+    private int aimMode = IAimingModes.AIM_MODE_NONE;
     private int otherAttackInfo = -1;	// 
     private boolean nemesisConfused = false;
     
@@ -128,7 +128,7 @@ public class WeaponAttackAction
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId) {
-        return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE, false);
+        return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE, false);
       }
     
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
@@ -708,7 +708,7 @@ public class WeaponAttackAction
         }
     
         // add targeting computer (except with LBX cluster ammo)
-        if (aimingMode == FiringDisplay.AIM_MODE_TARG_COMP &&
+        if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP &&
           aimingAt != Mech.LOC_NONE) {
           toHit.addModifier(3, "aiming with targeting computer");
         } else {

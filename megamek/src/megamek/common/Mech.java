@@ -14,9 +14,8 @@
 
 package megamek.common;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.Enumeration;
-import megamek.client.FiringDisplay;
 
 /**
  * You know what mechs are, silly.
@@ -971,19 +970,19 @@ public abstract class Mech
      * Rolls up a hit location
      */
     public HitData rollHitLocation(int table, int side) {
-    	return rollHitLocation(table, side, LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+    	return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
     }     
      
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
         
         if ((aimedLocation != LOC_NONE) &&
-        	(aimingMode == FiringDisplay.AIM_MODE_TARG_COMP)) {
+        	(aimingMode == IAimingModes.AIM_MODE_TARG_COMP)) {
             	return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);        		
         }
         
     	if ((aimedLocation != LOC_NONE) &&
-    		(aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
+    		(aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
             roll = Compute.d6(2);
             
             if ((5 < roll) && (roll < 9)) {

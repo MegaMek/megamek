@@ -38,6 +38,7 @@ public class PhysicalDisplay
     private Button            butPunch;
     private Button            butKick;
     private Button            butPush;
+    private Button            butClub;
     private Button            butReady;
     private Button            butNext;
     private Button            butMenu;
@@ -81,6 +82,12 @@ public class PhysicalDisplay
         butPush.addKeyListener(this);
         butPush.setEnabled(false);
         
+        butClub = new Button("Club");
+        butClub.setActionCommand("club");
+        butClub.addActionListener(this);
+        butClub.addKeyListener(this);
+        butClub.setEnabled(false);
+        
         butReady = new Button("Done");
         butReady.setActionCommand("ready");
         butReady.addActionListener(this);
@@ -103,10 +110,11 @@ public class PhysicalDisplay
         panButtons = new Panel();
         panButtons.setLayout(new GridLayout(2, 3));
         panButtons.add(butPunch);
-        panButtons.add(butKick);
+        panButtons.add(butClub);
         panButtons.add(butNext);
+        panButtons.add(butKick);
         panButtons.add(butPush);
-        panButtons.add(butMenu);
+//        panButtons.add(butMenu);
         panButtons.add(butReady);
     
         
@@ -150,21 +158,29 @@ public class PhysicalDisplay
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int en) {
-        if (client.game.getEntity(en) != null) {
-            this.cen = en;
-            target(Entity.NONE);
-            client.game.board.highlight(ce().getPosition());
-            client.game.board.select(null);
-            client.game.board.cursor(null);
-      
-            client.mechD.displayMech(ce());
-            client.mechD.showPanel("movement");
-      
-            client.bv.centerOnHex(ce().getPosition());
-        } else {
+        if (client.game.getEntity(en) == null) {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
             System.err.println("FiringDisplay: sending ready signal...");
-                  client.sendReady(true);
+            client.sendReady(true);
+            return;
+        }
+        this.cen = en;
+        target(Entity.NONE);
+        client.game.board.highlight(ce().getPosition());
+        client.game.board.select(null);
+        client.game.board.cursor(null);
+
+        client.mechD.displayMech(ce());
+        client.mechD.showPanel("movement");
+
+        client.bv.centerOnHex(ce().getPosition());
+
+        // does it have a club?
+        Mounted club = Compute.clubMechHas(ce());
+        if (club == null || club.getName().endsWith("Club")) {
+            butClub.setLabel("Club");
+        } else {
+            butClub.setLabel(club.getName());
         }
     }
     
@@ -205,6 +221,7 @@ public class PhysicalDisplay
         butKick.setEnabled(false);
         butPunch.setEnabled(false);
         butPush.setEnabled(false);
+        butClub.setEnabled(false);
         butReady.setEnabled(false);
         butNext.setEnabled(false);
     }
@@ -277,6 +294,16 @@ public class PhysicalDisplay
     }
     
     /**
+     * Club that target!
+     */
+    private void club() {
+        disableButtons();
+        Mounted club = Compute.clubMechHas(ce());
+        attacks.addElement(new ClubAttackAction(cen, ten, club));
+        ready();
+    }
+    
+    /**
      * Targets an entity
      */
     private void target(int en) {
@@ -307,9 +334,20 @@ public class PhysicalDisplay
             // how about push?
             ToHitData push = Compute.toHitPush(client.game, cen, ten);
             butPush.setEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
+            
+            // clubbing?
+            Mounted club = Compute.clubMechHas(ce());
+            if (club != null) {
+                ToHitData clubToHit = Compute.toHitClub(client.game, cen, ten, club);
+                butClub.setEnabled(clubToHit.getValue() != ToHitData.IMPOSSIBLE);
+            } else {
+                butClub.setEnabled(false);
+            }
+            
         } else {
             butPunch.setEnabled(false);
             butKick.setEnabled(false);
+            butClub.setEnabled(false);
         }
     }
     
@@ -410,6 +448,8 @@ public class PhysicalDisplay
             kick();
         } else if (ev.getActionCommand().equalsIgnoreCase("push") && client.isMyTurn()) {
             push();
+        } else if (ev.getActionCommand().equalsIgnoreCase("club") && client.isMyTurn()) {
+            club();
         } else if (ev.getActionCommand().equalsIgnoreCase("next") && client.isMyTurn()) {
             selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
         }

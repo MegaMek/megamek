@@ -759,7 +759,7 @@ public class MovementDisplay
                 }
 
                 // check if it's a valid charge
-                ToHitData toHit = new ChargeAttackAction(cen, target.getTargetId(), target.getTargetType(), target.getPosition()).toHit(client.game, cmd);
+                ToHitData toHit = new ChargeAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()).toHit(client.game, cmd);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
 
                     // Determine how much damage the charger will take.

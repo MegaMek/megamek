@@ -34,7 +34,7 @@ import megamek.common.*;
 public class ChargeAttackAction extends DisplacementAttackAction {
 
     public ChargeAttackAction(Entity attacker, Targetable target) {
-        this(attacker.getId(), target.getTargetId(), target.getTargetType(), target.getPosition());
+        this(attacker.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
     }
     
     public ChargeAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {

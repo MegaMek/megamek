@@ -1,3 +1,16 @@
+/**
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * 
+ *  This program is free software; you can redistribute it and/or modify it 
+ *  under the terms of the GNU General Public License as published by the Free 
+ *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful, but 
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *  for more details.
+ */
 /*
  * TestBot.java
  *
@@ -367,9 +380,9 @@ public class TestBot extends BotClientWrapper {
           System.out.println("recalculating moves since the unit is immobile");
           this.calculateMoveTurn();
           return;
-        } else if (!cen.moved && mt.result.length < 6) {
-          min = (EntityState)mt.result[0];
+        } else if (!cen.moved && mt.result.length < 6 && mt.result.length > 0) {
           //move to the head of the class...
+          min = (EntityState)mt.result[0];
           short_circuit = true;
         }
       }
@@ -390,16 +403,18 @@ public class TestBot extends BotClientWrapper {
           } catch (Exception e) {
             e.printStackTrace();
           }
-        } else {
+        } else if ( ((EntityState[])possible.elementAt(0)).length > 0 ) {
           min = ((EntityState[])possible.elementAt(0))[0];
         }
       }
     }
-    for (int d = 0; d < enemy_array.length; d++) {
+    for (int d = 0; min != null && d < enemy_array.length; d++) {
       Entity en = (Entity)enemy_array[d];
       CEntity enemy = this.enemies.get(en);
       int enemy_hit_arc = Compute.getThreatHitArc(enemy.old.curPos, enemy.old.curFacing, min.curPos);
-      enemy.expected_damage[enemy_hit_arc] += min.damages[d];
+      if ( min.damages.length > d ) {
+          enemy.expected_damage[enemy_hit_arc] += min.damages[d];
+      }
       if (enemy.expected_damage[enemy_hit_arc] > 0) {
         enemy.hasTakenDamage = true;
       }

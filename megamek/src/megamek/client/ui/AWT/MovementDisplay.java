@@ -1007,7 +1007,6 @@ public class MovementDisplay
     private Entity getUnloadedUnit() {
 
         Entity choice = null;
-
         // Handle error condition.
         if ( this.loadedUnits.size() == 0 ) {
             System.err.println( "MovementDisplay#getUnloadedUnit() called without loaded units." );
@@ -1281,16 +1280,18 @@ public class MovementDisplay
             clearAllMoves();
             cmd.addStep(MovePath.STEP_FLEE);
             moveTo(cmd);
-        } else if (ce() instanceof Tank) {
-            if (ev.getActionCommand().equals(MOVE_EJECT) && clientgui.doYesNoDialog("Abandon?", "Do you want to abandon this vehicle?")) {
+        } else if (ev.getActionCommand().equals(MOVE_EJECT)) {
+            if (ce() instanceof Tank) {
+                if (clientgui.doYesNoDialog("Abandon?", "Do you want to abandon this vehicle?")) {
+                    clearAllMoves();
+                    cmd.addStep(MovePath.STEP_EJECT);
+                    moveTo(cmd);
+                }
+            } else if (clientgui.doYesNoDialog("Eject?", "Do you want to abandon this mech?")) {
                 clearAllMoves();
                 cmd.addStep(MovePath.STEP_EJECT);
                 moveTo(cmd);
             }
-        } else if (ev.getActionCommand().equals(MOVE_EJECT) && clientgui.doYesNoDialog("Eject?", "Do you want to abandon this mech?")) {
-            clearAllMoves();
-            cmd.addStep(MovePath.STEP_EJECT);
-            moveTo(cmd);
         } else if ( ev.getActionCommand().equals(MOVE_LOAD) ) {
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.

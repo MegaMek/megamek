@@ -125,7 +125,7 @@ public class BLKTankFile implements MechLoader {
             throw new EntityLoadingException("Incorrect armor array length");   
         }
         
-        t.setHasTurret(armor.length == 5);
+        t.setHasNoTurret(armor.length == 4);
         
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];
@@ -143,7 +143,7 @@ public class BLKTankFile implements MechLoader {
         loadEquipment(t, "Right", Tank.LOC_RIGHT);
         loadEquipment(t, "Left", Tank.LOC_LEFT);
         loadEquipment(t, "Rear", Tank.LOC_REAR);
-        if (t.hasTurret()) {
+        if (!t.hasNoTurret()) {
             loadEquipment(t, "Turret", Tank.LOC_TURRET);
         }
         loadEquipment(t, "Body", Tank.LOC_BODY);

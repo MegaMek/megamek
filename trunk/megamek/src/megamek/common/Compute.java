@@ -164,32 +164,15 @@ public class Compute
     }
     
     /**
-     * Returns true if there is a mech that is an enemy of the specified unit
-     * in the specified hex.  This is only called for stacking purposes, and
-     * so does not return true if the enemy mech is currenly making a DFA.
-     */
-    public static boolean isEnemyMechIn(Game game, int entityId, Coords coords) {
-        Entity entity = game.getEntity(entityId);
-        for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
-            final Entity inHex = (Entity)i.nextElement();
-            if (inHex instanceof Mech && inHex.isEnemyOf(entity)
-            && !inHex.isMakingDfa()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
      * Returns true if there is any unit that is an enemy of the specified unit
      * in the specified hex.  This is only called for stacking purposes, and
      * so does not return true if the enemy unit is currenly making a DFA.
      */
-    public static boolean isEnemyUnitIn(Game game, int entityId, Coords coords) {
+    public static boolean isEnemyIn(Game game, int entityId, Coords coords, boolean isMech) {
         Entity entity = game.getEntity(entityId);
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
-            if (inHex.isEnemyOf(entity) && !inHex.isMakingDfa()) {
+            if ((!isMech || inHex instanceof Mech) && inHex.isEnemyOf(entity) && !inHex.isMakingDfa()) {
                 return true;
             }
         }
@@ -3494,17 +3477,6 @@ public class Compute
         }
 
         return 0;
-    }
-
-    /**
-     * Damage caused by a successfull thrashing attack.
-     *
-     * @param   entity - the <code>Entity</code> conducting the thrash attack.
-     * @return  The <code>int</code> amount of damage caused by this attack.
-     */
-    public static int getThrashDamageFor( Entity entity ) {
-        int nDamage = Math.round( entity.getWeight() / 3.0f );
-        return nDamage;
     }
 
     /**

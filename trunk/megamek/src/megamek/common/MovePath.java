@@ -153,20 +153,21 @@ public class MovePath implements Serializable {
         }
         return this;
     }
-
-    /**
-     * Not to be called from the server.
-     */
-    public void compile() {
-        compile(game, entity);
-    }
     
-    /**
-     * TODO: this could be recompile
-     */
     public void compile(Game g, Entity en) {
         this.game = g;
         this.entity = en;
+        Vector temp = new Vector(steps);
+        steps.clear();
+        for (int i = 0; i < temp.size(); i++) {
+            MoveStep step = (MoveStep)temp.get(i);
+            if (step.getTarget(game) != null) {
+                step = new MoveStep(this, step.getType(), step.getTarget(game));
+            } else {
+                step = new MoveStep(this, step.getType());
+            }
+            this.addStep(step);
+        }
 		compileLastStep();
     }
 
@@ -212,15 +213,6 @@ public class MovePath implements Serializable {
         }
         return false;
     }
-
-    /**
-	 * Clear all flags in all steps
-	 */
-    /*
-	 * public void clearAllFlags() { for (final Enumeration i = getSteps();
-	 * i.hasMoreElements();) { final MoveStep step = (MoveStep)
-	 * i.nextElement(); step.clearAllFlags(); }
-	 */
 
     /**
 	 * Returns the final coordinates if a mech were to perform all the steps in
@@ -395,7 +387,7 @@ public class MovePath implements Serializable {
         return false;
     }
 
-    protected void compileLastStep() {
+    public void compileLastStep() {
         for (int i = length() - 1; i >= 0; i--) {
             final MoveStep step = getStep(i);
             if (step.checkIllegal(game, entity)) {

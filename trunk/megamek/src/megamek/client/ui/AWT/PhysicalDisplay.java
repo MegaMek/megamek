@@ -558,7 +558,7 @@ public class PhysicalDisplay
             .append( toHit.getDesc() )
             .append( ")" )
             .append( "\nDamage: " )
-            .append( Compute.getThrashDamageFor(ce()) )
+            .append( ThrashAttackAction.getThrashDamageFor(ce()) )
             .append( toHit.getTableDesc() );
 
         // Give the user to cancel the attack.

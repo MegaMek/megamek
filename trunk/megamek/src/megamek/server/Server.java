@@ -1525,33 +1525,6 @@ implements Runnable, ConnectionHandler {
     }
     
     /**
-     * Deploys an entity near a selected point on the board.
-     *
-     * @param entity the entity to deploy
-     * @param pos the point to deploy near
-     * @param towards another point that the deployed mechs will face towards
-     */
-    private boolean deploy(Entity entity, Coords pos, Coords towards, int recurse) {
-        if (game.board.contains(pos) && game.getFirstEntity(pos) == null
-        && !entity.isHexProhibited(game.board.getHex(pos))) {
-            placeEntity(entity, pos, pos.direction(towards));
-            return true;
-        }
-        
-        // if pos is filled, try some different positions
-        for (int j = 0; j < recurse; j++) {
-            for (int i = 0; i < 6; i++) {
-                Coords deployPos = pos.translated(i);
-                if (deploy(entity, deployPos, towards, j)) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
      * Places a mech on the board
      */
     private void placeEntity(Entity entity, Coords pos, int facing) {
@@ -1560,31 +1533,6 @@ implements Runnable, ConnectionHandler {
         entity.setSecondaryFacing(facing);
     }
     
-    /**
-     * Returns the starting point for the specified player
-     */
-    private Coords getStartingCoords(int startingPos) {
-        switch (startingPos) {
-            default :
-            case 0 :
-                return new Coords(1, 1);
-            case 1 :
-                return new Coords(game.board.width / 2, 1);
-            case 2 :
-                return new Coords(game.board.width - 2, 1);
-            case 3 :
-                return new Coords(game.board.width - 2, game.board.height / 2);
-            case 4 :
-                return new Coords(game.board.width - 2, game.board.height - 2);
-            case 5 :
-                return new Coords(game.board.width / 2, game.board.height - 2);
-            case 6 :
-                return new Coords(1, game.board.height - 2);
-            case 7 :
-                return new Coords(1, game.board.height / 2);
-        }
-    }
-
     /**
        Set up the teams vector.  Each player on a team (Team 1 .. Team X) is
        placed in the appropriate vector.  Any player on 'No Team', is placed
@@ -6240,7 +6188,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // Standard damage loop in 5 point clusters.
-        int hits = Compute.getThrashDamageFor(ae);
+        int hits = ThrashAttackAction.getThrashDamageFor(ae);
         phaseReport.append( " and deals " )
             .append( hits )
             .append( " points of damage in 5 point clusters.");

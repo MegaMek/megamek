@@ -404,7 +404,16 @@ public abstract class Entity
      * Returns the elevation of this entity.
      */
     public int elevation() {
-        return elevationOccupied(game.board.getHex(getPosition()));
+	Coords	pos = getPosition();
+	if ( null == pos ) {
+	    throw new IllegalStateException
+		("Entity #" + this.getId() + "does not know its position.");
+	}
+	else if ( !game.board.contains(pos) ) {
+	    throw new IllegalStateException
+		("Board does not contain the Coords: " + pos + ".");
+	}
+        return elevationOccupied(game.board.getHex(pos));
     }
     
     /**

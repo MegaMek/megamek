@@ -36,6 +36,11 @@ public class Game implements Serializable
     public static final int PHASE_PHYSICAL          = 9;
     public static final int PHASE_END               = 10;
     public static final int PHASE_VICTORY           = 11;
+    /**
+     * The number of Infantry platoons that have to move for every Mek
+     * or Vehicle, if the "inf_move_multi" option is selected.
+     */
+    public static final int INF_MOVE_MULTI     	    = 3;
     
     public int phase = PHASE_UNKNOWN;
     private GameTurn turn;
@@ -384,5 +389,25 @@ public class Game implements Serializable
         }
         return getFirstEntityNum(player);
     }
-    
+
+    /**
+     * Determines if the indicated player has any remaining selectable infanty.
+     *
+     * @param	playerId - the <code>int</code> ID of the player
+     * @return	<code>true</code> if the player has any remaining
+     *		active infantry, <code>false</code> otherwise.
+     */
+    public boolean hasInfantry( int playerId ) {
+	Player player = this.getPlayer( playerId );
+
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if ( player.equals(entity.getOwner()) &&
+		 entity.isSelectable() &&
+		 entity instanceof Infantry ) {
+                return true;
+            }          
+        }
+        return false;
+    }
 }

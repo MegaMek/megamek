@@ -3127,7 +3127,7 @@ implements Runnable {
         phaseReport.append("Needs " ).append( roll.getValueAsString()
         ).append( " [" ).append( roll.getDesc() ).append( "]"
         ).append( ", rolls " ).append( diceRoll ).append( " : ");
-        if (diceRoll < roll.getValue() || true) {
+        if ( diceRoll < roll.getValue() ) {
             phaseReport.append("fails.\n");
             return false;
         } else {

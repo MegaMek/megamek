@@ -1385,6 +1385,11 @@ public class Compute
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = isInBuilding( game, te );
+        boolean isInferno =
+            ( atype != null &&
+              atype.getMunitionType() == AmmoType.M_INFERNO ) ||
+            ( isWeaponInfantry &&
+              wtype.hasFlag(WeaponType.F_INFERNO) );
         
         ToHitData toHit = null;
         
@@ -1435,18 +1440,13 @@ public class Compute
         }
 
         // Some weapons can't cause fires.
-        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) &&
+        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno &&
              Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can not cause fires.");
         }
 
         // Can't target infantry with Inferno rounds (BMRr, pg. 141).
-        if ( te instanceof Infantry &&
-             ( ( atype != null &&
-                 atype.getMunitionType() == AmmoType.M_INFERNO ) ||
-               ( isWeaponInfantry &&
-                 wtype.hasFlag(WeaponType.F_INFERNO) )
-               ) ) {
+        if ( te instanceof Infantry && isInferno ) {
             return new ToHitData( ToHitData.IMPOSSIBLE,
                   "Can not target infantry with Inferno rounds." );
         }

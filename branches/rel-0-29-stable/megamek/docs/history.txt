@@ -116,6 +116,11 @@ VERSION HISTORY:
 v 0.29-stable-2 (CVS)
 + Bug 763169: Dropping prone now has chance to dislodge swarmers.
 + Bug 756126 (possible): Only needed hex images loaded during board load
++ Bug 769106: Fixed bug that was messing up "go prone to dislodge swarmers."
++ Data 762795: Added BH-21's Avatar image.
++ Data 764066: Added BH-21's updated images.
++ Data 769828: Swapped Perseus' & Yeoman's images.
++ Bug 764704: Inferno SRM-2's can still target woods for ignition.
 
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.

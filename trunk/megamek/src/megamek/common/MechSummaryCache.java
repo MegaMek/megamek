@@ -176,14 +176,7 @@ public class MechSummaryCache
         boolean bNeedsUpdate = false;
         System.out.println("Looking in " + fDir.getPath());
         String[] sa = fDir.list();
-        // begin block: remove me when TDB moves armor into xml files
-        Vector xmlFiles = new Vector();
-        for (int j = 0; j < sa.length; j++) {
-            if (sa[j].endsWith(".xml")) {
-                xmlFiles.addElement(sa[j]);
-            }
-        }
-        // end block
+
         for (int x = 0; x < sa.length; x++) {
             File f = new File(fDir, sa[x]);
             if (f.equals(CACHE)) { continue; }
@@ -193,25 +186,6 @@ public class MechSummaryCache
                 continue;
             }
             if (f.getName().indexOf('.') == -1) { continue; }
-            // begin block: change me when TDB moves armor into xml files
-            if (f.getName().endsWith(".dbm")) {
-                // Check if this file has a matching ".xml" file, if
-                //  not, print a warning message.  Either way, skip
-                //  the file, since it is handled by TdbFile.java.
-                boolean foundMatch = false;
-                for (int i = 0; i < xmlFiles.size(); i++) {
-                    String partial = (String)xmlFiles.elementAt(i);
-                    if (partial.substring(0,partial.length() - 3).equals(sa[x].substring(0,sa[x].length() - 3))) {
-                        foundMatch = true;
-                    }
-                }
-                if (!foundMatch) {
-                    System.out.println("Failure to load mech >> " + sa[x]);
-                    System.out.println("  -Both Drawing Board save files (.xml and .dbm) must be present for each Drawing Board mech.");
-                }
-                continue;
-            }
-            // end block
             if (f.getName().toLowerCase().endsWith(".zip")) {
                 bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
                 continue;
@@ -272,10 +246,6 @@ public class MechSummaryCache
             
             try {
                 System.out.println("Loading from " + fZipFile.getPath() + " >> " + zEntry.getName());
-                if (zEntry.getName().toLowerCase().endsWith(".xml") || zEntry.getName().toLowerCase().endsWith(".dbm")) {
-                    System.out.println("  -Mech files from The Drawing Board cannot be loaded from zip files.");
-                    continue;
-                }
                 MechFileParser mfp = new MechFileParser(zFile.getInputStream(zEntry), zEntry.getName());
                 Entity m = mfp.getEntity();
                 MechSummary ms = new MechSummary();

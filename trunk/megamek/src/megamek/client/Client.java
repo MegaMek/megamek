@@ -353,13 +353,15 @@ public class Client extends Panel
         alert.show();
     }
     
-    /**
-     * Pops up a dialog box asking a yes/no question
-     * @returns true if yes
-     */
-    public boolean doYesNoDialog(String title, String question) {
-        return true;
-    }
+	/**
+	* Pops up a dialog box asking a yes/no question
+	* @returns true if yes
+	*/
+	public boolean doYesNoDialog(String title, String question) {
+	ConfirmDialog confirm = new ConfirmDialog(frame,title,question);
+		confirm.show();
+		return confirm.getAnswer();
+	};
     
     /**
      * Send movement data for the given entity to the server.

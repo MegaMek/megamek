@@ -109,6 +109,24 @@ public class Game
     }
   
     /**
+     * Get a vector of entity objects that are enemies of this player
+     */
+      public Vector getEnemyEntities(Player player) {
+        Vector ents = new Vector();
+        int thisTeam = player.getTeam();
+        
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+          Entity entity = (Entity)i.nextElement();
+            
+          if (player.isEnemyOf(entity.getOwner())) {
+            ents.addElement( entity );
+          }
+        }
+        
+        return ents;
+      }
+    
+    /**
      * Returns the player number whose turn it is
      */
     public int getTurn() {

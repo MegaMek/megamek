@@ -45,6 +45,7 @@ public class FiringDisplay
     
     private Button            butAim;
     private Button            butFindClub;
+    private Button            butNextTarg;
     
     private Button            butSpace;
     private Button            butSpace1;
@@ -68,6 +69,8 @@ public class FiringDisplay
     private boolean            shiftheld;
     private boolean            twisting;
 
+    private Entity[]            visibleTargets  = null;
+    private int                 lastTargetID    = -1;
     
     /**
      * Creates and lays out a new movement phase display 
@@ -107,6 +110,9 @@ public class FiringDisplay
         butAim.addActionListener(this);
         butAim.setEnabled(false);
         
+        butNextTarg = new Button("Next Target");
+        butNextTarg.addActionListener(this);
+        butNextTarg.setEnabled(false);
         
         butSpace = new Button(".");
         butSpace.setEnabled(false);
@@ -181,7 +187,7 @@ public class FiringDisplay
         case 0 :
             panButtons.add(butFire);
             panButtons.add(butSkip);
-            panButtons.add(butSpace);
+            panButtons.add(butNextTarg);
             panButtons.add(butNext);
             panButtons.add(butTwist);
             panButtons.add(butSpace1);
@@ -214,6 +220,7 @@ public class FiringDisplay
             client.game.board.cursor(null);
 
             refreshAll();
+            cacheVisibleTargets();
 
             client.bv.centerOnHex(ce().getPosition());
             
@@ -255,6 +262,8 @@ public class FiringDisplay
         client.mechW.setVisible(false);
         client.bv.clearMovementData();
         disableButtons();
+        
+        clearVisibleTargets();
     }
     
     /**
@@ -269,6 +278,88 @@ public class FiringDisplay
         butMore.setEnabled(false);
         butNext.setEnabled(false);
         butDone.setEnabled(false);
+        butNextTarg.setEnabled(false);
+    }
+    
+    /**
+     * Cache the list of visible targets. This is used for the 'next target' button.
+     *
+     * We'll sort it by range to us... the sorting isn't the most efficient, but how many
+     * targets can we really have and still play the game?
+     */
+      private void cacheVisibleTargets() {
+        clearVisibleTargets();
+        
+        Vector vec = client.game.getEnemyEntities( ce().getOwner() );
+        Coords myPos = ce().getPosition();
+        boolean flipLocs = false;
+        
+        lastTargetID = -1;
+        
+        visibleTargets = new Entity[vec.size()];
+        vec.copyInto(visibleTargets);
+        
+        if ( vec.size() == 0 )
+          return;
+        
+        butNextTarg.setEnabled(true);
+        
+        for ( int i = 0; i < visibleTargets.length - 1; i++ ) {
+          Entity entI = (Entity)visibleTargets[i];
+          int rangeToI = myPos.distance(entI.getPosition());
+          
+          for ( int j = i + 1; j < visibleTargets.length; j++ ) {
+            flipLocs = false;
+            
+            Entity entJ = (Entity)visibleTargets[j];
+            int rangeToJ = myPos.distance(entJ.getPosition());
+            
+            if ( rangeToJ < rangeToI )
+              flipLocs = true;
+            else if ( (rangeToJ == rangeToI) && (entJ.getId() < entI.getId()) )
+              flipLocs = true;
+              
+            if ( flipLocs ) {
+              visibleTargets[i] = entJ;
+              visibleTargets[j] = entI;
+            }
+          }
+        }
+      }
+
+      private void clearVisibleTargets() {
+        visibleTargets = null;
+        lastTargetID = -1;
+        butNextTarg.setEnabled(false);
+      }
+      
+    /**
+     * Get the next target. Return null if we don't have any targets.
+     */
+      private Entity getNextTarget() {
+        if ( null == visibleTargets )
+          return null;
+        
+        lastTargetID++;
+        
+        if ( lastTargetID >= visibleTargets.length )
+          lastTargetID = 0;
+        
+        return (Entity)visibleTargets[lastTargetID];
+      }
+    
+    /**
+     * Jump to our next target. If there isn't one, well, don't do anything.
+     */
+      private void jumpToNextTarget() {
+        Entity targ = getNextTarget();
+        
+        if ( null == targ )
+          return;
+
+        target(targ.getId());
+        client.bv.centerOnHex(targ.getPosition());
+        client.game.board.select(targ.getPosition());
     }
     
     /**
@@ -542,6 +633,8 @@ public class FiringDisplay
             setupButtonPanel();
         } else if (ev.getSource() == butFindClub) {
             findClub();
+        } else if (ev.getSource() == butNextTarg) {
+          jumpToNextTarget();
         }
     }
     
@@ -623,3 +716,4 @@ public class FiringDisplay
         }
     }
 }
+

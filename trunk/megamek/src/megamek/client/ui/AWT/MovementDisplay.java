@@ -209,8 +209,8 @@ public class MovementDisplay
     public void selectEntity(int en) {
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
-            System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
-            System.err.println("FiringDisplay: sending ready signal...");
+            System.err.println("MovementDisplay: tried to select non-existant entity: " + en);
+            System.err.println("MovementDisplay: sending ready signal...");
             client.sendReady(true);
             return;
         }
@@ -392,12 +392,19 @@ public class MovementDisplay
                 ToHitData toHit = Compute.toHitCharge(client.game, cen, target.getId(), md);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
                     // if yes, ask them if they want to charge
-                        
-                        // if they answer yes, charge
-                        moveTo(md);
-                        return;
-                
-                        // else clear movement
+
+				if ( client.doYesNoDialog( "Charge " + target.getDisplayName() + "?",
+					"To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
+					+ "\nDamage to Target: "+Compute.getChargeDamageFor(ce(),md.getHexesMoved())+" (in 5pt clusters)"+toHit.getTableDesc()
+					+ "\nDamage to Self: " + Compute.getChargeDamageTakenBy(ce(),target)+" (in 5pt clusters)"
+				) ) {
+	                        // if they answer yes, charge
+      	                  moveTo(md);
+				} else {
+					// else clear movement
+					clearAllMoves();
+				};
+				return;
                 } else {
                     // if not valid, tell why
                     client.doAlertDialog("Can't perform charge", toHit.getDesc());
@@ -414,16 +421,23 @@ public class MovementDisplay
                     return;
                 }
                 
-                // check if it's a valid charge
+                // check if it's a valid DFA
                 ToHitData toHit = Compute.toHitDfa(client.game, cen, target.getId(), md);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
-                    // if yes, ask them if they want to charge
-                        
-                        // if they answer yes, charge
-                        moveTo(md);
+                    // if yes, ask them if they want to DFA
+				if ( client.doYesNoDialog( "D.F.A. " + target.getDisplayName() + "?",
+					"To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
+					+ "\nDamage to Target: "+Compute.getDfaDamageFor(ce())+" (in 5pt clusters)"+toHit.getTableDesc()
+					+ "\nDamage to Self: " + Compute.getDfaDamageTakenBy(ce())+" (in 5pt clusters) (using Kick table)"
+				) ) {
+	                      	// if they answer yes, go for it
+                        	moveTo(md);
+				} else {
+	                        // else clear movement
+					clearAllMoves();
+				};
                         return;
                 
-                        // else clear movement
                 } else {
                     // if not valid, tell why
                     client.doAlertDialog("Can't perform D.F.A.", toHit.getDesc());

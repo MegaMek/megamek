@@ -6273,7 +6273,7 @@ implements Runnable, ConnectionHandler {
                 if (nRange<=1) {
                     nDamPerHit++;
                 } else if (nRange <= wtype.getMediumRange()) {
-                    // Do NOthing for Short and Medium Range
+                    // Do Nothing for Short and Medium Range
                 } else if (nRange <= wtype.getLongRange()) {
                     nDamPerHit--;
                 } else if (nRange <= wtype.getExtremeRange()) {
@@ -6281,7 +6281,7 @@ implements Runnable, ConnectionHandler {
                 }
             }
         }
-        if (glancing) {
+        if (glancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS) ) {
             nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
         }
 

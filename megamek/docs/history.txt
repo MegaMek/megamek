@@ -11,6 +11,8 @@ v0.29.65 (CVS)
 + Bug 1060000: Pilot losing consciousness should live through the ejection
 + Bug 1100983: Grand Titan and Black Watch pictures not working.
 + Bug 1112541: PSR reporting when autoejecting in wrong place.
++ RFE 734061: implemented iNarc, Nemesis Pods and ability to brush off Pods
+    still missing.
 
 v0.29.64 (2005-02-06 9:30am)
 + RFE 1112483: CTL+R shortcut added to Turn Report menu command

@@ -335,7 +335,8 @@ Equipment
 - Missile Munitions		Partial		Incendiary, Semiguided, Swarm, and Swarm-I not implemented
 - MASC				Yes		None
 - Narc				Yes		None
-- Narc Munitions		Partial		iNarc not yet implemented.
+- Narc Munitions		Yes		None
+- iNarc				Partial		Nemesis Pods not implemented, 'Mechs cannot try to 'brush off' iNarc Pods.
 - Rocket Lauchers		Yes		None
 - Stealth Armor System		Yes		Activate/Disable on the systems tab.
 - Sword				Yes		None

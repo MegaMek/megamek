@@ -170,6 +170,9 @@ public abstract class Entity
     protected Vector            weaponList = new Vector();
     protected Vector            ammoList = new Vector();
     protected Vector            miscList = new Vector();
+    
+    protected Vector            pendingINarcPods = new Vector();
+    protected Vector            iNarcPods = new Vector();
 
     protected Vector            failedEquipmentList = new Vector();
 
@@ -2283,8 +2286,9 @@ public abstract class Entity
     }
 
     public boolean onSameC3NetworkAs(Entity e) {
-      if(isEnemyOf(e)) return false;
-      if (isShutDown() || e.isShutDown()) return false;
+      if (isEnemyOf(e) || isShutDown() || e.isShutDown() || isECMINarced()) {
+          return false; 
+      }
 
       // Active Mek Stealth prevents entity from participating in C3.
       // Turn off the stealth, and your back in the network.
@@ -2366,6 +2370,12 @@ public abstract class Entity
         setUnjammingRAC(false);
         crew.setKoThisRound(false);
         m_lNarcedBy |= m_lPendingNarc;
+        if (pendingINarcPods.size() > 0) {
+            for (int j = 0;j < pendingINarcPods.size();j++) {
+                iNarcPods.addElement(pendingINarcPods.elementAt(j));
+            }
+            pendingINarcPods = new Vector();
+        }
 
         for (Enumeration i = getEquipment(); i.hasMoreElements();) {
             ((Mounted)i.nextElement()).newRound(roundNumber);
@@ -2481,7 +2491,9 @@ public abstract class Entity
         }
     }
 
-    // add a narc pod from this team to the mech.  Unremovable
+    /**
+     * add a narc pod from this team to the mech.  Unremovable
+     */
     public void setNarcedBy(int nTeamID) {
         // avoid overflow in ridiculous battles
         if (nTeamID > (1 << Player.MAX_TEAMS)) {
@@ -2495,15 +2507,95 @@ public abstract class Entity
         m_lPendingNarc |= teamMask;
     }
 
-    // has the team attached a narc pod to me?
+    /**
+     * has the team attached a narc pod to me?
+     */
     public boolean isNarcedBy(int nTeamID) {
         long teamMask = 1;
         if ( nTeamID > Player.TEAM_NONE ) {
             teamMask = 1 << nTeamID;
         }
-        return (m_lNarcedBy & teamMask) > 0;
+        return (m_lNarcedBy & teamMask) > 0 && !isINarcedBy(nTeamID);
+    }
+    
+    /**
+     * attach an iNarcPod
+     * @param pod The <code>INarcPod</code> to be attached.
+     */
+    public void attachINarcPod(INarcPod pod) {
+        this.pendingINarcPods.addElement(pod);
+    }
+    
+    /**
+     * Have we been iNarced with a homing pod from that team?
+     * @param nTeamID The id of the team that we are wondering about.
+     * @return
+     */
+    public boolean isINarcedBy(int nTeamID) {
+        for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
+            INarcPod pod = (INarcPod)e.nextElement();
+            if (pod.getTeam() == nTeamID && pod.getType() == INarcPod.HOMING)
+                return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Do we have an ECM iNarc Pod attached?
+     * @return
+     */
+    public boolean isECMINarced() {
+        for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
+            INarcPod pod = (INarcPod)e.nextElement();
+            if (pod.getType() == INarcPod.ECM)
+                return true;
+        }
+        return false;
     }
 
+    /**
+     * Do we have an Haywire iNarc Pod attached?
+     * @return
+     */
+    public boolean isHaywireINarced() {
+        for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
+            INarcPod pod = (INarcPod)e.nextElement();
+            if (pod.getType() == INarcPod.HAYWIRE)
+                return true;
+        }
+        return false;        
+    }
+    
+    /**
+     * Do we have an Nemesis iNarc Pod attached?
+     * @return
+     */
+    public boolean isNemesisINarced() {
+        for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
+            INarcPod pod = (INarcPod)e.nextElement();
+            if (pod.getType() == INarcPod.NEMESIS)
+                return true;
+        }
+        return false;        
+    }
+    
+    /**
+     * Remove all attached iNarc Pods
+     */
+    public void removeAllINarcPods() {
+        iNarcPods = new Vector();
+    }
+    
+    /**
+     * Do we have any iNarc Pods attached?
+     * @return
+     */
+    public boolean hasINarcPodsAttached() {
+        if (iNarcPods.size() > 0 ) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Calculates the battle value of this entity

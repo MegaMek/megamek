@@ -74,7 +74,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v CVS
+v 0.27.14 (01-03-03, 9pm)
 + ammo exploding from heat can't explode twice
 + 657606: dead meks can't engage in physical attacks
 + added codes for IS TargComps

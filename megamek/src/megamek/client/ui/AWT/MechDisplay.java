@@ -1082,6 +1082,8 @@ class SystemPanel
     //
     public void itemStateChanged(ItemEvent ev) {
         if(ev.getItemSelectable() == locList) {
+            m_chMode.removeAll();
+            m_chMode.setEnabled(false);
             displaySlots();
         }
         else if (ev.getItemSelectable() == slotList) {

@@ -29,6 +29,7 @@ v 0.29.27 (CVS)
 + Blind Drop now lists unit type (inf/proto/veh/mech)
 + Protomech sprites now torso twist just like mechs.
 + Unit sprite now has "loaded infantry" indication.
++ Slight tweak to Systems tab Mode box
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

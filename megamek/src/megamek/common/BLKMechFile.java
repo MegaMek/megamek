@@ -91,17 +91,27 @@ public class BLKMechFile {
         mech = new BipedMech();
 
       //Do I even write the year for these??
-                    
-      if (dataFile.exists("year")) {
-            if (dataFile.getDataAsInt("year")[0] != 3025) return null;
-        }
-        
         
         if (!dataFile.exists("name")) return null;
             mech.setName(dataFile.getDataAsString("Name")[0]);
         
         if (!dataFile.exists("model")) return null;
             mech.setModel(dataFile.getDataAsString("Model")[0]);
+        
+        if (!dataFile.exists("year")) return null;
+            mech.setYear(dataFile.getDataAsInt("year")[0]);
+            
+        if (!dataFile.exists("type")) return null;
+            
+            if (dataFile.getDataAsString("type")[0].equals("IS")) {
+                if (mech.getYear() == 3025) {
+                    mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                } else {
+                    mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                }
+            } else {
+                mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+            }
         
         if (!dataFile.exists("tonnage")) return null;
             mech.weight = dataFile.getDataAsFloat("tonnage")[0];
@@ -199,6 +209,14 @@ public class BLKMechFile {
             
                                    
             
+        // prefix is "Clan " or "IS "
+        String prefix;
+        if (mech.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+            prefix = "Clan ";
+        } else {
+            prefix = "IS ";
+        }
+
             for (int loc = 0; loc < criticals.length; loc++ ) {
              
                 
@@ -217,12 +235,20 @@ public class BLKMechFile {
             if (etype != null) {
                 mech.addEquipment(etype, loc, rearMounted);
             } else {
-                //System.out.println("blkmechfile: could not find equipment " + critName);
+                etype = EquipmentType.getByMepName(prefix + critName);
+                if (etype != null) {
+                    mech.addEquipment(etype, loc, rearMounted);
+                }
+//                System.out.println("mepfile: could not find equipment " + critName);
             }
             
             }//end of specific location
             }//end of all crits
             
+         if (mech.isClan()) {
+            mech.addClanCase();
+        }
+
             
             return mech;
                     

@@ -55,9 +55,11 @@ public abstract class Entity
     protected int               id;
 
     protected float             weight;
+    protected boolean           omni = false;
     protected String            model;
     protected String            name;
-    protected String		tech;
+    protected int               year;
+    protected int		techLevel;
 
     protected transient Player  owner;
     protected int               ownerId;
@@ -165,16 +167,28 @@ public abstract class Entity
     protected void setName(String name) {
         this.name = name;
     }
-	
-	/**
+    
+    /**
      * Returns the unit tech for this entity.
      */
-    public String getTech() {
-        return tech;
+    public int getTechLevel() {
+        return techLevel;
     }
   
-    protected void setTech(String tech) {
-        this.tech = tech;
+    protected void setTechLevel(int techLevel) {
+        this.techLevel = techLevel;
+    }
+    
+    public boolean isClan() {
+        return techLevel == TechConstants.T_CLAN_LEVEL_2;
+    }
+    
+    public int getYear() {
+        return year;
+    }
+    
+    protected void setYear(int year) {
+        this.year = year;
     }
     
     public float getWeight() {
@@ -183,6 +197,14 @@ public abstract class Entity
     
     protected void setWeight(float weight) {
         this.weight = weight;
+    }
+    
+    public boolean isOmni() {
+        return omni;
+    }
+    
+    protected void setOmni(boolean omni) {
+        this.omni = omni;
     }
     
     /**
@@ -1301,6 +1323,24 @@ public abstract class Entity
             CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM
             && ccs.getIndex() == system) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns whether there is CASE protecting the location.
+     */
+    public boolean locationHasCase(int loc) {
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getLocation() == loc
+            && mounted.getType().hasFlag(MiscType.F_CASE)
+            && !mounted.isDestroyed()) {
+                
+                System.out.println("Found CASE");
+                
                 return true;
             }
         }

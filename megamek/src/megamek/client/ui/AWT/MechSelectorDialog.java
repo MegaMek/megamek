@@ -130,8 +130,8 @@
                 ms.setName(m.getName());
                 ms.setRef(m.getModel());
                 ms.setSourceFile(f);
-                ms.setYear(mfp.getYear());
-                ms.setType(mfp.getTechType());
+                ms.setYear(m.getYear());
+                ms.setType(m.getTechLevel());
                 ms.setTons((int)m.getWeight());
                 ms.setBV(m.calculateBattleValue());
                 vMechs.addElement(ms);
@@ -142,20 +142,17 @@
     private void populateChoices(MechSummary[] msa) {
     	// use the uniqueness feature of hashtables
     	Hashtable htYears = new Hashtable();
-    	Hashtable htTypes = new Hashtable();
     	for (int x = 0; x < msa.length; x++) {
     		htYears.put(String.valueOf(msa[x].getYear()), new Object());
-    		htTypes.put(msa[x].getType(), new Object());
     	}
     	Vector v = keysToVector(htYears);
     	for (int x = 0; x < v.size(); x++) {
     		m_chYear.addItem((String)v.elementAt(x));
     	}
-    	
-    	v = keysToVector(htTypes);
-    	for (int x = 0; x < v.size(); x++) {
-    		m_chType.addItem((String)v.elementAt(x));
-    	}
+        
+        for (int i = 0; i < TechConstants.T_NAMES.length; i++) {
+            m_chType.addItem(TechConstants.T_NAMES[i]);
+        }
     }
     
     private Vector keysToVector(Hashtable h)
@@ -171,10 +168,10 @@
     {
     	Vector vMechs = new Vector();
     	int nYear = Integer.parseInt(m_chYear.getSelectedItem());
-    	String sType = m_chType.getSelectedItem();
+    	int nType = m_chType.getSelectedIndex();
     	for (int x = 0; x < m_mechsAll.length; x++) {
     		if (m_mechsAll[x].getYear() == nYear && 
-    				m_mechsAll[x].getType().equals(sType)) {
+    				m_mechsAll[x].getType() == nType) {
     			vMechs.addElement(m_mechsAll[x]);
     		}
     	}

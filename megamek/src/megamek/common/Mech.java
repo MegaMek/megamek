@@ -699,6 +699,16 @@ public abstract class Mech
     }
     
     /**
+     * Adds clan CASE in every location
+     */
+    public void addClanCase() {
+        EquipmentType clCase = EquipmentType.getByInternalName("CLCASE");
+        for (int i = 0; i < locations(); i++) {
+            addEquipment(new Mounted(this, clCase), i, false);
+        }
+    }
+    
+    /**
      * Mounts the specified weapon in the specified location.
      * 
      * Throw exception if full, maybe?

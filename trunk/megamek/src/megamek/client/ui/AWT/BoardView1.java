@@ -1652,7 +1652,7 @@ public class BoardView1
     public boolean doScroll() {
     	if (Settings.explicitScrollOnly) {
     	   Point oldScroll = new Point(scroll);
-           if (oldMousePosition == null || mousePos.equals(oldMousePosition) || oldMouseButtonPressed != MouseEvent.BUTTON3) {
+           if (oldMousePosition == null || mousePos.equals(oldMousePosition)) {
            	   return false;
            }
            scroll.x -= mousePos.x - oldMousePosition.x;

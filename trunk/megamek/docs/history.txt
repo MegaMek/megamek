@@ -8,6 +8,7 @@ v0.29.67 (CVS)
 + RFE 1150066: Remember MiniReport window position and size.
 + Bug 1115574: Gravity doesn't change BV.
 + Bug 1120451: cannot use RMG when /data/boards directory is empty
++ Ontos, Rommel, Skulker, and Sturmfeur wrecks had non-transparent backgrounds
 
 v0.29.66 (2005-02-21 7:45am)
 + Data 1100263: HMPRead Mixed Tech RAC Codes

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000, 2001, 2002, 2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -21,15 +21,16 @@ import java.util.*;
 import megamek.*;
 import megamek.common.*;
 import megamek.common.actions.*;
-import megamek.common.options.*;
 import megamek.server.commands.*;
+import megamek.common.net.*;
+import megamek.common.options.*;
 import megamek.common.util.StringUtil;
 
 /**
  * @author Ben Mazur
  */
 public class Server
-implements Runnable {
+implements Runnable, ConnectionHandler {
     //    public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
     public final static String  DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
     
@@ -9198,9 +9199,13 @@ implements Runnable {
     }
  
     /**
-     * Process a packet
+     * Process a packet from a connection.
+     *
+     * @param   id - the <code>int</code> ID the connection that
+     *          received the packet.
+     * @param   packet - the <code>Packet</code> to be processed.
      */
-    synchronized void handle(int connId, Packet packet) {
+    public synchronized void handle(int connId, Packet packet) {
         Player player = game.getPlayer( connId );
         // Check player.  Please note, the connection may be pending.
         if ( null == player && null == getPendingConnection(connId) ) {

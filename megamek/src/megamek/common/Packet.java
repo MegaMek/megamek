@@ -142,6 +142,11 @@ implements Serializable {
         if (zipped) {
             return;
         }
+
+        // Don't zip if we have no data.
+        if ( null == data ) {
+            return;
+        }
         
 //        long start = System.currentTimeMillis();
         
@@ -231,6 +236,15 @@ implements Serializable {
             return 0;
         }
     }
-    
-    
+    /**
+     * Dermine if the packet has been zipped.
+     *
+     * @return  <code>true</code> if the packet has been zipped.
+     *          <code>false</code> if the packet has no data or if it
+     *          has not been zipped.
+     */
+    public boolean isZipped() {
+        return zipped;
+    }
+
 }

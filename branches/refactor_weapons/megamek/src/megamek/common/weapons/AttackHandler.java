@@ -16,6 +16,7 @@
  *
  */
 package megamek.common.weapons;
+import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
@@ -28,4 +29,6 @@ public interface AttackHandler {
 	public boolean handle(int phase);
 	//Frankly, wish I could get rid of this, but I think certain things occaisonly need to know the firer.
 	public int getAttackerId();
+	//ugly hack, but necessary until (if we do) we refactor damaging methods out of server and into what is being damaged.
+	public void setServer(Server server);
 }

@@ -57,7 +57,12 @@ public abstract class Weapon extends WeaponType {
         if (weapon.isJammed()) {
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon is jammed");
         }
-		return new WeaponHandler(toHit,waa,game);
+        switch(waa.getTarget(game).getTargetType()) {
+        	case Targetable.TYPE_ENTITY:
+        	default:
+        		return new WeaponHandler(toHit,waa,game);
+        	
+        }
 		
 	}
 	public ToHitData toHit(WeaponAttackAction waa, Game game) {

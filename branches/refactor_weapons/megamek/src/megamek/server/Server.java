@@ -5025,7 +5025,7 @@ implements Runnable, ConnectionHandler {
      * @param   bReportAttempt - <code>true</code> if the attempt roll should
      *          be added to the report.
      */
-    private boolean tryIgniteHex( Coords c, boolean bInferno, int nTargetRoll,
+    public boolean tryIgniteHex( Coords c, boolean bInferno, int nTargetRoll,
                                   boolean bReportAttempt ) {
 
         Hex hex = game.board.getHex(c);
@@ -5069,11 +5069,11 @@ implements Runnable, ConnectionHandler {
      *          is causing the roll, this should be <code>false</code>.
      * @param   nTargetRoll - the <code>int</code> roll target for the attempt.
      */
-   private boolean tryIgniteHex(Coords c, boolean bInferno, int nTargetRoll) {
+   public boolean tryIgniteHex(Coords c, boolean bInferno, int nTargetRoll) {
        return tryIgniteHex(c, bInferno, nTargetRoll, false);
    }
 
-    private void tryClearHex(Coords c, int nTarget) {
+    public void tryClearHex(Coords c, int nTarget) {
         Hex h = game.board.getHex(c);
         int woods = h.levelOf(Terrain.WOODS);
         if (woods == Terrain.LEVEL_NONE) {
@@ -7958,7 +7958,7 @@ implements Runnable, ConnectionHandler {
      * @param ammoExplosion ammo explosion type damage is handled slightly differently
      * @param bFrag If 0, nothing; if 1, Fragmentation; if 2, Flechette.
      */
-    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag) {
+    public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag) {
         StringBuffer desc = new StringBuffer();
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
@@ -8868,14 +8868,14 @@ implements Runnable, ConnectionHandler {
     /**
      * Rolls and resolves critical hits with no die roll modifiers.
      */
-    private String criticalEntity(Entity en, int loc) {
+    public String criticalEntity(Entity en, int loc) {
     	return criticalEntity(en, loc, 0);
     }
 
     /**
      * Checks for location breach and returns phase logging
      */
-    private String breachCheck(Entity entity, int loc, int hitflag, boolean isMoving) {
+    public String breachCheck(Entity entity, int loc, int hitflag, boolean isMoving) {
         StringBuffer desc = new StringBuffer();
         if (entity.getLocationStatus(loc) > Entity.LOC_NORMAL) { //covers both water and vacuum
             int breachroll = hitflag;
@@ -11455,7 +11455,7 @@ implements Runnable, ConnectionHandler {
      * @param   damage - the <code>int</code> amount of damage.
      * @return  a <code>String</code> message to be shown to the players.
      */
-    private String damageBuilding( Building bldg, int damage ) {
+    public String damageBuilding( Building bldg, int damage ) {
         final String defaultWhy = " absorbs ";
         return damageBuilding( bldg, damage, defaultWhy );
     }
@@ -11473,7 +11473,7 @@ implements Runnable, ConnectionHandler {
      *          why the building took the damage.
      * @return  a <code>String</code> message to be shown to the players.
      */
-    private String damageBuilding( Building bldg, int damage, String why ) {
+    public String damageBuilding( Building bldg, int damage, String why ) {
         StringBuffer buffer = new StringBuffer();
 
         // Do nothing if no building or no damage was passed.

@@ -20,6 +20,7 @@
 
 package megamek.common.actions;
 
+import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -51,8 +52,8 @@ public class FindClubAction extends AbstractEntityAction {
 		}
 		final Hex hex = game.board.getHex(entity.getPosition());
 
-		//Non bipeds can't
-		if ( entity.getMovementType() != Entity.MovementType.BIPED ) {
+		//Non biped mechs can't
+		if ( !(entity instanceof BipedMech) ) {
 			return false;
 		}
 

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -35,7 +35,10 @@ public class TargetRoll {
     public final static int IMPOSSIBLE          = Integer.MAX_VALUE;
     public final static int AUTOMATIC_FAIL      = Integer.MAX_VALUE - 1;
     public final static int AUTOMATIC_SUCCESS   = Integer.MIN_VALUE;
-    public final static int CHECK_FALSE         = Integer.MIN_VALUE - 2;
+    /* The CHECK_FALSE value is returned when a function that normally
+       would return a target roll number determines that the roll
+       wasn't needed after all. */
+    public final static int CHECK_FALSE         = Integer.MIN_VALUE + 1;
     
     private ArrayList modifiers = new ArrayList();
     
@@ -71,6 +74,8 @@ public class TargetRoll {
                 return "Automatic Failure";
             case AUTOMATIC_SUCCESS :
                 return "Automatic Success";
+            case CHECK_FALSE :
+                return "Did not need to roll";
             default :
                 return Integer.toString(total);
         }
@@ -87,8 +92,10 @@ public class TargetRoll {
             Modifier modifier = (Modifier)i.next();
             
             // check for break condition
-            if (modifier.value == IMPOSSIBLE || modifier.value == AUTOMATIC_FAIL 
-            || modifier.value == AUTOMATIC_SUCCESS) {
+            if (modifier.value == IMPOSSIBLE
+                || modifier.value == AUTOMATIC_FAIL 
+                || modifier.value == AUTOMATIC_SUCCESS
+                || modifier.value == CHECK_FALSE) {
                 return modifier.desc;
             }
             

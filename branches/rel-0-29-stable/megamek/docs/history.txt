@@ -124,6 +124,8 @@ v 0.29-stable-2 (CVS)
 + Bug 773000: Tank hit locations
 + Bug 773001: Tank locations on armor diagram
 + Updated FiringDisplay#findClub() from mainline.
++ Updated TargetRoll.java from mainline.
++ Bug 759032: fixed NPE in MovementDisplay
 
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.

@@ -1043,11 +1043,30 @@ public class Game implements Serializable
     public Enumeration getEntities(Coords c) {
         Vector vector = new Vector();
 
-        // Only build the list if the coords are off the board.
+        // Only build the list if the coords are on the board.
         if ( this.board.contains(c) ) {
             for (Enumeration i = entities.elements(); i.hasMoreElements();) {
                 final Entity entity = (Entity)i.nextElement();
                 if (c.equals(entity.getPosition()) && entity.isTargetable()) {
+                    vector.addElement(entity);
+                }
+            }
+        }
+
+        return vector.elements();
+    }
+    
+    /**
+     * Returns an Enumeration of the enemy's active entities at the given coordinates.
+     */
+    public Enumeration getEnemyEntities(Coords c, Entity currentEntity) {
+        Vector vector = new Vector();
+
+        // Only build the list if the coords are on the board.
+        if ( this.board.contains(c) ) {
+            for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+                final Entity entity = (Entity)i.nextElement();
+                if (c.equals(entity.getPosition()) && entity.isTargetable() && entity.isEnemyOf(currentEntity)) {
                     vector.addElement(entity);
                 }
             }

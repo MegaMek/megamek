@@ -114,6 +114,9 @@ FUTURE VERSION PLANS:
 VERSION HISTORY:
 ----------------
 
+v 0.29.14-dev
++ Fixed NPE in menu bar.
+
 v 0.29.13 (10-05-03, 11pm)
 + RFE 814576: Show PlayerColor when Camo is missing.
 + Added common client settings dialog.

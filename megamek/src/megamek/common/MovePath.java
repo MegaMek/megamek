@@ -14,10 +14,13 @@
 
 package megamek.common;
 
-import com.sun.java.util.collections.*;
+import com.sun.java.util.collections.Comparator;
+import com.sun.java.util.collections.ArrayList;
+import com.sun.java.util.collections.Collections;
+
 import java.io.Serializable;
 import java.util.Enumeration;
-
+import java.util.Vector;
 
 /**
  * Holds movement path for an entity.

@@ -34,6 +34,11 @@ public abstract class Entity
       public static final int WHEELED = 4;
       public static final int HOVER   = 5;
     }
+    // weight class limits
+    public static final int        WEIGHT_LIGHT        = 35;
+    public static final int        WEIGHT_MEDIUM       = 55;
+    public static final int        WEIGHT_HEAVY        = 75;
+    public static final int        WEIGHT_ASSAULT      = 100;   
     
     public static final int        NONE                = -1;
 
@@ -197,6 +202,18 @@ public abstract class Entity
         return weight;
     }
     
+    public int getWeightClass() {
+        int nWeight = (int)getWeight();
+         if (nWeight <= WEIGHT_LIGHT) {
+            return WEIGHT_LIGHT;
+         } else if (nWeight <= WEIGHT_MEDIUM) {
+             return WEIGHT_MEDIUM;
+         } else if (nWeight <= WEIGHT_HEAVY) {
+             return WEIGHT_HEAVY;
+         } else {
+             return WEIGHT_ASSAULT;
+         }
+    }
     
     protected void setWeight(float weight) {
         this.weight = weight;

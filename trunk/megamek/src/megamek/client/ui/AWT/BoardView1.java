@@ -1503,7 +1503,15 @@ public class BoardView1
                 && sprite.getTargetId() == aa.getTargetId()) {
                 // use existing attack, but add this weapon
                 if (aa instanceof WeaponAttackAction) {
-                    sprite.addWeapon((WeaponAttackAction)aa);
+                    WeaponAttackAction waa = (WeaponAttackAction)aa;
+                    if ( aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY 
+                        && aa.getTargetType() != Targetable.TYPE_HEX_FASCAM
+                        && aa.getTargetType() != Targetable.TYPE_HEX_INFERNO_IV
+                        && aa.getTargetType() != Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                        attackSprites.addElement(new AttackSprite(aa));
+                    } else if ( waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
+                        attackSprites.addElement(new AttackSprite(aa));
+                    }
                 }
                 if (aa instanceof KickAttackAction) {
                     sprite.addWeapon((KickAttackAction)aa);
@@ -1524,14 +1532,24 @@ public class BoardView1
                     sprite.addWeapon((DfaAttackAction)aa);
                 }
                 if (aa instanceof ProtomechPhysicalAttackAction) {
-                	sprite.addWeapon((ProtomechPhysicalAttackAction)aa);
+                    sprite.addWeapon((ProtomechPhysicalAttackAction)aa);
                 }
                 return;
             }
         }
-
         // no re-use possible, add a new one
-        attackSprites.addElement(new AttackSprite(aa));
+        // don't add a sprite for an artillery attack made by the other player
+        if (aa instanceof WeaponAttackAction) {
+            WeaponAttackAction waa = (WeaponAttackAction)aa;
+            if ( aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY 
+                && aa.getTargetType() != Targetable.TYPE_HEX_FASCAM
+                && aa.getTargetType() != Targetable.TYPE_HEX_INFERNO_IV
+                && aa.getTargetType() != Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                attackSprites.addElement(new AttackSprite(aa));
+            } else if ( waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
+                attackSprites.addElement(new AttackSprite(aa));
+            }
+        }
     }
 
     /** Removes all attack sprites from a certain entity */

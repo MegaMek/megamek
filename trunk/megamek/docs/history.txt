@@ -13,6 +13,7 @@ v0.29.52 (CVS)
 + Bug 1031057: unable to configure own unit when using real blind drop
 + Bug 1006181: Duplicate info in tooltip
 + Bug 1041003: Torso breached, but ammo still usable
++ Bug 983376: Artillery targets shown too early
 
 v0.29.51 (2004-10-03 8:15am)
 + Bug 1028638: a quad 'Mechs front legs are as restrictive as its rear legs

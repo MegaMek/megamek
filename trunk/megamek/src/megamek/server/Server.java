@@ -666,9 +666,9 @@ implements Runnable {
         // actually remove all flagged entities
         for (Enumeration e = toRemove.elements(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
-            int condition = Game.UNIT_SALVAGEABLE;
+            int condition = Entity.REMOVE_SALVAGEABLE;
             if ( !entity.isSalvage() ) {
-                condition = Game.UNIT_DEVASTATED;
+                condition = Entity.REMOVE_DEVASTATED;
             }
             
             game.removeEntity(entity.getId(), condition);
@@ -1002,6 +1002,7 @@ implements Runnable {
                 break;
             case Game.PHASE_VICTORY :
                 prepareVictoryReport();
+                send(createFullEntitiesPacket());
                 send(createReportPacket());
                 send(createEndOfGamePacket());
                 break;
@@ -2008,9 +2009,9 @@ implements Runnable {
                         .append( passenger.getDisplayName() )
                         .append( " with it.\n" );
                     game.removeEntity( passenger.getId(),
-                                       Game.UNIT_IN_RETREAT );
+                                       Entity.REMOVE_IN_RETREAT );
                     send( createRemoveEntityPacket(passenger.getId(),
-                                                   Game.UNIT_IN_RETREAT) );
+                                                   Entity.REMOVE_IN_RETREAT) );
                 }
             }
             // Is the unit being swarmed?
@@ -2033,21 +2034,21 @@ implements Runnable {
                 phaseReport.append( "   It takes " )
                     .append( swarmer.getDisplayName() )
                     .append( " with it.\n" );
-                game.removeEntity( swarmerId, Game.UNIT_IN_RETREAT );
+                game.removeEntity( swarmerId, Entity.REMOVE_IN_RETREAT );
                 send( createRemoveEntityPacket(swarmerId,
-                                               Game.UNIT_IN_RETREAT) );
+                                               Entity.REMOVE_IN_RETREAT) );
             }
-            game.removeEntity( entity.getId(), Game.UNIT_IN_RETREAT );
+            game.removeEntity( entity.getId(), Entity.REMOVE_IN_RETREAT );
             send( createRemoveEntityPacket(entity.getId(),
-                                           Game.UNIT_IN_RETREAT) );
+                                           Entity.REMOVE_IN_RETREAT) );
             return;
         }
         
         if (md.contains(MovementData.STEP_EJECT)) {
             phaseReport.append("\n" ).append( entity.getDisplayName()).append( " ejects.\n");
             phaseReport.append(destroyEntity(entity, "ejection"));
-            game.removeEntity( entity.getId(), Game.UNIT_SALVAGEABLE );
-            send(createRemoveEntityPacket(entity.getId(), Game.UNIT_SALVAGEABLE));
+            game.removeEntity( entity.getId(), Entity.REMOVE_SALVAGEABLE );
+            send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_SALVAGEABLE));
             return;
         }
         
@@ -2229,9 +2230,9 @@ implements Runnable {
                             if ( game.getOptions().booleanOption("push_off_board") ) {
                                 // Yup.  One dead entity.
                                 game.removeEntity(entity.getId(),
-                                                  Game.UNIT_IN_RETREAT);
+                                                  Entity.REMOVE_IN_RETREAT);
                                 send(createRemoveEntityPacket(entity.getId(),
-                                                              Game.UNIT_IN_RETREAT));
+                                                              Entity.REMOVE_IN_RETREAT));
                                 phaseReport.append("*** " )
                                     .append( entity.getDisplayName() )
                                     .append( " has skidded off the field. ***\n");
@@ -2422,7 +2423,7 @@ implements Runnable {
 
                             // Update the target's position,
                             // unless it is off the game map.
-                            if ( !game.isInGraveyard(target) ) {
+                            if ( !game.isOutOfGame(target) ) {
                                 entityUpdate( target.getId() );
                             }
 
@@ -2968,7 +2969,7 @@ implements Runnable {
 
         // Update the entitiy's position,
         // unless it is off the game map.
-        if ( !game.isInGraveyard(entity) ) {
+        if ( !game.isOutOfGame(entity) ) {
             entityUpdate( entity.getId() );
         }
         
@@ -5442,9 +5443,9 @@ implements Runnable {
         } else {
             if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
                 game.removeEntity(te.getId(),
-                                  Game.UNIT_IN_RETREAT);
+                                  Entity.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(te.getId(),
-                                              Game.UNIT_IN_RETREAT));
+                                              Entity.REMOVE_IN_RETREAT));
                 phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " has been forced from the field. ***\n");
                 ae.setPosition(src);
             } else {
@@ -5640,9 +5641,9 @@ implements Runnable {
         } else {
             if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
                 game.removeEntity(te.getId(),
-                                  Game.UNIT_IN_RETREAT);
+                                  Entity.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(te.getId(),
-                                              Game.UNIT_IN_RETREAT));
+                                              Entity.REMOVE_IN_RETREAT));
                 phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
                 doEntityDisplacement(ae, ae.getPosition(), src, chargePSR);
             } else {
@@ -5798,9 +5799,9 @@ implements Runnable {
         Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
         if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest.translated(direction))) {
             game.removeEntity(te.getId(),
-                              Game.UNIT_IN_RETREAT);
+                              Entity.REMOVE_IN_RETREAT);
             send(createRemoveEntityPacket(te.getId(),
-                                          Game.UNIT_IN_RETREAT));
+                                          Entity.REMOVE_IN_RETREAT));
             phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
         } else {
             if (targetDest != null) {
@@ -6789,10 +6790,10 @@ implements Runnable {
         StringBuffer sb = new StringBuffer();
 
         // The unit can suffer an ammo explosion after it has been destroyed.
-        int condition = Game.UNIT_SALVAGEABLE;
+        int condition = Entity.REMOVE_SALVAGEABLE;
         if ( !canSalvage ) {
             entity.setSalvage( canSalvage );
-            condition = Game.UNIT_DEVASTATED;
+            condition = Entity.REMOVE_DEVASTATED;
         }
 
         // Ignore entities that are already destroyed.
@@ -7598,7 +7599,7 @@ implements Runnable {
         Entity entity = game.getEntity(entityId);
         if (entity != null && entity.getOwner() == getPlayer(connIndex)) {
             game.removeEntity(entityId);
-            send(createRemoveEntityPacket(entityId, Game.UNIT_NEVER_JOINED));
+            send(createRemoveEntityPacket(entityId, Entity.REMOVE_UNKNOWN));
         } else {
             // hey! that's not your entity
         }
@@ -7799,6 +7800,16 @@ implements Runnable {
     }
     
     /**
+     * Creates a packet containing all current and out-of-game entities
+     */
+    private Packet createFullEntitiesPacket() {
+        final Object[] data = new Object[2];
+        data[0] = game.getEntitiesVector();
+        data[1] = game.getOutOfGameEntitiesVector();
+        return new Packet(Packet.COMMAND_SENDING_ENTITIES, data);
+    }
+    
+    /**
      * Creates a packet containing all entities visible to the player in a blind game
      */
     private Packet createFilteredEntitiesPacket(Player p) {
@@ -7824,7 +7835,7 @@ implements Runnable {
      * @return  A <code>Packet</code> to be sent to clients.
      */
     private Packet createRemoveEntityPacket(int entityId) {
-        return this.createRemoveEntityPacket(entityId, Game.UNIT_SALVAGEABLE);
+        return this.createRemoveEntityPacket(entityId, Entity.REMOVE_SALVAGEABLE);
     }
     
     /**
@@ -7839,10 +7850,10 @@ implements Runnable {
      * @return  A <code>Packet</code> to be sent to clients.
      */
     private Packet createRemoveEntityPacket(int entityId, int condition) {
-        if ( condition != Game.UNIT_NEVER_JOINED &&
-             condition != Game.UNIT_IN_RETREAT &&
-             condition != Game.UNIT_SALVAGEABLE &&
-             condition != Game.UNIT_DEVASTATED ) {
+        if ( condition != Entity.REMOVE_UNKNOWN &&
+             condition != Entity.REMOVE_IN_RETREAT &&
+             condition != Entity.REMOVE_SALVAGEABLE &&
+             condition != Entity.REMOVE_DEVASTATED ) {
             throw new IllegalArgumentException( "Unknown unit condition: " +
                                                 condition );
         }

@@ -114,7 +114,7 @@ public class Game implements Serializable
     private boolean mechInFirstHex = true;
     private boolean mechInSecondHex = true;
 
-	private Map minefields = Collections.synchronizedMap(new HashMap());
+  private Map minefields = Collections.synchronizedMap(new HashMap());
     private Vector vibrabombs = new Vector();
     /**
      * Constructor
@@ -143,75 +143,75 @@ public class Game implements Serializable
       mechInSecondHex = mech;
     }
 
-	public boolean containsMinefield(Coords coords) {
-		return minefields.containsKey(coords);
-	}
+  public boolean containsMinefield(Coords coords) {
+    return minefields.containsKey(coords);
+  }
     
-	public Vector getMinefields(Coords coords) {
-    	Vector mfs = (Vector) minefields.get(coords);
-    	if (mfs == null) {
-    		return new Vector();
-    	}
-		return mfs;
-	}
+  public Vector getMinefields(Coords coords) {
+      Vector mfs = (Vector) minefields.get(coords);
+      if (mfs == null) {
+        return new Vector();
+      }
+    return mfs;
+  }
     
-	public int getNbrMinefields(Coords coords) {
-    	Vector mfs = (Vector) minefields.get(coords);
-    	if (mfs == null) {
-    		return 0;
-    	}
-		
-		return mfs.size();
-	}
+  public int getNbrMinefields(Coords coords) {
+      Vector mfs = (Vector) minefields.get(coords);
+      if (mfs == null) {
+        return 0;
+      }
+    
+    return mfs.size();
+  }
     
     public void addMinefield(Minefield mf) {
-    	Vector mfs = (Vector) minefields.get(mf.getCoords());
-    	if (mfs == null) {
-    		mfs = new Vector();
-	    	mfs.addElement(mf);
-	    	minefields.put(mf.getCoords(), mfs);
-	    	return;
-    	}
-    	mfs.addElement(mf);
+      Vector mfs = (Vector) minefields.get(mf.getCoords());
+      if (mfs == null) {
+        mfs = new Vector();
+        mfs.addElement(mf);
+        minefields.put(mf.getCoords(), mfs);
+        return;
+      }
+      mfs.addElement(mf);
     }
     
     public void removeMinefield(Minefield mf) {
-    	Vector mfs = (Vector) minefields.get(mf.getCoords());
-    	if (mfs == null) {
-    		return;
-    	}
-    	
-    	Enumeration e = mfs.elements();
-    	while (e.hasMoreElements()) {
-    		Minefield mftemp = (Minefield) e.nextElement();
-    		if (mftemp.equals(mf)) {
-    			mfs.removeElement(mftemp);
-    			break;
-    		}
-    	}
-    	if (mfs.isEmpty()) {
-    		minefields.remove(mf.getCoords());
-    	}
-	}
-	
-	public void clearMinefields() {
-		minefields.clear();
-	}
+      Vector mfs = (Vector) minefields.get(mf.getCoords());
+      if (mfs == null) {
+        return;
+      }
+      
+      Enumeration e = mfs.elements();
+      while (e.hasMoreElements()) {
+        Minefield mftemp = (Minefield) e.nextElement();
+        if (mftemp.equals(mf)) {
+          mfs.removeElement(mftemp);
+          break;
+        }
+      }
+      if (mfs.isEmpty()) {
+        minefields.remove(mf.getCoords());
+      }
+  }
+  
+  public void clearMinefields() {
+    minefields.clear();
+  }
     
     public Vector getVibrabombs() {
-    	return vibrabombs;
+      return vibrabombs;
     }
     
     public void addVibrabomb(Minefield mf) {
-    	vibrabombs.addElement(mf);
+      vibrabombs.addElement(mf);
     }
     
     public void removeVibrabomb(Minefield mf) {
-    	vibrabombs.removeElement(mf);
-	}
+      vibrabombs.removeElement(mf);
+  }
     
     public boolean containsVibrabomb(Minefield mf) {
-    	return vibrabombs.contains(mf);
+      return vibrabombs.contains(mf);
     }
     
     public GameOptions getOptions() {
@@ -739,7 +739,7 @@ public class Game implements Serializable
                 Entity en = (Entity)vec.elementAt(i);
                 
                 if ( en.getId() == id ) 
-                  vec.remove(i);
+                  vec.removeElementAt(i);
               }
             }
           }
@@ -770,11 +770,11 @@ public class Game implements Serializable
         minefields.clear();
         vibrabombs.removeAllElements();
 
-		Enumeration players = getPlayers();
-		while (players.hasMoreElements()) {
-			Player player = (Player) players.nextElement();
-          	player.removeMinefields();
-		}
+    Enumeration players = getPlayers();
+    while (players.hasMoreElements()) {
+      Player player = (Player) players.nextElement();
+            player.removeMinefields();
+    }
     }
     
     /**

@@ -159,7 +159,7 @@ public class GameEncoder {
         }
 
         // Encode the game's state.
-        out.write( "<state " );
+        out.write( "<gamestate " );
         out.write( "windDirection=\"" );
         out.write( game.getWindDirection() );
         out.write( "\" roundCount=\"" );

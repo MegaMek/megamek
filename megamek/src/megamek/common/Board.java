@@ -937,7 +937,7 @@ public class Board
     }
 
     /**
-     * Determine if the given coordinatess has a burning inferno.
+     * Determine if the given coordinates has a burning inferno.
      *
      * @param   coords - the <code>Coords</code> being checked.
      * @return  <code>true</code> if those coordinates have a burning
@@ -974,7 +974,7 @@ public class Board
         InfernoTracker tracker = null;
 
         // Get the tracker for those coordinates, record the round
-        // of burning and see if  the fire is still burning.
+        // of burning and see if the fire is still burning.
         tracker = (InfernoTracker) this.infernos.get( coords );
         if ( null != tracker ) {
             tracker.newRound(-1);
@@ -984,6 +984,71 @@ public class Board
         }
 
         return result;
+    }
+
+    /**
+     * Get an enumeration of all coordinates with infernos still burning.
+     *
+     * @return  an <code>Enumeration</code> of <code>Coords</code> that
+     *          have infernos still burning.
+     */
+    public Enumeration getInfernoBurningCoords() {
+        // Only include *burning* inferno trackers.
+        Vector burning = new Vector();
+        Enumeration iter = this.infernos.keys();
+        while ( iter.hasMoreElements() ) {
+            final Coords coords = (Coords) iter.nextElement();
+            if ( this.isInfernoBurning(coords) ) {
+                burning.addElement( coords );
+            }
+        }
+        return burning.elements();
+    }
+
+    /**
+     * 
+     * Determine the remaining number of turns the given coordinates will have
+     * a burning inferno.
+     *
+     * @param   coords - the <code>Coords</code> being checked.
+     *          This value must not be <code>null</code>.  Unchecked.
+     * @return  the <code>int</code> number of burn turns left for all infernos
+     *          This value will be non-negative.
+     */
+    public int getInfernoBurnTurns( Coords coords ) {
+        int turns = 0;
+        InfernoTracker tracker = null;
+
+        // Get the tracker for those coordinates
+        // and see if the fire is still burning.
+        tracker = (InfernoTracker) this.infernos.get( coords );
+        if ( null != tracker ) {
+            turns = tracker.getTurnsLeftToBurn();
+        }
+        return turns;
+    }
+
+    /**
+     * 
+     * Determine the remaining number of turns the given coordinates will have
+     * a burning Inferno IV round.
+     *
+     * @param   coords - the <code>Coords</code> being checked.
+     *          This value must not be <code>null</code>.  Unchecked.
+     * @return  the <code>int</code> number of burn turns left for Arrow IV
+     *          infernos.  This value will be non-negative.
+     */
+    public int getInfernoIVBurnTurns( Coords coords ) {
+        int turns = 0;
+        InfernoTracker tracker = null;
+
+        // Get the tracker for those coordinates
+        // and see if the fire is still burning.
+        tracker = (InfernoTracker) this.infernos.get( coords );
+        if ( null != tracker ) {
+            turns = tracker.getArrowIVTurnsLeftToBurn();
+        }
+        return turns;
     }
 
     /**

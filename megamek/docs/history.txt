@@ -4,6 +4,7 @@ v0.29.36 (CVS)
 + Bug 957390: a bot miscue from the last checkin
 + Bug 838318: Stealth was still working when mech shutdown.
 + Data 949800 and 949801: Cyclops CP-11-C3 and some mixed tech mech fixes.
++ Use StringBuffer.append() instead of String + String.
 
 v0.29.35 (2004-05-20, 2pm)
 + Time to start tracking memory usage in the log file.  Where is it all going?

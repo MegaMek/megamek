@@ -4,7 +4,6 @@ import megamek.common.*;
 import megamek.common.Mech;
 import megamek.common.MechSummaryCache;
 
-import java.util.Vector;
 import java.util.Enumeration;
 import java.lang.StringBuffer;
 import java.io.File;
@@ -55,7 +54,7 @@ public class TestAllEntities implements MechSummaryCache.Listener
         if (all)
         {
             mechSummaryCache = MechSummaryCache.getInstance();
-            mechSummaryCache.addListener(this);
+            MechSummaryCache.addListener(this);
         }
     }
 

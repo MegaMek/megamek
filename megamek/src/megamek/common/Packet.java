@@ -25,32 +25,34 @@ import java.io.*;
 public class Packet
   implements Serializable
 {
-    public static final int        COMMAND_SERVER_NAME            = 1;
-    public static final int        COMMAND_CLIENT_NAME            = 2;
-    public static final int        COMMAND_LOCAL_PN            = 3;
+    public static final int        COMMAND_SERVER_NAME          = 1;
+    public static final int        COMMAND_CLIENT_NAME          = 2;
+    public static final int        COMMAND_LOCAL_PN             = 3;
 
-    public static final int        COMMAND_PLAYER_ADD          = 4;
-    public static final int        COMMAND_PLAYER_REMOVE       = 5;
+    public static final int        COMMAND_PLAYER_ADD           = 4;
+    public static final int        COMMAND_PLAYER_REMOVE        = 5;
     public static final int        COMMAND_PLAYER_UPDATE        = 6;
-    public static final int        COMMAND_PLAYER_READY        = 7;
+    public static final int        COMMAND_PLAYER_READY         = 7;
   
-    public static final int        COMMAND_CHAT                = 8;
+    public static final int        COMMAND_CHAT                 = 8;
     
-    public static final int        COMMAND_ENTITY_ADD            = 9;
+    public static final int        COMMAND_ENTITY_ADD           = 9;
     public static final int        COMMAND_ENTITY_REMOVE        = 10;
-    public static final int        COMMAND_ENTITY_MOVE            = 11;
-    public static final int        COMMAND_ENTITY_ATTACK       = 12;
-    public static final int        COMMAND_ENTITY_READY        = 13;
+    public static final int        COMMAND_ENTITY_MOVE          = 11;
+    public static final int        COMMAND_ENTITY_ATTACK        = 12;
+    public static final int        COMMAND_ENTITY_READY         = 13;
     public static final int        COMMAND_ENTITY_UPDATE        = 14;
     
-    public static final int        COMMAND_PHASE_CHANGE        = 15;
-    public static final int        COMMAND_TURN                = 16;
+    public static final int        COMMAND_PHASE_CHANGE         = 15;
+    public static final int        COMMAND_TURN                 = 16;
     
     public static final int        COMMAND_SENDING_BOARD        = 17;
-    public static final int        COMMAND_SENDING_ENTITIES    = 18;
-    public static final int     COMMAND_SENDING_PLAYERS     = 19;
-    public static final int        COMMAND_SENDING_REPORT        = 20;
+    public static final int        COMMAND_SENDING_ENTITIES     = 18;
+    public static final int        COMMAND_SENDING_PLAYERS      = 19;
+    public static final int        COMMAND_SENDING_REPORT       = 20;
     public static final int        COMMAND_SENDING_GAME_SETTINGS= 21;
+    public static final int        COMMAND_SENDING_MAP_SETTINGS = 22;
+    public static final int        COMMAND_QUERY_MAP_SETTINGS   = 23;
     
     
     private int                command;

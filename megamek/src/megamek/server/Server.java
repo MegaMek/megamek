@@ -28,6 +28,7 @@ public class Server
     implements Runnable
 {
     public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.";
+    public final static String  DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
     
     // server setup
     private String              name;
@@ -43,13 +44,15 @@ public class Server
 
     private Game                game = new Game();
 
+    private GameSettings        gameSettings = new GameSettings();
+    private MapSettings         mapSettings = new MapSettings();
+    
     // list of turns and whose turn it is
     private int                 roundCounter = 0;
     private int[]               turns;
     private int                 ti;
 
     // stuff for the current turn
-    private GameSettings        gameSettings = new GameSettings();
     private Vector              attacks = new Vector();
     private Vector              pendingCharges = new Vector();
     private Vector              pilotRolls = new Vector();
@@ -73,7 +76,7 @@ public class Server
             System.err.println("could not create server socket on port " + port);
         }
 
-        game.phase = Game.PHASE_LOUNGE;
+        changePhase(Game.PHASE_LOUNGE);
 
         // display server start text
         System.out.println("s: starting a new server...");
@@ -164,7 +167,8 @@ public class Server
         send(connId, createEntitiesPacket());
         switch (game.phase) {
         case Game.PHASE_LOUNGE :
-            send(connId, createSettingsPacket());
+            send(connId, createMapSettingsPacket());
+            send(connId, createGameSettingsPacket());
             break;
         default :
             getPlayer(connId).setReady(game.getEntitiesOwnedBy(getPlayer(connId)) <= 0);
@@ -550,17 +554,23 @@ public class Server
      */
     private void prepareForPhase(int phase) {
         switch (phase) {
+        case Game.PHASE_LOUNGE :
+            mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings.getBoardWidth(), mapSettings.getBoardHeight()));
+            mapSettings.setNullBoardsSelected(DEFAULT_BOARD);
+            break;
         case Game.PHASE_EXCHANGE :
             gameSettings.friendlyFire = game.getNoOfPlayers() <= 1;
             resetPlayerReady();
             // apply board layout settings to produce a mega-board
-            Board[] sheetBoards = new Board[gameSettings.sheetWidth * gameSettings.sheetHeight];
-            for (int i = 0; i < gameSettings.sheetWidth * gameSettings.sheetHeight; i++) {
+            mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+            mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
+            Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
+            for (int i = 0; i < mapSettings.getMapWidth() * mapSettings.getMapHeight(); i++) {
                 sheetBoards[i] = new Board();
-                sheetBoards[i].load(getRandomBoard());
+                sheetBoards[i].load((String)mapSettings.getBoardsSelectedVector().elementAt(i) + ".board");
             }
-            game.board.combine(gameSettings.boardWidth, gameSettings.boardHeight,
-                    gameSettings.sheetWidth, gameSettings.sheetHeight, sheetBoards);
+            game.board.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
+                    mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
             // deploy all entities
             Coords center = new Coords(game.board.width / 2, game.board.height / 2);
             for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
@@ -2658,28 +2668,40 @@ public class Server
     }
 
     /**
-     * Returns a random board filename
-     *
-     * TODO: make this search the boards directory for boards of the correct size
+     * Scans the boards directory for map boards of the appropriate size
+     * and returns them.
      */
-    private String getRandomBoard() {
-        String[] boards = {"battletech.board", "citytech.board",
-                           "deepcanyon1.board", "deepcanyon2.board",
-                           "deserthills.board",
-                           "desertmountain1.board", "desertmountain2.board",
-                           "heavyforest1.board", "heavyforest2.board",
-                           "lakearea.board",
-                           "largelakes1.board", "largelakes2.board",
-                           "openterrain1.board", "openterrain2.board",
-                           "rivervalley.board",
-                           "rollinghills1.board", "rollinghills2.board",
-                           "scatteredwoods.board",
-                           "woodland.board"};
-
-        return boards[(int)(Compute.random.nextDouble() * boards.length)];
+    private Vector scanForBoards(int boardWidth, int boardHeight) {
+        Vector boards = new Vector();
+        
+        // if there are any boards, add these:
+        boards.addElement(MapSettings.BOARD_RANDOM);
+        boards.addElement(MapSettings.BOARD_SURPRISE);
+        
+        // temp: just add these...
+        boards.addElement("battletech");
+        boards.addElement("citytech");
+        boards.addElement("deepcanyon1");
+        boards.addElement("deepcanyon2");
+        boards.addElement("deserthills");
+        boards.addElement("desertmountain1");
+        boards.addElement("desertmountain2");
+        boards.addElement("heavyforest1");
+        boards.addElement("heavyforest2");
+        boards.addElement("lakearea");
+        boards.addElement("largelakes1");
+        boards.addElement("largelakes2");
+        boards.addElement("openterrain1");
+        boards.addElement("openterrain2");
+        boards.addElement("rivervalley");
+        boards.addElement("rollinghills1");
+        boards.addElement("rollinghills2");
+        boards.addElement("scatteredwoods");
+        boards.addElement("woodland");
+        
+        return boards;
     }
-
-
+    
     /**
      * Sets an entity ready status to false
      */
@@ -2818,9 +2840,24 @@ public class Server
     }
     
     /**
+     * Creates a packet containing the map settings
+     */
+    private Packet createMapSettingsPacket() {
+        return new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, mapSettings);
+    }
+    
+    /**
+     * Creates a packet containing temporary map settings as a response to a
+     * client query
+     */
+    private Packet createMapQueryPacket(MapSettings temp) {
+        return new Packet(Packet.COMMAND_QUERY_MAP_SETTINGS, temp);
+    }
+    
+    /**
      * Creates a packet containing the game settingss
      */
-    private Packet createSettingsPacket() {
+    private Packet createGameSettingsPacket() {
         return new Packet(Packet.COMMAND_SENDING_GAME_SETTINGS, gameSettings);
     }
 
@@ -2952,7 +2989,21 @@ public class Server
             gameSettings = (GameSettings)packet.getObject(0);
             resetPlayerReady();
             transmitAllPlayerReadys();
-            send(createSettingsPacket());
+            send(createGameSettingsPacket());
+            break;
+        case Packet.COMMAND_SENDING_MAP_SETTINGS :
+            mapSettings = (MapSettings)packet.getObject(0);
+            mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+            resetPlayerReady();
+            transmitAllPlayerReadys();
+            send(createMapSettingsPacket());
+            break;
+        case Packet.COMMAND_QUERY_MAP_SETTINGS :
+            MapSettings temp = (MapSettings)packet.getObject(0);
+            temp.setBoardsAvailableVector(scanForBoards(temp.getBoardWidth(), temp.getBoardHeight()));
+            temp.setNullBoardsSelected(DEFAULT_BOARD);
+            temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+            send(connId, createMapQueryPacket(temp));
             break;
         }
     }

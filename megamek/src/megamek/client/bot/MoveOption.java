@@ -389,15 +389,15 @@ public class MoveOption extends MovePath {
         }
 
         // calc & add attacker los mods
-        LosEffects los = Compute.calculateLos(game, ae.getId(), te);
-        toHita.append(Compute.losModifiers(los));
+        LosEffects los = LosEffects.calculateLos(game, ae.getId(), te);
+        toHita.append(los.losModifiers());
         // save variables
         pc = los.isTargetCover();
         apc = los.isAttackerCover();
         // reverse attacker & target partial cover & calc defender los mods
         los.setTargetCover(apc);
         los.setAttackerCover(pc);
-        toHitd.append(Compute.losModifiers(los));
+        toHitd.append(los.losModifiers());
 
         // heatBuildup
         if (ae.getHeatFiringModifier() != 0) {

@@ -19,10 +19,10 @@ import java.awt.event.*;
 import megamek.common.Coords;
 import megamek.common.BoardEvent;
 import megamek.common.BoardListener;
+import megamek.common.LosEffects;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import megamek.common.Compute;
 import megamek.common.ToHitData;
 
 /**
@@ -312,33 +312,26 @@ public class Ruler extends Dialog implements BoardListener {
 
       String toHit1 = "", toHit2 = "";
       ToHitData thd;
-
       if (flip) {
-         thd = Compute.losModifiers( Compute.calculateLosTheoretical(client.game, start, end, h1, h2 ) );
-         if (thd.getDesc().indexOf("blocked") < 0) {
-            toHit1 = thd.getValue() + " = ";
-         }
-         toHit1 += thd.getDesc();
-
-         thd = Compute.losModifiers( Compute.calculateLosTheoretical(client.game, end, start, h2, h1 ) );
-         if (thd.getDesc().indexOf("blocked") < 0) {
-            toHit2 = thd.getValue() + " = ";
-         }
-         toHit2 += thd.getDesc();
+         thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers();
       } else {
-         thd = Compute.losModifiers( Compute.calculateLosTheoretical(client.game, end, start, h2, h1 ) );
-         if (thd.getDesc().indexOf("blocked") < 0) {
-            toHit1 = thd.getValue() + " = ";
-         }
-         toHit1 += thd.getDesc();
-
-         thd = Compute.losModifiers( Compute.calculateLosTheoretical(client.game, start, end, h1, h2 ) );
-         if (thd.getDesc().indexOf("blocked") < 0) {
-            toHit2 = thd.getValue() + " = ";
-         }
-         toHit2 += thd.getDesc();
+		 thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers();
       }
+      if (thd.getDesc().indexOf("blocked") < 0) {
+         toHit1 = thd.getValue() + " = ";
+      }
+      toHit1 += thd.getDesc();
 
+	  if (flip) {
+		 thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers();
+	  } else {
+		 thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers();
+	  }
+      if (thd.getDesc().indexOf("blocked") < 0) {
+         toHit2 = thd.getValue() + " = ";
+      }
+      toHit2 += thd.getDesc();
+  
 
       tf_start.setText(start.toString());
       tf_end.setText(end.toString());
@@ -347,6 +340,27 @@ public class Ruler extends Dialog implements BoardListener {
       //      tf_los1.setCaretPosition(0);
       tf_los2.setText(toHit2 );
       //      tf_los2.setCaretPosition(0);
+   }
+   
+   /**
+    * Ignores determining if the attack is on land or under
+    * water.
+    * 
+    * @param c1
+    * @param c2
+    * @param h1
+    * @param h2
+    * @return
+    */
+   LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1, int h2) {
+       LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+       ai.attackPos = c1;
+       ai.targetPos = c2;
+       ai.attackHeight = h1;
+       ai.targetHeight = h2;
+       ai.attackAbsHeight = client.game.getBoard().getHex(c1).floor() + h1;
+       ai.targetAbsHeight = client.game.getBoard().getHex(c2).floor() + h2;
+       return ai;
    }
 
    public boolean valid() {

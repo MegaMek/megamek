@@ -123,6 +123,10 @@ extends Dialog implements ActionListener {
             fldPiloting.setEnabled(false);
         }
         
+        addWindowListener(new WindowAdapter() {
+	    public void windowClosing(WindowEvent e) { setVisible(false); }
+	});
+
         pack();
         setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
                     frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);

@@ -28,6 +28,8 @@ public class FiringDisplay
     KeyListener, ComponentListener, MouseListener,
     ItemListener
 {
+    private static final int    NUM_BUTTON_LAYOUTS = 2;
+    
     // parent game
     public Client client;
     
@@ -36,11 +38,24 @@ public class FiringDisplay
     
     // buttons
     private Container        panButtons;
-    private Button            butFire;
-    private Button            butReady;
-    private Button            butNext;
-    private Button            butMenu;
     
+    private Button            butFire;
+    private Button            butTwist;
+    private Button            butSkip;
+    
+    private Button            butAim;
+    private Button            butFindClub;
+    
+    private Button            butSpace;
+    private Button            butSpace1;
+    private Button            butSpace2;
+    
+    private Button            butNext;
+    private Button            butDone;
+    private Button            butMore;
+    
+    private int               buttonLayout;
+
     // let's keep track of what we're shooting and at what, too
     private int                cen;        // current entity number
     private int                ten;        // target entity number
@@ -71,36 +86,52 @@ public class FiringDisplay
         labStatus = new Label("Waiting to begin Weapon Attack phase...", Label.CENTER);
         
         butFire = new Button("Fire");
-        butFire.setActionCommand("fire");
         butFire.addActionListener(this);
-        butFire.addKeyListener(this);
         butFire.setEnabled(false);
         
-        butReady = new Button("Done");
-        butReady.setActionCommand("ready");
-        butReady.addActionListener(this);
-        butReady.addKeyListener(this);
+        butSkip = new Button("Skip");
+        butSkip.addActionListener(this);
+        butSkip.setEnabled(false);
         
-        butNext = new Button("Next Unit");
-        butNext.setActionCommand("next");
+        butTwist = new Button("Twist");
+        butTwist.addActionListener(this);
+        butTwist.setEnabled(false);
+        
+
+        butFindClub = new Button("Find Club");
+        butFindClub.addActionListener(this);
+        butFindClub.setEnabled(false);
+        
+        butAim = new Button("Aim");
+        butAim.addActionListener(this);
+        butAim.setEnabled(false);
+        
+        
+        butSpace = new Button(".");
+        butSpace.setEnabled(false);
+
+        butSpace1 = new Button(".");
+        butSpace1.setEnabled(false);
+
+        butSpace2 = new Button(".");
+        butSpace2.setEnabled(false);
+
+        butDone = new Button("Done");
+        butDone.addActionListener(this);
+        butDone.setEnabled(false);
+        
+        butNext = new Button(" Next Unit ");
         butNext.addActionListener(this);
-        butNext.addKeyListener(this);
         butNext.setEnabled(false);
         
-        butMenu = new Button("?");
-        butMenu.setActionCommand("menu");
-        butMenu.addActionListener(this);
-        butMenu.addKeyListener(this);
-        butMenu.setEnabled(false);
+        butMore = new Button("More...");
+        butMore.addActionListener(this);
+        butMore.setEnabled(false);
         
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(2, 2));
-        panButtons.add(butFire);
-        panButtons.add(butNext);
-        panButtons.add(butMenu);
-        panButtons.add(butReady);
-    
+        buttonLayout = 0;
+        setupButtonPanel();
         
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -141,6 +172,35 @@ public class FiringDisplay
         comp.addKeyListener(this);
     }
     
+    private void setupButtonPanel() {
+        panButtons.removeAll();
+        panButtons.setLayout(new GridLayout(2, 4));
+        
+        switch (buttonLayout) {
+        case 0 :
+            panButtons.add(butFire);
+            panButtons.add(butSkip);
+            panButtons.add(butSpace);
+            panButtons.add(butNext);
+            panButtons.add(butTwist);
+            panButtons.add(butSpace1);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+            break;
+        case 1 :
+            panButtons.add(butAim);
+            panButtons.add(butFindClub);
+            panButtons.add(butSpace);
+            panButtons.add(butNext);
+            panButtons.add(butSpace1);
+            panButtons.add(butSpace2);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+            break;
+        }
+        
+        validate();
+    }
     /**
      * Selects an entity, by number, for movement.
      */
@@ -171,7 +231,8 @@ public class FiringDisplay
     private void beginMyTurn() {
         ten = Entity.NONE;
         butNext.setEnabled(true);
-        butReady.setEnabled(true);
+        butDone.setEnabled(true);
+        butMore.setEnabled(true);
         client.mechW.setVisible(true);
         moveMechDisplay();
         client.game.board.select(null);
@@ -200,7 +261,7 @@ public class FiringDisplay
      */
     private void disableButtons() {
         butFire.setEnabled(false);
-        butReady.setEnabled(false);
+        butDone.setEnabled(false);
         butNext.setEnabled(false);
     }
     
@@ -407,14 +468,20 @@ public class FiringDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if(ev.getActionCommand().equalsIgnoreCase("ready") && client.isMyTurn()) {
+        if (!client.isMyTurn()) {
+            return;
+        }
+        
+        if (ev.getSource() == butDone) {
             ready();
-        }
-        if(ev.getActionCommand().equalsIgnoreCase("fire") && client.isMyTurn()) {
+        } else if (ev.getSource() == butFire) {
             fire();
-        }
-        if(ev.getActionCommand().equalsIgnoreCase("next") && client.isMyTurn()) {
+        } else if (ev.getSource() == butNext) {
             selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
+        } else if (ev.getSource() == butMore) {
+            buttonLayout++;
+            buttonLayout %= NUM_BUTTON_LAYOUTS;
+            setupButtonPanel();
         }
     }
     

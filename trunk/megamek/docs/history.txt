@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v 0.29.30 (CVS)
++ Bug 922776: Salamander BAs can explicitly raise Mek heat (BMRr, page 65).
 
 v 0.29.29 (2004-03-21 4:35pm)
 + Bug 802115: Failed MASC now marks mech as "done".

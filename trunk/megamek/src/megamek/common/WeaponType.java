@@ -3020,6 +3020,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_FLAMER | F_DOUBLE_HITS;
+        String[] modes = { "Damage", "Heat" };
+        weapon.setModes(modes);
 
         return weapon;
     }

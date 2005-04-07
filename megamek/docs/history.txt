@@ -3,6 +3,9 @@ VERSION HISTORY:
 v0.29.73 (CVS)
 + Bug 1176985: Nighthawk BA should have stealth.
 + Added Aerie BA.
++ Added pictures for Fire Falcon, Crossbow, Grendel, Hankyu, Hellion, Huntsman,
+    Kingfisher, Linebacker, Nightgyr, Nova Cat, Phantom, Pouncer, Savage Coyote,
+    Shadowcat, Stooping Hawk, Turkina variants and Jupiter 1 and 2 and Lobo.
 
 v0.29.72 (2005-04-02 3:15pm)
 + Data 1171465: Use the "lunar" theme in moonscapes boards.

@@ -37,6 +37,9 @@ public class WeaponType extends EquipmentType {
     public static final int     F_BALLISTIC     = 0x20000; // For Gunnery/Ballistic skill
     public static final int     F_ENERGY        = 0x40000; // For Gunnery/Energy skill
     public static final int     F_MISSILE       = 0x80000; // For Gunnery/Missile skill
+    public static final int     F_PLASMA        = 0x100000; // For fires
+    public static final int F_INCENDIARY_NEEDLES = 0x200000; // For fires
+
     public static final int     F_SPLITABLE     = 0x0100; // Weapons that can be split between locations
     public static final int     F_MG            = 0x0200; // MG; for rapid fire set up
 
@@ -82,6 +85,10 @@ public class WeaponType extends EquipmentType {
             return TargetRoll.IMPOSSIBLE;
         } else if (hasFlag(F_FLAMER)) {
             return 4;
+        } else if (hasFlag(F_PLASMA)) {
+            return 5;
+        } else if (hasFlag(F_INCENDIARY_NEEDLES)) {
+            return 6;
         } else if (hasFlag(F_PPC) || hasFlag(F_LASER)) {
             return 7;
         } else {
@@ -361,6 +368,21 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createBACompactNARC() );
         EquipmentType.addType( createSlothSmallLaser() );
         EquipmentType.addType( createBAMineLauncher() );
+
+        // Combat Operations Weapons
+        EquipmentType.addType( createBAAdvancedSRM5() );
+        EquipmentType.addType( createBABearhunterAC() );
+        EquipmentType.addType( createBACLMediumPulseLaser() );
+        EquipmentType.addType( createBAIncendiaryNeedler() );
+        EquipmentType.addType( createBALightRecRifle() );
+        EquipmentType.addType( createBALightGaussRifle() );
+        EquipmentType.addType( createBAMediumRecRifle() );
+        EquipmentType.addType( createBAPlasmaRifle() );
+        EquipmentType.addType( createBASingleSmallPulseLaser() );
+        EquipmentType.addType( createBASRM4() );
+        EquipmentType.addType( createBASupportPPC() );
+        EquipmentType.addType( createBAVibroClaws() );
+        EquipmentType.addType( createPhalanxSRM4() );
     }
 
     public static WeaponType createFlamer() {
@@ -5003,6 +5025,315 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 15;
         weapon.bv = 40;
         weapon.flags |= F_ARTILLERY | F_SPLITABLE;
+        return weapon;
+    }
+
+    // Combat operations weapons.
+
+    public static WeaponType createBAAdvancedSRM5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Advanced SRM 5";
+        weapon.setInternalName("AdvancedSRM5");
+        weapon.addLookupName("BA-Advanced SRM-5");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_SRM_ADVANCED;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_NO_FIRES | F_BATTLEARMOR | F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createBABearhunterAC() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Bearhunter AC";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Bearhunter Superheavy AC");
+        weapon.heat = 0;
+        weapon.toHitModifier = 1;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 0;
+        weapon.mediumRange = 1;
+        weapon.longRange = 2;
+        weapon.extremeRange = 2;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBACLMediumPulseLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Medium Pulse Laser";
+        weapon.setInternalName("BACLMediumPulseLaser");
+        weapon.addLookupName("BA-CL Medium Pulse Laser");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 7;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.waterShortRange = 3;
+        weapon.waterMediumRange = 5;
+        weapon.waterLongRange = 8;
+        weapon.waterExtremeRange = 10;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAIncendiaryNeedler() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Firedrake Needler";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Firedrake Incendiary Needler");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 0;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_INCENDIARY_NEEDLES | F_BATTLEARMOR | F_DIRECT_FIRE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createBALightRecRifle() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Light Recoilless";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Light Recoilless Rifle");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBALightGaussRifle() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "King David Gauss Rifle";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-King David Light Gauss Rifle");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAMediumRecRifle() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Medium Recoilless";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Medium Recoilless Rifle");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAPlasmaRifle() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Plasma Rifle";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Plasma Rifle");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_PLASMA | F_BATTLEARMOR | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createBASingleSmallPulseLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Small Pulse Laser";
+        weapon.setInternalName("BASingleSmallPulseLaser");
+        weapon.addLookupName("BA-Single Small Pulse Laser");
+        weapon.heat = 0;
+        weapon.damage = 3;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
+        weapon.waterShortRange = 1;
+        weapon.waterMediumRange = 2;
+        weapon.waterLongRange = 2;
+        weapon.waterExtremeRange = 4;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+
+        return weapon;
+    }
+
+    public static WeaponType createBASRM4() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "SRM 4";
+        weapon.setInternalName("BA-SRM4");
+        weapon.addLookupName("BA-SRM4");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createBASupportPPC() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Support PPC";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Support PPC");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 5;
+        weapon.longRange = 7;
+        weapon.extremeRange = 10;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_PPC | F_BATTLEARMOR | F_DIRECT_FIRE | F_ENERGY;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAVibroClaws() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Vibroclaws";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Vibro Claws");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 0;
+        weapon.mediumRange = 0;
+        weapon.longRange = 0;
+        weapon.extremeRange = 0;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createPhalanxSRM4() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Phalanx SRM 4";
+        weapon.setInternalName("PhalanxSRM4");
+        weapon.addLookupName("Phalanx SRM4");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_DOUBLE_HITS | F_MISSILE;
+
         return weapon;
     }
 

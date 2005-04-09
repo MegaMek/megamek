@@ -96,6 +96,12 @@ public class BattleArmor
     private boolean     isMimetic = false;
 
     /**
+     * Flag that is <code>true</code> when this unit is equipped with simple
+     * Camo.
+     */
+    private boolean     isSimpleCamo = false;
+
+    /**
      * Modifiers to <code>ToHitData</code> for stealth.
      */
     private int         shortStealthMod = 0;
@@ -166,6 +172,11 @@ public class BattleArmor
      * The internal name for Mimetic Camo equipment.
      */
     public static final String MIMETIC_CAMO = "Mimetic Armor";
+
+    /**
+     * The internal name for Simple Camo equipment.
+     */
+    public static final String SIMPLE_CAMO = "Simple Camo";
 
     /**
      * The internal name for Single-Hex ECM equipment.
@@ -500,6 +511,9 @@ public class BattleArmor
         else if ( BattleArmor.MIMETIC_CAMO.equals( name ) ) {
             this.isMimetic = true;
         }
+        else if ( BattleArmor.SIMPLE_CAMO.equals( name ) ) {
+            this.isSimpleCamo = true;
+        }
     }
 
     /**
@@ -635,7 +649,7 @@ public class BattleArmor
      *          stealth system or if it is inactive.
      */
     public boolean isStealthActive() {
-        return (isStealthy || isMimetic);
+        return (isStealthy || isMimetic || isSimpleCamo);
     }
 
     /**
@@ -659,6 +673,17 @@ public class BattleArmor
             result = new TargetRoll( 0, "stealth not active"  );
         }
 
+        // Simple camo modifier is on top of the movement modifier
+        //      0 hexes moved   +2 movement modifier
+        //      1+ hexes moved  +1 movement modifier
+        if ( isSimpleCamo ) {
+            if ( 0 == this.delta_distance ) {
+                result = new TargetRoll( 2, "camoflage" );
+            } else {
+                result = new TargetRoll( 1, "camoflage" );
+            }
+        }
+        
         // Mimetic armor modifier is based upon and replaces the movement
         // bonus as listed below (BMRr, pg. 71):
         //      0 hexes moved   +3 movement modifier
@@ -667,7 +692,7 @@ public class BattleArmor
         //      3 hexes moved   +0 movement modifier
         // N.B. Rather than mucking with Compute#getTargetMovementModifier,
         // I decided to apply a -1 modifier here... the total works out.
-        else if ( isMimetic ) {
+        if ( isMimetic ) {
             if ( 3 == this.delta_distance ) {
             result = new TargetRoll( -1,
                                      "mimetic armor cancels movement bonus" );
@@ -678,7 +703,7 @@ public class BattleArmor
         }
         
         // Stealthy units alreay have their to-hit mods defined.
-        else if ( isStealthy ) {
+        if ( isStealthy ) {
             switch ( range ) {
             case RangeType.RANGE_MINIMUM:
             case RangeType.RANGE_SHORT:

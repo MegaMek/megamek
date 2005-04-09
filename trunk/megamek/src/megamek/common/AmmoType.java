@@ -462,12 +462,15 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType( createBASRM2OSAmmo() );
         EquipmentType.addType( createBAInfernoSRMAmmo() );
         EquipmentType.addType( createBAAdvancedSRM2Ammo() );
+        EquipmentType.addType( createBAAdvancedSRM5Ammo() );
         EquipmentType.addType( createBAMicroBombAmmo() );
         EquipmentType.addType( createCLTorpedoLRM5Ammo() );
         EquipmentType.addType( createFenrirSRM4Ammo() );
         EquipmentType.addType( createBACompactNarcAmmo() );
         EquipmentType.addType( createBAMineLauncherAmmo() );
         EquipmentType.addType( createBALRM5Ammo() );
+        EquipmentType.addType( createPhalanxSRM4Ammo() );
+        EquipmentType.addType( createGrenedierSRM4Ammo() );
 
         // Protomech-specific ammo
         EquipmentType.addType(createCLPROHeavyMGAmmo());
@@ -2712,6 +2715,22 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+    public static AmmoType createBAAdvancedSRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Advanced SRM 5 Ammo";
+        ammo.setInternalName("BA-Advanced SRM-5 Ammo");
+        ammo.addLookupName("BA-Advanced SRM-5 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
     public static AmmoType createBAMicroBombAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -2755,6 +2774,38 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 4;
+        ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    public static AmmoType createPhalanxSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 4 Ammo";
+        ammo.setInternalName("PhalanxSRM4Ammo");
+        ammo.addLookupName("Phalanx SRM4 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 2;
+        ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    public static AmmoType createGrenedierSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 4 Ammo";
+        ammo.setInternalName("BA-SRM4 Grenadier Ammo");
+        ammo.addLookupName("BA-SRM4 Grenadier Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 7;
         ammo.hittable = false;
         ammo.bv = 0;
 

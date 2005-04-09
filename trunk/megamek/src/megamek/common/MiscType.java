@@ -267,6 +267,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType( createBAMagneticClamp() );
         EquipmentType.addType( createSingleHexECM() );
         EquipmentType.addType( createMimeticCamo() );
+        EquipmentType.addType( createSimpleCamo() );
         EquipmentType.addType( createParafoil() );
         EquipmentType.addType( createBASearchlight() );
     }
@@ -777,6 +778,20 @@ public class MiscType extends EquipmentType {
         
         misc.name = BattleArmor.MIMETIC_CAMO;
         misc.setInternalName(BattleArmor.MIMETIC_CAMO);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_STEALTH;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createSimpleCamo() {
+        MiscType misc = new MiscType();
+        
+        misc.name = BattleArmor.SIMPLE_CAMO;
+        misc.setInternalName(BattleArmor.SIMPLE_CAMO);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;

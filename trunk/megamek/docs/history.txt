@@ -9,6 +9,8 @@ v0.29.73 (CVS)
 + Added pics for Shamash, Shoden and Svantovit tanks.
 + Added pics for Icestorm, Maxim Heavy Hover Transport, Tyr, Odin and Dire Wolf
     Hohiro.
++ Data 1177157: added new battle armor squads as "combat_equipment.zip".
++ Data 1176308: added *most* new BA equipment.
 
 v0.29.72 (2005-04-02 3:15pm)
 + Data 1171465: Use the "lunar" theme in moonscapes boards.

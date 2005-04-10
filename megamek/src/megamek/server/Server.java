@@ -6033,10 +6033,22 @@ implements Runnable, ConnectionHandler {
         }
 
         int nCluster = 5;
+        
+        int ratedDamage = wtype.getRackSize();
+        bldg = null;
+        bldg = game.board.getBuildingAt(coords);
+        int bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
+        bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+        ratedDamage -= bldgAbsorbs;
+        if ((bldg != null) && (bldgAbsorbs > 0)) {
+            phaseReport.append("The building in the hex absorbs " + bldgAbsorbs + "damage from the artillery strike!\n");
+            phaseReport.append(damageBuilding(bldg, ratedDamage));   
+        }
 
         for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
             Entity entity = (Entity)impactHexHits.nextElement();
-            int hits = wtype.getRackSize();
+            int hits = ratedDamage;
+            
             while(hits>0) {
                 if(wr.artyAttackerCoords!=null) {
                     toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
@@ -6052,6 +6064,7 @@ implements Runnable, ConnectionHandler {
             }
 
         }
+        
         for(int dir=0;dir<=5;dir++) {
             Coords tempcoords=coords.translated(dir);
             if(!game.board.contains(tempcoords)) {
@@ -6061,13 +6074,25 @@ implements Runnable, ConnectionHandler {
                 continue;
 
             }
+            
+            ratedDamage = wtype.getRackSize()/2;
+            bldg = null;
+            bldg = game.board.getBuildingAt(tempcoords);
+            bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
+            bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+            ratedDamage -= bldgAbsorbs;
+            if ((bldg != null) && (bldgAbsorbs > 0)) {
+                phaseReport.append("The building in the hex absorbs " + bldgAbsorbs + "damage from the artillery strike!\n");
+                phaseReport.append(damageBuilding(bldg, ratedDamage));   
+            }
+            
             Enumeration splashHexHits = game.getEntities(tempcoords);
             if(splashHexHits.hasMoreElements()) {
                 phaseReport.append("in hex " + tempcoords.getBoardNum());
             }
             for(;splashHexHits.hasMoreElements();) {
                 Entity entity = (Entity)splashHexHits.nextElement();
-                int hits = wtype.getRackSize()/2;
+                int hits = ratedDamage;
                 while(hits>0) {
                     HitData hit = entity.rollHitLocation
                         ( toHit.getHitTable(),

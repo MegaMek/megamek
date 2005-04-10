@@ -74,8 +74,13 @@ implements Runnable, ConnectionHandler {
      * damage and kill logic from Server, where it is now, to the Entity subclasses eventually.  
      * This has not been implemented yet -- I am just starting to build the groundwork into Server.
      * It isn't in the execution path and shouldn't cause any bugs */
-    
-    private HashSet             knownDeadEntities = new HashSet();
+    //Note from another coder - I have commented out your groundwork
+    //for now because it is using HashSet, which isn't available in
+    //Java 1.1 unless you import the collections classes.  Since the
+    //Server class isn't using any other collecitons classes, there
+    //might be a reason we're avoiding them here...if not, feel free
+    //to add the import.
+    //private HashSet             knownDeadEntities = new HashSet();
 
     /**
      * Construct a new GameHost and begin listening for
@@ -13788,6 +13793,8 @@ implements Runnable, ConnectionHandler {
     }
     
     private void deadEntitiesCleanup() {
+        //See note above where knownDeadEntities variable is declared
+        /*
         Entity en = null;
         for(Enumeration k = game.getGraveyardEntities(); k.hasMoreElements(); en = (Entity) k.nextElement()) {
             if (en != null) {
@@ -13796,5 +13803,6 @@ implements Runnable, ConnectionHandler {
         	    }
             }        	
         }
+        */
     }
 }

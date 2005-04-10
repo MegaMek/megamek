@@ -20,11 +20,11 @@
 
 package megamek.client;
 
-import megamek.common.options.GameOption;
+import megamek.common.options.IOption;
 
 public interface DialogOptionListener
 {
-  public void showDescFor(GameOption option);
-  public void optionClicked(DialogOptionComponent comp, GameOption option, boolean state);
+  public void showDescFor(IOption option);
+  public void optionClicked(DialogOptionComponent comp, IOption option, boolean state);
 }
 

@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.io.*;
 
 import megamek.common.actions.*;
+import megamek.common.options.GameOptions;
 
 /**
  * The game class is the root of all data about the game in progress.

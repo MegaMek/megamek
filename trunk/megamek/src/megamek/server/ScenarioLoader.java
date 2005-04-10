@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import megamek.client.ChatLounge;
 import megamek.common.loaders.*;
-import megamek.common.options.GameOption;
+import megamek.common.options.IOption;
 
 public class ScenarioLoader 
 {
@@ -404,7 +404,7 @@ public class ScenarioLoader
       while ( st.hasMoreTokens() ) {
         String curAdv = st.nextToken();
         
-        GameOption option = entity.getCrew().getOptions().getOption(curAdv);
+        IOption option = entity.getCrew().getOptions().getOption(curAdv);
        
         if ( null == option ) {
           System.out.println("Ignoring invalid pilot advantage: " + curAdv);

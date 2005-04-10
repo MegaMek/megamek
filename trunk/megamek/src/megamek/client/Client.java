@@ -33,6 +33,7 @@ import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.options.GameOptions;
 
 public class Client implements Runnable {
     // we need these to communicate with the server

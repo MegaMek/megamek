@@ -11,6 +11,7 @@ v0.29.73 (CVS)
     Hohiro.
 + Data 1177157: added new battle armor squads as "combat_equipment.zip".
 + Data 1176308: added *most* new BA equipment.
++ Patch 1178079: Options refactoring, thanks Mev!
 
 v0.29.72 (2005-04-02 3:15pm)
 + Data 1171465: Use the "lunar" theme in moonscapes boards.

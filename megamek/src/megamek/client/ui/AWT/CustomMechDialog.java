@@ -30,8 +30,9 @@ import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Hashtable;
-import megamek.common.options.OptionGroup;
-import megamek.common.options.GameOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.IOption;
+import megamek.common.options.PilotOptions;
 
 /**
  * A dialog that a player can use to customize his mech before battle.  
@@ -643,19 +644,19 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     }
 
     public void setOptions() {
-      GameOption option;
+      IOption option;
       
       for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
         DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
         
         option = comp.getOption();
         
-        entity.getCrew().getOptions().getOption(option.getShortName()).setValue(comp.getValue());
+        entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
       }
     }
     
     public void resetOptions() {
-      GameOption option;
+      IOption option;
       
       for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
         DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
@@ -663,7 +664,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         option = comp.getOption();
         option.setValue(false);
                 
-        entity.getCrew().getOptions().getOption(option.getShortName()).setValue(comp.getValue());
+        entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
       }
     }
     
@@ -680,13 +681,13 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         c.insets = new Insets(0, 0, 0, 0);
         c.ipadx = 0;    c.ipady = 0;
         
-        for (Enumeration i = options.groups(); i.hasMoreElements();) {
-            OptionGroup group = (OptionGroup)i.nextElement();
+        for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = (IOptionGroup)i.nextElement();
             
             addGroup(group, gridbag, c);
             
-            for (Enumeration j = group.options(); j.hasMoreElements();) {
-                GameOption option = (GameOption)j.nextElement();
+            for (Enumeration j = group.getOptions(); j.hasMoreElements();) {
+                IOption option = (IOption)j.nextElement();
 
                 addOption(option, gridbag, c, editable);
             }
@@ -695,17 +696,17 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         validate();
     }
     
-    private void addGroup(OptionGroup group, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addGroup(IOptionGroup group, GridBagLayout gridbag, GridBagConstraints c) {
         Label groupLabel = new Label(group.getName());
         
         gridbag.setConstraints(groupLabel, c);
         panOptions.add(groupLabel);
     }
     
-    private void addOption(GameOption option, GridBagLayout gridbag, GridBagConstraints c, boolean editable) {
+    private void addOption(IOption option, GridBagLayout gridbag, GridBagConstraints c, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this, option, editable);
 
-        if (option.getShortName().equals("weapon_specialist")) {
+        if (option.getName().equals("weapon_specialist")) {
             optionComp.addValue("None");
             Hashtable uniqueWeapons = new Hashtable();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
@@ -725,13 +726,13 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         optionComps.addElement(optionComp);
     }
     
-    public void showDescFor(GameOption option) {
-        texDesc.setText(option.getDesc());
+    public void showDescFor(IOption option) {
+        texDesc.setText(option.getDescription());
     }
 
     // TODO : implement me!!!
     public void optionClicked( DialogOptionComponent comp,
-                               GameOption option, boolean state ) {
+                               IOption option, boolean state ) {
     }
 
     public boolean isOkay() {

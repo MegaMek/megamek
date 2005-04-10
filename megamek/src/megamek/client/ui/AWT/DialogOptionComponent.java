@@ -24,11 +24,12 @@ import java.awt.*;
 
 import java.awt.event.MouseListener;
 import java.awt.event.ItemListener;
-import megamek.common.options.GameOption;
+import megamek.common.options.IOption;
+import megamek.common.options.Option;
 
 public class DialogOptionComponent extends Panel implements MouseListener, ItemListener
 {
-    GameOption option;
+    IOption option;
     
     private Checkbox checkbox;
     private Choice choice;
@@ -36,11 +37,11 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
     private Label label;
     private DialogOptionListener parent;
     
-    public DialogOptionComponent(DialogOptionListener parent, GameOption option) {
+    public DialogOptionComponent(DialogOptionListener parent, IOption option) {
       this(parent, option, true);
     }
     
-    public DialogOptionComponent(DialogOptionListener parent, GameOption option, boolean editable) {
+    public DialogOptionComponent(DialogOptionListener parent, IOption option, boolean editable) {
         this.parent = parent;
         this.option = option;
         
@@ -48,8 +49,8 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
         
         setLayout(new BorderLayout());
         switch(option.getType()) {
-            case GameOption.BOOLEAN :
-                checkbox = new Checkbox(option.getFullName(), option.booleanValue());
+            case IOption.BOOLEAN :
+                checkbox = new Checkbox(option.getDisplayableName(), option.booleanValue());
                 checkbox.addMouseListener(this);
                 checkbox.addItemListener(this);
                 add(checkbox, BorderLayout.CENTER);
@@ -58,11 +59,11 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
                   checkbox.setEnabled(false);
                   
                 break;
-            case GameOption.CHOICE :
+            case IOption.CHOICE :
                 choice = new Choice();
 
                 choice.addMouseListener(this);
-                label = new Label(option.getFullName());
+                label = new Label(option.getDisplayableName());
                 label.addMouseListener(this);
                 add(label, BorderLayout.WEST);
                 add(choice, BorderLayout.CENTER);
@@ -74,7 +75,7 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
             default :
                 textField = new TextField(option.stringValue(), option.getTextFieldLength());
                 textField.addMouseListener(this);
-                label = new Label(option.getFullName());
+                label = new Label(option.getDisplayableName());
                 label.addMouseListener(this);
 
                 if ( option.isLabelBeforeTextField() ) {
@@ -99,22 +100,22 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
     
     public Object getValue() {
         switch(option.getType()) {
-            case GameOption.BOOLEAN :
+            case IOption.BOOLEAN :
                 return new Boolean(checkbox.getState());
-            case GameOption.INTEGER :
+            case IOption.INTEGER :
                 return Integer.valueOf(textField.getText());
-            case GameOption.FLOAT :
+            case IOption.FLOAT :
                 return Float.valueOf(textField.getText());
-            case GameOption.STRING :
+            case IOption.STRING :
                 return textField.getText();
-            case GameOption.CHOICE :
+            case IOption.CHOICE :
                 return choice.getSelectedItem();
             default :
                 return null;
         }
     }
     
-    public GameOption getOption() {
+    public IOption getOption() {
       return option;
     }
 
@@ -128,10 +129,10 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
 
         // Update the correct control.
         switch(option.getType()) {
-        case GameOption.BOOLEAN :
+        case IOption.BOOLEAN :
             checkbox.setEnabled( editable );
             break;
-        case GameOption.CHOICE :
+        case IOption.CHOICE :
             choice.setEnabled( editable );
             break;
         default :
@@ -155,8 +156,8 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
     /**
      * Returns a new option, representing the option in it's changed state.
      */
-    public GameOption changedOption() {
-        return new GameOption(option.getShortName(), "", "", option.getType(), getValue());
+    public IOption changedOption() {
+        return new Option(option.getOwner(), option.getName(), option.getType(), getValue());
     }
     
     public void mousePressed(java.awt.event.MouseEvent mouseEvent) {

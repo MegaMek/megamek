@@ -19,8 +19,9 @@ import java.io.IOException;
 import java.util.Enumeration;
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
-import megamek.common.options.OptionGroup;
-import megamek.common.options.GameOption;
+import megamek.common.options.GameOptions;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.IOption;
 
 /**
  * Objects of this class can encode a <code>GameOptions</code> object as XML
@@ -57,17 +58,17 @@ public class GameOptionsEncoder {
         output.write( "<options version=\"1.0\">" );
   
         // Now the options themselves
-        Enumeration groups = options.groups();
+        Enumeration groups = options.getGroups();
         while ( groups.hasMoreElements() ) {
-            final OptionGroup group = (OptionGroup) groups.nextElement();
+            final IOptionGroup group = (IOptionGroup) groups.nextElement();
   
-            Enumeration iter = group.options();
+            Enumeration iter = group.getOptions();
             while ( iter.hasMoreElements() ) {
-                final GameOption option = (GameOption) iter.nextElement();
+                final IOption option = (IOption) iter.nextElement();
 
                 // Encode this option.
                 output.write( "<gameoption><optionname>" );
-                output.write( option.getShortName() );
+                output.write( option.getName() );
                 output.write( "</optionname><optionvalue>" );
                 output.write( option.getValue().toString() );
                 output.write( "</optionvalue></gameoption>" );

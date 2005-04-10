@@ -16,8 +16,9 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Enumeration;
-import megamek.common.options.OptionGroup;
-import megamek.common.options.GameOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.IOption;
+import megamek.common.options.PilotOptions;
 
 public class Pilot
     implements Serializable
@@ -157,14 +158,14 @@ public class Pilot
     }
 
     public void clearAdvantages() {
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-          OptionGroup group = (OptionGroup)i.nextElement();
+      for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
+          IOptionGroup group = (IOptionGroup)i.nextElement();
           
           if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
             continue;
             
-          for (Enumeration j = group.options(); j.hasMoreElements();) {
-              GameOption option = (GameOption)j.nextElement();
+          for (Enumeration j = group.getOptions(); j.hasMoreElements();) {
+              IOption option = (IOption)j.nextElement();
               
               option.clearValue();
           }
@@ -175,14 +176,14 @@ public class Pilot
     public int countAdvantages() {
       int count = 0;
       
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-          OptionGroup group = (OptionGroup)i.nextElement();
+      for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
+          IOptionGroup group = (IOptionGroup)i.nextElement();
           
           if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
             continue;
             
-          for (Enumeration j = group.options(); j.hasMoreElements();) {
-              GameOption option = (GameOption)j.nextElement();
+          for (Enumeration j = group.getOptions(); j.hasMoreElements();) {
+              IOption option = (IOption)j.nextElement();
               
               if ( option.booleanValue() )
                 count++;
@@ -196,11 +197,11 @@ public class Pilot
         Returns the LVL3 Rules "Pilot Advantages" this pilot has
     */
     public Enumeration getAdvantages() {
-        for (Enumeration i = options.groups(); i.hasMoreElements();) {
-            OptionGroup group = (OptionGroup)i.nextElement();
+        for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = (IOptionGroup)i.nextElement();
 
             if ( group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-                return group.options();
+                return group.getOptions();
         };
 
         // no pilot advantages -- return an empty Enumeration
@@ -219,16 +220,16 @@ public class Pilot
       }
       
     for (Enumeration j = getAdvantages(); j.hasMoreElements();) {
-        GameOption option = (GameOption)j.nextElement();
+        IOption option = (IOption)j.nextElement();
 
         if ( option.booleanValue() ) {
             if ( adv.length() > 0 ) {
                 adv.append(sep);
             }
 
-            adv.append(option.getShortName());
-            if (option.getType() == GameOption.STRING ||
-                option.getType() == GameOption.CHOICE) {
+            adv.append(option.getName());
+            if (option.getType() == IOption.STRING ||
+                option.getType() == IOption.CHOICE) {
                 adv.append(" ").append(option.stringValue());
             }
         }

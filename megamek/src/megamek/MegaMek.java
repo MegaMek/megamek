@@ -19,10 +19,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 
 import megamek.common.*;
+import megamek.common.options.GameOptions;
 import megamek.client.*;
 import megamek.client.util.AdvancedLabel;
 import megamek.client.util.widget.*;

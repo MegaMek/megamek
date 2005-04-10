@@ -18,7 +18,7 @@ package megamek.client.util.widget;
 import java.awt.*;
 import java.util.*;
 import megamek.common.*;
-import megamek.common.options.GameOption;
+import megamek.common.options.IOption;
 
 /**
  * Set of elements to reperesent general unit information in MechDisplay
@@ -202,9 +202,9 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         if (en.crew.countAdvantages() > 0) {
             int i=0;
             for (Enumeration advantages = en.crew.getAdvantages(); advantages.hasMoreElements();) {
-                GameOption option = (GameOption)advantages.nextElement();
+                IOption option = (IOption)advantages.nextElement();
                 if (option.booleanValue()) {
-                    advantagesR[i++].setString(option.getFullName());
+                    advantagesR[i++].setString(option.getDisplayableName());
                 };
             };
         };

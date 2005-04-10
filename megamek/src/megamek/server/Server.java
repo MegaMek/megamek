@@ -11496,7 +11496,6 @@ implements Runnable, ConnectionHandler {
         Entity oldEntity = game.getEntity(entity.getId());
         if (oldEntity != null && oldEntity.getOwner() == getPlayer(connIndex)) {
             game.setEntity(entity.getId(), entity);
-
             send(createEntitiesPacket());
         } else {
             // hey!
@@ -11737,8 +11736,8 @@ implements Runnable, ConnectionHandler {
         int changed = 0;
 
         for (Enumeration i = ((Vector)packet.getObject(1)).elements(); i.hasMoreElements();) {
-            GameOption option = (GameOption)i.nextElement();
-            GameOption originalOption = game.getOptions().getOption(option.getShortName());
+            IOption option = (IOption)i.nextElement();
+            IOption originalOption = game.getOptions().getOption(option.getName());
 
             if (originalOption == null) {
                 continue;
@@ -11748,7 +11747,7 @@ implements Runnable, ConnectionHandler {
             message.append( "Player " )
                 .append( player.getName() )
                 .append( " changed option \"" )
-                .append( originalOption.getFullName() )
+                .append( originalOption.getDisplayableName() )
                 .append( "\" to " )
                 .append( option.stringValue() )
                 .append( "." );

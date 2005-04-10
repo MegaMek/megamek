@@ -12,12 +12,6 @@
  *  for more details.
  */
 
-/*
- * OptionGroup.java
- *
- * Created on April 26, 2002, 11:26 AM
- */
-
 package megamek.common.options;
 
 import java.io.*;
@@ -29,9 +23,9 @@ import java.util.*;
  * @author  Ben
  * @version 
  */
-public class OptionGroup implements Serializable {
+public class OptionGroup implements IBasicOptionGroup, Serializable {
     
-    private Vector options = new Vector();
+    private Vector optionNames = new Vector();
     
     private String name;
     private String key;
@@ -58,12 +52,12 @@ public class OptionGroup implements Serializable {
       return key;
     }
         
-    public Enumeration options() {
-        return options.elements();
+    public Enumeration getOptionNames() {
+        return optionNames.elements();
     }
     
-    public void addOption(GameOption option) {
-        options.addElement(option);
+    public void addOptionName(String optionName) {
+        optionNames.addElement(optionName);
     }
 
 }

@@ -470,7 +470,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType( createBAMineLauncherAmmo() );
         EquipmentType.addType( createBALRM5Ammo() );
         EquipmentType.addType( createPhalanxSRM4Ammo() );
-        EquipmentType.addType( createGrenedierSRM4Ammo() );
+        EquipmentType.addType( createGrenadierSRM4Ammo() );
 
         // Protomech-specific ammo
         EquipmentType.addType(createCLPROHeavyMGAmmo());
@@ -2795,7 +2795,7 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    public static AmmoType createGrenedierSRM4Ammo() {
+    public static AmmoType createGrenadierSRM4Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "SRM 4 Ammo";

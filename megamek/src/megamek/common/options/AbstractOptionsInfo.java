@@ -15,6 +15,7 @@
 package megamek.common.options;
 
 import java.util.Enumeration;
+import java.util.Vector;
 
 
 import com.sun.java.util.collections.Hashtable;
@@ -30,7 +31,7 @@ public abstract class AbstractOptionsInfo implements IOptionsInfo {
     
     private Hashtable optionsHash = new Hashtable();
 
-    private Hashtable groups = new Hashtable();
+    private Vector groups = new Vector();
 
     private boolean finished;
 
@@ -49,10 +50,16 @@ public abstract class AbstractOptionsInfo implements IOptionsInfo {
     OptionGroup addGroup(String name, String key) {
         OptionGroup group = null;
         if (!finished) {
-            group = (OptionGroup)groups.get(name);
+            for (int i = 0; i < groups.size(); i++) {
+                OptionGroup g = (OptionGroup)groups.elementAt(i); 
+                if ( g != null && g.getName().equals(name)) {
+                    group = ((OptionGroup)groups.elementAt(i));
+                    break;
+                }
+            }
             if (group == null) {
-                group = key == null? new OptionGroup(name):new OptionGroup(name, key);
-                groups.put(name,group);
+                group = (key == null? new OptionGroup(name):new OptionGroup(name, key));
+                groups.addElement(group);
             }
         }
         return group;

@@ -30,16 +30,24 @@ public class OptionGroup implements IBasicOptionGroup, Serializable {
     private String name;
     private String key;
 
-    /** Creates new OptionGroup */
+    /**
+     * Creates new OptionGroup
+     * @param name group name
+     * @param key optional key
+     */
     public OptionGroup(String name, String key) {
         this.name = name;
         this.key = key;     
     }
     
+    /**
+     * Creates new OptionGroup with empty key
+     * @param name option name
+     */
     public OptionGroup(String name) {
       this(name, "");
     }
-    
+
     public String getName() {
         return name;
     }
@@ -56,8 +64,18 @@ public class OptionGroup implements IBasicOptionGroup, Serializable {
         return optionNames.elements();
     }
     
+    /**
+     * Adds new option name to this group. The option names are unique, 
+     * so if there is already an option <code>optionName</code> this
+     * function does nothing. 
+     * @param optionName new option name
+     */
     public void addOptionName(String optionName) {
-        optionNames.addElement(optionName);
+        //This check is a performance penalty, but we don't 
+        //allow duplicate option names 
+        if (!optionNames.contains(optionName)) {
+            optionNames.addElement(optionName);
+        }
     }
 
 }

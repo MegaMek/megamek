@@ -1592,6 +1592,25 @@ public class Game implements Serializable
     public int getArtillerySize() {
         return offboardArtilleryAttacks.size();
     }
+    
+    /**
+     * get all ArtilleryAttackActions aimed at the specified Coords
+     * @param coords The <code>Coords</code> wanted.
+     * @return A <code>Vector</code> of ArtilleryAttackActions.
+     */
+    public Vector getArtilleryAttackActions(Coords coords, int playerId) {
+        Vector artyAttacks = new Vector();
+        System.out.println(this.getArtillerySize());
+        System.out.println("blubb");
+        for (Enumeration e = getArtilleryAttacks(); e.hasMoreElements();) {
+            ArtilleryAttackAction aaa = (ArtilleryAttackAction)e.nextElement();
+            if (aaa.getWR().waa.getTarget(this).getPosition().equals(coords) &&
+                aaa.getPlayerId() == playerId) {
+                artyAttacks.addElement(aaa);
+            }
+        }
+        return artyAttacks;
+    }
 
 
     /** Returns an Enumeration of actions scheduled for this phase. */

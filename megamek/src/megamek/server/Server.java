@@ -12088,6 +12088,10 @@ implements Runnable, ConnectionHandler {
         data[1] = new Boolean(charge);
         return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
     }
+    
+    private Packet createArtyAttackPacket(ArtilleryAttackAction aaa) {
+        return new Packet(Packet.COMMAND_ARTY_FIRED, aaa);
+    }
 
     /**
      * Send a packet to all connected clients.
@@ -13271,6 +13275,7 @@ implements Runnable, ConnectionHandler {
                                                  firingEntity.getOwnerId(),
                                                  spotterIds, firingEntity.getPosition());
                 game.addArtilleryAttack(aaa);
+                send(createArtyAttackPacket(aaa));
             }
         }
         game.resetActions();

@@ -1078,7 +1078,7 @@ public class BoardView1
                 else {
                     // too big to fit, left justify to the frame (roughly).
                     // how do I extract the first term of HEX_SIZE to use here?--LDE
-                	tipLoc.x = getLocationOnScreen().x + hex_size.width;
+                    tipLoc.x = getLocationOnScreen().x + hex_size.width;
                 }
             }
 
@@ -1129,6 +1129,9 @@ public class BoardView1
               mhex.contains(Terrain.BUILDING)) ) {
             stringsSize += 1;
         }
+        
+        // add 1 for each arty aimed here
+        stringsSize += game.getArtilleryAttackActions(mcoords, localPlayer.getId()).size();
 
         stringsSize += game.getNbrMinefields(mcoords);
 
@@ -1167,6 +1170,14 @@ public class BoardView1
                 strings[stringsIndex] = buf.toString();
                 stringsIndex += 1;
             }
+            // check for artillery attacks
+            for (Enumeration e = game.getArtilleryAttackActions(mcoords,localPlayer.getId()).elements();e.hasMoreElements();) {
+                ArtilleryAttackAction aaa = (ArtilleryAttackAction)e.nextElement();
+                if (aaa.getPlayerId() == localPlayer.getId()) {
+                    strings[stringsIndex] = "artillery landing in "+aaa.turnsTilHit+" turns.";
+                    stringsIndex++;
+                }
+            }
 
             if (game.containsMinefield(mcoords)) {
                 java.util.Vector minefields = game.getMinefields(mcoords);
@@ -1192,12 +1203,11 @@ public class BoardView1
                         }
                         break;
                     case (Minefield.TYPE_THUNDER_ACTIVE) :
-                    	strings[stringsIndex] = "Thunder-Active minefield(" + mf.getDamage() + ")" + owner;
-                    	break;
-					case (Minefield.TYPE_THUNDER_INFERNO) :
-						strings[stringsIndex] = "Thunder-Inferno minefield(" + mf.getDamage() + ")" + owner;
-						break;
-                    	
+                        strings[stringsIndex] = "Thunder-Active minefield(" + mf.getDamage() + ")" + owner;
+                        break;
+                    case (Minefield.TYPE_THUNDER_INFERNO) :
+                        strings[stringsIndex] = "Thunder-Inferno minefield(" + mf.getDamage() + ")" + owner;
+                        break;
                     }
                     stringsIndex++;
                 }

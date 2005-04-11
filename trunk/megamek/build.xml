@@ -54,7 +54,7 @@
   </target>
 
   <target name="compile" depends="init" description="Compile java sources into class files">
-    <javac debug="true" debuglevel="lines,source" destdir="${builddir}" srcdir="${srcdir}" target="1.1">
+    <javac debug="true" debuglevel="lines,source" destdir="${builddir}" srcdir="${srcdir}" target="1.1" source="1.2">
         <classpath>
             <!-- KEEP this updated when additional libraries are available -->
             <pathelement location="${basedir}"/>

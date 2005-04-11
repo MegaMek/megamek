@@ -15,6 +15,7 @@ v0.29.73 (CVS)
 + Operation under the MS JVM broke again - fixed now.
 + Timber Wolf Pryde, Vixen, Locust IIC 4 pics.
 + Bug 1053305, Patch 1172220: Artillery not damaging buildings.
++ Ordering fix for patch 1178079.
 
 v0.29.72 (2005-04-02 3:15pm)
 + Data 1171465: Use the "lunar" theme in moonscapes boards.

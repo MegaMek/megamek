@@ -27,7 +27,6 @@ import java.util.Vector;
 
 import megamek.client.bot.BotClient;
 import megamek.common.*;
-import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.DodgeAction;
@@ -597,10 +596,6 @@ public class Client implements Runnable {
     protected void receiveTurns(Packet packet) {
         game.setTurnVector((Vector) packet.getObject(0));
     }
-    
-    protected void receiveArtyFired(Packet packet) {
-        game.addArtilleryAttack((ArtilleryAttackAction) packet.getObject(0));
-    }
 
     /**
      * Loads the board from the data in the net command.
@@ -981,8 +976,6 @@ public class Client implements Runnable {
                     
                     processGameEvent(new GameEvent(this, GameEvent.GAME_END, null, ""));
                     break;
-                 case Packet.COMMAND_ARTY_FIRED :
-                     receiveArtyFired(c);
             }
         }
     }

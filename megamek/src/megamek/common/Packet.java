@@ -81,7 +81,6 @@ implements Serializable {
     public static final int        COMMAND_UNLOAD_STRANDED      = 40;    
     
     public static final int        COMMAND_SET_ARTYAUTOHITHEXES = 42;
-    public static final int        COMMAND_ARTY_FIRED           = 43;
     
     private int command;
     private Object[] data;

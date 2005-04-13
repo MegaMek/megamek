@@ -38,8 +38,6 @@ public class ChatLounge
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
-    public static final String START_LOCATION_NAMES[] = { "Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W" };
-
     // parent Client
     private Client client;
     private ClientGUI clientgui;
@@ -991,7 +989,7 @@ public class ChatLounge
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : ");
-                ssb.append(START_LOCATION_NAMES[player.getStartingPos()]);
+                ssb.append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
                 lisStarts.add(ssb.toString());
             }
         }

@@ -20,7 +20,6 @@ import megamek.common.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import megamek.client.ChatLounge;
 import megamek.common.loaders.*;
 import megamek.common.options.IOption;
 
@@ -451,7 +450,7 @@ public class ScenarioLoader
                 s = "Any";
             }
             
-            int nDir = findIndex(ChatLounge.START_LOCATION_NAMES, s);
+            int nDir = findIndex(IStartingPositions.START_LOCATION_NAMES, s);
             
             // if it's not set by now, make it any
             if (nDir == -1) {

@@ -19,6 +19,7 @@ v0.29.73 (CVS)
 + Added pics for Ares, Asshur, Athena, Badger, Centaur, Enyo, Harpy, Heimdall,
     Hydra, Indra, Ku, Morrigu, Satyr, Siren, Zorya.
 + Patch 1181482: String literals in Ruler#setText()
++ Patch 1181497: extract START_LOCATION_NAMES into interface
 
 v0.29.72 (2005-04-02 3:15pm)
 + Data 1171465: Use the "lunar" theme in moonscapes boards.

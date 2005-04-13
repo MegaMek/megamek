@@ -32,7 +32,6 @@ import java.util.Enumeration;
  * @author  Ben
  */
 public class StartingPositionDialog extends java.awt.Dialog implements ActionListener {
-    private static final String startNames[] = { "Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W" };
 
     private Client client;
 
@@ -91,7 +90,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
 
     private void setupStartGrid() {
         for (int i = 0; i < 9; i++) {
-            butStartPos[i] = new Button(startNames[i]);
+            butStartPos[i] = new Button(IStartingPositions.START_LOCATION_NAMES[i]);
             butStartPos[i].addActionListener(this);
         }
         panStartButtons.setLayout(new GridLayout(3, 3));
@@ -137,7 +136,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : ");
-                ssb.append(startNames[player.getStartingPos()]);
+                ssb.append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
                 lisStartList.add(ssb.toString());
             }
         }

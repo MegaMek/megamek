@@ -313,22 +313,22 @@ public class Ruler extends Dialog implements BoardListener {
       String toHit1 = "", toHit2 = "";
       ToHitData thd;
       if (flip) {
-         thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);
+          thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);
       } else {
-		 thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers(client.game);
+          thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers(client.game);
       }
-      if (thd.getDesc().indexOf("blocked") < 0) {
-         toHit1 = thd.getValue() + " = ";
+      if (thd.getValue() != ToHitData.IMPOSSIBLE) {
+          toHit1 = thd.getValue() + " = ";
       }
       toHit1 += thd.getDesc();
 
-	  if (flip) {
-		 thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers(client.game);
-	  } else {
-		 thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);
-	  }
-      if (thd.getDesc().indexOf("blocked") < 0) {
-         toHit2 = thd.getValue() + " = ";
+	    if (flip) {
+          thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers(client.game);
+	    } else {
+          thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);
+	    }
+      if (thd.getValue() != ToHitData.IMPOSSIBLE) {
+          toHit2 = thd.getValue() + " = ";
       }
       toHit2 += thd.getDesc();
   

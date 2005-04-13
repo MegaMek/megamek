@@ -64,14 +64,14 @@ public class ReportDisplay
         rta = new TextArea(client.eotr, 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         rta.setEditable(false);
         
-        setupStatusBar( "" );
+        setupStatusBar( "" ); //$NON-NLS-1$
         
-        readyB = new Button("Done");
-        readyB.setActionCommand("ready");
+        readyB = new Button(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
+        readyB.setActionCommand("ready"); //$NON-NLS-1$
         readyB.addActionListener(this);
         
-        rerollInitiativeB = new Button("Reroll");
-        rerollInitiativeB.setActionCommand("reroll_initiative");
+        rerollInitiativeB = new Button(Messages.getString("ReportDisplay.Reroll")); //$NON-NLS-1$
+        rerollInitiativeB.setActionCommand("reroll_initiative"); //$NON-NLS-1$
         rerollInitiativeB.addActionListener(this);
         
         // layout screen
@@ -95,7 +95,7 @@ public class ReportDisplay
         panButtons.setLayout( new GridLayout(1, 8) );
         panButtons.add(rerollInitiativeB);
         for ( int padding = 0; padding < 6; padding++ ) {
-            panButtons.add( new Label( "" ) );
+            panButtons.add( new Label( "" ) ); //$NON-NLS-1$
         }
         addBag( panButtons, gridbag, c );
 
@@ -171,10 +171,10 @@ public class ReportDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if(ev.getActionCommand().equalsIgnoreCase("ready")) {
+        if(ev.getActionCommand().equalsIgnoreCase("ready")) { //$NON-NLS-1$
             ready();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) {
+        if(ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) { //$NON-NLS-1$
             rerollInitiative();
         }
     }

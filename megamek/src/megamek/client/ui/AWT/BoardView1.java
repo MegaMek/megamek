@@ -44,11 +44,11 @@ public class BoardView1
     // The list of valid zoom factors.  Other values cause map aliasing,
     // I can't be bothered figuring out why.  - Ben
     private static final float[] ZOOM_FACTORS =
-    		{	0.30f, 0.41f, 0.50f,
-    			0.60f, 0.68f, 0.79f,
-				0.90f, 1.00f
-				//1.09f, 1.17f
-    		};
+            {   0.30f, 0.41f, 0.50f,
+                0.60f, 0.68f, 0.79f,
+                0.90f, 1.00f
+                //1.09f, 1.17f
+            };
 
     // the index of zoom factor 1.00f
     private static final int BASE_ZOOM_INDEX = 7;
@@ -56,32 +56,32 @@ public class BoardView1
     // line width of the c3 network lines
     private static final int C3_LINE_WIDTH = 1;
 
-    private static Font FONT_7 = new Font("SansSerif", Font.PLAIN, 7);
-    private static Font FONT_8 = new Font("SansSerif", Font.PLAIN, 8);
-    private static Font FONT_9 = new Font("SansSerif", Font.PLAIN, 9);
-    private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10);
-    private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12);
+    private static Font FONT_7 = new Font("SansSerif", Font.PLAIN, 7); //$NON-NLS-1$
+    private static Font FONT_8 = new Font("SansSerif", Font.PLAIN, 8); //$NON-NLS-1$
+    private static Font FONT_9 = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
+    private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+    private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
 
-    private Dimension  	hex_size = null;
-    private boolean		isJ2RE;
+    private Dimension       hex_size = null;
+    private boolean         isJ2RE;
     
-    private Font       font_hexnum 		= FONT_10;
-    private Font       font_elev 		= FONT_9;
-    private Font       font_minefield 	= FONT_12;
+    private Font       font_hexnum          = FONT_10;
+    private Font       font_elev        = FONT_9;
+    private Font       font_minefield   = FONT_12;
 
     private Game game;
     private Frame frame;
 
-    private Point 		mousePos = new Point();
-    private Rectangle 	view = new Rectangle();
-    private Point 		offset = new Point();
+    private Point       mousePos = new Point();
+    private Rectangle   view = new Rectangle();
+    private Point       offset = new Point();
     private Dimension boardSize;
 
     // scrolly stuff:
     private Scrollbar vScrollbar = null;
     private Scrollbar hScrollbar = null;
     private boolean isScrolling = false;
-    private Thread scroller = new Thread(this, "BoardView Scroller Thread");
+    private Thread scroller = new Thread(this, "BoardView Scroller Thread"); //$NON-NLS-1$
     private Point scroll = new Point();
     private boolean initCtlScroll;
     private boolean ctlKeyHeld = false;
@@ -140,9 +140,9 @@ public class BoardView1
     private boolean              useLOSTool = true;
 
     // Initial scale factor for sprites and map
-    private boolean				hasZoomed = false;
-    public 	int					zoomIndex;
-    private float 				scale;
+    private boolean                 hasZoomed = false;
+    public      int                     zoomIndex;
+    private float               scale;
     private Hashtable scaledImageCache = new Hashtable();
         
     // Displayables (Chat box, etc.)
@@ -201,22 +201,22 @@ public class BoardView1
             System.out.println("Mouse wheel not supported by this jvm");
         }
         /* MouseWheelListener isn't a v1.3.1 API */
-     	
-     	// only use scaling if we're using Java 2, otherwise we get memory leaks etc.
-     	Properties p = System.getProperties();
-     	String javaVersion = p.getProperty( "java.version" );
-     	if ( javaVersion.charAt(2) == '1' ){
-     		isJ2RE = false;
-     		zoomIndex = BASE_ZOOM_INDEX;
-     	} else {
-     		isJ2RE = true;
-     		zoomIndex = Settings.mapZoomIndex;
-     		checkZoomIndex();
-	        hasZoomed = true;
-     	}
-	    scale = ZOOM_FACTORS[ zoomIndex ];
         
-	    updateFontSizes();
+        // only use scaling if we're using Java 2, otherwise we get memory leaks etc.
+        Properties p = System.getProperties();
+        String javaVersion = p.getProperty( "java.version" ); //$NON-NLS-1$
+        if ( javaVersion.charAt(2) == '1' ){
+            isJ2RE = false;
+            zoomIndex = BASE_ZOOM_INDEX;
+        } else {
+            isJ2RE = true;
+            zoomIndex = Settings.mapZoomIndex;
+            checkZoomIndex();
+            hasZoomed = true;
+        }
+        scale = ZOOM_FACTORS[ zoomIndex ];
+        
+        updateFontSizes();
         updateBoardSize();
 
         // tooltip
@@ -350,9 +350,9 @@ public class BoardView1
         offset.setLocation(getOptimalOffset(size));
 
         if (!this.isTileImagesLoaded()) {
-            g.drawString("loading images...", 20, 50);
+            g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
             if (!tileManager.isStarted()) {
-                System.out.println("boardview1: loading images for board");
+                System.out.println("boardview1: loading images for board"); //$NON-NLS-1$
                 tileManager.loadNeededImages(game);
             }
             return;
@@ -443,13 +443,13 @@ public class BoardView1
         // draw the back buffer onto the screen
         // first clear the entire view if the map has been zoomed
         if ( hasZoomed == true ){
-        	Image tmpImage = createImage( size.width, size.height );
-        	Graphics tmpGraphics = tmpImage.getGraphics();
-        	tmpGraphics.drawImage(backImage, offset.x, offset.y, this);
-        	g.drawImage(tmpImage, 0, 0, this);
-        	hasZoomed=false;
+            Image tmpImage = createImage( size.width, size.height );
+            Graphics tmpGraphics = tmpImage.getGraphics();
+            tmpGraphics.drawImage(backImage, offset.x, offset.y, this);
+            g.drawImage(tmpImage, 0, 0, this);
+            hasZoomed=false;
         } else {
-        	g.drawImage(backImage, offset.x, offset.y, this);
+            g.drawImage(backImage, offset.x, offset.y, this);
         }
         //g.drawString(""+scale, 10, 10);
 
@@ -461,7 +461,7 @@ public class BoardView1
      * Updates the boardSize variable with the proper values for this board.
      */
     private void updateBoardSize() {
-    	int width = game.getBoard().width * (int)(HEX_WC*scale) + (int)(HEX_W/4*scale);
+        int width = game.getBoard().width * (int)(HEX_WC*scale) + (int)(HEX_W/4*scale);
         int height = game.getBoard().height * (int)(HEX_H*scale) + (int)(HEX_H/2*scale);
         boardSize = new Dimension(width, height);
     }
@@ -472,8 +472,8 @@ public class BoardView1
      */
     private Dimension getOptimalView(Dimension size) {
         return new Dimension(
-        		Math.min(size.width, boardSize.width),
-        		Math.min(size.height, boardSize.height));
+                Math.min(size.width, boardSize.width),
+                Math.min(size.height, boardSize.height));
     }
 
     /**
@@ -530,10 +530,10 @@ public class BoardView1
      */
     private Image getScaledImage(Image base, double scale ) {
         if (base == null) {
-        	return null;
+            return null;
         }
         if ( zoomIndex == BASE_ZOOM_INDEX ) {
-        	return base;
+            return base;
         }
         Dimension d = getImageBounds(base).getSize();
         d.width *= scale;
@@ -541,16 +541,16 @@ public class BoardView1
         ScaledCacheKey key = new ScaledCacheKey(base, d);
         Image scaled = (Image) scaledImageCache.get(key);
         if (scaled == null) {
-        	scaled = scale(base, d.width, d.height);
+            scaled = scale(base, d.width, d.height);
 
-	        MediaTracker tracker = new MediaTracker(this);
-	        tracker.addImage( scaled, 1 );
-	        // Wait for image to load
-	        try{
-	        	tracker.waitForID( 1 );
-	        } catch ( InterruptedException e ){ e.printStackTrace(); }
-	          
-	        scaledImageCache.put(key, scaled);
+            MediaTracker tracker = new MediaTracker(this);
+            tracker.addImage( scaled, 1 );
+            // Wait for image to load
+            try{
+                tracker.waitForID( 1 );
+            } catch ( InterruptedException e ){ e.printStackTrace(); }
+              
+            scaledImageCache.put(key, scaled);
         }
         return scaled;
     }
@@ -559,22 +559,22 @@ public class BoardView1
      * The actual scaling code.
      */
     private Image scale(Image img, int width, int height) {
-		ImageFilter filter;
+        ImageFilter filter;
 
-		filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
-		                                          img.getHeight(null),
-		                                          width, height);
-		
-		ImageProducer prod;
-		prod = new FilteredImageSource(img.getSource(), filter);
-		return Toolkit.getDefaultToolkit().createImage(prod);
-//    	BufferedImage tmp = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB );
-//    	Graphics g = tmp.getGraphics();
-//    	g.drawImage(img,
+        filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
+                                                  img.getHeight(null),
+                                                  width, height);
+        
+        ImageProducer prod;
+        prod = new FilteredImageSource(img.getSource(), filter);
+        return Toolkit.getDefaultToolkit().createImage(prod);
+//      BufferedImage tmp = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB );
+//      Graphics g = tmp.getGraphics();
+//      g.drawImage(img,
 //                    width,
 //                    height,
 //                    this);
-//    	return (Image)tmp;
+//      return (Image)tmp;
     }
     
     private static Rectangle getImageBounds(Image im) {
@@ -662,103 +662,103 @@ public class BoardView1
                 p.translate(-(view.x), -(view.y));
                 
                 if (!game.board.contains(c)){ continue; }
-		        if (!game.containsMinefield(c)){ continue; }
-		        
-		        Minefield mf = (Minefield) game.getMinefields(c).elementAt(0);
-		        
-		        Image tmpImage = getScaledImage( tileManager.getMinefieldSign(), scale );
-		        backGraph.drawImage(
-		        		tmpImage,
-		        		p.x + (int)(13*scale), 
-						p.y + (int)(13*scale), 
-						this);
-		        
-				backGraph.setColor(Color.black);
-		        int nbrMfs = game.getNbrMinefields(c);
-	        	if (nbrMfs > 1) {
-	        		drawCenteredString("Multiple", 
-				        		p.x,
-								p.y + (int)(51*scale),
-								font_minefield,
-								backGraph);
-	        	} else if (nbrMfs == 1) {
-		    		switch (mf.getType()) {
-		    			case (Minefield.TYPE_CONVENTIONAL) :
-		    				drawCenteredString(
-		    						"Conventional",
-		    						p.x,
-									p.y + (int)(51*scale),
-									font_minefield,
-									backGraph);
-		    				break;
-		    			case (Minefield.TYPE_THUNDER) :
-		    				drawCenteredString(
-					        		"Thunder (" + mf.getDamage() + ")", 
-									p.x, 
-									p.y + (int)(51*scale),
-									font_minefield,
-									backGraph);
-		    			break;
-		    			case (Minefield.TYPE_THUNDER_INFERNO) :
-		    				drawCenteredString(
-		    						"Thunder-Inf (" + mf.getDamage() + ")", 
-									p.x,
-									p.y + (int)(51*scale),
-									font_minefield,
-									backGraph);
-		    			break;
-		    			case (Minefield.TYPE_THUNDER_ACTIVE) :
-		    				drawCenteredString(
-					        		"Thunder-Actv (" + mf.getDamage() + ")", 
-									p.x,
-									p.y + (int)(51*scale),
-									font_minefield,
-									backGraph);
-		    			break;
-		    			case (Minefield.TYPE_COMMAND_DETONATED) :
-		    				drawCenteredString(
-					        		"Command-", 
-									p.x,
-									p.y + (int)(51*scale),
-									font_minefield,
-									backGraph);
-		    				drawCenteredString(
-					        		"detonated", 
-									p.x,
-									p.y + (int)(60*scale),
-									font_minefield,
-									backGraph);
-		    			break;
-		    			case (Minefield.TYPE_VIBRABOMB) :
-		    				drawCenteredString(
-					        		"Vibrabomb", 
-									p.x,
-									p.y + (int)(51*scale),
-									font_minefield,
-									backGraph);
+                if (!game.containsMinefield(c)){ continue; }
+                
+                Minefield mf = (Minefield) game.getMinefields(c).elementAt(0);
+                
+                Image tmpImage = getScaledImage( tileManager.getMinefieldSign(), scale );
+                backGraph.drawImage(
+                        tmpImage,
+                        p.x + (int)(13*scale), 
+                        p.y + (int)(13*scale), 
+                        this);
+                
+                backGraph.setColor(Color.black);
+                int nbrMfs = game.getNbrMinefields(c);
+                if (nbrMfs > 1) {
+                    drawCenteredString(Messages.getString("BoardView1.Multiple"),  //$NON-NLS-1$
+                                p.x,
+                                p.y + (int)(51*scale),
+                                font_minefield,
+                                backGraph);
+                } else if (nbrMfs == 1) {
+                    switch (mf.getType()) {
+                        case (Minefield.TYPE_CONVENTIONAL) :
+                            drawCenteredString(
+                                    Messages.getString("BoardView1.Conventional"), //$NON-NLS-1$
+                                    p.x,
+                                    p.y + (int)(51*scale),
+                                    font_minefield,
+                                    backGraph);
+                            break;
+                        case (Minefield.TYPE_THUNDER) :
+                            drawCenteredString(
+                                    Messages.getString("BoardView1.Thunder") + mf.getDamage() + ")",  //$NON-NLS-1$ //$NON-NLS-2$
+                                    p.x, 
+                                    p.y + (int)(51*scale),
+                                    font_minefield,
+                                    backGraph);
+                        break;
+                        case (Minefield.TYPE_THUNDER_INFERNO) :
+                            drawCenteredString(
+                                    Messages.getString("BoardView1.Thunder-Inf") + mf.getDamage() + ")",  //$NON-NLS-1$ //$NON-NLS-2$
+                                    p.x,
+                                    p.y + (int)(51*scale),
+                                    font_minefield,
+                                    backGraph);
+                        break;
+                        case (Minefield.TYPE_THUNDER_ACTIVE) :
+                            drawCenteredString(
+                                    Messages.getString("BoardView1.Thunder-Actv") + mf.getDamage() + ")",  //$NON-NLS-1$ //$NON-NLS-2$
+                                    p.x,
+                                    p.y + (int)(51*scale),
+                                    font_minefield,
+                                    backGraph);
+                        break;
+                        case (Minefield.TYPE_COMMAND_DETONATED) :
+                            drawCenteredString(
+                                    Messages.getString("BoardView1.Command-"),  //$NON-NLS-1$
+                                    p.x,
+                                    p.y + (int)(51*scale),
+                                    font_minefield,
+                                    backGraph);
+                            drawCenteredString(
+                                    Messages.getString("BoardView1.detonated"),  //$NON-NLS-1$
+                                    p.x,
+                                    p.y + (int)(60*scale),
+                                    font_minefield,
+                                    backGraph);
+                        break;
+                        case (Minefield.TYPE_VIBRABOMB) :
+                            drawCenteredString(
+                                    Messages.getString("BoardView1.Vibrabomb"),  //$NON-NLS-1$
+                                    p.x,
+                                    p.y + (int)(51*scale),
+                                    font_minefield,
+                                    backGraph);
                   if (mf.getPlayerId() == localPlayer.getId()) {
                       drawCenteredString(
-					        		"(" + mf.getSetting() + ")", 
-									    p.x,
-									    p.y + (int)(60*scale),
-									    font_minefield,
-									    backGraph);
+                                    "(" + mf.getSetting() + ")",  //$NON-NLS-1$ //$NON-NLS-2$
+                                        p.x,
+                                        p.y + (int)(60*scale),
+                                        font_minefield,
+                                        backGraph);
                   }
-		    			break;
-		    		}
-			    }
+                        break;
+                    }
+                }
             }
         }
     }
 
     private void drawCenteredString( String string, int x, int y, Font font, Graphics graph ){
-    	FontMetrics currentMetrics = getFontMetrics(font);
-    	int stringWidth = currentMetrics.stringWidth(string);
-    	
-    	x += (int)((hex_size.width - stringWidth)/2);
-    	
-    	graph.setFont(font);
-    	graph.drawString( string, x, y );
+        FontMetrics currentMetrics = getFontMetrics(font);
+        int stringWidth = currentMetrics.stringWidth(string);
+        
+        x += (int)((hex_size.width - stringWidth)/2);
+        
+        graph.setFont(font);
+        graph.drawString( string, x, y );
     }
     
     /**
@@ -786,7 +786,7 @@ public class BoardView1
             // Handle resizes correctly.
             checkScrollBounds();
             boardRect = new Rectangle(view);
-            System.out.println("boardview1: made a new board buffer " + boardRect);
+            System.out.println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
             drawHexes(view);
         }
         if (!boardRect.union(view).equals(boardRect)) {
@@ -845,8 +845,8 @@ public class BoardView1
      * Redraws all hexes in the specified rectangle
      */
     private void drawHexes(Rectangle rect) {
-    	
-    	// rect is the view
+        
+        // rect is the view
         int drawX = (int)(rect.x / (HEX_WC*scale))-1;
         int drawY = (int)(rect.y / (HEX_H*scale))-1;
 
@@ -860,23 +860,23 @@ public class BoardView1
         // clear, if we need to
         if (rect.x < (21*scale)) {
             boardGraph.clearRect(
-            		rect.x - boardRect.x, rect.y - boardRect.y,
-            		(int)(21*scale) - rect.x, rect.height);
+                    rect.x - boardRect.x, rect.y - boardRect.y,
+                    (int)(21*scale) - rect.x, rect.height);
         }
         if (rect.y < (36*scale)) {
             boardGraph.clearRect(
-            		rect.x - boardRect.x, rect.y - boardRect.y,
-            		rect.width, (int)(36*scale) - rect.y);
+                    rect.x - boardRect.x, rect.y - boardRect.y,
+                    rect.width, (int)(36*scale) - rect.y);
         }
         if (rect.x > boardSize.width - view.width - (21*scale)) {
             boardGraph.clearRect(
-            		boardRect.width - (int)(21*scale), rect.y - boardRect.y,
-					(int)(21*scale), rect.height);
+                    boardRect.width - (int)(21*scale), rect.y - boardRect.y,
+                    (int)(21*scale), rect.height);
         }
         if (rect.y > boardSize.height - view.height - (int)(36*scale)) {
             boardGraph.clearRect(
-            		rect.x - boardRect.x, boardRect.height - (int)(36*scale),
-            		rect.width, (int)(36*scale));
+                    rect.x - boardRect.x, boardRect.height - (int)(36*scale),
+                    rect.width, (int)(36*scale));
         }
 
         // draw some hexes
@@ -940,41 +940,41 @@ public class BoardView1
         
         // draw hex number
         if (scale >= 0.5){
-        	drawCenteredString(
-        			c.getBoardNum(),
-					drawX,
-					drawY + (int)(12*scale),
-					font_hexnum,
-					boardGraph);
+            drawCenteredString(
+                    c.getBoardNum(),
+                    drawX,
+                    drawY + (int)(12*scale),
+                    font_hexnum,
+                    boardGraph);
         }
         // level | depth
         if (level != 0 && depth == 0 && zoomIndex > 3) {
-        	drawCenteredString(
-        			"LEVEL " + level,
-        			drawX,
-        			drawY + (int)(70*scale),
-					font_elev,
-					boardGraph);
+            drawCenteredString(
+                    Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
+                    drawX,
+                    drawY + (int)(70*scale),
+                    font_elev,
+                    boardGraph);
         } else if (depth != 0 && level == 0  && zoomIndex > 3 ) {
-        	drawCenteredString(
-        			"DEPTH " + depth,
-        			drawX,
-					drawY + (int)(70*scale),
-					font_elev,
-					boardGraph);
+            drawCenteredString(
+                    Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
+                    drawX,
+                    drawY + (int)(70*scale),
+                    font_elev,
+                    boardGraph);
         } else if (level != 0 && depth != 0  && zoomIndex > 3) {
-        	drawCenteredString(
-       				"LEVEL " + level,
-        			drawX,
-					drawY + (int)(60*scale),
-					font_elev,
-					boardGraph);
-       		drawCenteredString(
-       				"DEPTH " + depth,
-        			drawX,
-					drawY + (int)(70*scale),
-					font_elev,
-					boardGraph);
+            drawCenteredString(
+                        Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
+                    drawX,
+                    drawY + (int)(60*scale),
+                    font_elev,
+                    boardGraph);
+                drawCenteredString(
+                        Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
+                    drawX,
+                    drawY + (int)(70*scale),
+                    font_elev,
+                    boardGraph);
         }
         
         // draw elevation borders
@@ -1018,8 +1018,8 @@ public class BoardView1
      */
     private Point getHexLocation(int x, int y) {
         return new Point(
-        		x * (int)(HEX_WC*scale),
-        		y * (int)(HEX_H*scale) + ((x & 1) == 1 ? (int)(HEX_H/2*scale) : 0));
+                x * (int)(HEX_WC*scale),
+                y * (int)(HEX_H*scale) + ((x & 1) == 1 ? (int)(HEX_H/2*scale) : 0));
     }
     private Point getHexLocation(Coords c) {
         return getHexLocation(c.x, c.y);
@@ -1143,13 +1143,13 @@ public class BoardView1
 
         // are we on a hex?
         if (mhex != null) {
-            strings[stringsIndex] = "Hex " + mcoords.getBoardNum()
-                + "; level " + mhex.getElevation();
+            strings[stringsIndex] = Messages.getString("BoardView1.Hex") + mcoords.getBoardNum() //$NON-NLS-1$
+                + Messages.getString("BoardView1.level") + mhex.getElevation(); //$NON-NLS-1$
             stringsIndex += 1;
 
             // Do we have rubble?
             if ( mhex.contains(Terrain.RUBBLE) ) {
-                strings[stringsIndex] = "Rubble";
+                strings[stringsIndex] = Messages.getString("BoardView1.Rubble"); //$NON-NLS-1$
                 stringsIndex += 1;
             }
 
@@ -1157,12 +1157,12 @@ public class BoardView1
             else if ( mhex.contains(Terrain.BUILDING) ) {
                 // Get the building.
                 Building bldg = game.board.getBuildingAt( mcoords );
-                StringBuffer buf = new StringBuffer( "Height " );
+                StringBuffer buf = new StringBuffer( Messages.getString("BoardView1.Height") ); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
                 buf.append( mhex.levelOf(Terrain.BLDG_ELEV) );
-                buf.append( " " );
+                buf.append( " " ); //$NON-NLS-1$
                 buf.append( bldg.toString() );
-                buf.append( ", CF: " );
+                buf.append( Messages.getString("BoardView1.CF") ); //$NON-NLS-1$
                 buf.append( bldg.getCurrentCF() );
                 strings[stringsIndex] = buf.toString();
                 stringsIndex += 1;
@@ -1172,31 +1172,32 @@ public class BoardView1
                 java.util.Vector minefields = game.getMinefields(mcoords);
                 for (int i = 0; i < minefields.size(); i++){
                     Minefield mf = (Minefield) minefields.elementAt(i);
-                    String owner =  " (" + game.getPlayer(mf.getPlayerId()).getName() + ")";
+                    String owner =  " (" + game.getPlayer(mf.getPlayerId()).getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
                     switch (mf.getType()) {
                     case (Minefield.TYPE_CONVENTIONAL) :
-                        strings[stringsIndex] = "Conventional minefield " + owner;
+                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield") +" " + owner; //$NON-NLS-1$ //$NON-NLS-2$
                         break;
                     case (Minefield.TYPE_THUNDER) :
-                        strings[stringsIndex] = "Thunder minefield(" + mf.getDamage() + ")" + owner;
+                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         break;
                     case (Minefield.TYPE_COMMAND_DETONATED) :
-                        strings[stringsIndex] = "Command-detonated minefield " + owner;
+                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield") +" " + owner; //$NON-NLS-1$ //$NON-NLS-2$
                         break;
                     case (Minefield.TYPE_VIBRABOMB) :
                         if (mf.getPlayerId() == localPlayer.getId()) {
-                            strings[stringsIndex] = "Vibrabomb minefield(" + mf.getSetting() + ") " + owner;
+                            strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         } else {
-                            strings[stringsIndex] = "Vibrabomb minefield" + owner;
+                            strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
                         }
                         break;
                     case (Minefield.TYPE_THUNDER_ACTIVE) :
-                        strings[stringsIndex] = "Thunder-Active minefield(" + mf.getDamage() + ")" + owner;
+                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         break;
                     case (Minefield.TYPE_THUNDER_INFERNO) :
-                        strings[stringsIndex] = "Thunder-Inferno minefield(" + mf.getDamage() + ")" + owner;
+                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         break;
+                        
                     }
                     stringsIndex++;
                 }
@@ -1652,53 +1653,49 @@ public class BoardView1
 
             LosEffects le = LosEffects.calculateLos(game, ai);
             StringBuffer message = new StringBuffer();
-            message.append( "Attacker(")
-                .append(game.getMechInFirst() ? "Mech" : "non Mech")
-                .append(") hex is " )
-                .append( c1.getBoardNum() )
-                .append( ".\n" );
-            message.append( "Target(")
-                .append(game.getMechInSecond() ? "Mech" : "non Mech")
-                .append(") hex is " )
-                .append( c2.getBoardNum() )
-                .append( ".\n" );
+            message.append(Messages.getString("BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
+                    game.getMechInFirst() ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                    c1.getBoardNum()}));
+            message.append(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
+                    game.getMechInFirst() ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                    c1.getBoardNum()}));
             if (!le.canSee()) {
-                message.append( "Line of sight is blocked.\n" );
-                message.append( "Range is " )
-                    .append( c1.distance(c2) )
-                    .append( " hex(es).\n");
+                message.append(Messages.getString("BoardView1.LOSBlocked", new Object[]{ //$NON-NLS-1$
+                    new Integer(c1.distance(c2))}));
             } else {
-                message.append( "Line of sight is not blocked.\n" );
-                message.append( "Range is " )
-                    .append( c1.distance(c2) )
-                    .append( " hex(es).\n");
+                message.append(Messages.getString("BoardView1.LOSNotBlocked", new Object[]{ //$NON-NLS-1$
+                        new Integer(c1.distance(c2))}));
                 if (le.getHeavyWoods() > 0) {
-                    message.append( le.getHeavyWoods() )
-                        .append( " heavy wood hex(es) in line of sight.\n" );
+                    message.append(Messages.getString("BoardView1.HeavyWoods", new Object[]{ //$NON-NLS-1$
+                            new Integer(le.getHeavyWoods())}));
                 }
                 if (le.getLightWoods() > 0) {
-                    message.append( le.getLightWoods() )
-                        .append( " light wood hex(es) in line of sight.\n" );
+                    message.append(Messages.getString("BoardView1.LightWoods", new Object[]{ //$NON-NLS-1$
+                            new Integer(le.getLightWoods())}));
                 }
                 if (le.getLightSmoke() > 0) {
-                    message.append( le.getLightSmoke() )
-                        .append( " light smoke hex(es) in line of sight.\n" );
+                    message.append(Messages.getString("BoardView1.LightSmoke", new Object[]{ //$NON-NLS-1$
+                            new Integer(le.getLightSmoke())}));
                 }
                 if (le.getHeavySmoke() > 0) {
-                    message.append( le.getHeavySmoke() );
-                    if (game.getOptions().booleanOption("maxtech_fire"))
-                        message.append( " heavy");
-                    message.append( " smoke hex(es) in line of sight.\n" );
+                    if (game.getOptions().booleanOption("maxtech_fire")) { //$NON-NLS-1$
+                        message.append(Messages.getString("BoardView1.HeavySmoke", new Object[]{ //$NON-NLS-1$
+                                new Integer(le.getHeavySmoke())}));
+                    }
+                    else {
+                        message.append(Messages.getString("BoardView1.Smoke", new Object[]{ //$NON-NLS-1$
+                                new Integer(le.getHeavySmoke())}));
+                    }
                 }
                 if (le.isTargetCover()) {
-                    message.append("Target has partial cover.\n");
+                    message.append(Messages.getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
                 }
                 if (le.isAttackerCover()) {
-                    message.append("Attacker has partial cover.\n");
+                    message.append(Messages.getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
                 }
             }
             AlertDialog alert = new AlertDialog(frame,
-                                                "Range / Line of Sight",
+                                                Messages.getString("BoardView1.LOSTitle"), //$NON-NLS-1$
                                                 message.toString(), false);
             alert.show();
         }
@@ -2255,11 +2252,11 @@ public class BoardView1
      * 
      */
     public void zoomIn(){
-    	int tmpZoomIndex = zoomIndex + 1;
-    	if ( isJ2RE == true ){
-    		zoomIndex++;
-			zoom();
-		}
+        int tmpZoomIndex = zoomIndex + 1;
+        if ( isJ2RE == true ){
+            zoomIndex++;
+            zoom();
+        }
     }
 
     /**
@@ -2267,11 +2264,11 @@ public class BoardView1
      *
      */
     public void zoomOut(){
-    	if ( isJ2RE == true ){
-    		zoomIndex--;
-			zoom();
-		}
-   	}
+        if ( isJ2RE == true ){
+            zoomIndex--;
+            zoom();
+        }
+        }
 
     /**
      * zoomIndex is a reference to a static array of scale factors.
@@ -2283,69 +2280,69 @@ public class BoardView1
      * @param zoomIndex
      */
     public void setZoomIndex( int zoomIndex ){
- 		if ( isJ2RE == true ){
- 			this.zoomIndex = zoomIndex;
-			zoom();
-    	}
+        if ( isJ2RE == true ){
+            this.zoomIndex = zoomIndex;
+            zoom();
+        }
     }
 
     public int getZoomIndex(){
-    	return zoomIndex;
+        return zoomIndex;
     }
     
     private void checkZoomIndex(){
-    	if ( zoomIndex > ZOOM_FACTORS.length-1 ) {
-    		zoomIndex = ZOOM_FACTORS.length-1;
-    	}
-    	if ( zoomIndex < 0 ) zoomIndex = 0;
+        if ( zoomIndex > ZOOM_FACTORS.length-1 ) {
+            zoomIndex = ZOOM_FACTORS.length-1;
+        }
+        if ( zoomIndex < 0 ) zoomIndex = 0;
     }
     
     //
     // Changes hex dimensions and refreshes the map with the new scale
     //
-	private void zoom(){
-		checkZoomIndex();
-    	scale = ZOOM_FACTORS[zoomIndex];
+    private void zoom(){
+        checkZoomIndex();
+        scale = ZOOM_FACTORS[zoomIndex];
         Settings.mapZoomIndex = zoomIndex;
 
-    	hex_size = new Dimension((int)(HEX_W*scale), (int)(HEX_H*scale));
+        hex_size = new Dimension((int)(HEX_W*scale), (int)(HEX_H*scale));
 
-    	final Dimension size = getSize();
+        final Dimension size = getSize();
         //Coords c = getCoordsAt(new Point((int)(size.width/2), (int)(size.height/2)));
 
-    	boardGraph=null;
-    	backGraph=null;
-    	hasZoomed=true;
+        boardGraph=null;
+        backGraph=null;
+        hasZoomed=true;
 
-    	updateBoardSize();
+        updateBoardSize();
 
-    	view.setLocation(scroll);
-    	view.setSize(getOptimalView(size));
-    	offset.setLocation(getOptimalOffset(size));
+        view.setLocation(scroll);
+        view.setSize(getOptimalView(size));
+        offset.setLocation(getOptimalOffset(size));
 
-    	updateFontSizes();
-    	updateBoardImage();
-    	
-    	update(this.getGraphics());
+        updateFontSizes();
+        updateBoardImage();
+        
+        update(this.getGraphics());
     }
     
-	private void updateFontSizes(){
-	    if ( zoomIndex <= 4 ) {
-	    		font_elev = FONT_7;
-	    		font_hexnum = FONT_7;
-	    		font_minefield = FONT_7;
-	    }
-	    if ( zoomIndex <= 5 & zoomIndex > 4 ){
-	        	font_elev = FONT_8;
-	        	font_hexnum = FONT_8;
-	    		font_minefield = FONT_8;
-	    }
-	    if ( zoomIndex > 5 ){
-	    	font_elev = FONT_9;
-	    	font_hexnum = FONT_9;
-    		font_minefield = FONT_9;
-	    }
-	}
+    private void updateFontSizes(){
+        if ( zoomIndex <= 4 ) {
+                font_elev = FONT_7;
+                font_hexnum = FONT_7;
+                font_minefield = FONT_7;
+        }
+        if ( zoomIndex <= 5 & zoomIndex > 4 ){
+                font_elev = FONT_8;
+                font_hexnum = FONT_8;
+                font_minefield = FONT_8;
+        }
+        if ( zoomIndex > 5 ){
+            font_elev = FONT_9;
+            font_hexnum = FONT_9;
+            font_minefield = FONT_9;
+        }
+    }
 
     /**
      * Displays a bit of text in a box.
@@ -2361,7 +2358,7 @@ public class BoardView1
             this.tipStrings = tipStrings;
 
             // setup
-            setFont(new Font("SansSerif", Font.PLAIN, 12));
+            setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
             setBackground(SystemColor.info);
             setForeground(SystemColor.infoText);
 
@@ -2449,12 +2446,12 @@ public class BoardView1
 
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer, boolean makeTranslucent) {
             if (isReady()) {
-            	Image tmpImage;
-            	if (zoomIndex == BASE_ZOOM_INDEX ){
-    	            tmpImage = image;
-            	} else {
+                Image tmpImage;
+                if (zoomIndex == BASE_ZOOM_INDEX ){
+                    tmpImage = image;
+                } else {
                     tmpImage = getScaledImage( image, scale );
-            	}
+                }
                 if (makeTranslucent && isJ2RE) {
                     Graphics2D g2 = (Graphics2D) g;
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
@@ -2499,7 +2496,7 @@ public class BoardView1
         public CursorSprite(Color color) {
             this.color = color;
             this.bounds = new Rectangle(hexPoly.getBounds().width + 1,
-            		hexPoly.getBounds().height + 1);
+                    hexPoly.getBounds().height + 1);
             this.image = null;
 
             // start offscreen
@@ -2525,25 +2522,25 @@ public class BoardView1
 
         public void setOffScreen(){
             bounds.setLocation(-100, -100);
-        	hexLoc = new Coords(-2, -2);
+            hexLoc = new Coords(-2, -2);
         }
         
         public void setHexLocation( Coords hexLoc ){
-        	this.hexLoc = hexLoc;
-        	bounds.setLocation(getHexLocation(hexLoc));
+            this.hexLoc = hexLoc;
+            bounds.setLocation(getHexLocation(hexLoc));
         }
         
         public Rectangle getBounds(){
-        	this.bounds = new Rectangle(hexPoly.getBounds().width + 1,
-        			hexPoly.getBounds().height + 1);
-        	bounds.setLocation(getHexLocation( hexLoc ));
-        	
-        	return bounds;
+            this.bounds = new Rectangle(hexPoly.getBounds().width + 1,
+                    hexPoly.getBounds().height + 1);
+            bounds.setLocation(getHexLocation( hexLoc ));
+            
+            return bounds;
         }
     }
 
     
-	private class GhostEntitySprite extends Sprite {
+    private class GhostEntitySprite extends Sprite {
         private Entity entity;
         private Rectangle entityRect;
         private Rectangle modelRect;
@@ -2552,7 +2549,7 @@ public class BoardView1
             this.entity = entity;
 
             String shortName = entity.getShortName();
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55,
                             getFontMetrics(font).stringWidth(shortName) + 1,
                             getFontMetrics(font).getAscent());
@@ -2561,10 +2558,10 @@ public class BoardView1
 
             this.bounds = tempBounds;
             this.entityRect = new Rectangle(
-            		bounds.x + (int)(20*scale),
-            		bounds.y + (int)(14*scale), 
-					(int)(44*scale), 
-					(int)(44*scale));
+                    bounds.x + (int)(20*scale),
+                    bounds.y + (int)(14*scale), 
+                    (int)(44*scale), 
+                    (int)(44*scale));
             this.image = null;
         }
 
@@ -2597,16 +2594,16 @@ public class BoardView1
         }
 
         public Rectangle getBounds(){
-        	Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
-        	tempBounds.setLocation(getHexLocation(entity.getPosition()));
-        	this.bounds = tempBounds;
+            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+            tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            this.bounds = tempBounds;
         
-        	this.entityRect = new Rectangle(bounds.x + (int)(20*scale),
-        			bounds.y + (int)(14*scale),
-					(int)(44*scale),
-					(int)(44*scale));
-        	
-        	return bounds;
+            this.entityRect = new Rectangle(bounds.x + (int)(20*scale),
+                    bounds.y + (int)(14*scale),
+                    (int)(44*scale),
+                    (int)(44*scale));
+            
+            return bounds;
         }
         
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
@@ -2626,7 +2623,7 @@ public class BoardView1
             this.facing = facing;
 
             String shortName = entity.getShortName();
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55,
                             getFontMetrics(font).stringWidth(shortName) + 1,
                             getFontMetrics(font).getAscent());
@@ -2635,12 +2632,12 @@ public class BoardView1
 
             this.bounds = tempBounds;
             this.entityRect = new Rectangle(bounds.x + (int)(20*scale),
-            		bounds.y + (int)(14*scale),
-					(int)(44*scale),
-					(int)(44*scale));
+                    bounds.y + (int)(14*scale),
+                    (int)(44*scale),
+                    (int)(44*scale));
             this.image = null;
         }
-		
+        
         /**
          * Creates the sprite for this entity.  It is an extra pain to
          * create transparent images in AWT.
@@ -2686,34 +2683,34 @@ public class BoardView1
 
             String shortName = entity.getShortName();
             
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55,
-                            		getFontMetrics(font).stringWidth(shortName) + 1,
-                            		getFontMetrics(font).getAscent());
+                                    getFontMetrics(font).stringWidth(shortName) + 1,
+                                    getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
             this.bounds = tempBounds;
             this.entityRect = new Rectangle(
-            		bounds.x + (int)(20*scale),
-            		bounds.y + (int)(14*scale),
-					(int)(44*scale),
-					(int)(44*scale));
+                    bounds.x + (int)(20*scale),
+                    bounds.y + (int)(14*scale),
+                    (int)(44*scale),
+                    (int)(44*scale));
             this.image = null;
         }
 
         public Rectangle getBounds(){
-        	Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
-        	tempBounds.setLocation(getHexLocation(entity.getPosition()));
-        	this.bounds = tempBounds;
+            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+            tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            this.bounds = tempBounds;
         
-        	this.entityRect = new Rectangle(
-        			bounds.x + (int)(20*scale),
-        			bounds.y + (int)(14*scale),
-					(int)(44*scale),
-					(int)(44*scale));
-        	
-        	return bounds;
+            this.entityRect = new Rectangle(
+                    bounds.x + (int)(20*scale),
+                    bounds.y + (int)(14*scale),
+                    (int)(44*scale),
+                    (int)(44*scale));
+            
+            return bounds;
         }
         
         /**
@@ -2723,7 +2720,7 @@ public class BoardView1
         public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             Rectangle tempRect =
                 new Rectangle(47, 55,
                               getFontMetrics(font).stringWidth(shortName) + 1,
@@ -2796,33 +2793,33 @@ public class BoardView1
             this.entity = entity;
 
             String shortName = entity.getShortName();
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55,
-                            			getFontMetrics(font).stringWidth(shortName) + 1,
-                            			getFontMetrics(font).getAscent());
+                                        getFontMetrics(font).stringWidth(shortName) + 1,
+                                        getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
             this.bounds = tempBounds;
             this.entityRect = new Rectangle(bounds.x + (int)(20*scale),
-            								bounds.y + (int)(14*scale),
-											(int)(44*scale),
-											(int)(44*scale));
+                                            bounds.y + (int)(14*scale),
+                                            (int)(44*scale),
+                                            (int)(44*scale));
             this.image = null;
         }
 
         public Rectangle getBounds(){
-        	Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
-        	tempBounds.setLocation(getHexLocation(entity.getPosition()));
-        	this.bounds = tempBounds;
+            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+            tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            this.bounds = tempBounds;
         
-        	this.entityRect = new Rectangle(
-        			bounds.x + (int)(20*scale),
-        			bounds.y + (int)(14*scale),
-					(int)(44*scale),
-					(int)(44*scale));
-        	
-        	return bounds;
+            this.entityRect = new Rectangle(
+                    bounds.x + (int)(20*scale),
+                    bounds.y + (int)(14*scale),
+                    (int)(44*scale),
+                    (int)(44*scale));
+            
+            return bounds;
         }
         
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
@@ -2843,9 +2840,9 @@ public class BoardView1
             // figure out size
             String shortName = entity.getShortName();
             if (Settings.showUnitId) {
-                shortName+=(" ID:"+entity.getId());
+                shortName+=(Messages.getString("BoardView1.ID")+entity.getId()); //$NON-NLS-1$
             }
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             Rectangle tempRect =
                 new Rectangle(47, 55,
                               getFontMetrics(font).stringWidth(shortName) + 1,
@@ -2927,65 +2924,65 @@ public class BoardView1
             if ( entity.isImmobile() && !entity.isProne() && !turretLocked ) {
                 // draw "IMMOBILE"
                 graph.setColor(Color.darkGray);
-                graph.drawString("IMMOBILE", 18, 39);
+                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 39); //$NON-NLS-1$
                 graph.setColor(Color.red);
-                graph.drawString("IMMOBILE", 17, 38);
+                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 38); //$NON-NLS-1$
             } else if (!entity.isImmobile() && entity.isProne()) {
                 // draw "PRONE"
                 graph.setColor(Color.darkGray);
-                graph.drawString("PRONE", 26, 39);
+                graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 39); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph.drawString("PRONE", 25, 38);
+                graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 38); //$NON-NLS-1$
             } else if ( !entity.isImmobile() && turretLocked ) {
                 // draw "LOCKED"
                 graph.setColor(Color.darkGray);
-                graph.drawString("LOCKED", 22, 39);
+                graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 39); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph.drawString("LOCKED", 21, 38);
+                graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 38); //$NON-NLS-1$
             } else if (entity.isImmobile() && entity.isProne()) {
                 // draw "IMMOBILE" and "PRONE"
                 graph.setColor(Color.darkGray);
-                graph.drawString("IMMOBILE", 18, 35);
-                graph.drawString("PRONE", 26, 48);
+                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 48); //$NON-NLS-1$
                 graph.setColor(Color.red);
-                graph.drawString("IMMOBILE", 17, 34);
+                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph.drawString("PRONE", 25, 47);
+                graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 47); //$NON-NLS-1$
             } else if ( entity.isImmobile() && turretLocked ) {
                 // draw "IMMOBILE" and "LOCKED"
                 graph.setColor(Color.darkGray);
-                graph.drawString("IMMOBILE", 18, 35);
-                graph.drawString("LOCKED", 22, 48);
+                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 48); //$NON-NLS-1$
                 graph.setColor(Color.red);
-                graph.drawString("IMMOBILE", 17, 34);
+                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph.drawString("LOCKED", 21, 47);
+                graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 47); //$NON-NLS-1$
             }
 
             // If this unit is being swarmed or is swarming another, say so.
             if ( Entity.NONE != entity.getSwarmAttackerId() ) {
                 // draw "SWARMED"
                 graph.setColor(Color.darkGray);
-                graph.drawString("SWARMED", 17, 22);
+                graph.drawString(Messages.getString("BoardView1.SWARMED"), 17, 22); //$NON-NLS-1$
                 graph.setColor(Color.red);
-                graph.drawString("SWARMED", 16, 21);
+                graph.drawString(Messages.getString("BoardView1.SWARMED"), 16, 21); //$NON-NLS-1$
             }
 
             // If this unit is transporting another, say so.
             if ((entity.getLoadedUnits()).size() > 0) {
                 // draw "T"
                 graph.setColor(Color.darkGray);
-                graph.drawString("T", 20, 71);
+                graph.drawString("T", 20, 71); //$NON-NLS-1$
                 graph.setColor(Color.black);
-                graph.drawString("T", 19, 70);
+                graph.drawString("T", 19, 70); //$NON-NLS-1$
             }
             
             // If this unit is stuck, say so.
             if ((entity.isStuck())) {
                 graph.setColor(Color.darkGray);
-                graph.drawString("STUCK", 26, 61);
+                graph.drawString(Messages.getString("BoardView1.STUCK"), 26, 61); //$NON-NLS-1$
                 graph.setColor(Color.orange);
-                graph.drawString("STUCK", 25, 60);
+                graph.drawString(Messages.getString("BoardView1.STUCK"), 25, 60); //$NON-NLS-1$
                 
             }
 
@@ -2994,16 +2991,16 @@ public class BoardView1
                 if (!entity.isSeenByEnemy()) {
                     // draw "U"
                     graph.setColor(Color.darkGray);
-                    graph.drawString("U", 30, 71);
+                    graph.drawString("U", 30, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
-                    graph.drawString("U", 29, 70);
+                    graph.drawString("U", 29, 70); //$NON-NLS-1$
                 } else if (!entity.isVisibleToEnemy() && !isJ2RE) {
                     // If this unit is currently hidden from the enemy, say so.
                     // draw "H"
                     graph.setColor(Color.darkGray);
-                    graph.drawString("H", 30, 71);
+                    graph.drawString("H", 30, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
-                    graph.drawString("H", 29, 70);
+                    graph.drawString("H", 29, 70); //$NON-NLS-1$
                 }
             }
 
@@ -3046,9 +3043,9 @@ public class BoardView1
                 return false;
             }
 
-            if (game.getOptions().booleanOption("double_blind")
+            if (game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
                 && (e.getOwner().getId() == getLocalPlayer().getId()
-                    || (game.getOptions().booleanOption("team_vision")
+                    || (game.getOptions().booleanOption("team_vision") //$NON-NLS-1$
                         && e.getOwner().getTeam() == getLocalPlayer().getTeam()))) {
                 return true;
             } else {
@@ -3069,8 +3066,8 @@ public class BoardView1
          * Overrides to provide for a smaller sensitive area.
          */
         public boolean isInside(Point point) {
-            return entityRect.contains(	point.x + view.x - offset.x,
-            							point.y + view.y - offset.y);
+            return entityRect.contains(     point.x + view.x - offset.x,
+                                        point.y + view.y - offset.y);
         }
 
         private String[] getTooltip() {
@@ -3079,38 +3076,38 @@ public class BoardView1
 
             buffer = new StringBuffer();
             buffer.append( entity.getChassis() )
-                .append( " (" )
+                .append( " (" ) //$NON-NLS-1$
                 .append( entity.getOwner().getName() )
-                .append( "); " )
+                .append( "); " ) //$NON-NLS-1$
                 .append( entity.getCrew().getGunnery() )
-                .append( "/" )
+                .append( "/" ) //$NON-NLS-1$
                 .append( entity.getCrew().getPiloting() )
-                .append( " pilot" );
+                .append( Messages.getString("BoardView1.pilot") ); //$NON-NLS-1$
             int numAdv = entity.getCrew().countAdvantages();
             if (numAdv > 0) {
-                buffer.append( " <" )
+                buffer.append( " <" ) //$NON-NLS-1$
                     .append( numAdv )
-                    .append( " advs>" );
+                    .append( Messages.getString("BoardView1.advs") ); //$NON-NLS-1$
             }
             tipStrings[0] = buffer.toString();
 
             buffer = new StringBuffer();
-            buffer.append( "Move " )
+            buffer.append( Messages.getString("BoardView1.move") ) //$NON-NLS-1$
                 .append( entity.getMovementAbbr(entity.moved) )
-                .append( ":" )
+                .append( ":" ) //$NON-NLS-1$
                 .append( entity.delta_distance )
-                .append( " (+" )
+                .append( " (+" ) //$NON-NLS-1$
                 .append( Compute.getTargetMovementModifier
                          (game, entity.getId()).getValue() )
-                .append( ");" )
-                .append( " Heat " )
+                .append( ");" ) //$NON-NLS-1$
+                .append( Messages.getString("BoardView1.Heat") ) //$NON-NLS-1$
                 .append( entity.heat );
             tipStrings[1] = buffer.toString();
 
             buffer = new StringBuffer();
-            buffer.append( "Armor " )
+            buffer.append( Messages.getString("BoardView1.Armor") ) //$NON-NLS-1$
                 .append( entity.getTotalArmor() )
-                .append( "; Internal " )
+                .append( Messages.getString("BoardView1.internal") ) //$NON-NLS-1$
                 .append( entity.getTotalInternal() );
             tipStrings[2] = buffer.toString();
 
@@ -3234,11 +3231,11 @@ public class BoardView1
                 break;
             case MovePath.STEP_LOAD:
                 // Announce load.
-                String load = "Load";
+                String load = Messages.getString("BoardView1.Load"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
-                    load = "(" + load + ")";
+                    load = "(" + load + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int loadX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(load) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(load, loadX, stepPos.y + 39);
@@ -3247,11 +3244,11 @@ public class BoardView1
                 break;
             case MovePath.STEP_UNLOAD:
                 // Announce unload.
-                String unload = "Unload";
+                String unload = Messages.getString("BoardView1.Unload"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
-                    unload = "(" + unload + ")";
+                    unload = "(" + unload + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int unloadX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(unload) / 2);
                 int unloadY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -3285,29 +3282,29 @@ public class BoardView1
 
             // If the step is using a road bonus, mark it.
             if ( step.isPavementStep() && step.getParent().getEntity() instanceof Tank ) {
-                costStringBuf.append( "+" );
+                costStringBuf.append( "+" ); //$NON-NLS-1$
             }
 
             // If the step is dangerous, mark it.
             if ( step.isDanger() ) {
-                costStringBuf.append( "*" );
+                costStringBuf.append( "*" ); //$NON-NLS-1$
             }
 
             // If the step is past danger, mark that.
             if (step.isPastDanger()) {
-                costStringBuf.insert( 0, "(" );
-                costStringBuf.append( ")" );
+                costStringBuf.insert( 0, "(" ); //$NON-NLS-1$
+                costStringBuf.append( ")" ); //$NON-NLS-1$
             }
 
             if (step.isUsingMASC()) {
-                costStringBuf.append("[");
+                costStringBuf.append("["); //$NON-NLS-1$
                 costStringBuf.append(step.getTargetNumberMASC());
-                costStringBuf.append("+]");
+                costStringBuf.append("+]"); //$NON-NLS-1$
             }
 
             // Convert the buffer to a String and draw it.
             costString = costStringBuf.toString();
-            graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
             int costX = stepPos.x + 42;
             if (shiftFlag) {
                 costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
@@ -3336,8 +3333,8 @@ public class BoardView1
         Color spriteColor;
 
         public C3Sprite(Entity e, Entity m) {
-        	this.entityE = e;
-        	this.entityM = m;
+            this.entityE = e;
+            this.entityM = m;
             this.entityId = e.getId();
             this.masterId = m.getId();
             this.spriteColor = e.getOwner().getColor();
@@ -3382,21 +3379,21 @@ public class BoardView1
             
             C3Poly = new Polygon();
             C3Poly.addPoint(
-            		a.x + (int)(scale*(HEX_W/2) - (int)Math.round(Math.sin(an) * lw)),
-            		a.y + (int)(scale*(HEX_H/2) + (int)Math.round(Math.cos(an) * lw)));
+                    a.x + (int)(scale*(HEX_W/2) - (int)Math.round(Math.sin(an) * lw)),
+                    a.y + (int)(scale*(HEX_H/2) + (int)Math.round(Math.cos(an) * lw)));
             C3Poly.addPoint(
-            		a.x + (int)(scale*(HEX_W/2) + (int)Math.round(Math.sin(an) * lw)), 
-            		a.y + (int)(scale*(HEX_H/2) - (int)Math.round(Math.cos(an) * lw)));
+                    a.x + (int)(scale*(HEX_W/2) + (int)Math.round(Math.sin(an) * lw)), 
+                    a.y + (int)(scale*(HEX_H/2) - (int)Math.round(Math.cos(an) * lw)));
             C3Poly.addPoint(
-            		t.x + (int)(scale*(HEX_W/2) + (int)Math.round(Math.sin(an) * lw)), 
-            		t.y + (int)(scale*(HEX_H/2) - (int)Math.round(Math.cos(an) * lw)));
+                    t.x + (int)(scale*(HEX_W/2) + (int)Math.round(Math.sin(an) * lw)), 
+                    t.y + (int)(scale*(HEX_H/2) - (int)Math.round(Math.cos(an) * lw)));
             C3Poly.addPoint(
-            		t.x + (int)(scale*(HEX_W/2) - (int)Math.round(Math.sin(an) * lw)), 
-            		t.y + (int)(scale*(HEX_H/2) + (int)Math.round(Math.cos(an) * lw)));
+                    t.x + (int)(scale*(HEX_W/2) - (int)Math.round(Math.sin(an) * lw)), 
+                    t.y + (int)(scale*(HEX_H/2) + (int)Math.round(Math.cos(an) * lw)));
         }
 
         public Rectangle getBounds(){
-        	makePoly();
+            makePoly();
             // set bounds
             this.bounds = new Rectangle(C3Poly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
@@ -3413,9 +3410,9 @@ public class BoardView1
         }
 
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-        	//makePoly();
-        	
-        	Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints, C3Poly.npoints);
+            //makePoly();
+            
+            Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints, C3Poly.npoints);
             drawPoly.translate(x, y);
 
             g.setColor(spriteColor);
@@ -3503,7 +3500,7 @@ public class BoardView1
                 addWeapon((DfaAttackAction)attack);
             }
             if (attack instanceof ProtomechPhysicalAttackAction) {
-            	addWeapon((ProtomechPhysicalAttackAction)attack);
+                addWeapon((ProtomechPhysicalAttackAction)attack);
             }
 
             // nullify image
@@ -3534,14 +3531,14 @@ public class BoardView1
         }
         
         public Rectangle getBounds(){
-        	makePoly();
+            makePoly();
             // set bounds
             this.bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
             attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
-        	
-        	return bounds;
+            
+            return bounds;
         }
 
         /** If we have build full arrow already with single attack and have got
@@ -3609,50 +3606,50 @@ public class BoardView1
             final Entity entity = game.getEntity(attack.getEntityId());
             final WeaponType wtype = (WeaponType)entity.getEquipment(attack.getWeaponId()).getType();
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement( wtype.getName() + "; needs " + roll );
+            weaponDescs.addElement( wtype.getName() + Messages.getString("BoardView1.needs") + roll ); //$NON-NLS-1$
         }
 
         public void addWeapon(KickAttackAction attack) {
-            String bufer = "";
-            String rollLeft = "";
-            String rollRight = "";
+            String bufer = ""; //$NON-NLS-1$
+            String rollLeft = ""; //$NON-NLS-1$
+            String rollRight = ""; //$NON-NLS-1$
             final int leg = attack.getLeg();
             switch (leg){
             case KickAttackAction.BOTH:
                 rollLeft = KickAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
                 rollRight = KickAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
-                bufer = "Kicks with both legs. Left needs " + rollLeft + "; Right needs " + rollRight;
+                bufer = Messages.getString("BoardView1.kickBoth", new Object[]{rollLeft,rollRight}); //$NON-NLS-1$
                 break;
             case KickAttackAction.LEFT:
                 rollLeft = KickAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
-                bufer = "Kicks with left leg. Needs " + rollLeft;
+                bufer = Messages.getString("BoardView1.kickLeft", new Object[]{rollLeft}); //$NON-NLS-1$
                 break;
             case KickAttackAction.RIGHT:
                 rollRight = KickAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
-                bufer = "Kicks with right leg. Needs " + rollRight;
+                bufer = Messages.getString("BoardView1.kickRight", new Object[]{rollRight}); //$NON-NLS-1$
                 break;
             }
             weaponDescs.addElement(bufer);
         }
 
         public void addWeapon(PunchAttackAction attack) {
-            String bufer = "";
-            String rollLeft = "";
-            String rollRight = "";
+            String bufer = ""; //$NON-NLS-1$
+            String rollLeft = ""; //$NON-NLS-1$
+            String rollRight = ""; //$NON-NLS-1$
             final int arm = attack.getArm();
             switch (arm){
             case PunchAttackAction.BOTH:
                 rollLeft = PunchAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT).getValueAsString();
                 rollRight = PunchAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT).getValueAsString();
-                bufer = "Punches with both arms. Left needs " + rollLeft + "; Right needs " + rollRight;
+                bufer = Messages.getString("BoardView1.punchBoth", new Object[]{rollLeft,rollRight}); //$NON-NLS-1$
                 break;
             case PunchAttackAction.LEFT:
                 rollLeft = PunchAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT).getValueAsString();
-                bufer = "Punches with left arm. Needs " + rollLeft;
+                bufer = Messages.getString("BoardView1.punchLeft", new Object[]{rollLeft}); //$NON-NLS-1$
                 break;
             case PunchAttackAction.RIGHT:
                 rollRight = PunchAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT).getValueAsString();
-                bufer = "Punches with right arm. Needs " + rollRight;
+                bufer = Messages.getString("BoardView1.punchRight", new Object[]{rollRight}); //$NON-NLS-1$
                 break;
             }
             weaponDescs.addElement(bufer);
@@ -3660,32 +3657,32 @@ public class BoardView1
 
         public void addWeapon(PushAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement("Pushes. Needs " + roll);
+            weaponDescs.addElement(Messages.getString("BoardView1.push", new Object[]{roll})); //$NON-NLS-1$
         }
 
         public void addWeapon(ClubAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
             final String club = attack.getClub().getName();
-            weaponDescs.addElement("Hits with " + club +". Needs " + roll);
+            weaponDescs.addElement(Messages.getString("BoardView1.hit", new Object[]{club,roll})); //$NON-NLS-1$
         }
 
         public void addWeapon(ChargeAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement("Charges. Needs " + roll);
+            weaponDescs.addElement(Messages.getString("BoardView1.charge", new Object[]{roll})); //$NON-NLS-1$
         }
         public void addWeapon(DfaAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement("DFA. Needs " + roll);
+            weaponDescs.addElement(Messages.getString("BoardView1.DFA", new Object[]{roll})); //$NON-NLS-1$
         }
         public void addWeapon(ProtomechPhysicalAttackAction attack) {
-        	final String roll = attack.toHit(game).getValueAsString();
-        	weaponDescs.addElement("Makes a protomech physical attack. Needs " + roll);
+            final String roll = attack.toHit(game).getValueAsString();
+            weaponDescs.addElement(Messages.getString("BoardView1.proto", new Object[]{roll})); //$NON-NLS-1$
         }
 
         private String[] getTooltip() {
             String[] tipStrings = new String[1 + weaponDescs.size()];
             int tip = 1;
-            tipStrings[0] = attackerDesc + " on " + targetDesc;
+            tipStrings[0] = attackerDesc + " "+Messages.getString("BoardView1.on")+" " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             for (Iterator i = weaponDescs.iterator(); i.hasNext();) {
                 tipStrings[tip++] = (String)i.next();
             }
@@ -3726,7 +3723,7 @@ public class BoardView1
      * Return, whether a popup may be drawn, this currently means, whether no scrolling took place.
      */
     public boolean mayDrawPopup() {
-    	return !scrolled;
+        return !scrolled;
     }
     
 }

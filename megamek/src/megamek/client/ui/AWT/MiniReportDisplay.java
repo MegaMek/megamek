@@ -28,9 +28,9 @@ public class MiniReportDisplay extends Dialog
     private TextArea taData;
 
     public MiniReportDisplay(Frame parent, String sReport) {
-        super(parent, "Turn Report", true);
+        super(parent, Messages.getString("MiniReportDisplay.title"), true); //$NON-NLS-1$
         
-        butOkay = new Button("Okay");
+        butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
         butOkay.addActionListener(this);
         taData = new TextArea(sReport, 20, 48);
         taData.setEditable(false);

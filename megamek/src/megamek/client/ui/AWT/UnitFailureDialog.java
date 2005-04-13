@@ -32,10 +32,10 @@ public class UnitFailureDialog extends Dialog
     private List failedList = new List(10);
 
     private TextArea reasonTextArea = 
-        new TextArea("",4,40,TextArea.SCROLLBARS_VERTICAL_ONLY);
+        new TextArea("",4,40,TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
 
     public UnitFailureDialog(Frame frame, Hashtable hff) {
-        super(frame,"Unit Loading Failures");
+        super(frame,Messages.getString("UnitFailureDialog.title")); //$NON-NLS-1$
 
         this.hFailedFiles = hff;
         Enumeration failedUnits = hFailedFiles.keys();
@@ -51,7 +51,7 @@ public class UnitFailureDialog extends Dialog
         setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
                     frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
 
-        Button okButton = new Button("Ok");
+        Button okButton = new Button(Messages.getString("Okay")); //$NON-NLS-1$
         okButton.addActionListener(this);
 
         add(okButton, BorderLayout.SOUTH);

@@ -35,14 +35,14 @@ import megamek.common.*;
  * @version
  */
 public class MechTileset {
-    private String LIGHT_STRING = "default_light";
-    private String MEDIUM_STRING = "default_medium";
-    private String HEAVY_STRING = "default_heavy";
-    private String ASSAULT_STRING = "default_assault";
-    private String QUAD_STRING = "default_quad";
-    private String TANK_STRING = "default_tank";
-    private String INF_STRING = "default_infantry";
-    private String PROTO_STRING = "default_proto";
+    private String LIGHT_STRING = "default_light"; //$NON-NLS-1$
+    private String MEDIUM_STRING = "default_medium"; //$NON-NLS-1$
+    private String HEAVY_STRING = "default_heavy"; //$NON-NLS-1$
+    private String ASSAULT_STRING = "default_assault"; //$NON-NLS-1$
+    private String QUAD_STRING = "default_quad"; //$NON-NLS-1$
+    private String TANK_STRING = "default_tank"; //$NON-NLS-1$
+    private String INF_STRING = "default_infantry"; //$NON-NLS-1$
+    private String PROTO_STRING = "default_proto"; //$NON-NLS-1$
     
     private MechEntry default_light;
     private MechEntry default_medium;
@@ -114,7 +114,7 @@ public class MechTileset {
         }
         
         //TODO: better exception?
-        throw new IndexOutOfBoundsException("can't find an image for that mech");
+        throw new IndexOutOfBoundsException("can't find an image for that mech"); //$NON-NLS-1$
     }
     
     public void loadFromFile(String filename) throws IOException {
@@ -130,25 +130,25 @@ public class MechTileset {
             String name = null;
             String imageName = null;
             if ( st.ttype == StreamTokenizer.TT_WORD
-                 && st.sval.equalsIgnoreCase("include") ) {
+                 && st.sval.equalsIgnoreCase("include") ) { //$NON-NLS-1$
                 st.nextToken();
                 name = st.sval;
-                System.out.print( "Loading more unit images from " );
+                System.out.print( "Loading more unit images from " ); //$NON-NLS-1$
                 System.out.print( name );
-                System.out.println( "..." );
+                System.out.println( "..." ); //$NON-NLS-1$
                 try {
                     this.loadFromFile(name);
-                System.out.print( "... finished " );
+                System.out.print( "... finished " ); //$NON-NLS-1$
                 System.out.print( name );
-                System.out.println( "." );
+                System.out.println( "." ); //$NON-NLS-1$
                 }
                 catch (IOException ioerr) {
-                    System.out.print( "... failed: " );
+                    System.out.print( "... failed: " ); //$NON-NLS-1$
                     System.out.print( ioerr.getMessage() );
-                    System.out.println( "." );
+                    System.out.println( "." ); //$NON-NLS-1$
                 }
             } else if ( st.ttype == StreamTokenizer.TT_WORD
-                        && st.sval.equalsIgnoreCase("chassis") ) {
+                        && st.sval.equalsIgnoreCase("chassis") ) { //$NON-NLS-1$
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
@@ -156,7 +156,7 @@ public class MechTileset {
                 // add to list
                 chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
             } else if ( st.ttype == StreamTokenizer.TT_WORD
-                        && st.sval.equalsIgnoreCase("exact") ) {
+                        && st.sval.equalsIgnoreCase("exact") ) { //$NON-NLS-1$
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();

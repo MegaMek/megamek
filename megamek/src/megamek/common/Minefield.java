@@ -17,29 +17,32 @@ package megamek.common;
 import java.io.*;
 
 public class Minefield implements Serializable, Cloneable {
-	public static final int TYPE_CONVENTIONAL 		= 0;
-	public static final int TYPE_COMMAND_DETONATED 	= 1;
-	public static final int TYPE_VIBRABOMB 			= 2;
-	public static final int TYPE_THUNDER 			= 3;
-	public static final int TYPE_THUNDER_INFERNO		= 4;
-	public static final int TYPE_THUNDER_ACTIVE		= 5;
-	public static final int TYPE_THUNDER_VIBRABOMB		= 6;
 
-	public static final int TRIGGER_NONE 			= 0;
+    public static final int TYPE_CONVENTIONAL = 0;
+	public static final int TYPE_COMMAND_DETONATED = 1;
+	public static final int TYPE_VIBRABOMB = 2;
+	public static final int TYPE_THUNDER = 3;
+	public static final int TYPE_THUNDER_INFERNO = 4;
+	public static final int TYPE_THUNDER_ACTIVE = 5;
+	public static final int TYPE_THUNDER_VIBRABOMB = 6;
+
+	public static final int TRIGGER_NONE = 0;
 	
-        public static final int CLEAR_NUMBER_WEAPON             = 5;
-        public static final int CLEAR_NUMBER_INFANTRY           = 10;
-        public static final int CLEAR_NUMBER_INFANTRY_ACCIDENT  = 5;
-        public static final int CLEAR_NUMBER_SWEEPER            = 6;
-        public static final int CLEAR_NUMBER_SWEEPER_ACCIDENT   = 2;
+	public static final int CLEAR_NUMBER_WEAPON = 5;
+	public static final int CLEAR_NUMBER_INFANTRY = 10;
+	public static final int CLEAR_NUMBER_INFANTRY_ACCIDENT = 5;
+	public static final int CLEAR_NUMBER_SWEEPER = 6;
+	public static final int CLEAR_NUMBER_SWEEPER_ACCIDENT = 2;
 
-	public static final int TO_HIT_SIDE 			= ToHitData.SIDE_FRONT;
-	public static final int TO_HIT_TABLE 			= ToHitData.HIT_KICK;
+	public static final int TO_HIT_SIDE = ToHitData.SIDE_FRONT;
+	public static final int TO_HIT_TABLE = ToHitData.HIT_KICK;
 
-	public static final int MAX_DAMAGE 				= 20;
+	public static final int MAX_DAMAGE = 20;
 
-	public static final String IMAGE_FILE 			= "data/hexes/minefieldsign.gif";
+	public static final String IMAGE_FILE = "data/hexes/minefieldsign.gif";
 
+    private static String[] names = {"Conventional", "Command-detonated", "Vibrabomb", "Thunder", "Thunder-Inferno", "Thunder-Active", "Thunder-Vibrabomb"};
+    
 	private Coords coords = null;
 	private int playerId = Player.PLAYER_NONE;
 	private int damage = 0;
@@ -49,7 +52,7 @@ public class Minefield implements Serializable, Cloneable {
 	private int type = -1;
 	private boolean areaEffect = false;
 	private boolean oneUse = false;
-	
+
 	private Minefield() {
 	}
 	
@@ -204,6 +207,10 @@ public class Minefield implements Serializable, Cloneable {
 	public int getType() {
 		return type;
 	}
+
+    public String getName() {
+        return names[getType()];
+    }
 
 	public int getPlayerId() {
 		return playerId;

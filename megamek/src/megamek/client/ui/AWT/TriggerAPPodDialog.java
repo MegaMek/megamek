@@ -32,7 +32,7 @@ import megamek.common.actions.TriggerAPPodAction;
 public class TriggerAPPodDialog
     extends Dialog implements ActionListener
 {
-    private Button butOkay = new Button("Okay");
+    private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private AdvancedLabel labMessage;
 
     /** The <code>FirePodTracker</code>s for the entity's active AP Pods. */
@@ -81,15 +81,10 @@ public class TriggerAPPodDialog
      * @param   entity the <code>Entity</code> that can fire AP Pods.
      */
     public TriggerAPPodDialog( Frame parent, Entity entity ) {
-        super(parent, "Trigger AP Pods", true);
+        super(parent, Messages.getString("TriggerAPPodDialog.title"), true); //$NON-NLS-1$
         this.entityId = entity.getId();
 
-        // Message label.
-        StringBuffer message = new StringBuffer();
-        message.append( "Select the Anti-Personnel Pods on \n" )
-            .append( entity.getDisplayName() )
-            .append( "\nthat you want to trigger." );
-        labMessage = new AdvancedLabel( message.toString() );
+        labMessage = new AdvancedLabel(Messages.getString("TriggerAPPodDialog.selectPodsToTrigger",new Object[]{entity.getDisplayName()})); //$NON-NLS-1$ 
 
         // AP Pod checkbox panel.
         Panel panPods = new Panel();
@@ -104,9 +99,9 @@ public class TriggerAPPodDialog
             if ( mount.getType().hasFlag( MiscType.F_AP_POD ) ) {
 
                 // Create a checkbox for the pod, and add it to the panel.
-                message = new StringBuffer();
+                StringBuffer message = new StringBuffer();
                 message.append( entity.getLocationName(mount.getLocation()) )
-                    .append( " " )
+                    .append( " " ) //$NON-NLS-1$
                     .append( mount.getName() );
                 Checkbox pod = new Checkbox( message.toString() );
                 panPods.add( pod );

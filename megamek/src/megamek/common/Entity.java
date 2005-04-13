@@ -393,7 +393,7 @@ public abstract class Entity
              return WEIGHT_ASSAULT;
          }
     }
-
+    
     public void setWeight(float weight) {
         this.weight = weight;
     }

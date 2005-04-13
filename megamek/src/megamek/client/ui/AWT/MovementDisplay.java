@@ -35,22 +35,22 @@ public class MovementDisplay
 
     private static final int    NUM_BUTTON_LAYOUTS = 3;
 
-    public static final String    MOVE_WALK = "moveWalk";
-    public static final String    MOVE_NEXT = "moveNext";
-    public static final String    MOVE_JUMP = "moveJump";
-    public static final String    MOVE_BACK_UP = "moveBackUp";
-    public static final String    MOVE_TURN = "moveTurn";
-    public static final String    MOVE_GET_UP = "moveGetUp";
-    public static final String    MOVE_CHARGE = "moveCharge";
-    public static final String    MOVE_DFA = "moveDFA";
-    public static final String    MOVE_GO_PRONE = "moveGoProne";
-    public static final String    MOVE_FLEE = "moveFlee";
-    public static final String    MOVE_EJECT = "moveEject";
-    public static final String    MOVE_LOAD = "moveLoad";
-    public static final String    MOVE_UNLOAD = "moveUnload";
-    public static final String    MOVE_UNJAM = "moveUnjam";
-    public static final String    MOVE_CLEAR = "moveClear";
-    public static final String    MOVE_CANCEL   = "moveCancel";
+    public static final String    MOVE_WALK = "moveWalk"; //$NON-NLS-1$
+    public static final String    MOVE_NEXT = "moveNext"; //$NON-NLS-1$
+    public static final String    MOVE_JUMP = "moveJump"; //$NON-NLS-1$
+    public static final String    MOVE_BACK_UP = "moveBackUp"; //$NON-NLS-1$
+    public static final String    MOVE_TURN = "moveTurn"; //$NON-NLS-1$
+    public static final String    MOVE_GET_UP = "moveGetUp"; //$NON-NLS-1$
+    public static final String    MOVE_CHARGE = "moveCharge"; //$NON-NLS-1$
+    public static final String    MOVE_DFA = "moveDFA"; //$NON-NLS-1$
+    public static final String    MOVE_GO_PRONE = "moveGoProne"; //$NON-NLS-1$
+    public static final String    MOVE_FLEE = "moveFlee"; //$NON-NLS-1$
+    public static final String    MOVE_EJECT = "moveEject"; //$NON-NLS-1$
+    public static final String    MOVE_LOAD = "moveLoad"; //$NON-NLS-1$
+    public static final String    MOVE_UNLOAD = "moveUnload"; //$NON-NLS-1$
+    public static final String    MOVE_UNJAM = "moveUnjam"; //$NON-NLS-1$
+    public static final String    MOVE_CLEAR = "moveClear"; //$NON-NLS-1$
+    public static final String    MOVE_CANCEL   = "moveCancel"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -122,93 +122,93 @@ public class MovementDisplay
 
         client.game.board.addBoardListener(this);
 
-        setupStatusBar("Waiting to begin Movement phase...");
+        setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
 
-        butClear = new Button("Clear mines");
+        butClear = new Button(Messages.getString("MovementDisplay.butClear")); //$NON-NLS-1$
         butClear.addActionListener(this);
         butClear.setEnabled(false);
         butClear.setActionCommand(MOVE_CLEAR);
 
-        butWalk = new Button("Walk");
+        butWalk = new Button(Messages.getString("MovementDisplay.butWalk")); //$NON-NLS-1$
         butWalk.addActionListener(this);
         butWalk.setEnabled(false);
         butWalk.setActionCommand(MOVE_WALK);
 
-        butJump = new Button("Jump");
+        butJump = new Button(Messages.getString("MovementDisplay.butJump")); //$NON-NLS-1$
         butJump.addActionListener(this);
         butJump.setEnabled(false);
         butJump.setActionCommand(MOVE_JUMP);
 
-        butBackup = new Button("Back Up");
+        butBackup = new Button(Messages.getString("MovementDisplay.butBackup")); //$NON-NLS-1$
         butBackup.addActionListener(this);
         butBackup.setEnabled(false);
         butBackup.setActionCommand(MOVE_BACK_UP);
 
-        butTurn = new Button("Turn");
+        butTurn = new Button(Messages.getString("MovementDisplay.butTurn")); //$NON-NLS-1$
         butTurn.addActionListener(this);
         butTurn.setEnabled(false);
         butTurn.setActionCommand(MOVE_TURN);
 
 
-        butUp = new Button("Get Up");
+        butUp = new Button(Messages.getString("MovementDisplay.butUp")); //$NON-NLS-1$
         butUp.addActionListener(this);
         butUp.setEnabled(false);
         butUp.setActionCommand(MOVE_GET_UP);
 
-        butDown = new Button("Go Prone");
+        butDown = new Button(Messages.getString("MovementDisplay.butDown")); //$NON-NLS-1$
         butDown.addActionListener(this);
         butDown.setEnabled(false);
         butDown.setActionCommand(MOVE_GO_PRONE);
 
-        butCharge = new Button("Charge");
+        butCharge = new Button(Messages.getString("MovementDisplay.butCharge")); //$NON-NLS-1$
         butCharge.addActionListener(this);
         butCharge.setEnabled(false);
         butCharge.setActionCommand(MOVE_CHARGE);
 
-        butDfa = new Button("D.F.A.");
+        butDfa = new Button(Messages.getString("MovementDisplay.butDfa")); //$NON-NLS-1$
         butDfa.addActionListener(this);
         butDfa.setEnabled(false);
         butDfa.setActionCommand(MOVE_DFA);
 
-        butFlee = new Button("Flee");
+        butFlee = new Button(Messages.getString("MovementDisplay.butFlee")); //$NON-NLS-1$
         butFlee.addActionListener(this);
         butFlee.setEnabled(false);
         butFlee.setActionCommand(MOVE_FLEE);
 
-        butEject = new Button("Eject");
+        butEject = new Button(Messages.getString("MovementDisplay.butEject")); //$NON-NLS-1$
         butEject.addActionListener(this);
         butEject.setEnabled(false);
         butEject.setActionCommand(MOVE_EJECT);
 
-        butRAC = new Button("Unjam RAC");
+        butRAC = new Button(Messages.getString("MovementDisplay.butRAC")); //$NON-NLS-1$
         butRAC.addActionListener(this);
         butRAC.setEnabled(false);
         butRAC.setActionCommand(MOVE_UNJAM);
 
-        butMore = new Button("More...");
+        butMore = new Button(Messages.getString("MovementDisplay.butMore")); //$NON-NLS-1$
         butMore.addActionListener(this);
         butMore.setEnabled(false);
 
-        butNext = new Button("Next Unit");
+        butNext = new Button(Messages.getString("MovementDisplay.butNext")); //$NON-NLS-1$
         butNext.addActionListener(this);
         butNext.setEnabled(false);
         butNext.setActionCommand(MOVE_NEXT);
 
-        butDone = new Button("Move");
+        butDone = new Button(Messages.getString("MovementDisplay.butDone")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
 
-        butLoad = new Button("Load");
+        butLoad = new Button(Messages.getString("MovementDisplay.butLoad")); //$NON-NLS-1$
         butLoad.addActionListener(this);
         butLoad.setEnabled(false);
         butLoad.setActionCommand(MOVE_LOAD);
 
-        butUnload = new Button("Unload");
+        butUnload = new Button(Messages.getString("MovementDisplay.butUnload")); //$NON-NLS-1$
         butUnload.addActionListener(this);
         butUnload.setEnabled(false);
         butUnload.setActionCommand(MOVE_UNLOAD);
         
-        butSpace = new Button(".");
+        butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
         // layout button grid
@@ -299,7 +299,7 @@ public class MovementDisplay
         
         // hmm, sometimes this gets called when there's no ready entities?
         if (ce == null) {
-            System.err.println("MovementDisplay: tried to select non-existant entity: " + en);
+            System.err.println("MovementDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
         // okay...
@@ -317,7 +317,7 @@ public class MovementDisplay
         client.game.board.select(null);
         client.game.board.cursor(null);
         clientgui.mechD.displayEntity(ce);
-        clientgui.mechD.showPanel("movement");
+        clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
         if (!clientgui.bv.isMovingUnits()) {
 	        clientgui.bv.centerOnHex(ce.getPosition());
 	    }
@@ -367,7 +367,7 @@ public class MovementDisplay
         updateLoadButtons();
 
         setFleeEnabled(ce.canFlee());
-        if (client.game.getOptions().booleanOption("vehicles_can_eject")) {
+        if (client.game.getOptions().booleanOption("vehicles_can_eject")) { //$NON-NLS-1$
           setEjectEnabled ( (!isInfantry) && ce.isActive());
         } else {
           setEjectEnabled(isMech && ce.isActive());
@@ -379,9 +379,9 @@ public class MovementDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        setStatusBarText("It's your turn to move.");
+        setStatusBarText(Messages.getString("MovementDisplay.its_your_turn")); //$NON-NLS-1$
         selectEntity(client.getFirstEntityNum());
-        butDone.setLabel("Done");
+        butDone.setLabel(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(true);
         setNextEnabled(true);
         butMore.setEnabled(true);
@@ -455,7 +455,7 @@ public class MovementDisplay
         
         // update some GUI elements
         clientgui.bv.clearMovementData();
-        butDone.setLabel("Done");
+        butDone.setLabel(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
         updateProneButtons();
         updateRACButton();
 
@@ -482,7 +482,7 @@ public class MovementDisplay
             MovePath possible = (MovePath) cmd.clone();
             possible.clipToPossible();
             if (possible.length() == 0) {
-                butDone.setLabel( "Done" );
+                butDone.setLabel( Messages.getString("MovementDisplay.Done") ); //$NON-NLS-1$
             }
         }
     }
@@ -494,9 +494,8 @@ public class MovementDisplay
         md.clipToPossible();
         if (md.length() == 0 && Settings.nagForNoAction) {
             //Hmm....no movement steps, comfirm this action
-            String title = "Remain stationary?";
-            String body = "This unit has not moved.\n\n" +
-                "Are you really done?\n";
+            String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title"); //$NON-NLS-1$
+            String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message"); //$NON-NLS-1$
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if ( !response.getShowAgain() ) {
                 Settings.nagForNoAction = false;
@@ -510,7 +509,9 @@ public class MovementDisplay
         if ( md != null ) {
             if (md.hasActiveMASC() && Settings.nagForMASC) { //pop up are you sure dialog
                 Mech m = (Mech)ce();
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,"Are you sure?", "The movement you have selected will require a roll of " + m.getMASCTarget() + " or higher\nto avoid MASC failure.  Do you wish to proceed?", true);
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                        Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[]{new Integer(m.getMASCTarget())}), //$NON-NLS-1$
+                        true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
@@ -526,9 +527,8 @@ public class MovementDisplay
             if (check.length() > 0 && Settings.nagForPSR) {
                 ConfirmDialog nag = 
                     new ConfirmDialog(clientgui.frame,
-                                      "Are you sure?", 
-                                      "You must make the following piloting\n" +
-                                      "skill check(s) for your movement:\n" +
+                                      Messages.getString("MovementDisplay.areYouSure"),  //$NON-NLS-1$
+                                      Messages.getString("MovementDisplay.ConfirmPilotingRoll")+ //$NON-NLS-1$
                                       check, true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
@@ -548,8 +548,7 @@ public class MovementDisplay
     }
 
     private String addNag(PilotingRollData rollTarget) {
-        String desc = "Need " + rollTarget.getValueAsString() + " [" + rollTarget.getDesc() + "]\n";
-        return desc;
+        return Messages.getString("MovementDisplay.addNag", new Object[]{rollTarget.getValueAsString(), rollTarget.getDesc()});//$NON-NLS-1$
     }
 
     /**
@@ -831,14 +830,14 @@ public class MovementDisplay
             client.game.board.select(b.getCoords());
 
             if (shiftheld || gear == MovementDisplay.GEAR_TURN) {
-                butDone.setLabel("Move");
+                butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
 
                 // Set the button's label to "Done"
                 // if the entire move is impossible.
                 MovePath possible = (MovePath) cmd.clone();
                 possible.clipToPossible();
                 if (possible.length() == 0) {
-                    butDone.setLabel( "Done" );
+                    butDone.setLabel( Messages.getString("MovementDisplay.Done") ); //$NON-NLS-1$
                 }
                 return;
             }
@@ -847,7 +846,7 @@ public class MovementDisplay
                 // check if target is valid
                 final Targetable target = this.chooseTarget( b.getCoords() );
                 if (target == null || target.equals(ce)) {
-                    clientgui.doAlertDialog("Can't perform charge", "No target!");
+                    clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
                     return;
                 }
@@ -860,7 +859,7 @@ public class MovementDisplay
                     int toAttacker = 0;
                     if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
                         Entity te = (Entity) target;
-                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce,te, client.game.getOptions().booleanOption("maxtech_charge_damage"), cmd.getHexesMoved());
+                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce,te, client.game.getOptions().booleanOption("maxtech_charge_damage"), cmd.getHexesMoved()); //$NON-NLS-1$
                     }
                     else if ( target.getTargetType() ==
                               Targetable.TYPE_BUILDING ) {
@@ -871,16 +870,11 @@ public class MovementDisplay
 
                     // Ask the player if they want to charge.
                     if ( clientgui.doYesNoDialog
-                         ( "Charge " + target.getDisplayName() + "?",
-                           "To Hit: " + toHit.getValueAsString() +
-                           " (" + Compute.oddsAbove(toHit.getValue()) +
-                           "%)   (" + toHit.getDesc() + ")"
-                           + "\nDamage to Target: "+
-                           ChargeAttackAction.getDamageFor(ce,cmd.getHexesMoved())+
-                           " (in 5pt clusters)"+ toHit.getTableDesc()
-                           + "\nDamage to Self: " +
-                           toAttacker +
-                           " (in 5pt clusters)" ) ) {
+                         ( Messages.getString("MovementDisplay.ChargeDialog.title", new Object[]{target.getDisplayName()}), //$NON-NLS-1$
+                           Messages.getString("MovementDisplay.ChargeDialog.message", new Object[]{ //$NON-NLS-1$      
+                           toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())),toHit.getDesc(),
+                           new Integer(ChargeAttackAction.getDamageFor(ce,cmd.getHexesMoved())),toHit.getTableDesc(),
+                           new Integer(toAttacker)}))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
                         moveTo(cmd);
@@ -891,7 +885,7 @@ public class MovementDisplay
                     return;
                 } else {
                     // if not valid, tell why
-                    clientgui.doAlertDialog( "Can't perform charge",
+                    clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantCharge"), //$NON-NLS-1$
                                           toHit.getDesc() );
                     clearAllMoves();
                     return;
@@ -900,7 +894,7 @@ public class MovementDisplay
                 // check if target is valid
                 final Targetable target = this.chooseTarget( b.getCoords() );
                 if (target == null || target.equals(ce)) {
-                    clientgui.doAlertDialog("Can't perform D.F.A.", "No target!");
+                    clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantDFA"), Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
                     return;
                 }
@@ -913,16 +907,11 @@ public class MovementDisplay
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
                     if ( clientgui.doYesNoDialog
-                         ( "D.F.A. " + target.getDisplayName() + "?",
-                           "To Hit: " + toHit.getValueAsString() +
-                           " (" + Compute.oddsAbove(toHit.getValue()) +
-                           "%)   (" + toHit.getDesc() + ")"
-                           + "\nDamage to Target: " +
-                           DfaAttackAction.getDamageFor(ce) +
-                           " (in 5pt clusters)" + toHit.getTableDesc()
-                           + "\nDamage to Self: " +
-                           DfaAttackAction.getDamageTakenBy(ce) +
-                           " (in 5pt clusters) (using Kick table)" ) ) {
+                         ( Messages.getString("MovementDisplay.DFADialog.title", new Object[]{target.getDisplayName()}), //$NON-NLS-1$
+                           Messages.getString("MovementDisplay.DFADialog.message", new Object[]{ //$NON-NLS-1$
+                                   toHit.getValueAsString(),new Double(Compute.oddsAbove(toHit.getValue())),
+                                   toHit.getDesc(), new Integer(DfaAttackAction.getDamageFor(ce)), toHit.getTableDesc(),
+                                   new Integer(DfaAttackAction.getDamageTakenBy(ce))}))) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);
                         moveTo(cmd);
@@ -934,14 +923,14 @@ public class MovementDisplay
 
                 } else {
                     // if not valid, tell why
-                    clientgui.doAlertDialog( "Can't perform D.F.A.",
+                    clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantDFA"), //$NON-NLS-1$
                                           toHit.getDesc() );
                     clearAllMoves();
                     return;
                 }
             }
 
-            butDone.setLabel("Move");
+            butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
             updateProneButtons();
             updateRACButton();
             updateLoadButtons();
@@ -1039,25 +1028,22 @@ public class MovementDisplay
         Entity choice = null;
         // Handle error condition.
         if ( this.loadedUnits.size() == 0 ) {
-            System.err.println( "MovementDisplay#getUnloadedUnit() called without loaded units." );
+            System.err.println( "MovementDisplay#getUnloadedUnit() called without loaded units." ); //$NON-NLS-1$
 
         }
 
         // If we have multiple choices, display a selection dialog.
         else if ( this.loadedUnits.size() > 1 ) {
             String[] names = new String[ this.loadedUnits.size() ];
-            StringBuffer question = new StringBuffer();
-            question.append( ce.getShortName() );
-            question.append( " has the following unused space:\n" );
-            question.append( ce.getUnusedString() );
-            question.append( "\n\nWhich unit do you want to unload?" );
+            String question = Messages.getString("MovementDisplay.UnloadUnitDialog.message", new Object[]{ //$NON-NLS-1$
+                    ce.getShortName(),ce.getUnusedString()});
             for ( int loop = 0; loop < names.length; loop++ ) {
                 names[loop] = ( (Entity)this.loadedUnits.elementAt(loop) ).getShortName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( clientgui.frame,
-                                        "Unload Unit",
-                                        question.toString(),
+                                        Messages.getString("MovementDisplay.UnloadUnitDialog.title"), //$NON-NLS-1$
+                                        question,
                                         names );
             choiceDialog.show();
             if ( choiceDialog.getAnswer() == true ) {
@@ -1116,17 +1102,14 @@ public class MovementDisplay
         // If we have multiple choices, display a selection dialog.
         else if ( targets.size() > 1 ) {
             String[] names = new String[ targets.size() ];
-            StringBuffer question = new StringBuffer();
-            question.append( "Hex " );
-            question.append( pos.getBoardNum() );
-            question.append( " contains the following targets." );
-            question.append( "\n\nWhich target do you want to attack?" );
+            String question = Messages.getString("MovementDisplay.ChooseTargetDialog.message", new Object[]{//$NON-NLS-1$
+                    pos.getBoardNum()});
             for ( int loop = 0; loop < names.length; loop++ ) {
                 names[loop] = ( (Targetable)targets.elementAt(loop) ).getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( clientgui.frame,
-                                        "Choose Target",
+                                        Messages.getString("MovementDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
                                         question.toString(),
                                         names );
             choiceDialog.show();
@@ -1167,9 +1150,9 @@ public class MovementDisplay
 
         } else {
             if (ev.getPlayer() == null && client.game.getTurn() instanceof GameTurn.UnloadStrandedTurn) {
-                setStatusBarText("Please wait for another player to unload their stranded units...");
+                setStatusBarText(Messages.getString("MovementDisplay.waitForAnother")); //$NON-NLS-1$
             } else {
-                setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to move.");
+                setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
             }
         }
     }
@@ -1184,7 +1167,7 @@ public class MovementDisplay
             endMyTurn();
         }
         if (client.game.getPhase() ==  Game.PHASE_MOVEMENT) {
-            setStatusBarText("Waiting to begin Movement phase...");
+            setStatusBarText(Messages.getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         }
     }
 
@@ -1251,8 +1234,8 @@ public class MovementDisplay
         } else if (ev.getActionCommand().equals(MOVE_CLEAR)) {       	
             clearAllMoves();
             if (!client.game.containsMinefield(ce.getPosition())) {
-                clientgui.doAlertDialog( "Can't clear minefield",
-                                      "No minefield in hex!" );
+                clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantClearMinefield"), //$NON-NLS-1$
+                                      Messages.getString("MovementDisplay.NoMinefield") ); //$NON-NLS-1$
                 return;
             }
 
@@ -1270,14 +1253,10 @@ public class MovementDisplay
                 }
             }
 
-            StringBuffer buff = new StringBuffer();
-            buff.append( "The unit successfully clears the\nminefield on " )
-                .append( clear )
-                .append( "+. The minefield\nwill explode on " )
-                .append( boom )
-                .append( " or less." );
-            if ( clientgui.doYesNoDialog( "Clear the minefield?",
-                                       buff.toString() ) ) {
+            if (clientgui.doYesNoDialog( Messages.getString("MovementDisplay.ClearMinefieldDialog.title"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.ClearMinefieldDialog.message", new Object[]{ //$NON-NLS-1$
+                            new Integer(clear), new Integer(boom)})
+            )) {
                 cmd.addStep(MovePath.STEP_CLEAR_MINEFIELD);
                 moveTo(cmd);
             }
@@ -1301,7 +1280,7 @@ public class MovementDisplay
             }
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
-            butDone.setLabel("Move");
+            butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_GO_PRONE)) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalProne()) {
@@ -1309,19 +1288,19 @@ public class MovementDisplay
             }
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
-            butDone.setLabel("Move");
-        } else if (ev.getActionCommand().equals(MOVE_FLEE) && clientgui.doYesNoDialog("Escape?", "Do you want to flee?")) {
+            butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
+        } else if (ev.getActionCommand().equals(MOVE_FLEE) && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"), Messages.getString("MovementDisplay.EscapeDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             clearAllMoves();
             cmd.addStep(MovePath.STEP_FLEE);
             moveTo(cmd);
         } else if (ev.getActionCommand().equals(MOVE_EJECT)) {
             if (ce instanceof Tank) {
-                if (clientgui.doYesNoDialog("Abandon?", "Do you want to abandon this vehicle?")) {
+                if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.AbandonDialog.title"), Messages.getString("MovementDisplay.AbandonDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                     clearAllMoves();
                     cmd.addStep(MovePath.STEP_EJECT);
                     moveTo(cmd);
                 }
-            } else if (clientgui.doYesNoDialog("Eject?", "Do you want to abandon this mech?")) {
+            } else if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.AbandonDialog1.title"), Messages.getString("MovementDisplay.AbandonDialog1.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                 clearAllMoves();
                 cmd.addStep(MovePath.STEP_EJECT);
                 moveTo(cmd);
@@ -1381,7 +1360,7 @@ public class MovementDisplay
 
         // Let the player know what's going on.
         setStatusBarText
-            ("All players unload entities stranded on immobile transports.");
+            (Messages.getString("MovementDisplay.AllPlayersUnload")); //$NON-NLS-1$
 
         // Collect the stranded entities into the vector.
         // TODO : get a better interface to "game" and "turn"
@@ -1406,21 +1385,22 @@ public class MovementDisplay
         // Construct an array of stranded entity names
         names = new String[ stranded.size() ];
         for ( int index = 0; index < names.length; index++ ) {
-            StringBuffer buffer = new StringBuffer();
             entity = (Entity) stranded.elementAt(index);
             transport = client.getEntity( entity.getTransportId() );
-            buffer.append( entity.getDisplayName() );
-            if ( null != transport ) {
-                buffer.append( " at " )
-                    .append( transport.getPosition().getBoardNum() );
+            String buffer;
+            if ( null == transport ) {
+                buffer = entity.getDisplayName();
+            }
+            else {
+                buffer = Messages.getString("MovementDisplay.EntityAt", new Object[]{entity.getDisplayName(),transport.getPosition().getBoardNum()}); //$NON-NLS-1$ 
             }
             names[index] = buffer.toString();
         }
 
         // Show the choices to the player
         // TODO : implement this function!!!
-        int[] indexes = clientgui.doChoiceDialog( "Unload Stranded Units", 
-                                               "The following units are currently stranded\non immobile transports.  Select as any and\nall units that you want to unload.",
+        int[] indexes = clientgui.doChoiceDialog( Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.title"),  //$NON-NLS-1$
+                                               Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.message"), //$NON-NLS-1$
                                                names );
 
         // Convert the indexes into selected entity IDs and tell the server.

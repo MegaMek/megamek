@@ -24,13 +24,13 @@ import megamek.common.Player;
 public class PlayerListDialog
     extends Dialog implements ActionListener
 {
-    private Button butClose   = new Button("Close");
+    private Button butClose   = new Button(Messages.getString("PlayerListDialog.Close")); //$NON-NLS-1$
     private List   playerList = new List();
     
     private Client client;
     
     public PlayerListDialog(Frame parent, Client client) {
-        super(parent, "Player list", false);
+        super(parent, Messages.getString("PlayerListDialog.title"), false); //$NON-NLS-1$
         this.client = client;
         
         butClose.addActionListener(this);
@@ -66,11 +66,17 @@ public class PlayerListDialog
             final Player player = (Player)e.nextElement();
             StringBuffer playerDisplay = new StringBuffer(player.getName());
             if (player.isGhost()) {
-                playerDisplay.append(" [ghost]");
+                playerDisplay.append(" ["); //$NON-NLS-1$
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_ghost")); //$NON-NLS-1$
+                playerDisplay.append("]"); //$NON-NLS-1$
             } else if (player.isObserver()) {
-                playerDisplay.append(" [observer]");
+                playerDisplay.append(" [");                 //$NON-NLS-1$
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_observer")); //$NON-NLS-1$
+                playerDisplay.append("]"); //$NON-NLS-1$
             } else if (player.isDone()) {
-                playerDisplay.append(" (done)");
+                playerDisplay.append(" (");                 //$NON-NLS-1$
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_done")); //$NON-NLS-1$
+                playerDisplay.append(")"); //$NON-NLS-1$
             }
             playerList.add(playerDisplay.toString());
         }

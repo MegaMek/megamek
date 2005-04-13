@@ -34,7 +34,7 @@ public class SelectArtyAutoHitHexDisplay
     public ClientGUI clientgui;
     private Client client;
     
-    public static final String SET_HIT_HEX = "setAutoHitHex";
+    public static final String SET_HIT_HEX = "setAutoHitHex"; //$NON-NLS-1$
     
     // buttons
     private Panel             panButtons;
@@ -57,18 +57,18 @@ public class SelectArtyAutoHitHexDisplay
 
         client.game.board.addBoardListener(this);
 
-        setupStatusBar("Waiting to begin Artillery autohit hex setup phase...");
+        setupStatusBar(Messages.getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
 
         p = client.getLocalPlayer();
         
         artyAutoHitHexes.insertElementAt(new Integer(p.getId()), 0);
         
-        butA = new Button("Artillery Autohit Hexes");
+        butA = new Button(Messages.getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
         butA.addActionListener(this);
         butA.setActionCommand(SET_HIT_HEX);
         butA.setEnabled(false);
 
-        butDone = new Button("Done");
+        butDone = new Button(Messages.getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
 
@@ -138,8 +138,8 @@ public class SelectArtyAutoHitHexDisplay
             return;
         }
         if (!artyAutoHitHexes.contains(coords) && artyAutoHitHexes.size() < 6
-             && clientgui.doYesNoDialog("Set designated artillery target",
-                    "Do you want to set hex " + coords.getBoardNum() + " as a designated artillery target?\nAny artillery fire targeting this hex will automatically hit.")) {
+             && clientgui.doYesNoDialog(Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
+                     Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[]{coords.getBoardNum()}))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled( 6 - artyAutoHitHexes.size());
             if (artyAutoHitHexes.size() == 6) {
@@ -191,10 +191,9 @@ public class SelectArtyAutoHitHexDisplay
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            setStatusBarText("It's your turn to select designated Artillery targets.");
-        } else {
-            setStatusBarText("It's " + ev.getPlayer().getName() + 
-                    "'s turn to select designated Artillery targets.");
+            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_your_turn")); //$NON-NLS-1$
+        } else {            
+            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
         }
     }
 
@@ -210,7 +209,7 @@ public class SelectArtyAutoHitHexDisplay
             endMyTurn();
         }
         if (client.game.getPhase() == Game.PHASE_SET_ARTYAUTOHITHEXES) {
-            setStatusBarText("Waiting to begin Minefield Deployment phase...");
+            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }
     }
 
@@ -256,7 +255,7 @@ public class SelectArtyAutoHitHexDisplay
     }
 
     private void setArtyEnabled(int nbr) {
-        butA.setLabel("Designated Artillery targets(" + nbr + ")");
+        butA.setLabel(Messages.getString("SelectArtyAutoHitHexDisplay.designatedTargets", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
         butA.setEnabled(nbr > 0);
 //        clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }

@@ -128,7 +128,7 @@ public class HexTileset {
     
     public void loadFromFile(String filename) throws IOException {
         // make inpustream for board
-        Reader r = new BufferedReader(new FileReader("data/hexes/" + filename));
+        Reader r = new BufferedReader(new FileReader("data/hexes/" + filename)); //$NON-NLS-1$
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
         st.eolIsSignificant(true);
@@ -140,8 +140,8 @@ public class HexTileset {
             String terrain = null;
             String theme = null;
             String imageName = null;
-            if(st.ttype == StreamTokenizer.TT_WORD && (st.sval.equals("base") || st.sval.equals("super"))) {
-                boolean base = st.sval.equals("base");
+            if(st.ttype == StreamTokenizer.TT_WORD && (st.sval.equals("base") || st.sval.equals("super"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                boolean base = st.sval.equals("base"); //$NON-NLS-1$
 
                 if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                     elevation = (int)st.nval;
@@ -164,8 +164,8 @@ public class HexTileset {
         }
         r.close();
         
-        System.out.println("hexTileset: loaded " + bases.size() + " base images");
-        System.out.println("hexTileset: loaded " + supers.size() + " super images");
+        System.out.println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     /**
@@ -319,7 +319,7 @@ public class HexTileset {
             this.hex = hex;
             this.imageFile = imageFile;
             r = new java.util.Random();
-            filenames = StringUtil.splitString(imageFile, ";");
+            filenames = StringUtil.splitString(imageFile, ";"); //$NON-NLS-1$
         }
         
         public Hex getHex() {
@@ -331,7 +331,7 @@ public class HexTileset {
         }
 
        public String getImageFileName() {
-           return "data/hexes/" + imageFile;
+           return "data/hexes/" + imageFile; //$NON-NLS-1$
        }
         
         public Image getImage(Component comp) {
@@ -355,7 +355,7 @@ public class HexTileset {
           images = new java.util.Vector();
           for (int i = 0; i < filenames.size(); i++) {
             String filename = (String) filenames.elementAt(i);
-            images.addElement(comp.getToolkit().getImage("data/hexes/" + filename));
+            images.addElement(comp.getToolkit().getImage("data/hexes/" + filename)); //$NON-NLS-1$
           }
 //      image = comp.getToolkit().getImage("data/hexes/" + imageFile);
         }

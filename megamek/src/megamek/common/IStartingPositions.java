@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002, 2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -14,9 +14,6 @@
 
 package megamek.common;
 
-/**
- * Enumerates names of the starting positions for deployment
- */
 public interface IStartingPositions {
 
     public static final String START_LOCATION_NAMES[] = { "Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W" };

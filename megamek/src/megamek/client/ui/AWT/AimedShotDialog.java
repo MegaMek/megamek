@@ -21,7 +21,7 @@ import java.awt.event.*;
 public class AimedShotDialog
     extends Dialog
 {
-    private Button butNoAim = new Button("Don't aim");
+    private Button butNoAim = new Button(Messages.getString("AimedShotDialog.dontAim")); //$NON-NLS-1$
 
     /**
      * The checkboxes for available choices.

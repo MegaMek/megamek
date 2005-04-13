@@ -46,12 +46,12 @@ implements GameListener, KeyListener {
         this.client = clientgui.getClient();
         client.addGameListener(this);
         
-        chatArea = new TextArea(" \n", 5, 40, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        chatArea = new TextArea(" \n", 5, 40, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
         chatArea.setEditable(false);
         playerList = new List();
         inputField = new TextField();
         inputField.addKeyListener(this);
-        butDone = new Button( "I'm Done" );
+        butDone = new Button( Messages.getString("ChatterBox.ImDone") ); //$NON-NLS-1$
         butDone.setEnabled( false );
 
         chatPanel = new Panel(new BorderLayout());
@@ -89,7 +89,7 @@ implements GameListener, KeyListener {
      * @param   message the <code>String</code> message to be shown.
      */
     public void systemMessage( String message ) {
-        chatArea.append("\nMegaMek: " + message);
+        chatArea.append("\nMegaMek: " + message); //$NON-NLS-1$
     }
 
     /**
@@ -107,7 +107,7 @@ implements GameListener, KeyListener {
     // GameListener
     //
     public void gamePlayerChat(GameEvent ev) {
-        chatArea.append("\n" + ev.getMessage());
+        chatArea.append("\n" + ev.getMessage()); //$NON-NLS-1$
         PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gamePlayerStatusChange(GameEvent ev) {
@@ -133,7 +133,7 @@ implements GameListener, KeyListener {
     public void keyPressed(KeyEvent ev) {
         if(ev.getKeyCode() == KeyEvent.VK_ENTER) {
             client.sendChat(inputField.getText());
-            inputField.setText("");
+            inputField.setText(""); //$NON-NLS-1$
         }
     }
     public void keyReleased(KeyEvent ev) {

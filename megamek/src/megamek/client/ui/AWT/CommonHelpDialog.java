@@ -48,13 +48,13 @@ public class CommonHelpDialog extends Dialog
 
         // Create the help dialog.
         this.setLayout( new BorderLayout() );
-        lblHelp = new AdvancedLabel("Help is currently unavailable.");
+        lblHelp = new AdvancedLabel(Messages.getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
         ScrollPane scroll = new ScrollPane();
         scroll.add( lblHelp );
         this.add( scroll, BorderLayout.CENTER );
 
         // Add a "Close" button.
-        Button butClose = new Button( "Close" );
+        Button butClose = new Button( Messages.getString("CommonHelpDialog.Close") ); //$NON-NLS-1$
         butClose.addActionListener( new ActionListener() {
                 public void actionPerformed( ActionEvent event ) {
                     quit();
@@ -84,11 +84,11 @@ public class CommonHelpDialog extends Dialog
 		// Were we passed a null helpfile?
 		if ( helpfile == null ) {
 			// Big error.
-			this.setTitle( "No Help Available" );
-			buff.append( "Help is currently unavailable." );
+			this.setTitle( Messages.getString("CommonHelpDialog.noHelp.title") ); //$NON-NLS-1$
+			buff.append( Messages.getString("CommonHelpDialog.noHelp.Message") ); //$NON-NLS-1$
 		} else {
 			// Set our title.
-			this.setTitle( "Help File: " + helpfile.getName() );
+			this.setTitle( Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName() ); //$NON-NLS-1$
 
 			// Try to read in the help file.
 			boolean firstLine = true;
@@ -101,16 +101,16 @@ public class CommonHelpDialog extends Dialog
 					if ( firstLine ) {
 						firstLine = false;
 					} else {
-						buff.append( " \n" ); // the space is to force a line-feed on empty lines
+						buff.append( " \n" ); // the space is to force a line-feed on empty lines //$NON-NLS-1$
 					}
 					buff.append( line );
 					line = input.readLine();
 				}
 			} catch ( IOException exp ) {
 				if ( !firstLine ) {
-					buff.append( "\n \n" );
+					buff.append( "\n \n" ); //$NON-NLS-1$
 				}
-				buff.append( "Error reading help file: " )
+				buff.append( Messages.getString("CommonHelpDialog.errorReading") ) //$NON-NLS-1$
 					.append( exp.getMessage() );
 				exp.printStackTrace();
 			}

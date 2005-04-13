@@ -27,20 +27,20 @@ public class VibrabombSettingDialog
     private GridBagLayout gridbag = new GridBagLayout();
     private GridBagConstraints c = new GridBagConstraints();
 
-    private Button butOk = new Button("OK");
-    private TextField fldSetting = new TextField("20", 2);
+    private Button butOk = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+    private TextField fldSetting = new TextField("20", 2); //$NON-NLS-1$
 
     private int setting = 0;
     private Frame frame = null;
 
     public VibrabombSettingDialog(Frame p) {
-        super(p, "Vibrabomb setting", true);
+        super(p, Messages.getString("VibrabombSettingDialog.title"), true); //$NON-NLS-1$
         super.setResizable(false);
         frame = p;
 
 		butOk.addActionListener(this);
 
-		Label labMessage = new Label("Select a setting(20-100):");
+		Label labMessage = new Label(Messages.getString("VibrabombSettingDialog.selectSetting")); //$NON-NLS-1$
         setLayout(gridbag);
 
 		c.fill = GridBagConstraints.VERTICAL;
@@ -81,16 +81,16 @@ public class VibrabombSettingDialog
 	        	}
 			} catch (NumberFormatException e) {
 				AlertDialog ad = new AlertDialog(frame,
-												"Vibrabomb setting",
-												"Only numbers between 20 - 100");
+												Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
+												Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
 				ad.show();
 				return;
 			}
 			
 			if ((setting < 20) || (setting > 100)) {
 				AlertDialog ad = new AlertDialog(frame,
-												"Vibrabomb setting",
-												"Only numbers between 20 - 100");
+												Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
+												Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
 				ad.show();
 				return;
 			}

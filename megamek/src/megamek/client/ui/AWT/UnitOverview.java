@@ -22,7 +22,7 @@ public class UnitOverview implements Displayable {
 
     private static final int	UNKNOWN_UNITS_PER_PAGE = -1;
 
-    private static final Font   FONT = new Font("SansSerif", Font.PLAIN, 10);
+    private static final Font   FONT = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
     private static final int    DIST_TOP = 5;
     private static final int    DIST_SIDE = 5;
     private static final int    ICON_WIDTH = 56;
@@ -54,13 +54,13 @@ public class UnitOverview implements Displayable {
         fm = clientgui.bv.getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.bv.getToolkit();
-        scrollUp = toolkit.getImage("data/widgets/scrollUp.gif");
+        scrollUp = toolkit.getImage("data/widgets/scrollUp.gif"); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDown = toolkit.getImage("data/widgets/scrollDown.gif");
+        scrollDown = toolkit.getImage("data/widgets/scrollDown.gif"); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUp = toolkit.getImage("data/widgets/pageUp.gif");
+        pageUp = toolkit.getImage("data/widgets/pageUp.gif"); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDown = toolkit.getImage("data/widgets/pageDown.gif");
+        pageDown = toolkit.getImage("data/widgets/pageDown.gif"); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
     }
 
@@ -311,24 +311,24 @@ public class UnitOverview implements Displayable {
         if (entity.isImmobile() && !entity.isProne()) {
             // draw "IMMOB"
             graph.setColor(Color.darkGray);
-            graph.drawString("IMMOB", x + 11, y + 29);
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 29); //$NON-NLS-1$
             graph.setColor(Color.red);
-            graph.drawString("IMMOB", x + 10, y + 28);
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 28); //$NON-NLS-1$
         } else if (!entity.isImmobile() && entity.isProne()) {
             // draw "PRONE"
             graph.setColor(Color.darkGray);
-            graph.drawString("PRONE", x + 11, y + 29);
+            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 11, y + 29); //$NON-NLS-1$
             graph.setColor(Color.yellow);
-            graph.drawString("PRONE", x + 10, y + 28);
+            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 10, y + 28); //$NON-NLS-1$
         } else if (entity.isImmobile() && entity.isProne()) {
             // draw "IMMOB" and "PRONE"
             graph.setColor(Color.darkGray);
-            graph.drawString("IMMOB", x + 11, y + 24);
-            graph.drawString("PRONE", x + 11, y + 34);
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24); //$NON-NLS-1$
+            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 11, y + 34); //$NON-NLS-1$
             graph.setColor(Color.red);
-            graph.drawString("IMMOB", x + 10, y + 23);
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23); //$NON-NLS-1$
             graph.setColor(Color.yellow);
-            graph.drawString("PRONE", x + 10, y + 33);
+            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 10, y + 33); //$NON-NLS-1$
         } else if (!entity.isDeployed()) {
         	int roundsLeft = entity.getDeployRound() - clientgui.getClient().game.getRoundCount();
         	if (roundsLeft > 0) {

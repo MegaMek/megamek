@@ -22,11 +22,13 @@ import java.awt.event.*;
 public class RandomMapDialog
     extends Dialog implements ActionListener, FocusListener
 {
-	private static final String NONE   = "None";
-	private static final String LOW    = "Low";
-	private static final String MEDIUM = "Medium";
-	private static final String HIGH   = "High";
-	
+	private static final String NONE   = Messages.getString("RandomMapDialog.elevNONE"); //$NON-NLS-1$
+	private static final String LOW    = Messages.getString("RandomMapDialog.elevLow"); //$NON-NLS-1$
+	private static final String MEDIUM = Messages.getString("RandomMapDialog.elevMedium"); //$NON-NLS-1$
+	private static final String HIGH   = Messages.getString("RandomMapDialog.elevHigh"); //$NON-NLS-1$
+
+    private static final String INVALID_SETTING  = Messages.getString("RandomMapDialog.InvalidSetting"); //$NON-NLS-1$
+
 	private static final int NORMAL_LINE_WIDTH = 195;
 	private static final int ADVANCED_LINE_WIDTH = 295;
 
@@ -148,7 +150,7 @@ public class RandomMapDialog
     private boolean initiated = false;
 
     public RandomMapDialog(Frame parent, BoardSelectionDialog bsd, MapSettings mapSettings) {
-        super(parent, "Random map settings", true);
+        super(parent, Messages.getString("RandomMapDialog.title"), true); //$NON-NLS-1$
         this.mapSettings = mapSettings;
         this.frame = parent;
         this.bsd = bsd;
@@ -181,9 +183,9 @@ public class RandomMapDialog
     	} else {
     		advanced = !advanced;
     		if (advanced) {
-    			butAdvanced.setLabel("Normal");
+    			butAdvanced.setLabel(Messages.getString("RandomMapDialog.Normal")); //$NON-NLS-1$
     		} else {
-    			butAdvanced.setLabel("Advanced");
+    			butAdvanced.setLabel(Messages.getString("RandomMapDialog.Advanced")); //$NON-NLS-1$
     		}
     		setupOptions();
     	}
@@ -192,7 +194,7 @@ public class RandomMapDialog
     private void setupOptions() {
     	panOptions.removeAll();
 
-		addLabelTextField(labBoardSize, texBoardWidth, texBoardHeight, "x");
+		addLabelTextField(labBoardSize, texBoardWidth, texBoardHeight, "x"); //$NON-NLS-1$
 		texBoardWidth.requestFocus();
 
 		if (!advanced) {
@@ -217,14 +219,14 @@ public class RandomMapDialog
 
 			addSeparator(slElevationAd);
 			
-			addLabelTextField(labForestSpots, texMinForestSpots, texMaxForestSpots, "-");
-			addLabelTextField(labForestSize, texMinForestSize, texMaxForestSize, "-");
+			addLabelTextField(labForestSpots, texMinForestSpots, texMaxForestSpots, "-"); //$NON-NLS-1$
+			addLabelTextField(labForestSize, texMinForestSize, texMaxForestSize, "-"); //$NON-NLS-1$
 			addLabelTextField(labProbHeavy, texProbHeavy);
 
 			addSeparator(slWoodsAd);
 
-			addLabelTextField(labRoughSpots, texMinRoughSpots, texMaxRoughSpots, "-");
-			addLabelTextField(labRoughSize, texMinRoughSize, texMaxRoughSize, "-");
+			addLabelTextField(labRoughSpots, texMinRoughSpots, texMaxRoughSpots, "-"); //$NON-NLS-1$
+			addLabelTextField(labRoughSize, texMinRoughSize, texMaxRoughSize, "-"); //$NON-NLS-1$
 		
 			addSeparator(slRoughAd);
 
@@ -232,8 +234,8 @@ public class RandomMapDialog
 		
 			addSeparator(slRoadsAd);
 
-			addLabelTextField(labWaterSpots, texMinWaterSpots, texMaxWaterSpots, "-");
-			addLabelTextField(labWaterSize, texMinWaterSize, texMaxWaterSize, "-");
+			addLabelTextField(labWaterSpots, texMinWaterSpots, texMaxWaterSpots, "-"); //$NON-NLS-1$
+			addLabelTextField(labWaterSize, texMinWaterSize, texMaxWaterSize, "-"); //$NON-NLS-1$
 			addLabelTextField(labProbDeep, texProbDeep);
 
 			addSeparator(slLakesAd);
@@ -243,8 +245,8 @@ public class RandomMapDialog
 			addSeparator(slRiversAd);
 
 			addLabelTextField(labProbCrater, texProbCrater);
-			addLabelTextField(labMaxCraters, texMinCraters, texMaxCraters, "-");
-			addLabelTextField(labRadius, texMinRadius, texMaxRadius, "-");
+			addLabelTextField(labMaxCraters, texMinCraters, texMaxCraters, "-"); //$NON-NLS-1$
+			addLabelTextField(labRadius, texMinRadius, texMaxRadius, "-"); //$NON-NLS-1$
 
 			addSeparator(slCratersAd);
 
@@ -266,10 +268,10 @@ public class RandomMapDialog
 	
 	private void createComponents() {
 
-	    butOK = new Button("OK");
+	    butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
 		butOK.addActionListener(this);
 		
-	    butAdvanced = new Button("Advanced");
+	    butAdvanced = new Button(Messages.getString("RandomMapDialog.Advanced")); //$NON-NLS-1$
 		butAdvanced.addActionListener(this);
 
 	    panButtons = new Panel();	    
@@ -279,8 +281,8 @@ public class RandomMapDialog
         gridbag = new GridBagLayout();
         panOptions.setLayout(gridbag);
 
-	    labBoardSize = new Label("Board size (hexes):", Label.LEFT);
-	    labBoardDivider = new Label("x", Label.CENTER);
+	    labBoardSize = new Label(Messages.getString("RandomMapDialog.BoardSize"), Label.LEFT); //$NON-NLS-1$
+	    labBoardDivider = new Label("x", Label.CENTER); //$NON-NLS-1$
 	    texBoardWidth = new TextField(2);
    		texBoardWidth.addFocusListener(this);
 	    texBoardHeight = new TextField(2);
@@ -288,125 +290,125 @@ public class RandomMapDialog
 	    slBoardSize = new SimpleLine(NORMAL_LINE_WIDTH);
 
 		// Normal setting components...
-		labElevation = new Label("Elevation:", Label.LEFT);
+		labElevation = new Label(Messages.getString("RandomMapDialog.labElevation"), Label.LEFT); //$NON-NLS-1$
 		choElevation = new Choice();
 		fillChoice(choElevation);
 		slElevation = new SimpleLine(NORMAL_LINE_WIDTH);
 
-		labWoods = new Label("Woods:", Label.LEFT);
+		labWoods = new Label(Messages.getString("RandomMapDialog.labWoods"), Label.LEFT); //$NON-NLS-1$
 		choWoods = new Choice();
 		fillChoice(choWoods);
 		slWoods = new SimpleLine(NORMAL_LINE_WIDTH);
 
-		labLakes = new Label("Lakes:", Label.LEFT);
+		labLakes = new Label(Messages.getString("RandomMapDialog.labLakes"), Label.LEFT); //$NON-NLS-1$
 		choLakes = new Choice();
 		fillChoice(choLakes);
 		slLakes = new SimpleLine(NORMAL_LINE_WIDTH);
 
-		labRough = new Label("Roughs:", Label.LEFT);
+		labRough = new Label(Messages.getString("RandomMapDialog.labRough"), Label.LEFT); //$NON-NLS-1$
 		choRough = new Choice();
 		fillChoice(choRough);
 		slRough = new SimpleLine(NORMAL_LINE_WIDTH);
 
-		labRivers = new Label("River:", Label.LEFT);
+		labRivers = new Label(Messages.getString("RandomMapDialog.labRivers"), Label.LEFT); //$NON-NLS-1$
 		choRivers = new Choice();
 		fillChoice(choRivers);
 		slRivers = new SimpleLine(NORMAL_LINE_WIDTH);
 
-		labRoads = new Label("Road:", Label.LEFT);
+		labRoads = new Label(Messages.getString("RandomMapDialog.labRoads"), Label.LEFT); //$NON-NLS-1$
 		choRoads = new Choice();
 		fillChoice(choRoads);
 		slRoads = new SimpleLine(NORMAL_LINE_WIDTH);
 
 		// Advanced setting components...
 		/** how much hills there should be, Range 0..1000 */
-		labHilliness = new Label("Amount of elevation(0-1000):", Label.LEFT);
+		labHilliness = new Label(Messages.getString("RandomMapDialog.labHilliness"), Label.LEFT); //$NON-NLS-1$
 		texHilliness = new TextField(2);
 		texHilliness.addFocusListener(this);
 		/** Maximum level of the map */
-		labRange = new Label("Elevation range: ", Label.LEFT);
+		labRange = new Label(Messages.getString("RandomMapDialog.labRange"), Label.LEFT); //$NON-NLS-1$
 		texRange = new TextField(2);
 		texRange.addFocusListener(this);
-		labProbInvert = new Label("Probability of inverting the map: ", Label.LEFT);
+		labProbInvert = new Label(Messages.getString("RandomMapDialog.labProbInvert"), Label.LEFT); //$NON-NLS-1$
 		texProbInvert = new TextField(2);
 		texProbInvert.addFocusListener(this);
 		
 		/** how much Lakes at least */
-		labWaterSpots= new Label("Number of lakes(min-max):", Label.LEFT);
+		labWaterSpots= new Label(Messages.getString("RandomMapDialog.labWaterSpots"), Label.LEFT); //$NON-NLS-1$
 		texMinWaterSpots= new TextField(2);
 		texMinWaterSpots.addFocusListener(this);
 		/** how much Lakes at most */
 		texMaxWaterSpots= new TextField(2);
 		texMaxWaterSpots.addFocusListener(this);
 		/** minimum size of a lake */
-		labWaterSize= new Label("Lake size in hexes(min-max):", Label.LEFT);
+		labWaterSize= new Label(Messages.getString("RandomMapDialog.labWaterSize"), Label.LEFT); //$NON-NLS-1$
 		texMinWaterSize= new TextField(2);
 		texMinWaterSize.addFocusListener(this);
 		/** maximum Size of a lake */
 		texMaxWaterSize= new TextField(2);
 		texMaxWaterSize.addFocusListener(this);
 		/** probability for water deeper than lvl1, Range 0..100 */
-		labProbDeep= new Label("Probability for deep water:", Label.LEFT);
+		labProbDeep= new Label(Messages.getString("RandomMapDialog.labProbDeep"), Label.LEFT); //$NON-NLS-1$
 		texProbDeep= new TextField(2);
 		texProbDeep.addFocusListener(this);
 		
 		/** how much forests at least */
-		labForestSpots = new Label("Number of woods(min-max):", Label.LEFT);
+		labForestSpots = new Label(Messages.getString("RandomMapDialog.labForestSpots"), Label.LEFT); //$NON-NLS-1$
 		texMinForestSpots = new TextField(2);
 		texMinForestSpots.addFocusListener(this);
 		/** how much forests at most */
 		texMaxForestSpots= new TextField(2);
 		texMaxForestSpots.addFocusListener(this);
 		/** minimum size of a forest */
-		labForestSize= new Label("Wood size in hexes(min-max):", Label.LEFT);
+		labForestSize= new Label(Messages.getString("RandomMapDialog.labForestSize"), Label.LEFT); //$NON-NLS-1$
 		texMinForestSize= new TextField(2);
 		texMinForestSize.addFocusListener(this);
 		/** maximum Size of a forest */
 		texMaxForestSize= new TextField(2);
 		texMaxForestSize.addFocusListener(this);
 		/** probability for heavy wood, Range 0..100 */
-		labProbHeavy = new Label("Probability for heavy wood:", Label.LEFT);
+		labProbHeavy = new Label(Messages.getString("RandomMapDialog.labProbHeavy"), Label.LEFT); //$NON-NLS-1$
 		texProbHeavy = new TextField(2);
 		texProbHeavy.addFocusListener(this);
 		
 		/** rough */
-		labRoughSpots= new Label("Number of roughs(min-max):", Label.LEFT);
+		labRoughSpots= new Label(Messages.getString("RandomMapDialog.labRoughSpots"), Label.LEFT); //$NON-NLS-1$
 		texMinRoughSpots= new TextField(2);
 		texMinRoughSpots.addFocusListener(this);
 		texMaxRoughSpots= new TextField(2);
 		texMaxRoughSpots.addFocusListener(this);
-		labRoughSize= new Label("Rough size in hexes(min-max):", Label.LEFT);
+		labRoughSize= new Label(Messages.getString("RandomMapDialog.labRoughSize"), Label.LEFT); //$NON-NLS-1$
 		texMinRoughSize= new TextField(2);
 		texMinRoughSize.addFocusListener(this);
 		texMaxRoughSize= new TextField(2);
 		texMaxRoughSize.addFocusListener(this);
 		
 		/** probability for a road, range 0..100 */
-		labProbRoad= new Label("Probability for a road:", Label.LEFT);
+		labProbRoad= new Label(Messages.getString("RandomMapDialog.labProbRoad"), Label.LEFT); //$NON-NLS-1$
 		texProbRoad= new TextField(2);
 		texProbRoad.addFocusListener(this);
 		/** probability for a river, range 0..100 */
-		labProbRiver= new Label("Probability for a river", Label.LEFT);
+		labProbRiver= new Label(Messages.getString("RandomMapDialog.labProbRiver"), Label.LEFT); //$NON-NLS-1$
 		texProbRiver= new TextField(2);
 		texProbRiver.addFocusListener(this);
 		
 		/* Craters */
-		labProbCrater= new Label("Probability for craters:", Label.LEFT);
+		labProbCrater= new Label(Messages.getString("RandomMapDialog.labProbCrater"), Label.LEFT); //$NON-NLS-1$
 		texProbCrater= new TextField(2);
 		texProbCrater.addFocusListener(this);
-		labRadius= new Label("Crater radius(min-max):", Label.LEFT);
+		labRadius= new Label(Messages.getString("RandomMapDialog.labRadius"), Label.LEFT); //$NON-NLS-1$
 		texMinRadius= new TextField(2);
 		texMinRadius.addFocusListener(this);
 		texMaxRadius= new TextField(2);
 		texMaxRadius.addFocusListener(this);
-		labMaxCraters= new Label("Number of craters(min-max):", Label.LEFT);
+		labMaxCraters= new Label(Messages.getString("RandomMapDialog.labMaxCraters"), Label.LEFT); //$NON-NLS-1$
 		texMaxCraters= new TextField(2);    
 		texMaxCraters.addFocusListener(this);
 		texMinCraters= new TextField(2);
 		texMinCraters.addFocusListener(this);
 		
 		/** Algorithm */
-		labAlgorithmToUse = new Label("Algorithm:", Label.LEFT);
+		labAlgorithmToUse = new Label(Messages.getString("RandomMapDialog.labAlgorithmToUse"), Label.LEFT); //$NON-NLS-1$
 		texAlgorithmToUse = new TextField(2);
 	
 	    slElevationAd = new SimpleLine(ADVANCED_LINE_WIDTH);
@@ -552,12 +554,12 @@ public class RandomMapDialog
 			boardWidth = Integer.parseInt(texBoardWidth.getText());
 			boardHeight = Integer.parseInt(texBoardHeight.getText());
 		} catch (NumberFormatException ex) {
-            new AlertDialog(frame, "Invalid Setting", "Only integers are allowed!").show();
+            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.OnlyIntegersWarn")).show(); //$NON-NLS-1$
             return false;
         }
         
         if (boardHeight <= 0 || boardHeight <= 0) {
-            new AlertDialog(frame, "Invalid Setting", "Board size settings must be greater than 0.").show();
+            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.BoardSizeWarn")).show(); //$NON-NLS-1$
             return false;
         }
 
@@ -589,140 +591,140 @@ public class RandomMapDialog
 				minCraters = Integer.parseInt(texMinCraters.getText());
 				algorithmToUse = Integer.parseInt(texAlgorithmToUse.getText());
 			} catch (NumberFormatException ex) {
-	            new AlertDialog(frame, "Invalid Setting", "Only integers are allowed!").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.OnlyIntegersWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        
 	        if (hilliness < 0 || hilliness > 99) {
-	            new AlertDialog(frame, "Invalid Setting", "Amount of elevation must be 0-99.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.AmmountOfElevationWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (range < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Elevation range must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.elevRangeWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (probInvert < 0 || probInvert > 100) {
-	            new AlertDialog(frame, "Invalid Setting", "Depression probability must be 0-100.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.depressionWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (minWaterSpots < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Min number of lakes must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinLakesWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxWaterSpots < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Max number of lakes must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxLakesWarn1")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxWaterSpots < minWaterSpots) {
-	            new AlertDialog(frame, "Invalid Setting", "Max number of lakes must not be less than min.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxLakesWarn2")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (minWaterSize < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Min lake size must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinLakeSizeWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxWaterSize < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Max lake size must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxLakeSizeWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxWaterSize < minWaterSize) {
-	            new AlertDialog(frame, "Invalid Setting", "Max lake size must not be less than min.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxLakeSizeWarn1")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (probDeep < 0 || probDeep > 100) {
-	            new AlertDialog(frame, "Invalid Setting", "Probability for deep water must be 0-100.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.DeepWaterProbWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (minForestSpots < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Min number of forests must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinForestsWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxForestSpots < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Max number of forests must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxForestsWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxForestSpots < minForestSpots) {
-	            new AlertDialog(frame, "Invalid Setting", "Max number of forests must not be less than min.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxForestsWarn1")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (minForestSize < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Min forest size must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinForestSizeWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxForestSize < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Max forest size must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxForestSizeWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxForestSize < minForestSize) {
-	            new AlertDialog(frame, "Invalid Setting", "Max forest size must not be less than min.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxForestSizeWarn1")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (probHeavy < 0 || probHeavy > 100) {
-	            new AlertDialog(frame, "Invalid Setting", "Probability for heavy forest must be 0-100.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.HeavyForestProbWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (minRoughSpots < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Min number of roughs must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinRoughsWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxRoughSpots < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Max number of roughs must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxRoughsWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxRoughSpots < minRoughSpots) {
-	            new AlertDialog(frame, "Invalid Setting", "Max number of roughs must not be less than min.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxRoughsWarn1")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (minRoughSize < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Min rough size must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinRoughSizeWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxRoughSize < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Max rough size must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxRoughSizeWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxRoughSize < minRoughSize) {
-	            new AlertDialog(frame, "Invalid Setting", "Max rough size must not be less than min.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxRoughSizeWarn1")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (probRiver < 0 || probRiver > 100) {
-	            new AlertDialog(frame, "Invalid Setting", "Probability for a river must be 0-100.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.RiverProbWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (probRoad < 0 || probRoad > 100) {
-	            new AlertDialog(frame, "Invalid Setting", "Probability for a road must be 0-100.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.RoadProbWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (probCrater < 0 || probCrater > 100) {
-	            new AlertDialog(frame, "Invalid Setting", "Probability for craters must be 0-100.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.CratersProbWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (minRadius < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Min crater radius must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinCraterRadiusWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxRadius < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Max crater radius must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxCraterRadiusWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxRadius < minRadius) {
-	            new AlertDialog(frame, "Invalid Setting", "Max crater radius must not be less than min.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxCraterRadiusWarn1")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxCraters < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Max number of craters must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxCatersWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (minCraters < 0) {
-	            new AlertDialog(frame, "Invalid Setting", "Min number of craters must be greater than -1.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinCatersWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (maxCraters < minCraters) {
-	            new AlertDialog(frame, "Invalid Setting", "Max number of craters must not be less than min.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxCatersWarn1")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        if (algorithmToUse < 0 || algorithmToUse > 2) {
-	            new AlertDialog(frame, "Invalid Setting", "Algorithm to use must be 0-2.").show();
+	            new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.AlgorithmWarn")).show(); //$NON-NLS-1$
 	            return false;
 	        }
 	        

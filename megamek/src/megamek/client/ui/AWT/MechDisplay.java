@@ -26,10 +26,7 @@ import megamek.common.*;
  * Displays the info for a mech.  This is also a sort
  * of interface for special movement and firing actions.
  */
-public class MechDisplay extends BufferedPanel
-
-
-{
+public class MechDisplay extends BufferedPanel {
     // buttons & gizmos for top level
 
     MechPanelTabStrip tabStrip;
@@ -59,15 +56,15 @@ public class MechDisplay extends BufferedPanel
 
         displayP = new BufferedPanel(new CardLayout());
         mPan = new MovementPanel();
-        displayP.add("movement", mPan);
+        displayP.add("movement", mPan); //$NON-NLS-1$
         aPan = new ArmorPanel();
-        displayP.add("armor", aPan);
+        displayP.add("armor", aPan); //$NON-NLS-1$
         wPan = new WeaponPanel(clientgui);
-        displayP.add("weapons", wPan);
+        displayP.add("weapons", wPan); //$NON-NLS-1$
         sPan = new SystemPanel(clientgui);
-        displayP.add("systems", sPan);
+        displayP.add("systems", sPan); //$NON-NLS-1$
         ePan = new ExtraPanel(clientgui);
-        displayP.add("extras", ePan);
+        displayP.add("extras", ePan); //$NON-NLS-1$
 
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
@@ -82,7 +79,7 @@ public class MechDisplay extends BufferedPanel
         c.weighty = 1.0;
         addBag(displayP, c);
 
-        ((CardLayout)displayP.getLayout()).show(displayP, "movement");
+        ((CardLayout)displayP.getLayout()).show(displayP, "movement"); //$NON-NLS-1$
         //tabStrip.setTab(0);
         
         clientgui.mechW.addKeyListener(clientgui.menuBar);
@@ -124,15 +121,15 @@ public class MechDisplay extends BufferedPanel
 	 */
     public void showPanel(String s) {
         ((CardLayout) displayP.getLayout()).show(displayP, s);
-        if (s == "movement") {
+        if (s == "movement") { //$NON-NLS-1$
             tabStrip.setTab(0);
-        } else if (s == "armor") {
+        } else if (s == "armor") { //$NON-NLS-1$
             tabStrip.setTab(1);
-        } else if (s == "weapons") {
+        } else if (s == "weapons") { //$NON-NLS-1$
             tabStrip.setTab(3);
-        } else if (s == "systems") {
+        } else if (s == "systems") { //$NON-NLS-1$
             tabStrip.setTab(2);
-        } else if (s == "extras") {
+        } else if (s == "extras") { //$NON-NLS-1$
             tabStrip.setTab(4);
         }
     }
@@ -273,7 +270,7 @@ class ArmorPanel  extends PicMap
             minRightMargin = minTankLeftMargin;
         }
         if (null == ams) {
-            System.err.println("The armor panel is null.");
+            System.err.println("The armor panel is null."); //$NON-NLS-1$
             return;
         }
         ams.setEntity(en);
@@ -315,7 +312,7 @@ class WeaponPanel extends BufferedPanel
     private Entity entity;
     private ClientGUI client;
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayMediumFontSize);
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayMediumFontSize); //$NON-NLS-1$
 
     public WeaponPanel(ClientGUI client) {
         super(new GridBagLayout());
@@ -344,7 +341,7 @@ class WeaponPanel extends BufferedPanel
 
         //adding Ammo choice + label
 
-        wAmmo = new TransparentLabel("Ammo", fm, clr, TransparentLabel.LEFT);
+        wAmmo = new TransparentLabel(Messages.getString("MechDisplay.Ammo"), fm, clr, TransparentLabel.LEFT); //$NON-NLS-1$
         m_chAmmo = new Choice();
         m_chAmmo.addItemListener(this);
         m_chAmmo.addKeyListener(client.menuBar);
@@ -366,8 +363,8 @@ class WeaponPanel extends BufferedPanel
 
         //Adding Heat Buildup
 
-        currentHeatBuildupL = new TransparentLabel("Heat Buildup: ", fm, clr, TransparentLabel.RIGHT);
-        currentHeatBuildupR = new TransparentLabel("--", fm, clr, TransparentLabel.LEFT);
+        currentHeatBuildupL = new TransparentLabel(Messages.getString("MechDisplay.HeatBuildup"), fm, clr, TransparentLabel.RIGHT); //$NON-NLS-1$
+        currentHeatBuildupR = new TransparentLabel("--", fm, clr, TransparentLabel.LEFT); //$NON-NLS-1$
 
         c.insets = new Insets(2, 9, 2, 1);
         c.gridwidth = 2; c.gridx = 0;
@@ -386,12 +383,12 @@ class WeaponPanel extends BufferedPanel
 
 
         //Adding weapon display labels
-        wNameL = new TransparentLabel("Name", fm, clr, TransparentLabel.CENTER);
-        wHeatL = new TransparentLabel("Heat", fm, clr, TransparentLabel.CENTER);
-        wDamL =  new TransparentLabel("Damage", fm, clr, TransparentLabel.CENTER);
-        wNameR = new TransparentLabel("", fm, clr, TransparentLabel.CENTER);
-        wHeatR = new TransparentLabel("--", fm, clr, TransparentLabel.CENTER);
-        wDamR =  new TransparentLabel("--", fm, clr, TransparentLabel.CENTER);
+        wNameL = new TransparentLabel(Messages.getString("MechDisplay.Name"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wHeatL = new TransparentLabel(Messages.getString("MechDisplay.Heat"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wDamL =  new TransparentLabel(Messages.getString("MechDisplay.Damage"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wNameR = new TransparentLabel("", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wHeatR = new TransparentLabel("--", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wDamR =  new TransparentLabel("--", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
 
 
          c.anchor = GridBagConstraints.CENTER;
@@ -432,16 +429,16 @@ class WeaponPanel extends BufferedPanel
 
 
         // Adding range labels
-        wMinL = new TransparentLabel("Min", fm, clr, TransparentLabel.CENTER);
-        wShortL = new TransparentLabel("Short", fm, clr, TransparentLabel.CENTER);
-        wMedL = new TransparentLabel("Med", fm, clr, TransparentLabel.CENTER);
-        wLongL = new TransparentLabel("Long", fm, clr, TransparentLabel.CENTER);
-        wExtL = new TransparentLabel("Ext", fm, clr, TransparentLabel.CENTER);
-        wMinR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
-        wShortR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
-        wMedR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
-        wLongR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
-        wExtR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        wMinL = new TransparentLabel(Messages.getString("MechDisplay.Min"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wShortL = new TransparentLabel(Messages.getString("MechDisplay.Short"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wMedL = new TransparentLabel(Messages.getString("MechDisplay.Med"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wLongL = new TransparentLabel(Messages.getString("MechDisplay.Long"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wExtL = new TransparentLabel(Messages.getString("MechDisplay.Ext"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wMinR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wShortR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wMedR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wLongR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wExtR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
         
         c.weightx = 1.0;
         c.insets = new Insets(2, 9, 1, 1);
@@ -498,13 +495,13 @@ class WeaponPanel extends BufferedPanel
         
             
         // target panel
-        wTargetL = new TransparentLabel("Target:", fm, clr, TransparentLabel.CENTER);
-        wRangeL = new TransparentLabel("Range:", fm, clr, TransparentLabel.CENTER);
-        wToHitL = new TransparentLabel("To Hit:", fm, clr, TransparentLabel.CENTER);
+        wTargetL = new TransparentLabel(Messages.getString("MechDisplay.Target"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wRangeL = new TransparentLabel(Messages.getString("MechDisplay.Range"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wToHitL = new TransparentLabel(Messages.getString("MechDisplay.ToHit"), fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
 
-        wTargetR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
-        wRangeR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
-        wToHitR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        wTargetR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wRangeR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
+        wToHitR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER); //$NON-NLS-1$
 
         c.weightx = 0.0;
         c.insets = new Insets(2, 9, 1, 1);
@@ -538,7 +535,7 @@ class WeaponPanel extends BufferedPanel
         add(wToHitR);
 
         // to-hit text
-        toHitText = new TextArea("", 2, 20, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        toHitText = new TextArea("", 2, 20, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
         toHitText.setEditable(false);
         toHitText.addKeyListener(client.menuBar);
 
@@ -554,32 +551,32 @@ class WeaponPanel extends BufferedPanel
     }
 
     private void setBackGround(){
-        Image tile = getToolkit().getImage("data/widgets/tile.gif");
+        Image tile = getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_TOP;
-        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_BOTTOM;
-        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -587,28 +584,28 @@ class WeaponPanel extends BufferedPanel
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/tl_corner.gif");
+        tile = getToolkit().getImage("data/widgets/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/bl_corner.gif");
+        tile = getToolkit().getImage("data/widgets/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/tr_corner.gif");
+        tile = getToolkit().getImage("data/widgets/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/br_corner.gif");
+        tile = getToolkit().getImage("data/widgets/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -654,9 +651,10 @@ class WeaponPanel extends BufferedPanel
         for(int i = 0; i < weapons.size(); i++) {
             Mounted mounted = (Mounted) weapons.elementAt(i);
             WeaponType wtype = (WeaponType) mounted.getType();
-            // TODO : make this a StringBuffer.
-            String wn = mounted.getDesc()
-                        + " [" + en.getLocationAbbr(mounted.getLocation()) + "]";
+            StringBuffer wn = new StringBuffer(mounted.getDesc());
+            wn.append(" ["); //$NON-NLS-1$
+            wn.append(en.getLocationAbbr(mounted.getLocation()));
+            wn.append("]"); //$NON-NLS-1$
             // determine shots left & total shots left
             if (wtype.getAmmoType() != AmmoType.T_NA
                 && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
@@ -673,19 +671,23 @@ class WeaponPanel extends BufferedPanel
 
                 int totalShotsLeft = entity.getTotalMunitionsOfType(typeUsed);
 
-                wn += " (" + shotsLeft + "/" + totalShotsLeft + ")";
+                wn.append(" ("); //$NON-NLS-1$
+                wn.append(shotsLeft);
+                wn.append("/"); //$NON-NLS-1$
+                wn.append(totalShotsLeft);
+                wn.append(")"); //$NON-NLS-1$
             }
             
             // MG rapidfire
             if (mounted.isRapidfire()) {
-                wn += " [Rapid Fire]";
+                wn.append(Messages.getString("MechDisplay.rapidFire")); //$NON-NLS-1$
             }
 
             // Fire Mode - lots of things have variable modes
             if (wtype.hasModes()) {
-                wn += " " + mounted.curMode();
+                wn.append(" ");wn.append(mounted.curMode()); //$NON-NLS-1$
             }
-            weaponList.add(wn);
+            weaponList.add(wn.toString());
             if (mounted.isUsedThisRound()
                 && game.getPhase() == Game.PHASE_FIRING) {
                 // add heat from weapons fire to heat tracker
@@ -700,18 +702,18 @@ class WeaponPanel extends BufferedPanel
         String heatCapacityStr = Integer.toString(heatCap);
 
         if ( heatCap < heatCapWater ) {
-          heatCapacityStr = heatCap + " [" + heatCapWater + "]";
+          heatCapacityStr = heatCap + " [" + heatCapWater + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         // end duplicate block
 
         String heatText = Integer.toString(currentHeatBuildup);
         if (currentHeatBuildup > en.getHeatCapacityWithWater()) {
-            heatText += "*"; // overheat indication
+            heatText += "*"; // overheat indication //$NON-NLS-1$
         }
-        this.currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ")");
+        this.currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // If MaxTech range rules are in play, display the extreme range.
-        if (game.getOptions().booleanOption("maxtech_range")) {
+        if (game.getOptions().booleanOption("maxtech_range")) { //$NON-NLS-1$
             wExtL.setVisible (true);
             wExtR.setVisible (true);
         }
@@ -754,27 +756,27 @@ class WeaponPanel extends BufferedPanel
         if(weaponList.getSelectedIndex() == -1) {
             m_chAmmo.removeAll();
             m_chAmmo.setEnabled(false);
-            wNameR.setText("");
-            wHeatR.setText("--");
-            wDamR.setText("--");
-            wMinR.setText("---");
-            wShortR.setText("---");
-            wMedR.setText("---");
-            wLongR.setText("---");
-            wExtR.setText("---");
+            wNameR.setText(""); //$NON-NLS-1$
+            wHeatR.setText("--"); //$NON-NLS-1$
+            wDamR.setText("--"); //$NON-NLS-1$
+            wMinR.setText("---"); //$NON-NLS-1$
+            wShortR.setText("---"); //$NON-NLS-1$
+            wMedR.setText("---"); //$NON-NLS-1$
+            wLongR.setText("---"); //$NON-NLS-1$
+            wExtR.setText("---"); //$NON-NLS-1$
             return;
         }
         Mounted mounted = (Mounted)weapons.elementAt(weaponList.getSelectedIndex());
         WeaponType wtype = (WeaponType)mounted.getType();
         // update weapon display
         wNameR.setText(mounted.getDesc());
-        wHeatR.setText(wtype.getHeat() + "");
+        wHeatR.setText(wtype.getHeat() + ""); //$NON-NLS-1$
         if(wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
-            wDamR.setText("Missile");
+            wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
         } else if(wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
-            wDamR.setText("Variable");
+            wDamR.setText(Messages.getString("MechDisplay.Variable")); //$NON-NLS-1$
         } else if(wtype.getDamage() == WeaponType.DAMAGE_SPECIAL) {
-            wDamR.setText("Special");
+            wDamR.setText(Messages.getString("MechDisplay.Special")); //$NON-NLS-1$
         } else if(wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
             StringBuffer damage = new StringBuffer();
             damage.append( Integer.toString(wtype.getRackSize()) )
@@ -799,27 +801,27 @@ class WeaponPanel extends BufferedPanel
         if(wtype.getMinimumRange() > 0) {
             wMinR.setText(Integer.toString(wtype.getMinimumRange()));
         } else {
-            wMinR.setText("---");
+            wMinR.setText("---"); //$NON-NLS-1$
         }
         if(shortR > 1) {
-            wShortR.setText("1 - " + shortR);
+            wShortR.setText("1 - " + shortR); //$NON-NLS-1$
         } else {
-            wShortR.setText("" + shortR);
+            wShortR.setText("" + shortR); //$NON-NLS-1$
         }
         if(mediumR - shortR > 1) {
-            wMedR.setText((shortR + 1) + " - " + mediumR);
+            wMedR.setText((shortR + 1) + " - " + mediumR); //$NON-NLS-1$
         } else {
-            wMedR.setText("" + mediumR);
+            wMedR.setText("" + mediumR); //$NON-NLS-1$
         }
         if(longR - mediumR > 1) {
-            wLongR.setText((mediumR + 1) + " - " + longR);
+            wLongR.setText((mediumR + 1) + " - " + longR); //$NON-NLS-1$
         } else {
-            wLongR.setText("" + longR);
+            wLongR.setText("" + longR); //$NON-NLS-1$
         }
         if(extremeR - longR > 1) {
-            wExtR.setText((longR + 1) + " - " + extremeR);
+            wExtR.setText((longR + 1) + " - " + extremeR); //$NON-NLS-1$
         } else {
-            wExtR.setText("" + extremeR);
+            wExtR.setText("" + extremeR); //$NON-NLS-1$
         }
 
         // Update the range display to account for the weapon's loaded ammo.
@@ -878,10 +880,10 @@ class WeaponPanel extends BufferedPanel
     private String formatAmmo(Mounted m)
     {
         StringBuffer sb = new StringBuffer(64);
-        int ammoIndex = m.getDesc().indexOf("Ammo");
+        int ammoIndex = m.getDesc().indexOf(Messages.getString("MechDisplay.0")); //$NON-NLS-1$
         int loc = m.getLocation();
         if (loc != Entity.LOC_NONE) {
-            sb.append("[").append(entity.getLocationAbbr(loc)).append("] ");
+            sb.append("[").append(entity.getLocationAbbr(loc)).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
         }
         if (ammoIndex == -1) {
             sb.append(m.getDesc());
@@ -904,27 +906,27 @@ class WeaponPanel extends BufferedPanel
         {
             if(atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)
             {
-                wMinR.setText("4");
-                wShortR.setText("1 - 9");
-                wMedR.setText("10 - 18");
-                wLongR.setText("19 - 27");
-                wExtR.setText("28 - 36");
+                wMinR.setText("4"); //$NON-NLS-1$
+                wShortR.setText("1 - 9"); //$NON-NLS-1$
+                wMedR.setText("10 - 18"); //$NON-NLS-1$
+                wLongR.setText("19 - 27"); //$NON-NLS-1$
+                wExtR.setText("28 - 36"); //$NON-NLS-1$
             }
             else if(atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
             {
-                wMinR.setText("---");
-                wShortR.setText("1 - 3");
-                wMedR.setText("4 - 6");
-                wLongR.setText("7 - 9");
-                wExtR.setText("10 - 12");
+                wMinR.setText("---"); //$NON-NLS-1$
+                wShortR.setText("1 - 3"); //$NON-NLS-1$
+                wMedR.setText("4 - 6"); //$NON-NLS-1$
+                wLongR.setText("7 - 9"); //$NON-NLS-1$
+                wExtR.setText("10 - 12"); //$NON-NLS-1$
             }
             else
             {
-                wMinR.setText("4");
-                wShortR.setText("1 - 5");
-                wMedR.setText("6 - 10");
-                wLongR.setText("11 - 15");
-                wExtR.setText("16 - 20");
+                wMinR.setText("4"); //$NON-NLS-1$
+                wShortR.setText("1 - 5"); //$NON-NLS-1$
+                wMedR.setText("6 - 10"); //$NON-NLS-1$
+                wLongR.setText("11 - 15"); //$NON-NLS-1$
+                wExtR.setText("16 - 20"); //$NON-NLS-1$
             }
         } // End weapon-is-ATM
 
@@ -983,7 +985,7 @@ class SystemPanel
     //public Label modeLabel;
     private ClientGUI clientgui;
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize);
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize); //$NON-NLS-1$
 
     Entity en;
 
@@ -993,8 +995,8 @@ class SystemPanel
         FontMetrics fm = getFontMetrics(FONT_VALUE);
 
         this.clientgui = clientgui;
-        locLabel = new TransparentLabel("Location", fm, Color.white,TransparentLabel.CENTER);
-        slotLabel = new TransparentLabel("Slot", fm, Color.white,TransparentLabel.CENTER);
+        locLabel = new TransparentLabel(Messages.getString("MechDisplay.Location"), fm, Color.white,TransparentLabel.CENTER); //$NON-NLS-1$
+        slotLabel = new TransparentLabel(Messages.getString("MechDisplay.Slot"), fm, Color.white,TransparentLabel.CENTER); //$NON-NLS-1$
 
         locList = new List(8, false);
         locList.addItemListener(this);
@@ -1006,18 +1008,18 @@ class SystemPanel
         //slotList.setEnabled(false);
 
         m_chMode = new Choice();
-        m_chMode.add("   ");
+        m_chMode.add("   "); //$NON-NLS-1$
         m_chMode.setEnabled(false);
         m_chMode.addItemListener(this);
         m_chMode.addKeyListener(clientgui.menuBar);
 
-        m_bDumpAmmo = new Button("Dump");
+        m_bDumpAmmo = new Button(Messages.getString("MechDisplay.m_bDumpAmmo")); //$NON-NLS-1$
         m_bDumpAmmo.setEnabled(false);
-        m_bDumpAmmo.setActionCommand("dump");
+        m_bDumpAmmo.setActionCommand("dump"); //$NON-NLS-1$
         m_bDumpAmmo.addActionListener(this);
         m_bDumpAmmo.addKeyListener(clientgui.menuBar);
 
-        modeLabel = new TransparentLabel("Mode", fm, Color.white,TransparentLabel.RIGHT);
+        modeLabel = new TransparentLabel(Messages.getString("MechDisplay.modeLabel"), fm, Color.white,TransparentLabel.RIGHT); //$NON-NLS-1$
         //modeLabel.setEnabled(false);
 
 
@@ -1149,12 +1151,12 @@ class SystemPanel
             final CriticalSlot cs = en.getCritical(loc, i);
             StringBuffer sb = new StringBuffer(32);
             if(cs == null) {
-                sb.append("---");
+                sb.append("---"); //$NON-NLS-1$
             } else {
                 switch(cs.getType()) {
                 case CriticalSlot.TYPE_SYSTEM :
-                    sb.append(cs.isDestroyed() ? "*" : "")
-                        .append(cs.isBreached() ? "x" : "");
+                    sb.append(cs.isDestroyed() ? "*" : "") //$NON-NLS-1$ //$NON-NLS-2$
+                        .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
                     // Protomechs have different systme names.
                     if ( en instanceof Protomech ) {
                         sb.append(Protomech.systemNames[cs.getIndex()]);
@@ -1164,9 +1166,9 @@ class SystemPanel
                     break;
                 case CriticalSlot.TYPE_EQUIPMENT :
                     Mounted m = en.getEquipment(cs.getIndex());
-                    sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc());
+                    sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                     if (m.getType().hasModes()) {
-                        sb.append(" (").append(m.curMode()).append(")");
+                        sb.append(" (").append(m.curMode()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                     break;
                 }
@@ -1181,9 +1183,9 @@ class SystemPanel
                     if (m.getType() instanceof MiscType && 
                         m.getType().hasFlag(MiscType.F_TARGCOMP) ) {
                         StringBuffer sb = new StringBuffer(32);
-                        sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc());
+                        sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                         if (m.getType().hasModes()) {
-                            sb.append(" (").append(m.curMode()).append(")");
+                            sb.append(" (").append(m.curMode()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
                         }
                         slotList.add(sb.toString());                                                
                     }                    
@@ -1239,15 +1241,15 @@ class SystemPanel
 				clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
 
                 // notify the player
-                if (m.getType().hasInstantModeSwitch()) {
-					clientgui.systemMessage("Switched " + m.getName() + " to " + m.curMode());
+                if (m.getType().hasInstantModeSwitch()) {                    
+					clientgui.systemMessage(Messages.getString("MechDisplay.switched", new Object[]{m.getName(),m.curMode()}));//$NON-NLS-1$
                 }
                 else {
-                    if (Game.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase() ) {
-                         clientgui.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
-                            " at start of game.");
-                    } else clientgui.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
-                            " at end of turn.");
+                    if (Game.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase() ) {                        
+                         clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart", new Object[]{m.getName(),m.pendingMode()}));//$NON-NLS-1$
+                    } else{ 
+                        clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[]{m.getName(),m.pendingMode()}));//$NON-NLS-1$
+                    }
                 }
                 displaySlots();
             }
@@ -1257,7 +1259,7 @@ class SystemPanel
     // ActionListener
     public void actionPerformed(ActionEvent ae)
     {
-        if (ae.getActionCommand().equals("dump")) {
+        if (ae.getActionCommand().equals("dump")) { //$NON-NLS-1$
             Mounted m = getSelectedEquipment();
             boolean bOwner = (clientgui.getClient().getLocalPlayer() == en.getOwner());
             if (m == null || !bOwner || !(m.getType() instanceof AmmoType) ||
@@ -1270,20 +1272,14 @@ class SystemPanel
 
             if (m.isPendingDump()) {
                 bDumping = false;
-                String title = "Cancel Dumping Ammo?";
-                String body = "Do you want to cancel dumping " + m.getName() + "?";
+                String title = Messages.getString("MechDisplay.CancelDumping.title"); //$NON-NLS-1$
+                String body = Messages.getString("MechDisplay.CancelDumping.message", new Object[]{m.getName()}); //$NON-NLS-1$
                 bConfirmed = clientgui.doYesNoDialog(title, body);
             }
             else {
                 bDumping = true;
-                String title = "Dump Ammo?";
-                String body = "Do you want to dump " + m.getName() + "?\n\n"
-                    + "Ammo dumping will start at the beginning of the next game turn.\n"
-                    + "You will not be able to use the ammo while it is being dumped,\n"
-                    + "but it can still be critically hit or explode from heat buildup.\n"
-                    + "It will also explode as the result of any rear torso hit that\n"
-                    + "turn.  Additionally, you will not be able to run or jump while\n"
-                    + "you are dumping ammo.";
+                String title = Messages.getString("MechDisplay.Dump.title"); //$NON-NLS-1$
+                String body = Messages.getString("MechDisplay.Dump.message", new Object[]{m.getName()}); //$NON-NLS-1$
                 bConfirmed = clientgui.doYesNoDialog(title, body);
             }
 
@@ -1295,32 +1291,32 @@ class SystemPanel
     }
 
     private void setBackGround(){
-        Image tile = getToolkit().getImage("data/widgets/tile.gif");
+        Image tile = getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_TOP;
-        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_BOTTOM;
-        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -1328,28 +1324,28 @@ class SystemPanel
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/tl_corner.gif");
+        tile = getToolkit().getImage("data/widgets/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/bl_corner.gif");
+        tile = getToolkit().getImage("data/widgets/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/tr_corner.gif");
+        tile = getToolkit().getImage("data/widgets/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/br_corner.gif");
+        tile = getToolkit().getImage("data/widgets/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -1368,7 +1364,7 @@ class ExtraPanel
     public TextArea unusedR, carrysR, heatR;
     public java.awt.List narcList;
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize);
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize); //$NON-NLS-1$
 
     private ClientGUI clientgui;
 
@@ -1380,7 +1376,7 @@ class ExtraPanel
         FontMetrics fm = getFontMetrics(FONT_VALUE);
 
         narcLabel = new TransparentLabel
-            ("Affected By:", fm, Color.white,TransparentLabel.CENTER);
+            (Messages.getString("MechDisplay.AffectedBy"), fm, Color.white,TransparentLabel.CENTER); //$NON-NLS-1$
 
         narcList = new List(3, false);
         narcList.addKeyListener(clientgui.menuBar);
@@ -1389,20 +1385,20 @@ class ExtraPanel
         //unusedL = new Label( "Unused Space:", Label.CENTER );
 
         unusedL = new TransparentLabel
-            ("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
-        unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+            (Messages.getString("MechDisplay.UnusedSpace"), fm, Color.white,TransparentLabel.CENTER); //$NON-NLS-1$
+        unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
         unusedR.setEditable(false);
         unusedR.addKeyListener(clientgui.menuBar);
 
         carrysL = new TransparentLabel
-            ( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
-        carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+            ( Messages.getString("MechDisplay.Carryng"), fm, Color.white,TransparentLabel.CENTER); //$NON-NLS-1$
+        carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
         carrysR.setEditable(false);
         carrysR.addKeyListener(clientgui.menuBar);
 
         heatL = new TransparentLabel
-            ( "Heat Effects:", fm, Color.white, TransparentLabel.CENTER);
-        heatR = new TextArea ("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+            ( Messages.getString("MechDisplay.HeatEffects"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
+        heatR = new TextArea ("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
         heatR.setEditable(false);
         heatR.addKeyListener(clientgui.menuBar);
 
@@ -1462,35 +1458,33 @@ class ExtraPanel
 
     }
 
-
-
    private void setBackGround(){
-        Image tile = getToolkit().getImage("data/widgets/tile.gif");
+        Image tile = getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_TOP;
-        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_BOTTOM;
-        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -1498,33 +1492,32 @@ class ExtraPanel
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/tl_corner.gif");
+        tile = getToolkit().getImage("data/widgets/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/bl_corner.gif");
+        tile = getToolkit().getImage("data/widgets/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/tr_corner.gif");
+        tile = getToolkit().getImage("data/widgets/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/br_corner.gif");
+        tile = getToolkit().getImage("data/widgets/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
     }
-
 
     /**
      * updates fields for the specified mech
@@ -1543,39 +1536,41 @@ class ExtraPanel
             int team = player.getTeam();
             if ( en.isNarcedBy( team ) &&
                  !player.isObserver()) {
-                buff = new StringBuffer( "NARCed by " );
+                buff = new StringBuffer( Messages.getString("MechDisplay.NARCedBy") ); //$NON-NLS-1$
                 buff.append( player.getName() );
-                buff.append( " [" )
+                buff.append( " [" ) //$NON-NLS-1$
                     .append( Player.teamNames[team] )
-                    .append( "]" );
+                    .append( "]" ); //$NON-NLS-1$
                 narcList.add( buff.toString() );
             }
             if ( en.isINarcedBy( team ) &&
                     !player.isObserver()) {
-                   buff = new StringBuffer( "iNarc Homing Pod from " );
+                   buff = new StringBuffer( Messages.getString("MechDisplay.INarcHoming") ); //$NON-NLS-1$
                    buff.append( player.getName() );
-                   buff.append( " [" )
+                   buff.append( " [" ) //$NON-NLS-1$
                        .append( Player.teamNames[team] )
-                       .append( "] attached." );
+                       .append( "] ") //$NON-NLS-1$
+                       .append(Messages.getString("MechDisplay.attached")) //$NON-NLS-1$
+                       .append("."); //$NON-NLS-1$
                    narcList.add( buff.toString() );
             }
         }
         if ( en.isINarcedWith(INarcPod.ECM)) {
-               buff = new StringBuffer( "iNarc ECM Pod attached." );
+               buff = new StringBuffer( Messages.getString("MechDisplay.iNarcECMPodAttached") ); //$NON-NLS-1$
                narcList.add( buff.toString() );
         }
         if ( en.isINarcedWith(INarcPod.HAYWIRE)) {
-               buff = new StringBuffer( "iNarc Haywire Pod attached." );
+               buff = new StringBuffer( Messages.getString("MechDisplay.iNarcHaywirePodAttached") ); //$NON-NLS-1$
                narcList.add( buff.toString() );
         }
         if ( en.isINarcedWith(INarcPod.NEMESIS)) {
-               buff = new StringBuffer( "iNarc Nemesis Pod attached." );
+               buff = new StringBuffer( Messages.getString("MechDisplay.iNarcNemesisPodAttached") ); //$NON-NLS-1$
                narcList.add( buff.toString() );
         }
 
         // Show inferno track.
         if ( en.infernos.isStillBurning() ) {
-            buff = new StringBuffer( "Inferno burn remaining: " );
+            buff = new StringBuffer( Messages.getString("MechDisplay.InfernoBurnRemaining") ); //$NON-NLS-1$
             buff.append( en.infernos.getTurnsLeftToBurn() );
             narcList.add( buff.toString() );
         }
@@ -1583,14 +1578,14 @@ class ExtraPanel
         // Show ECM affect.
         Coords pos = en.getPosition();
         if ( Compute.isAffectedByECM( en, pos, pos ) ) {
-            narcList.add( "In enemy ECM field." );
+            narcList.add( Messages.getString("MechDisplay.InEnemyECMField") ); //$NON-NLS-1$
         }
 
         // Show Turret Locked.
         if ( en instanceof Tank &&
              !( (Tank) en ).hasNoTurret() &&
              !en.canChangeSecondaryFacing() ) {
-            narcList.add( "Turret locked" );
+            narcList.add( Messages.getString("MechDisplay.Turretlocked") ); //$NON-NLS-1$
         }
 
         // Show jammed weapons.
@@ -1599,7 +1594,7 @@ class ExtraPanel
             Mounted weapon = (Mounted) weaps.nextElement();
             if ( weapon.isJammed() ) {
                 buff = new StringBuffer( weapon.getName() );
-                buff.append( " is Jammed" );
+                buff.append( Messages.getString("MechDisplay.isJammed") ); //$NON-NLS-1$
                 narcList.add( buff.toString() );
             }
         }
@@ -1608,14 +1603,14 @@ class ExtraPanel
         for ( int loc = 0; loc < en.locations(); loc++ ) {
             if ( Entity.LOC_BREACHED == en.getLocationStatus(loc) ) {
                 buff = new StringBuffer( en.getLocationName(loc) );
-                buff.append( " Breached" );
+                buff.append( Messages.getString("MechDisplay.Breached") ); //$NON-NLS-1$
                 narcList.add( buff.toString() );
             }
         }
 
         // transport values
         String unused = en.getUnusedString();
-        if ( unused.equals("") ) unused = "None";
+        if ( unused.equals("") ) unused = Messages.getString("MechDisplay.None"); //$NON-NLS-1$ //$NON-NLS-2$
         this.unusedR.setText( unused );
         Enumeration iter = en.getLoadedUnits().elements();
         carrysR.setText( null );
@@ -1624,7 +1619,7 @@ class ExtraPanel
             carrysR.append( ((Entity)iter.nextElement()).getShortName() );
             hasText = true;
             if ( iter.hasMoreElements() ) {
-                carrysR.append( "\n" );
+                carrysR.append( "\n" ); //$NON-NLS-1$
             }
         }
 
@@ -1632,80 +1627,80 @@ class ExtraPanel
         Mounted club = Compute.clubMechHas( en );
         if ( null != club ) {
             if ( hasText ) {
-                carrysR.append( "\n" );
+                carrysR.append( "\r\n" ); //$NON-NLS-1$
             }
             carrysR.append( club.getName() );
         }
 
         // Show Heat Effects, but only for Mechs.
-        heatR.setText("");
+        heatR.setText(""); //$NON-NLS-1$
         if (en instanceof Mech) {
             boolean moreHeatMove = false, moreHeatFire = false;
             boolean hasTSM = false;
             if (((Mech)en).hasTSM()) hasTSM = true;
 
             if (en.heat>=30) {
-                heatR.append("Was automaticly shut down\n");
+                heatR.append(Messages.getString("MechDisplay.WasAutomaticlyShutDown")); //$NON-NLS-1$
                 moreHeatMove = true;
             }
             if (en.heat >=25 && !moreHeatMove) {
                 if (hasTSM) {
-                    heatR.append ("-4 Movement Points\n");
+                    heatR.append (Messages.getString("MechDisplay.mp-4")); //$NON-NLS-1$
                 } else {
-                    heatR.append("-5 Movement Points\n");
+                    heatR.append(Messages.getString("MechDisplay.mp-5")); //$NON-NLS-1$
                 }
                 moreHeatMove = true;
             }
             if (en.heat >= 24) {
-                heatR.append("+4 Modifier to Fire\n");
+                heatR.append(Messages.getString("MechDisplay.mp+4")); //$NON-NLS-1$
                 moreHeatFire = true;
             }
             if (en.heat >= 20 && !moreHeatMove) {
                 if (hasTSM) {
-                    heatR.append ("-3 Movement Points\n");
+                    heatR.append (Messages.getString("MechDisplay.mp-3")); //$NON-NLS-1$
                 } else {
-                    heatR.append ("-4 Movement Points\n");
+                    heatR.append (Messages.getString("MechDisplay.mp-4")); //$NON-NLS-1$
                 }
                 moreHeatMove = true;
             }
             if (en.heat >= 17 && !moreHeatFire) {
-                heatR.append ("+3 Modifier to Fire\n");
+                heatR.append (Messages.getString("MechDisplay.mf+3")); //$NON-NLS-1$
                 moreHeatFire = true;
             }
             if (en.heat >= 15 && !moreHeatMove) {
                 if (hasTSM) {
-                    heatR.append ("-2 Movement Points\n");
+                    heatR.append (Messages.getString("MechDisplay.mp-2")); //$NON-NLS-1$
                 } else {
-                    heatR.append ("-3 Movement Points\n");
+                    heatR.append (Messages.getString("MechDisplay.mp-3")); //$NON-NLS-1$
                 }
                 moreHeatMove = true;
             }
             if (en.heat >= 13 && !moreHeatFire) {
-                heatR.append ("+2 Modifier to Fire\n");
+                heatR.append (Messages.getString("MechDisplay.mf+3")); //$NON-NLS-1$
                 moreHeatFire = true;
             }
             if (en.heat >= 10 && !moreHeatMove) {
                 if (hasTSM) {
-                    heatR.append ("-1 Movement Point\n");
+                    heatR.append (Messages.getString("MechDisplay.mp-1")); //$NON-NLS-1$
                 } else {
-                    heatR.append ("-2 Movement Points\n");
+                    heatR.append (Messages.getString("MechDisplay.mp-2")); //$NON-NLS-1$
                 }
                 moreHeatMove = true;
             }
             if (en.heat == 9 && !moreHeatMove && hasTSM) {
-                heatR.append ("+1 Movement Point (TSM)\n");
+                heatR.append (Messages.getString("MechDisplay.mptsm+1")); //$NON-NLS-1$
                 moreHeatMove = true;
             }
             if (en.heat >= 8 && !moreHeatFire) {
-                heatR.append ("+1 Modifier to Fire\n");
+                heatR.append (Messages.getString("MechDisplay.mf+1")); //$NON-NLS-1$
                 moreHeatFire = true;
             }
             if (en.heat >= 5 && !moreHeatMove) {
-                heatR.append ("-1 Movement Point\n");
+                heatR.append (Messages.getString("MechDisplay.mp-1")); //$NON-NLS-1$
                 moreHeatMove = true;
             }
             if (en.heat <=4) {
-                heatR.append ("None\n");
+                heatR.append (Messages.getString("MechDisplay.None")+"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     } // End public void displayMech( Entity )

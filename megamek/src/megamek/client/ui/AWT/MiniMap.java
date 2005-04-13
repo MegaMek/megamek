@@ -149,7 +149,7 @@ public class MiniMap extends Canvas
         int green;
         int blue;
 
-        File coloursFile = new File("data/hexes/" + Settings.minimapColours);
+        File coloursFile = new File("data/hexes/" + Settings.minimapColours); //$NON-NLS-1$
 
         // only while the defaults are hard-coded!
         if(!coloursFile.exists()) { return; }
@@ -175,10 +175,10 @@ public class MiniMap extends Canvas
             case StreamTokenizer.TT_WORD:
                 // read in
                 String key = st.sval;
-                if (key.equals("unitsize")) {
+                if (key.equals("unitsize")) { //$NON-NLS-1$
                     st.nextToken();
                     unitSize = (int)st.nval;
-                } else if (key.equals("background")) {
+                } else if (key.equals("background")) { //$NON-NLS-1$
                     st.nextToken();
                     red = (int)st.nval;
                     st.nextToken();
@@ -187,7 +187,7 @@ public class MiniMap extends Canvas
                     blue = (int)st.nval;
 
                     BACKGROUND = new Color(red,green,blue);
-                } else if (key.equals("heavywoods")) {
+                } else if (key.equals("heavywoods")) { //$NON-NLS-1$
                     st.nextToken();
                     red = (int)st.nval;
                     st.nextToken();
@@ -196,7 +196,7 @@ public class MiniMap extends Canvas
                     blue = (int)st.nval;
 
                     HEAVY_WOODS = new Color(red,green,blue);
-                } else if (key.equals("sinkhole")) {
+                } else if (key.equals("sinkhole")) { //$NON-NLS-1$
                     st.nextToken();
                     red = (int)st.nval;
                     st.nextToken();
@@ -205,7 +205,7 @@ public class MiniMap extends Canvas
                     blue = (int)st.nval;
 
                     SINKHOLE = new Color(red,green,blue);
-                } else if (key.equals("smokeandfire")) {
+                } else if (key.equals("smokeandfire")) { //$NON-NLS-1$
                     st.nextToken();
                     red = (int)st.nval;
                     st.nextToken();
@@ -396,19 +396,19 @@ public class MiniMap extends Canvas
                 String label;
                 switch (heightDisplayMode) {
                 case SHOW_NO_HEIGHT :
-                    label = "N";
+                    label = Messages.getString("MiniMap.NoHeightLabel"); //$NON-NLS-1$
                     break;
                 case SHOW_GROUND_HEIGHT :
-                    label = "G";
+                    label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
                     break;
                 case SHOW_BUILDING_HEIGHT :
-                    label = "B";
+                    label = Messages.getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
                     break;
                 case SHOW_TOTAL_HEIGHT :
-                    label = "T";
+                    label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
                     break;
                 default :
-                    label = "";
+                    label = ""; //$NON-NLS-1$
                 }
                 g.drawString(label, 17, getSize().height - 14 + 12);
             }
@@ -433,7 +433,7 @@ public class MiniMap extends Canvas
                 height = (h.getTerrain(Terrain.BUILDING) != null) ? h.ceiling() : h.floor();
             }
             if (height != 0) {
-                g.drawString(height + "", baseX + 5, baseY + 5);
+                g.drawString(height + "", baseX + 5, baseY + 5); //$NON-NLS-1$
             }
         }
     }

@@ -48,16 +48,16 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     private Panel panOptions = new Panel();
     private ScrollPane scrOptions = new ScrollPane();
     
-    private TextArea texDesc = new TextArea("Mouse over an option to see a description.", 3, 35, TextArea.SCROLLBARS_VERTICAL_ONLY);
+    private TextArea texDesc = new TextArea(Messages.getString("GameOptionsDialog.optionDescriptionHint"), 3, 35, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
     
     private Panel panPassword = new Panel();
-    private Label labPass = new Label("Password:");
+    private Label labPass = new Label(Messages.getString("GameOptionsDialog.Password")); //$NON-NLS-1$
     private TextField texPass = new TextField(15);
     
     private Panel panButtons = new Panel();
-    private Button butSave = new Button("Save");
-    private Button butOkay = new Button("Okay");
-    private Button butCancel = new Button("Cancel");
+    private Button butSave = new Button(Messages.getString("GameOptionsDialog.Save")); //$NON-NLS-1$
+    private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+    private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
 
     /**
      * Initialize this dialog.
@@ -109,7 +109,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
                     frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
 
-        savedAlert = new AlertDialog(frame, "Options saved", "Default games options saved. Next time you host a\ngame these options will be automatically loaded and set.");
+        savedAlert = new AlertDialog(frame, Messages.getString("GameOptionsDialog.OptionSavedDialog.title"), Messages.getString("GameOptionsDialog.OptionSavedDialog.message")); //$NON-NLS-1$ //$NON-NLS-2$
 
     }
 
@@ -119,7 +119,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
      * @param   client - the <code>Client</code> parent of this dialog.
      */
     public GameOptionsDialog(ClientGUI client) {
-        super(client.frame, "View/Edit Game Options...", true);
+        super(client.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
         this.client = client;
         this.init( client.frame, client.getClient().game.getOptions() );
     }
@@ -132,7 +132,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
      * @param   options - the <code>GameOptions</code> to be displayed.
      */
     public GameOptionsDialog( Frame frame, GameOptions options ) {
-        super(frame, "View/Edit Game Options...", true);
+        super(frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
         this.init( frame, options );
         butOkay.setEnabled( false );
     }
@@ -221,50 +221,50 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         maxOptionWidth = Math.max( maxOptionWidth,
                                    optionComp.getPreferredSize().width );
 
-        if (option.getName().equals("inf_deploy_even")) {
-            if ( !(options.getOption("inf_move_even")).booleanValue()
+        if (option.getName().equals("inf_deploy_even")) { //$NON-NLS-1$
+            if ( !(options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
                  || !editable ) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("inf_move_multi")) {
-            if ( (options.getOption("inf_move_even")).booleanValue()
-                 || (options.getOption("inf_move_later")).booleanValue()
+        } else if (option.getName().equals("inf_move_multi")) { //$NON-NLS-1$
+            if ( (options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
+                 || (options.getOption("inf_move_later")).booleanValue() //$NON-NLS-1$
                  || !editable ) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("inf_move_even")) {
-            if ( (options.getOption("inf_move_multi")).booleanValue()
-                 || (options.getOption("inf_move_later")).booleanValue()
+        } else if (option.getName().equals("inf_move_even")) { //$NON-NLS-1$
+            if ( (options.getOption("inf_move_multi")).booleanValue() //$NON-NLS-1$
+                 || (options.getOption("inf_move_later")).booleanValue() //$NON-NLS-1$
                  || !editable ) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("inf_move_later")) {
-            if ( (options.getOption("inf_move_even")).booleanValue()
-                 || (options.getOption("inf_move_multi")).booleanValue()
+        } else if (option.getName().equals("inf_move_later")) { //$NON-NLS-1$
+            if ( (options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
+                 || (options.getOption("inf_move_multi")).booleanValue() //$NON-NLS-1$
                  || !editable ) {
                 optionComp.setEditable(false);
             }
         }
-        else if (option.getName().equals("protos_deploy_even")) {
-            if ( !(options.getOption("protos_move_even")).booleanValue()
+        else if (option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
+            if ( !(options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
                  || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("protos_move_multi")) {
-            if ( (options.getOption("protos_move_even")).booleanValue()
-                 || (options.getOption("protos_move_later")).booleanValue()
+        } else if (option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
+            if ( (options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
+                 || (options.getOption("protos_move_later")).booleanValue() //$NON-NLS-1$
                  || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("protos_move_even")) {
-            if ( (options.getOption("protos_move_multi")).booleanValue()
-                 || (options.getOption("protos_move_later")).booleanValue()
+        } else if (option.getName().equals("protos_move_even")) { //$NON-NLS-1$
+            if ( (options.getOption("protos_move_multi")).booleanValue() //$NON-NLS-1$
+                 || (options.getOption("protos_move_later")).booleanValue() //$NON-NLS-1$
                  || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("protos_move_later")) {
-            if ( (options.getOption("protos_move_even")).booleanValue()
-                 || (options.getOption("protos_move_multi")).booleanValue()
+        } else if (option.getName().equals("protos_move_later")) { //$NON-NLS-1$
+            if ( (options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
+                 || (options.getOption("protos_move_multi")).booleanValue() //$NON-NLS-1$
                  || !editable ) {
                 optionComp.setEditable(false);
             }
@@ -283,76 +283,76 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     //  Arguments are the GameOption object and the true/false
     //  state of the checkbox.
     public void optionClicked(DialogOptionComponent comp, IOption option, boolean state) {
-        if (option.getName().equals("inf_move_even")) {
+        if (option.getName().equals("inf_move_even")) { //$NON-NLS-1$
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getName().equals("inf_deploy_even")) {
+                if (comp_i.option.getName().equals("inf_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.setState(false);
                 }
-                if (comp_i.option.getName().equals("inf_move_multi")) {
+                if (comp_i.option.getName().equals("inf_move_multi")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
-                if (comp_i.option.getName().equals("inf_move_later")) {
-                    comp_i.setEditable(!state);
-                }
-            }
-        }
-        if (option.getName().equals("inf_move_multi")) {
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getName().equals("inf_move_even")) {
-                    comp_i.setEditable(!state);
-                }
-                if (comp_i.option.getName().equals("inf_move_later")) {
+                if (comp_i.option.getName().equals("inf_move_later")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
             }
         }
-        if (option.getName().equals("inf_move_later")) {
+        if (option.getName().equals("inf_move_multi")) { //$NON-NLS-1$
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getName().equals("inf_move_even")) {
+                if (comp_i.option.getName().equals("inf_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
-                if (comp_i.option.getName().equals("inf_move_multi")) {
+                if (comp_i.option.getName().equals("inf_move_later")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
             }
         }
-        if (option.getName().equals("protos_move_even")) {
+        if (option.getName().equals("inf_move_later")) { //$NON-NLS-1$
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getName().equals("protos_deploy_even")) {
+                if (comp_i.option.getName().equals("inf_move_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                }
+                if (comp_i.option.getName().equals("inf_move_multi")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                }
+            }
+        }
+        if (option.getName().equals("protos_move_even")) { //$NON-NLS-1$
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.setState(false);
                 }
-                if (comp_i.option.getName().equals("protos_move_multi")) {
+                if (comp_i.option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
-                if (comp_i.option.getName().equals("protos_move_later")) {
-                    comp_i.setEditable(!state);
-                }
-            }
-        }
-        if (option.getName().equals("protos_move_multi")) {
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getName().equals("protos_move_even")) {
-                    comp_i.setEditable(!state);
-                }
-                if (comp_i.option.getName().equals("protos_move_later")) {
+                if (comp_i.option.getName().equals("protos_move_later")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
             }
         }
-        if (option.getName().equals("protos_move_later")) {
+        if (option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getName().equals("protos_move_even")) {
+                if (comp_i.option.getName().equals("protos_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
-                if (comp_i.option.getName().equals("protos_move_multi")) {
+                if (comp_i.option.getName().equals("protos_move_later")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                }
+            }
+        }
+        if (option.getName().equals("protos_move_later")) { //$NON-NLS-1$
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getName().equals("protos_move_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                }
+                if (comp_i.option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
             }

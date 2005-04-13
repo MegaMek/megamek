@@ -34,10 +34,10 @@ public class ChoiceDialog
     private boolean confirm = false;
 
     private Panel panButtons = new Panel();
-    private Button butSelectAll = new Button("Select All");
-    private Button butClearAll = new Button("Clear All");
-    private Button butOK = new Button("OK");
-    private Button butCancel = new Button("Cancel");
+    private Button butSelectAll = new Button(Messages.getString("ChoiceDialog.SelectAll")); //$NON-NLS-1$
+    private Button butClearAll = new Button(Messages.getString("ChoiceDialog.ClearAll")); //$NON-NLS-1$
+    private Button butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+    private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
 
     /**
      * The checkboxes for available choices.

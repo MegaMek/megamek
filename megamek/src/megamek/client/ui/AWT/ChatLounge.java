@@ -122,7 +122,7 @@ public class ChatLounge
 
         // Create a tabbed panel to hold our components.
         panTabs = new TabPanel();
-        Font tabPanelFont = new Font ("Helvetica",Font.BOLD,
+        Font tabPanelFont = new Font ("Helvetica",Font.BOLD, //$NON-NLS-1$
                                       Settings.chatLoungeTabFontSize);
         panTabs.setTabFont (tabPanelFont);
         
@@ -132,23 +132,23 @@ public class ChatLounge
         client.addGameListener(this);
         client.game.board.addBoardListener(this);
 
-        butOptions = new Button("Game Options...");
+        butOptions = new Button(Messages.getString("ChatLounge.butOptions")); //$NON-NLS-1$
         butOptions.addActionListener(this);
 
-        butDone = new Button("I'm Done");
+        butDone = new Button(Messages.getString("ChatLounge.butDone")); //$NON-NLS-1$
         Font font = null;
         try {
-            font = new Font("sanserif", Font.BOLD, 12);
+            font = new Font("sanserif", Font.BOLD, 12); //$NON-NLS-1$
         }
         catch (Exception exp) {
             exp.printStackTrace();
         }
         if (null == font) {
-            System.err.println("Couldn't find the new font for the 'Done' button.");
+            System.err.println("Couldn't find the new font for the 'Done' button."); //$NON-NLS-1$
         } else {
             butDone.setFont(font);
         }
-        butDone.setActionCommand("ready");
+        butDone.setActionCommand("ready"); //$NON-NLS-1$
         butDone.addActionListener(this);
 
         setupPlayerInfo();
@@ -168,7 +168,7 @@ public class ChatLounge
 
         setupMainPanel();
 
-        labStatus = new Label("", Label.CENTER);
+        labStatus = new Label("", Label.CENTER); //$NON-NLS-1$
 
         // layout main thing
         GridBagLayout gridbag = new GridBagLayout();
@@ -214,7 +214,7 @@ public class ChatLounge
 
         panPlayerInfo = new Panel();
 
-        labPlayerInfo = new Label("Player Setup");
+        labPlayerInfo = new Label(Messages.getString("ChatLounge.labPlayerInfo")); //$NON-NLS-1$
 
         lisPlayerInfo = new List(5);
         lisPlayerInfo.addItemListener(new ItemListener() {
@@ -232,26 +232,26 @@ public class ChatLounge
             }
         });
         
-        butAddBot = new Button("Add Bot");
-        butAddBot.setActionCommand("add_bot");
+        butAddBot = new Button(Messages.getString("ChatLounge.butAddBot")); //$NON-NLS-1$
+        butAddBot.setActionCommand("add_bot"); //$NON-NLS-1$
         butAddBot.addActionListener(this);
         
-		butRemoveBot = new Button("Remove Bot");
+		butRemoveBot = new Button(Messages.getString("ChatLounge.butRemoveBot")); //$NON-NLS-1$
 		butRemoveBot.setEnabled(false);
-        butRemoveBot.setActionCommand("remove_bot");
+        butRemoveBot.setActionCommand("remove_bot"); //$NON-NLS-1$
 		butRemoveBot.addActionListener(this);
 		
-        labTeam = new Label("Team:", Label.RIGHT);
-        labCamo = new Label("Camo:", Label.RIGHT);
+        labTeam = new Label(Messages.getString("ChatLounge.labTeam"), Label.RIGHT); //$NON-NLS-1$
+        labCamo = new Label(Messages.getString("ChatLounge.labCamo"), Label.RIGHT); //$NON-NLS-1$
 
         choTeam = new Choice();
         choTeam.addItemListener(this);
         setupTeams();
 
         butCamo = new ImageButton();
-        butCamo.setLabel("No Camo");
+        butCamo.setLabel(Messages.getString("ChatLounge.noCamo")); //$NON-NLS-1$
         butCamo.setPreferredSize(84, 72);
-        butCamo.setActionCommand("camo");
+        butCamo.setActionCommand("camo"); //$NON-NLS-1$
         butCamo.addActionListener(this);
         camoDialog.addItemListener(
             new CamoChoiceListener(camoDialog, butCamo, butOptions.getBackground(), player.getId(), client));
@@ -329,22 +329,22 @@ public class ChatLounge
     private void setupMinefield() {
         panMinefield = new Panel();
 
-        labMinefield = new Label("Minefields");
+        labMinefield = new Label(Messages.getString("ChatLounge.labMinefield")); //$NON-NLS-1$
 
         lisMinefield = new List(2);
 
-        labConventional = new Label("Conventional:", Label.RIGHT);
-        labCommandDetonated = new Label("Command-detonated:", Label.RIGHT);
-        labVibrabomb = new Label("Vibrabomb:", Label.RIGHT);
+        labConventional = new Label(Messages.getString("ChatLounge.labConventional"), Label.RIGHT); //$NON-NLS-1$
+        labCommandDetonated = new Label(Messages.getString("ChatLounge.labCommandDetonated"), Label.RIGHT); //$NON-NLS-1$
+        labVibrabomb = new Label(Messages.getString("ChatLounge.labVibrabomb"), Label.RIGHT); //$NON-NLS-1$
 
         fldConventional = new TextField(1);
         fldCommandDetonated = new TextField(1);
         fldVibrabomb = new TextField(1);
 
-        butMinefield = new Button("Update");
+        butMinefield = new Button(Messages.getString("ChatLounge.butMinefield")); //$NON-NLS-1$
         butMinefield.addActionListener(this);
 
-        enableMinefields(client.game.getOptions().booleanOption("minefields"));
+        enableMinefields(client.game.getOptions().booleanOption("minefields")); //$NON-NLS-1$
 
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -428,14 +428,14 @@ public class ChatLounge
      * Sets up the board settings panel
      */
     private void setupBoardSettings() {
-        labBoardSize = new Label("Board Size: # x # hexes", Label.CENTER);
-        labMapSize = new Label("Map Size: # x # boards", Label.CENTER);
+        labBoardSize = new Label(Messages.getString("ChatLounge.labBoardSize"), Label.CENTER); //$NON-NLS-1$
+        labMapSize = new Label(Messages.getString("ChatLounge.labMapSize"), Label.CENTER); //$NON-NLS-1$
 
         lisBoardsSelected = new List(5);
         lisBoardsSelected.addActionListener(this);
 
-        butChangeBoard = new Button("Edit / View Map...");
-        butChangeBoard.setActionCommand("change_board");
+        butChangeBoard = new Button(Messages.getString("ChatLounge.butChangeBoard")); //$NON-NLS-1$
+        butChangeBoard.setActionCommand("change_board"); //$NON-NLS-1$
         butChangeBoard.addActionListener(this);
 
         panBoardSettings = new Panel();
@@ -470,22 +470,17 @@ public class ChatLounge
     }
 
     private void refreshBoardSettings() {
-        labBoardSize.setText(
-            "Board Size: "
-                + client.getMapSettings().getBoardWidth()
-                + " x "
-                + client.getMapSettings().getBoardHeight()
-                + " hexes");
-        labMapSize.setText(
-            "Map Size: "
-                + client.getMapSettings().getMapWidth()
-                + " x "
-                + client.getMapSettings().getMapHeight()
-                + " boards");
+        labBoardSize.setText(Messages.getString("ChatLounge.BoardSize", //$NON-NLS-1$
+                new Object[]{new Integer(client.getMapSettings().getBoardWidth()),
+                new Integer(client.getMapSettings().getBoardHeight())}));
+        labMapSize.setText(Messages.getString("ChatLounge.BoardSize", //$NON-NLS-1$
+                new Object[]{new Integer(client.getMapSettings().getMapWidth()),
+                new Integer(client.getMapSettings().getMapHeight())}));
+
         lisBoardsSelected.removeAll();
         int index = 0;
         for (Enumeration i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add((index++) + ": " + (String) i.nextElement());
+            lisBoardsSelected.add((index++) + ": " + (String) i.nextElement()); //$NON-NLS-1$
         }
     }
 
@@ -518,8 +513,8 @@ public class ChatLounge
 
         // Should we display the panels in tabs?
         if (Settings.chatLoungeTabs) {
-            this.panTabs.add ("Select Units", panMain);
-            this.panTabs.add ("Configure", panTop);
+            this.panTabs.add ("Select Units", panMain); //$NON-NLS-1$
+            this.panTabs.add ("Configure", panTop); //$NON-NLS-1$
         } else {
             c.weighty = 0.0;
             gridbag.setConstraints(panTop, c);
@@ -565,18 +560,18 @@ public class ChatLounge
         lisEntities.addActionListener(this);
         lisEntities.addItemListener(this);
 
-        butLoadList = new Button("Load Unit List...");
-        butLoadList.setActionCommand("load_list");
+        butLoadList = new Button(Messages.getString("ChatLounge.butLoadList")); //$NON-NLS-1$
+        butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
         butLoadList.addActionListener(this);
 
         //          lblPlaceholder = new Label();
 
-        butSaveList = new Button("Save Unit List...");
-        butSaveList.setActionCommand("save_list");
+        butSaveList = new Button(Messages.getString("ChatLounge.butSaveList")); //$NON-NLS-1$
+        butSaveList.setActionCommand("save_list"); //$NON-NLS-1$
         butSaveList.addActionListener(this);
         butSaveList.setEnabled(false);
 
-        butLoad = new Button("Add A Unit...");
+        butLoad = new Button(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
         MechSummaryCache.addListener(new MechSummaryCache.Listener() {
             public void doneLoading() {
                 butLoad.setEnabled(true);
@@ -584,32 +579,32 @@ public class ChatLounge
             }
         });
         butLoad.setEnabled(MechSummaryCache.isInitialized());
-        Font font = new Font("sanserif", Font.BOLD, 18);
+        Font font = new Font("sanserif", Font.BOLD, 18); //$NON-NLS-1$
         if (null == font) {
-            System.err.println("Couldn't find the new font for the 'Add a Unit' button.");
+            System.err.println("Couldn't find the new font for the 'Add a Unit' button."); //$NON-NLS-1$
         } else {
             butLoad.setFont(font);
         }
-        butLoad.setActionCommand("load_mech");
+        butLoad.setActionCommand("load_mech"); //$NON-NLS-1$
         butLoad.addActionListener(this);
 
-        butCustom = new Button("Configure Unit...");
-        butCustom.setActionCommand("custom_mech");
+        butCustom = new Button(Messages.getString("ChatLounge.butCustom")); //$NON-NLS-1$
+        butCustom.setActionCommand("custom_mech"); //$NON-NLS-1$
         butCustom.addActionListener(this);
         butCustom.setEnabled(false);
 
-        butMechReadout = new Button("View Unit...");
-        butMechReadout.setActionCommand("Mech_readout");
+        butMechReadout = new Button(Messages.getString("ChatLounge.butMechReadout")); //$NON-NLS-1$
+        butMechReadout.setActionCommand("Mech_readout"); //$NON-NLS-1$
         butMechReadout.addActionListener(this);
         butMechReadout.setEnabled(false);
 
-        butDelete = new Button("Delete Unit");
-        butDelete.setActionCommand("delete_mech");
+        butDelete = new Button(Messages.getString("ChatLounge.butDelete")); //$NON-NLS-1$
+        butDelete.setActionCommand("delete_mech"); //$NON-NLS-1$
         butDelete.addActionListener(this);
         butDelete.setEnabled(false);
 
-        butDeleteAll = new Button("Delete All");
-        butDeleteAll.setActionCommand("delete_all");
+        butDeleteAll = new Button(Messages.getString("ChatLounge.butDeleteAll")); //$NON-NLS-1$
+        butDeleteAll.setActionCommand("delete_all"); //$NON-NLS-1$
         butDeleteAll.addActionListener(this);
         butDeleteAll.setEnabled(false);
 
@@ -670,16 +665,16 @@ public class ChatLounge
      * Sets up the battle values panel
      */
     private void setupBVs() {
-        labBVs = new Label("Total Battle Values", Label.CENTER);
+        labBVs = new Label(Messages.getString("ChatLounge.labBVs"), Label.CENTER); //$NON-NLS-1$
 
         lisBVs = new List(5);
 
         panBVs = new Panel();
 
         bvCbg = new CheckboxGroup();
-        chkBV = new Checkbox("BV", bvCbg, true);
+        chkBV = new Checkbox(Messages.getString("ChatLounge.chkBV"), bvCbg, true); //$NON-NLS-1$
         chkBV.addItemListener(this);
-        chkTons = new Checkbox("Tons", bvCbg, false);
+        chkTons = new Checkbox(Messages.getString("ChatLounge.chkTons"), bvCbg, false); //$NON-NLS-1$
         chkTons.addItemListener(this);
 
         // layout
@@ -715,12 +710,12 @@ public class ChatLounge
      * Sets up the starting positions panel
      */
     private void setupStarts() {
-        labStarts = new Label("Starting Positions", Label.CENTER);
+        labStarts = new Label(Messages.getString("ChatLounge.labStarts"), Label.CENTER); //$NON-NLS-1$
 
         lisStarts = new List(5);
         lisStarts.addActionListener(this);
 
-        butChangeStart = new Button("Change Start...");
+        butChangeStart = new Button(Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
         butChangeStart.addActionListener(this);
 
         panStarts = new Panel();
@@ -762,8 +757,8 @@ public class ChatLounge
     private void refreshEntities() {
         lisEntities.removeAll();
         int listIndex = 0;
-        String strTreeSet = "";
-        String strTreeView = "";
+        String strTreeSet = ""; //$NON-NLS-1$
+        String strTreeView = ""; //$NON-NLS-1$
         boolean localUnits = false;
         entityCorrespondance = new int[client.game.getNoOfEntities()];
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
@@ -775,30 +770,30 @@ public class ChatLounge
             }
 
             // Reset the tree strings.
-            strTreeSet = "";
-            strTreeView = "";
+            strTreeSet = ""; //$NON-NLS-1$
+            strTreeView = ""; //$NON-NLS-1$
 
             // Set the tree strings based on C3 settings for the unit.
             if (entity.hasC3i()) {
                 if (entity.calculateFreeC3Nodes() == 5)
-                    strTreeSet = "**";
-                strTreeView = " (" + entity.getC3NetId() + ")";
+                    strTreeSet = "**"; //$NON-NLS-1$
+                strTreeView = " (" + entity.getC3NetId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
             } else if (entity.hasC3()) {
                 if (entity.getC3Master() == null) {
                     if (entity.hasC3S())
-                        strTreeSet = "***";
+                        strTreeSet = "***"; //$NON-NLS-1$
                     else
-                        strTreeSet = "*";
+                        strTreeSet = "*"; //$NON-NLS-1$
                 } else if (!entity.C3MasterIs(entity)) {
-                    strTreeSet = ">";
+                    strTreeSet = ">"; //$NON-NLS-1$
                     if (entity.getC3Master().getC3Master() != null
                         && !entity.getC3Master().C3MasterIs(entity.getC3Master()))
-                        strTreeSet = ">>";
-                    strTreeView = " -> " + entity.getC3Master().getDisplayName();
+                        strTreeSet = ">>"; //$NON-NLS-1$
+                    strTreeView = " -> " + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
                 }
             }
 
-            if (!client.game.getOptions().booleanOption("pilot_advantages")) {
+            if (!client.game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
                 entity.getCrew().clearAdvantages();
             }
 
@@ -806,65 +801,57 @@ public class ChatLounge
 
             // Handle the "Blind Drop" option.
             if (!entity.getOwner().equals(client.getLocalPlayer())
-                && client.game.getOptions().booleanOption("blind_drop")
-                && !client.game.getOptions().booleanOption("real_blind_drop")) {
-                String unitClass = "";
+                && client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
+                && !client.game.getOptions().booleanOption("real_blind_drop")) { //$NON-NLS-1$
+                String unitClass = ""; //$NON-NLS-1$
                 if (entity instanceof Infantry) {
-                    unitClass = "Infantry";
+                    unitClass = Messages.getString("ChatLounge.0"); //$NON-NLS-1$
                 } else if (entity instanceof Protomech) {
-                    unitClass = "Protomech";
+                    unitClass = Messages.getString("ChatLounge.1"); //$NON-NLS-1$
                 } else {
                     int weight = entity.getWeightClass();
                     switch (weight) {
                         case Entity.WEIGHT_LIGHT :
-                            unitClass = "Light";
+                            unitClass = Messages.getString("ChatLounge.2"); //$NON-NLS-1$
                             break;
                         case Entity.WEIGHT_MEDIUM :
-                            unitClass = "Medium";
+                            unitClass = Messages.getString("ChatLounge.3"); //$NON-NLS-1$
                             break;
                         case Entity.WEIGHT_HEAVY :
-                            unitClass = "Heavy";
+                            unitClass = Messages.getString("ChatLounge.4"); //$NON-NLS-1$
                             break;
                         case Entity.WEIGHT_ASSAULT :
-                            unitClass = "Assault";
+                            unitClass = Messages.getString("ChatLounge.5"); //$NON-NLS-1$
                             break;
                     }
                     if (entity instanceof Tank) {
-                        unitClass += " Vehicle";
+                        unitClass += Messages.getString("ChatLounge.6"); //$NON-NLS-1$
                     }
                 }
                 lisEntities.add(
-                    entity.getOwner().getName()
-                        + " ("
-                        + entity.getCrew().getGunnery()
-                        + "/"
-                        + entity.getCrew().getPiloting()
-                        + " pilot"
-                        + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "")
-                        + ")"
-                        + " Class: "
-                        + unitClass
-                        + ((entity.isOffBoard()) ? " deploys off board" : "")
-                        + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
+                        Messages.getString("ChatLounge.EntityListEntry1", new Object[]{ //$NON-NLS-1$
+                                entity.getOwner().getName(),
+                                new Integer(entity.getCrew().getGunnery()),
+                                new Integer(entity.getCrew().getPiloting()),
+                                (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                unitClass,
+                                ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
+                                ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : "")})); //$NON-NLS-1$ //$NON-NLS-2$
                 entityCorrespondance[listIndex++] = entity.getId();
             } else if (entity.getOwner().equals(client.getLocalPlayer())
-                       || (!client.game.getOptions().booleanOption("blind_drop")
-                       && !client.game.getOptions().booleanOption("real_blind_drop"))) {
+                       || (!client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
+                       && !client.game.getOptions().booleanOption("real_blind_drop"))) { //$NON-NLS-1$
                 lisEntities.add(
                     strTreeSet
-                        + entity.getDisplayName()
-                        + " ("
-                        + entity.getCrew().getGunnery()
-                        + "/"
-                        + entity.getCrew().getPiloting()
-                        + " pilot"
-                        + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "")
-                        + ")"
-                        + " BV="
-                        + entity.calculateBattleValue()
-                        + strTreeView
-                        + ((entity.isOffBoard()) ? " deploys off board" : "")
-                        + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
+                    + Messages.getString("ChatLounge.EntityListEntry1", new Object[]{ //$NON-NLS-1$
+                            entity.getDisplayName(),
+                            new Integer(entity.getCrew().getGunnery()),
+                            new Integer(entity.getCrew().getPiloting()),
+                            (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            new Integer(entity.calculateBattleValue()),
+                            strTreeView,
+                            ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
+                            ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : "")})); //$NON-NLS-1$ //$NON-NLS-2$
                 entityCorrespondance[listIndex++] = entity.getId();
             }
         }
@@ -889,15 +876,15 @@ public class ChatLounge
             final Player player = (Player) i.nextElement();
             if (player != null) {
                 StringBuffer pi = new StringBuffer();
-                pi.append(player.getName()).append(" : ");
+                pi.append(player.getName()).append(" : "); //$NON-NLS-1$
                 pi.append(Player.teamNames[player.getTeam()]);
 
                 String plyrCamo = player.getCamoFileName();
 
                 if ((null == plyrCamo) || Player.NO_CAMO.equals(plyrCamo)) {
-                    pi.append(", ").append(Player.colorNames[player.getColorIndex()]);
+                    pi.append(", ").append(Player.colorNames[player.getColorIndex()]); //$NON-NLS-1$
                 } else {
-                    pi.append(", ").append(player.getCamoFileName());
+                    pi.append(", ").append(player.getCamoFileName()); //$NON-NLS-1$
                 }
 
                 lisPlayerInfo.add(pi.toString());
@@ -914,9 +901,9 @@ public class ChatLounge
             final Player player = (Player) i.nextElement();
             if (player != null) {
                 StringBuffer pi = new StringBuffer();
-                pi.append(player.getName()).append(" : ");
-                pi.append(player.getNbrMFConventional()).append("/");
-                pi.append(player.getNbrMFCommand()).append("/");
+                pi.append(player.getName()).append(" : "); //$NON-NLS-1$
+                pi.append(player.getNbrMFConventional()).append("/"); //$NON-NLS-1$
+                pi.append(player.getNbrMFCommand()).append("/"); //$NON-NLS-1$
                 pi.append(player.getNbrMFVibra());
 
                 lisMinefield.add(pi.toString());
@@ -956,9 +943,9 @@ public class ChatLounge
                }
             }
             if (useBv) {
-                lisBVs.add(player.getName() + " BV=" + (int) playerValue);
+                lisBVs.add(player.getName() + Messages.getString("ChatLounge.BV") + (int) playerValue); //$NON-NLS-1$
             } else {
-                lisBVs.add(player.getName() + " Tons=" + playerValue);
+                lisBVs.add(player.getName() + Messages.getString("ChatLounge.Tons") + playerValue); //$NON-NLS-1$
             }
         }
     }
@@ -1023,7 +1010,7 @@ public class ChatLounge
      * condition.
      */
     private void refreshDoneButton(boolean done) {
-        butDone.setLabel(done ? "Not Done" : "I'm Done");
+        butDone.setLabel(done ? Messages.getString("ChatLounge.notDone") : Messages.getString("ChatLounge.imDone")); //$NON-NLS-1$ //$NON-NLS-2$
     }
     private void refreshDoneButton() {
         refreshDoneButton(client.getLocalPlayer().isDone());
@@ -1060,13 +1047,13 @@ public class ChatLounge
                 nbrVibra = Integer.parseInt(vibra);
             }
         } catch (NumberFormatException e) {
-            AlertDialog ad = new AlertDialog(clientgui.frame, "Minefield", "Only positive integers allowed");
+            AlertDialog ad = new AlertDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.title"), Messages.getString("ChatLounge.MinefieldAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
             ad.show();
             return;
         }
 
         if (nbrConv < 0 || nbrCmd < 0 || nbrVibra < 0) {
-            AlertDialog ad = new AlertDialog(clientgui.frame, "Minefield", "Only positive integers allowed");
+            AlertDialog ad = new AlertDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.title"), Messages.getString("ChatLounge.MinefieldAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
             ad.show();
             return;
         }
@@ -1136,11 +1123,11 @@ public class ChatLounge
         MechView mechView = new MechView(entity);
         TextArea ta = new TextArea();
         ta.setEditable(false);
-        ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        ta.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         ta.setText(mechView.getMechReadout());
-        final Dialog dialog = new Dialog(clientgui.frame, "Unit Quick View", false);
-        Button btn = new Button("Ok");
-        dialog.add("South", btn);
+        final Dialog dialog = new Dialog(clientgui.frame, Messages.getString("ChatLounge.quickView"), false); //$NON-NLS-1$
+        Button btn = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+        dialog.add(Messages.getString("ChatLounge.South"), btn); //$NON-NLS-1$
         btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dialog.setVisible(false);
@@ -1151,13 +1138,13 @@ public class ChatLounge
                 dialog.setVisible(false);
             }
         });
-        dialog.add("Center", ta);
+        dialog.add(Messages.getString("ChatLounge.Center"), ta); //$NON-NLS-1$
 
         // Preview image of the Mech...
         BufferedPanel panPreview = new BufferedPanel();
         panPreview.setPreferredSize(84, 72);
         clientgui.loadPreviewImage(panPreview, entity);
-        dialog.add("North", panPreview);
+        dialog.add(Messages.getString("ChatLounge.North"), panPreview); //$NON-NLS-1$
 
         dialog.setLocation(
             clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2 - dialog.getSize().width / 2,
@@ -1248,7 +1235,7 @@ public class ChatLounge
             butCustom.setEnabled(selected);
 
             // Handle "Blind drop" option.
-            if (selected && client.game.getOptions().booleanOption("blind_drop")) {
+            if (selected && client.game.getOptions().booleanOption("blind_drop")) { //$NON-NLS-1$
                 Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
                 butMechReadout.setEnabled(entity.getOwner().equals(client.getLocalPlayer()));
                 butCustom.setEnabled(entity.getOwner().equals(client.getLocalPlayer()));
@@ -1331,7 +1318,7 @@ public class ChatLounge
             clientgui.getStartingPositionDialog().update();
             Client c = getPlayerListSelected(lisStarts);
             if (c == null) {
-				clientgui.doAlertDialog("Improper command", "Please select a bot you control or your player from the player list.");
+				clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
 			clientgui.getStartingPositionDialog().setClient(c);
@@ -1351,13 +1338,13 @@ public class ChatLounge
         } else if (ev.getSource() == butCamo) {
             camoDialog.show();
         } else if (ev.getSource() == butAddBot) {
-            String name = name = "Bot" + lisPlayerInfo.getItemCount();
-            Prompt p = new Prompt(clientgui.frame, "Choose Bot Name", "Name:", name, 15);
+            String name = name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
+            Prompt p = new Prompt(clientgui.frame, Messages.getString("ChatLounge.ChooseBotName"), Messages.getString("ChatLounge.Name"), name, 15); //$NON-NLS-1$ //$NON-NLS-2$
             if (!p.showDialog()){
                 return;
             }
-            if (p.getText().trim().equals("")) {
-                name = "Bot" + lisPlayerInfo.getItemCount();
+            if (p.getText().trim().equals("")) { //$NON-NLS-1$
+                name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
             } else {
                 name = p.getText();
             }
@@ -1366,14 +1353,14 @@ public class ChatLounge
 			try {
 				c.connect();
 			} catch (Exception e) {
-				clientgui.doAlertDialog("Error", "Could not add bot");
+				clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			c.retrieveServerInfo();
 			clientgui.getBots().put(name, c);
         } else if (ev.getSource() == butRemoveBot) {
             Client c = getPlayerListSelected(lisPlayerInfo);
             if (c == null || c == client) {
-				clientgui.doAlertDialog("Improper command", "Please select a bot you control from the player list.");
+				clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBo")); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
             } 
             c.die();
@@ -1385,7 +1372,7 @@ public class ChatLounge
         if (l.getSelectedIndex() == -1) {
             return client;
         }
-		String name = l.getSelectedItem().substring(0, Math.max(0,l.getSelectedItem().indexOf(" :")));
+		String name = l.getSelectedItem().substring(0, Math.max(0,l.getSelectedItem().indexOf(" :"))); //$NON-NLS-1$
 	    BotClient c = (BotClient)clientgui.getBots().get(name);
 	    if (c == null && client.getName().equals(name)) {
 	        return client;

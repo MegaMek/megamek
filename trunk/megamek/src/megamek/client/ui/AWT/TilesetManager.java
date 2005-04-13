@@ -54,8 +54,8 @@ public class TilesetManager {
     private DirectoryItems camos;
     
     // mech images
-    private MechTileset mechTileset = new MechTileset("data/mex/");
-    private MechTileset wreckTileset = new MechTileset("data/mex/wrecks/");
+    private MechTileset mechTileset = new MechTileset("data/mex/"); //$NON-NLS-1$
+    private MechTileset wreckTileset = new MechTileset("data/mex/wrecks/"); //$NON-NLS-1$
     private ArrayList mechImageList = new ArrayList();
     private HashMap mechImages = new HashMap();
     
@@ -68,10 +68,10 @@ public class TilesetManager {
     public TilesetManager(Component comp) throws java.io.IOException {
         this.comp = comp;
         this.tracker = new MediaTracker(comp);
-        camos = new DirectoryItems( new File("data/camo"), "",
+        camos = new DirectoryItems( new File("data/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
                                     ImageFileFactory.getInstance() );
-        mechTileset.loadFromFile("mechset.txt");
-        wreckTileset.loadFromFile("wreckset.txt");
+        mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
+        wreckTileset.loadFromFile("wreckset.txt"); //$NON-NLS-1$
         hexTileset.loadFromFile(Settings.mapTileset);
 
     }
@@ -80,12 +80,12 @@ public class TilesetManager {
         EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
-            System.out.println("Loading image for " + entity.getShortName() + " on the fly.");
+            System.out.println("Loading image for " + entity.getShortName() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
-                System.out.println("Unable to load image for entity: " + entity.getShortName());
+                System.out.println("Unable to load image for entity: " + entity.getShortName()); //$NON-NLS-1$
             }            
         }
         return entityImage.getIcon();
@@ -95,12 +95,12 @@ public class TilesetManager {
         EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
-            System.out.println("Loading image for " + entity.getShortName() + " on the fly.");
+            System.out.println("Loading image for " + entity.getShortName() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
-                System.out.println("Unable to load image for entity: " + entity.getShortName());
+                System.out.println("Unable to load image for entity: " + entity.getShortName()); //$NON-NLS-1$
                 return null;
             }            
         }
@@ -122,12 +122,12 @@ public class TilesetManager {
         EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
-            System.out.println("Loading image for " + entity.getShortName() + " on the fly.");
+            System.out.println("Loading image for " + entity.getShortName() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
-                System.out.println("Unable to load image for entity: " + entity.getShortName());
+                System.out.println("Unable to load image for entity: " + entity.getShortName()); //$NON-NLS-1$
             }            
         }
         // get image rotated for facing
@@ -269,7 +269,7 @@ public class TilesetManager {
 
             // Translate the root camo directory name.
             String category = player.getCamoCategory();
-            if ( Player.ROOT_CAMO.equals( category ) ) category = "";
+            if ( Player.ROOT_CAMO.equals( category ) ) category = ""; //$NON-NLS-1$
             camo = (Image) camos.getItem( category, player.getCamoFileName() );
 
         } catch ( Exception err ) {
@@ -408,11 +408,11 @@ public class TilesetManager {
           try {
               pgMech.grabPixels();
           } catch (InterruptedException e) {
-              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage());
+              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
               return image;
           }
           if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
-              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
+              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
               return image;
           }
           
@@ -421,11 +421,11 @@ public class TilesetManager {
 	          try {
 	              pgCamo.grabPixels();
 	          } catch (InterruptedException e) {
-	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage());
+	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage()); //$NON-NLS-1$
 	              return image;
 	          }
 	          if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
-	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
+	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
 	              return image;
 	          }
 	      }

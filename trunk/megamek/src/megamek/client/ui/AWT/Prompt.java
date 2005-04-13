@@ -30,8 +30,8 @@ import java.awt.event.ActionListener;
  */
 public class Prompt extends Dialog implements ActionListener {
 
-    private Button butOk = new Button("Ok");
-    private Button butCancel = new Button("Cancel");
+    private Button butOk = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+    private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     private TextField txtValue = new TextField();
     private Label lblText = new Label();
     private boolean ok = false;

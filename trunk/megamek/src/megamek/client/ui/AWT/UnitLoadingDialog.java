@@ -25,13 +25,13 @@ import megamek.common.MechSummaryCache;
 
 public class UnitLoadingDialog extends Dialog {
 
-    private Label lLoading = new Label("Loading units...");
+    private Label lLoading = new Label(Messages.getString("UnitLoadingDialog.LoadingUnits")); //$NON-NLS-1$
     private Label lSpacer = new Label();
-    private Label lCacheText = new Label("  ...from cache: ");
+    private Label lCacheText = new Label(Messages.getString("UnitLoadingDialog.fromCache")); //$NON-NLS-1$
     private Label lCacheCount = new Label();
-    private Label lFileText = new Label("  ...from files: ");
+    private Label lFileText = new Label(Messages.getString("UnitLoadingDialog.fromFiles")); //$NON-NLS-1$
     private Label lFileCount = new Label();
-    private Label lZipText = new Label("  ...from zips: ");
+    private Label lZipText = new Label(Messages.getString("UnitLoadingDialog.fromZips")); //$NON-NLS-1$
     private Label lZipCount = new Label();
 
     // Determines how often to update the loading dialog.
@@ -39,7 +39,7 @@ public class UnitLoadingDialog extends Dialog {
     private static final int UPDATE_FREQUENCY = 50;
 
     public UnitLoadingDialog(Frame frame) {
-        super(frame,"Please wait...");
+        super(frame,Messages.getString("UnitLoadingDialog.pleaseWait")); //$NON-NLS-1$
 
         setLayout(new GridLayout(4,2));
         add(lLoading);
@@ -73,7 +73,7 @@ public class UnitLoadingDialog extends Dialog {
                 }
             }
         };
-        Thread t = new Thread(r, "Unit Loader");
+        Thread t = new Thread(r, "Unit Loader"); //$NON-NLS-1$
         t.start();
     }
     

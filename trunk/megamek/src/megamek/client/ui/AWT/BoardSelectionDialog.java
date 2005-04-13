@@ -41,13 +41,13 @@ public class BoardSelectionDialog
     
     private Panel panMapSize = new Panel();
 
-    private Label labBoardSize = new Label("Board Size (hexes):", Label.RIGHT);
-    private Label labBoardDivider = new Label("x", Label.CENTER);
+    private Label labBoardSize = new Label(Messages.getString("BoardSelectionDialog.BoardSize"), Label.RIGHT); //$NON-NLS-1$
+    private Label labBoardDivider = new Label("x", Label.CENTER); //$NON-NLS-1$
     private TextField texBoardWidth = new TextField(2);
     private TextField texBoardHeight = new TextField(2);
     
-    private Label labMapSize = new Label("Map Size (boards):", Label.RIGHT);
-    private Label labMapDivider = new Label("x", Label.CENTER);
+    private Label labMapSize = new Label(Messages.getString("BoardSelectionDialog.MapSize"), Label.RIGHT); //$NON-NLS-1$
+    private Label labMapDivider = new Label("x", Label.CENTER); //$NON-NLS-1$
     private TextField texMapWidth = new TextField(2);
     private TextField texMapHeight = new TextField(2);
     
@@ -55,30 +55,30 @@ public class BoardSelectionDialog
     private Panel panMapButtons = new Panel();
     
     private Panel panBoardsSelected = new Panel();
-    private Label labBoardsSelected = new Label("Maps Selected:", Label.CENTER);
+    private Label labBoardsSelected = new Label(Messages.getString("BoardSelectionDialog.MapsSelected"), Label.CENTER); //$NON-NLS-1$
     private java.awt.List lisBoardsSelected = new java.awt.List(10);
-    private Checkbox chkSelectAll = new Checkbox("Select All");
+    private Checkbox chkSelectAll = new Checkbox(Messages.getString("BoardSelectionDialog.SelectAll")); //$NON-NLS-1$
 
-    private Button butChange = new Button("<<");
+    private Button butChange = new Button("<<"); //$NON-NLS-1$
 
     private Panel panBoardsAvailable = new Panel();
-    private Label labBoardsAvailable = new Label("Maps Available :", Label.CENTER);
+    private Label labBoardsAvailable = new Label(Messages.getString("BoardSelectionDialog.mapsAvailable"), Label.CENTER); //$NON-NLS-1$
     private java.awt.List lisBoardsAvailable = new java.awt.List(10);
-    private Checkbox chkRotateBoard = new Checkbox("Rotate Board");
+    private Checkbox chkRotateBoard = new Checkbox(Messages.getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
     
     private Panel panButtons = new Panel();
-	private Button butUpdate = new Button("Update Size");
-	private Button butRandomMap = new Button("Generated Map Settings");
-    private Label labButtonSpace = new Label("", Label.CENTER);
-    private Button butOkay = new Button("Okay");
-    private Button butCancel = new Button("Cancel");
+	private Button butUpdate = new Button(Messages.getString("BoardSelectionDialog.UpdateSize")); //$NON-NLS-1$
+	private Button butRandomMap = new Button(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
+    private Label labButtonSpace = new Label("", Label.CENTER); //$NON-NLS-1$
+    private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+    private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     
     private boolean bDelayedSingleSelect = false;
     
 
     /** Creates new BoardSelectionDialog */
     public BoardSelectionDialog(ClientGUI client) {
-        super(client.frame, "Edit Board Layout...", true);
+        super(client.frame, Messages.getString("BoardSelectionDialog.EditBoardLaout"), true); //$NON-NLS-1$
         this.client = client;
         this.mapSettings = (MapSettings)client.getClient().getMapSettings().clone();
         setResizable(true);
@@ -271,7 +271,7 @@ public class BoardSelectionDialog
         lisBoardsSelected.removeAll();
         int index = 0;
         for (Enumeration i = mapSettings.getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add((index++) + ": " + (String)i.nextElement());
+            lisBoardsSelected.add((index++) + ": " + (String)i.nextElement()); //$NON-NLS-1$
         }
         lisBoardsSelected.select(0);
         refreshSelectAllCheck();
@@ -300,7 +300,7 @@ public class BoardSelectionDialog
                  chkRotateBoard.getState() ) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
-            lisBoardsSelected.replaceItem(selected[i] + ": " + name, selected[i]);
+            lisBoardsSelected.replaceItem(selected[i] + ": " + name, selected[i]); //$NON-NLS-1$
             mapSettings.getBoardsSelectedVector().setElementAt(name, selected[i]);
             lisBoardsSelected.select(selected[i]);
         }
@@ -323,13 +323,13 @@ public class BoardSelectionDialog
             mapWidth = Integer.parseInt(texMapWidth.getText());
             mapHeight = Integer.parseInt(texMapHeight.getText());
         } catch (NumberFormatException ex) {
-            new AlertDialog(client.frame, "Invalid Map Size", "Invalid number in map size settings.").show();
+            new AlertDialog(client.frame, Messages.getString("BoardSelectionDialog.InvalidMapSize"), Messages.getString("BoardSelectionDialog.InvalidNumberOfmaps")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         
         // check settings
         if (boardHeight <= 0 || boardHeight <= 0 || mapWidth <= 0 || mapHeight <= 0) {
-            new AlertDialog(client.frame, "Invalid Map Size", "All map size settings must be greater than 0.").show();
+            new AlertDialog(client.frame, Messages.getString("BoardSelectionDialog.InvalidMapSize"), Messages.getString("BoardSelectionDialog.MapSizeMustBeGreateter0")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         
@@ -344,10 +344,10 @@ public class BoardSelectionDialog
         refreshMapButtons();
         
         lisBoardsSelected.removeAll();
-        lisBoardsSelected.add("Updating...");
+        lisBoardsSelected.add(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
         
         lisBoardsAvailable.removeAll();
-        lisBoardsAvailable.add("Updating...");
+        lisBoardsAvailable.add(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
         
         client.getClient().sendMapQuery(mapSettings);
     }
@@ -376,12 +376,12 @@ public class BoardSelectionDialog
         || !texBoardHeight.getText().equals(Integer.toString(mapSettings.getBoardHeight()))
         || !texMapWidth.getText().equals(Integer.toString(mapSettings.getMapWidth()))
         || !texMapHeight.getText().equals(Integer.toString(mapSettings.getMapHeight()))) {
-            new AlertDialog(client.frame, "Please Update Map Size", "Please hit the Update Map Size button after changing map size settings.").show();
+            new AlertDialog(client.frame, Messages.getString("BoardSelectionDialog.UpdateMapSize.title"), Messages.getString("BoardSelectionDialog.UpdateMapSize.message")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         
         if (mapSettings.getBoardsAvailableVector().size() <= 0) {
-            new AlertDialog(client.frame, "No Boards of Selected Size", "There are no boards of the selected size.  Please select a valid size.").show();
+            new AlertDialog(client.frame, Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.title"), Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.message")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         
@@ -423,7 +423,7 @@ public class BoardSelectionDialog
 //            for (int i = 0; i < selected.length; i++) {
 //                lisBoardsSelected.deselect(selected[i]);
 //            }
-        	System.out.println("Selected!");
+        	System.out.println("Selected!"); //$NON-NLS-1$
         	if (bDelayedSingleSelect) {
         		lisBoardsSelected.setMultipleMode(false);
         	}
@@ -437,10 +437,10 @@ public class BoardSelectionDialog
         refreshMapButtons();
         
         lisBoardsSelected.removeAll();
-        lisBoardsSelected.add("Updating...");
+        lisBoardsSelected.add(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
         
         lisBoardsAvailable.removeAll();
-        lisBoardsAvailable.add("Updating...");
+        lisBoardsAvailable.add(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
         
         client.getClient().sendMapQuery(mapSettings);
     }
@@ -459,7 +459,7 @@ public class BoardSelectionDialog
 
 	public void keyPressed(KeyEvent ev) {
 		if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
-			System.out.println("Multiple on!");
+			System.out.println("Multiple on!"); //$NON-NLS-1$
 			lisBoardsSelected.setMultipleMode(true);
 			bDelayedSingleSelect = false;
 		}
@@ -468,7 +468,7 @@ public class BoardSelectionDialog
 
 	public void keyReleased(KeyEvent ev) {
 		if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
-			System.out.println("Multiple off!");
+			System.out.println("Multiple off!"); //$NON-NLS-1$
 			bDelayedSingleSelect = true;
 		}
 	}

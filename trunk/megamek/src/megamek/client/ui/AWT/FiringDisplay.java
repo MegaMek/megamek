@@ -35,19 +35,19 @@ public class FiringDisplay
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     
     // Action command names
-    public static final String FIRE_AIM        = "fireAim";
-    public static final String FIRE_FIND_CLUB  = "fireFindClub";
-    public static final String FIRE_FIRE       = "fireFire";
-    public static final String FIRE_MODE       = "fireMode";
-    public static final String FIRE_FLIP_ARMS  = "fireFlipArms";
-    public static final String FIRE_MORE       = "fireMore";
-    public static final String FIRE_NEXT       = "fireNext";
-    public static final String FIRE_NEXT_TARG  = "fireNextTarg";
-    public static final String FIRE_SKIP       = "fireSkip";
-    public static final String FIRE_SPOT       = "fireSpot";
-    public static final String FIRE_TWIST      = "fireTwist";
-    public static final String FIRE_CANCEL     = "fireCancel";
-    public static final String FIRE_REPORT     = "fireReport";
+    public static final String FIRE_AIM        = "fireAim"; //$NON-NLS-1$
+    public static final String FIRE_FIND_CLUB  = "fireFindClub"; //$NON-NLS-1$
+    public static final String FIRE_FIRE       = "fireFire"; //$NON-NLS-1$
+    public static final String FIRE_MODE       = "fireMode"; //$NON-NLS-1$
+    public static final String FIRE_FLIP_ARMS  = "fireFlipArms"; //$NON-NLS-1$
+    public static final String FIRE_MORE       = "fireMore"; //$NON-NLS-1$
+    public static final String FIRE_NEXT       = "fireNext"; //$NON-NLS-1$
+    public static final String FIRE_NEXT_TARG  = "fireNextTarg"; //$NON-NLS-1$
+    public static final String FIRE_SKIP       = "fireSkip"; //$NON-NLS-1$
+    public static final String FIRE_SPOT       = "fireSpot"; //$NON-NLS-1$
+    public static final String FIRE_TWIST      = "fireTwist"; //$NON-NLS-1$
+    public static final String FIRE_CANCEL     = "fireCancel"; //$NON-NLS-1$
+    public static final String FIRE_REPORT     = "fireReport"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -109,73 +109,73 @@ public class FiringDisplay
         // fire
         attacks = new Vector();
 
-        setupStatusBar("Waiting to begin Firing phase...");
+        setupStatusBar(Messages.getString("FiringDisplay.waitingForFiringPhase")); //$NON-NLS-1$
         
-        butFire = new Button("Fire");
+        butFire = new Button(Messages.getString("FiringDisplay.Fire")); //$NON-NLS-1$
         butFire.addActionListener(this);
         butFire.addKeyListener(this);
         butFire.setActionCommand(FIRE_FIRE);
         butFire.setEnabled(false);
         
-        butSkip = new Button("Skip");
+        butSkip = new Button(Messages.getString("FiringDisplay.Skip")); //$NON-NLS-1$
         butSkip.addActionListener(this);
         butSkip.addKeyListener(this);
         butSkip.setActionCommand(FIRE_SKIP);
         butSkip.setEnabled(false);
         
-        butTwist = new Button("Twist");
+        butTwist = new Button(Messages.getString("FiringDisplay.Twist")); //$NON-NLS-1$
         butTwist.addActionListener(this);
         butTwist.addKeyListener(this);
         butTwist.setActionCommand(FIRE_TWIST);
         butTwist.setEnabled(false);
         
 
-        butFindClub = new Button("Find Club");
+        butFindClub = new Button(Messages.getString("FiringDisplay.FindClub")); //$NON-NLS-1$
         butFindClub.addActionListener(this);
         butFindClub.addKeyListener(this);
         butFindClub.setActionCommand(FIRE_FIND_CLUB);
         butFindClub.setEnabled(false);
         
-        butNextTarg = new Button("Next Target");
+        butNextTarg = new Button(Messages.getString("FiringDisplay.NextTarget")); //$NON-NLS-1$
         butNextTarg.addActionListener(this);
         butNextTarg.addKeyListener(this);
         butNextTarg.setActionCommand(FIRE_NEXT_TARG);
         butNextTarg.setEnabled(false);
         
-        butFlipArms = new Button("Flip Arms");
+        butFlipArms = new Button(Messages.getString("FiringDisplay.FlipArms")); //$NON-NLS-1$
         butFlipArms.addActionListener(this);
         butFlipArms.addKeyListener(this);
         butFlipArms.setActionCommand(FIRE_FLIP_ARMS);
         butFlipArms.setEnabled(false);
         
-        butSpot = new Button("Spot");
+        butSpot = new Button(Messages.getString("FiringDisplay.Spot")); //$NON-NLS-1$
         butSpot.addActionListener(this);
         butSpot.addKeyListener(this);
         butSpot.setActionCommand(FIRE_SPOT);
         butSpot.setEnabled(false);
         
-        butSpace = new Button(".");
+        butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
         // Fire Mode - Adding a Fire Mode Button to the 2nd Menu - Rasia
-        butFireMode = new Button("Mode");
+        butFireMode = new Button(Messages.getString("FiringDisplay.Mode")); //$NON-NLS-1$
         butFireMode.addActionListener(this);
         butFireMode.addKeyListener(this);
         butFireMode.setActionCommand(FIRE_MODE);
         butFireMode.setEnabled(false);
 
-        butDone = new Button("Done");
+        butDone = new Button(Messages.getString("FiringDisplay.Done")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.addKeyListener(this);
         butDone.setEnabled(false);
         
-        butNext = new Button(" Next Unit ");
+        butNext = new Button(Messages.getString("FiringDisplay.NextUnit")); //$NON-NLS-1$
         butNext.addActionListener(this);
         butNext.addKeyListener(this);
         butNext.setActionCommand(FIRE_NEXT);
         butNext.setEnabled(false);
         
-        butMore = new Button("More...");
+        butMore = new Button(Messages.getString("FiringDisplay.More")); //$NON-NLS-1$
         butMore.addActionListener(this);
         butMore.addKeyListener(this);
         butMore.setActionCommand(FIRE_MORE);
@@ -291,7 +291,7 @@ public class FiringDisplay
                 // We were *supposed* to have found an on-board entity.
                 if ( null == ce().getPosition() ) {
                     System.err.println
-                        ("FiringDisplay: could not find an on-board entity: " +
+                        ("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
                          en);
                     return;
                 }
@@ -318,10 +318,10 @@ public class FiringDisplay
 
             setFindClubEnabled(FindClubAction.canMechFindClub(client.game, en));
             setSpotEnabled(ce().canSpot()
-              && client.game.getOptions().booleanOption("indirect_fire"));
+              && client.game.getOptions().booleanOption("indirect_fire")); //$NON-NLS-1$
             setFlipArmsEnabled(ce().canFlipArms());
         } else {
-            System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
+            System.err.println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
     }
     
@@ -422,11 +422,10 @@ public class FiringDisplay
         
         // notify the player
         if (m.getType().hasInstantModeSwitch()) {
-            clientgui.systemMessage("Switched " + m.getName() + " to " + m.curMode());
+            clientgui.systemMessage(Messages.getString("FiringDisplay.switched", new Object[]{m.getName(), m.curMode()})); //$NON-NLS-1$
         }
         else {
-            clientgui.systemMessage(m.getName() + " will switch to " + m.pendingMode() + 
-                    " at end of turn.");
+            clientgui.systemMessage(Messages.getString("FiringDisplay.willSwitch", new Object[]{m.getName(), m.pendingMode()})); //$NON-NLS-1$
         }
 
         this.updateTarget();
@@ -521,9 +520,8 @@ public class FiringDisplay
     private void ready() {
         if (attacks.isEmpty() && Settings.nagForNoAction) {
             // comfirm this action
-            String title = "Don't fire?";
-            String body = "This unit has not fired any weapons.\n\n" +
-                "Are you really done?\n";
+            String title = Messages.getString("FiringDisplay.DontFireDialog.title"); //$NON-NLS-1$
+            String body = Messages.getString("FiringDisplay.DontFireDialog.message"); //$NON-NLS-1$
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if ( !response.getShowAgain() ) {
                 Settings.nagForNoAction = false;
@@ -535,7 +533,7 @@ public class FiringDisplay
         }
         // auto spot if we can and the option is set
         if (attacks.isEmpty() && 
-            client.game.getOptions().booleanOption("auto_spot") &&
+            client.game.getOptions().booleanOption("auto_spot") && //$NON-NLS-1$
 		    client.game.getPhase() == Game.PHASE_FIRING) {
             if (!ce().isINarcedWith( INarcPod.HAYWIRE )) {
                     doSpot();
@@ -574,7 +572,7 @@ public class FiringDisplay
         // validate
         if (ce() == null || target == null || mounted == null 
         || !(mounted.getType() instanceof WeaponType)) {
-            throw new IllegalArgumentException("current fire parameters are invalid");
+            throw new IllegalArgumentException("current fire parameters are invalid"); //$NON-NLS-1$
         }
 
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(), 
@@ -661,12 +659,8 @@ public class FiringDisplay
     }
         
     // comfirm this action
-    String title = "Find A Club?";
-    String body = "Do you want to find a club?\n\n" +
-      "Finding a club is an exclusive action.  If you choose\n" +
-      "to find a club, any declared attacks will be cancelled,\n" +
-      "and you may declare no further attacks.\n\n" +
-      "Pressing 'Yes' will confirm, and end your turn.";
+    String title = Messages.getString("FiringDisplay.FindClubDialog.title"); //$NON-NLS-1$
+    String body = Messages.getString("FiringDisplay.FindClubDialog.message"); //$NON-NLS-1$
     if (!clientgui.doYesNoDialog(title, body)) {
       return;
         }
@@ -686,20 +680,15 @@ public class FiringDisplay
         }
         
         if (ce().isINarcedWith( INarcPod.HAYWIRE )) {
-            String title = "Can not spot";
-            String body = "This unit can not spot for indirect fire,\n" +
-                "because it has an iNarc Haywire Pod attached.";
+            String title = Messages.getString("FiringDisplay.CantSpotDialog.title"); //$NON-NLS-1$
+            String body = Messages.getString("FiringDisplay.CantSpotDialog.message"); //$NON-NLS-1$
             clientgui.doAlertDialog(title, body);
             return;
         }
     
         // comfirm this action
-        String title = "Spot For Indirect Fire?";
-        String body = "Do you want to spot for indirect fire?\n\n" +
-            "Spotting is an exclusive action.  If you choose\n" +
-            "to spot, any declared attacks will be cancelled,\n" +
-            "and you may declare no further attacks.\n\n" +
-            "Pressing 'Yes' will confirm, and end your turn.";
+        String title = Messages.getString("FiringDisplay.SpotForInderectDialog.title"); //$NON-NLS-1$
+        String body = Messages.getString("FiringDisplay.SpotForInderectDialog.message"); //$NON-NLS-1$
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
@@ -775,7 +764,7 @@ public class FiringDisplay
         }
         clientgui.bv.redrawEntity(ce());
         clientgui.mechD.displayEntity(ce());
-        clientgui.mechD.showPanel("weapons");
+        clientgui.mechD.showPanel("weapons"); //$NON-NLS-1$
         clientgui.mechD.wPan.selectWeapon(ce().getFirstWeapon());
         updateTarget();
     }
@@ -812,7 +801,7 @@ public class FiringDisplay
               ash.setEnableAll(aiming);
               if (aiming) {
                 toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, ash.getAimingAt(), ash.getAimingMode());
-                clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName() + " (" + ash.getAimingLocation() + ")");
+                clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName() + " (" + ash.getAimingLocation() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
               } else {
                 toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
                 clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
@@ -822,13 +811,13 @@ public class FiringDisplay
               toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
               clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
             }
-            clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()));
+            clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
-                clientgui.mechD.wPan.wToHitR.setText("Already fired");
+                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("FiringDisplay.alreadyFired")); //$NON-NLS-1$
                 setFireEnabled(false);
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
-                clientgui.mechD.wPan.wToHitR.setText("Auto-firing weapon");
+                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("FiringDisplay.autoFiringWeapon")); //$NON-NLS-1$
                 setFireEnabled(false);
             } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
@@ -837,16 +826,16 @@ public class FiringDisplay
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
-                clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
+                clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)"); //$NON-NLS-1$ //$NON-NLS-2$
                 setFireEnabled(true);
             }
             clientgui.mechD.wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
-            clientgui.mechD.wPan.wTargetR.setText("---");
-            clientgui.mechD.wPan.wRangeR.setText("---");
-            clientgui.mechD.wPan.wToHitR.setText("---");
-            clientgui.mechD.wPan.toHitText.setText("");
+            clientgui.mechD.wPan.wTargetR.setText("---"); //$NON-NLS-1$
+            clientgui.mechD.wPan.wRangeR.setText("---"); //$NON-NLS-1$
+            clientgui.mechD.wPan.wToHitR.setText("---"); //$NON-NLS-1$
+            clientgui.mechD.wPan.toHitText.setText(""); //$NON-NLS-1$
         }
     }
   
@@ -940,7 +929,7 @@ public class FiringDisplay
         }
 
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
-            boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire");
+            boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
             // HACK : sometimes we don't show the target choice window
             Targetable targ = null;
             if (this.showTargetChoice)
@@ -969,9 +958,9 @@ public class FiringDisplay
             
             if(client.isMyTurn()) {
                 beginMyTurn();
-                setStatusBarText("It's your turn to fire.");
-            } else {
-                setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to fire.");
+                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
+            } else {                
+                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
             }
         }
     }
@@ -987,7 +976,7 @@ public class FiringDisplay
         }
         // if we're ending the firing phase, unregister stuff.
         if(client.game.getPhase() ==  Game.PHASE_FIRING) {
-            setStatusBarText("Waiting to begin Firing phase...");
+            setStatusBarText(Messages.getString("FiringDisplay.waitingForFiringPhase")); //$NON-NLS-1$
         }
     }
 
@@ -1013,7 +1002,7 @@ public class FiringDisplay
         } else if (ev.getActionCommand().equals(FIRE_REPORT)) {
             new MiniReportDisplay(clientgui.frame, client.eotr).show();
             return;
-        } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
+        } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) { //$NON-NLS-1$
             // Make sure the game options dialog is not editable.
             if ( clientgui.getGameOptionsDialog().isEditable() ) {
                 clientgui.getGameOptionsDialog().setEditable( false );
@@ -1255,8 +1244,8 @@ public class FiringDisplay
           aimingAt = lockedLoc;
         }
         asd = new AimedShotDialog(clientgui.frame,
-                      "Aimed shot",
-                      "Aim at:",
+                      Messages.getString("FiringDisplay.AimedShotDialog.title"), //$NON-NLS-1$
+                      Messages.getString("FiringDisplay.AimedShotDialog.message"), //$NON-NLS-1$
                       options,
                       enabled,
                       aimingAt,
@@ -1520,7 +1509,7 @@ public class FiringDisplay
      */
     private Targetable chooseTarget( Coords pos ) {
           
-        boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire");
+        boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
         Enumeration choices = null;
@@ -1556,19 +1545,14 @@ public class FiringDisplay
         // If we have multiple choices, display a selection dialog.
         else if ( targets.size() > 1 ) {
             String[] names = new String[ targets.size() ];
-            StringBuffer question = new StringBuffer();
-            question.append( "Hex " );
-            question.append( pos.getBoardNum() );
-            question.append( " contains the following targets." );
-            question.append( "\n\nWhich target do you want to attack?" );
             for ( int loop = 0; loop < names.length; loop++ ) {
                 names[loop] = ( (Targetable)targets.elementAt(loop) )
                     .getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( clientgui.frame,
-                                        "Choose Target",
-                                        question.toString(),
+                                        Messages.getString("FiringDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
+                                        Messages.getString("FiringDisplay.ChooseTargetDialog.message", new Object[]{pos.getBoardNum()}), //$NON-NLS-1$ 
                                         names );
             choiceDialog.show();
             if ( choiceDialog.getAnswer() == true ) {

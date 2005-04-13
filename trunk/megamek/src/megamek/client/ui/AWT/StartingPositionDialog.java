@@ -46,7 +46,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
 
     /** Creates a new instance of StartingPositionDialog */
     public StartingPositionDialog(ClientGUI clientgui) {
-        super(clientgui.frame, "Select a Starting Position...", true);
+        super(clientgui.frame, Messages.getString("StartingPositionDialog.title"), true); //$NON-NLS-1$
         this.client = clientgui.getClient();
         
         lisStartList.setEnabled(false);
@@ -150,7 +150,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
                 // If the gameoption set_arty_player_homeedge is set,
                 // set all the player's offboard arty units to be behind the newly
                 // selected home edge.
-                if (client.game.getOptions().booleanOption("set_arty_player_homeedge")) {
+                if (client.game.getOptions().booleanOption("set_arty_player_homeedge")) { //$NON-NLS-1$
                     int direction = -1;
                     switch(i) {
                         case 0:

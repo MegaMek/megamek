@@ -71,30 +71,30 @@ public class GameEvent extends java.util.EventObject {
         StringBuffer buff = new StringBuffer();
         switch (this.type) {
             case GAME_PLAYER_STATUSCHANGE :
-                buff.append("Status Change");
+                buff.append("Status Change"); //$NON-NLS-1$
                 break;
             case GAME_PLAYER_CHAT :
-                buff.append("Chat");
+                buff.append("Chat"); //$NON-NLS-1$
                 break;
             case GAME_PHASE_CHANGE :
-                buff.append("Phase Change");
+                buff.append("Phase Change"); //$NON-NLS-1$
                 break;
             case GAME_TURN_CHANGE :
-                buff.append("Turn Change");
+                buff.append("Turn Change"); //$NON-NLS-1$
                 break;
             case GAME_NEW_ENTITIES :
-                buff.append("New Entities");
+                buff.append("New Entities"); //$NON-NLS-1$
                 break;
             case GAME_NEW_SETTINGS :
-                buff.append("New Settings");
+                buff.append("New Settings"); //$NON-NLS-1$
                 break;
             default :
-                buff.append("Unknown");
+                buff.append("Unknown"); //$NON-NLS-1$
                 break;
         }
-        buff.append(" game event ");
+        buff.append(" game event "); //$NON-NLS-1$
         if (null != this.player) {
-            buff.append("for ").append(this.player.getName()).append(" (id: ").append(this.player.getId()).append(") ");
+            buff.append("for ").append(this.player.getName()).append(" (id: ").append(this.player.getId()).append(") "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         if (null != this.message) {
             buff.append(this.message);

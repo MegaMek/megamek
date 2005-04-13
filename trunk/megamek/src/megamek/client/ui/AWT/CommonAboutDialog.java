@@ -45,7 +45,7 @@ public class CommonAboutDialog extends Dialog
         if ( imgTitleImage == null ) {
             // Nope.  Load it.
             Image image = frame.getToolkit().getImage
-                ( "data/images/megamek-splash2.gif" );
+                ( "data/images/megamek-splash2.gif" ); //$NON-NLS-1$
             MediaTracker tracker = new MediaTracker( frame );
             tracker.addImage( image, 0 );
             try {
@@ -67,7 +67,7 @@ public class CommonAboutDialog extends Dialog
      */
     public CommonAboutDialog( Frame frame ) {
         // Construct the superclass.
-        super( frame, "About MegaMek" );
+        super( frame, Messages.getString("CommonAboutDialog.title") ); //$NON-NLS-1$
 
         // Make sure we close at the appropriate times.
         this.addWindowListener(new WindowAdapter() {
@@ -86,36 +86,21 @@ public class CommonAboutDialog extends Dialog
 
         // Make a label containing the version of this app.
         StringBuffer buff = new StringBuffer();
-        buff.append( "MegaMek version " )
+        buff.append( Messages.getString("CommonAboutDialog.version") ) //$NON-NLS-1$
             .append( megamek.MegaMek.VERSION )
-            .append( "\nTimestamp " )
+            .append( Messages.getString("CommonAboutDialog.timestamp") ) //$NON-NLS-1$
             .append( new Date(megamek.MegaMek.TIMESTAMP).toString() )
-            .append( "\nJava Vendor " )
-            .append( System.getProperty("java.vendor") )
-            .append( "\nJava Version " )
-            .append( System.getProperty("java.version") );
+            .append( Messages.getString("CommonAboutDialog.javaVendor") ) //$NON-NLS-1$
+            .append( System.getProperty("java.vendor") ) //$NON-NLS-1$
+            .append( Messages.getString("CommonAboutDialog.javaVersion") ) //$NON-NLS-1$
+            .append( System.getProperty("java.version") ); //$NON-NLS-1$
         AdvancedLabel lblVersion = new AdvancedLabel( buff.toString() );
 
-        // Create the copyright.
-        buff = new StringBuffer();
-        buff.append( "MegaMek Copyright 2000,2001,2002,2003,2004,2005 Ben Mazur\n\n" )
-            .append( "BattleTech, BattleMech, 'Mech, and MechWarrior are registered trademarks of\n" )
-            .append( "WizKids, LLC. Original BattleTech material Copyright by  WizKids, LLC.\n" )
-            .append( "All Rights Reserved.  Used without permission." );
-        AdvancedLabel lblCopyright = new AdvancedLabel( buff.toString() );
-        
-        // Give us some "about" text.
-        buff = new StringBuffer();
-        buff.append( "MegaMek is community effort to implement the Classic BattleTech rules in an\n" )
-            .append( "operating-system-agnostic, network enabled manner. MegaMek is distributed\n" )
-            .append( "under the GNU General Public License. A copy of the liscense should be avail-\n" )
-            .append( "able in the installation directory. If you've enjoyed playing MegaMek, please share\n" )
-            .append( "it with a friend. If you'd like to improve it, please be aware that your contributions\n" )
-            .append( "must ALSO be distributed under the GNU General Public License, Version 2 or later.\n" );
-        AdvancedLabel lblAbout = new AdvancedLabel( buff.toString() );
+        AdvancedLabel lblCopyright = new AdvancedLabel(Messages.getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
+        AdvancedLabel lblAbout = new AdvancedLabel(Messages.getString("CommonAboutDialog.about")); //$NON-NLS-1$
 
         // Add a "Close" button.
-        Button butClose = new Button( "Close" );
+        Button butClose = new Button( Messages.getString("CommonAboutDialog.Close") ); //$NON-NLS-1$
         butClose.addActionListener( new ActionListener() {
                 public void actionPerformed( ActionEvent event ) {
                     quit();

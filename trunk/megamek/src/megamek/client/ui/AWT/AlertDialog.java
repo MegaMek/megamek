@@ -26,7 +26,7 @@ import megamek.common.Settings;
 public class AlertDialog
     extends Dialog implements ActionListener
 {
-    private Button butOkay = new Button("Okay");
+    private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private AdvancedLabel labMessage;
     
     public AlertDialog(Frame parent, String title,

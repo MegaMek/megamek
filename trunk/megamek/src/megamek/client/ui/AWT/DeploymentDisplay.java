@@ -31,10 +31,10 @@ public class DeploymentDisplay
     private DistractableAdapter distracted = new DistractableAdapter();
 
     // Action command names
-    public static final String DEPLOY_TURN        = "deployTurn";
-    public static final String DEPLOY_NEXT        = "deployNext";
-    public static final String DEPLOY_LOAD        = "deployLoad";
-    public static final String DEPLOY_UNLOAD      = "deployUnload";
+    public static final String DEPLOY_TURN        = "deployTurn"; //$NON-NLS-1$
+    public static final String DEPLOY_NEXT        = "deployNext"; //$NON-NLS-1$
+    public static final String DEPLOY_LOAD        = "deployLoad"; //$NON-NLS-1$
+    public static final String DEPLOY_UNLOAD      = "deployUnload"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -69,10 +69,10 @@ public class DeploymentDisplay
 
         client.game.board.addBoardListener(this);
 
-        setupStatusBar("Waiting to begin Deployment phase...");
+        setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
 
 
-        butTurn = new Button("Turn");
+        butTurn = new Button(Messages.getString("DeploymentDisplay.Turn")); //$NON-NLS-1$
         butTurn.addActionListener(this);
         butTurn.setActionCommand(DEPLOY_TURN);
         butTurn.setEnabled(false);
@@ -86,22 +86,22 @@ public class DeploymentDisplay
 //         butSpace3 = new Button(".");
 //         butSpace3.setEnabled(false);
 
-        butLoad = new Button("Load");
+        butLoad = new Button(Messages.getString("DeploymentDisplay.Load")); //$NON-NLS-1$
         butLoad.addActionListener(this);
         butLoad.setActionCommand(DEPLOY_LOAD);
         butLoad.setEnabled(false);
 
-        butUnload = new Button("Unload");
+        butUnload = new Button(Messages.getString("DeploymentDisplay.Unload")); //$NON-NLS-1$
         butUnload.addActionListener(this);
         butUnload.setActionCommand(DEPLOY_UNLOAD);
         butUnload.setEnabled(false);
 
-        butNext = new Button("Next Unit");
+        butNext = new Button(Messages.getString("DeploymentDisplay.NextUnit")); //$NON-NLS-1$
         butNext.addActionListener(this);
         butNext.setActionCommand(DEPLOY_NEXT);
         butNext.setEnabled(true);
 
-        butDone = new Button("Deploy");
+        butDone = new Button(Messages.getString("DeploymentDisplay.Deploy")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
 
@@ -158,7 +158,7 @@ public class DeploymentDisplay
         
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
-            System.err.println("DeploymentDisplay: tried to select non-existant entity: " + en);
+            System.err.println("DeploymentDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
 
@@ -218,7 +218,7 @@ public class DeploymentDisplay
             	break;
             }
             clientgui.mechD.displayEntity(ce());
-            clientgui.mechD.showPanel("movement");
+            clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
         
             // Update the menu bar.
             clientgui.getMenuBar().setEntity( ce() );
@@ -338,14 +338,9 @@ public class DeploymentDisplay
         else if ( !client.game.board.isLegalDeployment
                   (moveto, ce().getOwner()) ||
                   ce().isHexProhibited(client.game.board.getHex(moveto)) ) {
-            StringBuffer buff = new StringBuffer();
-            buff.append( ce().getShortName() )
-                .append( " can not deploy into " )
-                .append( moveto.getBoardNum() )
-                .append( "." );
             AlertDialog dlg = new AlertDialog( clientgui.frame,
-                                               "Invalid deployment",
-                                               buff.toString() );
+                                               Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
+                                               Messages.getString("DeploymentDisplay.cantDeployInto", new Object[]{ce().getShortName(), moveto.getBoardNum()})); //$NON-NLS-1$
             dlg.show();
             return;
         }
@@ -374,11 +369,10 @@ public class DeploymentDisplay
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            setStatusBarText("It's your turn to deploy.");
+            setStatusBarText(Messages.getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
             endMyTurn();
-            setStatusBarText("It's " + ev.getPlayer().getName() + 
-                    "'s turn to deploy.");
+            setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
         }
     }
     
@@ -392,7 +386,7 @@ public class DeploymentDisplay
         }
 
         if (client.game.getPhase() == Game.PHASE_DEPLOYMENT) {
-            setStatusBarText("Waiting to begin Deployment phase...");
+            setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }
     }
     
@@ -450,18 +444,13 @@ public class DeploymentDisplay
             // Do we have anyone to load?
             if ( choices.size() > 0 ) {
                 String[] names = new String[ choices.size() ];
-                StringBuffer question = new StringBuffer();
-                question.append( ce().getShortName() );
-                question.append( " has the following unused space:\n" );
-                question.append( ce().getUnusedString() );
-                question.append( "\n\nWhich unit do you want to load?" );
                 for ( int loop = 0; loop < names.length; loop++ ) {
                     names[loop] = ( (Entity)choices.elementAt(loop) ).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
                     new SingleChoiceDialog( clientgui.frame,
-                                            "Load Unit",
-                                            question.toString(),
+                                            Messages.getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
+                                            Messages.getString("DeploymentDisplay.loadUnitDialog.message", new Object[]{ce().getShortName(), ce().getUnusedString()}), //$NON-NLS-1$
                                             names );
                 choiceDialog.show();
                 if ( choiceDialog.getAnswer() == true ) {
@@ -474,8 +463,8 @@ public class DeploymentDisplay
             } // End have-choices
             else {
                 AlertDialog alert = new AlertDialog( clientgui.frame,
-                                                     "Load Unit",
-                                                     ce().getShortName() + " can not load any of the remaining units." );
+                                                     Messages.getString("DeploymentDisplay.allertDialog1.title"), //$NON-NLS-1$
+                                                     Messages.getString("DeploymentDisplay.allertDialog1.message", new Object[]{ce().getShortName()})); //$NON-NLS-1$
                 alert.show();
             }
 
@@ -488,18 +477,13 @@ public class DeploymentDisplay
             if ( choices.size() > 0 ) {
                 Entity other = null;
                 String[] names = new String[ choices.size() ];
-                StringBuffer question = new StringBuffer();
-                question.append( ce().getShortName() );
-                question.append( " has the following unused space:\n" );
-                question.append( ce().getUnusedString() );
-                question.append( "\n\nWhich unit do you want to unload?" );
                 for ( int loop = 0; loop < names.length; loop++ ) {
                     names[loop] = ( (Entity)choices.elementAt(loop) ).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
                     new SingleChoiceDialog( clientgui.frame,
-                                            "Unload Unit",
-                                            question.toString(),
+                                            Messages.getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
+                                            Messages.getString("DeploymentDisplay.unloadUnitDialog.message", new Object[]{ce().getShortName(), ce().getUnusedString()}), //$NON-NLS-1$
                                             names );
                 choiceDialog.show();
                 if ( choiceDialog.getAnswer() == true ) {
@@ -511,16 +495,16 @@ public class DeploymentDisplay
                         clientgui.mechD.displayEntity(ce());
                     }
                     else {
-                        System.out.println( "Could not unload " +
+                        System.out.println( "Could not unload " + //$NON-NLS-1$
                                             other.getShortName() +
-                                            " from " + ce().getShortName() );
+                                            " from " + ce().getShortName() ); //$NON-NLS-1$
                     }
                 }
             } // End have-choices
             else {
                 AlertDialog alert = new AlertDialog( clientgui.frame,
-                                                     "Unload Unit",
-                                                     ce().getShortName() + " is not transporting any units." );
+                                                     Messages.getString("DeploymentDisplay.allertDialog2.title"), //$NON-NLS-1$
+                                                     Messages.getString("DeploymentDisplay.allertDialog2.message",new Object[]{ce().getShortName()})); //$NON-NLS-1$
                 alert.show();
             }
 

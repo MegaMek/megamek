@@ -32,15 +32,15 @@ public class PhysicalDisplay
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
-    public static final String PHYSICAL_PUNCH = "punch";
-    public static final String PHYSICAL_KICK = "kick";
-    public static final String PHYSICAL_CLUB = "club";
-    public static final String PHYSICAL_BRUSH_OFF = "brushOff";
-    public static final String PHYSICAL_THRASH = "thrash";
-    public static final String PHYSICAL_DODGE = "dodge";
-    public static final String PHYSICAL_PUSH = "push";
-    public static final String PHYSICAL_NEXT = "next";
-    public static final String PHYSICAL_PROTO = "protoPhysical";
+    public static final String PHYSICAL_PUNCH = "punch"; //$NON-NLS-1$
+    public static final String PHYSICAL_KICK = "kick"; //$NON-NLS-1$
+    public static final String PHYSICAL_CLUB = "club"; //$NON-NLS-1$
+    public static final String PHYSICAL_BRUSH_OFF = "brushOff"; //$NON-NLS-1$
+    public static final String PHYSICAL_THRASH = "thrash"; //$NON-NLS-1$
+    public static final String PHYSICAL_DODGE = "dodge"; //$NON-NLS-1$
+    public static final String PHYSICAL_PUSH = "push"; //$NON-NLS-1$
+    public static final String PHYSICAL_NEXT = "next"; //$NON-NLS-1$
+    public static final String PHYSICAL_PROTO = "protoPhysical"; //$NON-NLS-1$
 
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
@@ -88,64 +88,64 @@ public class PhysicalDisplay
     
         attacks = new Vector();
 
-        setupStatusBar("Waiting to begin Physical Attack phase...");
+        setupStatusBar(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
             
-        butSpace = new Button(".");
+        butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
-        butSpace2 = new Button(".");
+        butSpace2 = new Button("."); //$NON-NLS-1$
         butSpace2.setEnabled(false);
 
-        butPunch = new Button("Punch");
+        butPunch = new Button(Messages.getString("PhysicalDisplay.Punch")); //$NON-NLS-1$
         butPunch.addActionListener(this);
         butPunch.setEnabled(false);
         butPunch.setActionCommand(PHYSICAL_PUNCH);
         
-        butKick = new Button("Kick");
+        butKick = new Button(Messages.getString("PhysicalDisplay.Kick")); //$NON-NLS-1$
         butKick.addActionListener(this);
         butKick.setEnabled(false);
         butKick.setActionCommand(PHYSICAL_KICK);
         
-        butPush = new Button("Push");
+        butPush = new Button(Messages.getString("PhysicalDisplay.Push")); //$NON-NLS-1$
         butPush.addActionListener(this);
         butPush.setEnabled(false);
         butPush.setActionCommand(PHYSICAL_PUSH);
         
-        butClub = new Button("Club");
+        butClub = new Button(Messages.getString("PhysicalDisplay.Clusb")); //$NON-NLS-1$
         butClub.addActionListener(this);
         butClub.setEnabled(false);
         butClub.setActionCommand(PHYSICAL_CLUB);
 
-        butBrush = new Button("Brush Off");
+        butBrush = new Button(Messages.getString("PhysicalDisplay.BrushOff")); //$NON-NLS-1$
         butBrush.addActionListener(this);
         butBrush.setEnabled(false);
         butBrush.setActionCommand(PHYSICAL_BRUSH_OFF);
 
-        butThrash = new Button("Thrash");
+        butThrash = new Button(Messages.getString("PhysicalDisplay.Trash")); //$NON-NLS-1$
         butThrash.addActionListener(this);
         butThrash.setEnabled(false);
         butThrash.setActionCommand(PHYSICAL_THRASH);
 
-        butDodge = new Button("Dodge");
+        butDodge = new Button(Messages.getString("PhysicalDisplay.Dodge")); //$NON-NLS-1$
         butDodge.addActionListener(this);
         butDodge.setEnabled(false);
         butDodge.setActionCommand(PHYSICAL_DODGE);
         
-        butProto = new Button("Proto-Physical");
+        butProto = new Button(Messages.getString("PhysicalDisplay.ProtoPhysical")); //$NON-NLS-1$
         butProto.addActionListener(this);
         butProto.setEnabled(false);
         butProto.setActionCommand(PHYSICAL_PROTO);
 
-        butDone = new Button("Done");
+        butDone = new Button(Messages.getString("PhysicalDisplay.Done")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
         
-        butNext = new Button(" Next Unit ");
+        butNext = new Button(Messages.getString("PhysicalDisplay.NextUnit")); //$NON-NLS-1$
         butNext.addActionListener(this);
         butNext.setEnabled(false);
         butNext.setActionCommand(PHYSICAL_NEXT);
         
-        butMore = new Button("More...");
+        butMore = new Button(Messages.getString("PhysicalDisplay.More")); //$NON-NLS-1$
         butMore.addActionListener(this);
         butMore.setEnabled(false);
         
@@ -223,7 +223,7 @@ public class PhysicalDisplay
      */
     public void selectEntity(int en) {
         if (client.game.getEntity(en) == null) {
-            System.err.println("PhysicalDisplay: tried to select non-existant entity: " + en);
+            System.err.println("PhysicalDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
         if (ce() != null) {
@@ -240,7 +240,7 @@ public class PhysicalDisplay
         client.game.board.cursor(null);
 
         clientgui.mechD.displayEntity(entity);
-        clientgui.mechD.showPanel("movement");
+        clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
 
         clientgui.bv.centerOnHex(entity.getPosition());
 
@@ -249,13 +249,13 @@ public class PhysicalDisplay
 
         // does it have a club?
         Mounted club = Compute.clubMechHas(entity);
-        if (club == null || club.getName().endsWith("Club")) {
-            butClub.setLabel("Club");
+        if (club == null || club.getName().endsWith("Club")) { //$NON-NLS-1$
+            butClub.setLabel(Messages.getString("PhysicalDisplay.Club")); //$NON-NLS-1$
         } else {
             butClub.setLabel(club.getName());
         }
 
-        if ( (entity instanceof Mech) && !entity.isProne() && entity.getCrew().getOptions().booleanOption("dodge_maneuver") ) {
+        if ( (entity instanceof Mech) && !entity.isProne() && entity.getCrew().getOptions().booleanOption("dodge_maneuver") ) { //$NON-NLS-1$
           setDodgeEnabled(true);
         }
     }
@@ -316,10 +316,8 @@ public class PhysicalDisplay
     private void ready() {
         if (attacks.isEmpty() && Settings.nagForNoAction) {
             // comfirm this action
-            String title = "Don't physical attack?";
-            String body = "This unit has not used any physical attacks.\n\n" +
-                "Are you really done?\n";
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+            ConfirmDialog response = clientgui.doYesNoBotherDialog(Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title") //$NON-NLS-1$
+                    , Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message")); //$NON-NLS-1$
             if ( !response.getShowAgain() ) {
                 Settings.nagForNoAction = false;
                 Settings.save();
@@ -353,54 +351,51 @@ public class PhysicalDisplay
      * Punch the target!
      */
     private void punch() {
-  final ToHitData leftArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.LEFT);
-  final ToHitData rightArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.RIGHT);
-
-  if (clientgui.doYesNoDialog( "Punch " + target.getDisplayName() + "?",
-    "To Hit [RA]: " + rightArm.getValueAsString() + " (" + Compute.oddsAbove(rightArm.getValue()) + "%)   (" + rightArm.getDesc() + ")"
-    + "\nDamage [RA]: "+PunchAttackAction.getDamageFor(ce(),PunchAttackAction.RIGHT)+rightArm.getTableDesc()
-    + "\n   and/or"
-    +"\nTo Hit [LA]: " + leftArm.getValueAsString() + " (" + Compute.oddsAbove(leftArm.getValue()) + "%)   (" + leftArm.getDesc() + ")"
-    + "\nDamage [LA]: "+PunchAttackAction.getDamageFor(ce(),PunchAttackAction.LEFT)+leftArm.getTableDesc()
-  ) ) {
-          disableButtons();
-          if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
-              && rightArm.getValue() != ToHitData.IMPOSSIBLE) {
-              attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.BOTH));
-          } else if (leftArm.getValue() < rightArm.getValue()) {
-              attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.LEFT));
-          } else {
-              attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.RIGHT));
-          }
-          ready();
-  };
+        final ToHitData leftArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.LEFT);
+        final ToHitData rightArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.RIGHT);
+        String title = Messages.getString("PhysicalDisplay.PunchDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.PunchDialog.message",new Object[]{ //$NON-NLS-1$
+                rightArm.getValueAsString(), new Double(Compute.oddsAbove(rightArm.getValue())),rightArm.getDesc(), new Integer(PunchAttackAction.getDamageFor(ce(),PunchAttackAction.RIGHT)), rightArm.getTableDesc(),
+                leftArm.getValueAsString(),  new Double(Compute.oddsAbove(leftArm.getValue())), leftArm.getDesc(), new Integer(PunchAttackAction.getDamageFor(ce(),PunchAttackAction.LEFT)), leftArm.getTableDesc()}); 
+        if (clientgui.doYesNoDialog(title, message)) {
+            disableButtons();
+            if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
+                    && rightArm.getValue() != ToHitData.IMPOSSIBLE) {
+                attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.BOTH));
+            } else if (leftArm.getValue() < rightArm.getValue()) {
+                attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.LEFT));
+            } else {
+                attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.RIGHT));
+            }
+            ready();
+        }
     }
     
     /**
      * Kick the target!
      */
     private void kick() {
-  ToHitData leftLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFT);
-  ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
-  ToHitData attackLeg;
-  int attackSide;
-
-  if (leftLeg.getValue() < rightLeg.getValue()) {
-    attackLeg = leftLeg;
-    attackSide = KickAttackAction.LEFT;
-  } else {
-    attackLeg = rightLeg;
-    attackSide = KickAttackAction.RIGHT;
-  };
-
-  if (clientgui.doYesNoDialog( "Kick " + target.getDisplayName() + "?",
-    "To Hit: " + attackLeg.getValueAsString() + " (" + Compute.oddsAbove(attackLeg.getValue()) + "%)   (" + attackLeg.getDesc() + ")"
-    + "\nDamage: "+KickAttackAction.getDamageFor(ce(),attackSide)+attackLeg.getTableDesc()
-  ) ) {
-    disableButtons();
-    attacks.addElement(new KickAttackAction(cen, target.getTargetType(), target.getTargetId(), attackSide));
-    ready();
-  };
+        ToHitData leftLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFT);
+        ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
+        ToHitData attackLeg;
+        int attackSide;
+        
+        if (leftLeg.getValue() < rightLeg.getValue()) {
+            attackLeg = leftLeg;
+            attackSide = KickAttackAction.LEFT;
+        } else {
+            attackLeg = rightLeg;
+            attackSide = KickAttackAction.RIGHT;
+        };
+        String title = Messages.getString("PhysicalDisplay.KickDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.KickDialog.message", new Object[]{ //$NON-NLS-1$
+                attackLeg.getValueAsString(), new Double(Compute.oddsAbove(attackLeg.getValue())), attackLeg.getDesc()
+                ,KickAttackAction.getDamageFor(ce(),attackSide)+attackLeg.getTableDesc()});
+        if (clientgui.doYesNoDialog(title, message)){
+            disableButtons();
+            attacks.addElement(new KickAttackAction(cen, target.getTargetType(), target.getTargetId(), attackSide));
+            ready();
+        }
     }
     
     /**
@@ -408,8 +403,10 @@ public class PhysicalDisplay
      */
     private void push() {
         ToHitData toHit = PushAttackAction.toHit(client.game, cen, target);
-        if (clientgui.doYesNoDialog( "Push " + target.getDisplayName() + "?",
-            "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")") ) {
+        String title = Messages.getString("PhysicalDisplay.PushDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.PushDialog.message", new Object[]{ //$NON-NLS-1$
+                toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())),toHit.getDesc()});
+        if (clientgui.doYesNoDialog( title, message)){
             disableButtons();
             attacks.addElement(new PushAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()));
             ready();
@@ -422,40 +419,30 @@ public class PhysicalDisplay
     private void club() {
         Mounted club = Compute.clubMechHas(ce());
         ToHitData toHit = ClubAttackAction.toHit(client.game, cen, target, club);
-        StringBuffer buff = new StringBuffer();
-        buff.append ("To Hit: ")
-            .append (toHit.getValueAsString())
-            .append (" (")
-            .append (Compute.oddsAbove(toHit.getValue()))
-            .append ("%)   (")
-            .append (toHit.getDesc())
-            .append (")\nDamage: ")
-            .append (ClubAttackAction.getDamageFor(ce(),club))
-            .append (toHit.getTableDesc());
-        if ( clientgui.doYesNoDialog( "Club " + target.getDisplayName() + "?",
-                                      buff.toString()
-                                      ) ) {
+        String title = Messages.getString("PhysicalDisplay.ClubDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.ClubDialog.message", new Object[]{ //$NON-NLS-1$
+                toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())), toHit.getDesc(), 
+                ClubAttackAction.getDamageFor(ce(),club)+toHit.getTableDesc()});
+        if (clientgui.doYesNoDialog(title,message)){
             disableButtons();
             attacks.addElement(new ClubAttackAction(cen, target.getTargetType(), target.getTargetId(), club));
             ready();
-        };
+        }
     }
 
     /**
      * Make a protomech physical attack on the target.
-     */
-    
+     */    
     private void proto() {
     	ToHitData proto = ProtomechPhysicalAttackAction.toHit(client.game, cen, target);
-
-    	if (clientgui.doYesNoDialog( "Protomech physical attack at " + target.getDisplayName() + "?",
-    	    "To Hit: " + proto.getValueAsString() + " (" + Compute.oddsAbove(proto.getValue()) + "%)   (" + proto.getDesc() + ")"
-    	    + "\nDamage: "+ProtomechPhysicalAttackAction.getDamageFor(ce())+proto.getTableDesc()
-    	) ) {
+    	String title = Messages.getString("PhysicalDisplay.ProtoMechAttackDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.ProtoMechAttackDialog.message", new Object[]{ //$NON-NLS-1$
+                proto.getValueAsString(), new Double(Compute.oddsAbove(proto.getValue())), proto.getDesc(), ProtomechPhysicalAttackAction.getDamageFor(ce())+proto.getTableDesc()});        
+    	if (clientgui.doYesNoDialog(title,message)){
     		disableButtons();
     	    attacks.addElement(new ProtomechPhysicalAttackAction(cen, target.getTargetType(), target.getTargetId()));
     	    ready();
-    	  };
+    	  }
     }
     
     /**
@@ -468,72 +455,57 @@ public class PhysicalDisplay
             ( client.game, cen, target, BrushOffAttackAction.RIGHT );
         boolean canHitLeft  = (ToHitData.IMPOSSIBLE != toHitLeft.getValue());
         boolean canHitRight = (ToHitData.IMPOSSIBLE != toHitRight.getValue());
-        int     damageLeft = 0;
-        int     damageRight = 0;
+        int damageLeft = 0;
+        int damageRight = 0;
         String  title = null;
         StringBuffer    warn  = null;
-        StringBuffer    left  = null;
-        StringBuffer    right = null;
-        StringBuffer    both  = null;
-        String[]        choices = null;
+        String left  = null;
+        String right = null;
+        String both = null;
+        String[] choices = null;
         SingleChoiceDialog dlg = null;
 
         // If the entity can't brush off, display an error message and abort.
         if ( !canHitLeft && !canHitRight ) {
-            clientgui.doAlertDialog( "Code shouldn't get here!",
-                                  "You've selected a 'brush off' attack that automatically fails!  Try again." );
+            clientgui.doAlertDialog( Messages.getString("PhysicalDisplay.AlertDialog.title"), //$NON-NLS-1$
+                                  Messages.getString("PhysicalDisplay.AlertDialog.message") ); //$NON-NLS-1$
             return;
         }
 
         // If we can hit with both arms, the player will have to make a choice.
         // Otherwise, the player is just confirming the arm in the attack.
         if ( canHitLeft && canHitRight ) {
-            both = new StringBuffer( "Both Arms" );
-            warn = new StringBuffer( "Which arm(s) do you want to use to" );
-            title = "Choose Brush Off Attacks";
+            both = Messages.getString("PhysicalDisplay.bothArms"); //$NON-NLS-1$
+            warn = new StringBuffer(Messages.getString("PhysicalDisplay.whichArm")); //$NON-NLS-1$
+            title = Messages.getString("PhysicalDisplay.chooseBrushOff"); //$NON-NLS-1$
         } else {
-            warn = new StringBuffer( "Confirm you want to use this arm to" );
-            title = "Confrim Brush Off Attack";
+            warn = new StringBuffer(Messages.getString("PhysicalDisplay.confirmArm")); //$NON-NLS-1$
+            title = Messages.getString("PhysicalDisplay.confirmBrushOff"); //$NON-NLS-1$
         }
 
         // Build the rest of the warning string.
         // Use correct text when the target is an iNarc pod.
         if (Targetable.TYPE_INARC_POD == target.getTargetType()) {
-            warn.append( "\nbrush off the " )
-                .append( target.getDisplayName() )
-                .append( "?\nWARNING: any arm that misses the pod" )
-                .append( "\n\thits the Mek on the Punch table!" );
+            warn.append(Messages.getString("PhysicalDisplay.brushOff1")); //$NON-NLS-1$
         }
         else {
-            warn.append( "\nbrush off the swarming infantry?" )
-                .append( "\nWARNING: any arm that misses the infantry" )
-                .append( "\n\thits the Mek on the Punch table!" );
+            warn.append(Messages.getString("PhysicalDisplay.brushOff2")); //$NON-NLS-1$
         }
 
         // If we can hit with the left arm, get
         // the damage and construct the string.
         if ( canHitLeft ) {
-            damageLeft = BrushOffAttackAction.getDamageFor
-                ( ce(), BrushOffAttackAction.LEFT );
-            left = new StringBuffer( "Left Arm to-hit: " );
-            left.append( toHitLeft.getValueAsString() )
-                .append( " (" )
-                .append( Compute.oddsAbove(toHitLeft.getValue()) )
-                .append( "%) Damage: " )
-                .append( damageLeft );
+            damageLeft = BrushOffAttackAction.getDamageFor(ce(), BrushOffAttackAction.LEFT);
+            left = Messages.getString("PhysicalDisplay.LAHit", new Object[]{ //$NON-NLS-1$
+                    toHitLeft.getValueAsString(), new Double(Compute.oddsAbove(toHitLeft.getValue())), new Integer(damageLeft)});
         }
 
         // If we can hit with the right arm, get
         // the damage and construct the string.
         if ( canHitRight ) {
-            damageRight = BrushOffAttackAction.getDamageFor
-                ( ce(), BrushOffAttackAction.RIGHT );
-            right = new StringBuffer( "Right Arm to-hit: " );
-            right.append( toHitRight.getValueAsString() )
-                .append( " (" )
-                .append( Compute.oddsAbove(toHitRight.getValue()) )
-                .append( "%) Damage: " )
-                .append( damageRight );
+            damageRight = BrushOffAttackAction.getDamageFor(ce(), BrushOffAttackAction.RIGHT);
+            right = Messages.getString("PhysicalDisplay.RAHit", new Object[]{ //$NON-NLS-1$
+                    toHitRight.getValueAsString(), new Double(Compute.oddsAbove(toHitRight.getValue())), new Integer(damageRight)});
         }
 
         // Allow the player to cancel or choose which arm(s) to use.
@@ -609,26 +581,14 @@ public class PhysicalDisplay
     private void thrash() {
         ThrashAttackAction act = new ThrashAttackAction( cen, target.getTargetType(), target.getTargetId() );
         ToHitData toHit = act.toHit(client.game);
-        StringBuffer at = new StringBuffer();
-        StringBuffer damage = new StringBuffer();
 
-        // Build the dialog's strings.
-        at.append( "Thrash at " )
-            .append( target.getDisplayName() )
-            .append( " (warning: this causes a Piloting roll to avoid fall damage)?" );
-        damage.append( "To Hit: " )
-            .append( toHit.getValueAsString() )
-            .append( " (" )
-            .append( Compute.oddsAbove(toHit.getValue()) )
-            .append( "%)   (" )
-            .append( toHit.getDesc() )
-            .append( ")" )
-            .append( "\nDamage: " )
-            .append( ThrashAttackAction.getDamageFor(ce()) )
-            .append( toHit.getTableDesc() );
+        String title = Messages.getString("PhysicalDisplay.TrashDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.TrashDialog.message", new Object[]{//$NON-NLS-1$
+            toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())), toHit.getDesc(), 
+            ThrashAttackAction.getDamageFor(ce())+toHit.getTableDesc()});
 
         // Give the user to cancel the attack.
-        if ( clientgui.doYesNoDialog(at.toString(), damage.toString()) ) {
+        if (clientgui.doYesNoDialog(title,message)) {
             disableButtons();
             attacks.addElement( act );
             ready();
@@ -639,7 +599,7 @@ public class PhysicalDisplay
      * Dodge like that guy in that movie that I won't name for copywrite reasons!
      */
     private void dodge() {
-      if (clientgui.doYesNoDialog("Dodge?", "Enable dodge? You will not be able to do other physical attacks this round.") ) {
+      if (clientgui.doYesNoDialog(Messages.getString("PhysicalDisplay.DodgeDialog.title"), Messages.getString("PhysicalDisplay.DodgeDialog.message")) ) { //$NON-NLS-1$ //$NON-NLS-2$
         disableButtons();
         
         Entity entity = client.game.getEntity(cen);
@@ -826,20 +786,15 @@ public class PhysicalDisplay
         // If we have multiple choices, display a selection dialog.
         else if ( targets.size() > 1 ) {
             String[] names = new String[ targets.size() ];
-            StringBuffer question = new StringBuffer();
-            question.append( "Hex " );
-            question.append( pos.getBoardNum() );
-            question.append( " contains the following targets." );
-            question.append( "\n\nWhich target do you want to attack?" );
             for ( int loop = 0; loop < names.length; loop++ ) {
                 names[loop] = ( (Targetable)targets.elementAt(loop) )
                     .getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( clientgui.frame,
-                                        "Choose Target",
-                                        question.toString(),
-                                        names );
+                        Messages.getString("PhysicalDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
+                        Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", new Object[]{pos.getBoardNum()}), //$NON-NLS-1$
+                        names );
             choiceDialog.show();
             if ( choiceDialog.getAnswer() == true ) {
                 choice = (Targetable) targets.elementAt
@@ -867,12 +822,12 @@ public class PhysicalDisplay
 
             if (client.isMyTurn()) {
                 beginMyTurn();
-                setStatusBarText("It's your turn to declare physical attacks.");
+                setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
-                setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to declare physical attacks.");
+                setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn",new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
             }
         } else {
-            System.err.println("PhysicalDisplay: got turnchange event when it's not the physical attacks phase");
+            System.err.println("PhysicalDisplay: got turnchange event when it's not the physical attacks phase"); //$NON-NLS-1$
         }
     }
     public void gamePhaseChange(GameEvent ev) {
@@ -887,7 +842,7 @@ public class PhysicalDisplay
         }
         // if we're ending the firing phase, unregister stuff.
         if (client.game.getPhase() ==  Game.PHASE_PHYSICAL) {
-            setStatusBarText("Waiting to begin Physical Attack phase...");
+            setStatusBarText(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
         }
     }
 

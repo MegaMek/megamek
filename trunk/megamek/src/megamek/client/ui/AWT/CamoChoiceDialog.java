@@ -120,7 +120,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             // Translate the "root camo" category name.
             Enumeration camoNames;
             if ( Player.ROOT_CAMO.equals( category ) ) {
-                camoNames = camos.getItemNames( "" );
+                camoNames = camos.getItemNames( "" ); //$NON-NLS-1$
             } else {
                 camoNames = camos.getItemNames( category );
             }
@@ -180,7 +180,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
                 // Don't forget to translate the ROOT_CAMO.
                 String curCat = category;
                 if ( Player.ROOT_CAMO.equals( curCat ) ) {
-                    curCat = "";
+                    curCat = ""; //$NON-NLS-1$
                 }
 
                 // We need to copy the image to make it appear.
@@ -196,7 +196,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
                 // Print the stack trace and display the message.
                 err.printStackTrace();
                 AlertDialog dlg = new AlertDialog
-                    ( frame, "Error getting camo", err.getMessage() );
+                    ( frame, Messages.getString("CamoChoiceDialog.error_getting_camo"), err.getMessage() ); //$NON-NLS-1$
                 dlg.show();
                 dlg.dispose();
             }
@@ -211,7 +211,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
     public CamoChoiceDialog( Frame parent ) {
 
         // Initialize our superclass and record our parent frame.
-        super( parent, "Select Camo Pattern", true );
+        super( parent, Messages.getString("CamoChoiceDialog.select_camo_pattern"), true ); //$NON-NLS-1$
         frame = parent;
 
         // Declare local variables.
@@ -219,7 +219,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         String name;
 
         // Parse the camo directory.
-        camos = new DirectoryItems( new File("data/camo"), "",
+        camos = new DirectoryItems( new File("data/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
                                     ImageFileFactory.getInstance() );
 
         // Close the window, when the WM says to.
@@ -243,13 +243,13 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         // Make sure the "no camo" and "root camo" are at top.
         // Only add the "root camo" category if it contains items.
         categories.addItem( Player.NO_CAMO );
-        if ( camos.getItemNames("").hasMoreElements() ) {
+        if ( camos.getItemNames("").hasMoreElements() ) { //$NON-NLS-1$
             categories.addItem( Player.ROOT_CAMO );
         }
         names = camos.getCategoryNames();
         while ( names.hasMoreElements() ) {
             name = (String) names.nextElement();
-            if ( !name.equals("") ) {
+            if ( !name.equals("") ) { //$NON-NLS-1$
                 categories.addItem( name );
             }
         }
@@ -297,12 +297,12 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         layout.gridy++;
 
         // Add a label for the "keep old camo" button.
-        panel.add( new AdvancedLabel( "Keep\nOld Camo" ), layout );
+        panel.add( new AdvancedLabel( Messages.getString("CamoChoiceDialog.keep_old_camo") ), layout ); //$NON-NLS-1$
         layout.gridy++;
 
         // Create the "keep old camo" button.
         keep = new ImageButton();
-        keep.setLabel( "No Camo" );
+        keep.setLabel( Messages.getString("CamoChoiceDialog.no_camo") ); //$NON-NLS-1$
         keep.setPreferredSize( 84, 72 );
         keep.addActionListener( new ActionListener() {
                 // Pressing this button closes without saving.
@@ -318,12 +318,12 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         layout.gridy++;
 
         // Add a label for the "select new camo" button.
-        panel.add( new AdvancedLabel( "Select\nNew Camo" ), layout );
+        panel.add( new AdvancedLabel( Messages.getString("CamoChoiceDialog.select_new_camo") ), layout ); //$NON-NLS-1$
         layout.gridy++;
 
         // Create the "select new camo" button.
         select = new ImageButton();
-        select.setLabel( "No Camo" );
+        select.setLabel( Messages.getString("CamoChoiceDialog.no_camo") ); //$NON-NLS-1$
         select.setPreferredSize( 84, 72 );
         select.addActionListener( this );
         panel.add( select, layout );
@@ -418,7 +418,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
         // Replace the ROOT_CAMO string with "".
         if ( Player.ROOT_CAMO.equals( curCat ) ) {
-            curCat = "";
+            curCat = ""; //$NON-NLS-1$
         }
 
         // Clear the background and try to set the camo image.
@@ -431,7 +431,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             // Print the stack trace and display the message.
             err.printStackTrace();
             AlertDialog dlg = new AlertDialog
-                ( frame, "Error getting camo", err.getMessage() );
+                ( frame, Messages.getString("CamoChoiceDialog.error_getting_camo"), err.getMessage() ); //$NON-NLS-1$
             dlg.show();
             dlg.dispose();
         }
@@ -463,7 +463,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         try {
             String curCat = prevCat;
             if ( Player.ROOT_CAMO.equals( curCat ) ) {
-                curCat = "";
+                curCat = ""; //$NON-NLS-1$
             }
             image = (Image) camos.getItem( curCat, prevItem );
         }
@@ -471,7 +471,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             // Print the stack trace and display the message.
             err.printStackTrace();
             AlertDialog dlg = new AlertDialog
-                ( frame, "Error getting camo", err.getMessage() );
+                ( frame, Messages.getString("CamoChoiceDialog.error_getting_camo"), err.getMessage() ); //$NON-NLS-1$
             dlg.show();
             dlg.dispose();
         }

@@ -127,7 +127,7 @@ public class CamoChoiceListener implements ItemListener {
         if ( null == image ) {
             for (int color = 0; color < Player.colorNames.length; color++){
                 if ( Player.colorNames[color].equals( itemName ) ) {
-                    butCamo.setLabel( "No Camo" );
+                    butCamo.setLabel( Messages.getString("CamoChoiceListener.NoCammo") ); //$NON-NLS-1$
                     butCamo.setBackground
                         ( new Color(Player.colorRGBs[color]) );
                     player.setColorIndex( color );
@@ -139,7 +139,7 @@ public class CamoChoiceListener implements ItemListener {
 
         // We need to copy the image to make it appear.
         else {
-            butCamo.setLabel( "" );
+            butCamo.setLabel( "" ); //$NON-NLS-1$
             butCamo.setBackground( defaultBG );
         }
 

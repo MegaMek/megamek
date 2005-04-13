@@ -39,12 +39,12 @@ public class ClientGUI
     extends Panel
     implements MouseListener, WindowListener, ActionListener, KeyListener, GameListener {
     // Action commands.
-    public static final String VIEW_MEK_DISPLAY = "viewMekDisplay";
-    public static final String VIEW_MINI_MAP = "viewMiniMap";
-    public static final String VIEW_LOS_SETTING = "viewLOSSetting";
-    public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
-    public static final String VIEW_ZOOM_IN = "viewZoomIn";
-    public static final String VIEW_ZOOM_OUT = "viewZoomOut";
+    public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
+    public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
+    public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
+    public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
+    public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
+    public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
 
     // a frame, to show stuff in
     public Frame frame;
@@ -54,7 +54,7 @@ public class ClientGUI
     private CommonAboutDialog about = null;
     private CommonHelpDialog help = null;
     private CommonSettingsDialog setdlg = null;
-    private String helpFileName = "readme.txt";
+    private String helpFileName = "readme.txt"; //$NON-NLS-1$
 
     // keep me
     private ChatterBox cb;
@@ -65,7 +65,7 @@ public class ClientGUI
     public MechDisplay mechD;
     public Dialog minimapW;
     public MiniMap minimap;
-    public PopupMenu popup = new PopupMenu("Board Popup...");
+    public PopupMenu popup = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
     private UnitOverview uo;
     public Ruler ruler; // added by kenn
     protected Component curPanel;
@@ -140,19 +140,19 @@ public class ClientGUI
         try {
             File file = new File(Settings.soundBingFilename);
             if (!file.exists()) {
-                System.err.println("Failed to load audio file: " + Settings.soundBingFilename);
+                System.err.println("Failed to load audio file: " + Settings.soundBingFilename); //$NON-NLS-1$
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURL());
         } catch (NoSuchMethodError e) {
             //Ok, that didn't work.  We will fall back on our other
             // sound class.
-            System.out.println("Failed to find AudioClip class, using AudioPlayer instead.");
-            if (!Settings.soundBingFilename.endsWith(".au")) {
+            System.out.println("Failed to find AudioClip class, using AudioPlayer instead."); //$NON-NLS-1$
+            if (!Settings.soundBingFilename.endsWith(".au")) { //$NON-NLS-1$
                 //The older sound class only understands .au files
                 Settings.soundBingFilename =
                     new String(
-                        Settings.soundBingFilename.substring(0, Settings.soundBingFilename.lastIndexOf(".")) + ".au");
+                        Settings.soundBingFilename.substring(0, Settings.soundBingFilename.lastIndexOf(".")) + ".au"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -191,7 +191,7 @@ public class ClientGUI
      * Initializes a number of things about this frame.
      */
     private void initializeFrame() {
-        this.frame = new Frame("MegaMek Client");
+        this.frame = new Frame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         menuBar.setGame(client.game);
         frame.setMenuBar(menuBar);
         if (Settings.windowSizeHeight != 0) {
@@ -204,7 +204,7 @@ public class ClientGUI
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
 
-        frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
+        frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif")); //$NON-NLS-1$
     }
 
     /**
@@ -212,7 +212,7 @@ public class ClientGUI
      * frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(client.getName() + " - MegaMek");
+        frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
         frame.setLayout(new BorderLayout());
         frame.add(this, BorderLayout.CENTER);
         frame.validate();
@@ -242,8 +242,8 @@ public class ClientGUI
             scroller.add (bv, BorderLayout.CENTER);
             // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
             if (Settings.getInstance().get
-                ("megamek.client.clientgui.hidescrollbars", "false").equals
-                ("false")) {
+                ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
+                ("false")) { //$NON-NLS-1$
                 // Assign the scrollbars to the board viewer.
                 scroller.add (vertical, BorderLayout.EAST);
                 scroller.add (horizontal, BorderLayout.SOUTH);
@@ -251,7 +251,7 @@ public class ClientGUI
             }
 
         } catch (IOException e) {
-            doAlertDialog("Fatal Error", "Could not initialise:\n" + e);
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
         }
 
@@ -283,7 +283,7 @@ public class ClientGUI
 
         bv.add(popup);
 
-        mechW = new Dialog(frame, "Mech Display", false);
+        mechW = new Dialog(frame, Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
         mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
         mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
         mechW.setResizable(true);
@@ -301,12 +301,12 @@ public class ClientGUI
         // end kenn
 
         // minimap
-        minimapW = new Dialog(frame, "MiniMap", false);
+        minimapW = new Dialog(frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
         minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
         try {
             minimap = new MiniMap(minimapW, this, bv);
         } catch (IOException e) {
-            doAlertDialog("Fatal Error", "Could not initialise minimap:\n" + e);
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message1") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
         };
         minimap.addKeyListener(this);
@@ -319,7 +319,7 @@ public class ClientGUI
         client.changePhase(Game.PHASE_UNKNOWN);
 
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
-        new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
+        new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
 
         client.addGameListener(this);
     }
@@ -424,44 +424,44 @@ public class ClientGUI
      * Implement the <code>ActionListener</code> interface.
      */
     public void actionPerformed(ActionEvent event) {
-        if (event.getActionCommand().equalsIgnoreCase("fileGameSave")) {
-            FileDialog fd = new FileDialog(frame, "Select file to save to...", FileDialog.LOAD);
-            fd.setDirectory(".");
+        if (event.getActionCommand().equalsIgnoreCase("fileGameSave")) { //$NON-NLS-1$
+            FileDialog fd = new FileDialog(frame, Messages.getString("ClientGUI.FileSaveDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
+            fd.setDirectory("."); //$NON-NLS-1$
             // limit file-list to savedgames only
             fd.setFilenameFilter(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".sav"));
+                    return (null != name && name.endsWith(".sav")); //$NON-NLS-1$
                 }
             });
             //Using the FilenameFilter class would be the appropriate way to
             // filter for certain extensions, but it's broken under windoze.  See
             // http://developer.java.sun.com/developer/bugParade/bugs/4031440.html
             // for details.  The hack below is better than nothing.
-            fd.setFile("*.sav");
+            fd.setFile("*.sav"); //$NON-NLS-1$
 
             fd.show();
 
             if (null!=fd.getFile()) {
-                client.sendChat("/save "+fd.getFile());
+                client.sendChat("/save "+fd.getFile()); //$NON-NLS-1$
             };
         }
 
-        if (event.getActionCommand().equalsIgnoreCase("helpAbout")) {
+        if (event.getActionCommand().equalsIgnoreCase("helpAbout")) { //$NON-NLS-1$
             showAbout();
         }
-        if (event.getActionCommand().equalsIgnoreCase("helpContents")) {
+        if (event.getActionCommand().equalsIgnoreCase("helpContents")) { //$NON-NLS-1$
             showHelp();
         }
-        if (event.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
+        if (event.getActionCommand().equalsIgnoreCase("viewClientSettings")) { //$NON-NLS-1$
             showSettings();
         }
-        if (event.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
+        if (event.getActionCommand().equalsIgnoreCase("viewGameOptions")) { //$NON-NLS-1$
             showOptions();
         }
-        if (event.getActionCommand().equalsIgnoreCase("viewPlayerList")) {
+        if (event.getActionCommand().equalsIgnoreCase("viewPlayerList")) { //$NON-NLS-1$
             showPlayerList();
         }
-        if (event.getActionCommand().equalsIgnoreCase("viewTurnReport")) {
+        if (event.getActionCommand().equalsIgnoreCase("viewTurnReport")) { //$NON-NLS-1$
             showTurnReport();
         }
         if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
@@ -633,30 +633,30 @@ public class ClientGUI
         switch (phase) {
             case Game.PHASE_LOUNGE :
                 component = new ChatLounge(this);
-                main = "ChatLounge";
+                main = "ChatLounge"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
                 panSecondary.add(secondary, ((ChatLounge) component).getSecondaryDisplay());
                 break;
             case Game.PHASE_STARTING_SCENARIO :
-                component = new Label("Starting scenario...");
-                main = "Label-StartingScenario";
+                component = new Label(Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
+                main = "Label-StartingScenario"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
-                panSecondary.add(secondary, new Label(""));
+                panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
                 break;
             case Game.PHASE_EXCHANGE :
-                component = new Label("Transmitting game data...");
-                main = "Label-Exchange";
+                component = new Label(Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
+                main = "Label-Exchange"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
-                panSecondary.add(secondary, new Label(""));
+                panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
                 break;
             case Game.PHASE_SET_ARTYAUTOHITHEXES:
                 component = new SelectArtyAutoHitHexDisplay(this);
 
-                main = "BoardView";
-                secondary = "SelectArtyAutoHitHexDisplay";
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
                 if (!mainNames.contains(main)) {
                     panMain.add(main, this.scroller);
                 }
@@ -665,8 +665,8 @@ public class ClientGUI
             case Game.PHASE_DEPLOY_MINEFIELDS :
                 component = new DeployMinefieldDisplay(this);
 
-                main = "BoardView";
-                secondary = "DeployMinefieldDisplay";
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
                 if (!mainNames.contains(main)) {
                     panMain.add(main, this.scroller);
                 }
@@ -674,8 +674,8 @@ public class ClientGUI
                 break;
             case Game.PHASE_DEPLOYMENT :
                 component = new DeploymentDisplay(this);
-                main = "BoardView";
-                secondary = "DeploymentDisplay";
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "DeploymentDisplay"; //$NON-NLS-1$
                 if (!mainNames.contains(main)) {
                     panMain.add(main, this.scroller);
                 }
@@ -684,8 +684,8 @@ public class ClientGUI
             case Game.PHASE_TARGETING :
                 component = new TargetingPhaseDisplay(this, false);
                 ((TargetingPhaseDisplay) component).initializeListeners();
-                main = "BoardView";
-                secondary = "TargetingPhaseDisplay";
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "TargetingPhaseDisplay"; //$NON-NLS-1$
                 if (!mainNames.contains(main)) {
                     panMain.add(main, this.scroller);
                 }
@@ -693,8 +693,8 @@ public class ClientGUI
                 break;
             case Game.PHASE_MOVEMENT :
                 component = new MovementDisplay(this);
-                main = "BoardView";
-                secondary = "MovementDisplay";
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "MovementDisplay"; //$NON-NLS-1$
                 if (!mainNames.contains(main)) {
                     panMain.add(main, this.scroller);
                 }
@@ -703,8 +703,8 @@ public class ClientGUI
             case Game.PHASE_OFFBOARD :
                 component = new TargetingPhaseDisplay(this, true);
                 ((TargetingPhaseDisplay) component).initializeListeners();
-                main = "BoardView";
-                secondary = "OffboardDisplay";
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "OffboardDisplay"; //$NON-NLS-1$
                 if (!mainNames.contains(main)) {
                     panMain.add(main, this.scroller);
                 }
@@ -712,8 +712,8 @@ public class ClientGUI
                 break;
             case Game.PHASE_FIRING :
                 component = new FiringDisplay(this);
-                main = "BoardView";
-                secondary = "FiringDisplay";
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "FiringDisplay"; //$NON-NLS-1$
                 if (!mainNames.contains(main)) {
                     panMain.add(main, this.scroller);
                 }
@@ -721,8 +721,8 @@ public class ClientGUI
                 break;
             case Game.PHASE_PHYSICAL :
                 component = new PhysicalDisplay(this);
-                main = "BoardView";
-                secondary = "PhysicalDisplay";
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "PhysicalDisplay"; //$NON-NLS-1$
                 if (!mainNames.contains(main)) {
                     panMain.add(main, this.scroller);
                 }
@@ -730,7 +730,7 @@ public class ClientGUI
                 break;
             case Game.PHASE_INITIATIVE :
                 component = new ReportDisplay(client);
-                main = "ReportDisplay";
+                main = "ReportDisplay"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
                 panSecondary.add(secondary, ((ReportDisplay) component).getSecondaryDisplay());
@@ -746,15 +746,15 @@ public class ClientGUI
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(Game.PHASE_INITIATIVE);
                 }
-                main = "ReportDisplay";
+                main = "ReportDisplay"; //$NON-NLS-1$
                 secondary = main;
                 break;
             default :
-                component = new Label("Waiting on the server...");
-                main = "Label-Default";
+                component = new Label(Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
+                main = "Label-Default"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
-                panSecondary.add(secondary, new Label(""));
+                panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
         }
         phaseComponents.put(name, component);
         mainNames.put(name, main);
@@ -880,13 +880,13 @@ public class ClientGUI
                 Hex h = client.game.board.getHex(coords);
                 if (h != null && h.contains(Terrain.WOODS) && curPanel instanceof FiringDisplay) {
                     popup.add(new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_CLEAR)));
-                    if (client.game.getOptions().booleanOption("fire")) {
+                    if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
                         popup.add(
                             new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_IGNITE)));
                     }
                 } else if (h != null && h.contains(Terrain.BUILDING)) {
                     popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.board, false)));
-                    if (client.game.getOptions().booleanOption("fire")) {
+                    if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
                         popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.board, true)));
                     }
                 }
@@ -1021,23 +1021,23 @@ public class ClientGUI
 
         // Build the "load unit" dialog, if necessary.
         if (null == dlgLoadList) {
-            dlgLoadList = new FileDialog(frame, "Open Unit List File", FileDialog.LOAD);
+            dlgLoadList = new FileDialog(frame, Messages.getString("ClientGUI.openUnitListFileDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
 
             // Add a filter for MUL files
             dlgLoadList.setFilenameFilter(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".mul"));
+                    return (null != name && name.endsWith(".mul")); //$NON-NLS-1$
                 }
             });
 
             // use base directory by default
-            dlgLoadList.setDirectory(".");
+            dlgLoadList.setDirectory("."); //$NON-NLS-1$
 
             // Default to the player's name.
             //dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );
             // Instead, use setFile as a windoze hack, see Server.java
             //  (search for "setFile") for details.
-            dlgLoadList.setFile("*.mul");
+            dlgLoadList.setFile("*.mul"); //$NON-NLS-1$
         }
 
         // Display the "load unit" dialog.
@@ -1059,7 +1059,7 @@ public class ClientGUI
                 }
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
-                doAlertDialog("Error Loading File", excep.getMessage());
+                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
             }
         }
     }
@@ -1085,20 +1085,20 @@ public class ClientGUI
 
         // Build the "save unit" dialog, if necessary.
         if (null == dlgSaveList) {
-            dlgSaveList = new FileDialog(frame, "Save Unit List As", FileDialog.SAVE);
+            dlgSaveList = new FileDialog(frame, Messages.getString("ClientGUI.saveUnitListFileDialog.title"), FileDialog.SAVE); //$NON-NLS-1$
 
             // Add a filter for MUL files
             dlgSaveList.setFilenameFilter(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".mul"));
+                    return (null != name && name.endsWith(".mul")); //$NON-NLS-1$
                 }
             });
 
             // use base directory by default
-            dlgSaveList.setDirectory(".");
+            dlgSaveList.setDirectory("."); //$NON-NLS-1$
 
             // Default to the player's name.
-            dlgSaveList.setFile(client.getLocalPlayer().getName() + ".mul");
+            dlgSaveList.setFile(client.getLocalPlayer().getName() + ".mul"); //$NON-NLS-1$
         }
 
         // Display the "save unit" dialog.
@@ -1108,16 +1108,16 @@ public class ClientGUI
         String unitPath = dlgSaveList.getDirectory();
         String unitFile = dlgSaveList.getFile();
         if (null != unitFile) {
-            if (!(unitFile.toLowerCase().endsWith(".mul")
-                  || unitFile.toLowerCase().endsWith(".xml"))) {
-                unitFile += ".mul";
+            if (!(unitFile.toLowerCase().endsWith(".mul") //$NON-NLS-1$
+                  || unitFile.toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+                unitFile += ".mul"; //$NON-NLS-1$
             }
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitPath, unitFile, unitList);
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
-                doAlertDialog("Error Saving File", excep.getMessage());
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
             }
         }
     }
@@ -1152,7 +1152,7 @@ public class ClientGUI
         Entity entity;
 
         public ViewMenuItem(Entity entity) {
-            super("View " + entity.getDisplayName());
+            super(Messages.getString("ClientGUI.viewMenuItem") + entity.getDisplayName()); //$NON-NLS-1$
             this.entity = entity;
             addActionListener(this);
         }
@@ -1172,7 +1172,7 @@ public class ClientGUI
         Entity entity;
 
         public SelectMenuItem(Entity entity) {
-            super("Select " + entity.getDisplayName());
+            super(Messages.getString("ClientGUI.selectMenuItem") + entity.getDisplayName()); //$NON-NLS-1$
             this.entity = entity;
             addActionListener(this);
         }
@@ -1196,7 +1196,7 @@ public class ClientGUI
         Targetable target;
 
         public TargetMenuItem(Targetable t) {
-            super("Target " + t.getDisplayName());
+            super(Messages.getString("ClientGUI.targetMenuItem") + t.getDisplayName()); //$NON-NLS-1$
             target = t;
             addActionListener(this);
         }
@@ -1264,7 +1264,7 @@ public class ClientGUI
     }
 
     public void gameDisconnected(GameEvent e) {
-        AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
+        AlertDialog alert = new AlertDialog(frame, Messages.getString("ClientGUI.Disconnected.title"), Messages.getString("ClientGUI.Disconnected.message")); //$NON-NLS-1$ //$NON-NLS-2$
         alert.show();
         frame.setVisible(false);
         die();
@@ -1305,7 +1305,7 @@ public class ClientGUI
         }
         if (curPanel instanceof ChatLounge) {
             ChatLounge cl = (ChatLounge) curPanel;
-            boolean useMinefields = client.game.getOptions().booleanOption("minefields");
+            boolean useMinefields = client.game.getOptions().booleanOption("minefields"); //$NON-NLS-1$
             cl.enableMinefields(useMinefields);
 
             if (!useMinefields) {
@@ -1434,8 +1434,8 @@ public class ClientGUI
         // Don't bother asking if none survived.
         if (!living.isEmpty()
             && doYesNoDialog(
-                "Save Units?",
-                "Do you want to save all surviving units\n" + "(including retreated units) to a file?")) {
+                Messages.getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
+                Messages.getString("ClientGUI.SaveUnitsDialog.message"))){ //$NON-NLS-1$
 
             // Allow the player to save the units to a file.
             saveListFile(living);

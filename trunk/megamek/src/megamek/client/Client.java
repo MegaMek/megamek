@@ -93,7 +93,7 @@ public class Client implements Runnable {
      */
     public void connect() throws UnknownHostException, IOException {
         socket = new Socket(host, port);
-        pump = new Thread(this, "Client Pump");
+        pump = new Thread(this, "Client Pump"); //$NON-NLS-1$
         pump.start();
     }
 
@@ -127,11 +127,11 @@ public class Client implements Runnable {
             try {
                 serverlog.close();
             } catch (IOException e) {
-                System.err.print("Exception closing logfile: ");
+                System.err.print("Exception closing logfile: "); //$NON-NLS-1$
                 e.printStackTrace();
             };
         }
-        System.out.println("client: died");
+        System.out.println("client: died"); //$NON-NLS-1$
         
     }
 
@@ -143,8 +143,8 @@ public class Client implements Runnable {
             connected = false;
             die();
         }
-        if (!host.equals("localhost")) {
-            processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_DISCONNECTED, getLocalPlayer(), ""));
+        if (!host.equals("localhost")) { //$NON-NLS-1$
+            processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_DISCONNECTED, getLocalPlayer(), "")); //$NON-NLS-1$
         }
     }
     
@@ -249,23 +249,23 @@ public class Client implements Runnable {
             case Game.PHASE_DEPLOY_MINEFIELDS :
                 break;
             case Game.PHASE_DEPLOYMENT :
-                memDump("entering deployment phase");
+                memDump("entering deployment phase"); //$NON-NLS-1$
                 break;
             case Game.PHASE_TARGETING :
-                memDump("entering targeting phase");
+                memDump("entering targeting phase"); //$NON-NLS-1$
                 break;
             case Game.PHASE_MOVEMENT :
-                memDump("entering movement phase");
+                memDump("entering movement phase"); //$NON-NLS-1$
                 break;
             case Game.PHASE_OFFBOARD :
-                memDump("entering offboard phase");
+                memDump("entering offboard phase"); //$NON-NLS-1$
                 break;
             case Game.PHASE_FIRING :
-                memDump("entering firing phase");
+                memDump("entering firing phase"); //$NON-NLS-1$
                 break;
             case Game.PHASE_PHYSICAL :
                 game.resetActions();
-                memDump("entering physical phase");
+                memDump("entering physical phase"); //$NON-NLS-1$
                 break;
             case Game.PHASE_INITIATIVE :
                 game.resetActions();
@@ -279,7 +279,7 @@ public class Client implements Runnable {
                 break;
         }
 
-        processGameEvent(new GameEvent(this, GameEvent.GAME_PHASE_CHANGE, null, ""));
+        processGameEvent(new GameEvent(this, GameEvent.GAME_PHASE_CHANGE, null, "")); //$NON-NLS-1$
     }
 
     /**
@@ -401,7 +401,7 @@ public class Client implements Runnable {
     protected void changeTurnIndex(int index) {
         game.setTurnIndex(index);
         Player player = getPlayer(game.getTurn().getPlayerNum());
-        processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, player, ""));
+        processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, player, "")); //$NON-NLS-1$
     }
 
     /**
@@ -587,7 +587,7 @@ public class Client implements Runnable {
         Settings.lastPlayerColor = newPlayer.getColorIndex();
         Settings.lastPlayerCategory = newPlayer.getCamoCategory();
         Settings.lastPlayerCamoName = newPlayer.getCamoFileName();
-        processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, ""));
+        processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, "")); //$NON-NLS-1$
     }
 
     /**
@@ -671,7 +671,7 @@ public class Client implements Runnable {
             Minefield mf = (Minefield) minefields.elementAt(i);
             game.addMinefield(mf);
         }
-        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
+        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, "")); //$NON-NLS-1$
     }
 
     protected void receiveSendingMinefields(Packet packet) {
@@ -682,19 +682,19 @@ public class Client implements Runnable {
             Minefield mf = (Minefield) minefields.elementAt(i);
             game.addMinefield(mf);
         }
-      processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
+      processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, "")); //$NON-NLS-1$
     }
 
     protected void receiveRevealMinefield(Packet packet) {
         Minefield mf = (Minefield) packet.getObject(0);
         game.addMinefield(mf);
-        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
+        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, "")); //$NON-NLS-1$
     }
 
     protected void receiveRemoveMinefield(Packet packet) {
         Minefield mf = (Minefield) packet.getObject(0);
         game.removeMinefield(mf);
-        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
+        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, "")); //$NON-NLS-1$
     }
 
     protected void receiveBuildingUpdateCF(Packet packet) {
@@ -768,7 +768,7 @@ public class Client implements Runnable {
      */
     private void saveEntityStatus(String sStatus) {
         try {
-            FileWriter fw = new FileWriter("entitystatus.txt");
+            FileWriter fw = new FileWriter("entitystatus.txt"); //$NON-NLS-1$
             fw.write(sStatus);
             fw.flush();
             fw.close();
@@ -802,7 +802,7 @@ public class Client implements Runnable {
             return packet;
         } catch (SocketException ex) {
             // assume client is shutting down
-            System.err.println("client: Socket error (server closed?)");
+            System.err.println("client: Socket error (server closed?)"); //$NON-NLS-1$
             if (this.connFailures > MAX_CONN_FAILURES) {
                 disconnected();
             } else {
@@ -810,11 +810,11 @@ public class Client implements Runnable {
             }
             return null;
         } catch (IOException ex) {
-            System.err.println("client: IO error reading command:");
+            System.err.println("client: IO error reading command:"); //$NON-NLS-1$
             disconnected();
             return null;
         } catch (ClassNotFoundException ex) {
-            System.err.println("client: class not found error reading command:");
+            System.err.println("client: class not found error reading command:"); //$NON-NLS-1$
             ex.printStackTrace();
             disconnected();
             return null;
@@ -836,7 +836,7 @@ public class Client implements Runnable {
             out.flush();
             //            System.out.println("c: packet #" + packet.getCommand() + " sent");
         } catch (IOException ex) {
-            System.err.println("client: error sending command.");
+            System.err.println("client: error sending command."); //$NON-NLS-1$
         }
     }
 
@@ -848,7 +848,7 @@ public class Client implements Runnable {
         while(pump == currentThread) {
             Packet c = readPacket();
             if (c == null) {
-                System.out.println("client: got null packet");
+                System.out.println("client: got null packet"); //$NON-NLS-1$
                 continue;
             }
             switch (c.getCommand()) {
@@ -868,7 +868,7 @@ public class Client implements Runnable {
                 case Packet.COMMAND_PLAYER_READY :
                     getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
                     processGameEvent(
-                        new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
+                        new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), "")); //$NON-NLS-1$
                     break;
                 case Packet.COMMAND_PLAYER_ADD :
                     receivePlayerInfo(c);
@@ -876,7 +876,7 @@ public class Client implements Runnable {
                 case Packet.COMMAND_PLAYER_REMOVE :
                     game.removePlayer(c.getIntValue(0));
                     processGameEvent(
-                        new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
+                        new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), "")); //$NON-NLS-1$
                     break;
                 case Packet.COMMAND_CHAT :
                     if (null!=serverlog && Settings.keepServerlog) {
@@ -946,7 +946,7 @@ public class Client implements Runnable {
                         };
                     };
                     eotr = (String) c.getObject(0);
-                    processGameEvent(new GameEvent(this, GameEvent.GAME_REPORT, null, ""));
+                    processGameEvent(new GameEvent(this, GameEvent.GAME_REPORT, null, "")); //$NON-NLS-1$
                     break;
                 case Packet.COMMAND_ENTITY_ATTACK :
                     receiveAttack(c);
@@ -974,7 +974,7 @@ public class Client implements Runnable {
                     this.game.board.highlight(null);
                     this.game.board.cursor(null);
                     
-                    processGameEvent(new GameEvent(this, GameEvent.GAME_END, null, ""));
+                    processGameEvent(new GameEvent(this, GameEvent.GAME_END, null, "")); //$NON-NLS-1$
                     break;
             }
         }
@@ -999,11 +999,11 @@ public class Client implements Runnable {
             final long total = Runtime.getRuntime().totalMemory();
             final long free = Runtime.getRuntime().freeMemory();
             final long used = total - free;
-            buf.append("Memory dump ").append(where);
+            buf.append("Memory dump ").append(where); //$NON-NLS-1$
             for (int loop = where.length(); loop < 25; loop++) {
                 buf.append(' ');
             }
-            buf.append(": used (").append(used).append(") + free (").append(free).append(") = ").append(total);
+            buf.append(": used (").append(used).append(") + free (").append(free).append(") = ").append(total); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             System.out.println(buf.toString());
         }
     }

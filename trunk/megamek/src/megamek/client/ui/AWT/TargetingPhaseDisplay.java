@@ -33,13 +33,13 @@ public class TargetingPhaseDisplay
     private DistractableAdapter distracted = new DistractableAdapter();
 
     // Action command names
-    public static final String FIRE_FIRE       = "fireFire";
-    public static final String FIRE_FLIP_ARMS  = "fireFlipArms";
-    public static final String FIRE_NEXT       = "fireNext";
-    public static final String FIRE_SKIP       = "fireSkip";
-    public static final String FIRE_TWIST      = "fireTwist";
-    public static final String FIRE_CANCEL     = "fireCancel";
-    public static final String FIRE_REPORT     = "fireReport";
+    public static final String FIRE_FIRE       = "fireFire"; //$NON-NLS-1$
+    public static final String FIRE_FLIP_ARMS  = "fireFlipArms"; //$NON-NLS-1$
+    public static final String FIRE_NEXT       = "fireNext"; //$NON-NLS-1$
+    public static final String FIRE_SKIP       = "fireSkip"; //$NON-NLS-1$
+    public static final String FIRE_TWIST      = "fireTwist"; //$NON-NLS-1$
+    public static final String FIRE_CANCEL     = "fireCancel"; //$NON-NLS-1$
+    public static final String FIRE_REPORT     = "fireReport"; //$NON-NLS-1$
 
     // parent game
     public ClientGUI clientgui;
@@ -86,36 +86,36 @@ public class TargetingPhaseDisplay
         // fire
         attacks = new Vector();
 
-        setupStatusBar("Waiting to begin Targeting phase...");
+        setupStatusBar(Messages.getString("TargetingPhaseDisplay.waitingForTargetingPhase")); //$NON-NLS-1$
 
-        butFire = new Button("Fire");
+        butFire = new Button(Messages.getString("TargetingPhaseDisplay.Fire")); //$NON-NLS-1$
         butFire.addActionListener(this);
         butFire.setActionCommand(FIRE_FIRE);
         butFire.setEnabled(false);
 
-        butSkip = new Button("Skip");
+        butSkip = new Button(Messages.getString("TargetingPhaseDisplay.Skip")); //$NON-NLS-1$
         butSkip.addActionListener(this);
         butSkip.setActionCommand(FIRE_SKIP);
         butSkip.setEnabled(false);
 
-        butTwist = new Button("Twist");
+        butTwist = new Button(Messages.getString("TargetingPhaseDisplay.Twist")); //$NON-NLS-1$
         butTwist.addActionListener(this);
         butTwist.setActionCommand(FIRE_TWIST);
         butTwist.setEnabled(false);
 
-        butFlipArms = new Button("Flip Arms");
+        butFlipArms = new Button(Messages.getString("TargetingPhaseDisplay.FlipArms")); //$NON-NLS-1$
         butFlipArms.addActionListener(this);
         butFlipArms.setActionCommand(FIRE_FLIP_ARMS);
         butFlipArms.setEnabled(false);
 
-        butSpace = new Button(".");
+        butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
-        butDone = new Button("Done");
+        butDone = new Button(Messages.getString("TargetingPhaseDisplay.Done")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
 
-        butNext = new Button(" Next Unit ");
+        butNext = new Button(Messages.getString("TargetingPhaseDisplay.NextUnit")); //$NON-NLS-1$
         butNext.addActionListener(this);
         butNext.setActionCommand(FIRE_NEXT);
         butNext.setEnabled(false);
@@ -232,7 +232,7 @@ public class TargetingPhaseDisplay
                 // We were *supposed* to have found an on-board entity.
                 if ( null == ce().getPosition() ) {
                     System.err.println
-                        ("FiringDisplay: could not find an on-board entity: " +
+                        ("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
                          en);
                     return;
                 }
@@ -257,7 +257,7 @@ public class TargetingPhaseDisplay
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
             setFlipArmsEnabled(ce().canFlipArms());
         } else {
-            System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
+            System.err.println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
     }
 
@@ -338,9 +338,8 @@ public class TargetingPhaseDisplay
     private void ready() {
         if (attacks.isEmpty() && Settings.nagForNoAction) {
             // comfirm this action
-            String title = "Don't fire?";
-            String body = "This unit has not fired any weapons.\n\n" +
-                "Are you really done?\n";
+            String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title"); //$NON-NLS-1$
+            String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message"); //$NON-NLS-1$
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if ( !response.getShowAgain() ) {
                 Settings.nagForNoAction = false;
@@ -382,7 +381,7 @@ public class TargetingPhaseDisplay
         // validate
         if (ce() == null || target == null || mounted == null
         || !(mounted.getType() instanceof WeaponType)) {
-            throw new IllegalArgumentException("current fire parameters are invalid");
+            throw new IllegalArgumentException("current fire parameters are invalid"); //$NON-NLS-1$
         }
 
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
@@ -491,7 +490,7 @@ public class TargetingPhaseDisplay
         }
         clientgui.bv.redrawEntity(ce());
         clientgui.mechD.displayEntity(ce());
-        clientgui.mechD.showPanel("weapons");
+        clientgui.mechD.showPanel("weapons"); //$NON-NLS-1$
         clientgui.mechD.wPan.selectWeapon(ce().getFirstWeapon());
         updateTarget();
     }
@@ -524,13 +523,13 @@ public class TargetingPhaseDisplay
               toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, 0);
               clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
 
-            clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()));
+            clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
-                clientgui.mechD.wPan.wToHitR.setText("Already fired");
+                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.alreadyFired")); //$NON-NLS-1$
                 setFireEnabled(false);
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
-                clientgui.mechD.wPan.wToHitR.setText("Auto-firing weapon");
+                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.autoFiringWeapon")); //$NON-NLS-1$
                 setFireEnabled(false);
             } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
@@ -539,16 +538,16 @@ public class TargetingPhaseDisplay
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
-                clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
+                clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)"); //$NON-NLS-1$ //$NON-NLS-2$
                 setFireEnabled(true);
             }
             clientgui.mechD.wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
-            clientgui.mechD.wPan.wTargetR.setText("---");
-            clientgui.mechD.wPan.wRangeR.setText("---");
-            clientgui.mechD.wPan.wToHitR.setText("---");
-            clientgui.mechD.wPan.toHitText.setText("");
+            clientgui.mechD.wPan.wTargetR.setText("---"); //$NON-NLS-1$
+            clientgui.mechD.wPan.wRangeR.setText("---"); //$NON-NLS-1$
+            clientgui.mechD.wPan.wToHitR.setText("---"); //$NON-NLS-1$
+            clientgui.mechD.wPan.toHitText.setText(""); //$NON-NLS-1$
         }
     }
 
@@ -620,7 +619,7 @@ public class TargetingPhaseDisplay
         }
 
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
-            boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire");
+            boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
@@ -647,9 +646,9 @@ public class TargetingPhaseDisplay
 
             if(client.isMyTurn()) {
                 beginMyTurn();
-                setStatusBarText("It's your turn to fire.");
-            } else {
-                setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to fire.");
+                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn")); //$NON-NLS-1$
+            } else {               
+                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
             }
         }
     }
@@ -665,7 +664,7 @@ public class TargetingPhaseDisplay
         }
         // if we're ending the firing phase, unregister stuff.
         if(client.game.getPhase() ==  phase) {
-            setStatusBarText("Waiting to begin Firing phase...");
+            setStatusBarText(Messages.getString("TargetingPhaseDisplay.waitingForFiringPhase")); //$NON-NLS-1$
         }
     }
 
@@ -691,7 +690,7 @@ public class TargetingPhaseDisplay
         } else if (ev.getActionCommand().equals(FIRE_REPORT)) {
             new MiniReportDisplay(clientgui.frame, client.eotr).show();
             return;
-        } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
+        } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) { //$NON-NLS-1$
             // Make sure the game options dialog is not editable.
             if ( clientgui.getGameOptionsDialog().isEditable() ) {
                 clientgui.getGameOptionsDialog().setEditable( false );

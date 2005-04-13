@@ -38,7 +38,7 @@ public class MechSelectorDialog
     private final static int KEY_TIMEOUT = 1000;
      
     // these indices should match up with the static values in the MechSummaryComparator
-    private String[] m_saSorts = { "Name", "Ref", "Weight", "BV", "Year" };
+    private String[] m_saSorts = { Messages.getString("MechSelectorDialog.0"), Messages.getString("MechSelectorDialog.1"), Messages.getString("MechSelectorDialog.2"), Messages.getString("MechSelectorDialog.3"), Messages.getString("MechSelectorDialog.4") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
     
     private MechSummary[] m_mechsCurrent;
     private Client m_client;
@@ -48,32 +48,32 @@ public class MechSelectorDialog
     private StringBuffer m_sbSearch = new StringBuffer();
     private long m_nLastSearch = 0;
     
-    private Label m_labelWeightClass = new Label("Weight Class: ", Label.RIGHT);
+    private Label m_labelWeightClass = new Label(Messages.getString("MechSelectorDialog.m_labelWeightClass"), Label.RIGHT); //$NON-NLS-1$
     private Choice m_chWeightClass = new Choice();
-    private Label m_labelType = new Label("Type: ", Label.RIGHT);
+    private Label m_labelType = new Label(Messages.getString("MechSelectorDialog.m_labelType"), Label.RIGHT); //$NON-NLS-1$
     private Choice m_chType = new Choice();
-    private Label m_labelUnitType = new Label("Unit Type: ", Label.RIGHT);
+    private Label m_labelUnitType = new Label(Messages.getString("MechSelectorDialog.m_labelUnitType"), Label.RIGHT); //$NON-NLS-1$
     private Choice m_chUnitType = new Choice();
-    private Label m_labelSort = new Label("Sort: ", Label.RIGHT);
+    private Label m_labelSort = new Label(Messages.getString("MechSelectorDialog.m_labelSort"), Label.RIGHT); //$NON-NLS-1$
     private Choice m_chSort = new Choice();
     private Panel m_pParams = new Panel();
     List m_mechList = new List(10);
-    private Button m_bPick = new Button("Select Mech");
-    private Button m_bCancel = new Button("Cancel");
+    private Button m_bPick = new Button(Messages.getString("MechSelectorDialog.m_bPick")); //$NON-NLS-1$
+    private Button m_bCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     private Panel m_pButtons = new Panel();
-    private TextArea m_mechViewLeft = new TextArea("",18,25,TextArea.SCROLLBARS_HORIZONTAL_ONLY);
+    private TextArea m_mechViewLeft = new TextArea("",18,25,TextArea.SCROLLBARS_HORIZONTAL_ONLY); //$NON-NLS-1$
     private TextArea m_mechViewRight = new TextArea(18,28);
     private Panel m_pLeft = new Panel();
 
     private Panel m_pUpper = new Panel();
 	BufferedPanel m_pPreview = new BufferedPanel();
 	
-	private Label m_labelPlayer = new Label("Player:", Label.RIGHT);
+	private Label m_labelPlayer = new Label(Messages.getString("MechSelectorDialog.m_labelPlayer"), Label.RIGHT); //$NON-NLS-1$
 	private Choice m_chPlayer = new Choice();
 
     public MechSelectorDialog(ClientGUI cl, UnitLoadingDialog uld)
     {
-        super(cl.frame, "Select Mech...", true);
+        super(cl.frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
         m_client = cl.getClient();
         m_clientgui = cl;
         unitLoadingDialog = uld;
@@ -106,16 +106,16 @@ public class MechSelectorDialog
 
         m_pLeft.setLayout(new BorderLayout());
         m_pLeft.add(m_pUpper, BorderLayout.NORTH);
-        m_mechList.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        m_mechList.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         m_mechList.addKeyListener(this);
         m_pLeft.add(m_mechList, BorderLayout.CENTER);
         m_pLeft.add(m_pButtons, BorderLayout.SOUTH);
 
         setLayout(new BorderLayout());
         add(m_pLeft, BorderLayout.WEST);
-        m_mechViewLeft.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        m_mechViewLeft.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         add(m_mechViewLeft, BorderLayout.CENTER);
-        m_mechViewRight.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        m_mechViewRight.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         add(m_mechViewRight, BorderLayout.EAST);
         
         //clearMechPreview();
@@ -170,32 +170,32 @@ public class MechSelectorDialog
          * be changed there as well.
          */
 
-        m_chWeightClass.addItem("Light");
-        m_chWeightClass.addItem("Medium");
-        m_chWeightClass.addItem("Heavy");
-        m_chWeightClass.addItem("Assault");
-        m_chWeightClass.addItem("All");
+        m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.Light")); //$NON-NLS-1$
+        m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.Medium")); //$NON-NLS-1$
+        m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.Heavy")); //$NON-NLS-1$
+        m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.Assault")); //$NON-NLS-1$
+        m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chWeightClass.select(0);
 
-        m_chType.addItem("IS level 1");
-        m_chType.addItem("IS level 2");
-        m_chType.addItem("IS All");
-        m_chType.addItem("Clan level 2");
-        m_chType.addItem("IS and Clan");
-        m_chType.addItem("Mixed (IS) level 2");
-        m_chType.addItem("Mixed (Clan) level 2");
+        m_chType.addItem(Messages.getString("MechSelectorDialog.ISLevel1")); //$NON-NLS-1$
+        m_chType.addItem(Messages.getString("MechSelectorDialog.ISLevel2")); //$NON-NLS-1$
+        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAll")); //$NON-NLS-1$
+        m_chType.addItem(Messages.getString("MechSelectorDialog.ClanLevel2")); //$NON-NLS-1$
+        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAndClan")); //$NON-NLS-1$
+        m_chType.addItem(Messages.getString("MechSelectorDialog.MixedISLevel2")); //$NON-NLS-1$
+        m_chType.addItem(Messages.getString("MechSelectorDialog.MixedClanLevel2")); //$NON-NLS-1$
         // More than 8 items causes the drop down to sprout a vertical
         //  scroll bar.  I guess we'll sacrifice this next one to stay
         //  under the limit.  Stupid AWT Choice class!
         //        m_chType.addItem("Mixed All");
-        m_chType.addItem("All");
+        m_chType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chType.select(0);
 
-        m_chUnitType.addItem("Mek");
-        m_chUnitType.addItem("Tank");
-        m_chUnitType.addItem("Infantry");
-        m_chUnitType.addItem("ProtoMek");
-        m_chUnitType.addItem("All");
+        m_chUnitType.addItem(Messages.getString("MechSelectorDialog.Mek")); //$NON-NLS-1$
+        m_chUnitType.addItem(Messages.getString("MechSelectorDialog.Tank")); //$NON-NLS-1$
+        m_chUnitType.addItem(Messages.getString("MechSelectorDialog.Infantry")); //$NON-NLS-1$
+        m_chUnitType.addItem(Messages.getString("MechSelectorDialog.Protomek")); //$NON-NLS-1$
+        m_chUnitType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chUnitType.select(0);
     }
     
@@ -206,16 +206,16 @@ public class MechSelectorDialog
         String sClass = m_chWeightClass.getSelectedItem();
         int nWeight = 0;
 
-        if (sClass.equals("Light")) {
+        if (sClass.equals(Messages.getString("MechSelectorDialog.Light"))) { //$NON-NLS-1$
             nWeight = Entity.WEIGHT_LIGHT;
         }
-        else if (sClass.equals("Medium")) {
+        else if (sClass.equals(Messages.getString("MechSelectorDialog.Medium"))) { //$NON-NLS-1$
             nWeight = Entity.WEIGHT_MEDIUM;
         }
-        else if (sClass.equals("Heavy")) {
+        else if (sClass.equals(Messages.getString("MechSelectorDialog.Heavy"))) { //$NON-NLS-1$
             nWeight = Entity.WEIGHT_HEAVY;
         }
-        else if (sClass.equals("Assault")) {
+        else if (sClass.equals(Messages.getString("MechSelectorDialog.Assault"))) { //$NON-NLS-1$
             nWeight = Entity.WEIGHT_ASSAULT;
         }
         int nType = m_chType.getSelectedIndex();
@@ -223,27 +223,27 @@ public class MechSelectorDialog
         String sUnitType = m_chUnitType.getSelectedItem();
         MechSummary[] mechs = MechSummaryCache.getInstance().getAllMechs();
         if ( mechs == null ) {
-            System.err.println( "No units to filter!" );
+            System.err.println( "No units to filter!" ); //$NON-NLS-1$
             return;
         }
         for (int x = 0; x < mechs.length; x++) {
             if ( /* Weight */
-                (sClass.equals("All") || mechs[x].getWeightClass() == nWeight)
+                (sClass.equals(Messages.getString("MechSelectorDialog.All")) || mechs[x].getWeightClass() == nWeight) //$NON-NLS-1$
                 && /* Technology Level */
-                (sType.equals("All")
-                 || (sType.equals("IS All") &&
+                (sType.equals(Messages.getString("MechSelectorDialog.All")) //$NON-NLS-1$
+                 || (sType.equals(Messages.getString("MechSelectorDialog.ISAll")) && //$NON-NLS-1$
                      mechs[x].getType() <= TechConstants.T_IS_LEVEL_2)
-                 || (sType.equals("IS and Clan") &&
+                 || (sType.equals(Messages.getString("MechSelectorDialog.ISAndClan")) && //$NON-NLS-1$
                      (mechs[x].getType() <= TechConstants.T_IS_LEVEL_2 ||
                       mechs[x].getType() == TechConstants.T_CLAN_LEVEL_2))
-                 || (sType.equals("Mixed All") &&
+                 || (sType.equals(Messages.getString("MechSelectorDialog.MixedAll")) && //$NON-NLS-1$
                      (mechs[x].getType() ==
                       TechConstants.T_MIXED_BASE_IS_LEVEL_2 ||
                       mechs[x].getType() ==
                       TechConstants.T_MIXED_BASE_CLAN_LEVEL_2))
                  || TechConstants.T_NAMES[mechs[x].getType()].equals(sType))
                 && /* Unit Type (Mek, Infantry, etc.) */
-                ( sUnitType.equals( "All" ) ||
+                ( sUnitType.equals( Messages.getString("MechSelectorDialog.All") ) || //$NON-NLS-1$
                   mechs[x].getUnitType().equals(sUnitType) ) )
                 {
                     vMechs.addElement(mechs[x]);
@@ -284,10 +284,10 @@ public class MechSelectorDialog
     
     private String formatMech(MechSummary ms)
     {
-        return makeLength(ms.getModel(), 10) + " " + 
-                makeLength(ms.getChassis(), 20) + " " + 
-                makeLength("" + ms.getTons(), 3) + " " + 
-                makeLength("" + ms.getBV(),5)+""+
+        return makeLength(ms.getModel(), 10) + " " +  //$NON-NLS-1$
+                makeLength(ms.getChassis(), 20) + " " +  //$NON-NLS-1$
+                makeLength("" + ms.getTons(), 3) + " " +  //$NON-NLS-1$ //$NON-NLS-2$
+                makeLength("" + ms.getBV(),5)+""+ //$NON-NLS-1$ //$NON-NLS-2$
 		    ms.getYear();
     }
     
@@ -314,7 +314,7 @@ public class MechSelectorDialog
                 e.setOwner(c.getLocalPlayer());
                 c.sendAddEntity(e);
             } catch (EntityLoadingException ex) {
-                System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
+                System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 ex.printStackTrace();
                 return;
             }
@@ -345,7 +345,7 @@ public class MechSelectorDialog
                     Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                     previewMech(entity);
                 } catch (EntityLoadingException ex) {
-                    System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
+                    System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     ex.printStackTrace();
                     clearMechPreview();
                     return;
@@ -357,8 +357,8 @@ public class MechSelectorDialog
     void clearMechPreview() {
         m_mechViewLeft.setEditable(false);
         m_mechViewRight.setEditable(false);
-        m_mechViewLeft.setText("");
-        m_mechViewRight.setText("");
+        m_mechViewLeft.setText(""); //$NON-NLS-1$
+        m_mechViewRight.setText(""); //$NON-NLS-1$
 
         // Remove preview image.        
         if (MechSummaryCache.isInitialized()) {
@@ -381,14 +381,14 @@ public class MechSelectorDialog
 		m_pPreview.paint(m_pPreview.getGraphics());
     }
     
-    private static final String SPACES = "                        ";
+    private static final String SPACES = "                        "; //$NON-NLS-1$
     private String makeLength(String s, int nLength)
     {
         if (s.length() == nLength) {
             return s;
         }
         else if (s.length() > nLength) {
-            return s.substring(0, nLength - 2) + "..";
+            return s.substring(0, nLength - 2) + ".."; //$NON-NLS-1$
         }
         else {
             return s + SPACES.substring(0, nLength - s.length());
@@ -400,7 +400,7 @@ public class MechSelectorDialog
     
     public void keyPressed(java.awt.event.KeyEvent ke) {
 	if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-	    ActionEvent event = new ActionEvent(m_bPick,ActionEvent.ACTION_PERFORMED,"");
+	    ActionEvent event = new ActionEvent(m_bPick,ActionEvent.ACTION_PERFORMED,""); //$NON-NLS-1$
 	    actionPerformed(event);
 	}
         long curTime = System.currentTimeMillis();

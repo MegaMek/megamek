@@ -51,8 +51,8 @@ public class CommonSettingsDialog extends ClientDialog
     private Checkbox    defaultAutoejectDisabled;
     private Checkbox    showUnitId;
 
-    private static final String CANCEL = "CANCEL";
-    private static final String UPDATE = "UPDATE";
+    private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
+    private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
     
 
     /**
@@ -62,7 +62,7 @@ public class CommonSettingsDialog extends ClientDialog
      */
     public CommonSettingsDialog( Frame owner) {
         // Initialize our superclass with a title.
-        super( owner, "Client Settings" );
+        super( owner, Messages.getString("CommonSettingsDialog.title") ); //$NON-NLS-1$
 
         // Lay out this dialog.
         Panel tempPanel = new Panel();
@@ -71,129 +71,129 @@ public class CommonSettingsDialog extends ClientDialog
         // Add the setting controls.
         Panel panSetting;
         minimapEnabled
-            = new Checkbox( "The minimap can be shown." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.minimapEnabled") ); //$NON-NLS-1$
         tempPanel.add( minimapEnabled );
         
         autoEndFiring
-            = new Checkbox( "Skip 'Done' when firing all weapons." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.autoEndFiring") ); //$NON-NLS-1$
         tempPanel.add( autoEndFiring );
         
         nagForMASC
-            = new Checkbox( "Confirm all movement that uses MASC." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.nagForMASC") ); //$NON-NLS-1$
         tempPanel.add( nagForMASC );
         
         nagForPSR
-            = new Checkbox( "Confirm all movement that requires a PSR." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.nagForPSR") ); //$NON-NLS-1$
         tempPanel.add( nagForPSR );
         
         nagForNoAction
-            = new Checkbox( "Confirm done when no movement/firing/physicals declared." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.nagForNoAction") ); //$NON-NLS-1$
         tempPanel.add( nagForNoAction );
         
         animateMove
-            = new Checkbox( "Animate movement." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.animateMove") ); //$NON-NLS-1$
         tempPanel.add( animateMove );
         
         showWrecks
-            = new Checkbox( "Show wrecks." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.showWrecks") ); //$NON-NLS-1$
         tempPanel.add( showWrecks );
         
         soundMute
-            = new Checkbox( "Mute sound." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.soundMute") ); //$NON-NLS-1$
         tempPanel.add( soundMute );
         
         showMapHexPopup
-            = new Checkbox( "Show map hex popup." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.showMapHexPopup") ); //$NON-NLS-1$
         tempPanel.add( showMapHexPopup );
 
         panSetting = new Panel();
         tooltipDelay
             = new TextField(4);
         panSetting.add( tooltipDelay );
-        panSetting.add( new Label("Tooltip popup delay.") );
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.tooltipDelay")) ); //$NON-NLS-1$
         tempPanel.add( panSetting );
 
         panSetting = new Panel();
         unitStartChar
             = new Choice();
         // Add option for "A, B, C, D..."
-        unitStartChar.addItem( "\u0041, \u0042, \u0043, \u0044..." );
+        unitStartChar.addItem( "\u0041, \u0042, \u0043, \u0044..." ); //$NON-NLS-1$
         // Add option for "ALPHA, BETA, GAMMA, DELTA..."
-        unitStartChar.addItem( "\u0391, \u0392, \u0393, \u0394..." );
+        unitStartChar.addItem( "\u0391, \u0392, \u0393, \u0394..." ); //$NON-NLS-1$
         // Add option for "alpha, beta, gamma, delta..."
-        unitStartChar.addItem( "\u03B1, \u03B2, \u03B3, \u03B4..." );
+        unitStartChar.addItem( "\u03B1, \u03B2, \u03B3, \u03B4..." ); //$NON-NLS-1$
         panSetting.add( unitStartChar );
-        panSetting.add( new Label("ProtoMech unit codes.") );
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.protoMechUnitCodes")) ); //$NON-NLS-1$
 
         panSetting = new Panel();
         maxPathfinderTime
             = new TextField(5);
         panSetting.add( maxPathfinderTime );
-        panSetting.add( new Label("Pathfinder time limit (milliseconds).") );
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit")) ); //$NON-NLS-1$
         tempPanel.add( panSetting );
         getFocus
-            = new Checkbox( "Get Focus when a new phase begins.");
+            = new Checkbox( Messages.getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
         tempPanel.add( getFocus );
         tempPanel.add( panSetting );
 
         // player-specific settings
         defaultAutoejectDisabled
-            = new Checkbox( "Disable all automatic ejection by default." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.defaultAutoejectDisabled") ); //$NON-NLS-1$
         defaultAutoejectDisabled.addItemListener(this);
         tempPanel.add( defaultAutoejectDisabled );
 
         showUnitId
-            = new Checkbox ( "Show each unit's unique Id next to its name.");
+            = new Checkbox ( Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
         showUnitId.addItemListener(this);
         tempPanel.add( showUnitId );
         
         // client-side gamelog settings
         keepServerlog
-            = new Checkbox( "Keep a copy of the game log." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.keepServerlog") ); //$NON-NLS-1$
         keepServerlog.addItemListener(this);
         tempPanel.add( keepServerlog );
         panSetting = new Panel();
         serverlogFilename
             = new TextField(20);
         panSetting.add( serverlogFilename );
-        panSetting.add( new Label("Game log filename (this file will be appended to.)") );
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileName")) ); //$NON-NLS-1$
         tempPanel.add( panSetting );
         panSetting = new Panel();
         serverlogMaxSize
             = new TextField(5);
         panSetting.add( serverlogMaxSize );
-        panSetting.add( new Label("Maximum game log size (MB).") );
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileMaxSize")) ); //$NON-NLS-1$
         tempPanel.add( panSetting );
 
         // scrolling options
-        tempPanel.add( new Label("Clicking on the MiniMap and using the numpad arrow keys always scrolls the main display.") );
-        tempPanel.add( new Label("Additionaly, you may choose to scroll:") );
+        tempPanel.add( new Label(Messages.getString("CommonSettingsDialog.minimapScroll")) ); //$NON-NLS-1$
+        tempPanel.add( new Label(Messages.getString("CommonSettingsDialog.additionalScroll")) ); //$NON-NLS-1$
 
         rightDragScroll
-            = new Checkbox( "By right-clicking on the map and dragging." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.rightDragScroll") ); //$NON-NLS-1$
         tempPanel.add( rightDragScroll );
         
         ctlScroll
-            = new Checkbox( "By holding down CTRL and dragging." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.ctlScroll") ); //$NON-NLS-1$
             tempPanel.add( ctlScroll );
 
         clickEdgeScroll
-            = new Checkbox( "By right-clicking near the edge of the map." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.clickEdgeScroll") ); //$NON-NLS-1$
             tempPanel.add( clickEdgeScroll );
 
         alwaysRightClickScroll
-            = new Checkbox( "Use the right-click near the edge of the map scrolling also in the firing phase." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.alwaysRightClickScroll") ); //$NON-NLS-1$
             tempPanel.add( alwaysRightClickScroll );
         
         autoEdgeScroll
-            = new Checkbox( "Automatically, whenever you left-click near the edge of the map." );
+            = new Checkbox( Messages.getString("CommonSettingsDialog.autoEdgeScroll") ); //$NON-NLS-1$
             tempPanel.add( autoEdgeScroll );
 
         panSetting = new Panel();
         scrollSensitivity
             = new TextField(4);
         panSetting.add( scrollSensitivity );
-        panSetting.add( new Label("Scroll sensitivity.") );
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.scrollSesitivity")) ); //$NON-NLS-1$
         tempPanel.add( panSetting );
 
         scrOptions.add(tempPanel);
@@ -214,12 +214,12 @@ public class CommonSettingsDialog extends ClientDialog
         Panel buttons = new Panel();
         buttons.setLayout( new GridLayout(1, 0) );
         buttons.add( new Label() );
-        Button update = new Button( "Update" );
+        Button update = new Button( Messages.getString("CommonSettingsDialog.Update") ); //$NON-NLS-1$
         update.setActionCommand( CommonSettingsDialog.UPDATE );
         update.addActionListener( this );
         buttons.add( update );
         buttons.add( new Label() );
-        Button cancel = new Button( "Cancel" );
+        Button cancel = new Button( Messages.getString("Cancel") ); //$NON-NLS-1$
         cancel.setActionCommand( CommonSettingsDialog.CANCEL );
         cancel.addActionListener( this );
         buttons.add( cancel );

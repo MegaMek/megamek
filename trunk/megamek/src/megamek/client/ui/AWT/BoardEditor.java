@@ -91,7 +91,7 @@ public class BoardEditor extends Container
         try {
             bv = new BoardView1(game, frame);
         } catch (IOException e) {
-            new AlertDialog(frame,"Fatal Error", "Could not initialise:\n"+e);
+            new AlertDialog(frame,Messages.getString("BoardEditor.FatalError"), Messages.getString("BoardEditor.CouldntInitialize")+e); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         };
 
@@ -110,10 +110,8 @@ public class BoardEditor extends Container
         frame.show();
 
         if (true==Settings.nagForMapEdReadme) {
-            String title = "Please read the editor-readme.txt";
-            String body = 
-                "Instructions for using the editor may be found in editor-readme.txt.\n"+
-                " \nWould you like to read the Map Editor documentation now?\n";
+            String title = Messages.getString("BoardEditor.readme.title"); //$NON-NLS-1$
+            String body = Messages.getString("BoardEditor.readme.message"); //$NON-NLS-1$
             ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
             confirm.show();
 
@@ -132,7 +130,7 @@ public class BoardEditor extends Container
      * Sets up the frame that will display the editor.
      */
     private void setupFrame() {
-        frame.setTitle("MegaMek Board Editor : Unnamed");
+        frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
         frame.setLayout(new BorderLayout());
 
         // Create a scroll bars to surround the board view.
@@ -183,21 +181,21 @@ public class BoardEditor extends Container
      */
     private void setupEditorPanel() {
         canHex = new HexCanvas();
-        labElev = new Label("Elev:", Label.RIGHT);
-        texElev = new TextField("0", 1);
+        labElev = new Label(Messages.getString("BoardEditor.labElev"), Label.RIGHT); //$NON-NLS-1$
+        texElev = new TextField("0", 1); //$NON-NLS-1$
         texElev.addActionListener(this);
         texElev.addTextListener(this);
-        butElevUp = new Button("U");
+        butElevUp = new Button(Messages.getString("BoardEditor.butElevUp")); //$NON-NLS-1$
         butElevUp.addActionListener(this);
-        butElevDown = new Button("D");
+        butElevDown = new Button(Messages.getString("BoardEditor.butElevDown")); //$NON-NLS-1$
         butElevDown.addActionListener(this);
     
-        labTerrain = new Label("Terrain:", Label.LEFT);
+        labTerrain = new Label(Messages.getString("BoardEditor.labTerrain"), Label.LEFT); //$NON-NLS-1$
         lisTerrain = new java.awt.List(6);
         lisTerrain.addItemListener(this);
         refreshTerrainList();
         
-        butDelTerrain = new Button("Remove Terrain");
+        butDelTerrain = new Button(Messages.getString("BoardEditor.butDelTerrain")); //$NON-NLS-1$
         butDelTerrain.addActionListener(this);
         
         choTerrainType = new Choice();
@@ -205,22 +203,22 @@ public class BoardEditor extends Container
             choTerrainType.add(Terrain.getName(i));
         }
         
-        texTerrainLevel = new TextField("0", 1);
+        texTerrainLevel = new TextField("0", 1); //$NON-NLS-1$
         
-        butAddTerrain = new Button("Add/Set Terrain");
+        butAddTerrain = new Button(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
         butAddTerrain.addActionListener(this);
         
-        butMiniMap = new Button("Toggle MiniMap");
-        butMiniMap.setActionCommand( "viewMiniMap" );
+        butMiniMap = new Button(Messages.getString("BoardEditor.butMiniMap")); //$NON-NLS-1$
+        butMiniMap.setActionCommand( "viewMiniMap" ); //$NON-NLS-1$
         butMiniMap.addActionListener(this);
         
         panTerrainType = new Panel(new BorderLayout());
         panTerrainType.add(choTerrainType, BorderLayout.WEST);
         panTerrainType.add(texTerrainLevel, BorderLayout.CENTER);
         
-        cheTerrExitSpecified = new Checkbox("Set Exits : ");
-        butTerrExits = new Button("A");
-        texTerrExits = new TextField("0", 1);
+        cheTerrExitSpecified = new Checkbox(Messages.getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
+        butTerrExits = new Button(Messages.getString("BoardEditor.butTerrExits")); //$NON-NLS-1$
+        texTerrExits = new TextField("0", 1); //$NON-NLS-1$
         butTerrExits.addActionListener(this);
     
         panTerrExits = new Panel(new FlowLayout());
@@ -229,33 +227,33 @@ public class BoardEditor extends Container
         panTerrExits.add(texTerrExits);
 
         panRoads = new Panel(new FlowLayout());
-        cheRoadsAutoExit = new Checkbox("Exit Roads to Pavement");
+        cheRoadsAutoExit = new Checkbox(Messages.getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
         cheRoadsAutoExit.addItemListener( this );
         panRoads.add(cheRoadsAutoExit);
 
-        labTheme = new Label("Theme:", Label.LEFT);
-        texTheme = new TextField("", 15);
+        labTheme = new Label(Messages.getString("BoardEditor.labTheme"), Label.LEFT); //$NON-NLS-1$
+        texTheme = new TextField("", 15); //$NON-NLS-1$
         texTheme.addTextListener(this);
 
-        labBoard = new Label("Board:", Label.LEFT);
-        butBoardNew = new Button("New...");
-        butBoardNew.setActionCommand( "fileBoardNew" );
+        labBoard = new Label(Messages.getString("BoardEditor.labBoard"), Label.LEFT); //$NON-NLS-1$
+        butBoardNew = new Button(Messages.getString("BoardEditor.butBoardNew")); //$NON-NLS-1$
+        butBoardNew.setActionCommand( "fileBoardNew" ); //$NON-NLS-1$
         butBoardNew.addActionListener(this);
 
-        butBoardLoad = new Button("Load...");
-        butBoardLoad.setActionCommand( "fileBoardOpen" );
+        butBoardLoad = new Button(Messages.getString("BoardEditor.butBoardLoad")); //$NON-NLS-1$
+        butBoardLoad.setActionCommand( "fileBoardOpen" ); //$NON-NLS-1$
         butBoardLoad.addActionListener(this);
 
-        butBoardSave = new Button("Save");
-        butBoardSave.setActionCommand( "fileBoardSave" );
+        butBoardSave = new Button(Messages.getString("BoardEditor.butBoardSave")); //$NON-NLS-1$
+        butBoardSave.setActionCommand( "fileBoardSave" ); //$NON-NLS-1$
         butBoardSave.addActionListener(this);
 
-        butBoardSaveAs = new Button("Save As...");
-        butBoardSaveAs.setActionCommand( "fileBoardSaveAs" );
+        butBoardSaveAs = new Button(Messages.getString("BoardEditor.butBoardSaveAs")); //$NON-NLS-1$
+        butBoardSaveAs.setActionCommand( "fileBoardSaveAs" ); //$NON-NLS-1$
         butBoardSaveAs.addActionListener(this);
 
-        butBoardSaveAsImage = new Button("Save As Image...");
-        butBoardSaveAsImage.setActionCommand( "fileBoardSaveAsImage" );
+        butBoardSaveAsImage = new Button(Messages.getString("BoardEditor.butBoardSaveAsImage")); //$NON-NLS-1$
+        butBoardSaveAsImage.setActionCommand( "fileBoardSaveAsImage" ); //$NON-NLS-1$
         butBoardSaveAsImage.addActionListener(this);
 
         panButtons = new Panel(new GridLayout(3, 2, 2, 2));
@@ -266,7 +264,7 @@ public class BoardEditor extends Container
         panButtons.add(butBoardSaveAs);
         panButtons.add(butBoardSaveAsImage);
         
-        blankL = new Label("", Label.CENTER);
+        blankL = new Label("", Label.CENTER); //$NON-NLS-1$
         
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -303,13 +301,13 @@ public class BoardEditor extends Container
         //        addBag(labBoard, gridbag, c);
         addBag(panButtons, gridbag, c);
 
-        minimapW = new Dialog(frame, "MiniMap", false);
+        minimapW = new Dialog(frame, Messages.getString("BoardEditor.minimapW"), false); //$NON-NLS-1$
         minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
         minimapW.addWindowListener(this);
         try {
             minimap = new MiniMap(minimapW, game, bv);
         } catch (IOException e) {
-            new AlertDialog(frame,"Fatal Error", "Could not initialise minimap:\n"+e);
+            new AlertDialog(frame,Messages.getString("BoardEditor.FatalError"), Messages.getString("BoardEditor.CouldNotInitialiseMinimap")+e); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         };
         minimapW.add(minimap);
@@ -425,14 +423,14 @@ public class BoardEditor extends Container
             board.newData(bnd.getX(), bnd.getY(), newHexes); 
             curpath = null;
             curfile = null;
-            frame.setTitle("MegaMek Board Editor : Unnamed");
+            frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
             menuBar.setBoard( true );
         }
     }
     
     public void boardLoad() {
-        FileDialog fd = new FileDialog(frame, "Load Board...", FileDialog.LOAD);
-        fd.setDirectory("data" + File.separator + "boards");
+        FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.loadBoard"), FileDialog.LOAD); //$NON-NLS-1$
+        fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
         fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fd.show();
         
@@ -451,11 +449,11 @@ public class BoardEditor extends Container
             is.close();
             menuBar.setBoard( true );
         } catch(IOException ex) {
-            System.err.println("error opening file to save!");
+            System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);
         }
         
-        frame.setTitle("MegaMek Board Editor : " + curfile);
+        frame.setTitle(Messages.getString("BoardEditor.title0") + curfile); //$NON-NLS-1$
 
         cheRoadsAutoExit.setState( board.getRoadsAutoExit() );
 
@@ -480,7 +478,7 @@ public class BoardEditor extends Container
             // okay, done!
             os.close();
         } catch(IOException ex) {
-            System.err.println("error opening file to save!");
+            System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);
         }
     }
@@ -493,8 +491,8 @@ public class BoardEditor extends Container
             boardSaveAsImage();
             return;
         }
-        Dialog waitD = new Dialog(this.frame, "Please wait...");
-        waitD.add(new Label("Saving board as image..."));
+        Dialog waitD = new Dialog(this.frame, Messages.getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
+        waitD.add(new Label(Messages.getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
         waitD.setSize(250,130);
         // move to middle of screen
         Dimension screenSize = frame.getToolkit().getScreenSize();
@@ -516,7 +514,7 @@ public class BoardEditor extends Container
             byte[] pngbytes;
             pngbytes = png.pngEncode();
             if (pngbytes == null) {
-                System.out.println("Failed to save board as image:Null image");
+                System.out.println("Failed to save board as image:Null image"); //$NON-NLS-1$
             }
             else {
                 outfile.write( pngbytes );
@@ -535,8 +533,8 @@ public class BoardEditor extends Container
      * saves the board to the file.
      */
     public void boardSaveAs() {
-        FileDialog fd = new FileDialog(frame, "Save Board As...", FileDialog.SAVE);
-        fd.setDirectory("data" + File.separator + "boards");
+        FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.saveBoardAs"), FileDialog.SAVE); //$NON-NLS-1$
+        fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
         fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fd.show();
         
@@ -548,11 +546,11 @@ public class BoardEditor extends Container
         curfile = fd.getFile();
 
         // make sure the file ends in board
-        if (!curfile.toLowerCase().endsWith(".board")) {
-            curfile += ".board";
+        if (!curfile.toLowerCase().endsWith(".board")) { //$NON-NLS-1$
+            curfile += ".board"; //$NON-NLS-1$
         }
         
-        frame.setTitle("MegaMek Board Editor : " + curfile);
+        frame.setTitle(Messages.getString("BoardEditor.title0") + curfile); //$NON-NLS-1$
         
         boardSave();
     }
@@ -563,29 +561,29 @@ public class BoardEditor extends Container
      * for printing boards.
      */
     public void boardSaveAsImage() {
-        FileDialog fd = new FileDialog(frame, "Save Board As Image...", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.saveAsImage"), FileDialog.SAVE); //$NON-NLS-1$
         //        fd.setDirectory("data" + File.separator + "boards");
         fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
 
         // Add a filter for PNG files
         fd.setFilenameFilter(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".png"));
+                    return (null != name && name.endsWith(".png")); //$NON-NLS-1$
                 }
             });
 
         // use base directory by default
-        fd.setDirectory(".");
+        fd.setDirectory("."); //$NON-NLS-1$
 
         // Default to the board's name (if it has one).
         String fileName = null;
         if (null != curfile && curfile.length() > 0) {
             fileName = curfile.toUpperCase();
-            if (fileName.endsWith(".BOARD")) {
+            if (fileName.endsWith(".BOARD")) { //$NON-NLS-1$
                 int length = fileName.length();
                 fileName = fileName.substring (0, length-6);
             }
-            fileName = fileName.toLowerCase() + ".png";
+            fileName = fileName.toLowerCase() + ".png"; //$NON-NLS-1$
             fd.setFile (fileName);
         }
 
@@ -600,11 +598,11 @@ public class BoardEditor extends Container
         curfileImage = fd.getFile();
 
         // make sure the file ends in board
-        if (!curfileImage.toLowerCase().endsWith(".png")) {
-            curfileImage += ".png";
+        if (!curfileImage.toLowerCase().endsWith(".png")) { //$NON-NLS-1$
+            curfileImage += ".png"; //$NON-NLS-1$
         }
 
-        frame.setTitle("MegaMek Board Editor : " + curfileImage);
+        frame.setTitle(Messages.getString("BoardEditor.title0") + curfileImage); //$NON-NLS-1$
 
         boardSaveImage();
     }
@@ -739,7 +737,7 @@ public class BoardEditor extends Container
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if ( this.help == null ) {
-            File helpfile = new File( "editor-readme.txt" );
+            File helpfile = new File( "editor-readme.txt" ); //$NON-NLS-1$
             this.help = new CommonHelpDialog( this.frame, helpfile );
         }
 
@@ -764,15 +762,15 @@ public class BoardEditor extends Container
     // ActionListener
     //
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getActionCommand().equalsIgnoreCase("fileBoardNew")) {
+        if (ae.getActionCommand().equalsIgnoreCase("fileBoardNew")) { //$NON-NLS-1$
             boardNew();
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardOpen")) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardOpen")) { //$NON-NLS-1$
             boardLoad();                                            
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSave")) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSave")) { //$NON-NLS-1$
             boardSave();                                            
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAs")) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAs")) { //$NON-NLS-1$
             boardSaveAs();
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAsImage")) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAsImage")) { //$NON-NLS-1$
             boardSaveAsImage();
         } else if (ae.getSource() == butDelTerrain && lisTerrain.getSelectedItem() != null) {
             Terrain toRemove = new Terrain(lisTerrain.getSelectedItem());
@@ -796,13 +794,13 @@ public class BoardEditor extends Container
             ed.show();
             texTerrExits.setText(Integer.toString(ed.getExits()));
             addSetTerrain();
-        } else if (ae.getActionCommand().equalsIgnoreCase("viewMiniMap")) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("viewMiniMap")) { //$NON-NLS-1$
             toggleMap();
-        } else if (ae.getActionCommand().equalsIgnoreCase("helpAbout")) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("helpAbout")) { //$NON-NLS-1$
             showAbout();
-        } else if (ae.getActionCommand().equalsIgnoreCase("helpContents")) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("helpContents")) { //$NON-NLS-1$
             showHelp();
-        } else if (ae.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("viewClientSettings")) { //$NON-NLS-1$
             showSettings();
         }
     }
@@ -829,11 +827,11 @@ public class BoardEditor extends Container
                 if (bv.supersFor(curHex) != null) {
                     for (Iterator i = bv.supersFor(curHex).iterator(); i.hasNext();) {
                         g.drawImage((Image)i.next(), 0, 0, this);
-                        g.drawString("SUPER", 0, 10);
+                        g.drawString(Messages.getString("BoardEditor.SUPER"), 0, 10); //$NON-NLS-1$
                     }
                 }
-                g.setFont(new Font("SansSerif", Font.PLAIN, 9));
-                g.drawString("LEVEL " + curHex.getElevation(), 24, 70);
+                g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
+                g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getElevation(), 24, 70); //$NON-NLS-1$
             } else {
                 g.clearRect(0, 0, 72, 72);
             }
@@ -891,24 +889,24 @@ class BoardNewDialog extends Dialog implements ActionListener {
     protected Button        butOkay, butCancel;
     
     public BoardNewDialog(Frame frame, String[] hexList, int hexSelected) {
-        super(frame, "Set Dimensions", true);
+        super(frame, Messages.getString("BoardEditor.SetDimentions"), true); //$NON-NLS-1$
         
         xvalue = 0;
         yvalue = 0;
         
-        labWidth = new Label("Width:", Label.RIGHT);
-        labHeight = new Label("Height:", Label.RIGHT);
+        labWidth = new Label(Messages.getString("BoardEditor.labWidth"), Label.RIGHT); //$NON-NLS-1$
+        labHeight = new Label(Messages.getString("BoardEditor.labHeight"), Label.RIGHT); //$NON-NLS-1$
         
-        texWidth = new TextField("16", 2);
-        texHeight = new TextField("17", 2);
+        texWidth = new TextField("16", 2); //$NON-NLS-1$
+        texHeight = new TextField("17", 2); //$NON-NLS-1$
         
-        butOkay = new Button("Okay");
-        butOkay.setActionCommand("done");
+        butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+        butOkay.setActionCommand("done"); //$NON-NLS-1$
         butOkay.addActionListener(this);
         butOkay.setSize(80, 24);
 
-        butCancel = new Button("Cancel");
-        butCancel.setActionCommand("cancel");
+        butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
+        butCancel.setActionCommand("cancel"); //$NON-NLS-1$
         butCancel.addActionListener(this);
         butCancel.setSize(80, 24);
 
@@ -978,14 +976,14 @@ class BoardNewDialog extends Dialog implements ActionListener {
  */
 class ExitsDialog extends Dialog implements ActionListener
 {
-    private Checkbox    cheExit0 = new Checkbox("0");
-    private Checkbox    cheExit1 = new Checkbox("1");
-    private Checkbox    cheExit2 = new Checkbox("2");
-    private Checkbox    cheExit3 = new Checkbox("3");
-    private Checkbox    cheExit4 = new Checkbox("4");
-    private Checkbox    cheExit5 = new Checkbox("5");
+    private Checkbox    cheExit0 = new Checkbox("0"); //$NON-NLS-1$
+    private Checkbox    cheExit1 = new Checkbox("1"); //$NON-NLS-1$
+    private Checkbox    cheExit2 = new Checkbox("2"); //$NON-NLS-1$
+    private Checkbox    cheExit3 = new Checkbox("3"); //$NON-NLS-1$
+    private Checkbox    cheExit4 = new Checkbox("4"); //$NON-NLS-1$
+    private Checkbox    cheExit5 = new Checkbox("5"); //$NON-NLS-1$
     
-    private Label       labBlank = new Label("");
+    private Label       labBlank = new Label(""); //$NON-NLS-1$
     
     private Panel       panNorth = new Panel(new GridBagLayout());
     private Panel       panSouth = new Panel(new GridBagLayout());
@@ -994,10 +992,10 @@ class ExitsDialog extends Dialog implements ActionListener
     
     private Panel       panExits = new Panel(new BorderLayout());
     
-    private Button      butDone = new Button("Done");
+    private Button      butDone = new Button(Messages.getString("BoardEditor.Done")); //$NON-NLS-1$
     
     public ExitsDialog(Frame frame) {
-        super(frame, "Set Exits", true);
+        super(frame, Messages.getString("BoardEditor.SetExits"), true); //$NON-NLS-1$
         setResizable(false);
         
         butDone.addActionListener(this);

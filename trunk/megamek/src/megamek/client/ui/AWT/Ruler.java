@@ -64,7 +64,7 @@ public class Ruler extends Dialog implements BoardListener {
    TextField height2 = new TextField();
 
    public Ruler(Frame f, Client c, BoardView1 b) {
-      super(f, "Ruler", false);
+      super(f, Messages.getString("Ruler.title"), false); //$NON-NLS-1$
       enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
       start = null;
@@ -88,48 +88,48 @@ public class Ruler extends Dialog implements BoardListener {
    }
 
    void jbInit() throws Exception {
-      butFlip.setLabel("Flip");
+      butFlip.setLabel(Messages.getString("Ruler.flip")); //$NON-NLS-1$
       butFlip.addActionListener(new java.awt.event.ActionListener() {
          public void actionPerformed(ActionEvent e) {
             butFlip_actionPerformed(e);
          }
       });
       panel1.setLayout(gridBagLayout1);
-      jLabel1.setText("Start:");
+      jLabel1.setText(Messages.getString("Ruler.Start")); //$NON-NLS-1$
       tf_start.setEditable(false);
       tf_start.setColumns(16);
-      jLabel2.setText("End: ");
+      jLabel2.setText(Messages.getString("Ruler.End")); //$NON-NLS-1$
       tf_end.setEditable(false);
       tf_end.setColumns(16);
-      jLabel3.setText("Distance: ");
+      jLabel3.setText(Messages.getString("Ruler.Distance")); //$NON-NLS-1$
       tf_distance.setEditable(false);
       tf_distance.setColumns(5);
-      jLabel4.setText("POV: ");
+      jLabel4.setText(Messages.getString("Ruler.POV")+": "); //$NON-NLS-1$ //$NON-NLS-2$
       jLabel4.setForeground(startColor);
       tf_los1.setEditable(false);
       tf_los1.setColumns(30);
-      jLabel5.setText("POV");
+      jLabel5.setText(Messages.getString("Ruler.POV")); //$NON-NLS-1$
       jLabel5.setForeground(endColor);
       tf_los2.setEditable(false);
       tf_los2.setColumns(30);
-      butClose.setLabel("Close");
+      butClose.setLabel(Messages.getString("Ruler.Close")); //$NON-NLS-1$
       butClose.addActionListener(new java.awt.event.ActionListener() {
          public void actionPerformed(ActionEvent e) {
             butClose_actionPerformed(e);
          }
       });
-      heightLabel1.setText("Height1: ");
+      heightLabel1.setText(Messages.getString("Ruler.Height1")); //$NON-NLS-1$
       heightLabel1.setForeground(startColor);
-      height1.setText("1");
+      height1.setText("1"); //$NON-NLS-1$
       height1.addKeyListener(new java.awt.event.KeyAdapter() {
          public void keyReleased(KeyEvent e) {
             height1_keyReleased(e);
          }
       });
       height1.setColumns(5);
-      heightLabel2.setText("Height2: ");
+      heightLabel2.setText(Messages.getString("Ruler.Height2")); //$NON-NLS-1$
       heightLabel2.setForeground(endColor);
-      height2.setText("1");
+      height2.setText("1"); //$NON-NLS-1$
       height2.addKeyListener(new java.awt.event.KeyAdapter() {
          public void keyReleased(KeyEvent e) {
             height2_keyReleased(e);
@@ -310,7 +310,7 @@ public class Ruler extends Dialog implements BoardListener {
       } catch (NumberFormatException e) {
       }
 
-      String toHit1 = "", toHit2 = "";
+      String toHit1 = "", toHit2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
       ToHitData thd;
       if (flip) {
           thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);

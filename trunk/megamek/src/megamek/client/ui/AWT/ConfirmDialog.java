@@ -33,8 +33,8 @@ public class ConfirmDialog
     private Checkbox botherCheckbox;
 
     private Panel panButtons = new Panel();
-    private Button butYes = new Button("Yes");
-    private Button butNo = new Button("No");
+    private Button butYes = new Button(Messages.getString("Yes")); //$NON-NLS-1$
+    private Button butNo = new Button(Messages.getString("No")); //$NON-NLS-1$
     private Button defaultButton = butYes;
 
     private boolean confirmation = false;
@@ -115,7 +115,7 @@ public class ConfirmDialog
         c.gridheight = 1;
 
         if (useCheckbox) {
-            botherCheckbox = new Checkbox("Do not bother me again");
+            botherCheckbox = new Checkbox(Messages.getString("ConfirmDialog.dontBother")); //$NON-NLS-1$
         
             c.gridy = y++;
             gridbag.setConstraints(botherCheckbox, c);

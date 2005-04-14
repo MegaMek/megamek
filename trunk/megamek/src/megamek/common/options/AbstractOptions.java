@@ -86,25 +86,25 @@ public abstract class AbstractOptions implements IOptions, Serializable {
         return getOptionsInfoImp().addGroup(groupName, key);
     }
 
-    protected void addOption(OptionGroup group, String name, String displayableName, String desc, String defaultValue) {
-        addOption(group, name, displayableName, desc, IOption.STRING, defaultValue);
+    protected void addOption(OptionGroup group, String name, String defaultValue) {
+        addOption(group, name, IOption.STRING, defaultValue);
     }
-    protected void addOption(OptionGroup group, String name, String displayableName, String desc, boolean defaultValue) {
-        addOption(group, name, displayableName, desc, IOption.BOOLEAN, new Boolean(defaultValue));
+    protected void addOption(OptionGroup group, String name, boolean defaultValue) {
+        addOption(group, name, IOption.BOOLEAN, new Boolean(defaultValue));
     }
-    protected void addOption(OptionGroup group, String name, String displayableName, String desc, int defaultValue) {
-        addOption(group, name, displayableName, desc, IOption.INTEGER, new Integer(defaultValue));
+    protected void addOption(OptionGroup group, String name, int defaultValue) {
+        addOption(group, name, IOption.INTEGER, new Integer(defaultValue));
     }
-    protected void addOption(OptionGroup group, String name, String displayableName, String desc, float defaultValue) {
-        addOption(group, name, displayableName, desc, IOption.FLOAT, new Float(defaultValue));
+    protected void addOption(OptionGroup group, String name, float defaultValue) {
+        addOption(group, name, IOption.FLOAT, new Float(defaultValue));
     }
-    protected void addOption(OptionGroup group, String name, String displayableName, String desc, Vector defaultValue) {
-        addOption(group, name, displayableName, desc, IOption.CHOICE, "");
+    protected void addOption(OptionGroup group, String name, Vector defaultValue) {
+        addOption(group, name, IOption.CHOICE, ""); //$NON-NLS-1$
     }
 
-    protected void addOption (OptionGroup group, String name, String displayableName, String desc, int type, Object defaultValue) {
+    protected void addOption (OptionGroup group, String name, int type, Object defaultValue) {
         optionsHash.put(name, new Option(this,name, type, defaultValue));
-        getOptionsInfoImp().addOptionInfo(group, name, displayableName,desc);
+        getOptionsInfoImp().addOptionInfo(group, name);
     }
 
     protected class GroupsEnumeration implements Enumeration {
@@ -143,6 +143,10 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
             public String getName() {
                 return group.getName();
+            }
+
+            public String getDisplayableName() {
+                return getOptionsInfoImp().getGroupDisplayableName(group.getName());
             }
 
             public Enumeration getOptionNames() {

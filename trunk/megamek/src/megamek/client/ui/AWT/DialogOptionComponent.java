@@ -24,8 +24,9 @@ import java.awt.*;
 
 import java.awt.event.MouseListener;
 import java.awt.event.ItemListener;
+
+import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
-import megamek.common.options.Option;
 
 public class DialogOptionComponent extends Panel implements MouseListener, ItemListener
 {
@@ -156,8 +157,8 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
     /**
      * Returns a new option, representing the option in it's changed state.
      */
-    public IOption changedOption() {
-        return new Option(option.getOwner(), option.getName(), option.getType(), getValue());
+    public IBasicOption changedOption() {
+        return new BasicOption (option.getName(),getValue());
     }
     
     public void mousePressed(java.awt.event.MouseEvent mouseEvent) {
@@ -176,5 +177,28 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
         parent.optionClicked(this, option, checkbox.getState());
     }
     
-}
+    private static class BasicOption implements IBasicOption {
+        private String name;
+        private Object value;
 
+        BasicOption (String name, Object value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        /* (non-Javadoc)
+         * @see megamek.common.options.IBasicOption#getName()
+         */
+        public String getName() {
+            return name;
+        }
+
+        /* (non-Javadoc)
+         * @see megamek.common.options.IBasicOption#getValue()
+         */
+        public Object getValue() {
+            return value;
+        }
+    }
+
+}

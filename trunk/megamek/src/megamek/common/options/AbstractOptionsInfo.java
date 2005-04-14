@@ -18,6 +18,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 
+import com.sun.java.util.collections.HashSet;
 import com.sun.java.util.collections.Hashtable;
 
 
@@ -26,19 +27,75 @@ import com.sun.java.util.collections.Hashtable;
  * information such as displayable name, description etc.
  * The derived classes must implement the Singleton pattern  
  */
+public class AbstractOptionsInfo implements IOptionsInfo {
 
-public abstract class AbstractOptionsInfo implements IOptionsInfo {
-    
+    protected final static String GROUP_SUFFIX=".group."; //$NON-NLS-1$
+    protected final static String OPTION_SUFFIX=".option."; //$NON-NLS-1$
+    protected final static String DISPLAYABLE_NAME_SUFFIX=".displayableName"; //$NON-NLS-1$
+    protected final static String DESCRIPTION_SUFFIX=".description"; //$NON-NLS-1$
+
+    /**
+     * The OptionsInfo name that must be unique. Every instance of the 
+     * AbstractOptionsInfo must have unique name, it's used to query the NLS 
+     * dependent information from the common resource bundle.
+     * @see getOptionDisplayableName
+     * @see getGroupDisplayableName
+     * @see getOptionDescription 
+     */
+    private String name;
+
+    /**
+     * Hashtable of the <code>OptionInfo</code> used to store/find option info. 
+     */
     private Hashtable optionsHash = new Hashtable();
 
+    /**
+     * List of option groups. The order of groups is important. 
+     * The first group added by <code>addGroup</code> is the first in the
+     * <code>Enumeration</code> returned by <code>getGroups</code>   
+     */
     private Vector groups = new Vector();
 
+    /**
+     * Flag that indicates that this filling the the options info data is
+     * completed. <code>addGroup</code> and <code>addOptionInfo</code> 
+     * will have no effect if it's <code>true</code>
+     * @see finish
+     * @see addGroup
+     * @see addOptionInfo     
+     */
     private boolean finished;
 
+    /**
+     * The <code>HashSet</code> used to check if the options info is 
+     * already registered
+     * @see AbstractOptionsInfo()
+     */
+    private static HashSet names = new HashSet();
+    
+    /**
+     * Protected constructor. It is called only by descendants. The name must be unique
+     * because it's used to query the NLS dependent information from the resource bundle.
+     * @param name options info name
+     */
+    protected AbstractOptionsInfo(String name) {
+        if (names.contains(name)) {
+            throw new IllegalArgumentException("OptionsInfo '"+name+"' is already registered");             //$NON-NLS-1$ //$NON-NLS-2$
+        }        
+        this.name = name;
+    }
+
+    
+    /* (non-Javadoc)
+     * @see megamek.common.options.IOptionsInfo#getOptionInfo(java.lang.String)
+     */
     public IOptionInfo getOptionInfo(String name) {
         return ((IOptionInfo)optionsHash.get(name));
     }
 
+    /* (non-Javadoc)
+     * @see megamek.common.options.IOptionsInfo#getGroups()
+     */
     public Enumeration getGroups() {
         return groups.elements();
     }
@@ -65,42 +122,74 @@ public abstract class AbstractOptionsInfo implements IOptionsInfo {
         return group;
     }
 
-    void addOptionInfo(OptionGroup group, String name, String displayableName, String description) {
+    void addOptionInfo(OptionGroup group, String name) {
         if (!finished) {
             group.addOptionName(name);
-            setOptionInfo(name, new OptionInfo(displayableName, description));
+            setOptionInfo(name, new OptionInfo(name));
         }
     }
 
-    void setOptionInfo(String name, IOptionInfo info) {
-        optionsHash.put(name, info);
+    /**
+     * Returns the user friendly NLS dependent name suitable for 
+     * displaying in the options editor dialogs etc.
+     * @param groupName
+     * @return group displayable name
+     */
+    protected String getGroupDisplayableName(String groupName) {
+        for (int i = 0; i < groups.size(); i++) {
+            OptionGroup g = (OptionGroup)groups.elementAt(i); 
+            if ( g != null && g.getName().equals(groupName)) {
+                return Messages.getString(name+GROUP_SUFFIX+groupName+DISPLAYABLE_NAME_SUFFIX);
+            }
+        }
+        return null;
     }
     
+    /**
+     * Records that filling of this structure is finished.
+     * <code>addGroup</code> and <code>addOptionInfo</code> 
+     * will have no effect after call of this function
+     * @see addGroup
+     * @see addOptionInfo     
+     */
     void finish() {
         finished = true;
     }
     
-    protected static class OptionInfo implements IOptionInfo {
+    private void setOptionInfo(String name, OptionInfo info) {
+        optionsHash.put(name, info);
+    }
 
-        private String displayableName;
-        
-        private String description;
+    private String getOptionDisplayableName(String optionName) {
+        return Messages.getString(name+OPTION_SUFFIX+optionName+DISPLAYABLE_NAME_SUFFIX);        
+    }
 
+    private String getOptionDescription(String optionName) {
+        return Messages.getString(name+OPTION_SUFFIX+optionName+DESCRIPTION_SUFFIX);        
+    }
+    
+    /**
+     * Private model class to store the option info
+     * @see addOptionInfo
+     * @see getOptionInfo 
+     */
+    private class OptionInfo implements IOptionInfo {
+
+        private String name;
         private int textFieldLength = 2;
         
         private boolean labelBeforeTextField = false;
-        
-        public OptionInfo(String displayableName, String description) {
-            this.displayableName = displayableName;
-            this.description = description;
+
+        public OptionInfo(String optionName) {
+            this.name = optionName;
         }
 
         public String getDisplayableName() {
-            return displayableName;
+            return getOptionDisplayableName(name);
         }
 
         public String getDescription() {
-            return description;
+            return getOptionDescription(name);
         }
 
         public int getTextFieldLength() {

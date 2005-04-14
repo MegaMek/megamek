@@ -17,13 +17,7 @@ package megamek.common.options;
 import java.io.*;
 import java.util.*;
 
-/**
- * Groups options together, of course.
- *
- * @author  Ben
- * @version 
- */
-public class OptionGroup implements IBasicOptionGroup, Serializable {
+class OptionGroup implements IBasicOptionGroup, Serializable {
     
     private Vector optionNames = new Vector();
     
@@ -45,7 +39,7 @@ public class OptionGroup implements IBasicOptionGroup, Serializable {
      * @param name option name
      */
     public OptionGroup(String name) {
-      this(name, "");
+      this(name, ""); //$NON-NLS-1$
     }
 
     public String getName() {

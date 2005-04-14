@@ -32,7 +32,7 @@ package megamek.common.options;
  * @author  Ben
  * @version 
  */
-public interface IOption extends IOptionInfo {
+public interface IOption extends IBasicOption, IOptionInfo {
 
     /**
      * Booolean option type
@@ -66,12 +66,6 @@ public interface IOption extends IOptionInfo {
     public abstract IOptions getOwner();
 
     /**
-     * Returns the unique in the parent container context name  
-     * @return name of the option 
-     */
-    public abstract String getName();
-
-    /**
      * Returns option type. 
      * @return option type
      * @see IOption#BOOLEAN etc
@@ -85,13 +79,6 @@ public interface IOption extends IOptionInfo {
      */
     public abstract Object getDefault();
     
-    /**
-     * 
-     * @return option value
-     */
-    public abstract Object getValue();
-    
-
     /**
      * Return the value as the <code>boolean</code> 
      * @return

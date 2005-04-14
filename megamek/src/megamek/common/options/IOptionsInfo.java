@@ -18,15 +18,16 @@ import java.util.Enumeration;
 
 
 /**
- * Interface that represents the "static" information about the Options container
+ * Interface that represents the "static" (common to all instances)
+ * information about the Options container
  */
-
 public interface IOptionsInfo {
 
     /**
      * Returns the <code>IOptionInfo</code> for the specified option
      * @param name option name
      * @return the <code>IOptionInfo</code> for the specified option
+     * @see IOptionInfo
      */
     public abstract IOptionInfo getOptionInfo(String name);
 
@@ -35,5 +36,5 @@ public interface IOptionsInfo {
      * @return the <code>Enumeration</code> of the <code>IBasicOptionGroup</code>
      */
     public abstract Enumeration getGroups();
-
+    
 }

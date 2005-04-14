@@ -14,35 +14,23 @@
 
 package megamek.common.options;
 
+
 /**
- * Represents GUI data to allow the user to set the option
+ * Basic option.
+ * It's just <code>String</code> name - <code>Object</code> value pair 
  */
-public interface IOptionInfo {
+public interface IBasicOption {
 
     /**
-     * Returns the user friendly name suitable for displaying in the
-     * options editor dialogs etc.
-     * @return displayable name
+     * Returns the option name  
+     * @return name of the option 
      */
-    public abstract String getDisplayableName();
+    public abstract String getName();
 
     /**
-     * Return verbose description of the option suitable for context help, 
-     * tip etc. 
-     * @return option description 
+     * Returns the option value
+     * @return option value
      */
-    public abstract String getDescription();
-
-    /**
-     * 
-     * @return
-     */
-    public abstract int getTextFieldLength();
-
-    /**
-     * 
-     * @return
-     */
-    public abstract boolean isLabelBeforeTextField();
+    public abstract Object getValue();
     
 }

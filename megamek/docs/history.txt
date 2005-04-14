@@ -23,6 +23,9 @@ v0.29.73 (CVS)
 + Patch 1182015: strings "externalization"
 + Patch 1182480: strings externalization-2 and related changes
 + Bug 1181830: "Any unit that doesn't act is a spotter" option still nags.
++ Changed behaviour for LBX cluster glancing blows, now the number of pellets
+    is halved, effectively halving damage, and not the damage of each pellet
+    halved to 0 (because of rounding down).
 
 v0.29.72 (2005-04-02 3:15pm)
 + Data 1171465: Use the "lunar" theme in moonscapes boards.

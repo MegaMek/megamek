@@ -6518,7 +6518,10 @@ implements Runnable, ConnectionHandler {
                 if (!glancing) {
                     hits = Compute.missilesHit( hits );
                 } else {
-                    hits = Compute.missilesHit(hits, glancingMissileMod, glancing);
+                    // if glancing blow, half the number of missiles that hit,
+                    // that halves damage. do this, and not adjust number of 
+                    // pellets, because maxtech only talks about missile weapons
+                    hits = Compute.missilesHit(hits)/2;
                 }
             }
             nDamPerHit = 1;
@@ -6571,7 +6574,10 @@ implements Runnable, ConnectionHandler {
                 ae.heatBuildup += nDamPerHit;
             }
         }
-        if (glancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS) ) {
+        // only halve damage for non-missiles and non-cluster,
+        // because cluster lbx gets handled above.
+        if (glancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS) &&
+                !(usesAmmo && atype.getMunitionType() == AmmoType.M_CLUSTER)) {
             nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
         }
 

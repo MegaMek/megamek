@@ -535,8 +535,14 @@ public class FiringDisplay
         if (attacks.isEmpty() && 
             client.game.getOptions().booleanOption("auto_spot") && //$NON-NLS-1$
 		    client.game.getPhase() == Game.PHASE_FIRING) {
-            if (!ce().isINarcedWith( INarcPod.HAYWIRE )) {
+            if (!ce().isINarcedWith( INarcPod.HAYWIRE)) {
+                // if we might do physicals, ask for confirmation
+                if (ce().isEligibleForPhysical()) {
                     doSpot();
+                // else, spot without asking
+                } else {
+                    attacks.addElement(new SpotAction(cen));
+                }
             }
         }
 

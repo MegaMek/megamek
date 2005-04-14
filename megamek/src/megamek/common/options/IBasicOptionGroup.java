@@ -12,35 +12,36 @@
  *  for more details.
  */
 
-
 package megamek.common.options;
 
 import java.util.Enumeration;
 
 /**
  * Basic interface for options group. It only represents 
- * the group name, the optional key and the <code>Enumeration</code>
- * of the option names in this group    
+ * the group name, the key which can be an empty <code>String</code> 
+ * and the <code>Enumeration</code> of the option names in this group    
  */
-
-interface IBasicOptionGroup {
+public interface IBasicOptionGroup {
     
     /**
-     * 
+     * Returns the 'internal'(NON-NLS) name of the group, which is
+     * the only ID that is unique in the parent container 
+     * @see getDisplayableName()
      * @return group name
      */
     public abstract String getName();
 
     /**
-     *  
-     * @return optional group key which can be empty string
+     * Returns the the <code>String</code> key that can be used by
+     * clients to distinguish option groups by their own criterion 
+     * @return group key which can be an empty <code>String</code>
      */
     public abstract String getKey();
         
     /**
      * 
-     * @return the <code>Enumeration</code> of the names of the optiongs 
-     * that belongs to this group
+     * @return the <code>Enumeration</code> of the names of the options 
+     * that in this group
      */
     public abstract Enumeration getOptionNames();
 

@@ -29,8 +29,8 @@ public interface IOptions {
     public abstract Enumeration getGroups();
     
     /**
-     * Returns Returns the <code>Enumeration</code> of the options 
-     * in this options container.
+     * Returns the <code>Enumeration</code> of the options 
+     * in this options container. The order of options is not specified.
      * @return <code>Enumeration</code> of the <code>IOption</code>
      */
     public abstract Enumeration getOptions();
@@ -48,6 +48,7 @@ public interface IOptions {
      * Returns the UI specific data to allow the user to set the option
      * @param name option name
      * @return UI specific data
+     * @see IOptionInfo
      */
     public abstract IOptionInfo getOptionInfo(String name);
     

@@ -697,7 +697,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     }
     
     private void addGroup(IOptionGroup group, GridBagLayout gridbag, GridBagConstraints c) {
-        Label groupLabel = new Label(group.getName());
+        Label groupLabel = new Label(group.getDisplayableName());
         
         gridbag.setConstraints(groupLabel, c);
         panOptions.add(groupLabel);

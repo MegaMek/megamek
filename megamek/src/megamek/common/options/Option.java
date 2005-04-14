@@ -18,18 +18,7 @@ import java.io.*;
 import java.util.Vector;
 
 
-/**
- * The base class for a settable option. The settable option is used for game
- * options which relate to game behavior and as well as pilot options which
- * relate to specific stats about a pilot, such as advantages. Game options
- * are the same across all clients. A settable option's primary purpose is to 
- * store a value for the option.  Its secondary purpose is to give the desired 
- * options dialog enough data to allow the user to set the option.
- *
- * @author  Ben
- * @version 
- */
-public class Option implements IOption, Serializable {
+class Option implements IOption, Serializable {
 
     private String name;
     private int type;
@@ -56,7 +45,7 @@ public class Option implements IOption, Serializable {
     }
 
     public Option(IOptions owner, String name, Vector defaultValue) {
-        this(owner, name, CHOICE, "");
+        this(owner, name, CHOICE, ""); //$NON-NLS-1$
     }
     
     public Option(IOptions owner, String name, int type, Object defaultValue) {
@@ -67,7 +56,7 @@ public class Option implements IOption, Serializable {
             this.defaultValue = defaultValue;
             this.value = defaultValue;
         } else {
-            throw new IllegalArgumentException("Tried to give wrong type of value for option type.");
+            throw new IllegalArgumentException("Tried to give wrong type of value for option type."); //$NON-NLS-1$
         }
     }
     
@@ -114,7 +103,7 @@ public class Option implements IOption, Serializable {
 
     public boolean booleanValue() {
         if (type == CHOICE || type == STRING) {
-            if (value.equals("None") || value.equals("")) {
+            if (value.equals("None") || value.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
                 return false;
             } else {
                 return true;
@@ -140,7 +129,7 @@ public class Option implements IOption, Serializable {
         if (isValidValue(value)) {
             this.value = value;
         } else {
-            throw new IllegalArgumentException("Tried to give wrong type of value for option type.");
+            throw new IllegalArgumentException("Tried to give wrong type of value for option type."); //$NON-NLS-1$
         }
     }
     
@@ -148,7 +137,7 @@ public class Option implements IOption, Serializable {
         if (type == STRING || type == CHOICE) {
             this.value = value;
         } else {
-            throw new IllegalArgumentException("Tried to give String value to non-String option.");
+            throw new IllegalArgumentException("Tried to give String value to non-String option."); //$NON-NLS-1$
         }
     }
 
@@ -156,7 +145,7 @@ public class Option implements IOption, Serializable {
         if (type == BOOLEAN) {
             this.value = new Boolean(value);
         } else {
-            throw new IllegalArgumentException("Tried to give boolean value to non-boolean option.");
+            throw new IllegalArgumentException("Tried to give boolean value to non-boolean option."); //$NON-NLS-1$
         }
     }
 
@@ -164,7 +153,7 @@ public class Option implements IOption, Serializable {
         if (type == INTEGER) {
             this.value = new Integer(value);
         } else {
-            throw new IllegalArgumentException("Tried to give integer value to non-integer option.");
+            throw new IllegalArgumentException("Tried to give integer value to non-integer option."); //$NON-NLS-1$
         }
     }
 
@@ -172,7 +161,7 @@ public class Option implements IOption, Serializable {
         if (type == FLOAT) {
             this.value = new Float(value);
         } else {
-            throw new IllegalArgumentException("Tried to give float value to non-float option.");
+            throw new IllegalArgumentException("Tried to give float value to non-float option."); //$NON-NLS-1$
         }
     }
 
@@ -181,7 +170,7 @@ public class Option implements IOption, Serializable {
         switch (type) {
             case STRING : 
             case CHOICE : 
-                setValue("");
+                setValue(""); //$NON-NLS-1$
                 break;
             case BOOLEAN : 
                 setValue(false);

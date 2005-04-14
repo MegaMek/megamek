@@ -163,7 +163,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
       
       for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
         DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();        
-        IOption option = comp.changedOption();        
+        IBasicOption option = comp.changedOption();        
         output.addElement(option);
       }
       
@@ -205,7 +205,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
     
     private void addGroup(IOptionGroup group, GridBagLayout gridbag, GridBagConstraints c) {
-        Label groupLabel = new Label(group.getName());
+        Label groupLabel = new Label(group.getDisplayableName());
         
         gridbag.setConstraints(groupLabel, c);
         panOptions.add(groupLabel);

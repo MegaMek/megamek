@@ -24,24 +24,24 @@ import java.util.Vector;
  */
 public class PilotOptions extends AbstractOptions implements Serializable {
 
-    public static final String LVL3_ADVANTAGES = "lvl3Advantages";
+    public static final String LVL3_ADVANTAGES = "lvl3Advantages"; //$NON-NLS-1$
 
     public PilotOptions() {
         super();
     }
     
     public void initialize() {
-        OptionGroup adv = addGroup("Advantages", LVL3_ADVANTAGES);
-        addOption(adv, "dodge_maneuver", "Dodge Maneuver", "Enables the unit to make a dodge maneuver instead of a physical attack. This maneuver adds +2 to the BTH to physical attacks against the unit.\n\nNOTE: The dodge maneuver is declared during the weapons phase. Note: This ability is only used for BattleMechs.", false);
-        addOption(adv, "maneuvering_ace", "Maneuvering Ace", "Enables the unit to move laterally like a Quad. Units also receive a -1 BTH to rolls against skidding.", false);
-        addOption(adv, "melee_specialist", "Melee Specialist", "Enables the unit to do 1 additional point of damage with physical attacks and subtracts one from the attacker movement modifier (to a minimum of zero).\n\nNote: This ability is only used for BattleMechs.", false);
-        addOption(adv, "pain_resistance", "Pain Resistance", "When making consciousness rolls, 1 is added to all rolls. Also, damage received from ammo explosions is reduced by one point.\n\nNote: This ability is only used for BattleMechs.", false);
-        addOption(adv, "tactical_genius", "Tactical Genius", "A pilot who has a Tactical Genius may reroll their initiative once per turn.  The second roll must be accepted.\n\nNote: Only one Tactical Genius may be utilized per team.", false);
-        addOption(adv, "weapon_specialist", "Weapon Specialist", "A pilot who specializes in a particular weapon receives a -2 to hit modifier on all attacks with that weapon.", new Vector());
-        addOption(adv, "gunnery_laser", "Gunnery/Laser", "NOTE: This is a unofficial rule. Pilot gets a -1 to-hit bonus on all energy-based weapons (Laser, PPC, and Flamer).", false);
-        addOption(adv, "gunnery_missile", "Gunnery/Missile", "NOTE: This is a unofficial rule. Pilot gets a -1 to-hit bonus on all missile weapons (LRM, SRM, MRM, RL and ATM).", false);
-        addOption(adv, "gunnery_ballistic", "Gunnery/Ballistic", "NOTE: This is a unofficial rule. Pilot gets a -1 to-hit bonus on all ballistic weapons (MGs, all ACs, Gaussrifles).", false);
-        addOption(adv, "iron_man", "Iron Man", "NOTE: This is a unofficial rule. A pilot with this skill receives only 1 pilot hit from ammunition explosions.", false);
+        OptionGroup adv = addGroup("adv", LVL3_ADVANTAGES); //$NON-NLS-1$
+        addOption(adv,"dodge_maneuver", false); //$NON-NLS-1$
+        addOption(adv,"maneuvering_ace", false); //$NON-NLS-1$
+        addOption(adv,"melee_specialist", false); //$NON-NLS-1$
+        addOption(adv,"pain_resistance", false); //$NON-NLS-1$
+        addOption(adv,"tactical_genius", false); //$NON-NLS-1$
+        addOption(adv,"weapon_specialist", new Vector()); //$NON-NLS-1$
+        addOption(adv,"gunnery_laser", false); //$NON-NLS-1$
+        addOption(adv,"gunnery_missile", false); //$NON-NLS-1$
+        addOption(adv,"gunnery_ballistic", false); //$NON-NLS-1$
+        addOption(adv,"iron_man", false); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -57,7 +57,8 @@ public class PilotOptions extends AbstractOptions implements Serializable {
         public static AbstractOptionsInfo getInstance() {
             return instance;
         }
-        protected PilotOptionsInfo() {            
+        protected PilotOptionsInfo() {
+            super("PilotOptionsInfo"); //$NON-NLS-1$
         }
     }
 }

@@ -9,16 +9,16 @@ public class BotConfiguration {
 
 	static {
 		try {
-			BotProperties.load(new FileInputStream("bot.properties"));
+			BotProperties.load(new FileInputStream("bot.properties")); //$NON-NLS-1$
 		} catch (Exception e) {
-			System.out.println("Bot properties could not be loaded, will use defaults");
+			System.out.println("Bot properties could not be loaded, will use defaults"); //$NON-NLS-1$
 		}
 	}
 	
 	public int getIgnoreLevel() {
 		int difficulty = 3;
 		try {
-			difficulty = Integer.parseInt(BotProperties.getProperty("difficulty", "3"));
+			difficulty = Integer.parseInt(BotProperties.getProperty("difficulty", "3")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (Exception e) {
 			//do nothing
 		}

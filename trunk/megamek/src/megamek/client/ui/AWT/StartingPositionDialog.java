@@ -36,8 +36,8 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
     private Client client;
 
     private Panel panButtons = new Panel();
-    private Button butOkay = new Button("Okay");
-    private Button butCancel = new Button("Cancel");
+    private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+    private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
 
     private Panel panStartButtons = new Panel();
     private Button[] butStartPos = new Button[9];
@@ -135,7 +135,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
             Player player = (Player) i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
-                ssb.append(player.getName()).append(" : ");
+                ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
                 ssb.append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
                 lisStartList.add(ssb.toString());
             }

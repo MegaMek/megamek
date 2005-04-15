@@ -16,6 +16,8 @@ package megamek.client.util.widget;
 
 import java.awt.*;
 import java.util.*;
+
+import megamek.client.Messages;
 import megamek.common.*;
 
 /**
@@ -146,8 +148,8 @@ public class MechMapSet implements DisplayMapSet{
                                            
     private Image  heatImage; 
     
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorSmallFontSize);
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize);
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorSmallFontSize); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize); //$NON-NLS-1$
     
     
     public MechMapSet(Component c){
@@ -222,56 +224,56 @@ public class MechMapSet implements DisplayMapSet{
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
         
         //Labels for Front view
-        labels[Mech.LOC_HEAD] = createLabel("H", fm, Color.black,62,6);
-        labels[Mech.LOC_LARM] = createLabel("LA", fm, Color.black,14,59);
-        labels[Mech.LOC_LT] = createLabel("LT", fm, Color.black,41,52);
-        labels[Mech.LOC_CT] = createLabel("CT", fm, Color.black,62,42);
-        labels[Mech.LOC_RT] = createLabel("RT", fm, Color.black,84,52);
-        labels[Mech.LOC_RARM] = createLabel("RA", fm, Color.black,109,59);
-        labels[Mech.LOC_LLEG] = createLabel("LL", fm, Color.black,36,92);
-        labels[Mech.LOC_RLEG] = createLabel("RL", fm, Color.black,90,92);
+        labels[Mech.LOC_HEAD] = createLabel(Messages.getString("MechMapSet.l_H"), fm, Color.black,62,6); //$NON-NLS-1$
+        labels[Mech.LOC_LARM] = createLabel(Messages.getString("MechMapSet.l_LA"), fm, Color.black,14,59); //$NON-NLS-1$
+        labels[Mech.LOC_LT] = createLabel(Messages.getString("MechMapSet.l_LT"), fm, Color.black,41,52); //$NON-NLS-1$
+        labels[Mech.LOC_CT] = createLabel(Messages.getString("MechMapSet.l_CT"), fm, Color.black,62,42); //$NON-NLS-1$
+        labels[Mech.LOC_RT] = createLabel(Messages.getString("MechMapSet.l_RT"), fm, Color.black,84,52); //$NON-NLS-1$
+        labels[Mech.LOC_RARM] = createLabel(Messages.getString("MechMapSet.l_RA"), fm, Color.black,109,59); //$NON-NLS-1$
+        labels[Mech.LOC_LLEG] = createLabel(Messages.getString("MechMapSet.l_LL"), fm, Color.black,36,92); //$NON-NLS-1$
+        labels[Mech.LOC_RLEG] = createLabel(Messages.getString("MechMapSet.l_RL"), fm, Color.black,90,92); //$NON-NLS-1$
         //Labels for Back view
-        labels[REAR_AREA_OFFSET + Mech.LOC_LT] = createLabel("LT", fm, Color.black,133,39);
-        labels[REAR_AREA_OFFSET + Mech.LOC_CT] = createLabel("CT", fm, Color.black,156,25);
-        labels[REAR_AREA_OFFSET + Mech.LOC_RT] = createLabel("RT", fm, Color.black,178,39);
+        labels[REAR_AREA_OFFSET + Mech.LOC_LT] = createLabel(Messages.getString("MechMapSet.l_LT"), fm, Color.black,133,39); //$NON-NLS-1$
+        labels[REAR_AREA_OFFSET + Mech.LOC_CT] = createLabel(Messages.getString("MechMapSet.l_CT"), fm, Color.black,156,25); //$NON-NLS-1$
+        labels[REAR_AREA_OFFSET + Mech.LOC_RT] = createLabel(Messages.getString("MechMapSet.l_RT"), fm, Color.black,178,39); //$NON-NLS-1$
         //Labels for Internal Structure
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = createLabel("H", fm, Color.black,63,130);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LARM] = createLabel("LA", fm, Color.black,14,174);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = createLabel("LT", fm, Color.black,42,166);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = createLabel("CT", fm, Color.black,63,168);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = createLabel("RT", fm, Color.black,85,166);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RARM] = createLabel("RA", fm, Color.black,111,174);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = createLabel("LL", fm, Color.black,33,210);
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = createLabel("RL", fm, Color.black,93,210);
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = createLabel(Messages.getString("MechMapSet.l_H"), fm, Color.black,63,130); //$NON-NLS-1$
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LARM] = createLabel(Messages.getString("MechMapSet.l_LA"), fm, Color.black,14,174); //$NON-NLS-1$
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = createLabel(Messages.getString("MechMapSet.l_LT"), fm, Color.black,42,166); //$NON-NLS-1$
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = createLabel(Messages.getString("MechMapSet.L_CT"), fm, Color.black,63,168); //$NON-NLS-1$
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = createLabel(Messages.getString("MechMapSet.l_RT"), fm, Color.black,85,166); //$NON-NLS-1$
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RARM] = createLabel(Messages.getString("MechMapSet.L_RA"), fm, Color.black,111,174); //$NON-NLS-1$
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = createLabel(Messages.getString("MechMapSet.l_LL"), fm, Color.black,33,210); //$NON-NLS-1$
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = createLabel(Messages.getString("MechMapSet.l_RL"), fm, Color.black,93,210); //$NON-NLS-1$
         
         //Value labels for all parts of mek
             //front
         fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[Mech.LOC_HEAD] = createValueLabel(62, 22, "", fm);
-        vLabels[Mech.LOC_LARM] = createValueLabel(13, 72, "", fm);
-        vLabels[Mech.LOC_LT] = createValueLabel(38, 44, "", fm);
-        vLabels[Mech.LOC_CT] = createValueLabel(62, 57, "", fm);
-        vLabels[Mech.LOC_RT] = createValueLabel(86, 44, "", fm);
-        vLabels[Mech.LOC_RARM] = createValueLabel(112, 72, "", fm);
-        vLabels[Mech.LOC_LLEG] = createValueLabel(31, 113, "", fm);
-        vLabels[Mech.LOC_RLEG] = createValueLabel(94, 113, "", fm);
+        vLabels[Mech.LOC_HEAD] = createValueLabel(62, 22, "", fm); //$NON-NLS-1$
+        vLabels[Mech.LOC_LARM] = createValueLabel(13, 72, "", fm); //$NON-NLS-1$
+        vLabels[Mech.LOC_LT] = createValueLabel(38, 44, "", fm); //$NON-NLS-1$
+        vLabels[Mech.LOC_CT] = createValueLabel(62, 57, "", fm); //$NON-NLS-1$
+        vLabels[Mech.LOC_RT] = createValueLabel(86, 44, "", fm); //$NON-NLS-1$
+        vLabels[Mech.LOC_RARM] = createValueLabel(112, 72, "", fm); //$NON-NLS-1$
+        vLabels[Mech.LOC_LLEG] = createValueLabel(31, 113, "", fm); //$NON-NLS-1$
+        vLabels[Mech.LOC_RLEG] = createValueLabel(94, 113, "", fm); //$NON-NLS-1$
         
             //back
-        vLabels[REAR_AREA_OFFSET + Mech.LOC_LT] = createValueLabel(132, 28, "", fm);
-        vLabels[REAR_AREA_OFFSET + Mech.LOC_CT] = createValueLabel(156, 39, "", fm);
-        vLabels[REAR_AREA_OFFSET + Mech.LOC_RT] = createValueLabel(177, 28, "", fm);
+        vLabels[REAR_AREA_OFFSET + Mech.LOC_LT] = createValueLabel(132, 28, "", fm); //$NON-NLS-1$
+        vLabels[REAR_AREA_OFFSET + Mech.LOC_CT] = createValueLabel(156, 39, "", fm); //$NON-NLS-1$
+        vLabels[REAR_AREA_OFFSET + Mech.LOC_RT] = createValueLabel(177, 28, "", fm); //$NON-NLS-1$
         
             //Internal structure
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = createValueLabel(63, 142, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LARM] = createValueLabel(15, 187, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = createValueLabel(42, 180, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = createValueLabel(63, 182, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = createValueLabel(85, 180, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RARM] = createValueLabel(111, 187, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = createValueLabel(33, 223, "", fm);
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = createValueLabel(92, 223, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = createValueLabel(63, 142, "", fm); //$NON-NLS-1$
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LARM] = createValueLabel(15, 187, "", fm); //$NON-NLS-1$
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = createValueLabel(42, 180, "", fm); //$NON-NLS-1$
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = createValueLabel(63, 182, "", fm); //$NON-NLS-1$
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = createValueLabel(85, 180, "", fm); //$NON-NLS-1$
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RARM] = createValueLabel(111, 187, "", fm); //$NON-NLS-1$
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = createValueLabel(33, 223, "", fm); //$NON-NLS-1$
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = createValueLabel(92, 223, "", fm); //$NON-NLS-1$
           //heat
-        vLabels[19] = createValueLabel(155, 90, "", fm);
+        vLabels[19] = createValueLabel(155, 90, "", fm); //$NON-NLS-1$
     }
     
     private void setGroups(){
@@ -319,11 +321,11 @@ public class MechMapSet implements DisplayMapSet{
     }
     
     private void setBackGround(){
-        Image tile = comp.getToolkit().getImage("data/widgets/tile.gif");
+        Image tile = comp.getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        tile = comp.getToolkit().getImage("data/widgets/bg_mech.gif");
+        tile = comp.getToolkit().getImage("data/widgets/bg_mech.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER | BackGroundDrawer.HALIGN_CENTER;
         BackGroundDrawer bgd = new BackGroundDrawer (tile,b);

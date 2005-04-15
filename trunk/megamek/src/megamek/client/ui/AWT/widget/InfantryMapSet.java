@@ -16,6 +16,8 @@ package megamek.client.util.widget;
 
 import java.awt.*;
 import java.util.*;
+
+import megamek.client.Messages;
 import megamek.common.*;
 
 /**
@@ -37,7 +39,7 @@ public class InfantryMapSet implements DisplayMapSet{
 	private Vector    bgDrawers = new Vector();
 
 	
-	private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorMediumFontSize);
+	private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorMediumFontSize); //$NON-NLS-1$
 
 	
 	public InfantryMapSet(Component c){
@@ -64,13 +66,13 @@ public class InfantryMapSet implements DisplayMapSet{
        	   areas[i].setVisible(false);
        }
        
-       label.setValue("Infantry Platoon: " + Integer.toString(men) + " men");
+       label.setValue(Messages.getString("InfantryMapSet.InfantryPlatoon", new Object[]{Integer.toString(men)})); //$NON-NLS-1$
     }
 	
 	private void setAreas(){
 		int stepX = 30;
 	    int stepY = 42;
-		infImage = comp.getToolkit().getImage("data/widgets/inf.gif");
+		infImage = comp.getToolkit().getImage("data/widgets/inf.gif"); //$NON-NLS-1$
 		PMUtil.setImage(infImage, comp);
 		for(int i = 0; i < 28; i++){
 			int shiftX = (i % 5) * stepX;
@@ -82,7 +84,7 @@ public class InfantryMapSet implements DisplayMapSet{
 		
 		FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
 		label = new PMValueLabel(fm, Color.white);
-		label.setValue("Infantry Platoon: 00 men");
+		label.setValue(Messages.getString("InfantryMapSet.InfantryPlatoon", new Object[]{"00"}));  //$NON-NLS-1$//$NON-NLS-2$
 		Dimension d = label.getSize();
 		content.translate(0, d.height + 5);
 		label.moveTo(d.width / 2, d.height);
@@ -90,32 +92,32 @@ public class InfantryMapSet implements DisplayMapSet{
 	}
 	
 	private void setBackGround(){
-        Image tile = comp.getToolkit().getImage("data/widgets/tile.gif");
+        Image tile = comp.getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_TOP;
-        tile = comp.getToolkit().getImage("data/widgets/h_line.gif");
+        tile = comp.getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));                
         
             b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage("data/widgets/h_line.gif");
+        tile = comp.getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage("data/widgets/v_line.gif");
+        tile = comp.getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage("data/widgets/v_line.gif");
+        tile = comp.getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
                 
@@ -123,28 +125,28 @@ public class InfantryMapSet implements DisplayMapSet{
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage("data/widgets/tl_corner.gif");
+        tile = comp.getToolkit().getImage("data/widgets/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage("data/widgets/bl_corner.gif");
+        tile = comp.getToolkit().getImage("data/widgets/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage("data/widgets/tr_corner.gif");
+        tile = comp.getToolkit().getImage("data/widgets/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage("data/widgets/br_corner.gif");
+        tile = comp.getToolkit().getImage("data/widgets/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
          

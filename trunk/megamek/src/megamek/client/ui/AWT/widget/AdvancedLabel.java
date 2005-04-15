@@ -57,7 +57,7 @@ public class AdvancedLabel extends Component {
 
     public void setText(String text) {
         stringVector.removeAllElements();
-        StringTokenizer st = new StringTokenizer(text, "\n");
+        StringTokenizer st = new StringTokenizer(text, "\r\n"); //$NON-NLS-1$
         while (st.hasMoreTokens()) {
             stringVector.addElement(st.nextToken());
         }

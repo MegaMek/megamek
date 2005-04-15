@@ -76,17 +76,17 @@ public abstract class BotClient extends Client {
         try {
             switch (phase) {
                 case Game.PHASE_LOUNGE :
-                    sendChat("Hi, I'm a bot client!");
+                    sendChat(Messages.getString("BotClient.Hi")); //$NON-NLS-1$
                     break;
                 case Game.PHASE_DEPLOYMENT :
                     initialize();
                     break;
                 case Game.PHASE_MOVEMENT :
                     if (game.getEntitiesOwnedBy(this.getLocalPlayer()) == 0) {
-                        sendChat("How about a nice game of chess?");
+                        sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
                         this.die();
                     }
-                    if (!(game.getOptions().booleanOption("double_blind"))
+                    if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
                         && game.getEntitiesOwnedBy(this.getLocalPlayer()) - game.getNoOfEntities() == 0) {
                         this.die();
                     }

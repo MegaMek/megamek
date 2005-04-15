@@ -78,8 +78,8 @@ public class ZippedItems implements Categorized {
         // Convert the file name to upper case, and compare it to image
         // file extensions.  Yeah, it's a bit of a hack, but whatever.
         String ucName = name.toUpperCase();
-        return ( ucName.endsWith( "ZIP" )  ||
-                 ucName.endsWith( "JAR" ) );
+        return ( ucName.endsWith( "ZIP" )  || //$NON-NLS-1$
+                 ucName.endsWith( "JAR" ) ); //$NON-NLS-1$
     }
 
     /**
@@ -121,11 +121,11 @@ public class ZippedItems implements Categorized {
         // Validate input.
         if ( null == zipFile ) {
             throw new IllegalArgumentException
-                ( "A null ZIP file was passed." );
+                ( "A null ZIP file was passed." ); //$NON-NLS-1$
         }
         if ( null == itemFactory ) {
             throw new IllegalArgumentException
-                ( "A null item factory was passed." );
+                ( "A null item factory was passed." ); //$NON-NLS-1$
         }
 
         // Save the root category name and the item factory.
@@ -164,7 +164,7 @@ public class ZippedItems implements Categorized {
                 // Construct the category name for this sub-directory.
                 StringBuffer buffer = new StringBuffer();
                 buffer.append( rootName )
-                    .append( " : " )
+                    .append( " : " ) //$NON-NLS-1$
                     .append( name );
                 catName = buffer.toString();
 
@@ -181,7 +181,7 @@ public class ZippedItems implements Categorized {
             else if ( ZippedItems.isZipName( name ) ) {
                 // TODO : implement me!!!
                 System.out.print
-                    ( "... found a ZIP file **inside** a ZIP file: " );
+                    ( "... found a ZIP file **inside** a ZIP file: " ); //$NON-NLS-1$
                 System.out.println( name );
             }
 
@@ -216,7 +216,7 @@ public class ZippedItems implements Categorized {
             name = entry.getName();
 
             // Should this entry be assigned to a sub-category?
-            index = name.lastIndexOf( "/" );
+            index = name.lastIndexOf( "/" ); //$NON-NLS-1$
             if ( index < 0 ) {
                 // Nope.  Assign it to the root category.
                 catName = rootName;

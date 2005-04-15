@@ -318,7 +318,7 @@ public class Ruler extends Dialog implements BoardListener {
           thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers(client.game);
       }
       if (thd.getValue() != ToHitData.IMPOSSIBLE) {
-          toHit1 = thd.getValue() + " = ";
+          toHit1 = thd.getValue() + " = "; //$NON-NLS-1$
       }
       toHit1 += thd.getDesc();
 
@@ -328,14 +328,14 @@ public class Ruler extends Dialog implements BoardListener {
           thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);
 	    }
       if (thd.getValue() != ToHitData.IMPOSSIBLE) {
-          toHit2 = thd.getValue() + " = ";
+          toHit2 = thd.getValue() + " = "; //$NON-NLS-1$
       }
       toHit2 += thd.getDesc();
   
 
       tf_start.setText(start.toString());
       tf_end.setText(end.toString());
-      tf_distance.setText("" + distance);
+      tf_distance.setText("" + distance); //$NON-NLS-1$
       tf_los1.setText(toHit1 );
       //      tf_los1.setCaretPosition(0);
       tf_los2.setText(toHit2 );

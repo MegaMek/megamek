@@ -50,11 +50,8 @@ public class BotGUI implements GameListener {
     public void notifyOfBot() {
         if (Settings.nagForBotReadme && !WarningShown) {
             WarningShown = true;
-            String title = "Please read the ai-readme.txt";
-            String body =
-                "The bot does not work with all units or game options.\n"
-                    + "Please read the ai-readme.txt file before using the bot.\n"
-                    + " \nWould you like to read the AI documentation now?\n";
+            String title = Messages.getString("BotGUI.notifyOfBot.title"); //$NON-NLS-1$
+            String body = Messages.getString("BotGUI.notifyOfBot.message"); //$NON-NLS-1$
             Dimension screenSize = frame.getToolkit().getScreenSize();
             frame.pack();
             frame.setLocation(
@@ -69,7 +66,7 @@ public class BotGUI implements GameListener {
             }
 
             if (confirm.getAnswer()) {
-                File helpfile = new File("ai-readme.txt");
+                File helpfile = new File("ai-readme.txt"); //$NON-NLS-1$
                 new CommonHelpDialog(frame, helpfile).show();
             }
         }

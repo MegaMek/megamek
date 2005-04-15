@@ -17,7 +17,7 @@ public class ChatProcessor {
             return;
         if (tb.getLocalPlayer() == null)
             return;
-        StringTokenizer st = new StringTokenizer(ge.getMessage(), ":");
+        StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
         if (!st.hasMoreTokens()) {
             return;
         }
@@ -43,10 +43,10 @@ public class ChatProcessor {
                             boolean understood = false;
                             //should create a command factory and a
                             // command object...
-                            if (command.equalsIgnoreCase("echo")) {
+                            if (command.equalsIgnoreCase("echo")) { //$NON-NLS-1$
                                 understood = true;
                             }
-                            if (command.equalsIgnoreCase("calm down")) {
+                            if (command.equalsIgnoreCase("calm down")) { //$NON-NLS-1$
                                 Iterator i = tb.getEntitiesOwned().iterator();
                                 while (i.hasNext()) {
                                     CEntity cen = tb.centities.get((Entity) i.next());
@@ -55,14 +55,14 @@ public class ChatProcessor {
                                     }
                                 }
                                 understood = true;
-                            } else if (command.equalsIgnoreCase("be aggressive")) {
+                            } else if (command.equalsIgnoreCase("be aggressive")) { //$NON-NLS-1$
                                 Iterator i = tb.getEntitiesOwned().iterator();
                                 while (i.hasNext()) {
                                     CEntity cen = tb.centities.get((Entity) i.next());
                                     cen.strategy.attack = Math.min(cen.strategy.attack * 1.2, 1.5);
                                 }
                                 understood = true;
-                            } else if (command.equalsIgnoreCase("attack")) {
+                            } else if (command.equalsIgnoreCase("attack")) { //$NON-NLS-1$
                                 int x = Integer.parseInt(st.nextToken().trim());
                                 int y = Integer.parseInt(st.nextToken().trim());
                                 Entity en = tb.game.getFirstEntity(new Coords(x - 1, y - 1));
@@ -70,16 +70,16 @@ public class ChatProcessor {
                                     if (en.isEnemyOf((Entity) tb.getEntitiesOwned().get(0))) {
                                         CEntity cen = tb.centities.get(en);
                                         cen.strategy.target += 3;
-                                        System.out.println(cen.entity.getShortName() + " " + cen.strategy.target);
+                                        System.out.println(cen.entity.getShortName() + " " + cen.strategy.target); //$NON-NLS-1$
                                         understood = true;
                                     }
                                 }
                             }
                             if (understood)
-                                tb.sendChat("Understood " + p.getName());
+                                tb.sendChat("Understood " + p.getName()); 
                         }
                     } else {
-                        tb.sendChat("I can't do that, " + p.getName());
+                        tb.sendChat("I can't do that, " + p.getName()); 
                     }
                 }
             } catch (Exception ex) {

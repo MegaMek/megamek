@@ -49,7 +49,7 @@ public class GALance extends GA {
                 this.chromosomes[i].fitness = getFitness(i);
             }
         } catch (Exception e) {
-            System.out.println("Error occured with " + populationDim + " pop " + chromosomeDim + " chromDim");
+            System.out.println("Error occured with " + populationDim + " pop " + chromosomeDim + " chromDim"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             Iterator i = moves.iterator();
             while (i.hasNext()) {
                 System.out.println(i.next());

@@ -38,11 +38,11 @@ public final class PMUtil {
         try{
             mt.waitForID(0);
         } catch (InterruptedException e){
-            System.out.println("Error while image loading.");
+            System.out.println("Error while image loading."); //$NON-NLS-1$
             b = false;
         }
         if(mt.isErrorID(0)){
-            System.out.println("Could Not load Image.");
+            System.out.println("Could Not load Image."); //$NON-NLS-1$
             b = false;
         }
         

@@ -39,18 +39,18 @@ public class MechPanelTabStrip extends PicMap {
 	private void setImages(){
 		MediaTracker mt = new MediaTracker(this);
 		Toolkit tk = getToolkit();
-		idleImage[0] = tk.getImage("data/widgets/tab_general_idle.gif");
-		idleImage[1] = tk.getImage("data/widgets/tab_armor_idle.gif");
-		idleImage[2] = tk.getImage("data/widgets/tab_systems_idle.gif");
-		idleImage[3] = tk.getImage("data/widgets/tab_weapon_idle.gif");
-		idleImage[4] = tk.getImage("data/widgets/tab_extras_idle.gif");
-		activeImage[0] = tk.getImage("data/widgets/tab_general_active.gif");
-		activeImage[1] = tk.getImage("data/widgets/tab_armor_active.gif");
-		activeImage[2] = tk.getImage("data/widgets/tab_systems_active.gif");
-		activeImage[3] = tk.getImage("data/widgets/tab_weapon_active.gif");
-		activeImage[4] = tk.getImage("data/widgets/tab_extras_active.gif");
-		idleCorner = tk.getImage("data/widgets/idle_corner.gif");
-		selectedCorner = tk.getImage("data/widgets/active_corner.gif");
+		idleImage[0] = tk.getImage("data/widgets/tab_general_idle.gif"); //$NON-NLS-1$
+		idleImage[1] = tk.getImage("data/widgets/tab_armor_idle.gif"); //$NON-NLS-1$
+		idleImage[2] = tk.getImage("data/widgets/tab_systems_idle.gif"); //$NON-NLS-1$
+		idleImage[3] = tk.getImage("data/widgets/tab_weapon_idle.gif"); //$NON-NLS-1$
+		idleImage[4] = tk.getImage("data/widgets/tab_extras_idle.gif"); //$NON-NLS-1$
+		activeImage[0] = tk.getImage("data/widgets/tab_general_active.gif"); //$NON-NLS-1$
+		activeImage[1] = tk.getImage("data/widgets/tab_armor_active.gif"); //$NON-NLS-1$
+		activeImage[2] = tk.getImage("data/widgets/tab_systems_active.gif"); //$NON-NLS-1$
+		activeImage[3] = tk.getImage("data/widgets/tab_weapon_active.gif"); //$NON-NLS-1$
+		activeImage[4] = tk.getImage("data/widgets/tab_extras_active.gif"); //$NON-NLS-1$
+		idleCorner = tk.getImage("data/widgets/idle_corner.gif"); //$NON-NLS-1$
+		selectedCorner = tk.getImage("data/widgets/active_corner.gif"); //$NON-NLS-1$
 	    
 	    for (int i = 0; i < 5 ; i++){
 	    	mt.addImage(idleImage[i],0);
@@ -61,10 +61,10 @@ public class MechPanelTabStrip extends PicMap {
 		try{
             mt.waitForAll();
         } catch (InterruptedException e){
-            System.out.println("TabStrip: Error while image loading.");
+            System.out.println("TabStrip: Error while image loading."); //$NON-NLS-1$
         }
         if(mt.isErrorID(0)){
-            System.out.println("TabStrip: Could Not load Image.");
+            System.out.println("TabStrip: Could Not load Image."); //$NON-NLS-1$
         }
 	}
 
@@ -97,7 +97,7 @@ public class MechPanelTabStrip extends PicMap {
 		                     { 
 		                       if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
 		                       	  setTab(0);
-		                       	  md.showPanel("movement");
+		                       	  md.showPanel("movement"); //$NON-NLS-1$
 		                       } 
 		                     }
 		               } );
@@ -107,7 +107,7 @@ public class MechPanelTabStrip extends PicMap {
 		                      {
 		                      	if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
 		                       	  setTab(1);
-		                       	  md.showPanel("armor");
+		                       	  md.showPanel("armor"); //$NON-NLS-1$
 		                        } 
 		                      }
 		               } );
@@ -117,7 +117,7 @@ public class MechPanelTabStrip extends PicMap {
 		                      {
 		                      	if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
 		                       	  setTab(2);
-		                       	  md.showPanel("systems");
+		                       	  md.showPanel("systems"); //$NON-NLS-1$
 		                        } 
 		                      }
 		               } );
@@ -127,7 +127,7 @@ public class MechPanelTabStrip extends PicMap {
 		                      {
 		                      	if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
 		                       	  setTab(3);
-		                       	  md.showPanel("weapons");
+		                       	  md.showPanel("weapons"); //$NON-NLS-1$
 		                        } 
 		                      }
 		               } );
@@ -137,7 +137,7 @@ public class MechPanelTabStrip extends PicMap {
 		                      {
 		                      	if (e.getActionCommand() == PMHotArea.MOUSE_DOWN){
 		                       	  setTab(4);
-		                       	  md.showPanel("extras");
+		                       	  md.showPanel("extras"); //$NON-NLS-1$
 		                        } 
 		                      }
 		               } );              

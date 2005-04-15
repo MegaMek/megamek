@@ -30,7 +30,7 @@ import java.util.*;
  */
 public class ServerLog {
     
-    public static final String LOG_FILE = "serverlog.txt";
+    public static final String LOG_FILE = "serverlog.txt"; //$NON-NLS-1$
     
     private long maxFilesize = Long.MAX_VALUE;
     private File logfile;
@@ -43,7 +43,7 @@ public class ServerLog {
             logfile = new File(filename);
             maxFilesize = maxSize;
             writer = new BufferedWriter(new FileWriter(filename, append));
-            append("Log file opened " + new Date().toString());
+            append("Log file opened " + new Date().toString()); //$NON-NLS-1$
         } catch (IOException ex) {
             //TODO: I dunno.  report this... to the log? ;)
             writer = null;
@@ -61,7 +61,7 @@ public class ServerLog {
         }
         try {
             writer.write(toLog);
-            writer.write("\n");
+            writer.write("\r\n"); //$NON-NLS-1$
             writer.flush();
         } catch (IOException ex) {
             //duhhhh...

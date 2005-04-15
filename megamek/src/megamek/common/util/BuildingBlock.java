@@ -100,7 +100,7 @@ public class BuildingBlock {
                 
                 //check for blank lines & comment lines...
                 //don't add them to the rawData if they are
-                if (data.length() > 0 && !data.startsWith(""+BuildingBlock.comment)) 
+                if (data.length() > 0 && !data.startsWith(""+BuildingBlock.comment))  //$NON-NLS-1$
                     this.rawData.add(data);
                 
                                 
@@ -111,7 +111,7 @@ public class BuildingBlock {
             
         } catch (IOException e) {
             
-            System.err.println("An IO Exception occured while attempting to read a BuildingBlock stream.");
+            System.err.println("An IO Exception occured while attempting to read a BuildingBlock stream."); //$NON-NLS-1$
             return false;
             
         }
@@ -156,13 +156,13 @@ public class BuildingBlock {
             }
             }catch(StringIndexOutOfBoundsException e) {
              
-                System.err.print("Was looking for " );
+                System.err.print("Was looking for " ); //$NON-NLS-1$
                 System.err.print( key );
-                System.err.println( " and caught a");
-                System.err.print("string index out of bounds exception on line: \"");
+                System.err.println( " and caught a"); //$NON-NLS-1$
+                System.err.print("string index out of bounds exception on line: \""); //$NON-NLS-1$
                 System.err.print(line);
-                System.err.println("\"");
-                System.err.print("rawData index number: ");
+                System.err.println("\""); //$NON-NLS-1$
+                System.err.print("rawData index number: "); //$NON-NLS-1$
                 System.err.println(lineNum);
                                 
             }
@@ -210,13 +210,13 @@ public class BuildingBlock {
             }
             } catch(StringIndexOutOfBoundsException e) {
                 
-                System.err.print("Was looking for " );
+                System.err.print("Was looking for " ); //$NON-NLS-1$
                 System.err.print( key );
-                System.err.println( " and caught a");
-                System.err.print("string index out of bounds exception on line: \"");
+                System.err.println( " and caught a"); //$NON-NLS-1$
+                System.err.print("string index out of bounds exception on line: \""); //$NON-NLS-1$
                 System.err.print(line);
-                System.err.println("\"");
-                System.err.print("rawData index number: ");
+                System.err.println("\""); //$NON-NLS-1$
+                System.err.print("rawData index number: "); //$NON-NLS-1$
                 System.err.println(lineNum);
             }
             
@@ -242,7 +242,7 @@ public class BuildingBlock {
         if (startIndex == -1 || endIndex == -1) {
          
             data = new String[1];
-            data[0] = "0";
+            data[0] = "0"; //$NON-NLS-1$
             return data;
             
         }
@@ -312,7 +312,7 @@ public class BuildingBlock {
             }catch (NumberFormatException oops) {
              
                 data[0] = 0;
-                System.err.println("getDataAsInt(\""+blockName+"\") failed.  NumberFormatException was caught.");
+                System.err.println("getDataAsInt(\""+blockName+"\") failed.  NumberFormatException was caught."); //$NON-NLS-1$ //$NON-NLS-2$
                 
             }
             
@@ -366,7 +366,7 @@ public class BuildingBlock {
             }catch (NumberFormatException oops) {
              
                 data[0] = 0;
-                System.err.println("getDataAsFloat(\""+blockName+"\") failed.  NumberFormatException was caught.");
+                System.err.println("getDataAsFloat(\""+blockName+"\") failed.  NumberFormatException was caught."); //$NON-NLS-1$ //$NON-NLS-2$
                 
             }
             
@@ -424,10 +424,10 @@ public class BuildingBlock {
      
         rawData.clear();
                 
-        this.writeBlockComment("building block data file");
-        rawData.add(new String("")); //blank line..
+        this.writeBlockComment("building block data file"); //$NON-NLS-1$
+        rawData.add(new String("")); //blank line.. //$NON-NLS-1$
     
-        this.writeBlockData("BlockVersion", ""+BuildingBlock.version);
+        this.writeBlockData("BlockVersion", ""+BuildingBlock.version); //$NON-NLS-1$ //$NON-NLS-2$
         
         return true;
     }
@@ -452,7 +452,7 @@ public class BuildingBlock {
     public boolean writeBlockData(String blockName, int blockData) {
      
         String [] temp = new String[1];
-        temp[0] = ""+blockData;
+        temp[0] = ""+blockData; //$NON-NLS-1$
         return writeBlockData(blockName, this.makeVector(temp)); 
         
     }
@@ -465,7 +465,7 @@ public class BuildingBlock {
             
             for (int c = 0; c < blockData.length; c++) {
              
-                temp[c] = ""+blockData[c];
+                temp[c] = ""+blockData[c]; //$NON-NLS-1$
                 
             };
         return writeBlockData(blockName, this.makeVector(temp));    
@@ -478,7 +478,7 @@ public class BuildingBlock {
     public boolean writeBlockData(String blockName, float blockData) {
      
         String [] temp = new String[1];
-        temp[0] = ""+blockData;
+        temp[0] = ""+blockData; //$NON-NLS-1$
         return writeBlockData(blockName, this.makeVector(temp)); 
         
     }
@@ -494,7 +494,7 @@ public class BuildingBlock {
             
             for (int c = 0; c < blockData.length; c++) {
              
-                temp[c] = ""+blockData[c];
+                temp[c] = ""+blockData[c]; //$NON-NLS-1$
                 
             };
         
@@ -518,7 +518,7 @@ public boolean writeBlockData(String blockName, String [] blockData) {
      */    
     public boolean writeBlockData(String blockName, Vector blockData) {
     
-        rawData.add(new String("<"+blockName+">"));
+        rawData.add(new String("<"+blockName+">")); //$NON-NLS-1$ //$NON-NLS-2$
         
         for (int c = 0; c < blockData.size(); c++) {
         
@@ -527,8 +527,8 @@ public boolean writeBlockData(String blockName, String [] blockData) {
         
         };
         
-        rawData.add(new String("</"+blockName+">"));
-        rawData.add(new String(""));
+        rawData.add(new String("</"+blockName+">")); //$NON-NLS-1$ //$NON-NLS-2$
+        rawData.add(new String("")); //$NON-NLS-1$
         
         return true;
         
@@ -557,7 +557,7 @@ public boolean writeBlockData(String blockName, String [] blockData) {
         if (file.exists()) {
             if (!file.delete()) {
              
-                System.err.println("Unable to delete file...(so I could re-write it)");
+                System.err.println("Unable to delete file...(so I could re-write it)"); //$NON-NLS-1$
                 return false;
             }
         }
@@ -585,7 +585,7 @@ public boolean writeBlockData(String blockName, String [] blockData) {
             out.close();
         } catch (IOException e) {
          
-            System.err.println("Unable to save block file "+fileName);
+            System.err.println("Unable to save block file "+fileName); //$NON-NLS-1$
             return false;
         }
         
@@ -696,8 +696,8 @@ public boolean writeBlockData(String blockName, String [] blockData) {
         }catch( NumberFormatException e) {
          
             //couldn't parse it...
-            System.err.println("Couldn't find array size at [0]...is this an array I returned...?");
-            System.err.println("Trying to find size anyway...");
+            System.err.println("Couldn't find array size at [0]...is this an array I returned...?"); //$NON-NLS-1$
+            System.err.println("Trying to find size anyway..."); //$NON-NLS-1$
             return this.countArray(array);
         }
         
@@ -734,11 +734,11 @@ public int getReturnedArraySize(int []array) {
     public int getReturnedArraySize(float []array) {
         
         try{
-            return Integer.parseInt(""+array[0]);
+            return Integer.parseInt(""+array[0]); //$NON-NLS-1$
         }catch(NumberFormatException e) {
             
-            System.err.println("Couldn't find array size at [0]...is this an array I returned...?");
-            System.err.println("Trying to find size anyway...");
+            System.err.println("Couldn't find array size at [0]...is this an array I returned...?"); //$NON-NLS-1$
+            System.err.println("Trying to find size anyway..."); //$NON-NLS-1$
             return this.countArray(array);
         }
         

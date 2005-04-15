@@ -39,6 +39,11 @@ import megamek.common.util.ItemFileFactory;
 public class ImageFileFactory implements ItemFileFactory {
 
     /**
+     * Accepted image file extentions 
+     */
+    private final static String JPG = "JPG", JPEG="JPEG", GIF="GIF", PNG="PNG"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+    /**
      * Implement the Singleton pattern.
      */
     private ImageFileFactory() {}
@@ -68,7 +73,7 @@ public class ImageFileFactory implements ItemFileFactory {
         // Validate the input.
         if ( null == file ) {
             throw new IllegalArgumentException
-                ( "A null image file was passed.");
+                ( "A null image file was passed."); //$NON-NLS-1$
         }
 
         // Construct an anonymous class that gets an Image for the file.
@@ -110,11 +115,11 @@ public class ImageFileFactory implements ItemFileFactory {
         // Validate the input.
         if ( null == zipEntry ) {
             throw new IllegalArgumentException
-                ( "A null ZIP entry was passed.");
+                ( "A null ZIP entry was passed."); //$NON-NLS-1$
         }
         if ( null == zipFile ) {
             throw new IllegalArgumentException
-                ( "A null ZIP file was passed.");
+                ( "A null ZIP file was passed."); //$NON-NLS-1$
         }
 
         // Construct an anonymous class that gets an Image for the file.
@@ -153,8 +158,8 @@ public class ImageFileFactory implements ItemFileFactory {
                         }
                         if ( item.getSize() <= index ) {
                             throw new IOException
-                                ( "Error reading " + item.getName() +
-                                  "\nYou may want to unzip " +
+                                ( "Error reading " + item.getName() + //$NON-NLS-1$
+                                  "\nYou may want to unzip " + //$NON-NLS-1$
                                   zipFile.getName() );
                         }
 
@@ -188,10 +193,10 @@ public class ImageFileFactory implements ItemFileFactory {
         // Convert the file name to upper case, and compare it to image
         // file extensions.  Yeah, it's a bit of a hack, but whatever.
         String ucName = name.toUpperCase();
-        return ( ucName.endsWith( "JPG" )  ||
-                 ucName.endsWith( "JPEG" ) ||
-                 ucName.endsWith( "GIF" )  ||
-                 ucName.endsWith( "PNG" ) );
+        return ( ucName.endsWith( JPG )  ||
+                 ucName.endsWith( JPEG ) ||
+                 ucName.endsWith( GIF )  ||
+                 ucName.endsWith( PNG ) );
     }
 
     /**
@@ -208,10 +213,10 @@ public class ImageFileFactory implements ItemFileFactory {
         // Convert the file name to upper case, and compare it to image
         // file extensions.  Yeah, it's a bit of a hack, but whatever.
         String ucName = name.toUpperCase();
-        return ( ucName.endsWith( "JPG" )  ||
-                 ucName.endsWith( "JPEG" ) ||
-                 ucName.endsWith( "GIF" )  ||
-                 ucName.endsWith( "PNG" ) );
+        return ( ucName.endsWith( JPG )  ||
+                 ucName.endsWith( JPEG ) ||
+                 ucName.endsWith( GIF )  ||
+                 ucName.endsWith( PNG ) );
     }
 
 }

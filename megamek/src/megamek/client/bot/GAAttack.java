@@ -134,7 +134,7 @@ public class GAAttack extends GA {
         try {
             target = (Entity) this.target_array.elementAt(chromVector.genes[chromosomeDim - 1]);
         } catch (Exception e) {
-            System.out.println(chromosomeDim + " " + chromVector.genes.length);
+            System.out.println(chromosomeDim + " " + chromVector.genes.length); //$NON-NLS-1$
             System.out.println(this.target_array.size());
             target = (Entity) this.target_array.elementAt(((Integer) this.valid_target_indexes.get(0)).intValue());
         }

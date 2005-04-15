@@ -975,7 +975,7 @@ public class ChatLounge
             Player player = (Player) i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
-                ssb.append(player.getName()).append(" : ");
+                ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
                 ssb.append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
                 lisStarts.add(ssb.toString());
             }

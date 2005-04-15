@@ -153,7 +153,7 @@ public class ImageButton extends SizedButton {
 
             } catch ( InterruptedException err ) {
                 // Print an error message and clear the image.
-                System.err.println( "Could not load image:" );
+                System.err.println( "Could not load image:" ); //$NON-NLS-1$
                 System.err.println( err.getMessage() );
                 image = null;
             }

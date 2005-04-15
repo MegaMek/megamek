@@ -97,15 +97,15 @@ public class DirectoryItems implements Categorized {
         // Validate input.
         if ( null == rootDir ) {
             throw new IllegalArgumentException
-                ( "A null root directory was passed." );
+                ( "A null root directory was passed." ); //$NON-NLS-1$
         }
         else if ( !rootDir.isDirectory() ) {
             throw new IllegalArgumentException
-                ( "The passed file is not a directory." );
+                ( "The passed file is not a directory." ); //$NON-NLS-1$
         }
         if ( null == itemFactory ) {
             throw new IllegalArgumentException
-                ( "A null item factory was passed." );
+                ( "A null item factory was passed." ); //$NON-NLS-1$
         }
 
         // Save the root category name and the item factory.
@@ -114,7 +114,7 @@ public class DirectoryItems implements Categorized {
 
         // Replace a null name with an empty name.
         if ( null == rootName ) {
-            rootName = "";
+            rootName = ""; //$NON-NLS-1$
         }
 
         /* DEBUG : uncomment this section to debug *
@@ -139,7 +139,7 @@ public class DirectoryItems implements Categorized {
                 StringBuffer name = new StringBuffer();
                 name.append( rootName )
                     .append( contents[entry] )
-                    .append( "/" );
+                    .append( "/" ); //$NON-NLS-1$
 
                 // Parse the sub-directory, and add it to the map.
                 this.addCategory
@@ -162,7 +162,7 @@ public class DirectoryItems implements Categorized {
                 }
                 catch ( Exception err ) {
                     // Print diagnostics and keep going.
-                    System.err.print( "Could not parse ");
+                    System.err.print( "Could not parse "); //$NON-NLS-1$
                     System.err.println( contents[entry] );
                     err.printStackTrace();
                 }
@@ -246,11 +246,11 @@ public class DirectoryItems implements Categorized {
         // Validate input.
         if ( null == categoryName ) {
             throw new IllegalArgumentException
-                ( "A null category name was passed." );
+                ( "A null category name was passed." ); //$NON-NLS-1$
         }
         if ( null == itemName ) {
             throw new IllegalArgumentException
-                ( "A null item name was passed." );
+                ( "A null item name was passed." ); //$NON-NLS-1$
         }
 
         // Make sure we have this category?

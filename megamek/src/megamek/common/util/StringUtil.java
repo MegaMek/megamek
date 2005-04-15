@@ -20,7 +20,7 @@ import com.sun.java.util.collections.Comparator;
 public class StringUtil {
 
     public static Vector splitString(String s, String divider) {
-        if (s == null || s.equals("")) {
+        if (s == null || s.equals("")) { //$NON-NLS-1$
             return new Vector();
         }
 
@@ -68,7 +68,7 @@ public class StringUtil {
     public static boolean parseBoolean(String input) {
         if (null == input) {
             return false;
-        } else if (input.equalsIgnoreCase("true")) {
+        } else if (input.equalsIgnoreCase("true")) { //$NON-NLS-1$
             return true;
         }
         return false;

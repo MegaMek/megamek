@@ -75,7 +75,7 @@ public class Connection {
             }
         };
         
-        receiver = new Thread(receiverRunnable, "Packet Receiver (" + getId() + ")");
+        receiver = new Thread(receiverRunnable, "Packet Receiver (" + getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         receiver.start();
         
         // start sender thread
@@ -87,7 +87,7 @@ public class Connection {
             }
         };
         
-        sender = new Thread(senderRunable, "Packet Sender (" + getId() + ")");
+        sender = new Thread(senderRunable, "Packet Sender (" + getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         sender.start();
     }
 
@@ -120,9 +120,9 @@ public class Connection {
             in.close();
             out.close();
         } catch (IOException e) {
-            System.err.print( "Error closing connection #" );
+            System.err.print( "Error closing connection #" ); //$NON-NLS-1$
             System.err.print( getId() );
-            System.err.print( ": " );
+            System.err.print( ": " ); //$NON-NLS-1$
             System.err.println( e.getMessage() );
             // We don't need a full stack trace... we're
             // just closing the connection anyway.
@@ -179,12 +179,12 @@ public class Connection {
 //                System.out.println("server(" + id + "): command #" + packet.getCommand() + " received.");
             return packet;
         } catch (IOException ex) {
-            System.err.println("server(" + id + "): IO error reading command");
+            System.err.println("server(" + id + "): IO error reading command"); //$NON-NLS-1$ //$NON-NLS-2$
 //             ex.printStackTrace();
             server.disconnected(this);
             return null;
         } catch (ClassNotFoundException ex) {
-            System.err.println("server(" + id + "): class not found error reading command");
+            System.err.println("server(" + id + "): class not found error reading command"); //$NON-NLS-1$ //$NON-NLS-2$
             server.disconnected(this);
             return null;
         }
@@ -211,7 +211,7 @@ public class Connection {
             bytes = packet.size();
 //            System.out.println("server(" + id + "): command #" + packet.getCommand() + " sent with " + packet.getData().length + " data");
         } catch(IOException ex) {
-            System.err.println("server(" + id + "): error sending command.  dropping player");
+            System.err.println("server(" + id + "): error sending command.  dropping player"); //$NON-NLS-1$ //$NON-NLS-2$
             System.err.println(ex);
             System.err.println(ex.getMessage());
             server.disconnected(this);

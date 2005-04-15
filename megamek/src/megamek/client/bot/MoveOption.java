@@ -193,7 +193,7 @@ public class MoveOption extends MovePath implements Cloneable {
                     getCEntity().getThreatUtility(.2 * this.entity.getWeight(), ToHitData.SIDE_REAR)
                         * (1 - Math.pow(getCEntity().base_psr_odds, 2));
                 this.movement_threat += cur_threat;
-                this.tv.add(cur_threat + " Movement Threat \n");
+                this.tv.add(cur_threat + " Movement Threat \r\n");
             }
         }
         return this;
@@ -233,7 +233,7 @@ public class MoveOption extends MovePath implements Cloneable {
             || isInfantry
             || isProtomech
             || ( isClan
-                 && game.getOptions().booleanOption("no_clan_physical") )) {
+                 && game.getOptions().booleanOption("no_clan_physical") )) { //$NON-NLS-1$
             return false;
         }
         Enumeration e = game.getEntities(last.getPosition());
@@ -499,10 +499,10 @@ public class MoveOption extends MovePath implements Cloneable {
             + getFinalCoords()
             + " "
             + super.toString()
-            + "\n Utility: "
+            + "\r\n Utility: "
             + getUtility()
-            + " \n"
+            + " \r\n"
             + tv
-            + "\n";
+            + "\r\n";
     }
 }

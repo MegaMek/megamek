@@ -27,7 +27,7 @@ public class PMValueLabel extends PMSimpleLabel {
       * Create the label.
       */
      PMValueLabel(FontMetrics fm, Color c) {
-      super("", fm, c);
+      super("", fm, c); //$NON-NLS-1$
      }
 
      /*

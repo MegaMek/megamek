@@ -46,7 +46,7 @@ import java.awt.event.*;
     
     public void onMouseClick(MouseEvent e){
        int modifiers = e.getModifiers();
-       String command = "";
+       String command = ""; //$NON-NLS-1$
        
        if( 0 != (modifiers & InputEvent.BUTTON1_MASK)) {
 	   	   command = PMHotArea.MOUSE_CLICK_LEFT;

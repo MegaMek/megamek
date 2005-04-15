@@ -16,6 +16,8 @@ package megamek.client.util.widget;
 
 import java.awt.*;
 import java.util.*;
+
+import megamek.client.Messages;
 import megamek.common.*;
 
 /**
@@ -78,8 +80,8 @@ public class TankMapSet implements DisplayMapSet{
                                            new int[]{139,160,187,187,160,139},6);
 
     
-    private static final Font       FONT_LABEL = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorSmallFontSize);
-    private static final Font       FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize);
+    private static final Font       FONT_LABEL = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorSmallFontSize); //$NON-NLS-1$
+    private static final Font       FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize); //$NON-NLS-1$
  
   
   
@@ -152,59 +154,59 @@ public class TankMapSet implements DisplayMapSet{
     FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
     
     //Labels for Front view
-    labels[Tank.LOC_FRONT] = createLabel("Front Armor", fm, Color.black,65,35);
-    labels[Tank.LOC_FRONT + INT_STR_OFFSET] = createLabel("Front I.S.", fm, Color.black,63,57);
-    labels[Tank.LOC_LEFT] = createLabel("LS", fm, Color.black,19,135);
-    labels[Tank.LOC_LEFT + INT_STR_OFFSET] = createLabel("L. I.S.", fm, Color.black,49,106);
-    labels[Tank.LOC_RIGHT] = createLabel("RS", fm, Color.black,124,135);
-    labels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createLabel("R. I.S.", fm, Color.black,95,106);
-    labels[Tank.LOC_REAR] = createLabel("Rear Armor", fm, Color.black,65,257);
-    labels[Tank.LOC_REAR + INT_STR_OFFSET] = createLabel("Rear I.S.", fm, Color.black,63,239);
-    labels[Tank.LOC_TURRET] = createLabel("Turret Armor", fm, Color.black,73,145);
-    labels[Tank.LOC_TURRET + INT_STR_OFFSET] = createLabel("Turret I.S.", fm, Color.black,73,173);
+    labels[Tank.LOC_FRONT] = createLabel(Messages.getString("TankMapSet.FrontArmor"), fm, Color.black,65,35); //$NON-NLS-1$
+    labels[Tank.LOC_FRONT + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,63,57); //$NON-NLS-1$
+    labels[Tank.LOC_LEFT] = createLabel(Messages.getString("TankMapSet.LS"), fm, Color.black,19,135); //$NON-NLS-1$
+    labels[Tank.LOC_LEFT + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,49,106); //$NON-NLS-1$
+    labels[Tank.LOC_RIGHT] = createLabel(Messages.getString("TankMapSet.RS"), fm, Color.black,124,135); //$NON-NLS-1$
+    labels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,95,106); //$NON-NLS-1$
+    labels[Tank.LOC_REAR] = createLabel(Messages.getString("TankMapSet.RearArmor"), fm, Color.black,65,257); //$NON-NLS-1$
+    labels[Tank.LOC_REAR + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.RearIS"), fm, Color.black,63,239); //$NON-NLS-1$
+    labels[Tank.LOC_TURRET] = createLabel(Messages.getString("TankMapSet.TurretArmor"), fm, Color.black,73,145); //$NON-NLS-1$
+    labels[Tank.LOC_TURRET + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.TurretIS"), fm, Color.black,73,173); //$NON-NLS-1$
     
     //Value labels for all parts of mek
         //front
     fm =  comp.getFontMetrics(FONT_VALUE);   
-    vLabels[Tank.LOC_FRONT] = createValueLabel(101, 37, "", fm);
-    vLabels[Tank.LOC_FRONT + INT_STR_OFFSET] = createValueLabel(91, 58, "", fm);
-    vLabels[Tank.LOC_LEFT] = createValueLabel(20, 150, "", fm);
-    vLabels[Tank.LOC_LEFT + INT_STR_OFFSET] = createValueLabel(44, 121, "", fm);
-    vLabels[Tank.LOC_RIGHT] = createValueLabel(125, 150, "", fm);
-    vLabels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createValueLabel(102, 121, "", fm);
-    vLabels[Tank.LOC_REAR] = createValueLabel(99, 258, "", fm);
-    vLabels[Tank.LOC_REAR + INT_STR_OFFSET] = createValueLabel(91, 241, "", fm);
-    vLabels[Tank.LOC_TURRET] = createValueLabel(73, 159, "", fm);
-    vLabels[Tank.LOC_TURRET + INT_STR_OFFSET] = createValueLabel(73, 193, "", fm);
+    vLabels[Tank.LOC_FRONT] = createValueLabel(101, 37, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_FRONT + INT_STR_OFFSET] = createValueLabel(91, 58, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_LEFT] = createValueLabel(20, 150, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_LEFT + INT_STR_OFFSET] = createValueLabel(44, 121, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_RIGHT] = createValueLabel(125, 150, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createValueLabel(102, 121, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_REAR] = createValueLabel(99, 258, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_REAR + INT_STR_OFFSET] = createValueLabel(91, 241, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_TURRET] = createValueLabel(73, 159, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_TURRET + INT_STR_OFFSET] = createValueLabel(73, 193, "", fm); //$NON-NLS-1$
     }
     
     private void setBackGround(){
-        Image tile = comp.getToolkit().getImage("data/widgets/tile.gif");
+        Image tile = comp.getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_TOP;
-        tile = comp.getToolkit().getImage("data/widgets/h_line.gif");
+        tile = comp.getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));                
         
             b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage("data/widgets/h_line.gif");
+        tile = comp.getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage("data/widgets/v_line.gif");
+        tile = comp.getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage("data/widgets/v_line.gif");
+        tile = comp.getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
                 
@@ -212,28 +214,28 @@ public class TankMapSet implements DisplayMapSet{
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage("data/widgets/tl_corner.gif");
+        tile = comp.getToolkit().getImage("data/widgets/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage("data/widgets/bl_corner.gif");
+        tile = comp.getToolkit().getImage("data/widgets/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage("data/widgets/tr_corner.gif");
+        tile = comp.getToolkit().getImage("data/widgets/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage("data/widgets/br_corner.gif");
+        tile = comp.getToolkit().getImage("data/widgets/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
     }

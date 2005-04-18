@@ -6,6 +6,7 @@ v0.29.74 (CVS)
     now get a turn to declare their dodge maneuver.
 + Bug 1185216: setting game options not working.
 + Bug 1185258: pic problems.
++ Bug 1185495: Aerie BA should have only 1 armor.
 
 v0.29.73 (2005-04-18 8:00am)
 + Bug 1176985: Nighthawk BA should have stealth.

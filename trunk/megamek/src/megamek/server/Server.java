@@ -11771,7 +11771,7 @@ implements Runnable, ConnectionHandler {
         int changed = 0;
 
         for (Enumeration i = ((Vector)packet.getObject(1)).elements(); i.hasMoreElements();) {
-            IOption option = (IOption)i.nextElement();
+            IBasicOption option = (IBasicOption)i.nextElement();
             IOption originalOption = game.getOptions().getOption(option.getName());
 
             if (originalOption == null) {
@@ -11784,7 +11784,7 @@ implements Runnable, ConnectionHandler {
                 .append( " changed option \"" )
                 .append( originalOption.getDisplayableName() )
                 .append( "\" to " )
-                .append( option.stringValue() )
+                .append( option.getValue().toString() )
                 .append( "." );
             sendServerChat( message.toString() );
             originalOption.setValue(option.getValue());

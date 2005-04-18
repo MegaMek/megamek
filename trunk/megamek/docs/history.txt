@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.74 (CVS)
++ Unconscious pilots could avoid damage when falling.
 
 v0.29.73 (2005-04-18 8:00am)
 + Bug 1176985: Nighthawk BA should have stealth.

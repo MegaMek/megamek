@@ -20,7 +20,7 @@ v0.29.73 (2005-04-18 8:00am)
 + Data 1176308: added *most* new BA equipment.
 + Patch 1178079: Options refactoring, thanks Mev!
 + Operation under the MS JVM broke again - fixed now.
-+ Timber Wolf Pryde, Vixen, Locust IIC 4 pics.
++ Timber Wolf Pryde, Incubus, Locust IIC 4 pics.
 + Bug 1053305, Patch 1172220: Artillery not damaging buildings.
 + Ordering fix for patch 1178079.
 + Added pics for Ares, Asshur, Athena, Badger, Centaur, Enyo, Harpy, Heimdall,

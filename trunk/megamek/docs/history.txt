@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.73 (CVS)
+v0.29.73 (2005-04-18 8:00am)
 + Bug 1176985: Nighthawk BA should have stealth.
 + Added Aerie BA.
 + Added pictures for Fire Falcon, Crossbow, Grendel, Hankyu, Hellion, Huntsman,

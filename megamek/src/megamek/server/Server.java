@@ -10664,7 +10664,7 @@ implements Runnable, ConnectionHandler {
             roll.addModifier(height, "height of fall");
         }
 
-        if (roll.getValue() == PilotingRollData.IMPOSSIBLE) {
+        if (roll.getValue() == PilotingRollData.AUTOMATIC_FAIL) {
             phaseReport.append("\nPilot of " ).append( entity.getDisplayName()
             ).append( " \"" ).append( entity.crew.getName() ).append( "\" cannot avoid damage.\n");
             phaseReport.append(damageCrew(entity, 1) ).append( "\n");

@@ -3834,7 +3834,11 @@ public abstract class Entity
             }
 
             canHit |= Compute.canPhysicalTarget(game, getId(), target);
-
+            // check if we can dodge and target can attack us,
+            // then we are eligible.
+            canHit |= ( this instanceof Mech && !isProne() && 
+                    getCrew().getOptions().booleanOption("dodge_maneuver") &&
+                    Compute.canPhysicalTarget(game, target.getId(), this) );
         }
 
         // If there are no valid Entity targets, check for add valid buildings.

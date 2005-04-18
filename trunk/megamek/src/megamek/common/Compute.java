@@ -1000,22 +1000,11 @@ public class Compute
             toHit.addModifier(-1, "melee specialist");
         }
 
-        // Mek targets that have the dodge maneuver but didn't get a physical
-        // turn (unless they're charging or DFAing) get the dodge bonus.
-        
-        /* I have currently made dodge slightly less useful than it is canonically because 
-         * otherwise MM will crash with an OutOfMemory error every time two mechs capable of dodging become
-         * adjacent to each other.
-         *
-         *TODO : Figure out a way to break the circular dependency on those two 
-         *
-         *Replace false with the fixed version of "
-               ( !target.hasDisplacementAttack() &&
-                 !target.isEligibleForPhysical() ) )" 
-         * */
+        // Mek targets that are dodging are harder to hit.
+
         if ( target != null && target instanceof Mech &&
              target.getCrew().getOptions().booleanOption("dodge_maneuver") &&
-             ( target.dodging || false )) {
+             ( target.dodging )) {
             toHit.addModifier(2, "target is dodging");
         }
     }

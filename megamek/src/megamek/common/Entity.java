@@ -2702,13 +2702,13 @@ public abstract class Entity
              || getCrew().getHits() >= 6 ) {
             //Following line switched from impossible to automatic failure
             //-- bug fix for dead units taking PSRs
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Pilot dead");
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, "Pilot dead");
         }
         // pilot awake?
         else if (!getCrew().isActive()) {
             //Following line switched from impossible to automatic failure
             // -- bug fix for unconscious pilots taking PSRs
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Pilot unconscious");
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, "Pilot unconscious");
         }
         // gyro operational?
         if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
@@ -2732,7 +2732,7 @@ public abstract class Entity
 
         //Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll
         //object and adjust as necessary
-          roll = addEntityBonuses(roll);
+        roll = addEntityBonuses(roll);
 
         return roll;
     }

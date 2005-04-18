@@ -5,6 +5,7 @@ v0.29.74 (CVS)
 + Units that can 'dodge' but not make any physical attacks
     now get a turn to declare their dodge maneuver.
 + Bug 1185216: setting game options not working.
++ Bug 1185258: pic problems.
 
 v0.29.73 (2005-04-18 8:00am)
 + Bug 1176985: Nighthawk BA should have stealth.

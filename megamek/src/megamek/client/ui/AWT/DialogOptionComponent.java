@@ -24,6 +24,7 @@ import java.awt.*;
 
 import java.awt.event.MouseListener;
 import java.awt.event.ItemListener;
+import java.io.Serializable;
 
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -177,7 +178,7 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
         parent.optionClicked(this, option, checkbox.getState());
     }
     
-    private static class BasicOption implements IBasicOption {
+    private static class BasicOption implements IBasicOption, Serializable {
         private String name;
         private Object value;
 

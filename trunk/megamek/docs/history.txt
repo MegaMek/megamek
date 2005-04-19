@@ -9,6 +9,8 @@ v0.29.74 (CVS)
 + Bug 1185495: Aerie BA should have only 1 armor.
 + Bug 1185682: Settings loading doesn't skip comments
 + Bug 1185492: Kobold TAG BA should have Light Tag only for Trooper 1.
++ Implemented storing/reading the user defined locale for ResourceBundles in the
+   MegaMek.cfg.
 
 v0.29.73 (2005-04-18 8:00am)
 + Bug 1176985: Nighthawk BA should have stealth.

@@ -207,14 +207,14 @@ public class Settings
     /** Any runtime overrides of MegaMek settings. */
     private static Properties runtime = null;
 
-    /** The singleton <code>Settings</code> object. */
-    private static final Settings instance = new Settings();
-
     /** Character used to delinieate strings in config file. */
     private static char quoteChar = '"';
 
     /** Character used for comments in config file. */
     private static char commentChar = '#';
+
+    /** The singleton <code>Settings</code> object. */
+    private static final Settings instance = new Settings();
 
     /**
      * Create and initialize the singleton instance.

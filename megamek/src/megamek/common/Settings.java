@@ -16,8 +16,11 @@ package megamek.common;
 
 import java.awt.*;
 import java.io.*;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Enumeration;
+
+import megamek.common.util.LocaleParser;
 
 public class Settings
 {
@@ -192,6 +195,12 @@ public class Settings
 
     /** Do not show unit Ids by default. */
     public static boolean showUnitId = false;
+
+    /**
+     * The desired client's locale 
+     */
+    public static Locale locale = null;
+
     
     /** The system defaults for MegaMek settings. */
     private static Properties system = null;
@@ -245,7 +254,43 @@ public class Settings
         }
 
     }
-        
+
+    public static Locale getLocale() {
+        if (locale == null)
+            return Locale.getDefault();
+        else
+            return locale;
+    }
+
+    public static void setLocale(Locale l) {
+        locale = l;
+    }
+
+    public static void setLocale(String l) {
+        LocaleParser p = new LocaleParser();
+        if (!p.parse(l)) {
+            locale = new Locale(p.getLanguage(), p.getCountry(), p.getVariant());
+        }
+    }
+
+    public static String getLocaleString() {
+        if (locale == null)
+            return "";
+        else {
+            StringBuffer result = new StringBuffer();             
+            if (locale.getLanguage().length() != 0) {
+                result.append(locale.getLanguage());
+                if (locale.getCountry().length() != 0) {
+                    result.append("_"+locale.getCountry());
+                    if (locale.getVariant().length() != 0) {
+                        result.append("_"+locale.getVariant());
+                    }
+                }
+            }
+            return result.toString();
+        }
+    }
+    
     /**
      * Loads the settings from disk
      */
@@ -260,16 +305,16 @@ public class Settings
             StreamTokenizer st = new StreamTokenizer(cr);
 
             st.lowerCaseMode(true);
+            st.eolIsSignificant(true);
             st.quoteChar(quoteChar);
             st.commentChar(commentChar);
-
 scan:
             while(true) {
                 switch(st.nextToken()) {
                 case StreamTokenizer.TT_EOF:
                     break scan;
                 case StreamTokenizer.TT_EOL:
-                    break scan;
+                    continue;
                 case StreamTokenizer.TT_WORD:
                     // read in 
                     String key = st.sval;
@@ -552,6 +597,18 @@ scan:
                         st.nextToken();
                         showUnitId = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if (key.equals("locale")) {
+                        //TODO It's not smart, we need more elegant way to handle case sensitivity
+                        // and load/save the settings in general
+                        st.lowerCaseMode(false);
+                        LocaleParser p = new LocaleParser();
+                        if (!p.parse(st)) {
+                            locale = new Locale(p.getLanguage(), p.getCountry(), p.getVariant());
+                        }
+                        //TODO It's not smart, we need more elegant way to handle case sensitivity
+                        // and load/save the settings in general
+                        st.lowerCaseMode(true);
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -679,7 +736,14 @@ scan:
             cw.write("chatloungetabfontsize " + chatLoungeTabFontSize + "\r\n");
             cw.write("defaultautoejectdisabled " + defaultAutoejectDisabled + "\r\n");
             cw.write("showunitid " + showUnitId + "\r\n");
-            
+
+            // Save the locale settings
+            String localeString = getLocaleString();
+            if (localeString.length()>0) {
+                    cw.write("locale "+localeString);
+                    cw.write(NL);
+            }
+
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes
             Enumeration keys = Settings.saved.propertyNames();

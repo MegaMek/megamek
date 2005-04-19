@@ -50,6 +50,7 @@ public class CommonSettingsDialog extends ClientDialog
     private TextField   serverlogMaxSize;
     private Checkbox    defaultAutoejectDisabled;
     private Checkbox    showUnitId;
+    private TextField   locale;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
@@ -197,7 +198,15 @@ public class CommonSettingsDialog extends ClientDialog
         tempPanel.add( panSetting );
 
         scrOptions.add(tempPanel);
+        
+        //locale settings
+        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.locale")) ); //$NON-NLS-1$
+        locale = new TextField(8);
+        panSetting.add( locale);
+        tempPanel.add( panSetting );
 
+        
         // add the scrollable panel
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -285,6 +294,8 @@ public class CommonSettingsDialog extends ClientDialog
         defaultAutoejectDisabled.setState( Settings.defaultAutoejectDisabled );
         showUnitId.setState( Settings.showUnitId );
 
+        locale.setText(Settings.getLocaleString());
+        
         getFocus.setState( Settings.getFocus );
         super.show();
     }
@@ -329,6 +340,8 @@ public class CommonSettingsDialog extends ClientDialog
 
         Settings.defaultAutoejectDisabled = defaultAutoejectDisabled.getState();
         Settings.showUnitId             = showUnitId.getState();
+
+        Settings.setLocale(locale.getText());
 
         Settings.save();
         this.setVisible( false );

@@ -9555,6 +9555,8 @@ implements Runnable, ConnectionHandler {
       } else {
         sbDesc.append("        ***The safety systems on the engine fail catastrophically resulting in a cascading engine failure!\n");
         sbDesc.append( destroyEntity(en, "engine explosion", false, false) );
+        //kill the crew
+        en.getCrew().setDoomed(true);
 
         //This is a hack so MM.NET marks the mech as not salvageable
           if ( en instanceof Mech )
@@ -9582,6 +9584,8 @@ implements Runnable, ConnectionHandler {
               continue;
 
             sbDesc.append(destroyEntity(entity, "engine explosion proximity", false, false));
+            // Kill the crew
+            entity.getCrew().setDoomed(true);
 
             entitesHit.put(entity, entity);
           }
@@ -13683,9 +13687,13 @@ implements Runnable, ConnectionHandler {
                     continue;
                 }
                 if (!pickedUp && pe.getOwnerId() == e.getOwnerId() && pe.getId() != e.getId()) {
+                    if (pe instanceof MechWarrior && game.getOptions().booleanOption("no_pilot_pickup")) {
+                        phaseReport.append(pe.getDisplayName())
+                             .append(" sits down with his colleagues and cracks open a beer!\n");
+                        continue;
+                    }
                     // Pick up the unit.
                     pe.pickUp(e);
-
                     // The picked unit is being carried by the loader.
                     e.setPickedUpById(pe.getId());
                     e.setPickedUpByExternalId(pe.getExternalId());
@@ -13698,21 +13706,25 @@ implements Runnable, ConnectionHandler {
                 Enumeration pickupEnemyEntities = game.getEnemyEntities(e.getPosition(), e);
                 while (pickupEnemyEntities.hasMoreElements() ) {
                     Entity pe = (Entity) pickupEnemyEntities.nextElement();
-                    if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious()) {
+                    if (pe.isDoomed() || pe.isShutDown() ||
+                        pe.getCrew().isUnconscious()) {
                         continue;
                     }
-                    if (!pickedUp) {
-                        // Capture the unit.
-                        pe.pickUp(e);
-
-                        // The captured unit is being carried by the loader.
-                        e.setCaptured( true );
-                        e.setPickedUpById(pe.getId());
-                        e.setPickedUpByExternalId(pe.getExternalId());
-                        pickedUp = true;
-                        phaseReport.append(e.getDisplayName()).append(" has been picked up by ")
-                        .append(pe.getDisplayName()).append(".\n");
+                    if (pe instanceof MechWarrior &&
+                          game.getOptions().booleanOption("no_pilot_pickup")) {
+                        phaseReport.append(pe.getDisplayName())
+                             .append(" sits down with his colleagues and cracks open a beer\n");
+                        continue;
                     }
+                    // Capture the unit.
+                    pe.pickUp(e);
+                    // The captured unit is being carried by the loader.
+                    e.setCaptured( true );
+                    e.setPickedUpById(pe.getId());
+                    e.setPickedUpByExternalId(pe.getExternalId());
+                    pickedUp = true;
+                    phaseReport.append(e.getDisplayName()).append(" has been picked up by ")
+                         .append(pe.getDisplayName()).append(".\n");
                 }
             }
             if (pickedUp) {

@@ -2725,7 +2725,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 1;
+        ammo.shots = 2;
         ammo.hittable = false;
         ammo.bv = 0;
 

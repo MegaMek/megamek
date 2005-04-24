@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -496,11 +496,12 @@ public class MiniMap extends Canvas
 
         if (attack instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction)attack;
-            if ( (attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY 
+            if ( ((attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY 
                 || attack.getTargetType() == Targetable.TYPE_HEX_FASCAM
                 || attack.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV
                 || attack.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV)
-                && waa.getEntity(m_game).getOwner().getId() != m_client.getLocalPlayer().getId() ) {
+                && waa.getEntity(m_game).getOwner().getId() != m_client.getLocalPlayer().getId())
+                || attack.getTargetType() == Targetable.TYPE_INARC_POD) {
                 return;
             }
         }

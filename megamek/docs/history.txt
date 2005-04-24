@@ -16,7 +16,7 @@ v0.29.74 (CVS)
     pilots.
 + MaxTech engine explosions now kill the exploded Mek's pilot.
 + Bug 1188644: Brushing off iNarc pod crashes MegaMek.
-+ Bug 1188591: Fixed  Grenadier, Hauberk and Advanced Clan Armor BVs
++ Bug 1188591: Fixed Grenadier, Hauberk and Advanced Clan Armor BVs
 
 v0.29.73 (2005-04-18 8:00am)
 + Bug 1176985: Nighthawk BA should have stealth.

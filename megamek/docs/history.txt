@@ -15,6 +15,7 @@ v0.29.74 (CVS)
 + Added option to disallow ejected pilots picking up/capturing other ejected
     pilots.
 + MaxTech engine explosions now kill the exploded Mek's pilot.
++ Bug 1188644: Brushing off iNarc pod crashes MegaMek.
 
 v0.29.73 (2005-04-18 8:00am)
 + Bug 1176985: Nighthawk BA should have stealth.

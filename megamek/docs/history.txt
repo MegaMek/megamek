@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.74 (CVS)
+v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.
 + Units that can 'dodge' but not make any physical attacks
     now get a turn to declare their dodge maneuver.

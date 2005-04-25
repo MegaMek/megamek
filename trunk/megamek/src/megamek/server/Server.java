@@ -6505,6 +6505,10 @@ implements Runnable, ConnectionHandler {
             }
 
             // Advanced SRM's only hit with even numbers of missles.
+            // TODO: need to check for BA Advanced SRM 5, if an even number
+            // of those hit, round up to odd unless that would 
+            // result in more missiles hitting than actually fired.
+
             if ( usesAmmo &&
                  atype.getAmmoType() == AmmoType.T_SRM_ADVANCED ) {
                 hits = 2 * (int) Math.floor( (1.0 + (float) hits) / 2.0);

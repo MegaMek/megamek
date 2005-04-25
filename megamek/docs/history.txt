@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
 v0.29.75 (CVS)
++ Added -port parameter to set the port a dedicated server will be listening to.
+  Only valid if next parameter after -dedicated (and savegame name, if there).
+  See also http://sourceforge.net/forum/forum.php?thread_id=1267994&forum_id=154580.
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.
@@ -46,7 +49,7 @@ v0.29.73 (2005-04-18 8:00am)
 + Changed behaviour for LBX cluster glancing blows, now the number of pellets
     is halved, effectively halving damage, and not the damage of each pellet
     halved to 0 (because of rounding down).
-
+  
 v0.29.72 (2005-04-02 3:15pm)
 + Data 1171465: Use the "lunar" theme in moonscapes boards.
 + Patch 1171880, Bug 1091243: after /reseting a game with minefields,

@@ -685,7 +685,8 @@ public class MegaMek implements ActionListener {
     }
 
     public static void main(String[] args) {
-
+        int usePort = 2346;
+        
         String logFileName = "MegaMek.log";
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-testdice")) {
@@ -702,11 +703,28 @@ public class MegaMek implements ActionListener {
                     savegameFileName = args[i];
                 }
                 Settings.load();
+                // Next argument may be "-port <number>"
+                i++;
+                if (i<args.length) {
+                    if (args[i].equals("-port")) {
+                        i++;
+                        if (i<args.length) {
+                            usePort = Integer.decode(args[i]).intValue();
+                        } else {
+                            i--;
+                            usePort = Settings.lastServerPort;
+                        }
+                    } else {
+                        i--;
+                        usePort = Settings.lastServerPort;
+                    }
+                }
                 // kick off a RNG check
                 megamek.common.Compute.d6();
                 // start server
                 Server dedicated = new Server(Settings.lastServerPass,
-                                              Settings.lastServerPort);
+                                              usePort);
+                                              //Settings.lastServerPort);
                 // load game options from xml file if available
                 dedicated.getGame().getOptions().loadOptions(null, null);
                 if (null != savegameFileName) {

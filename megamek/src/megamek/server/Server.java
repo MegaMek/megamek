@@ -6341,11 +6341,14 @@ implements Runnable, ConnectionHandler {
 
         // Other battle armor attacks use # of men firing to determine hits.
         // Each hit can be in a new location. The damage per shot comes from
-        // the "racksize".
+        // the "racksize", or from the ammo, for ammo weapons
         else if ( isBattleArmorAttack ) {
             bSalvo = true;
             platoon = (Infantry) ae;
             nCluster = 1;
+            if (usesAmmo) {
+                nDamPerHit = atype.getDamagePerShot();
+            }
             nDamPerHit = wtype.getRackSize();
             hits = platoon.getShootingStrength();
             // All attacks during Mek Swarms hit; all
@@ -6504,14 +6507,23 @@ implements Runnable, ConnectionHandler {
                 hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | glancing);
             }
 
-            // Advanced SRM's only hit with even numbers of missles.
-            // TODO: need to check for BA Advanced SRM 5, if an even number
-            // of those hit, round up to odd unless that would 
-            // result in more missiles hitting than actually fired.
-
+            // Advanced SRMs may get additional missiles
             if ( usesAmmo &&
-                 atype.getAmmoType() == AmmoType.T_SRM_ADVANCED ) {
-                hits = 2 * (int) Math.floor( (1.0 + (float) hits) / 2.0);
+                 atype.getAmmoType() == AmmoType.T_SRM_ADVANCED) {
+                // Advanced SRM 2s only hit with even number of missiles
+                if (atype.getRackSize() == 2) {
+                    hits = 2 * (int) Math.floor( (1.0 + (float) hits) / 2.0);
+                } 
+                // Advanced SRM 5s add one to the number of hits
+                // if hits is even and we wouldn't have more hits
+                // than shots fired
+                else if (atype.getRackSize() == 5) {
+                    int tmp = wtype.getRackSize() * platoon.getShootingStrength();
+                    if (hits%2 == 0 && hits < tmp) {
+                        hits++;
+                    }
+                }
+                
             }
 
         } else if (usesAmmo && atype.getMunitionType() == AmmoType.M_CLUSTER) {

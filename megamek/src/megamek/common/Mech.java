@@ -1955,14 +1955,6 @@ public abstract class Mech
             (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
     }
 
-    public void generateIconName(java.awt.FontMetrics fm) {
-        iconName = getModel();
-
-        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            iconName = iconName.substring(0, iconName.length() - 1);
-        }
-    }
-
     public boolean canCharge() {
         // Mechs can charge, unless they are Clan and the "no clan physicals" option is set
         return super.canCharge() && !(game.getOptions().booleanOption("no_clan_physical") && isClan());

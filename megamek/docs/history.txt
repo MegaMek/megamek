@@ -7,6 +7,7 @@ v0.29.75 (CVS)
 + Bug 1189805: Golem ASRM5 doing 5 damage per missile that hits, instead of 2.
 + Patch 1187324: Settings refactoring. The previous implementation was 
     marked with symbolic tag 'before-preferences'
++ Removed dependence on AWT from class Entity and descendants.
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.

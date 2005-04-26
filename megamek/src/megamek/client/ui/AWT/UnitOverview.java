@@ -15,12 +15,20 @@
 package megamek.client;
 
 import java.awt.*;
+import java.util.Vector;
+
 import megamek.common.*;
+import megamek.common.util.StringUtil;
 import megamek.client.util.widget.PMUtil;
 
 public class UnitOverview implements Displayable {
 
     private static final int	UNKNOWN_UNITS_PER_PAGE = -1;
+
+    /**
+     * The maximum length of the icon name.
+     */
+    public static final int ICON_NAME_MAX_LENGTH = 52;
 
     private static final Font   FONT = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
     private static final int    DIST_TOP = 5;
@@ -100,7 +108,7 @@ public class UnitOverview implements Displayable {
         for (int i = scrollOffset; i < v.size() && i < actUnitsPerPage + scrollOffset; i++) {
             Entity e = (Entity) v.elementAt(i);
             unitIds[i] = e.getId();
-            String name = e.getIconName(fm);
+            String name = getIconName(e, fm);
             Image i1 = clientgui.bv.getTilesetManager().iconFor(e);
 
 
@@ -374,5 +382,42 @@ public class UnitOverview implements Displayable {
     		clientgui.bv.repaint();
     	}
     }
+
+    protected String getIconName(Entity e, FontMetrics fm) {
+
+        if (e instanceof BattleArmor) {
+            String iconName = e.getShortName();                 
+            if (fm.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
+                Vector v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
+                iconName = (String) v.elementAt(0);
+                if (iconName.equals("Clan")) {
+                    iconName = (String) v.elementAt(1);
+                }
+            }
+            return adjustString(iconName,fm);
+        } else if (e instanceof Protomech) {
+            String iconName = e.getChassis() + " " + e.getModel(); //$NON-NLS-1$
+            return adjustString(iconName,fm);
+        } else if (e instanceof Tank) {                 
+            String iconName = e.getShortName();
+            
+            if (fm.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
+                Vector v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
+                iconName = (String) v.elementAt(0);
+            }
+            return adjustString(iconName,fm);
+        }else if (e instanceof Infantry || e instanceof Mech) {
+            String iconName = e.getModel();
+            return adjustString(iconName,fm);
+        }
+        return "!!Unknown!!";
+    }
+
+    protected String adjustString(String s, FontMetrics fm) {
+        while (fm.stringWidth(s) > ICON_NAME_MAX_LENGTH) {
+            s = s.substring(0, s.length() - 1);
+        }
+        return s;
+    }       
     
 }

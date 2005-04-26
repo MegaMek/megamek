@@ -16,8 +16,6 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
-import megamek.common.util.StringUtil;
-import java.util.Vector;
 
 /**
  * This class represents a squad or point of battle armor equiped infantry,
@@ -729,22 +727,6 @@ public class BattleArmor
         return result;
 
     } // End public TargetRoll getStealthModifier( char )
-
-    public void generateIconName(java.awt.FontMetrics fm) {
-        iconName = getShortName();
-		
-        if (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            Vector v = StringUtil.splitString(iconName, " ");
-            iconName = (String) v.elementAt(0);
-            if (iconName.equals("Clan")) {
-                iconName = (String) v.elementAt(1);
-            }
-        }
-		
-        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            iconName = iconName.substring(0, iconName.length() - 1);
-        }
-    }
 
 } // End public class BattleArmor extends Infantry implements Serializable
 

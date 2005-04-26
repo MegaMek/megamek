@@ -9415,7 +9415,7 @@ implements Runnable, ConnectionHandler {
                            }
                         }
                     }
-                } else {
+                } if (te.getInternal(hit) <= 0) {
                     // internal structure is gone, what are the transfer potentials?
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {

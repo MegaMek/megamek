@@ -14,11 +14,12 @@
 
 package megamek.test.client;
 
-import megamek.common.Settings;
-import megamek.client.util.ImageFileFactory;
-import megamek.common.util.DirectoryItems;
 import java.io.File;
 import java.util.Enumeration;
+
+import megamek.client.util.ImageFileFactory;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.DirectoryItems;
 
 /**
  * This class will list all of the camo files under "data/camo", according to
@@ -34,8 +35,7 @@ public class ListCamoFiles {
     public static void main( String[] args ) {
 
         try {
-            Settings settings = Settings.getInstance();
-            String rootDir = settings.get( "datadirectory", "data" );
+            String rootDir = PreferenceManager.getClientPreferences().getDataDirectory();
             File camoLib = new File( rootDir + "/camo");
             DirectoryItems images = new DirectoryItems
                 ( camoLib, "", ImageFileFactory.getInstance() );

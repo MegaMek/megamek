@@ -135,12 +135,12 @@ public class ClientGUI
      * Try to load the "bing" sound clip.
      */
     public void loadSoundClip() {
-        if (Settings.soundBingFilename == null)
+        if (GUIPreferences.getInstance().getSoundBingFilename() == null)
             return;
         try {
-            File file = new File(Settings.soundBingFilename);
+            File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
             if (!file.exists()) {
-                System.err.println("Failed to load audio file: " + Settings.soundBingFilename); //$NON-NLS-1$
+                System.err.println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURL());
@@ -148,11 +148,12 @@ public class ClientGUI
             //Ok, that didn't work.  We will fall back on our other
             // sound class.
             System.out.println("Failed to find AudioClip class, using AudioPlayer instead."); //$NON-NLS-1$
-            if (!Settings.soundBingFilename.endsWith(".au")) { //$NON-NLS-1$
+            if (!GUIPreferences.getInstance().getSoundBingFilename().endsWith(".au")) { //$NON-NLS-1$
                 //The older sound class only understands .au files
-                Settings.soundBingFilename =
+                GUIPreferences.getInstance().setSoundBingFilename(
                     new String(
-                        Settings.soundBingFilename.substring(0, Settings.soundBingFilename.lastIndexOf(".")) + ".au"); //$NON-NLS-1$ //$NON-NLS-2$
+                            GUIPreferences.getInstance().getSoundBingFilename().substring(0,
+                                    GUIPreferences.getInstance().getSoundBingFilename().lastIndexOf(".")) + ".au")); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -194,9 +195,9 @@ public class ClientGUI
         this.frame = new Frame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         menuBar.setGame(client.game);
         frame.setMenuBar(menuBar);
-        if (Settings.windowSizeHeight != 0) {
-            frame.setLocation(Settings.windowPosX, Settings.windowPosY);
-            frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
+        if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
+            frame.setLocation(GUIPreferences.getInstance().getWindowPosX(), GUIPreferences.getInstance().getWindowPosY());
+            frame.setSize(GUIPreferences.getInstance().getWindowSizeWidth(), GUIPreferences.getInstance().getWindowSizeHeight());
         } else {
             frame.setSize(800, 600);
         }
@@ -241,9 +242,9 @@ public class ClientGUI
             Scrollbar horizontal = new Scrollbar (Scrollbar.HORIZONTAL);
             scroller.add (bv, BorderLayout.CENTER);
             // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
-            if (Settings.getInstance().get
-                ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
-                ("false")) { //$NON-NLS-1$
+            if (System.getProperty
+                    ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
+                    ("false")) { //$NON-NLS-1$
                 // Assign the scrollbars to the board viewer.
                 scroller.add (vertical, BorderLayout.EAST);
                 scroller.add (horizontal, BorderLayout.SOUTH);
@@ -284,8 +285,8 @@ public class ClientGUI
         bv.add(popup);
 
         mechW = new Dialog(frame, Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
-        mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
-        mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
+        mechW.setLocation(GUIPreferences.getInstance().getDisplayPosX(), GUIPreferences.getInstance().getDisplayPosY());
+        mechW.setSize(GUIPreferences.getInstance().getDisplaySizeWidth(), GUIPreferences.getInstance().getDisplaySizeHeight());
         mechW.setResizable(true);
         mechW.addWindowListener(this);
         mechW.addKeyListener(this);
@@ -293,16 +294,16 @@ public class ClientGUI
         mechW.add(mechD);
 
         // added by kenn
-        Ruler.color1 = Settings.rulerColor1;
-        Ruler.color2 = Settings.rulerColor2;
+        Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
+        Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
         ruler = new Ruler(frame, this.client, bv);
-        ruler.setLocation(Settings.rulerPosX, Settings.rulerPosY);
-        ruler.setSize(Settings.rulerSizeWidth, Settings.rulerSizeHeight);
+        ruler.setLocation(GUIPreferences.getInstance().getRulerPosX(), GUIPreferences.getInstance().getRulerPosY());
+        ruler.setSize(GUIPreferences.getInstance().getRulerSizeWidth(), GUIPreferences.getInstance().getRulerSizeHeight());
         // end kenn
 
         // minimap
         minimapW = new Dialog(frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
-        minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
+        minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY());
         try {
             minimap = new MiniMap(minimapW, this, bv);
         } catch (IOException e) {
@@ -484,38 +485,35 @@ public class ClientGUI
      */
     public void saveSettings() {
         // save frame location
-        Settings.windowPosX = frame.getLocation().x;
-        Settings.windowPosY = frame.getLocation().y;
-        Settings.windowSizeWidth = frame.getSize().width;
-        Settings.windowSizeHeight = frame.getSize().height;
+        GUIPreferences.getInstance().setWindowPosX(frame.getLocation().x);
+        GUIPreferences.getInstance().setWindowPosY(frame.getLocation().y);
+        GUIPreferences.getInstance().setWindowSizeWidth(frame.getSize().width);
+        GUIPreferences.getInstance().setWindowSizeHeight(frame.getSize().height);
 
         // also minimap
         if (minimapW != null && (minimapW.getSize().width * minimapW.getSize().height) > 0) {
-            Settings.minimapPosX = minimapW.getLocation().x;
-            Settings.minimapPosY = minimapW.getLocation().y;
-            Settings.minimapZoom = minimap.getZoom();
+            GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
+            GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
+            GUIPreferences.getInstance().setMinimapZoom(minimap.getZoom());
         }
 
         // also mech display
         if (mechW != null && (mechW.getSize().width * mechW.getSize().height) > 0) {
-            Settings.displayPosX = mechW.getLocation().x;
-            Settings.displayPosY = mechW.getLocation().y;
-            Settings.displaySizeWidth = mechW.getSize().width;
-            Settings.displaySizeHeight = mechW.getSize().height;
+            GUIPreferences.getInstance().setDisplayPosX(mechW.getLocation().x);
+            GUIPreferences.getInstance().setDisplayPosY(mechW.getLocation().y);
+            GUIPreferences.getInstance().setDisplaySizeWidth(mechW.getSize().width);
+            GUIPreferences.getInstance().setDisplaySizeHeight(mechW.getSize().height);
         }
 
         // added by kenn
         // also ruler display
         if (ruler != null && ruler.getSize().width != 0 && ruler.getSize().height != 0) {
-            Settings.rulerPosX = ruler.getLocation().x;
-            Settings.rulerPosY = ruler.getLocation().y;
-            Settings.rulerSizeWidth = ruler.getSize().width;
-            Settings.rulerSizeHeight = ruler.getSize().height;
+            GUIPreferences.getInstance().setRulerPosX(ruler.getLocation().x);
+            GUIPreferences.getInstance().setRulerPosY(ruler.getLocation().y);
+            GUIPreferences.getInstance().setRulerSizeWidth(ruler.getSize().width);
+            GUIPreferences.getInstance().setRulerSizeHeight(ruler.getSize().height);
         }
         // end kenn
-
-        // save settings to disk
-        Settings.save();
     }
 
     /**
@@ -620,7 +618,7 @@ public class ClientGUI
         }
 
         // Make the new panel the focus, if the Client option says so
-        if (Settings.getFocus && !(client instanceof megamek.client.bot.TestBot)) curPanel.requestFocus();
+        if (GUIPreferences.getInstance().getFocus() && !(client instanceof megamek.client.bot.TestBot)) curPanel.requestFocus();
     }
 
     private Component initializePanel(int phase) {
@@ -821,9 +819,9 @@ public class ClientGUI
      */
     public void toggleMap() {
         if (minimapW.isVisible()) {
-            Settings.minimapEnabled = false;
+            GUIPreferences.getInstance().setMinimapEnabled(false);
         } else {
-            Settings.minimapEnabled = true;
+            GUIPreferences.getInstance().setMinimapEnabled(true);
         }
         minimapW.setVisible(!minimapW.isVisible());
         if (minimapW.isVisible()) {
@@ -1247,12 +1245,12 @@ public class ClientGUI
      * back on a Java 1.1 friendly (but undocumented!) class.
      */
     public void bing() {
-        if (!Settings.soundMute) {
+        if (!GUIPreferences.getInstance().getSoundMute()) {
             if (null != bingClip) {
                 bingClip.play();
             } else {
                 try {
-                    File file = new File(Settings.soundBingFilename);
+                    File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
                     InputStream in = new FileInputStream(file);
                     AudioStream bing = new AudioStream(in);
                     AudioPlayer.player.start(bing);
@@ -1284,7 +1282,7 @@ public class ClientGUI
             }
             // Replace this entity in the game.
             client.game.setEntity(eindex, entity);
-            if (movePath.size() > 0 && Settings.showMoveStep) {
+            if (movePath.size() > 0 && GUIPreferences.getInstance().getShowMoveStep()) {
                 bv.addMovingUnit(entity, movePath);
             } else {
                 bv.boardChangedEntity(new BoardEvent(client.game.board, oc, entity, 0, 0)); //XXX
@@ -1337,38 +1335,38 @@ public class ClientGUI
         // Handle phase-specific items.
         switch (client.game.getPhase()) {
             case Game.PHASE_DEPLOY_MINEFIELDS :
-                if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
                 break;
             case Game.PHASE_DEPLOYMENT :
-                if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
                 break;
             case Game.PHASE_TARGETING :
-                if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
                 break;
             case Game.PHASE_MOVEMENT :
-                if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
                 break;
             case Game.PHASE_OFFBOARD :
-                if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
                 break;
             case Game.PHASE_FIRING :
-                if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
                 break;
             case Game.PHASE_PHYSICAL :
                 bv.refreshAttacks();
-                if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
                 break;

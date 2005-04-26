@@ -17,6 +17,7 @@ package megamek.client.util.widget;
 import java.awt.*;
 import java.util.*;
 
+import megamek.client.GUIPreferences;
 import megamek.client.Messages;
 import megamek.common.*;
 
@@ -148,8 +149,8 @@ public class MechMapSet implements DisplayMapSet{
                                            
     private Image  heatImage; 
     
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorSmallFontSize); //$NON-NLS-1$
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize); //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayArmorSmallFontSize()); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayArmorLargeFontSize()); //$NON-NLS-1$
     
     
     public MechMapSet(Component c){

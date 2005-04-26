@@ -17,7 +17,6 @@ package megamek.client;
 import java.awt.*;
 import java.awt.event.*;
 
-import megamek.common.*;
 import megamek.client.util.*;
 
 /**
@@ -152,12 +151,12 @@ public class ConfirmDialog
         
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < Settings.minimumSizeWidth ) {
-            size.width = Settings.minimumSizeWidth;
+        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth() ) {
+            size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
             updateSize = true;
         }
-        if ( size.height < Settings.minimumSizeHeight ) {
-            size.height = Settings.minimumSizeHeight; 
+        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+            size.height = GUIPreferences.getInstance().getMinimumSizeHeight(); 
             updateSize = true;
         }
         if ( updateSize ) {

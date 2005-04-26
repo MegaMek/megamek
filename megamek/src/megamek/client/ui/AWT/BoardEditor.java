@@ -95,8 +95,6 @@ public class BoardEditor extends Container
             frame.dispose();
         };
 
-        Settings.load();
-
         this.addKeyListener(bv);
         this.addKeyListener(this);
         bv.addKeyListener(this);
@@ -109,15 +107,14 @@ public class BoardEditor extends Container
 
         frame.show();
 
-        if (true==Settings.nagForMapEdReadme) {
+        if (true==GUIPreferences.getInstance().getNagForMapEdReadme()) {
             String title = Messages.getString("BoardEditor.readme.title"); //$NON-NLS-1$
             String body = Messages.getString("BoardEditor.readme.message"); //$NON-NLS-1$
             ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
             confirm.show();
 
             if ( !confirm.getShowAgain() ) {
-                Settings.nagForMapEdReadme = false;
-                Settings.save();
+                GUIPreferences.getInstance().setNagForMapEdReadme(false);
             };
 
             if ( confirm.getAnswer() ) {
@@ -154,10 +151,9 @@ public class BoardEditor extends Container
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
     
-        // maybe we should have our own settings, instead of using the client's
-        if (Settings.windowSizeHeight != 0) {
-            frame.setLocation(Settings.windowPosX, Settings.windowPosY);
-            frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
+        if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
+            frame.setLocation(GUIPreferences.getInstance().getWindowPosX(), GUIPreferences.getInstance().getWindowPosY());
+            frame.setSize(GUIPreferences.getInstance().getWindowSizeWidth(), GUIPreferences.getInstance().getWindowSizeHeight());
         } else {
             frame.setSize(800, 600);
         }
@@ -302,7 +298,7 @@ public class BoardEditor extends Container
         addBag(panButtons, gridbag, c);
 
         minimapW = new Dialog(frame, Messages.getString("BoardEditor.minimapW"), false); //$NON-NLS-1$
-        minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
+        minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY());
         minimapW.addWindowListener(this);
         try {
             minimap = new MiniMap(minimapW, game, bv);

@@ -20,6 +20,7 @@ import java.util.*;
 import java.awt.*;
 
 import megamek.common.actions.*;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
 /**
@@ -729,7 +730,7 @@ public abstract class Entity
         if (getOwner() != null) {
             nbuf.append(" (").append(getOwner().getName()).append(")");
         }
-        if (Settings.showUnitId) {
+        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
             nbuf.append(" ID:").append(this.getId());
         }
         

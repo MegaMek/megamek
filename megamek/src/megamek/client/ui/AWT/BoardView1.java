@@ -24,6 +24,7 @@ import java.util.Enumeration;
 import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.preference.PreferenceManager;
 
 import java.util.Properties;
 
@@ -210,7 +211,7 @@ public class BoardView1
             zoomIndex = BASE_ZOOM_INDEX;
         } else {
             isJ2RE = true;
-            zoomIndex = Settings.mapZoomIndex;
+            zoomIndex = GUIPreferences.getInstance().getMapZoomIndex();
             checkZoomIndex();
             hasZoomed = true;
         }
@@ -377,7 +378,7 @@ public class BoardView1
         backGraph.drawImage(boardImage, 0, 0, this);
 
         // draw wrecks
-        if (Settings.showWrecks) {
+        if (GUIPreferences.getInstance().getShowWrecks()) {
             drawSprites(wreckSprites);
         }
 
@@ -936,7 +937,7 @@ public class BoardView1
             }
         }
         
-        boardGraph.setColor(Settings.mapTextColor);
+        boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
         
         // draw hex number
         if (scale >= 0.5){
@@ -1102,7 +1103,7 @@ public class BoardView1
         // first, we have to determine how much text we are going to have
         // are we on a hex?
         final Coords mcoords = getCoordsAt(point);
-        if (Settings.showMapHexPopup && game.board.contains(mcoords)) {
+        if (GUIPreferences.getInstance().getShowMapHexPopup() && game.board.contains(mcoords)) {
             mhex = game.board.getHex(mcoords);
             stringsSize += 1;
         }
@@ -1249,7 +1250,7 @@ public class BoardView1
             if (!isTipPossible) {
                 hideTooltip();
             }
-        } else if (isTipPossible && System.currentTimeMillis() - lastIdle > Settings.tooltipDelay) {
+        } else if (isTipPossible && System.currentTimeMillis() - lastIdle > GUIPreferences.getInstance().getTooltipDelay()) {
             showTooltip();
         }
     }
@@ -1734,10 +1735,10 @@ public class BoardView1
         final Point oldScroll = new Point(scroll);
         boolean s = false;
         
-        if ( isScrolling && Settings.rightDragScroll) {
+        if ( isScrolling && GUIPreferences.getInstance().getRightDragScroll()) {
             if (! (oldMousePosition == null || mousePos.equals(oldMousePosition)) ) {
-                scroll.x -= Settings.getScrollSensitivity() * (mousePos.x - oldMousePosition.x);
-                scroll.y -= Settings.getScrollSensitivity() * (mousePos.y - oldMousePosition.y);
+                scroll.x -= GUIPreferences.getInstance().getScrollSensitivity() * (mousePos.x - oldMousePosition.x);
+                scroll.y -= GUIPreferences.getInstance().getScrollSensitivity() * (mousePos.y - oldMousePosition.y);
                 checkScrollBounds();
                 oldMousePosition.setLocation(mousePos);
                 s = !oldScroll.equals(scroll);
@@ -1745,8 +1746,8 @@ public class BoardView1
             }
         }
 
-        if (isScrolling && (Settings.clickEdgeScroll || Settings.autoEdgeScroll) ) {
-            final int sf = Settings.getScrollSensitivity(); // scroll factor
+        if (isScrolling && (GUIPreferences.getInstance().getClickEdgeScroll() ||GUIPreferences.getInstance().getAutoEdgeScroll()) ) {
+            final int sf = GUIPreferences.getInstance().getScrollSensitivity(); // scroll factor
             // adjust x scroll
             // scroll when the mouse is at the edges
             if (mousePos.x < 100) {
@@ -1953,7 +1954,7 @@ public class BoardView1
 
             moveWait += idleTime;
 
-            if (moveWait > Settings.moveStepDelay) {
+            if (moveWait > GUIPreferences.getInstance().getMoveStepDelay()) {
 
                 java.util.Vector spent = new java.util.Vector();
 
@@ -2084,8 +2085,8 @@ public class BoardView1
         // Disable scrolling when ctrl or alt is held down, since this
         //  means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
-        if ( !Settings.rightDragScroll &&
-            !Settings.alwaysRightClickScroll &&    
+        if ( !GUIPreferences.getInstance().getRightDragScroll() &&
+            !GUIPreferences.getInstance().getAlwaysRightClickScroll() &&    
             game.getPhase() == Game.PHASE_FIRING ) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
@@ -2095,15 +2096,15 @@ public class BoardView1
         }
 
         // disable auto--edge-scrolling if no option set
-        if ( !Settings.autoEdgeScroll ) {
+        if ( !GUIPreferences.getInstance().getAutoEdgeScroll() ) {
             mask |= InputEvent.BUTTON1_MASK;
         };
         // disable edge-scrolling if no option set
-        if ( !Settings.clickEdgeScroll ) {
+        if ( !GUIPreferences.getInstance().getClickEdgeScroll() ) {
             mask |= InputEvent.BUTTON3_MASK;
         };
         
-        if ( Settings.rightDragScroll ) {
+        if ( GUIPreferences.getInstance().getRightDragScroll() ) {
             mask |= InputEvent.BUTTON2_MASK;
         };
 
@@ -2177,8 +2178,8 @@ public class BoardView1
         //  means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
 
-        if ( !Settings.rightDragScroll &&
-            !Settings.alwaysRightClickScroll &&
+        if ( !GUIPreferences.getInstance().getRightDragScroll() &&
+            !GUIPreferences.getInstance().getAlwaysRightClickScroll() &&
             game.getPhase() == Game.PHASE_FIRING) {
             // In the firing phase, also disable scrolling if
             //  the right or middle buttons are clicked, since
@@ -2187,17 +2188,17 @@ public class BoardView1
             mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
         };
 
-        if ( Settings.rightDragScroll ) {
+        if ( GUIPreferences.getInstance().getRightDragScroll() ) {
             mask |= InputEvent.BUTTON1_MASK | InputEvent.BUTTON2_MASK;
         };
 
         // disable auto--edge-scrolling if no option set
-        if ( !Settings.autoEdgeScroll ) {
+        if ( !GUIPreferences.getInstance().getAutoEdgeScroll() ) {
             mask |= InputEvent.BUTTON1_MASK;
         };
 
         // disable edge-scrolling if no option set
-        if ( !Settings.clickEdgeScroll && !Settings.rightDragScroll ) {
+        if ( !GUIPreferences.getInstance().getClickEdgeScroll() && !GUIPreferences.getInstance().getRightDragScroll() ) {
             mask |= InputEvent.BUTTON3_MASK;
         };
         
@@ -2230,14 +2231,14 @@ public class BoardView1
         if (isTipShowing()) {
             hideTooltip();
         }
-        if (ctlKeyHeld && Settings.ctlScroll) {
+        if (ctlKeyHeld && GUIPreferences.getInstance().getCtlScroll()) {
             if (initCtlScroll) {
                 previousMouseX = me.getX();
                 previousMouseY = me.getY();
                 initCtlScroll = false;
             }
-            scroll.x += Settings.getScrollSensitivity() * (me.getX() - previousMouseX);
-            scroll.y += Settings.getScrollSensitivity() * (me.getY() - previousMouseY);
+            scroll.x += GUIPreferences.getInstance().getScrollSensitivity() * (me.getX() - previousMouseX);
+            scroll.y += GUIPreferences.getInstance().getScrollSensitivity() * (me.getY() - previousMouseY);
             previousMouseX = me.getX();
             previousMouseY = me.getY();
             checkScrollBounds();
@@ -2303,7 +2304,7 @@ public class BoardView1
     private void zoom(){
         checkZoomIndex();
         scale = ZOOM_FACTORS[zoomIndex];
-        Settings.mapZoomIndex = zoomIndex;
+        GUIPreferences.getInstance().setMapZoomIndex(zoomIndex);
 
         hex_size = new Dimension((int)(HEX_W*scale), (int)(HEX_H*scale));
 
@@ -2839,7 +2840,7 @@ public class BoardView1
         public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
-            if (Settings.showUnitId) {
+            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
                 shortName+=(Messages.getString("BoardView1.ID")+entity.getId()); //$NON-NLS-1$
             }
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
@@ -3153,19 +3154,19 @@ public class BoardView1
             switch (step.getMovementType()) {
             case Entity.MOVE_RUN :
                 if (step.isUsingMASC()) {
-                    col = Settings.moveMASCColor;
+                    col = GUIPreferences.getInstance().getMoveMASCColor();
                 } else {
-                    col = Settings.moveRunColor;
+                    col = GUIPreferences.getInstance().getMoveRunColor();
                 }
                 break;
             case Entity.MOVE_JUMP :
-                col = Settings.moveJumpColor;
+                col = GUIPreferences.getInstance().getMoveJumpColor();
                 break;
             case Entity.MOVE_ILLEGAL :
-                col = Settings.moveIllegalColor;
+                col = GUIPreferences.getInstance().getMoveIllegalColor();
                 break;
             default :
-                col = Settings.moveDefaultColor;
+                col = GUIPreferences.getInstance().getMoveDefaultColor();
                 break;
             }
 

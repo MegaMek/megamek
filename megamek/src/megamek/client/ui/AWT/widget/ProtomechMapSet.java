@@ -17,6 +17,7 @@ package megamek.client.util.widget;
 import java.awt.*;
 import java.util.*;
 
+import megamek.client.GUIPreferences;
 import megamek.client.Messages;
 import megamek.common.*;
 
@@ -55,7 +56,7 @@ public class ProtomechMapSet implements DisplayMapSet{
 	
     private int stepY = 53;
 	
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayArmorLargeFontSize()); //$NON-NLS-1$
 	
     /**
      * This constructor have to be called anly from addNotify() method

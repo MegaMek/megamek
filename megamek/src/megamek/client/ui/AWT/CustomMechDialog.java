@@ -33,6 +33,7 @@ import java.util.Hashtable;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
+import megamek.common.preference.PreferenceManager;
 
 /**
  * A dialog that a player can use to customize his mech before battle.  
@@ -257,7 +258,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             StringBuffer callsign = new StringBuffer(Messages.getString("CustomMechDialog.Callsign")); //$NON-NLS-1$
             callsign.append(": ");  //$NON-NLS-1$
             callsign.append( (char) (this.entity.getUnitNumber() +
-                                     Settings.unitStartChar) )
+                    PreferenceManager.getClientPreferences().getUnitStartChar()) )
                 .append( '-' )
                 .append( this.entity.getId() );
             labCallsign.setText( callsign.toString() );
@@ -876,7 +877,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             StringBuffer callsign = new StringBuffer( other.getDisplayName() );
             callsign.append( " (" ) //$NON-NLS-1$
                 .append( (char) (other.getUnitNumber() +
-                                 Settings.unitStartChar) )
+                                 PreferenceManager.getClientPreferences().getUnitStartChar()) )
                 .append( '-' )
                 .append( other.getId() )
                 .append( ')' );

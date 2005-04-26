@@ -24,6 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.preference.PreferenceManager;
 
 import com.sun.java.util.collections.*;
 
@@ -84,7 +85,7 @@ public class MechSummaryCache {
     private int zipCount;
 
     private static final char SEPARATOR = '|';
-    private static final File ROOT = new File(Settings.mechDirectory);
+    private static final File ROOT = new File(PreferenceManager.getClientPreferences().getMechDirectory());
     private static final File CACHE = new File(ROOT, "units.cache");
 
     private MechSummaryCache() {

@@ -54,7 +54,7 @@ public class MiniMap extends Canvas
     private int          heightBufer;
     private int          unitSize = 6;//variable which define size of triangle for unit representation
     private Vector       roadHexIndexes = new Vector();
-    private int          zoom = Settings.minimapZoom;
+    private int          zoom = GUIPreferences.getInstance().getMinimapZoom();
     private int[]        hexSide = {3,5,6,8,10,12};
     private int[]        hexSideByCos30 = {3,4,5,7,9,10};
     private int[]        hexSideBySin30 = {2,2,3,4,5,6};
@@ -85,18 +85,18 @@ public class MiniMap extends Canvas
         // TODO: replace this quick-and-dirty with some real size calculator.
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < Settings.minimumSizeWidth ) {
-            size.width = Settings.minimumSizeWidth;
+        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
+            size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
             updateSize = true;
         }
-        if ( size.height < Settings.minimumSizeHeight ) {
-            size.height = Settings.minimumSizeHeight;
+        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+            size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
             updateSize = true;
         }
         if ( updateSize ) {
             setSize( size );
         }
-        setLocation( Settings.minimapPosX, Settings.minimapPosY );
+        setLocation( GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY() );
 
     }
 
@@ -149,7 +149,7 @@ public class MiniMap extends Canvas
         int green;
         int blue;
 
-        File coloursFile = new File("data/hexes/" + Settings.minimapColours); //$NON-NLS-1$
+        File coloursFile = new File("data/hexes/" + GUIPreferences.getInstance().getMinimapColours()); //$NON-NLS-1$
 
         // only while the defaults are hard-coded!
         if(!coloursFile.exists()) { return; }

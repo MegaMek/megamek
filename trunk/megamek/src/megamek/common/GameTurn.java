@@ -32,6 +32,7 @@ import java.util.Enumeration;
  * @author  Ben
  */
 public class GameTurn implements Serializable {
+
     private int playerId;
     
     /** Creates a new instance of GameTurn */
@@ -51,11 +52,11 @@ public class GameTurn implements Serializable {
      * Determine if the specified entity is a valid one to use for this turn.
      *
      * @param   entity the <code>Entity</code> that may take this turn.
-     * @param   game the <code>Game</code> this turn belongs to.
+     * @param   game the <code>IGame</code> this turn belongs to.
      * @return  <code>true</code> if the specified entity can take this turn.
      *          <code>false</code> if the entity is not valid for this turn.
      */
-    public boolean isValidEntity(Entity entity, Game game) {
+    public boolean isValidEntity(Entity entity, IGame game) {
         return entity != null
             && entity.getOwnerId() == playerId
             && entity.isSelectableThisTurn()
@@ -72,14 +73,14 @@ public class GameTurn implements Serializable {
     /**
      * Returns true if the player and entity are both valid.
      */
-    public boolean isValid(int playerId, Entity entity, Game game) {
+    public boolean isValid(int playerId, Entity entity, IGame game) {
         return playerId == this.playerId && isValidEntity(entity, game);
     }
     
     /**
      * Returns true if the player is valid.
      */
-    public boolean isValid(int playerId, Game game) {
+    public boolean isValid(int playerId, IGame game) {
         return playerId == this.playerId;
     }
     

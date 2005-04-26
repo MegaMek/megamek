@@ -18,14 +18,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.common.*;
+import megamek.common.event.GameListener;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public class DeploymentDisplay 
     extends StatusBarPhaseDisplay
-    implements BoardListener,  ActionListener, DoneButtoned,
-               KeyListener, GameListener, BoardViewListener, Distractable
+    implements BoardViewListener,  ActionListener, DoneButtoned,
+               KeyListener, GameListener, Distractable
 {
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
@@ -64,10 +69,8 @@ public class DeploymentDisplay
     public DeploymentDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
         this.client = clientgui.getClient();
-        client.addGameListener(this);
-
-
-        client.game.board.addBoardListener(this);
+        client.game.addGameListener(this);
+        clientgui.getBoardView().addBoardViewListener(this);
 
         setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
 
@@ -174,8 +177,8 @@ public class DeploymentDisplay
         setLoadEnabled(true);
         setUnloadEnabled(true);
         
-        client.game.board.select(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().cursor(null);
         // RACE : if player clicks fast enough, ce() is null.
         if ( null != ce() ) {
             // set facing according to starting position
@@ -252,9 +255,9 @@ public class DeploymentDisplay
             clientgui.setDisplayVisible(false);
         }
         cen = Entity.NONE;
-        client.game.board.select(null);
-        client.game.board.highlight(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().highlight(null);
+        clientgui.getBoardView().cursor(null);
         clientgui.bv.markDeploymentHexesFor(null);
         clientgui.bv.repaint(100);
     }
@@ -293,23 +296,49 @@ public class DeploymentDisplay
             endMyTurn();
         }
         clientgui.bv.markDeploymentHexesFor(null);
-        client.removeGameListener(this);
-        client.game.board.removeBoardListener(this);
+        client.game.removeGameListener(this);
+        clientgui.getBoardView().removeBoardViewListener(this);
         
         this.removeAll();
     }
+
+    public void gameTurnChange(GameTurnChangeEvent e) {                
+        // Are we ignoring events?
+        if (isIgnoringEvents() ) {
+            return;
+        }
+        if (client.isMyTurn()) {
+            beginMyTurn();
+            setStatusBarText(Messages.getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
+        } else {
+            endMyTurn();
+            setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
+        }
+    }
     
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
+        DeploymentDisplay.this.clientgui.bv.markDeploymentHexesFor(null);
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
+        if (client.game.getPhase() == Game.PHASE_DEPLOYMENT) {
+            setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
+        }
+    }
+
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardEvent b) {
+    public void boardHexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
             return;
         }
 
-        if (b.getType() != BoardEvent.BOARD_HEX_DRAGGED) {
+        if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
             return;
         }
         
@@ -335,9 +364,9 @@ public class DeploymentDisplay
             clientgui.bv.redrawEntity(ce());
             turnMode = false;
         }
-        else if ( !client.game.board.isLegalDeployment
+        else if ( !client.game.getBoard().isLegalDeployment
                   (moveto, ce().getOwner()) ||
-                  ce().isHexProhibited(client.game.board.getHex(moveto)) ) {
+                  ce().isHexProhibited(client.game.getBoard().getHex(moveto)) ) {
             AlertDialog dlg = new AlertDialog( clientgui.frame,
                                                Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
                                                Messages.getString("DeploymentDisplay.cantDeployInto", new Object[]{ce().getShortName(), moveto.getBoardNum()})); //$NON-NLS-1$
@@ -353,42 +382,10 @@ public class DeploymentDisplay
             clientgui.bv.redrawEntity(ce());
             butDone.setEnabled(true);
         }
-        client.game.board.select( moveto );
+        clientgui.getBoardView().select( moveto );
 
     }
 
-    //
-    // GameListener
-    //
-    public void gameTurnChange(GameEvent ev) {
-        
-        // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
-            return;
-        }
-
-        if (client.isMyTurn()) {
-            beginMyTurn();
-            setStatusBarText(Messages.getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
-        } else {
-            endMyTurn();
-            setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
-        }
-    }
-    
-    public void gamePhaseChange(GameEvent ev) {
-
-        clientgui.bv.markDeploymentHexesFor(null);
-
-        // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
-            return;
-        }
-
-        if (client.game.getPhase() == Game.PHASE_DEPLOYMENT) {
-            setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
-        }
-    }
     
     //
     // ActionListener

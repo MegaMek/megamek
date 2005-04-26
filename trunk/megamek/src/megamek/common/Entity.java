@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.*;
 
 import megamek.common.actions.*;
+import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
@@ -630,6 +631,7 @@ public abstract class Entity
      */
       public void setArmsFlipped(boolean armsFlipped) {
         this.armsFlipped = armsFlipped;
+        game.processGameEvent(new GameEntityChangeEvent(this, this));        
       }
 
     /**
@@ -788,6 +790,7 @@ public abstract class Entity
      */
     public void setSecondaryFacing(int sec_facing) {
         this.sec_facing = sec_facing;
+        game.processGameEvent(new GameEntityChangeEvent(this, this));
     }
 
     /**
@@ -944,26 +947,15 @@ public abstract class Entity
      * Returns the elevation that this entity would be on if it were placed
      * into the specified hex.
      */
-    public int elevationOccupied(Hex hex) {
+    public int elevationOccupied(IHex hex) {
         return hex.floor();
     }
-
-    /**
-     * Returns the elevation that this entity would be on if it moved from an
-     * adjacent hex, at the specified elevation, into the specified hex.
-     *
-     * Mechs might move into upper building levels, subs/vtols might stay at
-     * their present elevation, etc.
-     */
-//    public int elevationOccupied(Hex hex, int elevation) {
-//        return hex.floor();
-//    }
 
     /**
      * Returns true if the specified hex contains some sort of prohibited
      * terrain.
      */
-    public boolean isHexProhibited(Hex hex) {
+    public boolean isHexProhibited(IHex hex) {
         return false;
     }
 
@@ -1004,6 +996,9 @@ public abstract class Entity
      * Returns the abbreviated name of the location specified.
      */
     public String getLocationAbbr(HitData hit) {
+        if (hit==null) {
+            System.out.println("hit2=null");
+        }        
       return getLocationAbbr(hit.getLocation()) + (hit.isRear() && hasRearArmor(hit.getLocation()) ? "R" : "") + (hit.getEffect() == HitData.EFFECT_CRITICAL ? " (critical)" : "");
     }
 
@@ -2819,7 +2814,7 @@ public abstract class Entity
      * Checks if the entity might skid on pavement.  If so, returns
      *  the target roll for the piloting skill check.
      */
-    public PilotingRollData checkSkid(int moveType, Hex prevHex,
+    public PilotingRollData checkSkid(int moveType, IHex prevHex,
                                       int overallMoveType, MoveStep prevStep,
                                       int prevFacing, int curFacing,
                                       Coords lastPos, Coords curPos,
@@ -2864,13 +2859,13 @@ public abstract class Entity
      * Checks if the entity is moving into rubble.  If so, returns
      *  the target roll for the piloting skill check.
      */
-    public PilotingRollData checkRubbleMove(MoveStep step, Hex curHex,
+    public PilotingRollData checkRubbleMove(MoveStep step, IHex curHex,
                                             Coords lastPos, Coords curPos) {
         PilotingRollData roll = getBasePilotingRoll();
 
         if (!lastPos.equals(curPos)
             && step.getMovementType() != Entity.MOVE_JUMP
-            && curHex.levelOf(Terrain.RUBBLE) > 0
+            && curHex.terrainLevel(Terrains.RUBBLE) > 0
             && this instanceof Mech) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "entering Rubble"));
@@ -2885,13 +2880,13 @@ public abstract class Entity
      * Checks if the entity is moving into a swamp. If so, returns
      *  the target roll for the piloting skill check.
      */
-    public PilotingRollData checkSwampMove(MoveStep step, Hex curHex,
+    public PilotingRollData checkSwampMove(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos) {
         PilotingRollData roll = getBasePilotingRoll();
 
         if (!lastPos.equals(curPos)
             && step.getMovementType() != Entity.MOVE_JUMP
-            && curHex.contains(Terrain.SWAMP)) {
+            && curHex.containsTerrain(Terrains.SWAMP)) {
             // non-hovers need a simple PSR
             if (this.getMovementType() != MovementType.HOVER) {
                 // append the reason modifier
@@ -2910,15 +2905,15 @@ public abstract class Entity
      * Checks if the entity is moving into depth 1+ water.  If so,
      *  returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkWaterMove(MoveStep step, Hex curHex,
+    public PilotingRollData checkWaterMove(MoveStep step, IHex curHex,
                                            Coords lastPos, Coords curPos,
                                            boolean isPavementStep) {
-        if (curHex.levelOf(Terrain.WATER) > 0
+        if (curHex.terrainLevel(Terrains.WATER) > 0
             && !lastPos.equals(curPos)
             && step.getMovementType() != Entity.MOVE_JUMP
             && getMovementType() != Entity.MovementType.HOVER
             && !isPavementStep) {
-            return checkWaterMove(curHex.levelOf(Terrain.WATER));
+            return checkWaterMove(curHex.terrainLevel(Terrains.WATER));
         } else {
             return checkWaterMove(0);
         }
@@ -2975,13 +2970,13 @@ public abstract class Entity
      *  checkStuff() methods above.
      */
     public boolean checkMovementInBuilding(Coords lastPos, Coords curPos,
-                                           MoveStep step, Hex curHex,
-                                           Hex prevHex) {
+                                           MoveStep step, IHex curHex,
+                                           IHex prevHex) {
 
         if ( !lastPos.equals(curPos) &&
              step.getMovementType() != Entity.MOVE_JUMP &&
-             ( curHex.contains(Terrain.BUILDING) ||
-               (prevHex != null && prevHex.contains(Terrain.BUILDING)) ) &&
+             ( curHex.containsTerrain(Terrains.BUILDING) ||
+               (prevHex != null && prevHex.containsTerrain(Terrains.BUILDING)) ) &&
              !(this instanceof Infantry) ) {
             return true;
         } else {
@@ -3685,8 +3680,8 @@ public abstract class Entity
         Coords pos = getPosition();
         return pos != null && getWalkMP() > 0 && !isProne() && !isStuck()
             && !isShutDown() && !getCrew().isUnconscious()
-            && (pos.x == 0 || pos.x == game.board.width - 1
-                || pos.y == 0 || pos.y == game.board.height - 1);
+            && (pos.x == 0 || pos.x == game.board.getWidth() - 1
+                || pos.y == 0 || pos.y == game.board.getHeight() - 1);
     }
 
     public void setSeenByEnemy(boolean b) {
@@ -3965,32 +3960,32 @@ public abstract class Entity
         case Entity.NONE:
             break;
         case Entity.NORTH:
-            setPosition( new Coords( game.board.width / 2
-                                     + game.board.width % 2,
+            setPosition( new Coords( game.board.getWidth() / 2
+                                     + game.board.getWidth() % 2,
                                      -getOffBoardDistance() ) );
             setFacing(3);
             setDeployed( true );
             break;
         case Entity.SOUTH:
-            setPosition( new Coords( game.board.width / 2
-                                     + game.board.width % 2,
-                                     game.board.height
+            setPosition( new Coords( game.board.getWidth() / 2
+                                     + game.board.getWidth() % 2,
+                                     game.board.getHeight()
                                      + getOffBoardDistance() ) );
             setFacing(0);
             setDeployed( true );
             break;
         case Entity.EAST:
-            setPosition( new Coords( game.board.width
+            setPosition( new Coords( game.board.getWidth()
                                      + getOffBoardDistance(),
-                                     game.board.height / 2
-                                     + game.board.height % 2 ) );
+                                     game.board.getHeight() / 2
+                                     + game.board.getHeight() % 2 ) );
             setFacing(5);
             setDeployed( true );
             break;
         case Entity.WEST:
             setPosition( new Coords( -getOffBoardDistance(),
-                                     game.board.height / 2
-                                     + game.board.height % 2 ) );
+                                     game.board.getHeight() / 2
+                                     + game.board.getHeight() % 2 ) );
             setFacing(1);
             setDeployed( true );
             break;

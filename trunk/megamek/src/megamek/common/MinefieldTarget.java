@@ -19,7 +19,7 @@ public class MinefieldTarget implements Targetable
     private Coords m_coords;
     private int m_elev;
     
-    public MinefieldTarget(Coords c, Board board) {
+    public MinefieldTarget(Coords c, IBoard board) {
         m_coords = c;
         m_elev = board.getHex(m_coords).getElevation();
     }

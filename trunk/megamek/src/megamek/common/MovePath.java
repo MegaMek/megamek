@@ -78,7 +78,7 @@ public class MovePath implements Cloneable, Serializable {
 
     protected Vector steps = new Vector();
 
-    protected transient Game game;
+    protected transient IGame game;
     protected transient Entity entity;
 
     public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 2000;
@@ -86,7 +86,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Generates a new, empty, movement path object.
      */
-    public MovePath(Game game, Entity entity) {
+    public MovePath(IGame game, Entity entity) {
         this.entity = entity;
         this.game = game;
     }
@@ -191,7 +191,7 @@ public class MovePath implements Cloneable, Serializable {
         return this;
     }
 
-    public void compile(Game g, Entity en) {
+    public void compile(IGame g, Entity en) {
         this.game = g;
         this.entity = en;
         Vector temp = (Vector) steps.clone();

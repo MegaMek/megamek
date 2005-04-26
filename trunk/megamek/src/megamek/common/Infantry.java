@@ -278,7 +278,7 @@ public class Infantry
      * Infantry can not enter water.
      */
     public boolean isHexProhibited( Hex hex ) {
-        return (hex.levelOf(Terrain.WATER) > 0);
+        return (hex.terrainLevel(Terrains.WATER) > 0);
     }
 
     /**

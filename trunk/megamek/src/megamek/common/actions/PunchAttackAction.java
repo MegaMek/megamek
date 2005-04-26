@@ -18,12 +18,12 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Hex;
+import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.Tank;
 import megamek.common.Targetable;
-import megamek.common.Terrain;
+import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
 /**
@@ -56,7 +56,7 @@ public class PunchAttackAction
         this.arm = arm;
     }
     
-    public ToHitData toHit(Game game) {
+    public ToHitData toHit(IGame game) {
         return toHit(game, getEntityId(),
                 game.getTarget(getTargetType(), getTargetId() ),
                 getArm());
@@ -65,7 +65,7 @@ public class PunchAttackAction
     /**
      * To-hit number for the specified arm to punch
      */
-    public static ToHitData toHit(Game game, int attackerId,
+    public static ToHitData toHit(IGame game, int attackerId,
                                        Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
@@ -84,7 +84,7 @@ public class PunchAttackAction
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
         Building bldg = null;
         if ( targetInBuilding ) {
-            bldg = game.board.getBuildingAt( te.getPosition() );
+            bldg = game.getBoard().getBuildingAt( te.getPosition() );
         }
         final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         ToHitData toHit;
@@ -167,7 +167,7 @@ public class PunchAttackAction
             if ( !Compute.isInBuilding(game, ae) ) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
             }
-            else if ( !game.board.getBuildingAt( ae.getPosition() )
+            else if ( !game.getBoard().getBuildingAt( ae.getPosition() )
                       .equals( bldg ) ) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
             }
@@ -251,8 +251,8 @@ public class PunchAttackAction
         }
 
         // water partial cover?
-        Hex targHex = game.board.getHex(te.getPosition());
-        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+        IHex targHex = game.getBoard().getHex(te.getPosition());
+        if (te.height() > 0 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }
 

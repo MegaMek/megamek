@@ -495,7 +495,7 @@ public class MegaMek implements ActionListener {
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
                 BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port);
-                c.addGameListener(new BotGUI(c));
+                c.game.addGameListener(new BotGUI(c));
                 try {
                     c.connect();
                 } catch (Exception e) {
@@ -576,7 +576,7 @@ public class MegaMek implements ActionListener {
 
         // initialize game
         client = new TestBot(cd.name, cd.serverAddr, cd.port);
-        client.addGameListener(new BotGUI((BotClient)client));
+        client.game.addGameListener(new BotGUI((BotClient)client));
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
         try {

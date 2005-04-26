@@ -58,8 +58,8 @@ public class HexTileset {
      * Any terrain left is used to match a base image for the hex.  This time,
      * a match can be any value, and the first, best image is used.
      */
-    public void assignMatch(Hex hex, Component comp) {
-        Hex hexCopy = (Hex)hex.clone();
+    public void assignMatch(IHex hex, Component comp) {
+        IHex hexCopy = hex.duplicate();
         hex.setSupers(supersFor(hexCopy, comp));
         hex.setBase(baseFor(hexCopy, comp));
     }
@@ -70,7 +70,7 @@ public class HexTileset {
      * elements from the tileset hex are removed from the hex.  Thus you want
      * to pass a copy of the original to this function.
      */
-    private List supersFor(Hex hex, Component comp) {
+    private List supersFor(IHex hex, Component comp) {
         ArrayList matches = new ArrayList();
         
         // find superimposed image matches
@@ -79,8 +79,8 @@ public class HexTileset {
             if (superMatch(hex, entry.getHex()) >= 1.0) {
                 matches.add(entry.getImage(comp));
                 // remove involved terrain from consideration
-                for (int j = 0; j < Terrain.SIZE; j++) {
-                    if (entry.getHex().contains(j)) {
+                for (int j = 0; j < Terrains.SIZE; j++) {
+                    if (entry.getHex().containsTerrain(j)) {
                         hex.removeTerrain(j);
                     }
                 }
@@ -95,7 +95,7 @@ public class HexTileset {
      * Returns the best matching base image for this hex.  This works best if 
      * any terrain with a "super" image is removed.
      */
-    private Image baseFor(Hex hex, Component comp) {
+    private Image baseFor(IHex hex, Component comp) {
         HexEntry bestMatch = null;
         double match = -1;
 
@@ -146,7 +146,7 @@ public class HexTileset {
                 if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                     elevation = (int)st.nval;
                 } else {
-                    elevation = Terrain.WILDCARD;
+                    elevation = ITerrain.WILDCARD;
                 }
                 st.nextToken();
                 terrain = st.sval;
@@ -191,7 +191,7 @@ public class HexTileset {
     /**
      * Adds all images associated with the hex to the specified tracker
      */
-    public void trackHexImages(Hex hex, MediaTracker tracker) {
+    public void trackHexImages(IHex hex, MediaTracker tracker) {
         // add base
         tracker.addImage((Image)hex.getBase(), 1);
         
@@ -218,19 +218,19 @@ public class HexTileset {
      *
      * EXCEPTION: a themed original matches any unthemed comparason.
      */
-    private double superMatch(Hex org, Hex com) {
+    private double superMatch(IHex org, IHex com) {
         // check elevation
-        if (com.getElevation() != Terrain.WILDCARD && org.getElevation() != com.getElevation()) {
+        if (com.getElevation() != ITerrain.WILDCARD && org.getElevation() != com.getElevation()) {
             return 0;
         }
         // check terrain
-        for (int i = 0; i < Terrain.SIZE; i++) {
-            Terrain cTerr = com.getTerrain(i);
-            Terrain oTerr = org.getTerrain(i);
+        for (int i = 0; i < Terrains.SIZE; i++) {
+            ITerrain cTerr = com.getTerrain(i);
+            ITerrain oTerr = org.getTerrain(i);
             if (cTerr == null) {
                 continue;
             } else if (oTerr == null 
-                    || (cTerr.getLevel() != Terrain.WILDCARD 
+                    || (cTerr.getLevel() != ITerrain.WILDCARD 
                         && oTerr.getLevel() != cTerr.getLevel())
                     || (cTerr.hasExitsSpecified() 
                         && oTerr.getExits() != cTerr.getExits())) {
@@ -252,13 +252,13 @@ public class HexTileset {
      * Returns a value indicating how close of a match the original hex is to
      * the comparison hex.  0 means no match, 1 means perfect match.
      */
-    private double baseMatch(Hex org, Hex com) {
+    private double baseMatch(IHex org, IHex com) {
         double elevation;
         double terrain;
         double theme;
         
         // check elevation
-        if (com.getElevation() == Terrain.WILDCARD) {
+        if (com.getElevation() == ITerrain.WILDCARD) {
             elevation = 1.0;
         } else {
             elevation = 1.01 / (Math.abs(org.getElevation() - com.getElevation()) + 1.01);
@@ -268,15 +268,15 @@ public class HexTileset {
         // Bug 732188: Have a non-zero minimum terrain match.
         double maxTerrains = Math.max(org.terrainsPresent(), com.terrainsPresent());
         double matches = 0.0;
-        for (int i = 0; i < Terrain.SIZE; i++) {
-            Terrain cTerr = com.getTerrain(i);
-            Terrain oTerr = org.getTerrain(i);
+        for (int i = 0; i < Terrains.SIZE; i++) {
+            ITerrain cTerr = com.getTerrain(i);
+            ITerrain oTerr = org.getTerrain(i);
             if (cTerr == null || oTerr == null) {
                 continue;
             }
             double thisMatch = 0;
             
-            if (cTerr.getLevel() == Terrain.WILDCARD) {
+            if (cTerr.getLevel() == ITerrain.WILDCARD) {
                 thisMatch = 1.0;
             } else {
                 thisMatch = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel()) + 1.0);
@@ -313,7 +313,7 @@ public class HexTileset {
         private Image image;
         private java.util.Vector images;
         private java.util.Vector filenames;
-    private java.util.Random r;
+        private java.util.Random r;
         
         public HexEntry(Hex hex, String imageFile) {
             this.hex = hex;

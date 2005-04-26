@@ -29,16 +29,23 @@ import gov.nist.gui.TabPanel;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotGUI;
 import megamek.client.bot.TestBot;
+import megamek.client.event.BoardViewListener;
 import megamek.client.util.PlayerColors;
 import megamek.client.util.widget.BufferedPanel;
 import megamek.client.util.widget.ImageButton;
 import megamek.common.*;
+import megamek.common.event.GameEntityNewEvent;
+import megamek.common.event.GameEntityRemoveEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public class ChatLounge
     extends AbstractPhaseDisplay
-    implements ActionListener, ItemListener, BoardListener, GameListener, DoneButtoned, Distractable {
+    implements ActionListener, ItemListener, BoardViewListener, GameListener, DoneButtoned, Distractable {
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
@@ -133,8 +140,8 @@ public class ChatLounge
         // Create a new camo selection dialog.
         camoDialog = new CamoChoiceDialog(clientgui.getFrame());
 
-        client.addGameListener(this);
-        client.game.board.addBoardListener(this);
+        client.game.addGameListener(this);
+        clientgui.getBoardView().addBoardViewListener(this);
 
         butOptions = new Button(Messages.getString("ChatLounge.butOptions")); //$NON-NLS-1$
         butOptions.addActionListener(this);
@@ -1211,7 +1218,7 @@ public class ChatLounge
     //
     // GameListener
     //
-    public void gamePlayerStatusChange(GameEvent ev) {
+    public void gamePlayerChange(GamePlayerChangeEvent e) {
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
             return;
@@ -1223,7 +1230,7 @@ public class ChatLounge
         refreshCamos();
         refreshMinefield();
     }
-    public void gamePhaseChange(GameEvent ev) {
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
             return;
@@ -1241,7 +1248,7 @@ public class ChatLounge
             refreshBoardSettings();
         }
     }
-    public void gameNewEntities(GameEvent ev) {
+    public void gameEntityNew(GameEntityNewEvent e) {
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
             return;
@@ -1249,7 +1256,17 @@ public class ChatLounge
         refreshEntities();
         refreshBVs();
     }
-    public void gameNewSettings(GameEvent ev) {
+
+    public void gameEntityRemove(GameEntityRemoveEvent e) {
+        // Are we ignoring events?
+        if (this.isIgnoringEvents()) {
+            return;
+        }
+        refreshEntities();
+        refreshBVs();
+    }
+
+    public void gameSettingsChange(GameSettingsChangeEvent e) {
         // Are we ignoring events?
         if (this.isIgnoringEvents()) {
             return;
@@ -1395,7 +1412,7 @@ public class ChatLounge
                 name = p.getText();
             }
             BotClient c = new TestBot(name, client.getHost(), client.getPort());
-            c.addGameListener(new BotGUI(c));
+            c.game.addGameListener(new BotGUI(c));
             try {
                 c.connect();
             } catch (Exception e) {
@@ -1461,8 +1478,8 @@ public class ChatLounge
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.removeGameListener(this);
-        client.game.board.removeBoardListener(this);
+        client.game.removeGameListener(this);
+        clientgui.getBoardView().removeBoardViewListener(this);
     }
 
     /**

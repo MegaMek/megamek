@@ -17,11 +17,10 @@ import megamek.client.bot.ga.Chromosome;
 import megamek.client.bot.ga.GA;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.ToHitData;
 
 import com.sun.java.util.collections.Vector;
-;
 
 /**
  * Need to test the function that moves all firing to a single target
@@ -30,7 +29,7 @@ public class GAAttack extends GA {
 
     protected Vector attack;
     protected CEntity attacker;
-    protected Game game;
+    protected IGame game;
     protected CEntity.Table targets;
     protected java.util.Vector target_array = null;
     protected Vector valid_target_indexes = null;

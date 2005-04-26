@@ -31,7 +31,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
      * The <code>Game</code> current selected.
      * This value may be <code>null</code>.
      */
-    private Game game = null;
+    private IGame game = null;
     private boolean isJ2RE;
 
     private MenuItem fileGameNew = null;
@@ -637,13 +637,13 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     }
 
     /**
-     * Identify to the menu bar that a <code>Game</code> is available to the
+     * Identify to the menu bar that a <code>IGame</code> is available to the
      * parent.
      *
-     * @param   selected - The <code>Game</code> that is currently selected.
+     * @param   selected - The <code>IGame</code> that is currently selected.
      *          When there is no selection, set this to <code>null</code>.
      */
-    public synchronized void setGame( Game selected ) {
+    public synchronized void setGame(IGame selected) {
         this.game = selected;
         manageMenu();
     }

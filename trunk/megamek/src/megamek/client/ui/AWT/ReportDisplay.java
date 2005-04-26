@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import megamek.common.*;
+import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
@@ -57,7 +58,7 @@ public class ReportDisplay
     public ReportDisplay(Client client) {
         this.client = client;
 
-        this.client.addGameListener( this );
+        client.game.addGameListener( this );
 
 //         cb = client.cb;
         
@@ -197,7 +198,7 @@ public class ReportDisplay
         ;
     }
 
-    public void gamePhaseChange(GameEvent ev) {
+    public void gamePhaseChange(GamePhaseChangeEvent e){
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -233,7 +234,7 @@ public class ReportDisplay
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.removeGameListener(this);
+        client.game.removeGameListener(this);
     }
 
     /**

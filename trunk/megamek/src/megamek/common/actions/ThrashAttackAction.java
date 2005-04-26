@@ -15,12 +15,12 @@
 package megamek.common.actions;
 
 import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Hex;
+import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Targetable;
-import megamek.common.Terrain;
+import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
 /**
@@ -47,10 +47,10 @@ public class ThrashAttackAction extends AbstractAttackAction {
      * missed, the Mek takes normal falling damage.
      * 
      * @param game -
-     *            the <code>Game</code> object containing all entities.
+     *            the <code>IGame</code> object containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
-    public ToHitData toHit(Game game) {
+    public ToHitData toHit(IGame game) {
         final Entity ae = getEntity( game );
         Entity te = null;
         final Targetable target = getTarget( game );
@@ -92,11 +92,11 @@ public class ThrashAttackAction extends AbstractAttackAction {
         }
 
         // Check terrain.
-        Hex hex = game.board.getHex(ae.getPosition());
-        if (hex.contains(Terrain.WOODS)
-            || hex.contains(Terrain.ROUGH)
-            || hex.contains(Terrain.RUBBLE)
-            || hex.contains(Terrain.BUILDING)) {
+        IHex hex = game.getBoard().getHex(ae.getPosition());
+        if (hex.containsTerrain(Terrains.WOODS)
+            || hex.containsTerrain(Terrains.ROUGH)
+            || hex.containsTerrain(Terrains.RUBBLE)
+            || hex.containsTerrain(Terrains.BUILDING)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Not a clear or pavement hex.");
         }
 

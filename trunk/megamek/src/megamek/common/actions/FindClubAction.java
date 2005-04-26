@@ -24,10 +24,10 @@ import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Hex;
+import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.Mech;
-import megamek.common.Terrain;
+import megamek.common.Terrains;
 
 /**
  * The entity tries to find a club.
@@ -45,12 +45,12 @@ public class FindClubAction extends AbstractEntityAction {
     /**
      * Returns whether an entity can find a club in its current location
      */
-    public static boolean canMechFindClub(Game game, int entityId) {
+    public static boolean canMechFindClub(IGame game, int entityId) {
         final Entity entity = game.getEntity(entityId);
         if ( null == entity.getPosition() ) {
             return false;
         }
-        final Hex hex = game.board.getHex(entity.getPosition());
+        final IHex hex = game.getBoard().getHex(entity.getPosition());
 
         //Non biped mechs can't
         if ( !(entity instanceof BipedMech) ) {
@@ -76,10 +76,10 @@ public class FindClubAction extends AbstractEntityAction {
         // The hex must contain woods or rubble from
         // a medium, heavy, or hardened building,
         // or a blown off limb
-        if ( hex.levelOf(Terrain.WOODS) < 1 &&
-             hex.levelOf(Terrain.RUBBLE) < Building.MEDIUM && 
-             hex.levelOf(Terrain.ARMS) < 1 &&
-             hex.levelOf(Terrain.LEGS) < 1) {
+        if ( hex.terrainLevel(Terrains.WOODS) < 1 &&
+             hex.terrainLevel(Terrains.RUBBLE) < Building.MEDIUM && 
+             hex.terrainLevel(Terrains.ARMS) < 1 &&
+             hex.terrainLevel(Terrains.LEGS) < 1) {
             return false;
         }
 

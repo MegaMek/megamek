@@ -30,7 +30,7 @@ public class PushAttackAction
         super(entityId, targetType, targetId, targetPos);
     }
     
-    public ToHitData toHit(Game game) {
+    public ToHitData toHit(IGame game) {
         return toHit(game, getEntityId(),
                 game.getTarget(getTargetType(), getTargetId()));
     }
@@ -39,7 +39,7 @@ public class PushAttackAction
     /**
      * To-hit number for the mech to push another mech
      */
-    public static ToHitData toHit(Game game,
+    public static ToHitData toHit(IGame game,
                                       int attackerId,
                                       Targetable target) {
         final Entity ae = game.getEntity(attackerId);
@@ -54,7 +54,7 @@ public class PushAttackAction
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
         Building bldg = null;
         if ( targetInBuilding ) {
-            bldg = game.board.getBuildingAt( te.getPosition() );
+            bldg = game.getBoard().getBuildingAt( te.getPosition() );
         }
         final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         ToHitData toHit = null;
@@ -168,7 +168,7 @@ public class PushAttackAction
             if ( !Compute.isInBuilding(game, ae) ) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
             }
-            else if ( !game.board.getBuildingAt( ae.getPosition() )
+            else if ( !game.getBoard().getBuildingAt( ae.getPosition() )
                       .equals( bldg ) ) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
             }
@@ -217,8 +217,8 @@ public class PushAttackAction
         }
 
         // water partial cover?
-        Hex targHex = game.board.getHex(target.getPosition());
-        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+        IHex targHex = game.getBoard().getHex(target.getPosition());
+        if (te.height() > 0 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }
 

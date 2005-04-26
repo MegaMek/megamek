@@ -86,19 +86,19 @@ public class Building implements Serializable {
         }
 
         // Get the nextHex hex.
-        Hex nextHex = board.getHex( coords );
+        IHex nextHex = board.getHex( coords );
 
         // Error off if the building type or CF is off.
-        if ( this.type != nextHex.levelOf( Terrain.BUILDING ) ) {
+        if ( this.type != nextHex.terrainLevel( Terrains.BUILDING ) ) {
             throw new IllegalArgumentException
                 ( "The coordinates, " +
                   coords.getBoardNum() +
                   ", should contain the same type of building as " +
                   ( (Coords) this.coordinates.elementAt(0)).getBoardNum() );
         }
-        boolean hexHasCF = nextHex.contains( Terrain.BLDG_CF );
+        boolean hexHasCF = nextHex.containsTerrain( Terrains.BLDG_CF );
         if ( (hexHasCF && 
-              this.currentCF != nextHex.levelOf( Terrain.BLDG_CF )) ||
+              this.currentCF != nextHex.terrainLevel( Terrains.BLDG_CF )) ||
              (!hexHasCF &&
               this.currentCF != getDefaultCF( this.type )) ) {
             throw new IllegalArgumentException
@@ -116,7 +116,7 @@ public class Building implements Serializable {
         for ( int dir = 0; dir < 6; dir++ ) {
 
             // Does the building exit in this direction?
-            if ( nextHex.containsTerrainExit( Terrain.BUILDING, dir ) ) {
+            if ( nextHex.containsTerrainExit( Terrains.BUILDING, dir ) ) {
                 this.include( coords.translated(dir), board );
             }
 
@@ -161,16 +161,16 @@ public class Building implements Serializable {
         this.coordinates.addElement( coords );
 
         // Get the Hex for those coords.
-        Hex startHex = board.getHex( coords );
+        IHex startHex = board.getHex( coords );
 
         // Read our construction type from the hex.
-        if ( !startHex.contains( Terrain.BUILDING ) ) {
+        if ( !startHex.containsTerrain( Terrains.BUILDING ) ) {
             throw new IllegalArgumentException( "The coordinates, " +
                                                 coords.getBoardNum() +
                                                 ", do not contain a building."
                                                 );
         }
-        this.type = startHex.levelOf( Terrain.BUILDING );
+        this.type = startHex.terrainLevel( Terrains.BUILDING );
 
         // Insure that we've got a good type (and initialize our CF).
         this.currentCF = getDefaultCF( this.type );
@@ -181,8 +181,8 @@ public class Building implements Serializable {
         }
 
         // Now read the *real* CF, if the board specifies one.
-        if ( startHex.contains( Terrain.BLDG_CF ) ) {
-            this.currentCF = startHex.levelOf( Terrain.BLDG_CF );
+        if ( startHex.containsTerrain( Terrains.BLDG_CF ) ) {
+            this.currentCF = startHex.terrainLevel( Terrains.BLDG_CF );
         }
         this.phaseCF = this.currentCF;
 
@@ -191,7 +191,7 @@ public class Building implements Serializable {
         for ( int dir = 0; dir < 6; dir++ ) {
 
             // Does the building exit in this direction?
-            if ( startHex.containsTerrainExit( Terrain.BUILDING, dir ) ) {
+            if ( startHex.containsTerrainExit( Terrains.BUILDING, dir ) ) {
                 this.include( coords.translated(dir), board );
             }
 

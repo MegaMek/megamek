@@ -18,16 +18,21 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.event.GameListener;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public class FiringDisplay 
     extends StatusBarPhaseDisplay
-    implements BoardListener, GameListener, ActionListener, DoneButtoned,
-               KeyListener, ItemListener, BoardViewListener, Distractable
+    implements BoardViewListener, GameListener, ActionListener, DoneButtoned,
+               KeyListener, ItemListener, Distractable
 {
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
@@ -100,9 +105,9 @@ public class FiringDisplay
     public FiringDisplay(ClientGUI clientgui) {
         this.client = clientgui.getClient();
         this.clientgui = clientgui;
-        client.addGameListener(this);
+        client.game.addGameListener(this);
         
-        client.game.board.addBoardListener(this);
+        clientgui.getBoardView().addBoardViewListener(this);
         
         shiftheld = false;
     
@@ -299,9 +304,9 @@ public class FiringDisplay
             } // End ce()-not-on-board
 
             target(null);
-            client.game.board.highlight(ce().getPosition());
-            client.game.board.select(null);
-            client.game.board.cursor(null);
+            clientgui.getBoardView().highlight(ce().getPosition());
+            clientgui.getBoardView().select(null);
+            clientgui.getBoardView().cursor(null);
 
             refreshAll();
             cacheVisibleTargets();
@@ -355,7 +360,7 @@ public class FiringDisplay
             butDone.setEnabled(true);
             butMore.setEnabled(true);
             setFireModeEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
-            client.game.board.select(null);
+            clientgui.getBoardView().select(null);
         }
     }
     
@@ -373,9 +378,9 @@ public class FiringDisplay
         };
         cen = Entity.NONE;
         target(null);
-        client.game.board.select(null);
-        client.game.board.highlight(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().highlight(null);
+        clientgui.getBoardView().cursor(null);
         clientgui.bv.clearMovementData();
         disableButtons();
         
@@ -506,7 +511,7 @@ public class FiringDisplay
         this.showTargetChoice = false;
 
         clientgui.bv.centerOnHex(targ.getPosition());
-        client.game.board.select(targ.getPosition());
+        clientgui.getBoardView().select(targ.getPosition());
 
         // HACK : show the choice dialog again.
         this.showTargetChoice = true;
@@ -893,7 +898,7 @@ public class FiringDisplay
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardEvent b) {
+    public void boardHexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -914,19 +919,19 @@ public class FiringDisplay
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         }
         
-        if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
+        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if (shiftheld || twisting) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }
-            client.game.board.cursor(b.getCoords());
-        } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
+            clientgui.getBoardView().cursor(b.getCoords());
+        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            client.game.board.select(b.getCoords());
+            clientgui.getBoardView().select(b.getCoords());
         }
     }
     
-    public void boardHexSelected(BoardEvent b) {
+    public void boardHexSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -951,7 +956,7 @@ public class FiringDisplay
     //
     // GameListener
     //
-    public void gameTurnChange(GameEvent ev) {
+    public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -965,11 +970,11 @@ public class FiringDisplay
                 beginMyTurn();
                 setStatusBarText(Messages.getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
             } else {                
-                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
+                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
             }
         }
     }
-    public void gamePhaseChange(GameEvent ev) {
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -1040,8 +1045,8 @@ public class FiringDisplay
             changeMode();
         } else if (ev.getActionCommand().equals(FIRE_CANCEL)) {
             clearAttacks();
-            client.game.board.select(null);
-            client.game.board.cursor(null);
+            clientgui.getBoardView().select(null);
+            clientgui.getBoardView().cursor(null);
             refreshAll();
         }
     }
@@ -1111,8 +1116,8 @@ public class FiringDisplay
 
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearAttacks();
-            client.game.board.select(null);
-            client.game.board.cursor(null);
+            clientgui.getBoardView().select(null);
+            clientgui.getBoardView().cursor(null);
             refreshAll();
         }
         if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
@@ -1127,9 +1132,9 @@ public class FiringDisplay
         }
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {
             shiftheld = true;
-            if (client.isMyTurn() && client.game.board.lastCursor != null) {
+            if (client.isMyTurn() && clientgui.getBoardView().getLastCursor() != null) {
                 updateFlipArms(false);
-                torsoTwist(client.game.board.lastCursor);
+                torsoTwist(clientgui.getBoardView().getLastCursor());
             }
         }
         if (ev.getKeyCode() == KeyEvent.VK_LEFT && shiftheld) {
@@ -1502,8 +1507,8 @@ public class FiringDisplay
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.removeGameListener(this);
-        client.game.board.removeBoardListener(this);
+        client.game.removeGameListener(this);
+        clientgui.getBoardView().removeBoardViewListener(this);
         clientgui.mechD.wPan.weaponList.removeItemListener(this);
     }
     
@@ -1534,9 +1539,9 @@ public class FiringDisplay
         }
 
         // Is there a building in the hex?
-        Building bldg = client.game.board.getBuildingAt( pos );
+        Building bldg = client.game.getBoard().getBuildingAt( pos );
         if ( bldg != null ) {
-            targets.addElement( new BuildingTarget(pos, client.game.board, false) );
+            targets.addElement( new BuildingTarget(pos, client.game.getBoard(), false) );
         }
 
         // Do we have a single choice?

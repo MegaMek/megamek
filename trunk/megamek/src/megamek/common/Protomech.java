@@ -833,14 +833,6 @@ public class Protomech
         return 1;
     }
 
-    public void generateIconName(java.awt.FontMetrics fm) {
-        iconName = getChassis() + " " + getModel();
-
-        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            iconName = iconName.substring(0, iconName.length() - 1);
-        }
-    }
-
     public int getArmor(int loc, boolean rear)
     {
     	if(loc==LOC_NMISS)

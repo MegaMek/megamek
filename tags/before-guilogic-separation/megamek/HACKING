@@ -1,0 +1,73 @@
+ATTENTION TO FREE/LIBRE/OPEN SOURCE SOFTWARE HACKERS
+
+This project started on a Windows system and as such, it has a few quirks that
+you may find disconcerting.  The first is a complete lack of a Makefile; the
+primary means of building this project is Apache Ant.  Also, there is a BAT
+file to run the game on a Windows system; there is no corresponding shell
+script.  The release file is a ZIP file, and it does not place everything into
+a directory with a version number; many files are deposited directly into the
+directory that you unzip into.  As is typical in a Windows-centric Java app,
+all third party libraries (i.e. JAR files) are supplied by the project iteslf.
+Finally, MegaMek has to be run in the main directory; even though the data
+files could be shared between multiple users and are unlikely to change from
+release to release, each installation must have its own copy of the files.
+
+Someday, I intend to address every single issue listed above; for now, however,
+one must simply accept the limitations and move on.
+
+MegaMek can be run on any Java v1.1 runtime.  We've kept compatible with this
+old version of the runtime in order to support players who want to use the
+Microsoft JRE on their machines.  There *have* been a number of features added
+to MegaMek that are available if a more recent version of Java is installed.
+That means that MegaMek can not be *compiled* by a v1.1 JDK.  Still, I haven't
+found a "modern" Java compiler that won't build MegaMek.  Please report any
+problems that you run into on your environment.  One notable exception to this
+rule is the file "megamek/client/ClientGUI.java": due to popular demand, sounds
+have been added to MegaMek; the only v1.1 sound API is java.applet.AudioClip,
+which does not always work.  As a "backup", a Sun-specific API was used; it
+should be obvious that FLOSS Java environments will not build this file. 
+Please apply the patch named "gcj.patch" to correct this problem.
+
+While there is no Makefile, it's very easy to build MegaMek with Jikes.  My
+computer is running Debian Sarge with GCC installed.  Therefore, I can build
+MegaMek with the following command; please modify the command to meet your
+environment (email me if you have any problems).
+
+jikes-gij -q -d classes --target 1.1 --classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:TabPanel.jar `find megamek -name '*.java'`
+
+Once MegaMek is built, I can run it with GIJ with the following command.
+
+gij --classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:TabPanel.jar:classes megamek.MegaMek -log | tee MegaMek.log
+
+I can run it under Kaffe with a similar command.
+
+kaffe -classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:TabPanel.jar:classes megamek.MegaMek -log | tee MegaMek.log
+
+The following runtime flags are available:
+        -testdice : Test the random number generator used by MegaMek, and exit.
+        -dedicated [gamefile.sav] : Run MegaMek as a headless server; if the
+                optional SAV file is supplied, that saved game will be loaded.
+        -log [filename] : If no filename is given, run MegaMek without a log
+                file.  If a file is named, write the log to that file.  If this
+                flag is omitted, output is automatically sent to MegaMek.log.
+        -testxml filename : Parse the named XML file, display its contents, and
+                then exit.
+
+TODO list:
+ * The Splash Screen that is displayed first when MegaMek starts contains an
+        image.  This image should always be shown, but it flickers in and out
+        of view under certain FLOSS Java runtimes.
+ * The Splash Screen has a column of buttons to the right of the image.  Under
+        certain FLOSS runtimes, this column has a strange width, and it has a
+        stranger resize behavior.
+ * The Map Editor (launched from the button with the same name) has a strange
+        layout in the runtimes that have trouble laying out the Splash Screen.
+ * The Map Editor has image display problems in the runtimes that have problems
+        showing the image on the Splash Screen.
+ * The default random number generator that MegaMek uses is an instance of the
+        java.security.SecureRandom class.  Under certain runtimes, this RNG is
+        very poorly implemented, as evidenced by the "-testdice" flag.
+
+James Damour
+suvarov454@users.sourceforge.net
+last updated 2004-09-15

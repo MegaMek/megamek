@@ -1,0 +1,25 @@
+#
+# MiniMap configuration file
+# Lines starting with "#" (like this one) are comments
+#
+
+# terrain colours (red,green,blue)
+background 0 0 0
+none 215 211 156
+sinkhole 210 180 150
+woods 180 230 130
+heavywoods 160 200 100
+rough 186 191 160
+rubble 200 200 200
+water 200 247 253
+pavement 204 204 204
+road 71 79 107
+fire 255 0 0
+smoke 204 204 204
+smokeandfire 153 0 0
+swamp 49 136 74
+building 204 204 204
+bridge 109 55 25
+
+# unit size: defines the size of the triangle for unit representation
+unitsize 6

@@ -16,7 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import megamek.common.Settings;
 
 /**
  * Shows a Report, with an Okay Button
@@ -39,9 +38,9 @@ public class MiniReportDisplay extends Dialog
         
         add(BorderLayout.SOUTH, butOkay);
         add(BorderLayout.CENTER, taData);
-        setSize(Settings.miniReportSizeWidth, Settings.miniReportSizeHeight);
+        setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(), GUIPreferences.getInstance().getMiniReportSizeHeight());
         doLayout();
-        setLocation(Settings.miniReportPosX, Settings.miniReportPosY);
+        setLocation(GUIPreferences.getInstance().getMiniReportPosX(), GUIPreferences.getInstance().getMiniReportPosY());
 
         // closing the window is the same as hitting butOkay
         addWindowListener(new WindowAdapter() {
@@ -55,10 +54,10 @@ public class MiniReportDisplay extends Dialog
     
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == butOkay) {
-            Settings.miniReportSizeWidth=getSize().width;
-            Settings.miniReportSizeHeight=getSize().height;
-            Settings.miniReportPosX=getLocation().x;
-            Settings.miniReportPosY=getLocation().y;
+            GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);
+            GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
+            GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
+            GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
 
             hide();
         }

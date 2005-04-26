@@ -6,10 +6,10 @@ import java.io.File;
 
 import megamek.client.CommonHelpDialog;
 import megamek.client.ConfirmDialog;
+import megamek.client.GUIPreferences;
 import megamek.client.GameEvent;
 import megamek.client.GameListener;
 import megamek.common.Game;
-import megamek.common.Settings;
 
 public class BotGUI implements GameListener {
 
@@ -48,7 +48,7 @@ public class BotGUI implements GameListener {
     }
 
     public void notifyOfBot() {
-        if (Settings.nagForBotReadme && !WarningShown) {
+        if (GUIPreferences.getInstance().getNagForBotReadme() && !WarningShown) {
             WarningShown = true;
             String title = Messages.getString("BotGUI.notifyOfBot.title"); //$NON-NLS-1$
             String body = Messages.getString("BotGUI.notifyOfBot.message"); //$NON-NLS-1$
@@ -61,8 +61,7 @@ public class BotGUI implements GameListener {
             confirm.show();
 
             if (!confirm.getShowAgain()) {
-                Settings.nagForBotReadme = false;
-                Settings.save();
+                GUIPreferences.getInstance().setNagForBotReadme(false);
             }
 
             if (confirm.getAnswer()) {

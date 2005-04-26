@@ -23,6 +23,8 @@ import java.util.*;
 
 import megamek.common.*;
 import megamek.common.options.GameOptions;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.client.*;
 import megamek.client.util.AdvancedLabel;
 import megamek.client.util.widget.*;
@@ -111,7 +113,7 @@ public class MegaMek implements ActionListener {
         frame.setVisible(true);
 
         // tell the user about the readme...
-        if (true == Settings.nagForReadme) {
+        if (true == GUIPreferences.getInstance().getNagForReadme()) {
             String title = "Welcome to MegaMek " + VERSION;
             String body =
                 "MegaMek is a complex application -- if you ever need any help you\n"
@@ -122,8 +124,7 @@ public class MegaMek implements ActionListener {
             confirm.show();
 
             if (!confirm.getShowAgain()) {
-                Settings.nagForReadme = false;
-                Settings.save();
+                GUIPreferences.getInstance().setNagForReadme(false);
             };
 
             if (confirm.getAnswer()) {
@@ -650,6 +651,7 @@ public class MegaMek implements ActionListener {
      * Called when the quit buttons is pressed or the main menu is closed.
      */
     private void quit() {
+        PreferenceManager.getInstance().save();
         System.exit(0);
     }
 
@@ -702,7 +704,7 @@ public class MegaMek implements ActionListener {
                 } else {
                     savegameFileName = args[i];
                 }
-                Settings.load();
+
                 // Next argument may be "-port <number>"
                 i++;
                 if (i<args.length) {
@@ -712,19 +714,18 @@ public class MegaMek implements ActionListener {
                             usePort = Integer.decode(args[i]).intValue();
                         } else {
                             i--;
-                            usePort = Settings.lastServerPort;
+                            usePort = PreferenceManager.getClientPreferences().getLastServerPort();
                         }
                     } else {
                         i--;
-                        usePort = Settings.lastServerPort;
+                        usePort = PreferenceManager.getClientPreferences().getLastServerPort();
                     }
                 }
                 // kick off a RNG check
                 megamek.common.Compute.d6();
                 // start server
-                Server dedicated = new Server(Settings.lastServerPass,
-                                              usePort);
-                                              //Settings.lastServerPort);
+                Server dedicated = new Server(PreferenceManager.getClientPreferences().getLastServerPass(),
+                        usePort);
                 // load game options from xml file if available
                 dedicated.getGame().getOptions().loadOptions(null, null);
                 if (null != savegameFileName) {
@@ -764,7 +765,6 @@ public class MegaMek implements ActionListener {
             }
         } // End log-to-file
 
-        Settings.load();
         new MegaMek();
     }
 
@@ -845,25 +845,23 @@ class HostDialog extends Dialog implements ActionListener {
         serverPassL = new Label("Server Password:", Label.RIGHT);
         portL = new Label("Port:", Label.RIGHT);
 
-        yourNameF = new TextField(Settings.lastPlayerName, 16);
+        yourNameF = new TextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
-        serverPassF = new TextField(Settings.lastServerPass, 16);
+        serverPassF = new TextField(PreferenceManager.getClientPreferences().getLastServerPass(), 16);
         serverPassF.addActionListener(this);
-        portF = new TextField(Settings.lastServerPort + "", 4);
+        portF = new TextField(PreferenceManager.getClientPreferences().getLastServerPort() + "", 4);
         portF.addActionListener(this);
  
-        metaserver = Settings.getInstance().get
-            ("megamek.megamek.metaservername",
-             "http://www.damour.info/cgi-bin/james/metaserver");
+        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        metaserver = cs.getMetaServerName();
         metaserverL = new Label ("Megaserver Name:", Label.RIGHT);
         metaserverF = new TextField (metaserver);
         metaserverL.setEnabled (register);
         metaserverF.setEnabled (register);
 
-        String goalNumber = Settings.getInstance().get
-            ("megamek.megamek.goalplayers", "2");
+        int goalNumber = cs.getGoalPlayers();
         goalL = new Label ("# Players:", Label.RIGHT);
-        goalF = new TextField (goalNumber, 2);
+        goalF = new TextField (Integer.toString(goalNumber), 2);
         goalL.setEnabled (register);
         goalF.setEnabled (register);
 
@@ -993,12 +991,12 @@ class HostDialog extends Dialog implements ActionListener {
             }
 
             // update settings
-            Settings.lastPlayerName = name;
-            Settings.lastServerPass = serverPass;
-            Settings.lastServerPort = port;
-            Settings.getInstance().set ("megamek.megamek.metaservername",
+            PreferenceManager.getClientPreferences().setLastPlayerName(name);
+            PreferenceManager.getClientPreferences().setLastServerPass(serverPass);
+            PreferenceManager.getClientPreferences().setLastServerPort(port);
+            PreferenceManager.getClientPreferences().setValue("megamek.megamek.metaservername",
                                         metaserver);
-            Settings.getInstance().set ("megamek.megamek.goalplayers",
+            PreferenceManager.getClientPreferences().setValue("megamek.megamek.goalplayers",
                                         Integer.toString (goalPlayers));
         }
         setVisible(false);
@@ -1023,11 +1021,11 @@ class ConnectDialog extends Dialog implements ActionListener {
         serverAddrL = new Label("Server Address:", Label.RIGHT);
         portL = new Label("Port:", Label.RIGHT);
 
-        yourNameF = new TextField(Settings.lastPlayerName, 16);
+        yourNameF = new TextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
-        serverAddrF = new TextField(Settings.lastConnectAddr, 16);
+        serverAddrF = new TextField(PreferenceManager.getClientPreferences().getLastConnectAddr(), 16);
         serverAddrF.addActionListener(this);
-        portF = new TextField(Settings.lastConnectPort + "", 4);
+        portF = new TextField(PreferenceManager.getClientPreferences().getLastConnectPort() + "", 4);
         portF.addActionListener(this);
 
         okayB = new Button("Okay");
@@ -1109,9 +1107,9 @@ class ConnectDialog extends Dialog implements ActionListener {
             }
 
             // update settings
-            Settings.lastPlayerName = name;
-            Settings.lastConnectAddr = serverAddr;
-            Settings.lastConnectPort = port;
+            PreferenceManager.getClientPreferences().setLastPlayerName(name);
+            PreferenceManager.getClientPreferences().setLastConnectAddr(serverAddr);
+            PreferenceManager.getClientPreferences().setLastConnectPort(port);
         }
         setVisible(false);
     }

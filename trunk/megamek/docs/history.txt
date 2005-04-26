@@ -5,6 +5,8 @@ v0.29.75 (CVS)
   Only valid if next parameter after -dedicated (and savegame name, if there).
   See also http://sourceforge.net/forum/forum.php?thread_id=1267994&forum_id=154580.
 + Bug 1189805: Golem ASRM5 doing 5 damage per missile that hits, instead of 2.
++ Patch 1187324: Settings refactoring. The previous implementation was 
+    marked with symbolic tag 'before-preferences'
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.

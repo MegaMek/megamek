@@ -99,7 +99,7 @@ public class EntityListFile {
         output.append( "\" isDestroyed=\"" );
         output.append( String.valueOf(isDestroyed) );
         output.append( "\"/>" );
-        output.append( Settings.NL );
+        output.append( CommonConstants.NL );
 
         // Return a String.
         return output.toString();
@@ -136,20 +136,20 @@ public class EntityListFile {
                     thisLoc.append( "         <armor points=\"" );
                     thisLoc.append( formatArmor(entity.getArmor(loc)) );
                     thisLoc.append( "\"/>" );
-                    thisLoc.append( Settings.NL );
+                    thisLoc.append( CommonConstants.NL );
                 }
                 if ( entity.getOInternal(loc) != entity.getInternal(loc) ) {
                     thisLoc.append( "         <armor points=\"" );
                     thisLoc.append( formatArmor(entity.getInternal(loc)) );
                     thisLoc.append( "\" type=\"Internal\"/>" );
-                    thisLoc.append( Settings.NL );
+                    thisLoc.append( CommonConstants.NL );
                 }
                 if ( entity.hasRearArmor(loc) && entity.getOArmor(loc, true) !=
                      entity.getArmor(loc, true) ) {
                     thisLoc.append( "         <armor points=\"" );
                     thisLoc.append( formatArmor(entity.getArmor(loc, true)) );
                     thisLoc.append( "\" type=\"Rear\"/>" );
-                    thisLoc.append( Settings.NL );
+                    thisLoc.append( CommonConstants.NL );
                 }
             }
 
@@ -170,7 +170,7 @@ public class EntityListFile {
                         thisLoc.append( "         <slot index=\"" );
                         thisLoc.append( String.valueOf(loop+1) );
                         thisLoc.append( "\" type=\"Empty\"/>" );
-                        thisLoc.append( Settings.NL );
+                        thisLoc.append( CommonConstants.NL );
                         haveSlot = true;
                     }
 
@@ -215,7 +215,7 @@ public class EntityListFile {
                         thisLoc.append( "\" shots=\"" );
                         thisLoc.append( String.valueOf(mount.getShotsLeft()) );
                         thisLoc.append( "\"/>" );
-                        thisLoc.append( Settings.NL );
+                        thisLoc.append( CommonConstants.NL );
                         haveSlot = true;
                     }
 
@@ -269,10 +269,10 @@ public class EntityListFile {
                 if ( blownOff ) {
                     output.append( " has been blown off." );
                 }
-                output.append( Settings.NL );
+                output.append( CommonConstants.NL );
                 output.append( thisLoc.toString() );
                 output.append( "      </location>" );
-                output.append( Settings.NL );
+                output.append( CommonConstants.NL );
 
                 // Reset the location buffer.
                 thisLoc = new StringBuffer();
@@ -288,7 +288,7 @@ public class EntityListFile {
                 output.append( String.valueOf(loc) );
                 output.append( "\" isDestroyed=\"true\" /> " );
                 output.append( entity.getLocationName(loc) );
-                output.append( Settings.NL );
+                output.append( CommonConstants.NL );
 
             } // End location-completely-destroyed
 
@@ -304,13 +304,13 @@ public class EntityListFile {
 
         // If we recorded a slot, remind the player that slots start at 1.
         if ( haveSlot ) {
-            output.insert( 0, Settings.NL );
+            output.insert( 0, CommonConstants.NL );
             output.insert
                 ( 0, "      The first slot in a location is at index=\"1\"." );
 
             // Tanks do wierd things with ammo.
             if ( entity instanceof Tank ) {
-                output.insert( 0, Settings.NL );
+                output.insert( 0, CommonConstants.NL );
                 output.insert( 0, "      Tanks have special needs, so don't delete any ammo slots." );
             }
         }
@@ -357,11 +357,11 @@ public class EntityListFile {
 
         // Output the doctype and header stuff.
         output.write( "<?xml version=\"1.0\"?>" );
-        output.write( Settings.NL );
-        output.write( Settings.NL );
+        output.write( CommonConstants.NL );
+        output.write( CommonConstants.NL );
         output.write( "<unit>" );
-        output.write( Settings.NL );
-        output.write( Settings.NL );
+        output.write( CommonConstants.NL );
+        output.write( CommonConstants.NL );
 
         // Walk through the list of entities.
         Enumeration items = list.elements();
@@ -376,7 +376,7 @@ public class EntityListFile {
             output.write( "\" type=\"" );
             output.write( entity.getMovementTypeAsString() );
             output.write( "\">" );
-            output.write( Settings.NL );
+            output.write( CommonConstants.NL );
 
             // Add the crew this entity.
             final Pilot crew = entity.getCrew();
@@ -405,7 +405,7 @@ public class EntityListFile {
                 }
             }
             output.write( "\"/>" );
-            output.write( Settings.NL );
+            output.write( CommonConstants.NL );
 
             // Add the locations of this entity (if any are needed).
             String loc = getLocString( entity );
@@ -415,14 +415,14 @@ public class EntityListFile {
 
             // Finish writing this entity to the file.
             output.write( "   </entity>" );
-            output.write( Settings.NL );
-            output.write( Settings.NL );
+            output.write( CommonConstants.NL );
+            output.write( CommonConstants.NL );
 
         } // Handle the next entity
 
         // Finish writing.
         output.write( "</unit>" );
-        output.write( Settings.NL );
+        output.write( CommonConstants.NL );
         output.flush();
         output.close();
     }

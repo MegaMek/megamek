@@ -14,8 +14,11 @@
 
 package megamek.common;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Enumeration;
+
+import megamek.common.preference.PreferenceManager;
 
 /**
  * Protomechs.  Level 2 Clan equipment.
@@ -440,57 +443,55 @@ public class Protomech
 
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
-
-
-
-    	if ((aimedLocation != LOC_NONE) &&
-    		(aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+        
+        if ((aimedLocation != LOC_NONE) &&
+                (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
             roll = Compute.d6(2);
-
+            
             if ((5 < roll) && (roll < 9)) {
-            	return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
-
+            
+        }
+        
+        roll = Compute.d6(2);
+        try {
+            PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+            
+            if ( pw != null ) {
+                pw.print( table );
+                pw.print( "\t" );
+                pw.print( side );
+                pw.print( "\t" );
+                pw.println( roll );
             }
-
-                  roll = Compute.d6(2);
-                   try {
-                if ( Settings.mekHitLocLog != null ) {
-                    Settings.mekHitLocLog.print( table );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.print( side );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.println( roll );
-                }
-            } catch ( Throwable thrown ) {
-                thrown.printStackTrace();
-            }
-
-
-                switch( roll ) {
-                case 2:
-                return new HitData(Protomech.LOC_MAINGUN);
-                case 3:
-                case 11:
-                return new HitData(Protomech.LOC_NMISS);
-                case 4:
-                return new HitData(Protomech.LOC_RARM);
-                case 5:
-                case 9:
-                return new HitData(Protomech.LOC_LEG);
-                case 6:
-                case 7:
-                case 8:
-                return new HitData(Protomech.LOC_TORSO);
-                case 10:
-                return new HitData(Protomech.LOC_RARM);
-                case 12:
-                return new HitData(Protomech.LOC_HEAD);
-
-
-                }
-
-
+        } catch ( Throwable thrown ) {
+            thrown.printStackTrace();
+        }
+        
+        switch( roll ) {
+        case 2:
+            return new HitData(Protomech.LOC_MAINGUN);
+        case 3:
+        case 11:
+            return new HitData(Protomech.LOC_NMISS);
+        case 4:
+            return new HitData(Protomech.LOC_RARM);
+        case 5:
+        case 9:
+            return new HitData(Protomech.LOC_LEG);
+        case 6:
+        case 7:
+        case 8:
+            return new HitData(Protomech.LOC_TORSO);
+        case 10:
+            return new HitData(Protomech.LOC_RARM);
+        case 12:
+            return new HitData(Protomech.LOC_HEAD);
+            
+        }
+        
+        
         return null;
     }
 

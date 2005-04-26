@@ -492,14 +492,13 @@ public class MovementDisplay
      */
     private synchronized void moveTo(MovePath md) {
         md.clipToPossible();
-        if (md.length() == 0 && Settings.nagForNoAction) {
+        if (md.length() == 0 && GUIPreferences.getInstance().getNagForNoAction()) {
             //Hmm....no movement steps, comfirm this action
             String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title"); //$NON-NLS-1$
             String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message"); //$NON-NLS-1$
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if ( !response.getShowAgain() ) {
-                Settings.nagForNoAction = false;
-                Settings.save();
+                GUIPreferences.getInstance().setNagForNoAction(false);
             }
             if ( !response.getAnswer() ) {
                 return;
@@ -507,7 +506,7 @@ public class MovementDisplay
         }
 
         if ( md != null ) {
-            if (md.hasActiveMASC() && Settings.nagForMASC) { //pop up are you sure dialog
+            if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) { //pop up are you sure dialog
                 Mech m = (Mech)ce();
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                         Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[]{new Integer(m.getMASCTarget())}), //$NON-NLS-1$
@@ -516,7 +515,7 @@ public class MovementDisplay
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
-                        Settings.nagForMASC = false;
+                        GUIPreferences.getInstance().setNagForMASC(false);
                     }
                 } else {
                     return;
@@ -524,7 +523,7 @@ public class MovementDisplay
             }
 
             String check = doPSRCheck(md);
-            if (check.length() > 0 && Settings.nagForPSR) {
+            if (check.length() > 0 && GUIPreferences.getInstance().getNagForPSR()) {
                 ConfirmDialog nag = 
                     new ConfirmDialog(clientgui.frame,
                                       Messages.getString("MovementDisplay.areYouSure"),  //$NON-NLS-1$
@@ -534,7 +533,7 @@ public class MovementDisplay
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
-                        Settings.nagForPSR = false;
+                        GUIPreferences.getInstance().setNagForPSR(false);
                     }
                 } else {
                     return;

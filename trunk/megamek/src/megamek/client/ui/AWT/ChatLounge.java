@@ -123,7 +123,7 @@ public class ChatLounge
         // Create a tabbed panel to hold our components.
         panTabs = new TabPanel();
         Font tabPanelFont = new Font ("Helvetica",Font.BOLD, //$NON-NLS-1$
-                                      Settings.chatLoungeTabFontSize);
+                GUIPreferences.getInstance().getChatLoungeTabFontSize());
         panTabs.setTabFont (tabPanelFont);
         
         // Create a new camo selection dialog.
@@ -180,7 +180,7 @@ public class ChatLounge
         c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        if (Settings.chatLoungeTabs) {
+        if (GUIPreferences.getInstance().getChatLoungeTabs()) {
             addBag (panTabs, gridbag, c);
         } else {
             addBag(panMain, gridbag, c);
@@ -512,7 +512,7 @@ public class ChatLounge
         panMain.add(panUnits);
 
         // Should we display the panels in tabs?
-        if (Settings.chatLoungeTabs) {
+        if (GUIPreferences.getInstance().getChatLoungeTabs()) {
             this.panTabs.add ("Select Units", panMain); //$NON-NLS-1$
             this.panTabs.add ("Configure", panTop); //$NON-NLS-1$
         } else {

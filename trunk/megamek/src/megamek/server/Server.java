@@ -943,7 +943,7 @@ implements Runnable, ConnectionHandler {
             sb.append("++++++++++ " )
                 .append( p.getName() )
                 .append( " ++++++++++");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
 
             // Record the player's alive, retreated, or salvageable units.
             for (int x = 0; x < vAllUnits.size(); x++) {
@@ -957,9 +957,9 @@ implements Runnable, ConnectionHandler {
             Enumeration devastated = game.getDevastatedEntities();
             if ( devastated.hasMoreElements() ) {
                 sb.append("=============================================================");
-                sb.append( Settings.NL );
+                sb.append( CommonConstants.NL );
                 sb.append("The following utterly destroyed units are not available for salvage:");
-                sb.append( Settings.NL );
+                sb.append( CommonConstants.NL );
                 while ( devastated.hasMoreElements() ) {
                     Entity e = (Entity) devastated.nextElement();
                     if (e.getOwner() == p) {
@@ -971,11 +971,11 @@ implements Runnable, ConnectionHandler {
                             .append( "/" )
                             .append( e.getCrew().getPiloting() )
                             .append( ")" );
-                        sb.append( Settings.NL );
+                        sb.append( CommonConstants.NL );
                     }
                 } // Handle the next unsalvageable unit for the player
                 sb.append("=============================================================");
-                sb.append( Settings.NL );
+                sb.append( CommonConstants.NL );
             }
 
         } // Handle the next player

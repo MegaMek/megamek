@@ -14,8 +14,11 @@
 
 package megamek.common;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Enumeration;
+
+import megamek.common.preference.PreferenceManager;
 
 /**
  * You know what mechs are, silly.
@@ -120,7 +123,7 @@ public abstract class Mech
 
         // Player setting specify whether their Meks' automatic
         // ejection systems are disabled by default or not.
-        this.autoEject = !Settings.defaultAutoejectDisabled;
+        this.autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
     }
 
     public static int getInnerLocation(int location)
@@ -993,12 +996,13 @@ public abstract class Mech
         if(table == ToHitData.HIT_NORMAL) {
             roll = Compute.d6(2);
             try {
-                if ( Settings.mekHitLocLog != null ) {
-                    Settings.mekHitLocLog.print( table );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.print( side );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+                if ( pw != null ) {
+                    pw.print( table );
+                    pw.print( "\t" );
+                    pw.print( side );
+                    pw.print( "\t" );
+                    pw.println( roll );
                 }
             } catch ( Throwable thrown ) {
                 thrown.printStackTrace();
@@ -1109,12 +1113,13 @@ public abstract class Mech
         if(table == ToHitData.HIT_PUNCH) {
             roll = Compute.d6(1);
             try {
-                if ( Settings.mekHitLocLog != null ) {
-                    Settings.mekHitLocLog.print( table );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.print( side );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+                if ( pw!= null ) {
+                    pw.print( table );
+                    pw.print( "\t" );
+                    pw.print( side );
+                    pw.print( "\t" );
+                    pw.println( roll );
                 }
             } catch ( Throwable thrown ) {
                 thrown.printStackTrace();
@@ -1187,12 +1192,13 @@ public abstract class Mech
         if(table == ToHitData.HIT_KICK) {
             roll = Compute.d6(1);
             try {
-                if ( Settings.mekHitLocLog != null ) {
-                    Settings.mekHitLocLog.print( table );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.print( side );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();                
+                if ( pw != null ) {
+                    pw.print( table );
+                    pw.print( "\t" );
+                    pw.print( side );
+                    pw.print( "\t" );
+                    pw.println( roll );
                 }
             } catch ( Throwable thrown ) {
                 thrown.printStackTrace();
@@ -1224,12 +1230,13 @@ public abstract class Mech
         if(table == ToHitData.HIT_SWARM) {
             roll = Compute.d6(2);
             try {
-                if ( Settings.mekHitLocLog != null ) {
-                    Settings.mekHitLocLog.print( table );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.print( side );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+                if ( pw != null ) {
+                    pw.print( table );
+                    pw.print( "\t" );
+                    pw.print( side );
+                    pw.print( "\t" );
+                    pw.println( roll );
                 }
             } catch ( Throwable thrown ) {
                 thrown.printStackTrace();
@@ -1274,12 +1281,13 @@ public abstract class Mech
         if(table == ToHitData.HIT_ABOVE) {
             roll = Compute.d6(1);
             try {
-                if ( Settings.mekHitLocLog != null ) {
-                    Settings.mekHitLocLog.print( table );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.print( side );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+                if ( pw != null ) {
+                    pw.print( table );
+                    pw.print( "\t" );
+                    pw.print( side );
+                    pw.print( "\t" );
+                    pw.println( roll );
                 }
             } catch ( Throwable thrown ) {
                 thrown.printStackTrace();
@@ -1309,12 +1317,13 @@ public abstract class Mech
         if(table == ToHitData.HIT_BELOW) {
             roll = Compute.d6(1);
             try {
-                if ( Settings.mekHitLocLog != null ) {
-                    Settings.mekHitLocLog.print( table );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.print( side );
-                    Settings.mekHitLocLog.print( "\t" );
-                    Settings.mekHitLocLog.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+                if ( pw != null ) {
+                    pw.print( table );
+                    pw.print( "\t" );
+                    pw.print( side );
+                    pw.print( "\t" );
+                    pw.println( roll );
                 }
             } catch ( Throwable thrown ) {
                 thrown.printStackTrace();

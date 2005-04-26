@@ -34,6 +34,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.options.GameOptions;
+import megamek.common.preference.PreferenceManager;
 
 public class Client implements Runnable {
     // we need these to communicate with the server
@@ -81,9 +82,10 @@ public class Client implements Runnable {
         this.host = host;
         this.port = port;
 
-        if (Settings.keepServerlog && !(this instanceof BotClient)) {
+        if (PreferenceManager.getClientPreferences().keepServerlog() && !(this instanceof BotClient)) {
             // we need to keep a copy of the log
-            serverlog = new megamek.server.ServerLog(Settings.serverlogFilename, true, (new Integer(Settings.serverlogMaxSize).longValue() * 1024 * 1024) );
+            serverlog = new megamek.server.ServerLog(PreferenceManager.getClientPreferences().getServerlogFilename(), 
+                    true, (new Integer(PreferenceManager.getClientPreferences().getServerlogMaxSize()).longValue() * 1024 * 1024) );
         };
     }
 
@@ -532,9 +534,9 @@ public class Client implements Runnable {
      */
     public void sendPlayerInfo() {
         Player player = game.getPlayer(local_pn);
-        Settings.lastPlayerColor = player.getColorIndex();
-        Settings.lastPlayerCategory = player.getCamoCategory();
-        Settings.lastPlayerCamoName = player.getCamoFileName();
+        PreferenceManager.getClientPreferences().setLastPlayerColor(player.getColorIndex());
+        PreferenceManager.getClientPreferences().setLastPlayerCategory(player.getCamoCategory());
+        PreferenceManager.getClientPreferences().setLastPlayerCamoName(player.getCamoFileName());
         send(new Packet(Packet.COMMAND_PLAYER_UPDATE, player));
     }
 
@@ -584,9 +586,10 @@ public class Client implements Runnable {
         } else {
             game.setPlayer(pindex, newPlayer);
         }
-        Settings.lastPlayerColor = newPlayer.getColorIndex();
-        Settings.lastPlayerCategory = newPlayer.getCamoCategory();
-        Settings.lastPlayerCamoName = newPlayer.getCamoFileName();
+
+        PreferenceManager.getClientPreferences().setLastPlayerColor(newPlayer.getColorIndex());
+        PreferenceManager.getClientPreferences().setLastPlayerCategory(newPlayer.getCamoCategory());
+        PreferenceManager.getClientPreferences().setLastPlayerCamoName(newPlayer.getCamoFileName());
         processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, "")); //$NON-NLS-1$
     }
 
@@ -879,7 +882,7 @@ public class Client implements Runnable {
                         new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), "")); //$NON-NLS-1$
                     break;
                 case Packet.COMMAND_CHAT :
-                    if (null!=serverlog && Settings.keepServerlog) {
+                    if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
                         serverlog.append( (String) c.getObject(0) );
                     };
                     processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_CHAT, null, (String) c.getObject(0)));
@@ -936,7 +939,7 @@ public class Client implements Runnable {
                     receiveEntities(c);
                     break;
                 case Packet.COMMAND_SENDING_REPORT :
-                    if (null!=serverlog && Settings.keepServerlog) {
+                    if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
                         if (null==eotr || ((String) c.getObject(0)).length() < eotr.length() ) {
                             // first report packet
                             serverlog.append( (String) c.getObject(0) );
@@ -994,7 +997,7 @@ public class Client implements Runnable {
      * @see     megamek.client.Client#changePhase(int)
      */
     private void memDump(String where) {
-        if (Settings.memoryDumpOn) {
+        if (PreferenceManager.getClientPreferences().memoryDumpOn()) {
             StringBuffer buf = new StringBuffer();
             final long total = Runtime.getRuntime().totalMemory();
             final long free = Runtime.getRuntime().freeMemory();

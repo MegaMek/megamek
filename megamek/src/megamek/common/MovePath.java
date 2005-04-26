@@ -26,6 +26,8 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.preference.PreferenceManager;
+
 /**
  * Holds movement path for an entity.
  */
@@ -456,7 +458,7 @@ public class MovePath implements Cloneable, Serializable {
      * @param   type the type of movment step required.
      */
     public void findPathTo(Coords dest, int type) {
-        int timeLimit = Settings.maxPathfinderTime;
+        int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
 
         if (timeLimit >= 5000) {
             System.out.print("WARNING!!!  Settings allow up to ");

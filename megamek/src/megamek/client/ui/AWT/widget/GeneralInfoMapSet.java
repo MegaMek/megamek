@@ -18,6 +18,7 @@ package megamek.client.util.widget;
 import java.awt.*;
 import java.util.*;
 
+import megamek.client.GUIPreferences;
 import megamek.client.Messages;
 import megamek.common.*;
 import megamek.common.options.IOption;
@@ -38,8 +39,8 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR;
     private PMSimpleLabel[] advantagesR;
     private Vector    bgDrawers = new Vector();
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize); //$NON-NLS-1$
-    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, Settings.mechDisplayLargeFontSize); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
+    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
     private final static int MAX_STR_LENGTH = 18;
 
 

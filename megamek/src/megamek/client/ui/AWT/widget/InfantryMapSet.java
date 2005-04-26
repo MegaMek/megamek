@@ -17,6 +17,7 @@ package megamek.client.util.widget;
 import java.awt.*;
 import java.util.*;
 
+import megamek.client.GUIPreferences;
 import megamek.client.Messages;
 import megamek.common.*;
 
@@ -39,7 +40,7 @@ public class InfantryMapSet implements DisplayMapSet{
 	private Vector    bgDrawers = new Vector();
 
 	
-	private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorMediumFontSize); //$NON-NLS-1$
+	private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayArmorMediumFontSize()); //$NON-NLS-1$
 
 	
 	public InfantryMapSet(Component c){

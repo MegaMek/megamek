@@ -22,7 +22,6 @@ import megamek.client.util.AdvancedLabel;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.MiscType;
-import megamek.common.Settings;
 import megamek.common.actions.TriggerAPPodAction;
 
 /**
@@ -153,11 +152,11 @@ public class TriggerAPPodDialog
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < Settings.minimumSizeWidth ) {
-            size.width = Settings.minimumSizeWidth;
+        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
+            size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
-        if ( size.height < Settings.minimumSizeHeight ) {
-            size.height = Settings.minimumSizeHeight;
+        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+            size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
         if ( updateSize ) {
             setSize( size );

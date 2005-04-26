@@ -314,13 +314,12 @@ public class PhysicalDisplay
      * Called when the current entity is done with physical attacks.
      */
     private void ready() {
-        if (attacks.isEmpty() && Settings.nagForNoAction) {
+        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
             // comfirm this action
             ConfirmDialog response = clientgui.doYesNoBotherDialog(Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title") //$NON-NLS-1$
                     , Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message")); //$NON-NLS-1$
             if ( !response.getShowAgain() ) {
-                Settings.nagForNoAction = false;
-                Settings.save();
+                GUIPreferences.getInstance().setNagForNoAction(false);
             }
             if ( !response.getAnswer() ) {
                 return;

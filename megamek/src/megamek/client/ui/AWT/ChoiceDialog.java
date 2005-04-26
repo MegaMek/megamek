@@ -16,7 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import megamek.common.Settings;
 
 /**
  * A (somewhat primitive) dialog that asks a question and lets the player
@@ -160,11 +159,11 @@ public class ChoiceDialog
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < Settings.minimumSizeWidth ) {
-            size.width = Settings.minimumSizeWidth;
+        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth() ) {
+            size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
-        if ( size.height < Settings.minimumSizeHeight ) {
-            size.height = Settings.minimumSizeHeight;
+        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+            size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
         if ( updateSize ) {
             setSize( size );

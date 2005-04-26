@@ -32,7 +32,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.Client;
-import megamek.common.Settings;
+import megamek.common.CommonConstants;
 
 /**
  * Contains the options determining play in the current game.
@@ -230,9 +230,9 @@ public class GameOptions extends AbstractOptions implements Serializable {
 
         // Output the doctype and header stuff.
           output.write( "<?xml version=\"1.0\"?>" ); //$NON-NLS-1$
-          output.write( Settings.NL );
+          output.write( CommonConstants.NL );
           output.write( "<options>" ); //$NON-NLS-1$
-          output.write( Settings.NL );
+          output.write( CommonConstants.NL );
   
         // Now the options themselves
           for ( int i = 0; i < options.size(); i++ ) {
@@ -240,23 +240,23 @@ public class GameOptions extends AbstractOptions implements Serializable {
   
             output.write( "   <gameoption>" ); //$NON-NLS-1$
 
-            output.write( Settings.NL );
+            output.write( CommonConstants.NL );
             output.write( "      <optionname>" ); //$NON-NLS-1$
             output.write( option.getName() );
             output.write( "</optionname>" ); //$NON-NLS-1$
-            output.write( Settings.NL );
+            output.write( CommonConstants.NL );
             output.write( "      <optionvalue>" ); //$NON-NLS-1$
             output.write( option.getValue().toString() );
             output.write( "</optionvalue>" ); //$NON-NLS-1$
-            output.write( Settings.NL );
+            output.write( CommonConstants.NL );
   
             output.write( "   </gameoption>" ); //$NON-NLS-1$
-            output.write( Settings.NL );
+            output.write( CommonConstants.NL );
           }
   
         // Finish writing.
           output.write( "</options>" ); //$NON-NLS-1$
-          output.write( Settings.NL );
+          output.write( CommonConstants.NL );
           output.flush();
           output.close();
       } catch (IOException e) {}

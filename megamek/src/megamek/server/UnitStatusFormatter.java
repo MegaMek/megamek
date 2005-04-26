@@ -28,32 +28,32 @@ public abstract class UnitStatusFormatter
     {
         StringBuffer sb = new StringBuffer(2048);
         sb.append("=============================================================")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         sb.append(formatHeader(e));
         sb.append("--- Armor: ")
             .append(e.getTotalArmor())
             .append("/")
             .append(e.getTotalOArmor())
             .append("-------------------------------------------")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         sb.append("--- Internal: ")
             .append(e.getTotalInternal())
             .append("/")
             .append(e.getTotalOInternal())
             .append("----------------------------------------")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         sb.append(formatArmor(e));
         if ( e instanceof Mech ||
              e instanceof Protomech ) {
             sb.append("-------------------------------------------------------------")
-                .append( Settings.NL );
+                .append( CommonConstants.NL );
             sb.append(formatCrits(e));
         }
         sb.append("-------------------------------------------------------------")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         sb.append(formatAmmo(e));
         sb.append("=============================================================")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         return sb.toString();
     }
 
@@ -64,7 +64,7 @@ public abstract class UnitStatusFormatter
             .append(e.getChassis())
             .append(" - ")
             .append(e.getModel())
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         sb.append("Pilot: ")
             .append(e.crew.getName());
         sb.append(" (")
@@ -72,10 +72,10 @@ public abstract class UnitStatusFormatter
             .append("/");
         sb.append(e.crew.getPiloting())
             .append(")")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         if (e.isCaptured()) {
             sb.append( "  *** CAPTURED BY THE ENEMY ***" );
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
         }
         return sb.toString();
     }
@@ -91,7 +91,7 @@ public abstract class UnitStatusFormatter
                 sb.append(weap.getName());
                 sb.append(": ")
                     .append(weap.getShotsLeft())
-                    .append( Settings.NL );
+                    .append( CommonConstants.NL );
             }
 
         return sb.toString();
@@ -109,7 +109,7 @@ public abstract class UnitStatusFormatter
                 if (cs == null) continue;
                 nCount++;
                 if (nCount == 7) {
-                    sb.append( Settings.NL );
+                    sb.append( CommonConstants.NL );
                     sb.append("              ");
                 }
                 else if (nCount > 1) {
@@ -135,7 +135,7 @@ public abstract class UnitStatusFormatter
                     sb.append(m.getName());
                 }
             }
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
         }
         return sb.toString();
     }
@@ -161,20 +161,20 @@ public abstract class UnitStatusFormatter
     {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("      ARMOR               INTERNAL")
-            .append( Settings.NL )
+            .append( CommonConstants.NL )
             .append("    __________           __________")
-            .append( Settings.NL )
+            .append( CommonConstants.NL )
             .append("    |\\      /|           |\\      /|")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         // front
         sb.append("    | \\ ")
             .append(renderArmor(t.getArmor(Tank.LOC_FRONT)))
             .append(" / |           | \\ ");
         sb.append(renderArmor(t.getInternal(Tank.LOC_FRONT)))
             .append(" / |")
-            .append( Settings.NL )
+            .append( CommonConstants.NL )
             .append("    |  \\__/  |           |  \\__/  |")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         // left, turret and right
         sb.append("    |")
             .append(renderArmor(t.getArmor(Tank.LOC_LEFT)))
@@ -199,20 +199,20 @@ public abstract class UnitStatusFormatter
             }    
         sb.append(renderArmor(t.getInternal(Tank.LOC_RIGHT)))
             .append("|")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         // rear
         sb.append("    | /____\\ |           | /____\\ |")
-            .append( Settings.NL )
+            .append( CommonConstants.NL )
             .append("    | / ")
             .append(renderArmor(t.getArmor(Tank.LOC_REAR)))
             .append(" \\ |           | / ");
         sb.append(renderArmor(t.getInternal(Tank.LOC_REAR)))
             .append(" \\ |")
-            .append( Settings.NL )
+            .append( CommonConstants.NL )
             .append("    |/______\\|           |/______\\|")
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
 
-        sb.append( Settings.NL );
+        sb.append( CommonConstants.NL );
         return sb.toString();
     }
 
@@ -220,12 +220,12 @@ public abstract class UnitStatusFormatter
     {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("         FRONT                REAR                INTERNAL");
-        sb.append( Settings.NL );
+        sb.append( CommonConstants.NL );
         if (m.getWeight() < 70) {
             // head
             sb.append("         (").append(renderArmor(m.getArmor(Mech.LOC_HEAD))).append(")                 (**)                  (");
             sb.append(renderArmor(m.getInternal(Mech.LOC_HEAD))).append(")");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
             // torsos
             sb.append("      /").append(renderArmor(m.getArmor(Mech.LOC_LT))).append("|");
             sb.append(renderArmor(m.getArmor(Mech.LOC_CT))).append("|");
@@ -236,29 +236,29 @@ public abstract class UnitStatusFormatter
             sb.append(renderArmor(m.getInternal(Mech.LOC_LT))).append("|");
             sb.append(renderArmor(m.getInternal(Mech.LOC_CT))).append("|");
             sb.append(renderArmor(m.getInternal(Mech.LOC_RT))).append("\\");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
             // arms
             sb.append("     (").append(renderArmor(m.getArmor(Mech.LOC_LARM)));
             sb.append("/ || \\").append(renderArmor(m.getArmor(Mech.LOC_RARM)));
             sb.append(")         (   |  |   )          (");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LARM))).append("/ || \\");
             sb.append(renderArmor(m.getInternal(Mech.LOC_RARM))).append(")");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
             // legs
             sb.append("       /  /\\  \\               /  \\                /  /\\  \\");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
             sb.append("      (").append(renderArmor(m.getArmor(Mech.LOC_LLEG)));
             sb.append("/  \\").append(renderArmor(m.getArmor(Mech.LOC_RLEG)));
             sb.append(")             /    \\              (");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LLEG)));
             sb.append("/  \\").append(renderArmor(m.getInternal(Mech.LOC_RLEG))).append(")");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
         }
         else {
             // head
             sb.append("      .../").append(renderArmor(m.getArmor(Mech.LOC_HEAD))).append("\\...           .../**\\...            .../");
             sb.append(renderArmor(m.getInternal(Mech.LOC_HEAD))).append("\\...");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
             // torsos
             sb.append("     /").append(renderArmor(m.getArmor(Mech.LOC_LT))).append("| ");
             sb.append(renderArmor(m.getArmor(Mech.LOC_CT))).append(" |");
@@ -269,25 +269,25 @@ public abstract class UnitStatusFormatter
             sb.append(renderArmor(m.getInternal(Mech.LOC_LT))).append("| ");
             sb.append(renderArmor(m.getInternal(Mech.LOC_CT))).append(" |");
             sb.append(renderArmor(m.getInternal(Mech.LOC_RT))).append("\\");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
             // arms
             sb.append("    (").append(renderArmor(m.getArmor(Mech.LOC_LARM)));
             sb.append("). -- .(").append(renderArmor(m.getArmor(Mech.LOC_RARM)));
             sb.append(")       (   |    |   )        (");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LARM))).append("). -- .(");
             sb.append(renderArmor(m.getInternal(Mech.LOC_RARM))).append(")");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
             // legs
             sb.append("       /  /\\  \\             /      \\              /  /\\  \\");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
             sb.append("      /").append(renderArmor(m.getArmor(Mech.LOC_LLEG)));
             sb.append(".\\/.").append(renderArmor(m.getArmor(Mech.LOC_RLEG)));
             sb.append("\\           /        \\            /");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LLEG)));
             sb.append(".\\/.").append(renderArmor(m.getInternal(Mech.LOC_RLEG))).append("\\");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
         }
-        sb.append( Settings.NL );
+        sb.append( CommonConstants.NL );
         return sb.toString();
     }
     
@@ -295,7 +295,7 @@ public abstract class UnitStatusFormatter
         StringBuffer sb = new StringBuffer(32);
         sb.append("Surviving troopers: ")
             .append( renderArmor(i.getInternal(0)) )
-            .append( Settings.NL );
+            .append( CommonConstants.NL );
         return sb.toString();
     }
     
@@ -306,7 +306,7 @@ public abstract class UnitStatusFormatter
                 .append( renderArmor(b.getArmor(i)) )
                 .append(" / ")
                 .append( renderArmor(b.getInternal(i)) );
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
         }
         return sb.toString();
     }
@@ -315,7 +315,7 @@ public abstract class UnitStatusFormatter
     {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("         FRONT                INTERNAL");
-        sb.append( Settings.NL );
+        sb.append( CommonConstants.NL );
 
         // head & main gun
         sb.append("        ");
@@ -335,13 +335,13 @@ public abstract class UnitStatusFormatter
         sb.append(" (");
         sb.append(renderArmor(m.getInternal(Protomech.LOC_HEAD),1))
             .append(")");
-        sb.append( Settings.NL );
+        sb.append( CommonConstants.NL );
         if ( m.hasMainGun() ) {
             sb.append("         \\/ \\                   \\/ \\");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
         } else {
             sb.append("          / \\                    / \\");
-            sb.append( Settings.NL );
+            sb.append( CommonConstants.NL );
         }
         // arms & torso
         sb.append("      (")
@@ -357,18 +357,18 @@ public abstract class UnitStatusFormatter
             .append(" \\");
         sb.append(renderArmor(m.getInternal(Protomech.LOC_RARM)))
             .append(")");
-        sb.append( Settings.NL );
+        sb.append( CommonConstants.NL );
         // legs
         sb.append("         | | |                  | | |");
-        sb.append( Settings.NL );
+        sb.append( CommonConstants.NL );
         sb.append("        ( ")
             .append(renderArmor(m.getArmor(Protomech.LOC_LEG)));
         sb.append("  )                ( ");
         sb.append(renderArmor(m.getInternal(Protomech.LOC_LEG)))
             .append("  )");
-        sb.append( Settings.NL );
+        sb.append( CommonConstants.NL );
         sb.append("");
-        sb.append( Settings.NL );
+        sb.append( CommonConstants.NL );
         return sb.toString();
     }
 

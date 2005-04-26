@@ -336,14 +336,13 @@ public class TargetingPhaseDisplay
      * queue to the server.
      */
     private void ready() {
-        if (attacks.isEmpty() && Settings.nagForNoAction) {
+        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
             // comfirm this action
             String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title"); //$NON-NLS-1$
             String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message"); //$NON-NLS-1$
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if ( !response.getShowAgain() ) {
-                Settings.nagForNoAction = false;
-                Settings.save();
+                GUIPreferences.getInstance().setNagForNoAction(false);
             }
             if ( !response.getAnswer() ) {
                 return;
@@ -413,7 +412,7 @@ public class TargetingPhaseDisplay
         int nextWeapon = ce().getNextWeapon(weaponNum);
 
         // check; if there are no ready weapons, you're done.
-        if (nextWeapon == -1 && Settings.autoEndFiring) {
+        if (nextWeapon == -1 && GUIPreferences.getInstance().getAutoEndFiring()) {
             ready();
             return;
         }

@@ -32,6 +32,7 @@ import megamek.client.util.ImageFileFactory;
 import megamek.client.util.RotateFilter;
 import megamek.client.util.widget.BufferedPanel;
 import megamek.client.util.widget.BackGroundDrawer;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 
 /**
@@ -72,7 +73,7 @@ public class TilesetManager {
                                     ImageFileFactory.getInstance() );
         mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
         wreckTileset.loadFromFile("wreckset.txt"); //$NON-NLS-1$
-        hexTileset.loadFromFile(Settings.mapTileset);
+        hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
 
     }
     

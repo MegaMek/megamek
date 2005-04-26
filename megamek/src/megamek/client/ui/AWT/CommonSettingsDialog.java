@@ -17,7 +17,9 @@ package megamek.client;
 import java.awt.*;
 import java.awt.event.*;
 
-import megamek.common.Settings;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.PreferenceManager;
+
 
 public class CommonSettingsDialog extends ClientDialog
     implements ActionListener, ItemListener
@@ -255,48 +257,51 @@ public class CommonSettingsDialog extends ClientDialog
      * Overrides <code>Dialog#show()</code>.
      */
     public void show() {
-        minimapEnabled.setState( Settings.minimapEnabled );
-        autoEndFiring.setState( Settings.autoEndFiring );
-        nagForMASC.setState( Settings.nagForMASC );
-        nagForPSR.setState( Settings.nagForPSR );
-        nagForNoAction.setState( Settings.nagForNoAction );
-        animateMove.setState( Settings.showMoveStep );
-        showWrecks.setState( Settings.showWrecks );
-        soundMute.setState( Settings.soundMute );
-        showMapHexPopup.setState( Settings.showMapHexPopup );
-        tooltipDelay.setText( Integer.toString(Settings.tooltipDelay ) );
+        GUIPreferences gs = GUIPreferences.getInstance();
+        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        
+        minimapEnabled.setState( gs.getMinimapEnabled() );
+        autoEndFiring.setState( gs.getAutoEndFiring() );
+        nagForMASC.setState( gs.getNagForMASC() );
+        nagForPSR.setState( gs.getNagForPSR() );
+        nagForNoAction.setState( gs.getNagForNoAction() );
+        animateMove.setState( gs.getShowMoveStep() );
+        showWrecks.setState( gs.getShowWrecks() );
+        soundMute.setState( gs.getSoundMute() );
+        showMapHexPopup.setState( gs.getShowMapHexPopup() );
+        tooltipDelay.setText( Integer.toString(gs.getTooltipDelay() ) );
 
         // Select the correct char set (give a nice default to start).
         unitStartChar.select(0);
         for ( int loop = 0; loop < unitStartChar.getItemCount(); loop++ ) {
             if ( unitStartChar.getItem(loop).charAt(0) ==
-                 Settings.unitStartChar ) {
+                 PreferenceManager.getClientPreferences().getUnitStartChar() ) {
                 unitStartChar.select(loop);
                 break;
             }
         }
 
-        maxPathfinderTime.setText( Integer.toString(Settings.maxPathfinderTime ) );
+        maxPathfinderTime.setText( Integer.toString(cs.getMaxPathfinderTime() ) );
 
-        rightDragScroll.setState( Settings.rightDragScroll );
-        ctlScroll.setState( Settings.ctlScroll );
-        clickEdgeScroll.setState( Settings.clickEdgeScroll );
-        alwaysRightClickScroll.setState( Settings.alwaysRightClickScroll );
-        autoEdgeScroll.setState( Settings.autoEdgeScroll );
-        scrollSensitivity.setText( Integer.toString(Settings.getScrollSensitivity() ) );
+        rightDragScroll.setState( gs.getRightDragScroll() );
+        ctlScroll.setState( gs.getCtlScroll() );
+        clickEdgeScroll.setState( gs.getClickEdgeScroll() );
+        alwaysRightClickScroll.setState( gs.getAlwaysRightClickScroll() );
+        autoEdgeScroll.setState( gs.getAutoEdgeScroll() );
+        scrollSensitivity.setText( Integer.toString(gs.getScrollSensitivity() ) );
 
-        keepServerlog.setState( Settings.keepServerlog );
+        keepServerlog.setState( cs.keepServerlog() );
         serverlogFilename.setEnabled(keepServerlog.getState());
-        serverlogFilename.setText( Settings.serverlogFilename );
+        serverlogFilename.setText( cs.getServerlogFilename() );
         serverlogMaxSize.setEnabled(keepServerlog.getState());
-        serverlogMaxSize.setText( Integer.toString(Settings.serverlogMaxSize) );
+        serverlogMaxSize.setText( Integer.toString(cs.getServerlogMaxSize()) );
 
-        defaultAutoejectDisabled.setState( Settings.defaultAutoejectDisabled );
-        showUnitId.setState( Settings.showUnitId );
+        defaultAutoejectDisabled.setState( cs.defaultAutoejectDisabled() );
+        showUnitId.setState( cs.getShowUnitId() );
 
-        locale.setText(Settings.getLocaleString());
+        locale.setText(cs.getLocaleString());
         
-        getFocus.setState( Settings.getFocus );
+        getFocus.setState( gs.getFocus() );
         super.show();
     }
 
@@ -311,39 +316,41 @@ public class CommonSettingsDialog extends ClientDialog
      * Update the settings from this dialog's values, then closes it.
      */
     private void update() {
-        Settings.minimapEnabled = minimapEnabled.getState();
-        Settings.autoEndFiring =  autoEndFiring.getState();
-        Settings.nagForMASC =     nagForMASC.getState();
-        Settings.nagForPSR =      nagForPSR.getState();
-        Settings.nagForNoAction = nagForNoAction.getState();
-        Settings.showMoveStep =   animateMove.getState();
-        Settings.showWrecks =     showWrecks.getState();
-        Settings.soundMute =      soundMute.getState();
-        Settings.showMapHexPopup= showMapHexPopup.getState();
-        Settings.tooltipDelay =   Integer.parseInt(tooltipDelay.getText());
-        Settings.unitStartChar=   unitStartChar.getSelectedItem().charAt(0);
+        GUIPreferences gs = GUIPreferences.getInstance();
+        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        
+        gs.setMinimapEnabled(minimapEnabled.getState());
+        gs.setAutoEndFiring(autoEndFiring.getState());
+        gs.setNagForMASC(nagForMASC.getState());
+        gs.setNagForPSR(nagForPSR.getState());
+        gs.setNagForNoAction(nagForNoAction.getState());
+        gs.setShowMoveStep(animateMove.getState());
+        gs.setShowWrecks(showWrecks.getState());
+        gs.setSoundMute(soundMute.getState());
+        gs.setShowMapHexPopup(showMapHexPopup.getState());
+        gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
+        cs.setUnitStartChar(unitStartChar.getSelectedItem().charAt(0));
 
-        Settings.rightDragScroll        = rightDragScroll.getState();
-        Settings.ctlScroll              = ctlScroll.getState();
-        Settings.clickEdgeScroll        = clickEdgeScroll.getState();
-        Settings.alwaysRightClickScroll = alwaysRightClickScroll.getState();
-        Settings.autoEdgeScroll         = autoEdgeScroll.getState();
-        Settings.setScrollSensitivity( Integer.parseInt(scrollSensitivity.getText()) );
+        gs.setRightDragScroll(rightDragScroll.getState());
+        gs.setCtlScroll(ctlScroll.getState());
+        gs.setClickEdgeScroll(clickEdgeScroll.getState());
+        gs.setAlwaysRightClickScroll(alwaysRightClickScroll.getState());
+        gs.setAutoEdgeScroll(autoEdgeScroll.getState());
+        gs.setScrollSensitivity(Integer.parseInt(scrollSensitivity.getText()) );
 
-        Settings.maxPathfinderTime      = Integer.parseInt(maxPathfinderTime.getText());
+        cs.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
 
-        Settings.getFocus               = getFocus.getState();
+        gs.setGetFocus(getFocus.getState());
 
-        Settings.keepServerlog          = keepServerlog.getState();
-        Settings.serverlogFilename      = serverlogFilename.getText();
-        Settings.serverlogMaxSize       = Integer.parseInt(serverlogMaxSize.getText());
+        cs.setKeepServerlog(keepServerlog.getState());
+        cs.setServerlogFilename(serverlogFilename.getText());
+        cs.setServerlogMaxSize(Integer.parseInt(serverlogMaxSize.getText()));
 
-        Settings.defaultAutoejectDisabled = defaultAutoejectDisabled.getState();
-        Settings.showUnitId             = showUnitId.getState();
+        cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.getState());
+        cs.setShowUnitId(showUnitId.getState());
 
-        Settings.setLocale(locale.getText());
+        cs.setLocale(locale.getText());
 
-        Settings.save();
         this.setVisible( false );
     }
 

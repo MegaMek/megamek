@@ -3338,7 +3338,7 @@ public class BoardView1
             this.entityM = m;
             this.entityId = e.getId();
             this.masterId = m.getId();
-            this.spriteColor = e.getOwner().getColor();
+            this.spriteColor = PlayerColors.getColor(e.getOwner().getColorIndex());
 
             if(e.getPosition() == null || m.getPosition() == null) {
                 C3Poly = new Polygon();
@@ -3465,7 +3465,7 @@ public class BoardView1
             this.target = game.getTarget(targetType, targetId);
 
             // color?
-            attackColor = ae.getOwner().getColor();
+            attackColor = PlayerColors.getColor(ae.getOwner().getColorIndex());
             //angle of line connecting two hexes
             this.an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
             makePoly();

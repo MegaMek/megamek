@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.io.*;
 
+import megamek.client.util.PlayerColors;
 import megamek.common.*;
 import megamek.common.actions.*;
 
@@ -526,7 +527,7 @@ public class MiniMap extends Canvas
             yPoints[3] = yPoints[0]-2;
             yPoints[2] = yPoints[1]-2;
         };
-        g.setColor(source.getOwner().getColor());
+        g.setColor(PlayerColors.getColor(source.getOwner().getColorIndex()));
         g.fillPolygon(xPoints,yPoints,4);
         g.setColor(Color.black);
         g.drawPolygon(xPoints,yPoints,4);
@@ -541,7 +542,7 @@ public class MiniMap extends Canvas
                     && otherAttack.getEntityId() == attack.getTargetId() ) {
                     // attackTarget _must_ be an entity since it's shooting back (?)
                     Entity attackTarget = m_game.getEntity(otherAttack.getEntityId());
-                    g.setColor(attackTarget.getOwner().getColor());
+                    g.setColor(PlayerColors.getColor(attackTarget.getOwner().getColorIndex()));
 
                     xPoints[0] = xPoints[3];
                     yPoints[0] = yPoints[3];
@@ -622,7 +623,7 @@ public class MiniMap extends Canvas
             yPoints[3] = baseY;
         }
 
-        g.setColor (entity.getOwner().getColor());
+        g.setColor (PlayerColors.getColor(entity.getOwner().getColorIndex()));
         if (! entity.isSelectableThisTurn()) {
             // entity has moved (or whatever) already
             g.setColor (g.getColor().darker());

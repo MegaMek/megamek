@@ -193,7 +193,7 @@ public class HexTileset {
      */
     public void trackHexImages(Hex hex, MediaTracker tracker) {
         // add base
-        tracker.addImage(hex.getBase(), 1);
+        tracker.addImage((Image)hex.getBase(), 1);
         
         // add superImgs
         List superImgs = hex.getSupers();

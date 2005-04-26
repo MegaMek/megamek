@@ -29,6 +29,7 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import java.io.File;
 import megamek.client.util.ImageFileFactory;
+import megamek.client.util.PlayerColors;
 import megamek.client.util.RotateFilter;
 import megamek.client.util.widget.BufferedPanel;
 import megamek.client.util.widget.BackGroundDrawer;
@@ -142,7 +143,7 @@ public class TilesetManager {
         if (hex.getBase() == null) {
             hexTileset.assignMatch(hex, comp);
         }
-        return hex.getBase();
+        return (Image)hex.getBase();
     }
     
     /**
@@ -291,7 +292,7 @@ public class TilesetManager {
             wreck = wreckTileset.imageFor(entity, comp);
         }
         Player player = entity.getOwner();
-        int tint = player.getColorRGB();
+        int tint = PlayerColors.getColorRGB(player.getColorIndex());
 
         Image camo = getPlayerCamo( player );
         EntityImage entityImage = null;

@@ -26,6 +26,7 @@ import gov.nist.gui.TabPanel;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotGUI;
 import megamek.client.bot.TestBot;
+import megamek.client.util.PlayerColors;
 import megamek.client.util.widget.BufferedPanel;
 import megamek.client.util.widget.ImageButton;
 import megamek.common.*;
@@ -262,7 +263,7 @@ public class ChatLounge
         if (null != images) {
             butCamo.setImage(images[0]);
         } else {
-            butCamo.setBackground(new Color(Player.colorRGBs[player.getColorIndex()]));
+            butCamo.setBackground(PlayerColors.getColor(player.getColorIndex()));
         }
 
         // layout

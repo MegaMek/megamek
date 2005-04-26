@@ -16,7 +16,6 @@ package megamek.common;
 
 import java.util.*;
 import java.io.*;
-import java.awt.*;
 import com.sun.java.util.collections.HashMap;
 import com.sun.java.util.collections.HashSet;
 import com.sun.java.util.collections.Iterator;
@@ -2044,6 +2043,32 @@ public class Board
 
         }
 
+    }
+
+    protected static class Point {
+        
+        public int x;
+        public int y;
+        
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+        
+        public Point(Point other) {
+            this.x = other.x;
+            this.y = other.y;
+        }
+        
+        /**
+         * Set the location 
+         * @param x x coordinate
+         * @param y y coordinate
+         */
+        public void setLocation(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     /**

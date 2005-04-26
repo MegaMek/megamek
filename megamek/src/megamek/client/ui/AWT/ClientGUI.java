@@ -27,6 +27,7 @@ import com.sun.java.util.collections.Iterator;
 import com.sun.java.util.collections.Map;
 import com.sun.java.util.collections.TreeMap;
 
+import megamek.client.util.PlayerColors;
 import megamek.client.util.widget.BufferedPanel;
 import megamek.common.*;
 import megamek.common.util.Distractable;
@@ -1235,7 +1236,7 @@ public class ClientGUI
 
     public void loadPreviewImage(BufferedPanel bp, Entity entity, Player player) {
         Image camo = bv.getTilesetManager().getPlayerCamo(player);
-        int tint = player.getColorRGB();
+        int tint = PlayerColors.getColorRGB(player.getColorIndex());
         bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
     }
 

@@ -18,6 +18,8 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+
+import megamek.client.util.PlayerColors;
 import megamek.client.util.widget.ImageButton;
 import megamek.common.Player;
 
@@ -129,7 +131,7 @@ public class CamoChoiceListener implements ItemListener {
                 if ( Player.colorNames[color].equals( itemName ) ) {
                     butCamo.setLabel( Messages.getString("CamoChoiceListener.NoCammo") ); //$NON-NLS-1$
                     butCamo.setBackground
-                        ( new Color(Player.colorRGBs[color]) );
+                        (PlayerColors.getColor(color));
                     player.setColorIndex( color );
                     break;
                 }

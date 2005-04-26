@@ -27,6 +27,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.client.*;
 import megamek.client.util.AdvancedLabel;
+import megamek.client.util.PlayerColors;
 import megamek.client.util.widget.*;
 import megamek.client.bot.*;
 import megamek.server.*;
@@ -1165,7 +1166,7 @@ class ScenarioDialog extends Dialog implements ActionListener {
             final ImageButton curButton = m_camoButtons[x];
             curButton.setLabel("No Camo");
             curButton.setPreferredSize(84, 72);
-            curButton.setBackground(new Color(Player.colorRGBs[x]));
+            curButton.setBackground(PlayerColors.getColor(x));
             curButton.setActionCommand("camo");
 
             // When a camo button is pressed, remove any previous

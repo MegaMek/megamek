@@ -16,7 +16,6 @@ package megamek.common;
 
 import com.sun.java.util.collections.*;
 import java.io.*;
-import java.awt.Image;
 import java.util.StringTokenizer;
 
 /**
@@ -31,7 +30,7 @@ public class Hex
     private Terrain[] terrains;
     private String theme;
     
-    private transient Image base = null;
+    private transient Object base = null;
     private transient List supers = null;
     
     /** Constructs clear, plain hex at level 0. */
@@ -85,19 +84,51 @@ public class Hex
     public void setTheme(String theme) {
         this.theme = theme;
     }
-    
-    public Image getBase() {
+
+    /**
+     * Returns base image for hex. It's GUI implementation specific,
+     * it might be AWT/SWT image but not neccesary. For hypothetic 
+     * 3D client for example it could be something else. 
+     * @return base image object
+     * @see megamek.client.HexTileset
+     * @see Hex#setBase(Object)
+     * @see Hex#getSupers()
+     */    
+    public Object getBase() {
         return base;
     }
-    
-    public void setBase(Image base) {
+
+    /**
+     * Sets the base image for hex. It's GUI implementation specific,
+     * it might be AWT/SWT image but not neccesary. For hypothetic 
+     * 3D client for example it could be something else. 
+     * @param base base image object
+     * @see megamek.client.HexTileset
+     * @see Hex#getBase()
+     * @see Hex#setSupers(List)
+     */    
+    public void setBase(Object base) {
         this.base = base;
     }
-    
+
+    /**
+     * Sets the list of additional/super images for hex. 
+     * It's GUI implementation specific, it might be list of AWT/SWT 
+     * images but not neccesary. For hypothetic 3D client for example 
+     * it could be something else. 
+     * @param supers list of super image objects
+     */    
     public void setSupers(List supers) {
         this.supers = supers;
     }
     
+    /**
+     * returns the list of additional/super images for hex. 
+     * It's GUI implementation specific, it might be AWT/SWT images 
+     * but not neccesary. For hypothetic 3D client for example 
+     * it could be something else.
+     * @return additional/super images list 
+     */
     public List getSupers() {
         return supers;
     }

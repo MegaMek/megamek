@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import megamek.client.util.AdvancedLabel;
 import megamek.client.util.ImageFileFactory;
+import megamek.client.util.PlayerColors;
 import megamek.client.util.widget.ImageButton;
 import megamek.common.Player;
 import megamek.common.util.DirectoryItems;
@@ -165,7 +166,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             // Find the correct background color.
             for ( int color = 0; color < Player.colorNames.length; color++ ) {
                 if ( Player.colorNames[color].equals( item ) ) {
-                    keep.setBackground( new Color(Player.colorRGBs[color]) );
+                    keep.setBackground(PlayerColors.getColor(color));
                     prevCat = category;
                     prevItem = item;
                     break;
@@ -412,7 +413,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         if ( Player.NO_CAMO.equals( curCat ) ) {
             select.setImage( null );
             select.setBackground
-                ( new Color(Player.colorRGBs[items.getSelectedIndex()]) );
+                (PlayerColors.getColor(items.getSelectedIndex()));
             return;
         }
 

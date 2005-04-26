@@ -24,6 +24,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import megamek.client.CamoChoiceDialog;
+import megamek.client.util.PlayerColors;
 import megamek.client.util.widget.ImageButton;
 import megamek.common.Player;
 
@@ -94,7 +95,7 @@ public class TestCamoChoice extends Frame implements ActionListener,
             String item = dialog.getItemName();
             for ( int color = 0; color < Player.colorNames.length; color++ ) {
                 if ( Player.colorNames[color].equals( item ) ) {
-                    butCamo.setBackground( new Color(Player.colorRGBs[color]) );
+                    butCamo.setBackground(PlayerColors.getColor(color));
                     break;
                 }
             }

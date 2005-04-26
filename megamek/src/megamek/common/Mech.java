@@ -601,7 +601,7 @@ public abstract class Mech
         }
         int waterLevel = 0;
         if (!isOffBoard()) {
-            waterLevel = game.board.getHex(getPosition()).levelOf(Terrain.WATER);
+            waterLevel = game.board.getHex(getPosition()).terrainLevel(Terrains.WATER);
         }        
         if (waterLevel <= 0) {
             return getJumpMP();
@@ -779,14 +779,14 @@ public abstract class Mech
             return 0;
         }
         
-        Hex curHex = game.board.getHex(getPosition());
+        IHex curHex = game.board.getHex(getPosition());
         // are we even in water?  is it depth 1+
-        if (curHex.levelOf(Terrain.WATER) <= 0) {
+        if (curHex.terrainLevel(Terrains.WATER) <= 0) {
             return 0;
         }
         
         // are we entirely underwater?
-        if (isProne() || curHex.levelOf(Terrain.WATER) >= 2) {
+        if (isProne() || curHex.terrainLevel(Terrains.WATER) >= 2) {
             return getHeatCapacity();
         }
         

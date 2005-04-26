@@ -148,7 +148,7 @@ public class Tank
      * Hovercraft move on the surface of the water
      */
     public int elevationOccupied(Hex hex) {
-       if (movementType == MovementType.HOVER && hex.contains(Terrain.WATER)) {
+       if (movementType == MovementType.HOVER && hex.containsTerrain(Terrains.WATER)) {
            return hex.surface();
        } else {
            return hex.floor();
@@ -161,12 +161,12 @@ public class Tank
     public boolean isHexProhibited(Hex hex) {
         switch(movementType) {
             case MovementType.TRACKED :
-                return hex.levelOf(Terrain.WOODS) > 1 || hex.levelOf(Terrain.WATER) > 0;
+                return hex.terrainLevel(Terrains.WOODS) > 1 || hex.terrainLevel(Terrains.WATER) > 0;
             case MovementType.WHEELED :
-                return hex.contains(Terrain.WOODS) || hex.contains(Terrain.ROUGH) ||
-                    hex.levelOf(Terrain.WATER) > 0 || hex.contains(Terrain.RUBBLE);
+                return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH) ||
+                    hex.terrainLevel(Terrains.WATER) > 0 || hex.containsTerrain(Terrains.RUBBLE);
             case MovementType.HOVER :
-                return hex.contains(Terrain.WOODS);
+                return hex.containsTerrain(Terrains.WOODS);
             default :
                 return false;
         }

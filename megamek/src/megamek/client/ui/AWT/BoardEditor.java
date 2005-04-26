@@ -20,69 +20,70 @@ import java.awt.event.*;
 import java.io.*;
 import keypoint.PngEncoder;
 
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.common.*;
 
-public class BoardEditor extends Container
-    implements BoardListener, ItemListener, ActionListener, TextListener,
-    KeyListener, WindowListener {
+public class BoardEditor extends Container implements ItemListener,
+        ActionListener, TextListener, KeyListener, WindowListener {
 
-    private Frame               frame = new Frame();
-    
-    private Game                game = new Game();
-    private Board               board = game.getBoard();
-    private BoardView1          bv;
-    private CommonMenuBar       menuBar = new CommonMenuBar();
-    private CommonAboutDialog   about  = null;
-    private CommonHelpDialog    help   = null;
-    private CommonSettingsDialog        setdlg = null;
+    private Frame frame = new Frame();
 
-    private Hex                 curHex = new Hex();
+    private Game game = new Game();
+    private IBoard board = game.getBoard();
+    private BoardView1 bv;
+    private CommonMenuBar menuBar = new CommonMenuBar();
+    private CommonAboutDialog about = null;
+    private CommonHelpDialog help = null;
+    private CommonSettingsDialog setdlg = null;
 
-    private String              curpath, curfile, curfileImage;
-    
-    private boolean             ctrlheld, altheld;
+    private IHex curHex = new Hex();
+
+    private String curpath, curfile, curfileImage;
+
+    private boolean ctrlheld, altheld;
     
     // buttons and labels and such:
-    private HexCanvas           canHex;
-    
-    private Label               labElev;
-    private TextField           texElev;
-    private Button              butElevUp;
-    private Button              butElevDown;
-    
-    private Label               labTerrain;
-    private java.awt.List       lisTerrain;
-    
-    private Button              butDelTerrain;
-    
-    private Panel               panTerrainType;
-    private Choice              choTerrainType;
-    private TextField           texTerrainLevel;
-    
-    private Panel               panTerrExits;
-    private Checkbox            cheTerrExitSpecified;
-    private TextField           texTerrExits;
-    private Button              butTerrExits;
+    private HexCanvas canHex;
 
-    private Panel               panRoads;
-    private Checkbox            cheRoadsAutoExit;
+    private Label labElev;
+    private TextField texElev;
+    private Button butElevUp;
+    private Button butElevDown;
 
-    private Label               labTheme;
-    private TextField           texTheme;
+    private Label labTerrain;
+    private java.awt.List lisTerrain;
 
-    private Button              butAddTerrain;
-    
-    private Label               blankL;
-    
-    private Label               labBoard;
-    private Panel               panButtons;
-    private Button              butBoardNew, butBoardLoad;
-    private Button              butBoardSave, butBoardSaveAs;
-    private Button              butBoardSaveAsImage;
-    private Button              butMiniMap;
-    
-    private Dialog              minimapW;
-    private MiniMap             minimap;
+    private Button butDelTerrain;
+
+    private Panel panTerrainType;
+    private Choice choTerrainType;
+    private TextField texTerrainLevel;
+
+    private Panel panTerrExits;
+    private Checkbox cheTerrExitSpecified;
+    private TextField texTerrExits;
+    private Button butTerrExits;
+
+    private Panel panRoads;
+    private Checkbox cheRoadsAutoExit;
+
+    private Label labTheme;
+    private TextField texTheme;
+
+    private Button butAddTerrain;
+
+    private Label blankL;
+
+    private Label labBoard;
+    private Panel panButtons;
+    private Button butBoardNew, butBoardLoad;
+    private Button butBoardSave, butBoardSaveAs;
+    private Button butBoardSaveAsImage;
+    private Button butMiniMap;
+
+    private Dialog minimapW;
+    private MiniMap minimap;
     
     /**
      * Creates and lays out a new Board Editor frame.
@@ -98,7 +99,35 @@ public class BoardEditor extends Container
         this.addKeyListener(bv);
         this.addKeyListener(this);
         bv.addKeyListener(this);
-        board.addBoardListener(this);
+        bv.addBoardViewListener(new BoardViewListener(){
+
+            public void boardHexMoused(BoardViewEvent b) {
+                bv.cursor(b.getCoords());
+                if(altheld) {
+                    setCurrentHex(board.getHex(b.getCoords()));
+                    //board.highlight(b.getCoords());
+                }
+                if(ctrlheld) {
+                    if(!board.getHex(b.getCoords()).equals(curHex)) {
+                        paintHex(b.getCoords());
+                    }
+                }
+            }
+            public void boardHexCursor(BoardViewEvent b) {}
+
+            public void boardHexHighlighted(BoardViewEvent b) {}
+
+            public void boardHexSelected(BoardViewEvent b) {}
+
+            public void boardFirstLOSHex(BoardViewEvent b) {}
+
+            public void boardSecondLOSHex(BoardViewEvent b, Coords c) {}
+
+            public void finishedMovingUnits(BoardViewEvent b) {}
+
+            public void selectUnit(BoardViewEvent b) {}
+            
+        });
 
         bv.setUseLOSTool(false);
 
@@ -195,8 +224,8 @@ public class BoardEditor extends Container
         butDelTerrain.addActionListener(this);
         
         choTerrainType = new Choice();
-        for (int i = 1; i < Terrain.SIZE; i++) {
-            choTerrainType.add(Terrain.getName(i));
+        for (int i = 1; i < Terrains.SIZE; i++) {
+            choTerrainType.add(Terrains.getName(i));
         }
         
         texTerrainLevel = new TextField("0", 1); //$NON-NLS-1$
@@ -322,7 +351,7 @@ public class BoardEditor extends Container
      * location.
      */
     public void paintHex(Coords c) {
-        board.setHex(c, (Hex)curHex.clone());
+        board.setHex(c, (Hex)curHex.duplicate());
     }
     
     /**
@@ -330,8 +359,8 @@ public class BoardEditor extends Container
      * 
      * @param hex            hex to set.
      */
-    public void setCurrentHex(Hex hex) {
-        curHex = (Hex)hex.clone();
+    public void setCurrentHex(IHex hex) {
+        curHex = (Hex)hex.duplicate();
         
         texElev.setText(Integer.toString(curHex.getElevation()));
             
@@ -352,8 +381,8 @@ public class BoardEditor extends Container
      */
     public void refreshTerrainList() {
         lisTerrain.removeAll();
-        for (int i = 0; i < Terrain.SIZE; i++) {
-            Terrain terrain = curHex.getTerrain(i);
+        for (int i = 0; i < Terrains.SIZE; i++) {
+            ITerrain terrain = curHex.getTerrain(i);
             if (terrain != null) {
                 lisTerrain.add(terrain.toString());
             }
@@ -364,19 +393,19 @@ public class BoardEditor extends Container
      * Returns a new instance of the terrain that is currently entered in the
      * terrain input fields
      */
-    private Terrain enteredTerrain() {
-        int type = Terrain.parse(choTerrainType.getSelectedItem());
+    private ITerrain enteredTerrain() {
+        int type = Terrains.getType(choTerrainType.getSelectedItem());
         int level = Integer.parseInt(texTerrainLevel.getText());
         boolean exitsSpecified = cheTerrExitSpecified.getState();
         int exits = Integer.parseInt(texTerrExits.getText());
-        return new Terrain(type, level, exitsSpecified, exits);
+        return Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
     }
     
     /**
      * Add or set the terrain to the list based on the fields.
      */
     private void addSetTerrain() {
-        Terrain toAdd = enteredTerrain();
+        ITerrain toAdd = enteredTerrain();
         curHex.addTerrain(toAdd);
         refreshTerrainList();
         canHex.repaint();
@@ -387,10 +416,10 @@ public class BoardEditor extends Container
      * terrain in the list.
      */
     private void refreshTerrainFromList() {
-        Terrain terrain = new Terrain(lisTerrain.getSelectedItem());
+        ITerrain terrain = Terrains.getTerrainFactory().createTerrain(lisTerrain.getSelectedItem());
         terrain = curHex.getTerrain(terrain.getType());
 
-        choTerrainType.select(Terrain.getName(terrain.getType()));
+        choTerrainType.select(Terrains.getName(terrain.getType()));
         texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
         cheTerrExitSpecified.setState(terrain.hasExitsSpecified());
         texTerrExits.setText(Integer.toString(terrain.getExits()));
@@ -602,52 +631,6 @@ public class BoardEditor extends Container
 
         boardSaveImage();
     }
-
-    //
-    // BoardListener
-    //
-    public void boardHexMoused(BoardEvent b) {
-        board.cursor(b.getCoords());
-        if(altheld) {
-            setCurrentHex(board.getHex(b.getCoords()));
-//            board.highlight(b.getCoords());
-        }
-        if(ctrlheld) {
-            if(!board.getHex(b.getCoords()).equals(curHex)) {
-                paintHex(b.getCoords());
-            }
-        }
-    }
-    public void boardHexSelected(BoardEvent b) {
-        ;
-    }
-    public void boardHexCursor(BoardEvent b) {
-        ;
-    }
-    public void boardHexHighlighted(BoardEvent b) {
-        ;
-    }
-    public void boardChangedHex(BoardEvent b) {
-        ;
-    }
-    public void boardChangedEntity(BoardEvent b) {
-        ;
-    }
-    public void boardNewEntities(BoardEvent b) {
-        ;
-    }
-    public void boardNewVis(BoardEvent b) {
-        ;
-    }
-    public void boardNewBoard(BoardEvent b) {
-        ;
-    }
-    public void boardFirstLOSHex(BoardEvent b) {
-        ;
-    }
-    public void boardSecondLOSHex(BoardEvent b, Coords c) {
-        ;
-    }
     
     //
     // ItemListener
@@ -658,8 +641,9 @@ public class BoardEditor extends Container
         }
         else if ( ie.getSource() == cheRoadsAutoExit ) {
             // Set the new value for the option, and refrest the board.
-            board.setRoadsAutoExit( cheRoadsAutoExit.getState() );
-            board.newData( board );
+            board.setRoadsAutoExit(cheRoadsAutoExit.getState());
+            // TODO What does it mean ? board.newData( board );
+            bv.updateBoard();
             canHex.repaint();
         }
     }
@@ -691,11 +675,11 @@ public class BoardEditor extends Container
     public void keyPressed(KeyEvent ke) {
         switch(ke.getKeyCode()) {
         case KeyEvent.VK_CONTROL : 
-            paintHex(board.lastCursor);
+            paintHex(bv.getLastCursor());
             ctrlheld = true;
             break;
         case KeyEvent.VK_ALT : 
-            setCurrentHex(board.getHex(board.lastCursor));
+            setCurrentHex(board.getHex(bv.getLastCursor()));
             altheld = true;
             break;
         }
@@ -769,7 +753,7 @@ public class BoardEditor extends Container
         } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAsImage")) { //$NON-NLS-1$
             boardSaveAsImage();
         } else if (ae.getSource() == butDelTerrain && lisTerrain.getSelectedItem() != null) {
-            Terrain toRemove = new Terrain(lisTerrain.getSelectedItem());
+            ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(lisTerrain.getSelectedItem());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             canHex.repaint();
@@ -868,7 +852,7 @@ public class BoardEditor extends Container
     }    
     public void windowOpened(java.awt.event.WindowEvent windowEvent) {
     }
-    public void boardNewAttack(BoardEvent a) {
+    public void boardNewAttack(BoardViewEvent a) {
         ;
     }
 

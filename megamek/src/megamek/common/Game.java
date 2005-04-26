@@ -25,6 +25,25 @@ import java.util.Hashtable;
 import java.io.*;
 
 import megamek.common.actions.*;
+import megamek.common.event.GameAttackEvent;
+import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameEndEvent;
+import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GameEntityNewEvent;
+import megamek.common.event.GameEntityNewOffboardEvent;
+import megamek.common.event.GameEntityRemoveEvent;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameMapQueryEvent;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GamePlayerConnectedEvent;
+import megamek.common.event.GamePlayerDisconnectedEvent;
+import megamek.common.event.GameReportEvent;
+import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
 
 /**
@@ -32,28 +51,8 @@ import megamek.common.options.GameOptions;
  * Both the Client and the Server should have one of these objects and it
  * is their job to keep it synched.
  */
-public class Game implements Serializable
+public class Game implements Serializable, IGame
 {
-    public static final int PHASE_UNKNOWN           = -1;
-    public static final int PHASE_LOUNGE            = 1;
-    public static final int PHASE_SELECTION         = 2;
-    public static final int PHASE_EXCHANGE          = 3;
-    public static final int PHASE_DEPLOYMENT        = 4;
-    public static final int PHASE_INITIATIVE        = 5;
-    public static final int PHASE_TARGETING         = 6; 
-    public static final int PHASE_MOVEMENT          = 7; 
-    public static final int PHASE_MOVEMENT_REPORT   = 8; 
-    public static final int PHASE_OFFBOARD          = 9; 
-    public static final int PHASE_OFFBOARD_REPORT   = 10;
-    public static final int PHASE_FIRING            = 11;
-    public static final int PHASE_FIRING_REPORT     = 12;
-    public static final int PHASE_PHYSICAL          = 13;
-    public static final int PHASE_END               = 14;
-    public static final int PHASE_VICTORY           = 15;
-    public static final int PHASE_DEPLOY_MINEFIELDS = 16;
-    public static final int PHASE_STARTING_SCENARIO = 17;
-    public static final int PHASE_SET_ARTYAUTOHITHEXES = 18;
-
     /**
      * Define constants to describe the condition a
      * unit was in when it wass removed from the game.
@@ -61,7 +60,7 @@ public class Game implements Serializable
 
     private GameOptions options = new GameOptions();
 
-    public Board board = new Board();
+    public IBoard board = new Board();
 
     private Vector entities = new Vector();
     private Hashtable entityIds = new Hashtable();
@@ -134,22 +133,28 @@ public class Game implements Serializable
         ;
     }
 
-    // If it's a mech in the first hex used by the LOS tool
+    public IBoard getBoard() {
+        return board;
+    }
+
+    public void setBoard(IBoard board) {
+        IBoard oldBoard = this.board;  
+        this.board = board;
+        processGameEvent(new GameBoardNewEvent(this, oldBoard, board));
+    }
+
     public boolean getMechInFirst() {
       return mechInFirstHex;
     }
 
-    // If it's a mech in the second hex used by the LOS tool
     public boolean getMechInSecond() {
       return mechInSecondHex;
     }
 
-    // If it's a mech in the first hex used by the LOS tool
     public void setMechInFirst(boolean mech) {
       mechInFirstHex = mech;
     }
 
-    // If it's a mech in the second hex used by the LOS tool
     public void setMechInSecond(boolean mech) {
       mechInSecondHex = mech;
     }
@@ -184,39 +189,72 @@ public class Game implements Serializable
     public Enumeration getMinedCoords() {
         return minefields.keys();
     }
+
     public void addMinefield(Minefield mf) {
-      Vector mfs = (Vector) minefields.get(mf.getCoords());
-      if (mfs == null) {
-        mfs = new Vector();
-        mfs.addElement(mf);
-        minefields.put(mf.getCoords(), mfs);
-        return;
-      }
-      mfs.addElement(mf);
+        addMinefieldHelper(mf);
+        processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    public void removeMinefield(Minefield mf) {
-      Vector mfs = (Vector) minefields.get(mf.getCoords());
-      if (mfs == null) {
-        return;
-      }
-
-      Enumeration e = mfs.elements();
-      while (e.hasMoreElements()) {
-        Minefield mftemp = (Minefield) e.nextElement();
-        if (mftemp.equals(mf)) {
-          mfs.removeElement(mftemp);
-          break;
+    public void addMinefields(Vector minefields) {
+        for (int i = 0; i < minefields.size(); i++) {
+            Minefield mf = (Minefield) minefields.elementAt(i);
+            addMinefieldHelper(mf);
         }
-      }
-      if (mfs.isEmpty()) {
-        minefields.remove(mf.getCoords());
-      }
-  }
+        processGameEvent(new GameBoardChangeEvent(this));
+    }
 
-  public void clearMinefields() {
-    minefields.clear();
-  }
+    public void setMinefields(Vector minefields) {
+        clearMinefieldsHelper();
+        for (int i = 0; i < minefields.size(); i++) {
+            Minefield mf = (Minefield) minefields.elementAt(i);
+            addMinefieldHelper(mf);
+        }
+        processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    protected void addMinefieldHelper(Minefield mf) {
+        Vector mfs = (Vector) minefields.get(mf.getCoords());
+        if (mfs == null) {
+          mfs = new Vector();
+          mfs.addElement(mf);
+          minefields.put(mf.getCoords(), mfs);
+          return;
+        }
+        mfs.addElement(mf);
+      }
+
+    public void removeMinefield(Minefield mf) {
+        removeMinefieldHelper(mf);
+        processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    public void removeMinefieldHelper(Minefield mf) {
+        Vector mfs = (Vector) minefields.get(mf.getCoords());
+        if (mfs == null) {
+            return;
+        }
+        
+        Enumeration e = mfs.elements();
+        while (e.hasMoreElements()) {
+            Minefield mftemp = (Minefield) e.nextElement();
+            if (mftemp.equals(mf)) {
+                mfs.removeElement(mftemp);
+                break;
+            }
+        }
+        if (mfs.isEmpty()) {
+            minefields.remove(mf.getCoords());
+        }
+    }
+
+    public void clearMinefields() {
+        clearMinefieldsHelper();
+        processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    protected void clearMinefieldsHelper() {
+        minefields.clear();
+    }
 
     public Vector getVibrabombs() {
       return vibrabombs;
@@ -243,14 +281,9 @@ public class Game implements Serializable
             System.err.println( "Can't set the game options to null!" );
         } else {
             this.options = options;
-        }
+            processGameEvent(new GameSettingsChangeEvent(this));
+        }        
     }
-
-
-    public Board getBoard() {
-        return board;
-    }
-
 
     /**
      * Return an enumeration of teams in the game
@@ -316,6 +349,7 @@ public class Game implements Serializable
         player.setGame(this);
         players.addElement(player);
         playerIds.put(new Integer(id), player);
+        updatePlayer(player);
     }
 
     public void setPlayer(int id, Player player) {
@@ -323,11 +357,18 @@ public class Game implements Serializable
         player.setGame(this);
         players.setElementAt(player, players.indexOf(oldPlayer));
         playerIds.put(new Integer(id), player);
+        updatePlayer(player);
+    }
+
+    protected void updatePlayer(Player player) {
+        processGameEvent(new GamePlayerChangeEvent(this,player));
     }
 
     public void removePlayer(int id) {
-        players.removeElement(getPlayer(id));
+        Player playerToRemove = getPlayer(id); 
+        players.removeElement(playerToRemove);
         playerIds.remove(new Integer(id));
+        processGameEvent(new GamePlayerChangeEvent(this,playerToRemove));
     }
 
     /**
@@ -503,6 +544,7 @@ public class Game implements Serializable
     /** Sets the current turn index */
     public void setTurnIndex(int turnIndex) {
         this.turnIndex = turnIndex;
+        processGameEvent(new GameTurnChangeEvent(this,getPlayer(getTurn().getPlayerNum())));
     }
 
     /** Returns the current turn vector */
@@ -521,6 +563,21 @@ public class Game implements Serializable
 
     public void setPhase(int phase) {
         this.phase = phase;
+        // Handle phase-specific items.
+        switch (phase) {
+            case PHASE_LOUNGE :
+                reset();
+                break;
+            case Game.PHASE_PHYSICAL :
+                resetActions();
+                break;
+            case Game.PHASE_INITIATIVE :
+                resetActions();
+                resetCharges();
+                break;
+        }
+
+        processGameEvent(new GamePhaseChangeEvent(this));        
     }
 
     public int getLastPhase() {
@@ -626,6 +683,7 @@ public class Game implements Serializable
     public void setEntitiesVector(Vector entities) {
         this.entities = entities;
         reindexEntities();
+        processGameEvent(new GameEntityNewEvent(this));
     }
 
     /**
@@ -633,25 +691,6 @@ public class Game implements Serializable
      */
     public Vector getOutOfGameEntitiesVector() {
         return vOutOfGame;
-    }
-
-    /**
-     * Returns an out-of-game entity.
-     *
-     * @param   id the <code>int</code> ID of the out-of-game entity.
-     * @return  the out-of-game <code>Entity</code> with that ID.  If no
-     *          out-of-game entity has that ID, returns a <code>null</code>.
-     */
-    public Entity getOutOfGameEntity (int id) {
-        Entity match = null;
-        Enumeration iter = vOutOfGame.elements();
-        while (null == match && iter.hasMoreElements()) {
-            Entity entity = (Entity) iter.nextElement();
-            if (id == entity.getId()) {
-                match = entity;
-            }
-        }
-        return match;
     }
 
     /**
@@ -673,7 +712,28 @@ public class Game implements Serializable
             final Entity entity = (Entity)i.nextElement();
             entity.setGame(this);
         }
+        processGameEvent(new GameEntityNewOffboardEvent(this));
     }
+
+    /**
+     * Returns an out-of-game entity.
+     *
+     * @param   id the <code>int</code> ID of the out-of-game entity.
+     * @return  the out-of-game <code>Entity</code> with that ID.  If no
+     *          out-of-game entity has that ID, returns a <code>null</code>.
+     */
+    public Entity getOutOfGameEntity (int id) {
+        Entity match = null;
+        Enumeration iter = vOutOfGame.elements();
+        while (null == match && iter.hasMoreElements()) {
+            Entity entity = (Entity) iter.nextElement();
+            if (id == entity.getId()) {
+                match = entity;
+            }
+        }
+        return match;
+    }
+
 
     /**
      * Returns a <code>Vector</code> containing the <code>Entity</code>s
@@ -915,22 +975,25 @@ public class Game implements Serializable
         entities.addElement(entity);
         entityIds.put(new Integer(id), entity);
         
-        
         if(id > lastEntityId) lastEntityId = id;
+        processGameEvent(new GameEntityNewEvent(this));
     }
 
     public void setEntity(int id, Entity entity) {
+        setEntity(id,entity,null);
+    }
+
+    public void setEntity(int id, Entity entity, Vector movePath) {
         final Entity oldEntity = getEntity(id);
         entity.setGame(this);
         if (oldEntity == null) {
             entities.addElement(entity);
         } else {
+            Coords oc = entity.getPosition();
             entities.setElementAt(entity, entities.indexOf(oldEntity));
+            entityIds.put(new Integer(id), entity);
+            processGameEvent(new GameEntityChangeEvent(this,entity, movePath));
         }
-        entityIds.put(new Integer(id), entity);
-        
-        
-        if(id > lastEntityId) lastEntityId = id;
     }
     
     
@@ -965,33 +1028,34 @@ public class Game implements Serializable
             //System.err.println("Game#removeEntity: could not find entity to remove");
             return;
         }
-
+        
         entities.removeElement(toRemove);
         entityIds.remove(new Integer(id));
-
+        
         toRemove.setRemovalCondition(condition);
-
+        
         // do not keep never-joined entities
         if (vOutOfGame != null && condition != Entity.REMOVE_NEVER_JOINED) {
             vOutOfGame.addElement(toRemove);
         }
-
+        
         //We also need to remove it from the list of things to be deployed...
         //we might still be in this list if we never joined the game
-          if ( deploymentTable.size() > 0 ) {
+        if ( deploymentTable.size() > 0 ) {
             Enumeration iter = deploymentTable.elements();
-
+            
             while ( iter.hasMoreElements() ) {
-              Vector vec = (Vector)iter.nextElement();
-
-              for ( int i = vec.size() - 1; i >= 0; i-- ) {
-                Entity en = (Entity)vec.elementAt(i);
-
-                if ( en.getId() == id )
-                  vec.removeElementAt(i);
-              }
+                Vector vec = (Vector)iter.nextElement();
+                
+                for ( int i = vec.size() - 1; i >= 0; i-- ) {
+                    Entity en = (Entity)vec.elementAt(i);
+                    
+                    if ( en.getId() == id )
+                        vec.removeElementAt(i);
+                }
             }
-          }
+        }
+        processGameEvent(new GameEntityRemoveEvent(this,toRemove));
     }
 
     /**
@@ -1792,6 +1856,12 @@ public class Game implements Serializable
         this.phaseReport = new StringBuffer();
     }
 
+    public void end(int winner, int winnerTeam){
+        setVictoryPlayerId(winner);
+        setVictoryTeam(winnerTeam);
+        processGameEvent(new GameEndEvent(this));
+        
+    }
     /** Getter for property victoryPlayerId.
      * @return Value of property victoryPlayerId.
      */
@@ -2090,4 +2160,90 @@ public class Game implements Serializable
         }
         return nemesisTargets.elements();
     }
+
+    private Vector gameListeners = new Vector();
+
+    /**
+     * Adds the specified game listener to receive
+     * board events from this board.
+     *
+     * @param listener the game listener.
+     */
+    public void addGameListener(GameListener listener) {
+        gameListeners.addElement(listener);
+    }
+    
+    /**
+     * Removes the specified game listener.
+     *
+     * @param listener the game listener.
+     */
+    public void removeGameListener(GameListener listener) {
+        gameListeners.removeElement(listener);
+    }
+
+    /**
+     * Processes game events occurring on this
+     * connection by dispatching them to any registered
+     * GameListener objects.
+     *
+     * @param event the game event.
+     */
+    public void processGameEvent(GameEvent event) {
+        for (Enumeration e = gameListeners.elements(); e.hasMoreElements();) {
+            GameListener l = (GameListener) e.nextElement();
+            switch (event.getType()) {
+            case GameEvent.GAME_PLAYER_CONNECTED:
+                l.gamePlayerConnected((GamePlayerConnectedEvent)event);
+                break;
+            case GameEvent.GAME_PLAYER_DISCONNECTED:
+                l.gamePlayerDisconnected((GamePlayerDisconnectedEvent)event);
+                break;
+            case GameEvent.GAME_PLAYER_CHANGE:
+                l.gamePlayerChange((GamePlayerChangeEvent)event);
+                break;                
+            case GameEvent.GAME_PLAYER_CHAT:
+                l.gamePlayerChat((GamePlayerChatEvent)event);
+                break;
+            case GameEvent.GAME_PHASE_CHANGE:
+                l.gamePhaseChange((GamePhaseChangeEvent)event);
+                break;
+            case GameEvent.GAME_TURN_CHANGE:
+                l.gameTurnChange((GameTurnChangeEvent)event);
+                break;
+            case GameEvent.GAME_REPORT:
+                l.gameReport((GameReportEvent)event);
+                break;                
+            case GameEvent.GAME_END:
+                l.gameEnd((GameEndEvent)event);
+                break;
+            case GameEvent.GAME_BOARD_NEW:
+                l.gameBoardNew((GameBoardNewEvent)event);
+                break;
+            case GameEvent.GAME_BOARD_CHANGE:
+                l.gameBoardChanged((GameBoardChangeEvent)event);
+                break;
+            case GameEvent.GAME_SETTINGS_CHANGE:
+                l.gameSettingsChange((GameSettingsChangeEvent)event);
+                break;
+            case GameEvent.GAME_MAP_QUERY:
+                l.gameMapQuery((GameMapQueryEvent)event);
+                break;
+            case GameEvent.GAME_ENTITY_NEW:
+                l.gameEntityNew((GameEntityNewEvent)event);
+                break;
+            case GameEvent.GAME_ENTITY_NEW_OFFBOARD:
+                l.gameEntityNewOffboard((GameEntityNewOffboardEvent)event);
+                break;
+            case GameEvent.GAME_ENTITY_CHANGE:
+                l.gameEntityChange((GameEntityChangeEvent)event);
+                break;
+            case GameEvent.GAME_NEW_ATTACK:
+                l.gameAttack((GameAttackEvent)event);
+                break;
+            }
+        }
+    }
+
+    
 }

@@ -309,7 +309,7 @@ public class BattleArmor
         if ( this.getModel().equals(CLAN_WATER_ELEMENTAL) ) {
             return false;
         }
-        return (hex.levelOf(Terrain.WATER) > 0);
+        return (hex.terrainLevel(Terrains.WATER) > 0);
     }
 
     /**

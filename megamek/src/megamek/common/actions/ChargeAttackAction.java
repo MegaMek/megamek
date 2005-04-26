@@ -44,23 +44,23 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(Game game) {
+    public ToHitData toHit(IGame game) {
         return toHit(game, false);
     }
     
-    public ToHitData toHit(Game game, boolean skid) {
+    public ToHitData toHit(IGame game, boolean skid) {
         final Entity entity = game.getEntity(getEntityId());
         return toHit(game, game.getTarget(getTargetType(), getTargetId()), entity.getPosition(), entity.moved, skid);
     }
     
-    public ToHitData toHit(Game game, Targetable target, Coords src, int movement) {
+    public ToHitData toHit(IGame game, Targetable target, Coords src, int movement) {
         return toHit(game, target, src, movement, false);
     }
 
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(Game game, Targetable target, Coords src, int movement, boolean skid) {
+    public ToHitData toHit(IGame game, Targetable target, Coords src, int movement, boolean skid) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
@@ -79,11 +79,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
-        final int attackerElevation = ae.elevationOccupied(game.board.getHex(src));
+        final int attackerElevation = ae.elevationOccupied(game.getBoard().getHex(src));
         final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = target.getElevation();
         final int targetHeight = target.absHeight();
-        Building bldg = game.board.getBuildingAt( this.getTargetPos() );
+        Building bldg = game.getBoard().getBuildingAt( this.getTargetPos() );
         ToHitData toHit = null;
 
         // can't target yourself
@@ -158,7 +158,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         if (null != bldg) {
             if (!Compute.isInBuilding(game, ae)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building");
-            } else if (!game.board.getBuildingAt(ae.getPosition()).equals(bldg)) {
+            } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(bldg)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building");
             }
         }
@@ -207,8 +207,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // water partial cover?
-        Hex targHex = game.board.getHex(te.getPosition());
-        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+        IHex targHex = game.getBoard().getHex(te.getPosition());
+        if (te.height() > 0 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }
 
@@ -222,7 +222,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // all charges resolved against full-body table, except vehicles
         // and charges against mechs in water partial cover
-        if (targHex.levelOf(Terrain.WATER) == te.height() && te.height() > 0) {
+        if (targHex.terrainLevel(Terrains.WATER) == te.height() && te.height() > 0) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else if (ae.getHeight() < target.getHeight()) {
             toHit.setHitTable(ToHitData.HIT_KICK);
@@ -237,7 +237,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * Checks if a charge can hit the target, taking account of movement
      */
-    public ToHitData toHit(Game game, MovePath md) {
+    public ToHitData toHit(IGame game, MovePath md) {
         final Entity ae = game.getEntity(getEntityId());
         final Targetable target = getTarget(game);
         Coords chargeSrc = ae.getPosition();

@@ -18,14 +18,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.event.GameListener;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public class PhysicalDisplay 
     extends StatusBarPhaseDisplay
-    implements BoardListener, GameListener, ActionListener, DoneButtoned,
+    implements GameListener, ActionListener, DoneButtoned,
                KeyListener, BoardViewListener, Distractable
 {
 
@@ -82,9 +87,9 @@ public class PhysicalDisplay
     public PhysicalDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
         this.client = clientgui.getClient();
-        client.addGameListener(this);
+        client.game.addGameListener(this);
         
-        client.game.board.addBoardListener(this);
+        clientgui.getBoardView().addBoardViewListener(this);
     
         attacks = new Vector();
 
@@ -235,9 +240,9 @@ public class PhysicalDisplay
         Entity entity = ce();
         
         target(null);
-        client.game.board.highlight(ce().getPosition());
-        client.game.board.select(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().highlight(ce().getPosition());
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().cursor(null);
 
         clientgui.mechD.displayEntity(entity);
         clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
@@ -270,7 +275,7 @@ public class PhysicalDisplay
         butDone.setEnabled(true);
         butMore.setEnabled(true);
         clientgui.setDisplayVisible(true);
-        client.game.board.select(null);
+        clientgui.getBoardView().select(null);
     }
     
     /**
@@ -287,9 +292,9 @@ public class PhysicalDisplay
         };
         cen = Entity.NONE;
         target(null);
-        client.game.board.select(null);
-        client.game.board.highlight(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().highlight(null);
+        clientgui.getBoardView().cursor(null);
         clientgui.bv.clearMovementData();
         disableButtons();
     }
@@ -697,7 +702,7 @@ public class PhysicalDisplay
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardEvent b) {
+    public void boardHexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -710,16 +715,16 @@ public class PhysicalDisplay
         }
         if (client.isMyTurn()
             && (b.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
-            if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
-                if (!b.getCoords().equals(client.game.board.lastCursor)) {
-                    client.game.board.cursor(b.getCoords());
+            if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+                if (!b.getCoords().equals(clientgui.getBoardView().getLastCursor())) {
+                    clientgui.getBoardView().cursor(b.getCoords());
                 }
-            } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
-                client.game.board.select(b.getCoords());
+            } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+                clientgui.getBoardView().select(b.getCoords());
             }
         }
     }
-    public void boardHexSelected(BoardEvent b) {
+    public void boardHexSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -759,9 +764,9 @@ public class PhysicalDisplay
         }
 
         // Is there a building in the hex?
-        Building bldg = client.game.board.getBuildingAt( pos );
+        Building bldg = client.game.getBoard().getBuildingAt( pos );
         if ( bldg != null ) {
-            targets.addElement( new BuildingTarget(pos, client.game.board, false) );
+            targets.addElement( new BuildingTarget(pos, client.game.getBoard(), false) );
         }
 
         // Is the attacker targeting its own hex?
@@ -809,7 +814,7 @@ public class PhysicalDisplay
     //
     // GameListener
     //
-    public void gameTurnChange(GameEvent ev) {
+    public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -823,13 +828,13 @@ public class PhysicalDisplay
                 beginMyTurn();
                 setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
-                setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn",new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
+                setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn",new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
             }
         } else {
             System.err.println("PhysicalDisplay: got turnchange event when it's not the physical attacks phase"); //$NON-NLS-1$
         }
     }
-    public void gamePhaseChange(GameEvent ev) {
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -1007,8 +1012,8 @@ public class PhysicalDisplay
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.removeGameListener(this);
-        client.game.board.removeBoardListener(this);
+        client.game.removeGameListener(this);
+        clientgui.getBoardView().removeBoardViewListener(this);
     }
 
     /**

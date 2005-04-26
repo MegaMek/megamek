@@ -17,22 +17,20 @@ package megamek.client.bot;
 
 import java.util.Enumeration;
 
-import megamek.client.GameEvent;
 import megamek.common.*;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
-import megamek.common.Terrain;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.event.GamePlayerChatEvent;
 
 import com.sun.java.util.collections.ArrayList;
 import com.sun.java.util.collections.Arrays;
@@ -476,8 +474,8 @@ public class TestBot extends BotClient {
             adjustment *= self.overall_armor_percent * self.strategy.attack / enemy_array.size();
             //fix for hiding in level 2 water
             //To a greedy bot, it always seems nice to stay in here...
-            Hex h = game.board.getHex(option.getFinalCoords());
-            if (h.contains(Terrain.WATER)
+            IHex h = game.getBoard().getHex(option.getFinalCoords());
+            if (h.containsTerrain(Terrains.WATER)
                 && h.surface() > (self.getEntity().getElevation() + ((option.getFinalProne()) ? 0 : 1))) {
                 double mod = (self.getEntity().heat + option.getMovementheatBuildup() <= 7) ? 100 : 30;
                 adjustment += self.bv / mod;
@@ -485,8 +483,8 @@ public class TestBot extends BotClient {
             //add them in now, then re-add them later
             if (self.range > CEntity.RANGE_SHORT) {
                 int ele_dif =
-                    game.board.getHex(option.getFinalCoords()).getElevation()
-                        - game.board.getHex(self.current.getFinalCoords()).getElevation();
+                    game.getBoard().getHex(option.getFinalCoords()).getElevation()
+                        - game.getBoard().getHex(self.current.getFinalCoords()).getElevation();
                 adjustment -= (Math.max(ele_dif, 0) + 1)
                     * ((double) Compute.getTargetTerrainModifier(game, option.getEntity()).getValue() + 1);
             }
@@ -839,8 +837,8 @@ public class TestBot extends BotClient {
 
                 // Infantry in the open suffer double damage.
                 if (e instanceof Infantry) {
-                    Hex e_hex = game.getBoard().getHex(e.getPosition());
-                    if (!e_hex.contains(Terrain.WOODS) && !e_hex.contains(Terrain.BUILDING)) {
+                    IHex e_hex = game.getBoard().getHex(e.getPosition());
+                    if (!e_hex.containsTerrain(Terrains.WOODS) && !e_hex.containsTerrain(Terrains.BUILDING)) {
                         expectedDmg *= 2;
                     }
                 }
@@ -1145,7 +1143,7 @@ public class TestBot extends BotClient {
         System.gc(); //just to make sure
     }
 
-    protected void processChat(GameEvent ge) {
+    protected void processChat(GamePlayerChatEvent ge) {
         chatp.processChat(ge, this);
     }
 
@@ -1155,7 +1153,7 @@ public class TestBot extends BotClient {
         Coords cStart = getStartingCoords();
         Coords cDeploy = getCoordsAround(cStart);
 
-        Coords cCenter = new Coords(game.board.width / 2, game.board.height / 2);
+        Coords cCenter = new Coords(game.getBoard().getWidth() / 2, game.getBoard().getHeight() / 2);
         int nDir;
         if (getLocalPlayer().getStartingPos() != 0) {
             // face towards center if you aren't already there
@@ -1184,7 +1182,8 @@ public class TestBot extends BotClient {
 
     protected java.util.Vector deployMinefields(java.util.Vector deployedMinefields, int number, int type) {
         for (int i = 0; i < number; i++) {
-            Coords coords = new Coords(Compute.randomInt(game.board.width), Compute.randomInt(game.board.height));
+            Coords coords = new Coords(Compute.randomInt(game.getBoard().getWidth()),
+                    Compute.randomInt(game.getBoard().getHeight()));
 
             if (game.containsMinefield(coords)) {
                 Minefield mf = (Minefield) game.getMinefields(coords).elementAt(0);

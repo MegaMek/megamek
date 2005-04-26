@@ -57,7 +57,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
     /**
      * Checks if a death from above attack can hit the target, including movement
      */
-    public static ToHitData toHit(Game game, int attackerId, Targetable target, MovePath md) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, MovePath md) {
         final Entity ae = game.getEntity(attackerId);
 
         // Do to pretreatment of physical attacks, the target may be null.
@@ -130,7 +130,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         return toHit(game, attackerId, target, chargeSrc);
     }
 
-    public ToHitData toHit(Game game) {
+    public ToHitData toHit(IGame game) {
         final Entity entity = game.getEntity(getEntityId());
         return toHit(game, getEntityId(),
                         game.getTarget(getTargetType(), getTargetId()),
@@ -141,7 +141,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
      * To-hit number for a death from above attack, assuming that movement has
      * been handled
      */
-    public static ToHitData toHit(Game game, int attackerId, Targetable target, Coords src) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, Coords src) {
         final Entity ae = game.getEntity(attackerId);
         final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         

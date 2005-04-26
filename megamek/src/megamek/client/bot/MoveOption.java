@@ -15,21 +15,23 @@
 
 package megamek.client.bot;
 
-import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Vector;
 
-import megamek.common.*;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Hex;
+import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.Protomech;
 import megamek.common.Targetable;
-import megamek.common.Terrain;
+import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
 import com.sun.java.util.collections.ArrayList;
@@ -122,7 +124,7 @@ public class MoveOption extends MovePath implements Cloneable {
     private int facing;
     private boolean prone;
 
-    public MoveOption(Game game, CEntity centity) {
+    public MoveOption(IGame game, CEntity centity) {
         super(game, centity.entity);
         this.centity = centity;
         this.pos = centity.entity.getPosition();
@@ -309,15 +311,15 @@ public class MoveOption extends MovePath implements Cloneable {
         }
         toHitd.append(Compute.getAttackerTerrainModifier(game, te.getId()));
 
-        Hex attHex = game.board.getHex(ae.getPosition());
-        if (attHex.contains(Terrain.WATER) && attHex.surface() > attEl) {
+        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        if (attHex.containsTerrain(Terrains.WATER) && attHex.surface() > attEl) {
             toHita.addModifier(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
             toHitd.addModifier(ToHitData.IMPOSSIBLE, "Defender in depth 2+ water");
         } else if (attHex.surface() == attEl && ae.height() > 0) {
             apc = true;
         }
-        Hex targHex = game.board.getHex(te.getPosition());
-        if (targHex.contains(Terrain.WATER)) {
+        IHex targHex = game.getBoard().getHex(te.getPosition());
+        if (targHex.containsTerrain(Terrains.WATER)) {
             if (targHex.surface() == targEl && te.height() > 0) {
                 pc = true;
             } else if (targHex.surface() > targEl) {
@@ -448,8 +450,8 @@ public class MoveOption extends MovePath implements Cloneable {
         //ideally the pa charaterization should be in centity
         max *= mod;
         if (!enemy.getFinalProne() && distance == 1 && enemy_firing_arcs[0] != ToHitData.SIDE_REAR) {
-            Hex h = game.board.getHex(getFinalCoords());
-            Hex h1 = game.board.getHex(enemy.getFinalCoords());
+            IHex h = game.getBoard().getHex(getFinalCoords());
+            IHex h1 = game.getBoard().getHex(enemy.getFinalCoords());
             if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
                 max += ((h1.getElevation() - h.getElevation() == 1 || getFinalProne()) ? 5 : 1)
                     * ((enemy_firing_arcs[0] == ToHitData.SIDE_FRONT) ? .2 : .05)

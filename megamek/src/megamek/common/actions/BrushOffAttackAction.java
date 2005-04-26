@@ -20,7 +20,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -71,11 +71,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * If this attack misses, the Mek will suffer punch damage.  This same
      * action is used to remove iNARC pods.
      *
-     * @param   game - the <code>Game</code> object containing all entities.
+     * @param   game - the <code>IGame</code> object containing all entities.
      * @param   act - the <code>BrushOffAttackAction</code> for the attack.
      * @return  the <code>ToHitData</code> containing the target roll.
      */
-    public ToHitData toHit(Game game) {
+    public ToHitData toHit(IGame game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()), getArm());
     }
 
@@ -84,7 +84,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * If this attack misses, the Mek will suffer punch damage.  This same
      * action is used to remove iNARC pods.
      *
-     * @param   game - the <code>Game</code> object containing all entities.
+     * @param   game - the <code>IGame</code> object containing all entities.
      * @param   attackerId - the <code>int</code> ID of the attacking unit.
      * @param   target - the <code>Targetable</code> object being targeted.
      * @param   arm - the <code>int</code> of the arm making the attack;
@@ -92,7 +92,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      *          or <code>BrushOffAttackAction.LEFT</code>.
      * @return  the <code>ToHitData</code> containing the target roll.
      */
-    public static ToHitData toHit(Game game, int attackerId, Targetable target, int arm) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
@@ -119,10 +119,10 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             throw new IllegalArgumentException("Attacker or target not valid");
         }
         if ( ( targetId != ae.getSwarmAttackerId() ||
-               te == null || !(te instanceof Infantry) ) &&
-         target.getTargetType() != Targetable.TYPE_INARC_POD ) {
+                te == null || !(te instanceof Infantry) ) &&
+                target.getTargetType() != Targetable.TYPE_INARC_POD ) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
-                                 "Can only brush off swarming infantry or iNarc Pods" );
+            "Can only brush off swarming infantry or iNarc Pods" );
         }
 
         // Quads can't brush off.

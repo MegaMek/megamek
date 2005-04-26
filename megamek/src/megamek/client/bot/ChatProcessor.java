@@ -5,14 +5,15 @@ import java.util.StringTokenizer;
 
 import com.sun.java.util.collections.Iterator;
 
-import megamek.client.GameEvent;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Player;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GamePlayerChatEvent;
 
 public class ChatProcessor {
 
-    protected void processChat(GameEvent ge, TestBot tb) {
+    protected void processChat(GamePlayerChatEvent ge, TestBot tb) {
         if (ge.getType() != GameEvent.GAME_PLAYER_CHAT)
             return;
         if (tb.getLocalPlayer() == null)

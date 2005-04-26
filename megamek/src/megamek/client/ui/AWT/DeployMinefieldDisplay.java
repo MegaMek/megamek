@@ -18,13 +18,17 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.common.*;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public class DeployMinefieldDisplay 
     extends StatusBarPhaseDisplay
-    implements BoardListener,  ActionListener, DoneButtoned,
+    implements BoardViewListener,  ActionListener, DoneButtoned,
                KeyListener, GameListener, Distractable
 {
     // Distraction implementation.
@@ -70,9 +74,9 @@ public class DeployMinefieldDisplay
     public DeployMinefieldDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
         this.client = clientgui.getClient();
-        client.addGameListener(this);
+        client.game.addGameListener(this);
 
-        client.game.board.addBoardListener(this);
+        clientgui.getBoardView().addBoardViewListener(this);
 
         setupStatusBar(Messages.getString("DeployMinefieldDisplay.waitingForDeployMinefieldPhase")); //$NON-NLS-1$
 
@@ -173,9 +177,9 @@ public class DeployMinefieldDisplay
     private void endMyTurn() {
         // end my turn, then.
         disableButtons();
-        client.game.board.select(null);
-        client.game.board.highlight(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().highlight(null);
+        clientgui.getBoardView().cursor(null);
 
     }
 
@@ -192,7 +196,7 @@ public class DeployMinefieldDisplay
     }
 
     private void deployMinefield(Coords coords) {
-        if (!client.game.board.contains(coords)) {
+        if (!client.game.getBoard().contains(coords)) {
             return;
         }
         
@@ -274,14 +278,14 @@ public class DeployMinefieldDisplay
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardEvent b) {
+    public void boardHexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
             return;
         }
 
-        if (b.getType() != BoardEvent.BOARD_HEX_DRAGGED) {
+        if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
             return;
         }
         
@@ -294,14 +298,14 @@ public class DeployMinefieldDisplay
         boolean shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         
         // check for a deployment
-        client.game.board.select(b.getCoords());
+        clientgui.getBoardView().select(b.getCoords());
         deployMinefield(b.getCoords());
     }
 
     //
     // GameListener
     //
-    public void gameTurnChange(GameEvent ev) {
+    public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -314,11 +318,11 @@ public class DeployMinefieldDisplay
             beginMyTurn();
             setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
-            setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
+            setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
         }
     }
 
-    public void gamePhaseChange(GameEvent ev) {
+    public void gamePhaseChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -438,8 +442,8 @@ public class DeployMinefieldDisplay
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.removeGameListener(this);
-        client.game.board.removeBoardListener(this);
+        client.game.removeGameListener(this);
+        clientgui.getBoardView().removeBoardViewListener(this);
     }
 
 }

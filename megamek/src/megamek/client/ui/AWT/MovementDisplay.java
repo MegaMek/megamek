@@ -19,15 +19,20 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.common.*;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
+import megamek.common.event.GameListener;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public class MovementDisplay
     extends StatusBarPhaseDisplay
-    implements BoardListener,  ActionListener, DoneButtoned,
+    implements ActionListener, DoneButtoned,
                KeyListener, GameListener, BoardViewListener, Distractable
 {
     // Distraction implementation.
@@ -114,13 +119,13 @@ public class MovementDisplay
     public MovementDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
         this.client = clientgui.getClient();
-        client.addGameListener(this);
+        client.game.addGameListener(this);
 
         gear = MovementDisplay.GEAR_LAND;
 
         shiftheld = false;
 
-        client.game.board.addBoardListener(this);
+        clientgui.getBoardView().addBoardViewListener(this);
 
         setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
 
@@ -313,9 +318,9 @@ public class MovementDisplay
         // Update the menu bar.
         clientgui.getMenuBar().setEntity( ce );
         
-        client.game.board.highlight(ce.getPosition());
-        client.game.board.select(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().highlight(ce.getPosition());
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().cursor(null);
         clientgui.mechD.displayEntity(ce);
         clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
         if (!clientgui.bv.isMovingUnits()) {
@@ -407,9 +412,9 @@ public class MovementDisplay
             clientgui.setDisplayVisible(false);
         }
         cen = Entity.NONE;
-        client.game.board.select(null);
-        client.game.board.highlight(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().highlight(null);
+        clientgui.getBoardView().cursor(null);
         clientgui.bv.clearMovementData();
     }
 
@@ -444,8 +449,8 @@ public class MovementDisplay
         
         
         // clear board cursors
-        client.game.board.select(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().cursor(null);
         
         // create new current and considered paths
         cmd = new MovePath(client.game, ce);
@@ -573,7 +578,7 @@ public class MovementDisplay
         int overallMoveType = Entity.MOVE_NONE;
         boolean firstStep;
         int prevFacing = curFacing;
-        Hex prevHex = null;
+        IHex prevHex = null;
         final boolean isInfantry = (entity instanceof Infantry);
 
         PilotingRollData rollTarget;
@@ -610,7 +615,7 @@ public class MovementDisplay
             curPos = step.getPosition();
             curFacing = step.getFacing();
 
-            final Hex curHex = client.game.board.getHex(curPos);
+            final IHex curHex = client.game.getBoard().getHex(curPos);
 
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
@@ -688,11 +693,11 @@ public class MovementDisplay
                 
                 // Get the building being exited.
                 // TODO: allow units to climb on top of buildings.
-                Building bldgExited = client.game.board.getBuildingAt( lastPos );
+                Building bldgExited = client.game.getBoard().getBuildingAt( lastPos );
 
                 // Get the building being entered.
                 // TODO: allow units to climb on top of buildings.
-                Building bldgEntered = client.game.board.getBuildingAt( curPos );
+                Building bldgEntered = client.game.getBoard().getBuildingAt( curPos );
 
                 if ( bldgExited != null && bldgEntered != null && 
                      !bldgExited.equals(bldgEntered) ) {
@@ -751,7 +756,7 @@ public class MovementDisplay
                 nagReport.append(addNag(rollTarget));
             }
             // jumped into water?
-            int waterLevel = client.game.board.getHex(curPos).levelOf(Terrain.WATER);
+            int waterLevel = client.game.getBoard().getHex(curPos).terrainLevel(Terrains.WATER);
             rollTarget = entity.checkWaterMove(waterLevel);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 nagReport.append(addNag(rollTarget));
@@ -788,7 +793,7 @@ public class MovementDisplay
     //
     // BoardListener
     //
-    public synchronized void boardHexMoused(BoardEvent b) {
+    public synchronized void boardHexMoused(BoardViewEvent b) {
         final Entity ce = ce();
         
         
@@ -811,9 +816,9 @@ public class MovementDisplay
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         }
 
-        if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
-            if (!b.getCoords().equals(client.game.board.lastCursor) || shiftheld || gear == MovementDisplay.GEAR_TURN) {
-                client.game.board.cursor(b.getCoords());
+        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (!b.getCoords().equals(clientgui.getBoardView().getLastCursor()) || shiftheld || gear == MovementDisplay.GEAR_TURN) {
+                clientgui.getBoardView().cursor(b.getCoords());
 
                 // either turn or move
                 if ( ce != null) {
@@ -821,12 +826,12 @@ public class MovementDisplay
                     clientgui.bv.drawMovementData(ce, cmd);
                 }
             }
-        } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
+        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
 
             Coords moveto = b.getCoords();
             clientgui.bv.drawMovementData(ce, cmd);
 
-            client.game.board.select(b.getCoords());
+            clientgui.getBoardView().select(b.getCoords());
 
             if (shiftheld || gear == MovementDisplay.GEAR_TURN) {
                 butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
@@ -862,7 +867,7 @@ public class MovementDisplay
                     }
                     else if ( target.getTargetType() ==
                               Targetable.TYPE_BUILDING ) {
-                        Building bldg = client.game.board.getBuildingAt
+                        Building bldg = client.game.getBoard().getBuildingAt
                             ( moveto );
                         toAttacker = ChargeAttackAction.getDamageTakenBy(ce,bldg);
                     }
@@ -1085,9 +1090,9 @@ public class MovementDisplay
         }
 
         // Is there a building in the hex?
-        Building bldg = client.game.board.getBuildingAt( pos );
+        Building bldg = client.game.getBoard().getBuildingAt( pos );
         if ( bldg != null ) {
-            targets.addElement( new BuildingTarget(pos, client.game.board, false) );
+            targets.addElement( new BuildingTarget(pos, client.game.getBoard(), false) );
         }
 
         // Do we have a single choice?
@@ -1125,7 +1130,7 @@ public class MovementDisplay
     //
     // GameListener
     //
-    public void gameTurnChange(GameEvent ev) {
+    public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -1148,14 +1153,14 @@ public class MovementDisplay
             }
 
         } else {
-            if (ev.getPlayer() == null && client.game.getTurn() instanceof GameTurn.UnloadStrandedTurn) {
+            if (e.getPlayer() == null && client.game.getTurn() instanceof GameTurn.UnloadStrandedTurn) {
                 setStatusBarText(Messages.getString("MovementDisplay.waitForAnother")); //$NON-NLS-1$
             } else {
-                setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
+                setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
             }
         }
     }
-    public void gamePhaseChange(GameEvent ev) {
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -1365,7 +1370,7 @@ public class MovementDisplay
         // TODO : get a better interface to "game" and "turn"
         Enumeration entities = client.getSelectedEntities
             ( new EntitySelector() {
-                    private final Game game =
+                    private final IGame game =
                         MovementDisplay.this.client.game;
                     private final GameTurn turn =
                         MovementDisplay.this.client.game.getTurn();
@@ -1441,10 +1446,10 @@ public class MovementDisplay
         }
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {
             shiftheld = true;
-            if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
+            if (client.isMyTurn() && clientgui.getBoardView().getLastCursor() != null && !clientgui.getBoardView().getLastCursor().equals(clientgui.getBoardView().getSelected())) {
                 // switch to turning
                 //clientgui.bv.clearMovementData();
-                currentMove(client.game.board.lastCursor);
+                currentMove(clientgui.getBoardView().getLastCursor());
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         }
@@ -1474,10 +1479,10 @@ public class MovementDisplay
 
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
             shiftheld = false;
-            if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
+            if (client.isMyTurn() && clientgui.getBoardView().getLastCursor() != null && !clientgui.getBoardView().getLastCursor().equals(clientgui.getBoardView().getSelected())) {
                 // switch to movement
                 clientgui.bv.clearMovementData();
-                currentMove(client.game.board.lastCursor);
+                currentMove(clientgui.getBoardView().getLastCursor());
                 clientgui.bv.drawMovementData(ce(), cmd);
             }
         }
@@ -1619,8 +1624,8 @@ public class MovementDisplay
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.removeGameListener(this);
-        client.game.board.removeBoardListener(this);
+        client.game.removeGameListener(this);
+        clientgui.getBoardView().removeBoardViewListener(this);
     }
 
 }

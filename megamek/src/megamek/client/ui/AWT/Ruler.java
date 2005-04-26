@@ -16,9 +16,10 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.common.Coords;
-import megamek.common.BoardEvent;
-import megamek.common.BoardListener;
 import megamek.common.LosEffects;
 
 import java.awt.event.MouseEvent;
@@ -31,7 +32,7 @@ import megamek.common.ToHitData;
  * @author Ken Nguyen (kenn)
  * @version 1.0
  */
-public class Ruler extends Dialog implements BoardListener {
+public class Ruler extends Dialog implements BoardViewListener {
    public static Color color1 = Color.cyan;
    public static Color color2 = Color.magenta;
 
@@ -75,7 +76,7 @@ public class Ruler extends Dialog implements BoardListener {
 
       bv = b;
       client = c;
-      client.game.board.addBoardListener(this);
+      b.addBoardViewListener(this);
 
       try {
          jbInit();
@@ -375,34 +376,28 @@ public class Ruler extends Dialog implements BoardListener {
       return distance;
    }
 
-   public void boardHexMoused(BoardEvent b) {
+   public void boardHexMoused(BoardViewEvent b) {
       if ((b.getModifiers() & MouseEvent.ALT_MASK) != 0) {
-         if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
+         if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             addPoint(b.getCoords());
          }
       }
 
       bv.drawRuler(start, end, startColor, endColor);
    }
-   public void boardHexCursor(BoardEvent b) {
+   public void boardHexCursor(BoardViewEvent b) {
 
    }
-   public void boardHexHighlighted(BoardEvent b) {
+   public void boardHexHighlighted(BoardViewEvent b) {
 
    }
-   public void boardHexSelected(BoardEvent b) {
+   public void boardHexSelected(BoardViewEvent b) {
 
    }
-   public void boardNewBoard(BoardEvent b) {
+   public void boardFirstLOSHex(BoardViewEvent b) {
 
    }
-   public void boardChangedHex(BoardEvent b) {
-
-   }
-   public void boardFirstLOSHex(BoardEvent b) {
-
-   }
-   public void boardSecondLOSHex(BoardEvent b, Coords c) {
+   public void boardSecondLOSHex(BoardViewEvent b, Coords c) {
 
    }
 
@@ -443,11 +438,23 @@ public class Ruler extends Dialog implements BoardListener {
       show();
    }
 
-   public void boardChangedEntity(BoardEvent b) {
+   public void boardChangedEntity(BoardViewEvent b) {
         ;
     }
 
-    public void boardNewAttack(BoardEvent a) {
+    public void boardNewAttack(BoardViewEvent a) {
         ;
+    }
+
+    /* (non-Javadoc)
+     * @see megamek.client.BoardViewListener#finishedMovingUnits(megamek.client.BoardViewEvent)
+     */
+    public void finishedMovingUnits(BoardViewEvent b) {
+    }
+
+    /* (non-Javadoc)
+     * @see megamek.client.BoardViewListener#selectUnit(megamek.client.BoardViewEvent)
+     */
+    public void selectUnit(BoardViewEvent b) {
     }
 }

@@ -17,8 +17,10 @@ package megamek.common.xml;
 import java.io.Writer;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Hashtable;
+
+import com.sun.java.util.collections.Hashtable;
 import java.util.Vector;
+
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
 import megamek.common.util.StringUtil;
@@ -43,7 +45,7 @@ public class BoardEncoder {
      *          <code>null</code>.
      * @throws  <code>IOException</code> if there's any error on write.
      */
-    public static void encode( Board board, Writer out )
+    public static void encode( IBoard board, Writer out )
         throws IOException
     {
         Enumeration iter; // used when marching through a list of sub-elements
@@ -65,14 +67,14 @@ public class BoardEncoder {
 
         // Write the hex array to the stream.
         out.write( "<boardData width=\"" );
-        out.write( Integer.toString(board.width) );
+        out.write( Integer.toString(board.getWidth()) );
         out.write( "\" height=\"" );
-        out.write( Integer.toString(board.height) );
+        out.write( Integer.toString(board.getHeight()) );
         out.write( "\" roadsAutoExit=\"" );
         out.write( board.getRoadsAutoExit() ? "true" : "false" );
         out.write( "\" >" );
-        for ( y = 0; y < board.height; y++ ) {
-            for ( x = 0; x < board.width; x++ ) {
+        for ( y = 0; y < board.getHeight(); y++ ) {
+            for ( x = 0; x < board.getWidth(); x++ ) {
                 HexEncoder.encode( board.getHex(x,y), out );
             }
         }

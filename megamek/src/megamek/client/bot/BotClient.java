@@ -17,7 +17,6 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.Client;
-import megamek.client.GameEvent;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -25,6 +24,10 @@ import megamek.common.Game;
 import megamek.common.GameTurn;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GameReportEvent;
+import megamek.common.event.GameTurnChangeEvent;
 
 import com.sun.java.util.collections.ArrayList;
 
@@ -32,12 +35,33 @@ public abstract class BotClient extends Client {
 
     public BotClient(String playerName, String host, int port) {
         super(playerName, host, port);
+        game.addGameListener(new GameListenerAdapter(){
+
+            public void gamePlayerChat(GamePlayerChatEvent e) {
+                processChat(e);
+            }
+
+            public void gameTurnChange(GameTurnChangeEvent e) {
+                if (isMyTurn()) {
+                    calculateMyTurn();
+                }
+            }
+
+            public void gameReport(GameReportEvent e) {
+                if (game.getPhase() == Game.PHASE_INITIATIVE) {
+                    //Opponent has used tactical genius, must press
+                    // "Done" again to advance past initiative report.
+                    sendDone(true);
+                }
+            }
+            
+        });
     }
 
     BotConfiguration config = new BotConfiguration();
 
     public abstract void initialize();
-    protected abstract void processChat(GameEvent ge);
+    protected abstract void processChat(GamePlayerChatEvent ge);
     protected abstract void initMovement();
     protected abstract void initFiring();
     protected abstract MovePath calculateMoveTurn();
@@ -115,35 +139,6 @@ public abstract class BotClient extends Client {
         }
     }
 
-    protected void processGameEvent(GameEvent ge) {
-        super.processGameEvent(ge);
-
-        switch (ge.getType()) {
-            case GameEvent.GAME_PLAYER_CHAT :
-                processChat(ge);
-                break;
-            case GameEvent.GAME_PLAYER_STATUSCHANGE :
-                break;
-            case GameEvent.GAME_PHASE_CHANGE :
-                break;
-            case GameEvent.GAME_TURN_CHANGE :
-                if (isMyTurn()) {
-                    calculateMyTurn();
-                }
-                break;
-            case GameEvent.GAME_NEW_ENTITIES :
-                break;
-            case GameEvent.GAME_NEW_SETTINGS :
-                break;
-            case GameEvent.GAME_REPORT :
-                if (game.getPhase() == Game.PHASE_INITIATIVE) {
-                    //Opponent has used tactical genius, must press
-                    // "Done" again to advance past initiative report.
-                    sendDone(true);
-                }
-                break;
-        }
-    }
 
     protected void calculateMyTurn() {
         try {
@@ -194,14 +189,14 @@ public abstract class BotClient extends Client {
      */
     protected Coords getCoordsAround(Coords c) {
         // check the requested coords
-        if (game.board.isLegalDeployment(c, this.getLocalPlayer()) && game.getFirstEntity(c) == null) {
+        if (game.getBoard().isLegalDeployment(c, this.getLocalPlayer()) && game.getFirstEntity(c) == null) {
             return c;
         }
 
         // check the surrounding coords
         for (int x = 0; x < 6; x++) {
             Coords c2 = c.translated(x);
-            if (game.board.isLegalDeployment(c2, this.getLocalPlayer()) && game.getFirstEntity(c2) == null) {
+            if (game.getBoard().isLegalDeployment(c2, this.getLocalPlayer()) && game.getFirstEntity(c2) == null) {
                 return c2;
             }
         }
@@ -214,23 +209,23 @@ public abstract class BotClient extends Client {
         switch (getLocalPlayer().getStartingPos()) {
             default :
             case 0 :
-                return new Coords(game.board.width / 2, game.board.height / 2);
+                return new Coords(game.getBoard().getWidth() / 2, game.getBoard().getHeight() / 2);
             case 1 :
                 return new Coords(1, 1);
             case 2 :
-                return new Coords(game.board.width / 2, 1);
+                return new Coords(game.getBoard().getWidth() / 2, 1);
             case 3 :
-                return new Coords(game.board.width - 2, 1);
+                return new Coords(game.getBoard().getWidth() - 2, 1);
             case 4 :
-                return new Coords(game.board.width - 2, game.board.height / 2);
+                return new Coords(game.getBoard().getWidth() - 2, game.getBoard().getHeight() / 2);
             case 5 :
-                return new Coords(game.board.width - 2, game.board.height - 2);
+                return new Coords(game.getBoard().getWidth() - 2, game.getBoard().getHeight() - 2);
             case 6 :
-                return new Coords(game.board.width / 2, game.board.height - 2);
+                return new Coords(game.getBoard().getWidth() / 2, game.getBoard().getHeight() - 2);
             case 7 :
-                return new Coords(1, game.board.height - 2);
+                return new Coords(1, game.getBoard().getHeight() - 2);
             case 8 :
-                return new Coords(1, game.board.height / 2);
+                return new Coords(1, game.getBoard().getHeight() / 2);
         }
     }
 

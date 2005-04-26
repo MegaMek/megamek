@@ -18,15 +18,20 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.event.GameListener;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 /*Targeting Phase Display.  Breaks naming convention because
 TargetingDisplay is too easy to confuse with something else*/
 public class TargetingPhaseDisplay
     extends StatusBarPhaseDisplay
-    implements BoardListener, GameListener, ActionListener, DoneButtoned,
+    implements GameListener, ActionListener, DoneButtoned,
                KeyListener, ItemListener, BoardViewListener, Distractable
 {
     // Distraction implementation.
@@ -161,8 +166,8 @@ public class TargetingPhaseDisplay
      */
     public void initializeListeners() {
 
-        this.client.addGameListener(this);
-        this.client.game.board.addBoardListener(this);
+        client.game.addGameListener(this);
+        clientgui.getBoardView().addBoardViewListener(this);
 
         this.clientgui.bv.addKeyListener( this );
         addKeyListener(this);
@@ -240,9 +245,9 @@ public class TargetingPhaseDisplay
             } // End ce()-not-on-board
 
             target(null);
-            client.game.board.highlight(ce().getPosition());
-            client.game.board.select(null);
-            client.game.board.cursor(null);
+            clientgui.getBoardView().highlight(ce().getPosition());
+            clientgui.getBoardView().select(null);
+            clientgui.getBoardView().cursor(null);
 
             refreshAll();
 
@@ -289,7 +294,7 @@ public class TargetingPhaseDisplay
         } else {
             setNextEnabled(true);
             butDone.setEnabled(true);
-            client.game.board.select(null);
+            clientgui.getBoardView().select(null);
         }
     }
 
@@ -307,9 +312,9 @@ public class TargetingPhaseDisplay
         };
         cen = Entity.NONE;
         target(null);
-        client.game.board.select(null);
-        client.game.board.highlight(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().highlight(null);
+        clientgui.getBoardView().cursor(null);
         clientgui.bv.clearMovementData();
         disableButtons();
 
@@ -577,7 +582,7 @@ public class TargetingPhaseDisplay
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardEvent b) {
+    public void boardHexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -598,19 +603,19 @@ public class TargetingPhaseDisplay
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         }
 
-        if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
+        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if (shiftheld || twisting) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }
-            client.game.board.cursor(b.getCoords());
-        } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
+            clientgui.getBoardView().cursor(b.getCoords());
+        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            client.game.board.select(b.getCoords());
+            clientgui.getBoardView().select(b.getCoords());
         }
     }
 
-    public void boardHexSelected(BoardEvent b) {
+    public void boardHexSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -633,7 +638,7 @@ public class TargetingPhaseDisplay
     //
     // GameListener
     //
-    public void gameTurnChange(GameEvent ev) {
+    public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -647,11 +652,11 @@ public class TargetingPhaseDisplay
                 beginMyTurn();
                 setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn")); //$NON-NLS-1$
             } else {               
-                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
+                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
             }
         }
     }
-    public void gamePhaseChange(GameEvent ev) {
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -709,8 +714,8 @@ public class TargetingPhaseDisplay
             updateFlipArms(!ce().getArmsFlipped());
         } else if (ev.getActionCommand().equals(FIRE_CANCEL)) {
             clearAttacks();
-            client.game.board.select(null);
-            client.game.board.cursor(null);
+            clientgui.getBoardView().select(null);
+            clientgui.getBoardView().cursor(null);
             refreshAll();
         }
     }
@@ -764,8 +769,8 @@ public class TargetingPhaseDisplay
 
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearAttacks();
-            client.game.board.select(null);
-            client.game.board.cursor(null);
+            clientgui.getBoardView().select(null);
+            clientgui.getBoardView().cursor(null);
             refreshAll();
         }
         if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
@@ -775,9 +780,9 @@ public class TargetingPhaseDisplay
         }
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {
             shiftheld = true;
-            if (client.isMyTurn() && client.game.board.lastCursor != null) {
+            if (client.isMyTurn() && clientgui.getBoardView().getLastCursor() != null) {
                 updateFlipArms(false);
-                torsoTwist(client.game.board.lastCursor);
+                torsoTwist(clientgui.getBoardView().getLastCursor());
             }
         }
 /*        if (ev.getKeyCode() == KeyEvent.VK_M) {
@@ -885,8 +890,8 @@ public class TargetingPhaseDisplay
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.removeGameListener(this);
-        client.game.board.removeBoardListener(this);
+        client.game.removeGameListener(this);
+        clientgui.getBoardView().removeBoardViewListener(this);
         clientgui.mechD.wPan.weaponList.removeItemListener(this);
     }
 

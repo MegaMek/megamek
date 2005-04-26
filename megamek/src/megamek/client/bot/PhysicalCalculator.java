@@ -18,12 +18,12 @@ import java.util.Enumeration;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Hex;
+import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Tank;
-import megamek.common.Terrain;
+import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
@@ -100,8 +100,8 @@ public class PhysicalCalculator {
                     double damage = 2 / (1 + mod) * bestAttack.expectedDmg;
                     double threat = .2 * en.getWeight() * odds * (1 - cen.base_psr_odds);
                     //check for head kick
-                    Hex h = bot.game.board.getHex(bestAttack.target.getPosition());
-                    Hex h1 = bot.game.board.getHex(en.getPosition());
+                    IHex h = bot.game.getBoard().getHex(bestAttack.target.getPosition());
+                    IHex h1 = bot.game.getBoard().getHex(en.getPosition());
                     if (h1.getElevation() > h.getElevation()) {
                         damage *= 2;
                     }
@@ -164,7 +164,7 @@ public class PhysicalCalculator {
         return null;
     }
 
-    PhysicalOption getBestPhysical(Entity entity, Game game) {
+    PhysicalOption getBestPhysical(Entity entity, IGame game) {
         // Infantry can't conduct physical attacks.
         if (entity instanceof Infantry) {
             return null;
@@ -196,7 +196,7 @@ public class PhysicalCalculator {
         return best;
     }
 
-    PhysicalOption getBestPhysicalAttack(Entity from, Entity to, Game game) {
+    PhysicalOption getBestPhysicalAttack(Entity from, Entity to, IGame game) {
         double bestDmg = 0, dmg;
         int damage;
         int bestType = PhysicalOption.PUNCH_LEFT;
@@ -246,8 +246,8 @@ public class PhysicalCalculator {
 
         // Infantry in the open suffer double damage.
         if (to instanceof Infantry) {
-            Hex e_hex = game.getBoard().getHex(to.getPosition());
-            if (!e_hex.contains(Terrain.WOODS) && !e_hex.contains(Terrain.BUILDING)) {
+            IHex e_hex = game.getBoard().getHex(to.getPosition());
+            if (!e_hex.containsTerrain(Terrains.WOODS) && !e_hex.containsTerrain(Terrains.BUILDING)) {
                 bestDmg *= 2;
             }
         }

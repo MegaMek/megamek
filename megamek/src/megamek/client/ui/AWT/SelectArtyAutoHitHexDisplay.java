@@ -18,13 +18,18 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.common.*;
+import megamek.common.event.GameListener;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public class SelectArtyAutoHitHexDisplay 
     extends StatusBarPhaseDisplay
-    implements BoardListener,  ActionListener, DoneButtoned,
+    implements BoardViewListener,  ActionListener, DoneButtoned,
                KeyListener, GameListener, Distractable
 {
     // Distraction implementation.
@@ -53,9 +58,9 @@ public class SelectArtyAutoHitHexDisplay
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
         this.client = clientgui.getClient();
-        client.addGameListener(this);
+        client.game.addGameListener(this);
 
-        client.game.board.addBoardListener(this);
+        clientgui.getBoardView().addBoardViewListener(this);
 
         setupStatusBar(Messages.getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
 
@@ -118,9 +123,9 @@ public class SelectArtyAutoHitHexDisplay
     private void endMyTurn() {
         // end my turn, then.
         disableButtons();
-        client.game.board.select(null);
-        client.game.board.highlight(null);
-        client.game.board.cursor(null);
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().highlight(null);
+        clientgui.getBoardView().cursor(null);
 
     }
 
@@ -134,7 +139,7 @@ public class SelectArtyAutoHitHexDisplay
     }
 
     private void addArtyAutoHitHex(Coords coords) {
-        if (!client.game.board.contains(coords)) {
+        if (!client.game.getBoard().contains(coords)) {
             return;
         }
         if (!artyAutoHitHexes.contains(coords) && artyAutoHitHexes.size() < 6
@@ -153,14 +158,14 @@ public class SelectArtyAutoHitHexDisplay
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardEvent b) {
+    public void boardHexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
             return;
         }
 
-        if (b.getType() != BoardEvent.BOARD_HEX_DRAGGED) {
+        if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
             return;
         }
         
@@ -173,14 +178,14 @@ public class SelectArtyAutoHitHexDisplay
         boolean shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         
         // check for a deployment
-        client.game.board.select(b.getCoords());
+        clientgui.getBoardView().select(b.getCoords());
         addArtyAutoHitHex(b.getCoords());
     }
 
     //
     // GameListener
     //
-    public void gameTurnChange(GameEvent ev) {
+    public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -193,12 +198,11 @@ public class SelectArtyAutoHitHexDisplay
             beginMyTurn();
             setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_your_turn")); //$NON-NLS-1$
         } else {            
-            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_others_turn", new Object[]{ev.getPlayer().getName()})); //$NON-NLS-1$
+            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
         }
     }
 
-    public void gamePhaseChange(GameEvent ev) {
-
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
             return;
@@ -295,8 +299,8 @@ public class SelectArtyAutoHitHexDisplay
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        client.removeGameListener(this);
-        client.game.board.removeBoardListener(this);
+        client.game.removeGameListener(this);
+        clientgui.getBoardView().removeBoardViewListener(this);
     }
 
 }

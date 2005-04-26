@@ -64,7 +64,7 @@ public class BuildingTarget implements Targetable {
      * @exception an <code>IllegalArgumentException</code> will be thrown if
      *          the given coordinates do not contain a building.
      */
-    protected void init( Coords coords, Board board, boolean ignite ) {
+    protected void init( Coords coords, IBoard board, boolean ignite ) {
         this.position = coords;
         this.isIgnite = ignite;
 
@@ -96,9 +96,9 @@ public class BuildingTarget implements Targetable {
         // Get the height of the hex.
         // Note, this doesn't equal "ceiling()" for
         // one Level high buildings in a woods hex.
-        Hex targetHex = board.getHex( this.position );
+        IHex targetHex = board.getHex( this.position );
         this.elevation = targetHex.getElevation();
-        this.height = targetHex.levelOf( Terrain.BLDG_ELEV );
+        this.height = targetHex.terrainLevel( Terrains.BLDG_ELEV );
     }
 
 
@@ -112,7 +112,7 @@ public class BuildingTarget implements Targetable {
      * @exception an <code>IllegalArgumentException</code> will be thrown if
      *          the given coordinates do not contain a building.
      */
-    public BuildingTarget( Coords c, Board board, int nType ) {
+    public BuildingTarget( Coords c, IBoard board, int nType ) {
         boolean ignite = (nType == Targetable.TYPE_BLDG_IGNITE);
         this.init( c, board, ignite );
     }
@@ -127,7 +127,7 @@ public class BuildingTarget implements Targetable {
      * @exception an <code>IllegalArgumentException</code> will be thrown if
      *          the given coordinates do not contain a building.
      */
-    public BuildingTarget( Coords coords, Board board, boolean ignite ) {
+    public BuildingTarget( Coords coords, IBoard board, boolean ignite ) {
         this.init( coords, board, ignite );
     }
 

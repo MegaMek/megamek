@@ -27,9 +27,19 @@ import com.sun.java.util.collections.Iterator;
 import com.sun.java.util.collections.Map;
 import com.sun.java.util.collections.TreeMap;
 
+import megamek.client.event.BoardViewListener;
 import megamek.client.util.PlayerColors;
 import megamek.client.util.widget.BufferedPanel;
 import megamek.common.*;
+import megamek.common.event.GameEndEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameMapQueryEvent;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GamePlayerDisconnectedEvent;
+import megamek.common.event.GameReportEvent;
+import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
@@ -38,7 +48,7 @@ import sun.audio.AudioStream;
 
 public class ClientGUI
     extends Panel
-    implements MouseListener, WindowListener, ActionListener, KeyListener, GameListener {
+    implements MouseListener, WindowListener, ActionListener, KeyListener {
     // Action commands.
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
@@ -61,7 +71,6 @@ public class ClientGUI
     private ChatterBox cb;
     public BoardView1 bv;
     private Panel scroller;
-    public BoardComponent bc;
     public Dialog mechW;
     public MechDisplay mechD;
     public Dialog minimapW;
@@ -130,6 +139,10 @@ public class ClientGUI
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         this.add(panDisplay, BorderLayout.CENTER);
+    }
+
+    public IBoardView getBoardView() {
+        return bv;
     }
 
     /*
@@ -233,6 +246,7 @@ public class ClientGUI
         initializeFrame();
 
         try {
+            client.game.addGameListener(gameListener);
             // Create the board viewer.
             bv = new BoardView1(client.game, frame);
 
@@ -323,7 +337,6 @@ public class ClientGUI
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
 
-        client.addGameListener(this);
     }
 
     /**
@@ -876,44 +889,44 @@ public class ClientGUI
             if (curPanel instanceof FiringDisplay
                 || curPanel instanceof PhysicalDisplay
                 || curPanel instanceof TargetingPhaseDisplay) {
-                Hex h = client.game.board.getHex(coords);
-                if (h != null && h.contains(Terrain.WOODS) && curPanel instanceof FiringDisplay) {
-                    popup.add(new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_CLEAR)));
+                IHex h = client.game.getBoard().getHex(coords);
+                if (h != null && h.containsTerrain(Terrains.WOODS) && curPanel instanceof FiringDisplay) {
+                    popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_CLEAR)));
                     if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
                         popup.add(
-                            new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_IGNITE)));
+                            new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_IGNITE)));
                     }
-                } else if (h != null && h.contains(Terrain.BUILDING)) {
-                    popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.board, false)));
+                } else if (h != null && h.containsTerrain(Terrains.BUILDING)) {
+                    popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.getBoard(), false)));
                     if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
-                        popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.board, true)));
+                        popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.getBoard(), true)));
                     }
                 }
                 if (h != null && client.game.containsMinefield(coords) && curPanel instanceof FiringDisplay) {
-                    popup.add(new TargetMenuItem(new MinefieldTarget(coords, client.game.board)));
+                    popup.add(new TargetMenuItem(new MinefieldTarget(coords, client.game.getBoard())));
                 }
                 if (h != null && curPanel instanceof FiringDisplay) {
                     popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_MINEFIELD_DELIVER)));
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_MINEFIELD_DELIVER)));
                     popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_ARTILLERY)));
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
                     popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_FASCAM)));
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_FASCAM)));
                     popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_INFERNO_IV)));
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_INFERNO_IV)));
                     popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_VIBRABOMB_IV)));
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_VIBRABOMB_IV)));
                     
                 }
                 if (h != null && curPanel instanceof TargetingPhaseDisplay) {
                     popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_ARTILLERY)));
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
                     popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_FASCAM)));
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_FASCAM)));
                     popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_INFERNO_IV)));
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_INFERNO_IV)));
                     popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_VIBRABOMB_IV)));                }
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_VIBRABOMB_IV)));                }
             }
 
         }
@@ -1262,109 +1275,67 @@ public class ClientGUI
         }
     }
 
-    public void gameDisconnected(GameEvent e) {
-        AlertDialog alert = new AlertDialog(frame, Messages.getString("ClientGUI.Disconnected.title"), Messages.getString("ClientGUI.Disconnected.message")); //$NON-NLS-1$ //$NON-NLS-2$
-        alert.show();
-        frame.setVisible(false);
-        die();
-    }
+    protected GameListener gameListener = new GameListenerAdapter(){
 
-    public void gameNewEntities(GameEvent e) {
-        Object o = e.getSource();
-        //      XXX Hack alert!
-        if (o instanceof Packet) {
-            Packet c = (Packet) o;
-            int eindex = c.getIntValue(0);
-            Entity entity = (Entity) c.getObject(1);
-            Vector movePath = (Vector) c.getObject(2);
-            Coords oc = entity.getPosition();
-            if (client.game.getEntity(eindex) != null) {
-                oc = client.game.getEntity(eindex).getPosition();
+        public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
+            AlertDialog alert = new AlertDialog(frame, Messages.getString("ClientGUI.Disconnected.title"), Messages.getString("ClientGUI.Disconnected.message")); //$NON-NLS-1$ //$NON-NLS-2$
+            alert.show();
+            frame.setVisible(false);
+            die();
+        }
+
+        public void gamePlayerChat(GamePlayerChatEvent e) {
+            bing();
+        }
+
+        public void gamePhaseChange(GamePhaseChangeEvent e) {
+            boolean showRerollButton = false;
+            
+            //This is a really lame place for this, but I couldn't find a
+            //better one without making massive changes (which didn't seem
+            //worth it for one little feature).
+            if (bv.getLocalPlayer() == null) {
+                bv.setLocalPlayer(client.getLocalPlayer());
             }
-            // Replace this entity in the game.
-            client.game.setEntity(eindex, entity);
-            if (movePath.size() > 0 && GUIPreferences.getInstance().getShowMoveStep()) {
-                bv.addMovingUnit(entity, movePath);
-            } else {
-                bv.boardChangedEntity(new BoardEvent(client.game.board, oc, entity, 0, 0)); //XXX
-            }
-        } else {
-            //XXX Hack alert!
-            bv.boardNewEntities(new BoardEvent(client.game.board, null, null, 0, 0)); //XXX
-            //XXX
-        }
-    }
-
-    public void gameNewSettings(GameEvent e) {
-        if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
-            boardSelectionDialog.update(client.getMapSettings(), true);
-        }
-        if (gameOptionsDialog != null && gameOptionsDialog.isVisible()) {
-            gameOptionsDialog.update(client.game.getOptions());
-        }
-        if (curPanel instanceof ChatLounge) {
-            ChatLounge cl = (ChatLounge) curPanel;
-            boolean useMinefields = client.game.getOptions().booleanOption("minefields"); //$NON-NLS-1$
-            cl.enableMinefields(useMinefields);
-
-            if (!useMinefields) {
-                client.getLocalPlayer().setNbrMFConventional(0);
-                client.getLocalPlayer().setNbrMFCommand(0);
-                client.getLocalPlayer().setNbrMFVibra(0);
-                client.sendPlayerInfo();
-            }
-        }
-    }
-
-    public void gamePhaseChange(GameEvent e) {
-
-        boolean showRerollButton = false;
-
-        //This is a really lame place for this, but I couldn't find a
-        //better one without making massive changes (which didn't seem
-        //worth it for one little feature).
-        if (bv.getLocalPlayer() == null) {
-            bv.setLocalPlayer(client.getLocalPlayer());
-        }
-
-        // Swap to this phase's panel.
-        switchPanel(client.game.getPhase());
-
-        // Hide tooltip (thanks Thrud Cowslayer, C.O.R.E, and others for helping test this! :)
-        bv.hideTooltip();
-        
-        // Handle phase-specific items.
-        switch (client.game.getPhase()) {
+            
+            // Swap to this phase's panel.
+            switchPanel(client.game.getPhase());
+            
+            // Hide tooltip (thanks Thrud Cowslayer, C.O.R.E, and others for helping test this! :)
+            bv.hideTooltip();
+            
+            // Handle phase-specific items.
+            switch (client.game.getPhase()) {
             case Game.PHASE_DEPLOY_MINEFIELDS :
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
-                break;
+            break;
             case Game.PHASE_DEPLOYMENT :
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
-                break;
+            break;
             case Game.PHASE_TARGETING :
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
-                break;
+            break;
             case Game.PHASE_MOVEMENT :
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
-                break;
+            break;
             case Game.PHASE_OFFBOARD :
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
-                break;
+            break;
             case Game.PHASE_FIRING :
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
-                break;
+            break;
             case Game.PHASE_PHYSICAL :
                 bv.refreshAttacks();
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
@@ -1373,90 +1344,97 @@ public class ClientGUI
                 break;
             case Game.PHASE_INITIATIVE :
                 bv.clearAllAttacks();
-                showRerollButton = client.game.hasTacticalGenius(client.getLocalPlayer());
+            showRerollButton = client.game.hasTacticalGenius(client.getLocalPlayer());
             case Game.PHASE_MOVEMENT_REPORT :
             case Game.PHASE_OFFBOARD_REPORT :
             case Game.PHASE_FIRING_REPORT :
             case Game.PHASE_END :
             case Game.PHASE_VICTORY :
                 setMapVisible(false);
-
-                // nemchenk, 2004-01-01 -- hide MechDisplay at the end
-                mechW.setVisible(false);
-                break;
+            
+            // nemchenk, 2004-01-01 -- hide MechDisplay at the end
+            mechW.setVisible(false);
+            break;
+            }
+            
+            menuBar.setPhase(client.game.getPhase());
+            cb.getComponent().setVisible(true);
+            validate();
+            doLayout();
+            cb.moveToEnd();
         }
 
-        menuBar.setPhase(client.game.getPhase());
-        this.cb.getComponent().setVisible(true);
-        this.validate();
-        this.doLayout();
-        this.cb.moveToEnd();
-    }
+        public void gameReport(GameReportEvent e) {
+            // Normally the Report Display is updated when the panel is
+            //  switched during a phase change.  This update is for
+            //  Tactical Genius reroll requests, and therefore only
+            //  resets the done button.
+            if (curPanel instanceof ReportDisplay) {
+                ((ReportDisplay) curPanel).refresh();
+                ((ReportDisplay) curPanel).resetReadyButton();
+            }
+        }
 
-    public void gamePlayerChat(GameEvent e) {
-        bing();
-    }
+        public void gameEnd(GameEndEvent e) {
+            bv.clearMovementData();
+            
+            for (Iterator i = getBots().values().iterator(); i.hasNext();) {
+                ((Client) i.next()).die();
+            }
+            getBots().clear();
+            
+            // Make a list of the player's living units.
+            Vector living = client.game.getPlayerEntities(client.getLocalPlayer());
+            
+            // Be sure to include all units that have retreated.
+            for (Enumeration iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
+                living.addElement(iter.nextElement());
+            }
+            
+            // Allow players to save their living units to a file.
+            // Don't bother asking if none survived.
+            if (!living.isEmpty()
+                && doYesNoDialog(
+                   Messages.getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
+                   Messages.getString("ClientGUI.SaveUnitsDialog.message"))){ //$NON-NLS-1$
+                
+                // Allow the player to save the units to a file.
+                saveListFile(living);
+                
+            } // End user-wants-a-MUL
+        }
 
-    public void gamePlayerStatusChange(GameEvent e) {
-        ;
-    }
+        public void gameSettingsChange(GameSettingsChangeEvent e) {
+            if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
+                boardSelectionDialog.update(client.getMapSettings(), true);
+            }
+            if (gameOptionsDialog != null && gameOptionsDialog.isVisible()) {
+                gameOptionsDialog.update(client.game.getOptions());
+            }
+            if (curPanel instanceof ChatLounge) {
+                ChatLounge cl = (ChatLounge) curPanel;
+                boolean useMinefields = client.game.getOptions().booleanOption("minefields"); //$NON-NLS-1$
+                cl.enableMinefields(useMinefields);
+                
+                if (!useMinefields) {
+                    client.getLocalPlayer().setNbrMFConventional(0);
+                    client.getLocalPlayer().setNbrMFCommand(0);
+                    client.getLocalPlayer().setNbrMFVibra(0);
+                    client.sendPlayerInfo();
+                }
+            }
+        }
 
-    public void gameTurnChange(GameEvent e) {
-        ;
-    }
+        public void gameMapQuery(GameMapQueryEvent e) {
+            if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
+                boardSelectionDialog.update((MapSettings) e.getSource(), false);
+            }
+        }
 
-    public void gameBoardChanged(GameEvent e) {
-        bv.update(bv.getGraphics());
-    }
+    };
 
     public Client getClient() {
         return client;
-    }
-
-    public void gameEnd(GameEvent e) {
-        this.bv.clearMovementData();
-
-        for (Iterator i = getBots().values().iterator(); i.hasNext();) {
-            ((Client) i.next()).die();
-        }
-        getBots().clear();
-
-        // Make a list of the player's living units.
-        Vector living = client.game.getPlayerEntities(client.getLocalPlayer());
-
-        // Be sure to include all units that have retreated.
-        for (Enumeration iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
-            living.addElement(iter.nextElement());
-        }
-
-        // Allow players to save their living units to a file.
-        // Don't bother asking if none survived.
-        if (!living.isEmpty()
-            && doYesNoDialog(
-                Messages.getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
-                Messages.getString("ClientGUI.SaveUnitsDialog.message"))){ //$NON-NLS-1$
-
-            // Allow the player to save the units to a file.
-            saveListFile(living);
-
-        } // End user-wants-a-MUL
-    }
-
-    public void gameReport(GameEvent e) {
-        // Normally the Report Display is updated when the panel is
-        //  switched during a phase change.  This update is for
-        //  Tactical Genius reroll requests, and therefore only
-        //  resets the done button.
-        if (curPanel instanceof ReportDisplay) {
-            ((ReportDisplay) curPanel).refresh();
-            ((ReportDisplay) curPanel).resetReadyButton();
-        }
-    }
-
-    public void gameMapQuery(GameEvent e) {
-        if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
-            boardSelectionDialog.update((MapSettings) e.getSource(), false);
-        }
     }
 
     public Map getBots() {

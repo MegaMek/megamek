@@ -139,7 +139,7 @@ public class TilesetManager {
     /**
      * Return the base image for the hex
      */
-    public Image baseFor(Hex hex) {
+    public Image baseFor(IHex hex) {
         if (hex.getBase() == null) {
             hexTileset.assignMatch(hex, comp);
         }
@@ -149,7 +149,7 @@ public class TilesetManager {
     /**
      * Return a list of superimposed images for the hex
      */
-    public List supersFor(Hex hex) {
+    public List supersFor(IHex hex) {
         return hex.getSupers();
     }
     
@@ -177,13 +177,13 @@ public class TilesetManager {
     /**
      * Load all the images we'll need for the game and place them in the tracker
      */
-    public void loadNeededImages(Game game) {
+    public void loadNeededImages(IGame game) {
         loaded = false;
-        
+        IBoard board = game.getBoard();
         // pre-match all hexes with images, load hex images
-        for (int y = 0; y < game.board.height; y++) {
-            for (int x = 0; x < game.board.width; x++) {
-                Hex hex = game.board.getHex(x, y);
+        for (int y = 0; y < board.getHeight(); y++) {
+            for (int x = 0; x < board.getWidth(); x++) {
+                IHex hex = board.getHex(x, y);
                 loadHexImage(hex);
             }
         }
@@ -203,7 +203,7 @@ public class TilesetManager {
      * Loads the image(s) for this hex into the tracker.
      * @param hex the hex to load
      */
-    private void loadHexImage(Hex hex) {
+    private void loadHexImage(IHex hex) {
         hexTileset.assignMatch(hex, comp);
         hexTileset.trackHexImages(hex, tracker);
     }
@@ -212,7 +212,7 @@ public class TilesetManager {
      * Waits until a certain hex's images are done loading.
      * @param hex the hex to wait for
      */
-    public void waitForHex(Hex hex) {
+    public void waitForHex(IHex hex) {
         loadHexImage(hex);
         try {
             tracker.waitForID(1);

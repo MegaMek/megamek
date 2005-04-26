@@ -20,18 +20,30 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.io.*;
 
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
+import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.util.PlayerColors;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.event.BoardEvent;
+import megamek.common.event.BoardListener;
+import megamek.common.event.BoardListenerAdapter;
+import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 
 /**
  * Displays all the mapsheets in a scaled-down size.
  */
-public class MiniMap extends Canvas
-    implements BoardListener, MouseListener, ComponentListener, GameListener {
-    // these indices match those in Terrain.java, and are therefore sensitive to any changes there
+public class MiniMap extends Canvas  {
 
-    private final static Color[] m_terrainColors = new Color[Terrain.SIZE];
+    // these indices match those in Terrains.java, and are therefore sensitive to any changes there
+
+    private final static Color[] m_terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
     private static Color BACKGROUND;
     private static Color SINKHOLE;
@@ -45,7 +57,7 @@ public class MiniMap extends Canvas
 
     private Image        m_mapImage;
     private BoardView1   m_bview;
-    private Game         m_game;
+    private IGame         m_game;
     private Dialog       m_dialog;
     private static final int    margin = 6;
     private int          topMargin;
@@ -66,21 +78,23 @@ public class MiniMap extends Canvas
     private int          heightDisplayMode = SHOW_NO_HEIGHT;
     Coords               firstLOS;
     Coords               secondLOS;
-
+    
     private Client       m_client;
 
     /**
      * Creates and lays out a new mech display.
      */
-    public MiniMap(Dialog d, Game g, BoardView1 bview) throws IOException {
+    public MiniMap(Dialog d, IGame g, BoardView1 bview) throws IOException {
         m_game = g;
         m_bview = bview;
         m_dialog = d;
         initializeColors();
-        m_game.board.addBoardListener(this);
-        addMouseListener(this);
-        addComponentListener(this);
-        m_dialog.addComponentListener(this);
+        m_bview.addBoardViewListener(boardViewListener);
+        m_game.addGameListener(gameListener);
+        m_game.getBoard().addBoardListener(boardListener);
+        addMouseListener(mouseListener);
+        addComponentListener(componentListener);
+        m_dialog.addComponentListener(componentListener);
         m_dialog.setResizable(false);
 
         // TODO: replace this quick-and-dirty with some real size calculator.
@@ -104,7 +118,6 @@ public class MiniMap extends Canvas
     public MiniMap(Dialog d, ClientGUI c, BoardView1 bview) throws IOException {
         this (d, c.getClient().game, bview);
 
-        c.getClient().addGameListener(this);
         c.minimapW.addKeyListener(c.menuBar);
         addKeyListener(c.menuBar);
 
@@ -131,19 +144,19 @@ public class MiniMap extends Canvas
         BACKGROUND                        = Color.black;
         m_terrainColors[0]                = new Color(218,215,170);
         SINKHOLE                          = new Color(218,215,170);
-        m_terrainColors[Terrain.WOODS]    = new Color(180,230,130);
+        m_terrainColors[Terrains.WOODS]    = new Color(180,230,130);
         HEAVY_WOODS                       = new Color(160,200,100);
-        m_terrainColors[Terrain.ROUGH]    = new Color(215,181,0);
-        m_terrainColors[Terrain.RUBBLE]   = new Color(200,200,200);
-        m_terrainColors[Terrain.WATER]    = new Color(200,247,253);
-        m_terrainColors[Terrain.PAVEMENT] = new Color(204,204,204);
-        m_terrainColors[Terrain.ROAD]     = new Color(71,79,107);
-        m_terrainColors[Terrain.FIRE]     = Color.red;
-        m_terrainColors[Terrain.SMOKE]    = new Color(204,204,204);
+        m_terrainColors[Terrains.ROUGH]    = new Color(215,181,0);
+        m_terrainColors[Terrains.RUBBLE]   = new Color(200,200,200);
+        m_terrainColors[Terrains.WATER]    = new Color(200,247,253);
+        m_terrainColors[Terrains.PAVEMENT] = new Color(204,204,204);
+        m_terrainColors[Terrains.ROAD]     = new Color(71,79,107);
+        m_terrainColors[Terrains.FIRE]     = Color.red;
+        m_terrainColors[Terrains.SMOKE]    = new Color(204,204,204);
         SMOKE_AND_FIRE                    = new Color(153,0,0);
-        m_terrainColors[Terrain.SWAMP]    = new Color(49,136,74);
-        m_terrainColors[Terrain.BUILDING] = new Color(204,204,204);
-        m_terrainColors[Terrain.BRIDGE]   = new Color(109,55,25);
+        m_terrainColors[Terrains.SWAMP]    = new Color(49,136,74);
+        m_terrainColors[Terrains.BUILDING] = new Color(204,204,204);
+        m_terrainColors[Terrains.BRIDGE]   = new Color(109,55,25);
 
         // now try to read in the config file
         int red;
@@ -223,7 +236,7 @@ public class MiniMap extends Canvas
                     st.nextToken();
                     blue = (int)st.nval;
 
-                    m_terrainColors[Terrain.parse(key)]=new Color(red,green,blue);
+                    m_terrainColors[Terrains.getType(key)]=new Color(red,green,blue);
                 }
             }
         }
@@ -246,8 +259,8 @@ public class MiniMap extends Canvas
         int currentHexSideBySin30 = hexSideBySin30[zoom];
         topMargin = margin;
         leftMargin = margin;
-        requiredWidth = m_game.board.width*(currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2*margin;
-        requiredHeight = (2*m_game.board.height + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
+        requiredWidth = m_game.getBoard().getWidth()*(currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2*margin;
+        requiredHeight = (2*m_game.getBoard().getHeight() + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
         setSize(requiredWidth, requiredHeight);
         m_dialog.pack();
         //m_dialog.show();
@@ -273,9 +286,9 @@ public class MiniMap extends Canvas
         g.setColor(oldColor);
         if (!minimized) {
             roadHexIndexes.removeAllElements();
-            for (int j = 0; j < m_game.board.width; j++) {
-                for (int k = 0; k < m_game.board.height; k++) {
-                    Hex h = m_game.board.getHex(j, k);
+            for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
+                for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
+                    IHex h = m_game.getBoard().getHex(j, k);
                     g.setColor(terrainColor(h, j, k));
                     paintCoord(g, j, k, true);
                 }
@@ -287,9 +300,9 @@ public class MiniMap extends Canvas
             if (! roadHexIndexes.isEmpty()) paintRoads(g);
 
             if (SHOW_NO_HEIGHT!=heightDisplayMode) {
-                for (int j = 0; j < m_game.board.width; j++) {
-                    for (int k = 0; k < m_game.board.height; k++) {
-                        Hex h = m_game.board.getHex(j, k);
+                for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
+                    for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
+                        IHex h = m_game.getBoard().getHex(j, k);
                         paintHeight(g, h, j , k);
                     }
                 }
@@ -299,9 +312,9 @@ public class MiniMap extends Canvas
             if (null!=m_client && null!=m_game) {   // sanity check!
                 if (Game.PHASE_DEPLOYMENT == m_game.getPhase()
                     && m_game.getTurn().getPlayerNum() == m_client.getLocalPlayer().getId()) {
-                    for (int j = 0; j < m_game.board.width; j++) {
-                        for (int k = 0; k < m_game.board.height; k++) {
-                            if (m_game.board.isLegalDeployment(new Coords(j,k), m_client.getLocalPlayer())) {
+                    for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
+                        for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
+                            if (m_game.getBoard().isLegalDeployment(new Coords(j,k), m_client.getLocalPlayer())) {
                                 paintSingleCoordBorder(g,j,k,Color.yellow);
                             }
                         }
@@ -419,19 +432,19 @@ public class MiniMap extends Canvas
 
     }
 
-    private void paintHeight(Graphics g, Hex h, int x, int y) {
+    private void paintHeight(Graphics g, IHex h, int x, int y) {
         if (heightDisplayMode == SHOW_NO_HEIGHT) return;
         if(zoom > 2){
             int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
             int baseY = (2*y + 1 + x%2)* hexSideByCos30[zoom] + topMargin;
             g.setColor(Color.white);
             int height = 0;
-            if (h.getTerrain(Terrain.BUILDING) != null && heightDisplayMode == SHOW_BUILDING_HEIGHT) {
+            if (h.getTerrain(Terrains.BUILDING) != null && heightDisplayMode == SHOW_BUILDING_HEIGHT) {
                 height = h.ceiling();
             } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
                 height = h.floor();
             } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
-                height = (h.getTerrain(Terrain.BUILDING) != null) ? h.ceiling() : h.floor();
+                height = (h.getTerrain(Terrains.BUILDING) != null) ? h.ceiling() : h.floor();
             }
             if (height != 0) {
                 g.drawString(height + "", baseX + 5, baseY + 5); //$NON-NLS-1$
@@ -652,7 +665,7 @@ public class MiniMap extends Canvas
         int [] xPoints = new int[4];
         int [] yPoints = new int[4];
         Color oldColor = g.getColor();
-        g.setColor(m_terrainColors[Terrain.ROAD]);
+        g.setColor(m_terrainColors[Terrains.ROAD]);
         for (Enumeration iter = roadHexIndexes.elements(); iter.hasMoreElements(); ){
             int[] hex = (int[])iter.nextElement();
             x = hex[0];
@@ -744,7 +757,7 @@ public class MiniMap extends Canvas
     }
 
 
-    private Color terrainColor(Hex x, int boardX, int boardY) {
+    private Color terrainColor(IHex x, int boardX, int boardY) {
         Color terrColor = m_terrainColors[0];
         if (x.getElevation() < 0) {
             // sinkholes have their own colour
@@ -755,7 +768,7 @@ public class MiniMap extends Canvas
         int terrain = 0;
         for (int j = m_terrainColors.length - 1; j >= 0; j--) {
             if (x.getTerrain(j) != null && m_terrainColors[j] != null) {
-                if (j == Terrain.ROAD){
+                if (j == Terrains.ROAD){
                     int [] roadHex = {boardX, boardY, x.getTerrain(j).getExits()};
                     roadHexIndexes.addElement(roadHex);
                     continue;
@@ -763,11 +776,11 @@ public class MiniMap extends Canvas
                 terrColor = m_terrainColors[j];
                 terrain = j;
                 // make heavy woods darker
-                if (j == Terrain.WOODS && x.getTerrain(j).getLevel() > 1) {
+                if (j == Terrains.WOODS && x.getTerrain(j).getLevel() > 1) {
                     terrColor = HEAVY_WOODS;
                 };
                 // contains both smoke and fire
-                if (j == Terrain.SMOKE && x.getTerrain(Terrain.FIRE) != null) {
+                if (j == Terrains.SMOKE && x.getTerrain(Terrains.FIRE) != null) {
                     terrColor = SMOKE_AND_FIRE;
                 }
                 break;
@@ -777,11 +790,11 @@ public class MiniMap extends Canvas
         int r, g, b;
         switch (terrain) {
         case 0 :
-        case Terrain.WOODS :
-        case Terrain.ROUGH :
-        case Terrain.RUBBLE :
-        case Terrain.WATER :
-        case Terrain.PAVEMENT :
+        case Terrains.WOODS :
+        case Terrains.ROUGH :
+        case Terrains.RUBBLE :
+        case Terrains.WATER :
+        case Terrains.PAVEMENT :
             level = (int) Math.abs(x.floor());
             // By experiment it is possible to make only 6 distinctive color steps
             if (level > 10) level = 10;
@@ -793,7 +806,7 @@ public class MiniMap extends Canvas
             if (b < 0) b = 0;
             return new Color(r, g, b);
 
-        case Terrain.BUILDING :
+        case Terrains.BUILDING :
             level = (int) Math.abs(x.ceiling());
             // By experiment it is possible to make only 6 distinctive color steps
             if (level > 10) level = 10;
@@ -901,7 +914,7 @@ public class MiniMap extends Canvas
             } else {
                 if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
                     //              m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
-                    m_game.board.mouseAction(translateCoords(x - leftMargin, y - topMargin), Board.BOARD_HEX_CLICK, me.getModifiers());
+                    m_bview.mouseAction(translateCoords(x - leftMargin, y - topMargin), IBoardView.BOARD_HEX_CLICK, me.getModifiers());
                 } else {
                     m_bview.centerOnHex(translateCoords(x - leftMargin, y - topMargin));
                 }
@@ -913,125 +926,83 @@ public class MiniMap extends Canvas
         return zoom;
     }
 
-    // begin GameListener implementation
-    public void gamePlayerChat(GameEvent e) {}
-    public void gamePlayerStatusChange(GameEvent e) {}
-    public void gameTurnChange(GameEvent e) {
-        drawMap();
-    }
-    public void gamePhaseChange(GameEvent e) {
-        drawMap();
-    }
-    public void gameNewEntities(GameEvent e) {
-        //drawMap();
-    }
-    public void gameNewSettings(GameEvent e) {}
-    // end GameListener implementation
+    protected BoardListener boardListener = new BoardListenerAdapter() {
+        public void boardNewBoard(BoardEvent b) {
+            initializeMap();
+        }        
+    
+    };
 
-    // begin BoardListener implementation
-    public void boardHexMoused(BoardEvent b) {
-    }
-    public void boardHexCursor(BoardEvent b) {
-        firstLOS = null;
-        secondLOS = null;
-        drawMap();
-    }
-    public void boardHexHighlighted(BoardEvent b) {
-        firstLOS = null;
-        secondLOS = null;
-        drawMap();
-    }
-    public void boardHexSelected(BoardEvent b) {
-        firstLOS = null;
-        secondLOS = null;
-        drawMap();
-    }
-    public void boardNewBoard(BoardEvent b) {
-        initializeMap();
-    }
-    public void boardFirstLOSHex(BoardEvent b) {
-        secondLOS = null;
-        firstLOS = b.getCoords();
-        drawMap();
-    }
-    public void boardSecondLOSHex(BoardEvent b, Coords c) {
-        firstLOS = c;
-        secondLOS = b.getCoords();
-        drawMap();
-    }
+    protected GameListener gameListener = new GameListenerAdapter(){
+        public void gamePhaseChange(GamePhaseChangeEvent e) {
+            drawMap();
+        }
 
-    public void boardChangedHex(BoardEvent b) {
-        // Calling drawMap here turns out to be a bad idea since this
-        //  method gets called about 7 times for each hex that is changed.
-        //  Resolving fire/smoke updates, for example, was taking four times
-        //  as long with this call enabled.  We'll just leave the drawing
-        //  to the change turn/phase methods above.
-        //        drawMap();
-    }
-    // end BoardListener implementation
+        public void gameTurnChange(GameTurnChangeEvent e) {
+            drawMap();
+        }
+        
+        public void gameBoardNew(GameBoardNewEvent e) {
+            IBoard b = e.getOldBoard();
+            if (b != null) b.removeBoardListener(boardListener);
+            b = e.getNewBoard();
+            if (b != null) b.addBoardListener(boardListener);                
+            initializeMap();
+        }
 
-    // begin MouseListener implementation
-    public void mousePressed(MouseEvent me) {
-        // center main map on clicked area
-        processMouseClick(me.getX(), me.getY(), me);
-    }
-
-    public void mouseReleased(MouseEvent me) {
-    }
-
-    public void mouseEntered(MouseEvent me) {
-    }
-
-    public void mouseExited(MouseEvent me) {
-    }
-
-    public void mouseClicked(MouseEvent me) {
-    }
-    // end MouseListener implementation
-
-    // begin ComponentListener implementation
-    public void componentHidden(ComponentEvent ce) {
-    }
-
-    public void componentMoved(ComponentEvent ce) {
-    }
-
-    public void componentShown(ComponentEvent ce) {
-        drawMap();
-    }
-
-    public void componentResized(ComponentEvent ce) {
-        // if (!minimized) initializeMap();
-    }
+        public void gameBoardChanged(GameBoardChangeEvent e) {
+            drawMap();
+        }
+    };
 
 
-    // end ComponentListener implementation
-    public void gameBoardChanged(GameEvent e) {
-        ;
-    }
+    BoardViewListener boardViewListener = new BoardViewListenerAdapter(){
+        public void boardHexCursor(BoardViewEvent b) {
+            update();
+        }
+        
+        public void boardHexHighlighted(BoardViewEvent b) {
+            update();
+        }
+        
+        public void boardHexSelected(BoardViewEvent b) {
+            update();
+        }
+        
+        public void boardFirstLOSHex(BoardViewEvent b) {
+            secondLOS = null;
+            firstLOS = b.getCoords();
+            drawMap();
+        }
+        
+        public void boardSecondLOSHex(BoardViewEvent b, Coords c) {
+            firstLOS = c;
+            secondLOS = b.getCoords();
+            drawMap();
+        }
+        private void update()
+        {
+            firstLOS = null;
+            secondLOS = null;
+            drawMap();            
+        }
+    };
 
-    public void gameDisconnected(GameEvent e) {
-        ;
-    }
+    MouseListener mouseListener = new MouseAdapter(){
+        public void mousePressed(MouseEvent me) {
+            // center main map on clicked area
+            processMouseClick(me.getX(), me.getY(), me);
+        }
+    };
 
-    public void boardChangedEntity(BoardEvent b) {
-        ;
-    }
-
-    public void boardNewAttack(BoardEvent a) {
-        ;
-    }
-
-    public void gameEnd(GameEvent e) {
-        ;
-    }
-
-    public void gameReport(GameEvent e) {
-        ;
-    }
-
-    public void gameMapQuery(GameEvent e) {
-        ;
-    }
+    ComponentListener componentListener = new ComponentAdapter() {
+        public void componentShown(ComponentEvent ce) {
+            drawMap();
+        }
+        
+        public void componentResized(ComponentEvent ce) {
+            // if (!minimized) initializeMap();
+        }
+    };
 
 }

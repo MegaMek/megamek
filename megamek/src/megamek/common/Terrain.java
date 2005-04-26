@@ -24,43 +24,12 @@ import java.io.*;
  *
  * @author Ben
  */
-public class Terrain
-implements Serializable {
-    
-    public static final int     LEVEL_NONE      = Integer.MIN_VALUE;
-    public static final int     WILDCARD        = Integer.MAX_VALUE;
-    
-    public static final int     WOODS           = 1;
-    public static final int     ROUGH           = 2;
-    public static final int     RUBBLE          = 3;
-    public static final int     WATER           = 4;
-    public static final int     PAVEMENT        = 5;
-    public static final int     ROAD            = 6;
-    public static final int     FIRE            = 7;
-    public static final int     SMOKE           = 8; 
-    public static final int     SWAMP           = 9; 
-    public static final int     BUILDING        = 10;
-    public static final int     BLDG_CF         = 11;
-    public static final int     BLDG_ELEV       = 12;
-    public static final int     BLDG_BASEMENT   = 13;
-    public static final int     BRIDGE          = 14;
-    public static final int     BRIDGE_CF       = 15;
-    public static final int     BRIDGE_ELEV     = 16;
-    public static final int     FLUFF           = 17;
-    public static final int     ARMS            = 18; //blown off arms for use as clubs, level = number of arms in that hex
-    public static final int     LEGS            = 19; //blown off legs for use as clubs, level = number of legs in that hex
-    
-    private static final String[] names = {"none", "woods", "rough", "rubble",
-    "water", "pavement", "road", "fire", "smoke", "swamp",
-    "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
-    "bridge_elev", "fluff", "arms", "legs"};
-    
-    public static final int     SIZE            = names.length;
-    
-    private final int           type;
-    private int                 level;
-    private boolean             exitsSpecified = false;
-    private int                 exits;
+public class Terrain implements ITerrain, Serializable {
+
+    private final int type;
+    private int level;
+    private boolean exitsSpecified = false;
+    private int exits;
     
     /**
      * Terrain constructor
@@ -76,11 +45,11 @@ implements Serializable {
         this.exits = exits;
     }
     
-    public Terrain(Terrain other) {
-        this.type = other.type;
-        this.level = other.level;
-        this.exitsSpecified = other.exitsSpecified;
-        this.exits = other.exits;
+    public Terrain(ITerrain other) {
+        this.type = other.getType();
+        this.level = other.getLevel();
+        this.exitsSpecified = other.hasExitsSpecified();
+        this.exits = other.getExits();
     }
     
     /**
@@ -92,13 +61,13 @@ implements Serializable {
         int lastColon = terrain.lastIndexOf(':');
         String name = terrain.substring(0, firstColon);
         
-        this.type = parse(name);
+        this.type = Terrains.getType(name);
         if (firstColon == lastColon) {
             this.level = levelFor(terrain.substring(firstColon + 1));
             this.exitsSpecified = false;
 
             // Buildings *never* use implicit exits.
-            if ( this.type == Terrain.BUILDING ) {
+            if ( this.type == Terrains.BUILDING ) {
                 this.exitsSpecified = true;
             }
         } else {
@@ -155,7 +124,7 @@ implements Serializable {
      * @param   vert - a <code>boolean</code> value that, if <code>true</code>,
      *          indicates that the exits are being flipped East-for-West.
      */
-    public void flipExits( boolean horiz, boolean vert ) {
+    public void flipExits(boolean horiz, boolean vert) {
         // Do nothing if no flips are defined.
         if ( !horiz && !vert ) {
             return;
@@ -234,30 +203,17 @@ implements Serializable {
         // Update the exits.
         this.setExits( newExits );
 
-    } // End public void flipExits( boolean, boolean )
-
-    public static int parse(String name) {
-        for (int i = 0; i < names.length; i++) {
-            if (names[i].equals(name)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-    
-    public static String getName(int type) {
-        return names[type];
     }
     
     /**
      * Returns true if the terrain in this hex exits to the terrain in 
      * the other hex.
      */
-    public boolean exitsTo(Terrain other) {
+    public boolean exitsTo(ITerrain other) {
         if (other == null) {
             return false;
         }
-        return this.type == other.type && this.level == other.level;
+        return this.type == other.getType() && this.level == other.getLevel();
     }
     
     /**
@@ -267,14 +223,14 @@ implements Serializable {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if (object == null || getClass() != object.getClass()) {
+        } else if (object == null || !(object instanceof ITerrain)) {
             return false;
         }
-        Terrain other = (Terrain)object;
-        return this.type == other.type && this.level == other.level;
+        ITerrain other = (ITerrain)object;
+        return this.type == other.getType() && this.level == other.getLevel();
     }
     
     public String toString() {
-        return names[type] + ":" + level + (exitsSpecified ? ":" + exits : "");
+        return Terrains.getName(type) + ":" + level + (exitsSpecified ? ":" + exits : "");
     }
 }

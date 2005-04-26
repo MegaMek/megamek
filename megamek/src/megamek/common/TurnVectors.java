@@ -16,7 +16,7 @@ package megamek.common;
 
 import java.util.Enumeration;
 
-import com.sun.java.util.collections.Vector;
+import java.util.Vector;
 
 /**
  * A handy utility class for collecting <code>Vectors</code> of

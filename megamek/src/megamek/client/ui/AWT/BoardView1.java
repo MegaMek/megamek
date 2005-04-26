@@ -21,9 +21,18 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.util.Enumeration;
+
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
 import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.event.BoardEvent;
+import megamek.common.event.BoardListener;
+import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
 import megamek.common.preference.PreferenceManager;
 
 import java.util.Properties;
@@ -33,7 +42,7 @@ import java.util.Properties;
  */
 public class BoardView1
     extends Canvas
-    implements BoardListener, MouseListener, MouseMotionListener, KeyListener, Runnable, AdjustmentListener
+    implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, Runnable, AdjustmentListener
 {
     private static final int        TRANSPARENT = 0xFFFF00FF;
 
@@ -70,7 +79,7 @@ public class BoardView1
     private Font       font_elev        = FONT_9;
     private Font       font_minefield   = FONT_12;
 
-    private Game game;
+    private IGame game;
     private Frame frame;
 
     private Point       mousePos = new Point();
@@ -157,7 +166,7 @@ public class BoardView1
     private Vector movingEntitySprites = new Vector();
     private Hashtable movingEntitySpriteIds = new Hashtable();
     private Vector ghostEntitySprites = new Vector();
-    protected transient Vector boardViewListeners = new Vector();
+    protected transient Vector boardListeners = new Vector();
 
     // wreck sprites
     private Vector wreckSprites = new Vector();
@@ -173,15 +182,21 @@ public class BoardView1
     // Indicate that a scrolling took place, so no popup should be drawn on right mouse button release
     private boolean scrolled = false;
     
+    private Coords lastCursor;
+    private Coords highlighted;
+    private Coords selected;
+    private Coords firstLOS;
+    
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(Game game, Frame frame) throws java.io.IOException {
+    public BoardView1(IGame game, Frame frame) throws java.io.IOException {
         this.game = game;
         this.frame = frame;
 
         tileManager = new TilesetManager(this);
 
+        game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
         scroller.start();
         addKeyListener(this);
@@ -234,26 +249,62 @@ public class BoardView1
         secondLOSSprite = new CursorSprite(Color.red);
     }
 
-    public void addBoardViewListener(BoardViewListener l) {
-        boardViewListeners.addElement(l);
+    /**
+     * Adds the specified board listener to receive
+     * board events from this board.
+     *
+     * @param listener the board listener.
+     */
+    public void addBoardViewListener(BoardViewListener listener) {
+        boardListeners.addElement(listener);
+    }
+    
+    /**
+     * Removes the specified board listener.
+     *
+     * @param listener the board listener.
+     */
+    public void removeBoardViewListener(BoardViewListener listener) {
+        boardListeners.removeElement(listener);
     }
 
-    public void removeBoardViewListener(BoardViewListener l) {
-        boardViewListeners.removeElement(l);
-    }
-
-    public void processBoardViewEvent(BoardViewEvent be) {
-        if (boardViewListeners == null) {
+    /**
+     * Notifies attached board listeners of the event.
+     *
+     * @param event the board event.
+     */
+    public void processBoardViewEvent(BoardViewEvent event) {
+        if (boardListeners == null) {
             return;
         }
-        for(Enumeration e = boardViewListeners.elements(); e.hasMoreElements();) {
+        for(Enumeration e = boardListeners.elements(); e.hasMoreElements();) {
             BoardViewListener l = (BoardViewListener)e.nextElement();
-            switch(be.getType()) {
+            switch(event.getType()) {
+            case BoardViewEvent.BOARD_HEX_CLICKED :
+            case BoardViewEvent.BOARD_HEX_DOUBLECLICKED :
+            case BoardViewEvent.BOARD_HEX_DRAGGED :
+                l.boardHexMoused(event);
+                break;
+            case BoardViewEvent.BOARD_HEX_CURSOR :
+                l.boardHexCursor(event);
+                break;
+            case BoardViewEvent.BOARD_HEX_HIGHLIGHTED :
+                l.boardHexHighlighted(event);
+                break;
+            case BoardViewEvent.BOARD_HEX_SELECTED :
+                l.boardHexSelected(event);
+                break;
+            case BoardViewEvent.BOARD_FIRST_LOS_HEX :
+                l.boardFirstLOSHex(event);
+                break;
+            case BoardViewEvent.BOARD_SECOND_LOS_HEX :
+                l.boardSecondLOSHex(event, getFirstLOS());
+                break;
             case BoardViewEvent.FINISHED_MOVING_UNITS :
-                l.finishedMovingUnits(be);
+                l.finishedMovingUnits(event);
                 break;
             case BoardViewEvent.SELECT_UNIT :
-                l.selectUnit(be);
+                l.selectUnit(event);
                 break;
             }
         }
@@ -462,8 +513,8 @@ public class BoardView1
      * Updates the boardSize variable with the proper values for this board.
      */
     private void updateBoardSize() {
-        int width = game.getBoard().width * (int)(HEX_WC*scale) + (int)(HEX_W/4*scale);
-        int height = game.getBoard().height * (int)(HEX_H*scale) + (int)(HEX_H/2*scale);
+        int width = game.getBoard().getWidth() * (int)(HEX_WC*scale) + (int)(HEX_W/4*scale);
+        int height = game.getBoard().getHeight() * (int)(HEX_H*scale) + (int)(HEX_H/2*scale);
         boardSize = new Dimension(width, height);
     }
 
@@ -625,14 +676,14 @@ public class BoardView1
 
         int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
         int drawHeight = view.height / (int)(HEX_H*scale) + 3;
-
+        IBoard board = game.getBoard();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
                 Point p = getHexLocation(c);
                 p.translate(-(view.x), -(view.y));
-                if (game.board.isLegalDeployment(c, m_plDeployer)) {
+                if (board.isLegalDeployment(c, m_plDeployer)) {
                     backGraph.setColor(Color.yellow);
                     int[] xcoords = { p.x + (int)(21*scale), p.x + (int)(62*scale), p.x + (int)(83*scale), p.x + (int)(83*scale),
                             p.x + (int)(62*scale), p.x + (int)(21*scale), p.x, p.x };
@@ -655,6 +706,7 @@ public class BoardView1
         int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
         int drawHeight = view.height / (int)(HEX_H*scale) + 3;
 
+        IBoard board = game.getBoard();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
@@ -662,7 +714,7 @@ public class BoardView1
                 Point p = getHexLocation(c);
                 p.translate(-(view.x), -(view.y));
                 
-                if (!game.board.contains(c)){ continue; }
+                if (!board.contains(c)){ continue; }
                 if (!game.containsMinefield(c)){ continue; }
                 
                 Minefield mf = (Minefield) game.getMinefields(c).elementAt(0);
@@ -909,11 +961,11 @@ public class BoardView1
      * current, and does not check if the hex is visible.
      */
     private void drawHex(Coords c) {
-        if (!game.board.contains(c)) {
+        if (!game.getBoard().contains(c)) {
             return;
         }
 
-        final Hex hex = game.board.getHex(c);
+        final IHex hex = game.getBoard().getHex(c);
         final Point hexLoc = getHexLocation(c);
 
         int level = hex.getElevation();
@@ -1008,8 +1060,8 @@ public class BoardView1
      * drawn in the opposite direction as well.
      */
     private final boolean drawElevationLine(Coords src, int direction) {
-        final Hex srcHex = game.board.getHex(src);
-        final Hex destHex = game.board.getHexInDir(src, direction);
+        final IHex srcHex = game.getBoard().getHex(src);
+        final IHex destHex = game.getBoard().getHexInDir(src, direction);
         return destHex != null && srcHex.floor() != destHex.floor();
     }
 
@@ -1098,13 +1150,13 @@ public class BoardView1
     private String[] getTipText(Point point) {
 
         int stringsSize = 0;
-        Hex mhex = null;
+        IHex mhex = null;
 
         // first, we have to determine how much text we are going to have
         // are we on a hex?
         final Coords mcoords = getCoordsAt(point);
-        if (GUIPreferences.getInstance().getShowMapHexPopup() && game.board.contains(mcoords)) {
-            mhex = game.board.getHex(mcoords);
+        if (GUIPreferences.getInstance().getShowMapHexPopup() && game.getBoard().contains(mcoords)) {
+            mhex = game.getBoard().getHex(mcoords);
             stringsSize += 1;
         }
 
@@ -1126,8 +1178,8 @@ public class BoardView1
 
         // If the hex contains a building or rubble, make more space.
         if ( mhex != null &&
-             (mhex.contains(Terrain.RUBBLE) ||
-              mhex.contains(Terrain.BUILDING)) ) {
+             (mhex.containsTerrain(Terrains.RUBBLE) ||
+              mhex.containsTerrain(Terrains.BUILDING)) ) {
             stringsSize += 1;
         }
 
@@ -1149,18 +1201,18 @@ public class BoardView1
             stringsIndex += 1;
 
             // Do we have rubble?
-            if ( mhex.contains(Terrain.RUBBLE) ) {
+            if ( mhex.containsTerrain(Terrains.RUBBLE) ) {
                 strings[stringsIndex] = Messages.getString("BoardView1.Rubble"); //$NON-NLS-1$
                 stringsIndex += 1;
             }
 
             // Do we have a building?
-            else if ( mhex.contains(Terrain.BUILDING) ) {
+            else if ( mhex.containsTerrain(Terrains.BUILDING) ) {
                 // Get the building.
-                Building bldg = game.board.getBuildingAt( mcoords );
+                Building bldg = game.getBoard().getBuildingAt( mcoords );
                 StringBuffer buf = new StringBuffer( Messages.getString("BoardView1.Height") ); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
-                buf.append( mhex.levelOf(Terrain.BLDG_ELEV) );
+                buf.append( mhex.terrainLevel(Terrains.BLDG_ELEV) );
                 buf.append( " " ); //$NON-NLS-1$
                 buf.append( bldg.toString() );
                 buf.append( Messages.getString("BoardView1.CF") ); //$NON-NLS-1$
@@ -1198,7 +1250,6 @@ public class BoardView1
                     case (Minefield.TYPE_THUNDER_INFERNO) :
                         strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         break;
-                        
                     }
                     stringsIndex++;
                 }
@@ -1486,7 +1537,7 @@ public class BoardView1
         }
     }
 
-    public void boardNewAttack(BoardEvent e) {
+    public void boardNewAttack(BoardViewEvent e) {
         AttackAction aa = (AttackAction)e.getSource();
         addAttack(aa);
     }
@@ -1605,40 +1656,38 @@ public class BoardView1
         attackSprites.removeAllElements();
     }
 
-    public Image baseFor(Hex hex) {
+    public Image baseFor(IHex hex) {
         return tileManager.baseFor(hex);
     }
 
-    public com.sun.java.util.collections.List supersFor(Hex hex) {
+    public com.sun.java.util.collections.List supersFor(IHex hex) {
         return tileManager.supersFor(hex);
     }
 
-
-
-    public void boardHexMoused(BoardEvent b) {
+    public void boardHexMoused(BoardViewEvent b) {
     }
-    public void boardHexCursor(BoardEvent b) {
+    public void boardHexCursor(BoardViewEvent b) {
         moveCursor(cursorSprite, b.getCoords());
         moveCursor(firstLOSSprite, null);
         moveCursor(secondLOSSprite, null);
     }
-    public void boardHexSelected(BoardEvent b) {
+    public void boardHexSelected(BoardViewEvent b) {
         moveCursor(selectedSprite, b.getCoords());
         moveCursor(firstLOSSprite, null);
         moveCursor(secondLOSSprite, null);
     }
-    public void boardHexHighlighted(BoardEvent b) {
+    public void boardHexHighlighted(BoardViewEvent b) {
         moveCursor(highlightSprite, b.getCoords());
         moveCursor(firstLOSSprite, null);
         moveCursor(secondLOSSprite, null);
     }
-    public void boardFirstLOSHex(BoardEvent b) {
+    public void boardFirstLOSHex(BoardViewEvent b) {
         if (useLOSTool) {
             moveCursor(secondLOSSprite, null);
             moveCursor(firstLOSSprite, b.getCoords());
         }
     }
-    public void boardSecondLOSHex(BoardEvent b, Coords c1) {
+    public void boardSecondLOSHex(BoardViewEvent b, Coords c1) {
         if (useLOSTool) {
             Coords c2 = b.getCoords();
             moveCursor(firstLOSSprite, c1);
@@ -1701,30 +1750,6 @@ public class BoardView1
             alert.show();
         }
     }
-    public void boardChangedHex(BoardEvent b) {
-        tileManager.waitForHex(game.getBoard().getHex(b.getCoords()));
-        if (boardGraph != null) {
-            redrawAround(b.getCoords());
-        }
-    }
-    public void boardNewBoard(BoardEvent b) {
-        updateBoardSize();
-        backGraph = null;
-        backImage = null;
-        backSize = null;
-        boardImage = null;
-        boardGraph = null;
-        tileManager.reset();
-    }
-
-    public void boardNewEntities(BoardEvent e) {
-        redrawAllEntities();
-    }
-    public void boardChangedEntity(BoardEvent e) {
-        redrawEntity(e.getEntity());
-    }
-
-
 
     /**
      * If the mouse is at the edges of the screen, this
@@ -2118,7 +2143,7 @@ public class BoardView1
             hideTooltip();
         }
 
-        game.board.mouseAction(getCoordsAt(point), Board.BOARD_HEX_DRAG, me.getModifiers());
+        mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiers());
     }
 
     public void mouseReleased(MouseEvent me) {
@@ -2137,9 +2162,9 @@ public class BoardView1
         if (scrolled)
             return;
         if (me.getClickCount() == 1) {
-            game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_CLICK, me.getModifiers());
+            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK, me.getModifiers());
         } else {
-            game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DOUBLECLICK, me.getModifiers());
+            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_DOUBLECLICK, me.getModifiers());
         }
     }
 
@@ -2208,7 +2233,7 @@ public class BoardView1
             isScrolling = false; //activate scrolling
         };
 
-        game.board.mouseAction(getCoordsAt(point), Board.BOARD_HEX_DRAG, me.getModifiers());
+        mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiers());
     }
 
     public void mouseMoved(MouseEvent me) {
@@ -3721,10 +3746,230 @@ public class BoardView1
     // end kenn
 
     /**
+     * @param lastCursor The lastCursor to set.
+     */
+    public void setLastCursor(Coords lastCursor) {
+        this.lastCursor = lastCursor;
+    }
+
+    /**
+     * @return Returns the lastCursor.
+     */
+    public Coords getLastCursor() {
+        return lastCursor;
+    }
+
+    /**
+     * @param highlighted The highlighted to set.
+     */
+    public void setHighlighted(Coords highlighted) {
+        this.highlighted = highlighted;
+    }
+
+    /**
+     * @return Returns the highlighted.
+     */
+    public Coords getHighlighted() {
+        return highlighted;
+    }
+
+    /**
+     * @param selected The selected to set.
+     */
+    public void setSelected(Coords selected) {
+        this.selected = selected;
+    }
+
+    /**
+     * @return Returns the selected.
+     */
+    public Coords getSelected() {
+        return selected;
+    }
+
+    /**
+     * @param firstLOS The firstLOS to set.
+     */
+    public void setFirstLOS(Coords firstLOS) {
+        this.firstLOS = firstLOS;
+    }
+
+    /**
+     * @return Returns the firstLOS.
+     */
+    public Coords getFirstLOS() {
+        return firstLOS;
+    }
+    
+    /**
+     * Determines if this Board contains the Coords,
+     * and if so, "selects" that Coords.
+     *
+     * @param coords the Coords.
+     */
+    public void select(Coords coords) {
+        if(coords == null || game.getBoard().contains(coords)) {
+            setSelected(coords);
+            processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_SELECTED,0));
+        }
+    }
+    
+    /**
+     * "Selects" the specified Coords.
+     *
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     */
+    public void select(int x, int y) {
+        select(new Coords(x, y));
+    }
+    
+    /**
+     * Determines if this Board contains the Coords,
+     * and if so, highlights that Coords.
+     *
+     * @param coords the Coords.
+     */
+    public void highlight(Coords coords) {
+        if(coords == null || game.getBoard().contains(coords)) {
+            setHighlighted(coords);
+            processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
+        }
+    }
+    
+    /**
+     * Highlights the specified Coords.
+     *
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     */
+    public void highlight(int x, int y) {
+        highlight(new Coords(x, y));
+    }
+    
+    /**
+     * Determines if this Board contains the Coords,
+     * and if so, "cursors" that Coords.
+     *
+     * @param coords the Coords.
+     */
+    public void cursor(Coords coords) {
+        if(coords == null || game.getBoard().contains(coords)) {
+            if(getLastCursor() == null || coords == null || !coords.equals(getLastCursor())) {
+                setLastCursor(coords);
+                processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_CURSOR, 0));
+            } else {
+                setLastCursor(coords);
+            }
+        }
+    }
+    
+    /**
+     * "Cursors" the specified Coords.
+     *
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     */
+    public void cursor(int x, int y) {
+        cursor(new Coords(x, y));
+    }
+
+    public void checkLOS(Coords c) {
+        if(c == null || game.getBoard().contains(c)) {
+            if (getFirstLOS() == null) {
+                setFirstLOS(c);
+                processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
+            } else {
+                processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
+                setFirstLOS(null);
+            }
+        }
+    }
+
+    /**
+     * Determines if this Board contains the (x, y) Coords,
+     * and if so, notifies listeners about the specified mouse
+     * action.
+     */
+    public void mouseAction(int x, int y, int mtype, int modifiers) {
+        if(game.getBoard().contains(x, y)) {
+            Coords c = new Coords(x, y);
+            switch(mtype) {
+            case BOARD_HEX_CLICK :
+                if ((modifiers & java.awt.event.InputEvent.CTRL_MASK) != 0) {
+                    checkLOS(c);
+                } else {
+                    processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_CLICKED, modifiers));
+                }
+                break;
+            case BOARD_HEX_DOUBLECLICK :
+                processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
+                break;
+            case BOARD_HEX_DRAG :
+                processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_HEX_DRAGGED, modifiers));
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Notifies listeners about the specified mouse action.
+     *
+     * @param coords the Coords.
+     */
+    public void mouseAction(Coords coords, int mtype, int modifiers) {
+        mouseAction(coords.x, coords.y, mtype, modifiers);
+    }
+    
+    /**
      * Return, whether a popup may be drawn, this currently means, whether no scrolling took place.
      */
     public boolean mayDrawPopup() {
         return !scrolled;
     }
-    
+
+    /* (non-Javadoc)
+     * @see megamek.common.BoardListener#boardNewBoard(megamek.common.BoardEvent)
+     */
+    public void boardNewBoard(BoardEvent b) {        
+        updateBoard();
+    }
+
+    /* (non-Javadoc)
+     * @see megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
+     */
+    public void boardChangedHex(BoardEvent b) {
+        tileManager.waitForHex(game.getBoard().getHex(b.getCoords()));
+        if (boardGraph != null) {
+            redrawAround(b.getCoords());
+        }
+    }
+
+    private GameListener gameListener = new GameListenerAdapter(){
+        public void gameEntityChange(GameEntityChangeEvent e) {
+            //TODO process moving units
+            redrawEntity(e.getEntity());
+        }
+        public void gameBoardNew(GameBoardNewEvent e) {
+            IBoard b = e.getOldBoard();
+            if (b != null) {
+                b.removeBoardListener(BoardView1.this);
+            }
+            b = e.getNewBoard();
+            if (b != null) {
+                b.addBoardListener(BoardView1.this);
+            }
+            updateBoard();
+        }        
+    };
+
+    protected void updateBoard() {
+        updateBoardSize();
+        backGraph = null;
+        backImage = null;
+        backSize = null;
+        boardImage = null;
+        boardGraph = null;
+        tileManager.reset();        
+    }
 }

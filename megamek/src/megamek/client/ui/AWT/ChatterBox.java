@@ -24,13 +24,20 @@ import java.awt.TextField;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import megamek.common.event.GameEntityNewEvent;
+import megamek.common.event.GameEntityRemoveEvent;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GameTurnChangeEvent;
+
 /**
  * ChatterBox keeps track of a player list and a (chat) message
  * buffer.  Although it is not an AWT component, it keeps
  * one that it will gladly supply.
  */
-public class ChatterBox
-implements GameListener, KeyListener {
+public class ChatterBox implements KeyListener {
     public Client client;
     
     public String[]            chatBuffer;
@@ -44,7 +51,27 @@ implements GameListener, KeyListener {
     
     public ChatterBox(ClientGUI clientgui) {
         this.client = clientgui.getClient();
-        client.addGameListener(this);
+        client.game.addGameListener(new GameListenerAdapter(){
+            public void gamePlayerChat(GamePlayerChatEvent e) {
+                chatArea.append("\n" + e.getMessage()); //$NON-NLS-1$
+                PlayerListDialog.refreshPlayerList(playerList, client);
+            }
+            public void gamePlayerChange(GamePlayerChangeEvent e) {
+                PlayerListDialog.refreshPlayerList(playerList, client);
+            }
+            public void gameTurnChange(GameTurnChangeEvent e) {
+                PlayerListDialog.refreshPlayerList(playerList, client);
+            }
+            public void gamePhaseChange(GamePhaseChangeEvent e) {
+                PlayerListDialog.refreshPlayerList(playerList, client);
+            }
+            public void gameEntityNew(GameEntityNewEvent e) {
+                PlayerListDialog.refreshPlayerList(playerList, client);
+            }
+            public void gameEntityRemove(GameEntityRemoveEvent e) {
+                PlayerListDialog.refreshPlayerList(playerList, client);
+            }
+        });
         
         chatArea = new TextArea(" \n", 5, 40, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
         chatArea.setEditable(false);
@@ -104,30 +131,6 @@ implements GameListener, KeyListener {
     }
     
     //
-    // GameListener
-    //
-    public void gamePlayerChat(GameEvent ev) {
-        chatArea.append("\n" + ev.getMessage()); //$NON-NLS-1$
-        PlayerListDialog.refreshPlayerList(playerList, client);
-    }
-    public void gamePlayerStatusChange(GameEvent ev) {
-        PlayerListDialog.refreshPlayerList(playerList, client);
-    }
-    public void gameTurnChange(GameEvent ev) {
-        PlayerListDialog.refreshPlayerList(playerList, client);
-    }
-    public void gamePhaseChange(GameEvent ev) {
-        PlayerListDialog.refreshPlayerList(playerList, client);
-    }
-    public void gameNewEntities(GameEvent ev) {
-        PlayerListDialog.refreshPlayerList(playerList, client);
-    }
-    public void gameNewSettings(GameEvent ev) {
-        ;
-    }
-    
-    
-    //
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
@@ -140,26 +143,6 @@ implements GameListener, KeyListener {
         ;
     }
     public void keyTyped(KeyEvent ev) {
-        ;
-    }
-    
-    public void gameBoardChanged(GameEvent e) {
-        ;
-    }
-
-    public void gameDisconnected(GameEvent e) {
-        ;
-    }
-
-    public void gameEnd(GameEvent e) {
-        ;
-    }
-
-    public void gameReport(GameEvent e) {
-        ;
-    }
-    
-    public void gameMapQuery(GameEvent e) {
         ;
     }
 

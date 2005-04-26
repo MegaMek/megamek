@@ -189,7 +189,7 @@ public class MoveStep implements Serializable {
      * @return The <code>Targetable</code> that is the target of this step.
      *         For example, the enemy being charged. This value may be <code>null</code>
      */
-    public Targetable getTarget(Game game) {
+    public Targetable getTarget(IGame game) {
         if (this.targetId == Entity.NONE) {
             return null;
         }
@@ -203,7 +203,7 @@ public class MoveStep implements Serializable {
      * @param   entity the <code>Entity</code> taking this step.
      * @param   prev the previous step in the path.
      */
-    protected void compile(final Game game, final Entity entity, MoveStep prev)
+    protected void compile(final IGame game, final Entity entity, MoveStep prev)
     {
         final boolean isInfantry = entity instanceof Infantry;
         copy(game, prev);
@@ -266,7 +266,7 @@ public class MoveStep implements Serializable {
 
                 // check for water
                 if (!isPavementStep()
-                    && game.board.getHex(getPosition()).levelOf(Terrain.WATER) > 0
+                    && game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0
                     && entity.getMovementType() != Entity.MovementType.HOVER) {
                     setRunProhibited(true);
                 }
@@ -312,7 +312,7 @@ public class MoveStep implements Serializable {
                 setMp(getMp() + 1);
                 // check for water
                 if (!isPavementStep() &&
-                    game.board.getHex(getPosition()).levelOf(Terrain.WATER) > 0) {
+                    game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -339,7 +339,7 @@ public class MoveStep implements Serializable {
         addMpUsed(getMp());
 
         // Check for fire in the new hex.
-        if (game.board.getHex(getPosition()).contains(Terrain.FIRE)) {
+        if (game.getBoard().getHex(getPosition()).containsTerrain(Terrains.FIRE)) {
             heat = 2;
             totalHeat += 2;
         }
@@ -376,7 +376,7 @@ public class MoveStep implements Serializable {
      * 
      * @param state
      */
-    public void copy(final Game game, MoveStep prev) {
+    public void copy(final IGame game, MoveStep prev) {
         if (prev == null) {
             setFromEntity(parent.getEntity(), game);
             return;
@@ -400,7 +400,7 @@ public class MoveStep implements Serializable {
      * 
      * @param entity
      */
-    public void setFromEntity(Entity entity, Game game) {
+    public void setFromEntity(Entity entity, IGame game) {
         this.position = entity.getPosition();
         this.facing = entity.getFacing();
         // elevation
@@ -410,7 +410,7 @@ public class MoveStep implements Serializable {
 
         // check pavement
         if (position != null) {
-            Hex curHex = game.board.getHex(position);
+            IHex curHex = game.getBoard().getHex(position);
             if (curHex.hasPavement()) {
                 onlyPavement = true;
                 isPavementStep = true;
@@ -769,7 +769,7 @@ public class MoveStep implements Serializable {
     }
 
 
-    void compileIllegal(final Game game, final Entity entity,
+    void compileIllegal(final IGame game, final Entity entity,
                         final MoveStep prev) {
         final int stepType = getType();
         final boolean isInfantry = entity instanceof Infantry;
@@ -906,7 +906,7 @@ public class MoveStep implements Serializable {
                 Entity other = (Entity) target;
                 if (null != Compute.stackingViolation(game, other,
                                                       curPos, entity)
-                    || other.isHexProhibited(game.board.getHex(curPos))) {
+                    || other.isHexProhibited(game.getBoard().getHex(curPos))) {
                     movementType = Entity.MOVE_ILLEGAL;
                 }
             } else {
@@ -995,10 +995,10 @@ public class MoveStep implements Serializable {
     /**
      * Amount of movement points required to move from start to dest
      */
-    protected void calcMovementCostFor(Game game, Coords prev) {
+    protected void calcMovementCostFor(IGame game, Coords prev) {
         final int moveType = parent.getEntity().getMovementType();
-        final Hex srcHex = game.board.getHex(prev);
-        final Hex destHex = game.board.getHex(getPosition());
+        final IHex srcHex = game.getBoard().getHex(prev);
+        final IHex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = parent.getEntity() instanceof Infantry;
 
         mp = 1;
@@ -1011,26 +1011,26 @@ public class MoveStep implements Serializable {
         // Account for terrain, unless we're moving along a road.
         if (!isPavementStep) {
 
-            if (destHex.levelOf(Terrain.ROUGH) > 0) {
+            if (destHex.terrainLevel(Terrains.ROUGH) > 0) {
                 mp++;
             }
-            if (destHex.levelOf(Terrain.RUBBLE) > 0) {
+            if (destHex.terrainLevel(Terrains.RUBBLE) > 0) {
                 mp++;
             }
-            if (destHex.levelOf(Terrain.WOODS) == 1) {
+            if (destHex.terrainLevel(Terrains.WOODS) == 1) {
                 mp++;
-            } else if (destHex.levelOf(Terrain.WOODS) > 1) {
+            } else if (destHex.terrainLevel(Terrains.WOODS) > 1) {
                 mp += 2;
             }
 
             // non-hovers check for water depth and are affected by swamp
             if (moveType != Entity.MovementType.HOVER) {
-                if (destHex.levelOf(Terrain.WATER) == 1) {
+                if (destHex.terrainLevel(Terrains.WATER) == 1) {
                     mp++;
-                } else if (destHex.levelOf(Terrain.WATER) > 1) {
+                } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
                     mp += 3;
                 }
-                if (destHex.contains(Terrain.SWAMP)) {
+                if (destHex.containsTerrain(Terrains.SWAMP)) {
                     mp++;
                 }
             }
@@ -1057,9 +1057,9 @@ public class MoveStep implements Serializable {
         }
 
         // If we entering a building, all non-infantry pay additional MP.
-        if (nDestEl < destHex.levelOf(Terrain.BLDG_ELEV)
+        if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)
             && !(isInfantry)) {
-            Building bldg = game.board.getBuildingAt(getPosition());
+            Building bldg = game.getBoard().getBuildingAt(getPosition());
             mp += bldg.getType();
         }
     }
@@ -1070,10 +1070,10 @@ public class MoveStep implements Serializable {
      * This function does not comment on whether an overall movement path
      * is possible, just whether the <em>current</em> step is possible.
      */
-    public boolean isMovementPossible(Game game, Coords src) {
-        final Hex srcHex = game.board.getHex(src);
+    public boolean isMovementPossible(IGame game, Coords src) {
+        final IHex srcHex = game.getBoard().getHex(src);
         final Coords dest = this.getPosition();
-        final Hex destHex = game.board.getHex(dest);
+        final IHex destHex = game.getBoard().getHex(dest);
         final Entity entity = parent.getEntity();
 
         if (null == dest) {
@@ -1110,7 +1110,7 @@ public class MoveStep implements Serializable {
             return false;
         }
         // another easy check
-        if (!game.board.contains(dest)) {
+        if (!game.getBoard().contains(dest)) {
             return false;
         }
 
@@ -1206,7 +1206,7 @@ public class MoveStep implements Serializable {
         // Can't run into water unless hovering, first step, or using a bridge.
         if (movementType == Entity.MOVE_RUN
             && nMove != Entity.MovementType.HOVER
-            && destHex.levelOf(Terrain.WATER) > 0
+            && destHex.terrainLevel(Terrains.WATER) > 0
             && !firstStep
             && !isPavementStep) {
             return false;

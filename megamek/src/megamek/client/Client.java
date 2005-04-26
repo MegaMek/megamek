@@ -23,6 +23,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+
 import java.util.Vector;
 
 import megamek.client.bot.BotClient;
@@ -33,6 +34,13 @@ import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.event.GameAttackEvent;
+import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GameMapQueryEvent;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GamePlayerDisconnectedEvent;
+import megamek.common.event.GameReportEvent;
+import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.preference.PreferenceManager;
 
@@ -52,7 +60,7 @@ public class Client implements Runnable {
     private int port;
     
     // the game state object
-    public Game game = new Game();
+    public IGame game = new Game();
 
     // here's some game phase stuff
     private MapSettings mapSettings;
@@ -60,8 +68,6 @@ public class Client implements Runnable {
     
     private Thread pump;
 
-    // I send out game events!
-    private Vector gameListeners = new Vector();
     //And close client events!
     private Vector closeClientListeners = new Vector();
 
@@ -146,7 +152,7 @@ public class Client implements Runnable {
             die();
         }
         if (!host.equals("localhost")) { //$NON-NLS-1$
-            processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_DISCONNECTED, getLocalPlayer(), "")); //$NON-NLS-1$
+            game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
         }
     }
     
@@ -215,8 +221,8 @@ public class Client implements Runnable {
     /**
      * Shortcut to game.board
      */
-    public Board getBoard() {
-        return game.board;
+    public IBoard getBoard() {
+        return game.getBoard();
     }
 
     /**
@@ -235,65 +241,36 @@ public class Client implements Runnable {
      * along with it.
      */
     protected void changePhase(int phase) {
-        this.game.setPhase(phase);
-
+        game.setPhase(phase);
         // Handle phase-specific items.
         switch (phase) {
-            case Game.PHASE_LOUNGE :
-                game.reset();
-                break;
-            case Game.PHASE_STARTING_SCENARIO :
-                sendDone(true);
-                break;
-            case Game.PHASE_EXCHANGE :
-                sendDone(true);
-                break;
-            case Game.PHASE_DEPLOY_MINEFIELDS :
-                break;
-            case Game.PHASE_DEPLOYMENT :
-                memDump("entering deployment phase"); //$NON-NLS-1$
-                break;
-            case Game.PHASE_TARGETING :
-                memDump("entering targeting phase"); //$NON-NLS-1$
-                break;
-            case Game.PHASE_MOVEMENT :
-                memDump("entering movement phase"); //$NON-NLS-1$
-                break;
-            case Game.PHASE_OFFBOARD :
-                memDump("entering offboard phase"); //$NON-NLS-1$
-                break;
-            case Game.PHASE_FIRING :
-                memDump("entering firing phase"); //$NON-NLS-1$
-                break;
-            case Game.PHASE_PHYSICAL :
-                game.resetActions();
-                memDump("entering physical phase"); //$NON-NLS-1$
-                break;
-            case Game.PHASE_INITIATIVE :
-                game.resetActions();
-                game.resetCharges();
-                break;
-            case Game.PHASE_MOVEMENT_REPORT :
-            case Game.PHASE_OFFBOARD_REPORT :
-            case Game.PHASE_FIRING_REPORT :
-            case Game.PHASE_END :
-            case Game.PHASE_VICTORY :
-                break;
+        case Game.PHASE_STARTING_SCENARIO :
+            sendDone(true);
+            break;
+        case Game.PHASE_EXCHANGE :
+            sendDone(true);
+            break;
+        case Game.PHASE_DEPLOYMENT :
+            memDump("entering deployment phase"); //$NON-NLS-1$
+            break;
+        case Game.PHASE_TARGETING :
+            memDump("entering targeting phase"); //$NON-NLS-1$
+            break;
+        case Game.PHASE_MOVEMENT :
+            memDump("entering movement phase"); //$NON-NLS-1$
+            break;
+        case Game.PHASE_OFFBOARD :
+            memDump("entering offboard phase"); //$NON-NLS-1$
+            break;
+        case Game.PHASE_FIRING :
+            memDump("entering firing phase"); //$NON-NLS-1$
+            break;
+        case Game.PHASE_PHYSICAL :
+            memDump("entering physical phase"); //$NON-NLS-1$
+            break;
         }
-
-        processGameEvent(new GameEvent(this, GameEvent.GAME_PHASE_CHANGE, null, "")); //$NON-NLS-1$
     }
 
-    /**
-     * Adds the specified game listener to receive
-     * board events from this board.
-     *
-     * @param l            the game listener.
-     */
-    public void addGameListener(GameListener l) {
-        gameListeners.addElement(l);
-    }
-    
     /**
      * Adds the specified close client listener to receive
      * close client events.
@@ -303,59 +280,6 @@ public class Client implements Runnable {
      */
     public void addCloseClientListener(CloseClientListener l) {
         closeClientListeners.addElement(l);
-    }
-
-    /**
-     * Removes the specified game listener.
-     *
-     * @param l            the game listener.
-     */
-    public void removeGameListener(GameListener l) {
-        gameListeners.removeElement(l);
-    }
-
-    /**
-     * Processes game events occurring on this
-     * connection by dispatching them to any registered
-     * GameListener objects.
-     *
-     * @param be        the board event.
-     */
-    protected void processGameEvent(GameEvent ge) {
-        for (Enumeration e = gameListeners.elements(); e.hasMoreElements();) {
-            GameListener l = (GameListener) e.nextElement();
-            switch (ge.type) {
-                case GameEvent.GAME_PLAYER_CHAT :
-                    l.gamePlayerChat(ge);
-                    break;
-                case GameEvent.GAME_PLAYER_STATUSCHANGE :
-                    l.gamePlayerStatusChange(ge);
-                    break;
-                case GameEvent.GAME_PHASE_CHANGE :
-                    l.gamePhaseChange(ge);
-                    break;
-                case GameEvent.GAME_TURN_CHANGE :
-                    l.gameTurnChange(ge);
-                    break;
-                case GameEvent.GAME_NEW_ENTITIES :
-                    l.gameNewEntities(ge);
-                    break;
-                case GameEvent.GAME_NEW_SETTINGS :
-                    l.gameNewSettings(ge);
-                    break;
-                case GameEvent.GAME_PLAYER_DISCONNECTED :
-                    l.gameDisconnected(ge);
-                    break;
-                case GameEvent.GAME_END:
-                    l.gameEnd(ge);
-                    break;
-                case GameEvent.GAME_REPORT:
-                    l.gameReport(ge);
-                    break;
-                case GameEvent.GAME_MAP_QUERY:
-                    l.gameMapQuery(ge);
-            }
-        }
     }
 
     /**
@@ -402,8 +326,6 @@ public class Client implements Runnable {
      */
     protected void changeTurnIndex(int index) {
         game.setTurnIndex(index);
-        Player player = getPlayer(game.getTurn().getPlayerNum());
-        processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, player, "")); //$NON-NLS-1$
     }
 
     /**
@@ -590,7 +512,6 @@ public class Client implements Runnable {
         PreferenceManager.getClientPreferences().setLastPlayerColor(newPlayer.getColorIndex());
         PreferenceManager.getClientPreferences().setLastPlayerCategory(newPlayer.getCamoCategory());
         PreferenceManager.getClientPreferences().setLastPlayerCamoName(newPlayer.getCamoFileName());
-        processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, "")); //$NON-NLS-1$
     }
 
     /**
@@ -605,7 +526,7 @@ public class Client implements Runnable {
      */
     protected void receiveBoard(Packet c) {
         Board newBoard = (Board) c.getObject(0);
-        game.board.newData(newBoard);
+        game.setBoard(newBoard);
     }
 
     /**
@@ -620,8 +541,6 @@ public class Client implements Runnable {
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
         }
-
-        processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
     }
 
     /**
@@ -632,8 +551,6 @@ public class Client implements Runnable {
         Entity entity = (Entity) c.getObject(1);
         // Replace this entity in the game.
         game.setEntity(eindex, entity);        
-
-        processGameEvent(new GameEvent(c, GameEvent.GAME_NEW_ENTITIES, null, null));
     }
 
     protected void receiveEntityAdd(Packet packet) {
@@ -642,18 +559,13 @@ public class Client implements Runnable {
 
         // Add the entity to the game.
         game.addEntity(entityId, entity);
-
-        processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
     }
 
     protected void receiveEntityRemove(Packet packet) {
         int entityId = packet.getIntValue(0);
         int condition = packet.getIntValue(1);
-
         // Move the unit to its final resting place.
         game.removeEntity(entityId, condition);
-
-        processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
     }
 
     protected void receiveEntityVisibilityIndicator(Packet packet) {
@@ -663,55 +575,32 @@ public class Client implements Runnable {
             e.setVisibleToEnemy(packet.getBooleanValue(2));
             //this next call is only needed sometimes, but we'll just
             // call it everytime
-            game.board.processBoardEvent(new BoardEvent(game.board, e.getPosition(), e, BoardEvent.BOARD_CHANGED_ENTITY, 0));
+            game.processGameEvent(new GameEntityChangeEvent(this,e));
         }
     }
 
     protected void receiveDeployMinefields(Packet packet) {
-        Vector minefields = (Vector) packet.getObject(0);
-
-        for (int i = 0; i < minefields.size(); i++) {
-            Minefield mf = (Minefield) minefields.elementAt(i);
-            game.addMinefield(mf);
-        }
-        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, "")); //$NON-NLS-1$
+        game.addMinefields((Vector) packet.getObject(0));
     }
 
     protected void receiveSendingMinefields(Packet packet) {
-        Vector minefields = (Vector) packet.getObject(0);
-        game.clearMinefields();
-
-        for (int i = 0; i < minefields.size(); i++) {
-            Minefield mf = (Minefield) minefields.elementAt(i);
-            game.addMinefield(mf);
-        }
-      processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, "")); //$NON-NLS-1$
+        game.setMinefields((Vector) packet.getObject(0));
     }
 
     protected void receiveRevealMinefield(Packet packet) {
-        Minefield mf = (Minefield) packet.getObject(0);
-        game.addMinefield(mf);
-        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, "")); //$NON-NLS-1$
+        game.addMinefield((Minefield) packet.getObject(0));
     }
 
     protected void receiveRemoveMinefield(Packet packet) {
-        Minefield mf = (Minefield) packet.getObject(0);
-        game.removeMinefield(mf);
-        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, "")); //$NON-NLS-1$
+        game.removeMinefield((Minefield) packet.getObject(0));
     }
 
     protected void receiveBuildingUpdateCF(Packet packet) {
-        Vector bldgs = (Vector) packet.getObject(0);
-
-        // Update the board.  The board will notify listeners.
-        game.board.updateBuildingCF(bldgs);
+        game.getBoard().updateBuildingCF((Vector) packet.getObject(0));
     }
 
     protected void receiveBuildingCollapse(Packet packet) {
-        Vector bldgs = (Vector) packet.getObject(0);
-
-        // Update the board.  The board will notify listeners.
-        game.board.collapseBuilding(bldgs);
+        game.getBoard().collapseBuilding((Vector) packet.getObject(0));
     }
 
     /**
@@ -728,18 +617,10 @@ public class Client implements Runnable {
                 TorsoTwistAction tta = (TorsoTwistAction) ea;
                 Entity entity = game.getEntity(entityId);
                 entity.setSecondaryFacing(tta.getFacing());
-                game.board.processBoardEvent(new BoardEvent(
-                                       game.board, entity.getPosition(),
-                                       entity,
-                                       BoardEvent.BOARD_CHANGED_ENTITY, 0));
             } else if (ea instanceof FlipArmsAction && game.hasEntity(entityId)) {
                 FlipArmsAction faa = (FlipArmsAction) ea;
                 Entity entity = game.getEntity(entityId);
                 entity.setArmsFlipped(faa.getIsFlipped());
-                game.board.processBoardEvent(new BoardEvent(
-                                       game.board, entity.getPosition(),
-                                       entity,
-                                       BoardEvent.BOARD_CHANGED_ENTITY, 0));
             } else if (ea instanceof DodgeAction && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
                 entity.dodging = true;
@@ -750,9 +631,7 @@ public class Client implements Runnable {
                     Entity entity = game.getEntity(clubAct.getEntityId());
                     clubAct.setClub(Compute.clubMechHas(entity));
                 }
-                game.board.processBoardEvent(new BoardEvent(
-                                       ea, null, null,
-                                       BoardEvent.BOARD_NEW_ATTACK, 0));
+                game.processGameEvent(new GameAttackEvent(this,(AttackAction)ea));
             }
 
             if (addAction) {
@@ -870,22 +749,18 @@ public class Client implements Runnable {
                     break;
                 case Packet.COMMAND_PLAYER_READY :
                     getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
-                    processGameEvent(
-                        new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), "")); //$NON-NLS-1$
                     break;
                 case Packet.COMMAND_PLAYER_ADD :
                     receivePlayerInfo(c);
                     break;
                 case Packet.COMMAND_PLAYER_REMOVE :
                     game.removePlayer(c.getIntValue(0));
-                    processGameEvent(
-                        new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), "")); //$NON-NLS-1$
                     break;
                 case Packet.COMMAND_CHAT :
                     if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
                         serverlog.append( (String) c.getObject(0) );
                     };
-                    processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_CHAT, null, (String) c.getObject(0)));
+                    game.processGameEvent(new GamePlayerChatEvent(this,null, (String) c.getObject(0)));
                     break;
                 case Packet.COMMAND_ENTITY_ADD :
                     receiveEntityAdd(c);
@@ -912,7 +787,7 @@ public class Client implements Runnable {
                     receiveRemoveMinefield(c);
                     break;
                 case Packet.COMMAND_CHANGE_HEX :
-                    game.board.setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
+                    game.getBoard().setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
                     break;
                 case Packet.COMMAND_BLDG_UPDATE_CF :
                     receiveBuildingUpdateCF(c);
@@ -949,35 +824,26 @@ public class Client implements Runnable {
                         };
                     };
                     eotr = (String) c.getObject(0);
-                    processGameEvent(new GameEvent(this, GameEvent.GAME_REPORT, null, "")); //$NON-NLS-1$
+                    game.processGameEvent(new GameReportEvent(this));
                     break;
                 case Packet.COMMAND_ENTITY_ATTACK :
                     receiveAttack(c);
                     break;
                 case Packet.COMMAND_SENDING_GAME_SETTINGS :
                     game.setOptions((GameOptions) c.getObject(0));
-                    processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
                     break;
                 case Packet.COMMAND_SENDING_MAP_SETTINGS :
                     mapSettings = (MapSettings) c.getObject(0);
-                    processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
+                    game.processGameEvent(new GameSettingsChangeEvent(this));
                     break;
                 case Packet.COMMAND_QUERY_MAP_SETTINGS :
-                    processGameEvent(new GameEvent(c.getObject(0), GameEvent.GAME_MAP_QUERY, null, null));
+                    game.processGameEvent(new GameMapQueryEvent(this, (MapSettings)c.getObject(0)));
                     break;
                 case Packet.COMMAND_END_OF_GAME :
                     String sReport = (String) c.getObject(0);
-                    game.setVictoryPlayerId(c.getIntValue(1));
-                    game.setVictoryTeam(c.getIntValue(2));
+                    game.end(c.getIntValue(1), c.getIntValue(2));
                     // save victory report
                     saveEntityStatus(sReport);
-
-                    // Clean up the board settings.
-                    this.game.board.select(null);
-                    this.game.board.highlight(null);
-                    this.game.board.cursor(null);
-                    
-                    processGameEvent(new GameEvent(this, GameEvent.GAME_END, null, "")); //$NON-NLS-1$
                     break;
             }
         }

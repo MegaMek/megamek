@@ -17,6 +17,8 @@ package megamek.common;
 import java.io.*;
 import java.util.*;
 
+import megamek.common.event.GamePlayerChangeEvent;
+
 /**
  * Represents a player in the game.
  */
@@ -187,6 +189,7 @@ public final class Player extends TurnOrdered
 
     public void setDone(boolean done) {
         this.done = done;
+        game.processGameEvent(new GamePlayerChangeEvent(this,this));
     }
 
     public boolean isGhost() {

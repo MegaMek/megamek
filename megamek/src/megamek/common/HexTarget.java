@@ -21,7 +21,7 @@ public class HexTarget implements Targetable
     private int m_elev;
     private int m_type;
 
-    public HexTarget(Coords c, Board board, int nType) {
+    public HexTarget(Coords c, IBoard board, int nType) {
         m_coords = c;
         m_elev = board.getHex(m_coords).getElevation();
         m_type = nType;

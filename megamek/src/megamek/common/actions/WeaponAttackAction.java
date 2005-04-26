@@ -23,9 +23,9 @@ import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.Hex;
 import megamek.common.IAimingModes;
+import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
@@ -36,7 +36,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.Targetable;
-import megamek.common.Terrain;
+import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 
@@ -119,7 +119,7 @@ public class WeaponAttackAction
         return otherAttackInfo;
     }
 
-    public ToHitData toHit(Game game) {
+    public ToHitData toHit(IGame game) {
         return WeaponAttackAction.toHit(game, getEntityId(),
                            game.getTarget(getTargetType(), getTargetId()),
                            getWeaponId(),
@@ -127,18 +127,18 @@ public class WeaponAttackAction
                            getAimingMode(), nemesisConfused);
     }
 
-    public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE, false);
       }
     
-    public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
         return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, false);
     }
 
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
-    public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode, boolean isNemesisConfused) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode, boolean isNemesisConfused) {
         final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -164,8 +164,8 @@ public class WeaponAttackAction
               atype.getMunitionType() == AmmoType.M_INFERNO ) ||
             ( isWeaponInfantry &&
               wtype.hasFlag(WeaponType.F_INFERNO) );
-        boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == Game.PHASE_FIRING;
-        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == Game.PHASE_TARGETING || game.getPhase() == Game.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
+        boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == IGame.PHASE_FIRING;
+        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == IGame.PHASE_TARGETING || game.getPhase() == IGame.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
         boolean isPPCwithoutInhibitor = wtype.getInternalName()==("Particle Cannon") && game.getOptions().booleanOption("maxtech_ppc_inhibitors") && weapon.curMode().equals("Field Inhibitor OFF");
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
@@ -187,7 +187,7 @@ public class WeaponAttackAction
             !AmmoType.canDeliverMinefield(atype)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
         }
-        if ((game.getPhase() == Game.PHASE_TARGETING) && !isArtilleryIndirect) {
+        if ((game.getPhase() == IGame.PHASE_TARGETING) && !isArtilleryIndirect) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Only indirect artillery can be fired in the targeting phase");
         }
     
@@ -339,7 +339,7 @@ public class WeaponAttackAction
         int targEl;
     
         if (te == null) {
-            targEl = game.board.getHex(target.getPosition()).floor();
+            targEl = game.getBoard().getHex(target.getPosition()).floor();
         } else {
             targEl = te.absHeight();
         }
@@ -636,9 +636,9 @@ public class WeaponAttackAction
         }
     
         // target in water?
-        Hex attHex = game.board.getHex(ae.getPosition());
-        Hex targHex = game.board.getHex(target.getPosition());
-        if (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) { //target in partial water
+        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex targHex = game.getBoard().getHex(target.getPosition());
+        if (targHex.containsTerrain(Terrains.WATER) && targHex.surface() == targEl && te.height() > 0) { //target in partial water
             los.setTargetCover(true);
             losMods = los.losModifiers(game);
         }
@@ -739,7 +739,7 @@ public class WeaponAttackAction
     
         // Change hit table for partial cover, accomodate for partial underwater(legs)
         if (los.isTargetCover()) {
-            if ( ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET && (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
+            if ( ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET && (targHex.containsTerrain(Terrains.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
                 //weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_KICK);
             } else {

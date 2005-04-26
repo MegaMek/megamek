@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import megamek.common.loaders.*;
 import megamek.common.options.IOption;
+import megamek.common.util.BoardUtilities;
 
 public class ScenarioLoader 
 {
@@ -495,7 +496,7 @@ public class ScenarioLoader
      * size (16x17), because there's currently no way to specify the desired boardheight
      * in the scenario file
      */
-    private Board createBoard(Properties p)
+    private IBoard createBoard(Properties p)
         throws Exception
     {
         int nWidth = 1, nHeight = 1;
@@ -558,14 +559,12 @@ public class ScenarioLoader
                 }
                 ba[n] = new Board();
                 ba[n].load(sBoardFile);
-                ba[n].flip( isRotated, isRotated );
+                BoardUtilities.flip(ba[n], isRotated, isRotated );
             }
         }
         
         // construct the big board
-        Board out = new Board();
-        out.combine(16, 17, nWidth, nHeight, ba);
-        return out;        
+        return BoardUtilities.combine(16, 17, nWidth, nHeight, ba);
     }
     
     private Properties loadProperties()

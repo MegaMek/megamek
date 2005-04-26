@@ -39,7 +39,7 @@ public class TestBoardEncoder {
 
         // The Game containing the Board.
         Game game = new Game();
-        Board board = game.getBoard();
+        IBoard board = game.getBoard();
         Coords coords = null;
         boolean success = true;
 
@@ -62,19 +62,20 @@ public class TestBoardEncoder {
             board.load( TestBoardEncoder.getTestInputStream() );
 
             // Add some infernos and fires.
+            ITerrainFactory f = Terrains.getTerrainFactory();            
             coords = new Coords( 5, 3 );
             board.addInfernoTo( coords, InfernoTracker.STANDARD_ROUND, 1 );
-            board.getHex( coords ).addTerrain( new Terrain(Terrain.FIRE, 1) );
+            board.getHex( coords ).addTerrain( f.createTerrain(Terrains.FIRE, 1) );
             coords = new Coords( 8, 6 );
             board.addInfernoTo( coords, InfernoTracker.STANDARD_ROUND, 1 );
-            board.getHex( coords ).addTerrain( new Terrain(Terrain.FIRE, 2) );
+            board.getHex( coords ).addTerrain( f.createTerrain(Terrains.FIRE, 2) );
             coords = new Coords( 4, 10 );
-            board.getHex( coords ).addTerrain( new Terrain(Terrain.FIRE, 2) );
+            board.getHex( coords ).addTerrain( f.createTerrain(Terrains.FIRE, 2) );
             coords = new Coords( 7, 13 );
             board.addInfernoTo( coords, InfernoTracker.STANDARD_ROUND, 2 );
-            board.getHex( coords ).addTerrain( new Terrain(Terrain.FIRE, 2) );
+            board.getHex( coords ).addTerrain( f.createTerrain(Terrains.FIRE, 2) );
             coords = new Coords( 11, 14 );
-            board.getHex( coords ).addTerrain( new Terrain(Terrain.FIRE, 2) );
+            board.getHex( coords ).addTerrain( f.createTerrain(Terrains.FIRE, 2) );
 
             // Save a copy of the board before XML encoding.
             boos.writeObject( board );

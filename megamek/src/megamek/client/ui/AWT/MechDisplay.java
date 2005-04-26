@@ -620,7 +620,7 @@ class WeaponPanel extends BufferedPanel
     public void displayMech(Entity en) {
 
         // Grab a copy of the game.
-        Game game = client.getClient().game;
+        IGame game = client.getClient().game;
 
         // update pointer to weapons
         this.weapons = en.getWeaponList();
@@ -635,7 +635,7 @@ class WeaponPanel extends BufferedPanel
         Coords position = entity.getPosition();
         if (!en.isOffBoard()) {
             if ( position != null
-                    && game.getBoard().getHex(position).levelOf(Terrain.FIRE) == 2 ) {
+                    && game.getBoard().getHex(position).terrainLevel(Terrains.FIRE) == 2 ) {
                    currentHeatBuildup += 5; // standing in fire
                }
         }

@@ -26,6 +26,7 @@ import megamek.common.actions.*;
 import megamek.server.commands.*;
 import megamek.common.net.*;
 import megamek.common.options.*;
+import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 
 /**
@@ -1757,7 +1758,7 @@ implements Runnable, ConnectionHandler {
     public void applyBoardSettings() {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
-        Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
+        IBoard[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
         for (int i = 0; i < mapSettings.getMapWidth() * mapSettings.getMapHeight(); i++) {
             sheetBoards[i] = new Board();
             String name = (String)mapSettings.getBoardsSelectedVector().elementAt(i);
@@ -1767,14 +1768,15 @@ implements Runnable, ConnectionHandler {
                 name = name.substring( Board.BOARD_REQUEST_ROTATION.length() );
             }
             if (name.startsWith(MapSettings.BOARD_GENERATED)) {
-                sheetBoards[i].generateRandom(mapSettings);
+                sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
                 sheetBoards[i].load( name + ".board");
-                sheetBoards[i].flip( isRotated, isRotated );
+                BoardUtilities.flip(sheetBoards[i], isRotated, isRotated );
             }
         }
-        game.board.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
-        mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
+        IBoard newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
+                mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
+        game.setBoard(newBoard);
     }
 
     /**
@@ -2592,7 +2594,7 @@ implements Runnable, ConnectionHandler {
         boolean wasProne;
         boolean fellDuringMovement;
         int prevFacing = curFacing;
-        Hex prevHex = null;
+        IHex prevHex = null;
         final boolean isInfantry = (entity instanceof Infantry);
         AttackAction charge = null;
         PilotingRollData rollTarget;
@@ -2712,7 +2714,7 @@ implements Runnable, ConnectionHandler {
             curPos = step.getPosition();
             curFacing = step.getFacing();
 
-            final Hex curHex = game.board.getHex(curPos);
+            final IHex curHex = game.board.getHex(curPos);
 
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
@@ -2736,7 +2738,7 @@ implements Runnable, ConnectionHandler {
 
                     curPos = lastPos;
                     Coords nextPos = curPos;
-                    Hex    nextHex = null;
+                    IHex    nextHex = null;
                     int    skidDistance = 0;
                     Enumeration targets = null;
                     Entity target = null;
@@ -2815,12 +2817,12 @@ implements Runnable, ConnectionHandler {
                         if ( entity instanceof Tank &&
                              entity.getMovementType() ==
                              Entity.MovementType.HOVER ) {
-                            Terrain land = curHex.
-                                getTerrain(Terrain.WATER);
+                            ITerrain land = curHex.
+                                getTerrain(Terrains.WATER);
                             if ( land != null ) {
                                 curElevation += land.getLevel();
                             }
-                            land = nextHex.getTerrain(Terrain.WATER);
+                            land = nextHex.getTerrain(Terrains.WATER);
                             if ( land != null ) {
                                 nextElevation += land.getLevel();
                             }
@@ -2871,8 +2873,8 @@ implements Runnable, ConnectionHandler {
                                     if ( entity instanceof Tank &&
                                          entity.getMovementType() ==
                                          Entity.MovementType.HOVER &&
-                                         0 < nextHex.levelOf(Terrain.WATER) ) {
-                                        if ( 2 <= nextHex.levelOf(Terrain.WATER) ||
+                                         0 < nextHex.terrainLevel(Terrains.WATER) ) {
+                                        if ( 2 <= nextHex.terrainLevel(Terrains.WATER) ||
                                              target.isProne() ) {
                                             // Hovercraft can't hit the Mek.
                                             continue;
@@ -3223,7 +3225,7 @@ implements Runnable, ConnectionHandler {
             // check to see if we are a mech and we've moved OUT of fire
             if (entity instanceof Mech) {
                 if ( !lastPos.equals(curPos)
-                    && game.board.getHex(lastPos).contains(Terrain.FIRE)
+                    && game.board.getHex(lastPos).containsTerrain(Terrains.FIRE)
                     && ( step.getMovementType() != Entity.MOVE_JUMP
                          // Bug #828741 -- jumping bypasses fire, but not on the first step
                          //   getMpUsed -- total MP used to this step
@@ -3240,7 +3242,7 @@ implements Runnable, ConnectionHandler {
 
             // check to see if we are not a mech and we've moved INTO fire
             if (!(entity instanceof Mech)) {
-                if ( game.board.getHex(curPos).contains(Terrain.FIRE)
+                if ( game.board.getHex(curPos).containsTerrain(Terrains.FIRE)
                     && !lastPos.equals(curPos)
                     && step.getMovementType() != Entity.MOVE_JUMP ) {
                         doFlamingDeath(entity);
@@ -3315,7 +3317,7 @@ implements Runnable, ConnectionHandler {
                                          true);
 
                 // Swarming infantry platoons may drown.
-                if (curHex.levelOf(Terrain.WATER) > 1) {
+                if (curHex.terrainLevel(Terrains.WATER) > 1) {
                     drownSwarmer(entity, curPos);
                 }
 
@@ -3542,7 +3544,7 @@ implements Runnable, ConnectionHandler {
                 doSkillCheckInPlace(entity, rollTarget);
             }
             // jumped into water?
-            int waterLevel = game.board.getHex(curPos).levelOf(Terrain.WATER);
+            int waterLevel = game.board.getHex(curPos).terrainLevel(Terrains.WATER);
             rollTarget = entity.checkWaterMove(waterLevel);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
@@ -3553,7 +3555,7 @@ implements Runnable, ConnectionHandler {
             }
 
             // jumped into swamp? maybe stuck!
-            if (game.board.getHex(curPos).contains(Terrain.SWAMP)) {
+            if (game.board.getHex(curPos).containsTerrain(Terrains.SWAMP)) {
                 if (entity instanceof Mech) {
                     entity.setStuck(true);
                     phaseReport.append("\n" ).append( entity.getDisplayName()
@@ -3615,8 +3617,8 @@ implements Runnable, ConnectionHandler {
                     swarmer.setSwarmTargetId( Entity.NONE );
 
                     // Did the infantry fall into water?
-                    final Hex curHex = game.board.getHex(curPos);
-                    if ( curHex.levelOf(Terrain.WATER) > 0 ) {
+                    final IHex curHex = game.board.getHex(curPos);
+                    if ( curHex.terrainLevel(Terrains.WATER) > 0 ) {
                         // Swarming infantry die.
                         swarmer.setPosition( curPos );
                         phaseReport.append("    ")
@@ -3673,7 +3675,7 @@ implements Runnable, ConnectionHandler {
             // If the hex is on fire, and the swarming infantry is
             // *not* Battle Armor, it drops off.
             if ( !(swarmer instanceof BattleArmor) &&
-                 game.board.getHex(curPos).contains(Terrain.FIRE) ) {
+                 game.board.getHex(curPos).containsTerrain(Terrains.FIRE) ) {
                 swarmer.setSwarmTargetId( Entity.NONE );
                 entity.setSwarmAttackerId( Entity.NONE );
                 phaseReport.append( "\n   " )
@@ -3937,7 +3939,7 @@ implements Runnable, ConnectionHandler {
      */
     private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow, int hitMod) {
         // Bug 954272: Mines shouldn't work underwater
-        if (!game.board.getHex(mf.getCoords()).contains(Terrain.WATER) || game.board.getHex(mf.getCoords()).contains(Terrain.PAVEMENT)) {
+        if (!game.board.getHex(mf.getCoords()).containsTerrain(Terrains.WATER) || game.board.getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)) {
         switch (mf.getType()) {
             case (Minefield.TYPE_CONVENTIONAL) :
             case (Minefield.TYPE_THUNDER) :
@@ -3978,14 +3980,14 @@ implements Runnable, ConnectionHandler {
                            .append(" turns.\n");
 
                 // start a fire in the targets hex
-                Hex h = game.getBoard().getHex(dest);
+                IHex h = game.getBoard().getHex(dest);
 
                 // Unless there a fire in the hex already, start one.
-                if ( !h.contains( Terrain.FIRE ) ) {
+                if ( !h.containsTerrain( Terrains.FIRE ) ) {
                     phaseReport.append( " Fire started in hex " )
                                .append( dest.getBoardNum() )
                                .append( ".\n" );
-                    h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                 }
                 game.board.addInfernoTo(dest, InfernoTracker.STANDARD_ROUND, 1);
                 sendChangedHex(dest);
@@ -4015,7 +4017,7 @@ implements Runnable, ConnectionHandler {
             Minefield mf = (Minefield) e.nextElement();
 
             // Bug 954272: Mines shouldn't work underwater, and BMRr says Vibrabombs are mines
-            if (game.board.getHex(mf.getCoords()).contains(Terrain.WATER) && !game.board.getHex(mf.getCoords()).contains(Terrain.PAVEMENT)) {
+            if (game.board.getHex(mf.getCoords()).containsTerrain(Terrains.WATER) && !game.board.getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)) {
                 continue;
             }
 
@@ -4183,8 +4185,8 @@ implements Runnable, ConnectionHandler {
      * @param coords The <code>Coords</code> the entity is at
      */
     void checkForWashedInfernos(Entity entity, Coords coords) {
-        Hex hex = game.board.getHex(coords);
-        int waterLevel = hex.levelOf(Terrain.WATER);
+        IHex hex = game.board.getHex(coords);
+        int waterLevel = hex.terrainLevel(Terrains.WATER);
         // Mech on fire with infernos can wash them off.
         if (!(entity instanceof Mech) || !entity.infernos.isStillBurning()) {
             return;
@@ -4206,14 +4208,14 @@ implements Runnable, ConnectionHandler {
         entity.infernos.clear();
 
         // Start a fire in the hex?
-        Hex hex = game.board.getHex(coords);
+        IHex hex = game.board.getHex(coords);
         phaseReport.append( " Inferno removed from " )
             .append( entity.getDisplayName() );
-        if ( hex.contains(Terrain.FIRE) ) {
+        if ( hex.containsTerrain(Terrains.FIRE) ) {
             phaseReport.append( ".\n" );
         } else {
             phaseReport.append( " and fire started in hex!\n" );
-            hex.addTerrain(new Terrain(Terrain.FIRE, 1));
+            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
         }
         sendChangedHex(coords);
     }
@@ -4239,18 +4241,18 @@ implements Runnable, ConnectionHandler {
      * Set the locationsexposure of an entity
      *
      * @param entity The <code>Entity</code> who's exposure is being set
-     * @param hex The <code>Hex</code> the entity is in
+     * @param hex The <code>IHex</code> the entity is in
      * @param isPavementStep a <code>boolean</code> value wether
      *                       the entity is moving on a road
      * @param isJump a <code>boolean</code> value wether the entity is jumping
      */
 
-    public void doSetLocationsExposure(Entity entity, Hex hex, boolean isPavementStep, boolean isJump) {
-        if ( hex.levelOf(Terrain.WATER) > 0
+    public void doSetLocationsExposure(Entity entity, IHex hex, boolean isPavementStep, boolean isJump) {
+        if ( hex.terrainLevel(Terrains.WATER) > 0
             && entity.getMovementType() != Entity.MovementType.HOVER
             && !isPavementStep &&!isJump) {
             if (entity instanceof Mech && !entity.isProne()
-                && hex.levelOf(Terrain.WATER) == 1) {
+                && hex.terrainLevel(Terrains.WATER) == 1) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getOptions().booleanOption("vacuum"))
                         entity.setLocationStatus(loop, Entity.LOC_VACUUM);
@@ -4465,8 +4467,8 @@ implements Runnable, ConnectionHandler {
     * be able to cause an accidental fall from above
     */
     private void doEntityFallsInto(Entity entity, Coords src, Coords dest, PilotingRollData roll, boolean causeAffa) {
-        final Hex srcHex = game.board.getHex(src);
-        final Hex destHex = game.board.getHex(dest);
+        final IHex srcHex = game.board.getHex(src);
+        final IHex destHex = game.board.getHex(dest);
         final int fallElevation = Math.abs(destHex.floor() - srcHex.floor());
         int direction = src.direction(dest);
         // check entity in target hex
@@ -4591,8 +4593,8 @@ implements Runnable, ConnectionHandler {
             }
             return;
         }
-        final Hex srcHex = game.board.getHex(src);
-        final Hex destHex = game.board.getHex(dest);
+        final IHex srcHex = game.board.getHex(src);
+        final IHex destHex = game.board.getHex(dest);
         final int direction = src.direction(dest);
         // Handle null hexes.
         if ( srcHex == null || destHex == null ) {
@@ -5242,34 +5244,34 @@ implements Runnable, ConnectionHandler {
 
         // Get the entity's current hex.
         Coords coords = entity.getPosition();
-        Hex curHex = game.board.getHex( coords );
+        IHex curHex = game.board.getHex( coords );
 
         // Is there a blown off arm in the hex?
-        if (curHex.levelOf(Terrain.ARMS) > 0) {
+        if (curHex.terrainLevel(Terrains.ARMS) > 0) {
             clubType = EquipmentType.get("Limb Club");
-            curHex.addTerrain(new Terrain(Terrain.ARMS, curHex.levelOf(Terrain.ARMS)-1));
+            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, curHex.terrainLevel(Terrains.ARMS)-1));
             sendChangedHex(entity.getPosition());
             phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " picks up a blown-off arm for use as a club.\n");
         }
 
         // Is there a blown off leg in the hex?
-        else if (curHex.levelOf(Terrain.LEGS) > 0) {
+        else if (curHex.terrainLevel(Terrains.LEGS) > 0) {
             clubType = EquipmentType.get("Limb Club");
-            curHex.addTerrain(new Terrain(Terrain.LEGS, curHex.levelOf(Terrain.LEGS)-1));
+            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, curHex.terrainLevel(Terrains.LEGS)-1));
             sendChangedHex(entity.getPosition());
             phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " picks up a blown-off leg for use as a club.\n");
         }
 
         // Is there the rubble of a medium, heavy,
         // or hardened building in the hex?
-        else if ( Building.LIGHT < curHex.levelOf( Terrain.RUBBLE ) ) {
+        else if ( Building.LIGHT < curHex.terrainLevel( Terrains.RUBBLE ) ) {
 
             // Finding a club is not guaranteed.  The chances are
             // based on the type of building that produced the
             // rubble.
             boolean found = false;
             int roll = Compute.d6(2);
-            switch ( curHex.levelOf( Terrain.RUBBLE ) ) {
+            switch ( curHex.terrainLevel( Terrains.RUBBLE ) ) {
             case Building.MEDIUM:
                 if ( roll >= 7 ) {
                     found = true;
@@ -5302,7 +5304,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // Are there woods in the hex?
-        else if ( 1 <= curHex.levelOf( Terrain.WOODS ) ) {
+        else if ( 1 <= curHex.terrainLevel( Terrains.WOODS ) ) {
             clubType = EquipmentType.get("Tree Club");
             phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " uproots a tree for use as a club.\n");
         }
@@ -5504,7 +5506,7 @@ implements Runnable, ConnectionHandler {
     private boolean tryIgniteHex( Coords c, boolean bInferno, int nTargetRoll,
                                   boolean bReportAttempt ) {
 
-        Hex hex = game.board.getHex(c);
+        IHex hex = game.board.getHex(c);
         boolean bAnyTerrain = false;
 
         // Ignore bad coordinates.
@@ -5520,7 +5522,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // The hex may already be on fire.
-        if ( hex.contains( Terrain.FIRE ) ) {
+        if ( hex.containsTerrain( Terrains.FIRE ) ) {
             if ( bReportAttempt ) {
                 phaseReport.append("           The hex is already on fire.\n");
             }
@@ -5550,9 +5552,9 @@ implements Runnable, ConnectionHandler {
    }
 
     private void tryClearHex(Coords c, int nTarget) {
-        Hex h = game.board.getHex(c);
-        int woods = h.levelOf(Terrain.WOODS);
-        if (woods == Terrain.LEVEL_NONE) {
+        IHex h = game.board.getHex(c);
+        int woods = h.terrainLevel(Terrains.WOODS);
+        if (woods == ITerrain.LEVEL_NONE) {
             phaseReport.append("      Woods already cleared.\n" );
         } else {
             int woodsRoll = Compute.d6(2);
@@ -5561,13 +5563,13 @@ implements Runnable, ConnectionHandler {
                 .append( woodsRoll ).append( ": ");
             if(woodsRoll >= nTarget) {
                 if(woods > 1) {
-                    h.removeTerrain(Terrain.WOODS);
-                    h.addTerrain(new Terrain(Terrain.WOODS, woods - 1));
+                    h.removeTerrain(Terrains.WOODS);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, woods - 1));
                     phaseReport.append(" Heavy Woods converted to Light Woods!\n");
                 }
                 else if(woods == 1) {
-                    h.removeTerrain(Terrain.WOODS);
-                    h.addTerrain(new Terrain(Terrain.ROUGH, 1));
+                    h.removeTerrain(Terrains.WOODS);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
                     phaseReport.append(" Light Woods converted to Rough!\n");
                 }
                 sendChangedHex(c);
@@ -5963,13 +5965,13 @@ implements Runnable, ConnectionHandler {
                   return !bMissed;
               }
           }
-          Hex h = game.getBoard().getHex(coords);
+          IHex h = game.getBoard().getHex(coords);
           //Unless there is a fire in the hex already, start one.
-          if ( !h.contains( Terrain.FIRE ) ) {
+          if ( !h.containsTerrain( Terrains.FIRE ) ) {
               phaseReport.append( "       Fire started in hex " )
                   .append( coords.getBoardNum() )
                   .append( ".\n" );
-              h.addTerrain(new Terrain(Terrain.FIRE, 1));
+              h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
           }
           game.board.addInfernoTo( coords, InfernoTracker.INFERNO_IV_ROUND, 1 );
           sendChangedHex(coords);
@@ -5991,11 +5993,11 @@ implements Runnable, ConnectionHandler {
               }
               h = game.getBoard().getHex(tempcoords);
               // Unless there is a fire in the hex already, start one.
-              if ( !h.contains( Terrain.FIRE ) ) {
+              if ( !h.containsTerrain( Terrains.FIRE ) ) {
                   phaseReport.append( "       Fire started in hex " )
                       .append( tempcoords.getBoardNum() )
                       .append( ".\n" );
-                  h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                  h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
               }
               game.board.addInfernoTo( tempcoords, InfernoTracker.INFERNO_IV_ROUND, 1 );
               sendChangedHex(tempcoords);
@@ -6622,10 +6624,10 @@ implements Runnable, ConnectionHandler {
 
                     // start a fire in the targets hex
                     Coords c = target.getPosition();
-                    Hex h = game.getBoard().getHex(c);
+                    IHex h = game.getBoard().getHex(c);
 
                     // Is there a fire in the hex already?
-                    if ( h.contains( Terrain.FIRE ) ) {
+                    if ( h.containsTerrain( Terrains.FIRE ) ) {
                         phaseReport.append( "        " )
                             .append( hits )
                             .append( " Inferno rounds added to hex " )
@@ -6637,7 +6639,7 @@ implements Runnable, ConnectionHandler {
                             .append( " Inferno rounds start fire in hex " )
                             .append( c.getBoardNum() )
                             .append( ".\n" );
-                        h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                     }
                     game.board.addInfernoTo
                         ( c, InfernoTracker.STANDARD_ROUND, hits );
@@ -6844,12 +6846,12 @@ implements Runnable, ConnectionHandler {
 
                     // Unless there a fire in the hex already, start one.
                     Coords c = target.getPosition();
-                    Hex h = game.getBoard().getHex(c);
-                    if ( !h.contains( Terrain.FIRE ) ) {
+                    IHex h = game.getBoard().getHex(c);
+                    if ( !h.containsTerrain( Terrains.FIRE ) ) {
                         phaseReport.append( " Fire started in hex " )
                             .append( c.getBoardNum() )
                             .append( ".\n" );
-                        h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                     }
                     game.board.addInfernoTo
                         ( c, InfernoTracker.STANDARD_ROUND, hits );
@@ -6873,14 +6875,14 @@ implements Runnable, ConnectionHandler {
 
                     // start a fire in the targets hex
                     Coords c = target.getPosition();
-                    Hex h = game.getBoard().getHex(c);
+                    IHex h = game.getBoard().getHex(c);
 
                     // Unless there a fire in the hex already, start one.
-                    if ( !h.contains( Terrain.FIRE ) ) {
+                    if ( !h.containsTerrain( Terrains.FIRE ) ) {
                         phaseReport.append( " Fire started in hex " )
                             .append( c.getBoardNum() )
                             .append( ".\n" );
-                        h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                     }
                     game.board.addInfernoTo
                         ( c, InfernoTracker.STANDARD_ROUND, 1 );
@@ -6928,7 +6930,7 @@ implements Runnable, ConnectionHandler {
                 // weapons that can't normally start fires.  that's weird.
                 // Buildings can't be accidentally ignited.
                 if ( bldg == null) {
-                    boolean alreadyIgnited = game.board.getHex(target.getPosition()).contains(Terrain.FIRE);
+                    boolean alreadyIgnited = game.board.getHex(target.getPosition()).containsTerrain(Terrains.FIRE);
                     boolean ignited = tryIgniteHex(target.getPosition(), bInferno, 9);
                     if (!alreadyIgnited && ignited) return !bMissed;
                 }
@@ -8407,7 +8409,7 @@ implements Runnable, ConnectionHandler {
             if ( null == entity.getPosition() ) {
                 continue;
             }
-            Hex entityHex = game.getBoard().getHex(entity.getPosition());
+            IHex entityHex = game.getBoard().getHex(entity.getPosition());
 
             // heat doesn't matter for non-mechs
             if (!(entity instanceof Mech)) {
@@ -8466,7 +8468,7 @@ implements Runnable, ConnectionHandler {
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
             if (entityHex != null) {
-                if (entityHex.levelOf(Terrain.FIRE) == 2) {
+                if (entityHex.terrainLevel(Terrains.FIRE) == 2) {
                     entity.heatBuildup += 5;
                     roundReport.append("Added 5 heat from a fire...\n");
                 }
@@ -8640,11 +8642,11 @@ implements Runnable, ConnectionHandler {
             if ( null == entity.getPosition() ) {
                 continue;
             }
-            Hex entityHex = game.getBoard().getHex(entity.getPosition());
+            IHex entityHex = game.getBoard().getHex(entity.getPosition());
             if (entity instanceof Infantry &&
                     !(entity instanceof BattleArmor) &&
                     game.getTemperatureDifference() > 0 &&
-                    !(entityHex.contains(Terrain.BUILDING))) {
+                    !(entityHex.containsTerrain(Terrains.BUILDING))) {
                 phaseReport.append(entity.getDisplayName() )
                            .append( " is in extreme temperatures and dies.\n" );
                 phaseReport.append(destroyEntity(entity, "heat/cold", false, false));
@@ -8742,8 +8744,8 @@ implements Runnable, ConnectionHandler {
                  entity.isOffBoard()) {
                 continue;
             }
-            final Hex curHex = game.board.getHex(entity.getPosition());
-            if (curHex.contains(Terrain.FIRE)) {
+            final IHex curHex = game.board.getHex(entity.getPosition());
+            if (curHex.containsTerrain(Terrains.FIRE)) {
                 doFlamingDeath(entity);
             }
         }
@@ -8760,9 +8762,9 @@ implements Runnable, ConnectionHandler {
                  entity.isOffBoard()) {
                 continue;
             }
-            final Hex curHex = game.board.getHex(entity.getPosition());
-            if ((curHex.levelOf(Terrain.WATER) > 1
-            || (curHex.levelOf(Terrain.WATER) == 1 && entity.isProne()))
+            final IHex curHex = game.board.getHex(entity.getPosition());
+            if ((curHex.terrainLevel(Terrains.WATER) > 1
+            || (curHex.terrainLevel(Terrains.WATER) == 1 && entity.isProne()))
             && entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0) {
                 roundReport.append("\n" ).append( entity.getDisplayName() ).append( " is underwater with damaged life support.  Mechwarrior takes 1 damage.\n");
                 roundReport.append( damageCrew(entity, 1) );
@@ -9104,6 +9106,10 @@ implements Runnable, ConnectionHandler {
     private String damageEntity(Entity te, HitData hit, int damage,
                                 boolean ammoExplosion, int bFrag,
                                 boolean damageIS, boolean areaSatArty) {
+        //TODO mev
+        if (hit==null) {
+            System.out.println("hit=null");
+        }
         StringBuffer desc = new StringBuffer();
         boolean autoEject = false;
         if (ammoExplosion) {
@@ -9118,7 +9124,7 @@ implements Runnable, ConnectionHandler {
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
         boolean wasDamageIS = false;
-        Hex te_hex = null;
+        IHex te_hex = null;
 
         int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
         int specCrits = 0;
@@ -9136,11 +9142,11 @@ implements Runnable, ConnectionHandler {
         if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() ) {
             te_hex = game.board.getHex( te.getPosition() );
             if ( te_hex != null &&
-                 !te_hex.contains( Terrain.WOODS ) &&
-                 !te_hex.contains( Terrain.ROUGH ) &&
-                 !te_hex.contains( Terrain.RUBBLE ) &&
-                 !te_hex.contains( Terrain.SWAMP ) &&
-                 !te_hex.contains( Terrain.BUILDING ) ) {
+                 !te_hex.containsTerrain( Terrains.WOODS ) &&
+                 !te_hex.containsTerrain( Terrains.ROUGH ) &&
+                 !te_hex.containsTerrain( Terrains.RUBBLE ) &&
+                 !te_hex.containsTerrain( Terrains.SWAMP ) &&
+                 !te_hex.containsTerrain( Terrains.BUILDING ) ) {
                 // PBI.  Damage is doubled.
                 damage = damage * 2;
                 desc.append( "\n        Infantry platoon caught in the open!!!  Damage doubled." );
@@ -9194,6 +9200,9 @@ implements Runnable, ConnectionHandler {
 
             if (damageIS) desc.append ( "Internal Structure of ");
 
+            if (hit==null) {
+                System.out.println("hit1=null");
+            }
             desc.append(te.getLocationAbbr(hit) )
                 .append( "." );
 
@@ -9349,15 +9358,15 @@ implements Runnable, ConnectionHandler {
                                     desc.append( " <<<LIMB BLOWN OFF>>>\n        " )
                                     .append( te.getLocationName(Mech.LOC_RARM) )
                                     .append( " blown off." );
-                                    Hex h = game.board.getHex(te.getPosition());
+                                    IHex h = game.board.getHex(te.getPosition());
                                     if (te instanceof BipedMech) {
-                                        if (!h.contains( Terrain.ARMS)) {
-                                            h.addTerrain(new Terrain(Terrain.ARMS, 1));
+                                        if (!h.containsTerrain( Terrains.ARMS)) {
+                                            h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, 1));
                                         }
-                                        else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
-                                    } else if (!h.contains( Terrain.LEGS)) {
-                                               h.addTerrain(new Terrain(Terrain.LEGS, 1));
-                                           } else h.addTerrain(new Terrain(Terrain.LEGS, h.levelOf(Terrain.LEGS)+1));
+                                        else h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, h.terrainLevel(Terrains.ARMS)+1));
+                                    } else if (!h.containsTerrain( Terrains.LEGS)) {
+                                               h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, 1));
+                                           } else h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, h.terrainLevel(Terrains.LEGS)+1));
                                     sendChangedHex(te.getPosition());
                                 }
                                 if (hit.getLocation() == Mech.LOC_LT &&
@@ -9365,15 +9374,15 @@ implements Runnable, ConnectionHandler {
                                     desc.append( " <<<LIMB BLOWN OFF>>>\n        " )
                                     .append( te.getLocationName(Mech.LOC_LARM) )
                                     .append( " blown off." );
-                                    Hex h = game.board.getHex(te.getPosition());
+                                    IHex h = game.board.getHex(te.getPosition());
                                     if (te instanceof BipedMech) {
-                                        if (!h.contains( Terrain.ARMS)) {
-                                            h.addTerrain(new Terrain(Terrain.ARMS, 1));
+                                        if (!h.containsTerrain( Terrains.ARMS)) {
+                                            h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, 1));
                                         }
-                                        else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
-                                    } else if (!h.contains( Terrain.LEGS)) {
-                                               h.addTerrain(new Terrain(Terrain.LEGS, 1));
-                                           } else h.addTerrain(new Terrain(Terrain.LEGS, h.levelOf(Terrain.LEGS)+1));
+                                        else h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, h.terrainLevel(Terrains.ARMS)+1));
+                                    } else if (!h.containsTerrain( Terrains.LEGS)) {
+                                               h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, 1));
+                                           } else h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, h.terrainLevel(Terrains.LEGS)+1));
                                     sendChangedHex(te.getPosition());
                                 }
                         }
@@ -9497,7 +9506,7 @@ implements Runnable, ConnectionHandler {
 
                         // Hovercraft reduced to 0MP over water sink
                         if ( te.getMovementType() == Entity.MovementType.HOVER &&
-                                game.board.getHex( te.getPosition() ).levelOf(Terrain.WATER) > 0 ) {
+                                game.board.getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 ) {
                             desc.append( destroyEntity(te, "a watery grave", false) );
                         }
                     };
@@ -9509,7 +9518,7 @@ implements Runnable, ConnectionHandler {
                 // Does the hovercraft sink?
                 te_hex = game.board.getHex( te.getPosition() );
                 if ( te.getMovementType() == Entity.MovementType.HOVER &&
-                     te_hex.levelOf(Terrain.WATER) > 0 ) {
+                     te_hex.terrainLevel(Terrains.WATER) > 0 ) {
                     desc.append( destroyEntity(te, "a watery grave", false) );
                 }
             }
@@ -9577,10 +9586,10 @@ implements Runnable, ConnectionHandler {
             destroyLocation(en, Mech.LOC_CT);
 
         //Light our hex on fire
-          final Hex curHex = game.board.getHex(en.getPosition());
+          final IHex curHex = game.board.getHex(en.getPosition());
 
-          if ( (null != curHex) && !curHex.contains(Terrain.FIRE) && curHex.contains(Terrain.WOODS) ) {
-            curHex.addTerrain(new Terrain(Terrain.FIRE, 1));
+          if ( (null != curHex) && !curHex.containsTerrain(Terrains.FIRE) && curHex.containsTerrain(Terrains.WOODS) ) {
+            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
             sbDesc.append("        The hex at " + en.getPosition().x + "," + en.getPosition().y + " ignites!\n");
             sendChangedHex(en.getPosition());
           }
@@ -9716,9 +9725,9 @@ implements Runnable, ConnectionHandler {
                     // Sinking immobile hovercraft is a secondary effect
                     // and does not occur when loading from a scenario.
                     if ( secondaryEffects ) {
-                        Hex te_hex = game.board.getHex( en.getPosition() );
+                        IHex te_hex = game.board.getHex( en.getPosition() );
                         if ( en.getMovementType() == Entity.MovementType.HOVER
-                             && te_hex.levelOf(Terrain.WATER) > 0 ) {
+                             && te_hex.terrainLevel(Terrains.WATER) > 0 ) {
                             desc.append( destroyEntity
                                          (en, "a watery grave", false) );
                         }
@@ -9973,7 +9982,7 @@ implements Runnable, ConnectionHandler {
         CriticalSlot slot = null;
         StringBuffer desc = new StringBuffer();
         Coords coords = en.getPosition();
-        Hex hex = null;
+        IHex hex = null;
         if (null != coords) hex = game.board.getHex (coords);
         desc.append( "        Critical hit on " )
             .append( en.getLocationAbbr(loc) )
@@ -10015,13 +10024,13 @@ implements Runnable, ConnectionHandler {
                     destroyLocation(en, loc);
                 }
                 if (null != hex) {
-                    if (!hex.contains (Terrain.LEGS)) {
-                        hex.addTerrain (new Terrain(Terrain.LEGS, 1));
+                    if (!hex.containsTerrain (Terrains.LEGS)) {
+                        hex.addTerrain (Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, 1));
                     }
                     else {
-                        hex.addTerrain (new Terrain
-                                        (Terrain.LEGS,
-                                         hex.levelOf(Terrain.LEGS)+1));
+                        hex.addTerrain (Terrains.getTerrainFactory().createTerrain
+                                        (Terrains.LEGS,
+                                         hex.terrainLevel(Terrains.LEGS)+1));
                     }
                 }
                 sendChangedHex(en.getPosition());
@@ -10032,13 +10041,13 @@ implements Runnable, ConnectionHandler {
                     .append( " blown off." );
                 destroyLocation(en, loc);
                 if (null != hex) {
-                    if (!hex.contains( Terrain.ARMS)) {
-                        hex.addTerrain (new Terrain(Terrain.ARMS, 1));
+                    if (!hex.containsTerrain( Terrains.ARMS)) {
+                        hex.addTerrain (Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, 1));
                     }
                     else {
-                        hex.addTerrain (new Terrain
-                                        (Terrain.ARMS,
-                                         hex.levelOf(Terrain.ARMS)+1));
+                        hex.addTerrain (Terrains.getTerrainFactory().createTerrain
+                                        (Terrains.ARMS,
+                                         hex.terrainLevel(Terrains.ARMS)+1));
                     }
                 }
                 sendChangedHex(en.getPosition());
@@ -10125,11 +10134,11 @@ implements Runnable, ConnectionHandler {
      * @param   entity the <code>Entity</code> that needs to be checked.
      * @param   loc the <code>int</code> location on the entity that needs
      *          to be checked for a breach.
-     * @param   hex the <code>Hex</code> the enitity occupies when checking
+     * @param   hex the <code>IHex</code> the enitity occupies when checking
      *          This value will be <code>null</code> if the check is the
      *          result of an attack, and non-null if it occurs during movement.
      */
-    private String breachCheck(Entity entity, int loc, Hex hex) {
+    private String breachCheck(Entity entity, int loc, IHex hex) {
         StringBuffer desc = new StringBuffer();
         // BattleArmor does not breach
         if (entity instanceof Infantry) {
@@ -10167,11 +10176,11 @@ implements Runnable, ConnectionHandler {
      * @param   entity the <code>Entity</code> that needs to be checked.
      * @param   loc the <code>int</code> location on the entity that needs
      *          to be checked for a breach.
-     * @param   hex the <code>Hex</code> the enitity occupies when checking
+     * @param   hex the <code>IHex</code> the enitity occupies when checking
      *          This value will be <code>null</code> if the check is the
      *          result of an attack, and non-null if it occurs during movement.
      */
-    private String breachLocation(Entity entity, int loc, Hex hex) {
+    private String breachLocation(Entity entity, int loc, IHex hex) {
         StringBuffer desc = new StringBuffer();
         if (entity.getInternal(loc) < 0 ||
             entity.getLocationStatus(loc) < Entity.LOC_NORMAL) {
@@ -10385,7 +10394,7 @@ implements Runnable, ConnectionHandler {
             if ( iter.hasMoreElements() ) {
                 Entity other = null;
                 Coords curPos = entity.getPosition();
-                Hex entityHex = game.getBoard().getHex( curPos );
+                IHex entityHex = game.getBoard().getHex( curPos );
                 int curFacing = entity.getFacing();
                 while ( iter.hasMoreElements() ) {
                     other = (Entity) iter.nextElement();
@@ -10576,7 +10585,7 @@ implements Runnable, ConnectionHandler {
      * Makes a mech fall.
      */
     private void doEntityFall(Entity entity, Coords fallPos, int height, int facing, PilotingRollData roll) {
-        Hex fallHex = game.board.getHex(fallPos);
+        IHex fallHex = game.board.getHex(fallPos);
         // we don't need to deal damage yet, if the entity is doing DFA
         if (entity.isMakingDfa()) {
             phaseReport.append("But, since the 'mech is making a death from above attack, damage will be dealt during the physical phase.\n");
@@ -10607,7 +10616,7 @@ implements Runnable, ConnectionHandler {
                 table = ToHitData.SIDE_FRONT;
         }
 
-        int waterDepth = fallHex.levelOf(Terrain.WATER);
+        int waterDepth = fallHex.terrainLevel(Terrains.WATER);
         int damageHeight = height;
 
 
@@ -10663,7 +10672,7 @@ implements Runnable, ConnectionHandler {
         entity.setPosition(fallPos);
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
-        if (fallHex.levelOf(Terrain.WATER) > 0) {
+        if (fallHex.terrainLevel(Terrains.WATER) > 0) {
             for (int loop=0; loop< entity.locations();loop++){
                 entity.setLocationStatus(loop, Entity.LOC_WET);
             }
@@ -10710,7 +10719,7 @@ implements Runnable, ConnectionHandler {
             entity.setSwarmAttackerId( Entity.NONE );
             swarmer.setSwarmTargetId( Entity.NONE );
             // Did the infantry fall into water?
-            if ( fallHex.levelOf(Terrain.WATER) > 0 ) {
+            if ( fallHex.terrainLevel(Terrains.WATER) > 0 ) {
                 // Swarming infantry die.
                 swarmer.setPosition( fallPos );
                 phaseReport.append("    ")
@@ -10813,9 +10822,9 @@ implements Runnable, ConnectionHandler {
      * completed, all burning hexes are set to level 2.
      */
     private void resolveFire() {
-        Board board = game.getBoard();
-        int width = board.width;
-        int height = board.height;
+        IBoard board = game.getBoard();
+        int width = board.getWidth();
+        int height = board.getHeight();
         int windDirection = game.getWindDirection();
 
         // Get the position map of all entities in the game.
@@ -10863,24 +10872,24 @@ implements Runnable, ConnectionHandler {
                  currentYCoord++) {
                 Coords currentCoords = new Coords(currentXCoord,
                                                   currentYCoord);
-                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
+                IHex currentHex = board.getHex(currentXCoord, currentYCoord);
                 boolean infernoBurning = board.burnInferno( currentCoords );
 
                 // optional rule, woods burn down
-                if (currentHex.contains(Terrain.WOODS) && currentHex.levelOf(Terrain.FIRE) == 2 && game.getOptions().booleanOption("woods_burn_down")) {
+                if (currentHex.containsTerrain(Terrains.WOODS) && currentHex.terrainLevel(Terrains.FIRE) == 2 && game.getOptions().booleanOption("woods_burn_down")) {
                     burnDownWoods(currentCoords);
                 }
 
                 // If the woods has been cleared, or the building
                 // has collapsed put non-inferno fires out.
-                if ( currentHex.contains(Terrain.FIRE) && !infernoBurning &&
-                     !(currentHex.contains(Terrain.WOODS)) &&
-                     !(currentHex.contains(Terrain.BUILDING)) ) {
+                if ( currentHex.containsTerrain(Terrains.FIRE) && !infernoBurning &&
+                     !(currentHex.containsTerrain(Terrains.WOODS)) &&
+                     !(currentHex.containsTerrain(Terrains.BUILDING)) ) {
                     removeFire(currentXCoord, currentYCoord, currentHex);
                 }
 
                 // Was the fire started on a previous turn?
-                else if (currentHex.levelOf(Terrain.FIRE) == 2)
+                else if (currentHex.terrainLevel(Terrains.FIRE) == 2)
                 {
                     if ( infernoBurning ) {
                         phaseReport.append( "Inferno fire at " );
@@ -10890,9 +10899,9 @@ implements Runnable, ConnectionHandler {
                     phaseReport.append( currentCoords.getBoardNum() )
                         .append( " is burning brightly.\n" );
                     spreadFire(currentXCoord, currentYCoord, windDirection);
-                }  // End the Else If Hex was on fire previously
-            }  // end the loop through Y coordinates
-        }  // end the loop through X coordinates
+                }
+            }
+        }
 
         debugTime("resolve fire 1 end, begin resolve fire 2", true);
 
@@ -10901,11 +10910,11 @@ implements Runnable, ConnectionHandler {
 
             for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                Hex currentHex = board.getHex(currentXCoord,currentYCoord);
+                IHex currentHex = board.getHex(currentXCoord,currentYCoord);
                 // if the fire in the hex was started this turn
-                if (currentHex.levelOf(Terrain.FIRE) == 1) {
-                    currentHex.removeTerrain(Terrain.FIRE);
-                    currentHex.addTerrain(new Terrain(Terrain.FIRE, 2));
+                if (currentHex.terrainLevel(Terrains.FIRE) == 1) {
+                    currentHex.removeTerrain(Terrains.FIRE);
+                    currentHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 2));
                     sendChangedHex(currentCoords);
                     phaseReport.append( "Fire at " )
                         .append( currentCoords.getBoardNum() )
@@ -10919,13 +10928,13 @@ implements Runnable, ConnectionHandler {
                     }
                 }
                 // If the L3 smoke rule is off, add smoke normally, otherwise call the L3 method
-                if (currentHex.contains(Terrain.FIRE) && !game.getOptions().booleanOption("maxtech_fire")) {
+                if (currentHex.containsTerrain(Terrains.FIRE) && !game.getOptions().booleanOption("maxtech_fire")) {
                     addSmoke(currentXCoord, currentYCoord, windDirection);
                     addSmoke(currentXCoord, currentYCoord, (windDirection+1)%6);
                     addSmoke(currentXCoord, currentYCoord, (windDirection+5)%6);
                     board.initializeAround(currentXCoord,currentYCoord);
                 }
-                else if (currentHex.contains(Terrain.FIRE) && game.getOptions().booleanOption("maxtech_fire")) {
+                else if (currentHex.containsTerrain(Terrains.FIRE) && game.getOptions().booleanOption("maxtech_fire")) {
                     addL3Smoke(currentXCoord, currentYCoord);
                     board.initializeAround(currentXCoord, currentYCoord);
                 }
@@ -10947,19 +10956,19 @@ implements Runnable, ConnectionHandler {
     }  // End the ResolveFire() method
 
     public void burnDownWoods(Coords coords) {
-        Hex hex = game.board.getHex(coords);
+        IHex hex = game.board.getHex(coords);
         int roll = Compute.d6(2);
         if(roll >= 11) {
-            if(hex.levelOf(Terrain.WOODS) > 1) {
-                hex.removeTerrain(Terrain.WOODS);
-                hex.addTerrain(new Terrain(Terrain.WOODS, 1));
+            if(hex.terrainLevel(Terrains.WOODS) > 1) {
+                hex.removeTerrain(Terrains.WOODS);
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, 1));
                 phaseReport.append( "Heavy woods at ")
                            .append( coords.getBoardNum() )
                            .append( " burns down to Light Woods!\n" );
             }
-            else if(hex.levelOf(Terrain.WOODS) == 1) {
-                hex.removeTerrain(Terrain.WOODS);
-                hex.addTerrain(new Terrain(Terrain.ROUGH, 1));
+            else if(hex.terrainLevel(Terrains.WOODS) == 1) {
+                hex.removeTerrain(Terrains.WOODS);
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
                 phaseReport.append( "Light woods at ")
                            .append( coords.getBoardNum() )
                            .append( " burns down to Rough and goes out!!\n" );
@@ -10978,8 +10987,8 @@ implements Runnable, ConnectionHandler {
         spreadFire(nextCoords, 9);
 
         // Spread to the next hex downwind on a 12 if the first hex wasn't burning...
-        Hex nextHex = game.getBoard().getHex(nextCoords);
-        if (nextHex != null && !(nextHex.contains(Terrain.FIRE))) {
+        IHex nextHex = game.getBoard().getHex(nextCoords);
+        if (nextHex != null && !(nextHex.containsTerrain(Terrains.FIRE))) {
             // we've already gone one step in the wind direction, now go another
             spreadFire(nextCoords.translated(windDir), 12);
         }
@@ -10996,12 +11005,12 @@ implements Runnable, ConnectionHandler {
      * possible, if the hex isn't already on fire, and the fire roll is made.
      */
     public void spreadFire(Coords coords, int roll) {
-        Hex hex = game.getBoard().getHex(coords);
+        IHex hex = game.getBoard().getHex(coords);
         if (hex == null) {
             // Don't attempt to spread fire off the board.
             return;
         }
-        if (!(hex.contains(Terrain.FIRE)) && ignite(hex, roll)) {
+        if (!(hex.containsTerrain(Terrains.FIRE)) && ignite(hex, roll)) {
             sendChangedHex(coords);
             phaseReport.append("Fire spreads to " ).append( coords.getBoardNum() ).append( "!\n");
         }
@@ -11011,7 +11020,7 @@ implements Runnable, ConnectionHandler {
      * Returns true if the hex is set on fire with the specified roll.  Of
      * course, also checks to see that fire is possible in the specified hex.
      *
-     * @param   hex - the <code>Hex</code> to be lit.
+     * @param   hex - the <code>IHex</code> to be lit.
      * @param   roll - the <code>int</code> target number for the ignition roll
      * @param   bAnyTerrain - <code>true</code> if the fire can be lit in any
      *          terrain.  If this value is <code>false</code> the hex will be
@@ -11019,7 +11028,7 @@ implements Runnable, ConnectionHandler {
      * @param   bReportAttempt - <code>true</code> if the attempt roll should
      *          be added to the report.
      */
-   public boolean ignite( Hex hex, int roll, boolean bAnyTerrain,
+   public boolean ignite( IHex hex, int roll, boolean bAnyTerrain,
                           boolean bReportAttempt ) {
 
         // The hex might be null due to spreadFire translation
@@ -11029,13 +11038,13 @@ implements Runnable, ConnectionHandler {
         }
 
         // The hex may already be on fire.
-        if ( hex.contains( Terrain.FIRE ) ) {
+        if ( hex.containsTerrain( Terrains.FIRE ) ) {
             return true;
         }
 
         if ( !bAnyTerrain &&
-             !(hex.contains(Terrain.WOODS)) &&
-             !(hex.contains(Terrain.BUILDING)) ) {
+             !(hex.containsTerrain(Terrains.WOODS)) &&
+             !(hex.containsTerrain(Terrains.BUILDING)) ) {
             return false;
         }
 
@@ -11048,7 +11057,7 @@ implements Runnable, ConnectionHandler {
                 .append( "\n" );
         }
         if (fireRoll >= roll) {
-            hex.addTerrain(new Terrain(Terrain.FIRE, 1));
+            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
             return true;
         } else {
             return false;
@@ -11060,24 +11069,24 @@ implements Runnable, ConnectionHandler {
      * course, also checks to see that fire is possible in the specified hex.
      * This version of the method will not report the attempt roll.
      *
-     * @param   hex - the <code>Hex</code> to be lit.
+     * @param   hex - the <code>IHex</code> to be lit.
      * @param   roll - the <code>int</code> target number for the ignition roll
      * @param   bAnyTerrain - <code>true</code> if the fire can be lit in any
      *          terrain.  If this value is <code>false</code> the hex will be
      *          lit only if it contains Woods or a Building.
      */
-    public boolean ignite(Hex hex, int roll, boolean bAnyTerrain) {
+    public boolean ignite(IHex hex, int roll, boolean bAnyTerrain) {
        return ignite(hex, roll, bAnyTerrain, false);
     }
 
-    public boolean ignite(Hex hex, int roll) {
+    public boolean ignite(IHex hex, int roll) {
         // default signature, assuming only woods can burn
         return ignite(hex, roll, false);
     }
 
-    public void removeFire(int x, int y, Hex hex) {
+    public void removeFire(int x, int y, IHex hex) {
         Coords fireCoords = new Coords(x, y);
-        hex.removeTerrain(Terrain.FIRE);
+        hex.removeTerrain(Terrains.FIRE);
         sendChangedHex(fireCoords);
         if (!game.getOptions().booleanOption("maxtech_fire")) {
             // only remove the 3 smoke hexes if under L2 rules!
@@ -11094,9 +11103,9 @@ implements Runnable, ConnectionHandler {
      */
     public void addSmoke(int x, int y, int windDir) {
         Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
-        Hex nextHex = game.getBoard().getHex(smokeCoords);
-        if (nextHex != null && !(nextHex.contains(Terrain.SMOKE))) {
-            nextHex.addTerrain(new Terrain(Terrain.SMOKE, 1));
+        IHex nextHex = game.getBoard().getHex(smokeCoords);
+        if (nextHex != null && !(nextHex.containsTerrain(Terrains.SMOKE))) {
+            nextHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 1));
             sendChangedHex(smokeCoords);
             phaseReport.append("Smoke fills " ).append( smokeCoords.getBoardNum() ).append( "!\n");
         }
@@ -11106,34 +11115,34 @@ implements Runnable, ConnectionHandler {
      * Called under L3 fire rules. Called once.
      */
     public void addL3Smoke(int x, int y) {
-        Board board = game.getBoard();
+        IBoard board = game.getBoard();
         Coords smokeCoords = new Coords(x, y);
-        Hex smokeHex = game.getBoard().getHex(smokeCoords);
+        IHex smokeHex = game.getBoard().getHex(smokeCoords);
         boolean infernoBurning = board.isInfernoBurning( smokeCoords );
         if (smokeHex == null) {
             return;
         }
         // Have to check if it's inferno smoke or from a heavy/hardened building - heavy smoke from those
-        if(infernoBurning || Building.MEDIUM < smokeHex.levelOf(Terrain.BUILDING)) {
-            if (smokeHex.levelOf(Terrain.SMOKE) == 2){
+        if(infernoBurning || Building.MEDIUM < smokeHex.terrainLevel(Terrains.BUILDING)) {
+            if (smokeHex.terrainLevel(Terrains.SMOKE) == 2){
                 phaseReport.append("Heavy smoke continues to fill ").append( smokeCoords.getBoardNum() ).append( ".\n");
             } else {
-                if (smokeHex.levelOf(Terrain.SMOKE) == 1){
+                if (smokeHex.terrainLevel(Terrains.SMOKE) == 1){
                     //heavy smoke overrides light
-                    smokeHex.removeTerrain(Terrain.SMOKE);
+                    smokeHex.removeTerrain(Terrains.SMOKE);
                 }
-                smokeHex.addTerrain(new Terrain(Terrain.SMOKE, 2));
+                smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 2));
                 sendChangedHex(smokeCoords);
                 phaseReport.append("Heavy smoke fills ").append( smokeCoords.getBoardNum() ).append( "!\n");
             }
         }
         else {
-            if (smokeHex.levelOf(Terrain.SMOKE) == 2){
+            if (smokeHex.terrainLevel(Terrains.SMOKE) == 2){
                 phaseReport.append("Heavy smoke overpowers light smoke in ").append( smokeCoords.getBoardNum() ).append( ".\n");
-            } else if (smokeHex.levelOf(Terrain.SMOKE) == 1){
+            } else if (smokeHex.terrainLevel(Terrains.SMOKE) == 1){
                 phaseReport.append("Light smoke continues to fill ").append( smokeCoords.getBoardNum() ).append( ".\n");
             } else {
-                smokeHex.addTerrain(new Terrain(Terrain.SMOKE, 1));
+                smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 1));
                 sendChangedHex(smokeCoords);
                 phaseReport.append("Light smoke fills ").append( smokeCoords.getBoardNum() ).append( "!\n");
             }
@@ -11142,9 +11151,9 @@ implements Runnable, ConnectionHandler {
 
     public void removeSmoke(int x, int y, int windDir) { // L2 smoke removal
         Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
-        Hex nextHex = game.getBoard().getHex(smokeCoords);
-        if (nextHex != null && nextHex.contains(Terrain.SMOKE)) {
-            nextHex.removeTerrain(Terrain.SMOKE);
+        IHex nextHex = game.getBoard().getHex(smokeCoords);
+        if (nextHex != null && nextHex.containsTerrain(Terrains.SMOKE)) {
+            nextHex.removeTerrain(Terrains.SMOKE);
             sendChangedHex(smokeCoords);
             phaseReport.append("Smoke clears from " ).append( smokeCoords.getBoardNum() ).append( "!\n");
         }
@@ -11158,9 +11167,9 @@ implements Runnable, ConnectionHandler {
      * This method calls functions driftAddSmoke, driftSmokeDissipate, driftSmokeReport
      */
     private void resolveSmoke() {
-        Board board = game.getBoard();
-        int width = board.width;
-        int height = board.height;
+        IBoard board = game.getBoard();
+        int width = board.getWidth();
+        int height = board.getHeight();
         int windDir = game.getWindDirection();
         int windStr = game.getWindStrength();
         Vector SmokeToAdd = new Vector();
@@ -11189,14 +11198,14 @@ implements Runnable, ConnectionHandler {
 
                 for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
                     Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                    Hex currentHex = board.getHex(currentXCoord, currentYCoord);
+                    IHex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                     // check for existence of smoke, then add it to the vector...if the wind is not Calm!
-                    if (currentHex.contains(Terrain.SMOKE)){
-                        int smokeLevel = currentHex.levelOf(Terrain.SMOKE);
+                    if (currentHex.containsTerrain(Terrains.SMOKE)){
+                        int smokeLevel = currentHex.terrainLevel(Terrains.SMOKE);
                         Coords smokeCoords = driftAddSmoke(currentXCoord, currentYCoord, windDir, windStr);
                         //                        System.out.println(currentCoords.toString() + " to " + smokeCoords.toString());
-                        Hex smokeHex = game.getBoard().getHex(smokeCoords);
+                        IHex smokeHex = game.getBoard().getHex(smokeCoords);
                         if( board.contains(smokeCoords)) { // don't add it to the vector if it's not on board!
                             SmokeToAdd.addElement(new SmokeDrift(new Coords(smokeCoords), smokeLevel));
                         }
@@ -11204,7 +11213,7 @@ implements Runnable, ConnectionHandler {
                             // report that the smoke has blown off the map
                             phaseReport.append("Smoke at ").append( currentCoords.getBoardNum() ).append(" has blown off the map!\n");
                         }
-                        currentHex.removeTerrain(Terrain.SMOKE);
+                        currentHex.removeTerrain(Terrains.SMOKE);
                         sendChangedHex(currentCoords);
 
                     }
@@ -11219,8 +11228,8 @@ implements Runnable, ConnectionHandler {
                 SmokeDrift drift = (SmokeDrift)SmokeToAdd.elementAt(sta);
                 Coords smokeCoords = drift.coords;
                 int smokeSize = drift.size;
-                Hex smokeHex = game.getBoard().getHex(smokeCoords);
-                smokeHex.addTerrain(new Terrain(Terrain.SMOKE, smokeSize));
+                IHex smokeHex = game.getBoard().getHex(smokeCoords);
+                smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, smokeSize));
                 sendChangedHex(smokeCoords);
             }
 
@@ -11231,7 +11240,7 @@ implements Runnable, ConnectionHandler {
                 SmokeDrift drift = (SmokeDrift)SmokeToAdd.elementAt(dis);
                 Coords smokeCoords = drift.coords;
                 int smokeSize = drift.size;
-                Hex smokeHex = game.getBoard().getHex(smokeCoords);
+                IHex smokeHex = game.getBoard().getHex(smokeCoords);
                 int roll = Compute.d6(2);
 
                 boolean smokeDis = driftSmokeDissipate(smokeHex, roll, smokeSize, windStr);
@@ -11262,13 +11271,13 @@ implements Runnable, ConnectionHandler {
      * added complexity was not worth it given that smoke-delivering
      * weapons were not even implemented yet (and might never be).
      */
-    public boolean driftSmokeDissipate(Hex smokeHex, int roll, int smokeSize, int windStr) {
+    public boolean driftSmokeDissipate(IHex smokeHex, int roll, int smokeSize, int windStr) {
         // Dissipate in various winds
         if (roll > 10 || (roll > 9 && windStr == 2) || (roll > 7 && windStr == 3)) {
-            smokeHex.removeTerrain(Terrain.SMOKE);
+            smokeHex.removeTerrain(Terrains.SMOKE);
 
             if (smokeSize == 2) {
-                smokeHex.addTerrain(new Terrain(Terrain.SMOKE, 1));
+                smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 1));
                 return true;
             }
             else {
@@ -12073,7 +12082,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Creates a packet containing a hex, and the coordinates it goes at.
      */
-    private Packet createHexChangePacket(Coords coords, Hex hex) {
+    private Packet createHexChangePacket(Coords coords, IHex hex) {
         final Object[] data = new Object[2];
         data[0] = coords;
         data[1] = hex;
@@ -12610,9 +12619,9 @@ implements Runnable, ConnectionHandler {
             if ( vector != null ) {
 
                 // How many levels does this building have in this hex?
-                final Hex curHex = game.board.getHex( coords );
+                final IHex curHex = game.board.getHex( coords );
                 final int hexElev = curHex.surface();
-                final int numFloors = curHex.levelOf( Terrain.BLDG_ELEV );
+                final int numFloors = curHex.terrainLevel( Terrains.BLDG_ELEV );
 
                 // Track the load of each floor (and of the roof) separately.
                 // Track all units that fall into the basement in this hex.
@@ -12714,9 +12723,9 @@ implements Runnable, ConnectionHandler {
             if ( vector != null ) {
 
                 // How many levels does this building have in this hex?
-                final Hex curHex = game.board.getHex( coords );
+                final IHex curHex = game.board.getHex( coords );
                 final int hexElev = curHex.surface();
-                final int numFloors = curHex.levelOf( Terrain.BLDG_ELEV );
+                final int numFloors = curHex.terrainLevel( Terrains.BLDG_ELEV );
 
                 // Walk through the entities in this position.
                 Enumeration entities = vector.elements();
@@ -13573,20 +13582,20 @@ implements Runnable, ConnectionHandler {
             }
             int facing = entity.getFacing();
             Coords targetCoords = entity.getPosition().translated((facing + 3)%6);
-            Hex targetHex = game.board.getHex(targetCoords);
+            IHex targetHex = game.board.getHex(targetCoords);
             if (targetHex != null) {
-                if (targetHex.levelOf(Terrain.WATER) > 0) {
+                if (targetHex.terrainLevel(Terrains.WATER) > 0) {
                     rollTarget.addModifier(-1, "landing in water");
-                } else if (targetHex.levelOf(Terrain.ROUGH) > 0) {
+                } else if (targetHex.terrainLevel(Terrains.ROUGH) > 0) {
                     rollTarget.addModifier(0, "landing in rough");
-                } else if (targetHex.levelOf(Terrain.RUBBLE) > 0) {
+                } else if (targetHex.terrainLevel(Terrains.RUBBLE) > 0) {
                     rollTarget.addModifier(0, "landing in rubble");
-                } else if (targetHex.levelOf(Terrain.WOODS) == 1) {
+                } else if (targetHex.terrainLevel(Terrains.WOODS) == 1) {
                     rollTarget.addModifier(2, "landing in light woods");
-                } else if (targetHex.levelOf(Terrain.WOODS) == 2) {
+                } else if (targetHex.terrainLevel(Terrains.WOODS) == 2) {
                     rollTarget.addModifier(3, "landing in heavy woods");
-                } else if (targetHex.levelOf(Terrain.BLDG_ELEV) > 0) {
-                    rollTarget.addModifier(targetHex.levelOf(Terrain.BLDG_ELEV), "landing in a building");
+                } else if (targetHex.terrainLevel(Terrains.BLDG_ELEV) > 0) {
+                    rollTarget.addModifier(targetHex.terrainLevel(Terrains.BLDG_ELEV), "landing in a building");
                 } else rollTarget.addModifier(-2, "landing in clear terrain");
             } else {
                     rollTarget.addModifier(-2, "landing off the board");
@@ -13768,7 +13777,7 @@ implements Runnable, ConnectionHandler {
                 if (entity instanceof Tank &&
                     (entity.getMovementType() == Entity.MovementType.TRACKED ||
                      entity.getMovementType() == Entity.MovementType.WHEELED ) &&
-                    game.board.getHex(entity.getPosition()).levelOf(Terrain.WATER) > 0) {
+                    game.board.getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0) {
                         return true;
                 }
                 return false;

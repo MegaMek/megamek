@@ -41,10 +41,10 @@ public class HexEncoder {
      *          <code>null</code>.
      * @throws  <code>IOException</code> if there's any error on write.
      */
-    public static void encode( Hex hex, Writer out )
+    public static void encode( IHex hex, Writer out )
         throws IOException
     {
-        Terrain terrain = null;
+        ITerrain terrain = null;
         int loop = 0;
 
         // First, validate our input.
@@ -69,9 +69,9 @@ public class HexEncoder {
             out.write( hex.getTheme() );
         }
         out.write( "\" >" );
-        for ( loop = 0; loop < Terrain.SIZE; loop++ ) {
+        for ( loop = 0; loop < Terrains.SIZE; loop++ ) {
             // If the hex has this kind of terrain, encode it.
-            if ( hex.contains(loop) ) {
+            if ( hex.containsTerrain(loop) ) {
                 terrain = hex.getTerrain(loop);
                 out.write( "<terrain type=\"" );
                 out.write( Integer.toString(terrain.getType()) );
@@ -104,6 +104,7 @@ public class HexEncoder {
         String attrStr = null;
         int attrVal = 0;
         Hex retVal = null;
+        ITerrainFactory f = Terrains.getTerrainFactory();
 
         // Did we get a null node?
         if ( null == node ) {
@@ -130,7 +131,7 @@ public class HexEncoder {
                 }
 
                 // Create an array to hold all the terrains.
-                Terrain[] terrains = new Terrain[Terrain.SIZE];
+                ITerrain[] terrains = new ITerrain[Terrains.SIZE];
 
                 // Walk through the subnodes, parsing out terrain nodes.
                 Enumeration subnodes = child.elements();
@@ -151,8 +152,7 @@ public class HexEncoder {
                                 ( subnode.getAttribute( "level" ) );
                             final int exits = Integer.parseInt
                                 ( subnode.getAttribute( "exits" ) );
-                            terrains[type] = new Terrain
-                                ( type, level, exitsSpecified, exits );
+                            terrains[type] = f.createTerrain( type, level, exitsSpecified, exits );
                         }
                         catch ( Throwable thrown ) {
                             throw new IllegalStateException

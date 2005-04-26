@@ -11,6 +11,7 @@ v0.29.75 (CVS)
 + Added Locust IIC 2, 3, 5, Piranha, Ha Otoko, Howler, Corvis pics.
 + Bug 1092078: Invalid Engine Crit Reporting (Maxtech Engine Explosions)
 + Removed dependence on AWT from classes Board, Hex, Player.
++ RFE 1024483: Chat lounge entity list now sorts by team and player.
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.

@@ -9386,10 +9386,6 @@ implements Runnable, ConnectionHandler {
                         if (te instanceof Mech &&
                             (hit.getLocation() == Mech.LOC_RT ||
                              hit.getLocation() == Mech.LOC_LT)) {
-                            te.engineHitsThisRound +=
-                                te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                    Mech.SYSTEM_ENGINE,
-                                                    hit.getLocation());
 
                             boolean engineExploded = false;
 
@@ -9419,14 +9415,16 @@ implements Runnable, ConnectionHandler {
                            }
                         }
                     }
-                }
-
-                // is the internal structure gone?  what are the transfer potentials?
-                if (te.getInternal(hit) <= 0) {
+                } else {
+                    // internal structure is gone, what are the transfer potentials?
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
                         if (te instanceof Mech) {
+                            // add all non-destroyed engine crits
                             te.engineHitsThisRound += te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, hit.getLocation());
+                            // and substract those that where hit previously this round
+                            // hackish, but works.
+                            te.engineHitsThisRound -= te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, hit.getLocation());
                         }
 
                         boolean engineExploded = false;
@@ -10283,11 +10281,16 @@ implements Runnable, ConnectionHandler {
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             if (cs != null) {
+                // count engine hits for maxtech engine explosions
+                if (cs.getType() == CriticalSlot.TYPE_SYSTEM &&
+                    cs.getIndex() == Mech.SYSTEM_ENGINE &&
+                    !cs.isDamaged()) {
+                        en.engineHitsThisRound++;
+                }
                 cs.setMissing(true);
             }
         }
         // if it's a leg, the entity falls
-
         if (en instanceof Mech && en.locationIsLeg(loc)) {
             game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }

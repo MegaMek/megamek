@@ -9,6 +9,7 @@ v0.29.75 (CVS)
     marked with symbolic tag 'before-preferences'
 + Removed dependence on AWT from class Entity and descendants.
 + Added Locust IIC 2, 3, 5, Piranha, Ha Otoko, Howler, Corvis pics.
++ Bug 1092078: Invalid Engine Crit Reporting (Maxtech Engine Explosions)
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.

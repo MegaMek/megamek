@@ -17,7 +17,6 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.*;
-import java.awt.*;
 
 import megamek.common.actions.*;
 import megamek.common.preference.PreferenceManager;
@@ -102,7 +101,6 @@ public abstract class Entity
 
     protected String            displayName = null;
     protected String            shortName = null;
-    protected String            iconName = null;
 
     protected transient Player  owner;
     protected int               ownerId;
@@ -763,17 +761,6 @@ public abstract class Entity
         }
         this.shortName = nbuf.toString();
     }
-
-    // TODO : I really REALLY hate having an AWT class in the megamek.common
-    //        package, but I'm not smart enough to figure out how to remove it
-    public String getIconName(FontMetrics fm) {
-        if (iconName == null) {
-            generateIconName(fm);
-        }
-        return iconName;
-    }
-
-    public abstract void generateIconName(FontMetrics fm);
 
     /**
      * Returns the primary facing, or -1 if n/a

@@ -20,6 +20,9 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import com.sun.java.util.collections.Iterator;
+import com.sun.java.util.collections.LinkedList;
+import com.sun.java.util.collections.Comparator;
+import com.sun.java.util.collections.Collections;
 
 import gov.nist.gui.TabPanel;
 
@@ -762,8 +765,50 @@ public class ChatLounge
         String strTreeView = ""; //$NON-NLS-1$
         boolean localUnits = false;
         entityCorrespondance = new int[client.game.getNoOfEntities()];
+
+        /* We will attempt to sort by the following criteria: My units
+        first, then my teamates units, then other teams units.  We
+        will also sort by player name within the forementioned
+        categories.  Finally, a players units will be sorted by the
+        order they were "added" to the list.
+        */
+        LinkedList sortedEntities = new LinkedList();
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity) i.nextElement();
+            sortedEntities.add(entity);
+        }
+        Collections.sort( sortedEntities, new Comparator() {
+                public int compare( Object aa, Object bb ) {
+                    Entity a = (Entity)aa;
+                    Entity b = (Entity)bb;
+                    Player p_a = (Player)a.getOwner();
+                    Player p_b = (Player)b.getOwner();
+                    int t_a = p_a.getTeam();
+                    int t_b = p_b.getTeam();
+                    if (p_a.equals(client.getLocalPlayer()) &&
+                        !p_b.equals(client.getLocalPlayer())) {
+                        return -1;
+                    } else if (p_b.equals(client.getLocalPlayer()) &&
+                               !p_a.equals(client.getLocalPlayer())) {
+                        return 1;
+                    } else if (t_a == client.getLocalPlayer().getTeam()
+                               && t_b != client.getLocalPlayer().getTeam()) {
+                        return -1;
+                    } else if (t_b == client.getLocalPlayer().getTeam()
+                               && t_a != client.getLocalPlayer().getTeam()) {
+                        return 1;
+                    } else if (t_a != t_b) {
+                        return t_a - t_b;
+                    } else if (!p_a.equals(p_b)) {
+                        return p_a.getName().compareTo(p_b.getName());
+                    } else {
+                        return a.getId() - b.getId();
+                    }
+                }
+            } );
+
+        for (Iterator i = sortedEntities.iterator(); i.hasNext();) {
+            Entity entity = (Entity) i.next();
 
             // Remember if the local player has units.
             if (!localUnits && entity.getOwner().equals(client.getLocalPlayer())) {
@@ -844,7 +889,7 @@ public class ChatLounge
                        && !client.game.getOptions().booleanOption("real_blind_drop"))) { //$NON-NLS-1$
                 lisEntities.add(
                     strTreeSet
-                    + Messages.getString("ChatLounge.EntityListEntry1", new Object[]{ //$NON-NLS-1$
+                    + Messages.getString("ChatLounge.EntityListEntry2", new Object[]{ //$NON-NLS-1$
                             entity.getDisplayName(),
                             new Integer(entity.getCrew().getGunnery()),
                             new Integer(entity.getCrew().getPiloting()),

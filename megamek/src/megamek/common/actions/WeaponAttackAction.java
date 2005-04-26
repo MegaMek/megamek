@@ -50,7 +50,7 @@ public class WeaponAttackAction
     private int ammoId = -1;
     private int aimedLocation = Mech.LOC_NONE;
     private int aimMode = IAimingModes.AIM_MODE_NONE;
-    private int otherAttackInfo = -1;	// 
+    private int otherAttackInfo = -1;   // 
     private boolean nemesisConfused = false;
     
     // equipment that affects this attack (AMS, ECM?, etc)
@@ -112,11 +112,11 @@ public class WeaponAttackAction
     }
 
     public void setOtherAttackInfo(int newInfo) {
-    	otherAttackInfo = newInfo;
+        otherAttackInfo = newInfo;
     }
 
     public int getOtherAttackInfo() {
-    	return otherAttackInfo;
+        return otherAttackInfo;
     }
 
     public ToHitData toHit(Game game) {
@@ -184,8 +184,8 @@ public class WeaponAttackAction
     
         // make sure weapon can deliver minefield
         if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER &&
-        	!AmmoType.canDeliverMinefield(atype)) {
-    		return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
+            !AmmoType.canDeliverMinefield(atype)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
         }
         if ((game.getPhase() == Game.PHASE_TARGETING) && !isArtilleryIndirect) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Only indirect artillery can be fired in the targeting phase");
@@ -205,11 +205,11 @@ public class WeaponAttackAction
         }
     
         // make sure weapon can clear minefield
-    	if (target instanceof MinefieldTarget &&
-    		!AmmoType.canClearMinefield(atype)) {
-    		return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't clear minefields");
-    	}
-    	
+        if (target instanceof MinefieldTarget &&
+            !AmmoType.canClearMinefield(atype)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't clear minefields");
+        }
+        
         // Arty shots have to be with arty, non arty shots with non arty.
         if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY && 
                 (!wtype.hasFlag(WeaponType.F_ARTILLERY) || 

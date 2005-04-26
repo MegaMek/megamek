@@ -71,8 +71,8 @@ public class TurnVectors implements Enumeration {
     {
         this.numEven = evenCount;
         this.numNormal = normalCount;
-	this.normal_turns = new Vector( normalCount );
-	this.even_turns  = new Vector( evenCount );
+    this.normal_turns = new Vector( normalCount );
+    this.even_turns  = new Vector( evenCount );
         this.min = min;
     }
 

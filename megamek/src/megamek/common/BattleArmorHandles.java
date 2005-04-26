@@ -198,8 +198,8 @@ import java.util.*;
         // If we can't load the unit, throw an exception.
         if ( !this.canLoad(unit) ) {
             throw new IllegalArgumentException( "Can not load " +
-						unit.getShortName() +
-						" onto this OmniMech." );
+                        unit.getShortName() +
+                        " onto this OmniMech." );
         }
 
         // Assign the unit as our carried troopers.

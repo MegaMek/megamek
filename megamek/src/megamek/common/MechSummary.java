@@ -23,22 +23,22 @@
  
  public class MechSummary implements Serializable
  {
- 	private String m_sName;
- 	private String m_sChassis;
- 	private String m_sModel;
+    private String m_sName;
+    private String m_sChassis;
+    private String m_sModel;
         private String m_sUnitType;
- 	private File m_sSourceFile;
- 	private String m_sEntryName; // for files in zips
- 	private int m_nYear;
- 	private int m_nType;
- 	private int m_nTons;
- 	private int m_nBV;
+    private File m_sSourceFile;
+    private String m_sEntryName; // for files in zips
+    private int m_nYear;
+    private int m_nType;
+    private int m_nTons;
+    private int m_nBV;
         private long m_lModified; // for comparison when loading
 
-	
-	public String getName() { return (this.m_sName); }
-	public String getChassis() { return (this.m_sChassis); }
-	public String getModel() { return (this.m_sModel); }
+    
+    public String getName() { return (this.m_sName); }
+    public String getChassis() { return (this.m_sChassis); }
+    public String getModel() { return (this.m_sModel); }
         public String getUnitType() { return (this.m_sUnitType); }
         public static String determineUnitType(Entity e) {
              if (e instanceof Infantry) {
@@ -54,34 +54,34 @@
                   return "Unknown";
              }
         }
-	public File getSourceFile() { return (this.m_sSourceFile); }
-	public String getEntryName() { return (this.m_sEntryName); }
-	public int getYear() { return (this.m_nYear); }
-	public int getType() { return (this.m_nType); }
-	public int getTons() { return (this.m_nTons); }
-	public int getBV() { return (this.m_nBV); }
-	public long getModified() { return (this.m_lModified); }
-	
-	public void setName(String m_sName) { this.m_sName = m_sName; }
-	public void setChassis(String m_sChassis) { this.m_sChassis = m_sChassis; }
-	public void setModel(String m_sModel) { this.m_sModel = m_sModel; }
+    public File getSourceFile() { return (this.m_sSourceFile); }
+    public String getEntryName() { return (this.m_sEntryName); }
+    public int getYear() { return (this.m_nYear); }
+    public int getType() { return (this.m_nType); }
+    public int getTons() { return (this.m_nTons); }
+    public int getBV() { return (this.m_nBV); }
+    public long getModified() { return (this.m_lModified); }
+    
+    public void setName(String m_sName) { this.m_sName = m_sName; }
+    public void setChassis(String m_sChassis) { this.m_sChassis = m_sChassis; }
+    public void setModel(String m_sModel) { this.m_sModel = m_sModel; }
         public void setUnitType(String m_sUnitType) { this.m_sUnitType = m_sUnitType; }
-	public void setSourceFile(File m_sSourceFile) { this.m_sSourceFile = m_sSourceFile; }
-	public void setEntryName(String m_sEntryName) { this.m_sEntryName = m_sEntryName; }
-	public void setYear(int m_nYear) { this.m_nYear = m_nYear; }
-	public void setType(int m_nType) { this.m_nType = m_nType; }
-	public void setTons(int m_nTons) { this.m_nTons = m_nTons; }
-	public void setBV(int m_nBV) { this.m_nBV = m_nBV; }
-	public void setModified(long m_lModified) { this.m_lModified = m_lModified; }
- 	
-	public int getWeightClass() {
-	     if (m_nTons <= Entity.WEIGHT_LIGHT) {
-	        return Entity.WEIGHT_LIGHT;
-	    } else if (m_nTons <= Entity.WEIGHT_MEDIUM) {
-	         return Entity.WEIGHT_MEDIUM;
-	    } else if (m_nTons <= Entity.WEIGHT_HEAVY) {
-	         return Entity.WEIGHT_HEAVY;
-	    } else {
-	         return Entity.WEIGHT_ASSAULT;
+    public void setSourceFile(File m_sSourceFile) { this.m_sSourceFile = m_sSourceFile; }
+    public void setEntryName(String m_sEntryName) { this.m_sEntryName = m_sEntryName; }
+    public void setYear(int m_nYear) { this.m_nYear = m_nYear; }
+    public void setType(int m_nType) { this.m_nType = m_nType; }
+    public void setTons(int m_nTons) { this.m_nTons = m_nTons; }
+    public void setBV(int m_nBV) { this.m_nBV = m_nBV; }
+    public void setModified(long m_lModified) { this.m_lModified = m_lModified; }
+    
+    public int getWeightClass() {
+         if (m_nTons <= Entity.WEIGHT_LIGHT) {
+            return Entity.WEIGHT_LIGHT;
+        } else if (m_nTons <= Entity.WEIGHT_MEDIUM) {
+             return Entity.WEIGHT_MEDIUM;
+        } else if (m_nTons <= Entity.WEIGHT_HEAVY) {
+             return Entity.WEIGHT_HEAVY;
+        } else {
+             return Entity.WEIGHT_ASSAULT;
      }
 }}

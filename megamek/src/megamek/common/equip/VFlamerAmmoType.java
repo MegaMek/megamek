@@ -19,16 +19,16 @@ import megamek.common.*;
 public class VFlamerAmmoType extends AmmoType {
     // Overload the constructor 
     public VFlamerAmmoType(int tech) {
-	this.techType = tech;
-	this.damagePerShot = 2;
-	this.heat = 3;
-	this.range = new RangeType(1,2,3);
-	this.shots = 20;
-	this.bv = 1;
+    this.techType = tech;
+    this.damagePerShot = 2;
+    this.heat = 3;
+    this.range = new RangeType(1,2,3);
+    this.shots = 20;
+    this.bv = 1;
     }
 
     // Flamers ignite on 4+
     public int getFireTN() {
-	return 4;
+    return 4;
     }
 }

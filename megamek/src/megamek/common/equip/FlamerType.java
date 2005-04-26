@@ -23,24 +23,24 @@ public class FlamerType extends EnergyType implements BattleArmorWeapon {
     protected static final String[] FLAMER_MODES = { "Damage", "Heat" };
 
     public FlamerType (int tech) {
-	this.heat = 3;
-	this.damage = 2;
-	this.range = new RangeType(1,2,3);
-	this.criticals = 1;
-	this.bv = 6;
-	this.setModes(FLAMER_MODES);
-	this.techType = tech;
+    this.heat = 3;
+    this.damage = 2;
+    this.range = new RangeType(1,2,3);
+    this.criticals = 1;
+    this.bv = 6;
+    this.setModes(FLAMER_MODES);
+    this.techType = tech;
 
-	if (tech == TechConstants.T_IS_LEVEL_1) {
-	    this.tonnage = 1.0f;
-	} else {
-	    this.tonnage = 0.5f;	    
-	}
+    if (tech == TechConstants.T_IS_LEVEL_1) {
+        this.tonnage = 1.0f;
+    } else {
+        this.tonnage = 0.5f;        
+    }
     }
 
 
     public int getFireTN() {
-	return 4;
+    return 4;
     }
 
 

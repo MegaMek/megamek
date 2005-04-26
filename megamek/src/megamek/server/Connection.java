@@ -128,7 +128,7 @@ public class Connection {
             // just closing the connection anyway.
             //e.printStackTrace();
         } catch (NullPointerException ex) {
-        	; // never initialized, poor thing
+            ; // never initialized, poor thing
         }
     }
     

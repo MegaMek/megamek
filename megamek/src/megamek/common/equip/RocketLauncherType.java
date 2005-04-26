@@ -25,35 +25,35 @@ public class RocketLauncherType extends MissileType {
     protected String def_ammo_name;
 
     public EquipmentState getNewState(Mounted location) {
-	return new UsesFixedAmmoState(location, this, 
-				      def_ammo_type, 1);
+    return new UsesFixedAmmoState(location, this, 
+                      def_ammo_type, 1);
     }
 
 
     public RocketLauncherType( int size, Vector valid_ammo, 
-			       AmmoType ammo_type ) {    
-	super(size, valid_ammo);
-	this.def_ammo_type = ammo_type;
-	this.def_ammo_name = ammo_type.getInternalName();
-	this.techType = TechConstants.T_IS_LEVEL_2;
+                   AmmoType ammo_type ) {    
+    super(size, valid_ammo);
+    this.def_ammo_type = ammo_type;
+    this.def_ammo_name = ammo_type.getInternalName();
+    this.techType = TechConstants.T_IS_LEVEL_2;
 
-	switch (size) {
-	case 10:
-	    this.tonnage = 0.5f;
-	    this.criticals = 1;
-	    this.bv = 18;
-	    break;
-	case 15:
-	    this.tonnage = 1.0f;
-	    this.criticals = 2;
-	    this.bv = 23;
-	    break;
-	case 20:
-	    this.tonnage = 1.5f;
-	    this.criticals = 3;
-	    this.bv = 24;
-	    break;
-	}
+    switch (size) {
+    case 10:
+        this.tonnage = 0.5f;
+        this.criticals = 1;
+        this.bv = 18;
+        break;
+    case 15:
+        this.tonnage = 1.0f;
+        this.criticals = 2;
+        this.bv = 23;
+        break;
+    case 20:
+        this.tonnage = 1.5f;
+        this.criticals = 3;
+        this.bv = 24;
+        break;
+    }
     }
 
 

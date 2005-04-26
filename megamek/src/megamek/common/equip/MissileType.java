@@ -24,22 +24,22 @@ public abstract class MissileType extends UsesAmmoType {
     protected int size;
 
     public MissileType( int size, Vector valid_ammo ) {
-	super(valid_ammo);
-	this.size = size;
+    super(valid_ammo);
+    this.size = size;
     }
 
     public int getSize() {
-	return size;
+    return size;
     }
 
     public int missilesHit() {
-	return Compute.missilesHit(size);
+    return Compute.missilesHit(size);
     }
     
     // Returns a string for the damage.  (3/missile for example)
     public String getDamageString(EquipmentState state, Entity en, 
-				  Targetable targ) {
-	return (Integer.toString(getShotDamage(state,en,targ))  + "/missile");
+                  Targetable targ) {
+    return (Integer.toString(getShotDamage(state,en,targ))  + "/missile");
     }
 
 }

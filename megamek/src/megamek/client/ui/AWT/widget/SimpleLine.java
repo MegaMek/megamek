@@ -17,20 +17,20 @@ package megamek.client.util;
 import java.awt.*;
 
 public class SimpleLine extends Canvas {
-	
-	private int h = 2;
-	private int w;
-	
-	public SimpleLine(int width) {
-		w = width;
-		setSize(w, h);
-	}
-	
-	public void paint(Graphics g) {
-		g.setColor(Color.gray);
-		g.drawLine(0, 0, w, 0);
-		g.setColor(Color.white);
-		g.drawLine(0, 1, w, 1);
-	}
-	
+    
+    private int h = 2;
+    private int w;
+    
+    public SimpleLine(int width) {
+        w = width;
+        setSize(w, h);
+    }
+    
+    public void paint(Graphics g) {
+        g.setColor(Color.gray);
+        g.drawLine(0, 0, w, 0);
+        g.setColor(Color.white);
+        g.drawLine(0, 1, w, 1);
+    }
+    
 }

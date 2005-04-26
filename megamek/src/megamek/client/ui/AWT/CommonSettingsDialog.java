@@ -242,7 +242,7 @@ public class CommonSettingsDialog extends ClientDialog
 
         // Close this dialog when the window manager says to.
         addWindowListener(new WindowAdapter() {
-	    public void windowClosing(WindowEvent e) { cancel(); }
+        public void windowClosing(WindowEvent e) { cancel(); }
         });
 
         // Center this dialog.

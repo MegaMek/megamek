@@ -18,40 +18,40 @@ import megamek.common.*;
 
 public class RACAmmoType extends AmmoType {
     public RACAmmoType(int size) {
-	this.techType = TechConstants.T_IS_LEVEL_2;
-	this.rackSize = size;
-	this.damagePerShot = this.rackSize;
+    this.techType = TechConstants.T_IS_LEVEL_2;
+    this.rackSize = size;
+    this.damagePerShot = this.rackSize;
 
-	switch(size) {
-	case 2:
-	    this.heat = 1;
-	    this.range = new RangeType(6, 12, 18);
-	    this.shots = 45;
-	    this.bv = 15;
-	    break;
-	case 5: 
-	    this.heat = 1;
-	    this.range = new RangeType(5, 10, 15);
-	    this.shots = 20;
-	    this.bv = 31;
-	    break;
-	}
-	
+    switch(size) {
+    case 2:
+        this.heat = 1;
+        this.range = new RangeType(6, 12, 18);
+        this.shots = 45;
+        this.bv = 15;
+        break;
+    case 5: 
+        this.heat = 1;
+        this.range = new RangeType(5, 10, 15);
+        this.shots = 20;
+        this.bv = 31;
+        break;
+    }
+    
     }
 
     protected HitData resolveACAttack(Game game, 
-				      WeaponResult wr, 
-				      UsesAmmoType weap, 
-				      UsesAmmoState weap_state) {
-	return null;
+                      WeaponResult wr, 
+                      UsesAmmoType weap, 
+                      UsesAmmoState weap_state) {
+    return null;
     }
 
     // AC's do damage to a single location
     public void resolveAttack(Game game, 
-			      WeaponResult wr, 
-			      UsesAmmoType weap, 
-			      UsesAmmoState weap_state) {
-	resolveACAttack(game, wr, weap, weap_state);
+                  WeaponResult wr, 
+                  UsesAmmoType weap, 
+                  UsesAmmoState weap_state) {
+    resolveACAttack(game, wr, weap, weap_state);
     }
     
 }

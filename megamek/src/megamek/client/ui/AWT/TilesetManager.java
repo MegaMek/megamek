@@ -64,7 +64,7 @@ public class TilesetManager {
     // hex images
     private HexTileset hexTileset = new HexTileset();
     
-	private Image minefieldSign;    
+    private Image minefieldSign;    
 
     /** Creates new TilesetManager */
     public TilesetManager(Component comp) throws java.io.IOException {
@@ -114,9 +114,9 @@ public class TilesetManager {
     public Image imageFor(Entity entity) {
         // mechs look like they're facing their secondary facing
         if (entity instanceof Mech || entity instanceof Protomech) {
-	    	return imageFor(entity, entity.getSecondaryFacing());
+            return imageFor(entity, entity.getSecondaryFacing());
         } else {
-	    	return imageFor(entity, entity.getFacing());
+            return imageFor(entity, entity.getFacing());
         }
     }
 
@@ -204,8 +204,8 @@ public class TilesetManager {
      * @param hex the hex to load
      */
     private void loadHexImage(Hex hex) {
-		hexTileset.assignMatch(hex, comp);
-		hexTileset.trackHexImages(hex, tracker);
+        hexTileset.assignMatch(hex, comp);
+        hexTileset.trackHexImages(hex, tracker);
     }
     
     /**
@@ -213,7 +213,7 @@ public class TilesetManager {
      * @param hex the hex to wait for
      */
     public void waitForHex(Hex hex) {
-		loadHexImage(hex);
+        loadHexImage(hex);
         try {
             tracker.waitForID(1);
         } catch (InterruptedException e) {
@@ -234,7 +234,7 @@ public class TilesetManager {
         Image base = mechTileset.imageFor(entity, comp);
         EntityImage entityImage = new EntityImage(base, tint, camo, bp);
         Image preview = entityImage.loadPreviewImage();
-		
+        
         BackGroundDrawer bgdPreview = new BackGroundDrawer(preview);
         bp.removeBgDrawers();
         bp.addBgDrawer(bgdPreview);
@@ -347,7 +347,7 @@ public class TilesetManager {
         private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
         
         public EntityImage(Image base, int tint, Image camo, Component comp) {
-        	this(base, null, tint, camo, comp);
+            this(base, null, tint, camo, comp);
         }
 
         public EntityImage(Image base, Image wreck, int tint, Image camo, Component comp) {
@@ -368,7 +368,7 @@ public class TilesetManager {
             }
 
             if (wreck != null) {
-            	wreck = applyColor(wreck);
+                wreck = applyColor(wreck);
                 for (int i = 0; i < 6; i++) {
                     ImageProducer rotSource = new FilteredImageSource(wreck.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
                     wreckFacings[i] = comp.createImage(rotSource);
@@ -377,7 +377,7 @@ public class TilesetManager {
         }
         
         public Image loadPreviewImage() {
-			base = applyColor(base);
+            base = applyColor(base);
             return base;
         }
 
@@ -419,19 +419,19 @@ public class TilesetManager {
           }
           
           if (useCamo) {
-	          PixelGrabber pgCamo = new PixelGrabber(camo, 0, 0, IMG_WIDTH, IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
-	          try {
-	              pgCamo.grabPixels();
-	          } catch (InterruptedException e) {
-	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage()); //$NON-NLS-1$
-	              return image;
-	          }
-	          if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
-	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
-	              return image;
-	          }
-	      }
-	      
+              PixelGrabber pgCamo = new PixelGrabber(camo, 0, 0, IMG_WIDTH, IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
+              try {
+                  pgCamo.grabPixels();
+              } catch (InterruptedException e) {
+                  System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage()); //$NON-NLS-1$
+                  return image;
+              }
+              if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
+                  System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                  return image;
+              }
+          }
+          
           for (int i = 0; i < IMG_SIZE; i++) {
             int pixel = pMech[i];
             int alpha = (pixel >> 24) & 0xff;

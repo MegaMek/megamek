@@ -160,7 +160,7 @@ public class MoveStep implements Serializable {
     }
     
     public MovePath getParent() {
-    	return parent;
+        return parent;
     }
 
     /**
@@ -867,7 +867,7 @@ public class MoveStep implements Serializable {
         // Mechs with busted Gyro may make only one facing change
         if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                    Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1
-    	    && !isFirstStep() ) {
+            && !isFirstStep() ) {
             movementType = Entity.MOVE_ILLEGAL;
         }
 

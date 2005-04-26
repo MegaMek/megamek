@@ -22,18 +22,18 @@ import java.util.Vector;
 public class VehicleFlamerType extends BallisticType {
 
     public VehicleFlamerType(int tech, Vector valid_ammo ) {    
-	super(valid_ammo);
-	this.techType = tech;
-	this.heat = 3;
-	this.damage = 2;
-	
-	String[] modes = { "Damage", "Heat" };
-	this.setModes(modes);
-	this.range = new RangeType(1, 2, 3);
+    super(valid_ammo);
+    this.techType = tech;
+    this.heat = 3;
+    this.damage = 2;
+    
+    String[] modes = { "Damage", "Heat" };
+    this.setModes(modes);
+    this.range = new RangeType(1, 2, 3);
 
-	this.tonnage = 0.5f;
-	this.criticals = 1;
-	this.bv = 5;
+    this.tonnage = 0.5f;
+    this.criticals = 1;
+    this.bv = 5;
     }
     
     public WeaponResult setupAttack(Mounted loc, Entity en, Targetable targ) { return null; }

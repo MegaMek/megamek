@@ -36,42 +36,42 @@ public class RangeType {
 
     
     public RangeType(int r_min, int r_short, int r_med, int r_long, int r_extreme) {
-	this.r_min = r_min;
-	this.r_short = r_short;
-	this.r_med = r_med;
-	this.r_long = r_long;
-	this.r_extreme = r_extreme;
+    this.r_min = r_min;
+    this.r_short = r_short;
+    this.r_med = r_med;
+    this.r_long = r_long;
+    this.r_extreme = r_extreme;
 
     }
 
     public RangeType(int r_short, int r_med, int r_long, int r_extreme) {
-	this(0, r_short, r_med, r_long, r_extreme);
+    this(0, r_short, r_med, r_long, r_extreme);
     }
     
     public RangeType(int r_short, int r_med, int r_long) {
-	this(0, r_short, r_med, r_long, 2 * r_med);
+    this(0, r_short, r_med, r_long, 2 * r_med);
     }
     
     // returns short/med/long range
     public int getRangeID(int range) {
-	if (range <= r_short)
-	    return RANGE_SHORT;
-	else if (range <= r_med)
-	    return RANGE_MEDIUM;
-	else if (range <= r_long)
-	    return RANGE_LONG; 
+    if (range <= r_short)
+        return RANGE_SHORT;
+    else if (range <= r_med)
+        return RANGE_MEDIUM;
+    else if (range <= r_long)
+        return RANGE_LONG; 
 else if (range <= r_extreme)
-	    return RANGE_EXTREME;
-	else 
-	    return RANGE_OUT;
+        return RANGE_EXTREME;
+    else 
+        return RANGE_OUT;
     }
     
     // This quickly returns the minimum range modifier
     public int getMinRangeMod(int range) {
-	if (range <= r_min)
-	    return (r_min - range + 1);
-	else
-	    return 0;
+    if (range <= r_min)
+        return (r_min - range + 1);
+    else
+        return 0;
     }
 
     /**

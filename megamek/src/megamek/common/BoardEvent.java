@@ -33,7 +33,7 @@ public class BoardEvent
 
     public static final int        BOARD_FIRST_LOS_HEX        = 11;
     public static final int        BOARD_SECOND_LOS_HEX        = 12;
-    public static final int		   BOARD_NEW_ATTACK			   = 13;
+    public static final int            BOARD_NEW_ATTACK                = 13;
 
     private Coords        c;
     private Entity            entity;

@@ -148,7 +148,7 @@ public abstract class BotClient extends Client {
     protected void calculateMyTurn() {
         try {
             if (game.getPhase() == Game.PHASE_MOVEMENT) {
-				MovePath mp = null;
+                MovePath mp = null;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
                     Entity mustMove = game.getEntity(turn.getEntityNum());
@@ -182,7 +182,7 @@ public abstract class BotClient extends Client {
                     game.addMinefield((Minefield)mines.elementAt(i));
                 }
                 sendDeployMinefields(mines);
-				sendPlayerInfo();
+                sendPlayerInfo();
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -190,8 +190,8 @@ public abstract class BotClient extends Client {
     }
 
     /**
-	 * Gets valid & empty starting coords around the specified point
-	 */
+     * Gets valid & empty starting coords around the specified point
+     */
     protected Coords getCoordsAround(Coords c) {
         // check the requested coords
         if (game.board.isLegalDeployment(c, this.getLocalPlayer()) && game.getFirstEntity(c) == null) {

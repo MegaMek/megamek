@@ -28,11 +28,11 @@ public class UltraACType extends BallisticType {
         public UACEquipmentState(Mounted location, UltraACType type) {
             super(location, type);
         }
-	
+    
         public boolean isJammed() {
             return jammed;
         }
-	    
+        
         public void setJammed(boolean jammed) {
             this.jammed = jammed;
         }
@@ -40,7 +40,7 @@ public class UltraACType extends BallisticType {
     }
     
     public EquipmentState getNewState(Mounted location) {
-	return new UACEquipmentState(location, this);
+    return new UACEquipmentState(location, this);
     }
 
     private static final String[] UAC_MODES = {"Single", "Ultra"};
@@ -48,60 +48,60 @@ public class UltraACType extends BallisticType {
     private int size;
 
     public UltraACType( int tech, int size, Vector valid_ammo ) {
-	super(valid_ammo);
-	this.size = size;
-	this.setModes(UAC_MODES);
-	this.flags |= F_DIRECT_FIRE;
-	this.techType = tech;
+    super(valid_ammo);
+    this.size = size;
+    this.setModes(UAC_MODES);
+    this.flags |= F_DIRECT_FIRE;
+    this.techType = tech;
 
-	if (tech == TechConstants.T_IS_LEVEL_2) {
-	    switch(size) {
-	    case 2:
-		this.tonnage = 7.0f;
-		this.criticals = 3;
-		this.bv = 56;
-		break;
-	    case 5:
-		this.tonnage = 9.0f;
-		this.criticals = 5;
-		this.bv = 113;
-		break;
-	    case 10:
-		this.tonnage = 13.0f;
-		this.criticals = 7;
-		this.bv = 253;
-		break;
-	    case 20:
-		this.tonnage = 15.0f;
-		this.criticals = 10;
-		this.bv = 282;
-		break;
-	    }
-	} else { // Clan TECH
-	    switch(size) {
-	    case 2:
-		this.tonnage = 5.0f;
-		this.criticals = 2;
-		this.bv = 62;
-		break;
-	    case 5:
-		this.tonnage = 7.0f;
-		this.criticals = 3;
-		this.bv = 123;
-		break;
-	    case 10:
-		this.tonnage = 10.0f;
-		this.criticals = 4;
-		this.bv = 211;
-		break;
-	    case 20:
-		this.tonnage = 12.0f;
-		this.criticals = 8;
-		this.bv = 337;
-		break;
-	    }
-	}
-	
+    if (tech == TechConstants.T_IS_LEVEL_2) {
+        switch(size) {
+        case 2:
+        this.tonnage = 7.0f;
+        this.criticals = 3;
+        this.bv = 56;
+        break;
+        case 5:
+        this.tonnage = 9.0f;
+        this.criticals = 5;
+        this.bv = 113;
+        break;
+        case 10:
+        this.tonnage = 13.0f;
+        this.criticals = 7;
+        this.bv = 253;
+        break;
+        case 20:
+        this.tonnage = 15.0f;
+        this.criticals = 10;
+        this.bv = 282;
+        break;
+        }
+    } else { // Clan TECH
+        switch(size) {
+        case 2:
+        this.tonnage = 5.0f;
+        this.criticals = 2;
+        this.bv = 62;
+        break;
+        case 5:
+        this.tonnage = 7.0f;
+        this.criticals = 3;
+        this.bv = 123;
+        break;
+        case 10:
+        this.tonnage = 10.0f;
+        this.criticals = 4;
+        this.bv = 211;
+        break;
+        case 20:
+        this.tonnage = 12.0f;
+        this.criticals = 8;
+        this.bv = 337;
+        break;
+        }
+    }
+    
 
     }
     

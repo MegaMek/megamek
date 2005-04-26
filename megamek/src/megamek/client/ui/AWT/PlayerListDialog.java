@@ -44,8 +44,8 @@ public class PlayerListDialog
         refreshPlayerList();
        
         addWindowListener(new WindowAdapter() {
-	    public void windowClosing(WindowEvent e) { setVisible(false); }
-	});
+        public void windowClosing(WindowEvent e) { setVisible(false); }
+    });
         
         pack();
         setResizable(false);

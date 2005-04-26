@@ -26,73 +26,73 @@ import megamek.common.*;
  */
 
 public class InfantryMapSet implements DisplayMapSet{
-	//Picture to represent single trooper
-	private Image infImage;
+    //Picture to represent single trooper
+    private Image infImage;
     //Reference to Component class required to handle images and fonts
-	private Component comp;
-	 // Assuming that it will be no more that 28 men in platoon
-	private PMPicArea[] areas = new PMPicArea[28];
-	// Main areas group that will be passing to PicMap
-	private PMAreasGroup content = new PMAreasGroup();
-	//Label
-	private PMValueLabel label;
-	//Set of Backgrownd drawers
-	private Vector    bgDrawers = new Vector();
+    private Component comp;
+     // Assuming that it will be no more that 28 men in platoon
+    private PMPicArea[] areas = new PMPicArea[28];
+    // Main areas group that will be passing to PicMap
+    private PMAreasGroup content = new PMAreasGroup();
+    //Label
+    private PMValueLabel label;
+    //Set of Backgrownd drawers
+    private Vector    bgDrawers = new Vector();
 
-	
-	private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayArmorMediumFontSize()); //$NON-NLS-1$
+    
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayArmorMediumFontSize()); //$NON-NLS-1$
 
-	
-	public InfantryMapSet(Component c){
-		comp = c;
-		setAreas();
-		setBackGround();
-	}
-	
-	public PMAreasGroup getContentGroup(){
+    
+    public InfantryMapSet(Component c){
+        comp = c;
+        setAreas();
+        setBackGround();
+    }
+    
+    public PMAreasGroup getContentGroup(){
         return content;
     }
     
     public Vector getBackgroundDrawers(){
-    	return bgDrawers;
+        return bgDrawers;
     };
     
     public void setEntity(Entity e){
        Infantry inf = (Infantry) e;
        int men = inf.getInternal(0);
        for (int i = 0; i < men; i++){
-       	   areas[i].setVisible(true);
+               areas[i].setVisible(true);
        }
        for (int i = men; i < 28; i++){
-       	   areas[i].setVisible(false);
+               areas[i].setVisible(false);
        }
        
        label.setValue(Messages.getString("InfantryMapSet.InfantryPlatoon", new Object[]{Integer.toString(men)})); //$NON-NLS-1$
     }
-	
-	private void setAreas(){
-		int stepX = 30;
-	    int stepY = 42;
-		infImage = comp.getToolkit().getImage("data/widgets/inf.gif"); //$NON-NLS-1$
-		PMUtil.setImage(infImage, comp);
-		for(int i = 0; i < 28; i++){
-			int shiftX = (i % 5) * stepX;
-			int shiftY = (i / 5) * stepY;
-			areas[i] = new PMPicArea(infImage);
-			areas[i].translate(shiftX, shiftY);
-			content.addArea((PMElement) areas[i]);
-		}
-		
-		FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
-		label = new PMValueLabel(fm, Color.white);
-		label.setValue(Messages.getString("InfantryMapSet.InfantryPlatoon", new Object[]{"00"}));  //$NON-NLS-1$//$NON-NLS-2$
-		Dimension d = label.getSize();
-		content.translate(0, d.height + 5);
-		label.moveTo(d.width / 2, d.height);
-		content.addArea((PMElement) label);
-	}
-	
-	private void setBackGround(){
+    
+    private void setAreas(){
+        int stepX = 30;
+        int stepY = 42;
+        infImage = comp.getToolkit().getImage("data/widgets/inf.gif"); //$NON-NLS-1$
+        PMUtil.setImage(infImage, comp);
+        for(int i = 0; i < 28; i++){
+            int shiftX = (i % 5) * stepX;
+            int shiftY = (i / 5) * stepY;
+            areas[i] = new PMPicArea(infImage);
+            areas[i].translate(shiftX, shiftY);
+            content.addArea((PMElement) areas[i]);
+        }
+        
+        FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
+        label = new PMValueLabel(fm, Color.white);
+        label.setValue(Messages.getString("InfantryMapSet.InfantryPlatoon", new Object[]{"00"}));  //$NON-NLS-1$//$NON-NLS-2$
+        Dimension d = label.getSize();
+        content.translate(0, d.height + 5);
+        label.moveTo(d.width / 2, d.height);
+        content.addArea((PMElement) label);
+    }
+    
+    private void setBackGround(){
         Image tile = comp.getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
@@ -152,5 +152,5 @@ public class InfantryMapSet implements DisplayMapSet{
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
          
     }
-	
+    
 }

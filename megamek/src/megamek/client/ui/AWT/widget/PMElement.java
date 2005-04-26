@@ -21,19 +21,19 @@ package megamek.client.util.widget;
 import java.awt.*;
 
 public interface PMElement{
-	/**
+    /**
      * Translates element by x and y.
      */
-	public void translate(int x, int y);
-	/**
+    public void translate(int x, int y);
+    /**
      * Sets visibility of element
      */
-	public void setVisible(boolean v);
-	/**
+    public void setVisible(boolean v);
+    /**
      * Draws element into specifyed Graphics.
      */
     public void drawInto(Graphics g);
-	/**
+    /**
      * Return bounding box of element.
      */
      public Rectangle getBounds();

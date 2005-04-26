@@ -3677,17 +3677,17 @@ public abstract class Entity
         return this.unitNumber;
     }
 
-	/**
-	 * Returns whether an entity can flee from its current position.  Currently
-	 * returns true if the entity is on the edge of the board.
-	 */
-	public boolean canFlee() {
-		Coords pos = getPosition();
-		return pos != null && getWalkMP() > 0 && !isProne() && !isStuck()
-			&& !isShutDown() && !getCrew().isUnconscious()
-			&& (pos.x == 0 || pos.x == game.board.width - 1
-				|| pos.y == 0 || pos.y == game.board.height - 1);
-	}
+    /**
+     * Returns whether an entity can flee from its current position.  Currently
+     * returns true if the entity is on the edge of the board.
+     */
+    public boolean canFlee() {
+        Coords pos = getPosition();
+        return pos != null && getWalkMP() > 0 && !isProne() && !isStuck()
+            && !isShutDown() && !getCrew().isUnconscious()
+            && (pos.x == 0 || pos.x == game.board.width - 1
+                || pos.y == 0 || pos.y == game.board.height - 1);
+    }
 
     public void setSeenByEnemy(boolean b) {
         this.seenByEnemy = b;
@@ -4050,8 +4050,8 @@ public abstract class Entity
             Coords[] in = Coords.intervening(this.getPosition(), target.getPosition());
             for (int i = 0; i < in.length; i++) {
                 for (Enumeration e = game.getEntities(in[i]);e.hasMoreElements();) {
-                	Entity en = (Entity)e.nextElement();
-                	en.setIlluminated(true);
+                    Entity en = (Entity)e.nextElement();
+                    en.setIlluminated(true);
                 }
             }
         }
@@ -4067,8 +4067,8 @@ public abstract class Entity
             Coords[] in = Coords.intervening(this.getPosition(), target.getPosition());
             for (int i = 0; i < in.length; i++) {
                 for (Enumeration e = game.getEntities(in[i]);e.hasMoreElements();) {
-                	Entity en = (Entity)e.nextElement();
-                	en.setIlluminated(true);
+                    Entity en = (Entity)e.nextElement();
+                    en.setIlluminated(true);
                 }
             }
         }

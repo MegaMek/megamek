@@ -24,7 +24,7 @@ import megamek.common.*;
  */
 
 public interface DisplayMapSet {
-	public PMAreasGroup getContentGroup();
-	public Vector getBackgroundDrawers();
-	public void setEntity(Entity e);
+    public PMAreasGroup getContentGroup();
+    public Vector getBackgroundDrawers();
+    public void setEntity(Entity e);
 }

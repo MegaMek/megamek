@@ -36,15 +36,15 @@ public class ProtomechMapSet implements DisplayMapSet{
         new PMValueLabel[Protomech.NUM_PMECH_LOCATIONS];
     /* BEGIN killme block **
     //Picture with figure
-	private Image battleArmorImage;
-	//Images that shows how much armor + 1 internal damage left.
-	private Image[] armorImage = new Image[5];
-	//Set of areas to show BA figures
-	private PMPicArea[] unitAreas =  new PMPicArea[5];
-	//Set of areas to show BA armor left
-	private PMPicArea[] armorAreas = new PMPicArea[5];
-	//Set of labels to show BA armor left
-	private PMValueLabel[]    armorLabels = new PMValueLabel[5];
+    private Image battleArmorImage;
+    //Images that shows how much armor + 1 internal damage left.
+    private Image[] armorImage = new Image[5];
+    //Set of areas to show BA figures
+    private PMPicArea[] unitAreas =  new PMPicArea[5];
+    //Set of areas to show BA armor left
+    private PMPicArea[] armorAreas = new PMPicArea[5];
+    //Set of labels to show BA armor left
+    private PMValueLabel[]    armorLabels = new PMValueLabel[5];
     **  END  killme block */
 
     //Reference to Component (required for Image handling)
@@ -53,11 +53,11 @@ public class ProtomechMapSet implements DisplayMapSet{
     private PMAreasGroup content = new PMAreasGroup();
     //Set of Backgrpund drawers which will be sent to PicMap component
     private Vector    bgDrawers = new Vector();
-	
+    
     private int stepY = 53;
-	
+    
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayArmorLargeFontSize()); //$NON-NLS-1$
-	
+    
     /**
      * This constructor have to be called anly from addNotify() method
      */
@@ -72,7 +72,7 @@ public class ProtomechMapSet implements DisplayMapSet{
     */
     private void setAreas() {
         FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
-		
+        
         for(int i = 0; i < Protomech.NUM_PMECH_LOCATIONS; i++){
             int shiftY = i * stepY;
 
@@ -89,13 +89,13 @@ public class ProtomechMapSet implements DisplayMapSet{
             content.addArea((PMElement) internalLabels[i]);
         }
     }
-	
+    
     public PMAreasGroup getContentGroup(){
         return content;
     }
     
     public Vector getBackgroundDrawers(){
-    	return bgDrawers;
+        return bgDrawers;
     }
 
     /**
@@ -105,9 +105,9 @@ public class ProtomechMapSet implements DisplayMapSet{
      *          This should be a <code>Protomech</code> unit.
      */
     public void setEntity(Entity entity){
-    	Protomech proto = (Protomech) entity;
-    	int armor = 0;
-    	int internal =0;
+        Protomech proto = (Protomech) entity;
+        int armor = 0;
+        int internal =0;
         int loc = proto.locations();
 
         // Not all Protomechs have a Main Gun.
@@ -129,7 +129,7 @@ public class ProtomechMapSet implements DisplayMapSet{
             if ( armor < 0 ) {
                 armor = 0;
             }
-       	    internal = proto.getInternal(i);
+                internal = proto.getInternal(i);
             if ( internal < 0 ) {
                 internal = 0;
             }
@@ -137,11 +137,11 @@ public class ProtomechMapSet implements DisplayMapSet{
             // Now set the labels.
             sectionLabels[i].setValue( proto.getLocationName(i) );
             armorLabels[i].setValue( Integer.toString(armor) );
-       	    if ( armor + internal == 0 ) {
-       	    	internalLabels[i].setValue( Messages.getString("ProtomechMapSet.Destroyed") ); //$NON-NLS-1$
-       	    } else {
-       	    	internalLabels[i].setValue( Integer.toString(internal) );
-       	    }
+                if ( armor + internal == 0 ) {
+                    internalLabels[i].setValue( Messages.getString("ProtomechMapSet.Destroyed") ); //$NON-NLS-1$
+                } else {
+                    internalLabels[i].setValue( Integer.toString(internal) );
+                }
 
         } // Handle the next location.
 

@@ -56,12 +56,12 @@ public class DeployMinefieldDisplay
 
     // is the shift key held?
     private boolean            turnMode = false;
-    private boolean				deployM = false;
-    private boolean				deployC = false;
-    private boolean				deployV = false;
+    private boolean                 deployM = false;
+    private boolean                 deployC = false;
+    private boolean                 deployV = false;
 
-	private Player p;
-	private Vector deployedMinefields = new Vector();
+    private Player p;
+    private Vector deployedMinefields = new Vector();
 
     /**
      * Creates and lays out a new deployment phase display 
@@ -76,8 +76,8 @@ public class DeployMinefieldDisplay
 
         setupStatusBar(Messages.getString("DeployMinefieldDisplay.waitingForDeployMinefieldPhase")); //$NON-NLS-1$
 
-		p = client.getLocalPlayer();
-		
+        p = client.getLocalPlayer();
+        
         butM = new Button(Messages.getString("DeploymentDisplay.buttonMinefield", new Object[]{new Integer(p.getNbrMFConventional())})); //$NON-NLS-1$
         butM.addActionListener(this);
         butM.setActionCommand(DEPLOY_MINE_CONV);
@@ -159,12 +159,12 @@ public class DeployMinefieldDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-		setConventionalEnabled(p.getNbrMFConventional());
-		setCommandEnabled(p.getNbrMFCommand());
-		setVibrabombEnabled(p.getNbrMFVibra());
-		if (!p.hasMinefields()) {
-		    butDone.setEnabled(true);
-		}
+        setConventionalEnabled(p.getNbrMFConventional());
+        setCommandEnabled(p.getNbrMFCommand());
+        setVibrabombEnabled(p.getNbrMFVibra());
+        if (!p.hasMinefields()) {
+            butDone.setEnabled(true);
+        }
     }
 
     /**
@@ -183,89 +183,89 @@ public class DeployMinefieldDisplay
      * Disables all buttons in the interface
      */
     private void disableButtons() {
-		setConventionalEnabled(0);
-		setCommandEnabled(0);
-		setVibrabombEnabled(0);
+        setConventionalEnabled(0);
+        setCommandEnabled(0);
+        setVibrabombEnabled(0);
 
         butDone.setEnabled(false);
         butUnload.setEnabled(false);
     }
 
     private void deployMinefield(Coords coords) {
-    	if (!client.game.board.contains(coords)) {
-    		return;
-    	}
-    	
-    	if (client.game.containsMinefield(coords)) {
-    		Minefield mf = (Minefield) client.game.getMinefields(coords).elementAt(0);
-    		if (mf.getPlayerId() == client.getLocalPlayer().getId()) {
-		        butDone.setEnabled(false);
-	    		client.game.removeMinefield(mf);
-	    		deployedMinefields.removeElement(mf);
-	    		switch (mf.getType()) {
-	    			case (Minefield.TYPE_CONVENTIONAL) :
-		        	deployM = true;
-		        	deployC = false;
-		        	deployV = false;
-	    			p.setNbrMFConventional(p.getNbrMFConventional() + 1);
-	    			break;
-	    			case (Minefield.TYPE_COMMAND_DETONATED) :
-		        	deployM = false;
-		        	deployC = true;
-		        	deployV = false;
-	    			p.setNbrMFCommand(p.getNbrMFCommand() + 1);
-	    			break;
-	    			case (Minefield.TYPE_VIBRABOMB) :
-		        	deployM = false;
-		        	deployC = false;
-		        	deployV = true;
-	    			p.setNbrMFVibra(p.getNbrMFVibra() + 1);
-	    			break;
-	    		}
-	    	}
-    	} else {
-    		Minefield mf;
-    		
-    		if (deployM) {
-    			mf = Minefield.createConventionalMF(coords, p.getId());
-    			p.setNbrMFConventional(p.getNbrMFConventional() - 1);
-    		} else if (deployC) {
-    			mf = Minefield.createCommandDetonatedMF(coords, p.getId());
-    			p.setNbrMFCommand(p.getNbrMFCommand() - 1);
-    		} else if (deployV) {
-    			VibrabombSettingDialog vsd  = new VibrabombSettingDialog(clientgui.frame);
-    			vsd.show();
+        if (!client.game.board.contains(coords)) {
+            return;
+        }
+        
+        if (client.game.containsMinefield(coords)) {
+            Minefield mf = (Minefield) client.game.getMinefields(coords).elementAt(0);
+            if (mf.getPlayerId() == client.getLocalPlayer().getId()) {
+                butDone.setEnabled(false);
+                client.game.removeMinefield(mf);
+                deployedMinefields.removeElement(mf);
+                switch (mf.getType()) {
+                    case (Minefield.TYPE_CONVENTIONAL) :
+                    deployM = true;
+                    deployC = false;
+                    deployV = false;
+                    p.setNbrMFConventional(p.getNbrMFConventional() + 1);
+                    break;
+                    case (Minefield.TYPE_COMMAND_DETONATED) :
+                    deployM = false;
+                    deployC = true;
+                    deployV = false;
+                    p.setNbrMFCommand(p.getNbrMFCommand() + 1);
+                    break;
+                    case (Minefield.TYPE_VIBRABOMB) :
+                    deployM = false;
+                    deployC = false;
+                    deployV = true;
+                    p.setNbrMFVibra(p.getNbrMFVibra() + 1);
+                    break;
+                }
+            }
+        } else {
+            Minefield mf;
+            
+            if (deployM) {
+                mf = Minefield.createConventionalMF(coords, p.getId());
+                p.setNbrMFConventional(p.getNbrMFConventional() - 1);
+            } else if (deployC) {
+                mf = Minefield.createCommandDetonatedMF(coords, p.getId());
+                p.setNbrMFCommand(p.getNbrMFCommand() - 1);
+            } else if (deployV) {
+                VibrabombSettingDialog vsd  = new VibrabombSettingDialog(clientgui.frame);
+                vsd.show();
 
-				// Hack warning...    			
-    			clientgui.bv.stopScrolling();
-    			mf = Minefield.createVibrabombMF(coords, p.getId(), vsd.getSetting());
-    			p.setNbrMFVibra(p.getNbrMFVibra() - 1);
-    		} else {
-    			return;
-    		}
-    		client.game.addMinefield(mf);
-    		deployedMinefields.addElement(mf);
-    		clientgui.bv.update(clientgui.bv.getGraphics());
-    	}
-    	
-    	if (p.getNbrMFConventional() == 0 &&
-    		p.getNbrMFCommand() == 0 &&
-    		p.getNbrMFVibra() == 0) {
-    		butDone.setEnabled(true);
-    	}
+                // Hack warning...              
+                clientgui.bv.stopScrolling();
+                mf = Minefield.createVibrabombMF(coords, p.getId(), vsd.getSetting());
+                p.setNbrMFVibra(p.getNbrMFVibra() - 1);
+            } else {
+                return;
+            }
+            client.game.addMinefield(mf);
+            deployedMinefields.addElement(mf);
+            clientgui.bv.update(clientgui.bv.getGraphics());
+        }
+        
+        if (p.getNbrMFConventional() == 0 &&
+            p.getNbrMFCommand() == 0 &&
+            p.getNbrMFVibra() == 0) {
+            butDone.setEnabled(true);
+        }
 
-		setConventionalEnabled(p.getNbrMFConventional());
-		setCommandEnabled(p.getNbrMFCommand());
-		setVibrabombEnabled(p.getNbrMFVibra());
+        setConventionalEnabled(p.getNbrMFConventional());
+        setCommandEnabled(p.getNbrMFCommand());
+        setVibrabombEnabled(p.getNbrMFVibra());
 
-    	if (p.getNbrMFConventional() == 0) {
-    		deployM = false;
-    	}
-    	if (p.getNbrMFCommand() == 0) {
-    		deployC = false;
-	     }
-    	if (p.getNbrMFVibra() == 0) {
-    		deployV = false;
+        if (p.getNbrMFConventional() == 0) {
+            deployM = false;
+        }
+        if (p.getNbrMFCommand() == 0) {
+            deployC = false;
+         }
+        if (p.getNbrMFVibra() == 0) {
+            deployV = false;
         }
 
     }
@@ -353,24 +353,24 @@ public class DeployMinefieldDisplay
         }
         
         if (ev.getSource().equals(butDone)) {
-        	endMyTurn();
-        	client.sendDeployMinefields(deployedMinefields);
-			client.sendPlayerInfo();
+            endMyTurn();
+            client.sendDeployMinefields(deployedMinefields);
+            client.sendPlayerInfo();
         }
         if (ev.getActionCommand().equals(DEPLOY_MINE_CONV)) {
-        	deployM = true;
-        	deployC = false;
-        	deployV = false;
+            deployM = true;
+            deployC = false;
+            deployV = false;
         }
         if (ev.getActionCommand().equals(DEPLOY_MINE_COM)) {
-        	deployM = false;
-        	deployC = true;
-        	deployV = false;
+            deployM = false;
+            deployC = true;
+            deployV = false;
         }
         if (ev.getActionCommand().equals(DEPLOY_MINE_VIBRA)) {
-        	deployM = false;
-        	deployC = false;
-        	deployV = true;
+            deployM = false;
+            deployC = false;
+            deployV = true;
         }
     } // End public void actionPerformed(ActionEvent ev)
     
@@ -389,17 +389,17 @@ public class DeployMinefieldDisplay
 
     private void setConventionalEnabled(int nbr) {
         butM.setLabel(Messages.getString("DeploymentDisplay.buttonMinefield", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
-       	butM.setEnabled(nbr > 0);
+            butM.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployConventionalEnabled(nbr);
     }
     private void setCommandEnabled(int nbr) {
         butC.setLabel(Messages.getString("DeploymentDisplay.buttonCommand", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
-       	butC.setEnabled(nbr > 0);
+            butC.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployCommandEnabled(nbr);
     }
     private void setVibrabombEnabled(int nbr) {
         butV.setLabel(Messages.getString("DeploymentDisplay.buttonVibrabomb", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
-       	butV.setEnabled(nbr > 0);
+            butV.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployVibrabombEnabled(nbr);
     }
 

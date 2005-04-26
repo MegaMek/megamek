@@ -21,7 +21,7 @@ import java.awt.event.ActionListener;
 
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay implements ActionListener
 {
-	
+    
   // displays
     private Label labStatus;
     protected Panel panStatus;

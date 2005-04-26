@@ -23,51 +23,51 @@ public abstract class UsesAmmoType extends WeaponType {
     protected int    tech_level = 0;
         
     public UsesAmmoType (Vector valid_ammo) {
-	this.valid_ammo = valid_ammo;
+    this.valid_ammo = valid_ammo;
     };
 
     // is fed to the lower classes
     public EquipmentState getNewState(Mounted location) {
-	return new UsesAmmoState(location, this);
+    return new UsesAmmoState(location, this);
     }
 
     public Vector getValidAmmo () {
-	return valid_ammo;
+    return valid_ammo;
     }
 
     // By default, get all paramters from the ammunition.
 
     public int getHeat(EquipmentState state) {
-	UsesAmmoState amst = (UsesAmmoState) state;
-	AmmoType at = amst.getAmmoBin().getAmmoType();
-	return at.getHeat();
+    UsesAmmoState amst = (UsesAmmoState) state;
+    AmmoType at = amst.getAmmoBin().getAmmoType();
+    return at.getHeat();
     }
 
     public int getShotDamage(EquipmentState state, Entity en, Targetable targ) {
-	UsesAmmoState amst = (UsesAmmoState) state;
-	AmmoType at = amst.getAmmoBin().getAmmoType();
-	return at.getShotDamage(en, targ);
+    UsesAmmoState amst = (UsesAmmoState) state;
+    AmmoType at = amst.getAmmoBin().getAmmoType();
+    return at.getShotDamage(en, targ);
     }
 
 
     public RangeType getRange(EquipmentState state) {
-	UsesAmmoState amst = (UsesAmmoState) state;
-	AmmoType at = amst.getAmmoBin().getAmmoType();
-	return at.getRange();
+    UsesAmmoState amst = (UsesAmmoState) state;
+    AmmoType at = amst.getAmmoBin().getAmmoType();
+    return at.getRange();
     }
 
 
     public void resolveAttack(Game game, EquipmentState state, WeaponResult wr) {
-	UsesAmmoState amst = (UsesAmmoState) state;
-	AmmoType at = amst.getAmmoBin().getAmmoType();
-	at.resolveAttack(game, wr, this, state);
+    UsesAmmoState amst = (UsesAmmoState) state;
+    AmmoType at = amst.getAmmoBin().getAmmoType();
+    at.resolveAttack(game, wr, this, state);
     }
 
     public int getFireTN() {
 /* TODO: implement me
-	UsesAmmoState amst = (UsesAmmoState) state;
-	AmmoType at = amst.getAmmoBin().getAmmoType();
-	at.getFireTN();
+    UsesAmmoState amst = (UsesAmmoState) state;
+    AmmoType at = amst.getAmmoBin().getAmmoType();
+    at.getFireTN();
 */
         return TargetRoll.IMPOSSIBLE;
     }

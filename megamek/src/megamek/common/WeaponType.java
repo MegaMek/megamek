@@ -109,7 +109,7 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getRanges() {
-    	return new int[] {minimumRange, shortRange, mediumRange,
+        return new int[] {minimumRange, shortRange, mediumRange,
                           longRange, extremeRange};
     }
 
@@ -134,7 +134,7 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getWRanges() {
-    	return new int[] {minimumRange, waterShortRange, waterMediumRange,
+        return new int[] {minimumRange, waterShortRange, waterMediumRange,
                           waterLongRange, waterExtremeRange};
     }
 
@@ -2432,8 +2432,8 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.bv = 55;
-		weapon.setModes(new String[] {"", "Indirect"});
-		weapon.flags |= F_MISSILE;		
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;      
 
         return weapon;
     }
@@ -2457,8 +2457,8 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.5f;
         weapon.criticals = 1;
         weapon.bv = 109;
-		weapon.setModes(new String[] {"", "Indirect"});
-		weapon.flags |= F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
 
         return weapon;
     }
@@ -2482,8 +2482,8 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.5f;
         weapon.criticals = 2;
         weapon.bv = 164;
-		weapon.setModes(new String[] {"", "Indirect"});
-		weapon.flags |= F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
 
         return weapon;
     }
@@ -2507,8 +2507,8 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 4;
         weapon.bv = 220;
-		weapon.setModes(new String[] {"", "Indirect"});
-		weapon.flags |= F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
 
         return weapon;
     }
@@ -3425,7 +3425,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES| F_MISSILE;
         weapon.bv = 4; // ???
-		weapon.setModes(new String[] {"", "Indirect"}); // ?
+        weapon.setModes(new String[] {"", "Indirect"}); // ?
 
         return weapon;
     }

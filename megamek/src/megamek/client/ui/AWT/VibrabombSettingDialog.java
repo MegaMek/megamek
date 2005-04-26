@@ -38,29 +38,29 @@ public class VibrabombSettingDialog
         super.setResizable(false);
         frame = p;
 
-		butOk.addActionListener(this);
+        butOk.addActionListener(this);
 
-		Label labMessage = new Label(Messages.getString("VibrabombSettingDialog.selectSetting")); //$NON-NLS-1$
+        Label labMessage = new Label(Messages.getString("VibrabombSettingDialog.selectSetting")); //$NON-NLS-1$
         setLayout(gridbag);
 
-		c.fill = GridBagConstraints.VERTICAL;
-		c.insets = new Insets(1, 1, 1, 1);
-		c.weightx = 1.0;    c.weighty = 0.0;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		gridbag.setConstraints(labMessage, c);
-		add(labMessage);
-		
-		c.fill = GridBagConstraints.BOTH;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.weightx = 0.0;    c.weighty = 0.0;
-		gridbag.setConstraints(fldSetting, c);
-		add(fldSetting);
-		    
-		c.gridwidth = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.VERTICAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(labMessage, c);
+        add(labMessage);
+        
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(fldSetting, c);
+        add(fldSetting);
+            
+        c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.CENTER;
         c.weightx = 0.0;    c.weighty = 0.0;
-		gridbag.setConstraints(butOk, c);
-		add(butOk);
+        gridbag.setConstraints(butOk, c);
+        add(butOk);
 
         pack();
         setLocation(p.getLocation().x + p.getSize().width/2 - getSize().width/2,
@@ -74,26 +74,26 @@ public class VibrabombSettingDialog
 
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == butOk) {
-        	String s = fldSetting.getText();
-	   		try {
-	        	if (s != null && s.length() != 0) {
-	        			setting = Integer.parseInt(s);
-	        	}
-			} catch (NumberFormatException e) {
-				AlertDialog ad = new AlertDialog(frame,
-												Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
-												Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
-				ad.show();
-				return;
-			}
-			
-			if ((setting < 20) || (setting > 100)) {
-				AlertDialog ad = new AlertDialog(frame,
-												Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
-												Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
-				ad.show();
-				return;
-			}
+            String s = fldSetting.getText();
+                try {
+                if (s != null && s.length() != 0) {
+                        setting = Integer.parseInt(s);
+                }
+            } catch (NumberFormatException e) {
+                AlertDialog ad = new AlertDialog(frame,
+                                                Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
+                                                Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
+                ad.show();
+                return;
+            }
+            
+            if ((setting < 20) || (setting > 100)) {
+                AlertDialog ad = new AlertDialog(frame,
+                                                Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
+                                                Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
+                ad.show();
+                return;
+            }
         }
         this.setVisible(false);
     }

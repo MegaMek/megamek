@@ -304,12 +304,12 @@ public class MovementDisplay
         }
         // okay...
         if (ce != null) {
-        	ce.setSelected(false);
+            ce.setSelected(false);
         }
         this.cen = en;
         ce.setSelected(true);
         clearAllMoves();
-	    updateButtons();
+        updateButtons();
         // Update the menu bar.
         clientgui.getMenuBar().setEntity( ce );
         
@@ -319,8 +319,8 @@ public class MovementDisplay
         clientgui.mechD.displayEntity(ce);
         clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
         if (!clientgui.bv.isMovingUnits()) {
-	        clientgui.bv.centerOnHex(ce.getPosition());
-	    }
+            clientgui.bv.centerOnHex(ce.getPosition());
+        }
     }
     
     /**
@@ -1194,7 +1194,7 @@ public class MovementDisplay
             moveTo(cmd);
         } else if (ev.getActionCommand().equals(MOVE_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
-        } else if (ev.getActionCommand().equals(MOVE_CANCEL)) {       	
+        } else if (ev.getActionCommand().equals(MOVE_CANCEL)) {         
             clearAllMoves();
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
@@ -1230,7 +1230,7 @@ public class MovementDisplay
                 clearAllMoves();
             }
             gear = MovementDisplay.GEAR_BACKUP;
-        } else if (ev.getActionCommand().equals(MOVE_CLEAR)) {       	
+        } else if (ev.getActionCommand().equals(MOVE_CLEAR)) {          
             clearAllMoves();
             if (!client.game.containsMinefield(ce.getPosition())) {
                 clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantClearMinefield"), //$NON-NLS-1$
@@ -1507,21 +1507,21 @@ public class MovementDisplay
             return;
         }
 
-    	Entity e = client.game.getEntity(b.getEntityId());
+        Entity e = client.game.getEntity(b.getEntityId());
         if ( null == e ) {
             return;
         }
-    	if (client.isMyTurn()) {
+        if (client.isMyTurn()) {
             if ( client.game.getTurn().isValidEntity(e,client.game) ) {
                 selectEntity(e.getId());
             }
-    	} else {
+        } else {
             clientgui.setDisplayVisible(true);
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-            	clientgui.bv.centerOnHex(e.getPosition());
+                clientgui.bv.centerOnHex(e.getPosition());
             }
-    	}
+        }
     }
     private void setWalkEnabled(boolean enabled) {
         butWalk.setEnabled(enabled);

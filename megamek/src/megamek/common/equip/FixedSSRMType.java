@@ -28,16 +28,16 @@ public class FixedSSRMType extends SSRMissileType {
 
     // This class uses UsedFixedAmmoState for its state type
     public FixedSSRMType( int tech, int size, Vector valid_ammo, 
-			 int shots, AmmoType ammo_type ) {    
-	super(tech, size, valid_ammo);
-	this.def_ammo_type = ammo_type;
-	this.def_ammo_name = ammo_type.getInternalName();
-	this.starting_shots = shots;
+             int shots, AmmoType ammo_type ) {    
+    super(tech, size, valid_ammo);
+    this.def_ammo_type = ammo_type;
+    this.def_ammo_name = ammo_type.getInternalName();
+    this.starting_shots = shots;
     }
     
     public EquipmentState getNewState(Mounted location) {
-	return new UsesFixedAmmoState(location, this, 
-				      def_ammo_type, starting_shots);
+    return new UsesFixedAmmoState(location, this, 
+                      def_ammo_type, starting_shots);
     }
 
 

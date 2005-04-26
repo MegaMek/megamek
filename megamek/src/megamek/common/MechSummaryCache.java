@@ -237,7 +237,7 @@ public class MechSummaryCache {
         }
         synchronized (listeners) {
             for (int i = 0; i < listeners.size(); i++) {
-				((Listener)listeners.get(i)).doneLoading();
+                ((Listener)listeners.get(i)).doneLoading();
             }
         }
     }

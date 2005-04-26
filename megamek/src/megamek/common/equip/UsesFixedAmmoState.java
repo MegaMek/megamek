@@ -23,31 +23,31 @@ public class UsesFixedAmmoState extends UsesAmmoState implements AmmoBin {
     protected int shots;
 
     public UsesFixedAmmoState (Mounted location, UsesAmmoType type,
-			       AmmoType ammo_type, int shots) {
-	super(location, type);
-	this.ammo_type = ammo_type;
-	this.ammo_name = ammo_type.getInternalName();
-	this.shots = shots;
+                   AmmoType ammo_type, int shots) {
+    super(location, type);
+    this.ammo_type = ammo_type;
+    this.ammo_name = ammo_type.getInternalName();
+    this.shots = shots;
     }
 
 
     // For this special class, it is its own Ammo Bin
     public AmmoBin getAmmoBin() {
-	return this;
+    return this;
     }
 
     public void depleteAmmo() {
-	shots--;
+    shots--;
     }
     public int shotsLeft() {
-	return shots;
+    return shots;
     }
    
     public AmmoType getAmmoType() {
-	if(ammo_type == null) {
-	    // Look up the appropraite thing 
-//	    #######################
-	    }
-	return ammo_type;
+    if(ammo_type == null) {
+        // Look up the appropraite thing 
+//      #######################
+        }
+    return ammo_type;
     }
 }

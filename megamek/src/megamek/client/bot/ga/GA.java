@@ -15,7 +15,7 @@ public abstract class GA {
     Chromosome[] chromNextGen;
     double[] genAvgDeviation; //statistics--average deviation of current
     double[] genAvgFitness; //statistics--average fitness of current
-	protected final int best;
+    protected final int best;
 
     abstract protected void initPopulation();
     abstract protected void doRandomMutation(int index);
@@ -122,49 +122,49 @@ public abstract class GA {
         return (square_sum / populationDim);
     }
 
-	protected int[] selectTwoParents() {
-		boolean found = false;
-		int[] parents = new int[2];
-		parents[0] = -1;
+    protected int[] selectTwoParents() {
+        boolean found = false;
+        int[] parents = new int[2];
+        parents[0] = -1;
 
-		for (int i = 0; i < 2; i++) {
-			found = false;
-			while (!found) {
-				int index = getRandom(populationDim);
-				if (index == parents[0]) {
-					continue;
-				}
-				if (randomSelectionChance > getRandom(1.0) || index + 1 > getRandom(populationDim)) {
-					parents[i] = index;
-					found = true;
-				}
-			}
-		}
-		return parents;
-	}
+        for (int i = 0; i < 2; i++) {
+            found = false;
+            while (!found) {
+                int index = getRandom(populationDim);
+                if (index == parents[0]) {
+                    continue;
+                }
+                if (randomSelectionChance > getRandom(1.0) || index + 1 > getRandom(populationDim)) {
+                    parents[i] = index;
+                    found = true;
+                }
+            }
+        }
+        return parents;
+    }
 
     void computeFitnessRankings() {
         for (int i = 0; i < populationDim; i++)
             this.chromosomes[i].fitness = getFitness(i);
 
-		Arrays.sort(chromosomes);
+        Arrays.sort(chromosomes);
     }
 
-	void doGeneticMating() {
-		int max = populationDim - 1;
-		for (int i = 0; i < max; i+=2) {
-			int indexes[] = selectTwoParents();
+    void doGeneticMating() {
+        int max = populationDim - 1;
+        for (int i = 0; i < max; i+=2) {
+            int indexes[] = selectTwoParents();
 
-			chromNextGen[i].copyChromGenes(chromosomes[indexes[0]]);
-			chromNextGen[i + 1].copyChromGenes(chromosomes[indexes[1]]);
+            chromNextGen[i].copyChromGenes(chromosomes[indexes[0]]);
+            chromNextGen[i + 1].copyChromGenes(chromosomes[indexes[1]]);
 
-			if (getRandom(1.0) < crossoverProb) {
-				doUniformCrossover(chromNextGen[i], chromNextGen[i + 1]);
-			}
-		}
-		chromNextGen[populationDim - 1].copyChromGenes(chromosomes[best]);
-	}
-	
+            if (getRandom(1.0) < crossoverProb) {
+                doUniformCrossover(chromNextGen[i], chromNextGen[i + 1]);
+            }
+        }
+        chromNextGen[populationDim - 1].copyChromGenes(chromosomes[best]);
+    }
+    
     void copyNextGenToThisGen() {
         for (int i = 0; i < populationDim; i++) {
             this.chromosomes[i].copyChromGenes(this.chromNextGen[i]);

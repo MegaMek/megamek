@@ -26,16 +26,16 @@ public class FixedMRMType extends MRMissileType {
     protected int starting_shots;
 
     public FixedMRMType( int tech, int size, Vector valid_ammo, int shots, 
-			 AmmoType ammo_type ) {    
-	super(size, valid_ammo);
-	this.def_ammo_type = ammo_type;
-	this.def_ammo_name = ammo_type.getInternalName();
-	this.starting_shots = shots;
+             AmmoType ammo_type ) {    
+    super(size, valid_ammo);
+    this.def_ammo_type = ammo_type;
+    this.def_ammo_name = ammo_type.getInternalName();
+    this.starting_shots = shots;
     }
 
     public EquipmentState getNewState(Mounted location) {
-	return new UsesFixedAmmoState(location, this, 
-				      def_ammo_type, starting_shots);
+    return new UsesFixedAmmoState(location, this, 
+                      def_ammo_type, starting_shots);
     }
 
 
@@ -46,14 +46,14 @@ public class FixedMRMType extends MRMissileType {
     // is a pair of 20's
     public int missilesHit() {
         int hits;
-	if (size >= 30) {
-	    hits = Compute.missilesHit(size/2) +
-		Compute.missilesHit(size/2);
-	}
-	else
-	    hits = super.missilesHit();
+    if (size >= 30) {
+        hits = Compute.missilesHit(size/2) +
+        Compute.missilesHit(size/2);
+    }
+    else
+        hits = super.missilesHit();
 
-	return hits;
+    return hits;
     }
 
 }

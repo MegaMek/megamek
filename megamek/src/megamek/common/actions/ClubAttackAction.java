@@ -118,7 +118,7 @@ public class ClubAttackAction extends AbstractAttackAction {
 
         // non-mechs can't club
         if (!(ae instanceof Mech)) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't club");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't club");
         }
 
         //Quads can't club
@@ -240,7 +240,7 @@ public class ClubAttackAction extends AbstractAttackAction {
         int base = 4;
 
         if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-        	base = ae.getCrew().getPiloting() - 1;
+            base = ae.getCrew().getPiloting() - 1;
         }
 
         if (club.getType().hasFlag(MiscType.F_SWORD)) {

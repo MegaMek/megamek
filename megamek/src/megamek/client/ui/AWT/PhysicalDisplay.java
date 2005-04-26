@@ -45,7 +45,7 @@ public class PhysicalDisplay
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
     private ClientGUI          clientgui;
-    private Client			  client;
+    private Client            client;
         
     // buttons
     private Container         panButtons;
@@ -227,7 +227,7 @@ public class PhysicalDisplay
             return;
         }
         if (ce() != null) {
-        	ce().setSelected(false);
+            ce().setSelected(false);
         }
         this.cen = en;
         ce().setSelected(true);
@@ -433,15 +433,15 @@ public class PhysicalDisplay
      * Make a protomech physical attack on the target.
      */    
     private void proto() {
-    	ToHitData proto = ProtomechPhysicalAttackAction.toHit(client.game, cen, target);
-    	String title = Messages.getString("PhysicalDisplay.ProtoMechAttackDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        ToHitData proto = ProtomechPhysicalAttackAction.toHit(client.game, cen, target);
+        String title = Messages.getString("PhysicalDisplay.ProtoMechAttackDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
         String message = Messages.getString("PhysicalDisplay.ProtoMechAttackDialog.message", new Object[]{ //$NON-NLS-1$
                 proto.getValueAsString(), new Double(Compute.oddsAbove(proto.getValue())), proto.getDesc(), ProtomechPhysicalAttackAction.getDamageFor(ce())+proto.getTableDesc()});        
-    	if (clientgui.doYesNoDialog(title,message)){
-    		disableButtons();
-    	    attacks.addElement(new ProtomechPhysicalAttackAction(cen, target.getTargetType(), target.getTargetId()));
-    	    ready();
-    	  }
+        if (clientgui.doYesNoDialog(title,message)){
+            disableButtons();
+            attacks.addElement(new ProtomechPhysicalAttackAction(cen, target.getTargetType(), target.getTargetId()));
+            ready();
+          }
     }
     
     /**
@@ -879,7 +879,7 @@ public class PhysicalDisplay
         } else if (ev.getActionCommand().equals(PHYSICAL_DODGE)) {
             dodge();
         } else if (ev.getActionCommand().equals(PHYSICAL_PROTO)) {
-        	proto();
+            proto();
         } else if (ev.getActionCommand().equals(PHYSICAL_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butMore) {
@@ -918,9 +918,9 @@ public class PhysicalDisplay
     public void keyTyped(KeyEvent ev) {
     }
 
-	//
-	// BoardViewListener
-	//
+    //
+    // BoardViewListener
+    //
     public void finishedMovingUnits(BoardViewEvent b) {
     }
     
@@ -931,20 +931,20 @@ public class PhysicalDisplay
             return;
         }
 
-    	Entity e = client.game.getEntity(b.getEntityId());
-    	if (client.isMyTurn()) {
+        Entity e = client.game.getEntity(b.getEntityId());
+        if (client.isMyTurn()) {
             if ( client.game.getTurn().isValidEntity(e,client.game) ) {
                 selectEntity(e.getId());
             }
-    	} else {
+        } else {
             clientgui.setDisplayVisible(true);
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-            	clientgui.bv.centerOnHex(e.getPosition());
+                clientgui.bv.centerOnHex(e.getPosition());
             }
-    	}
+        }
     }
-	
+    
     public void setThrashEnabled(boolean enabled) {
         butThrash.setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalThrashEnabled(enabled);
@@ -974,8 +974,8 @@ public class PhysicalDisplay
         clientgui.getMenuBar().setPhysicalDodgeEnabled(enabled);
     }
     public void setProtoEnabled(boolean enabled) {
-    	butProto.setEnabled(enabled);
-    	clientgui.getMenuBar().setPhysicalProtoEnabled(enabled);
+        butProto.setEnabled(enabled);
+        clientgui.getMenuBar().setPhysicalProtoEnabled(enabled);
     }
     public void setNextEnabled(boolean enabled) {
         butNext.setEnabled(enabled);

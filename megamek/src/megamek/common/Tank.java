@@ -350,7 +350,7 @@ public class Tank
      * Rolls up a hit location
      */
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
-    	return rollHitLocation(table, side);
+        return rollHitLocation(table, side);
     }     
     
     public HitData rollHitLocation(int table, int side) {

@@ -18,7 +18,7 @@ import java.io.*;
 import java.util.Vector;
 
 
-class Option implements IOption, Serializable {
+public class Option implements IOption, Serializable {
 
     private String name;
     private int type;

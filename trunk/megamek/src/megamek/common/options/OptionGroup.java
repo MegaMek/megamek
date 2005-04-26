@@ -17,7 +17,7 @@ package megamek.common.options;
 import java.io.*;
 import java.util.*;
 
-class OptionGroup implements IBasicOptionGroup, Serializable {
+public class OptionGroup implements IBasicOptionGroup, Serializable {
     
     private Vector optionNames = new Vector();
     

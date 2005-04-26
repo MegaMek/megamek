@@ -240,10 +240,10 @@ public class ChatLounge
         butAddBot.setActionCommand("add_bot"); //$NON-NLS-1$
         butAddBot.addActionListener(this);
         
-		butRemoveBot = new Button(Messages.getString("ChatLounge.butRemoveBot")); //$NON-NLS-1$
-		butRemoveBot.setEnabled(false);
+        butRemoveBot = new Button(Messages.getString("ChatLounge.butRemoveBot")); //$NON-NLS-1$
+        butRemoveBot.setEnabled(false);
         butRemoveBot.setActionCommand("remove_bot"); //$NON-NLS-1$
-		butRemoveBot.addActionListener(this);
+        butRemoveBot.addActionListener(this);
 		
         labTeam = new Label(Messages.getString("ChatLounge.labTeam"), Label.RIGHT); //$NON-NLS-1$
         labCamo = new Label(Messages.getString("ChatLounge.labCamo"), Label.RIGHT); //$NON-NLS-1$

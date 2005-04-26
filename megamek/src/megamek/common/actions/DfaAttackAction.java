@@ -171,7 +171,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
         // Infantry CAN'T dfa!!!
         if ( ae instanceof Infantry ) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't dfa");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't dfa");
         }
 
         // Can't target a transported entity.
@@ -234,7 +234,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
           // BMR(r), page 33. +3 modifier for DFA on infantry.
         if ( te instanceof Infantry ) {
-        	toHit.addModifier( 3, "Infantry target" );
+            toHit.addModifier( 3, "Infantry target" );
         }
 
         // Battle Armor targets are hard for Meks and Tanks to hit.

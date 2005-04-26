@@ -24,7 +24,7 @@ import java.util.Vector;
 public abstract class BallisticType extends UsesAmmoType {
 
     public BallisticType( Vector valid_ammo ) {
-	super(valid_ammo);
+    super(valid_ammo);
     }
     
 }

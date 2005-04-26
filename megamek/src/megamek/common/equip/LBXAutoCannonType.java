@@ -24,59 +24,59 @@ public class LBXAutoCannonType extends BallisticType {
     private int size;
 
     public LBXAutoCannonType( int tech, int size, Vector valid_ammo ) {    
-	super(valid_ammo);
-	this.tech_level = tech;
-	this.size = size;
-	this.flags |= F_DIRECT_FIRE;
+    super(valid_ammo);
+    this.tech_level = tech;
+    this.size = size;
+    this.flags |= F_DIRECT_FIRE;
 
-	if (tech == TechConstants.T_IS_LEVEL_2) {
-	    switch(size) {
-	    case 2:
-		this.tonnage = 6.0f;
-		this.criticals = 4;
-		this.bv = 42;
-		break;
-	    case 5:
-		this.tonnage = 8.0f;
-		this.criticals = 5;
-		this.bv = 83;
-		break;
-	    case 10:
-		this.tonnage = 11.0f;
-		this.criticals = 6;
-		this.bv = 148;
-		break;
-	    case 20:
-		this.tonnage = 14.0f;
-		this.criticals = 11;
-		this.bv = 237;
-		break;
-	    }
-	} else {
-	    // CLAN
-	    switch(size) {
-	    case 2:
-		this.tonnage = 5.0f;
-		this.criticals = 3;
-		this.bv = 47;
-		break;
-	    case 5:
-		this.tonnage = 7.0f;
-		this.criticals = 4;
-		this.bv = 93;
-		break;
-	    case 10:
-		this.tonnage = 10.0f;
-		this.criticals = 5;
-		this.bv = 148;
-		break;
-	    case 20:
-		this.tonnage = 12.0f;
-		this.criticals = 9;
-		this.bv = 237;
-		break;
-	    }
-	}
+    if (tech == TechConstants.T_IS_LEVEL_2) {
+        switch(size) {
+        case 2:
+        this.tonnage = 6.0f;
+        this.criticals = 4;
+        this.bv = 42;
+        break;
+        case 5:
+        this.tonnage = 8.0f;
+        this.criticals = 5;
+        this.bv = 83;
+        break;
+        case 10:
+        this.tonnage = 11.0f;
+        this.criticals = 6;
+        this.bv = 148;
+        break;
+        case 20:
+        this.tonnage = 14.0f;
+        this.criticals = 11;
+        this.bv = 237;
+        break;
+        }
+    } else {
+        // CLAN
+        switch(size) {
+        case 2:
+        this.tonnage = 5.0f;
+        this.criticals = 3;
+        this.bv = 47;
+        break;
+        case 5:
+        this.tonnage = 7.0f;
+        this.criticals = 4;
+        this.bv = 93;
+        break;
+        case 10:
+        this.tonnage = 10.0f;
+        this.criticals = 5;
+        this.bv = 148;
+        break;
+        case 20:
+        this.tonnage = 12.0f;
+        this.criticals = 9;
+        this.bv = 237;
+        break;
+        }
+    }
 
     }
     

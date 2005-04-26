@@ -353,7 +353,7 @@ public class Infantry
      * Infantry only have one hit location.
      */
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
-    	return rollHitLocation(table, side);
+        return rollHitLocation(table, side);
     }     
      
     public HitData rollHitLocation( int table, int side ) {
@@ -444,7 +444,7 @@ public class Infantry
      * Sets the amount of men remaining in the platoon.
      */
     public void setInternal(int val, int loc) {
-	super.setInternal( val, loc );
+    super.setInternal( val, loc );
         this.men = val;
     }
 
@@ -455,7 +455,7 @@ public class Infantry
         if ( !this.isPlatoon() ) {
             return super.getInternalRemainingPercent();
         }
-	int menTotal = this.men > 0 ? this.men : 0; // Handle "DESTROYED"
+    int menTotal = this.men > 0 ? this.men : 0; // Handle "DESTROYED"
         return ((double) menTotal / this.menStarting);
     }
 
@@ -475,14 +475,14 @@ public class Infantry
      */
     public void autoSetInternal() {
 
-	// Clan platoons have 25 men.
-	if ( this.isClan() ) {
-	    this.initializeInternal( INF_PLT_CLAN_MAX_MEN,
-				     LOC_INFANTRY );
-	    return;
-	}
+    // Clan platoons have 25 men.
+    if ( this.isClan() ) {
+        this.initializeInternal( INF_PLT_CLAN_MAX_MEN,
+                     LOC_INFANTRY );
+        return;
+    }
 
-	// IS platoon strength is based upon movement type.
+    // IS platoon strength is based upon movement type.
         switch (this.getMovementType()) {
         case INF_LEG:
         case INF_MOTORIZED:
@@ -825,7 +825,7 @@ public class Infantry
      *
      * @param menLeft - the number of men in the platoon capable of shooting.
      * @return <code>int</code> - the amount of damage done when the platoon
-     *		hits its target.
+     *      hits its target.
      */
     public int getDamage( int menLeft ) { return damage[menLeft]; }
 

@@ -173,7 +173,7 @@ public class AmmoType extends EquipmentType {
     }
     
     public void resolveAttack(Game game, WeaponResult wr, UsesAmmoType weap,
-    		                  EquipmentState weap_state) {}
+                              EquipmentState weap_state) {}
 
     // By default, adds no new modifiers (these are for ammo based modifiers)
     public TargetRoll getModifiersFor(Game game, Entity en, Targetable targ) {
@@ -188,11 +188,11 @@ public class AmmoType extends EquipmentType {
     // Be default, all ammo explodes, with shots remaining * damagePerShot
     public void doCriticalDamage(EquipmentState state) {
         if (isExplosive()) {
-	        AmmoState as = (AmmoState)state;
-	        // Get the amount of damage.
+            AmmoState as = (AmmoState)state;
+            // Get the amount of damage.
             int damage = this.getDamagePerShot() * as.shotsLeft();
 /* TODO : implement me
-	        super.doCriticalDamage(state); // Set it as destroyed
+            super.doCriticalDamage(state); // Set it as destroyed
 */
             // Do weapon explosion damage
         }

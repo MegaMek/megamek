@@ -153,9 +153,9 @@ public class TargetRoll implements Serializable {
      * Append another TargetRoll to the end of this one
      */
     public void append(TargetRoll other) {
-    	if (other == null) {
-    		return;
-    	}
+        if (other == null) {
+            return;
+        }
         for (Iterator i = other.getModifiers(); i.hasNext();) {
             addModifier((Modifier)i.next());
         }

@@ -26,40 +26,40 @@ public class HeavyLaserType extends LaserType {
 //     public static final int LARGE = 33;
 
     public HeavyLaserType (int size) {
-	super(TechConstants.T_CLAN_LEVEL_2, size);
-	
-	// Change the settings now
-	switch(size) {
-	case SMALL:
-	    this.heat = 3;
-	    this.damage = 6;
-	    this.tonnage = 0.5f;
-	    this.criticals = 1;
-	    this.bv = 15;
-	    this.range = new RangeType(1,2,3);
-	    break;
-	case MED:
-	    this.heat = 7;
-	    this.damage = 10;
-	    this.tonnage = 1.0f;
-	    this.criticals = 2;
-	    this.bv = 76;
-	    this.range = new RangeType(3,6,9);
-	    break;
-	case LARGE:
-	    this.heat = 18;
-	    this.damage = 16;
-	    this.tonnage = 4.0f;
-	    this.criticals = 3;
-	    this.bv = 243;
-	    this.range = new RangeType(5,10,15);
-	    break;
-	}
-	
+    super(TechConstants.T_CLAN_LEVEL_2, size);
+    
+    // Change the settings now
+    switch(size) {
+    case SMALL:
+        this.heat = 3;
+        this.damage = 6;
+        this.tonnage = 0.5f;
+        this.criticals = 1;
+        this.bv = 15;
+        this.range = new RangeType(1,2,3);
+        break;
+    case MED:
+        this.heat = 7;
+        this.damage = 10;
+        this.tonnage = 1.0f;
+        this.criticals = 2;
+        this.bv = 76;
+        this.range = new RangeType(3,6,9);
+        break;
+    case LARGE:
+        this.heat = 18;
+        this.damage = 16;
+        this.tonnage = 4.0f;
+        this.criticals = 3;
+        this.bv = 243;
+        this.range = new RangeType(5,10,15);
+        break;
+    }
+    
     }
 
     public int getFireTN() {
-	return 7;
+    return 7;
     }
 
     public TargetRoll getModifiersFor(Mounted loc, Entity en, Targetable targ) { return null; }

@@ -67,8 +67,8 @@ public class BoardSelectionDialog
     private Checkbox chkRotateBoard = new Checkbox(Messages.getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
     
     private Panel panButtons = new Panel();
-	private Button butUpdate = new Button(Messages.getString("BoardSelectionDialog.UpdateSize")); //$NON-NLS-1$
-	private Button butRandomMap = new Button(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
+    private Button butUpdate = new Button(Messages.getString("BoardSelectionDialog.UpdateSize")); //$NON-NLS-1$
+    private Button butRandomMap = new Button(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
     private Label labButtonSpace = new Label("", Label.CENTER); //$NON-NLS-1$
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
@@ -120,8 +120,8 @@ public class BoardSelectionDialog
         this.add(panButtons);        
         
         addWindowListener(new WindowAdapter() {
-	    public void windowClosing(WindowEvent e) { setVisible(false); }
-	});
+        public void windowClosing(WindowEvent e) { setVisible(false); }
+    });
         
         pack();
         setResizable(false);
@@ -408,7 +408,7 @@ public class BoardSelectionDialog
 
     public void itemStateChanged(java.awt.event.ItemEvent itemEvent) {
         if (itemEvent.getSource() == chkSelectAll) {
-        	lisBoardsSelected.setMultipleMode(chkSelectAll.getState());
+            lisBoardsSelected.setMultipleMode(chkSelectAll.getState());
             for (int i = 0; i < lisBoardsSelected.getItemCount(); i++) {
                 if (chkSelectAll.getState()) {
                     lisBoardsSelected.select(i);
@@ -423,16 +423,16 @@ public class BoardSelectionDialog
 //            for (int i = 0; i < selected.length; i++) {
 //                lisBoardsSelected.deselect(selected[i]);
 //            }
-        	System.out.println("Selected!"); //$NON-NLS-1$
-        	if (bDelayedSingleSelect) {
-        		lisBoardsSelected.setMultipleMode(false);
-        	}
+            System.out.println("Selected!"); //$NON-NLS-1$
+            if (bDelayedSingleSelect) {
+                lisBoardsSelected.setMultipleMode(false);
+            }
             refreshSelectAllCheck();
         }
     }
     
     public void updateMapSettings(MapSettings mapSettings) {
-    	this.mapSettings = mapSettings;
+        this.mapSettings = mapSettings;
         refreshMapSize();
         refreshMapButtons();
         
@@ -457,22 +457,22 @@ public class BoardSelectionDialog
      * to indicate any later selection should trigger a set to single-select 
      */
 
-	public void keyPressed(KeyEvent ev) {
-		if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
-			System.out.println("Multiple on!"); //$NON-NLS-1$
-			lisBoardsSelected.setMultipleMode(true);
-			bDelayedSingleSelect = false;
-		}
-	}
+    public void keyPressed(KeyEvent ev) {
+        if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
+            System.out.println("Multiple on!"); //$NON-NLS-1$
+            lisBoardsSelected.setMultipleMode(true);
+            bDelayedSingleSelect = false;
+        }
+    }
 
 
-	public void keyReleased(KeyEvent ev) {
-		if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
-			System.out.println("Multiple off!"); //$NON-NLS-1$
-			bDelayedSingleSelect = true;
-		}
-	}
+    public void keyReleased(KeyEvent ev) {
+        if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
+            System.out.println("Multiple off!"); //$NON-NLS-1$
+            bDelayedSingleSelect = true;
+        }
+    }
 
-	public void keyTyped(KeyEvent arg0) {
-	}
+    public void keyTyped(KeyEvent arg0) {
+    }
 }

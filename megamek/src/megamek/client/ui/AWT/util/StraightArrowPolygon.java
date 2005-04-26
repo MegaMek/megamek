@@ -121,20 +121,20 @@ public class StraightArrowPolygon extends Polygon{
    }
 
    public boolean contains(int x, int y){
-   	   return hotArea.contains(x, y);
+           return hotArea.contains(x, y);
    }
 
    public boolean contains(Point p){
-   	   return hotArea.contains(p);
+           return hotArea.contains(p);
    }
 
    public boolean contains(double x, double y){
-   	   return hotArea.contains((int)Math.round(x), (int)Math.round(y));
+           return hotArea.contains((int)Math.round(x), (int)Math.round(y));
    }
 
    public void translate(int deltaX, int deltaY){
-   	   super.translate(deltaX, deltaY);
-   	   hotArea.translate(deltaX, deltaY);
+           super.translate(deltaX, deltaY);
+           hotArea.translate(deltaX, deltaY);
    }
 
 }

@@ -250,8 +250,8 @@ public class ScenarioLoader
                 g.addEntity(entities[y].getId(), entities[y]);
             }
         }
-		// game's ready
-		g.getOptions().initialize();
+        // game's ready
+        g.getOptions().initialize();
 
         // set wind
         g.determineWind();
@@ -472,17 +472,17 @@ public class ScenarioLoader
 
             String minefields = p.getProperty("Minefields_" + out[x].getName());
             if (minefields != null) {
-            	try {
-			        StringTokenizer mfs = new StringTokenizer(minefields, ",");
-			        out[x].setNbrMFConventional(Integer.parseInt(mfs.nextToken()));
-			        out[x].setNbrMFCommand(Integer.parseInt(mfs.nextToken()));
-			        out[x].setNbrMFVibra(Integer.parseInt(mfs.nextToken()));
-				} catch (Exception e) {
-			        out[x].setNbrMFConventional(0);
-			        out[x].setNbrMFCommand(0);
-			        out[x].setNbrMFVibra(0);
-			        System.err.println("Something wrong with " + out[x].getName() + "s minefields.");
-				}
+                try {
+                    StringTokenizer mfs = new StringTokenizer(minefields, ",");
+                    out[x].setNbrMFConventional(Integer.parseInt(mfs.nextToken()));
+                    out[x].setNbrMFCommand(Integer.parseInt(mfs.nextToken()));
+                    out[x].setNbrMFVibra(Integer.parseInt(mfs.nextToken()));
+                } catch (Exception e) {
+                    out[x].setNbrMFConventional(0);
+                    out[x].setNbrMFCommand(0);
+                    out[x].setNbrMFVibra(0);
+                    System.err.println("Something wrong with " + out[x].getName() + "s minefields.");
+                }
             }
         }
         

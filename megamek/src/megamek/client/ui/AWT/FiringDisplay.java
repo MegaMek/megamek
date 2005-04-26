@@ -266,25 +266,25 @@ public class FiringDisplay
         }
 
         if (client.game.getEntity(en) != null) {
-	        if (ce() != null) {
-	        	ce().setSelected(false);
-	        }
-	        this.cen = en;
-	        ce().setSelected(true);
+            if (ce() != null) {
+                ce().setSelected(false);
+            }
+            this.cen = en;
+            ce().setSelected(true);
 
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.
             if ( null == ce().getPosition() ) {
 
-			    // Walk through the list of entities for this player.
-			    for ( int nextId = client.getNextEntityNum(en);
-			    	nextId != en;
-			        nextId = client.getNextEntityNum(nextId) ) {
-			
-			        if (null != client.game.getEntity(nextId).getPosition()) {
-			      		this.cen = nextId;
-			      		break;
-			        }
+                // Walk through the list of entities for this player.
+                for ( int nextId = client.getNextEntityNum(en);
+                    nextId != en;
+                    nextId = client.getNextEntityNum(nextId) ) {
+            
+                    if (null != client.game.getEntity(nextId).getPosition()) {
+                        this.cen = nextId;
+                        break;
+                    }
 
                 } // Check the player's next entity.
 
@@ -533,7 +533,7 @@ public class FiringDisplay
         // auto spot if we can and the option is set
         if (attacks.isEmpty() && 
             client.game.getOptions().booleanOption("auto_spot") && //$NON-NLS-1$
-		        client.game.getPhase() == Game.PHASE_FIRING) {
+                client.game.getPhase() == Game.PHASE_FIRING) {
             if (!ce().isINarcedWith( INarcPod.HAYWIRE)) {
                 // if we might do physicals, ask for confirmation
                 if (ce().isEligibleForPhysical()) {
@@ -747,8 +747,8 @@ public class FiringDisplay
      * removes the last action
      */
     private void removeLastFiring() {
-    	Object o = attacks.lastElement();
-    	if (o instanceof WeaponAttackAction) {
+        Object o = attacks.lastElement();
+        if (o instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction)o;
             ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
             attacks.removeElement(o);
@@ -1062,42 +1062,42 @@ public class FiringDisplay
       refreshAll();
     }
 
-	private void setFireEnabled(boolean enabled) {
-		butFire.setEnabled(enabled);
+    private void setFireEnabled(boolean enabled) {
+        butFire.setEnabled(enabled);
         clientgui.getMenuBar().setFireFireEnabled(enabled);
-	}
-	private void setTwistEnabled(boolean enabled) {
-		butTwist.setEnabled(enabled);
+    }
+    private void setTwistEnabled(boolean enabled) {
+        butTwist.setEnabled(enabled);
         clientgui.getMenuBar().setFireTwistEnabled(enabled);
-	}
-	private void setSkipEnabled(boolean enabled) {
-		butSkip.setEnabled(enabled);
+    }
+    private void setSkipEnabled(boolean enabled) {
+        butSkip.setEnabled(enabled);
         clientgui.getMenuBar().setFireSkipEnabled(enabled);
-	}
-	private void setFindClubEnabled(boolean enabled) {
-		butFindClub.setEnabled(enabled);
+    }
+    private void setFindClubEnabled(boolean enabled) {
+        butFindClub.setEnabled(enabled);
         clientgui.getMenuBar().setFireFindClubEnabled(enabled);
-	}
-	private void setNextTargetEnabled(boolean enabled) {
-		butNextTarg.setEnabled(enabled);
+    }
+    private void setNextTargetEnabled(boolean enabled) {
+        butNextTarg.setEnabled(enabled);
         clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
-	}
-	private void setFlipArmsEnabled(boolean enabled) {
-		butFlipArms.setEnabled(enabled);
+    }
+    private void setFlipArmsEnabled(boolean enabled) {
+        butFlipArms.setEnabled(enabled);
         clientgui.getMenuBar().setFireFlipArmsEnabled(enabled);
-	}
-	private void setSpotEnabled(boolean enabled) {
-		butSpot.setEnabled(enabled);
+    }
+    private void setSpotEnabled(boolean enabled) {
+        butSpot.setEnabled(enabled);
         clientgui.getMenuBar().setFireSpotEnabled(enabled);
-	}
-	private void setFireModeEnabled(boolean enabled) {
-		butFireMode.setEnabled(enabled);
+    }
+    private void setFireModeEnabled(boolean enabled) {
+        butFireMode.setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
-	}
-	private void setNextEnabled(boolean enabled) {
-		butNext.setEnabled(enabled);
+    }
+    private void setNextEnabled(boolean enabled) {
+        butNext.setEnabled(enabled);
         clientgui.getMenuBar().setFireNextEnabled(enabled);
-	}
+    }
     
     //
     // KeyListener
@@ -1195,18 +1195,18 @@ public class FiringDisplay
             return;
         }
 
-    	Entity e = client.game.getEntity(b.getEntityId());
-    	if (client.isMyTurn()) {
+        Entity e = client.game.getEntity(b.getEntityId());
+        if (client.isMyTurn()) {
             if ( client.game.getTurn().isValidEntity(e,client.game) ) {
                 selectEntity(e.getId());
             }
-    	} else {
+        } else {
             clientgui.setDisplayVisible(true);
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-            	clientgui.bv.centerOnHex(e.getPosition());
+                clientgui.bv.centerOnHex(e.getPosition());
             }
-    	}
+        }
     }
 
   private class AimedShotHandler implements ActionListener, ItemListener {  

@@ -71,7 +71,7 @@ public class PushAttackAction
 
         // non-mechs can't push
         if (!(ae instanceof Mech)) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't push");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't push");
         }
 
         //Quads can't push

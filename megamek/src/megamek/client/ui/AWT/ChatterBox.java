@@ -111,16 +111,16 @@ implements GameListener, KeyListener {
         PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gamePlayerStatusChange(GameEvent ev) {
-		PlayerListDialog.refreshPlayerList(playerList, client);
+        PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gameTurnChange(GameEvent ev) {
-		PlayerListDialog.refreshPlayerList(playerList, client);
+        PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gamePhaseChange(GameEvent ev) {
-		PlayerListDialog.refreshPlayerList(playerList, client);
+        PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gameNewEntities(GameEvent ev) {
-		PlayerListDialog.refreshPlayerList(playerList, client);
+        PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gameNewSettings(GameEvent ev) {
         ;
@@ -159,8 +159,8 @@ implements GameListener, KeyListener {
         ;
     }
     
-	public void gameMapQuery(GameEvent e) {
-		;
-	}
+    public void gameMapQuery(GameEvent e) {
+        ;
+    }
 
 }

@@ -49,25 +49,25 @@ public class PMPicPolygonalArea extends PMGenericHotArea{
     }
     
     public void setIdleImage(Image im){
-    	   this.idleImage = im;
+           this.idleImage = im;
     }
     
     public Image getIdleImage(){
-    	return idleImage;
+        return idleImage;
     }
     
     public Image getActiveImage(){
-    	return activeImage;
+        return activeImage;
     }
     
     
     public void setActiveImage(Image im){
-    	   this.activeImage = im;
-    	   if (activeImage != null) {
-    	   	 highlight = true;
-    	   } else {
-    	   	 highlight = false;
-    	   }
+           this.activeImage = im;
+           if (activeImage != null) {
+                 highlight = true;
+           } else {
+                 highlight = false;
+           }
     }
     
     
@@ -86,9 +86,9 @@ public class PMPicPolygonalArea extends PMGenericHotArea{
         if ((g == null) || (! visible)) return;
         Rectangle r = getBounds();
         if(selected){
-        	g.drawImage(activeImage, r.x, r.y, null);
+            g.drawImage(activeImage, r.x, r.y, null);
         } else {
-        	g.drawImage(idleImage, r.x, r.y, null);
+            g.drawImage(idleImage, r.x, r.y, null);
         }
           
     }
@@ -103,9 +103,9 @@ public class PMPicPolygonalArea extends PMGenericHotArea{
     }
     
     public void onMouseOver(MouseEvent e){
-     	if(highlight) selected = true;
+        if(highlight) selected = true;
         super.onMouseOver(e);
-     	
+        
     }
     
     public void onMouseExit(MouseEvent e){

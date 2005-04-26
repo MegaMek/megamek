@@ -46,7 +46,7 @@ public class PMAreasGroup  implements PMElement{
      */
     
     public void removeAll(){
-    	gr.removeAllElements();
+        gr.removeAllElements();
     }
     
      /**
@@ -54,14 +54,14 @@ public class PMAreasGroup  implements PMElement{
      */
     
     public  PMElement elementAt(int i){
-    	return (PMElement) gr.elementAt(i);
+        return (PMElement) gr.elementAt(i);
     }
     
      /**
      * Returns enumeration of all elements in group.
      */   
     public Enumeration elements(){
-    	return gr.elements();
+        return gr.elements();
     }
            
      /**
@@ -94,12 +94,12 @@ public class PMAreasGroup  implements PMElement{
         while(iter.hasMoreElements()){
             PMElement pme = (PMElement) iter.nextElement();
             if ((pme != null) && (pme.getBounds() != null)){
-            	if(empty){
-            		bounds = pme.getBounds();
-            		empty = false;
-            	}else{
+                if(empty){
+                    bounds = pme.getBounds();
+                    empty = false;
+                }else{
                     bounds = bounds.union(pme.getBounds());
-                }	
+                }   
             }
         }
         return bounds;          

@@ -23,16 +23,16 @@ public class AdvSRMissileType extends FixedSRMType {
 
     public AdvSRMissileType( int size, Vector valid_ammo, int shots) {    
         // TODO : replace the "null" with the default ammo
-	super(TechConstants.T_CLAN_LEVEL_2, size, valid_ammo, shots, null);
+    super(TechConstants.T_CLAN_LEVEL_2, size, valid_ammo, shots, null);
     }
     // Adv SRM's are like normal, except they always hit in even numbers
 
     public int BAmissilesHit(int troops) {
-	int hits = super.BAmissilesHit(troops);
+    int hits = super.BAmissilesHit(troops);
 
-	// Adv Missiles are like normal, but always hit in pairs, rounded up
-	hits += hits % 2;
-	return hits;
+    // Adv Missiles are like normal, but always hit in pairs, rounded up
+    hits += hits % 2;
+    return hits;
     }
 
 }

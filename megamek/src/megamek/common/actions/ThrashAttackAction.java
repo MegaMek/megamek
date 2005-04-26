@@ -41,15 +41,15 @@ public class ThrashAttackAction extends AbstractAttackAction {
     }
 
     /**
-	 * To-hit number for thrashing attack. This attack can only be made by a
-	 * prone Mek in a clear or pavement terrain hex that contains infantry.
-	 * This attack will force a PSR check for the prone Mek; if the PSR is
-	 * missed, the Mek takes normal falling damage.
-	 * 
-	 * @param game -
-	 *            the <code>Game</code> object containing all entities.
-	 * @return the <code>ToHitData</code> containing the target roll.
-	 */
+     * To-hit number for thrashing attack. This attack can only be made by a
+     * prone Mek in a clear or pavement terrain hex that contains infantry.
+     * This attack will force a PSR check for the prone Mek; if the PSR is
+     * missed, the Mek takes normal falling damage.
+     * 
+     * @param game -
+     *            the <code>Game</code> object containing all entities.
+     * @return the <code>ToHitData</code> containing the target roll.
+     */
     public ToHitData toHit(Game game) {
         final Entity ae = getEntity( game );
         Entity te = null;

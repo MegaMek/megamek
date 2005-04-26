@@ -181,41 +181,41 @@ public class DeploymentDisplay
             // set facing according to starting position
             switch (client.getLocalPlayer().getStartingPos()) {
             case 8:
-            	ce().setFacing(1);
-            	ce().setSecondaryFacing(1);
-            	break;
+                ce().setFacing(1);
+                ce().setSecondaryFacing(1);
+                break;
             case 7:
-            	ce().setFacing(1);
-            	ce().setSecondaryFacing(1);
-            	break;
+                ce().setFacing(1);
+                ce().setSecondaryFacing(1);
+                break;
             case 6:
-            	ce().setFacing(0);
-            	ce().setSecondaryFacing(0);
-            	break;
+                ce().setFacing(0);
+                ce().setSecondaryFacing(0);
+                break;
             case 5:
-            	ce().setFacing(5);
-            	ce().setSecondaryFacing(5);
-            	break;
+                ce().setFacing(5);
+                ce().setSecondaryFacing(5);
+                break;
             case 4:
-            	ce().setFacing(5);
-            	ce().setSecondaryFacing(5);
-            	break;
+                ce().setFacing(5);
+                ce().setSecondaryFacing(5);
+                break;
             case 3:
-            	ce().setFacing(4);
-            	ce().setSecondaryFacing(4);
-            	break;
+                ce().setFacing(4);
+                ce().setSecondaryFacing(4);
+                break;
             case 2:
-            	ce().setFacing(3);
-            	ce().setSecondaryFacing(3);
-            	break;
+                ce().setFacing(3);
+                ce().setSecondaryFacing(3);
+                break;
             case 1:
-            	ce().setFacing(2);
-            	ce().setSecondaryFacing(2);
-            	break;
+                ce().setFacing(2);
+                ce().setSecondaryFacing(2);
+                break;
             case 0:
-            	ce().setFacing(0);
-            	ce().setSecondaryFacing(0);
-            	break;
+                ce().setFacing(0);
+                ce().setSecondaryFacing(0);
+                break;
             }
             clientgui.mechD.displayEntity(ce());
             clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
@@ -525,9 +525,9 @@ public class DeploymentDisplay
     public void keyTyped(KeyEvent ev) {
     }
 
-	//
-	// BoardViewListener
-	//
+    //
+    // BoardViewListener
+    //
     public void finishedMovingUnits(BoardViewEvent b) {
     }
     
@@ -539,13 +539,13 @@ public class DeploymentDisplay
             return;
         }
 
-    	Entity e = client.game.getEntity(b.getEntityId());
+        Entity e = client.game.getEntity(b.getEntityId());
         if ( null == e ) {
             return;
         }
-    	if (client.isMyTurn()) {
+        if (client.isMyTurn()) {
             if ( client.game.getTurn().isValidEntity(e,client.game) ) {
-            	if (ce() != null) {
+                if (ce() != null) {
                     ce().setPosition(null);
                     clientgui.bv.redrawEntity(ce());
                     // Unload any loaded units.
@@ -558,19 +558,19 @@ public class DeploymentDisplay
                         other.newRound(client.game.getRoundCount());
                     }
                 }
-	            
+                
                 selectEntity(e.getId());
                 if ( null != e.getPosition() ) {
                     clientgui.bv.centerOnHex(e.getPosition());
                 }
             }
-    	} else {
+        } else {
             clientgui.setDisplayVisible(true);
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-            	clientgui.bv.centerOnHex(e.getPosition());
+                clientgui.bv.centerOnHex(e.getPosition());
             }
-    	}
+        }
     }
 
     private void setNextEnabled(boolean enabled) {

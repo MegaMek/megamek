@@ -146,8 +146,8 @@ public class TriggerAPPodDialog
         add(butOkay);
         
         addWindowListener(new WindowAdapter() {
-	    public void windowClosing(WindowEvent e) { setVisible(false); }
-	});
+        public void windowClosing(WindowEvent e) { setVisible(false); }
+    });
         
         pack();
         Dimension size = getSize();

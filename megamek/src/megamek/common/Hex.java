@@ -332,15 +332,15 @@ public class Hex
         invalidateCache();
     }
     
-	/**
-	Removes all Terreains from the hex.
-	*/
-	public void removeAllTerrains() {
-		for (int i = 0; i < terrains.length; i++) {
-			terrains[i] = null;
-		}
-		invalidateCache();
-	}
+    /**
+    Removes all Terreains from the hex.
+    */
+    public void removeAllTerrains() {
+        for (int i = 0; i < terrains.length; i++) {
+            terrains[i] = null;
+        }
+        invalidateCache();
+    }
  
     /**
      * Returns the number of terrain attributes present

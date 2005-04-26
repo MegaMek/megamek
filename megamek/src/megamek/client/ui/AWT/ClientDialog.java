@@ -52,7 +52,7 @@ public class ClientDialog extends Dialog {
      *            the desired height of this dialog (you might not get it)
      */
     public void setLocationAndSize(int desiredX, int desiredY){
-    	setLocationAndSize(new Dimension(desiredX,desiredY));
+        setLocationAndSize(new Dimension(desiredX,desiredY));
     }
 
     /**

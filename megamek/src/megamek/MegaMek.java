@@ -401,7 +401,7 @@ public class MegaMek implements ActionListener {
             ;
         }
         optdlg = null;
-		launch(gui.getFrame());
+        launch(gui.getFrame());
     }
 
     /**
@@ -472,7 +472,7 @@ public class MegaMek implements ActionListener {
 
         // apply any scenario damage
         sl.applyDamage(server);
-		ClientGUI gui = null;
+        ClientGUI gui = null;
         if (sd.localName != "") {
             // initialize game
             client = new Client(hd.name, "localhost", hd.port);
@@ -617,7 +617,7 @@ public class MegaMek implements ActionListener {
      */
     private void showHelp() {
         if (this.help == null) {
-			help = showHelp(this.frame, "readme");
+            help = showHelp(this.frame, "readme");
         }
         // Show the help dialog.
         this.help.show();
@@ -627,10 +627,10 @@ public class MegaMek implements ActionListener {
      * display the filename in a CommonHelpDialog
      */
     private static CommonHelpDialog showHelp(Frame frame, String filename) {
-		Locale l = Locale.getDefault();
-		File helpfile = new File(filename + "-" + l.getDisplayLanguage(Locale.ENGLISH) + ".txt");
+        Locale l = Locale.getDefault();
+        File helpfile = new File(filename + "-" + l.getDisplayLanguage(Locale.ENGLISH) + ".txt");
         if (!helpfile.exists()) {
-			helpfile = new File(filename + ".txt");
+            helpfile = new File(filename + ".txt");
         }
         return new CommonHelpDialog(frame, helpfile);
     }

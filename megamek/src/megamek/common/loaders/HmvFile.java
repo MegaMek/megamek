@@ -328,11 +328,11 @@ public class HmvFile
 
   public Entity getEntity() throws EntityLoadingException {
       try  {
-	  Entity entity = null;
+      Entity entity = null;
 
-	  if (movementType == HMVMovementType.TRACKED ||
-	      movementType == HMVMovementType.WHEELED ||
-	      movementType == HMVMovementType.HOVER)
+      if (movementType == HMVMovementType.TRACKED ||
+          movementType == HMVMovementType.WHEELED ||
+          movementType == HMVMovementType.HOVER)
               {
                   Tank tank = new Tank();
                   entity = tank;
@@ -421,109 +421,109 @@ public class HmvFile
                             int location)
     throws Exception
   {
-	Hashtable equipmentAtLocation = (Hashtable) equipment.get(weaponLocation);
-	if (equipmentAtLocation != null)
-	{
+    Hashtable equipmentAtLocation = (Hashtable) equipment.get(weaponLocation);
+    if (equipmentAtLocation != null)
+    {
       for (Enumeration e = equipmentAtLocation.keys(); e.hasMoreElements();)
       {
-	    EquipmentType equipmentType = (EquipmentType) e.nextElement();
-	    Integer count = (Integer) equipmentAtLocation.get(equipmentType);
+        EquipmentType equipmentType = (EquipmentType) e.nextElement();
+        Integer count = (Integer) equipmentAtLocation.get(equipmentType);
 
-	    for (int i = 0; i < count.intValue(); i++)
+        for (int i = 0; i < count.intValue(); i++)
         {
-		  tank.addEquipment(equipmentType, location);
-	    }
-	  }
+          tank.addEquipment(equipmentType, location);
+        }
+      }
     }
   }
 
   private static int getSuspensionFactor(int roundedInternalStructure,
                                          HMVMovementType movementType)
   {
-	int suspensionFactor = 0;
-	if (movementType == HMVMovementType.WHEELED)
-	{
-	  suspensionFactor = 20;
-	}
-	else if (movementType == HMVMovementType.DISPLACEMENT_HULL ||
-	         movementType == HMVMovementType.SUBMARINE)
-	{
-	  suspensionFactor = 30;
-	}
-	else if (movementType == HMVMovementType.VTOL)
-	{
-	  switch (roundedInternalStructure)
+    int suspensionFactor = 0;
+    if (movementType == HMVMovementType.WHEELED)
+    {
+      suspensionFactor = 20;
+    }
+    else if (movementType == HMVMovementType.DISPLACEMENT_HULL ||
+             movementType == HMVMovementType.SUBMARINE)
+    {
+      suspensionFactor = 30;
+    }
+    else if (movementType == HMVMovementType.VTOL)
+    {
+      switch (roundedInternalStructure)
       {
-		case 1:
-  	      suspensionFactor = 50;
-  	      break;
-		case 2:
-  	      suspensionFactor = 95;
-  	      break;
-		case 3:
-  	      suspensionFactor = 140;
-  	      break;
-	  }
-	}
-	else if (movementType == HMVMovementType.HOVER)
-	{
-	  switch (roundedInternalStructure)
+        case 1:
+          suspensionFactor = 50;
+          break;
+        case 2:
+          suspensionFactor = 95;
+          break;
+        case 3:
+          suspensionFactor = 140;
+          break;
+      }
+    }
+    else if (movementType == HMVMovementType.HOVER)
+    {
+      switch (roundedInternalStructure)
       {
-		case 1:
-  	      suspensionFactor = 40;
-  	      break;
-		case 2:
-  	      suspensionFactor = 85;
-  	      break;
-		case 3:
-  	      suspensionFactor = 130;
-  	      break;
-		case 4:
-  	      suspensionFactor = 175;
-  	      break;
-		case 5:
-  	      suspensionFactor = 235;
-  	      break;
-	  }
-	}
-	else if (movementType == HMVMovementType.HYDROFOIL)
-	{
-	  switch (roundedInternalStructure)
+        case 1:
+          suspensionFactor = 40;
+          break;
+        case 2:
+          suspensionFactor = 85;
+          break;
+        case 3:
+          suspensionFactor = 130;
+          break;
+        case 4:
+          suspensionFactor = 175;
+          break;
+        case 5:
+          suspensionFactor = 235;
+          break;
+      }
+    }
+    else if (movementType == HMVMovementType.HYDROFOIL)
+    {
+      switch (roundedInternalStructure)
       {
-		case 1:
-  	      suspensionFactor = 60;
-  	      break;
-		case 2:
-  	      suspensionFactor = 105;
-  	      break;
-		case 3:
-  	      suspensionFactor = 150;
-  	      break;
-		case 4:
-  	      suspensionFactor = 195;
-  	      break;
-		case 5:
-  	      suspensionFactor = 255;
-  	      break;
-		case 6:
-  	      suspensionFactor = 300;
-  	      break;
-		case 7:
-  	      suspensionFactor = 345;
-  	      break;
-		case 8:
-  	      suspensionFactor = 390;
-  	      break;
-		case 9:
-  	      suspensionFactor = 435;
-  	      break;
-		case 10:
-  	      suspensionFactor = 480;
-  	      break;
-	  }
-	}
+        case 1:
+          suspensionFactor = 60;
+          break;
+        case 2:
+          suspensionFactor = 105;
+          break;
+        case 3:
+          suspensionFactor = 150;
+          break;
+        case 4:
+          suspensionFactor = 195;
+          break;
+        case 5:
+          suspensionFactor = 255;
+          break;
+        case 6:
+          suspensionFactor = 300;
+          break;
+        case 7:
+          suspensionFactor = 345;
+          break;
+        case 8:
+          suspensionFactor = 390;
+          break;
+        case 9:
+          suspensionFactor = 435;
+          break;
+        case 10:
+          suspensionFactor = 480;
+          break;
+      }
+    }
 
-	return suspensionFactor;
+    return suspensionFactor;
   }
 
   private static final Hashtable EQUIPMENT = new Hashtable();

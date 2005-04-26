@@ -223,11 +223,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // all charges resolved against full-body table, except vehicles
         // and charges against mechs in water partial cover
         if (targHex.levelOf(Terrain.WATER) == te.height() && te.height() > 0) {
-        	toHit.setHitTable(ToHitData.HIT_PUNCH);
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else if (ae.getHeight() < target.getHeight()) {
             toHit.setHitTable(ToHitData.HIT_KICK);
         } else {
-        	toHit.setHitTable(ToHitData.HIT_NORMAL);
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
 
         // done!

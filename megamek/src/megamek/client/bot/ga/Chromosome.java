@@ -19,8 +19,8 @@ public class Chromosome implements Comparable {
     }
     
     public int compareTo(Object o) {
-		double delta = fitness - ((Chromosome)o).fitness;
-		return delta>0?1:delta<0?-1:0;
+        double delta = fitness - ((Chromosome)o).fitness;
+        return delta>0?1:delta<0?-1:0;
     }
 
 }

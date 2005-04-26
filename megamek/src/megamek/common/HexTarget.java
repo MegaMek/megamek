@@ -57,21 +57,21 @@ public class HexTarget implements Targetable
     }
 
     public String getDisplayName() {
-    	String name = "";
-    	switch (m_type) {
-		case (Targetable.TYPE_MINEFIELD_DELIVER) :
-			name = " (Deliver minefield)";
-			break;
-		case (Targetable.TYPE_HEX_CLEAR) :
-			name = " (Clear)";
-			break;
-		case (Targetable.TYPE_HEX_IGNITE) :
-			name = " (Ignite)";
-			break;
-		case (Targetable.TYPE_HEX_ARTILLERY) :
-		    name = " (Artillery)";
-		    break;
-		case (Targetable.TYPE_HEX_FASCAM) :
+        String name = "";
+        switch (m_type) {
+        case (Targetable.TYPE_MINEFIELD_DELIVER) :
+            name = " (Deliver minefield)";
+            break;
+        case (Targetable.TYPE_HEX_CLEAR) :
+            name = " (Clear)";
+            break;
+        case (Targetable.TYPE_HEX_IGNITE) :
+            name = " (Ignite)";
+            break;
+        case (Targetable.TYPE_HEX_ARTILLERY) :
+            name = " (Artillery)";
+            break;
+        case (Targetable.TYPE_HEX_FASCAM) :
             name = " (FASCAM)";
             break;
         case (Targetable.TYPE_HEX_INFERNO_IV) :
@@ -79,7 +79,7 @@ public class HexTarget implements Targetable
             break;
         case (Targetable.TYPE_HEX_VIBRABOMB_IV) :
             name = " (Vibrabomb IV)";
-    	}
+        }
         return "Hex: " + m_coords.getBoardNum() + name;
     }
 

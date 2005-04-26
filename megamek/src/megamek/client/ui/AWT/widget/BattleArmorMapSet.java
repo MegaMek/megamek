@@ -34,101 +34,101 @@ import megamek.common.*;
 public class BattleArmorMapSet implements DisplayMapSet{
     
     //Picture with figure
-	private Image battleArmorImage;
-	//Images that shows how much armor + 1 internal damage left.
-	private Image[] armorImage = new Image[5];
-	//Reference to Component (required for Image handling)
-	private Component comp;
-	//Set of areas to show BA figures
-	private PMPicArea[] unitAreas =  new PMPicArea[5];
-	//Set of areas to show BA armor left
-	private PMPicArea[] armorAreas = new PMPicArea[5];
-	//Set of labels to show BA armor left
-	private PMValueLabel[]    armorLabels = new PMValueLabel[5];
-	//Content group which will be sent to PicMap component
-	private PMAreasGroup content = new PMAreasGroup();
-	//Set of Backgrpund drawers which will be sent to PicMap component
-	private Vector    bgDrawers = new Vector();
-	
-	private int stepY = 53;
-	
-	private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$ 
-	        GUIPreferences.getInstance().getMechDisplayArmorLargeFontSize());
-	
-	/**
+    private Image battleArmorImage;
+    //Images that shows how much armor + 1 internal damage left.
+    private Image[] armorImage = new Image[5];
+    //Reference to Component (required for Image handling)
+    private Component comp;
+    //Set of areas to show BA figures
+    private PMPicArea[] unitAreas =  new PMPicArea[5];
+    //Set of areas to show BA armor left
+    private PMPicArea[] armorAreas = new PMPicArea[5];
+    //Set of labels to show BA armor left
+    private PMValueLabel[]    armorLabels = new PMValueLabel[5];
+    //Content group which will be sent to PicMap component
+    private PMAreasGroup content = new PMAreasGroup();
+    //Set of Backgrpund drawers which will be sent to PicMap component
+    private Vector    bgDrawers = new Vector();
+    
+    private int stepY = 53;
+    
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$ 
+            GUIPreferences.getInstance().getMechDisplayArmorLargeFontSize());
+    
+    /**
      * This constructor have to be called anly from addNotify() method
      */
-	public BattleArmorMapSet( Component c){
-		comp = c;
-		setAreas();
-		setBackGround();
-	}
+    public BattleArmorMapSet( Component c){
+        comp = c;
+        setAreas();
+        setBackGround();
+    }
 
-	private void setAreas(){
-		FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
-		
-		battleArmorImage = comp.getToolkit().getImage("data/widgets/battle_armor.gif"); //$NON-NLS-1$
-		PMUtil.setImage(battleArmorImage, comp);
-		for(int i = 0; i < 5; i++){
-		    int shiftY = i * stepY;
-		    unitAreas[i] = new PMPicArea(battleArmorImage);
-		    unitAreas[i].translate(0, shiftY);
-			content.addArea((PMElement) unitAreas[i]);
-			
-			
-			armorImage[i] = comp.createImage(105, 12);
-		    armorAreas[i] = new PMPicArea(armorImage[i]);
-		    armorAreas[i].translate(45, shiftY + 12);
-		    content.addArea((PMElement) armorAreas[i]);
-		    
-		    armorLabels[i] = new PMValueLabel(fm, Color.red.brighter());
-		    armorLabels[i]. moveTo(160, shiftY + 24);
-		    content.addArea((PMElement) armorLabels[i]);
-		}
-	}
-	
-	public PMAreasGroup getContentGroup(){
+    private void setAreas(){
+        FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
+        
+        battleArmorImage = comp.getToolkit().getImage("data/widgets/battle_armor.gif"); //$NON-NLS-1$
+        PMUtil.setImage(battleArmorImage, comp);
+        for(int i = 0; i < 5; i++){
+            int shiftY = i * stepY;
+            unitAreas[i] = new PMPicArea(battleArmorImage);
+            unitAreas[i].translate(0, shiftY);
+            content.addArea((PMElement) unitAreas[i]);
+            
+            
+            armorImage[i] = comp.createImage(105, 12);
+            armorAreas[i] = new PMPicArea(armorImage[i]);
+            armorAreas[i].translate(45, shiftY + 12);
+            content.addArea((PMElement) armorAreas[i]);
+            
+            armorLabels[i] = new PMValueLabel(fm, Color.red.brighter());
+            armorLabels[i]. moveTo(160, shiftY + 24);
+            content.addArea((PMElement) armorLabels[i]);
+        }
+    }
+    
+    public PMAreasGroup getContentGroup(){
         return content;
     }
     
     public Vector getBackgroundDrawers(){
-    	return bgDrawers;
+        return bgDrawers;
     }
     
     
     public void setEntity(Entity e){
-    	BattleArmor ba = (BattleArmor) e;
-    	int armor = 0;
-    	int internal =0;
+        BattleArmor ba = (BattleArmor) e;
+        int armor = 0;
+        int internal =0;
         int men = 5;
         
         if (ba.isClan()){
-        	 men = 5;
-        	 armorAreas[4].setVisible(true);
-        	 armorLabels[4].setVisible(true);
-        	 unitAreas[4].setVisible(true);
+             men = 5;
+             armorAreas[4].setVisible(true);
+             armorLabels[4].setVisible(true);
+             unitAreas[4].setVisible(true);
         } else{
-        	 men = 4;
-        	 armorAreas[4].setVisible(false);
-        	 armorLabels[4].setVisible(false);
-        	 unitAreas[4].setVisible(false);
+             men = 4;
+             armorAreas[4].setVisible(false);
+             armorLabels[4].setVisible(false);
+             unitAreas[4].setVisible(false);
         }
         
         for(int i = 0; i < men ; i++){
-       	    armor = (ba.getArmor(i+1, false) < 0) ? 0: ba.getArmor(i+1, false);
-       	    internal =  (ba.getInternal(i+1) < 0) ? 0: ba.getInternal(i+1);
-       	    if((armor+internal) == 0){
-       	    	armorAreas[i].setVisible(false);
-       	    	armorLabels[i].setValue(Messages.getString("BattleArmorMapSet.Killed")); //$NON-NLS-1$
-       	    } else {
-       	    	drawArmorImage(armorImage[i], armor+internal);
-       	    	armorLabels[i].setValue(Integer.toString(armor+internal));
+                armor = (ba.getArmor(i+1, false) < 0) ? 0: ba.getArmor(i+1, false);
+                internal =  (ba.getInternal(i+1) < 0) ? 0: ba.getInternal(i+1);
+                if((armor+internal) == 0){
+                    armorAreas[i].setVisible(false);
+                    armorLabels[i].setValue(Messages.getString("BattleArmorMapSet.Killed")); //$NON-NLS-1$
+                } else {
+                    drawArmorImage(armorImage[i], armor+internal);
+                    armorLabels[i].setValue(Integer.toString(armor+internal));
                 armorAreas[i].setVisible(true);
-       	    }
+                }
         }
     }
 
-	private void setBackGround(){
+    private void setBackGround(){
         Image tile = comp.getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;

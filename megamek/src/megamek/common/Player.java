@@ -79,17 +79,17 @@ public final class Player extends TurnOrdered
     private boolean admitsDefeat = false;
     
     public Vector getMinefields() {
-    	return visibleMinefields;
+        return visibleMinefields;
     }
     
     public void addMinefield(Minefield mf) {
-    	visibleMinefields.addElement(mf);
+        visibleMinefields.addElement(mf);
     }
     
     public void addMinefields(Vector minefields) {
-    	for (int i = 0; i < minefields.size(); i++) {
-	    	visibleMinefields.addElement(minefields.elementAt(i));
-    	}
+        for (int i = 0; i < minefields.size(); i++) {
+            visibleMinefields.addElement(minefields.elementAt(i));
+        }
     }
     
     public void removeMinefield(Minefield mf) {
@@ -108,7 +108,7 @@ public final class Player extends TurnOrdered
         return visibleMinefields.contains(mf);
     }
     
-	public boolean hasMinefields() {
+    public boolean hasMinefields() {
         return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0);
     }
     
@@ -262,11 +262,11 @@ public final class Player extends TurnOrdered
     }
     
     public void setAdmitsDefeat(boolean admitsDefeat) {
-    	this.admitsDefeat = admitsDefeat;
+        this.admitsDefeat = admitsDefeat;
     }
     
     public boolean admitsDefeat() {
-    	return admitsDefeat;
+        return admitsDefeat;
     }
     
     public void setArtyAutoHitHexes(Vector artyAutoHitHexes) {

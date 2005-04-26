@@ -32,7 +32,7 @@ public class Protomech
     "Torso", "Right Arm", "Left Arm", "Legs", "Main Gun"};
 
     public static final String[] LOCATION_ABBRS = {"HD", "T", "RA", "LA", "L", "MG"};
-	//weapon bools
+    //weapon bools
     private boolean bHasMainGun;
     private boolean bHasRArmGun;
     private boolean bHasLArmGun;
@@ -72,7 +72,7 @@ public class Protomech
     public static final int        LOC_LEG             = 4;
     public static final int        LOC_MAINGUN         = 5;
     //Near miss reprs.
-    public static final int 	   LOC_NMISS		   = 6;
+    public static final int        LOC_NMISS           = 6;
     //"Systems".  These represent protomech critical hits; which remain constant regardless of proto.
     //doesn't matter what gets hit in a proto section, just the number of times it's been critted
     //so just have the right number of these systems and it works.
@@ -168,7 +168,7 @@ public class Protomech
      */
     public boolean shaded(int loc, int numHit)
     {
-    	switch(loc){
+        switch(loc){
         case LOC_HEAD:
         case LOC_LARM:
         case LOC_RARM:
@@ -185,8 +185,8 @@ public class Protomech
     }
 
     public int getWalkMP(boolean gravity) {
-     	int wmp=getOriginalWalkMP();
-     	int legCrits=this.getCritsHit(LOC_LEG);
+        int wmp=getOriginalWalkMP();
+        int legCrits=this.getCritsHit(LOC_LEG);
         int i;
         int j;
         // Gravity, Protos can't get faster
@@ -194,19 +194,19 @@ public class Protomech
         else j = wmp;
         if (j < wmp) wmp = j;
         switch(legCrits)
-     	{
-     		case 0:
-     		break;
-     		case 1:
-     		wmp--;
-     		break;
-     		case 2:
-     		wmp=wmp/2;
-     		break;
-     		case 3:
-     		wmp=0;
-     		break;
-     	}
+        {
+            case 0:
+            break;
+            case 1:
+            wmp--;
+            break;
+            case 2:
+            wmp=wmp/2;
+            break;
+            case 3:
+            wmp=0;
+            break;
+        }
         if (game != null) {
             i = game.getTemperatureDifference();
             return Math.max(wmp - i, 0);
@@ -244,7 +244,7 @@ public class Protomech
    */
     public int getNumberOfCriticals(int loc)
     {
-    	switch(loc) {
+        switch(loc) {
         case LOC_MAINGUN:
             return 0;
         case LOC_HEAD:
@@ -276,16 +276,16 @@ public class Protomech
         int jump=this.jumpMP;
         int torsoCrits=this.getCritsHit(LOC_TORSO);
         switch(torsoCrits)
-     	{
-     		case 0:
-     		break;
-     		case 1:
-     		if (jump > 0) jump--;
-     		break;
-     		case 2:
-     		jump=jump/2;
-     		break;
-     	}
+        {
+            case 0:
+            break;
+            case 1:
+            if (jump > 0) jump--;
+            break;
+            case 2:
+            jump=jump/2;
+            break;
+        }
         if (applyGravityEffectsOnMP(jump) > jump) return jump;
         else return applyGravityEffectsOnMP(jump);
     }
@@ -394,7 +394,7 @@ public class Protomech
     }
 
     public boolean hasRearArmor(int loc) {
-    	return false;
+        return false;
     }
 
      public int getRunMPwithoutMASC(boolean gravity) {
@@ -438,7 +438,7 @@ public class Protomech
      * Rolls up a hit location
      */
     public HitData rollHitLocation(int table, int side) {
-    	return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
+        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
     }
 
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
@@ -500,7 +500,7 @@ public class Protomech
   */
 
      public boolean canTransferCriticals(int loc) {
-     	return false;
+        return false;
      }
     /**
      * Gets the location that excess damage transfers to
@@ -539,7 +539,7 @@ public class Protomech
      * @param leg right/left leg
      */
     public  void setInternal(int head, int torso, int arm, int legs, int mainGun ) {
-    	  initializeInternal(head, LOC_HEAD);
+          initializeInternal(head, LOC_HEAD);
         initializeInternal(torso, LOC_TORSO);
         initializeInternal(arm, LOC_RARM);
         initializeInternal(arm, LOC_LARM);
@@ -585,7 +585,7 @@ public class Protomech
     public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, int shots)
     throws LocationFullException
     {
-    	Mounted mounted = new Mounted(this, etype);
+        Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted, shots);
         return mounted;
 
@@ -606,82 +606,82 @@ public class Protomech
             }
         }
 
-    	if(mounted.getType() instanceof WeaponType) {
+        if(mounted.getType() instanceof WeaponType) {
             switch(loc) {
-            	case LOC_HEAD:
-            	case LOC_LEG:
-            	case LOC_NMISS:
-            	throw new LocationFullException("Weapon " + mounted.getName() + " can't be mounted in " + getLocationAbbr(loc));
-            	case LOC_MAINGUN:
-            	if(bHasMainGun)
-            	{
-            		throw new LocationFullException("Already has Main Gun");
-            	}
-            	else
-            	{
-            		bHasMainGun=true;
-            		mounted.setLocation(loc, rearMounted);
-        			equipmentList.addElement(mounted);
-        			weaponList.addElement(mounted);
-        			MainGunNum=getEquipmentNum(mounted);
-        		}
-        		break;
-        		case LOC_LARM:
-        		if(bHasLArmGun)
-            	{
-            		throw new LocationFullException("Already has LArm Gun");
-            	}
-            	else
-            	{
-            		bHasLArmGun=true;
-            		mounted.setLocation(loc, rearMounted);
-        			equipmentList.addElement(mounted);
-        			weaponList.addElement(mounted);
-        			LArmGunNum=getEquipmentNum(mounted);
-        		}
-        		break;
-        		case LOC_RARM:
-        		if(bHasRArmGun)
-            	{
-            		throw new LocationFullException("Already has RArm Gun");
-            	}
-            	else
-            	{
-            		bHasRArmGun=true;
-            		mounted.setLocation(loc, rearMounted);
-        			equipmentList.addElement(mounted);
-        			weaponList.addElement(mounted);
-        			RArmGunNum=getEquipmentNum(mounted);
-        		}
-        		break;
-        		case LOC_TORSO:
-        		if(bHasTorsoAGun)
-        		{
-        			if(bHasTorsoBGun)
-        			{
-        				throw new LocationFullException("Already has both torso guns");
-        			}
-        			else
-        			{
-            		bHasTorsoBGun=true;
-            		mounted.setLocation(loc, rearMounted);
-        			equipmentList.addElement(mounted);
-        			weaponList.addElement(mounted);
-        			TorsoBGunNum=getEquipmentNum(mounted);
-        			}
-        		}
-        		else
-        			{
-        			bHasTorsoAGun=true;
-            		mounted.setLocation(loc, rearMounted);
-        			equipmentList.addElement(mounted);
-        			weaponList.addElement(mounted);
-        			TorsoAGunNum=getEquipmentNum(mounted);
-        			}
-        			break;
-        		}
-        	} else
-        	{ super.addEquipment(mounted,loc,rearMounted);
+                case LOC_HEAD:
+                case LOC_LEG:
+                case LOC_NMISS:
+                throw new LocationFullException("Weapon " + mounted.getName() + " can't be mounted in " + getLocationAbbr(loc));
+                case LOC_MAINGUN:
+                if(bHasMainGun)
+                {
+                    throw new LocationFullException("Already has Main Gun");
+                }
+                else
+                {
+                    bHasMainGun=true;
+                    mounted.setLocation(loc, rearMounted);
+                    equipmentList.addElement(mounted);
+                    weaponList.addElement(mounted);
+                    MainGunNum=getEquipmentNum(mounted);
+                }
+                break;
+                case LOC_LARM:
+                if(bHasLArmGun)
+                {
+                    throw new LocationFullException("Already has LArm Gun");
+                }
+                else
+                {
+                    bHasLArmGun=true;
+                    mounted.setLocation(loc, rearMounted);
+                    equipmentList.addElement(mounted);
+                    weaponList.addElement(mounted);
+                    LArmGunNum=getEquipmentNum(mounted);
+                }
+                break;
+                case LOC_RARM:
+                if(bHasRArmGun)
+                {
+                    throw new LocationFullException("Already has RArm Gun");
+                }
+                else
+                {
+                    bHasRArmGun=true;
+                    mounted.setLocation(loc, rearMounted);
+                    equipmentList.addElement(mounted);
+                    weaponList.addElement(mounted);
+                    RArmGunNum=getEquipmentNum(mounted);
+                }
+                break;
+                case LOC_TORSO:
+                if(bHasTorsoAGun)
+                {
+                    if(bHasTorsoBGun)
+                    {
+                        throw new LocationFullException("Already has both torso guns");
+                    }
+                    else
+                    {
+                    bHasTorsoBGun=true;
+                    mounted.setLocation(loc, rearMounted);
+                    equipmentList.addElement(mounted);
+                    weaponList.addElement(mounted);
+                    TorsoBGunNum=getEquipmentNum(mounted);
+                    }
+                }
+                else
+                    {
+                    bHasTorsoAGun=true;
+                    mounted.setLocation(loc, rearMounted);
+                    equipmentList.addElement(mounted);
+                    weaponList.addElement(mounted);
+                    TorsoAGunNum=getEquipmentNum(mounted);
+                    }
+                    break;
+                }
+            } else
+            { super.addEquipment(mounted,loc,rearMounted);
         }
     }
 
@@ -835,29 +835,29 @@ public class Protomech
 
     public int getArmor(int loc, boolean rear)
     {
-    	if(loc==LOC_NMISS)
-    	{
-    		return ARMOR_NA;
-    	}
-    	else
-    	{
-    		return super.getArmor(loc, rear);
-    	}
+        if(loc==LOC_NMISS)
+        {
+            return ARMOR_NA;
+        }
+        else
+        {
+            return super.getArmor(loc, rear);
+        }
     }
     public int getInternal(int loc)
     {
-    	if(loc==LOC_NMISS)
-    	{
-    		return ARMOR_NA;
-    	}
-    	else
-    	{
-    		return super.getInternal(loc);
-    	}
+        if(loc==LOC_NMISS)
+        {
+            return ARMOR_NA;
+        }
+        else
+        {
+            return super.getInternal(loc);
+        }
     }
     protected String[] getLocationAbbrs()
     {
-    	return LOCATION_ABBRS;
+        return LOCATION_ABBRS;
     }
 
   public String getLocationAbbr(int loc)

@@ -18,15 +18,15 @@ import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
 
 public class IndexedCheckbox extends Checkbox {
-	private int index;
-	
-	public IndexedCheckbox(String label, boolean state, CheckboxGroup group, int index) {
-		super(label, state, group);
-		
-		this.index = index;
-	}
-	
-	public int getIndex() {
-		return index;
-	}
+    private int index;
+    
+    public IndexedCheckbox(String label, boolean state, CheckboxGroup group, int index) {
+        super(label, state, group);
+        
+        this.index = index;
+    }
+    
+    public int getIndex() {
+        return index;
+    }
 }

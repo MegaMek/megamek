@@ -91,21 +91,21 @@ public class BLKTankFile extends BLKFile implements MechLoader {
         t.setMovementType(nMotion);
         
         if ( dataFile.exists("transporters")) {
-	    String[] transporters = dataFile.getDataAsString("transporters");
-	    // Walk the array of transporters.
-	    for (int index = 0; index < transporters.length; index++) {
-		// TroopSpace:
-		if ( transporters[index].startsWith( "TroopSpace:", 0 ) ) {
-		    // Everything after the ':' should be the space's size.
+        String[] transporters = dataFile.getDataAsString("transporters");
+        // Walk the array of transporters.
+        for (int index = 0; index < transporters.length; index++) {
+        // TroopSpace:
+        if ( transporters[index].startsWith( "TroopSpace:", 0 ) ) {
+            // Everything after the ':' should be the space's size.
                     Double fsize = new Double
-			( transporters[index].substring(11) );
+            ( transporters[index].substring(11) );
                     int size = fsize.intValue();
-		    t.addTransporter( new TroopSpace(size) );
-		}
+            t.addTransporter( new TroopSpace(size) );
+        }
 
-	    } // Handle the next transportation component.
+        } // Handle the next transportation component.
 
-	} // End has-transporters
+    } // End has-transporters
 
         if (dataFile.exists("engine_type"))
             t.setEngineType(dataFile.getDataAsInt("engine_type")[0]);

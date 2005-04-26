@@ -105,10 +105,10 @@ public class GALance extends GA {
                 MoveOption min = (MoveOption) ((MoveOption[]) moves.elementAt(m))[0];
                 if (min.damage > 2 * next.damage && min.getUtility() < .5 * next.getUtility()) {
                     result += next.getCEntity().bv; //it is being endangered
-													// in the future
+                                                    // in the future
                     if (m > 0)
                         chromVector.genes[m]--; //go so far as to mutate the
-												// gene
+                                                // gene
                 }
             }
         }
@@ -187,21 +187,21 @@ public class GALance extends GA {
                 if (next.doomed) {
                     if (next.getCEntity().last != null && next.getCEntity().last.doomed) {
                         result -= next.damage - .5 * next.getUtility(); //should
-																		// be
-																		// dead
+                                                                        // be
+                                                                        // dead
                     } else if (next.getCEntity().last != null && !next.getCEntity().last.doomed) {
                         result += next.getUtility() + 2 * next.damage; //don't
-																	   // like
-																	   // this
-																	   // case
+                                                                       // like
+                                                                       // this
+                                                                       // case
                     } else {
                         result += next.getUtility();
                     }
                 } else {
                     if (next.getCEntity().last != null && !next.getCEntity().last.inDanger) {
                         result += next.getUtility() + next.damage; //not so
-																   // good
-																   // either
+                                                                   // good
+                                                                   // either
                     } else {
                         result += next.getUtility();
                     }

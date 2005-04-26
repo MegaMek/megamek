@@ -23,12 +23,12 @@ public abstract class StreakMissileType extends MissileType {
 
     // Supply input to the parent class' contructor.
     public StreakMissileType( int size, Vector valid_ammo ) {    
-	super(size, valid_ammo);
+    super(size, valid_ammo);
     }
 
     // Always hits with all missiles
     public int missilesHit() {
-	return size;
+    return size;
     }
 
 }

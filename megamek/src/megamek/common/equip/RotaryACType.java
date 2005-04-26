@@ -23,49 +23,49 @@ public class RotaryACType extends BallisticType {
 
     protected class RACEquipmentState extends UsesAmmoState {
 
-	protected boolean jammed = false;
+    protected boolean jammed = false;
 
-	public RACEquipmentState(Mounted location, RotaryACType type) {
-	    super(location, type);
-	}
-	public boolean isJammed() {
-	    return jammed;
-	}
-	public void setJammed(boolean jammed) {
-	    this.jammed = jammed;
-	}
+    public RACEquipmentState(Mounted location, RotaryACType type) {
+        super(location, type);
+    }
+    public boolean isJammed() {
+        return jammed;
+    }
+    public void setJammed(boolean jammed) {
+        this.jammed = jammed;
+    }
        
     }
     
     public EquipmentState getNewState(Mounted location) {
-	return new RACEquipmentState(location, this);
+    return new RACEquipmentState(location, this);
     }
 
 
     private int size;
     
     private static final String[] RAC_MODES = {"Single", "2-shot",
-					       "4-shot","6-shot"};
+                           "4-shot","6-shot"};
     
     public RotaryACType( int size, Vector valid_ammo ) {
-	super(valid_ammo);
-	this.size = size;
-	this.setModes(RAC_MODES);
-	this.flags |= F_DIRECT_FIRE;
-	this.techType = TechConstants.T_IS_LEVEL_2;
+    super(valid_ammo);
+    this.size = size;
+    this.setModes(RAC_MODES);
+    this.flags |= F_DIRECT_FIRE;
+    this.techType = TechConstants.T_IS_LEVEL_2;
 
-	switch(size) {
-	case 2:
-	    this.tonnage = 8.0f;
-	    this.criticals = 3;
-	    this.bv = 118;
-	    break;
-	case 5:
-	    this.tonnage = 10.0f;
-	    this.criticals = 6;
-	    this.bv = 247;
-	    break;
-	}
+    switch(size) {
+    case 2:
+        this.tonnage = 8.0f;
+        this.criticals = 3;
+        this.bv = 118;
+        break;
+    case 5:
+        this.tonnage = 10.0f;
+        this.criticals = 6;
+        this.bv = 247;
+        break;
+    }
     }
     
     public WeaponResult setupAttack(Mounted loc, Entity en, Targetable targ) { return null; }

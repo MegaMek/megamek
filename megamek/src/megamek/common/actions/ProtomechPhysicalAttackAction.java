@@ -61,7 +61,7 @@ public class ProtomechPhysicalAttackAction
 
     
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
-    	final Entity ae = game.getEntity(attackerId);
+        final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
@@ -127,7 +127,7 @@ public class ProtomechPhysicalAttackAction
         
         //can only target targets in adjacent hexes, not in same hex
         if (range == 0) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in adjacent hex");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in adjacent hex");
         }
         
         // check facing

@@ -78,44 +78,44 @@ public class CommonHelpDialog extends Dialog
     }
     
     public void setFile(File helpfile) {
-		// Create a buffer to contain our help text.
-		StringBuffer buff = new StringBuffer();
+        // Create a buffer to contain our help text.
+        StringBuffer buff = new StringBuffer();
 
-		// Were we passed a null helpfile?
-		if ( helpfile == null ) {
-			// Big error.
-			this.setTitle( Messages.getString("CommonHelpDialog.noHelp.title") ); //$NON-NLS-1$
-			buff.append( Messages.getString("CommonHelpDialog.noHelp.Message") ); //$NON-NLS-1$
-		} else {
-			// Set our title.
-			this.setTitle( Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName() ); //$NON-NLS-1$
+        // Were we passed a null helpfile?
+        if ( helpfile == null ) {
+            // Big error.
+            this.setTitle( Messages.getString("CommonHelpDialog.noHelp.title") ); //$NON-NLS-1$
+            buff.append( Messages.getString("CommonHelpDialog.noHelp.Message") ); //$NON-NLS-1$
+        } else {
+            // Set our title.
+            this.setTitle( Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName() ); //$NON-NLS-1$
 
-			// Try to read in the help file.
-			boolean firstLine = true;
-			try {
-				BufferedReader input = new BufferedReader
-					( new FileReader(helpfile) );
-				String line = input.readLine();
-				//                while ( line != null && line.length() > 0 ) {
-				while ( line != null ) {
-					if ( firstLine ) {
-						firstLine = false;
-					} else {
-						buff.append( " \n" ); // the space is to force a line-feed on empty lines //$NON-NLS-1$
-					}
-					buff.append( line );
-					line = input.readLine();
-				}
-			} catch ( IOException exp ) {
-				if ( !firstLine ) {
-					buff.append( "\n \n" ); //$NON-NLS-1$
-				}
-				buff.append( Messages.getString("CommonHelpDialog.errorReading") ) //$NON-NLS-1$
-					.append( exp.getMessage() );
-				exp.printStackTrace();
-			}
-		} // End non-null-helpfile
-		lblHelp.setText(buff.toString());
+            // Try to read in the help file.
+            boolean firstLine = true;
+            try {
+                BufferedReader input = new BufferedReader
+                    ( new FileReader(helpfile) );
+                String line = input.readLine();
+                //                while ( line != null && line.length() > 0 ) {
+                while ( line != null ) {
+                    if ( firstLine ) {
+                        firstLine = false;
+                    } else {
+                        buff.append( " \n" ); // the space is to force a line-feed on empty lines //$NON-NLS-1$
+                    }
+                    buff.append( line );
+                    line = input.readLine();
+                }
+            } catch ( IOException exp ) {
+                if ( !firstLine ) {
+                    buff.append( "\n \n" ); //$NON-NLS-1$
+                }
+                buff.append( Messages.getString("CommonHelpDialog.errorReading") ) //$NON-NLS-1$
+                    .append( exp.getMessage() );
+                exp.printStackTrace();
+            }
+        } // End non-null-helpfile
+        lblHelp.setText(buff.toString());
     }
 
     /**

@@ -17,11 +17,11 @@ package megamek.client;
 public class BoardViewEvent
     extends java.util.EventObject
 {
-	public static final int	FINISHED_MOVING_UNITS	= 0;
-	public static final int	SELECT_UNIT	= 1;
+    public static final int     FINISHED_MOVING_UNITS   = 0;
+    public static final int     SELECT_UNIT     = 1;
 
-    private int				type;
-    private int				entityId;
+    private int                 type;
+    private int                 entityId;
     
     public BoardViewEvent(Object source, int type) {
         super(source);

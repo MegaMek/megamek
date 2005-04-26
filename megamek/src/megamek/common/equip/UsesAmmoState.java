@@ -18,17 +18,17 @@ import megamek.common.*;
 
 public class UsesAmmoState extends EquipmentState {
     public UsesAmmoState (Mounted location, UsesAmmoType type) {
-	super(location, type);
+    super(location, type);
     }
     
     protected AmmoBin ammo;
 
     public AmmoBin getAmmoBin() {
-	return ammo;
+    return ammo;
     }
 
     public void setAmmoBin(AmmoBin ammo) {
-	this.ammo = ammo;
+    this.ammo = ammo;
     }
 }
 

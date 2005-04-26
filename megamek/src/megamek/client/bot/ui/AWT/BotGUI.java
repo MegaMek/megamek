@@ -57,7 +57,7 @@ public class BotGUI implements GameListener {
             frame.setLocation(
                 screenSize.width / 2 - frame.getSize().width / 2,
                 screenSize.height / 2 - frame.getSize().height / 2);
-			ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);
+            ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);
             confirm.show();
 
             if (!confirm.getShowAgain()) {

@@ -19,28 +19,28 @@ import megamek.common.*;
 public class ArmorPiercingACAmmoType extends ACAmmoType {
     // Overload the constructor 
     public ArmorPiercingACAmmoType(int size) {
-	super(size);
-	this.techType = TechConstants.T_IS_LEVEL_2;
-	
-	// AP rounds have half the ammo per ton
-	this.shots = this.shots / 2;
+    super(size);
+    this.techType = TechConstants.T_IS_LEVEL_2;
+    
+    // AP rounds have half the ammo per ton
+    this.shots = this.shots / 2;
     }
 
     public TargetRoll getModifiersFor(Game game, Entity en, Targetable targ) {
-	TargetRoll tr = super.getModifiersFor(game,en,targ);
-	tr.addModifier(1, "AP rounds");
-	return tr;
+    TargetRoll tr = super.getModifiersFor(game,en,targ);
+    tr.addModifier(1, "AP rounds");
+    return tr;
     }
 
     public void resolveAttack(Game game, 
-			      WeaponResult wr, 
-			      UsesAmmoType weap, 
-			      UsesAmmoState weap_state) {
+                  WeaponResult wr, 
+                  UsesAmmoType weap, 
+                  UsesAmmoState weap_state) {
 
-	HitData hd = resolveACAttack(game,wr,weap, weap_state);
-	
-	// Actually add a critical if there is armor left in the location hit???
-//	##########
+    HitData hd = resolveACAttack(game,wr,weap, weap_state);
+    
+    // Actually add a critical if there is armor left in the location hit???
+//  ##########
     }
     
 }

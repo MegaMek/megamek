@@ -21,51 +21,51 @@ public class GaussRifleAmmoType extends AmmoType {
     protected int type;
 
     public GaussRifleAmmoType(int tech, int type) {
-	this.techType = tech;
-	this.type = type;
+    this.techType = tech;
+    this.type = type;
 
-	if (tech == TechConstants.T_IS_LEVEL_2) {
-	    switch(type) {
-	    case GaussRifleType.LIGHT:
-		this.damagePerShot = 8;
-//		this.heat = 1;
-		this.shots = 16;
-		this.range = new RangeType (3,8,17,25);
-		this.bv = 20;
-		break;
-	    case GaussRifleType.NORMAL:
-		this.damagePerShot = 15;
-//		this.heat = 1;
-		this.shots = 8;
-		this.range = new RangeType (2,7,15,22);
-		this.bv = 37;
-		break;
-		// While the constants are here, the special rules (PSR for
-		// shooting and moving) is handled in a subclass, along
-		// with the damage returning routines
-	    case GaussRifleType.HEAVY:
-		this.damagePerShot = 25;
-		this.shots = 4;
-		this.range = new RangeType(4,6,13,20);
-		this.bv = 43;
-//		this.heat = 2;
-	    }
-	} else { 
-	    // Clan
-	    this.damagePerShot = 15;
-//	    this.heat = 1;
-	    this.shots = 8;
-	    this.range = new RangeType(2,7,15,22);
-	    this.bv = 33;
-	}
+    if (tech == TechConstants.T_IS_LEVEL_2) {
+        switch(type) {
+        case GaussRifleType.LIGHT:
+        this.damagePerShot = 8;
+//      this.heat = 1;
+        this.shots = 16;
+        this.range = new RangeType (3,8,17,25);
+        this.bv = 20;
+        break;
+        case GaussRifleType.NORMAL:
+        this.damagePerShot = 15;
+//      this.heat = 1;
+        this.shots = 8;
+        this.range = new RangeType (2,7,15,22);
+        this.bv = 37;
+        break;
+        // While the constants are here, the special rules (PSR for
+        // shooting and moving) is handled in a subclass, along
+        // with the damage returning routines
+        case GaussRifleType.HEAVY:
+        this.damagePerShot = 25;
+        this.shots = 4;
+        this.range = new RangeType(4,6,13,20);
+        this.bv = 43;
+//      this.heat = 2;
+        }
+    } else { 
+        // Clan
+        this.damagePerShot = 15;
+//      this.heat = 1;
+        this.shots = 8;
+        this.range = new RangeType(2,7,15,22);
+        this.bv = 33;
+    }
     }
 
     // No gauss rifle can start fires.
     public int getFireTN() {
-	return TargetRoll.IMPOSSIBLE;
+    return TargetRoll.IMPOSSIBLE;
     }
     
     public boolean isExplosive() {
-	return false;
+    return false;
     }
 }

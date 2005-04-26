@@ -26,14 +26,14 @@ import java.awt.*;
  */
 
 public final class PMUtil {
-	
-	/**
+    
+    /**
      * Ensures that Images is completely loaded
      */
-	
-	public static boolean setImage(Image im, Component c){
-		boolean b = true;
-		MediaTracker mt = new MediaTracker(c);
+    
+    public static boolean setImage(Image im, Component c){
+        boolean b = true;
+        MediaTracker mt = new MediaTracker(c);
         mt.addImage(im,0);
         try{
             mt.waitForID(0);
@@ -47,19 +47,19 @@ public final class PMUtil {
         }
         
         return b;
-	}
-	
-	/**
+    }
+    
+    /**
      * Returns Window class that contains given component
      */
-	
-	public static Window getParentWindow(Component c){
-		Container container = c.getParent();
-		while (!(container instanceof Window) || (container == null)){
-			container = container.getParent(); 
-		}
-		return (Window) container;
-	}
-	
-	
+    
+    public static Window getParentWindow(Component c){
+        Container container = c.getParent();
+        while (!(container instanceof Window) || (container == null)){
+            container = container.getParent(); 
+        }
+        return (Window) container;
+    }
+    
+    
 }

@@ -22,33 +22,33 @@ import java.util.Vector;
 public class MRMissileType extends MissileType {
 
     public MRMissileType( int size, Vector valid_ammo ) {    
-	super(size, valid_ammo);
-	// IS ONLY
+    super(size, valid_ammo);
+    // IS ONLY
 
-	this.techType = TechConstants.T_IS_LEVEL_2;
+    this.techType = TechConstants.T_IS_LEVEL_2;
 
-	switch(size) {
-	case 10:
-	    this.tonnage = 3.0f;
-	    this.criticals = 2;
-	    this.bv = 56;
-	    break;
-	case 20:
-	    this.tonnage = 7.0f;
-	    this.criticals = 3;
-	    this.bv = 112;
-	    break;
-	case 30:
-	    this.tonnage = 10.0f;
-	    this.criticals = 5;
-	    this.bv = 168;
-	    break;
-	case 40:
-	    this.tonnage = 12.0f;
-	    this.criticals = 7;
-	    this.bv = 224;
-	    break;
-	}
+    switch(size) {
+    case 10:
+        this.tonnage = 3.0f;
+        this.criticals = 2;
+        this.bv = 56;
+        break;
+    case 20:
+        this.tonnage = 7.0f;
+        this.criticals = 3;
+        this.bv = 112;
+        break;
+    case 30:
+        this.tonnage = 10.0f;
+        this.criticals = 5;
+        this.bv = 168;
+        break;
+    case 40:
+        this.tonnage = 12.0f;
+        this.criticals = 7;
+        this.bv = 224;
+        break;
+    }
     }
 
     public WeaponResult setupAttack(Mounted loc, Entity en, Targetable targ) { return null; }
@@ -59,14 +59,14 @@ public class MRMissileType extends MissileType {
     // is a pair of 20's
     public int missilesHit() {
         int hits;
-	if (size >= 30) {
-	    hits = Compute.missilesHit(size/2) +
-		Compute.missilesHit(size/2);
-	}
-	else
-	    hits = Compute.missilesHit(size);
+    if (size >= 30) {
+        hits = Compute.missilesHit(size/2) +
+        Compute.missilesHit(size/2);
+    }
+    else
+        hits = Compute.missilesHit(size);
 
-	return hits;
+    return hits;
     }
 
 }

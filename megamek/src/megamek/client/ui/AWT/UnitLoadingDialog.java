@@ -55,8 +55,8 @@ public class UnitLoadingDialog extends Dialog {
         add(lZipCount);
 
         setSize(250,130);
-		// move to middle of screen
-		Dimension screenSize = frame.getToolkit().getScreenSize();
+        // move to middle of screen
+        Dimension screenSize = frame.getToolkit().getScreenSize();
         setLocation(
             screenSize.width / 2 - getSize().width / 2,
             screenSize.height / 2 - getSize().height / 2);
@@ -78,8 +78,8 @@ public class UnitLoadingDialog extends Dialog {
     }
     
     private void updateCounts() {
-		lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance().getCacheCount()));
-		lFileCount.setText(String.valueOf(MechSummaryCache.getInstance().getFileCount()));
-		lZipCount.setText(String.valueOf(MechSummaryCache.getInstance().getZipCount()));
+        lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance().getCacheCount()));
+        lFileCount.setText(String.valueOf(MechSummaryCache.getInstance().getFileCount()));
+        lZipCount.setText(String.valueOf(MechSummaryCache.getInstance().getZipCount()));
     }    
 }

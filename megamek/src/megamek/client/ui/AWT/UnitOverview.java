@@ -23,7 +23,7 @@ import megamek.client.util.widget.PMUtil;
 
 public class UnitOverview implements Displayable {
 
-    private static final int	UNKNOWN_UNITS_PER_PAGE = -1;
+    private static final int    UNKNOWN_UNITS_PER_PAGE = -1;
 
     /**
      * The maximum length of the icon name.
@@ -40,22 +40,22 @@ public class UnitOverview implements Displayable {
     private static final int    BUTTON_PADDING = 2;
     private static final int    PADDING = 5;
     
-    private int[]				unitIds;
-    private boolean				isHit = false;
-    private boolean				visible = true;
-    private boolean				scroll = false;
-    private int					unitsPerPage = UNKNOWN_UNITS_PER_PAGE;
-	private int					actUnitsPerPage = 0;
-    private int					scrollOffset = 0;
+    private int[]               unitIds;
+    private boolean                 isHit = false;
+    private boolean                 visible = true;
+    private boolean                 scroll = false;
+    private int                     unitsPerPage = UNKNOWN_UNITS_PER_PAGE;
+    private int                     actUnitsPerPage = 0;
+    private int                     scrollOffset = 0;
 
-    private ClientGUI				clientgui;
+    private ClientGUI               clientgui;
 
-    private FontMetrics			fm;
+    private FontMetrics             fm;
     
-    private Image				scrollUp;
-    private Image				scrollDown;
-    private Image				pageUp;
-    private Image				pageDown;
+    private Image               scrollUp;
+    private Image               scrollDown;
+    private Image               pageUp;
+    private Image               pageDown;
 
     public UnitOverview(ClientGUI clientgui) {
         this.clientgui = clientgui;
@@ -76,11 +76,11 @@ public class UnitOverview implements Displayable {
         if (!visible) {
             return;
         }
-		
+        
         if (unitsPerPage == UNKNOWN_UNITS_PER_PAGE) {
             computeUnitsPerPage(size);
         }
-		
+        
         graph.setFont(FONT);
         java.util.Vector v = clientgui.getClient().game.getPlayerEntities(clientgui.getClient().getLocalPlayer());
         unitIds = new int[v.size()];
@@ -98,7 +98,7 @@ public class UnitOverview implements Displayable {
 
         int x = size.width - DIST_SIDE - ICON_WIDTH;
         int y = DIST_TOP;
-		
+        
         if (scroll) {
             graph.drawImage(pageUp, x, y, clientgui.bv);
             graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING, clientgui.bv);
@@ -119,11 +119,11 @@ public class UnitOverview implements Displayable {
             drawConditionStrings(graph, e, x, y);
             graph.setColor(getFrameColor(e));
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
-			
+            
             if (e.isSelected()) {
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
             }
-			
+            
             y += ICON_HEIGHT + PADDING;
         }
 
@@ -143,20 +143,20 @@ public class UnitOverview implements Displayable {
         if (!visible) {
             return false;
         }
-		
+        
         int actUnits = scroll ? unitsPerPage - 1 : unitsPerPage;
 
-    	int x = p.x;
-    	int y = p.y;
-    	int xOffset = size.width - DIST_SIDE - ICON_WIDTH;
-    	int yOffset = DIST_TOP;
-    	
-    	if (x < xOffset ||
+        int x = p.x;
+        int y = p.y;
+        int xOffset = size.width - DIST_SIDE - ICON_WIDTH;
+        int yOffset = DIST_TOP;
+        
+        if (x < xOffset ||
             x > xOffset + ICON_WIDTH ||
             y < yOffset ||
             y > yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING))) {
             return false;
-    	}
+        }
 
         if (scroll) {
             if (y > yOffset &&
@@ -186,7 +186,7 @@ public class UnitOverview implements Displayable {
             }
             yOffset += ICON_HEIGHT + PADDING;
         }
-		
+        
         if (scroll) {
             yOffset -= PADDING;
             yOffset += BUTTON_PADDING;
@@ -203,88 +203,88 @@ public class UnitOverview implements Displayable {
             }
         }
 
-    	return false;
+        return false;
     }
 
     public boolean isMouseOver(Point p, Dimension size) {
-    	return false;
+        return false;
     }
 
     public boolean isSliding() {
-    	return false;
+        return false;
     }
 
-	public boolean slide() {
-    	return false;
+    public boolean slide() {
+        return false;
     }
 
     public boolean isDragged(Point p, Dimension size) {
-    	return false;
+        return false;
     }
     
     public boolean isBeingDragged() {
-    	return false;
+        return false;
     }
 
-	public boolean isReleased() {
-		if (!visible) {
-			return false;
-		}
-		
-		if (isHit) {
-			isHit = false;
-			return true;
-		}
-    	return false;
+    public boolean isReleased() {
+        if (!visible) {
+            return false;
+        }
+        
+        if (isHit) {
+            isHit = false;
+            return true;
+        }
+        return false;
     }
     
     public void setVisible(boolean visible) {
-    	this.visible = visible;
+        this.visible = visible;
     }
     
     public boolean isVisible() {
-    	return visible;
+        return visible;
     }
 
     private void drawHeat(Graphics graph, Entity entity, int x, int y) {
-    	if (!(entity instanceof Mech)) {
-    		return;
-    	}
-		int heat = Math.min(30, entity.heat);
+        if (!(entity instanceof Mech)) {
+            return;
+        }
+        int heat = Math.min(30, entity.heat);
 
-		graph.setColor(Color.darkGray);
-		graph.fillRect(x + 52, y + 4, 2, 30);
-		graph.setColor(Color.lightGray);
-		graph.fillRect(x + 51, y + 3, 2, 30);
-		graph.setColor(Color.red);
-		graph.fillRect(x + 51, y + 3 + (30 - heat), 2, heat);
+        graph.setColor(Color.darkGray);
+        graph.fillRect(x + 52, y + 4, 2, 30);
+        graph.setColor(Color.lightGray);
+        graph.fillRect(x + 51, y + 3, 2, 30);
+        graph.setColor(Color.red);
+        graph.fillRect(x + 51, y + 3 + (30 - heat), 2, heat);
     }
     
     private void drawBars(Graphics graph, Entity entity, int x, int y) {
-		//Lets draw our armor and internal status bars
-		int baseBarLength = 23;
-		int barLength = 0;
-		double percentRemaining = 0.00;
-		
-		percentRemaining = entity.getArmorRemainingPercent();
-		barLength = (int)(baseBarLength * percentRemaining);
-		
-		graph.setColor(Color.darkGray);
-		graph.fillRect(x + 4, y + 4, 23, 2);
-		graph.setColor(Color.lightGray);
-		graph.fillRect(x + 3, y + 3, 23, 2);
-		graph.setColor(getStatusBarColor(percentRemaining));
-		graph.fillRect(x + 3, y + 3, barLength, 2);
-		
-		percentRemaining = entity.getInternalRemainingPercent();
-		barLength = (int)(baseBarLength * percentRemaining);
-		
-		graph.setColor(Color.darkGray);
-		graph.fillRect(x + 4, y + 7, 23, 2);
-		graph.setColor(Color.lightGray);
-		graph.fillRect(x + 3, y + 6, 23, 2);
-		graph.setColor(getStatusBarColor(percentRemaining));
-		graph.fillRect(x + 3, y + 6, barLength, 2);
+        //Lets draw our armor and internal status bars
+        int baseBarLength = 23;
+        int barLength = 0;
+        double percentRemaining = 0.00;
+        
+        percentRemaining = entity.getArmorRemainingPercent();
+        barLength = (int)(baseBarLength * percentRemaining);
+        
+        graph.setColor(Color.darkGray);
+        graph.fillRect(x + 4, y + 4, 23, 2);
+        graph.setColor(Color.lightGray);
+        graph.fillRect(x + 3, y + 3, 23, 2);
+        graph.setColor(getStatusBarColor(percentRemaining));
+        graph.fillRect(x + 3, y + 3, barLength, 2);
+        
+        percentRemaining = entity.getInternalRemainingPercent();
+        barLength = (int)(baseBarLength * percentRemaining);
+        
+        graph.setColor(Color.darkGray);
+        graph.fillRect(x + 4, y + 7, 23, 2);
+        graph.setColor(Color.lightGray);
+        graph.fillRect(x + 3, y + 6, 23, 2);
+        graph.setColor(getStatusBarColor(percentRemaining));
+        graph.fillRect(x + 3, y + 6, barLength, 2);
 
     }
     
@@ -298,20 +298,20 @@ public class UnitOverview implements Displayable {
     }
     
     private Color getFrameColor(Entity entity) {
-    	if (!clientgui.getClient().isMyTurn() || !entity.isSelectableThisTurn()) {
-    		return Color.gray;
-    	}
-    	return Color.black;
+        if (!clientgui.getClient().isMyTurn() || !entity.isSelectableThisTurn()) {
+            return Color.gray;
+        }
+        return Color.black;
     }
 
     private void printLine(Graphics g, int x, int y, String s) {
-    	g.setColor(Color.black);
-		g.drawString(s, x + 1, y);
-		g.drawString(s, x - 1, y);
-		g.drawString(s, x, y + 1);
-		g.drawString(s, x, y - 1);
-		g.setColor(Color.white);
-		g.drawString(s, x, y);
+        g.setColor(Color.black);
+        g.drawString(s, x + 1, y);
+        g.drawString(s, x - 1, y);
+        g.drawString(s, x, y + 1);
+        g.drawString(s, x, y - 1);
+        g.setColor(Color.white);
+        g.drawString(s, x, y);
     }
 
     private void drawConditionStrings(Graphics graph, Entity entity, int x, int y) {
@@ -338,49 +338,49 @@ public class UnitOverview implements Displayable {
             graph.setColor(Color.yellow);
             graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 10, y + 33); //$NON-NLS-1$
         } else if (!entity.isDeployed()) {
-        	int roundsLeft = entity.getDeployRound() - clientgui.getClient().game.getRoundCount();
-        	if (roundsLeft > 0) {
-        		printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
-        	}
+            int roundsLeft = entity.getDeployRound() - clientgui.getClient().game.getRoundCount();
+            if (roundsLeft > 0) {
+                printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
+            }
         }
     }
 
     private void computeUnitsPerPage(Dimension size) {
-    	unitsPerPage = (size.height - DIST_TOP) / (ICON_HEIGHT + PADDING);
+        unitsPerPage = (size.height - DIST_TOP) / (ICON_HEIGHT + PADDING);
     }
 
     private void pageUp() {
-    	if (scrollOffset > 0) {
-    		scrollOffset -= actUnitsPerPage;
-    		if (scrollOffset < 0) {
-    			scrollOffset = 0;
-    		}
-    		clientgui.bv.repaint();
-    	}
+        if (scrollOffset > 0) {
+            scrollOffset -= actUnitsPerPage;
+            if (scrollOffset < 0) {
+                scrollOffset = 0;
+            }
+            clientgui.bv.repaint();
+        }
     }
 
     private void pageDown() {
-    	if (scrollOffset < unitIds.length - actUnitsPerPage) {
-    		scrollOffset += actUnitsPerPage;
-    		if (scrollOffset > unitIds.length - actUnitsPerPage) {
-    			scrollOffset = unitIds.length - actUnitsPerPage;
-    		}
-    		clientgui.bv.repaint();
-    	}
+        if (scrollOffset < unitIds.length - actUnitsPerPage) {
+            scrollOffset += actUnitsPerPage;
+            if (scrollOffset > unitIds.length - actUnitsPerPage) {
+                scrollOffset = unitIds.length - actUnitsPerPage;
+            }
+            clientgui.bv.repaint();
+        }
     }
     
     private void scrollUp() {
-    	if (scrollOffset > 0) {
-    		scrollOffset--;
-    		clientgui.bv.repaint();
-    	}
+        if (scrollOffset > 0) {
+            scrollOffset--;
+            clientgui.bv.repaint();
+        }
     }
     
     private void scrollDown() {
-    	if (scrollOffset < unitIds.length - actUnitsPerPage) {
-    		scrollOffset++;
-    		clientgui.bv.repaint();
-    	}
+        if (scrollOffset < unitIds.length - actUnitsPerPage) {
+            scrollOffset++;
+            clientgui.bv.repaint();
+        }
     }
 
     protected String getIconName(Entity e, FontMetrics fm) {

@@ -8,6 +8,7 @@ v0.29.75 (CVS)
 + Patch 1187324: Settings refactoring. The previous implementation was 
     marked with symbolic tag 'before-preferences'
 + Removed dependence on AWT from class Entity and descendants.
++ Added Locust IIC 2, 3, 5, Piranha, Ha Otoko, Howler, Corvis pics.
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.

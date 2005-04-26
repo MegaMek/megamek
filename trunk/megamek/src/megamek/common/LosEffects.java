@@ -75,23 +75,23 @@ public class LosEffects {
     }
     
     public int getLightWoods() {
-    	return lightWoods;
+        return lightWoods;
     }
     
     public int getHeavyWoods() {
-    	return heavyWoods;
+        return heavyWoods;
     }
 
     public int getLightSmoke() {
-    	return lightSmoke;
+        return lightSmoke;
     }
     
     public int getHeavySmoke() {
-    	return heavySmoke;
+        return heavySmoke;
     }
 
     public boolean isBlocked() {
-    	return blocked;
+        return blocked;
     }
     /** Getter for property targetCover.
      * @return Value of property targetCover.
@@ -135,12 +135,12 @@ public class LosEffects {
         this.thruBldg = thruBldg;
     }
     
-	/**
-	 * LOS check from ae to te.
-	 */
-	public boolean canSee() {
-	    return !blocked && (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) < 3;
-	}
+    /**
+     * LOS check from ae to te.
+     */
+    public boolean canSee() {
+        return !blocked && (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) < 3;
+    }
 
     /**
      * Returns a LosEffects object representing the LOS effects of interveing
@@ -180,7 +180,7 @@ public class LosEffects {
         } else {
             targEl = game.board.getHex(target.getPosition()).floor();
         }
-    	
+        
         ai.attackAbsHeight = attEl;
         ai.targetAbsHeight = targEl;
         boolean attOffBoard = ae.isOffBoard();
@@ -218,7 +218,7 @@ public class LosEffects {
                 targEl == targetHex.surface();
             targetOnLand = !(targetUnderWater || targetInWater);
         }
-		
+        
         boolean underWaterCombat = targetUnderWater || attUnderWater;
         
         ai.attUnderWater = attUnderWater;
@@ -244,9 +244,9 @@ public class LosEffects {
             ai.attUnderWater && ai.targetOnLand) {
             LosEffects los = new LosEffects();
             los.blocked = true;
-            return los;        	
+            return los;             
         }
-		
+        
         double degree = ai.attackPos.degree(ai.targetPos);
         if (degree % 60 == 30) {
             return LosEffects.losDivided(game, ai);
@@ -270,7 +270,7 @@ public class LosEffects {
         }
 
         if (lightSmoke + (heavySmoke * 2) > 2) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke.");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke.");
         }
 
         if (lightSmoke + (heavySmoke * 2) + lightWoods + (heavyWoods * 2) > 2) {
@@ -286,7 +286,7 @@ public class LosEffects {
         }
      
         if (lightSmoke > 0) {
-        	modifiers.addModifier(lightSmoke, lightSmoke + " intervening light smoke");
+            modifiers.addModifier(lightSmoke, lightSmoke + " intervening light smoke");
         }
         
         if (heavySmoke > 0) {
@@ -379,7 +379,7 @@ public class LosEffects {
         if (ai.targetEntity) {
             targetInBuilding = Compute.isInBuilding(game, game.board.getHex(ai.targetPos).floor(), ai.targetPos);
         }
-		    
+            
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if ( targetInBuilding && Compute.isInBuilding( game, game.board.getHex(ai.attackPos).floor(), ai.attackPos ) ) {
@@ -490,12 +490,12 @@ public class LosEffects {
         
         //check for LOS according to diagramming rule from MaxTech, page 22
         if (game.getOptions().booleanOption("maxtech_LOS1")) {
-        	if (hexEl + bldgEl > (ai.targetAbsHeight * ai.attackPos.distance(coords) +
-        			              ai.attackAbsHeight * ai.targetPos.distance(coords)) /
-								  (ai.targetPos.distance(coords) +
-								   ai.attackPos.distance(coords))) {
-        		los.blocked = true;        
-        	}
+            if (hexEl + bldgEl > (ai.targetAbsHeight * ai.attackPos.distance(coords) +
+                                  ai.attackAbsHeight * ai.targetPos.distance(coords)) /
+                                  (ai.targetPos.distance(coords) +
+                                   ai.attackPos.distance(coords))) {
+                los.blocked = true;        
+            }
         }
         if ((hexEl + bldgEl > ai.attackAbsHeight && hexEl + bldgEl > ai.targetAbsHeight)
         || (hexEl + bldgEl > ai.attackAbsHeight && ai.attackPos.distance(coords) == 1)

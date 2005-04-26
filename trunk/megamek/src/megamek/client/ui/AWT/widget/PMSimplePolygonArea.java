@@ -71,7 +71,7 @@ public class PMSimplePolygonArea implements PMHotArea{
         } else {
             g.setColor(this.normalBorderColor);
         }
-	    g.drawPolygon(this.areaShape);
+        g.drawPolygon(this.areaShape);
         g.setColor(oldColor);           
     }
     
@@ -95,11 +95,11 @@ public class PMSimplePolygonArea implements PMHotArea{
     }
     
     public Cursor getCursor(){
-    	return cursor;
+        return cursor;
     }
     
     public void setCursor(Cursor c){
-    	cursor = c;
+        cursor = c;
     }
     
     public void onMouseClick(MouseEvent e){
@@ -107,7 +107,7 @@ public class PMSimplePolygonArea implements PMHotArea{
     }        
     
     public void onMouseOver(MouseEvent e){
-     	if(highlight) selected = true;
+        if(highlight) selected = true;
     }
     
     public void onMouseExit(MouseEvent e){

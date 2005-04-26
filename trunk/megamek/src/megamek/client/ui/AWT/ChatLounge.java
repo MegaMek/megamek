@@ -244,7 +244,7 @@ public class ChatLounge
         butRemoveBot.setEnabled(false);
         butRemoveBot.setActionCommand("remove_bot"); //$NON-NLS-1$
         butRemoveBot.addActionListener(this);
-		
+        
         labTeam = new Label(Messages.getString("ChatLounge.labTeam"), Label.RIGHT); //$NON-NLS-1$
         labCamo = new Label(Messages.getString("ChatLounge.labCamo"), Label.RIGHT); //$NON-NLS-1$
 
@@ -312,17 +312,17 @@ public class ChatLounge
         gridbag.setConstraints(butCamo, c);
         panPlayerInfo.add(butCamo);
         
-		c.gridwidth = 1;
-		c.weightx = 0.0;
-		c.weighty = 0.0;
-		gridbag.setConstraints(butAddBot, c);
-		panPlayerInfo.add(butAddBot);
+        c.gridwidth = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(butAddBot, c);
+        panPlayerInfo.add(butAddBot);
 
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.weightx = 1.0;
-		c.weighty = 0.0;
-		gridbag.setConstraints(butRemoveBot, c);
-		panPlayerInfo.add(butRemoveBot);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(butRemoveBot, c);
+        panPlayerInfo.add(butRemoveBot);
 
         refreshPlayerInfo();
     }
@@ -981,11 +981,11 @@ public class ChatLounge
             for (Enumeration j = client.getEntities(); j.hasMoreElements();) {
                 Entity entity = (Entity) j.nextElement();
                 if (entity.getOwner().equals(player)) {  
-                	if (useBv) 
-                		playerValue += entity.calculateBattleValue();        
-                	else{
-                		playerValue += entity.getWeight();     
-                	}
+                    if (useBv) 
+                        playerValue += entity.calculateBattleValue();        
+                    else{
+                        playerValue += entity.getWeight();     
+                    }
                }
             }
             if (useBv) {
@@ -1119,9 +1119,9 @@ public class ChatLounge
         }
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
         boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
-		Client c = null;
+        Client c = null;
         if (editable) {
-			c = (Client)clientgui.getBots().get(entity.getOwner().getName());
+            c = (Client)clientgui.getBots().get(entity.getOwner().getName());
         } else {
             editable |= entity.getOwnerId() == client.getLocalPlayer().getId();
             c = client;
@@ -1330,11 +1330,11 @@ public class ChatLounge
             customizeMech();
         } else if (ev.getSource() == butDelete) {
             // delete mech
-			Entity e = client.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+            Entity e = client.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
             Client c = (Client)clientgui.getBots().get(e.getOwner().getName());
-			if (c == null) {
-			    c = client;
-			}
+            if (c == null) {
+                c = client;
+            }
             if (lisEntities.getSelectedIndex() != -1) {
                 c.sendDeleteEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
             }
@@ -1364,10 +1364,10 @@ public class ChatLounge
             clientgui.getStartingPositionDialog().update();
             Client c = getPlayerListSelected(lisStarts);
             if (c == null) {
-				clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
-			clientgui.getStartingPositionDialog().setClient(c);
+            clientgui.getStartingPositionDialog().setClient(c);
             clientgui.getStartingPositionDialog().show();
         } else if (ev.getSource() == butMechReadout) {
             mechReadout();
@@ -1394,20 +1394,20 @@ public class ChatLounge
             } else {
                 name = p.getText();
             }
-			BotClient c = new TestBot(name, client.getHost(), client.getPort());
-			c.addGameListener(new BotGUI(c));
-			try {
-				c.connect();
-			} catch (Exception e) {
-				clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			c.retrieveServerInfo();
-			clientgui.getBots().put(name, c);
+            BotClient c = new TestBot(name, client.getHost(), client.getPort());
+            c.addGameListener(new BotGUI(c));
+            try {
+                c.connect();
+            } catch (Exception e) {
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            c.retrieveServerInfo();
+            clientgui.getBots().put(name, c);
         } else if (ev.getSource() == butRemoveBot) {
             Client c = getPlayerListSelected(lisPlayerInfo);
             if (c == null || c == client) {
-				clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBo")); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBo")); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
             } 
             c.die();
             clientgui.getBots().remove(c.getName());
@@ -1418,12 +1418,12 @@ public class ChatLounge
         if (l.getSelectedIndex() == -1) {
             return client;
         }
-		String name = l.getSelectedItem().substring(0, Math.max(0,l.getSelectedItem().indexOf(" :"))); //$NON-NLS-1$
-	    BotClient c = (BotClient)clientgui.getBots().get(name);
-	    if (c == null && client.getName().equals(name)) {
-	        return client;
-	    }
-	    return c;
+        String name = l.getSelectedItem().substring(0, Math.max(0,l.getSelectedItem().indexOf(" :"))); //$NON-NLS-1$
+        BotClient c = (BotClient)clientgui.getBots().get(name);
+        if (c == null && client.getName().equals(name)) {
+            return client;
+        }
+        return c;
     }
     
     /**

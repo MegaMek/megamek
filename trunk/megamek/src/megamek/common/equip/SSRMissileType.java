@@ -22,47 +22,47 @@ import java.util.Vector;
 public class SSRMissileType extends StreakMissileType {
    
     public SSRMissileType( int tech, int size, Vector valid_ammo ) {    
-	super(size, valid_ammo);
-	this.techType = tech;
+    super(size, valid_ammo);
+    this.techType = tech;
 
-	if (tech == TechConstants.T_IS_LEVEL_2 ) {
-	    switch(size) {
-	    case 2:
-		this.tonnage = 1.5f;
-		this.criticals = 1;
-		this.bv = 30;
-		break;
-	    case 4:
-		this.tonnage = 3.0f;
-		this.criticals = 1;
-		this.bv = 59;
-		break;
-	    case 6:
-		this.tonnage = 4.5f;
-		this.criticals = 2;
-		this.bv = 89;
-		break;
-	    }
-	} else { // CLAN 
+    if (tech == TechConstants.T_IS_LEVEL_2 ) {
+        switch(size) {
+        case 2:
+        this.tonnage = 1.5f;
+        this.criticals = 1;
+        this.bv = 30;
+        break;
+        case 4:
+        this.tonnage = 3.0f;
+        this.criticals = 1;
+        this.bv = 59;
+        break;
+        case 6:
+        this.tonnage = 4.5f;
+        this.criticals = 2;
+        this.bv = 89;
+        break;
+        }
+    } else { // CLAN 
 
-	    switch (size) {
-	    case 2: 
-		this.tonnage = 1.0f;
-		this.criticals = 1;
-		this.bv = 40;
-		break;
-	    case 4:
-		this.tonnage = 2.0f;
-		this.criticals = 1;
-		this.bv = 79;
-		break;
-	    case 6:
-		this.tonnage = 3.0f;
-		this.criticals = 2;
-		this.bv = 119;
-		break;
-	    }
-	}
+        switch (size) {
+        case 2: 
+        this.tonnage = 1.0f;
+        this.criticals = 1;
+        this.bv = 40;
+        break;
+        case 4:
+        this.tonnage = 2.0f;
+        this.criticals = 1;
+        this.bv = 79;
+        break;
+        case 6:
+        this.tonnage = 3.0f;
+        this.criticals = 2;
+        this.bv = 119;
+        break;
+        }
+    }
     }
 
     public WeaponResult setupAttack(Mounted loc, Entity en, Targetable targ) { return null; }

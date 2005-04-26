@@ -22,37 +22,37 @@ public class PPCType extends EnergyType {
     
     public PPCType (int tech, boolean is_ER) {
     
-	if ( tech == TechConstants.T_IS_LEVEL_1 || 
+    if ( tech == TechConstants.T_IS_LEVEL_1 || 
              tech == TechConstants.T_IS_LEVEL_2 ) {
-	    this.damage = 10;
-	    this.tonnage = 7.0f;
-	    this.criticals = 3;
-	    this.flags |= F_DIRECT_FIRE;
-	    this.techType = tech;
-	
-	    if (!is_ER) {
-		this.bv = 176;
-		this.heat = 10;
-		this.range = new RangeType(3, 6, 12, 18);
+        this.damage = 10;
+        this.tonnage = 7.0f;
+        this.criticals = 3;
+        this.flags |= F_DIRECT_FIRE;
+        this.techType = tech;
+    
+        if (!is_ER) {
+        this.bv = 176;
+        this.heat = 10;
+        this.range = new RangeType(3, 6, 12, 18);
 
-	    } else {
-		this.bv = 229;
-		this.heat = 15;
-		this.range = new RangeType(7,14,23);
-	    }
-	} else {
-	    this.bv = 412;
-	    this.tonnage = 6.0f;
-	    this.criticals = 2;
+        } else {
+        this.bv = 229;
+        this.heat = 15;
+        this.range = new RangeType(7,14,23);
+        }
+    } else {
+        this.bv = 412;
+        this.tonnage = 6.0f;
+        this.criticals = 2;
 
-	    this.range = new RangeType(7,14,23);
-	    this.heat = 15;
-	    this.damage = 15;
-	}
+        this.range = new RangeType(7,14,23);
+        this.heat = 15;
+        this.damage = 15;
+    }
     }
 
     public int getFireTN() {
-	return 7;
+    return 7;
     }
 
 

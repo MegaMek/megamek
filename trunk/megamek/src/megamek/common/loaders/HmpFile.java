@@ -277,49 +277,49 @@ public class HmpFile
       for(int x = 0; x < 12; x++)
       {
         laCriticals[x] = readUnsignedInt(dis);
-      }	
+      }     
 
       // left torso criticals
       for(int x = 0; x < 12; x++)
       {
         ltCriticals[x] = readUnsignedInt(dis);
-      }	
+      }     
 
       // left leg criticals
       for(int x = 0; x < 12; x++)
       {
         llCriticals[x] = readUnsignedInt(dis);
-      }	
+      }     
 
       // right arm criticals
       for(int x = 0; x < 12; x++)
       {
         raCriticals[x] = readUnsignedInt(dis);
-      }	
+      }     
 
       // right torso criticals
       for(int x = 0; x < 12; x++)
       {
         rtCriticals[x] = readUnsignedInt(dis);
-      }	
+      }     
 
       // right leg criticals
       for(int x = 0; x < 12; x++)
       {
         rlCriticals[x] = readUnsignedInt(dis);
-      }	
+      }     
 
       // head criticals
       for(int x = 0; x < 12; x++)
       {
         headCriticals[x] = readUnsignedInt(dis);
-      }	
+      }     
 
       // center torso criticals
       for(int x = 0; x < 12; x++)
       {
         ctCriticals[x] = readUnsignedInt(dis);
-      }	
+      }     
 
       dis.close();
     }

@@ -156,13 +156,13 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         menu = new Menu( Messages.getString("CommonMenuBar.FileMenu") ); //$NON-NLS-1$
         this.add( menu );
 
-     	Properties p = System.getProperties();
-     	String javaVersion = p.getProperty( "java.version" ); //$NON-NLS-1$
-     	if ( javaVersion.length() < 3 || javaVersion.charAt(2) == '1' ){
+        Properties p = System.getProperties();
+        String javaVersion = p.getProperty( "java.version" ); //$NON-NLS-1$
+        if ( javaVersion.length() < 3 || javaVersion.charAt(2) == '1' ){
             isJ2RE = false;
-     	} else {
+        } else {
             isJ2RE = true;
-     	}
+        }
         
         // Create the Game sub-menu.
         submenu = new Menu( Messages.getString("CommonMenuBar.GameMenu") ); //$NON-NLS-1$
@@ -372,16 +372,16 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 
         menu.addSeparator();
 
-		fireMode = createMenuItem(menu, Messages.getString("CommonMenuBar.fireMode"), FiringDisplay.FIRE_MODE, KeyEvent.VK_O); //$NON-NLS-1$
+        fireMode = createMenuItem(menu, Messages.getString("CommonMenuBar.fireMode"), FiringDisplay.FIRE_MODE, KeyEvent.VK_O); //$NON-NLS-1$
 
         menu.addSeparator();
 
-		fireFindClub = createMenuItem(menu, Messages.getString("CommonMenuBar.fireFindClub"), FiringDisplay.FIRE_FIND_CLUB); //$NON-NLS-1$
-		fireSpot = createMenuItem(menu, Messages.getString("CommonMenuBar.fireSpot"), FiringDisplay.FIRE_SPOT); //$NON-NLS-1$
+        fireFindClub = createMenuItem(menu, Messages.getString("CommonMenuBar.fireFindClub"), FiringDisplay.FIRE_FIND_CLUB); //$NON-NLS-1$
+        fireSpot = createMenuItem(menu, Messages.getString("CommonMenuBar.fireSpot"), FiringDisplay.FIRE_SPOT); //$NON-NLS-1$
 
         menu.addSeparator();
 
-		fireCancel = createMenuItem(menu, Messages.getString("CommonMenuBar.fireCancel"), FiringDisplay.FIRE_CANCEL, KeyEvent.VK_ESCAPE); //$NON-NLS-1$
+        fireCancel = createMenuItem(menu, Messages.getString("CommonMenuBar.fireCancel"), FiringDisplay.FIRE_CANCEL, KeyEvent.VK_ESCAPE); //$NON-NLS-1$
 
         // *** Create the physical menu.
         menu = new Menu( Messages.getString("CommonMenuBar.PhysicalMenu") ); //$NON-NLS-1$
@@ -415,20 +415,20 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         manageMenu();
     }
 
-	private MenuItem createMenuItem(Menu m, String label, String command, int shortcut) {
-		MenuItem mi = createMenuItem(m, label, command);
-		mi.setShortcut(new MenuShortcut(shortcut));
-		return mi;
-	}
+    private MenuItem createMenuItem(Menu m, String label, String command, int shortcut) {
+        MenuItem mi = createMenuItem(m, label, command);
+        mi.setShortcut(new MenuShortcut(shortcut));
+        return mi;
+    }
 
-	private MenuItem createMenuItem(Menu m, String label, String command) {
+    private MenuItem createMenuItem(Menu m, String label, String command) {
         MenuItem mi = new MenuItem( label );
         mi.addActionListener( this );
         mi.setActionCommand(command);
         mi.setEnabled(false);
         m.add( mi );
         return mi;
-	}
+    }
 
     /**
      * Implement the <code>ActionListener</code> interface.
@@ -541,11 +541,11 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             };
             viewMiniMap.setEnabled( true );
             if ( isJ2RE ){
-            	viewZoomIn.setEnabled( true );
-            	viewZoomOut.setEnabled( true );
+                viewZoomIn.setEnabled( true );
+                viewZoomOut.setEnabled( true );
             } else {
-            	viewZoomIn.setEnabled( false);
-            	viewZoomOut.setEnabled( false );
+                viewZoomIn.setEnabled( false);
+                viewZoomOut.setEnabled( false );
             }
         }
         // If we don't have a board we can't view the mini map.
@@ -592,11 +592,11 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             viewLOSSetting.setEnabled( true );
             viewMiniMap.setEnabled( true );
             if ( isJ2RE == true ){
-	            viewZoomIn.setEnabled( true );
-	            viewZoomOut.setEnabled( true );
+                viewZoomIn.setEnabled( true );
+                viewZoomOut.setEnabled( true );
             } else {
-	            viewZoomIn.setEnabled( false );
-	            viewZoomOut.setEnabled( false );
+                viewZoomIn.setEnabled( false );
+                viewZoomOut.setEnabled( false );
             }
             viewUnitOverview.setEnabled( true );
             viewPlayerList.setEnabled( true );
@@ -694,144 +694,144 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
      *          as constants in the <code>Game</code> class).
      */
     public synchronized void setPhase( int current ) {
-    	this.entity = null;
+        this.entity = null;
         this.phase = current;
         manageMenu();
     }
 
-	// Manages the movement menu items...
-	public synchronized void setMoveWalkEnabled(boolean enabled) {
-    	moveWalk.setEnabled(enabled);
-	}
-	public synchronized void setMoveTurnEnabled(boolean enabled) {
-    	moveTurn.setEnabled(enabled);
-	}
-	public synchronized void setMoveNextEnabled(boolean enabled) {
-    	moveNext.setEnabled(enabled);
-	}
-	public synchronized void setMoveLoadEnabled(boolean enabled) {
-    	moveLoad.setEnabled(enabled);
-	}
-	public synchronized void setMoveUnloadEnabled(boolean enabled) {
-    	moveUnload.setEnabled(enabled);
-	}
-	public synchronized void setMoveJumpEnabled(boolean enabled) {
-    	moveJump.setEnabled(enabled);
-	}
-	public synchronized void setMoveBackUpEnabled(boolean enabled) {
-    	moveBackUp.setEnabled(enabled);
-	}
-	public synchronized void setMoveChargeEnabled(boolean enabled) {
-    	moveCharge.setEnabled(enabled);
-	}
-	public synchronized void setMoveDFAEnabled(boolean enabled) {
-    	moveDFA.setEnabled(enabled);
-	}
-	public synchronized void setMoveGoProneEnabled(boolean enabled) {
-    	moveGoProne.setEnabled(enabled);
-	}
-	public synchronized void setMoveFleeEnabled(boolean enabled) {
-    	moveFlee.setEnabled(enabled);
-	}
-	public synchronized void setMoveEjectEnabled(boolean enabled) {
-    	moveEject.setEnabled(enabled);
-	}
-	public synchronized void setMoveUnjamEnabled(boolean enabled) {
-    	moveUnjam.setEnabled(enabled);
-	}
-	public synchronized void setMoveClearEnabled(boolean enabled) {
-    	moveClear.setEnabled(enabled);
-	}
-	public synchronized void setMoveGetUpEnabled(boolean enabled) {
-    	moveGetUp.setEnabled(enabled);
-	}
+    // Manages the movement menu items...
+    public synchronized void setMoveWalkEnabled(boolean enabled) {
+        moveWalk.setEnabled(enabled);
+    }
+    public synchronized void setMoveTurnEnabled(boolean enabled) {
+        moveTurn.setEnabled(enabled);
+    }
+    public synchronized void setMoveNextEnabled(boolean enabled) {
+        moveNext.setEnabled(enabled);
+    }
+    public synchronized void setMoveLoadEnabled(boolean enabled) {
+        moveLoad.setEnabled(enabled);
+    }
+    public synchronized void setMoveUnloadEnabled(boolean enabled) {
+        moveUnload.setEnabled(enabled);
+    }
+    public synchronized void setMoveJumpEnabled(boolean enabled) {
+        moveJump.setEnabled(enabled);
+    }
+    public synchronized void setMoveBackUpEnabled(boolean enabled) {
+        moveBackUp.setEnabled(enabled);
+    }
+    public synchronized void setMoveChargeEnabled(boolean enabled) {
+        moveCharge.setEnabled(enabled);
+    }
+    public synchronized void setMoveDFAEnabled(boolean enabled) {
+        moveDFA.setEnabled(enabled);
+    }
+    public synchronized void setMoveGoProneEnabled(boolean enabled) {
+        moveGoProne.setEnabled(enabled);
+    }
+    public synchronized void setMoveFleeEnabled(boolean enabled) {
+        moveFlee.setEnabled(enabled);
+    }
+    public synchronized void setMoveEjectEnabled(boolean enabled) {
+        moveEject.setEnabled(enabled);
+    }
+    public synchronized void setMoveUnjamEnabled(boolean enabled) {
+        moveUnjam.setEnabled(enabled);
+    }
+    public synchronized void setMoveClearEnabled(boolean enabled) {
+        moveClear.setEnabled(enabled);
+    }
+    public synchronized void setMoveGetUpEnabled(boolean enabled) {
+        moveGetUp.setEnabled(enabled);
+    }
 
-	// Manages deploy menu items...
-	public synchronized void setDeployNextEnabled(boolean enabled) {
-    	deployNext.setEnabled(enabled);
-	}
-	public synchronized void setDeployTurnEnabled(boolean enabled) {
-    	deployTurn.setEnabled(enabled);
-	}
-	public synchronized void setDeployLoadEnabled(boolean enabled) {
-    	deployLoad.setEnabled(enabled);
-	}
-	public synchronized void setDeployUnloadEnabled(boolean enabled) {
-    	deployUnload.setEnabled(enabled);
-	}
+    // Manages deploy menu items...
+    public synchronized void setDeployNextEnabled(boolean enabled) {
+        deployNext.setEnabled(enabled);
+    }
+    public synchronized void setDeployTurnEnabled(boolean enabled) {
+        deployTurn.setEnabled(enabled);
+    }
+    public synchronized void setDeployLoadEnabled(boolean enabled) {
+        deployLoad.setEnabled(enabled);
+    }
+    public synchronized void setDeployUnloadEnabled(boolean enabled) {
+        deployUnload.setEnabled(enabled);
+    }
 
-	// Manages deploy minefield items...
-	public synchronized void setDeployConventionalEnabled(int nbr) {
+    // Manages deploy minefield items...
+    public synchronized void setDeployConventionalEnabled(int nbr) {
         deployMinesConventional.setLabel(Messages.getString("CommonMenuBar.Minefield", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
         deployMinesConventional.setEnabled(nbr > 0);
-	}
-	public synchronized void setDeployCommandEnabled(int nbr) {
+    }
+    public synchronized void setDeployCommandEnabled(int nbr) {
         deployMinesCommand.setLabel(Messages.getString("CommonMenuBar.Command", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
         // Cannot ever deploy command mines...
         deployMinesCommand.setEnabled(false);
-	}
-	public synchronized void setDeployVibrabombEnabled(int nbr) {
+    }
+    public synchronized void setDeployVibrabombEnabled(int nbr) {
         deployMinesVibrabomb.setLabel(Messages.getString("CommonMenuBar.Vibrabomb", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
         deployMinesVibrabomb.setEnabled(nbr > 0);
-	}
+    }
 
-	//Manages physical menu items...
-	public synchronized void setPhysicalNextEnabled(boolean enabled) {
-    	physicalNext.setEnabled(enabled);
-	}
-	public synchronized void setPhysicalPunchEnabled(boolean enabled) {
-    	physicalPunch.setEnabled(enabled);
-	}
-	public synchronized void setPhysicalKickEnabled(boolean enabled) {
-    	physicalKick.setEnabled(enabled);
-	}
-	public synchronized void setPhysicalPushEnabled(boolean enabled) {
-    	physicalPush.setEnabled(enabled);
-	}
-	public synchronized void setPhysicalClubEnabled(boolean enabled) {
-    	physicalClub.setEnabled(enabled);
-	}
-	public synchronized void setPhysicalBrushOffEnabled(boolean enabled) {
-    	physicalBrushOff.setEnabled(enabled);
-	}
-	public synchronized void setPhysicalDodgeEnabled(boolean enabled) {
-    	physicalDodge.setEnabled(enabled);
-	}
-	public synchronized void setPhysicalThrashEnabled(boolean enabled) {
-    	physicalThrash.setEnabled(enabled);
-	}
-	public synchronized void setPhysicalProtoEnabled(boolean enabled) {
-    	physicalProto.setEnabled(enabled);
-	}
-	//Manages fire menu items...
+    //Manages physical menu items...
+    public synchronized void setPhysicalNextEnabled(boolean enabled) {
+        physicalNext.setEnabled(enabled);
+    }
+    public synchronized void setPhysicalPunchEnabled(boolean enabled) {
+        physicalPunch.setEnabled(enabled);
+    }
+    public synchronized void setPhysicalKickEnabled(boolean enabled) {
+        physicalKick.setEnabled(enabled);
+    }
+    public synchronized void setPhysicalPushEnabled(boolean enabled) {
+        physicalPush.setEnabled(enabled);
+    }
+    public synchronized void setPhysicalClubEnabled(boolean enabled) {
+        physicalClub.setEnabled(enabled);
+    }
+    public synchronized void setPhysicalBrushOffEnabled(boolean enabled) {
+        physicalBrushOff.setEnabled(enabled);
+    }
+    public synchronized void setPhysicalDodgeEnabled(boolean enabled) {
+        physicalDodge.setEnabled(enabled);
+    }
+    public synchronized void setPhysicalThrashEnabled(boolean enabled) {
+        physicalThrash.setEnabled(enabled);
+    }
+    public synchronized void setPhysicalProtoEnabled(boolean enabled) {
+        physicalProto.setEnabled(enabled);
+    }
+    //Manages fire menu items...
 
-	public synchronized void setFireFireEnabled(boolean enabled) {
-    	fireFire.setEnabled(enabled);
-	}
-	public synchronized void setFireSkipEnabled(boolean enabled) {
-    	fireSkip.setEnabled(enabled);
-	}
-	public synchronized void setFireNextTargetEnabled(boolean enabled) {
-    	fireNextTarg.setEnabled(enabled);
-	}
-	public synchronized void setFireNextEnabled(boolean enabled) {
-    	fireNext.setEnabled(enabled);
-	}
-	public synchronized void setFireTwistEnabled(boolean enabled) {
-    	fireTwist.setEnabled(enabled);
-	}
-	public synchronized void setFireFlipArmsEnabled(boolean enabled) {
-    	fireFlipArms.setEnabled(enabled);
-	}
-	public synchronized void setFireModeEnabled(boolean enabled) {
-    	fireMode.setEnabled(enabled);
-	}
-	public synchronized void setFireFindClubEnabled(boolean enabled) {
-    	fireFindClub.setEnabled(enabled);
-	}
-	public synchronized void setFireSpotEnabled(boolean enabled) {
-    	fireSpot.setEnabled(enabled);
-	}
+    public synchronized void setFireFireEnabled(boolean enabled) {
+        fireFire.setEnabled(enabled);
+    }
+    public synchronized void setFireSkipEnabled(boolean enabled) {
+        fireSkip.setEnabled(enabled);
+    }
+    public synchronized void setFireNextTargetEnabled(boolean enabled) {
+        fireNextTarg.setEnabled(enabled);
+    }
+    public synchronized void setFireNextEnabled(boolean enabled) {
+        fireNext.setEnabled(enabled);
+    }
+    public synchronized void setFireTwistEnabled(boolean enabled) {
+        fireTwist.setEnabled(enabled);
+    }
+    public synchronized void setFireFlipArmsEnabled(boolean enabled) {
+        fireFlipArms.setEnabled(enabled);
+    }
+    public synchronized void setFireModeEnabled(boolean enabled) {
+        fireMode.setEnabled(enabled);
+    }
+    public synchronized void setFireFindClubEnabled(boolean enabled) {
+        fireFindClub.setEnabled(enabled);
+    }
+    public synchronized void setFireSpotEnabled(boolean enabled) {
+        fireSpot.setEnabled(enabled);
+    }
 
     //
     // KeyListener

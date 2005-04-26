@@ -7869,7 +7869,7 @@ implements Runnable, ConnectionHandler {
 
         // was this push resolved earlier?
         if (pr.pushBackResolved) {
-        	return;
+            return;
         }
 
         if (lastEntityId != paa.getEntityId()) {
@@ -7899,28 +7899,28 @@ implements Runnable, ConnectionHandler {
             PhysicalResult tpr = (PhysicalResult)i.nextElement();
             if (tpr.aaa.getEntityId() == te.getId() &&
                 tpr.aaa instanceof PushAttackAction &&
-				tpr.aaa.getTargetId() == ae.getId() ) {
-            	targetPushResult = tpr;
+                tpr.aaa.getTargetId() == ae.getId() ) {
+                targetPushResult = tpr;
             }
         }
         // if our target has a push against us, we need to resolve both now
         if (targetPushResult != null) {
-        	// do both hit?
-        	if (targetPushResult.roll >= targetPushResult.toHit.getValue() &&
-        		roll >= toHit.getValue()) {
-        		phaseReport.append("succeeds: but ")
-				           .append(te.getDisplayName())
-						   .append("  pushed back!.\n")
-        		           .append("\nPhysical attacks for " )
-				           .append( te.getDisplayName() ).append( "\n")
-        		           .append("    Pushing " ).append( ae.getDisplayName())
+            // do both hit?
+            if (targetPushResult.roll >= targetPushResult.toHit.getValue() &&
+                roll >= toHit.getValue()) {
+                phaseReport.append("succeeds: but ")
+                           .append(te.getDisplayName())
+                           .append("  pushed back!.\n")
+                           .append("\nPhysical attacks for " )
+                           .append( te.getDisplayName() ).append( "\n")
+                           .append("    Pushing " ).append( ae.getDisplayName())
                            .append("; needs " ).append( toHit.getValue() )
-						   .append( ", ")
-						   .append("rolls " ).append( roll ).append( " : ")
+                           .append( ", ")
+                           .append("rolls " ).append( roll ).append( " : ")
                            .append("succeeds: but ")
                            .append(ae.getDisplayName())
                            .append("  pushed back!.\n");
-        		PilotingRollData targetPushPRD = new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed");
+                PilotingRollData targetPushPRD = new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed");
                 targetPushPRD.setCumulative(false); // see Bug# 811987 for more info
                 PilotingRollData pushPRD = new PilotingRollData(ae.getId(), getKickPushPSRMod(ae, te, 0), "was pushed");
                 pushPRD.setCumulative(false); // see Bug# 811987 for more info
@@ -7928,7 +7928,7 @@ implements Runnable, ConnectionHandler {
                 game.addPSR(targetPushPRD);
                 targetPushResult.pushBackResolved = true;
                 return;
-        	}
+            }
         }
 
         // do we hit?
@@ -7974,7 +7974,7 @@ implements Runnable, ConnectionHandler {
      * Handle a charge attack
      */
     private void resolveChargeAttack(PhysicalResult pr, int lastEntityId) {
-    	final ChargeAttackAction caa = (ChargeAttackAction)pr.aaa;
+        final ChargeAttackAction caa = (ChargeAttackAction)pr.aaa;
         final Entity ae = game.getEntity(caa.getEntityId());
         final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
         // get damage, ToHitData and roll from the PhysicalResult
@@ -8786,7 +8786,7 @@ implements Runnable, ConnectionHandler {
      * Resolves and reports all piloting skill rolls for a single mech.
      */
     void resolvePilotingRolls(Entity entity) {
-    	resolvePilotingRolls(entity, false, null, null);
+        resolvePilotingRolls(entity, false, null, null);
     }
     void resolvePilotingRolls( Entity entity, boolean moving,
                                Coords src, Coords dest ) {
@@ -8903,8 +8903,8 @@ implements Runnable, ConnectionHandler {
             if (moving) {
                 doEntityFallsInto( entity, src, dest, base );
             } else {
-	            doEntityFall(entity, base);
-	     	}
+                doEntityFall(entity, base);
+            }
             return;
         }
         // loop thru rolls we do have to make...
@@ -8927,11 +8927,11 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(", rolls ").append(diceRoll).append(" : ");
             if (diceRoll < target.getValue()) {
                 phaseReport.append(" falls.\n");
-	            if (moving) {
-	                doEntityFallsInto( entity, src, dest, base );
-	            } else {
-	                doEntityFall(entity, base);
-	            }
+                if (moving) {
+                    doEntityFallsInto( entity, src, dest, base );
+                } else {
+                    doEntityFall(entity, base);
+                }
                 return;
             } else {
                 phaseReport.append(" succeeds.\n");
@@ -9081,7 +9081,7 @@ implements Runnable, ConnectionHandler {
     public String damageEntity(Entity te, HitData hit, int damage,
                                boolean ammoExplosion, int bFrag,
                                boolean damageIS) {
-    	return damageEntity(te, hit, damage, ammoExplosion, bFrag,
+        return damageEntity(te, hit, damage, ammoExplosion, bFrag,
                             damageIS, false);
     }
 
@@ -9445,7 +9445,7 @@ implements Runnable, ConnectionHandler {
                           // If the head is destroyed, kill the crew.
                           if (hit.getLocation() == Mech.LOC_HEAD ||
                               (hit.getLocation() == Mech.LOC_CT && ((ammoExplosion && !autoEject) || areaSatArty))) {
-                          	te.getCrew().setDoomed(true);
+                            te.getCrew().setDoomed(true);
                           }
                         }
 
@@ -10004,8 +10004,8 @@ implements Runnable, ConnectionHandler {
                 hits = 3;
                 desc.append( " 3 locations." );
             } else if (en instanceof Protomech) {
-            	hits=3;
-            	desc.append( " 3 locations" );
+                hits=3;
+                desc.append( " 3 locations" );
 
             } else if (en.locationIsLeg(loc)) {
                 desc.append( "<<<LIMB BLOWN OFF>>> " )
@@ -10114,7 +10114,7 @@ implements Runnable, ConnectionHandler {
      * Rolls and resolves critical hits with no die roll modifiers.
      */
     private String criticalEntity(Entity en, int loc) {
-    	return criticalEntity(en, loc, 0);
+        return criticalEntity(en, loc, 0);
     }
 
     /**
@@ -10180,8 +10180,8 @@ implements Runnable, ConnectionHandler {
         }
         desc.append( " <<<" )
             .append( entity.getShortName() )
-			.append( " ")
-			.append( entity.getLocationAbbr(loc) )
+            .append( " ")
+            .append( entity.getLocationAbbr(loc) )
             .append( " BREACHED>>>" );
         if (entity instanceof Tank) {
             desc.append( destroyEntity(entity, "hull breach in vacuum", true, true) );
@@ -10236,7 +10236,7 @@ implements Runnable, ConnectionHandler {
             desc.append( "\n*** " )
                 .append( entity.getDisplayName() );
             if (entity.getLocationStatus(loc) == Entity.LOC_WET)
-            	desc.append( " Pilot Drowned! ***" );
+                desc.append( " Pilot Drowned! ***" );
             else desc.append( " Pilot died to explosive decompression! ***");
         }
 
@@ -10248,9 +10248,9 @@ implements Runnable, ConnectionHandler {
 
         // Did the hull breach destroy the engine?
         if (entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT) +
-        	entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT) +
-			entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT) >= 3) {
-        	desc.append( destroyEntity(entity, "engine destruction") );
+            entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT) +
+            entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT) >= 3) {
+            desc.append( destroyEntity(entity, "engine destruction") );
         }
 
         return desc.toString();
@@ -10519,7 +10519,7 @@ implements Runnable, ConnectionHandler {
         if (en.getCrew().getOptions().booleanOption("iron_man")) pilotDamage = 1;
         desc.append(damageCrew(en, pilotDamage));
         if ( en.crew.isDoomed() || en.crew.isDead() ) {
-        	desc.append( destroyEntity(en, "crew death", true) );
+            desc.append( destroyEntity(en, "crew death", true) );
         } else {
             desc.append("\n");
         }
@@ -11347,8 +11347,8 @@ implements Runnable, ConnectionHandler {
      * update everyone
      */
     private void entityUpdate(int nEntityID) {
-    	entityUpdate(nEntityID, new Vector());
-	}
+        entityUpdate(nEntityID, new Vector());
+    }
 
     private void entityUpdate(int nEntityID, Vector movePath) {
         if (doBlind()) {
@@ -11929,7 +11929,7 @@ implements Runnable, ConnectionHandler {
      * Creates a packet containing a single entity, for update
      */
     private Packet createEntityPacket(int entityId) {
-    	return createEntityPacket(entityId, new Vector());
+        return createEntityPacket(entityId, new Vector());
     }
     private Packet createEntityPacket(int entityId, Vector movePath) {
         final Entity entity = game.getEntity(entityId);
@@ -13859,10 +13859,10 @@ implements Runnable, ConnectionHandler {
         Entity en = null;
         for(Enumeration k = game.getGraveyardEntities(); k.hasMoreElements(); en = (Entity) k.nextElement()) {
             if (en != null) {
-        	    if (!knownDeadEntities.contains(en)) {
+                if (!knownDeadEntities.contains(en)) {
                     knownDeadEntities.add(en);
-        	    }
-            }        	
+                }
+            }           
         }
         */
     }

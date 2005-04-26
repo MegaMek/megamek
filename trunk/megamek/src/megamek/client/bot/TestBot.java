@@ -1176,10 +1176,10 @@ public class TestBot extends BotClient {
         java.util.Vector deployedMinefields = new java.util.Vector();
   
         deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFConventional(), 0);
-		deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFCommand(), 1);
-		deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFVibra(), 2);
+        deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFCommand(), 1);
+        deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFVibra(), 2);
 
-		return deployedMinefields;
+        return deployedMinefields;
     }
 
     protected java.util.Vector deployMinefields(java.util.Vector deployedMinefields, int number, int type) {

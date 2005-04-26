@@ -21,9 +21,9 @@ package megamek.client.util.widget;
 import java.awt.*;
 
 public interface PMLabel extends PMElement{
-	public Dimension getSize();
-	public int getDescent();
-	public void moveTo(int x, int y);
-	public void setColor(Color c);
-	public void setString(String s);	
+    public Dimension getSize();
+    public int getDescent();
+    public void moveTo(int x, int y);
+    public void setColor(Color c);
+    public void setString(String s);    
 }

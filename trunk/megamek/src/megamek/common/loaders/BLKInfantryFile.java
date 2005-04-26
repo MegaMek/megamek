@@ -86,7 +86,7 @@ public class BLKInfantryFile extends BLKFile implements MechLoader {
         if (dataFile.exists("jumpingMP"))
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
 
-	/* Infanty *have* no armor (that's why they're PBI :).
+    /* Infanty *have* no armor (that's why they're PBI :).
         if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find armor block.");
         
         int[] armor = dataFile.getDataAsInt("armor");
@@ -106,7 +106,7 @@ public class BLKInfantryFile extends BLKFile implements MechLoader {
         }
         
         
-	*/        
+    */        
         t.autoSetInternal();
         
         loadEquipment(t, "Platoon", Infantry.LOC_INFANTRY);

@@ -322,11 +322,11 @@ public class Ruler extends Dialog implements BoardListener {
       }
       toHit1 += thd.getDesc();
 
-	    if (flip) {
+        if (flip) {
           thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers(client.game);
-	    } else {
+        } else {
           thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);
-	    }
+        }
       if (thd.getValue() != ToHitData.IMPOSSIBLE) {
           toHit2 = thd.getValue() + " = "; //$NON-NLS-1$
       }

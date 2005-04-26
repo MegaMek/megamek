@@ -57,31 +57,31 @@ public class GeneralInfoMapSet implements DisplayMapSet{
 
     private void setAreas(){
         FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
-		
+        
         mechTypeL0 = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, 10); //$NON-NLS-1$
         mechTypeL0.setColor(Color.yellow);
         content.addArea(mechTypeL0);
-		
-		
+        
+        
         mechTypeL1 = createLabel(STAR3, fm, 0, 25);
         mechTypeL1.setColor(Color.yellow);
         content.addArea(mechTypeL1);
-		
+        
         fm = comp.getFontMetrics(FONT_VALUE);
 
         playerL = createLabel(Messages.getString("GeneralInfoMapSet.playerL"), fm, 0, 40); //$NON-NLS-1$
         content.addArea(playerL);
-		
+        
         playerR = createLabel(Messages.getString("GeneralInfoMapSet.playerR"), fm, playerL.getSize().width + 10, 40); //$NON-NLS-1$
-        content.addArea(playerR);		
-		
+        content.addArea(playerR);       
+        
         teamL = createLabel(Messages.getString("GeneralInfoMapSet.teamL"), fm, 0, 55); //$NON-NLS-1$
         content.addArea(teamL);
-		
+        
         teamR = createLabel(Messages.getString("GeneralInfoMapSet.teamR"), fm, teamL.getSize().width + 10, 55); //$NON-NLS-1$
         content.addArea(teamR);
-		
-				
+        
+                
         statusL = createLabel(Messages.getString("GeneralInfoMapSet.statusL"), fm, 0, 70); //$NON-NLS-1$
         content.addArea(statusL);
 
@@ -90,49 +90,49 @@ public class GeneralInfoMapSet implements DisplayMapSet{
 
         weightL = createLabel(Messages.getString("GeneralInfoMapSet.weightL"), fm, 0, 85); //$NON-NLS-1$
         content.addArea(weightL);
-		
+        
         weightR = createLabel(STAR3, fm, weightL.getSize().width + 10, 85);
         content.addArea(weightR);
-		
-		
+        
+        
         mpL0 = createLabel(Messages.getString("GeneralInfoMapSet.mpL0"), fm, 0, 100); //$NON-NLS-1$
         content.addArea(mpL0);
-		
+        
         mpL1 = createLabel(Messages.getString("GeneralInfoMapSet.mpL1"), fm, 0 , 115); //$NON-NLS-1$
         mpL1.moveTo( mpL0.getSize().width - mpL1.getSize().width, 115);
         content.addArea(mpL1);
-		
+        
         mpL2 = createLabel(Messages.getString("GeneralInfoMapSet.mpL2"), fm, 0 , 130); //$NON-NLS-1$
         mpL2.moveTo( mpL0.getSize().width - mpL2.getSize().width, 130);
         content.addArea(mpL2);
-		
+        
         mpL3 = createLabel(Messages.getString("GeneralInfoMapSet.mpL3"), fm, 0 , 145); //$NON-NLS-1$
         mpL3.moveTo( mpL0.getSize().width - mpL3.getSize().width, 145);
         content.addArea(mpL3);
-		
-		
+        
+        
         mpR0 = createLabel("", fm, mpL0.getSize().width + 10, 100); //$NON-NLS-1$
         content.addArea(mpR0);
-		
+        
         mpR1 = createLabel(STAR3, fm, mpL0.getSize().width + 10, 115);
         content.addArea(mpR1);
-		
+        
         mpR2 = createLabel(STAR3, fm, mpL0.getSize().width + 10, 130);
         content.addArea(mpR2);
-				
+                
         mpR3 = createLabel(STAR3, fm, mpL0.getSize().width + 10, 145);
         content.addArea(mpR3);
-		
+        
         curMoveL = createLabel(Messages.getString("GeneralInfoMapSet.curMoveL"), fm, 0, 160); //$NON-NLS-1$
         content.addArea(curMoveL);
-		
+        
         curMoveR = createLabel(STAR3, fm, curMoveL.getSize().width + 10, 160);
         content.addArea(curMoveR);
-		
-				
+        
+                
         heatL = createLabel(Messages.getString("GeneralInfoMapSet.heatL"), fm, 0, 175); //$NON-NLS-1$
         content.addArea(heatL);
-		
+        
         heatR = createLabel(STAR3, fm, heatL.getSize().width + 10, 175);
         content.addArea(heatR);
 
@@ -163,21 +163,21 @@ public class GeneralInfoMapSet implements DisplayMapSet{
      * updates fields for the unit
      */
     public void setEntity(Entity en) {
-    	
-    	String s = en.getShortName();
-    	mechTypeL1.setVisible(false);
-    	
-    	if(s.length() > MAX_STR_LENGTH){
-    		int i = s.lastIndexOf(" ", MAX_STR_LENGTH); //$NON-NLS-1$
-    		mechTypeL0.setString(s.substring(0,i));
+        
+        String s = en.getShortName();
+        mechTypeL1.setVisible(false);
+        
+        if(s.length() > MAX_STR_LENGTH){
+            int i = s.lastIndexOf(" ", MAX_STR_LENGTH); //$NON-NLS-1$
+            mechTypeL0.setString(s.substring(0,i));
             mechTypeL1.setString(s.substring(i).trim());
             mechTypeL1.setVisible(true);
-    	} else {
-    		mechTypeL0.setString(s);
-    		mechTypeL1.setString(""); //$NON-NLS-1$
-    	}
-    	
-    	
+        } else {
+            mechTypeL0.setString(s);
+            mechTypeL1.setString(""); //$NON-NLS-1$
+        }
+        
+        
         statusR.setString(en.isProne() ? Messages.getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
         playerR.setString(en.getOwner().getName());
         if (en.getOwner().getTeam() == 0) {
@@ -215,9 +215,9 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         };
         
         if (en.mpUsed > 0) {
-        	mpR0.setString("("+ en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$
+            mpR0.setString("("+ en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-        	mpR0.setString(""); //$NON-NLS-1$
+            mpR0.setString(""); //$NON-NLS-1$
         }
         mpR1.setString(Integer.toString(en.getWalkMP()));
         mpR2.setString(en.getRunMPasString());
@@ -236,11 +236,11 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         heatR.setString(Integer.toString(en.heat) + " (" + heatCapacityStr + " "+Messages.getString("GeneralInfoMapSet.capacity")+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         
         if (en instanceof Mech){
-        	heatL.setVisible(true);
-        	heatR.setVisible(true);
+            heatL.setVisible(true);
+            heatR.setVisible(true);
         } else {
-        	heatL.setVisible(false);
-        	heatR.setVisible(false);
+            heatL.setVisible(false);
+            heatR.setVisible(false);
         }
 
         if (en instanceof Tank) {
@@ -253,15 +253,15 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         }
     }
         
-	public PMAreasGroup getContentGroup(){
+    public PMAreasGroup getContentGroup(){
         return content;
     }
     
     public Vector getBackgroundDrawers(){
-    	return bgDrawers;
+        return bgDrawers;
     }
     
-	private void setBackGround(){
+    private void setBackGround(){
         Image tile = comp.getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile,comp);
         int b = BackGroundDrawer.TILING_BOTH;
@@ -328,5 +328,5 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         return l; 
     }   
     
-	
+    
 }

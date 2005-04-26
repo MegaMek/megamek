@@ -54,38 +54,38 @@ public class AimedShotDialog
         checkboxes = new IndexedCheckbox[ choices.length ];
         
         for (int i = 0; i < choices.length; i++) {
-        	boolean even = (i & 1) == 0;
-			checkboxes[i] = new IndexedCheckbox(choices[i], (i == selectedIndex), radioGroup, i);
-			checkboxes[i].addItemListener(il);
-			checkboxes[i].setEnabled(enabled[i] && !locked);
-			c.gridwidth = even ? 1 : GridBagConstraints.REMAINDER;
-			c.anchor = GridBagConstraints.WEST;
-			gridbag.setConstraints(checkboxes[i], c);
-			add(checkboxes[i]);
+            boolean even = (i & 1) == 0;
+            checkboxes[i] = new IndexedCheckbox(choices[i], (i == selectedIndex), radioGroup, i);
+            checkboxes[i].addItemListener(il);
+            checkboxes[i].setEnabled(enabled[i] && !locked);
+            c.gridwidth = even ? 1 : GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(checkboxes[i], c);
+            add(checkboxes[i]);
         }
 
-		butNoAim.addActionListener(al);
-		c.gridwidth = GridBagConstraints.REMAINDER;
+        butNoAim.addActionListener(al);
+        c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(5, 0, 5, 0);
-		c.anchor = GridBagConstraints.CENTER;
-		gridbag.setConstraints(butNoAim, c);
-		add(butNoAim);
+        c.anchor = GridBagConstraints.CENTER;
+        gridbag.setConstraints(butNoAim, c);
+        add(butNoAim);
 
         butNoAim.requestFocus();
 
-		pack();
+        pack();
         setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
                     parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
     };
     
     public void setEnableAll(boolean enableAll) {
-    	for (int i = 0; i < checkboxes.length; i++) {
-    		if (enableAll) {
-    			checkboxes[i].setEnabled(enabled[i]);
-    		} else {
-    			checkboxes[i].setEnabled(false);
-    		}
-    	}
+        for (int i = 0; i < checkboxes.length; i++) {
+            if (enableAll) {
+                checkboxes[i].setEnabled(enabled[i]);
+            } else {
+                checkboxes[i].setEnabled(false);
+            }
+        }
     }
 
 } 

@@ -104,7 +104,7 @@ public class PunchAttackAction
 
         // non-mechs can't punch
         if (!(ae instanceof Mech)) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
         }
 
         // Can't target a transported entity.

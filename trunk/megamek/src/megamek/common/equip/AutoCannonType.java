@@ -24,33 +24,33 @@ public class AutoCannonType extends BallisticType {
     private int size;
 
     public AutoCannonType( int size, Vector valid_ammo ) {    
-	super(valid_ammo);
-	this.tech_level = TechConstants.T_IS_LEVEL_1;
-	this.size = size;
-	this.flags |= F_DIRECT_FIRE;
+    super(valid_ammo);
+    this.tech_level = TechConstants.T_IS_LEVEL_1;
+    this.size = size;
+    this.flags |= F_DIRECT_FIRE;
 
-	switch(size) {
-	case 2:
-	    this.tonnage = 6.0f;
-	    this.criticals = 1;
-	    this.bv = 37;
-	    break;
-	case 5:
-	    this.tonnage = 8.0f;
-	    this.criticals = 4;
-	    this.bv = 70;
-	    break;
-	case 10:
-	    this.tonnage = 12.0f;
-	    this.criticals = 7;
-	    this.bv = 124;
-	    break;
-	case 20:
-	    this.tonnage = 14.0f;
-	    this.criticals = 10;
-	    this.bv = 178;
-	    break;
-	}
+    switch(size) {
+    case 2:
+        this.tonnage = 6.0f;
+        this.criticals = 1;
+        this.bv = 37;
+        break;
+    case 5:
+        this.tonnage = 8.0f;
+        this.criticals = 4;
+        this.bv = 70;
+        break;
+    case 10:
+        this.tonnage = 12.0f;
+        this.criticals = 7;
+        this.bv = 124;
+        break;
+    case 20:
+        this.tonnage = 14.0f;
+        this.criticals = 10;
+        this.bv = 178;
+        break;
+    }
 
     }
     

@@ -23,20 +23,20 @@ import java.awt.event.*;
  */
 
  public abstract class PMGenericHotArea implements PMHotArea{
- 	
- 	private ActionListener actionListener = null;
- 	private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+    
+    private ActionListener actionListener = null;
+    private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
     
     
     public Cursor getCursor(){
-    	return cursor;
+        return cursor;
     }
     
     public void setCursor(Cursor c){
-    	cursor = c;
+        cursor = c;
     }
     
- 	public synchronized void addActionListener(ActionListener l) {
+    public synchronized void addActionListener(ActionListener l) {
         actionListener = AWTEventMulticaster.add(actionListener, l);
     }
     
@@ -49,45 +49,45 @@ import java.awt.event.*;
        String command = ""; //$NON-NLS-1$
        
        if( 0 != (modifiers & InputEvent.BUTTON1_MASK)) {
-	   	   command = PMHotArea.MOUSE_CLICK_LEFT;
-	   } else if ( 0 != (modifiers & InputEvent.BUTTON2_MASK)){
-	   	   command = PMHotArea.MOUSE_CLICK_RIGHT;
-	   }
-	   
-	   if( e.getClickCount() > 1) command = PMHotArea.MOUSE_DOUBLE_CLICK;
-	   
-	   ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
-	   dispatchEvent(ae);
+               command = PMHotArea.MOUSE_CLICK_LEFT;
+       } else if ( 0 != (modifiers & InputEvent.BUTTON2_MASK)){
+               command = PMHotArea.MOUSE_CLICK_RIGHT;
+       }
+       
+       if( e.getClickCount() > 1) command = PMHotArea.MOUSE_DOUBLE_CLICK;
+       
+       ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
+       dispatchEvent(ae);
     }        
     
     public void onMouseOver(MouseEvent e){
-     	int modifiers = e.getModifiers();
+        int modifiers = e.getModifiers();
         String command = PMHotArea.MOUSE_OVER;
         ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
-	    dispatchEvent(ae);
-     	
+        dispatchEvent(ae);
+        
     }
     
     public void onMouseExit(MouseEvent e){
         int modifiers = e.getModifiers();
         String command = PMHotArea.MOUSE_EXIT;
         ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
-	    dispatchEvent(ae);
+        dispatchEvent(ae);
     }
     
     public void onMouseDown(MouseEvent e){
-    	int modifiers = e.getModifiers();
+        int modifiers = e.getModifiers();
         String command = PMHotArea.MOUSE_DOWN;
         ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
-	    dispatchEvent(ae);
+        dispatchEvent(ae);
     }
     
     public void onMouseUp(MouseEvent e){
-    	int modifiers = e.getModifiers();
+        int modifiers = e.getModifiers();
         String command = PMHotArea.MOUSE_UP;
         ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
-	    dispatchEvent(ae);
-	}
+        dispatchEvent(ae);
+    }
     
     private void dispatchEvent(ActionEvent ae){
         if (actionListener != null) {

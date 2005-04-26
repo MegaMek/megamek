@@ -423,22 +423,22 @@ public class Compute
         return spotter;
     }
 
-	public static ToHitData getImmobileMod(Targetable target) {
-		return getImmobileMod(target, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
-	}
+    public static ToHitData getImmobileMod(Targetable target) {
+        return getImmobileMod(target, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+    }
 
-	public static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
-		if (target.isImmobile()) {
-			if ((aimingAt == Mech.LOC_HEAD) &&
-				(aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
-				return new ToHitData(3, "aiming at head");
-			} else {
-				return new ToHitData(-4, "target immobile");
-			}
-		} else {
-			return null;
-		}
-	}
+    public static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
+        if (target.isImmobile()) {
+            if ((aimingAt == Mech.LOC_HEAD) &&
+                (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+                return new ToHitData(3, "aiming at head");
+            } else {
+                return new ToHitData(-4, "target immobile");
+            }
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Determines the to-hit modifier due to range for an attack with the
@@ -928,7 +928,7 @@ public class Compute
      */
     
     public static int getAffaDamageFor(Entity entity) {
-    	return (int)entity.getWeight() / 10;
+        return (int)entity.getWeight() / 10;
     }
 
     /**
@@ -1029,38 +1029,38 @@ public class Compute
      * Target movement modifer for the specified delta_distance
      */
     public static ToHitData getTargetMovementModifier(int distance, boolean jumped) {
-    	return getTargetMovementModifier(distance, jumped, false);
+        return getTargetMovementModifier(distance, jumped, false);
     }
 
     public static ToHitData getTargetMovementModifier(int distance, boolean jumped, boolean maxtech) {
         ToHitData toHit = new ToHitData();
 
-		if (!maxtech) {
-			if (distance >= 3 && distance <= 4) {
-	            toHit.addModifier(1, "target moved 3-4 hexes");
-	        } else if (distance >= 5 && distance <= 6) {
-	            toHit.addModifier(2, "target moved 5-6 hexes");
-	        } else if (distance >= 7 && distance <= 9) {
-	            toHit.addModifier(3, "target moved 7-9 hexes");
-	        } else if (distance >= 10) {
-	            toHit.addModifier(4, "target moved 10+ hexes");
-	        }
-	    } else {
-			if (distance >= 3 && distance <= 4) {
-			   toHit.addModifier(1, "target moved 3-4 hexes");
-			} else if (distance >= 5 && distance <= 6) {
-			   toHit.addModifier(2, "target moved 5-6 hexes");
-			} else if (distance >= 7 && distance <= 9) {
-			   toHit.addModifier(3, "target moved 7-9 hexes");
-			} else if (distance >= 10 && distance <= 13) {
-			   toHit.addModifier(4, "target moved 10-13 hexes");
-			} else if (distance >= 14 && distance <=18) {
-			   toHit.addModifier(5, "target moved 14-18 hexes");
-			} else if (distance >= 19 && distance <=24) {
-			   toHit.addModifier(6, "target moved 19-24 hexes");
-			} else if (distance >= 25) {
-			   toHit.addModifier(7, "target moved 25+ hexes");
-			}
+        if (!maxtech) {
+            if (distance >= 3 && distance <= 4) {
+                toHit.addModifier(1, "target moved 3-4 hexes");
+            } else if (distance >= 5 && distance <= 6) {
+                toHit.addModifier(2, "target moved 5-6 hexes");
+            } else if (distance >= 7 && distance <= 9) {
+                toHit.addModifier(3, "target moved 7-9 hexes");
+            } else if (distance >= 10) {
+                toHit.addModifier(4, "target moved 10+ hexes");
+            }
+        } else {
+            if (distance >= 3 && distance <= 4) {
+               toHit.addModifier(1, "target moved 3-4 hexes");
+            } else if (distance >= 5 && distance <= 6) {
+               toHit.addModifier(2, "target moved 5-6 hexes");
+            } else if (distance >= 7 && distance <= 9) {
+               toHit.addModifier(3, "target moved 7-9 hexes");
+            } else if (distance >= 10 && distance <= 13) {
+               toHit.addModifier(4, "target moved 10-13 hexes");
+            } else if (distance >= 14 && distance <=18) {
+               toHit.addModifier(5, "target moved 14-18 hexes");
+            } else if (distance >= 19 && distance <=24) {
+               toHit.addModifier(6, "target moved 19-24 hexes");
+            } else if (distance >= 25) {
+               toHit.addModifier(7, "target moved 25+ hexes");
+            }
         }
 
         if (jumped) {
@@ -1883,40 +1883,40 @@ public class Compute
 
     static boolean isInBuilding(Game game, int entityElev, Coords coords ) {
 
-		// Get the Hex at those coordinates.
-		final Hex curHex = game.board.getHex( coords );
+        // Get the Hex at those coordinates.
+        final Hex curHex = game.board.getHex( coords );
 
-		// The entity can't be inside of a building that isn't there.
-		if ( !curHex.contains( Terrain.BLDG_ELEV ) ) {
-			return false;
-		}
+        // The entity can't be inside of a building that isn't there.
+        if ( !curHex.contains( Terrain.BLDG_ELEV ) ) {
+            return false;
+        }
 
-		// Get the elevations occupied by the building.
-		int surface = curHex.surface();
-		int bldgHeight = curHex.levelOf( Terrain.BLDG_ELEV );
-		int basement = 0;
-		if ( curHex.contains( Terrain.BLDG_BASEMENT ) ) {
-			basement = curHex.levelOf( Terrain.BLDG_BASEMENT );
-		}
+        // Get the elevations occupied by the building.
+        int surface = curHex.surface();
+        int bldgHeight = curHex.levelOf( Terrain.BLDG_ELEV );
+        int basement = 0;
+        if ( curHex.contains( Terrain.BLDG_BASEMENT ) ) {
+            basement = curHex.levelOf( Terrain.BLDG_BASEMENT );
+        }
 
-		// Return true if the entity is in the range of building elevations.
-		if ( entityElev >= (surface - basement) &&
-			 entityElev < (surface + bldgHeight) ) {
-			return true;
-		}
+        // Return true if the entity is in the range of building elevations.
+        if ( entityElev >= (surface - basement) &&
+             entityElev < (surface + bldgHeight) ) {
+            return true;
+        }
 
-		// Entity is not *inside* of the building.
-		return false;
-	}
+        // Entity is not *inside* of the building.
+        return false;
+    }
 
     public static Coords scatter(Coords coords) {
-    	int scatterDirection = d6(1) - 1;
-    	int scatterDistance = d6(1);
+        int scatterDirection = d6(1) - 1;
+        int scatterDistance = d6(1);
 
-    	for (int i = 0; i < scatterDistance; i++) {
-    		coords = coords.translated(scatterDirection);
-    	}
-    	return coords;
+        for (int i = 0; i < scatterDistance; i++) {
+            coords = coords.translated(scatterDirection);
+        }
+        return coords;
     }
     
 } // End public class Compute

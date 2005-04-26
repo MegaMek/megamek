@@ -515,11 +515,11 @@ public class MovePath implements Cloneable, Serializable {
             MovePath candidatePath = (MovePath) candidates.remove(0);
             Coords startingPos = candidatePath.getFinalCoords();
             
-			if (candidatePath.getFinalCoords().distance(dest) == 1) {
-			    bestPath = candidatePath;
-				keepLooping = false;
-				break;
-			}
+            if (candidatePath.getFinalCoords().distance(dest) == 1) {
+                bestPath = candidatePath;
+                keepLooping = false;
+                break;
+            }
 
             Iterator adjacent = candidatePath.getNextMoves(step == STEP_BACKWARDS, step == STEP_FORWARDS).iterator();
             while (adjacent.hasNext()) {
@@ -543,7 +543,7 @@ public class MovePath implements Cloneable, Serializable {
             }
             loopcount++;
             if (loopcount % 256 == 0 && keepLooping && candidates.size() > 0) {
-				MovePath front = (MovePath)candidates.get(0);
+                MovePath front = (MovePath)candidates.get(0);
                 if (front.getFinalCoords().distance(dest) < bestPath.getFinalCoords().distance(dest)) {
                     bestPath = front;
                     keepLooping = System.currentTimeMillis() < endTime;
@@ -562,37 +562,37 @@ public class MovePath implements Cloneable, Serializable {
         }
     }
     
-	/**
-	 * Find the shortest path to the destination <code>Coords</code> by
-	 * hex count.  This right choice <em>only</em> when making a simple
-	 * move like a straight line or one with a single turn.
-	 *
-	 * @param   dest the destination <code>Coords</code> of the move.
-	 * @param   type the type of movment step required.
-	 */
-	private void lazyPathfinder(Coords dest, int type) {
-		int step = STEP_FORWARDS;
-		if (type == STEP_BACKWARDS) {
-			step = STEP_BACKWARDS;
-		}
-		Coords subDest = dest;
-		if (!dest.equals(getFinalCoords())) {
-			subDest = dest.translated(dest.direction(getFinalCoords()));
-		}
+    /**
+     * Find the shortest path to the destination <code>Coords</code> by
+     * hex count.  This right choice <em>only</em> when making a simple
+     * move like a straight line or one with a single turn.
+     *
+     * @param   dest the destination <code>Coords</code> of the move.
+     * @param   type the type of movment step required.
+     */
+    private void lazyPathfinder(Coords dest, int type) {
+        int step = STEP_FORWARDS;
+        if (type == STEP_BACKWARDS) {
+            step = STEP_BACKWARDS;
+        }
+        Coords subDest = dest;
+        if (!dest.equals(getFinalCoords())) {
+            subDest = dest.translated(dest.direction(getFinalCoords()));
+        }
 
-		while (!getFinalCoords().equals(subDest)) {
-			// adjust facing
-			rotatePathfinder((getFinalCoords().direction(subDest)
-							  + (step == STEP_BACKWARDS ? 3 : 0)) % 6);
-			// step forwards
-			addStep(step);
-		}
-		rotatePathfinder((getFinalCoords().direction(dest)
-						  + (step == STEP_BACKWARDS ? 3 : 0)) % 6);
-		if (!dest.equals(getFinalCoords())) {
-			addStep(type);
-		}
-	}
+        while (!getFinalCoords().equals(subDest)) {
+            // adjust facing
+            rotatePathfinder((getFinalCoords().direction(subDest)
+                              + (step == STEP_BACKWARDS ? 3 : 0)) % 6);
+            // step forwards
+            addStep(step);
+        }
+        rotatePathfinder((getFinalCoords().direction(dest)
+                          + (step == STEP_BACKWARDS ? 3 : 0)) % 6);
+        if (!dest.equals(getFinalCoords())) {
+            addStep(type);
+        }
+    }
 
     /**
      * Returns a list of possible moves that result in a

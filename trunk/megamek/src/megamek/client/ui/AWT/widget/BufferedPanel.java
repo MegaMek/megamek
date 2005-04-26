@@ -32,13 +32,13 @@ public class BufferedPanel extends Panel implements ComponentListener {
      private Dimension preferredSize = new Dimension();
 
      public BufferedPanel(){
-	  super();
-	  addComponentListener(this);
+      super();
+      addComponentListener(this);
      }
      
      public BufferedPanel(LayoutManager layout){
-	  super(layout);
-	  addComponentListener(this);
+      super(layout);
+      addComponentListener(this);
      }
      
      /**

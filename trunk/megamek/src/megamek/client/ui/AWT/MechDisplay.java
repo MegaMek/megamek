@@ -39,7 +39,7 @@ public class MechDisplay extends BufferedPanel {
     public SystemPanel          sPan;
     public ExtraPanel           ePan;
     private ClientGUI           clientgui;
-    private Client				client;
+    private Client              client;
 
     private Entity              currentlyDisplaying = null;
 
@@ -117,8 +117,8 @@ public class MechDisplay extends BufferedPanel {
 
 
     /**
-	 * Changes to the specified panel.
-	 */
+     * Changes to the specified panel.
+     */
     public void showPanel(String s) {
         ((CardLayout) displayP.getLayout()).show(displayP, s);
         if (s == "movement") { //$NON-NLS-1$
@@ -1238,11 +1238,11 @@ class SystemPanel
 
 
                 // send the event to the server
-				clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
+                clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
 
                 // notify the player
                 if (m.getType().hasInstantModeSwitch()) {                    
-					clientgui.systemMessage(Messages.getString("MechDisplay.switched", new Object[]{m.getName(),m.curMode()}));//$NON-NLS-1$
+                    clientgui.systemMessage(Messages.getString("MechDisplay.switched", new Object[]{m.getName(),m.curMode()}));//$NON-NLS-1$
                 }
                 else {
                     if (Game.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase() ) {                        
@@ -1285,7 +1285,7 @@ class SystemPanel
 
             if (bConfirmed) {
                 m.setPendingDump(bDumping);
-				clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
+                clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
             }
         }
     }

@@ -19,50 +19,50 @@ import megamek.common.*;
 public class MachineGunAmmoType extends AmmoType {
     
     public MachineGunAmmoType(int tech, boolean half_ton) {
-	// Assume normal size
-	this(tech, MachineGunType.NORMAL, half_ton);
+    // Assume normal size
+    this(tech, MachineGunType.NORMAL, half_ton);
     }
 
     public MachineGunAmmoType(int tech, int size, boolean half_ton) {
-	this.techType = tech;
-	this.bv = 1;
+    this.techType = tech;
+    this.bv = 1;
 
-	if (tech == TechConstants.T_IS_LEVEL_1) {
-	    // Normal only
-	    this.damagePerShot = 2;
-	    this.range = new RangeType(1,2,3);
-	    this.shots = 200;
-	} else {
-	    switch(size) {
-	    case MachineGunType.LIGHT:
-		this.damagePerShot = 1;
-		this.range = new RangeType(2,4,6);
-		this.shots = 200;
-		break;
-	    case MachineGunType.NORMAL:
-		this.damagePerShot = 2;
-		this.range = new RangeType(1,2,3);
-		this.shots = 200;
-		break;
-	    case MachineGunType.HEAVY:
-		this.damagePerShot = 3;
-		// No long range
-		this.range = new RangeType(1,2,2);
-		this.shots = 100;
-	    }    
-	}
-	// Handle half-ton lots
-	if (half_ton) {
-	    this.shots /= 2;
-	}
+    if (tech == TechConstants.T_IS_LEVEL_1) {
+        // Normal only
+        this.damagePerShot = 2;
+        this.range = new RangeType(1,2,3);
+        this.shots = 200;
+    } else {
+        switch(size) {
+        case MachineGunType.LIGHT:
+        this.damagePerShot = 1;
+        this.range = new RangeType(2,4,6);
+        this.shots = 200;
+        break;
+        case MachineGunType.NORMAL:
+        this.damagePerShot = 2;
+        this.range = new RangeType(1,2,3);
+        this.shots = 200;
+        break;
+        case MachineGunType.HEAVY:
+        this.damagePerShot = 3;
+        // No long range
+        this.range = new RangeType(1,2,2);
+        this.shots = 100;
+        }    
+    }
+    // Handle half-ton lots
+    if (half_ton) {
+        this.shots /= 2;
+    }
     }
 
 
     public void resolveAttack(Game game, 
-			      WeaponResult wr, 
-			      UsesAmmoType weap, 
-			      UsesAmmoState weap_state) {
-//	#######################
+                  WeaponResult wr, 
+                  UsesAmmoType weap, 
+                  UsesAmmoState weap_state) {
+//  #######################
     }
     
 }

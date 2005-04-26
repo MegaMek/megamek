@@ -41,12 +41,12 @@ public class PMSimpleLabel  implements PMLabel{
       * Create the label with the specified string, font and color
       */
      public PMSimpleLabel(String s, FontMetrics fm, Color c){
-	    string = s;
-	    this.fm = fm;
-	    width = fm.stringWidth(string);
-	    height = fm.getHeight();
-	    descent = fm.getMaxDescent();
-	    color = c;
+        string = s;
+        this.fm = fm;
+        width = fm.stringWidth(string);
+        height = fm.getHeight();
+        descent = fm.getMaxDescent();
+        color = c;
      }
      
     public void setString(String s){
@@ -98,11 +98,11 @@ public class PMSimpleLabel  implements PMLabel{
      }
      
      public void setVisible(boolean v){
-     	 visible = v;
+         visible = v;
      }
      
      public Rectangle getBounds(){
-     	 return new Rectangle(x, y - height +  descent, width, height);
+         return new Rectangle(x, y - height +  descent, width, height);
      }
 
      /*

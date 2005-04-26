@@ -30,53 +30,53 @@ public class GaussRifleType extends BallisticType {
 
     // Assume normal size
     public GaussRifleType (int tech, Vector valid_ammo) {
-	this(tech, NORMAL, valid_ammo);
+    this(tech, NORMAL, valid_ammo);
     }
 
     public GaussRifleType( int tech, int type, Vector valid_ammo ) {    
-	super(valid_ammo);
-	this.flags = F_DIRECT_FIRE;
-	this.techType = tech;
+    super(valid_ammo);
+    this.flags = F_DIRECT_FIRE;
+    this.techType = tech;
 
-	if (tech == TechConstants.T_IS_LEVEL_2 ) {
-	    switch(type) {
-	    case LIGHT:
-		this.tonnage = 12.0f;
-		this.criticals = 5;
-		this.bv = 159;
-		explosive_damage =16;
-		break;
-	    case NORMAL:
-		this.tonnage = 15.0f;
-		this.criticals = 7;
-		this.bv = 321;
-		explosive_damage = 20;
-		break;
-	    case HEAVY:
-		this.tonnage = 18.0f;
-		this.criticals = 11;
-		this.bv = 346;
-		explosive_damage = 25;
-	    }
-	} else { // Clan ... only normal
-	    this.tonnage = 12.0f;
-	    this.criticals = 6;
-	    this.bv = 321;
-	    explosive_damage = 20;
-	}
+    if (tech == TechConstants.T_IS_LEVEL_2 ) {
+        switch(type) {
+        case LIGHT:
+        this.tonnage = 12.0f;
+        this.criticals = 5;
+        this.bv = 159;
+        explosive_damage =16;
+        break;
+        case NORMAL:
+        this.tonnage = 15.0f;
+        this.criticals = 7;
+        this.bv = 321;
+        explosive_damage = 20;
+        break;
+        case HEAVY:
+        this.tonnage = 18.0f;
+        this.criticals = 11;
+        this.bv = 346;
+        explosive_damage = 25;
+        }
+    } else { // Clan ... only normal
+        this.tonnage = 12.0f;
+        this.criticals = 6;
+        this.bv = 321;
+        explosive_damage = 20;
+    }
     }
 
     public WeaponResult setupAttack(Mounted loc, Entity en, Targetable targ) { return null; }
     public void resolveAttack( WeaponResult wr) {}
     
     public boolean isExplosive() {
-	return true;
+    return true;
     }
 
     public void doCriticalDamage(EquipmentState state) {
 /* TODO: implement me
-	super(state);
-	// Explode
+    super(state);
+    // Explode
 */
     }
 

@@ -63,9 +63,9 @@ public class PMPicArea implements PMHotArea{
     public void drawInto(Graphics g){
         if ((g == null) || (! visible)) return;
         if(selected){
-        	g.drawImage(activeImage, x, y, null);
+            g.drawImage(activeImage, x, y, null);
         } else {
-        	g.drawImage(idleImage, x, y, null);
+            g.drawImage(idleImage, x, y, null);
         }
           
     }
@@ -90,11 +90,11 @@ public class PMPicArea implements PMHotArea{
     }
     
     public Cursor getCursor(){
-    	return cursor;
+        return cursor;
     }
     
     public void setCursor(Cursor c){
-    	cursor = c;
+        cursor = c;
     }
     
     public void onMouseClick(MouseEvent e){
@@ -102,7 +102,7 @@ public class PMPicArea implements PMHotArea{
     }        
     
     public void onMouseOver(MouseEvent e){
-     	if(highlight) selected = true;
+        if(highlight) selected = true;
     }
     
     public void onMouseExit(MouseEvent e){

@@ -42,11 +42,11 @@ public abstract class TurnOrdered implements Serializable
     }
 
     public int getOtherTurns() {  
-	return turns_other;     
+    return turns_other;     
     }                          
 
     public int getEvenTurns() {   
-	return turns_even;       
+    return turns_even;       
     }
 
     public int getMultiTurns(Game game) {
@@ -92,12 +92,12 @@ public abstract class TurnOrdered implements Serializable
     public static void rollInitiative(Vector v)
     {
         // Clear all rolls
-	for (Enumeration i = v.elements(); i.hasMoreElements();) {
-	    final TurnOrdered item = (TurnOrdered)i.nextElement();
-	    item.clearInitiative();
-	}
+    for (Enumeration i = v.elements(); i.hasMoreElements();) {
+        final TurnOrdered item = (TurnOrdered)i.nextElement();
+        item.clearInitiative();
+    }
 
-	rollInitAndResolveTies(v, null);
+    rollInitAndResolveTies(v, null);
 
         //This is the *auto-reroll* code for the Tactical Genius (lvl 3)
         // pilot ability.  It is NOT CURRENTLY IMPLEMENTED.  This code may
@@ -177,17 +177,17 @@ public abstract class TurnOrdered implements Serializable
      */
     public static TurnVectors generateTurnOrder( Vector v, Game game )
     {
-	int[] num_even_turns = new int[v.size()];
-	int[] num_normal_turns = new int[v.size()];
+    int[] num_even_turns = new int[v.size()];
+    int[] num_normal_turns = new int[v.size()];
        
-	int total_even_turns = 0;
-	int total_normal_turns = 0;
-	int index;
+    int total_even_turns = 0;
+    int total_normal_turns = 0;
+    int index;
         TurnOrdered[] order = new TurnOrdered[v.size()];
         int orderedItems = 0;
 
         com.sun.java.util.collections.ArrayList plist = 
-	    new com.sun.java.util.collections.ArrayList(v.size());
+        new com.sun.java.util.collections.ArrayList(v.size());
 
         for (Enumeration i = v.elements(); i.hasMoreElements();) {
             Object item = i.nextElement();
@@ -205,86 +205,86 @@ public abstract class TurnOrdered implements Serializable
               i.hasNext(); orderedItems++ ) {
             final TurnOrdered item = (TurnOrdered)i.next();
             order[orderedItems] = item;
-	    
+        
             // Track even turns separately from the normal turns.
             num_normal_turns[orderedItems] = item.getNormalTurns(game);
             num_even_turns[orderedItems] = item.getEvenTurns();
 
             // Keep a running total.
-	    total_even_turns += num_even_turns[orderedItems];
-	    total_normal_turns += num_normal_turns[orderedItems];
-        }	
+        total_even_turns += num_even_turns[orderedItems];
+        total_normal_turns += num_normal_turns[orderedItems];
+        }   
 
-	int min;
-	int turns_left;
+    int min;
+    int turns_left;
 
-	// We will do the 'normal' turns first, and then the 'even' turns.
-	min = Integer.MAX_VALUE;
-	for(index = 0; index < orderedItems ; index++) {
-	    if ( num_normal_turns[index] != 0 && num_normal_turns[index] < min)
-		min = num_normal_turns[index];
-	}
+    // We will do the 'normal' turns first, and then the 'even' turns.
+    min = Integer.MAX_VALUE;
+    for(index = 0; index < orderedItems ; index++) {
+        if ( num_normal_turns[index] != 0 && num_normal_turns[index] < min)
+        min = num_normal_turns[index];
+    }
 
-	TurnVectors turns =
+    TurnVectors turns =
             new TurnVectors(total_normal_turns, total_even_turns, min);
 
         // Allocate the normal turns.
-	turns_left = total_normal_turns;
-	while (turns_left > 0) {
-	    for (index = 0; index < orderedItems; index++) {
-		// If you have no turns here, skip
-		if (num_normal_turns[index] == 0)
-		    continue;
+    turns_left = total_normal_turns;
+    while (turns_left > 0) {
+        for (index = 0; index < orderedItems; index++) {
+        // If you have no turns here, skip
+        if (num_normal_turns[index] == 0)
+            continue;
 
-		// If you have less than twice the lowest,
+        // If you have less than twice the lowest,
                 // move 1.  Otherwise, move more.
-		int ntm = num_normal_turns[index] / min;
-		for (int j = 0; j < ntm; j++) {
-		    turns.addNormal(order[index]);
-		    num_normal_turns[index]--;
-		    turns_left--;
-		}
+        int ntm = num_normal_turns[index] / min;
+        for (int j = 0; j < ntm; j++) {
+            turns.addNormal(order[index]);
+            num_normal_turns[index]--;
+            turns_left--;
+        }
 
-	    }
-	    // Since the smallest unit count had to place 1, reduce min)
-	    min--;
+        }
+        // Since the smallest unit count had to place 1, reduce min)
+        min--;
 
-	} // Handle the next 'normal' turn.
+    } // Handle the next 'normal' turn.
 
-	// Now, we allocate the 'even' turns, if there are any.
-	if ( total_even_turns > 0 ) {
-	    
-	    min = Integer.MAX_VALUE;
-	    for (index = 0; index < orderedItems ; index++) {
-		if ( num_even_turns[index] != 0 && num_even_turns[index] < min)
-		    min = num_even_turns[index];
-	    }
-	    
-	    turns_left = total_even_turns;
-	    while (turns_left > 0) {
-		for (index = 0; index < orderedItems; index++) {
-		    // If you have no turns here, skip
-		    if (num_even_turns[index] == 0)
-			continue;
-		    
+    // Now, we allocate the 'even' turns, if there are any.
+    if ( total_even_turns > 0 ) {
+        
+        min = Integer.MAX_VALUE;
+        for (index = 0; index < orderedItems ; index++) {
+        if ( num_even_turns[index] != 0 && num_even_turns[index] < min)
+            min = num_even_turns[index];
+        }
+        
+        turns_left = total_even_turns;
+        while (turns_left > 0) {
+        for (index = 0; index < orderedItems; index++) {
+            // If you have no turns here, skip
+            if (num_even_turns[index] == 0)
+            continue;
+            
                     // If you have less than twice the lowest,
                     // move 1.  Otherwise, move more.
-		    int ntm = num_even_turns[index] / min;
+            int ntm = num_even_turns[index] / min;
                     for (int j = 0; j < ntm; j++) {
                         turns.addEven(order[index]);
                         num_even_turns[index]--;
                         turns_left--;
                     }
-		    
+            
                 }
                 // Since the smallest unit count had to place 1, reduce min)
                 min--;
 
             }  // Handle the next 'even' turn
 
-	} // End have-'even'-turns
+    } // End have-'even'-turns
 
-	return turns;
+    return turns;
 
     }
 

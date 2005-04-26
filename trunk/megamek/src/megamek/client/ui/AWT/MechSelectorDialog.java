@@ -66,10 +66,10 @@ public class MechSelectorDialog
     private Panel m_pLeft = new Panel();
 
     private Panel m_pUpper = new Panel();
-	BufferedPanel m_pPreview = new BufferedPanel();
-	
-	private Label m_labelPlayer = new Label(Messages.getString("MechSelectorDialog.m_labelPlayer"), Label.RIGHT); //$NON-NLS-1$
-	private Choice m_chPlayer = new Choice();
+    BufferedPanel m_pPreview = new BufferedPanel();
+    
+    private Label m_labelPlayer = new Label(Messages.getString("MechSelectorDialog.m_labelPlayer"), Label.RIGHT); //$NON-NLS-1$
+    private Choice m_chPlayer = new Choice();
 
     public MechSelectorDialog(ClientGUI cl, UnitLoadingDialog uld)
     {
@@ -81,8 +81,8 @@ public class MechSelectorDialog
         for (int x = 0; x < m_saSorts.length; x++) {
             m_chSort.addItem(m_saSorts[x]);
         }
-		updatePlayerChoice();
-		
+        updatePlayerChoice();
+        
         m_pParams.setLayout(new GridLayout(4, 2));
         m_pParams.add(m_labelWeightClass);
         m_pParams.add(m_chWeightClass);
@@ -139,14 +139,14 @@ public class MechSelectorDialog
         m_chPlayer.removeAll();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
-		for (Iterator i = m_clientgui.getBots().values().iterator(); i.hasNext();) {
-			m_chPlayer.addItem(((Client)i.next()).getName());
-		}
-		if (m_chPlayer.getItemCount() == 1) {
-		    m_chPlayer.setEnabled(false);
-		} else {
-		    m_chPlayer.select(lastChoice);
-		}
+        for (Iterator i = m_clientgui.getBots().values().iterator(); i.hasNext();) {
+            m_chPlayer.addItem(((Client)i.next()).getName());
+        }
+        if (m_chPlayer.getItemCount() == 1) {
+            m_chPlayer.setEnabled(false);
+        } else {
+            m_chPlayer.select(lastChoice);
+        }
     }
 
     public void run() {
@@ -288,7 +288,7 @@ public class MechSelectorDialog
                 makeLength(ms.getChassis(), 20) + " " +  //$NON-NLS-1$
                 makeLength("" + ms.getTons(), 3) + " " +  //$NON-NLS-1$ //$NON-NLS-2$
                 makeLength("" + ms.getBV(),5)+""+ //$NON-NLS-1$ //$NON-NLS-2$
-		    ms.getYear();
+            ms.getYear();
     }
     
     public void actionPerformed(ActionEvent ae) {
@@ -376,9 +376,9 @@ public class MechSelectorDialog
         m_mechViewLeft.setCaretPosition(0);
         m_mechViewRight.setCaretPosition(0);
 
-		// Preview image of the unit...
-		m_clientgui.loadPreviewImage(m_pPreview, entity, m_client.getLocalPlayer());
-		m_pPreview.paint(m_pPreview.getGraphics());
+        // Preview image of the unit...
+        m_clientgui.loadPreviewImage(m_pPreview, entity, m_client.getLocalPlayer());
+        m_pPreview.paint(m_pPreview.getGraphics());
     }
     
     private static final String SPACES = "                        "; //$NON-NLS-1$
@@ -399,10 +399,10 @@ public class MechSelectorDialog
     }
     
     public void keyPressed(java.awt.event.KeyEvent ke) {
-	if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-	    ActionEvent event = new ActionEvent(m_bPick,ActionEvent.ACTION_PERFORMED,""); //$NON-NLS-1$
-	    actionPerformed(event);
-	}
+    if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+        ActionEvent event = new ActionEvent(m_bPick,ActionEvent.ACTION_PERFORMED,""); //$NON-NLS-1$
+        actionPerformed(event);
+    }
         long curTime = System.currentTimeMillis();
         if (curTime - m_nLastSearch > KEY_TIMEOUT) {
             m_sbSearch = new StringBuffer();

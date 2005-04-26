@@ -42,8 +42,8 @@ public class DefeatCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         Player player = server.getPlayer(connId);
         if (server.getGame().isForceVictory()) {
-	        server.sendServerChat(player.getName() + " admits defeat.");
-	        player.setAdmitsDefeat(true);
+            server.sendServerChat(player.getName() + " admits defeat.");
+            player.setAdmitsDefeat(true);
         } else {
             server.sendServerChat(connId, "Nobody has declared victory, you can't declare a defeat.");
         }

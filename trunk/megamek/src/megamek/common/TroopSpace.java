@@ -135,8 +135,8 @@ public final class TroopSpace implements Transporter {
         // If we can't load the unit, throw an exception.
         if ( !this.canLoad(unit) ) {
             throw new IllegalArgumentException( "Can not load " +
-						unit.getShortName() +
-						" into this troop space." );
+                        unit.getShortName() +
+                        " into this troop space." );
         }
 
         // Decrement the available space.

@@ -74,7 +74,7 @@ public abstract class PicMap extends Component {
     * this is just transparent layer over container.
     */
     public PicMap(){
-    	rootGroup.addArea(otherAreas);
+        rootGroup.addArea(otherAreas);
         rootGroup.addArea(hotAreas);
         rootGroup.addArea(labels);
         enableEvents(AWTEvent.MOUSE_EVENT_MASK |
@@ -98,21 +98,21 @@ public abstract class PicMap extends Component {
      * Within same layer objects are drawing by order they added to components.
      */
     public void addElement(PMElement e){
-    	if(e instanceof PMLabel){ 
-     		labels.addArea(e);
-    	} else if (e instanceof PMHotArea){
-    		hotAreas.addArea(e);
+        if(e instanceof PMLabel){ 
+            labels.addArea(e);
+        } else if (e instanceof PMHotArea){
+            hotAreas.addArea(e);
             areascount++;
-    	} else if (e instanceof PMAreasGroup){
-    		PMAreasGroup ag = (PMAreasGroup) e;
-    		Enumeration iter = ag.elements();
-    		while(iter.hasMoreElements()){
-    			addElement((PMElement) iter.nextElement());
-    		}
-    	} else{
-    		otherAreas.addArea(e);
-    	}
-    	
+        } else if (e instanceof PMAreasGroup){
+            PMAreasGroup ag = (PMAreasGroup) e;
+            Enumeration iter = ag.elements();
+            while(iter.hasMoreElements()){
+                addElement((PMElement) iter.nextElement());
+            }
+        } else{
+            otherAreas.addArea(e);
+        }
+        
     }
     
     /**
@@ -120,14 +120,14 @@ public abstract class PicMap extends Component {
      */
     
     public void removeElement(PMElement e){
-    	if(e instanceof PMLabel){
+        if(e instanceof PMLabel){
             labels.removeArea(e);
-    	} else if(e instanceof PMHotArea){
+        } else if(e instanceof PMHotArea){
            if (hotAreas.removeArea(e)) areascount--;
-    	} else {
-    		otherAreas.removeArea(e);
-    	}
-    	
+        } else {
+            otherAreas.removeArea(e);
+        }
+        
     }
     
     /**
@@ -135,12 +135,12 @@ public abstract class PicMap extends Component {
      */
     
     public void removeAll(){
-    	otherAreas.removeAll();
-    	hotAreas.removeAll();
-    	labels.removeAll();
-    	bgDrawers.removeAllElements();
-    	areascount = 0;
-    	activeHotArea = null;    	
+        otherAreas.removeAll();
+        hotAreas.removeAll();
+        labels.removeAll();
+        bgDrawers.removeAllElements();
+        areascount = 0;
+        activeHotArea = null;       
     }
     
     /**
@@ -172,13 +172,13 @@ public abstract class PicMap extends Component {
      */
     
     public void setContentMargins(int l, int t, int r, int b){
-     	leftMargin = ( l < 0) ? 0 : l;
-    	topMargin =  ( t < 0) ? 0 : t;
-    	rightMargin = ( r < 0) ? 0 : r;
-    	bottomMargin = ( b < 0) ? 0 : b;
-     	Rectangle rect = rootGroup.getBounds();
-    	rootGroup.translate(leftMargin - rect.x, topMargin - rect.y);
-    	  	
+        leftMargin = ( l < 0) ? 0 : l;
+        topMargin =  ( t < 0) ? 0 : t;
+        rightMargin = ( r < 0) ? 0 : r;
+        bottomMargin = ( b < 0) ? 0 : b;
+        Rectangle rect = rootGroup.getBounds();
+        rootGroup.translate(leftMargin - rect.x, topMargin - rect.y);
+            
     }
     
     /**
@@ -186,7 +186,7 @@ public abstract class PicMap extends Component {
      */
     
     public Rectangle getContentBounds() {
-    	return rootGroup.getBounds();
+        return rootGroup.getBounds();
     }
 
     /**
@@ -203,18 +203,18 @@ public abstract class PicMap extends Component {
      */   
     
     public void update() {
-    	if (bgIsOpaque){
-	        int w = Math.max(getSize().width, minWidth);
-	        int h = Math.max(getSize().height, minHeight);
-	        offScr = createImage(w, h);
-	        if(offScr == null) return;
-	        Graphics g = offScr.getGraphics();
-	        drawInto(g);
-	        repaint();
-	        g.dispose();
-    	} else {
+        if (bgIsOpaque){
+            int w = Math.max(getSize().width, minWidth);
+            int h = Math.max(getSize().height, minHeight);
+            offScr = createImage(w, h);
+            if(offScr == null) return;
+            Graphics g = offScr.getGraphics();
+            drawInto(g);
             repaint();
-	    }
+            g.dispose();
+        } else {
+            repaint();
+        }
     }
     
     public void update(Graphics g) {
@@ -222,20 +222,20 @@ public abstract class PicMap extends Component {
     }
     
     public void paint(Graphics g){
-    	if (bgIsOpaque){
-    	   //If we want to use buffering Component will be with opaque background
+        if (bgIsOpaque){
+           //If we want to use buffering Component will be with opaque background
            g.drawImage(offScr,0,0,null);
         } else {
-        	// Disrectly drawing to the place (use buffering in conainer)
-        	// Makes background of PicMap transparent
-           drawInto(g);	
+            // Disrectly drawing to the place (use buffering in conainer)
+            // Makes background of PicMap transparent
+           drawInto(g);     
         }
     }
     
     private void drawInto(Graphics g){
-    	int w = Math.max(getSize().width, minWidth);
+        int w = Math.max(getSize().width, minWidth);
         int h = Math.max(getSize().height, minHeight);
-    	//Background painting
+        //Background painting
         Enumeration iter = bgDrawers.elements();
         while(iter.hasMoreElements()){
             BackGroundDrawer bgd = (BackGroundDrawer) iter.nextElement();
@@ -252,7 +252,7 @@ public abstract class PicMap extends Component {
         if (activeHotArea !=null) activeHotArea.drawInto(g);
         labels.drawInto(g);
         g.setClip(oldClip);
-    	
+        
     }
     
     public Dimension getPreferredSize() {
@@ -263,8 +263,8 @@ public abstract class PicMap extends Component {
     public Dimension getMinimumSize(){
        Rectangle r = rootGroup.getBounds();
        if (r != null){
-       	   return new Dimension(r.x + r.width + rightMargin,
-       	                        r.y + r.height + bottomMargin);
+               return new Dimension(r.x + r.width + rightMargin,
+                                    r.y + r.height + bottomMargin);
        }
        return new Dimension(minWidth, minHeight);
     }
@@ -285,14 +285,14 @@ public abstract class PicMap extends Component {
     }
     
     private boolean intersects(Shape sh, int x, int y){
-    	if (sh instanceof Rectangle){
-    		Rectangle r = (Rectangle) sh;
-    		return r.contains(x,y);
-    	} else if (sh instanceof Polygon){
-    		Polygon p = (Polygon)sh;
-    		return p.contains(x, y);
-    	}
-    	return false;
+        if (sh instanceof Rectangle){
+            Rectangle r = (Rectangle) sh;
+            return r.contains(x,y);
+        } else if (sh instanceof Polygon){
+            Polygon p = (Polygon)sh;
+            return p.contains(x, y);
+        }
+        return false;
     }
     
     /**
@@ -306,52 +306,52 @@ public abstract class PicMap extends Component {
      */
     
     public void setBackgroundOpaque( boolean v){
-    	bgIsOpaque = v;
+        bgIsOpaque = v;
     }
     
     
     protected void processMouseEvent(MouseEvent e){
-    	PMHotArea ha = getAreaUnder(e.getX(), e.getY());
-    	switch (e.getID()) {
-	    	case MouseEvent.MOUSE_CLICKED:
+        PMHotArea ha = getAreaUnder(e.getX(), e.getY());
+        switch (e.getID()) {
+            case MouseEvent.MOUSE_CLICKED:
                 if (ha != null) ha.onMouseClick(e);
-	    	    break;
-	    	case MouseEvent.MOUSE_PRESSED:
+                break;
+            case MouseEvent.MOUSE_PRESSED:
                 if (ha != null) ha.onMouseDown(e);
-	    	    break;
-	    	case MouseEvent.MOUSE_RELEASED:
+                break;
+            case MouseEvent.MOUSE_RELEASED:
                 if (ha != null) ha.onMouseUp(e);
-	    	    break;
-	    }
-	    update();
+                break;
+        }
+        update();
     }
     
     protected void processMouseMotionEvent(MouseEvent e){
-    	switch (e.getID()) {
-	    	case MouseEvent.MOUSE_MOVED:
-    	        PMHotArea ha = getAreaUnder(e.getX(), e.getY());
-		        if(ha != activeHotArea){
-		            if(activeHotArea != null) activeHotArea.onMouseExit(e);
-		            activeHotArea = ha;
-		            if(ha != null){
-		            	 ha.onMouseOver(e);
-		            	 this.setCursor(ha.getCursor());
-		            } else {
-		            	setCursor(Cursor.getDefaultCursor());
-		            }
-		            update();
-		        }
-	    	    break;
-	    }
+        switch (e.getID()) {
+            case MouseEvent.MOUSE_MOVED:
+                PMHotArea ha = getAreaUnder(e.getX(), e.getY());
+                if(ha != activeHotArea){
+                    if(activeHotArea != null) activeHotArea.onMouseExit(e);
+                    activeHotArea = ha;
+                    if(ha != null){
+                         ha.onMouseOver(e);
+                         this.setCursor(ha.getCursor());
+                    } else {
+                        setCursor(Cursor.getDefaultCursor());
+                    }
+                    update();
+                }
+                break;
+        }
     }
     
     protected void processComponentEvent(ComponentEvent e) {
-    	switch (e.getID()) {
-	    	case ComponentEvent.COMPONENT_RESIZED:
-	    	    onResize();
-	    	    update();
-	    	    break;
-	    }
+        switch (e.getID()) {
+            case ComponentEvent.COMPONENT_RESIZED:
+                onResize();
+                update();
+                break;
+        }
     }
 }   
 

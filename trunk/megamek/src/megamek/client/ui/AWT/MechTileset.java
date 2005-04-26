@@ -60,7 +60,7 @@ public class MechTileset {
 
     /** Creates new MechTileset */
     public MechTileset(String dir) {
-		this.dir = dir;
+        this.dir = dir;
     }
     
     public Image imageFor(Entity entity, Component comp) {
@@ -100,7 +100,7 @@ public class MechTileset {
             return default_inf;
         }
         if (entity instanceof Protomech) {
-        	return default_proto;
+            return default_proto;
         }
         // mech, by weight
         if (entity.getWeight() <= Entity.WEIGHT_LIGHT) {

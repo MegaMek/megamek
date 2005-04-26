@@ -39,7 +39,7 @@ public class PMValueLabel extends PMSimpleLabel {
      }
      
      public void setVisible(boolean v){
-     	super.setVisible (v);
+        super.setVisible (v);
      }
 
      /*
@@ -54,6 +54,6 @@ public class PMValueLabel extends PMSimpleLabel {
      }
      
      public Rectangle getBounds(){
-     	return new Rectangle(x - width/2, y - height, width, height + descent);
+        return new Rectangle(x - width/2, y - height, width, height + descent);
      }
 }

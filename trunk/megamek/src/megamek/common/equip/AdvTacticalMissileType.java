@@ -24,31 +24,31 @@ import java.util.Vector;
 public class AdvTacticalMissileType extends MissileType {
 
     public AdvTacticalMissileType( int size, Vector valid_ammo ) {    
-	super(size, valid_ammo);
-	// Clan only
+    super(size, valid_ammo);
+    // Clan only
 
-	switch(size) {
-	case 3:
-	    this.tonnage = 1.5f;
-	    this.criticals = 2;
-	    this.bv = 53;
-	    break;
-	case 6:
-	    this.tonnage = 3.5f;
-	    this.criticals = 3;
-	    this.bv = 105;
-	    break;
-	case 9:
-	    this.tonnage = 5.0f;
-	    this.criticals = 4;
-	    this.bv = 147;
-	    break;
-	case 12:
-	    this.tonnage = 7.0f;
-	    this.criticals = 5;
-	    this.bv = 212;
-	    break;
-	}
+    switch(size) {
+    case 3:
+        this.tonnage = 1.5f;
+        this.criticals = 2;
+        this.bv = 53;
+        break;
+    case 6:
+        this.tonnage = 3.5f;
+        this.criticals = 3;
+        this.bv = 105;
+        break;
+    case 9:
+        this.tonnage = 5.0f;
+        this.criticals = 4;
+        this.bv = 147;
+        break;
+    case 12:
+        this.tonnage = 7.0f;
+        this.criticals = 5;
+        this.bv = 212;
+        break;
+    }
     }
 
     public WeaponResult setupAttack(Mounted loc, Entity en, Targetable targ) { return null; }

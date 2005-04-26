@@ -768,8 +768,8 @@ public class ClientGUI
     }
 
     protected void showBoardPopup(Point point) {
-    	if (!bv.mayDrawPopup())
-    		return;
+        if (!bv.mayDrawPopup())
+            return;
         fillPopup(bv.getCoordsAt(point));
 
         if (popup.getItemCount() > 0) {
@@ -1271,7 +1271,7 @@ public class ClientGUI
 
     public void gameNewEntities(GameEvent e) {
         Object o = e.getSource();
-        //		XXX Hack alert!
+        //      XXX Hack alert!
         if (o instanceof Packet) {
             Packet c = (Packet) o;
             int eindex = c.getIntValue(0);

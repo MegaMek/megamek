@@ -26,87 +26,87 @@ public class PulseLaserType extends LaserType {
 //     public static final int LARGE = 23;
 
     public PulseLaserType (int tech, int size) {
-	super(tech,size);
-	this.techType = tech;
+    super(tech,size);
+    this.techType = tech;
 
-	if (tech == TechConstants.T_IS_LEVEL_2) {
-	    switch(size) {
-	    case SMALL:
-		this.heat = 2;
-		this.damage = 3;
-		this.range = new RangeType(1,2,3);
-		this.tonnage = 1.0f;
-		this.criticals = 1;
-		this.bv = 12;
-		break;
-	    case MED:
-		this.heat = 4;
-		this.damage = 6;
-		this.range = new RangeType(2,4,6);
-		this.tonnage = 2.0f;
-		this.criticals = 1;
-		this.bv = 48;
-		break;
-	    case LARGE:
-		this.heat = 10;
-		this.damage = 9;
-		this.range = new RangeType(3,7,10);
-		this.tonnage = 7.0f;
-		this.criticals = 2;
-		this.bv = 119;
-		break;
-	    }
-	} else {
-	    // CLAN
-	    switch(size) {
-	    case MICRO:
-		this.heat = 1;
-		this.damage = 3;
-		this.range = new RangeType(1,2,3);
-		this.tonnage = 0.5f;
-		this.criticals = 1;
-		this.bv = 12;
-		break;
-	    case SMALL:
-		this.heat = 2;
-		this.damage = 3;
-		this.range = new RangeType(2,4,6);
-		this.tonnage = 1.0f;
-		this.criticals = 1;
-		this.bv = 24;
-		break;
-	    case MED:
-		this.heat = 4;
-		this.damage = 7;
-		this.range = new RangeType(4,8,12);
-		this.tonnage = 2.0f;
-		this.criticals = 1;
-		this.bv = 111;
-		break;
-	    case LARGE:
-		this.heat = 10;
-		this.damage = 10;
-		this.range = new RangeType(6,14,20);
-		this.tonnage = 6.0f;
-		this.criticals = 2;
-		this.bv = 265;
-		break;
+    if (tech == TechConstants.T_IS_LEVEL_2) {
+        switch(size) {
+        case SMALL:
+        this.heat = 2;
+        this.damage = 3;
+        this.range = new RangeType(1,2,3);
+        this.tonnage = 1.0f;
+        this.criticals = 1;
+        this.bv = 12;
+        break;
+        case MED:
+        this.heat = 4;
+        this.damage = 6;
+        this.range = new RangeType(2,4,6);
+        this.tonnage = 2.0f;
+        this.criticals = 1;
+        this.bv = 48;
+        break;
+        case LARGE:
+        this.heat = 10;
+        this.damage = 9;
+        this.range = new RangeType(3,7,10);
+        this.tonnage = 7.0f;
+        this.criticals = 2;
+        this.bv = 119;
+        break;
+        }
+    } else {
+        // CLAN
+        switch(size) {
+        case MICRO:
+        this.heat = 1;
+        this.damage = 3;
+        this.range = new RangeType(1,2,3);
+        this.tonnage = 0.5f;
+        this.criticals = 1;
+        this.bv = 12;
+        break;
+        case SMALL:
+        this.heat = 2;
+        this.damage = 3;
+        this.range = new RangeType(2,4,6);
+        this.tonnage = 1.0f;
+        this.criticals = 1;
+        this.bv = 24;
+        break;
+        case MED:
+        this.heat = 4;
+        this.damage = 7;
+        this.range = new RangeType(4,8,12);
+        this.tonnage = 2.0f;
+        this.criticals = 1;
+        this.bv = 111;
+        break;
+        case LARGE:
+        this.heat = 10;
+        this.damage = 10;
+        this.range = new RangeType(6,14,20);
+        this.tonnage = 6.0f;
+        this.criticals = 2;
+        this.bv = 265;
+        break;
             }
-	}
+    }
     }
 
     // Micro pulse lasers cannot start fire
     public int getFireTN() {
-	if (size != MICRO)
-	    return 7;
-	else
-	    return TargetRoll.IMPOSSIBLE;
+    if (size != MICRO)
+        return 7;
+    else
+        return TargetRoll.IMPOSSIBLE;
     }
 
     public TargetRoll getModifiersFor(Mounted loc, Entity en, Targetable targ) {
-	TargetRoll tr = super.getModifiersFor(loc,en,targ);
-	tr.addModifier(-2, "pulse laser");
-	return tr;
+    TargetRoll tr = super.getModifiersFor(loc,en,targ);
+    tr.addModifier(-2, "pulse laser");
+    return tr;
     }
     
 }

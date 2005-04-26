@@ -164,97 +164,97 @@ public class PhysicalCalculator {
         return null;
     }
 
-	PhysicalOption getBestPhysical(Entity entity, Game game) {
-		// Infantry can't conduct physical attacks.
-		if (entity instanceof Infantry) {
-			return null;
-		}
+    PhysicalOption getBestPhysical(Entity entity, Game game) {
+        // Infantry can't conduct physical attacks.
+        if (entity instanceof Infantry) {
+            return null;
+        }
 
-		// if you're charging, it's already declared
-		if (entity.isCharging() || entity.isMakingDfa()) {
-			return null;
-		}
+        // if you're charging, it's already declared
+        if (entity.isCharging() || entity.isMakingDfa()) {
+            return null;
+        }
 
-		PhysicalOption best = null;
-		for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-			Entity target = (Entity) e.nextElement();
+        PhysicalOption best = null;
+        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
+            Entity target = (Entity) e.nextElement();
 
-			if (target.equals(entity))
-				continue;
-			if (!target.isEnemyOf(entity))
-				continue;
-			if (null == target.getPosition())
-				continue;
-			PhysicalOption one = getBestPhysicalAttack(entity, target, game);
-			if (one != null) {
-				if (best == null || one.expectedDmg > best.expectedDmg) {
-					best = one;
-				}
-			}
-		}
+            if (target.equals(entity))
+                continue;
+            if (!target.isEnemyOf(entity))
+                continue;
+            if (null == target.getPosition())
+                continue;
+            PhysicalOption one = getBestPhysicalAttack(entity, target, game);
+            if (one != null) {
+                if (best == null || one.expectedDmg > best.expectedDmg) {
+                    best = one;
+                }
+            }
+        }
         if(best == null) best = new PhysicalOption(entity);   
-		return best;
-	}
+        return best;
+    }
 
-	PhysicalOption getBestPhysicalAttack(Entity from, Entity to, Game game) {
-		double bestDmg = 0, dmg;
-		int damage;
-		int bestType = PhysicalOption.PUNCH_LEFT;
+    PhysicalOption getBestPhysicalAttack(Entity from, Entity to, Game game) {
+        double bestDmg = 0, dmg;
+        int damage;
+        int bestType = PhysicalOption.PUNCH_LEFT;
 
-		// Infantry can't conduct physical attacks.
-		if (from instanceof Infantry) {
-			return null;
-		}
-		ToHitData odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.LEFT);
-		if (odds.getValue() != ToHitData.IMPOSSIBLE) {
-			damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
-			bestDmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
-		}
+        // Infantry can't conduct physical attacks.
+        if (from instanceof Infantry) {
+            return null;
+        }
+        ToHitData odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.LEFT);
+        if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+            damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
+            bestDmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+        }
 
-		odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
-		if (odds.getValue() != ToHitData.IMPOSSIBLE) {
-			damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.RIGHT);
-			dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
-			if (dmg > 0 && bestDmg > 0) {
-				bestType = PhysicalOption.PUNCH_BOTH;
-				bestDmg += dmg;
-			} else {
-				bestType = PhysicalOption.PUNCH_RIGHT;
-				bestDmg = dmg;
-			}
-		}
+        odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
+        if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+            damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.RIGHT);
+            dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+            if (dmg > 0 && bestDmg > 0) {
+                bestType = PhysicalOption.PUNCH_BOTH;
+                bestDmg += dmg;
+            } else {
+                bestType = PhysicalOption.PUNCH_RIGHT;
+                bestDmg = dmg;
+            }
+        }
 
-		odds = KickAttackAction.toHit(game, from.getId(), to, KickAttackAction.LEFT);
-		if (odds.getValue() != ToHitData.IMPOSSIBLE) {
-			damage = KickAttackAction.getDamageFor(from, KickAttackAction.LEFT);
-			dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
-			if (dmg > bestDmg) {
-				bestType = PhysicalOption.KICK_LEFT;
-				bestDmg = dmg;
-			}
-		}
+        odds = KickAttackAction.toHit(game, from.getId(), to, KickAttackAction.LEFT);
+        if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+            damage = KickAttackAction.getDamageFor(from, KickAttackAction.LEFT);
+            dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+            if (dmg > bestDmg) {
+                bestType = PhysicalOption.KICK_LEFT;
+                bestDmg = dmg;
+            }
+        }
 
-		odds = KickAttackAction.toHit(game, from.getId(), to, KickAttackAction.RIGHT);
-		if (odds.getValue() != ToHitData.IMPOSSIBLE) {
-			damage = KickAttackAction.getDamageFor(from, KickAttackAction.RIGHT);
-			dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
-			if (dmg > bestDmg) {
-				bestType = PhysicalOption.KICK_RIGHT;
-				bestDmg = dmg;
-			}
-		}
+        odds = KickAttackAction.toHit(game, from.getId(), to, KickAttackAction.RIGHT);
+        if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+            damage = KickAttackAction.getDamageFor(from, KickAttackAction.RIGHT);
+            dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+            if (dmg > bestDmg) {
+                bestType = PhysicalOption.KICK_RIGHT;
+                bestDmg = dmg;
+            }
+        }
 
-		// Infantry in the open suffer double damage.
-		if (to instanceof Infantry) {
-			Hex e_hex = game.getBoard().getHex(to.getPosition());
-			if (!e_hex.contains(Terrain.WOODS) && !e_hex.contains(Terrain.BUILDING)) {
-				bestDmg *= 2;
-			}
-		}
+        // Infantry in the open suffer double damage.
+        if (to instanceof Infantry) {
+            Hex e_hex = game.getBoard().getHex(to.getPosition());
+            if (!e_hex.contains(Terrain.WOODS) && !e_hex.contains(Terrain.BUILDING)) {
+                bestDmg *= 2;
+            }
+        }
 
-		if (bestDmg > 0) {
-			return new PhysicalOption(from, to, bestDmg, bestType);
-		}
-		return null;
-	}
+        if (bestDmg > 0) {
+            return new PhysicalOption(from, to, bestDmg, bestType);
+        }
+        return null;
+    }
 }

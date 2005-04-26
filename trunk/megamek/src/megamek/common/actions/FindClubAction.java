@@ -42,61 +42,61 @@ public class FindClubAction extends AbstractEntityAction {
         super(entityId);
     }
     
-	/**
-	 * Returns whether an entity can find a club in its current location
-	 */
-	public static boolean canMechFindClub(Game game, int entityId) {
-		final Entity entity = game.getEntity(entityId);
-		if ( null == entity.getPosition() ) {
-			return false;
-		}
-		final Hex hex = game.board.getHex(entity.getPosition());
+    /**
+     * Returns whether an entity can find a club in its current location
+     */
+    public static boolean canMechFindClub(Game game, int entityId) {
+        final Entity entity = game.getEntity(entityId);
+        if ( null == entity.getPosition() ) {
+            return false;
+        }
+        final Hex hex = game.board.getHex(entity.getPosition());
 
-		//Non biped mechs can't
-		if ( !(entity instanceof BipedMech) ) {
-			return false;
-		}
+        //Non biped mechs can't
+        if ( !(entity instanceof BipedMech) ) {
+            return false;
+        }
 
-		// Is the entity active?
-		if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
-			return false;
-		}
+        // Is the entity active?
+        if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
+            return false;
+        }
 
-		// Can't find clubs while spotting.
-		if ( entity.isSpotting() ) {
-			return false;
-		}
+        // Can't find clubs while spotting.
+        if ( entity.isSpotting() ) {
+            return false;
+        }
 
-		//Check game options
-		if (game.getOptions().booleanOption("no_clan_physical") &&
-			entity.isClan()) {
-			return false;
-		}
+        //Check game options
+        if (game.getOptions().booleanOption("no_clan_physical") &&
+            entity.isClan()) {
+            return false;
+        }
 
-		// The hex must contain woods or rubble from
-		// a medium, heavy, or hardened building,
-		// or a blown off limb
-		if ( hex.levelOf(Terrain.WOODS) < 1 &&
-			 hex.levelOf(Terrain.RUBBLE) < Building.MEDIUM && 
+        // The hex must contain woods or rubble from
+        // a medium, heavy, or hardened building,
+        // or a blown off limb
+        if ( hex.levelOf(Terrain.WOODS) < 1 &&
+             hex.levelOf(Terrain.RUBBLE) < Building.MEDIUM && 
              hex.levelOf(Terrain.ARMS) < 1 &&
              hex.levelOf(Terrain.LEGS) < 1) {
-			return false;
-		}
+            return false;
+        }
 
-		// also, need shoulders and hands
-		if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
-		|| !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
-		|| !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
-		|| !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
-			return false;
-		}
+        // also, need shoulders and hands
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
+        || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
+        || !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
+        || !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+            return false;
+        }
 
-		// and last, check if you already have a club, greedy
-		if (Compute.clubMechHas(entity) != null) {
-			return false;
-		}
+        // and last, check if you already have a club, greedy
+        if (Compute.clubMechHas(entity) != null) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 }

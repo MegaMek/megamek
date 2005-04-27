@@ -18,30 +18,37 @@ import java.util.Vector;
 
 import megamek.common.Entity;
 
+/**
+ * Instances of this class are sent game entity is changed 
+ *
+ * @see GameListener
+ */
 public class GameEntityChangeEvent extends GameEntityEvent {
 
     protected Vector movePath;
-
+    
     /**
+     * Constructs new GameEntityChangeEvent
      * @param source
-     * @param type
+     * @param entity
      */
     public GameEntityChangeEvent(Object source, Entity entity) {
         this(source, entity, null);
     }
-
+    
     /**
-    * @param source
-    * @param type
+     * Constructs new GameEntityChangeEvent
+     * @param source
+     * @param entity
      * @param movePath
-    */
-   public GameEntityChangeEvent(Object source, Entity entity, Vector movePath) {
-      super(source, entity, GAME_ENTITY_CHANGE);
+     */
+    public GameEntityChangeEvent(Object source, Entity entity, Vector movePath) {
+        super(source, entity, GAME_ENTITY_CHANGE);
         this.movePath = movePath;
-   }
-
+    }
+    
     /**
-     * @return Returns the movePath.
+     * @return the movePath.
      */
     public Vector getMovePath() {
         return movePath;

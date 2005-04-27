@@ -14,14 +14,19 @@
 
 package megamek.common.event;
 
+/**
+ * Instances of this class are sent when the game finished 
+ *
+ * @see IGame#end(int, int)
+ * @see GameListener
+ */
 public class GameEndEvent extends GameEvent {
 
     /**
-     * @param source
-     * @param type
+     * @param source event source
      */
     public GameEndEvent(Object source) {
         super(source, GAME_END);
     }
-
+    
 }

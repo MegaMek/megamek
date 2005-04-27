@@ -14,14 +14,39 @@
 
 package megamek.common.event;
 
+import java.util.Vector;
+
+import megamek.common.Entity;
+
+/**
+ * Instances of this class are sent when entity is added to game 
+ */
 public class GameEntityNewEvent extends GameEvent {
 
-   /**
-    * @param source
-    * @param type
-    */
-   public GameEntityNewEvent(Object source) {
-      super(source, GAME_ENTITY_NEW);
-   }
+    protected Vector entities; 
 
+    /**
+     * 
+     * @param source
+     * @param entity
+     */
+    public GameEntityNewEvent(Object source, Entity entity) {
+        super(source,GAME_ENTITY_NEW);
+        entities = new Vector();
+        entities.addElement(entity);
+    }
+
+    /**
+     * 
+     * @param source
+     * @param entities
+     */
+    public GameEntityNewEvent(Object source, Vector entities) {
+        super(source,GAME_ENTITY_NEW);
+        this.entities = entities;
+    }
+    
+    public Vector GetEntities(){
+        return entities;
+    }
 }

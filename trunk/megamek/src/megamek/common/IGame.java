@@ -26,7 +26,7 @@ import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
 
 /**
- * The game class is the root of all data about the game in progress.
+ * This interface is the root of all data about the game in progress.
  * Both the Client and the Server should have one of these objects and it
  * is their job to keep it synched.
  */
@@ -72,7 +72,7 @@ public interface IGame {
 
     /**
      * Adds the specified game listener to receive
-     * board events from this board.
+     * board events from this Game.
      *
      * @param listener the game listener.
      */
@@ -86,8 +86,7 @@ public interface IGame {
     public abstract void removeGameListener(GameListener listener);
     
     /**
-     * Processes game events occurring on this
-     * connection by dispatching them to any registered
+     * Processes game events by dispatching them to any registered
      * GameListener objects.
      *
      * @param event the game event.

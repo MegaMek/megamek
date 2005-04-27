@@ -1427,7 +1427,7 @@ public class ClientGUI
 
         public void gameMapQuery(GameMapQueryEvent e) {
             if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
-                boardSelectionDialog.update((MapSettings) e.getSource(), false);
+                boardSelectionDialog.update((MapSettings)e.getSettings(), false);
             }
         }
 

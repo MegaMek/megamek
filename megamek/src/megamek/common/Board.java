@@ -85,9 +85,8 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
-     * Creates a new board of the specified dimensions.
-     * All hexes in the board will be null until otherwise
-     * set.
+     * Creates a new board of the specified dimensions and specified
+     * hex data.
      *
      * @param width the width dimension.
      * @param height the height dimension.
@@ -96,7 +95,7 @@ public class Board implements Serializable, IBoard {
     public Board(int width, int height, IHex[] data) {
         this.width = width;
         this.height = height;
-        data = new Hex[width * height];
+        this.data = new Hex[width * height];
         for(int y=0; y<height; y++) {
             for(int x=0; x<width; x++) {
                 this.data[y*width+x] = data[y*width+x]; 

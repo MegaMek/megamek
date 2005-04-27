@@ -14,11 +14,33 @@
 
 package megamek.common.event;
 
-
+/**
+ * Classes which implement this interface provide methods
+ * that deal with the events that are generated when the
+ * Board is changed.
+ * <p>
+ * After creating an instance of a class that implements
+ * this interface it can be added to a Board using the
+ * <code>addBoardListener</code> method and removed using
+ * the <code>removeBoardListener</code> method. When board
+ * is changed the appropriate method will be invoked.
+ * </p>
+ *
+ * @see BoardListenerAdapter
+ * @see BoardEvent
+ */
 public interface BoardListener extends java.util.EventListener
 {
+    /**
+     * Sent when Board completely changed
+     * @param b an event containing information about the change
+     */
     public void boardNewBoard(BoardEvent b);
     
+    /**
+     * Sent when Hex on the Board changed
+     * @param b an event containing information about the change
+     */
     public void boardChangedHex(BoardEvent b);
 
 }

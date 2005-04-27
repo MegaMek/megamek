@@ -16,21 +16,31 @@ package megamek.common.event;
 
 import megamek.common.Player;
 
+/**
+ * Instances of descendant classes are sent as a result of Game changes
+ * related to Players
+ *
+ * @see GamePlayerChangeEvent
+ * @see GamePlayerChatEvent
+ * @see GameListener
+ */
 public abstract class GamePlayerEvent extends GameEvent {
 
     protected Player player;
     
     /**
+     * 
      * @param source
+     * @param player
      * @param type
      */
     public GamePlayerEvent(Object source, Player player, int type) {
         super(source, type);
         this.player = player;
     }
-
+    
     /**
-     * @return Returns the player.
+     * @return the player.
      */
     public Player getPlayer() {
         return player;

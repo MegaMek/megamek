@@ -16,21 +16,26 @@ package megamek.common.event;
 
 import megamek.common.Player;
 
+/**
+ * Instances of this class are sent when chat message received    
+ */
 public class GamePlayerChatEvent extends GamePlayerEvent {
-
+    
     protected String message;
-
+    
     /**
+     * 
      * @param source
      * @param player
+     * @param message
      */
     public GamePlayerChatEvent(Object source, Player player, String message) {
         super(source, player, GAME_PLAYER_CHAT);
         this.message = message;
     }
-
+    
     /**
-     * @return Returns the message.
+     * @return the chat message.
      */
     public String getMessage() {
         return message;

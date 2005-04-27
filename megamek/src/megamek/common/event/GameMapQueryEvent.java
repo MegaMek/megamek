@@ -16,23 +16,28 @@ package megamek.common.event;
 
 import megamek.common.MapSettings;
 
+/**
+ * Instances of this class are sent when Client is asked for the Map   
+ */
 public class GameMapQueryEvent extends GameEvent {
-
+    
     protected MapSettings settings;
-
+    
     /**
+     * 
      * @param source
-     * @param type
+     * @param settings
      */
     public GameMapQueryEvent(Object source, MapSettings settings) {
         super(source, GAME_MAP_QUERY);
         this.settings = settings;
     }
-
+    
     /**
-    * @return Returns the settings.
-    */
-   public MapSettings getSettings() {
-      return settings;
-   }
+     * 
+     * @return
+     */
+    public MapSettings getSettings() {
+        return settings;
+    }
 }

@@ -14,11 +14,14 @@
 
 package megamek.common.event;
 
+/**
+ * Instances of this class are sent when Server report is received
+ */
 public class GameReportEvent extends GameEvent {
 
     /**
+     * 
      * @param source
-     * @param type
      */
     public GameReportEvent(Object source) {
         super(source, GAME_REPORT);

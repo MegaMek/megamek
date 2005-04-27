@@ -549,8 +549,9 @@ public class Client implements Runnable {
     protected void receiveEntityUpdate(Packet c) {
         int eindex = c.getIntValue(0);
         Entity entity = (Entity) c.getObject(1);
+        Vector movePath = (Vector) c.getObject(2);        
         // Replace this entity in the game.
-        game.setEntity(eindex, entity);        
+        game.setEntity(eindex, entity, movePath);        
     }
 
     protected void receiveEntityAdd(Packet packet) {

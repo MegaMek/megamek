@@ -14,14 +14,17 @@
 
 package megamek.common.event;
 
+/**
+ * Instances of this class are sent when Game phase changes   
+ */
 public class GamePhaseChangeEvent extends GameEvent {
-
+    
     /**
+     * 
      * @param source
-     * @param type
      */
     public GamePhaseChangeEvent(Object source) {
         super(source, GAME_PHASE_CHANGE);
     }
-
+    
 }

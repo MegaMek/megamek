@@ -14,6 +14,11 @@
 
 package megamek.common.event;
 
+/**
+ * Instances of descendant classes are sent as a result of Game change
+ *
+ * @see GameListener
+ */
 public abstract class GameEvent extends java.util.EventObject {
 
     public static final int GAME_PLAYER_CONNECTED = 0;
@@ -47,6 +52,10 @@ public abstract class GameEvent extends java.util.EventObject {
         this.type = type;
     }
 
+    /**
+     * 
+     * @return the type of the event
+     */
     public int getType() {
         return type;
     }

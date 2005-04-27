@@ -16,6 +16,12 @@ package megamek.common.event;
 
 import megamek.common.IBoard;
 
+/**
+ * Instances of this class are sent when the new board for game is set 
+ *
+ * @see IGame#setBoard(IBoard)
+ * @see GameListener
+ */
 public class GameBoardNewEvent extends GameEvent {
 
     protected IBoard oldBoard;
@@ -25,7 +31,7 @@ public class GameBoardNewEvent extends GameEvent {
      * Constructs the new event with the specified old/new board objects 
      * @param source The event source
      * @param oldBoard old game board
-     * @param newBoard new game oard
+     * @param newBoard new game board
      */
     public GameBoardNewEvent(Object source, IBoard oldBoard, IBoard newBoard) {
         super(source, GAME_BOARD_NEW);
@@ -39,6 +45,7 @@ public class GameBoardNewEvent extends GameEvent {
     public IBoard getNewBoard() {
         return newBoard;
     }
+
     /**
      * @return Returns the oldBoard.
      */

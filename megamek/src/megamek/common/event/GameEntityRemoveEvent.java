@@ -14,36 +14,20 @@
 
 package megamek.common.event;
 
-import java.util.Vector;
-
 import megamek.common.Entity;
 
+/**
+ * Instances of this class are sent when entity is removed
+ */
 public class GameEntityRemoveEvent extends GameEntityEvent {
-
-    protected Vector movePath;
-
+    
     /**
+     * 
      * @param source
-     * @param type
+     * @param entity
      */
     public GameEntityRemoveEvent(Object source, Entity entity) {
-        this(source, entity, null);
-    }
-
-    /**
-     * @param source
-     * @param type
-     * @param movePath
-     */
-    public GameEntityRemoveEvent(Object source, Entity entity, Vector movePath) {
         super(source, entity, GAME_ENTITY_REMOVE);
-        this.movePath = movePath;
     }
-
-    /**
-     * @return Returns the movePath.
-     */
-    public Vector getMovePath() {
-        return movePath;
-    }
+    
 }

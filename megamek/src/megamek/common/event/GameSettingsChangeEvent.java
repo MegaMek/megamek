@@ -14,14 +14,17 @@
 
 package megamek.common.event;
 
+/**
+ * Instances of this class are sent when Game settings are changed   
+ */
 public class GameSettingsChangeEvent extends GameEvent {
-
+    
     /**
+     * 
      * @param source
-     * @param type
      */
     public GameSettingsChangeEvent(Object source) {
         super(source, GAME_SETTINGS_CHANGE);
     }
-
+    
 }

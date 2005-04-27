@@ -683,7 +683,7 @@ public class Game implements Serializable, IGame
     public void setEntitiesVector(Vector entities) {
         this.entities = entities;
         reindexEntities();
-        processGameEvent(new GameEntityNewEvent(this));
+        processGameEvent(new GameEntityNewEvent(this, entities));
     }
 
     /**
@@ -976,7 +976,7 @@ public class Game implements Serializable, IGame
         entityIds.put(new Integer(id), entity);
         
         if(id > lastEntityId) lastEntityId = id;
-        processGameEvent(new GameEntityNewEvent(this));
+        processGameEvent(new GameEntityNewEvent(this, entity));
     }
 
     public void setEntity(int id, Entity entity) {

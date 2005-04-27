@@ -158,7 +158,7 @@ public class SelectArtyAutoHitHexDisplay
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {

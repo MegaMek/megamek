@@ -957,7 +957,7 @@ public class MiniMap extends Canvas  {
 
 
     BoardViewListener boardViewListener = new BoardViewListenerAdapter(){
-        public void boardHexCursor(BoardViewEvent b) {
+        public void hexCursor(BoardViewEvent b) {
             update();
         }
         
@@ -965,17 +965,17 @@ public class MiniMap extends Canvas  {
             update();
         }
         
-        public void boardHexSelected(BoardViewEvent b) {
+        public void hexSelected(BoardViewEvent b) {
             update();
         }
         
-        public void boardFirstLOSHex(BoardViewEvent b) {
+        public void firstLOSHex(BoardViewEvent b) {
             secondLOS = null;
             firstLOS = b.getCoords();
             drawMap();
         }
         
-        public void boardSecondLOSHex(BoardViewEvent b, Coords c) {
+        public void secondLOSHex(BoardViewEvent b, Coords c) {
             firstLOS = c;
             secondLOS = b.getCoords();
             drawMap();

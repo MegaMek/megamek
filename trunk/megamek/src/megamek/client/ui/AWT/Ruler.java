@@ -376,7 +376,7 @@ public class Ruler extends Dialog implements BoardViewListener {
       return distance;
    }
 
-   public void boardHexMoused(BoardViewEvent b) {
+   public void hexMoused(BoardViewEvent b) {
       if ((b.getModifiers() & MouseEvent.ALT_MASK) != 0) {
          if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             addPoint(b.getCoords());
@@ -385,19 +385,19 @@ public class Ruler extends Dialog implements BoardViewListener {
 
       bv.drawRuler(start, end, startColor, endColor);
    }
-   public void boardHexCursor(BoardViewEvent b) {
+   public void hexCursor(BoardViewEvent b) {
 
    }
    public void boardHexHighlighted(BoardViewEvent b) {
 
    }
-   public void boardHexSelected(BoardViewEvent b) {
+   public void hexSelected(BoardViewEvent b) {
 
    }
-   public void boardFirstLOSHex(BoardViewEvent b) {
+   public void firstLOSHex(BoardViewEvent b) {
 
    }
-   public void boardSecondLOSHex(BoardViewEvent b, Coords c) {
+   public void secondLOSHex(BoardViewEvent b, Coords c) {
 
    }
 
@@ -455,6 +455,6 @@ public class Ruler extends Dialog implements BoardViewListener {
     /* (non-Javadoc)
      * @see megamek.client.BoardViewListener#selectUnit(megamek.client.BoardViewEvent)
      */
-    public void selectUnit(BoardViewEvent b) {
+    public void unitSelected(BoardViewEvent b) {
     }
 }

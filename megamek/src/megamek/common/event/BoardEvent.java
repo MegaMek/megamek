@@ -16,6 +16,11 @@ package megamek.common.event;
 
 import megamek.common.Coords;
 
+/**
+ * Instances of this class are sent as a result of Board change
+ *
+ * @see BoardListener
+ */
 public class BoardEvent extends java.util.EventObject
 {
     public static final int BOARD_NEW_BOARD = 0;

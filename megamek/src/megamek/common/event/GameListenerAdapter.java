@@ -15,6 +15,18 @@
 package megamek.common.event;
 
 
+/**
+ * This adapter class provides default implementations for the
+ * methods described by the <code>GameListener</code> interface.
+ * <p>
+ * Classes that wish to deal with <code>GamedEvent</code>s can
+ * extend this class and override only the methods which they are
+ * interested in.
+ * </p>
+ *
+ * @see GameListener
+ * @see GameEvent
+ */
 public class GameListenerAdapter implements GameListener {
     
     /* (non-Javadoc)

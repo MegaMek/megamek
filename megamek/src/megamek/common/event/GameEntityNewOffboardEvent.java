@@ -14,14 +14,18 @@
 
 package megamek.common.event;
 
+/**
+ * Instances of this class are sent when new Offboard entity 
+ * is added to game 
+ */
 public class GameEntityNewOffboardEvent extends GameEvent {
-
-   /**
-    * @param source
-    * @param type
-    */
-   public GameEntityNewOffboardEvent(Object source) {
-      super(source, GAME_ENTITY_NEW_OFFBOARD);
-   }
-
+    
+    /**
+     * 
+     * @param source
+     */
+    public GameEntityNewOffboardEvent(Object source) {
+        super(source, GAME_ENTITY_NEW_OFFBOARD);
+    }
+    
 }

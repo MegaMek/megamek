@@ -776,6 +776,7 @@ public abstract class Entity
      */
     public void setFacing(int facing) {
         this.facing = facing;
+        game.processGameEvent(new GameEntityChangeEvent(this, this));
     }
 
     /**

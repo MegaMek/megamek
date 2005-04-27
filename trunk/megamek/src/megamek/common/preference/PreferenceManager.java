@@ -165,13 +165,13 @@ public class PreferenceManager {
     
     protected void saveStore(Writer output, String name, PreferenceStore ps) throws IOException {
         output.write("\t<"+STORE_NODE_NAME+" "+
-                NAME_ATTRIBUTE +"=\""+name+"\">");
+                NAME_ATTRIBUTE +"=\""+quoteXMLChars(name)+"\">");
         output.write(CommonConstants.NL);
         for (Enumeration e = ps.properties.keys();e.hasMoreElements();) {
             String pname = (String)e.nextElement(); 
             String pvalue = (String)ps.properties.get(pname);
-            output.write("\t\t<"+PREFERENCE_NODE_NAME+" "+NAME_ATTRIBUTE+"=\""+pname+"\" "+
-                    VALUE_ATTRIBUTE+"=\""+pvalue+"\"/>");
+            output.write("\t\t<"+PREFERENCE_NODE_NAME+" "+NAME_ATTRIBUTE+"=\""+quoteXMLChars(pname)+"\" "+
+                    VALUE_ATTRIBUTE+"=\""+quoteXMLChars(pvalue)+"\"/>");
             output.write(CommonConstants.NL);
             
         }            
@@ -179,4 +179,39 @@ public class PreferenceManager {
         output.write(CommonConstants.NL);
         
     }
+
+    protected static String quoteXMLChars(String s) {
+        StringBuffer result = null;
+        for(int i = 0, max = s.length(), delta = 0; i < max; i++) {
+            char c = s.charAt(i);
+            String replacement = null;
+            
+            if (c == '&') {
+                replacement = "&amp;";
+            } else if (c == '<') {
+                replacement = "&lt;";
+            } else if (c == '\r') {
+                replacement = "&#13;";
+            } else if (c == '>') {
+                replacement = "&gt;";
+            } else if (c == '"') {
+                replacement = "&quot;";
+            } else if (c == '\'') {
+                replacement = "&apos;";
+            }
+            
+            if (replacement != null) {
+                if (result == null) {
+                    result = new StringBuffer(s);
+                }
+                result.replace(i + delta, i + delta + 1, replacement);
+                delta += (replacement.length() - 1);
+            }
+        }
+        if (result == null) {
+            return s;
+        }
+        return result.toString();
+    }
+    
 }

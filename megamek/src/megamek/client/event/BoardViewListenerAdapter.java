@@ -16,54 +16,66 @@ package megamek.client.event;
 
 import megamek.common.Coords;
 
+/**
+ * This adapter class provides default implementations for the
+ * methods described by the <code>BoardViewListener</code> interface.
+ * <p>
+ * Classes that wish to deal with <code>BoardViewEvent</code>s can
+ * extend this class and override only the methods which they are
+ * interested in.
+ * </p>
+ *
+ * @see BoardViewListener
+ * @see BoardViewEvent
+ */
 public class BoardViewListenerAdapter implements BoardViewListener {
-
-    /* (non-Javadoc)
-     * @see megamek.client.BoardViewListener#boardHexMoused(megamek.client.BoardViewEvent)
+    
+    /**
+     * The default behavior is to do nothing.
      */
     public void boardHexMoused(BoardViewEvent b) {
     }
-
-    /* (non-Javadoc)
-     * @see megamek.client.BoardViewListener#boardHexCursor(megamek.client.BoardViewEvent)
+    
+    /**
+     * The default behavior is to do nothing.
      */
     public void boardHexCursor(BoardViewEvent b) {
     }
-
-    /* (non-Javadoc)
-     * @see megamek.client.BoardViewListener#boardHexHighlighted(megamek.client.BoardViewEvent)
+    
+    /**
+     * The default behavior is to do nothing.
      */
     public void boardHexHighlighted(BoardViewEvent b) {
     }
-
-    /* (non-Javadoc)
-     * @see megamek.client.BoardViewListener#boardHexSelected(megamek.client.BoardViewEvent)
+    
+    /**
+     * The default behavior is to do nothing.
      */
     public void boardHexSelected(BoardViewEvent b) {
     }
-
-    /* (non-Javadoc)
-     * @see megamek.client.BoardViewListener#boardFirstLOSHex(megamek.client.BoardViewEvent)
+    
+    /**
+     * The default behavior is to do nothing.
      */
     public void boardFirstLOSHex(BoardViewEvent b) {
     }
-
-    /* (non-Javadoc)
-     * @see megamek.client.BoardViewListener#boardSecondLOSHex(megamek.client.BoardViewEvent, megamek.common.Coords)
+    
+    /**
+     * The default behavior is to do nothing.
      */
     public void boardSecondLOSHex(BoardViewEvent b, Coords c) {
     }
-
-    /* (non-Javadoc)
-     * @see megamek.client.BoardViewListener#finishedMovingUnits(megamek.client.BoardViewEvent)
+    
+    /**
+     * The default behavior is to do nothing.
      */
     public void finishedMovingUnits(BoardViewEvent b) {
     }
-
-    /* (non-Javadoc)
-     * @see megamek.client.BoardViewListener#selectUnit(megamek.client.BoardViewEvent)
+    
+    /**
+     * The default behavior is to do nothing.
      */
     public void selectUnit(BoardViewEvent b) {
     }
-
+    
 }

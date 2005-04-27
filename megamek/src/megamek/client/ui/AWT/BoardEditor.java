@@ -101,7 +101,7 @@ public class BoardEditor extends Container implements ItemListener,
         bv.addKeyListener(this);
         bv.addBoardViewListener(new BoardViewListener(){
 
-            public void boardHexMoused(BoardViewEvent b) {
+            public void hexMoused(BoardViewEvent b) {
                 bv.cursor(b.getCoords());
                 if(altheld) {
                     setCurrentHex(board.getHex(b.getCoords()));
@@ -113,19 +113,19 @@ public class BoardEditor extends Container implements ItemListener,
                     }
                 }
             }
-            public void boardHexCursor(BoardViewEvent b) {}
+            public void hexCursor(BoardViewEvent b) {}
 
             public void boardHexHighlighted(BoardViewEvent b) {}
 
-            public void boardHexSelected(BoardViewEvent b) {}
+            public void hexSelected(BoardViewEvent b) {}
 
-            public void boardFirstLOSHex(BoardViewEvent b) {}
+            public void firstLOSHex(BoardViewEvent b) {}
 
-            public void boardSecondLOSHex(BoardViewEvent b, Coords c) {}
+            public void secondLOSHex(BoardViewEvent b, Coords c) {}
 
             public void finishedMovingUnits(BoardViewEvent b) {}
 
-            public void selectUnit(BoardViewEvent b) {}
+            public void unitSelected(BoardViewEvent b) {}
             
         });
 

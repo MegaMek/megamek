@@ -43,22 +43,22 @@ public class AbstractPhaseDisplay extends Panel implements BoardViewListener, Ga
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent b) {
     }
     
-    public void boardHexSelected(BoardViewEvent b) {
+    public void hexSelected(BoardViewEvent b) {
     }
     
-    public void boardHexCursor(BoardViewEvent b) {
+    public void hexCursor(BoardViewEvent b) {
     }
     
     public void boardHexHighlighted(BoardViewEvent b) {
     }
     
-    public void boardFirstLOSHex(BoardViewEvent b) {
+    public void firstLOSHex(BoardViewEvent b) {
     }
     
-    public void boardSecondLOSHex(BoardViewEvent b, Coords c) {
+    public void secondLOSHex(BoardViewEvent b, Coords c) {
     }
     
     /* (non-Javadoc)
@@ -70,7 +70,7 @@ public class AbstractPhaseDisplay extends Panel implements BoardViewListener, Ga
     /* (non-Javadoc)
      * @see megamek.client.BoardViewListener#selectUnit(megamek.client.BoardViewEvent)
      */
-    public void selectUnit(BoardViewEvent b) {
+    public void unitSelected(BoardViewEvent b) {
     }
     
     // GameListener

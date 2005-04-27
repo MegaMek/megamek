@@ -793,7 +793,7 @@ public class MovementDisplay
     //
     // BoardListener
     //
-    public synchronized void boardHexMoused(BoardViewEvent b) {
+    public synchronized void hexMoused(BoardViewEvent b) {
         final Entity ce = ce();
         
         
@@ -1505,7 +1505,7 @@ public class MovementDisplay
             clientgui.bv.centerOnHex(ce.getPosition());
         }
     }
-    public void selectUnit(BoardViewEvent b) {
+    public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {

@@ -31,51 +31,67 @@ import megamek.common.Coords;
 public class BoardViewListenerAdapter implements BoardViewListener {
     
     /**
+     * Sent when user clicks, double clicks or drags hex.
      * The default behavior is to do nothing.
+     * @param b an event
      */
-    public void boardHexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent b) {
     }
     
     /**
+     * Sent when BoardView 'cursor' is set to Hex.
      * The default behavior is to do nothing.
+     * @param b an event
      */
-    public void boardHexCursor(BoardViewEvent b) {
+    public void hexCursor(BoardViewEvent b) {
     }
     
     /**
+     * Sent when BoardView 'cursor' is set to Hex.
      * The default behavior is to do nothing.
+     * @param b an event
      */
     public void boardHexHighlighted(BoardViewEvent b) {
     }
     
     /**
+     * Sent when Hex is selected.
      * The default behavior is to do nothing.
+     * @param b an event
      */
-    public void boardHexSelected(BoardViewEvent b) {
+    public void hexSelected(BoardViewEvent b) {
     }
     
     /**
+     * Sent when firstLOS is set.
      * The default behavior is to do nothing.
+     * @param b an event
      */
-    public void boardFirstLOSHex(BoardViewEvent b) {
+    public void firstLOSHex(BoardViewEvent b) {
     }
     
     /**
+     * Sent when secondLOS is set.
      * The default behavior is to do nothing.
+     * @param b an event
      */
-    public void boardSecondLOSHex(BoardViewEvent b, Coords c) {
+    public void secondLOSHex(BoardViewEvent b, Coords c) {
     }
     
     /**
+     * Sent when moving units is finished.
      * The default behavior is to do nothing.
+     * @param b an event
      */
     public void finishedMovingUnits(BoardViewEvent b) {
     }
     
     /**
+     * Sent when Unit is selected.
      * The default behavior is to do nothing.
+     * @param b an event
      */
-    public void selectUnit(BoardViewEvent b) {
+    public void unitSelected(BoardViewEvent b) {
     }
     
 }

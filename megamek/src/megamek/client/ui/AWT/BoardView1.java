@@ -283,28 +283,28 @@ public class BoardView1
             case BoardViewEvent.BOARD_HEX_CLICKED :
             case BoardViewEvent.BOARD_HEX_DOUBLECLICKED :
             case BoardViewEvent.BOARD_HEX_DRAGGED :
-                l.boardHexMoused(event);
+                l.hexMoused(event);
                 break;
             case BoardViewEvent.BOARD_HEX_CURSOR :
-                l.boardHexCursor(event);
+                l.hexCursor(event);
                 break;
             case BoardViewEvent.BOARD_HEX_HIGHLIGHTED :
                 l.boardHexHighlighted(event);
                 break;
             case BoardViewEvent.BOARD_HEX_SELECTED :
-                l.boardHexSelected(event);
+                l.hexSelected(event);
                 break;
             case BoardViewEvent.BOARD_FIRST_LOS_HEX :
-                l.boardFirstLOSHex(event);
+                l.firstLOSHex(event);
                 break;
             case BoardViewEvent.BOARD_SECOND_LOS_HEX :
-                l.boardSecondLOSHex(event, getFirstLOS());
+                l.secondLOSHex(event, getFirstLOS());
                 break;
             case BoardViewEvent.FINISHED_MOVING_UNITS :
                 l.finishedMovingUnits(event);
                 break;
             case BoardViewEvent.SELECT_UNIT :
-                l.selectUnit(event);
+                l.unitSelected(event);
                 break;
             }
         }

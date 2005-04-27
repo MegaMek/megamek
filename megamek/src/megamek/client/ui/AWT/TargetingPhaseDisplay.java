@@ -582,7 +582,7 @@ public class TargetingPhaseDisplay
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -615,7 +615,7 @@ public class TargetingPhaseDisplay
         }
     }
 
-    public void boardHexSelected(BoardViewEvent b) {
+    public void hexSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -833,7 +833,7 @@ public class TargetingPhaseDisplay
         }
     }
 
-    public void selectUnit(BoardViewEvent b) {
+    public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {

@@ -997,9 +997,6 @@ public abstract class Entity
      * Returns the abbreviated name of the location specified.
      */
     public String getLocationAbbr(HitData hit) {
-        if (hit==null) {
-            System.out.println("hit2=null");
-        }        
       return getLocationAbbr(hit.getLocation()) + (hit.isRear() && hasRearArmor(hit.getLocation()) ? "R" : "") + (hit.getEffect() == HitData.EFFECT_CRITICAL ? " (critical)" : "");
     }
 

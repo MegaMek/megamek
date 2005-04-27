@@ -9106,10 +9106,6 @@ implements Runnable, ConnectionHandler {
     private String damageEntity(Entity te, HitData hit, int damage,
                                 boolean ammoExplosion, int bFrag,
                                 boolean damageIS, boolean areaSatArty) {
-        //TODO mev
-        if (hit==null) {
-            System.out.println("hit=null");
-        }
         StringBuffer desc = new StringBuffer();
         boolean autoEject = false;
         if (ammoExplosion) {
@@ -9200,9 +9196,6 @@ implements Runnable, ConnectionHandler {
 
             if (damageIS) desc.append ( "Internal Structure of ");
 
-            if (hit==null) {
-                System.out.println("hit1=null");
-            }
             desc.append(te.getLocationAbbr(hit) )
                 .append( "." );
 

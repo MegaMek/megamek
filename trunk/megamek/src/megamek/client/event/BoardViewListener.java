@@ -16,6 +16,21 @@ package megamek.client.event;
 
 import megamek.common.Coords;
 
+/**
+ * Classes which implement this interface provide methods
+ * that deal with the events that are generated when the
+ * BoardView is changed.
+ * <p>
+ * After creating an instance of a class that implements
+ * this interface it can be added to a Board using the
+ * <code>addBoardViewListener</code> method and removed using
+ * the <code>removeBoardViewListener</code> method. 
+ * When BoardView is changed the appropriate method will be invoked.
+ * </p>
+ *
+ * @see BoardViewListenerAdapter
+ * @see BoardViewEvent
+ */
 public interface BoardViewListener extends java.util.EventListener
 {
     public void boardHexMoused(BoardViewEvent b);

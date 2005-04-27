@@ -17,6 +17,12 @@ package megamek.client.event;
 import megamek.common.Coords;
 import megamek.common.Entity;
 
+/**
+ * Instances of this class are sent as a result of changes 
+ * in BoardView
+ *
+ * @see BoardViewListener
+ */
 public class BoardViewEvent extends java.util.EventObject
 {
     public static final int BOARD_HEX_CLICKED = 0;
@@ -74,24 +80,24 @@ public class BoardViewEvent extends java.util.EventObject
     }
     
     /**
-     * Returns the coordinate where this event occurred, if
-     * applicable; null otherwise.
+     * @return the coordinate where this event occurred, if
+     *         applicable; <code>null</code> otherwise.
      */
     public Coords getCoords() {
         return c;
     }
     
     /**
-     * Returns the entity associated with this event, if
-     * applicable; null otherwise.
+     * @return the entity associated with this event, if
+     *         applicable; <code>null</code> otherwise.
      */
     public Entity getEntity() {
         return entity;
     }
 
     /**
-     * Returns the entity associated with this event, if
-     * applicable; null otherwise.
+     * @return the entity ID associated with this event, if
+     *         applicable; 0 otherwise.
      */
     public int getEntityId() {
         return entityId;

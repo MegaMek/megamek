@@ -131,8 +131,10 @@ public interface IBoardView {
     public abstract void mouseAction(Coords coords, int mtype, int modifiers);
 
     /**
-     * Adds the specified board listener to receive
-     * board events from this board.
+     * Adds the specified board view listener to receive
+     * events from this view.
+     * 
+     * @see BoardViewListener
      *
      * @param listener the board listener.
      */

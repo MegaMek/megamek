@@ -1664,32 +1664,15 @@ public class BoardView1
         return tileManager.supersFor(hex);
     }
 
-    public void boardHexMoused(BoardViewEvent b) {
-    }
-    public void boardHexCursor(BoardViewEvent b) {
-        moveCursor(cursorSprite, b.getCoords());
-        moveCursor(firstLOSSprite, null);
-        moveCursor(secondLOSSprite, null);
-    }
-    public void boardHexSelected(BoardViewEvent b) {
-        moveCursor(selectedSprite, b.getCoords());
-        moveCursor(firstLOSSprite, null);
-        moveCursor(secondLOSSprite, null);
-    }
-    public void boardHexHighlighted(BoardViewEvent b) {
-        moveCursor(highlightSprite, b.getCoords());
-        moveCursor(firstLOSSprite, null);
-        moveCursor(secondLOSSprite, null);
-    }
-    public void boardFirstLOSHex(BoardViewEvent b) {
+    protected void firstLOSHex(Coords c) {
         if (useLOSTool) {
             moveCursor(secondLOSSprite, null);
-            moveCursor(firstLOSSprite, b.getCoords());
+            moveCursor(firstLOSSprite, c);
         }
     }
-    public void boardSecondLOSHex(BoardViewEvent b, Coords c1) {
+
+    protected void secondLOSHex(Coords c2, Coords c1) {
         if (useLOSTool) {
-            Coords c2 = b.getCoords();
             moveCursor(firstLOSSprite, c1);
             moveCursor(secondLOSSprite, c2);
 
@@ -3810,6 +3793,9 @@ public class BoardView1
     public void select(Coords coords) {
         if(coords == null || game.getBoard().contains(coords)) {
             setSelected(coords);
+            moveCursor(selectedSprite, coords);
+            moveCursor(firstLOSSprite, null);
+            moveCursor(secondLOSSprite, null);
             processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_SELECTED,0));
         }
     }
@@ -3833,6 +3819,9 @@ public class BoardView1
     public void highlight(Coords coords) {
         if(coords == null || game.getBoard().contains(coords)) {
             setHighlighted(coords);
+            moveCursor(highlightSprite, coords);
+            moveCursor(firstLOSSprite, null);
+            moveCursor(secondLOSSprite, null);
             processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
         }
     }
@@ -3857,6 +3846,9 @@ public class BoardView1
         if(coords == null || game.getBoard().contains(coords)) {
             if(getLastCursor() == null || coords == null || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
+                moveCursor(cursorSprite, coords);
+                moveCursor(firstLOSSprite, null);
+                moveCursor(secondLOSSprite, null);
                 processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_CURSOR, 0));
             } else {
                 setLastCursor(coords);
@@ -3878,8 +3870,10 @@ public class BoardView1
         if(c == null || game.getBoard().contains(c)) {
             if (getFirstLOS() == null) {
                 setFirstLOS(c);
+                firstLOSHex(c);
                 processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
             } else {
+                secondLOSHex(c,getFirstLOS());
                 processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
                 setFirstLOS(null);
             }
@@ -3947,8 +3941,11 @@ public class BoardView1
 
     private GameListener gameListener = new GameListenerAdapter(){
         public void gameEntityChange(GameEntityChangeEvent e) {
-            //TODO process moving units
-            redrawEntity(e.getEntity());
+            if (e.getMovePath() != null) {
+                addMovingUnit(e.getEntity(),e.getMovePath());
+            }else {
+                redrawEntity(e.getEntity());
+            }
         }
         public void gameBoardNew(GameBoardNewEvent e) {
             IBoard b = e.getOldBoard();
@@ -3970,6 +3967,7 @@ public class BoardView1
         backSize = null;
         boardImage = null;
         boardGraph = null;
-        tileManager.reset();        
+        tileManager.reset();
+        redrawAllEntities();
     }
 }

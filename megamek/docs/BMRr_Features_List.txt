@@ -6,7 +6,7 @@ Components (Units)
 
 - Battlemechs			Yes		None
 - Protomechs			Yes		None
-- Vehicles			Partial		No VTOL's or Naval Units.
+- Vehicles			Partial		No VTOLs or Naval Units.
 - Infantry			Yes		None
 
 Components (Mapsheets)
@@ -205,7 +205,7 @@ Clan Battle Armor Variants
 
 - Gnome				Yes		None
 - Salamander			Yes		None
-- Slyph				No		Waiting on VTOL movement.
+- Sylph				No		Waiting on VTOL movement.
 - Undine			No		Waiting on underwater movement.
 
 Innersphere Battle Armor Variants
@@ -308,7 +308,7 @@ Special Case Rules (Scavenging and Repairs)
 
 Special Case Rules (Underwater Operations)
 
-- Movement			Yes		Buggy.
+- Movement			Yes		None
 - Line Of Sight			Yes		None
 - Weapons Attacks		Yes		None
 - Physical Attacks		Yes		None
@@ -322,7 +322,7 @@ Equipment
 - Artemis IV FCS		Yes		None
 - Artillery Weapons		Partial		Need smoke and Homing Arrow IV ammo.
 - Autocannon Munitions		Partial		Incendiary Ammo not implemented.
-- C3 Computers			Yes    		All bug reports on C3 need to be re-confirmed
+- C3 Computers			Yes    		None
 - Cargo Space			No		None
 - CASE				Yes		None
 - ECM				Yes		None

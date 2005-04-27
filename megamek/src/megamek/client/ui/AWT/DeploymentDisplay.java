@@ -331,7 +331,7 @@ public class DeploymentDisplay
     //
     // BoardListener
     //
-    public void boardHexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -529,7 +529,7 @@ public class DeploymentDisplay
     }
     
     // Selected a unit in the unit overview.
-    public void selectUnit(BoardViewEvent b) {
+    public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {

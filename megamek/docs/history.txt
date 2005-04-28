@@ -16,6 +16,7 @@ v0.29.75 (CVS)
 + First step in gui/logic separation direction. The previous implementation
     was marked with symbolic tag 'before-guilogic-separation'
 + Bug 1191818: Java 1.1 compatability fix for client settings dialog.
++ Client options window was too large.
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.

@@ -1194,7 +1194,7 @@ public class Game implements Serializable, IGame
         if (!vector.isEmpty()) {
             int count = vector.size();
             int random = Compute.randomInt(count);
-            return (Entity)vector.get(random);
+            return (Entity)vector.elementAt(random);
         } else {
             return null;
         }

@@ -554,7 +554,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
                 return p.getColor();
             }
         }
-        return Color.BLACK;
+        return Color.black;
    
     }
 

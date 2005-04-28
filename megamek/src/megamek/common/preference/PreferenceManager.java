@@ -204,7 +204,10 @@ public class PreferenceManager {
                 if (result == null) {
                     result = new StringBuffer(s);
                 }
-                result.replace(i + delta, i + delta + 1, replacement);
+                String temp = result.toString();
+                String firstHalf = temp.substring(0, i + delta);
+                String secondHalf = temp.substring(i + delta + 1, temp.length());
+                result = new StringBuffer(firstHalf + replacement + secondHalf);
                 delta += (replacement.length() - 1);
             }
         }

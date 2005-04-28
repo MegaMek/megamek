@@ -24,7 +24,7 @@ import java.awt.Window;
  */
 public class ClientDialog extends Dialog {
 
-    private static final int SCREEN_BORDER = 10;
+    private static final double TASKBAR_SIZE = .05;
     private static final int CONTAINER_BUFFER = 10;
 
     private Frame owner = null;
@@ -78,28 +78,29 @@ public class ClientDialog extends Dialog {
         height = Math.min( desiredDimension.height + CONTAINER_BUFFER,
                            screenSize.height );
 
-        //shrink the dialog if it will go bigger than page:
-        if (height > screenSize.height)
-            height = screenSize.height - SCREEN_BORDER;
-        if (width > screenSize.width)
-            width = screenSize.width - SCREEN_BORDER;
+        //Shrink the dialog if it will go bigger than page:
+        // A border is used to account for things like the windows taskbar.
+        // Sadly, the true size of the taskbar cannot be found without making
+        // a native call, so 5% is just a guess.  It should probably be
+        // a configuration setting so people can modify it according to
+        // their OS setup.
+        int screenBorder = Math.max( (int)(screenSize.width * TASKBAR_SIZE),
+                                     (int)(screenSize.height * TASKBAR_SIZE));
+        if (height == screenSize.height)
+            height = screenSize.height - 2*screenBorder;
+        if (width == screenSize.width)
+            width = screenSize.width - 2*screenBorder;
 
         Dimension ownerCenter = getOwnersCenter();
         yLoc = ownerCenter.height - height / 2;
         xLoc = ownerCenter.width - width / 2;
 
-        if (yLoc < SCREEN_BORDER)
-            yLoc = SCREEN_BORDER;
-        if (xLoc < SCREEN_BORDER)
-            xLoc = SCREEN_BORDER;
-
-        //now check if the window goes past the end of the screen
-        if ((yLoc + height) > screenSize.height) {
-            yLoc = (screenSize.height - SCREEN_BORDER) - height;
-        }
-        if ((xLoc + width) > screenSize.width) {
-            xLoc = (screenSize.width - SCREEN_BORDER) - width;
-        }
+        if (yLoc < screenBorder ||
+            yLoc + height > screenSize.height - screenBorder)
+            yLoc = screenBorder;
+        if (xLoc < screenBorder ||
+            xLoc + width > screenSize.width - screenBorder)
+            xLoc = screenBorder;
 
         setSize(width, height);
         setLocation(xLoc, yLoc);

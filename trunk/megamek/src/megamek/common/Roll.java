@@ -46,8 +46,7 @@ public abstract class Roll {
      * No one should call the default constructor.
      */
     private Roll() {
-        throw new UnsupportedOperationException
-            ("Default Roll constructor called.");
+        throw new UnsupportedOperationException("Default Roll constructor called.");
     }
 
     /**

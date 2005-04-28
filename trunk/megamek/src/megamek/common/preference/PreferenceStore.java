@@ -263,12 +263,12 @@ class PreferenceStore implements IPreferenceStore {
     
     public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
         if (!listeners.contains((listener))) {
-            listeners.add(listener);
+            listeners.addElement(listener);
         }
     }
 
     public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
-        listeners.remove(listener);        
+        listeners.removeElement(listener);
     }
 
     protected void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {

@@ -27,6 +27,8 @@ public class ClientDialog extends Dialog {
     private static final int SCREEN_BORDER = 10;
     private static final int CONTAINER_BUFFER = 10;
 
+    private Frame owner = null;
+
     /**
      * @param owner -
      *            the <code>Frame</code> that owns this dialog.
@@ -35,9 +37,11 @@ public class ClientDialog extends Dialog {
      */
     public ClientDialog(Frame owner, String title) {
         super(owner, title);
+        this.owner = owner;
     }
     public ClientDialog(Frame owner, String title, boolean modal) {
         super(owner, title, modal);
+        this.owner = owner;
     }
 
     /**
@@ -67,7 +71,6 @@ public class ClientDialog extends Dialog {
     protected void setLocationAndSize(Dimension desiredDimension) {
         int yLoc, xLoc, height, width;
 
-        Window owner = this.getOwner();
         Dimension screenSize = owner.getToolkit().getScreenSize();
 
         width = Math.min( desiredDimension.width + CONTAINER_BUFFER,
@@ -104,10 +107,10 @@ public class ClientDialog extends Dialog {
 
     private Dimension getOwnersCenter() {
         Dimension center = new Dimension();
-        center.height = this.getOwner().getLocation().y
-            + this.getOwner().getSize().height / 2;
-        center.width = this.getOwner().getLocation().x
-            + this.getOwner().getSize().width / 2;
+        center.height = this.owner.getLocation().y
+            + this.owner.getSize().height / 2;
+        center.width = this.owner.getLocation().x
+            + this.owner.getSize().width / 2;
         return center;
     }
 

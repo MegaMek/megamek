@@ -13,8 +13,9 @@ v0.29.75 (CVS)
 + Removed dependence on AWT from classes Board, Hex, Player.
 + RFE 1024483: Chat lounge entity list now sorts by team and player.
 + Expanded tabs to spaces in the .java files
-+ First step in gui/logic separation direction. The previous implementation was 
-    marked with symbolic tag 'before-guilogic-separation'
++ First step in gui/logic separation direction. The previous implementation
+    was marked with symbolic tag 'before-guilogic-separation'
++ Bug 1191818: Java 1.1 compatability fix for client settings dialog.
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.

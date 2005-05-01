@@ -36,7 +36,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         weightL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
         movementTypeL, ejectL;
     private PMSimpleLabel statusR, playerR, teamR, weightR, pilotR,
-        mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR;
+        mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR, bvL, bvR;
     private PMSimpleLabel[] advantagesR;
     private Vector    bgDrawers = new Vector();
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
@@ -150,6 +150,11 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         content.addArea( ejectL );
         ejectR = createLabel(STAR3, fm, ejectL.getSize().width + 10, 230);
         content.addArea( ejectR );
+        
+        bvL = createLabel( Messages.getString("GeneralInfoMapSet.bvL"), fm, 0, 245); //$NON-NLS-1$
+        content.addArea( bvL );
+        bvR = createLabel(STAR3, fm, bvL.getSize().width + 10, 245);
+        content.addArea( bvR );
 
         int vSpace = 245;
         advantagesR = new PMSimpleLabel[24];
@@ -257,6 +262,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
             movementTypeL.setVisible(false);
             movementTypeR.setVisible(false);
         }
+        bvR.setString(new Integer(en.calculateBattleValue()).toString());
     }
         
     public PMAreasGroup getContentGroup(){

@@ -19,6 +19,7 @@ v0.29.75 (CVS)
 + Client options window was too large.
 + Various Java 1.1 compatability fixes.
 + Bug 1192795: Mek display shows auto-eject again.
++ Show unit's current BV (recalculated for damage) in the MekDisplay.
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.

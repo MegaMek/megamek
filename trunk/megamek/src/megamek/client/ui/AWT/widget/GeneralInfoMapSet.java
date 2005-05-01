@@ -146,17 +146,23 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 10, 215);
         content.addArea(pilotR);
 
-        int vSpace = 230;
+        ejectL = createLabel( Messages.getString("GeneralInfoMapSet.ejectL"), fm, 0, 230); //$NON-NLS-1$
+        content.addArea( ejectL );
+        ejectR = createLabel(STAR3, fm, ejectL.getSize().width + 10, 230);
+        content.addArea( ejectR );
+
+        int vSpace = 245;
         advantagesR = new PMSimpleLabel[24];
         for (int i=0; i < advantagesR.length; i++) {
             advantagesR[i] = createLabel(new Integer(i).toString(), fm, pilotL.getSize().width + 10, vSpace);
             content.addArea(advantagesR[i]);
             vSpace += 15;
         };
-        ejectL = createLabel( Messages.getString("GeneralInfoMapSet.ejectL"), fm, 0, vSpace); //$NON-NLS-1$
-        content.addArea( ejectL );
-        ejectR = createLabel(STAR3, fm, ejectL.getSize().width + 10, vSpace);
-        content.addArea( ejectR );
+        //DO NOT PLACE ANY MORE LABELS BELOW HERE.  They will get
+        //pushed off the bottom of the screen by the pilot advantage
+        //labels.  Why not just allocate the number of pilot advantage
+        //labels required instead of a hard 24?  Because we don't have
+        //an entity at this point.  Bleh.
     }
 
      /**

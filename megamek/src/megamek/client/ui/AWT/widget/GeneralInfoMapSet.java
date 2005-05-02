@@ -42,7 +42,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
     private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
     private final static int MAX_STR_LENGTH = 18;
-
+    private int yCoord = 1;
 
     /**
      * This constructor have to be called anly from addNotify() method
@@ -53,115 +53,118 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         setBackGround();
     }
 
-
+    //These two methods are used to vertically position new labels on the
+    // display.
+    private int getYCoord() {
+        return yCoord * 15 - 5;
+    }
+    private int getNewYCoord() {
+        yCoord++;
+        return getYCoord();
+    }
 
     private void setAreas(){
         FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
-        
-        mechTypeL0 = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, 10); //$NON-NLS-1$
+
+        mechTypeL0 = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
         mechTypeL0.setColor(Color.yellow);
         content.addArea(mechTypeL0);
         
-        
-        mechTypeL1 = createLabel(STAR3, fm, 0, 25);
+        mechTypeL1 = createLabel(STAR3, fm, 0, getNewYCoord());
         mechTypeL1.setColor(Color.yellow);
         content.addArea(mechTypeL1);
         
         fm = comp.getFontMetrics(FONT_VALUE);
 
-        playerL = createLabel(Messages.getString("GeneralInfoMapSet.playerL"), fm, 0, 40); //$NON-NLS-1$
+        playerL = createLabel(Messages.getString("GeneralInfoMapSet.playerL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(playerL);
         
-        playerR = createLabel(Messages.getString("GeneralInfoMapSet.playerR"), fm, playerL.getSize().width + 10, 40); //$NON-NLS-1$
-        content.addArea(playerR);       
+        playerR = createLabel(Messages.getString("GeneralInfoMapSet.playerR"), fm, playerL.getSize().width + 10, getYCoord()); //$NON-NLS-1$
+        content.addArea(playerR);
         
-        teamL = createLabel(Messages.getString("GeneralInfoMapSet.teamL"), fm, 0, 55); //$NON-NLS-1$
+        teamL = createLabel(Messages.getString("GeneralInfoMapSet.teamL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(teamL);
         
-        teamR = createLabel(Messages.getString("GeneralInfoMapSet.teamR"), fm, teamL.getSize().width + 10, 55); //$NON-NLS-1$
+        teamR = createLabel(Messages.getString("GeneralInfoMapSet.teamR"), fm, teamL.getSize().width + 10, getYCoord()); //$NON-NLS-1$
         content.addArea(teamR);
         
                 
-        statusL = createLabel(Messages.getString("GeneralInfoMapSet.statusL"), fm, 0, 70); //$NON-NLS-1$
+        statusL = createLabel(Messages.getString("GeneralInfoMapSet.statusL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(statusL);
 
-        statusR = createLabel(STAR3, fm, statusL.getSize().width + 10, 70);
+        statusR = createLabel(STAR3, fm, statusL.getSize().width + 10, getYCoord());
         content.addArea(statusR);
 
-        weightL = createLabel(Messages.getString("GeneralInfoMapSet.weightL"), fm, 0, 85); //$NON-NLS-1$
+        weightL = createLabel(Messages.getString("GeneralInfoMapSet.weightL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(weightL);
         
-        weightR = createLabel(STAR3, fm, weightL.getSize().width + 10, 85);
+        weightR = createLabel(STAR3, fm, weightL.getSize().width + 10, getYCoord());
         content.addArea(weightR);
-        
-        
-        mpL0 = createLabel(Messages.getString("GeneralInfoMapSet.mpL0"), fm, 0, 100); //$NON-NLS-1$
-        content.addArea(mpL0);
-        
-        mpL1 = createLabel(Messages.getString("GeneralInfoMapSet.mpL1"), fm, 0 , 115); //$NON-NLS-1$
-        mpL1.moveTo( mpL0.getSize().width - mpL1.getSize().width, 115);
-        content.addArea(mpL1);
-        
-        mpL2 = createLabel(Messages.getString("GeneralInfoMapSet.mpL2"), fm, 0 , 130); //$NON-NLS-1$
-        mpL2.moveTo( mpL0.getSize().width - mpL2.getSize().width, 130);
-        content.addArea(mpL2);
-        
-        mpL3 = createLabel(Messages.getString("GeneralInfoMapSet.mpL3"), fm, 0 , 145); //$NON-NLS-1$
-        mpL3.moveTo( mpL0.getSize().width - mpL3.getSize().width, 145);
-        content.addArea(mpL3);
-        
-        
-        mpR0 = createLabel("", fm, mpL0.getSize().width + 10, 100); //$NON-NLS-1$
-        content.addArea(mpR0);
-        
-        mpR1 = createLabel(STAR3, fm, mpL0.getSize().width + 10, 115);
-        content.addArea(mpR1);
-        
-        mpR2 = createLabel(STAR3, fm, mpL0.getSize().width + 10, 130);
-        content.addArea(mpR2);
-                
-        mpR3 = createLabel(STAR3, fm, mpL0.getSize().width + 10, 145);
-        content.addArea(mpR3);
-        
-        curMoveL = createLabel(Messages.getString("GeneralInfoMapSet.curMoveL"), fm, 0, 160); //$NON-NLS-1$
-        content.addArea(curMoveL);
-        
-        curMoveR = createLabel(STAR3, fm, curMoveL.getSize().width + 10, 160);
-        content.addArea(curMoveR);
-        
-                
-        heatL = createLabel(Messages.getString("GeneralInfoMapSet.heatL"), fm, 0, 175); //$NON-NLS-1$
-        content.addArea(heatL);
-        
-        heatR = createLabel(STAR3, fm, heatL.getSize().width + 10, 175);
-        content.addArea(heatR);
 
-        movementTypeL = createLabel(Messages.getString("GeneralInfoMapSet.movementTypeL"), fm, 0, 190); //$NON-NLS-1$
-        content.addArea(movementTypeL);
-        movementTypeR = createLabel(STAR3, fm, movementTypeL.getSize().width + 10, 190);
-        content.addArea(movementTypeR);
-
-        pilotL = createLabel(Messages.getString("GeneralInfoMapSet.pilotL"), fm, 0, 215); //$NON-NLS-1$
-        content.addArea(pilotL);
-        pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 10, 215);
-        content.addArea(pilotR);
-
-        ejectL = createLabel( Messages.getString("GeneralInfoMapSet.ejectL"), fm, 0, 230); //$NON-NLS-1$
-        content.addArea( ejectL );
-        ejectR = createLabel(STAR3, fm, ejectL.getSize().width + 10, 230);
-        content.addArea( ejectR );
-        
-        bvL = createLabel( Messages.getString("GeneralInfoMapSet.bvL"), fm, 0, 245); //$NON-NLS-1$
+        bvL = createLabel( Messages.getString("GeneralInfoMapSet.bvL"), fm, weightL.getSize().width + 10 + weightR.getSize().width + 10, getYCoord()); //$NON-NLS-1$
         content.addArea( bvL );
-        bvR = createLabel(STAR3, fm, bvL.getSize().width + 10, 245);
+
+        bvR = createLabel(STAR3, fm, weightL.getSize().width + 10 + weightR.getSize().width + 10 + bvL.getSize().width + 10, getYCoord());
         content.addArea( bvR );
 
-        int vSpace = 245;
+        mpL0 = createLabel(Messages.getString("GeneralInfoMapSet.mpL0"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(mpL0);
+
+        mpR0 = createLabel("", fm, mpL0.getSize().width + 10, getYCoord()); //$NON-NLS-1$
+        content.addArea(mpR0);
+
+        mpL1 = createLabel(Messages.getString("GeneralInfoMapSet.mpL1"), fm, 0 , getNewYCoord()); //$NON-NLS-1$
+        mpL1.moveTo( mpL0.getSize().width - mpL1.getSize().width, 115);
+        content.addArea(mpL1);
+
+        mpR1 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
+        content.addArea(mpR1);
+
+        mpL2 = createLabel(Messages.getString("GeneralInfoMapSet.mpL2"), fm, 0 , getNewYCoord()); //$NON-NLS-1$
+        mpL2.moveTo( mpL0.getSize().width - mpL2.getSize().width, 130);
+        content.addArea(mpL2);
+
+        mpR2 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
+        content.addArea(mpR2);
+
+        mpL3 = createLabel(Messages.getString("GeneralInfoMapSet.mpL3"), fm, 0 , getNewYCoord()); //$NON-NLS-1$
+        mpL3.moveTo( mpL0.getSize().width - mpL3.getSize().width, 145);
+        content.addArea(mpL3);
+
+        mpR3 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
+        content.addArea(mpR3);
+
+        curMoveL = createLabel(Messages.getString("GeneralInfoMapSet.curMoveL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(curMoveL);
+        
+        curMoveR = createLabel(STAR3, fm, curMoveL.getSize().width + 10, getYCoord());
+        content.addArea(curMoveR);
+        
+        heatL = createLabel(Messages.getString("GeneralInfoMapSet.heatL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(heatL);
+        
+        heatR = createLabel(STAR3, fm, heatL.getSize().width + 10, getYCoord());
+        content.addArea(heatR);
+
+        movementTypeL = createLabel(Messages.getString("GeneralInfoMapSet.movementTypeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(movementTypeL);
+        movementTypeR = createLabel(STAR3, fm, movementTypeL.getSize().width + 10, getYCoord());
+        content.addArea(movementTypeR);
+
+        pilotL = createLabel(Messages.getString("GeneralInfoMapSet.pilotL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(pilotL);
+        pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 10, getYCoord());
+        content.addArea(pilotR);
+
+        ejectL = createLabel( Messages.getString("GeneralInfoMapSet.ejectL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea( ejectL );
+        ejectR = createLabel(STAR3, fm, ejectL.getSize().width + 10, getYCoord());
+        content.addArea( ejectR );
+
         advantagesR = new PMSimpleLabel[24];
         for (int i=0; i < advantagesR.length; i++) {
-            advantagesR[i] = createLabel(new Integer(i).toString(), fm, pilotL.getSize().width + 10, vSpace);
+            advantagesR[i] = createLabel(new Integer(i).toString(), fm, pilotL.getSize().width + 10, getNewYCoord());
             content.addArea(advantagesR[i]);
-            vSpace += 15;
         };
         //DO NOT PLACE ANY MORE LABELS BELOW HERE.  They will get
         //pushed off the bottom of the screen by the pilot advantage

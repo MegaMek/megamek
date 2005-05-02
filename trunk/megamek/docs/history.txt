@@ -21,6 +21,7 @@ v0.29.75 (CVS)
 + Bug 1192795: Mek display shows auto-eject again.
 + Show unit's current BV (recalculated for damage) in the MekDisplay.
 + Data 1193401: Show appropriate pictures for Combat Equipment BAs.
++ Fix bug with display of BV on MekDisplay.
 
 v0.29.74 (2005-04-25 8:15am)
 + Unconscious pilots could avoid damage when falling.

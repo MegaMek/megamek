@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.75 (CVS)
+v0.29.75 (2005-05-03 8:15am)
 + Added -port parameter to set the port a dedicated server will be listening to.
   Only valid if next parameter after -dedicated (and savegame name, if there).
   See also http://sourceforge.net/forum/forum.php?thread_id=1267994&forum_id=154580.

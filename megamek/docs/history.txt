@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.76 (CVS)
++ Patch 1194720, RFE 1050894: Alternate Artillery Scatter Option
 
 v0.29.75 (2005-05-03 8:15am)
 + Added -port parameter to set the port a dedicated server will be listening to.

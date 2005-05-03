@@ -1908,9 +1908,14 @@ public class Compute
         return false;
     }
 
-    public static Coords scatter(Coords coords) {
+    public static Coords scatter(Coords coords, int margin) {
         int scatterDirection = d6(1) - 1;
-        int scatterDistance = d6(1);
+        int scatterDistance = 0;
+        if (margin > 0) {
+            scatterDistance = margin;
+        } else {
+            scatterDistance = d6(1);
+        }
 
         for (int i = 0; i < scatterDistance; i++) {
             coords = coords.translated(scatterDirection);

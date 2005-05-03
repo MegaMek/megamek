@@ -5858,7 +5858,7 @@ implements Runnable, ConnectionHandler {
               .append("\n");
         }
         else {
-          coords = Compute.scatter(coords);
+          coords = Compute.scatter(coords, game.getOptions().booleanOption("margin_scatter_distance")?toHit.getValue()-wr.roll:-1);
           if (game.board.contains(coords)) {
             phaseReport.append("misses and scatters to hex ")
                 .append(coords.getBoardNum())
@@ -5904,7 +5904,7 @@ implements Runnable, ConnectionHandler {
                   .append("\n");
           }
           else {
-              coords = Compute.scatter(coords);
+              coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
               if (game.board.contains(coords)) {
                   phaseReport.append("misses and scatters to hex ")
                       .append(coords.getBoardNum())
@@ -5929,7 +5929,7 @@ implements Runnable, ConnectionHandler {
                   .append("\n");
           }
           else {
-              coords = Compute.scatter(coords);
+              coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
               if (game.board.contains(coords)) {
                   phaseReport.append("misses and scatters to hex ")
                       .append(coords.getBoardNum())
@@ -5954,7 +5954,7 @@ implements Runnable, ConnectionHandler {
                   .append("\n");
           }
           else {
-              coords = Compute.scatter(coords);
+              coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
               if (game.board.contains(coords)) {
                   phaseReport.append("misses and scatters to hex ")
                       .append(coords.getBoardNum())
@@ -6021,7 +6021,7 @@ implements Runnable, ConnectionHandler {
               .append("\n");
         }
         else {
-          coords = Compute.scatter(coords);
+          coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
           if (game.board.contains(coords)) {
             phaseReport.append("misses and scatters to hex ")
                 .append(coords.getBoardNum())

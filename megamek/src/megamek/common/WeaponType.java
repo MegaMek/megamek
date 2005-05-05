@@ -5047,7 +5047,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 16;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_NO_FIRES | F_BATTLEARMOR | F_MISSILE;
+        weapon.flags |= F_NO_FIRES | F_MISSILE;
         weapon.bv = 0;
 
         return weapon;

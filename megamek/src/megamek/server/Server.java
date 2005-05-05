@@ -6512,20 +6512,10 @@ implements Runnable, ConnectionHandler {
             // Advanced SRMs may get additional missiles
             if ( usesAmmo &&
                  atype.getAmmoType() == AmmoType.T_SRM_ADVANCED) {
-                // Advanced SRM 2s only hit with even number of missiles
-                if (atype.getRackSize() == 2) {
-                    hits = 2 * (int) Math.floor( (1.0 + (float) hits) / 2.0);
-                } 
-                // Advanced SRM 5s add one to the number of hits
-                // if hits is even and we wouldn't have more hits
-                // than shots fired
-                else if (atype.getRackSize() == 5) {
-                    int tmp = wtype.getRackSize() * platoon.getShootingStrength();
-                    if (hits%2 == 0 && hits < tmp) {
-                        hits++;
-                    }
+                int tmp = wtype.getRackSize() * platoon.getShootingStrength();
+                if (hits%2 == 1 && hits < tmp) {
+                    hits++;
                 }
-                
             }
 
         } else if (usesAmmo && atype.getMunitionType() == AmmoType.M_CLUSTER) {

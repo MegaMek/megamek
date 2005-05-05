@@ -3760,6 +3760,9 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 16;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
         weapon.flags |= F_NO_FIRES | F_MISSILE;
         weapon.bv = 0;
 
@@ -5047,6 +5050,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 16;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
         weapon.flags |= F_NO_FIRES | F_MISSILE;
         weapon.bv = 0;
 

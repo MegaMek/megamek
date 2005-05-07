@@ -878,7 +878,23 @@ public abstract class Entity
     
     public int getWalkMP( boolean gravity ) {
         int mp = this.walkMP;
-        mp = Math.max(mp - (int)(heat / 5), 0);
+        int minus=0;
+        if (game.getOptions().booleanOption("maxtech_heat")) {
+            if (heat<30) {
+                minus = (int)(heat / 5); 
+            } else if (heat>=49) {
+                minus = 9;
+            } else if (heat>=43) {
+                minus = 8;
+            } else if (heat>=37) {
+                minus = 7;
+            } else if (heat>=31) {
+                minus = 6;
+            }
+            mp = Math.max(mp-minus,0);
+        } else {
+            mp = Math.max(mp - (int)(heat / 5), 0);
+        }
         mp = applyGravityEffectsOnMP(mp);
         return mp;
     }
@@ -1342,6 +1358,16 @@ public abstract class Entity
             mod++;
         }
         if (heat >= 24) {
+            mod++;
+        }
+        boolean mtHeat = game.getOptions().booleanOption("maxtech_heat");
+        if (mtHeat && heat >= 33) {
+            mod++;
+        }
+        if (mtHeat && heat >= 41) {
+            mod++;
+        }
+        if (mtHeat && heat >= 48) {
             mod++;
         }
         return mod;

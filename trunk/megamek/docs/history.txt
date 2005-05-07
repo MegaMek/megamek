@@ -5,6 +5,7 @@ v0.29.76 (CVS)
 + Bug 1195502: Continuing Golem ASRM5 problem
 + New picture for Kodiak
 + Bi-Monthly update on Batchall.de-Mechs
++ MaxTech Expanded Heat Scale and Avoiding Shutdown rule.
 
 v0.29.75 (2005-05-03 8:15am)
 + Added -port parameter to set the port a dedicated server will be listening to.

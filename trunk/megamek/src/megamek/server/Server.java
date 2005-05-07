@@ -8513,15 +8513,27 @@ implements Runnable, ConnectionHandler {
                     }
                 }
             } // End avoid-inferno-explosion
-
+            int autoShutDownHeat;
+            boolean mtHeat;
+            
+            if (game.getOptions().booleanOption("maxtech_heat")) {
+                autoShutDownHeat = 50;
+                mtHeat = true;
+            } else {
+                autoShutDownHeat = 30;
+                mtHeat = false;
+            }
             // heat effects: start up
-            if (entity.heat < 30 && entity.isShutDown()) {
+            if (entity.heat < autoShutDownHeat && entity.isShutDown()) {
                 if (entity.heat < 14) {
                     entity.setShutDown(false);
                     roundReport.append( entity.getDisplayName() )
                         .append( " automatically starts up.\n" );
                 } else {
                     int startup = 4 + (((entity.heat - 14) / 4) * 2);
+                    if (mtHeat) {
+                        startup = entity.crew.getPiloting() + startup - 8;
+                    }
                     int suroll = Compute.d6(2);
                     roundReport.append( entity.getDisplayName() )
                         .append( " needs a " )
@@ -8541,7 +8553,7 @@ implements Runnable, ConnectionHandler {
             // heat effects: shutdown!
             // 2003-01-26 JAD - Don't shut down if you just restarted.
             else if (entity.heat >= 14 && !entity.isShutDown()) {
-                if (entity.heat >= 30) {
+                if (entity.heat >= autoShutDownHeat) {
                     roundReport.append( entity.getDisplayName() )
                         .append( " automatically shuts down.\n" );
                     // add a piloting roll and resolve immediately
@@ -8552,6 +8564,9 @@ implements Runnable, ConnectionHandler {
                     entity.setShutDown(true);
                 } else if (entity.heat >= 14) {
                     int shutdown = 4 + (((entity.heat - 14) / 4) * 2);
+                    if (mtHeat) {
+                        shutdown = entity.crew.getPiloting() + shutdown - 8;
+                    }
                     int sdroll = Compute.d6(2);
                     roundReport.append(entity.getDisplayName() )
                         .append( " needs a " )
@@ -8577,6 +8592,14 @@ implements Runnable, ConnectionHandler {
             if (entity.heat >= 19) {
                 int boom = 4 + (entity.heat >= 23 ? 2 : 0) +
                     (entity.heat >= 28 ? 2 : 0);
+                if (mtHeat) {
+                    boom += 
+                        (entity.heat >= 35 ? 2 : 0) +
+                        (entity.heat >= 40 ? 2 : 0) +
+                        (entity.heat >= 45 ? 2 : 0);
+                    // Last line is a crutch; 45 heat should be no roll
+                    // but automatic explosion.
+                }
                 int boomroll = Compute.d6(2);
                 roundReport.append( entity.getDisplayName() )
                         .append( " needs a " )
@@ -8599,7 +8622,22 @@ implements Runnable, ConnectionHandler {
                                          Mech.LOC_HEAD ) > 0
                  && entity.heat >= 15
                  && !entity.crew.isDead() && !entity.crew.isDoomed() ) {
-                if (entity.heat >= 25) {
+                if (entity.heat >= 47) {
+                    if (mtHeat) {
+                        roundReport.append(entity.getDisplayName() ).append( " has 47 or higher heat and damaged life support.  Mechwarrior takes 5 damage.\n");
+                        damageCrew(entity, 5);
+                    }
+                } else if (entity.heat >= 39) {
+                    if (mtHeat) {
+                        roundReport.append(entity.getDisplayName() ).append( " has 39 or higher heat and damaged life support.  Mechwarrior takes 4 damage.\n");
+                        damageCrew(entity, 4);
+                    }
+                } else if (entity.heat >= 32) {
+                    if (mtHeat) {
+                        roundReport.append(entity.getDisplayName() ).append( " has 32 or higher heat and damaged life support.  Mechwarrior takes 3 damage.\n");
+                        damageCrew(entity, 3);
+                    }
+                } else if (entity.heat >= 25) {
                     // mechwarrior takes 2 damage
                     roundReport.append(entity.getDisplayName() ).append( " has 25 or higher heat and damaged life support.  Mechwarrior takes 2 damage.\n");
                     damageCrew(entity, 2);
@@ -8608,12 +8646,77 @@ implements Runnable, ConnectionHandler {
                     roundReport.append(entity.getDisplayName() ).append( " has 15 or higher heat and damaged life support.  Mechwarrior takes 1 damage.\n");
                     damageCrew(entity, 1);
                 }
-                // The pilot may have just expired.
-                if ( entity.crew.isDead() || entity.crew.isDoomed() ) {
-                    roundReport.append( "*** " )
-                        .append( entity.getDisplayName() )
-                        .append( " PILOT BAKES TO DEATH! ***" )
-                        .append( destroyEntity(entity, "crew death", true) );
+            } else if (mtHeat) {
+                // Pilot may take damage from heat if MaxTech option is set
+                int heatroll;
+                if (entity.heat >= 32) {
+                    heatroll = Compute.d6(2);
+                    roundReport.append (entity.getDisplayName())
+                        .append (" needs a 8 to avoid pilot hit, rolls a ")
+                        .append (heatroll);
+                    if (heatroll<=7) {
+                        roundReport.append (", fails and takes a hit.\n");
+                        damageCrew (entity, 1);
+                    } else {
+                        roundReport.append (", succeeds.\n");
+                    }
+                }
+                if (entity.heat >= 39) {
+                    heatroll = Compute.d6(2);
+                    roundReport.append (entity.getDisplayName())
+                        .append (" needs a 10 to avoid pilot hit, rolls a ")
+                        .append (heatroll);
+                    if (heatroll<=9) {
+                        roundReport.append (", fails and takes a hit.\n");
+                        damageCrew (entity, 1);
+                    } else {
+                        roundReport.append (", succeeds.\n");
+                    }
+                }
+                if (entity.heat >= 47) {
+                    heatroll = Compute.d6(2);
+                    roundReport.append (entity.getDisplayName())
+                        .append (" needs a 12 to avoid pilot hit, rolls a ")
+                        .append (heatroll);
+                    if (heatroll<=11) {
+                        roundReport.append (", fails and takes a hit.\n");
+                        damageCrew (entity, 1);
+                    } else {
+                        roundReport.append (", succeeds.\n");
+                    }
+                }
+            }
+            // The pilot may have just expired.
+            if ( entity.crew.isDead() || entity.crew.isDoomed() ) {
+                roundReport.append( "*** " )
+                    .append( entity.getDisplayName() )
+                    .append( " PILOT BAKES TO DEATH! ***" )
+                    .append( destroyEntity(entity, "crew death", true) );
+            }
+            
+            // With MaxTech Heat Scale, there may occur critical damage
+            if (mtHeat) {
+                int damageroll = Compute.d6(2);
+                if (entity.heat >= 44) {
+                    roundReport.append (entity.getDisplayName())
+                        .append (" needs a 10 to avoid system failure, rolls a ")
+                        .append (damageroll);
+                    if (damageroll>=10) {
+                        roundReport.append (", succeeds.\n");
+                    } else {
+                        roundReport.append (", fails and takes a critical hit.\n");
+                        roundReport.append(oneCriticalEntity (entity, Compute.d6(2)));
+                    }
+                } else if (entity.heat >= 36) {
+                    roundReport.append (entity.getDisplayName())
+                    .append (" needs an 8 to avoid system failure, rolls a ")
+                    .append (damageroll);
+                if (damageroll>=8) {
+                    roundReport.append (", succeeds.\n");
+                } else {
+                    roundReport.append (", fails and takes a critical hit.\n");
+                    roundReport.append(oneCriticalEntity (entity, Compute.d6(2)));
+                }
                 }
             }
         }
@@ -9960,101 +10063,108 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Rolls and resolves critical hits on mechs or vehicles.
+     * if rollNumber is false, a single hit is applied - needed for
+     * MaxTech Heat Scale rule.
      */
-    private String criticalEntity(Entity en, int loc, int critMod) {
+    private String criticalEntity(Entity en, int loc, int critMod, boolean rollNumber) {
         CriticalSlot slot = null;
         StringBuffer desc = new StringBuffer();
         Coords coords = en.getPosition();
         IHex hex = null;
-        if (null != coords) hex = game.board.getHex (coords);
-        desc.append( "        Critical hit on " )
-            .append( en.getLocationAbbr(loc) )
-            .append( ". " );
-        int hits = 0;
-        int roll = Compute.d6(2);
-        desc.append( "Roll = " );
-        if ( critMod != 0 ) {
-            desc.append( "(" ).append( roll );
-            if ( critMod > 0 ) {
-                desc.append( "+" );
+        int hits;
+        if (rollNumber) {
+            if (null != coords) hex = game.board.getHex (coords);
+            desc.append( "        Critical hit on " )
+                .append( en.getLocationAbbr(loc) )
+                .append( ". " );
+            hits = 0;
+            int roll = Compute.d6(2);
+            desc.append( "Roll = " );
+            if ( critMod != 0 ) {
+                desc.append( "(" ).append( roll );
+                if ( critMod > 0 ) {
+                    desc.append( "+" );
+                }
+                desc.append( critMod ).append( ") = " );
+                roll += critMod;
             }
-            desc.append( critMod ).append( ") = " );
-            roll += critMod;
-        }
-        desc.append( roll ).append( ";" );
-        if (roll <= 7) {
-            desc.append( " no effect." );
-            return desc.toString();
-        } else if (roll >= 8 && roll <= 9) {
-            hits = 1;
-            desc.append( " 1 location." );
-        } else if (roll >= 10 && roll <= 11) {
-            hits = 2;
-            desc.append( " 2 locations." );
-        } else if (roll == 12) {
-            if (en instanceof Tank) {
-                hits = 3;
-                desc.append( " 3 locations." );
-            } else if (en instanceof Protomech) {
-                hits=3;
-                desc.append( " 3 locations" );
+            desc.append( roll ).append( ";" );
+            if (roll <= 7) {
+                desc.append( " no effect." );
+                return desc.toString();
+            } else if (roll >= 8 && roll <= 9) {
+                hits = 1;
+                desc.append( " 1 location." );
+            } else if (roll >= 10 && roll <= 11) {
+                hits = 2;
+                desc.append( " 2 locations." );
+            } else if (roll == 12) {
+                if (en instanceof Tank) {
+                    hits = 3;
+                    desc.append( " 3 locations." );
+                } else if (en instanceof Protomech) {
+                    hits=3;
+                    desc.append( " 3 locations" );
 
-            } else if (en.locationIsLeg(loc)) {
-                desc.append( "<<<LIMB BLOWN OFF>>> " )
-                    .append( en.getLocationName(loc) )
-                    .append( " blown off." );
-                if (en.getInternal(loc) > 0) {
+                } else if (en.locationIsLeg(loc)) {
+                    desc.append( "<<<LIMB BLOWN OFF>>> " )
+                        .append( en.getLocationName(loc) )
+                        .append( " blown off." );
+                    if (en.getInternal(loc) > 0) {
+                        destroyLocation(en, loc);
+                    }
+                    if (null != hex) {
+                        if (!hex.containsTerrain (Terrains.LEGS)) {
+                            hex.addTerrain (Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, 1));
+                        }
+                        else {
+                            hex.addTerrain (Terrains.getTerrainFactory().createTerrain
+                                            (Terrains.LEGS,
+                                             hex.terrainLevel(Terrains.LEGS)+1));
+                        }
+                    }
+                    sendChangedHex(en.getPosition());
+                    return desc.toString();
+                } else if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) {
+                    desc.append( "<<<LIMB BLOWN OFF>>> " )
+                        .append( en.getLocationName(loc) )
+                        .append( " blown off." );
                     destroyLocation(en, loc);
-                }
-                if (null != hex) {
-                    if (!hex.containsTerrain (Terrains.LEGS)) {
-                        hex.addTerrain (Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, 1));
+                    if (null != hex) {
+                        if (!hex.containsTerrain( Terrains.ARMS)) {
+                            hex.addTerrain (Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, 1));
+                        }
+                        else {
+                            hex.addTerrain (Terrains.getTerrainFactory().createTerrain
+                                            (Terrains.ARMS,
+                                             hex.terrainLevel(Terrains.ARMS)+1));
+                        }
                     }
-                    else {
-                        hex.addTerrain (Terrains.getTerrainFactory().createTerrain
-                                        (Terrains.LEGS,
-                                         hex.terrainLevel(Terrains.LEGS)+1));
+                    sendChangedHex(en.getPosition());
+                    return desc.toString();
+                } else if (loc == Mech.LOC_HEAD) {
+                    desc.append( "<<<HEAD BLOWN OFF>>> " )
+                        .append( en.getLocationName(loc) )
+                        .append( " blown off." );
+                    destroyLocation(en, loc);
+                    // Don't kill a pilot multiple times.
+                    if ( Pilot.DEATH > en.getCrew().getHits() ) {
+                        en.crew.setDoomed(true);
+                        desc.append( "\n" )
+                            .append( destroyEntity(en, "pilot death", true) );
                     }
+                    return desc.toString();
+                } else {
+                    // torso hit
+                    hits = 3;
+                    desc.append( " 3 locations." );
                 }
-                sendChangedHex(en.getPosition());
-                return desc.toString();
-            } else if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) {
-                desc.append( "<<<LIMB BLOWN OFF>>> " )
-                    .append( en.getLocationName(loc) )
-                    .append( " blown off." );
-                destroyLocation(en, loc);
-                if (null != hex) {
-                    if (!hex.containsTerrain( Terrains.ARMS)) {
-                        hex.addTerrain (Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, 1));
-                    }
-                    else {
-                        hex.addTerrain (Terrains.getTerrainFactory().createTerrain
-                                        (Terrains.ARMS,
-                                         hex.terrainLevel(Terrains.ARMS)+1));
-                    }
-                }
-                sendChangedHex(en.getPosition());
-                return desc.toString();
-            } else if (loc == Mech.LOC_HEAD) {
-                desc.append( "<<<HEAD BLOWN OFF>>> " )
-                    .append( en.getLocationName(loc) )
-                    .append( " blown off." );
-                destroyLocation(en, loc);
-                // Don't kill a pilot multiple times.
-                if ( Pilot.DEATH > en.getCrew().getHits() ) {
-                    en.crew.setDoomed(true);
-                    desc.append( "\n" )
-                        .append( destroyEntity(en, "pilot death", true) );
-                }
-                return desc.toString();
-            } else {
-                // torso hit
-                hits = 3;
-                desc.append( " 3 locations." );
             }
+        } else {
+            hits = 1;
         }
-
-        // vehicle handle crits in their own 'special' way
+        
+            // vehicle handle crits in their own 'special' way
         if (en instanceof Tank) {
             Tank tank = (Tank)en;
             for (int x = 0; x < hits; x++) {
@@ -10106,9 +10216,19 @@ implements Runnable, ConnectionHandler {
      * Rolls and resolves critical hits with no die roll modifiers.
      */
     private String criticalEntity(Entity en, int loc) {
-        return criticalEntity(en, loc, 0);
+        return criticalEntity(en, loc, 0, true);
     }
 
+    private String criticalEntity (Entity en, int loc, int critMod) {
+        return criticalEntity (en, loc, critMod, true);
+    }
+    
+    /**
+     * Rolls one critical hit
+     */
+    private String oneCriticalEntity (Entity en, int loc) {
+        return criticalEntity(en, loc, 0, false);
+    }
     /**
      * Checks for location breach and returns phase logging.
      * <p/>

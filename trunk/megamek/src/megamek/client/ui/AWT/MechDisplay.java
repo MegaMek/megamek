@@ -1635,69 +1635,96 @@ class ExtraPanel
         // Show Heat Effects, but only for Mechs.
         heatR.setText(""); //$NON-NLS-1$
         if (en instanceof Mech) {
-            boolean moreHeatMove = false, moreHeatFire = false;
             boolean hasTSM = false;
+            boolean mtHeat = false;
             if (((Mech)en).hasTSM()) hasTSM = true;
 
-            if (en.heat>=30) {
-                heatR.append(Messages.getString("MechDisplay.WasAutomaticlyShutDown")); //$NON-NLS-1$
-                moreHeatMove = true;
+            if (clientgui.getClient().game.getOptions().booleanOption("maxtech_heat")) {
+                mtHeat = true;
             }
-            if (en.heat >=25 && !moreHeatMove) {
+            if (mtHeat && en.heat>=50) {
+                heatR.append(Messages.getString("MechDisplay.WasAutomaticlyShutDown")); //$NON-NLS-1$
+            } else if (mtHeat && en.heat>=49) {
+                if (hasTSM) {
+                    heatR.append (Messages.getString("MechDisplay.mp-8"));
+                } else {
+                    heatR.append (Messages.getString("MechDisplay.mp-9")); 
+                }
+            } else if (mtHeat && en.heat>=43) {
+                if (hasTSM) {
+                    heatR.append (Messages.getString("MechDisplay.mp-7"));
+                } else {
+                    heatR.append (Messages.getString("MechDisplay.mp-8")); 
+                }
+            } else if (mtHeat && en.heat>=37) {
+                if (hasTSM) {
+                    heatR.append (Messages.getString("MechDisplay.mp-6"));
+                } else {
+                    heatR.append (Messages.getString("MechDisplay.mp-7")); 
+                }
+            } else if (mtHeat && en.heat>=31) {
+                if (hasTSM) {
+                    heatR.append (Messages.getString("MechDisplay.mp-5"));
+                } else {
+                    heatR.append (Messages.getString("MechDisplay.mp-6")); 
+                }
+            } else if (!mtHeat && en.heat >= 30) {
+                heatR.append(Messages.getString("MechDisplay.WasAutomaticlyShutDown")); //$NON-NLS-1$
+            } else if (en.heat >=25) {
                 if (hasTSM) {
                     heatR.append (Messages.getString("MechDisplay.mp-4")); //$NON-NLS-1$
                 } else {
                     heatR.append(Messages.getString("MechDisplay.mp-5")); //$NON-NLS-1$
                 }
-                moreHeatMove = true;
-            }
-            if (en.heat >= 24) {
-                heatR.append(Messages.getString("MechDisplay.mp+4")); //$NON-NLS-1$
-                moreHeatFire = true;
-            }
-            if (en.heat >= 20 && !moreHeatMove) {
+            } else if (en.heat >= 20) {
                 if (hasTSM) {
                     heatR.append (Messages.getString("MechDisplay.mp-3")); //$NON-NLS-1$
                 } else {
                     heatR.append (Messages.getString("MechDisplay.mp-4")); //$NON-NLS-1$
                 }
-                moreHeatMove = true;
-            }
-            if (en.heat >= 17 && !moreHeatFire) {
-                heatR.append (Messages.getString("MechDisplay.mf+3")); //$NON-NLS-1$
-                moreHeatFire = true;
-            }
-            if (en.heat >= 15 && !moreHeatMove) {
+            } else if (en.heat >= 15) {
                 if (hasTSM) {
                     heatR.append (Messages.getString("MechDisplay.mp-2")); //$NON-NLS-1$
                 } else {
                     heatR.append (Messages.getString("MechDisplay.mp-3")); //$NON-NLS-1$
                 }
-                moreHeatMove = true;
-            }
-            if (en.heat >= 13 && !moreHeatFire) {
-                heatR.append (Messages.getString("MechDisplay.mf+3")); //$NON-NLS-1$
-                moreHeatFire = true;
-            }
-            if (en.heat >= 10 && !moreHeatMove) {
+            } else if (en.heat >= 10) {
                 if (hasTSM) {
                     heatR.append (Messages.getString("MechDisplay.mp-1")); //$NON-NLS-1$
                 } else {
                     heatR.append (Messages.getString("MechDisplay.mp-2")); //$NON-NLS-1$
                 }
-                moreHeatMove = true;
-            }
-            if (en.heat == 9 && !moreHeatMove && hasTSM) {
+            } else if (en.heat == 9 && hasTSM) {
                 heatR.append (Messages.getString("MechDisplay.mptsm+1")); //$NON-NLS-1$
-                moreHeatMove = true;
-            }
-            if (en.heat >= 8 && !moreHeatFire) {
-                heatR.append (Messages.getString("MechDisplay.mf+1")); //$NON-NLS-1$
-                moreHeatFire = true;
-            }
-            if (en.heat >= 5 && !moreHeatMove) {
+            } else if (en.heat >= 5) {
                 heatR.append (Messages.getString("MechDisplay.mp-1")); //$NON-NLS-1$
-                moreHeatMove = true;
+            }
+            if (mtHeat && en.heat >= 48) {
+                heatR.append (Messages.getString("MechDisplay.mf+7")); //$NON-NLS-1$
+            } else if (mtHeat && en.heat >= 41) {
+                heatR.append (Messages.getString("MechDisplay.mf+6")); //$NON-NLS-1$
+            } else if (mtHeat && en.heat >= 33) {
+                heatR.append (Messages.getString("MechDisplay.mf+5")); //$NON-NLS-1$
+            } else if (en.heat >= 24) {
+                heatR.append (Messages.getString("MechDisplay.mf+4")); //$NON-NLS-1$
+            } else if (en.heat >= 17) {
+                heatR.append (Messages.getString("MechDisplay.mf+3")); //$NON-NLS-1$
+            } else if (en.heat >= 13) {
+                heatR.append (Messages.getString("MechDisplay.mf+3")); //$NON-NLS-1$
+            } else if (en.heat >= 8) {
+                heatR.append (Messages.getString("MechDisplay.mf+1")); //$NON-NLS-1$
+            }
+            if (mtHeat && en.heat >= 47) {
+                heatR.append (Messages.getString("MechDisplay.phit12")); //$NON-NLS-1$
+            } else if (mtHeat && en.heat >= 39) {
+                heatR.append (Messages.getString("MechDisplay.phit10")); //$NON-NLS-1$
+            } else if (mtHeat && en.heat >= 32) {
+                heatR.append (Messages.getString("MechDisplay.phit8")); //$NON-NLS-1$
+            }
+            if (mtHeat && en.heat >= 44) {
+                heatR.append (Messages.getString("MechDisplay.sysfail10")); //$NON-NLS-1$
+            } else if (mtHeat && en.heat >= 36) {
+                heatR.append (Messages.getString("MechDisplay.sysfail8")); //$NON-NLS-1$
             }
             if (en.heat <=4) {
                 heatR.append (Messages.getString("MechDisplay.None")+"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$

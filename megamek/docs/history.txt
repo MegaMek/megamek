@@ -8,6 +8,7 @@ v0.29.76 (CVS)
 + MaxTech Expanded Heat Scale and Avoiding Shutdown rule.
 + Internationalization: German translation for client
 + Some translations broke unit selection dialog, changed back to English
++ Data 1197659: New Combat Equipment Protomechs.
 
 v0.29.75 (2005-05-03 8:15am)
 + Added -port parameter to set the port a dedicated server will be listening to.

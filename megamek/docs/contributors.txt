@@ -29,10 +29,10 @@ Lot of people have contributed to the MegaMek project.
      Dirk Wilhelm <wayne07@users.sourceforge.net>
      David Smith <xylaan@users.sourceforge.net>
      David Taylor <dtaylor@swiftdsl.com.au>
-     Björn Olsson <nalleolsson@users.sourceforge.net>
+     Bjï¿½rn Olsson <nalleolsson@users.sourceforge.net>
      Florian Stock <flolo@users.sourceforge.net>
      Patrick Johnmeyer <pineconius@users.sourceforge.net>
-     Alexander Schölling <schoelling@users.sourceforge.net>
+     Alexander Schï¿½lling <schoelling@users.sourceforge.net>
      Sebastian Brocks <beerockxs@users.sourceforge.net>
      Robin D. Toll <neko128@users.sourceforge.net>
      Ecthellion <ecthellion@users.sourceforge.net>
@@ -42,6 +42,7 @@ Lot of people have contributed to the MegaMek project.
      Stefan Bissell <weaselflink@users.sourceforge.net>
      Reinhard Vicinus <rvicinus@users.sourceforge.net>
      Chris Nelson <albinosqrl@users.sourceforge.net>
+     fastsammy <fastsammy@users.sourceforge.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -60,12 +61,13 @@ Lot of people have contributed to the MegaMek project.
   Scenario Readme:
      Lee "T-Bolt" Smith
 
-  Mech, Vehicle, and Infantry Conversion and QA:
+  Mech, Vehicle, Protomech and Infantry Conversion and QA:
      Hopalong
      Martis Truesight
      Taerkar
      coralbeach
      Robert Heath <blasty_mcnasty@users.sourceforge.net>
+     Jacob Wall <lancemanprime@users.sourceforge.net>
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>

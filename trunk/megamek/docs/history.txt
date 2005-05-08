@@ -7,6 +7,7 @@ v0.29.76 (CVS)
 + Bi-Monthly update on Batchall.de-Mechs
 + MaxTech Expanded Heat Scale and Avoiding Shutdown rule.
 + Internationalization: German translation for client
++ Some translations broke unit selection dialog, changed back to English
 
 v0.29.75 (2005-05-03 8:15am)
 + Added -port parameter to set the port a dedicated server will be listening to.

@@ -29,10 +29,10 @@ Lot of people have contributed to the MegaMek project.
      Dirk Wilhelm <wayne07@users.sourceforge.net>
      David Smith <xylaan@users.sourceforge.net>
      David Taylor <dtaylor@swiftdsl.com.au>
-     Bj�rn Olsson <nalleolsson@users.sourceforge.net>
+     Björn Olsson <nalleolsson@users.sourceforge.net>
      Florian Stock <flolo@users.sourceforge.net>
      Patrick Johnmeyer <pineconius@users.sourceforge.net>
-     Alexander Sch�lling <schoelling@users.sourceforge.net>
+     Alexander Schölling <schoelling@users.sourceforge.net>
      Sebastian Brocks <beerockxs@users.sourceforge.net>
      Robin D. Toll <neko128@users.sourceforge.net>
      Ecthellion <ecthellion@users.sourceforge.net>

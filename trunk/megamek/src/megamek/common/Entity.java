@@ -879,7 +879,7 @@ public abstract class Entity
     public int getWalkMP( boolean gravity ) {
         int mp = this.walkMP;
         int minus=0;
-        if (game.getOptions().booleanOption("maxtech_heat")) {
+        if (game != null && game.getOptions().booleanOption("maxtech_heat")) {
             if (heat<30) {
                 minus = (int)(heat / 5); 
             } else if (heat>=49) {

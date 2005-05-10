@@ -2238,6 +2238,9 @@ public class Game implements Serializable, IGame
             case GameEvent.GAME_ENTITY_NEW:
                 l.gameEntityNew((GameEntityNewEvent)event);
                 break;
+            case GameEvent.GAME_ENTITY_REMOVE:
+                l.gameEntityRemove((GameEntityRemoveEvent)event);
+                break;
             case GameEvent.GAME_ENTITY_NEW_OFFBOARD:
                 l.gameEntityNewOffboard((GameEntityNewOffboardEvent)event);
                 break;

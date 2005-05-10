@@ -54,12 +54,6 @@ public abstract class Entity
     public static final int REMOVE_DEVASTATED     = 0x0400;
     public static final int REMOVE_NEVER_JOINED   = 0x0800;
 
-    // weight class limits
-    public static final int        WEIGHT_LIGHT        = 35;
-    public static final int        WEIGHT_MEDIUM       = 55;
-    public static final int        WEIGHT_HEAVY        = 75;
-    public static final int        WEIGHT_ASSAULT      = 100;
-
     public static final int        NONE                = -1;
 
     public static final int        MOVE_SKID           = -2;
@@ -382,16 +376,11 @@ public abstract class Entity
     }
 
     public int getWeightClass() {
-        int nWeight = (int)getWeight();
-         if (nWeight <= WEIGHT_LIGHT) {
-            return WEIGHT_LIGHT;
-         } else if (nWeight <= WEIGHT_MEDIUM) {
-             return WEIGHT_MEDIUM;
-         } else if (nWeight <= WEIGHT_HEAVY) {
-             return WEIGHT_HEAVY;
-         } else {
-             return WEIGHT_ASSAULT;
-         }
+        return EntityWeightClass.getWeightClass((int)getWeight());
+    }
+
+    public String getWeightClassName() {
+        return EntityWeightClass.getClassName(getWeightClass());
     }
     
     public void setWeight(float weight) {

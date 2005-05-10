@@ -73,7 +73,7 @@ public class EntityEncoder {
         out.write( "\" typeVal=\"" );
         out.write( String.valueOf(entity.getMovementType()) );
         out.write( "\" techBase=\"" );
-        out.write ( entity.getTechLevel() + ":" + TechConstants.T_NAMES[entity.getTechLevel()] );
+        out.write ( entity.getTechLevel() + ":" + TechConstants.getLevelName(entity.getTechLevel()) );
         out.write( "\" year=\"" );
         out.write( String.valueOf(entity.getYear()) );
         out.write( "\" mass=\"" );

@@ -103,13 +103,13 @@ public class MechTileset {
             return default_proto;
         }
         // mech, by weight
-        if (entity.getWeight() <= Entity.WEIGHT_LIGHT) {
+        if (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
             return default_light;
-        } else if (entity.getWeight() <= Entity.WEIGHT_MEDIUM) {
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
             return default_medium;
-        } else if (entity.getWeight() <= Entity.WEIGHT_HEAVY) {
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
             return default_heavy;
-        } else if (entity.getWeight() <= Entity.WEIGHT_ASSAULT) {
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
             return default_assault;
         }
         

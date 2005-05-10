@@ -9564,7 +9564,7 @@ implements Runnable, ConnectionHandler {
                         damage = 0;
                     } else if (damage > 0) {
                         // remaining damage transfers
-                        desc.append( " " )
+                        desc.append( "\n        " )
                             .append( damage )
                             .append( " damage transfers to " )
                             .append( te.getLocationAbbr(nextHit) )
@@ -9655,7 +9655,7 @@ implements Runnable, ConnectionHandler {
 
       boolean didExplode = explosionRoll >= explosionBTH;
 
-      sbDesc.append("        \n" + en.getDisplayName() + " has taken " + en.engineHitsThisRound + " engine hits this round.\n");
+      sbDesc.append("\n        " + en.getDisplayName() + " has taken " + en.engineHitsThisRound + " engine hits this round.\n");
       sbDesc.append("        Checking for engine explosion on BTH = " + explosionBTH + ", Roll = " + explosionRoll + "\n");
       en.rolledForEngineExplosion = true;
 

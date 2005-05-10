@@ -40,7 +40,7 @@ public abstract class GameEvent extends java.util.EventObject {
     public static final int GAME_ENTITY_REMOVE = 13;
     public static final int GAME_ENTITY_NEW_OFFBOARD = 14;
     public static final int GAME_ENTITY_CHANGE = 15;
-    public static final int GAME_NEW_ATTACK = 16;
+    public static final int GAME_NEW_ACTION = 16;
 
     protected int type;
 

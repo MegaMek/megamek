@@ -34,7 +34,6 @@ import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
-import megamek.common.event.GameAttackEvent;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameMapQueryEvent;
 import megamek.common.event.GamePlayerChatEvent;
@@ -632,7 +631,6 @@ public class Client implements Runnable {
                     Entity entity = game.getEntity(clubAct.getEntityId());
                     clubAct.setClub(Compute.clubMechHas(entity));
                 }
-                game.processGameEvent(new GameAttackEvent(this,(AttackAction)ea));
             }
 
             if (addAction) {

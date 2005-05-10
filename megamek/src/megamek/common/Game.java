@@ -25,7 +25,7 @@ import java.util.Hashtable;
 import java.io.*;
 
 import megamek.common.actions.*;
-import megamek.common.event.GameAttackEvent;
+import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEndEvent;
@@ -1637,9 +1637,12 @@ public class Game implements Serializable, IGame
 
     } // End private boolean checkForMagneticClamp()
 
-    /** Adds the specified action to the actions list for this phase. */
+    /** 
+     * Adds the specified action to the actions list for this phase. 
+     */
     public void addAction(EntityAction ea) {
         actions.addElement(ea);
+        processGameEvent(new GameNewActionEvent(this,ea));        
     }
     public void addArtilleryAttack(ArtilleryAttackAction aaa) {
         offboardArtilleryAttacks.addElement(aaa);
@@ -1707,9 +1710,12 @@ public class Game implements Serializable, IGame
         return initiativeRerollRequests;
     }
 
-    /** Adds a pending displacement attack to the list for this phase. */
+    /**
+     * Adds a pending displacement attack to the list for this phase.
+     */
     public void addCharge(AttackAction ea) {
         pendingCharges.addElement(ea);
+        processGameEvent(new GameNewActionEvent(this,ea));                
     }
 
     /**
@@ -2238,8 +2244,8 @@ public class Game implements Serializable, IGame
             case GameEvent.GAME_ENTITY_CHANGE:
                 l.gameEntityChange((GameEntityChangeEvent)event);
                 break;
-            case GameEvent.GAME_NEW_ATTACK:
-                l.gameAttack((GameAttackEvent)event);
+            case GameEvent.GAME_NEW_ACTION:
+                l.gameNewAction((GameNewActionEvent)event);
                 break;
             }
         }

@@ -29,8 +29,10 @@ import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
+import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.preference.PreferenceManager;
@@ -1537,11 +1539,6 @@ public class BoardView1
         }
     }
 
-    public void boardNewAttack(BoardViewEvent e) {
-        AttackAction aa = (AttackAction)e.getSource();
-        addAttack(aa);
-    }
-    
     /**
      * Adds an attack to the sprite list.
      */
@@ -3940,13 +3937,27 @@ public class BoardView1
     }
 
     private GameListener gameListener = new GameListenerAdapter(){
+        
+        public void gameEntityNew(GameEntityNewEvent e) {
+            redrawAllEntities();            
+        }
+
         public void gameEntityChange(GameEntityChangeEvent e) {
-            if (e.getMovePath() != null) {
-                addMovingUnit(e.getEntity(),e.getMovePath());
+            java.util.Vector mp = e.getMovePath();
+            if (mp != null && mp.size() > 0 && GUIPreferences.getInstance().getShowMoveStep()) {
+                addMovingUnit(e.getEntity(), mp);
             }else {
                 redrawEntity(e.getEntity());
             }
         }
+
+        public void gameNewAction(GameNewActionEvent e) {
+            EntityAction ea = e.getAction();
+            if (ea instanceof AttackAction) {            
+                addAttack((AttackAction)ea);
+            }
+        }
+
         public void gameBoardNew(GameBoardNewEvent e) {
             IBoard b = e.getOldBoard();
             if (b != null) {

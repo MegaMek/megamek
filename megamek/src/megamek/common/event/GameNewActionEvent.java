@@ -14,32 +14,32 @@
 
 package megamek.common.event;
 
-import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
 
 /**
- * Instances of this class are sent when Attack occurs
+ * Instances of this class are sent when new Action added to the game
  *
  * @see GameListener
  */
-public class GameAttackEvent extends GameEvent {
+public class GameNewActionEvent extends GameEvent {
 
-    protected AttackAction attack; 
+    protected EntityAction action; 
 
     /**
-     * Cunstruct new GameAttackEvent
+     * Cunstruct new GameNewActionEvent
      * @param source sender
-     * @param attack
+     * @param action
      */
-    public GameAttackEvent(Object source, AttackAction attack) {
-        super(source, GAME_NEW_ATTACK);
-        this.attack = attack;
+    public GameNewActionEvent(Object source, EntityAction action) {
+        super(source, GAME_NEW_ACTION);
+        this.action = action;
     }
 
     /**
-     * @return the attack.
+     * @return the action.
      */
-    public AttackAction getAttack() {
-        return attack;
+    public EntityAction getAction() {
+        return action;
     }
 
 }

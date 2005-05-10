@@ -50,5 +50,5 @@ public interface GameListener extends java.util.EventListener
     public void gameEntityNewOffboard(GameEntityNewOffboardEvent e);
     public void gameEntityRemove(GameEntityRemoveEvent e);
     public void gameEntityChange(GameEntityChangeEvent e);
-    public void gameAttack(GameAttackEvent e);
+    public void gameNewAction(GameNewActionEvent e);
 }

@@ -165,36 +165,29 @@ public class MechSelectorDialog
     
     
     private void populateChoices() {
-        /* If you change any of the strings below, be sure to check
-         * the filterMechs method below as some strings may need to
-         * be changed there as well.
-         */
-
-        m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.Light")); //$NON-NLS-1$
-        m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.Medium")); //$NON-NLS-1$
-        m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.Heavy")); //$NON-NLS-1$
-        m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.Assault")); //$NON-NLS-1$
+        
+        for (int i=0; i<EntityWeightClass.SIZE; i++) {
+            m_chWeightClass.addItem(EntityWeightClass.getClassName(i));
+        }
         m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chWeightClass.select(0);
 
-        m_chType.addItem(Messages.getString("MechSelectorDialog.ISLevel1")); //$NON-NLS-1$
-        m_chType.addItem(Messages.getString("MechSelectorDialog.ISLevel2")); //$NON-NLS-1$
+        for (int i=0; i<TechConstants.SIZE; i++) {
+            m_chType.addItem(TechConstants.getLevelDisplayableName(i));
+        }        
         m_chType.addItem(Messages.getString("MechSelectorDialog.ISAll")); //$NON-NLS-1$
-        m_chType.addItem(Messages.getString("MechSelectorDialog.ClanLevel2")); //$NON-NLS-1$
         m_chType.addItem(Messages.getString("MechSelectorDialog.ISAndClan")); //$NON-NLS-1$
-        m_chType.addItem(Messages.getString("MechSelectorDialog.MixedISLevel2")); //$NON-NLS-1$
-        m_chType.addItem(Messages.getString("MechSelectorDialog.MixedClanLevel2")); //$NON-NLS-1$
         // More than 8 items causes the drop down to sprout a vertical
         //  scroll bar.  I guess we'll sacrifice this next one to stay
         //  under the limit.  Stupid AWT Choice class!
-        //        m_chType.addItem("Mixed All");
+        //m_chType.addItem("Mixed All");
         m_chType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chType.select(0);
 
-        m_chUnitType.addItem(Messages.getString("MechSelectorDialog.Mek")); //$NON-NLS-1$
-        m_chUnitType.addItem(Messages.getString("MechSelectorDialog.Tank")); //$NON-NLS-1$
-        m_chUnitType.addItem(Messages.getString("MechSelectorDialog.Infantry")); //$NON-NLS-1$
-        m_chUnitType.addItem(Messages.getString("MechSelectorDialog.Protomek")); //$NON-NLS-1$
+
+        for (int i=0; i<UnitType.SIZE; i++) {
+            m_chUnitType.addItem(UnitType.getTypeDisplayableName(i));
+        }
         m_chUnitType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chUnitType.select(0);
     }
@@ -203,24 +196,10 @@ public class MechSelectorDialog
     private void filterMechs()
     {
         Vector vMechs = new Vector();
-        String sClass = m_chWeightClass.getSelectedItem();
-        int nWeight = 0;
-
-        if (sClass.equals(Messages.getString("MechSelectorDialog.Light"))) { //$NON-NLS-1$
-            nWeight = Entity.WEIGHT_LIGHT;
-        }
-        else if (sClass.equals(Messages.getString("MechSelectorDialog.Medium"))) { //$NON-NLS-1$
-            nWeight = Entity.WEIGHT_MEDIUM;
-        }
-        else if (sClass.equals(Messages.getString("MechSelectorDialog.Heavy"))) { //$NON-NLS-1$
-            nWeight = Entity.WEIGHT_HEAVY;
-        }
-        else if (sClass.equals(Messages.getString("MechSelectorDialog.Assault"))) { //$NON-NLS-1$
-            nWeight = Entity.WEIGHT_ASSAULT;
-        }
+        int nClass = m_chWeightClass.getSelectedIndex();
         int nType = m_chType.getSelectedIndex();
         String sType = m_chType.getSelectedItem();
-        String sUnitType = m_chUnitType.getSelectedItem();
+        int nUnitType = m_chUnitType.getSelectedIndex();
         MechSummary[] mechs = MechSummaryCache.getInstance().getAllMechs();
         if ( mechs == null ) {
             System.err.println( "No units to filter!" ); //$NON-NLS-1$
@@ -228,7 +207,7 @@ public class MechSelectorDialog
         }
         for (int x = 0; x < mechs.length; x++) {
             if ( /* Weight */
-                (sClass.equals(Messages.getString("MechSelectorDialog.All")) || mechs[x].getWeightClass() == nWeight) //$NON-NLS-1$
+                (nClass == EntityWeightClass.SIZE || mechs[x].getWeightClass() == nClass)
                 && /* Technology Level */
                 (sType.equals(Messages.getString("MechSelectorDialog.All")) //$NON-NLS-1$
                  || (sType.equals(Messages.getString("MechSelectorDialog.ISAll")) && //$NON-NLS-1$
@@ -241,10 +220,10 @@ public class MechSelectorDialog
                       TechConstants.T_MIXED_BASE_IS_LEVEL_2 ||
                       mechs[x].getType() ==
                       TechConstants.T_MIXED_BASE_CLAN_LEVEL_2))
-                 || TechConstants.T_NAMES[mechs[x].getType()].equals(sType))
+                 || TechConstants.getLevelDisplayableName(mechs[x].getType()).equals(sType))
                 && /* Unit Type (Mek, Infantry, etc.) */
-                ( sUnitType.equals( Messages.getString("MechSelectorDialog.All") ) || //$NON-NLS-1$
-                  mechs[x].getUnitType().equals(sUnitType) ) )
+                ( nUnitType == UnitType.SIZE ||
+                  mechs[x].getUnitType().equals(UnitType.getTypeName(nUnitType))))
                 {
                     vMechs.addElement(mechs[x]);
                 }

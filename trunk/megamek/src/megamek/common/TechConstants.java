@@ -26,7 +26,7 @@ package megamek.common;
  * @author  Ben
  * @version 
  */
-public interface TechConstants {
+public class TechConstants {
 
     /*
      * These can apply to entities or individual pieces of equipment
@@ -43,7 +43,30 @@ public interface TechConstants {
     //An entity with a Clan chassis that mounts some Inner Sphere equipment
     public static final int         T_MIXED_BASE_CLAN_LEVEL_2 = 4;
     
-    public static final String[]    T_NAMES = {"IS level 1", "IS level 2", 
+    private static final String[]    T_NAMES = {"IS level 1", "IS level 2", 
         "Clan level 2", "Mixed (IS) level 2", "Mixed (Clan) level 2"};
+
+    public static final int SIZE = T_NAMES.length;
+    
+    public static String getLevelName(int level) {
+        if (level >= 0 && level < SIZE) {
+            return T_NAMES[level];
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown tech level");            
+        }
+    }
+
+    public static String getLevelDisplayableName(int level) {
+        if (level >= 0 && level < SIZE) {
+            return Messages.getString("TechLevel."+T_NAMES[level]);
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown tech level");            
+        }
+    }
+
 }
 

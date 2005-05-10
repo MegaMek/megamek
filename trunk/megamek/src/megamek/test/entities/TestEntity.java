@@ -674,7 +674,7 @@ public abstract class TestEntity implements TestEntityOption
     {
         return "Chassis: "+
             MOVEMENT_CHASSIS_NAMES[getEntity().getMovementType()]+" - "+
-            TechConstants.T_NAMES[getEntity().getTechLevel()]+
+            TechConstants.getLevelName(getEntity().getTechLevel())+
             " ("+Integer.toString(getEntity().getYear())+")\n";
     }
 

@@ -8,7 +8,7 @@ import megamek.client.CommonHelpDialog;
 import megamek.client.ConfirmDialog;
 import megamek.client.GUIPreferences;
 import megamek.common.Game;
-import megamek.common.event.GameAttackEvent;
+import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEndEvent;
@@ -70,100 +70,51 @@ public class BotGUI implements GameListener {
         }
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gamePlayerConnected(megamek.common.GamePlayerConnectedEvent)
-     */
     public void gamePlayerConnected(GamePlayerConnectedEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gamePlayerDisconnected(megamek.common.GamePlayerDisconnectedEvent)
-     */
     public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gamePlayerChange(megamek.common.GamePlayerChangeEvent)
-     */
     public void gamePlayerChange(GamePlayerChangeEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gamePlayerChat(megamek.common.GamePlayerChatEvent)
-     */
     public void gamePlayerChat(GamePlayerChatEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameTurnChange(megamek.common.GameTurnChangeEvent)
-     */
     public void gameTurnChange(GameTurnChangeEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameReport(megamek.common.GameReportEvent)
-     */
     public void gameReport(GameReportEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameEnd(megamek.common.GameEndEvent)
-     */
     public void gameEnd(GameEndEvent e) {
     }
 
-    
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameBoardNew(megamek.common.GameBoardNewEvent)
-     */
     public void gameBoardNew(GameBoardNewEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameBoardChanged(megamek.common.GameBoardChangeEvent)
-     */
     public void gameBoardChanged(GameBoardChangeEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameSettingsChange(megamek.common.GameSettingsChangeEvent)
-     */
     public void gameSettingsChange(GameSettingsChangeEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameMapQuery(megamek.common.GameMapQueryEvent)
-     */
     public void gameMapQuery(GameMapQueryEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameEntityNew(megamek.common.GameEntityNewEvent)
-     */
     public void gameEntityNew(GameEntityNewEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameEntityNewOffboard(megamek.common.GameEntityNewOffboardEvent)
-     */
     public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameEntityChange(megamek.common.GameEntityChangeEvent)
-     */
     public void gameEntityChange(GameEntityChangeEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameAttack(megamek.common.GameAttackEvent)
-     */
-    public void gameAttack(GameAttackEvent e) {
+    public void gameNewAction(GameNewActionEvent e) {
     }
 
-    /* (non-Javadoc)
-     * @see megamek.common.GameListener#gameEntityRemove(megamek.common.GameEntityRemoveEvent)
-     */
     public void gameEntityRemove(GameEntityRemoveEvent e) {
     }
 

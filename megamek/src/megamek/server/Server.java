@@ -5733,13 +5733,14 @@ implements Runnable, ConnectionHandler {
       if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
           // the mod is weight-based
           int nMod;
-          if (ae.getWeight() <= Entity.WEIGHT_LIGHT) {
+          switch (ae.getWeightClass()) {
+          case EntityWeightClass.WEIGHT_LIGHT:
               nMod = 2;
-          } else if (ae.getWeight() <= Entity.WEIGHT_MEDIUM) {
+          case EntityWeightClass.WEIGHT_MEDIUM:
               nMod = 1;
-          } else if (ae.getWeight() <= Entity.WEIGHT_HEAVY) {
+          case EntityWeightClass.WEIGHT_HEAVY:
               nMod = 0;
-          } else {
+          default:
               nMod = -1;
           }
           PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
@@ -8347,37 +8348,37 @@ implements Runnable, ConnectionHandler {
         int targetMod = 0;
 
         switch ( attacker.getWeightClass() ) {
-          case Entity.WEIGHT_LIGHT:
+          case EntityWeightClass.WEIGHT_LIGHT:
             attackerMod = 1;
             break;
 
-          case Entity.WEIGHT_MEDIUM:
+          case EntityWeightClass.WEIGHT_MEDIUM:
             attackerMod = 2;
             break;
 
-          case Entity.WEIGHT_HEAVY:
+          case EntityWeightClass.WEIGHT_HEAVY:
             attackerMod = 3;
             break;
 
-          case Entity.WEIGHT_ASSAULT:
+          case EntityWeightClass.WEIGHT_ASSAULT:
             attackerMod = 4;
             break;
         }
 
         switch ( target.getWeightClass() ) {
-          case Entity.WEIGHT_LIGHT:
+          case EntityWeightClass.WEIGHT_LIGHT:
             targetMod = 1;
             break;
 
-          case Entity.WEIGHT_MEDIUM:
+          case EntityWeightClass.WEIGHT_MEDIUM:
             targetMod = 2;
             break;
 
-          case Entity.WEIGHT_HEAVY:
+          case EntityWeightClass.WEIGHT_HEAVY:
             targetMod = 3;
             break;
 
-          case Entity.WEIGHT_ASSAULT:
+          case EntityWeightClass.WEIGHT_ASSAULT:
             targetMod = 4;
             break;
         }
@@ -8795,19 +8796,16 @@ implements Runnable, ConnectionHandler {
                           .append(" damage +").append(damMod);
 
                       switch ( entity.getWeightClass() ) {
-                        case Entity.WEIGHT_LIGHT:
+                        case EntityWeightClass.WEIGHT_LIGHT:
                           weightMod = 1;
                           break;
-
-                        case Entity.WEIGHT_MEDIUM:
+                        case EntityWeightClass.WEIGHT_MEDIUM:
                           weightMod = 0;
                           break;
-
-                        case Entity.WEIGHT_HEAVY:
+                        case EntityWeightClass.WEIGHT_HEAVY:
                           weightMod = -1;
                           break;
-
-                        case Entity.WEIGHT_ASSAULT:
+                        case EntityWeightClass.WEIGHT_ASSAULT:
                           weightMod = -2;
                           break;
                       }

@@ -862,21 +862,7 @@ public class ChatLounge
                 } else if (entity instanceof Protomech) {
                     unitClass = Messages.getString("ChatLounge.1"); //$NON-NLS-1$
                 } else {
-                    int weight = entity.getWeightClass();
-                    switch (weight) {
-                        case Entity.WEIGHT_LIGHT :
-                            unitClass = Messages.getString("ChatLounge.2"); //$NON-NLS-1$
-                            break;
-                        case Entity.WEIGHT_MEDIUM :
-                            unitClass = Messages.getString("ChatLounge.3"); //$NON-NLS-1$
-                            break;
-                        case Entity.WEIGHT_HEAVY :
-                            unitClass = Messages.getString("ChatLounge.4"); //$NON-NLS-1$
-                            break;
-                        case Entity.WEIGHT_ASSAULT :
-                            unitClass = Messages.getString("ChatLounge.5"); //$NON-NLS-1$
-                            break;
-                    }
+                    unitClass = entity.getWeightClassName();
                     if (entity instanceof Tank) {
                         unitClass += Messages.getString("ChatLounge.6"); //$NON-NLS-1$
                     }

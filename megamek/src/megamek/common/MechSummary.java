@@ -26,34 +26,35 @@
     private String m_sName;
     private String m_sChassis;
     private String m_sModel;
-        private String m_sUnitType;
+    private String m_sUnitType;
     private File m_sSourceFile;
     private String m_sEntryName; // for files in zips
     private int m_nYear;
     private int m_nType;
     private int m_nTons;
     private int m_nBV;
-        private long m_lModified; // for comparison when loading
+    private long m_lModified; // for comparison when loading
 
     
     public String getName() { return (this.m_sName); }
     public String getChassis() { return (this.m_sChassis); }
     public String getModel() { return (this.m_sModel); }
-        public String getUnitType() { return (this.m_sUnitType); }
-        public static String determineUnitType(Entity e) {
-             if (e instanceof Infantry) {
-                  return "Infantry";
-             } else if (e instanceof Tank) {
-                  return "Tank";
-             } else if (e instanceof Mech) {
-                  return "Mek";
-             } else if (e instanceof Protomech) {
-                  return "ProtoMek";
-             } else {
-                  //Hmm...this is not a good case, should throw excep. instead?
-                  return "Unknown";
-             }
+    public String getUnitType() { return (this.m_sUnitType); }
+    
+    public static String determineUnitType(Entity e) {
+        if (e instanceof Infantry) {
+            return "Infantry";
+        } else if (e instanceof Tank) {
+            return "Tank";
+        } else if (e instanceof Mech) {
+            return "Mek";
+        } else if (e instanceof Protomech) {
+            return "ProtoMek";
+        } else {
+            //Hmm...this is not a good case, should throw excep. instead?
+            return "Unknown";
         }
+    }
     public File getSourceFile() { return (this.m_sSourceFile); }
     public String getEntryName() { return (this.m_sEntryName); }
     public int getYear() { return (this.m_nYear); }
@@ -65,7 +66,7 @@
     public void setName(String m_sName) { this.m_sName = m_sName; }
     public void setChassis(String m_sChassis) { this.m_sChassis = m_sChassis; }
     public void setModel(String m_sModel) { this.m_sModel = m_sModel; }
-        public void setUnitType(String m_sUnitType) { this.m_sUnitType = m_sUnitType; }
+    public void setUnitType(String m_sUnitType) { this.m_sUnitType = m_sUnitType; }
     public void setSourceFile(File m_sSourceFile) { this.m_sSourceFile = m_sSourceFile; }
     public void setEntryName(String m_sEntryName) { this.m_sEntryName = m_sEntryName; }
     public void setYear(int m_nYear) { this.m_nYear = m_nYear; }
@@ -75,13 +76,6 @@
     public void setModified(long m_lModified) { this.m_lModified = m_lModified; }
     
     public int getWeightClass() {
-         if (m_nTons <= Entity.WEIGHT_LIGHT) {
-            return Entity.WEIGHT_LIGHT;
-        } else if (m_nTons <= Entity.WEIGHT_MEDIUM) {
-             return Entity.WEIGHT_MEDIUM;
-        } else if (m_nTons <= Entity.WEIGHT_HEAVY) {
-             return Entity.WEIGHT_HEAVY;
-        } else {
-             return Entity.WEIGHT_ASSAULT;
-     }
-}}
+        return EntityWeightClass.getWeightClass(m_nTons);
+    }
+}

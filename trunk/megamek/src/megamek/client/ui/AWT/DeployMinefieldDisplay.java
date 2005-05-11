@@ -76,7 +76,8 @@ public class DeployMinefieldDisplay
         this.client = clientgui.getClient();
         client.game.addGameListener(this);
 
-        clientgui.getBoardView().addBoardViewListener(this);
+        //Listener is added in the ClientGUI#switchPanel
+        //clientgui.getBoardView().addBoardViewListener(this);
 
         setupStatusBar(Messages.getString("DeployMinefieldDisplay.waitingForDeployMinefieldPhase")); //$NON-NLS-1$
 

@@ -143,7 +143,7 @@ public class BoardEncoder {
         Hashtable infernos = new Hashtable();
         int height = 0;
         int width = 0;
-        Hex[] hexes = null;
+        IHex[] hexes = null;
         Coords coords = null;
         boolean roadsAutoExit = false;
         Enumeration subnodes = null;
@@ -233,7 +233,7 @@ public class BoardEncoder {
                     ( child.getAttribute("roadsAutoExit") );
 
                 // Create an array to hold all the boardData.
-                hexes = new Hex[height * width];
+                hexes = new IHex[height * width];
 
                 // Walk through the subnodes, parsing out hex nodes.
                 int numHexes = 0;

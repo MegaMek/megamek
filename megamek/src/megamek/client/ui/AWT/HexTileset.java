@@ -207,7 +207,7 @@ public class HexTileset {
     /**
      * Loads the image for this hex.
      */
-    public void loadHexImage(Hex hex, Component comp, MediaTracker tracker) {
+    public void loadHexImage(IHex hex, Component comp, MediaTracker tracker) {
         
     }
     
@@ -308,21 +308,21 @@ public class HexTileset {
     }
 
     private class HexEntry {
-        private Hex hex;
+        private IHex hex;
         private String imageFile;
         private Image image;
         private java.util.Vector images;
         private java.util.Vector filenames;
         private java.util.Random r;
         
-        public HexEntry(Hex hex, String imageFile) {
+        public HexEntry(IHex hex, String imageFile) {
             this.hex = hex;
             this.imageFile = imageFile;
             r = new java.util.Random();
             filenames = StringUtil.splitString(imageFile, ";"); //$NON-NLS-1$
         }
         
-        public Hex getHex() {
+        public IHex getHex() {
             return hex;
         }
         

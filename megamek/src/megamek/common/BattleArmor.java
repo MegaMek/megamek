@@ -305,7 +305,7 @@ public class BattleArmor
     /**
      * Most Infantry can not enter water.
      */
-    public boolean isHexProhibited( Hex hex ) {
+    public boolean isHexProhibited( IHex hex ) {
         if ( this.getModel().equals(CLAN_WATER_ELEMENTAL) ) {
             return false;
         }

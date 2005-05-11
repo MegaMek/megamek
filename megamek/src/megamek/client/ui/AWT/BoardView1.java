@@ -258,7 +258,9 @@ public class BoardView1
      * @param listener the board listener.
      */
     public void addBoardViewListener(BoardViewListener listener) {
-        boardListeners.addElement(listener);
+        if (!boardListeners.contains(listener)) {
+            boardListeners.addElement(listener);
+        }
     }
     
     /**

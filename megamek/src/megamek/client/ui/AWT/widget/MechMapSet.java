@@ -171,6 +171,10 @@ public class MechMapSet implements DisplayMapSet{
     
     public void setEntity(Entity e){           
       Mech m = (Mech) e;
+        boolean mtHeat = false;
+        if (e.getGame() != null && e.getGame().getOptions().booleanOption("maxtech_heat")) {
+            mtHeat = true;
+        }
         int a = 1;
         int a0 = 1;
         for (int i = 0; i< m.locations(); i++){
@@ -193,7 +197,7 @@ public class MechMapSet implements DisplayMapSet{
         
           //heat
         vLabels[19].setValue(Integer.toString(m.heat));
-        drawHeatControl(m.heat);
+        drawHeatControl(m.heat, mtHeat);
     }
     
     private void setAreas(){
@@ -333,19 +337,32 @@ public class MechMapSet implements DisplayMapSet{
         bgDrawers.addElement(bgd);         
     }
     
-    private void drawHeatControl(int t){
+    private void drawHeatControl(int t)
+    {
+        drawHeatControl (t, false);
+    }
+    
+    private void drawHeatControl(int t, boolean mtHeat){
         int y = 0;
+        int maxHeat, steps;
+        if (mtHeat) {
+            maxHeat = 50;
+            steps = 2;
+        } else {
+            maxHeat = 30;
+            steps = 4;
+        }
         Graphics g = heatImage.getGraphics();
-        for (int i = 0; i< 30; i++){
-            y = 120 - (i+1)*4;
+        for (int i = 0; i< maxHeat; i++){
+            y = 120 - (i+1)*steps;
             if (i < t){
                 g.setColor(Color.red);
             } else {
                 g.setColor(Color.lightGray);
             }
-            g.fillRect(0, y, 10, 4);
+            g.fillRect(0, y, 10, steps);
             g.setColor(Color.black);
-            g.drawRect(0, y, 10, 4);            
+            g.drawRect(0, y, 10, steps);            
         }
     }
     

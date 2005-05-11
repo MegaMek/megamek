@@ -297,6 +297,8 @@ public abstract class Entity
         this.externalId = externalId;
     }
 
+    public Game getGame() { return game; }
+    
     public void setGame(Game game) {
         this.game = game;
         this.restore();

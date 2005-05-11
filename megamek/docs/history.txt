@@ -7,6 +7,8 @@ v0.29.77 (CVS)
 + Bug 1195279: deleting a unit in the lobby works only halfway
 + Bug 1199594: Hex class is used directly instead of IHex
 + Clarified faction name restrictions in Example.mms.
++ Additional translations (Game options)
++ Consider MaxTech heat scale for heat diagrams
 
 v0.29.76 (2005-05-09 8:00am)
 + Patch 1194720, RFE 1050894: Alternate Artillery Scatter Option

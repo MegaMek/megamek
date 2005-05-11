@@ -251,14 +251,24 @@ public class UnitOverview implements Displayable {
         if (!(entity instanceof Mech)) {
             return;
         }
-        int heat = Math.min(30, entity.heat);
+        boolean mtHeat = false;
+        int mHeat = 30;
+        if (entity.getGame()!=null && entity.getGame().getOptions().booleanOption("maxtech_heat")) {
+            mHeat = 50;
+            mtHeat = true;
+        }
+        int heat = Math.min(mHeat, entity.heat);
 
         graph.setColor(Color.darkGray);
         graph.fillRect(x + 52, y + 4, 2, 30);
         graph.setColor(Color.lightGray);
         graph.fillRect(x + 51, y + 3, 2, 30);
         graph.setColor(Color.red);
-        graph.fillRect(x + 51, y + 3 + (30 - heat), 2, heat);
+        if (mtHeat) {
+            graph.fillRect(x + 51, y + 3 + (30 - (int)(heat*0.6)), 2, (int)(heat*0.6));   
+        } else {
+            graph.fillRect(x + 51, y + 3 + (30 - heat), 2, heat);
+        }
     }
     
     private void drawBars(Graphics graph, Entity entity, int x, int y) {

@@ -81,7 +81,7 @@ public class Board implements Serializable, IBoard {
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
-        data = new Hex[width * height];
+        data = new IHex[width * height];
     }
 
     /**
@@ -95,7 +95,7 @@ public class Board implements Serializable, IBoard {
     public Board(int width, int height, IHex[] data) {
         this.width = width;
         this.height = height;
-        this.data = new Hex[width * height];
+        this.data = new IHex[width * height];
         for(int y=0; y<height; y++) {
             for(int x=0; x<width; x++) {
                 this.data[y*width+x] = data[y*width+x]; 
@@ -122,7 +122,7 @@ public class Board implements Serializable, IBoard {
      *                  to <code>InfernoTracker</code>s for this board.  This
      *                  object is used directly without being copied.
      */
-    public Board( int width, int height, Hex[] hexes,
+    public Board( int width, int height, IHex[] hexes,
                   Vector bldgs, Hashtable infMap ) {
         this.width = width;
         this.height = height;
@@ -149,9 +149,9 @@ public class Board implements Serializable, IBoard {
 
     
     /* (non-Javadoc)
-     * @see megamek.common.IBoard#newData(int, int, megamek.common.Hex[])
+     * @see megamek.common.IBoard#newData(int, int, megamek.common.IHex[])
      */
-    public void newData(int width, int height, Hex[] data) {
+    public void newData(int width, int height, IHex[] data) {
         this.width = width;
         this.height = height;
         this.data = data;
@@ -166,7 +166,7 @@ public class Board implements Serializable, IBoard {
      * @see megamek.common.IBoard#newData(int, int)
      */
     public void newData(int width, int height) {
-        newData(width, height, new Hex[width * height]);
+        newData(width, height, new IHex[width * height]);
     }
     
     /**
@@ -455,7 +455,7 @@ public class Board implements Serializable, IBoard {
      */
     public void load(InputStream is) {
         int nw = 0, nh = 0, di = 0;
-        Hex[] nd = new Hex[0];
+        IHex[] nd = new IHex[0];
         
         try {
             Reader r = new BufferedReader(new InputStreamReader(is));
@@ -474,7 +474,7 @@ public class Board implements Serializable, IBoard {
                     }
                     nw = Integer.parseInt(args[0]);
                     nh = Integer.parseInt(args[1]);
-                    nd = new Hex[nw * nh];
+                    nd = new IHex[nw * nh];
                     di = 0;
                 } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("option")) {
                     // read rest of line

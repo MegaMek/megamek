@@ -147,7 +147,7 @@ public class Tank
     /**
      * Hovercraft move on the surface of the water
      */
-    public int elevationOccupied(Hex hex) {
+    public int elevationOccupied(IHex hex) {
        if (movementType == MovementType.HOVER && hex.containsTerrain(Terrains.WATER)) {
            return hex.surface();
        } else {
@@ -158,7 +158,7 @@ public class Tank
     /**
      * Tanks have all sorts of prohibited terrain.
      */
-    public boolean isHexProhibited(Hex hex) {
+    public boolean isHexProhibited(IHex hex) {
         switch(movementType) {
             case MovementType.TRACKED :
                 return hex.terrainLevel(Terrains.WOODS) > 1 || hex.terrainLevel(Terrains.WATER) > 0;

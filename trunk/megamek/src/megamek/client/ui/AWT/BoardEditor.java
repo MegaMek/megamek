@@ -351,7 +351,7 @@ public class BoardEditor extends Container implements ItemListener,
      * location.
      */
     public void paintHex(Coords c) {
-        board.setHex(c, (Hex)curHex.duplicate());
+        board.setHex(c, curHex.duplicate());
     }
     
     /**
@@ -360,7 +360,7 @@ public class BoardEditor extends Container implements ItemListener,
      * @param hex            hex to set.
      */
     public void setCurrentHex(IHex hex) {
-        curHex = (Hex)hex.duplicate();
+        curHex = hex.duplicate();
         
         texElev.setText(Integer.toString(curHex.getElevation()));
             
@@ -441,7 +441,7 @@ public class BoardEditor extends Container implements ItemListener,
         bnd.show();
         
         if(bnd.getX() > 0 || bnd.getY() > 0) {
-            Hex[] newHexes = new Hex[ bnd.getX() * bnd.getY() ]; 
+            IHex[] newHexes = new IHex[ bnd.getX() * bnd.getY() ]; 
             for(int i = 0; i < newHexes.length; i++) { 
                 newHexes[i] = new Hex(); 
             }

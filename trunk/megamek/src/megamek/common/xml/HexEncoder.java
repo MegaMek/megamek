@@ -100,10 +100,10 @@ public class HexEncoder {
      * @throws  <code>IllegalStateException</code> if the node does not
      *          contain a valid <code>Hex</code>.
      */
-    public static Hex decode( ParsedXML node, Game game ) {
+    public static IHex decode( ParsedXML node, Game game ) {
         String attrStr = null;
         int attrVal = 0;
-        Hex retVal = null;
+        IHex retVal = null;
         ITerrainFactory f = Terrains.getTerrainFactory();
 
         // Did we get a null node?

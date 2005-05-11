@@ -47,7 +47,7 @@ public interface IBoard {
      * @param height the height dimension.
      * @param data new hex data appropriate for the board.
      */
-    public abstract void newData(int width, int height, Hex[] data);
+    public abstract void newData(int width, int height, IHex[] data);
 
     /**
      * Creates a new data set for the board, with the

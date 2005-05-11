@@ -786,7 +786,7 @@ public class Client implements Runnable {
                     receiveRemoveMinefield(c);
                     break;
                 case Packet.COMMAND_CHANGE_HEX :
-                    game.getBoard().setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
+                    game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
                     break;
                 case Packet.COMMAND_BLDG_UPDATE_CF :
                     receiveBuildingUpdateCF(c);

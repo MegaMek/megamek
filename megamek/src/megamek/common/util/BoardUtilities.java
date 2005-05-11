@@ -89,7 +89,7 @@ public class BoardUtilities {
                 elevationMap,
                 mapSettings.getAlgorithmToUse());
         
-        Hex[] nb = new Hex[mapSettings.getBoardWidth() * mapSettings.getBoardHeight()];
+        IHex[] nb = new IHex[mapSettings.getBoardWidth() * mapSettings.getBoardHeight()];
         int index = 0;
         for (int h = 0; h < mapSettings.getBoardHeight(); h++) {
             for (int w = 0; w < mapSettings.getBoardWidth(); w++) {
@@ -193,7 +193,7 @@ public class BoardUtilities {
             Iterator iter = unUsed.iterator();
             for (int n = 0; n < (which - 1); n++)
                 iter.next();
-            field = (Hex)iter.next();
+            field = (IHex)iter.next();
             field.removeAllTerrains();
             int tempInt = (Compute.randomInt(100) < probMore)? 2 : 1;
             ITerrain tempTerrain = f.createTerrain(terrainType, tempInt);
@@ -208,14 +208,14 @@ public class BoardUtilities {
             int min = Integer.MAX_VALUE;
             Iterator iter = unUsed.iterator();
             while (iter.hasNext()) {
-                field = (Hex)iter.next();
+                field = (IHex)iter.next();
                 if (field.getElevation() < min) {
                     min = field.getElevation();
                 }
             }
             iter = alreadyUsed.iterator();
             while (iter.hasNext()) {
-                field = (Hex)iter.next();
+                field = (IHex)iter.next();
                 field.setElevation(min);
             }
             
@@ -234,13 +234,13 @@ public class BoardUtilities {
      */
     private static void findAllUnused(IBoard board, int terrainType, HashSet alreadyUsed,
             HashSet unUsed, IHex searchFrom, HashMap reverseHex) {
-        Hex field;
+        IHex field;
         HashSet notYetUsed = new HashSet();
         
         notYetUsed.add(searchFrom);
         do {
             Iterator iter = notYetUsed.iterator();
-            field = (Hex)iter.next();
+            field = (IHex)iter.next();
             if (field == null) {
                 continue;
             }
@@ -413,7 +413,7 @@ public class BoardUtilities {
         HashSet tmpRiverHexes = (HashSet)riverHexes.clone();
         while (!tmpRiverHexes.isEmpty()) {
             Iterator iter = tmpRiverHexes.iterator();
-            field = (Hex)iter.next();
+            field = (IHex)iter.next();
             if (field.getElevation() < minElevation) {
                 minElevation = field.getElevation();
             }
@@ -432,7 +432,7 @@ public class BoardUtilities {
         /* now adjust the elevation to same height */
         Iterator iter = riverHexes.iterator();
         while (iter.hasNext()) {
-            field = (Hex)iter.next();
+            field = (IHex)iter.next();
             field.setElevation(minElevation);
         }
         

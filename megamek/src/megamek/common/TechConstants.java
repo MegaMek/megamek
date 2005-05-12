@@ -43,7 +43,8 @@ public class TechConstants {
     //An entity with a Clan chassis that mounts some Inner Sphere equipment
     public static final int         T_MIXED_BASE_CLAN_LEVEL_2 = 4;
     
-    private static final String[]    T_NAMES = {"IS level 1", "IS level 2", 
+    // this made public because MekWars accesses it
+    public static final String[]    T_NAMES = {"IS level 1", "IS level 2", 
         "Clan level 2", "Mixed (IS) level 2", "Mixed (Clan) level 2"};
 
     public static final int SIZE = T_NAMES.length;

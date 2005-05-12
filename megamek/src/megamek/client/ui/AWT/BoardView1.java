@@ -1351,8 +1351,8 @@ public class BoardView1
     }
 
     /**
-     * Clears the sprite for an entity and prepares it to be re-drawn.  Replaces
-     * the old sprite with the new!
+     * Clears the sprite for an entity and prepares it to be re-drawn.
+     *  Replaces the old sprite with the new!
      *
      *  Try to prevent annoying ConcurrentModificationExceptions
      */

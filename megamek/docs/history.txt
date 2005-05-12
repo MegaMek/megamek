@@ -17,6 +17,7 @@ v0.29.77 (CVS)
 + Bug 1200323: Ammo doesn't detonate from heat under certain conditions
 + Changed the Procyon's movement and BV per the Ask the Writer forum
     http://forums.classicbattletech.com/index.php/topic,20243.0.html
++ Don't add 30 heat when empty inferno ammo slot is hit.
 
 
 v0.29.76 (2005-05-09 8:00am)

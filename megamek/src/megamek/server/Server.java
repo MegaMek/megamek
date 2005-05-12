@@ -11606,7 +11606,7 @@ implements Runnable, ConnectionHandler {
             Vector vCanSee = whoCanSee(e);
             for (int y = 0; y < vCanSee.size(); y++) {
                 Player p = (Player)vCanSee.elementAt(y);
-                if (e.getOwner().isEnemyOf(p)) {
+                if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
                     e.setVisibleToEnemy(true);
                     e.setSeenByEnemy(true);
                 }

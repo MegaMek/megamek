@@ -22,9 +22,6 @@ v0.29.77 (CVS)
 + Bug 1198377, Data 1200079: corrected Chevalier (Speed)
 + Data 1197033: updated mechfiles readme.txt
 
- 
-
-
 v0.29.76 (2005-05-09 8:00am)
 + Patch 1194720, RFE 1050894: Alternate Artillery Scatter Option
 + Bug 1195502: Continuing Golem ASRM5 problem

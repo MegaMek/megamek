@@ -10659,6 +10659,10 @@ implements Runnable, ConnectionHandler {
                 if (!atype.isExplosive()) {
                     continue;
                 }
+                // ignore empty bins
+                if (atype.getShots() == 0) {
+                    continue;
+                }
                 // BMRr, pg. 48, compare one rack's
                 // damage.  Ties go to most rounds.
                 int newRack = atype.getDamagePerShot() * atype.getRackSize();

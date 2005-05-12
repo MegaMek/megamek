@@ -10605,10 +10605,9 @@ implements Runnable, ConnectionHandler {
 
         // Inferno ammo causes heat buildup as well as the damage
         if ( mounted.getType() instanceof AmmoType &&
-             ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO) {
-            if (mounted.getShotsLeft() > 0) {
-                en.heatBuildup += 30;
-            }
+             ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO &&
+             mounted.getShotsLeft() > 0) {
+            en.heatBuildup += 30;
         }
 
         // determine and deal damage

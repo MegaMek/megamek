@@ -11,6 +11,7 @@ v0.29.77 (CVS)
 + Consider MaxTech heat scale for heat diagrams
 + Bug 1199491: deploying minefields doesn't work
 + Bug 1197622: Internationalization breaks dialog
++ Fix size in german localized mech selection dialog
 
 
 v0.29.76 (2005-05-09 8:00am)

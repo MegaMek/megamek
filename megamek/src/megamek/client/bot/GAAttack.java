@@ -143,7 +143,9 @@ public class GAAttack extends GA {
             if (a.target != null) { //if not the no fire option
                 targets.put(a.target);
                 double mod = 1;
-                if (a.ammoLeft != -1) {
+                if (a.primary_odds <= 0) {
+                	mod = 0; // If there's no chance to hit at all...
+                } else if (a.ammoLeft != -1) {
                     if (attacker.overall_armor_percent < .5) {
                         mod = 1.5; //get rid of it
                     } else if (a.ammoLeft < 12 && attacker.overall_armor_percent > .75) {

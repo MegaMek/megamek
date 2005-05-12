@@ -19,6 +19,8 @@ v0.29.77 (CVS)
     http://forums.classicbattletech.com/index.php/topic,20243.0.html
 + Don't add 30 heat when empty inferno ammo slot is hit.
 + Patch 1200105, Bug 1028373: Bot Takes Impossible Shots
++ Bug 1198377, Data 1200079: corrected Chevalier (Speed)
+ 
 
 
 v0.29.76 (2005-05-09 8:00am)

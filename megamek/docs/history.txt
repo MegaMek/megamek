@@ -14,6 +14,7 @@ v0.29.77 (CVS)
 + Fix size in german localized mech selection dialog
 + Bug 1200799: punch message box has wrong text
 + Bug 1200288: /seeall during double blind
++ Bug 1200323: Ammo doesn't detonate from heat under certain conditions
 
 
 v0.29.76 (2005-05-09 8:00am)

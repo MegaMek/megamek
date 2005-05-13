@@ -10795,9 +10795,6 @@ implements Runnable, ConnectionHandler {
         //check for location exposure
         doSetLocationsExposure(entity, fallHex, fallHex.hasPavement(), false);
 
-        // pilot damage?
-        roll.removeAutos();
-
         if (height > 0) {
             roll.addModifier(height, "height of fall");
         }

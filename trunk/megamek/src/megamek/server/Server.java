@@ -10795,11 +10795,15 @@ implements Runnable, ConnectionHandler {
         //check for location exposure
         doSetLocationsExposure(entity, fallHex, fallHex.hasPavement(), false);
 
+        // we want to be able to avoid pilot damage even when it was
+        // an automatic fall, only unconsciousness should cause auto-damage
+        roll.removeAutos();
+        
         if (height > 0) {
             roll.addModifier(height, "height of fall");
         }
 
-        if (roll.getValue() == PilotingRollData.AUTOMATIC_FAIL) {
+        if (roll.getValue() == PilotingRollData.IMPOSSIBLE) {
             phaseReport.append("\nPilot of " ).append( entity.getDisplayName()
             ).append( " \"" ).append( entity.crew.getName() ).append( "\" cannot avoid damage.\n");
             phaseReport.append(damageCrew(entity, 1) ).append( "\n");

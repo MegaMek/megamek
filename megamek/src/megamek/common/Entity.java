@@ -2704,9 +2704,7 @@ public abstract class Entity
         }
         // pilot awake?
         else if (!getCrew().isActive()) {
-            //Following line switched from impossible to automatic failure
-            // -- bug fix for unconscious pilots taking PSRs
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, "Pilot unconscious");
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconscious");
         }
         // gyro operational?
         if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {

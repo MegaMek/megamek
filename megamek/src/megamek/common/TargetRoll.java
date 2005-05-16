@@ -143,7 +143,7 @@ public class TargetRoll implements Serializable {
 
     public void addModifier(Modifier modifier) {
         if (modifier.value == CHECK_FALSE) {
-            removeAutos();
+            removeAutos(true);
         }
         modifiers.add(modifier);
         recalculate();
@@ -164,11 +164,29 @@ public class TargetRoll implements Serializable {
     /**
      * Remove all automatic failures or successes, but leave impossibles intact
      */
+    
     public void removeAutos() {
+        removeAutos(false);
+    }
+    
+    /**
+     * Remove all automatic failures or successes, and possibly also remove
+     * impossibles
+     * @param removeImpossibles <code>boolean</code> value wether or not 
+     *                          impossibles should be removed
+     */
+    
+    public void removeAutos(boolean removeImpossibles) {
         ArrayList toKeep = new ArrayList();
         for (Iterator i = modifiers.iterator(); i.hasNext();) {
             Modifier modifier = (Modifier)i.next();
-            if (modifier.value != AUTOMATIC_FAIL && modifier.value != AUTOMATIC_SUCCESS) {
+            if (!removeImpossibles) {
+                if (modifier.value != AUTOMATIC_FAIL && modifier.value != AUTOMATIC_SUCCESS) {
+                    toKeep.add(modifier);
+                }
+            } else if (modifier.value != AUTOMATIC_FAIL &&
+                       modifier.value != AUTOMATIC_SUCCESS &&
+                       modifier.value != IMPOSSIBLE) {
                 toKeep.add(modifier);
             }
         }

@@ -292,9 +292,15 @@ public class Game implements Serializable, IGame
         return teams.elements();
     }
 
-    /** Return the teams vector */
+    /**
+     * Return the current number of teams in the game.
+     */
+    public int getNoOfTeams() {
+        return teams.size();
+    }
+
     public Vector getTeamsVector() {
-        return teams;
+        return (Vector)teams.clone();
     }
 
     /**
@@ -312,6 +318,48 @@ public class Game implements Serializable, IGame
             }
         }
         return null;
+    }
+
+    /**
+     Set up the teams vector.  Each player on a team (Team 1 .. Team X) is
+     placed in the appropriate vector.  Any player on 'No Team', is placed
+     in their own object
+     */
+    public void setupTeams() {
+        Vector teams = new Vector();
+        boolean useTeamInit = getOptions().getOption("team_initiative").booleanValue();
+        
+        // Get all NO_TEAM players.  If team_initiative is false, all
+        // players are on their own teams for initiative purposes.
+        for (Enumeration i = getPlayers(); i.hasMoreElements();) {
+            final Player player = (Player)i.nextElement();
+            if ( !useTeamInit || player.getTeam() == Player.TEAM_NONE ) {
+                Team new_team = new Team(Player.TEAM_NONE);
+                new_team.addPlayer(player);
+                teams.addElement(new_team);
+            }
+        }
+        
+        if (useTeamInit) {
+            // Now, go through all the teams, and add the apropriate player
+            for (int t = Player.TEAM_NONE + 1; t < Player.MAX_TEAMS; t++) {
+                Team new_team = null;
+                for (Enumeration i = getPlayers(); i.hasMoreElements();) {
+                    final Player player = (Player)i.nextElement();
+                    if (player.getTeam() == t) {
+                        if (new_team == null) {
+                            new_team = new Team(t);
+                        }
+                        new_team.addPlayer(player);
+                    }
+                }
+                
+                if (new_team != null) {
+                    teams.addElement(new_team);
+                }
+            }
+        }
+        this.teams = teams;
     }
 
     /**
@@ -568,10 +616,10 @@ public class Game implements Serializable, IGame
             case PHASE_LOUNGE :
                 reset();
                 break;
-            case Game.PHASE_PHYSICAL :
+            case IGame.PHASE_PHYSICAL :
                 resetActions();
                 break;
-            case Game.PHASE_INITIATIVE :
+            case IGame.PHASE_INITIATIVE :
                 resetActions();
                 resetCharges();
                 break;
@@ -1706,8 +1754,14 @@ public class Game implements Serializable, IGame
         initiativeRerollRequests.addElement(t);
     }
 
-    public Vector getInitiativeRerollRequests() {
-        return initiativeRerollRequests;
+    public void rollInitAndResolveTies() {
+        TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests);
+        initiativeRerollRequests.removeAllElements();
+        
+    }
+
+    public int getNoOfInitiativeRerollRequests() {
+        return initiativeRerollRequests.size();
     }
 
     /**
@@ -1938,7 +1992,7 @@ public class Game implements Serializable, IGame
             retVal = new Enumeration() {
                     private EntitySelector selector = entry;
                     private Entity current = null;
-                    private Enumeration iter = Game.this.getEntities();
+                    private Enumeration iter = getEntities();
 
                     // Do any more entities meet the selection criteria?
                     public boolean hasMoreElements() {
@@ -2029,7 +2083,7 @@ public class Game implements Serializable, IGame
 
         // If no selector was supplied, return all entities.
         if ( null == selector ) {
-            retVal = Game.this.vOutOfGame.elements();
+            retVal = vOutOfGame.elements();
         }
 
         // Otherwise, return an anonymous Enumeration
@@ -2039,7 +2093,7 @@ public class Game implements Serializable, IGame
             retVal = new Enumeration() {
                     private EntitySelector selector = entry;
                     private Entity current = null;
-                    private Enumeration iter = Game.this.vOutOfGame.elements();
+                    private Enumeration iter = vOutOfGame.elements();
 
                     // Do any more entities meet the selection criteria?
                     public boolean hasMoreElements() {
@@ -2096,12 +2150,12 @@ public class Game implements Serializable, IGame
 
         // If no selector was supplied, return the count of all game entities.
         if ( null == selector ) {
-            retVal = Game.this.vOutOfGame.size();
+            retVal = vOutOfGame.size();
         }
 
         // Otherwise, count the entities that meet the selection criteria.
         else {
-            Enumeration iter = Game.this.vOutOfGame.elements();
+            Enumeration iter = vOutOfGame.elements();
             while ( iter.hasMoreElements() ) {
                 if ( selector.accept((Entity) iter.nextElement()) ) {
                     retVal++;

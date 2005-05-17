@@ -284,7 +284,7 @@ public class PhysicalDisplay
     private void endMyTurn() {
         // end my turn, then.
         Entity next = client.game.getNextEntity( client.game.getTurnIndex() );
-        if ( Game.PHASE_PHYSICAL == client.game.getPhase()
+        if ( IGame.PHASE_PHYSICAL == client.game.getPhase()
              && null != next
              && null != ce()
              && next.getOwnerId() != ce().getOwnerId() ) {
@@ -821,7 +821,7 @@ public class PhysicalDisplay
             return;
         }
 
-        if (client.game.getPhase() == Game.PHASE_PHYSICAL) {
+        if (client.game.getPhase() == IGame.PHASE_PHYSICAL) {
             endMyTurn();
 
             if (client.isMyTurn()) {
@@ -841,11 +841,11 @@ public class PhysicalDisplay
             return;
         }
 
-        if (client.isMyTurn() && client.game.getPhase() != Game.PHASE_PHYSICAL) {
+        if (client.isMyTurn() && client.game.getPhase() != IGame.PHASE_PHYSICAL) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if (client.game.getPhase() ==  Game.PHASE_PHYSICAL) {
+        if (client.game.getPhase() ==  IGame.PHASE_PHYSICAL) {
             setStatusBarText(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
         }
     }

@@ -693,14 +693,14 @@ public class EntityEncoder {
      *
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
-     * @param   game - the <code>Game</code> the decoded object belongs to.
+     * @param   game - the <code>IGame</code> the decoded object belongs to.
      * @return  the <code>Entity</code> object based on the node.
      * @throws  <code>IllegalArgumentException</code> if the node is
      *          <code>null</code>.
      * @throws  <code>IllegalStateException</code> if the node does not
      *          contain a valid <code>Entity</code>.
      */
-    private static Entity decodeEntityData( ParsedXML node, Game game ) {
+    private static Entity decodeEntityData( ParsedXML node, IGame game ) {
         String attrStr = null;
         int attrVal = 0;
         boolean attrTrue = false;
@@ -831,14 +831,14 @@ public class EntityEncoder {
      *
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
-     * @param   game - the <code>Game</code> the decoded object belongs to.
+     * @param   game - the <code>IGame</code> the decoded object belongs to.
      * @return  the <code>Entity</code> object based on the node.
      * @throws  <code>IllegalArgumentException</code> if the node is
      *          <code>null</code>.
      * @throws  <code>IllegalStateException</code> if the node does not
      *          contain a valid <code>Entity</code>.
      */
-    public static Entity decode( ParsedXML node, Game game ) {
+    public static Entity decode( ParsedXML node, IGame game ) {
         String attrStr = null;
         int attrVal = 0;
         Entity entity = null;

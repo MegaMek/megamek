@@ -148,7 +148,7 @@ public class ReportDisplay
     
     public void resetButtons() {
         resetReadyButton();
-        if (client.game.getPhase() == Game.PHASE_INITIATIVE
+        if (client.game.getPhase() == IGame.PHASE_INITIATIVE
             && client.game.hasTacticalGenius(client.getLocalPlayer())) {
             showRerollButton(true);
         } else {

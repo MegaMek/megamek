@@ -94,14 +94,14 @@ public class BuildingEncoder {
      *
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
-     * @param   game - the <code>Game</code> the decoded object belongs to.
+     * @param   game - the <code>IGame</code> the decoded object belongs to.
      * @return  the <code>Building</code> object based on the node.
      * @throws  <code>IllegalArgumentException</code> if the node is
      *          <code>null</code>.
      * @throws  <code>IllegalStateException</code> if the node does not
      *          contain a valid <code>Building</code>.
      */
-    public static Building decode( ParsedXML node, Game game ) {
+    public static Building decode( ParsedXML node, IGame game ) {
         String attrStr = null;
         int attrVal = 0;
         Building retVal = null;

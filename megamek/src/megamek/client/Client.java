@@ -243,28 +243,28 @@ public class Client implements Runnable {
         game.setPhase(phase);
         // Handle phase-specific items.
         switch (phase) {
-        case Game.PHASE_STARTING_SCENARIO :
+        case IGame.PHASE_STARTING_SCENARIO :
             sendDone(true);
             break;
-        case Game.PHASE_EXCHANGE :
+        case IGame.PHASE_EXCHANGE :
             sendDone(true);
             break;
-        case Game.PHASE_DEPLOYMENT :
+        case IGame.PHASE_DEPLOYMENT :
             memDump("entering deployment phase"); //$NON-NLS-1$
             break;
-        case Game.PHASE_TARGETING :
+        case IGame.PHASE_TARGETING :
             memDump("entering targeting phase"); //$NON-NLS-1$
             break;
-        case Game.PHASE_MOVEMENT :
+        case IGame.PHASE_MOVEMENT :
             memDump("entering movement phase"); //$NON-NLS-1$
             break;
-        case Game.PHASE_OFFBOARD :
+        case IGame.PHASE_OFFBOARD :
             memDump("entering offboard phase"); //$NON-NLS-1$
             break;
-        case Game.PHASE_FIRING :
+        case IGame.PHASE_FIRING :
             memDump("entering firing phase"); //$NON-NLS-1$
             break;
-        case Game.PHASE_PHYSICAL :
+        case IGame.PHASE_PHYSICAL :
             memDump("entering physical phase"); //$NON-NLS-1$
             break;
         }

@@ -92,7 +92,7 @@ public class GameOptionsEncoder {
      * @throws  <code>IllegalStateException</code> if the node does not
      *          contain a valid <code>GameOptions</code>.
      */
-    public static GameOptions decode( ParsedXML node, Game game ) {
+    public static GameOptions decode( ParsedXML node, IGame game ) {
         return null;
     }
 

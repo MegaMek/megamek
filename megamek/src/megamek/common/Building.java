@@ -73,12 +73,12 @@ public class Building implements Serializable {
      * the new hex, which aren't already included).
      *
      * @param   coords - the <code>Coords</code> of the new hex.
-     * @param   board - the game's <code>Board</code> object.
+     * @param   board - the game's <code>IBoard</code> object.
      * @exception an <code>IllegalArgumentException</code> will be thrown if
      *          the given coordinates do not contain a building, or if the
      *          building covers multiple hexes with different CF.
      */
-    protected void include( Coords coords, Board board ) {
+    protected void include( Coords coords, IBoard board ) {
 
         // If the hex is already in the building, we've covered it before.
         if ( this.isIn( coords ) ) {
@@ -150,7 +150,7 @@ public class Building implements Serializable {
      *          the given coordinates do not contain a building, or if the
      *          building covers multiple hexes with different CFs.
      */
-    public Building( Coords coords, Board board ) {
+    public Building( Coords coords, IBoard board ) {
 
         // The ID of the building will be the hashcode of the coords.
         // ASSUMPTION: this will be unique ID across ALL the building's

@@ -1674,22 +1674,25 @@ public class BoardView1
         if (useLOSTool) {
             moveCursor(firstLOSSprite, c1);
             moveCursor(secondLOSSprite, c2);
-
+            
+            boolean mechInFirst = GUIPreferences.getInstance().getMechInFirst();
+            boolean mechInSecond = GUIPreferences.getInstance().getMechInSecond();
+            
             LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
             ai.attackPos = c1;
             ai.targetPos = c2;
-            ai.attackHeight = game.getMechInFirst()?1:0;
-            ai.targetHeight = game.getMechInSecond()?1:0;
+            ai.attackHeight = mechInFirst?1:0;
+            ai.targetHeight = mechInSecond?1:0;
             ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
             ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
 
             LosEffects le = LosEffects.calculateLos(game, ai);
             StringBuffer message = new StringBuffer();
             message.append(Messages.getString("BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
-                    game.getMechInFirst() ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                    mechInFirst ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
                     c1.getBoardNum()}));
             message.append(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
-                    game.getMechInFirst() ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                    mechInSecond ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
                     c1.getBoardNum()}));
             if (!le.canSee()) {
                 message.append(Messages.getString("BoardView1.LOSBlocked", new Object[]{ //$NON-NLS-1$

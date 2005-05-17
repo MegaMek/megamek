@@ -114,10 +114,6 @@ public class Game implements Serializable, IGame
     private Hashtable deploymentTable = new Hashtable();
     private int lastDeploymentRound = 0;
 
-    // Settings for the LOS tool.
-    private boolean mechInFirstHex = true;
-    private boolean mechInSecondHex = true;
-
     private Hashtable minefields = new Hashtable();
     private Vector vibrabombs = new Vector();
     private Vector offboardArtilleryAttacks = new Vector();
@@ -143,42 +139,26 @@ public class Game implements Serializable, IGame
         processGameEvent(new GameBoardNewEvent(this, oldBoard, board));
     }
 
-    public boolean getMechInFirst() {
-      return mechInFirstHex;
+    public boolean containsMinefield(Coords coords) {
+        return minefields.containsKey(coords);
     }
-
-    public boolean getMechInSecond() {
-      return mechInSecondHex;
+    
+    public Vector getMinefields(Coords coords) {
+        Vector mfs = (Vector) minefields.get(coords);
+        if (mfs == null) {
+            return new Vector();
+        }
+        return mfs;
     }
-
-    public void setMechInFirst(boolean mech) {
-      mechInFirstHex = mech;
+    
+    public int getNbrMinefields(Coords coords) {
+        Vector mfs = (Vector) minefields.get(coords);
+        if (mfs == null) {
+            return 0;
+        }
+        
+        return mfs.size();
     }
-
-    public void setMechInSecond(boolean mech) {
-      mechInSecondHex = mech;
-    }
-
-  public boolean containsMinefield(Coords coords) {
-    return minefields.containsKey(coords);
-  }
-
-  public Vector getMinefields(Coords coords) {
-      Vector mfs = (Vector) minefields.get(coords);
-      if (mfs == null) {
-        return new Vector();
-      }
-    return mfs;
-  }
-
-  public int getNbrMinefields(Coords coords) {
-      Vector mfs = (Vector) minefields.get(coords);
-      if (mfs == null) {
-        return 0;
-      }
-
-    return mfs.size();
-  }
 
     /**
      * Get the coordinates of all mined hexes in the game.

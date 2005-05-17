@@ -68,7 +68,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String WINDOW_POS_Y = "WindowPosY";
     public static final String WINDOW_SIZE_HEIGHT = "WindowSizeHeight";
     public static final String WINDOW_SIZE_WIDTH = "WindowSizeWidth";
-
+    public static final String LOS_MECH_IN_FIRST = "LOSMechInFirst";
+    public static final String LOS_MECH_IN_SECOND = "LOSMechInSecond";
+    
     protected static GUIPreferences instance = new GUIPreferences();
     
     public static GUIPreferences getInstance() {
@@ -373,6 +375,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(WINDOW_SIZE_WIDTH);
     }
 
+    public boolean getMechInFirst() {
+        return store.getBoolean(LOS_MECH_IN_FIRST);        
+    }
+
+    public boolean getMechInSecond() {
+        return store.getBoolean(LOS_MECH_IN_SECOND);        
+    }
+    
     public void setAlwaysRightClickScroll(boolean state) {
         store.setValue(ALWAYS_RIGHT_CLICK_SCROLL, state);
     }
@@ -536,7 +546,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setWindowSizeWidth(int i) {
         store.setValue(WINDOW_SIZE_WIDTH, i);
     }
+
+    public void setMechInFirst(boolean b) {
+        store.setValue(LOS_MECH_IN_FIRST, b);        
+    }
     
+    public void setMechInSecond(boolean b) {
+        store.setValue(LOS_MECH_IN_SECOND, b);        
+    }
+
     protected ColorParser p = new ColorParser();    
 
     protected String getColorString(Color color) {

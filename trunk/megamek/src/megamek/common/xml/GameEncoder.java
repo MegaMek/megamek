@@ -174,10 +174,6 @@ public class GameEncoder {
         out.write( game.getVictoryPlayerId() );
         out.write( "\" victoryTeam=\"" );
         out.write( game.getVictoryTeam() );
-        out.write( "\" mechInFirst=\"" );
-        out.write( game.getMechInFirst() ? "true" : "false" );
-        out.write( "\" mechInSecond=\"" );
-        out.write( game.getMechInSecond() ? "true" : "false" );
         out.write( "\" />" );
 
         // Finish the XML stream for this game.

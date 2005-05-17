@@ -1234,11 +1234,12 @@ public class ClientGUI
     // Shows a dialg where the player can select the entity types
     // used in the LOS tool.
     public void showLOSSettingDialog() {
-        LOSDialog ld = new LOSDialog(frame, client.game.getMechInFirst(), client.game.getMechInSecond());
+        GUIPreferences gp = GUIPreferences.getInstance(); 
+        LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp.getMechInSecond());
         ld.show();
 
-        client.game.setMechInFirst(ld.getMechInFirst());
-        client.game.setMechInSecond(ld.getMechInSecond());
+        gp.setMechInFirst(ld.getMechInFirst());
+        gp.setMechInSecond(ld.getMechInSecond());
     }
 
     // Loads a preview image of the unit into the BufferedPanel.

@@ -94,29 +94,6 @@ public interface IGame {
     public abstract void processGameEvent(GameEvent event);    
 
     /**
-     * @return If it's a mech in the first hex used by the LOS tool
-     */
-    public abstract boolean getMechInFirst();
-
-    /**
-     * 
-     * @return If it's a mech in the second hex used by the LOS tool
-     */
-    public abstract boolean getMechInSecond();
-
-    /**
-     * 
-     * @param mech If it's a mech in the first hex used by the LOS tool
-     */
-    public abstract void setMechInFirst(boolean mech);
-
-    /**
-     * 
-     * @param mech If it's a mech in the second hex used by the LOS tool
-     */
-    public abstract void setMechInSecond(boolean mech);
-    
-    /**
      * Check if there is a minefield at given coords
      * @param coords coords to check
      * @return <code>true</code> if there is a minefield at given coords

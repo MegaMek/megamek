@@ -398,6 +398,12 @@ implements Runnable, ConnectionHandler {
 
             sendServerChat( who );
 
+            // there is more than one player, uncheck the friendly fire option
+            if ( game.getNoOfPlayers() > 1
+                 && game.getOptions().booleanOption("friendly_fire") ) {
+                game.getOptions().getOption("friendly_fire").setValue(false);
+                send(createGameSettingsPacket());
+            }
         } // Found the player
     }
 
@@ -3740,6 +3746,8 @@ implements Runnable, ConnectionHandler {
                     // Nope.  Create a new Thunder minefield
                     minefield = Minefield.createThunderMF
                         ( mfCoord, playerId, (int)(damage/2 + damage%2) );
+    	            game.addMinefield(minefield);
+	                revealMinefield(minefield);
                 } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
                     // Yup.  Replace the old one.
                     removeMinefield(minefield);
@@ -3751,10 +3759,9 @@ implements Runnable, ConnectionHandler {
                         newDamage = Minefield.MAX_DAMAGE;
                     }
                     minefield.setDamage(newDamage);
+    	            game.addMinefield(minefield);
+	                revealMinefield(minefield);
                 }
-                game.addMinefield(minefield);
-                revealMinefield(minefield);
-
             } // End coords-on-board
 
         } // Handle the next coords
@@ -3784,15 +3791,17 @@ implements Runnable, ConnectionHandler {
         if (minefield == null) {
             minefield = Minefield.createThunderMF(coords, playerId, damage);
             // Add to the old one
+	        game.addMinefield(minefield);
+    	    revealMinefield(minefield);
         } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
             removeMinefield(minefield);
             int oldDamage = minefield.getDamage();
             damage += oldDamage;
             damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
             minefield.setDamage(damage);
+	        game.addMinefield(minefield);
+    	    revealMinefield(minefield);
         }
-        game.addMinefield(minefield);
-        revealMinefield(minefield);
     }
 
     /**
@@ -3817,15 +3826,17 @@ implements Runnable, ConnectionHandler {
         if (minefield == null) {
             minefield = Minefield.createThunderInfernoMF(coords, playerId, damage);
             // Add to the old one
-        } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
+ 	        game.addMinefield(minefield);
+    	    revealMinefield(minefield);
+       } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
             removeMinefield(minefield);
             int oldDamage = minefield.getDamage();
             damage += oldDamage;
             damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
             minefield.setDamage(damage);
-        }
-        game.addMinefield(minefield);
-        revealMinefield(minefield);
+ 	        game.addMinefield(minefield);
+    	    revealMinefield(minefield);
+       }
     }
 
     /**
@@ -3873,15 +3884,17 @@ implements Runnable, ConnectionHandler {
         if (minefield == null) {
             minefield = Minefield.createThunderActiveMF(coords, playerId, damage);
             // Add to the old one
+	        game.addMinefield(minefield);
+    	    revealMinefield(minefield);
         } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
             removeMinefield(minefield);
             int oldDamage = minefield.getDamage();
             damage += oldDamage;
             damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
             minefield.setDamage(damage);
+	        game.addMinefield(minefield);
+    	    revealMinefield(minefield);
         }
-        game.addMinefield(minefield);
-        revealMinefield(minefield);
     }
 
     /**
@@ -3903,15 +3916,17 @@ implements Runnable, ConnectionHandler {
         if (minefield == null) {
             minefield = Minefield.createThunderVibrabombMF(coords, playerId, damage, sensitivity);
             // Add to the old one
+	        game.addVibrabomb(minefield);
+    	    revealMinefield(minefield);
         } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
             removeMinefield(minefield);
             int oldDamage = minefield.getDamage();
             damage += oldDamage;
             damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
             minefield.setDamage(damage);
+	        game.addVibrabomb(minefield);
+    	    revealMinefield(minefield);
         }
-        game.addVibrabomb(minefield);
-        revealMinefield(minefield);
     }
 
     /**
@@ -5727,14 +5742,13 @@ implements Runnable, ConnectionHandler {
       if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
           // the mod is weight-based
           int nMod;
-          switch (ae.getWeightClass()) {
-          case EntityWeightClass.WEIGHT_LIGHT:
+          if (ae.getWeight() <= EntityWeightClass.WEIGHT_LIGHT) {
               nMod = 2;
-          case EntityWeightClass.WEIGHT_MEDIUM:
+          } else if (ae.getWeight() <= EntityWeightClass.WEIGHT_MEDIUM) {
               nMod = 1;
-          case EntityWeightClass.WEIGHT_HEAVY:
+          } else if (ae.getWeight() <= EntityWeightClass.WEIGHT_HEAVY) {
               nMod = 0;
-          default:
+          } else {
               nMod = -1;
           }
           PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
@@ -8793,12 +8807,15 @@ implements Runnable, ConnectionHandler {
                         case EntityWeightClass.WEIGHT_LIGHT:
                           weightMod = 1;
                           break;
+
                         case EntityWeightClass.WEIGHT_MEDIUM:
                           weightMod = 0;
                           break;
+
                         case EntityWeightClass.WEIGHT_HEAVY:
                           weightMod = -1;
                           break;
+
                         case EntityWeightClass.WEIGHT_ASSAULT:
                           weightMod = -2;
                           break;
@@ -9556,7 +9573,7 @@ implements Runnable, ConnectionHandler {
                         damage = 0;
                     } else if (damage > 0) {
                         // remaining damage transfers
-                        desc.append( "\n        " )
+                        desc.append( " " )
                             .append( damage )
                             .append( " damage transfers to " )
                             .append( te.getLocationAbbr(nextHit) )
@@ -9647,7 +9664,7 @@ implements Runnable, ConnectionHandler {
 
       boolean didExplode = explosionRoll >= explosionBTH;
 
-      sbDesc.append("\n        " + en.getDisplayName() + " has taken " + en.engineHitsThisRound + " engine hits this round.\n");
+      sbDesc.append("        \n" + en.getDisplayName() + " has taken " + en.engineHitsThisRound + " engine hits this round.\n");
       sbDesc.append("        Checking for engine explosion on BTH = " + explosionBTH + ", Roll = " + explosionRoll + "\n");
       en.rolledForEngineExplosion = true;
 
@@ -10599,8 +10616,7 @@ implements Runnable, ConnectionHandler {
 
         // Inferno ammo causes heat buildup as well as the damage
         if ( mounted.getType() instanceof AmmoType &&
-             ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO &&
-             mounted.getShotsLeft() > 0) {
+             ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO) {
             en.heatBuildup += 30;
         }
 
@@ -10652,10 +10668,6 @@ implements Runnable, ConnectionHandler {
                 }
                 AmmoType atype = (AmmoType)mounted.getType();
                 if (!atype.isExplosive()) {
-                    continue;
-                }
-                // ignore empty bins
-                if (atype.getShots() == 0) {
                     continue;
                 }
                 // BMRr, pg. 48, compare one rack's
@@ -10789,15 +10801,14 @@ implements Runnable, ConnectionHandler {
         //check for location exposure
         doSetLocationsExposure(entity, fallHex, fallHex.hasPavement(), false);
 
-        // we want to be able to avoid pilot damage even when it was
-        // an automatic fall, only unconsciousness should cause auto-damage
+        // pilot damage?
         roll.removeAutos();
-        
+
         if (height > 0) {
             roll.addModifier(height, "height of fall");
         }
 
-        if (roll.getValue() == PilotingRollData.IMPOSSIBLE) {
+        if (roll.getValue() == PilotingRollData.AUTOMATIC_FAIL) {
             phaseReport.append("\nPilot of " ).append( entity.getDisplayName()
             ).append( " \"" ).append( entity.crew.getName() ).append( "\" cannot avoid damage.\n");
             phaseReport.append(damageCrew(entity, 1) ).append( "\n");
@@ -11606,7 +11617,7 @@ implements Runnable, ConnectionHandler {
             Vector vCanSee = whoCanSee(e);
             for (int y = 0; y < vCanSee.size(); y++) {
                 Player p = (Player)vCanSee.elementAt(y);
-                if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
+                if (e.getOwner().isEnemyOf(p)) {
                     e.setVisibleToEnemy(true);
                     e.setSeenByEnemy(true);
                 }

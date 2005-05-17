@@ -310,7 +310,7 @@ public class MiniMap extends Canvas  {
 
             // draw Drop Zone
             if (null!=m_client && null!=m_game) {   // sanity check!
-                if (Game.PHASE_DEPLOYMENT == m_game.getPhase()
+                if (IGame.PHASE_DEPLOYMENT == m_game.getPhase()
                     && m_game.getTurn().getPlayerNum() == m_client.getLocalPlayer().getId()) {
                     for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
                         for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
@@ -323,7 +323,7 @@ public class MiniMap extends Canvas  {
             }
 
             // draw declared fire
-            if (Game.PHASE_FIRING==m_game.getPhase() || Game.PHASE_PHYSICAL==m_game.getPhase()) {
+            if (IGame.PHASE_FIRING==m_game.getPhase() || IGame.PHASE_PHYSICAL==m_game.getPhase()) {
                 for (Enumeration iter = m_game.getActions(); iter.hasMoreElements(); ) {
                     Object action = iter.nextElement();
                     if (action instanceof AttackAction) {

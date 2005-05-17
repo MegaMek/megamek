@@ -35,7 +35,7 @@ public final class Player extends TurnOrdered
     "Team 3", "Team 4", "Team 5"};
     public static final int     MAX_TEAMS = teamNames.length;
 
-    private transient Game  game;
+    private transient IGame  game;
 
     private String          name = "unnamed";
     private int             id;
@@ -159,7 +159,7 @@ public final class Player extends TurnOrdered
         this.id = id;
     }
 
-    public void setGame(Game game) {
+    public void setGame(IGame game) {
         this.game = game;
     }
 

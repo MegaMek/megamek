@@ -331,10 +331,10 @@ public class DeployMinefieldDisplay
         }
 
         if ( client.isMyTurn() &&
-             client.game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS ) {
+             client.game.getPhase() != IGame.PHASE_DEPLOY_MINEFIELDS ) {
             endMyTurn();
         }
-        if (client.game.getPhase() == Game.PHASE_DEPLOY_MINEFIELDS) {
+        if (client.game.getPhase() == IGame.PHASE_DEPLOY_MINEFIELDS) {
             setStatusBarText(Messages.getString("DeployMinefieldDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }
     }

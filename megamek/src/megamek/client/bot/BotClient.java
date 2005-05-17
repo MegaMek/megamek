@@ -20,8 +20,8 @@ import megamek.client.Client;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.common.GameTurn;
+import megamek.common.IGame;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
 import megamek.common.event.GameListenerAdapter;
@@ -48,7 +48,7 @@ public abstract class BotClient extends Client {
             }
 
             public void gameReport(GameReportEvent e) {
-                if (game.getPhase() == Game.PHASE_INITIATIVE) {
+                if (game.getPhase() == IGame.PHASE_INITIATIVE) {
                     //Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
                     sendDone(true);
@@ -99,13 +99,13 @@ public abstract class BotClient extends Client {
 
         try {
             switch (phase) {
-                case Game.PHASE_LOUNGE :
+                case IGame.PHASE_LOUNGE :
                     sendChat(Messages.getString("BotClient.Hi")); //$NON-NLS-1$
                     break;
-                case Game.PHASE_DEPLOYMENT :
+                case IGame.PHASE_DEPLOYMENT :
                     initialize();
                     break;
-                case Game.PHASE_MOVEMENT :
+                case IGame.PHASE_MOVEMENT :
                     if (game.getEntitiesOwnedBy(this.getLocalPlayer()) == 0) {
                         sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
                         this.die();
@@ -116,22 +116,22 @@ public abstract class BotClient extends Client {
                     }
                     initMovement();
                     break;
-                case Game.PHASE_FIRING :
+                case IGame.PHASE_FIRING :
                     initFiring();
                     break;
-                case Game.PHASE_PHYSICAL :
+                case IGame.PHASE_PHYSICAL :
                     break;
-                case Game.PHASE_INITIATIVE :
-                case Game.PHASE_MOVEMENT_REPORT :
-                case Game.PHASE_FIRING_REPORT :
-                case Game.PHASE_END :/*
-                case Game.PHASE_OFFBOARD_REPORT :
-                case Game.PHASE_SET_ARTYAUTOHITHEXES:
-                case Game.PHASE_OFFBOARD:
-                case Game.PHASE_TARGETING:*/
+                case IGame.PHASE_INITIATIVE :
+                case IGame.PHASE_MOVEMENT_REPORT :
+                case IGame.PHASE_FIRING_REPORT :
+                case IGame.PHASE_END :/*
+                case IGame.PHASE_OFFBOARD_REPORT :
+                case IGame.PHASE_SET_ARTYAUTOHITHEXES:
+                case IGame.PHASE_OFFBOARD:
+                case IGame.PHASE_TARGETING:*/
                     sendDone(true);
                     break;
-                case Game.PHASE_VICTORY :
+                case IGame.PHASE_VICTORY :
                     break;
             }
         } catch (Throwable t) {
@@ -142,7 +142,7 @@ public abstract class BotClient extends Client {
 
     protected void calculateMyTurn() {
         try {
-            if (game.getPhase() == Game.PHASE_MOVEMENT) {
+            if (game.getPhase() == IGame.PHASE_MOVEMENT) {
                 MovePath mp = null;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
@@ -152,14 +152,14 @@ public abstract class BotClient extends Client {
                     mp = calculateMoveTurn();
                 }
                 moveEntity(mp.getEntity().getId(), mp);
-            } else if (game.getPhase() == Game.PHASE_FIRING) {
+            } else if (game.getPhase() == IGame.PHASE_FIRING) {
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
                     MovePath mp = continueMovementFor(game.getEntity(turn.getEntityNum()));
                     moveEntity(mp.getEntity().getId(), mp);
                 }
                 calculateFiringTurn();
-            } else if (game.getPhase() == Game.PHASE_PHYSICAL) {
+            } else if (game.getPhase() == IGame.PHASE_PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
                 // Bug #1072137: don't crash if the bot can't find a physical.
                 if (null != po) {
@@ -169,9 +169,9 @@ public abstract class BotClient extends Client {
                     // Send a "no attack" to clear the game turn, if any.
                     sendAttackData( getLocalPlayer().getId(), new Vector(0) );
                 }
-            } else if (game.getPhase() == Game.PHASE_DEPLOYMENT) {
+            } else if (game.getPhase() == IGame.PHASE_DEPLOYMENT) {
                 calculateDeployment();
-            } else if (game.getPhase() == Game.PHASE_DEPLOY_MINEFIELDS) {
+            } else if (game.getPhase() == IGame.PHASE_DEPLOY_MINEFIELDS) {
                 Vector mines = calculateMinefieldDeployment();
                 for (int i = 0; i < mines.size(); i++) {
                     game.addMinefield((Minefield)mines.elementAt(i));

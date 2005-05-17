@@ -52,7 +52,7 @@ public class ACAmmoType extends AmmoType {
     
     }
 
-    protected HitData resolveACAttack(Game game, 
+    protected HitData resolveACAttack(IGame game, 
                       WeaponResult wr, 
                       UsesAmmoType weap, 
                       UsesAmmoState weap_state) {
@@ -60,7 +60,7 @@ public class ACAmmoType extends AmmoType {
     }
 
     // AC's do damage to a single location
-    public void resolveAttack(Game game, 
+    public void resolveAttack(IGame game, 
                   WeaponResult wr, 
                   UsesAmmoType weap, 
                   UsesAmmoState weap_state) {

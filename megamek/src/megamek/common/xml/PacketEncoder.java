@@ -69,7 +69,7 @@ public class PacketEncoder {
                 out.write( data[loop].toString() );
                 out.write( "\" />" );
             }
-            else if ( data[loop].getClass().equals(Board.class) ) {
+            else if ( data[loop].getClass().equals(IBoard.class) ) {
                 BoardEncoder.encode( (Board) data[loop], out );
             }
         }
@@ -81,7 +81,7 @@ public class PacketEncoder {
      *
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
-     * @param   game - the <code>Game</code> the decoded object belongs to.
+     * @param   game - the <code>IGame</code> the decoded object belongs to.
      * @return  the <code>Object</code> corresponding to the node.
      *          This value may be <code>null</code>.
      * @throws  <code>IllegalArgumentException</code> if the node is
@@ -91,7 +91,7 @@ public class PacketEncoder {
      * @throws  <code>NumberFormatException</code> if the value of a numeric
      *          data element is not in a valid format.
      */
-    private static Object decodeData( ParsedXML node, Game game ) {
+    private static Object decodeData( ParsedXML node, IGame game ) {
         Object retval = null;
 
         // Decoding is base the node's name.
@@ -208,7 +208,7 @@ public class PacketEncoder {
      *
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
-     * @param   game - the <code>Game</code> the decoded object belongs to.
+     * @param   game - the <code>IGame</code> the decoded object belongs to.
      * @return  the <code>Packet</code> object based on the node.
      * @throws  <code>IllegalArgumentException</code> if the node is
      *          <code>null</code>.
@@ -217,7 +217,7 @@ public class PacketEncoder {
      * @throws  <code>NumberFormatException</code> if the value of a numeric
      *          data element is not in a valid format.
      */
-    public static Packet decode( ParsedXML node, Game game ) {
+    public static Packet decode( ParsedXML node, IGame game ) {
         Packet packet = null;
         int command = 0;
         Object[] data = null;

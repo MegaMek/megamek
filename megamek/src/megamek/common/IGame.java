@@ -146,47 +146,112 @@ public interface IGame {
      */
     public abstract Enumeration getMinedCoords();
     
+    /**
+     * Addds the specified minefield
+     * @param mf minefield to add
+     */
     public abstract void addMinefield(Minefield mf);
 
+    /**
+     * Adds a number of minefields
+     * @param minefields the <code>Vector</code> of the minefields to add
+     */
     public abstract void addMinefields(Vector minefields);
     
+    /**
+     * Sets the minefields to the given <code>Vector</code> of the minefields
+     * @param minefields
+     */
     public abstract void setMinefields(Vector minefields);
 
+    /**
+     * Removes the specified minefield
+     * @param mf minefield to remove
+     */
     public abstract void removeMinefield(Minefield mf);
     
+    /**
+     * Removes all minefields
+     *
+     */
     public abstract void clearMinefields();
     
+    /**
+     * 
+     * @return the <code>Vector</code> of the vibrabombs
+     */
     public abstract Vector getVibrabombs();
     
+    /**
+     * Addds the specified vibrabomb
+     * @param mf Vibrabomb to add
+     */
     public abstract void addVibrabomb(Minefield mf);
     
+    /**
+     * Removes the specified Vibrabomb
+     * @param mf Vibrabomb to remove
+     */
     public abstract void removeVibrabomb(Minefield mf);
     
+    /**
+     * Checks if the game contains the specified Vibrabomb
+     * @param mf the Vibrabomb to ceck
+     * @return
+     */
     public abstract boolean containsVibrabomb(Minefield mf);
     
+    /**
+     * 
+     * @return game options
+     */
     public abstract GameOptions getOptions();
     
+    /**
+     * sets the game options
+     * @param options
+     */
     public abstract void setOptions(GameOptions options);
     
+    /**
+     * 
+     * @return the game board
+     */
     public abstract IBoard getBoard();
-    
+
+    /**
+     * Sets the new game board
+     * @param board
+     */
     public abstract void setBoard(IBoard board);
 
     /**
      * Return an enumeration of teams in the game
      */
     public abstract Enumeration getTeams();
-    
-    /** Return the teams vector 
-     * 
+
+    /**
+     * Return the current number of teams in the game.
+     */
+    public abstract int getNoOfTeams();
+
+    /**
+     * Return the immutable vector of teams
      */
     public abstract Vector getTeamsVector();
-    
+
     /**
      * Return a players team
      *  Note: may return null if player has no team
      */
     public abstract Team getTeamForPlayer(Player p);
+
+    /**
+     Set up the teams vector.  Each player on a team (Team 1 .. Team X) is
+     placed in the appropriate vector.  Any player on 'No Team', is placed
+     in their own object
+     */
+    public abstract void setupTeams();
     
     /**
      * Return an enumeration of player in the game
@@ -718,8 +783,10 @@ public interface IGame {
     public abstract Vector getActionsVector();
     
     public abstract void addInitiativeRerollRequest(Team t);
+
+    public abstract void rollInitAndResolveTies();
     
-    public abstract Vector getInitiativeRerollRequests();
+    public abstract int getNoOfInitiativeRerollRequests();
     
     /**
      * Adds a pending displacement attack to the list for this phase.

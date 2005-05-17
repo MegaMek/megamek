@@ -80,7 +80,7 @@ public abstract class Entity
     // The maximum length of the icon name.
     public static final int        ICON_NAME_MAX_LENGTH = 52;
 
-    protected transient Game    game;
+    protected transient IGame    game;
 
     protected int               id = Entity.NONE;
 
@@ -297,9 +297,9 @@ public abstract class Entity
         this.externalId = externalId;
     }
 
-    public Game getGame() { return game; }
+    public IGame getGame() { return game; }
     
-    public void setGame(Game game) {
+    public void setGame(IGame game) {
         this.game = game;
         this.restore();
         // Make sure the owner is set.
@@ -670,11 +670,11 @@ public abstract class Entity
             throw new IllegalStateException
                 ("Entity #" + this.getId() + " does not know its position.");
         }
-        else if ( !game.board.contains(pos) ) {
+        else if ( !game.getBoard().contains(pos) ) {
             throw new IllegalStateException
                 ("Board does not contain the Coords: " + pos + ".");
         }
-        return elevationOccupied(game.board.getHex(pos));
+        return elevationOccupied(game.getBoard().getHex(pos));
     }
 
     /**
@@ -3693,8 +3693,8 @@ public abstract class Entity
         Coords pos = getPosition();
         return pos != null && getWalkMP() > 0 && !isProne() && !isStuck()
             && !isShutDown() && !getCrew().isUnconscious()
-            && (pos.x == 0 || pos.x == game.board.getWidth() - 1
-                || pos.y == 0 || pos.y == game.board.getHeight() - 1);
+            && (pos.x == 0 || pos.x == game.getBoard().getWidth() - 1
+                || pos.y == 0 || pos.y == game.getBoard().getHeight() - 1);
     }
 
     public void setSeenByEnemy(boolean b) {
@@ -3838,7 +3838,7 @@ public abstract class Entity
         }
 
         // If there are no valid Entity targets, check for add valid buildings.
-        Enumeration bldgs = game.board.getBuildings();
+        Enumeration bldgs = game.getBoard().getBuildings();
         while ( !canHit && bldgs.hasMoreElements() ) {
             final Building bldg = (Building) bldgs.nextElement();
 
@@ -3854,7 +3854,7 @@ public abstract class Entity
 
                 // Can the entity target *this* hex of the building?
                 final BuildingTarget target = new BuildingTarget( coords,
-                                                                  game.board,
+                                                                  game.getBoard(),
                                                                   false );
 
                 canHit |= Compute.canPhysicalTarget(game, getId(), target);
@@ -3973,32 +3973,32 @@ public abstract class Entity
         case Entity.NONE:
             break;
         case Entity.NORTH:
-            setPosition( new Coords( game.board.getWidth() / 2
-                                     + game.board.getWidth() % 2,
+            setPosition( new Coords( game.getBoard().getWidth() / 2
+                                     + game.getBoard().getWidth() % 2,
                                      -getOffBoardDistance() ) );
             setFacing(3);
             setDeployed( true );
             break;
         case Entity.SOUTH:
-            setPosition( new Coords( game.board.getWidth() / 2
-                                     + game.board.getWidth() % 2,
-                                     game.board.getHeight()
+            setPosition( new Coords( game.getBoard().getWidth() / 2
+                                     + game.getBoard().getWidth() % 2,
+                                     game.getBoard().getHeight()
                                      + getOffBoardDistance() ) );
             setFacing(0);
             setDeployed( true );
             break;
         case Entity.EAST:
-            setPosition( new Coords( game.board.getWidth()
+            setPosition( new Coords( game.getBoard().getWidth()
                                      + getOffBoardDistance(),
-                                     game.board.getHeight() / 2
-                                     + game.board.getHeight() % 2 ) );
+                                     game.getBoard().getHeight() / 2
+                                     + game.getBoard().getHeight() % 2 ) );
             setFacing(5);
             setDeployed( true );
             break;
         case Entity.WEST:
             setPosition( new Coords( -getOffBoardDistance(),
-                                     game.board.getHeight() / 2
-                                     + game.board.getHeight() % 2 ) );
+                                     game.getBoard().getHeight() / 2
+                                     + game.getBoard().getHeight() % 2 ) );
             setFacing(1);
             setDeployed( true );
             break;

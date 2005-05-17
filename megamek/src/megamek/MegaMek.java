@@ -424,7 +424,7 @@ public class MegaMek implements ActionListener {
             return;
         }
         ScenarioLoader sl = new ScenarioLoader(new File(fd.getDirectory(), fd.getFile()));
-        Game g = null;
+        IGame g = null;
         try {
             g = sl.createGame();
         } catch (Exception e) {

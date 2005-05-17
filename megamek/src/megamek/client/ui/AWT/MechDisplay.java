@@ -689,7 +689,7 @@ class WeaponPanel extends BufferedPanel
             }
             weaponList.add(wn.toString());
             if (mounted.isUsedThisRound()
-                && game.getPhase() == Game.PHASE_FIRING) {
+                && game.getPhase() == IGame.PHASE_FIRING) {
                 // add heat from weapons fire to heat tracker
                 currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();
             }
@@ -1211,7 +1211,7 @@ class SystemPanel
 
             boolean bOwner = (clientgui.getClient().getLocalPlayer() == en.getOwner());
             if ( m != null && bOwner && m.getType() instanceof AmmoType
-                 && Game.PHASE_DEPLOYMENT != clientgui.getClient().game.getPhase()
+                 && IGame.PHASE_DEPLOYMENT != clientgui.getClient().game.getPhase()
                  && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive() ) {
                 m_bDumpAmmo.setEnabled(true);
             }
@@ -1245,7 +1245,7 @@ class SystemPanel
                     clientgui.systemMessage(Messages.getString("MechDisplay.switched", new Object[]{m.getName(),m.curMode()}));//$NON-NLS-1$
                 }
                 else {
-                    if (Game.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase() ) {                        
+                    if (IGame.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase() ) {                        
                          clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart", new Object[]{m.getName(),m.pendingMode()}));//$NON-NLS-1$
                     } else{ 
                         clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[]{m.getName(),m.pendingMode()}));//$NON-NLS-1$

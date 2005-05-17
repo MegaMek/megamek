@@ -219,7 +219,7 @@ public class ScenarioLoader
         }
     }
 
-    public Game createGame()
+    public IGame createGame()
         throws Exception
     {
         System.out.println("Loading scenario from " + m_scenFile);
@@ -257,10 +257,10 @@ public class ScenarioLoader
         // set wind
         g.determineWind();
 
-  // Set up the teams (for initiative)
-        Server.setupTeams(g);
+        // Set up the teams (for initiative)
+        g.setupTeams();
 
-        g.setPhase(Game.PHASE_STARTING_SCENARIO);
+        g.setPhase(IGame.PHASE_STARTING_SCENARIO);
         
         g.setupRoundDeployment();
         
@@ -528,7 +528,7 @@ public class ScenarioLoader
             }
         }
         
-        Board[] ba = new Board[nWidth * nHeight];
+        IBoard[] ba = new IBoard[nWidth * nHeight];
         StringTokenizer st = new StringTokenizer(p.getProperty("Maps"), ",");
         for (int x = 0; x < nWidth; x++) {
             for (int y = 0; y < nHeight; y++) {
@@ -600,7 +600,7 @@ public class ScenarioLoader
         throws Exception
     {
         ScenarioLoader sl = new ScenarioLoader(new File(saArgs[0]));
-        Game g = sl.createGame();
+        IGame g = sl.createGame();
         System.out.println("Successfully loaded.");
     }
     

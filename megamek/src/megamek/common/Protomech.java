@@ -298,7 +298,7 @@ public class Protomech
             return getJumpMP();
         }
 
-        int waterLevel = game.board.getHex(getPosition()).terrainLevel(Terrains.WATER);
+        int waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
         if (waterLevel <= 0) {
             return getJumpMP();
         } else  {

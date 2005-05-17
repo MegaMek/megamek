@@ -40,7 +40,7 @@ public class HeatSinkCommand extends ServerCommand {
      */
     public void run(int connId, String[] args) {
         try {
-        if(server.getGame().getPhase()!=Game.PHASE_END) {
+        if(server.getGame().getPhase()!=IGame.PHASE_END) {
             server.sendServerChat(connId, "Error: heat sinks can only be turned off in the end phase.");
         } else {
         if (args.length < 3 || args.length > 3) {

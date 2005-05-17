@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.77 (CVS)
+v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing
 + Bug 1195283: sprites do not update correctly in game
 + Bug 1193520: attack sprites disappear after clicking done

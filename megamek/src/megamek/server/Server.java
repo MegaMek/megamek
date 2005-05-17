@@ -398,12 +398,6 @@ implements Runnable, ConnectionHandler {
 
             sendServerChat( who );
 
-            // there is more than one player, uncheck the friendly fire option
-            if ( game.getNoOfPlayers() > 1
-                 && game.getOptions().booleanOption("friendly_fire") ) {
-                game.getOptions().getOption("friendly_fire").setValue(false);
-                send(createGameSettingsPacket());
-            }
         } // Found the player
     }
 

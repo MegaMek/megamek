@@ -601,7 +601,7 @@ public abstract class Mech
         }
         int waterLevel = 0;
         if (!isOffBoard()) {
-            waterLevel = game.board.getHex(getPosition()).terrainLevel(Terrains.WATER);
+            waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
         }        
         if (waterLevel <= 0) {
             return getJumpMP();
@@ -640,7 +640,7 @@ public abstract class Mech
         }
         // otherwise, we are one elevation above our hex or the target's hex,
         // whichever is higher
-        int tElev = game.board.getHex(displacementAttack.getTargetPos()).floor();
+        int tElev = game.getBoard().getHex(displacementAttack.getTargetPos()).floor();
         return Math.max(cElev, tElev) + 1;
     }
     
@@ -779,7 +779,7 @@ public abstract class Mech
             return 0;
         }
         
-        IHex curHex = game.board.getHex(getPosition());
+        IHex curHex = game.getBoard().getHex(getPosition());
         // are we even in water?  is it depth 1+
         if (curHex.terrainLevel(Terrains.WATER) <= 0) {
             return 0;

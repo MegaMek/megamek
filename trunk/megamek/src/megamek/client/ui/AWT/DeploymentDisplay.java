@@ -248,7 +248,7 @@ public class DeploymentDisplay
         // end my turn, then.
         disableButtons();
         Entity next = client.game.getNextEntity( client.game.getTurnIndex() );
-        if ( Game.PHASE_DEPLOYMENT == client.game.getPhase()
+        if ( IGame.PHASE_DEPLOYMENT == client.game.getPhase()
              && null != next
              && null != ce()
              && next.getOwnerId() != ce().getOwnerId() ) {
@@ -323,7 +323,7 @@ public class DeploymentDisplay
             return;
         }
 
-        if (client.game.getPhase() == Game.PHASE_DEPLOYMENT) {
+        if (client.game.getPhase() == IGame.PHASE_DEPLOYMENT) {
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }
     }

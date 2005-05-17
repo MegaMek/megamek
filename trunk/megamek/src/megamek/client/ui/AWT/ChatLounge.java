@@ -1221,7 +1221,7 @@ public class ChatLounge
         if (this.isIgnoringEvents()) {
             return;
         }
-        if (client.game.getPhase() == Game.PHASE_LOUNGE) {
+        if (client.game.getPhase() == IGame.PHASE_LOUNGE) {
             refreshDoneButton();
             refreshGameSettings();
             refreshPlayerInfo();

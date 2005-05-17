@@ -22,7 +22,7 @@ import megamek.common.*;
 import megamek.common.actions.EntityAction;
 
 /**
- * Objects of this class can encode a <code>Game</code> object as XML into an
+ * Objects of this class can encode a <code>IGame</code> object as XML into an
  * output writer and decode one from a parsed XML node.  It is used for saving
  * games into a version- neutral format and may someday become the mechanism
  * for handling advance scenario options.  Please note that <em>order of the
@@ -33,9 +33,9 @@ import megamek.common.actions.EntityAction;
 public class GameEncoder {
 
     /**
-     * Encode a <code>Game</code> object to an output writer.
+     * Encode a <code>IGame</code> object to an output writer.
      *
-     * @param   game - the <code>Game</code> to be encoded.
+     * @param   game - the <code>IGame</code> to be encoded.
      *          This value must not be <code>null</code>.
      * @param   out - the <code>Writer</code> that will receive the XML.
      *          This value must not be <code>null</code>.
@@ -43,7 +43,7 @@ public class GameEncoder {
      *          <code>null</code>.
      * @throws  <code>IOException</code> if there's any error on write.
      */
-    public static void encode( Game game, Writer out )
+    public static void encode( IGame game, Writer out )
         throws IOException
     {
         Enumeration iter; // used when marching through a list of sub-elements
@@ -185,17 +185,17 @@ public class GameEncoder {
     }
 
     /**
-     * Decode a <code>Game</code> object from the passed node.
+     * Decode a <code>IGame</code> object from the passed node.
      *
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
-     * @return  the <code>Game</code> object based on the node.
+     * @return  the <code>IGame</code> object based on the node.
      * @throws  <code>IllegalArgumentException</code> if the node is
      *          <code>null</code>.
      * @throws  <code>IllegalStateException</code> if the node does not
-     *          contain a valid <code>Game</code>.
+     *          contain a valid <code>IGame</code>.
      */
-    public static Game decode( ParsedXML node ) {
+    public static IGame decode( ParsedXML node ) {
         return null;
     }
 

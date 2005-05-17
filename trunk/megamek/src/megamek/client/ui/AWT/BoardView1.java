@@ -2094,7 +2094,7 @@ public class BoardView1
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
         if ( !GUIPreferences.getInstance().getRightDragScroll() &&
             !GUIPreferences.getInstance().getAlwaysRightClickScroll() &&    
-            game.getPhase() == Game.PHASE_FIRING ) {
+            game.getPhase() == IGame.PHASE_FIRING ) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
             // this means the user wants to activate the
@@ -2187,7 +2187,7 @@ public class BoardView1
 
         if ( !GUIPreferences.getInstance().getRightDragScroll() &&
             !GUIPreferences.getInstance().getAlwaysRightClickScroll() &&
-            game.getPhase() == Game.PHASE_FIRING) {
+            game.getPhase() == IGame.PHASE_FIRING) {
             // In the firing phase, also disable scrolling if
             //  the right or middle buttons are clicked, since
             //  this means the user wants to activate the

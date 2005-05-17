@@ -62,7 +62,7 @@ public class GameTurn implements Serializable {
             && entity.isSelectableThisTurn()
             //This next bit enforces the "A players Infantry/Protos
             // move after that players other units" options.
-            && !( game.getPhase() == Game.PHASE_MOVEMENT
+            && !( game.getPhase() == IGame.PHASE_MOVEMENT
                   && ( (entity instanceof Infantry &&
                         game.getOptions().booleanOption("inf_move_later")) ||
                        (entity instanceof Protomech &&
@@ -111,7 +111,7 @@ public class GameTurn implements Serializable {
          * Returns true if the entity is normally valid and it is the specific
          * entity that can move this turn.
          */
-        public boolean isValidEntity(Entity entity, Game game) {
+        public boolean isValidEntity(Entity entity, IGame game) {
             return super.isValidEntity(entity, game) && entity.getId() == entityId;
         }
     }
@@ -130,7 +130,7 @@ public class GameTurn implements Serializable {
          * Returns true if the entity matches this game turn, even if the
          * entity has declared an action.
          */
-        public boolean isValidEntity(Entity entity, Game game) {
+        public boolean isValidEntity(Entity entity, IGame game) {
             final boolean oldDone = entity.done;
             entity.done = false;
             final boolean result = super.isValidEntity( entity, game );
@@ -200,10 +200,10 @@ public class GameTurn implements Serializable {
          * Determine if the given entity is a valid one to use for this turn.
          *
          * @param   entity the <code>Entity</code> being tested for the move.
-         * @param   game the <code>Game</code> the entity belongs to
+         * @param   game the <code>IGame</code> the entity belongs to
          * @return  <code>true</code> if the entity can be moved.
          */
-        public boolean isValidEntity( Entity entity, Game game ) {
+        public boolean isValidEntity( Entity entity, IGame game ) {
             // The entity must be in the mask, and pass
             // the requirements of the parent class.
             return (GameTurn.getClassCode(entity) & this.mask) != 0 &&
@@ -321,10 +321,10 @@ public class GameTurn implements Serializable {
          * Determine if the given entity is a valid one to use for this turn.
          *
          * @param   entity the <code>Entity</code> being tested for the move.
-         * @param   game the <code>Game</code> the entity belongs to
+         * @param   game the <code>IGame</code> the entity belongs to
          * @return  <code>true</code> if the entity can be moved.
          */
-        public boolean isValidEntity( Entity entity, Game game ) {
+        public boolean isValidEntity( Entity entity, IGame game ) {
             boolean retVal = false;
             // Null entities don't need to be checked.
             if ( null != entity ) {
@@ -348,7 +348,7 @@ public class GameTurn implements Serializable {
         /**
          * Returns true if the player and entity are both valid.
          */
-        public boolean isValid(int playerId, Entity entity, Game game) {
+        public boolean isValid(int playerId, Entity entity, IGame game) {
             return ( null != entity &&
                      entity.getOwnerId() == playerId &&
                      isValidEntity(entity, game) );
@@ -357,7 +357,7 @@ public class GameTurn implements Serializable {
         /**
          * Returns true if the player is valid.
          */
-        public boolean isValid(int playerId, Game game) {
+        public boolean isValid(int playerId, IGame game) {
             boolean retVal = false;
             for ( int index = 0;
                   index < this.entityIds.length && !retVal;
@@ -404,7 +404,7 @@ public class GameTurn implements Serializable {
          * Returns true if the specified entity is a valid one to use for
          * this turn.
          */
-        public boolean isValidEntity(Entity entity, Game game) {
+        public boolean isValidEntity(Entity entity, IGame game) {
             return ( super.isValidEntity( entity, game ) &&
                      this.unitNumber == entity.getUnitNumber() );
         }

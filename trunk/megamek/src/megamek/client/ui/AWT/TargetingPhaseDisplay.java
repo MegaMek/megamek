@@ -85,7 +85,7 @@ public class TargetingPhaseDisplay
     public TargetingPhaseDisplay(ClientGUI clientgui, boolean offboard) {
         this.clientgui = clientgui;
         this.client = clientgui.getClient();
-        this.phase = offboard?Game.PHASE_OFFBOARD:Game.PHASE_TARGETING;
+        this.phase = offboard?IGame.PHASE_OFFBOARD:IGame.PHASE_TARGETING;
         shiftheld = false;
 
         // fire

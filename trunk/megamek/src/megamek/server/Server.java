@@ -51,7 +51,7 @@ implements Runnable, ConnectionHandler {
     private int                 connectionCounter = 0;
     private int                 entityCounter = 0;
 
-    private Game                game = new Game();
+    private IGame               game = new Game();
 
     private StringBuffer        roundReport = game.getRoundReport(); //HACK
     private StringBuffer        phaseReport = game.getPhaseReport(); //HACK
@@ -103,7 +103,7 @@ implements Runnable, ConnectionHandler {
 
         game.getOptions().initialize();
 
-        changePhase(Game.PHASE_LOUNGE);
+        changePhase(IGame.PHASE_LOUNGE);
 
         // display server start text
         System.out.println("s: starting a new server...");
@@ -148,7 +148,7 @@ implements Runnable, ConnectionHandler {
      * This should only be called during server initialization before any
      * players have connected.
      */
-    public void setGame(Game g) {
+    public void setGame(IGame g) {
         this.game = g;
 
         // reattach the transient fields and ghost the players
@@ -169,7 +169,7 @@ implements Runnable, ConnectionHandler {
     }
 
     /** Returns the current game object */
-    public Game getGame() {
+    public IGame getGame() {
         return game;
     }
 
@@ -348,7 +348,7 @@ implements Runnable, ConnectionHandler {
 
         // if it is not the lounge phase, this player becomes an observer
         Player player = getPlayer( connId );
-        if ( game.getPhase() != Game.PHASE_LOUNGE
+        if ( game.getPhase() != IGame.PHASE_LOUNGE
              && null != player
              && game.getEntitiesOwnedBy(player) < 1) {
             player.setObserver(true);
@@ -421,7 +421,7 @@ implements Runnable, ConnectionHandler {
                                     player.getMinefields()));
 
             switch (game.getPhase()) {
-            case Game.PHASE_LOUNGE :
+            case IGame.PHASE_LOUNGE :
                 send(connId, createMapSettingsPacket());
                 // Send Entities *after* the Lounge Phase Change
                 send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE,
@@ -449,10 +449,10 @@ implements Runnable, ConnectionHandler {
                                         new Integer(game.getPhase())));
                 break;
             }
-            if (game.getPhase() == Game.PHASE_FIRING ||
-                game.getPhase() == Game.PHASE_TARGETING ||
-                game.getPhase() == Game.PHASE_OFFBOARD ||
-                game.getPhase() == Game.PHASE_PHYSICAL) {
+            if (game.getPhase() == IGame.PHASE_FIRING ||
+                game.getPhase() == IGame.PHASE_TARGETING ||
+                game.getPhase() == IGame.PHASE_OFFBOARD ||
+                game.getPhase() == IGame.PHASE_PHYSICAL) {
                 // can't go above, need board to have been sent
                 send(connId,createAttackPacket(game.getActionsVector(),false));
                 send(connId,createAttackPacket(game.getChargesVector(),true));
@@ -532,7 +532,7 @@ implements Runnable, ConnectionHandler {
      */
     void disconnected(Player player) {
         // in the lounge, just remove all entities for that player
-        if (game.getPhase() == Game.PHASE_LOUNGE) {
+        if (game.getPhase() == IGame.PHASE_LOUNGE) {
             removeAllEntitesOwnedBy(player);
         }
 
@@ -577,7 +577,7 @@ implements Runnable, ConnectionHandler {
         for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
             Player p = (Player)e.nextElement();
             p.setObserver(game.getEntitiesOwnedBy(p) < 1 &&
-                          game.getPhase() != Game.PHASE_LOUNGE);
+                          game.getPhase() != IGame.PHASE_LOUNGE);
         }
     }
 
@@ -605,7 +605,7 @@ implements Runnable, ConnectionHandler {
         System.out.print( format.format(new Date()) );
         System.out.println( " END OF GAME" );
 
-        changePhase(Game.PHASE_LOUNGE);
+        changePhase(IGame.PHASE_LOUNGE);
     }
 
     public void autoSave()
@@ -641,7 +641,7 @@ implements Runnable, ConnectionHandler {
         try {
             ObjectInputStream ois = new ObjectInputStream(
                     new FileInputStream(f));
-            game = (Game)ois.readObject();
+            game = (IGame)ois.readObject();
             ois.close();
         } catch (Exception e) {
             System.err.println("Unable to load file: " + f);
@@ -795,7 +795,7 @@ implements Runnable, ConnectionHandler {
 
             // reset done to false
 
-            if ( phase == Game.PHASE_DEPLOYMENT ) {
+            if ( phase == IGame.PHASE_DEPLOYMENT ) {
               entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
             } else {
               entity.setDone(false);
@@ -1026,20 +1026,19 @@ implements Runnable, ConnectionHandler {
         }
 
         // Tactical Genius pilot special ability (lvl 3)
-        if (game.getInitiativeRerollRequests().size() > 0) {
+        if (game.getNoOfInitiativeRerollRequests() > 0) {
             resetActivePlayersDone();
-            TurnOrdered.rollInitAndResolveTies(game.getTeamsVector(), game.getInitiativeRerollRequests());
+            game.rollInitAndResolveTies();
 
-            determineTurnOrder(Game.PHASE_INITIATIVE);
+            determineTurnOrder(IGame.PHASE_INITIATIVE);
             writeInitiativeReport(true);
             send(createReportPacket());
-            game.getInitiativeRerollRequests().removeAllElements();
             return;  // don't end the phase yet, players need to see new report
         }
 
         // need at least one entity in the game for the lounge phase to end
         if (!game.phaseHasTurns(game.getPhase())
-        && (game.getPhase() != Game.PHASE_LOUNGE || game.getNoOfEntities() > 0)) {
+        && (game.getPhase() != IGame.PHASE_LOUNGE || game.getNoOfEntities() > 0)) {
             endCurrentPhase();
         }
     }
@@ -1080,7 +1079,7 @@ implements Runnable, ConnectionHandler {
 
         // If a proto declared fire and protos don't move
         // multi, ignore whether infantry move or not.
-        else if ( protosMoved && game.getPhase() == Game.PHASE_FIRING ) {
+        else if ( protosMoved && game.getPhase() == IGame.PHASE_FIRING ) {
             multiMask = 0;
         }
 
@@ -1099,7 +1098,7 @@ implements Runnable, ConnectionHandler {
         // Unless overridden by the "protos_move_multi" option, all Protomechs
         // in a unit declare fire, and they don't mix with infantry.
         if ( protosMoved && !protosMoveMulti && isGeneralMoveTurn &&
-             game.getPhase() == Game.PHASE_FIRING ) {
+             game.getPhase() == IGame.PHASE_FIRING ) {
 
             // What's the unit number and ID of the entity used?
             final char movingUnit = entityUsed.getUnitNumber();
@@ -1193,12 +1192,12 @@ implements Runnable, ConnectionHandler {
      */
     private void prepareForPhase(int phase) {
         switch (phase) {
-            case Game.PHASE_LOUNGE :
+            case IGame.PHASE_LOUNGE :
                 mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings.getBoardWidth(), mapSettings.getBoardHeight()));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
                 break;
-            case Game.PHASE_INITIATIVE :
+            case IGame.PHASE_INITIATIVE :
                 // remove the last traces of last round
                 game.resetActions();
                 game.resetRoundReport();
@@ -1221,7 +1220,7 @@ implements Runnable, ConnectionHandler {
                 autoSave();
                 System.out.println("Round " + game.getRoundCount() + " memory usage: " + MegaMek.getMemoryUsed());
                 break;
-            case Game.PHASE_DEPLOY_MINEFIELDS :
+            case IGame.PHASE_DEPLOY_MINEFIELDS :
                 checkForObservers();
                 resetActivePlayersDone();
                 setIneligible(phase);
@@ -1241,7 +1240,7 @@ implements Runnable, ConnectionHandler {
                 // send turns to all players
                 send(createTurnVectorPacket());
                 break;
-            case Game.PHASE_SET_ARTYAUTOHITHEXES :
+            case IGame.PHASE_SET_ARTYAUTOHITHEXES :
                 // place off board entities actually off-board
                 Enumeration i = game.getEntities();
                 while (i.hasMoreElements()) {
@@ -1286,13 +1285,13 @@ implements Runnable, ConnectionHandler {
                 // send turns to all players
                 send(createTurnVectorPacket());
                 break;
-            case Game.PHASE_MOVEMENT :
+            case IGame.PHASE_MOVEMENT :
                 roundReport.append("\nMovement Phase\n-------------------\n");
-            case Game.PHASE_DEPLOYMENT :
-            case Game.PHASE_FIRING :
-            case Game.PHASE_PHYSICAL :
-            case Game.PHASE_TARGETING:
-            case Game.PHASE_OFFBOARD:
+            case IGame.PHASE_DEPLOYMENT :
+            case IGame.PHASE_FIRING :
+            case IGame.PHASE_PHYSICAL :
+            case IGame.PHASE_TARGETING:
+            case IGame.PHASE_OFFBOARD:
                 resetEntityPhase(phase);
                 checkForObservers();
                 setIneligible(phase);
@@ -1303,7 +1302,7 @@ implements Runnable, ConnectionHandler {
                 game.resetPhaseReport();
                 phaseReport = game.getPhaseReport(); //HACK
                 break;
-            case Game.PHASE_END :
+            case IGame.PHASE_END :
                 resetEntityPhase(phase);
                 game.resetPhaseReport();
                 phaseReport = game.getPhaseReport(); //HACK
@@ -1323,14 +1322,14 @@ implements Runnable, ConnectionHandler {
                 }
                 log.append( "\n" );
                 log.append( roundReport.toString() );
-            case Game.PHASE_MOVEMENT_REPORT :
-            case Game.PHASE_FIRING_REPORT :
-            case Game.PHASE_OFFBOARD_REPORT :
+            case IGame.PHASE_MOVEMENT_REPORT :
+            case IGame.PHASE_FIRING_REPORT :
+            case IGame.PHASE_OFFBOARD_REPORT :
                 resetActivePlayersDone();
                 send(createReportPacket());
                 if (game.getOptions().booleanOption("paranoid_autosave")) autoSave();
                 break;
-            case Game.PHASE_VICTORY :
+            case IGame.PHASE_VICTORY :
                 prepareVictoryReport();
                 log.append( "\n" );
                 log.append( roundReport.toString() );
@@ -1347,14 +1346,14 @@ implements Runnable, ConnectionHandler {
      */
     private boolean isPhasePlayable(int phase) {
         switch (phase) {
-            case Game.PHASE_SET_ARTYAUTOHITHEXES :
-            case Game.PHASE_DEPLOY_MINEFIELDS :
-            case Game.PHASE_DEPLOYMENT :
-            case Game.PHASE_MOVEMENT :
-            case Game.PHASE_FIRING :
-            case Game.PHASE_PHYSICAL :
-            case Game.PHASE_TARGETING:
-            case Game.PHASE_OFFBOARD :
+            case IGame.PHASE_SET_ARTYAUTOHITHEXES :
+            case IGame.PHASE_DEPLOY_MINEFIELDS :
+            case IGame.PHASE_DEPLOYMENT :
+            case IGame.PHASE_MOVEMENT :
+            case IGame.PHASE_FIRING :
+            case IGame.PHASE_PHYSICAL :
+            case IGame.PHASE_TARGETING:
+            case IGame.PHASE_OFFBOARD :
                 return game.hasMoreTurns();
             default :
                 return true;
@@ -1367,10 +1366,10 @@ implements Runnable, ConnectionHandler {
      */
     private void executePhase(int phase) {
         switch (phase) {
-            case Game.PHASE_EXCHANGE :
+            case IGame.PHASE_EXCHANGE :
                 resetPlayersDone();
                 // Build teams vector
-                setupTeams(game);
+                game.setupTeams();
                 applyBoardSettings();
                 game.setupRoundDeployment();
                 game.determineWind();
@@ -1382,13 +1381,13 @@ implements Runnable, ConnectionHandler {
                 // transmit the board to everybody
                 send(createBoardPacket());
                 break;
-            case Game.PHASE_SET_ARTYAUTOHITHEXES :
-            case Game.PHASE_DEPLOY_MINEFIELDS :
-            case Game.PHASE_DEPLOYMENT :
-            case Game.PHASE_MOVEMENT :
-            case Game.PHASE_FIRING :
-            case Game.PHASE_PHYSICAL :
-            case Game.PHASE_TARGETING :
+            case IGame.PHASE_SET_ARTYAUTOHITHEXES :
+            case IGame.PHASE_DEPLOY_MINEFIELDS :
+            case IGame.PHASE_DEPLOYMENT :
+            case IGame.PHASE_MOVEMENT :
+            case IGame.PHASE_FIRING :
+            case IGame.PHASE_PHYSICAL :
+            case IGame.PHASE_TARGETING :
                 changeToNextTurn();
                 if (game.getOptions().booleanOption("paranoid_autosave")) autoSave();
                 break;
@@ -1400,16 +1399,16 @@ implements Runnable, ConnectionHandler {
      */
     private void endCurrentPhase() {
         switch (game.getPhase()) {
-            case Game.PHASE_LOUNGE :
-                changePhase(Game.PHASE_EXCHANGE);
+            case IGame.PHASE_LOUNGE :
+                changePhase(IGame.PHASE_EXCHANGE);
                 break;
-            case Game.PHASE_EXCHANGE :
-                changePhase(Game.PHASE_SET_ARTYAUTOHITHEXES);
+            case IGame.PHASE_EXCHANGE :
+                changePhase(IGame.PHASE_SET_ARTYAUTOHITHEXES);
                 break;
-            case Game.PHASE_STARTING_SCENARIO :
-                changePhase(Game.PHASE_SET_ARTYAUTOHITHEXES);
+            case IGame.PHASE_STARTING_SCENARIO :
+                changePhase(IGame.PHASE_SET_ARTYAUTOHITHEXES);
                 break;
-            case Game.PHASE_SET_ARTYAUTOHITHEXES :
+            case IGame.PHASE_SET_ARTYAUTOHITHEXES :
                 Enumeration e = game.getPlayers();
                 boolean mines = false;
                 while (e.hasMoreElements()) {
@@ -1419,29 +1418,29 @@ implements Runnable, ConnectionHandler {
                     }
                 }
                 if (mines) {
-                    changePhase(Game.PHASE_DEPLOY_MINEFIELDS);
+                    changePhase(IGame.PHASE_DEPLOY_MINEFIELDS);
                 } else {
-                    changePhase(Game.PHASE_INITIATIVE);
+                    changePhase(IGame.PHASE_INITIATIVE);
                 }
                 break;
-            case Game.PHASE_DEPLOY_MINEFIELDS :
-                changePhase(Game.PHASE_INITIATIVE);
+            case IGame.PHASE_DEPLOY_MINEFIELDS :
+                changePhase(IGame.PHASE_INITIATIVE);
                 break;
-            case Game.PHASE_DEPLOYMENT :
+            case IGame.PHASE_DEPLOYMENT :
                 game.clearDeploymentThisRound();
                 game.checkForCompleteDeployment();
-                changePhase(Game.PHASE_INITIATIVE);
+                changePhase(IGame.PHASE_INITIATIVE);
                 break;
-            case Game.PHASE_INITIATIVE :
-                boolean doDeploy = game.shouldDeployThisRound() && (game.getLastPhase() != Game.PHASE_DEPLOYMENT);
+            case IGame.PHASE_INITIATIVE :
+                boolean doDeploy = game.shouldDeployThisRound() && (game.getLastPhase() != IGame.PHASE_DEPLOYMENT);
 
                 if ( doDeploy ) {
-                  changePhase(Game.PHASE_DEPLOYMENT);
+                  changePhase(IGame.PHASE_DEPLOYMENT);
                 } else {
-                  changePhase(Game.PHASE_TARGETING);
+                  changePhase(IGame.PHASE_TARGETING);
                 }
                 break;
-            case Game.PHASE_MOVEMENT :
+            case IGame.PHASE_MOVEMENT :
                 addMovementHeat();
                 applyBuildingDamage();
                 checkFor20Damage();
@@ -1452,16 +1451,16 @@ implements Runnable, ConnectionHandler {
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
-                    changePhase(Game.PHASE_MOVEMENT_REPORT);
+                    changePhase(IGame.PHASE_MOVEMENT_REPORT);
                 } else {
                     roundReport.append("<nothing>\n");
-                    changePhase(Game.PHASE_OFFBOARD);
+                    changePhase(IGame.PHASE_OFFBOARD);
                 }
                 break;
-            case Game.PHASE_MOVEMENT_REPORT :
-                changePhase(Game.PHASE_OFFBOARD);
+            case IGame.PHASE_MOVEMENT_REPORT :
+                changePhase(IGame.PHASE_OFFBOARD);
                 break;
-            case Game.PHASE_FIRING :
+            case IGame.PHASE_FIRING :
                 resolveAllButWeaponAttacks();
                 assignAMS();
                 resolveOnlyWeaponAttacks();
@@ -1473,16 +1472,16 @@ implements Runnable, ConnectionHandler {
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
-                    changePhase(Game.PHASE_FIRING_REPORT);
+                    changePhase(IGame.PHASE_FIRING_REPORT);
                 } else {
                     roundReport.append("<nothing>\n");
-                    changePhase(Game.PHASE_PHYSICAL);
+                    changePhase(IGame.PHASE_PHYSICAL);
                 }
                 break;
-            case Game.PHASE_FIRING_REPORT :
-                changePhase(Game.PHASE_PHYSICAL);
+            case IGame.PHASE_FIRING_REPORT :
+                changePhase(IGame.PHASE_PHYSICAL);
                 break;
-            case Game.PHASE_PHYSICAL :
+            case IGame.PHASE_PHYSICAL :
                 resolvePhysicalAttacks();
                 applyBuildingDamage();
                 checkFor20Damage();
@@ -1496,13 +1495,13 @@ implements Runnable, ConnectionHandler {
                 } else {
                     roundReport.append("<nothing>\n");
                 }
-                changePhase(Game.PHASE_END);
+                changePhase(IGame.PHASE_END);
                 break;
-            case Game.PHASE_TARGETING :
+            case IGame.PHASE_TARGETING :
                 enqueueIndirectArtilleryAttacks();
-                changePhase(Game.PHASE_MOVEMENT);
+                changePhase(IGame.PHASE_MOVEMENT);
                 break;
-            case Game.PHASE_OFFBOARD :
+            case IGame.PHASE_OFFBOARD :
                 roundReport.append("\nOffboard Attack Phase\n-----------------\n");
                 resolveIndirectArtilleryAttacks();
                 applyBuildingDamage();
@@ -1512,23 +1511,23 @@ implements Runnable, ConnectionHandler {
                 resolveCrewDamage(); // again, I guess
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
-                    changePhase(Game.PHASE_OFFBOARD_REPORT);
+                    changePhase(IGame.PHASE_OFFBOARD_REPORT);
                 } else {
                     roundReport.append("<nothing>\n");
-                    changePhase(Game.PHASE_FIRING);
+                    changePhase(IGame.PHASE_FIRING);
                 }
                 break;
-            case Game.PHASE_OFFBOARD_REPORT:
-                changePhase(Game.PHASE_FIRING);
+            case IGame.PHASE_OFFBOARD_REPORT:
+                changePhase(IGame.PHASE_FIRING);
                 break;
-            case Game.PHASE_END :
+            case IGame.PHASE_END :
                 if (victory()) {
-                    changePhase(Game.PHASE_VICTORY);
+                    changePhase(IGame.PHASE_VICTORY);
                 } else {
-                  changePhase(Game.PHASE_INITIATIVE);
+                  changePhase(IGame.PHASE_INITIATIVE);
                 }
                 break;
-            case Game.PHASE_VICTORY :
+            case IGame.PHASE_VICTORY :
                 resetGame();
                 break;
         }
@@ -1564,7 +1563,7 @@ implements Runnable, ConnectionHandler {
         }
         else if ( null == game.getFirstEntity()
                   && null != player
-                  && ((game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS) && (game.getPhase() != Game.PHASE_SET_ARTYAUTOHITHEXES))) {
+                  && ((game.getPhase() != IGame.PHASE_DEPLOY_MINEFIELDS) && (game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES))) {
             sendTurnErrorSkipMessage( player );
         }
     }
@@ -1608,19 +1607,19 @@ implements Runnable, ConnectionHandler {
         Entity toSkip = game.getFirstEntity();
 
         switch (game.getPhase()) {
-            case Game.PHASE_DEPLOYMENT :
+            case IGame.PHASE_DEPLOYMENT :
                 sendServerChat("Turns cannot be skipped in the deployment phase.");
                 break;
-            case Game.PHASE_MOVEMENT :
+            case IGame.PHASE_MOVEMENT :
                 if ( toSkip != null ) {
                     processMovement(toSkip, new MovePath(game, toSkip));
                 }
                 endCurrentTurn(toSkip);
                 break;
-            case Game.PHASE_FIRING :
-            case Game.PHASE_PHYSICAL :
-            case Game.PHASE_TARGETING :
-            case Game.PHASE_OFFBOARD :
+            case IGame.PHASE_FIRING :
+            case IGame.PHASE_PHYSICAL :
+            case IGame.PHASE_TARGETING :
+            case IGame.PHASE_OFFBOARD :
                 if ( toSkip != null ) {
                     processAttack(toSkip, new Vector(0));
                 }
@@ -1758,7 +1757,7 @@ implements Runnable, ConnectionHandler {
     public void applyBoardSettings() {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
-        IBoard[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
+        IBoard[] sheetBoards = new IBoard[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
         for (int i = 0; i < mapSettings.getMapWidth() * mapSettings.getMapHeight(); i++) {
             sheetBoards[i] = new Board();
             String name = (String)mapSettings.getBoardsSelectedVector().elementAt(i);
@@ -1779,55 +1778,6 @@ implements Runnable, ConnectionHandler {
         game.setBoard(newBoard);
     }
 
-    /**
-       Set up the teams vector.  Each player on a team (Team 1 .. Team X) is
-       placed in the appropriate vector.  Any player on 'No Team', is placed
-       in their own object
-    */
-    static void setupTeams(Game game)
-    {
-        Vector teams = game.getTeamsVector();
-        boolean useTeamInit =
-            game.getOptions().getOption("team_initiative").booleanValue();
-
-        // This is a reference to THE team vector,
-        // so we need to clear it before use.
-        teams.removeAllElements();
-
-        // Get all NO_TEAM players.  If team_initiative is false, all
-        // players are on their own teams for initiative purposes.
-        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            if ( !useTeamInit || player.getTeam() == Player.TEAM_NONE ) {
-                Team new_team = new Team(Player.TEAM_NONE);
-                new_team.addPlayer(player);
-                teams.addElement(new_team);
-            }
-        }
-
-        // If useTeamInit is false, all players have been placed
-        if (!useTeamInit) {
-            return;
-        }
-
-        // Now, go through all the teams, and add the apropriate player
-        for (int t = Player.TEAM_NONE + 1; t < Player.MAX_TEAMS; t++) {
-            Team new_team = null;
-            for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-                final Player player = (Player)i.nextElement();
-                if (player.getTeam() == t) {
-                    if (new_team == null) {
-                        new_team = new Team(t);
-                    }
-                    new_team.addPlayer(player);
-                }
-            }
-
-            if (new_team != null) {
-                teams.addElement(new_team);
-            }
-        }
-    }
 
     /**
      * Rolls initiative for all the players.
@@ -1845,22 +1795,22 @@ implements Runnable, ConnectionHandler {
         // and/or deploy even according to game options.
         boolean infMoveEven =
             ( game.getOptions().booleanOption("inf_move_even") &&
-              (game.getPhase() == Game.PHASE_INITIATIVE ||
-               game.getPhase() == Game.PHASE_MOVEMENT) ) ||
+              (game.getPhase() == IGame.PHASE_INITIATIVE ||
+               game.getPhase() == IGame.PHASE_MOVEMENT) ) ||
             ( game.getOptions().booleanOption("inf_deploy_even") &&
-              game.getPhase() == Game.PHASE_DEPLOYMENT );
+              game.getPhase() == IGame.PHASE_DEPLOYMENT );
         boolean infMoveMulti =
             game.getOptions().booleanOption("inf_move_multi");
         boolean protosMoveEven =
             ( game.getOptions().booleanOption("protos_move_even") &&
-              (game.getPhase() == Game.PHASE_INITIATIVE ||
-               game.getPhase() == Game.PHASE_MOVEMENT) ) ||
+              (game.getPhase() == IGame.PHASE_INITIATIVE ||
+               game.getPhase() == IGame.PHASE_MOVEMENT) ) ||
             ( game.getOptions().booleanOption("protos_deploy_even") &&
-              game.getPhase() == Game.PHASE_DEPLOYMENT );
+              game.getPhase() == IGame.PHASE_DEPLOYMENT );
         boolean protosMoveMulti =
             game.getOptions().booleanOption("protos_move_multi");
         boolean protosFireMulti = !protosMoveMulti &&
-            game.getPhase() == Game.PHASE_FIRING;
+            game.getPhase() == IGame.PHASE_FIRING;
         int evenMask = 0;
         if ( infMoveEven ) evenMask += GameTurn.CLASS_INFANTRY;
         if ( protosMoveEven ) evenMask += GameTurn.CLASS_PROTOMECH;
@@ -1925,8 +1875,9 @@ implements Runnable, ConnectionHandler {
         // Generate the turn order for the Players *within*
         // each Team.  Map the teams to their turn orders.
         // Count the number of teams moving this turn.
-        Hashtable allTeamTurns = new Hashtable( game.getTeamsVector().size() );
-        Hashtable evenTrackers = new Hashtable( game.getTeamsVector().size() );
+        int nTeams = game.getNoOfTeams();
+        Hashtable allTeamTurns = new Hashtable( nTeams );
+        Hashtable evenTrackers = new Hashtable( nTeams );
         int numTeamsMoving = 0;
         for (Enumeration loop = game.getTeams(); loop.hasMoreElements(); ) {
             final Team team = (Team) loop.nextElement();
@@ -1962,7 +1913,7 @@ implements Runnable, ConnectionHandler {
         Vector turns;
 
         if ( strandedUnits.hasMoreElements() &&
-             game.getPhase() == Game.PHASE_MOVEMENT ) {
+             game.getPhase() == IGame.PHASE_MOVEMENT ) {
             // Add a game turn to unload stranded units, if this
             //  is the movement phase.
             turns = new Vector( team_order.getNormalTurns() +
@@ -2078,7 +2029,7 @@ implements Runnable, ConnectionHandler {
     private void writeInitiativeReport(boolean abbreviatedReport) {
         // write to report
         if (!abbreviatedReport) {
-            if ((game.getLastPhase() == Game.PHASE_DEPLOYMENT) || game.isDeploymentComplete() || !game.shouldDeployThisRound()) {
+            if ((game.getLastPhase() == IGame.PHASE_DEPLOYMENT) || game.isDeploymentComplete() || !game.shouldDeployThisRound()) {
                 roundReport.append("\nInitiative Phase for Round #").append(game.getRoundCount());
             } else {
                 if ( game.getRoundCount() == 0 ) {
@@ -2171,20 +2122,20 @@ implements Runnable, ConnectionHandler {
      */
     private boolean isEligibleFor(Entity entity, int phase) {
         // only deploy in deployment phase
-        if ((phase == Game.PHASE_DEPLOYMENT) == entity.isDeployed()) {
+        if ((phase == IGame.PHASE_DEPLOYMENT) == entity.isDeployed()) {
             return false;
         }
 
         switch (phase) {
-            case Game.PHASE_MOVEMENT :
+            case IGame.PHASE_MOVEMENT :
                 return isEligibleForMovement(entity);
-            case Game.PHASE_FIRING :
+            case IGame.PHASE_FIRING :
                 return isEligibleForFiring(entity);
-            case Game.PHASE_PHYSICAL :
+            case IGame.PHASE_PHYSICAL :
                 return entity.isEligibleForPhysical();
-            case Game.PHASE_TARGETING :
+            case IGame.PHASE_TARGETING :
                 return isEligibleForTargetingPhase(entity);
-            case Game.PHASE_OFFBOARD :
+            case IGame.PHASE_OFFBOARD :
                 return isEligibleForOffboard(entity);
             default:
                 return true;
@@ -2453,7 +2404,7 @@ implements Runnable, ConnectionHandler {
         MovePath md = (MovePath)packet.getObject(1);
 
         // is this the right phase?
-        if (game.getPhase() != Game.PHASE_MOVEMENT) {
+        if (game.getPhase() != IGame.PHASE_MOVEMENT) {
             System.err.println("error: server got movement packet in wrong phase");
             return;
         }
@@ -2714,7 +2665,7 @@ implements Runnable, ConnectionHandler {
             curPos = step.getPosition();
             curFacing = step.getFacing();
 
-            final IHex curHex = game.board.getHex(curPos);
+            final IHex curHex = game.getBoard().getHex(curPos);
 
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
@@ -2754,7 +2705,7 @@ implements Runnable, ConnectionHandler {
 
                     // What is the first hex in the skid?
                     nextPos = curPos.translated( prevFacing );
-                    nextHex = game.board.getHex( nextPos );
+                    nextHex = game.getBoard().getHex( nextPos );
 
                     // Move the entity a number hexes from curPos in the
                     // prevFacing direction equal to half the distance moved
@@ -2764,7 +2715,7 @@ implements Runnable, ConnectionHandler {
                           skidDistance++ ) {
 
                         // Is the next hex off the board?
-                        if ( !game.board.contains(nextPos) ) {
+                        if ( !game.getBoard().contains(nextPos) ) {
 
                             // Can the entity skid off the map?
                             if (game.getOptions().booleanOption("push_off_board")) {
@@ -2848,7 +2799,7 @@ implements Runnable, ConnectionHandler {
                         }
 
                         // Get any building in the hex.
-                        Building bldg = game.board.getBuildingAt(nextPos);
+                        Building bldg = game.getBoard().getBuildingAt(nextPos);
                         boolean bldgSuffered = false;
                         boolean stopTheSkid = false;
                         // Does the next hex contain an entities?
@@ -3112,7 +3063,7 @@ implements Runnable, ConnectionHandler {
 
                         // Get the next hex in the skid?
                         nextPos = nextPos.translated( prevFacing );
-                        nextHex = game.board.getHex( nextPos );
+                        nextHex = game.getBoard().getHex( nextPos );
 
                     } // Handle the next skid hex.
 
@@ -3225,7 +3176,7 @@ implements Runnable, ConnectionHandler {
             // check to see if we are a mech and we've moved OUT of fire
             if (entity instanceof Mech) {
                 if ( !lastPos.equals(curPos)
-                    && game.board.getHex(lastPos).containsTerrain(Terrains.FIRE)
+                    && game.getBoard().getHex(lastPos).containsTerrain(Terrains.FIRE)
                     && ( step.getMovementType() != Entity.MOVE_JUMP
                          // Bug #828741 -- jumping bypasses fire, but not on the first step
                          //   getMpUsed -- total MP used to this step
@@ -3242,7 +3193,7 @@ implements Runnable, ConnectionHandler {
 
             // check to see if we are not a mech and we've moved INTO fire
             if (!(entity instanceof Mech)) {
-                if ( game.board.getHex(curPos).containsTerrain(Terrains.FIRE)
+                if ( game.getBoard().getHex(curPos).containsTerrain(Terrains.FIRE)
                     && !lastPos.equals(curPos)
                     && step.getMovementType() != Entity.MOVE_JUMP ) {
                         doFlamingDeath(entity);
@@ -3413,11 +3364,11 @@ implements Runnable, ConnectionHandler {
 
                 // Get the building being exited.
                 // TODO: allow units to climb on top of buildings.
-                Building bldgExited = game.board.getBuildingAt( lastPos );
+                Building bldgExited = game.getBoard().getBuildingAt( lastPos );
 
                 // Get the building being entered.
                 // TODO: allow units to climb on top of buildings.
-                Building bldgEntered = game.board.getBuildingAt( curPos );
+                Building bldgEntered = game.getBoard().getBuildingAt( curPos );
 
                 // If we're not leaving a building, just handle the "entered".
                 boolean collapsed = false;
@@ -3544,7 +3495,7 @@ implements Runnable, ConnectionHandler {
                 doSkillCheckInPlace(entity, rollTarget);
             }
             // jumped into water?
-            int waterLevel = game.board.getHex(curPos).terrainLevel(Terrains.WATER);
+            int waterLevel = game.getBoard().getHex(curPos).terrainLevel(Terrains.WATER);
             rollTarget = entity.checkWaterMove(waterLevel);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
@@ -3555,7 +3506,7 @@ implements Runnable, ConnectionHandler {
             }
 
             // jumped into swamp? maybe stuck!
-            if (game.board.getHex(curPos).containsTerrain(Terrains.SWAMP)) {
+            if (game.getBoard().getHex(curPos).containsTerrain(Terrains.SWAMP)) {
                 if (entity instanceof Mech) {
                     entity.setStuck(true);
                     phaseReport.append("\n" ).append( entity.getDisplayName()
@@ -3617,7 +3568,7 @@ implements Runnable, ConnectionHandler {
                     swarmer.setSwarmTargetId( Entity.NONE );
 
                     // Did the infantry fall into water?
-                    final IHex curHex = game.board.getHex(curPos);
+                    final IHex curHex = game.getBoard().getHex(curPos);
                     if ( curHex.terrainLevel(Terrains.WATER) > 0 ) {
                         // Swarming infantry die.
                         swarmer.setPosition( curPos );
@@ -3647,7 +3598,7 @@ implements Runnable, ConnectionHandler {
 
         } // End entity-is-jumping
         // update entity's locations' exposure
-        doSetLocationsExposure(entity, game.board.getHex(curPos), game.board.getHex(curPos).surface() <= entity.getElevation(), false);
+        doSetLocationsExposure(entity, game.getBoard().getHex(curPos), game.getBoard().getHex(curPos).surface() <= entity.getElevation(), false);
 
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP()
@@ -3675,7 +3626,7 @@ implements Runnable, ConnectionHandler {
             // If the hex is on fire, and the swarming infantry is
             // *not* Battle Armor, it drops off.
             if ( !(swarmer instanceof BattleArmor) &&
-                 game.board.getHex(curPos).containsTerrain(Terrains.FIRE) ) {
+                 game.getBoard().getHex(curPos).containsTerrain(Terrains.FIRE) ) {
                 swarmer.setSwarmTargetId( Entity.NONE );
                 entity.setSwarmAttackerId( Entity.NONE );
                 phaseReport.append( "\n   " )
@@ -3727,7 +3678,7 @@ implements Runnable, ConnectionHandler {
             }
 
             // Only if this is on the board...
-            if ( game.board.contains(mfCoord) ) {
+            if ( game.getBoard().contains(mfCoord) ) {
                 Minefield minefield = null;
                 Enumeration minefields = game.getMinefields(mfCoord).elements();
                 // Check if there already are Thunder minefields in the hex.
@@ -3746,8 +3697,8 @@ implements Runnable, ConnectionHandler {
                     // Nope.  Create a new Thunder minefield
                     minefield = Minefield.createThunderMF
                         ( mfCoord, playerId, (int)(damage/2 + damage%2) );
-    	            game.addMinefield(minefield);
-	                revealMinefield(minefield);
+                    game.addMinefield(minefield);
+                    revealMinefield(minefield);
                 } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
                     // Yup.  Replace the old one.
                     removeMinefield(minefield);
@@ -3759,8 +3710,8 @@ implements Runnable, ConnectionHandler {
                         newDamage = Minefield.MAX_DAMAGE;
                     }
                     minefield.setDamage(newDamage);
-    	            game.addMinefield(minefield);
-	                revealMinefield(minefield);
+                    game.addMinefield(minefield);
+                    revealMinefield(minefield);
                 }
             } // End coords-on-board
 
@@ -3791,16 +3742,16 @@ implements Runnable, ConnectionHandler {
         if (minefield == null) {
             minefield = Minefield.createThunderMF(coords, playerId, damage);
             // Add to the old one
-	        game.addMinefield(minefield);
-    	    revealMinefield(minefield);
+            game.addMinefield(minefield);
+            revealMinefield(minefield);
         } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
             removeMinefield(minefield);
             int oldDamage = minefield.getDamage();
             damage += oldDamage;
             damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
             minefield.setDamage(damage);
-	        game.addMinefield(minefield);
-    	    revealMinefield(minefield);
+            game.addMinefield(minefield);
+            revealMinefield(minefield);
         }
     }
 
@@ -3826,16 +3777,16 @@ implements Runnable, ConnectionHandler {
         if (minefield == null) {
             minefield = Minefield.createThunderInfernoMF(coords, playerId, damage);
             // Add to the old one
- 	        game.addMinefield(minefield);
-    	    revealMinefield(minefield);
+            game.addMinefield(minefield);
+            revealMinefield(minefield);
        } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
             removeMinefield(minefield);
             int oldDamage = minefield.getDamage();
             damage += oldDamage;
             damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
             minefield.setDamage(damage);
- 	        game.addMinefield(minefield);
-    	    revealMinefield(minefield);
+            game.addMinefield(minefield);
+            revealMinefield(minefield);
        }
     }
 
@@ -3844,7 +3795,7 @@ implements Runnable, ConnectionHandler {
      */
     private void deliverFASCAMMinefield( Coords coords, int playerId) {
         // Only if this is on the board...
-        if ( game.board.contains(coords) ) {
+        if ( game.getBoard().contains(coords) ) {
             Minefield minefield = null;
             Enumeration minefields = game.getMinefields(coords).elements();
             // Check if there already are Thunder minefields in the hex.
@@ -3884,16 +3835,16 @@ implements Runnable, ConnectionHandler {
         if (minefield == null) {
             minefield = Minefield.createThunderActiveMF(coords, playerId, damage);
             // Add to the old one
-	        game.addMinefield(minefield);
-    	    revealMinefield(minefield);
+            game.addMinefield(minefield);
+            revealMinefield(minefield);
         } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
             removeMinefield(minefield);
             int oldDamage = minefield.getDamage();
             damage += oldDamage;
             damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
             minefield.setDamage(damage);
-	        game.addMinefield(minefield);
-    	    revealMinefield(minefield);
+            game.addMinefield(minefield);
+            revealMinefield(minefield);
         }
     }
 
@@ -3916,16 +3867,16 @@ implements Runnable, ConnectionHandler {
         if (minefield == null) {
             minefield = Minefield.createThunderVibrabombMF(coords, playerId, damage, sensitivity);
             // Add to the old one
-	        game.addVibrabomb(minefield);
-    	    revealMinefield(minefield);
+            game.addVibrabomb(minefield);
+            revealMinefield(minefield);
         } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
             removeMinefield(minefield);
             int oldDamage = minefield.getDamage();
             damage += oldDamage;
             damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
             minefield.setDamage(damage);
-	        game.addVibrabomb(minefield);
-    	    revealMinefield(minefield);
+            game.addVibrabomb(minefield);
+            revealMinefield(minefield);
         }
     }
 
@@ -3948,7 +3899,7 @@ implements Runnable, ConnectionHandler {
      */
     private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow, int hitMod) {
         // Bug 954272: Mines shouldn't work underwater
-        if (!game.board.getHex(mf.getCoords()).containsTerrain(Terrains.WATER) || game.board.getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)) {
+        if (!game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER) || game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)) {
         switch (mf.getType()) {
             case (Minefield.TYPE_CONVENTIONAL) :
             case (Minefield.TYPE_THUNDER) :
@@ -3998,7 +3949,7 @@ implements Runnable, ConnectionHandler {
                                .append( ".\n" );
                     h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                 }
-                game.board.addInfernoTo(dest, InfernoTracker.STANDARD_ROUND, 1);
+                game.getBoard().addInfernoTo(dest, InfernoTracker.STANDARD_ROUND, 1);
                 sendChangedHex(dest);
                 break;
             }
@@ -4026,7 +3977,7 @@ implements Runnable, ConnectionHandler {
             Minefield mf = (Minefield) e.nextElement();
 
             // Bug 954272: Mines shouldn't work underwater, and BMRr says Vibrabombs are mines
-            if (game.board.getHex(mf.getCoords()).containsTerrain(Terrains.WATER) && !game.board.getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)) {
+            if (game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER) && !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)) {
                 continue;
             }
 
@@ -4194,7 +4145,7 @@ implements Runnable, ConnectionHandler {
      * @param coords The <code>Coords</code> the entity is at
      */
     void checkForWashedInfernos(Entity entity, Coords coords) {
-        IHex hex = game.board.getHex(coords);
+        IHex hex = game.getBoard().getHex(coords);
         int waterLevel = hex.terrainLevel(Terrains.WATER);
         // Mech on fire with infernos can wash them off.
         if (!(entity instanceof Mech) || !entity.infernos.isStillBurning()) {
@@ -4213,11 +4164,11 @@ implements Runnable, ConnectionHandler {
      * @param coords The <code>Coords</code> the entity is at
      */
     void washInferno(Entity entity, Coords coords) {
-        game.board.addInfernoTo( coords, InfernoTracker.STANDARD_ROUND, 1 );
+        game.getBoard().addInfernoTo( coords, InfernoTracker.STANDARD_ROUND, 1 );
         entity.infernos.clear();
 
         // Start a fire in the hex?
-        IHex hex = game.board.getHex(coords);
+        IHex hex = game.getBoard().getHex(coords);
         phaseReport.append( " Inferno removed from " )
             .append( entity.getDisplayName() );
         if ( hex.containsTerrain(Terrains.FIRE) ) {
@@ -4476,8 +4427,8 @@ implements Runnable, ConnectionHandler {
     * be able to cause an accidental fall from above
     */
     private void doEntityFallsInto(Entity entity, Coords src, Coords dest, PilotingRollData roll, boolean causeAffa) {
-        final IHex srcHex = game.board.getHex(src);
-        final IHex destHex = game.board.getHex(dest);
+        final IHex srcHex = game.getBoard().getHex(src);
+        final IHex destHex = game.getBoard().getHex(dest);
         final int fallElevation = Math.abs(destHex.floor() - srcHex.floor());
         int direction = src.direction(dest);
         // check entity in target hex
@@ -4588,7 +4539,7 @@ implements Runnable, ConnectionHandler {
      */
     private void doEntityDisplacement(Entity entity, Coords src, Coords dest,
     PilotingRollData roll) {
-        if (!game.board.contains(dest)) {
+        if (!game.getBoard().contains(dest)) {
             // set position anyway, for pushes moving through and stuff like
             // that
             entity.setPosition(dest);
@@ -4602,8 +4553,8 @@ implements Runnable, ConnectionHandler {
             }
             return;
         }
-        final IHex srcHex = game.board.getHex(src);
-        final IHex destHex = game.board.getHex(dest);
+        final IHex srcHex = game.getBoard().getHex(src);
+        final IHex destHex = game.getBoard().getHex(dest);
         final int direction = src.direction(dest);
         // Handle null hexes.
         if ( srcHex == null || destHex == null ) {
@@ -4685,14 +4636,14 @@ implements Runnable, ConnectionHandler {
         }
 
         // is this the right phase?
-        if (game.getPhase() != Game.PHASE_DEPLOYMENT) {
+        if (game.getPhase() != IGame.PHASE_DEPLOYMENT) {
             System.err.println("error: server got deployment packet in wrong phase");
             return;
         }
 
         // can this player/entity act right now?
         if ( !game.getTurn().isValid(connId, entity, game)
-             || !game.board.isLegalDeployment(coords, entity.getOwner()) ) {
+             || !game.getBoard().isLegalDeployment(coords, entity.getOwner()) ) {
             System.err.println("error: server got invalid deployment packet");
             return;
         }
@@ -4737,7 +4688,7 @@ implements Runnable, ConnectionHandler {
         artyAutoHitHexes.removeElementAt(0);
 
         // is this the right phase?
-        if (game.getPhase() != Game.PHASE_SET_ARTYAUTOHITHEXES) {
+        if (game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES) {
             System.err.println("error: server got set artyautohithexespacket in wrong phase");
             return;
         }
@@ -4749,7 +4700,7 @@ implements Runnable, ConnectionHandler {
         Vector minefields = (Vector) packet.getObject(0);
 
         // is this the right phase?
-        if (game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS) {
+        if (game.getPhase() != IGame.PHASE_DEPLOY_MINEFIELDS) {
             System.err.println("error: server got deploy minefields packet in wrong phase");
             return;
         }
@@ -4805,9 +4756,9 @@ implements Runnable, ConnectionHandler {
         Vector vector = (Vector)packet.getObject(1);
 
         // is this the right phase?
-        if (game.getPhase() != Game.PHASE_FIRING
-        && game.getPhase() != Game.PHASE_PHYSICAL
-        && game.getPhase() != Game.PHASE_TARGETING) {
+        if (game.getPhase() != IGame.PHASE_FIRING
+        && game.getPhase() != IGame.PHASE_PHYSICAL
+        && game.getPhase() != IGame.PHASE_TARGETING) {
             System.err.println("error: server got attack packet in wrong phase");
             return;
         }
@@ -4966,7 +4917,7 @@ implements Runnable, ConnectionHandler {
      * weapons fire that happens.  Torso twists, for example.
      */
     private void resolveAllButWeaponAttacks() {
-        if(game.getPhase()==Game.PHASE_FIRING) {
+        if(game.getPhase()==IGame.PHASE_FIRING) {
             roundReport.append("\nWeapon Attack Phase\n-------------------\n");
         }
 
@@ -5253,7 +5204,7 @@ implements Runnable, ConnectionHandler {
 
         // Get the entity's current hex.
         Coords coords = entity.getPosition();
-        IHex curHex = game.board.getHex( coords );
+        IHex curHex = game.getBoard().getHex( coords );
 
         // Is there a blown off arm in the hex?
         if (curHex.terrainLevel(Terrains.ARMS) > 0) {
@@ -5515,7 +5466,7 @@ implements Runnable, ConnectionHandler {
     private boolean tryIgniteHex( Coords c, boolean bInferno, int nTargetRoll,
                                   boolean bReportAttempt ) {
 
-        IHex hex = game.board.getHex(c);
+        IHex hex = game.getBoard().getHex(c);
         boolean bAnyTerrain = false;
 
         // Ignore bad coordinates.
@@ -5525,7 +5476,7 @@ implements Runnable, ConnectionHandler {
 
         // inferno always ignites
         if (bInferno) {
-            game.board.addInfernoTo(c, InfernoTracker.STANDARD_ROUND, 1);
+            game.getBoard().addInfernoTo(c, InfernoTracker.STANDARD_ROUND, 1);
             nTargetRoll = 0;
             bAnyTerrain = true;
         }
@@ -5561,7 +5512,7 @@ implements Runnable, ConnectionHandler {
    }
 
     private void tryClearHex(Coords c, int nTarget) {
-        IHex h = game.board.getHex(c);
+        IHex h = game.getBoard().getHex(c);
         int woods = h.terrainLevel(Terrains.WOODS);
         if (woods == ITerrain.LEVEL_NONE) {
             phaseReport.append("      Woods already cleared.\n" );
@@ -5645,12 +5596,12 @@ implements Runnable, ConnectionHandler {
       }
       final boolean targetInBuilding =
           Compute.isInBuilding(game, entityTarget);
-      if(bArtillery && game.getPhase()==Game.PHASE_FIRING) { //if direct artillery
+      if(bArtillery && game.getPhase()==IGame.PHASE_FIRING) { //if direct artillery
           wr.artyAttackerCoords=ae.getPosition();
       }
 
       // Which building takes the damage?
-      Building bldg = game.board.getBuildingAt(target.getPosition());
+      Building bldg = game.getBoard().getBuildingAt(target.getPosition());
       
       // Are we iNarc Nemesis Confusable?
       boolean isNemesisConfusable = false;
@@ -5742,13 +5693,14 @@ implements Runnable, ConnectionHandler {
       if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
           // the mod is weight-based
           int nMod;
-          if (ae.getWeight() <= EntityWeightClass.WEIGHT_LIGHT) {
+          switch (ae.getWeightClass()) {
+          case EntityWeightClass.WEIGHT_LIGHT:
               nMod = 2;
-          } else if (ae.getWeight() <= EntityWeightClass.WEIGHT_MEDIUM) {
+          case EntityWeightClass.WEIGHT_MEDIUM:
               nMod = 1;
-          } else if (ae.getWeight() <= EntityWeightClass.WEIGHT_HEAVY) {
+          case EntityWeightClass.WEIGHT_HEAVY:
               nMod = 0;
-          } else {
+          default:
               nMod = -1;
           }
           PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
@@ -5868,7 +5820,7 @@ implements Runnable, ConnectionHandler {
         }
         else {
           coords = Compute.scatter(coords, game.getOptions().booleanOption("margin_scatter_distance")?toHit.getValue()-wr.roll:-1);
-          if (game.board.contains(coords)) {
+          if (game.getBoard().contains(coords)) {
             phaseReport.append("misses and scatters to hex ")
                 .append(coords.getBoardNum())
                 .append("\n");
@@ -5914,7 +5866,7 @@ implements Runnable, ConnectionHandler {
           }
           else {
               coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
-              if (game.board.contains(coords)) {
+              if (game.getBoard().contains(coords)) {
                   phaseReport.append("misses and scatters to hex ")
                       .append(coords.getBoardNum())
                       .append("\n");
@@ -5924,7 +5876,7 @@ implements Runnable, ConnectionHandler {
                   return !bMissed;
               }
           }
-          if (game.board.contains(coords)) {
+          if (game.getBoard().contains(coords)) {
               deliverFASCAMMinefield(coords, ae.getOwner().getId());
           }
           return !bMissed;
@@ -5939,7 +5891,7 @@ implements Runnable, ConnectionHandler {
           }
           else {
               coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
-              if (game.board.contains(coords)) {
+              if (game.getBoard().contains(coords)) {
                   phaseReport.append("misses and scatters to hex ")
                       .append(coords.getBoardNum())
                       .append("\n");
@@ -5948,7 +5900,7 @@ implements Runnable, ConnectionHandler {
                   phaseReport.append("misses and scatters off the board\n");
               }
           }
-          if (game.board.contains(coords)) {
+          if (game.getBoard().contains(coords)) {
               deliverThunderVibraMinefield(coords, ae.getOwner().getId(), 20,
                                            wr.waa.getOtherAttackInfo());
           }
@@ -5964,7 +5916,7 @@ implements Runnable, ConnectionHandler {
           }
           else {
               coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
-              if (game.board.contains(coords)) {
+              if (game.getBoard().contains(coords)) {
                   phaseReport.append("misses and scatters to hex ")
                       .append(coords.getBoardNum())
                       .append("\n");
@@ -5982,7 +5934,7 @@ implements Runnable, ConnectionHandler {
                   .append( ".\n" );
               h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
           }
-          game.board.addInfernoTo( coords, InfernoTracker.INFERNO_IV_ROUND, 1 );
+          game.getBoard().addInfernoTo( coords, InfernoTracker.INFERNO_IV_ROUND, 1 );
           sendChangedHex(coords);
           for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
               Entity entity = (Entity)impactHexHits.nextElement();
@@ -5994,7 +5946,7 @@ implements Runnable, ConnectionHandler {
           }
           for(int dir=0;dir<=5;dir++) {
               Coords tempcoords=coords.translated(dir);
-              if(!game.board.contains(tempcoords)) {
+              if(!game.getBoard().contains(tempcoords)) {
                   continue;
               }
               if(coords.equals(tempcoords)) {
@@ -6008,7 +5960,7 @@ implements Runnable, ConnectionHandler {
                       .append( ".\n" );
                   h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
               }
-              game.board.addInfernoTo( tempcoords, InfernoTracker.INFERNO_IV_ROUND, 1 );
+              game.getBoard().addInfernoTo( tempcoords, InfernoTracker.INFERNO_IV_ROUND, 1 );
               sendChangedHex(tempcoords);
               for(Enumeration splashHexHits = game.getEntities(tempcoords);splashHexHits.hasMoreElements();) {
                   Entity entity = (Entity)splashHexHits.nextElement();
@@ -6031,7 +5983,7 @@ implements Runnable, ConnectionHandler {
         }
         else {
           coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
-          if (game.board.contains(coords)) {
+          if (game.getBoard().contains(coords)) {
             phaseReport.append("misses and scatters to hex ")
                 .append(coords.getBoardNum())
                 .append("\n");
@@ -6046,7 +5998,7 @@ implements Runnable, ConnectionHandler {
         
         int ratedDamage = wtype.getRackSize();
         bldg = null;
-        bldg = game.board.getBuildingAt(coords);
+        bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
         ratedDamage -= bldgAbsorbs;
@@ -6077,7 +6029,7 @@ implements Runnable, ConnectionHandler {
         
         for(int dir=0;dir<=5;dir++) {
             Coords tempcoords=coords.translated(dir);
-            if(!game.board.contains(tempcoords)) {
+            if(!game.getBoard().contains(tempcoords)) {
                 continue;
             }
             if(coords.equals(tempcoords)) {
@@ -6087,7 +6039,7 @@ implements Runnable, ConnectionHandler {
             
             ratedDamage = wtype.getRackSize()/2;
             bldg = null;
-            bldg = game.board.getBuildingAt(tempcoords);
+            bldg = game.getBoard().getBuildingAt(tempcoords);
             bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
             bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
             ratedDamage -= bldgAbsorbs;
@@ -6640,7 +6592,7 @@ implements Runnable, ConnectionHandler {
                             .append( ".\n" );
                         h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                     }
-                    game.board.addInfernoTo
+                    game.getBoard().addInfernoTo
                         ( c, InfernoTracker.STANDARD_ROUND, hits );
                     sendChangedHex(c);
 
@@ -6852,7 +6804,7 @@ implements Runnable, ConnectionHandler {
                             .append( ".\n" );
                         h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                     }
-                    game.board.addInfernoTo
+                    game.getBoard().addInfernoTo
                         ( c, InfernoTracker.STANDARD_ROUND, hits );
                     sendChangedHex(c);
 
@@ -6883,7 +6835,7 @@ implements Runnable, ConnectionHandler {
                             .append( ".\n" );
                         h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                     }
-                    game.board.addInfernoTo
+                    game.getBoard().addInfernoTo
                         ( c, InfernoTracker.STANDARD_ROUND, 1 );
                     sendChangedHex(c);
 
@@ -6929,7 +6881,7 @@ implements Runnable, ConnectionHandler {
                 // weapons that can't normally start fires.  that's weird.
                 // Buildings can't be accidentally ignited.
                 if ( bldg == null) {
-                    boolean alreadyIgnited = game.board.getHex(target.getPosition()).containsTerrain(Terrains.FIRE);
+                    boolean alreadyIgnited = game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.FIRE);
                     boolean ignited = tryIgniteHex(target.getPosition(), bInferno, 9);
                     if (!alreadyIgnited && ignited) return !bMissed;
                 }
@@ -7239,7 +7191,7 @@ implements Runnable, ConnectionHandler {
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( target.getPosition() );
+        Building bldg = game.getBoard().getBuildingAt( target.getPosition() );
 
         if (lastEntityId != paa.getEntityId()) {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
@@ -7348,7 +7300,7 @@ implements Runnable, ConnectionHandler {
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( target.getPosition() );
+        Building bldg = game.getBoard().getBuildingAt( target.getPosition() );
 
         if (lastEntityId != ae.getId()) {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
@@ -7463,7 +7415,7 @@ implements Runnable, ConnectionHandler {
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( target.getPosition() );
+        Building bldg = game.getBoard().getBuildingAt( target.getPosition() );
 
         if (lastEntityId != ae.getId()) {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
@@ -7761,7 +7713,7 @@ implements Runnable, ConnectionHandler {
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( target.getPosition() );
+        Building bldg = game.getBoard().getBuildingAt( target.getPosition() );
 
         // restore club attack
         caa.getClub().restore();
@@ -7949,7 +7901,7 @@ implements Runnable, ConnectionHandler {
 
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
             phaseReport.append("succeeds: target is pushed ");
-            if (game.board.contains(dest)) {
+            if (game.getBoard().contains(dest)) {
                 phaseReport.append("into hex "
                 ).append( dest.getBoardNum()
                 ).append( "\n");
@@ -7989,7 +7941,7 @@ implements Runnable, ConnectionHandler {
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( caa.getTargetPos() );
+        Building bldg = game.getBoard().getBuildingAt( caa.getTargetPos() );
 
         // is the attacker dead?  because that sure messes up the calculations
         if (ae == null) {
@@ -8120,7 +8072,7 @@ implements Runnable, ConnectionHandler {
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
 
         // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( te.getPosition() );
+        Building bldg = game.getBoard().getBuildingAt( te.getPosition() );
 
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
@@ -8202,7 +8154,7 @@ implements Runnable, ConnectionHandler {
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( daa.getTargetPos() );
+        Building bldg = game.getBoard().getBuildingAt( daa.getTargetPos() );
 
         // is the attacker dead?  because that sure messes up the calculations
         if (ae == null) {
@@ -8846,7 +8798,7 @@ implements Runnable, ConnectionHandler {
                  entity.isOffBoard()) {
                 continue;
             }
-            final IHex curHex = game.board.getHex(entity.getPosition());
+            final IHex curHex = game.getBoard().getHex(entity.getPosition());
             if (curHex.containsTerrain(Terrains.FIRE)) {
                 doFlamingDeath(entity);
             }
@@ -8864,7 +8816,7 @@ implements Runnable, ConnectionHandler {
                  entity.isOffBoard()) {
                 continue;
             }
-            final IHex curHex = game.board.getHex(entity.getPosition());
+            final IHex curHex = game.getBoard().getHex(entity.getPosition());
             if ((curHex.terrainLevel(Terrains.WATER) > 1
             || (curHex.terrainLevel(Terrains.WATER) == 1 && entity.isProne()))
             && entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0) {
@@ -9238,7 +9190,7 @@ implements Runnable, ConnectionHandler {
 
         // Is the infantry in the open?
         if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() ) {
-            te_hex = game.board.getHex( te.getPosition() );
+            te_hex = game.getBoard().getHex( te.getPosition() );
             if ( te_hex != null &&
                  !te_hex.containsTerrain( Terrains.WOODS ) &&
                  !te_hex.containsTerrain( Terrains.ROUGH ) &&
@@ -9453,7 +9405,7 @@ implements Runnable, ConnectionHandler {
                                     desc.append( " <<<LIMB BLOWN OFF>>>\n        " )
                                     .append( te.getLocationName(Mech.LOC_RARM) )
                                     .append( " blown off." );
-                                    IHex h = game.board.getHex(te.getPosition());
+                                    IHex h = game.getBoard().getHex(te.getPosition());
                                     if (te instanceof BipedMech) {
                                         if (!h.containsTerrain( Terrains.ARMS)) {
                                             h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, 1));
@@ -9469,7 +9421,7 @@ implements Runnable, ConnectionHandler {
                                     desc.append( " <<<LIMB BLOWN OFF>>>\n        " )
                                     .append( te.getLocationName(Mech.LOC_LARM) )
                                     .append( " blown off." );
-                                    IHex h = game.board.getHex(te.getPosition());
+                                    IHex h = game.getBoard().getHex(te.getPosition());
                                     if (te instanceof BipedMech) {
                                         if (!h.containsTerrain( Terrains.ARMS)) {
                                             h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, 1));
@@ -9601,7 +9553,7 @@ implements Runnable, ConnectionHandler {
 
                         // Hovercraft reduced to 0MP over water sink
                         if ( te.getMovementType() == Entity.MovementType.HOVER &&
-                                game.board.getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 ) {
+                                game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 ) {
                             desc.append( destroyEntity(te, "a watery grave", false) );
                         }
                     };
@@ -9611,7 +9563,7 @@ implements Runnable, ConnectionHandler {
                 desc.append( "\n            Movement system destroyed!" );
                 ((Tank)te).immobilize();
                 // Does the hovercraft sink?
-                te_hex = game.board.getHex( te.getPosition() );
+                te_hex = game.getBoard().getHex( te.getPosition() );
                 if ( te.getMovementType() == Entity.MovementType.HOVER &&
                      te_hex.terrainLevel(Terrains.WATER) > 0 ) {
                     desc.append( destroyEntity(te, "a watery grave", false) );
@@ -9681,7 +9633,7 @@ implements Runnable, ConnectionHandler {
             destroyLocation(en, Mech.LOC_CT);
 
         //Light our hex on fire
-          final IHex curHex = game.board.getHex(en.getPosition());
+          final IHex curHex = game.getBoard().getHex(en.getPosition());
 
           if ( (null != curHex) && !curHex.containsTerrain(Terrains.FIRE) && curHex.containsTerrain(Terrains.WOODS) ) {
             curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
@@ -9820,7 +9772,7 @@ implements Runnable, ConnectionHandler {
                     // Sinking immobile hovercraft is a secondary effect
                     // and does not occur when loading from a scenario.
                     if ( secondaryEffects ) {
-                        IHex te_hex = game.board.getHex( en.getPosition() );
+                        IHex te_hex = game.getBoard().getHex( en.getPosition() );
                         if ( en.getMovementType() == Entity.MovementType.HOVER
                              && te_hex.terrainLevel(Terrains.WATER) > 0 ) {
                             desc.append( destroyEntity
@@ -10082,7 +10034,7 @@ implements Runnable, ConnectionHandler {
         IHex hex = null;
         int hits;
         if (rollNumber) {
-            if (null != coords) hex = game.board.getHex (coords);
+            if (null != coords) hex = game.getBoard().getHex (coords);
             desc.append( "        Critical hit on " )
                 .append( en.getLocationAbbr(loc) )
                 .append( ". " );
@@ -10697,7 +10649,7 @@ implements Runnable, ConnectionHandler {
      * Makes a mech fall.
      */
     private void doEntityFall(Entity entity, Coords fallPos, int height, int facing, PilotingRollData roll) {
-        IHex fallHex = game.board.getHex(fallPos);
+        IHex fallHex = game.getBoard().getHex(fallPos);
         // we don't need to deal damage yet, if the entity is doing DFA
         if (entity.isMakingDfa()) {
             phaseReport.append("But, since the 'mech is making a death from above attack, damage will be dealt during the physical phase.\n");
@@ -10953,7 +10905,7 @@ implements Runnable, ConnectionHandler {
         // Cycle through all buildings, checking for fire.
         // ASSUMPTION: buildings don't lose 2 CF on the turn a fire starts.
         // ASSUMPTION: multi-hex buildings lose 2 CF max, regardless of # fires
-        Enumeration buildings = game.board.getBuildings();
+        Enumeration buildings = game.getBoard().getBuildings();
         while ( buildings.hasMoreElements() ) {
             Building bldg = (Building) buildings.nextElement();
             if ( bldg.isBurning() ) {
@@ -11033,7 +10985,7 @@ implements Runnable, ConnectionHandler {
                         .append( " was started this round.\n" );
 
                     // If the hex contains a building, set it on fire.
-                    Building bldg = game.board.getBuildingAt( currentCoords );
+                    Building bldg = game.getBoard().getBuildingAt( currentCoords );
                     if ( bldg != null ) {
                         bldg.setBurning( true );
                         burningBldgs.addElement( bldg );
@@ -11068,7 +11020,7 @@ implements Runnable, ConnectionHandler {
     }  // End the ResolveFire() method
 
     public void burnDownWoods(Coords coords) {
-        IHex hex = game.board.getHex(coords);
+        IHex hex = game.getBoard().getHex(coords);
         int roll = Compute.d6(2);
         if(roll >= 11) {
             if(hex.terrainLevel(Terrains.WOODS) > 1) {
@@ -11460,7 +11412,7 @@ implements Runnable, ConnectionHandler {
 
     private boolean doBlind() {
         return (game.getOptions().booleanOption("double_blind") &&
-        game.getPhase() >= Game.PHASE_DEPLOYMENT);
+        game.getPhase() >= IGame.PHASE_DEPLOYMENT);
     }
 
     /**
@@ -11868,7 +11820,7 @@ implements Runnable, ConnectionHandler {
 
     private void receiveInitiativeRerollRequest(Packet pkt, int connIndex) {
         Player player = getPlayer(connIndex);
-        if ( Game.PHASE_INITIATIVE != game.getPhase() ) {
+        if ( IGame.PHASE_INITIATIVE != game.getPhase() ) {
             StringBuffer message = new StringBuffer();
             if ( null == player ) {
                 message.append( "Player #" )
@@ -12043,7 +11995,7 @@ implements Runnable, ConnectionHandler {
      * Creates a packet containing the game board
      */
     private Packet createBoardPacket() {
-        return new Packet(Packet.COMMAND_SENDING_BOARD, game.board);
+        return new Packet(Packet.COMMAND_SENDING_BOARD, game.getBoard());
     }
 
     /**
@@ -12205,7 +12157,7 @@ implements Runnable, ConnectionHandler {
      * Sends notification to clients that the specified hex has changed.
      */
     public void sendChangedHex(Coords coords) {
-        send(createHexChangePacket(coords, game.board.getHex(coords)));
+        send(createHexChangePacket(coords, game.getBoard().getHex(coords)));
     }
 
     public void sendVisibilityIndicator(Entity e) {
@@ -12731,7 +12683,7 @@ implements Runnable, ConnectionHandler {
             if ( vector != null ) {
 
                 // How many levels does this building have in this hex?
-                final IHex curHex = game.board.getHex( coords );
+                final IHex curHex = game.getBoard().getHex( coords );
                 final int hexElev = curHex.surface();
                 final int numFloors = curHex.terrainLevel( Terrains.BLDG_ELEV );
 
@@ -12835,7 +12787,7 @@ implements Runnable, ConnectionHandler {
             if ( vector != null ) {
 
                 // How many levels does this building have in this hex?
-                final IHex curHex = game.board.getHex( coords );
+                final IHex curHex = game.getBoard().getHex( coords );
                 final int hexElev = curHex.surface();
                 final int numFloors = curHex.terrainLevel( Terrains.BLDG_ELEV );
 
@@ -12928,7 +12880,7 @@ implements Runnable, ConnectionHandler {
         bldg.setCurrentCF( 0 );
         bldg.setPhaseCF( 0 );
         send( createCollapseBuildingPacket(bldg) );
-        game.board.collapseBuilding( bldg );
+        game.getBoard().collapseBuilding( bldg );
 
     } // End private void collapseBuilding( Building )
 
@@ -12978,7 +12930,7 @@ implements Runnable, ConnectionHandler {
         //      the Enumeration from megamek.common.Board#getBuildings.
         Vector collapse = new Vector();
         Vector update = new Vector();
-        Enumeration buildings = game.board.getBuildings();
+        Enumeration buildings = game.getBoard().getBuildings();
         while ( buildings.hasMoreElements() ) {
             Building bldg = (Building) buildings.nextElement();
 
@@ -13091,7 +13043,7 @@ implements Runnable, ConnectionHandler {
         Entity entity = null;
 
         // Is this the right phase?
-        if (game.getPhase() != Game.PHASE_MOVEMENT) {
+        if (game.getPhase() != IGame.PHASE_MOVEMENT) {
             System.err.println
                 ("error: server got unload stranded packet in wrong phase");
             return;
@@ -13694,7 +13646,7 @@ implements Runnable, ConnectionHandler {
             }
             int facing = entity.getFacing();
             Coords targetCoords = entity.getPosition().translated((facing + 3)%6);
-            IHex targetHex = game.board.getHex(targetCoords);
+            IHex targetHex = game.getBoard().getHex(targetCoords);
             if (targetHex != null) {
                 if (targetHex.terrainLevel(Terrains.WATER) > 0) {
                     rollTarget.addModifier(-1, "landing in water");
@@ -13745,12 +13697,12 @@ implements Runnable, ConnectionHandler {
             }
             else {
                 // Add the pilot as an infantry unit on the battlefield.
-                if (game.board.contains(targetCoords)) {
+                if (game.getBoard().contains(targetCoords)) {
                     pilot.setPosition(targetCoords);
 /* Can pilots eject into water???
    ASSUMPTION : They can (because they get a -1 mod to the PSR.
                     // Did the pilot land in water?
-                    if ( game.board.getHex( targetCoords).levelOf
+                    if ( game.getBoard().getHex( targetCoords).levelOf
                          ( Terrain.WATER ) > 0 ) {
                         desc.append("and the pilot ejects, but lands in water!!!\n");
                         desc.append(destroyEntity( pilot, "a watery grave", false ));
@@ -13790,7 +13742,7 @@ implements Runnable, ConnectionHandler {
         desc.append(destroyEntity(entity, "ejection", true, true));
 
         // only remove the unit that ejected in the movement phase
-        if (game.getPhase() == Game.PHASE_MOVEMENT) {
+        if (game.getPhase() == IGame.PHASE_MOVEMENT) {
             game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
             send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
         }
@@ -13889,7 +13841,7 @@ implements Runnable, ConnectionHandler {
                 if (entity instanceof Tank &&
                     (entity.getMovementType() == Entity.MovementType.TRACKED ||
                      entity.getMovementType() == Entity.MovementType.WHEELED ) &&
-                    game.board.getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0) {
+                    game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0) {
                         return true;
                 }
                 return false;

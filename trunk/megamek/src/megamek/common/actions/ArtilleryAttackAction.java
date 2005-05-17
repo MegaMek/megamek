@@ -30,7 +30,7 @@ implements Serializable
     private Vector spotterIds;
     private final int playerId;
     private Coords firingCoords; //Coords of firing entity, needed for resolving attack direction.
-    public ArtilleryAttackAction(WeaponResult wr, Game game,
+    public ArtilleryAttackAction(WeaponResult wr, IGame game,
                                  int playerId, Vector spotterIds,Coords coords) {
         this.wr = wr;
         this.playerId = playerId;

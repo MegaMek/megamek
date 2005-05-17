@@ -19,25 +19,25 @@ import megamek.common.*;
 public class LBXClusterAmmoType extends LBXACAmmoType {
     // Use the normal constructor
     public LBXClusterAmmoType(int tech, int size) {
-    super(tech,size);
+        super(tech,size);
     }
-
+    
     // Overload the firing routines
-    public void resolveAttack(Game game, 
-                  WeaponResult wr, 
-                  UsesAmmoType weap, 
-                  UsesAmmoState weap_state) {
-    
+    public void resolveAttack(IGame game, 
+            WeaponResult wr, 
+            UsesAmmoType weap, 
+            UsesAmmoState weap_state) {
+        
     }
-
     
     
-    public TargetRoll getModifiersFor(Game game, Entity en, Targetable targ) {
-    TargetRoll tr = super.getModifiersFor(game,en,targ);
-    // For example, if target is VTOL, we could change this modifier
-    // easily, by checking the target entity type
-    tr.addModifier(-1,"cluster ammo");
-    return tr;
+    
+    public TargetRoll getModifiersFor(IGame game, Entity en, Targetable targ) {
+        TargetRoll tr = super.getModifiersFor(game,en,targ);
+        // For example, if target is VTOL, we could change this modifier
+        // easily, by checking the target entity type
+        tr.addModifier(-1,"cluster ammo");
+        return tr;
     }
     
 }

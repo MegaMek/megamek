@@ -38,7 +38,7 @@ public class TestBoardEncoder {
     public static void main( String[] args ) {
 
         // The Game containing the Board.
-        Game game = new Game();
+        IGame game = new Game();
         IBoard board = game.getBoard();
         Coords coords = null;
         boolean success = true;

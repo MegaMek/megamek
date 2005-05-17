@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.29.78 (CVS)
++ Bug 1202811: Game class is used directly instead of IGame
++ Bug 1203746: Settings for the LOS tool
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

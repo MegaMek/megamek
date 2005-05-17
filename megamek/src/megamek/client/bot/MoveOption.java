@@ -404,7 +404,19 @@ public class MoveOption extends MovePath implements Cloneable {
         } else if (this.threat + this.movement_threat > 30) {
             temp_threat += this.centity.entity.getWeight();
         }
-        return (temp_threat - temp_damage);
+        double retVal = temp_threat - temp_damage;
+        if (hasActiveMASC()) {
+            int mascTN = 0;
+            for (final Enumeration i = getSteps(); i.hasMoreElements();) {
+                MoveStep step = (MoveStep) i.nextElement();
+                if (step.isUsingMASC() && step.getTargetNumberMASC() > mascTN) {
+                    mascTN = step.getTargetNumberMASC();
+                }
+            }
+            double mascMult = Compute.oddsAbove(mascTN)/100;
+            retVal *= (mascMult > 0) ? mascMult : 0.01;
+        }
+        return retVal;
     }
 
     /**

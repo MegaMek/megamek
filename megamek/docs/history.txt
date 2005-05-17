@@ -4,6 +4,7 @@ v0.29.78 (CVS)
 + Bug 1202811: Game class is used directly instead of IGame
 + Bug 1203746: Settings for the LOS tool
 + Bug 1180419, Patch 1203291 Multiple Thunders stack over 20 points of damage
++ Bug 1145599, Patch 1203818: Bot always uses MASC until it fails
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

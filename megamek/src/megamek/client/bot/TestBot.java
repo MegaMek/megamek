@@ -1149,7 +1149,7 @@ public class TestBot extends BotClient {
 
     protected void calculateDeployment() {
         // Use the old clumping algorithm until someone puts AI in here
-        int entNum = game.getFirstDeployableEntityNum();
+        int entNum = game.getFirstDeployableEntityNum();        
         Coords cStart = getStartingCoords();
         Coords cDeploy = getCoordsAround(cStart);
 
@@ -1162,7 +1162,8 @@ public class TestBot extends BotClient {
             // otherwise, face away
             nDir = cCenter.direction(cDeploy);
         }
-
+        Entity ce = game.getEntity(entNum);
+        megamek.debug.Assert.assertTrue(!ce.isHexProhibited(game.getBoard().getHex(cDeploy)));
         deploy(entNum, cDeploy, nDir);
     }
 

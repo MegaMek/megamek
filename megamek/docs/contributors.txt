@@ -68,6 +68,8 @@ Lot of people have contributed to the MegaMek project.
      coralbeach
      Robert Heath <blasty_mcnasty@users.sourceforge.net>
      Jacob Wall <lancemanprime@users.sourceforge.net>
+     Alexander Schölling <schoelling@users.sourceforge.net>
+     fastsammy <fastsammy@users.sourceforge.net>
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>

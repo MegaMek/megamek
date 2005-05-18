@@ -8,6 +8,7 @@ v0.29.78 (CVS)
 + Bug 1201323, Data 1203226: Demolisher (Arrow IV) should have 38 turret armor
 + Added the assertion facility
 + Added the assertion for the deployment of the Bot's units
++ Fixed [DOS|U*x]-[DOS|U*x] cvs conversion problems for board files
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

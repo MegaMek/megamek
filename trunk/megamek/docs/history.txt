@@ -9,6 +9,7 @@ v0.29.78 (CVS)
 + Added the assertion facility
 + Added the assertion for the deployment of the Bot's units
 + Fixed [DOS|U*x]-[DOS|U*x] cvs conversion problems for board files
++ Fixed the copyright for the megamek/client/GUIPreferences.java
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

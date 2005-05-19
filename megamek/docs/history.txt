@@ -11,6 +11,7 @@ v0.29.78 (CVS)
 + Fixed [DOS|U*x]-[DOS|U*x] cvs conversion problems for board files
 + Fixed the copyright for the megamek/client/GUIPreferences.java
 + Bug 1204346: Screwed up HS in BJ-2
++ Bug 1204544: "View Unit" in lobby does not work with german l10n
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

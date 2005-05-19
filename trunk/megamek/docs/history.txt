@@ -13,6 +13,7 @@ v0.29.78 (CVS)
 + Bug 1204346: Screwed up HS in BJ-2
 + Bug 1204544: "View Unit" in lobby does not work with german l10n
 + Default value of the 'friendly_fire' game option was changed to 'off'
++ Bug 1205157: ASRM-5 on Golems has incorrect range.
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

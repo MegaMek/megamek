@@ -50,7 +50,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
 
     public void initialize() {
         OptionGroup base = addGroup("base"); //$NON-NLS-1$
-        addOption(base,"friendly_fire", true); //$NON-NLS-1$
+        addOption(base,"friendly_fire", false); //$NON-NLS-1$
         addOption(base,"skip_ineligable_movement", false); //$NON-NLS-1$
         addOption(base,"skip_ineligable_firing", false); //$NON-NLS-1$
         addOption(base,"skip_ineligable_physical", true); //$NON-NLS-1$

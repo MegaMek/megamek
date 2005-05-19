@@ -1166,7 +1166,7 @@ public class ChatLounge
         ta.setText(mechView.getMechReadout());
         final Dialog dialog = new Dialog(clientgui.frame, Messages.getString("ChatLounge.quickView"), false); //$NON-NLS-1$
         Button btn = new Button(Messages.getString("Okay")); //$NON-NLS-1$
-        dialog.add(Messages.getString("ChatLounge.South"), btn); //$NON-NLS-1$
+        dialog.add("South", btn); //$NON-NLS-1$
         btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dialog.setVisible(false);
@@ -1177,13 +1177,13 @@ public class ChatLounge
                 dialog.setVisible(false);
             }
         });
-        dialog.add(Messages.getString("ChatLounge.Center"), ta); //$NON-NLS-1$
+        dialog.add("Center", ta); //$NON-NLS-1$
 
         // Preview image of the Mech...
         BufferedPanel panPreview = new BufferedPanel();
         panPreview.setPreferredSize(84, 72);
         clientgui.loadPreviewImage(panPreview, entity);
-        dialog.add(Messages.getString("ChatLounge.North"), panPreview); //$NON-NLS-1$
+        dialog.add("North", panPreview); //$NON-NLS-1$
 
         dialog.setLocation(
             clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2 - dialog.getSize().width / 2,

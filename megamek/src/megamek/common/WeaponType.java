@@ -5044,7 +5044,7 @@ public class WeaponType extends EquipmentType {
         weapon.rackSize = 5;
         weapon.ammoType = AmmoType.T_SRM_ADVANCED;
         weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
+        weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
         weapon.extremeRange = 16;

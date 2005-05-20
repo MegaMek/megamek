@@ -384,6 +384,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createBASupportPPC() );
         EquipmentType.addType( createBAVibroClaws() );
         EquipmentType.addType( createPhalanxSRM4() );
+        
+        // War Of 3039 prototype weapons
+        EquipmentType.addType( createISGaussRiflePrototype() );
+        EquipmentType.addType( createISUltraAC5Prototype() );
+        EquipmentType.addType( createISERLargeLaserPrototype() );
+        EquipmentType.addType( createISMediumPulseLaserPrototype() );
     }
 
     public static WeaponType createFlamer() {
@@ -5444,6 +5450,32 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+    
+    public static WeaponType createISUltraAC5Prototype() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Ultra AC/5 Prototype";
+        weapon.setInternalName("ISUltraAC5Prototype");
+        weapon.addLookupName("IS Ultra AC/5 Prototype");
+        weapon.heat = 1;
+        weapon.damage = 5;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_AC_ULTRA;
+        weapon.minimumRange = 2;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 13;
+        weapon.longRange = 20;
+        weapon.extremeRange = 26;
+        weapon.tonnage = 9.0f;
+        weapon.criticals = 5;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_PROTOTYPE;
+        weapon.bv = 113;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
+
+        return weapon;
+    }
+
 
     public String toString() {
         return "WeaponType: " + name;

@@ -133,6 +133,7 @@ public abstract class Entity
     public int                  mpUsed = 0;
     public int                  moved = MOVE_NONE;
     public boolean              gotPavementBonus = false;
+    public boolean              hitThisRoundByAntiTSM = false;
 
     private int[]               exposure;
     private int[]               armor;

@@ -14,6 +14,14 @@ v0.29.78 (CVS)
 + Bug 1204544: "View Unit" in lobby does not work with german l10n
 + Default value of the 'friendly_fire' game option was changed to 'off'
 + Bug 1205157: ASRM-5 on Golems has incorrect range.
++ Bug 1185343: NPE in WeaponAttackAction.
++ Implemented the Prototype weapons from the War of 3039 sourcebooks,
+    missile munition (listen-kill, anti-TSM) can be chosen as usual for custom
+    ammo, The prototype Gauss Rifle, LB-10X, Ultra AC/5, ER-Large and Medium
+    Pulse laser need to be edited in the mechfile. They each take one more crit
+    than the normal versions of the weapon, and the equipment name in the mech-
+    file needs to be appended by " Prototype", e.g. for a Gauss Rifle, instead
+    of "IS Gauss Rifle", you write "IS Gauss Rifle Prototype".
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

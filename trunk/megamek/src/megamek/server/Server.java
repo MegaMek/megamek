@@ -5580,6 +5580,8 @@ implements Runnable, ConnectionHandler {
       boolean bFlechette = (usesAmmo &&
                             atype.getMunitionType() == AmmoType.M_FLECHETTE);
       boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
+      boolean bAntiTSM = (usesAmmo &&
+                            atype.getMunitionType() == AmmoType.M_ANTI_TSM);
       boolean glancing = false; // For Glancing Hits Rule
       int glancingMissileMod = 0;
       int glancingCritMod = 0;
@@ -5706,12 +5708,15 @@ implements Runnable, ConnectionHandler {
       // dice have been rolled, thanks
       phaseReport.append("rolls ").append(wr.roll).append(" : ");
 
-      // check for AC jams
+      // check for AC or Prototype jams
       int nShots = weapon.howManyShots();
-      if (nShots > 1) {
+      if (nShots > 1 || 
+          (wtype.hasFlag(WeaponType.F_PROTOTYPE) &&
+           wtype.getAmmoType() != AmmoType.T_NA) ) {
           int jamCheck = 0;
-          if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA &&
-              weapon.curMode().equals("Ultra")) {
+          if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA &&
+               weapon.curMode().equals("Ultra")) ||
+              wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
               jamCheck = 2;
           } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
               if (nShots == 2) {
@@ -5724,9 +5729,13 @@ implements Runnable, ConnectionHandler {
           }
 
           if (jamCheck > 0 && wr.roll <= jamCheck) {
-              // ultras are destroyed by jamming
+              // ultras and prototypes are destroyed by jamming
               if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
                   phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
+                  weapon.setJammed(true);
+                  weapon.setHit(true);
+              } else if (wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
+                  phaseReport.append("misses BECAUSE THE PROTOTYPE JAMS.\n");
                   weapon.setJammed(true);
                   weapon.setHit(true);
               } else {
@@ -6420,6 +6429,10 @@ implements Runnable, ConnectionHandler {
                     sSalvoType = " inferno missile(s) ";
                     bSalvo = false;
             }
+            
+            if (bAntiTSM) {
+                sSalvoType = " anti-TSM missile(s) ";
+            }
 
             // If dealing with fragmentation missiles,
             // it does double damage to infantry...
@@ -6463,6 +6476,10 @@ implements Runnable, ConnectionHandler {
             else {
                 hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | glancing);
             }
+            // anti TSM missiles hit with half the number, round up
+            if (bAntiTSM) {
+                hits = (int)Math.ceil((double)hits/2);
+            }
 
             // Advanced SRMs may get additional missiles
             if ( usesAmmo &&
@@ -6477,14 +6494,16 @@ implements Runnable, ConnectionHandler {
             // Cluster shots break into single point clusters.
             bSalvo = true;
             hits = wtype.getRackSize();
+            // war of 3039 prototype LBXs get -1 mod on missile chart
+            int nMod = wtype.hasFlag(WeaponType.F_PROTOTYPE) ? 0 : -1;
             if ( !bAllShotsHit ) {
                 if (!glancing) {
-                    hits = Compute.missilesHit( hits );
+                    hits = Compute.missilesHit( hits, nMod );
                 } else {
                     // if glancing blow, half the number of missiles that hit,
                     // that halves damage. do this, and not adjust number of 
                     // pellets, because maxtech only talks about missile weapons
-                    hits = Compute.missilesHit(hits)/2;
+                    hits = Compute.missilesHit(hits, nMod)/2;
                 }
             }
             nDamPerHit = 1;
@@ -6536,6 +6555,11 @@ implements Runnable, ConnectionHandler {
                 // Apply heat
                 ae.heatBuildup += nDamPerHit;
             }
+        } 
+        // laser prototype weapons get 1d6 of extra heat
+        if (wtype.hasFlag(WeaponType.F_LASER) &&
+            wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
+            ae.heatBuildup += Compute.d6();
         }
         // only halve damage for non-missiles and non-cluster,
         // because cluster lbx gets handled above.
@@ -7046,6 +7070,9 @@ implements Runnable, ConnectionHandler {
                             hit.makeArmorPiercing(atype);
                         if (glancing) {
                             hit.makeGlancingBlow();
+                        }
+                        if (bAntiTSM) {
+                            entityTarget.hitThisRoundByAntiTSM = true;
                         }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage) );
@@ -10010,6 +10037,16 @@ implements Runnable, ConnectionHandler {
             }
 
         } // End crit-on-equipment-slot
+        // mechs with TSM hit by anti-tsm missiles this round get another crit
+        if (en instanceof Mech && en.hitThisRoundByAntiTSM) {
+            Mech mech = (Mech)en;
+            if (mech.hasTSM()) {
+                desc.append("\n       ").append(en.getDisplayName())
+                    .append(" takes an additional critical hit, because it was hit by anti-TSM missiles this round./n");
+                desc.append(oneCriticalEntity (en, Compute.d6(2)));
+            }
+            en.hitThisRoundByAntiTSM = false;
+        }
 
         // Return the results of the damage.
         return desc.toString();

@@ -5718,6 +5718,10 @@ implements Runnable, ConnectionHandler {
                weapon.curMode().equals("Ultra")) ||
               wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
               jamCheck = 2;
+              if (weapon.curMode().equals("Ultra") &&
+                  wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
+                  jamCheck = 4;
+              }
           } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
               if (nShots == 2) {
                   jamCheck = 2;

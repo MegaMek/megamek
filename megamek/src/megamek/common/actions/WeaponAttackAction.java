@@ -169,6 +169,7 @@ public class WeaponAttackAction
         boolean isPPCwithoutInhibitor = wtype.getInternalName()==("Particle Cannon") && game.getOptions().booleanOption("maxtech_ppc_inhibitors") && weapon.curMode().equals("Field Inhibitor OFF");
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
+        boolean isECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
         if (te != null) {
             if (te.isINarcedBy(ae.getOwner().getTeam()) &&
                 atype != null &&
@@ -213,7 +214,7 @@ public class WeaponAttackAction
         // Arty shots have to be with arty, non arty shots with non arty.
         if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY && 
                 (!wtype.hasFlag(WeaponType.F_ARTILLERY) || 
-                        ((atype.getMunitionType() == AmmoType.M_FASCAM) || 
+                        (atype != null && (atype.getMunitionType() == AmmoType.M_FASCAM) || 
                         (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) || 
                         (atype.getMunitionType() == AmmoType.M_INFERNO_IV)))) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
@@ -226,13 +227,13 @@ public class WeaponAttackAction
               wtype.hasFlag(WeaponType.F_ARTILLERY)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
         }
-        if (target.getTargetType() == Targetable.TYPE_HEX_FASCAM && !(atype.getMunitionType() == AmmoType.M_FASCAM)) {
+        if (target.getTargetType() == Targetable.TYPE_HEX_FASCAM && atype != null && !(atype.getMunitionType() == AmmoType.M_FASCAM)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
         }
-        if (target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV && !(atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
+        if (target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV && atype != null && !(atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
         }
-        if (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV && !(atype.getMunitionType() == AmmoType.M_INFERNO_IV)) {
+        if (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV && atype != null && !(atype.getMunitionType() == AmmoType.M_INFERNO_IV)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
         }
         
@@ -499,6 +500,13 @@ public class WeaponAttackAction
     
         if (ae.crew.getOptions().booleanOption("gunnery_missile") == true && wtype.hasFlag(WeaponType.F_MISSILE) ) {
             toHit.addModifier ( -1, "Gunnery/Missile" );
+        }
+        
+        // Do we use Listen-Kill ammo from War of 3039 sourcebook?
+        if (!isECMAffected && atype != null && 
+             atype.getAmmoType() == AmmoType.M_LISTEN_KILL &&
+             !(te != null && te.isClan())) {
+            toHit.addModifier ( -1, "Listen-Kill ammo");            
         }
     
         // determine some more variables

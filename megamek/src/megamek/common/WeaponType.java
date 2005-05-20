@@ -39,6 +39,7 @@ public class WeaponType extends EquipmentType {
     public static final int     F_MISSILE       = 0x80000; // For Gunnery/Missile skill
     public static final int     F_PLASMA        = 0x100000; // For fires
     public static final int F_INCENDIARY_NEEDLES = 0x200000; // For fires
+    public static final int     F_PROTOTYPE     = 0x400000; // for war of 3039 prototype weapons
 
     public static final int     F_SPLITABLE     = 0x0100; // Weapons that can be split between locations
     public static final int     F_MG            = 0x0200; // MG; for rapid fire set up
@@ -5337,6 +5338,109 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DOUBLE_HITS | F_MISSILE;
+
+        return weapon;
+    }
+    
+    // War Of 3039 Prototype weapons
+    
+    public static WeaponType createISLBXAC10Prototype() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "LB 10-X AC Prototype";
+        weapon.setInternalName("ISLBXAC10Prototype");
+        weapon.addLookupName("IS LB 10-X AC Prototype");
+        weapon.heat = 2;
+        weapon.damage = 10;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_AC_LBX;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.tonnage = 11.0f;
+        weapon.criticals = 7;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_PROTOTYPE;
+        weapon.bv = 148;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISGaussRiflePrototype() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Gauss Rifle Prototype";
+        weapon.setInternalName("ISGaussRiflePrototype");
+        weapon.addLookupName("IS Gauss Rifle Prototype");
+        weapon.heat = 1;
+        weapon.damage = 15;
+        weapon.ammoType = AmmoType.T_GAUSS;
+        weapon.minimumRange = 2;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 15;
+        weapon.longRange = 22;
+        weapon.extremeRange = 30;
+        weapon.tonnage = 15.0f;
+        weapon.criticals = 7;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_PROTOTYPE;
+        weapon.explosive = true;
+        weapon.bv = 321;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISERLargeLaserPrototype() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "ER Large Laser Prototype";
+        weapon.setInternalName("ISERLargeLaserPrototype");
+        weapon.addLookupName("IS ER Large Laser Prototype");
+        weapon.heat = 12;
+        weapon.damage = 8;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 19;
+        weapon.extremeRange = 28;
+        weapon.waterShortRange = 3;
+        weapon.waterMediumRange = 9;
+        weapon.waterLongRange = 12;
+        weapon.waterExtremeRange = 18;
+        weapon.tonnage = 5.0f;
+        weapon.criticals = 2;
+        weapon.toHitModifier = 1;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_PROTOTYPE;
+        weapon.bv = 163;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISMediumPulseLaserPrototype() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Medium Pulse Laser Prototype";
+        weapon.setInternalName("ISMediumPulseLaserPrototype");
+        weapon.addLookupName("IS Pulse Med Laser Prototype");
+        weapon.addLookupName("IS Medium Pulse Laser Prototype");
+        weapon.heat = 4;
+        weapon.damage = 6;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.waterShortRange = 2;
+        weapon.waterMediumRange = 3;
+        weapon.waterLongRange = 4;
+        weapon.waterExtremeRange = 6;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_PROTOTYPE;
+        weapon.bv = 48;
 
         return weapon;
     }

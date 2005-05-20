@@ -100,6 +100,9 @@ public class AmmoType extends EquipmentType {
     public static final int     M_SMOKE             = 1 << 27;
     // Narc capable missiles
     public static final int     M_NARC_CAPABLE      = 1 << 28;
+    // War of 3039 ammo
+    public static final int     M_LISTEN_KILL       = 1 << 29;
+    public static final int     M_ANTI_TSM          = 1 << 30;
     
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
@@ -226,8 +229,8 @@ public class AmmoType extends EquipmentType {
 
     public static void initializeTypes() {
         // Save copies of the SRM and LRM ammos to use to create munitions.
-        Vector srmAmmos = new Vector(9);
-        Vector lrmAmmos = new Vector(24);
+        Vector srmAmmos = new Vector(11);
+        Vector lrmAmmos = new Vector(26);
         Vector acAmmos  = new Vector(4);
         Vector arrowAmmos = new Vector(4);
         Vector artyAmmos = new Vector(6);
@@ -485,6 +488,10 @@ public class AmmoType extends EquipmentType {
                                                    1, M_FRAGMENTATION ) );
         munitions.addElement( new MunitionMutator( "Narc capable",
                                                    1, M_NARC_CAPABLE ) );
+        munitions.addElement( new MunitionMutator( "Listen-Kill",
+                                                   1, M_LISTEN_KILL ) );
+        munitions.addElement( new MunitionMutator( "Anti-TSM",
+                                                   1, M_ANTI_TSM ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -514,6 +521,10 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_VIBRABOMB ) );
         munitions.addElement( new MunitionMutator( "Narc capable",
                                                    1, M_NARC_CAPABLE ) );
+        munitions.addElement( new MunitionMutator( "Listen-Kill",
+                                                   1, M_LISTEN_KILL ) );
+        munitions.addElement( new MunitionMutator( "Anti-TSM",
+                                                   1, M_ANTI_TSM ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.

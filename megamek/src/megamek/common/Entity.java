@@ -2369,6 +2369,7 @@ public abstract class Entity
         mpUsed = 0;
         moved = Entity.MOVE_NONE;
         gotPavementBonus = false;
+        hitThisRoundByAntiTSM = false;
 
         setArmsFlipped(false);
         setDisplacementAttack(null);

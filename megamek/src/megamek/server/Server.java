@@ -10046,7 +10046,7 @@ implements Runnable, ConnectionHandler {
             Mech mech = (Mech)en;
             if (mech.hasTSM()) {
                 desc.append("\n       ").append(en.getDisplayName())
-                    .append(" takes an additional critical hit, because it was hit by anti-TSM missiles this round./n");
+                    .append(" takes an additional critical hit, because it was hit by anti-TSM missiles this round.");
                 desc.append(oneCriticalEntity (en, Compute.d6(2)));
             }
             en.hitThisRoundByAntiTSM = false;

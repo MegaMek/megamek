@@ -4079,14 +4079,9 @@ implements Runnable, ConnectionHandler {
                 HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
                 phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
             } else if (mf.getType() == Minefield.TYPE_THUNDER_VIBRABOMB) {
-                // thunder vibrabombs do damage in 5 point packs
                 int damage = mf.getDamage();
-                while (damage > 0) {
-                    int cluster = Math.min(5, damage);
-                    HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-                    phaseReport.append(damageEntity(entity, hit, cluster));
-                    damage -= cluster;
-                }
+                HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                phaseReport.append(damageEntity(entity, hit, damage));
             }
 
             resolvePilotingRolls(entity, true, entity.getPosition(), entity.getPosition());

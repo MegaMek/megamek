@@ -22,6 +22,7 @@ v0.29.78 (CVS)
     than the normal versions of the weapon, and the equipment name in the mech-
     file needs to be appended by " Prototype", e.g. for a Gauss Rifle, instead
     of "IS Gauss Rifle", you write "IS Gauss Rifle Prototype".
+    For MTF files, you need to append "Prototyp" without a space in front of it.
 + Thunder Vibrabomb damage should _not_ be in 5 point clusters.
 
 v0.29.77 (2005-05-17 8:00am)

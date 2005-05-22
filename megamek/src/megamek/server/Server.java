@@ -9545,7 +9545,7 @@ implements Runnable, ConnectionHandler {
                         damage = 0;
                     } else if (damage > 0) {
                         // remaining damage transfers
-                        desc.append( " " )
+                        desc.append( "\n        " )
                             .append( damage )
                             .append( " damage transfers to " )
                             .append( te.getLocationAbbr(nextHit) )
@@ -9636,7 +9636,7 @@ implements Runnable, ConnectionHandler {
 
       boolean didExplode = explosionRoll >= explosionBTH;
 
-      sbDesc.append("        \n" + en.getDisplayName() + " has taken " + en.engineHitsThisRound + " engine hits this round.\n");
+      sbDesc.append("\n        " + en.getDisplayName() + " has taken " + en.engineHitsThisRound + " engine hits this round.\n");
       sbDesc.append("        Checking for engine explosion on BTH = " + explosionBTH + ", Roll = " + explosionRoll + "\n");
       en.rolledForEngineExplosion = true;
 
@@ -10598,7 +10598,8 @@ implements Runnable, ConnectionHandler {
 
         // Inferno ammo causes heat buildup as well as the damage
         if ( mounted.getType() instanceof AmmoType &&
-             ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO) {
+             ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO &&
+              mounted.getShotsLeft() > 0) {
             en.heatBuildup += 30;
         }
 
@@ -10650,6 +10651,10 @@ implements Runnable, ConnectionHandler {
                 }
                 AmmoType atype = (AmmoType)mounted.getType();
                 if (!atype.isExplosive()) {
+                    continue;
+                }
+                //ignore empty bins
+                if (atype.getShots() == 0) {
                     continue;
                 }
                 // BMRr, pg. 48, compare one rack's
@@ -10783,14 +10788,15 @@ implements Runnable, ConnectionHandler {
         //check for location exposure
         doSetLocationsExposure(entity, fallHex, fallHex.hasPavement(), false);
 
-        // pilot damage?
+        // we want to be able to avoid pilot damage even when it was
+        // an automatic fall, only unconsciousness should cause auto-damage
         roll.removeAutos();
 
         if (height > 0) {
             roll.addModifier(height, "height of fall");
         }
 
-        if (roll.getValue() == PilotingRollData.AUTOMATIC_FAIL) {
+        if (roll.getValue() == PilotingRollData.IMPOSSIBLE) {
             phaseReport.append("\nPilot of " ).append( entity.getDisplayName()
             ).append( " \"" ).append( entity.crew.getName() ).append( "\" cannot avoid damage.\n");
             phaseReport.append(damageCrew(entity, 1) ).append( "\n");
@@ -11599,7 +11605,7 @@ implements Runnable, ConnectionHandler {
             Vector vCanSee = whoCanSee(e);
             for (int y = 0; y < vCanSee.size(); y++) {
                 Player p = (Player)vCanSee.elementAt(y);
-                if (e.getOwner().isEnemyOf(p)) {
+                if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
                     e.setVisibleToEnemy(true);
                     e.setSeenByEnemy(true);
                 }

@@ -42,6 +42,7 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.CircularIntegerBuffer;
 
 public class Client implements Runnable {
     // we need these to communicate with the server
@@ -49,6 +50,8 @@ public class Client implements Runnable {
     Socket socket;
     private ObjectInputStream in = null;
     private ObjectOutputStream out = null;
+    private CircularIntegerBuffer debugLastFewCommandsSent =
+        new CircularIntegerBuffer(5);
 
     // some info about us and the server
     private boolean connected = false;
@@ -706,6 +709,7 @@ public class Client implements Runnable {
      * send the message to the server
      */
     protected void send(Packet packet) {
+        debugLastFewCommandsSent.push(packet.getCommand());
         packet.zipData();
         try {
             if (out == null) {
@@ -717,7 +721,8 @@ public class Client implements Runnable {
             out.flush();
             //            System.out.println("c: packet #" + packet.getCommand() + " sent");
         } catch (IOException ex) {
-            System.err.println("client: error sending command."); //$NON-NLS-1$
+            System.err.println("c: error sending command #" + packet.getCommand() + ": " + ex.getMessage()); //$NON-NLS-1$
+            System.err.println("    Last five commands that were sent (oldest first): " + debugLastFewCommandsSent.print());
         }
     }
 

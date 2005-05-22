@@ -504,7 +504,7 @@ public class WeaponAttackAction
         
         // Do we use Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected && atype != null && 
-             atype.getAmmoType() == AmmoType.M_LISTEN_KILL &&
+             atype.getMunitionType() == AmmoType.M_LISTEN_KILL &&
              !(te != null && te.isClan())) {
             toHit.addModifier ( -1, "Listen-Kill ammo");            
         }

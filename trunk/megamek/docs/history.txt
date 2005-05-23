@@ -25,6 +25,7 @@ v0.29.78 (CVS)
     For MTF files, you need to append "Prototyp" without a space in front of it.
 + Thunder Vibrabomb damage should _not_ be in 5 point clusters.
 + Added some network debug code to client
++ Do not allow a player's opponent to set his opponent's Mechs' autoeject status
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

@@ -5578,7 +5578,7 @@ implements Runnable, ConnectionHandler {
       boolean bAntiTSM = (usesAmmo &&
                             atype.getMunitionType() == AmmoType.M_ANTI_TSM);
       boolean glancing = false; // For Glancing Hits Rule
-      int glancingMissileMod = 0;
+      int hits = 1, glancingMissileMod = 0;
       int glancingCritMod = 0;
 
       if (!bInferno) {
@@ -6011,7 +6011,7 @@ implements Runnable, ConnectionHandler {
 
         for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
             Entity entity = (Entity)impactHexHits.nextElement();
-            int hits = ratedDamage;
+            hits = ratedDamage;
             
             while(hits>0) {
                 if(wr.artyAttackerCoords!=null) {
@@ -6056,7 +6056,7 @@ implements Runnable, ConnectionHandler {
             }
             for(;splashHexHits.hasMoreElements();) {
                 Entity entity = (Entity)splashHexHits.nextElement();
-                int hits = ratedDamage;
+                hits = ratedDamage;
                 while(hits>0) {
                     HitData hit = entity.rollHitLocation
                         ( toHit.getHitTable(),
@@ -6078,22 +6078,26 @@ implements Runnable, ConnectionHandler {
           if (weapon.isRapidfire() &&
               !(target instanceof Infantry &&
               !(target instanceof BattleArmor)) ){
-              // Check for rapid fire Option. Only MGs can be rapidfire.
-              nDamPerHit = Compute.d6();
-              ammoUsage = 3*nDamPerHit;
-              for (int i=0; i<ammoUsage; i++) {
-                  if (ammo.getShotsLeft() <= 0) {
-                      ae.loadWeapon(weapon);
-                      ammo = weapon.getLinked();
-                  }
-                  ammo.setShotsLeft(ammo.getShotsLeft()-1);
-              }
-              if (ae instanceof Mech) {
-                  // Apply heat
-                  ae.heatBuildup += nDamPerHit;
-              }
-          }
-                 if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
+                // Check for rapid fire Option. Only MGs can be rapidfire.
+                nDamPerHit = Compute.d6();
+                ammoUsage = 3*nDamPerHit;
+                if (ae.getTotalAmmoOfType(ammo.getType())>0) {
+                    for (int i=0; i<ammoUsage; i++) {
+                        if (ammo.getShotsLeft() <= 0) {
+                            ae.loadWeapon(weapon);
+                            ammo = weapon.getLinked();
+                        }
+                        ammo.setShotsLeft(ammo.getShotsLeft()-1);
+                    }
+                    if (ae instanceof Mech) {
+                        // Apply heat
+                        ae.heatBuildup += nDamPerHit;
+                    }
+                } else {
+                    hits = 0;
+                }
+            }
+            if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
                 phaseReport.append( "fails to achieve lock.\n" );
             } else {
                 phaseReport.append("misses");
@@ -6240,7 +6244,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // yeech.  handle damage. . different weapons do this in very different ways
-        int hits = 1, nCluster = 1, nSalvoBonus = 0;
+        int nCluster = 1, nSalvoBonus = 0;
         boolean bSalvo = false;
         // ecm check is heavy, so only do it once
         boolean bCheckedECM = false;
@@ -6543,16 +6547,20 @@ implements Runnable, ConnectionHandler {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             nDamPerHit = Compute.d6();
             ammoUsage = 3*nDamPerHit;
-            for (int i=0; i<ammoUsage; i++) {
-                if (ammo.getShotsLeft() <= 0) {
-                    ae.loadWeapon(weapon);
-                    ammo = weapon.getLinked();
+            if (ae.getTotalAmmoOfType(ammo.getType())>0) {
+                for (int i=0; i<ammoUsage; i++) {
+                    if (ammo.getShotsLeft() <= 0) {
+                        ae.loadWeapon(weapon);
+                        ammo = weapon.getLinked();
+                    } 
+                    ammo.setShotsLeft(ammo.getShotsLeft()-1);
                 }
-                ammo.setShotsLeft(ammo.getShotsLeft()-1);
-            }
-            if (ae instanceof Mech) {
-                // Apply heat
-                ae.heatBuildup += nDamPerHit;
+                if (ae instanceof Mech) {
+                    // Apply heat
+                    ae.heatBuildup += nDamPerHit;
+                }
+            } else {
+                hits = 0;
             }
         } 
         // laser prototype weapons get 1d6 of extra heat

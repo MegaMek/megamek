@@ -49,6 +49,7 @@ public class RandomMapDialog
     private Choice choRough = null;
     private Choice choRoads = null;
     private Choice choRivers = null;
+    private Choice choSwamp = null;
 
     private Label labElevation = null;
     private Label labWoods = null;
@@ -56,6 +57,7 @@ public class RandomMapDialog
     private Label labRough = null;
     private Label labRoads = null;
     private Label labRivers = null;
+    private Label labSwamp = null;
     
     private SimpleLine slElevation = null;
     private SimpleLine slWoods = null;
@@ -63,6 +65,7 @@ public class RandomMapDialog
     private SimpleLine slRough = null;
     private SimpleLine slRoads = null;
     private SimpleLine slRivers = null;
+    private SimpleLine slSwamp = null;
     private SimpleLine slBoardSize = null;
 
     private SimpleLine slElevationAd = null;
@@ -71,6 +74,7 @@ public class RandomMapDialog
     private SimpleLine slRoughAd = null;
     private SimpleLine slRoadsAd = null;
     private SimpleLine slRiversAd = null;
+    private SimpleLine slSwampAd = null;
     private SimpleLine slBoardSizeAd = null;
     private SimpleLine slCratersAd = null;
 
@@ -118,6 +122,14 @@ public class RandomMapDialog
     private Label labRoughSize;
     private TextField texMinRoughSize;
     private TextField texMaxRoughSize;
+    
+    /** swamp */
+    private Label labSwampSpots;
+    private TextField texMinSwampSpots;
+    private TextField texMaxSwampSpots;
+    private Label labSwampSize;
+    private TextField texMinSwampSize;
+    private TextField texMaxSwampSize;
     
     /** probability for a road, range 0..100 */
     private Label labProbRoad;
@@ -204,6 +216,7 @@ public class RandomMapDialog
             addOption(labElevation, choElevation, slElevation);
             addOption(labWoods, choWoods, slWoods);
             addOption(labRough, choRough, slRough);
+            addOption(labSwamp, choSwamp, slSwamp);
             addOption(labRoads, choRoads, slRoads);
             addOption(labLakes, choLakes, slLakes);
             addOption(labRivers, choRivers, slRivers);
@@ -229,6 +242,11 @@ public class RandomMapDialog
             addLabelTextField(labRoughSize, texMinRoughSize, texMaxRoughSize, "-"); //$NON-NLS-1$
         
             addSeparator(slRoughAd);
+            
+            addLabelTextField(labSwampSpots, texMinSwampSpots, texMaxSwampSpots, "-"); //$NON-NLS-1$
+            addLabelTextField(labSwampSize, texMinSwampSize, texMaxSwampSize, "-"); //$NON-NLS-1$
+        
+            addSeparator(slSwampAd);
 
             addLabelTextField(labProbRoad, texProbRoad);
         
@@ -309,6 +327,11 @@ public class RandomMapDialog
         choRough = new Choice();
         fillChoice(choRough);
         slRough = new SimpleLine(NORMAL_LINE_WIDTH);
+        
+        labSwamp = new Label(Messages.getString("RandomMapDialog.labSwamp"), Label.LEFT); //$NON-NLS-1$
+        choSwamp = new Choice();
+        fillChoice(choSwamp);
+        slSwamp = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labRivers = new Label(Messages.getString("RandomMapDialog.labRivers"), Label.LEFT); //$NON-NLS-1$
         choRivers = new Choice();
@@ -383,6 +406,18 @@ public class RandomMapDialog
         texMaxRoughSize= new TextField(2);
         texMaxRoughSize.addFocusListener(this);
         
+        /** swamp */
+        labSwampSpots= new Label(Messages.getString("RandomMapDialog.labSwampSpots"), Label.LEFT); //$NON-NLS-1$
+        texMinSwampSpots= new TextField(2);
+        texMinSwampSpots.addFocusListener(this);
+        texMaxSwampSpots= new TextField(2);
+        texMaxSwampSpots.addFocusListener(this);
+        labSwampSize= new Label(Messages.getString("RandomMapDialog.labSwampSize"), Label.LEFT); //$NON-NLS-1$
+        texMinSwampSize= new TextField(2);
+        texMinSwampSize.addFocusListener(this);
+        texMaxSwampSize= new TextField(2);
+        texMaxSwampSize.addFocusListener(this);
+        
         /** probability for a road, range 0..100 */
         labProbRoad= new Label(Messages.getString("RandomMapDialog.labProbRoad"), Label.LEFT); //$NON-NLS-1$
         texProbRoad= new TextField(2);
@@ -417,6 +452,7 @@ public class RandomMapDialog
         slRoughAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slRoadsAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slRiversAd = new SimpleLine(ADVANCED_LINE_WIDTH);
+        slSwampAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slBoardSizeAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slCratersAd = new SimpleLine(ADVANCED_LINE_WIDTH);
 
@@ -527,6 +563,11 @@ public class RandomMapDialog
         texMinRoughSize.setText(new Integer(mapSettings.getMinRoughSize()).toString());
         texMaxRoughSize.setText(new Integer(mapSettings.getMaxRoughSize()).toString());
         
+        texMinSwampSpots.setText(new Integer(mapSettings.getMinSwampSpots()).toString());
+        texMaxSwampSpots.setText(new Integer(mapSettings.getMaxSwampSpots()).toString());
+        texMinSwampSize.setText(new Integer(mapSettings.getMinSwampSize()).toString());
+        texMaxSwampSize.setText(new Integer(mapSettings.getMaxSwampSize()).toString());
+        
         texProbDeep.setText(new Integer(mapSettings.getProbDeep()).toString());
         texProbHeavy.setText(new Integer(mapSettings.getProbHeavy()).toString());
         texProbRiver.setText(new Integer(mapSettings.getProbRiver()).toString());
@@ -546,6 +587,7 @@ public class RandomMapDialog
         int minWaterSpots, maxWaterSpots, minWaterSize, maxWaterSize, probDeep;
         int minForestSpots, maxForestSpots, minForestSize, maxForestSize, probHeavy;
         int minRoughSpots, maxRoughSpots, minRoughSize, maxRoughSize;
+        int minSwampSpots, maxSwampSpots, minSwampSize, maxSwampSize;
         int probRoad, probRiver, probInvert;
         int minRadius, maxRadius, minCraters, maxCraters, probCrater;
         int algorithmToUse;
@@ -580,6 +622,10 @@ public class RandomMapDialog
                 maxRoughSpots = Integer.parseInt(texMaxRoughSpots.getText());
                 minRoughSize = Integer.parseInt(texMinRoughSize.getText());
                 maxRoughSize = Integer.parseInt(texMaxRoughSize.getText());
+                minSwampSpots = Integer.parseInt(texMinSwampSpots.getText());
+                maxSwampSpots = Integer.parseInt(texMaxSwampSpots.getText());
+                minSwampSize = Integer.parseInt(texMinSwampSize.getText());
+                maxSwampSize = Integer.parseInt(texMaxSwampSize.getText());
                 probRoad = Integer.parseInt(texProbRoad.getText());
                 probRiver = Integer.parseInt(texProbRiver.getText());
                 probHeavy = Integer.parseInt(texProbHeavy.getText());
@@ -687,6 +733,30 @@ public class RandomMapDialog
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxRoughSizeWarn1")).show(); //$NON-NLS-1$
                 return false;
             }
+            if (minSwampSpots < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinSwampsWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxSwampSpots < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxSwampsWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxSwampSpots < minSwampSpots) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxSwampsWarn1")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (minSwampSize < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinSwampSizeWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxSwampSize < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxSwampSizeWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxSwampSize < minSwampSize) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxSwampSizeWarn1")).show(); //$NON-NLS-1$
+                return false;
+            }
             if (probRiver < 0 || probRiver > 100) {
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.RiverProbWarn")).show(); //$NON-NLS-1$
                 return false;
@@ -712,15 +782,15 @@ public class RandomMapDialog
                 return false;
             }
             if (maxCraters < 0) {
-                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxCatersWarn")).show(); //$NON-NLS-1$
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxCratersWarn")).show(); //$NON-NLS-1$
                 return false;
             }
             if (minCraters < 0) {
-                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinCatersWarn")).show(); //$NON-NLS-1$
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinCratersWarn")).show(); //$NON-NLS-1$
                 return false;
             }
             if (maxCraters < minCraters) {
-                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxCatersWarn1")).show(); //$NON-NLS-1$
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxCratersWarn1")).show(); //$NON-NLS-1$
                 return false;
             }
             if (algorithmToUse < 0 || algorithmToUse > 2) {
@@ -818,6 +888,28 @@ public class RandomMapDialog
                 minRoughSpots = 5;
                 maxRoughSpots = 10;
             }
+            s = choSwamp.getSelectedItem();
+            if (s.equals(NONE)) {
+                minSwampSize = 0;
+                maxSwampSize = 0;
+                minSwampSpots = 0;
+                maxSwampSpots = 0;
+            } else if (s.equals(LOW)) {
+                minSwampSize = 1;
+                maxSwampSize = 2;
+                minSwampSpots = 2;
+                maxSwampSpots = 6;
+            } else if (s.equals(MEDIUM)) {
+                minSwampSize = 2;
+                maxSwampSize = 5;
+                minSwampSpots = 3;
+                maxSwampSpots = 8;
+            } else {
+                minSwampSize = 3;
+                maxSwampSize = 7;
+                minSwampSpots = 5;
+                maxSwampSpots = 10;
+            }
             s = choRoads.getSelectedItem();
             if (s.equals(NONE)) {
                 probRoad = 0;
@@ -856,6 +948,8 @@ public class RandomMapDialog
                                     minForestSize, maxForestSize, probHeavy);
         mapSettings.setRoughParams(minRoughSpots, maxRoughSpots,
                                     minRoughSize, maxRoughSize);
+        mapSettings.setSwampParams(minSwampSpots, maxSwampSpots,
+                                    minSwampSize, maxSwampSize);
         mapSettings.setRiverParam(probRiver);
         mapSettings.setRoadParam(probRoad);
         mapSettings.setCraterParam(probCrater, minCraters, maxCraters, minRadius, maxRadius);

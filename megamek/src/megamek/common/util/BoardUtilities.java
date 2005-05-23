@@ -143,6 +143,18 @@ public class BoardUtilities {
                     mapSettings.getMaxRoughSize(),
                     reverseHex);
         }
+        /* Add the swamp */
+        count = mapSettings.getMinSwampSpots();
+        if (mapSettings.getMaxSwampSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxSwampSpots());
+        }
+        count *= sizeScale;
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.SWAMP, 0,
+                    mapSettings.getMinSwampSize(), 
+                    mapSettings.getMaxSwampSize(),
+                    reverseHex);
+        }
         /* Add the craters */
         if (Compute.randomInt(100) < mapSettings.getProbCrater()) {
             addCraters(result, mapSettings.getMinRadius(), mapSettings.getMaxRadius(),

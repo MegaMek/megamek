@@ -27,6 +27,7 @@ v0.29.78 (CVS)
 + Added some network debug code to client
 + Do not allow a player's opponent to set his opponent's Mechs' autoeject status
 + Bug 1207130: when ejecting a mech, sprite gets updated too late
++ Bug 1205317: MGs in rapid fire ignore ammo depletion
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

@@ -183,7 +183,7 @@ v0.29.69 (2005-03-14 7:45am)
     variants.
 + Don't allow missed charges to displace the attacker off the map.
 + Changed the Battle Armor BVs to match the ones from HMBA
-  + Bug 1160780: Offboard Deployment and Double Blind NPE
++ Bug 1160780: Offboard Deployment and Double Blind NPE
 + When pushing a target off-board, the pushing Mech did not move to the position
     the pushed target previously had.
 + Bug 1047453: extreme gravity PSRs should be made at the end of the movement phase.

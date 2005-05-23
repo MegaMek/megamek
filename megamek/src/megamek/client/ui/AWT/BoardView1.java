@@ -29,6 +29,7 @@ import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
+import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEntityChangeEvent;
@@ -3944,6 +3945,10 @@ public class BoardView1
     private GameListener gameListener = new GameListenerAdapter(){
         
         public void gameEntityNew(GameEntityNewEvent e) {
+            redrawAllEntities();            
+        }
+
+        public void gameEntityRemove(GameEntityRemoveEvent e) {
             redrawAllEntities();            
         }
 

@@ -82,6 +82,15 @@ public class MapSettings implements Serializable {
     /** maximum Size of a rough spot */
     private int maxRoughSize = 2;
     
+    /** how much swamp spots at least */
+    private int minSwampSpots = 2;
+    /** how much swamp spots  at most */
+    private int maxSwampSpots = 10;
+    /** minimum size of a swamp spot */
+    private int minSwampSize = 1;
+    /** maximum Size of a swamp spot */
+    private int maxSwampSize = 2;
+    
     /** probability for a road, range 0..100 */
     private int probRoad = 0;
     
@@ -147,6 +156,10 @@ public class MapSettings implements Serializable {
         this.maxRoughSpots = other.getMaxRoughSpots();
         this.minRoughSize = other.getMinRoughSize();
         this.maxRoughSize = other.getMaxRoughSize();
+        this.minSwampSpots = other.getMinSwampSpots();
+        this.maxSwampSpots = other.getMaxSwampSpots();
+        this.minSwampSize = other.getMinSwampSize();
+        this.maxSwampSize = other.getMaxSwampSize();
         this.probRoad = other.getProbRoad();
         this.probRiver = other.getProbRiver();
         this.probCrater = other.getProbCrater();
@@ -328,6 +341,18 @@ public class MapSettings implements Serializable {
     if (maxRoughSize < minRoughSize) {
         maxRoughSize = minRoughSize;
     }
+    if (minSwampSpots < 0) {
+        minSwampSpots = 0;
+    }
+    if (maxSwampSpots < minSwampSpots) {
+        maxSwampSpots = minSwampSpots;
+    }
+    if (minSwampSize < 0) {
+        minSwampSize = 0;
+    }
+    if (maxSwampSize < minSwampSize) {
+        maxSwampSize = minSwampSize;
+    }
     if (probRoad < 0) {
         probRoad = 0;
     }
@@ -399,6 +424,10 @@ public class MapSettings implements Serializable {
             (this.maxRoughSpots != other.getMaxRoughSpots()) ||
             (this.minRoughSize != other.getMinRoughSize()) ||
             (this.maxRoughSize != other.getMaxRoughSize()) ||
+            (this.minSwampSpots != other.getMinSwampSpots()) ||
+            (this.maxSwampSpots != other.getMaxSwampSpots()) ||
+            (this.minSwampSize != other.getMinSwampSize()) ||
+            (this.maxSwampSize != other.getMaxSwampSize()) ||
             (this.probRoad != other.getProbRoad()) ||
             (this.probInvert != other.getProbInvert()) ||
             (this.probRiver != other.getProbRiver()) ||
@@ -439,6 +468,11 @@ public class MapSettings implements Serializable {
     public int getMaxRoughSpots() { return maxRoughSpots; }
     public int getMinRoughSize() { return minRoughSize; }
     public int getMaxRoughSize() { return maxRoughSize; }
+    
+    public int getMinSwampSpots() { return minSwampSpots; }
+    public int getMaxSwampSpots() { return maxSwampSpots; }
+    public int getMinSwampSize() { return minSwampSize; }
+    public int getMaxSwampSize() { return maxSwampSize; }
     
     public int getProbRoad() { return probRoad; }
     
@@ -491,6 +525,16 @@ public class MapSettings implements Serializable {
         minRoughSize = minSize;
         maxRoughSize = maxSize;
     }
+    
+    /** set the Parameters for the Map Generator 
+     */
+     public void setSwampParams(int minSpots, int maxSpots,
+                                 int minSize, int maxSize) {
+         minSwampSpots = minSpots;
+         maxSwampSpots = maxSpots;
+         minSwampSize = minSize;
+         maxSwampSize = maxSize;
+     }
     
     /** set the Parameters for the Map Generator 
     */

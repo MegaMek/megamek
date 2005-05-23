@@ -6768,7 +6768,7 @@ implements Runnable, ConnectionHandler {
 
         // Make sure the player knows when his attack causes no damage.
         if ( hits == 0 ) {
-            phaseReport.append( "attack deals zero damage.\n" );
+            phaseReport.append( " Attack deals zero damage." );
         }
 
         // for each cluster of hits, do a chunk of damage

@@ -157,8 +157,6 @@ public class Board implements Serializable, IBoard {
         this.data = data;
         
         initializeAll();
-        // good time to ensure hex cache
-        IdealHex.ensureCacheSize(width + 1, height + 1);
         processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_NEW_BOARD));
     }
     
@@ -208,7 +206,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Initialize all hexes
      */
-    private void initializeAll() {
+    public void initializeAll() {
 
         // Initialize all buildings.
         buildings.removeAllElements();
@@ -261,6 +259,8 @@ public class Board implements Serializable, IBoard {
                 initializeHex(x, y);
             }
         }
+        // good time to ensure hex cache
+        IdealHex.ensureCacheSize(width + 1, height + 1);
 
     } // End private void initializeAll()
     

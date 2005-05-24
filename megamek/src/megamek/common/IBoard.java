@@ -58,6 +58,11 @@ public interface IBoard {
      * @param height the height dimension.
      */
     public abstract void newData(int width, int height);
+
+    /**
+     * Initialize all hexes
+     */
+    public abstract void initializeAll();
     
     /**
      * Determines if this Board contains the (x, y) Coords,

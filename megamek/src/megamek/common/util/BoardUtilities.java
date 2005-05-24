@@ -53,6 +53,10 @@ public class BoardUtilities {
                 }
             }
         }
+
+        //Initialize all hexes - buildings, exits, etc
+        result.initializeAll();
+
         return result;
     }
     

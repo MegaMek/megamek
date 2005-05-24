@@ -29,6 +29,7 @@ v0.29.78 (CVS)
 + Bug 1207130: when ejecting a mech, sprite gets updated too late
 + Bug 1205317: MGs in rapid fire ignore ammo depletion
 + Added Swamp support to the random map generator.
++ Bug 1205396: I can not move (et al.) into a building with a mech.
 
 v0.29.77 (2005-05-17 8:00am)
 + Bug 1198746: Basilisk 2 SRM2 ammo missing

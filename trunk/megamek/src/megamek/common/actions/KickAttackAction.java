@@ -38,6 +38,8 @@ public class KickAttackAction extends AbstractAttackAction
     public static final int BOTH = 0;
     public static final int LEFT = 1;
     public static final int RIGHT = 2;
+    public static final int LEFTMULE = 3;
+    public static final int RIGHTMULE = 4;
     
     private int leg;
     
@@ -121,24 +123,36 @@ public class KickAttackAction extends AbstractAttackAction
         if ( targetInBuilding ) {
             bldg = game.getBoard().getBuildingAt( te.getPosition() );
         }
-
+        int mule = 0;
+        boolean mulekick = game.getOptions().booleanOption("maxtech_mulekicks");
         int[] kickLegs = new int[2];
         if ( ae.entityIsQuad() ) {
-          kickLegs[0] = Mech.LOC_RARM;
-          kickLegs[1] = Mech.LOC_LARM;
+            if (mulekick && (leg==KickAttackAction.LEFTMULE || leg==KickAttackAction.RIGHTMULE)) {
+                kickLegs[0] = Mech.LOC_RLEG;
+                kickLegs[1] = Mech.LOC_LLEG;
+                mule = 1; // To-hit modifier
+            } else {
+                kickLegs[0] = Mech.LOC_RARM;
+                kickLegs[1] = Mech.LOC_LARM;
+            }
         } else {
-          kickLegs[0] = Mech.LOC_RLEG;
-          kickLegs[1] = Mech.LOC_LLEG;
+            kickLegs[0] = Mech.LOC_RLEG;
+            kickLegs[1] = Mech.LOC_LLEG;
         }
-        final int legLoc =
-            (leg == KickAttackAction.RIGHT) ? kickLegs[0] : kickLegs[1];
+        final int legLoc = 
+            ( (leg == KickAttackAction.RIGHTMULE) || (leg == KickAttackAction.RIGHT) ) ? kickLegs[0] : kickLegs[1];
         final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
 
         ToHitData toHit;
 
         // arguments legal?
+        // By allowing mulekicks, this gets a little more complicated :(
         if (leg != KickAttackAction.RIGHT && leg != KickAttackAction.LEFT) {
-            throw new IllegalArgumentException("Leg must be LEFT or RIGHT");
+            if (!game.getOptions().booleanOption("maxtech_mulekicks")) {
+                throw new IllegalArgumentException("Leg must be LEFT or RIGHT");
+            } else if (leg != KickAttackAction.RIGHTMULE && leg != KickAttackAction.LEFTMULE) {
+                throw new IllegalArgumentException("Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
+            }
         }
         if (ae == null || target == null) {
             throw new IllegalArgumentException("Attacker or target not valid");
@@ -212,9 +226,20 @@ public class KickAttackAction extends AbstractAttackAction
 
         // check facing
         // Don't check arc for stomping infantry or tanks.
-        if (0 != range &&
+        if (0 != range && mule != 1 &&
             !Compute.isInArc(ae.getPosition(), ae.getFacing(),
                      target.getPosition(), Compute.ARC_FORWARD)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+        }
+
+        // check facing, part 2: Mule kick
+        if (0 != range && mule == 1 &&
+            !Compute.isInArc(ae.getPosition(), ae.getFacing(),
+                     target.getPosition(), Compute.ARC_REAR) &&
+            !Compute.isInArc(ae.getPosition(), ae.getFacing(),
+                     target.getPosition(), Compute.ARC_LEFTSIDE) &&
+            !Compute.isInArc(ae.getPosition(), ae.getFacing(),
+                     target.getPosition(), Compute.ARC_RIGHTSIDE)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
 
@@ -280,6 +305,11 @@ public class KickAttackAction extends AbstractAttackAction
         // target terrain
         toHit.append(Compute.getTargetTerrainModifier(game, te));
 
+        // Mulekick?
+        if (mulekick && mule!=0) {
+            toHit.addModifier(mule, "Quad Mek making a mule kick");
+        }
+        
         // damaged or missing actuators
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, legLoc)) {
             toHit.addModifier(2, "Upper leg actuator destroyed");

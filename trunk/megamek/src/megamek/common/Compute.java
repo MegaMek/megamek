@@ -1709,6 +1709,18 @@ public class Compute
              KickAttackAction.RIGHT ).getValue()
             != ToHitData.IMPOSSIBLE;
 
+        if (game.getOptions().booleanOption("maxtech_mulekicks")) {
+            canHit |= KickAttackAction.toHit
+            ( game, entityId, target,
+              KickAttackAction.LEFTMULE ).getValue()
+            != ToHitData.IMPOSSIBLE;
+            
+            canHit |= KickAttackAction.toHit
+            ( game, entityId, target,
+              KickAttackAction.RIGHTMULE ).getValue()
+            != ToHitData.IMPOSSIBLE;
+        }
+        
         canHit |= BrushOffAttackAction.toHit
             ( game, entityId, target,
               BrushOffAttackAction.LEFT ).getValue()

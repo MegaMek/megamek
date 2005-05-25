@@ -1251,7 +1251,6 @@ class SystemPanel
                             clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[]{m.getName(),m.pendingMode().getDisplayableName()}));//$NON-NLS-1$
                         }
                     }
-                    displaySlots();
                 }
             }
         }

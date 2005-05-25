@@ -381,16 +381,29 @@ public class PhysicalDisplay
     private void kick() {
         ToHitData leftLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFT);
         ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
+        ToHitData rightRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHTMULE);
+        ToHitData leftRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFTMULE);
         ToHitData attackLeg;
-        int attackSide;
+        int attackSide=KickAttackAction.LEFT;
+        int value = leftLeg.getValue();
+        attackLeg = leftLeg;
         
-        if (leftLeg.getValue() < rightLeg.getValue()) {
-            attackLeg = leftLeg;
-            attackSide = KickAttackAction.LEFT;
-        } else {
-            attackLeg = rightLeg;
+        if (value>rightLeg.getValue()) {
+            value = rightLeg.getValue();
             attackSide = KickAttackAction.RIGHT;
-        };
+            attackLeg = rightLeg;
+        }
+        if (value>rightRearLeg.getValue()) {
+            value = rightRearLeg.getValue();
+            attackSide = KickAttackAction.RIGHTMULE;
+            attackLeg = rightRearLeg;
+        }
+        if (value>leftRearLeg.getValue()) {
+            value = leftRearLeg.getValue();
+            attackSide = KickAttackAction.LEFTMULE;
+            attackLeg = leftRearLeg;
+        }
+        
         String title = Messages.getString("PhysicalDisplay.KickDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
         String message = Messages.getString("PhysicalDisplay.KickDialog.message", new Object[]{ //$NON-NLS-1$
                 attackLeg.getValueAsString(), new Double(Compute.oddsAbove(attackLeg.getValue())), attackLeg.getDesc()
@@ -647,6 +660,14 @@ public class PhysicalDisplay
                    (client.game, cen, target, KickAttackAction.RIGHT);
                 boolean canKick = leftLeg.getValue() != ToHitData.IMPOSSIBLE 
                               || rightLeg.getValue() != ToHitData.IMPOSSIBLE;
+                if (client.game.getOptions().booleanOption("maxtech_mulekicks")) {
+                    ToHitData rightRearLeg = KickAttackAction.toHit
+                       (client.game, cen, target, KickAttackAction.RIGHTMULE);
+                    ToHitData leftRearLeg = KickAttackAction.toHit
+                       (client.game, cen, target, KickAttackAction.LEFTMULE);
+                    canKick |= (leftRearLeg.getValue() != ToHitData.IMPOSSIBLE)
+                            || (rightRearLeg.getValue() != ToHitData.IMPOSSIBLE);
+                }
                 setKickEnabled(canKick);
                 
                 // how about push?

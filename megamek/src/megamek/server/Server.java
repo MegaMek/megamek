@@ -7317,9 +7317,20 @@ implements Runnable, ConnectionHandler {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
         }
-        final String legName = kaa.getLeg() == KickAttackAction.LEFT
-        ? "Left Leg"
-        : "Right Leg";
+        String legName = ( (kaa.getLeg() == KickAttackAction.LEFT) ||
+                                 (kaa.getLeg() == KickAttackAction.LEFTMULE) )
+        ? "Left "
+        : "Right ";
+        if (game.getOptions().booleanOption("maxtech_mulekicks")) {
+            if ( (kaa.getLeg() == KickAttackAction.LEFTMULE) || 
+                 (kaa.getLeg() == KickAttackAction.RIGHTMULE) ) {
+                legName.concat(" rear ");
+            } else {
+                legName.concat(" front ");
+            }
+        }
+        legName.concat("leg");
+        
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
         final ToHitData toHit = pr.toHit;

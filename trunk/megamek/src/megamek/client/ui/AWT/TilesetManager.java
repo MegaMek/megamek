@@ -139,18 +139,18 @@ public class TilesetManager {
     /**
      * Return the base image for the hex
      */
-    public Image baseFor(IHex hex) {
-        if (hex.getBase() == null) {
+    public Image baseFor(IHex hex) {	
+        if (hexTileset.getBase(hex, comp) == null) {
             hexTileset.assignMatch(hex, comp);
         }
-        return (Image)hex.getBase();
+        return hexTileset.getBase(hex, comp);
     }
     
     /**
      * Return a list of superimposed images for the hex
      */
     public List supersFor(IHex hex) {
-        return hex.getSupers();
+        return hexTileset.getSupers(hex, comp);
     }
     
     public Image getMinefieldSign() {

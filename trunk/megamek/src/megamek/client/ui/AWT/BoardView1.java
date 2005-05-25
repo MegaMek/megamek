@@ -62,6 +62,8 @@ public class BoardView1
                 0.90f, 1.00f
                 //1.09f, 1.17f
             };
+    
+    private ImageCache[] scaledImageCaches;
 
     // the index of zoom factor 1.00f
     private static final int BASE_ZOOM_INDEX = 7;
@@ -250,6 +252,11 @@ public class BoardView1
         selectedSprite = new CursorSprite(Color.blue);
         firstLOSSprite = new CursorSprite(Color.red);
         secondLOSSprite = new CursorSprite(Color.red);
+        
+        scaledImageCaches = new ImageCache[ZOOM_FACTORS.length];
+        for(int i = 0;i<scaledImageCaches.length;i++) {
+        	scaledImageCaches[i] = new ImageCache();
+        }
     }
 
     /**
@@ -585,19 +592,21 @@ public class BoardView1
     /**
      * Manages a cache of scaled images.
      */
-    private Image getScaledImage(Image base, double scale ) {
+    private Image getScaledImage(Image base) {
         if (base == null) {
             return null;
         }
         if ( zoomIndex == BASE_ZOOM_INDEX ) {
             return base;
         }
-        Dimension d = getImageBounds(base).getSize();
-        d.width *= scale;
-        d.height *= scale;
-        ScaledCacheKey key = new ScaledCacheKey(base, d);
-        Image scaled = (Image) scaledImageCache.get(key);
+        
+        
+        Image scaled = (Image) scaledImageCaches[zoomIndex].get(base);
         if (scaled == null) {
+        	Dimension d = getImageBounds(base).getSize();
+            d.width *= scale;
+            d.height *= scale;
+        	
             scaled = scale(base, d.width, d.height);
 
             MediaTracker tracker = new MediaTracker(this);
@@ -607,7 +616,7 @@ public class BoardView1
                 tracker.waitForID( 1 );
             } catch ( InterruptedException e ){ e.printStackTrace(); }
               
-            scaledImageCache.put(key, scaled);
+            scaledImageCaches[zoomIndex].put(base, scaled);
         }
         return scaled;
     }
@@ -625,13 +634,6 @@ public class BoardView1
         ImageProducer prod;
         prod = new FilteredImageSource(img.getSource(), filter);
         return Toolkit.getDefaultToolkit().createImage(prod);
-//      BufferedImage tmp = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB );
-//      Graphics g = tmp.getGraphics();
-//      g.drawImage(img,
-//                    width,
-//                    height,
-//                    this);
-//      return (Image)tmp;
     }
     
     private static Rectangle getImageBounds(Image im) {
@@ -724,7 +726,7 @@ public class BoardView1
                 
                 Minefield mf = (Minefield) game.getMinefields(c).elementAt(0);
                 
-                Image tmpImage = getScaledImage( tileManager.getMinefieldSign(), scale );
+                Image tmpImage = getScaledImage( tileManager.getMinefieldSign());
                 backGraph.drawImage(
                         tmpImage,
                         p.x + (int)(13*scale), 
@@ -983,13 +985,13 @@ public class BoardView1
 
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
-        Image scaledImage = getScaledImage(baseImage, scale);
+        Image scaledImage = getScaledImage(baseImage);
         
         boardGraph.drawImage(scaledImage, drawX, drawY, this);
         
         if (tileManager.supersFor(hex) != null) {
             for (Iterator i = tileManager.supersFor(hex).iterator(); i.hasNext();){
-                scaledImage = getScaledImage((Image)i.next(), scale);
+                scaledImage = getScaledImage((Image)i.next());
                 boardGraph.drawImage(scaledImage, drawX, drawY, this);
             }
         }
@@ -1367,9 +1369,13 @@ public class BoardView1
         if (sprite != null) {
             newSprites.removeElement(sprite);
         }
-
-        if (entity.getPosition() != null) {
-            sprite = new EntitySprite(entity);
+        Coords position = entity.getPosition();
+        if (position != null) {
+        	/*drawHex(position);
+        	IHex foo = game.getBoard().getHex(position);
+        	foo.markChanged(); */// TODO: Is this really necessary?
+            
+        	sprite = new EntitySprite(entity);
             newSprites.addElement(sprite);
             newSpriteIds.put( entityId, sprite );
         }
@@ -2462,7 +2468,7 @@ public class BoardView1
                 if (zoomIndex == BASE_ZOOM_INDEX ){
                     tmpImage = image;
                 } else {
-                    tmpImage = getScaledImage( image, scale );
+                    tmpImage = getScaledImage(image);
                 }
                 if (makeTranslucent && isJ2RE) {
                     Graphics2D g2 = (Graphics2D) g;

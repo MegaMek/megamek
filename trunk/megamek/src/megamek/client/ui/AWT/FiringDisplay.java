@@ -427,10 +427,10 @@ public class FiringDisplay
         
         // notify the player
         if (m.getType().hasInstantModeSwitch()) {
-            clientgui.systemMessage(Messages.getString("FiringDisplay.switched", new Object[]{m.getName(), m.curMode()})); //$NON-NLS-1$
+            clientgui.systemMessage(Messages.getString("FiringDisplay.switched", new Object[]{m.getName(), m.curMode().getDisplayableName()})); //$NON-NLS-1$
         }
         else {
-            clientgui.systemMessage(Messages.getString("FiringDisplay.willSwitch", new Object[]{m.getName(), m.pendingMode()})); //$NON-NLS-1$
+            clientgui.systemMessage(Messages.getString("FiringDisplay.willSwitch", new Object[]{m.getName(), m.pendingMode().getDisplayableName()})); //$NON-NLS-1$
         }
 
         this.updateTarget();

@@ -30,34 +30,34 @@ import megamek.common.*;
  */
 public class EquipmentPendingState extends EquipmentState implements RoundUpdated {
     protected int pending_mode;
-
+    
     public EquipmentPendingState(Mounted location, EquipmentType type) {
-  super(location,type);
-  pending_mode = mode;
+        super(location,type);
+        pending_mode = mode;
     }
-
-    public String curMode() {
-  return type.getModes()[pending_mode];
+    
+    public EquipmentMode curMode() {
+        return type.getMode(mode);
     }
-
+    
     public int switchMode() {
         if (type.hasModes()) {
             int nMode = 0;
-      nMode = (pending_mode + 1) % type.getModes().length;
+            nMode = (pending_mode + 1) % type.getModesCount();
             setMode(nMode);
             return nMode;
         }
         return -1;
     }
-
+    
     public void setMode(int n) {
         if (type.hasModes()) {
-      pending_mode = n;
-  }
+            pending_mode = n;
+        }
     }
-
+    
     public void newRound(int roundNumber) {
-  mode = pending_mode;
+        mode = pending_mode;
     }
-
+    
 }

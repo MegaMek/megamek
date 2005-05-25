@@ -111,25 +111,25 @@ public class Mounted implements Serializable, RoundUpdated {
         return type;
     }
 
-    public String curMode() {
-        return type.getModes()[mode];
+    public EquipmentMode curMode() {
+        return type.getMode(mode);
     }
 
-    public String pendingMode() {
+    public EquipmentMode pendingMode() {
         if (pendingMode == -1) {
-            return "None";
+            return EquipmentMode.getMode("None");
         }
-        return type.getModes()[pendingMode];
+        return type.getMode(pendingMode);
     }
 
     public int switchMode() {
         if (type.hasModes()) {
             int nMode = 0;
             if (pendingMode > -1) {
-                nMode = (pendingMode + 1) % type.getModes().length;
+                nMode = (pendingMode + 1) % type.getModesCount();
             }
             else {
-                nMode = (mode + 1) % type.getModes().length;
+                nMode = (mode + 1) % type.getModesCount();
             }
             setMode(nMode);
             return nMode;
@@ -138,8 +138,8 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public int setMode(String s) {
-        for (int x = 0; x < type.getModes().length; x++) {
-            if (type.getModes()[x].equals(s)) {
+        for (int x = 0, e = type.getModesCount(); x < e; x++) {
+            if (type.getMode(x).equals(s)) {
                 setMode(x);
                 return x;
             }

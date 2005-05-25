@@ -56,11 +56,15 @@ public class EquipmentType {
       
     protected double     bv = 0; // battle value point system
     
-    // what modes can this equipment be in?
-    protected String[] m_saModes = null;
+    /**
+     * what modes can this equipment be in?
+     */
+    protected Vector modes = null;
     
-    // can modes be switched instantly, or at end of turn?
-    protected boolean m_bInstantModeSwitch = true;
+    /**
+     * can modes be switched instantly, or at end of turn?
+     */
+    protected boolean instantModeSwitch = true;
     
     // static list of eq
     protected static Vector allTypes;
@@ -76,7 +80,11 @@ public class EquipmentType {
     }
     
     public String getDesc() {
-        return name;
+        String result = EquipmentMessages.getString("EquipmentType."+name);
+        if (result != null)
+            return result;
+        else
+            return name;
     }
     
     public String getInternalName() {
@@ -124,24 +132,43 @@ public class EquipmentType {
         return bv;
     }
     
-    public String[] getModes() {
-        return m_saModes;
+    public Enumeration getModes() {
+        return modes.elements();
     }
-    
-    public void setModes(String[] sa) {
-        m_saModes = sa;
-    }
-    
+
     public boolean hasModes() {
-        return m_saModes != null;
+        return modes != null;
+    }
+
+    public int getModesCount() {
+        if (modes != null)
+            return modes.size();
+        else
+            return 0;
+    }
+    
+    protected void setModes(String[] modes) {
+        Vector newModes  = null;
+        if (modes != null) {
+            newModes = new Vector(modes.length);
+            for (int i = 0 ,l = modes.length; i < l; i++) {
+                newModes.addElement(EquipmentMode.getMode(modes[i]));
+            }
+        }
+        this.modes = newModes;
+    }
+
+    public EquipmentMode getMode(int mode) {
+        megamek.debug.Assert.assertTrue(modes != null && mode >= 0 && mode < modes.size());
+        return (EquipmentMode)modes.elementAt(mode);
     }
     
     public void setInstantModeSwitch(boolean b) {
-        m_bInstantModeSwitch = b;
+        instantModeSwitch = b;
     }
     
     public boolean hasInstantModeSwitch() {
-        return m_bInstantModeSwitch;
+        return instantModeSwitch;
     }
 
     public void setInternalName(String s) {

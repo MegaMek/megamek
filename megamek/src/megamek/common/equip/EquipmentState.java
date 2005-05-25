@@ -21,6 +21,7 @@
 package megamek.common.equip;
 
 import megamek.common.*;
+
 import java.io.Serializable;
 
 /**
@@ -30,40 +31,40 @@ import java.io.Serializable;
  * @version 
  */
 public class EquipmentState implements Serializable {
-
+    
     protected transient EquipmentType type;
     protected int mode;        //Equipment's current state.
     protected Mounted location = null;// Reference to this states mounted location
-
+    
     public EquipmentState(Mounted location, EquipmentType type) {
-    this.location = location;
-    this.type = type;
-    if (type.hasModes())
-        mode = 0;
-    else
-        mode = -1;
+        this.location = location;
+        this.type = type;
+        if (type.hasModes())
+            mode = 0;
+        else
+            mode = -1;
     }
-
+    
     public Mounted getLocation() {
-    return location;
+        return location;
     }
-
-
-    // This returns the string for the mode
-    public String activeMode() {
-        return type.getModes()[mode];
+    
+    
+    // This returns EquipmentMode for the mode
+    public EquipmentMode activeMode() {
+        return type.getMode(mode);
     }
-
+    
     // This returns the same as above.  It's used by subclasses to do pending
     // modes
-    public String curMode() {
-    return activeMode();
+    public EquipmentMode curMode() {
+        return type.getMode(mode);
     }
-
+    
     public int switchMode() {
         if (type.hasModes()) {
             int nMode = 0;
-        nMode = (mode + 1) % type.getModes().length;
+            nMode = (mode + 1) % type.getModesCount();
             setMode(nMode);
             return nMode;
         }
@@ -71,26 +72,24 @@ public class EquipmentState implements Serializable {
     }
     
     public int setMode(String s) {
-    if (type.hasModes()) {
-        for (int x = 0; x < type.getModes().length; x++) {
-        if (type.getModes()[x].equals(s)) {
-            setMode(x);
-            return x;
+        for (int x = 0, e = type.getModesCount(); x < e; x++) {
+            if (type.getMode(x).equals(s)) {
+                setMode(x);
+                return x;
+            }
         }
-        }
-    }
         return -1;
     }
     
     public void setMode(int n) {
         if (type.hasModes()) 
-        mode = n;
+            mode = n;
     }
     
-       
+    
     // Called when the mounted is restored after de-serialization
     public void setType(EquipmentType type) {
-    this.type = type;
+        this.type = type;
     }
-
+    
 }

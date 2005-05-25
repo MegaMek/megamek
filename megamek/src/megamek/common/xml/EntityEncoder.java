@@ -369,9 +369,9 @@ public class EntityEncoder {
             output.append( String.valueOf(mount.getShotsLeft()) );
         }
         output.append( "\" curMode=\"" );
-        output.append( mount.curMode() );
+        output.append( mount.curMode().getName() );
         output.append( "\" pendingMode=\"" );
-        output.append( mount.pendingMode() );
+        output.append( mount.pendingMode().getName() );
         output.append( "\" linkedRef=\"" );
         if ( null == mount.getLinked() ) {
             output.append( "N/A" );

@@ -20,14 +20,25 @@
 
 package megamek.client;
 
-import com.sun.java.util.collections.*;
-import java.awt.Image;
 import java.awt.Component;
+import java.awt.Image;
 import java.awt.MediaTracker;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StreamTokenizer;
 
-import megamek.common.*;
-import megamek.common.util.StringUtil;
+
+import megamek.common.Hex;
+import megamek.common.IHex;
+import megamek.common.ITerrain;
+import megamek.common.Terrains;
+import megamek.client.util.ImageCache;
+
+import com.sun.java.util.collections.ArrayList;
+import com.sun.java.util.collections.Iterator;
+import com.sun.java.util.collections.List;
 
 /**
  * Matches each hex with an appropriate image.
@@ -37,11 +48,10 @@ import megamek.common.util.StringUtil;
  */
 public class HexTileset {
     
-    ArrayList bases = new ArrayList();
-    ArrayList supers = new ArrayList();
-    
-    Image clear;
-    Image woods;
+    private ArrayList bases = new ArrayList();
+    private ArrayList supers = new ArrayList();
+    private ImageCache hexToBaseImageCache = new ImageCache();
+    private ImageCache hexToSupersImageCache = new ImageCache(); 
 
     /** Creates new HexTileset */
     public HexTileset() {
@@ -60,8 +70,23 @@ public class HexTileset {
      */
     public void assignMatch(IHex hex, Component comp) {
         IHex hexCopy = hex.duplicate();
-        hex.setSupers(supersFor(hexCopy, comp));
-        hex.setBase(baseFor(hexCopy, comp));
+        hexToBaseImageCache.put(hex, baseFor(hexCopy, comp));
+        hexToSupersImageCache.put(hex, supersFor(hexCopy, comp));
+        hex.markSeen();
+    }
+    
+    public Image getBase(IHex hex, Component comp) {
+    	if (hex.isChanged()) {
+          assignMatch(hex, comp);
+    	}
+    	return (Image) hexToBaseImageCache.get(hex);
+    }
+    
+    public List getSupers(IHex hex, Component comp) {
+    	if (hex.isChanged()) {
+          assignMatch(hex, comp);
+    	}
+    	return (List) hexToSupersImageCache.get(hex);
     }
     
     /**
@@ -193,10 +218,10 @@ public class HexTileset {
      */
     public void trackHexImages(IHex hex, MediaTracker tracker) {
         // add base
-        tracker.addImage((Image)hex.getBase(), 1);
+        tracker.addImage((Image) hexToBaseImageCache.get(hex), 1);
         
         // add superImgs
-        List superImgs = hex.getSupers();
+        List superImgs = (List) hexToSupersImageCache.get(hex);
         if (superImgs != null) {
             for (Iterator i = superImgs.iterator(); i.hasNext();) {
                 tracker.addImage((Image)i.next(), 1);
@@ -307,58 +332,5 @@ public class HexTileset {
         return elevation * terrain * theme;
     }
 
-    private class HexEntry {
-        private IHex hex;
-        private String imageFile;
-        private Image image;
-        private java.util.Vector images;
-        private java.util.Vector filenames;
-        private java.util.Random r;
-        
-        public HexEntry(IHex hex, String imageFile) {
-            this.hex = hex;
-            this.imageFile = imageFile;
-            r = new java.util.Random();
-            filenames = StringUtil.splitString(imageFile, ";"); //$NON-NLS-1$
-        }
-        
-        public IHex getHex() {
-            return hex;
-        }
-        
-        public Image getImage() {
-            return image;
-        }
-
-       public String getImageFileName() {
-           return "data/hexes/" + imageFile; //$NON-NLS-1$
-       }
-        
-        public Image getImage(Component comp) {
-            if (images == null) {
-                loadImage(comp);
-            }
-      if (images.size() > 1) {
-        int rand = (int)(r.nextDouble() * (double)images.size());
-        return (Image) images.elementAt(rand);
-      } else {
-        return (Image) images.firstElement();
-      }
-/*      if (image == null) {
-        return image    loadImage(comp);
-      }
-      return image;
-*/
-    }
-        
-        public void loadImage(Component comp) {
-          images = new java.util.Vector();
-          for (int i = 0; i < filenames.size(); i++) {
-            String filename = (String) filenames.elementAt(i);
-            images.addElement(comp.getToolkit().getImage("data/hexes/" + filename)); //$NON-NLS-1$
-          }
-//      image = comp.getToolkit().getImage("data/hexes/" + imageFile);
-        }
-    }
 }
 

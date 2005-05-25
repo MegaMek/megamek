@@ -17,7 +17,6 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
-import com.sun.java.util.collections.List;
 
 /**
  * Hex represents a single hex on the board. 
@@ -29,6 +28,7 @@ public class Hex implements IHex, Serializable {
     private int elevation;
     private ITerrain[] terrains;
     private String theme;
+    private transient boolean hexHasChanged = true;
 
     /** Constructs clear, plain hex at level 0. */
     public Hex() {
@@ -71,6 +71,7 @@ public class Hex implements IHex, Serializable {
      */
     public void setElevation(int elevation) {
         this.elevation = elevation;
+        markChanged();
     }
 
     /* (non-Javadoc)
@@ -85,6 +86,7 @@ public class Hex implements IHex, Serializable {
      */
     public void setTheme(String theme) {
         this.theme = theme;
+        markChanged();
     }
 
     /* (non-Javadoc)
@@ -97,6 +99,7 @@ public class Hex implements IHex, Serializable {
                 terr.setExits(0);
             }
         }
+        markChanged();
     }
 
     /* (non-Javadoc)
@@ -104,6 +107,7 @@ public class Hex implements IHex, Serializable {
      */
     public void setExits(IHex other, int direction) {
         this.setExits( other, direction, true );
+        markChanged();
     }
 
     /* (non-Javadoc)
@@ -134,6 +138,7 @@ public class Hex implements IHex, Serializable {
                 cTerr.setExit( direction, true );
             }
         }
+        markChanged();
     }
 
     /* (non-Javadoc)
@@ -263,13 +268,16 @@ public class Hex implements IHex, Serializable {
      */
     public void addTerrain(ITerrain terrain) {
         terrains[terrain.getType()] = terrain;
+        markChanged();
     }
 
     /* (non-Javadoc)
      * @see megamek.common.IHex#removeTerrain(int)
      */
     public void removeTerrain(int type) {
-        terrains[type] = null;
+        boolean isChange = terrains[type] != null;
+    	terrains[type] = null;
+        if (isChange) markChanged();
     }
 
     /* (non-Javadoc)
@@ -279,6 +287,7 @@ public class Hex implements IHex, Serializable {
         for (int i = 0; i < terrains.length; i++) {
             terrains[i] = null;
         }
+        markChanged();
     }
 
     /* (non-Javadoc)
@@ -307,24 +316,17 @@ public class Hex implements IHex, Serializable {
         }
         return new Hex(elevation, tcopy, theme);
     }
-
-    private transient Object base = null;
-    private transient List supers = null;
-
-    public Object getBase() {
-        return base;
+    
+    public void markSeen() {
+    	hexHasChanged = false;
     }
     
-    public void setBase(Object base) {
-        this.base = base;
+    public void markChanged() {
+    	hexHasChanged = true;
     }
     
-    public void setSupers(List supers) {
-        this.supers = supers;
+    public boolean isChanged() {
+    	return hexHasChanged;
     }
     
-    public List getSupers() {
-        return supers;
-    }
-
 }

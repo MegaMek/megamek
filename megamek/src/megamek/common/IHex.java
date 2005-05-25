@@ -190,45 +190,22 @@ public interface IHex extends Cloneable{
      * @return new hex wich is equals to this 
      */
     public abstract IHex duplicate();
-
-    /**
-     * Returns base image for hex. It's GUI implementation specific,
-     * it might be AWT/SWT image but not neccesary. For hypothetic 
-     * 3D client for example it could be something else. 
-     * @return base image object
-     * @see megamek.client.HexTileset
-     * @see IHex#setBase(Object)
-     * @see IHex#getSupers()
+     
+    /*  This method must be called every time a change is made to the hex
+     *  which could affect its onscreen representation.  
      */
-    public abstract Object getBase();
-
-    /**
-     * Sets the base image for hex. It's GUI implementation specific,
-     * it might be AWT/SWT image but not neccesary. For hypothetic 
-     * 3D client for example it could be something else. 
-     * @param base base image object
-     * @see megamek.client.HexTileset
-     * @see IHex#getBase()
-     * @see IHex#setSupers(List)
-     */
-    public abstract void setBase(Object base);
     
-    /**
-     * Sets the list of additional/super images for hex. 
-     * It's GUI implementation specific, it might be AWT/SWT image 
-     * but not neccesary. For hypothetic 3D client for example 
-     * it could be something else. 
-     * @param supers list of super image objects
-     */
-    public abstract void setSupers(List supers);
-
-    /**
-     * returns the list of additional/super images for hex. 
-     * It's GUI implementation specific, it might be AWT/SWT image 
-     * but not neccesary. For hypothetic 3D client for example 
-     * it could be something else.
-     * @return additional/super images list 
-     */
-    public abstract List getSupers();
+    public void markChanged();
     
+    /*  This method should be called to mark a hex's changes as being reflected in 
+     *  the onscreen representation.
+     */
+
+    public void markSeen();
+    
+    /* This method may be used to detect whether a hex has been modified internally since the last time
+     * markHexSeen has been called.  It is useful for things such as dirtying caches, etc.
+     */
+    
+    public boolean isChanged();
 }

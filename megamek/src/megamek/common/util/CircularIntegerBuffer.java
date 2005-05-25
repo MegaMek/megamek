@@ -19,8 +19,6 @@
 
 package megamek.common.util;
 
-import java.util.Vector;
-
 public class CircularIntegerBuffer {
 
     private int begin;

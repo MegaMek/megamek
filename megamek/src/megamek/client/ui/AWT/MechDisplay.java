@@ -685,7 +685,7 @@ class WeaponPanel extends BufferedPanel
 
             // Fire Mode - lots of things have variable modes
             if (wtype.hasModes()) {
-                wn.append(" ");wn.append(mounted.curMode()); //$NON-NLS-1$
+                wn.append(" ");wn.append(mounted.curMode().getDisplayableName()); //$NON-NLS-1$
             }
             weaponList.add(wn.toString());
             if (mounted.isUsedThisRound()
@@ -1168,7 +1168,7 @@ class SystemPanel
                     Mounted m = en.getEquipment(cs.getIndex());
                     sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                     if (m.getType().hasModes()) {
-                        sb.append(" (").append(m.curMode()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+                        sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                     break;
                 }
@@ -1185,7 +1185,7 @@ class SystemPanel
                         StringBuffer sb = new StringBuffer(32);
                         sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                         if (m.getType().hasModes()) {
-                            sb.append(" (").append(m.curMode()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+                            sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
                         }
                         slotList.add(sb.toString());                                                
                     }                    
@@ -1224,34 +1224,35 @@ class SystemPanel
                 }
                 modeLabel.setEnabled(true);
                 m_chMode.removeAll();
-                String[] saModes = m.getType().getModes();
-                for (int x = 0; x < saModes.length; x++) {
-                    m_chMode.add(saModes[x]);
+                for (Enumeration e = m.getType().getModes(); e.hasMoreElements();) {
+                    EquipmentMode em = (EquipmentMode) e.nextElement();
+                    m_chMode.add(em.getDisplayableName());
                 }
-                m_chMode.select(m.curMode());
+                m_chMode.select(m.curMode().getDisplayableName());
             }
         }
         else if (ev.getItemSelectable() == m_chMode) {
             Mounted m = getSelectedEquipment();
             if (m != null && m.getType().hasModes()) {
-                int nMode = m.setMode(m_chMode.getSelectedItem());
-
-
-                // send the event to the server
-                clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
-
-                // notify the player
-                if (m.getType().hasInstantModeSwitch()) {                    
-                    clientgui.systemMessage(Messages.getString("MechDisplay.switched", new Object[]{m.getName(),m.curMode()}));//$NON-NLS-1$
-                }
-                else {
-                    if (IGame.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase() ) {                        
-                         clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart", new Object[]{m.getName(),m.pendingMode()}));//$NON-NLS-1$
-                    } else{ 
-                        clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[]{m.getName(),m.pendingMode()}));//$NON-NLS-1$
+                int nMode = m_chMode.getSelectedIndex();
+                if (nMode >= 0) {
+                    m.setMode(nMode);                    
+                    // send the event to the server
+                    clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
+                    
+                    // notify the player
+                    if (m.getType().hasInstantModeSwitch()) {                    
+                        clientgui.systemMessage(Messages.getString("MechDisplay.switched", new Object[]{m.getName(),m.curMode().getDisplayableName()}));//$NON-NLS-1$
                     }
+                    else {
+                        if (IGame.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase() ) {                        
+                            clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart", new Object[]{m.getName(),m.pendingMode().getDisplayableName()}));//$NON-NLS-1$
+                        } else{ 
+                            clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[]{m.getName(),m.pendingMode().getDisplayableName()}));//$NON-NLS-1$
+                        }
+                    }
+                    displaySlots();
                 }
-                displaySlots();
             }
         }
     }

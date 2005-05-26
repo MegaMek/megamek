@@ -17,8 +17,16 @@ package megamek.common;
 import java.util.Hashtable;
 
 /**
- * Modes can the equipment be in
- */
+ * <p> Class EquipmentMode describes a Equipment's particular mode. 
+ * <p>The <code>getDisplayableName</code> method allows you to obtain the 
+ * localized string from a predefined <code>ResourceBundle</code>.
+ * <p> The <code>equals</code> function allows to check if the mode is 
+ * equivalent to the mode identified by the given name.
+ * <p>There is no way to create the instance of the <code>EquipmentMode</code> 
+ * directly, use </code>EquipmentMode#getMode</code> instead.
+ * @see megamek.common.EquipmentType
+ * @see megamek.common.Mounted
+ * */
 public class EquipmentMode {
 
     /**
@@ -33,24 +41,25 @@ public class EquipmentMode {
     protected String name;
     
     /**
-     * Protected constructor since we don't allow direct creation of the mode.
-     * Modes available via <code>getMode()</code>
-     * 
+     * <p>Protected constructor since we don't allow direct creation of the mode.
+     * Modes available via <code>getMode</code>
+     * <p>Contructs the new mode denoted by the given name.
      * @param name unique mode identifier
      */
     protected EquipmentMode(String name) {
+        megamek.debug.Assert.assertTrue(name != null, "Name must not be null");
         this.name = name;
     }
     
     /**
-     * @return mode identifier
+     * @return mode name/identifier
      */
     public String getName() {
         return name;
     }
     
     /**
-     * @return the displayable name presented by the GUI to the user.
+     * @return the localized displayable name presented by the GUI to the user.
      */
     public String getDisplayableName() {
         String result = EquipmentMessages.getString("EquipmentMode."+name);
@@ -62,7 +71,7 @@ public class EquipmentMode {
     
     /**
      * @param name mode name
-     * @return mode that corresponds to given name
+     * @return unique mode that corresponds to the given name
      */
     public static EquipmentMode getMode(String name) {
         EquipmentMode mode = (EquipmentMode) modesHash.get(name);
@@ -73,8 +82,14 @@ public class EquipmentMode {
         return mode;
     }
 
-    public boolean equals (String s) {
-        return name.equals(s);
+    /**
+     * 
+     * @param modeName The name of the mode to compare with 
+     * @return <code>true</code> if this mode equals to the mode
+     * denoted by the given name
+     */
+    public boolean equals (String modeName) {
+        return name.equals(modeName);
     }
 }
 

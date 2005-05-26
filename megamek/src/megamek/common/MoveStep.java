@@ -60,6 +60,7 @@ public class MoveStep implements Serializable {
     private boolean firstStep; // check if no previous
     private boolean isTurning; // method
     private boolean isUnloaded;
+    private boolean hasEverUnloaded;
     private boolean prevStepOnPavement; // prev
     private boolean hasJustStood;
     private boolean thisStepBackwards;
@@ -92,6 +93,11 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, int type) {
         this.type = type;
         this.parent = path;
+        if (type==MovePath.STEP_UNLOAD) {
+            hasEverUnloaded=true;
+        } else {
+            hasEverUnloaded=false;
+        }
     }
 
     /**
@@ -108,6 +114,11 @@ public class MoveStep implements Serializable {
         this(path, type);
         this.targetId = target.getTargetId();
         this.targetType = target.getTargetType();
+        if (type==MovePath.STEP_UNLOAD) {
+            hasEverUnloaded=true;
+        } else {
+            hasEverUnloaded=false;
+        }
     }
 
     void setParent(MovePath path) {
@@ -219,6 +230,7 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_UNLOAD :
                 // Infantry in immobilized transporters get
                 // a special "unload stranded" game turn.
+                hasEverUnloaded=true;
                 break;
             case MovePath.STEP_LOAD :
                 setMp(1);
@@ -393,6 +405,7 @@ public class MoveStep implements Serializable {
         this.thisStepBackwards = prev.thisStepBackwards;
         this.isProne = prev.isProne;
         this.isRunProhibited = prev.isRunProhibited;
+        this.hasEverUnloaded = prev.hasEverUnloaded;
     }
 
     /**
@@ -577,6 +590,12 @@ public class MoveStep implements Serializable {
         else if (parent.isJumping() && distance == 0) {
             legal = false;
         }
+        
+        // Can't be after unloading BA/inf
+        else if (hasEverUnloaded && this.type != MovePath.STEP_UNLOAD) {
+            legal = false;
+        }
+        
         return legal;
     }
 
@@ -713,6 +732,9 @@ public class MoveStep implements Serializable {
      */
     public void setUnloaded(boolean b) {
         isUnloaded = b;
+        if (b) {
+            hasEverUnloaded=true;
+        }
     }
 
     /**

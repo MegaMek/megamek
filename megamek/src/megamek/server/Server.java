@@ -5532,6 +5532,10 @@ implements Runnable, ConnectionHandler {
         resolveWeaponAttack(wr, lastEntityId, false);
     }
     
+    private boolean resolveWeaponAttack(WeaponResult wr, int lastEntityId, boolean isNemesisConfused) {
+        return resolveWeaponAttack(wr, lastEntityId, false, 0);
+    }
+    
     /**
      * Resolve a single Weapon Attack object
      * @param wr The <code>WeaponResult</code> to resolve
@@ -5540,9 +5544,12 @@ implements Runnable, ConnectionHandler {
      * @param isNemesisConfused The <code>boolean</code> value of wether
      *        this attack is one caused by homing in on a iNarc Nemesis pod
      *        and so should not be further diverted
-     * @return wether we hit or not, only needed for nnemesis pod stuff
+     * @param swarmMissilesLeft The <code>int</code> number of remaining swarm
+     *        missiles this attack has, 0 if this is not a remaining swarm
+     *        missile attack 
+     * @return wether we hit or not, only needed for nemesis pod stuff
      */
-    private boolean resolveWeaponAttack(WeaponResult wr, int lastEntityId, boolean isNemesisConfused) {
+    private boolean resolveWeaponAttack(WeaponResult wr, int lastEntityId, boolean isNemesisConfused, int swarmMissilesLeft) {
       // If it's an artillery shot, the shooting entity
       // might have died in the meantime
       Entity ae = game.getEntity( wr.waa.getEntityId() );
@@ -5577,7 +5584,12 @@ implements Runnable, ConnectionHandler {
       boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
       boolean bAntiTSM = (usesAmmo &&
                             atype.getMunitionType() == AmmoType.M_ANTI_TSM);
+      boolean bSwarm = (usesAmmo &&
+                            atype.getMunitionType() == AmmoType.M_SWARM);
+      boolean bSwarmI = (usesAmmo &&
+                            atype.getMunitionType() == AmmoType.M_SWARM_I);
       boolean glancing = false; // For Glancing Hits Rule
+      int swarmMissilesNowLeft = 0;
       int hits = 1, glancingMissileMod = 0;
       int glancingCritMod = 0;
 
@@ -6131,6 +6143,9 @@ implements Runnable, ConnectionHandler {
                     maxMissiles *= platoon.getShootingStrength();
                 }
             }
+            if (bSwarm || bSwarmI) {
+                swarmMissilesNowLeft = swarmMissilesLeft > 0 ? swarmMissilesLeft : maxMissiles;
+            }
 
             // If the AMS shot down *all* incoming missiles, if
             // the shot is an automatic failure, or if it's from
@@ -6140,6 +6155,22 @@ implements Runnable, ConnectionHandler {
                  toHit.getValue() == TargetRoll.AUTOMATIC_FAIL ||
                  wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
                 return !bMissed;
+            }
+            // If we're using swarm munition, set the number of missiles that
+            // are left
+            if (bSwarm || bSwarmI) {
+                swarmMissilesNowLeft -= wr.amsShotDownTotal;
+                Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, wr.waa.getWeaponId());
+                if (swarmTarget != null) {
+                    phaseReport.append("    ").append(swarmMissilesNowLeft).append( " missiles continue.\n");
+                    weapon.setUsedThisRound(false);
+                    WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
+                        swarmTarget.getTargetId(), wr.waa.getWeaponId());
+                    newWaa.setSwarmingMissiles(true);
+                    newWaa.setOldTargetId(target.getTargetId());
+                    WeaponResult newWr = preTreatWeaponAttack(newWaa);
+                    resolveWeaponAttack(newWr, lastEntityId, false, swarmMissilesNowLeft);
+                } else phaseReport.append("    The remaining missiles find no new target.");
             }
 
             // Shots that miss an entity can set fires.
@@ -6432,7 +6463,12 @@ implements Runnable, ConnectionHandler {
                     sSalvoType = " inferno missile(s) ";
                     bSalvo = false;
             }
-            
+            if (bSwarm) {
+                sSalvoType = " swarm missile(s) ";
+            }
+            if (bSwarmI) {
+                sSalvoType = " swarm-I missile(s) ";
+            }
             if (bAntiTSM) {
                 sSalvoType = " anti-TSM missile(s) ";
             }
@@ -6474,14 +6510,33 @@ implements Runnable, ConnectionHandler {
             else if ( bAllShotsHit ) {
                 hits = wtype.getRackSize();
             }
-
             // In all other circumstances, roll for hits.
             else {
                 hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | glancing);
+                // swarm missiles that didn't hit continue 
+                if ( (bSwarm || bSwarmI) && swarmMissilesLeft == 0) {
+                    swarmMissilesNowLeft = wtype.getRackSize() - hits;
+                }
             }
             // anti TSM missiles hit with half the number, round up
             if (bAntiTSM) {
                 hits = (int)Math.ceil((double)hits/2);
+            }
+            // swarm or swarm-I shots may just hit with the remaining missiles
+            if ((bSwarm || bSwarmI) && (swarmMissilesLeft > 0)) {
+                int swarmsForHitTable;
+                if (swarmMissilesLeft < 20 && swarmMissilesLeft > 15)
+                    swarmsForHitTable = 15;
+                else if (swarmMissilesLeft < 15 && swarmMissilesLeft > 10)
+                    swarmsForHitTable = 10;
+                else if (swarmMissilesLeft < 10 && swarmMissilesLeft > 5)
+                    swarmsForHitTable = 5;
+                else swarmsForHitTable = 5;
+                hits = Compute.missilesHit(swarmsForHitTable, nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | glancing);
+                if (hits > swarmMissilesLeft) {
+                    hits = swarmMissilesLeft;
+                }
+                swarmMissilesNowLeft = swarmMissilesLeft - hits;
             }
 
             // Advanced SRMs may get additional missiles
@@ -6583,7 +6638,7 @@ implements Runnable, ConnectionHandler {
         // We've calculated how many hits.  At this point, any missed
         // shots damage the building instead of the target.
         if ( bMissed ) {
-            if ( targetInBuilding && bldg != null ) {
+            if ( targetInBuilding && bldg != null && !(bSwarm || bSwarmI)) {
 
                 // Reduce the number of hits by AMS hits.
                 if (wr.amsShotDownTotal > 0) {
@@ -7081,6 +7136,9 @@ implements Runnable, ConnectionHandler {
                         if (bAntiTSM) {
                             entityTarget.hitThisRoundByAntiTSM = true;
                         }
+                        if (bSwarm || bSwarmI) {
+                            entityTarget.addSwarmHit(ae.getId(), wr.waa.getWeaponId());
+                        }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage) );
                     }
@@ -7091,6 +7149,19 @@ implements Runnable, ConnectionHandler {
         } // Handle the next cluster.
 
         phaseReport.append("\n");
+        if (swarmMissilesNowLeft > 0) {
+            Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, wr.waa.getWeaponId());
+            if (swarmTarget != null) {
+                phaseReport.append("    ").append(swarmMissilesNowLeft).append( " missiles continue.\n");
+                weapon.setUsedThisRound(false);
+                WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
+                    swarmTarget.getTargetId(), wr.waa.getWeaponId());
+                newWaa.setSwarmingMissiles(true);
+                newWaa.setOldTargetId(target.getTargetId());
+                WeaponResult newWr = preTreatWeaponAttack(newWaa);
+                resolveWeaponAttack(newWr, lastEntityId, false, swarmMissilesNowLeft);
+            } else phaseReport.append("    The remaining missiles find no new target.");
+        }
         return !bMissed;
     }
 
@@ -10191,7 +10262,7 @@ implements Runnable, ConnectionHandler {
                 desc.append( "\n            Location is empty, " )
                     .append( "so criticals transfer to " )
                     .append( en.getLocationAbbr(loc) )
-                    .append( "." );
+                    .append( ".\n" );
             }
 
             // Roll critical hits in this location.
@@ -10200,7 +10271,7 @@ implements Runnable, ConnectionHandler {
                 // Have we hit all available slots in this location?
                 if (en.getHittableCriticals(loc) <= 0) {
                     desc.append( "\n            Location has no more " )
-                        .append( "hittable critical slots." );
+                        .append( "hittable critical slots.\n" );
                     break;
                 }
 
@@ -11657,8 +11728,8 @@ implements Runnable, ConnectionHandler {
                         }
                     } );
 
-            // According to page XXX of the BMRr, Protomechs must be
-            // deployed in full Points of five, unless "losses" have
+            // According to page 54 of the BMRr, Protomechs must be
+            // deployed in full Points of five, unless circumstances have
             // reduced the number to less that that.
             entity.setUnitNumber( (char) (numPlayerProtos / 5) );
 
@@ -13834,7 +13905,7 @@ implements Runnable, ConnectionHandler {
                     continue;
                 }
                 if (!pickedUp && pe.getOwnerId() == e.getOwnerId() && pe.getId() != e.getId()) {
-                    if (pe instanceof MechWarrior && game.getOptions().booleanOption("no_pilot_pickup")) {
+                    if (pe instanceof MechWarrior) {
                         phaseReport.append(pe.getDisplayName())
                              .append(" sits down with his colleagues and cracks open a beer!\n");
                         continue;
@@ -13857,8 +13928,7 @@ implements Runnable, ConnectionHandler {
                         pe.getCrew().isUnconscious()) {
                         continue;
                     }
-                    if (pe instanceof MechWarrior &&
-                          game.getOptions().booleanOption("no_pilot_pickup")) {
+                    if (pe instanceof MechWarrior) {
                         phaseReport.append(pe.getDisplayName())
                              .append(" sits down with his colleagues and cracks open a beer\n");
                         continue;

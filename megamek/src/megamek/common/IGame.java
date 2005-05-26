@@ -575,6 +575,17 @@ public interface IGame {
     public abstract Enumeration getEnemyEntities(final Coords c, final Entity currentEntity);
     
     /**
+     * Returns an <code>Enumeration</code> of friendly active
+     * entities at the given coordinates.
+     *
+     * @param   c the <code>Coords</code> of the hex being examined.
+     * @param   currentEntity the <code>Entity</code> whose friends are needed.
+     * @return  an <code>Enumeration</code> of <code>Entity</code>s at the
+     *          given coordinates who are friends of the given unit.
+     */
+    public abstract Enumeration getFriendlyEntities(final Coords c, final Entity currentEntity);
+    
+    /**
      * Moves an entity into the graveyard so it stops getting sent
      * out every phase.
      */

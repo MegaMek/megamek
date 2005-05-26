@@ -521,6 +521,10 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_VIBRABOMB ) );
         munitions.addElement( new MunitionMutator( "Narc capable",
                                                    1, M_NARC_CAPABLE ) );
+        munitions.addElement( new MunitionMutator( "Swarm",
+                                                   1, M_SWARM ) );
+        munitions.addElement( new MunitionMutator( "Swarm-I",
+                                                   1, M_SWARM_I) );
         munitions.addElement( new MunitionMutator( "Listen-Kill",
                                                    1, M_LISTEN_KILL ) );
         munitions.addElement( new MunitionMutator( "Anti-TSM",

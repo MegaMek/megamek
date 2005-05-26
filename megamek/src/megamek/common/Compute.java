@@ -1935,4 +1935,58 @@ public class Compute
         return coords;
     }
     
+    /**
+     * Gets a new target for a flight of swarm missiles that was just shot at
+     * an entity and has missiles left
+     * @param game
+     * @param ae The attacking <code>Entity</code>
+     * @param te The <code>Entity</code> that was shot at.
+     * @param weaponId The <code>int</code> ID of the launcher
+     *        used to fire this volley
+     * 
+     * @return the new target <code>Entity</code>. May return null if no
+     *         new target available
+     */
+    public static Entity getSwarmTarget(IGame game, int aeId, Entity te, int weaponId) {
+        Coords coords = te.getPosition();
+        Entity newTarget = null;
+        Entity tempEntity = null;
+        // first, check the hex of the original target
+        Enumeration entities = game.getEnemyEntities(coords, te);
+        while (entities.hasMoreElements()) {
+            tempEntity = (Entity)entities.nextElement();
+            if (!tempEntity.getHitBySwarm(aeId, weaponId)) {
+                // we found a target
+                return tempEntity;
+            }
+        }
+        // loop through adjacent hexes
+        for(int dir=0;dir<=5;dir++) {
+            Coords tempcoords=coords.translated(dir);
+            if(!game.getBoard().contains(tempcoords)) {
+                continue;
+            }
+            if(coords.equals(tempcoords)) {
+                continue;
+            }
+            entities = game.getEnemyEntities(tempcoords, te);
+            if (entities.hasMoreElements()) {
+                tempEntity = (Entity)entities.nextElement();
+                if (!tempEntity.getHitBySwarm(aeId, weaponId)) {
+                    // we found a target
+                    return tempEntity;
+                }
+            }
+            entities = game.getFriendlyEntities(tempcoords, te);
+            if (entities.hasMoreElements()) {
+                tempEntity = (Entity)entities.nextElement();
+                if (!tempEntity.getHitBySwarm(aeId, weaponId)) {
+                    // we found a target
+                    return tempEntity;
+                }
+            }
+        }
+        return newTarget;
+    }
+    
 } // End public class Compute

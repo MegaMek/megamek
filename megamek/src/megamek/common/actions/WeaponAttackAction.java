@@ -52,6 +52,8 @@ public class WeaponAttackAction
     private int aimMode = IAimingModes.AIM_MODE_NONE;
     private int otherAttackInfo = -1;   // 
     private boolean nemesisConfused = false;
+    private boolean swarmingMissiles = false;
+    private int oldTargetId = -1;
     
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -124,7 +126,7 @@ public class WeaponAttackAction
                            game.getTarget(getTargetType(), getTargetId()),
                            getWeaponId(),
                            getAimedLocation(),
-                           getAimingMode(), nemesisConfused);
+                           getAimingMode(), nemesisConfused, swarmingMissiles, game.getEntity(oldTargetId));
     }
 
     public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId) {
@@ -134,11 +136,25 @@ public class WeaponAttackAction
     public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
         return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, false);
     }
+    
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode, boolean isNemesisConfused) {
+        return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, isNemesisConfused, false, null);
+    }
 
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode, boolean isNemesisConfused) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget, Entity oldTarget) {
+        if (exchangeSwarmTarget) {
+            // this is a swarm attack against a new target
+            // first, exchange old and new targets to get all mods
+            // as if firing against old target.
+            // at the end of this function, we remove target terrain
+            // and movement mods, and add those for the new target
+            Targetable tempTarget = target;
+            target = (Targetable)oldTarget;
+            oldTarget = (Entity)tempTarget;
+        }
         final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -180,6 +196,7 @@ public class WeaponAttackAction
             }
         }
         final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
+        int toSubtract = 0;
         
         ToHitData toHit = null;
     
@@ -613,6 +630,7 @@ public class WeaponAttackAction
         if (te != null) {
             ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getTargetId());
             toHit.append(thTemp);
+            toSubtract += thTemp.getValue();
     
             // precision ammo reduces this modifier
             if (atype != null && atype.getAmmoType() == AmmoType.T_AC &&
@@ -641,6 +659,7 @@ public class WeaponAttackAction
         // target terrain, not applicable when delivering minefields
         if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
             toHit.append(Compute.getTargetTerrainModifier(game, target));
+            toSubtract += Compute.getTargetTerrainModifier(game, target).getValue();
         }
     
         // target in water?
@@ -762,6 +781,18 @@ public class WeaponAttackAction
         } else {
             toHit.setSideTable( Compute.targetSideTable(ae, target) );
         }
+        
+        // remove old target movement and terrain mods,
+        // add those for new target.
+        if (exchangeSwarmTarget) {
+            toHit.addModifier(-toSubtract, "original target mods");
+            toHit.append(Compute.getTargetMovementModifier(game, oldTarget.getId()));
+            toHit.append(Compute.getTargetTerrainModifier(game, game.getEntity(oldTarget.getId())));
+            if (!isECMAffected && !oldTarget.isEnemyOf(ae) &&
+                !(oldTarget.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)) {
+                   toHit.addModifier( +2, "Swarm-I at friendly unit with intact sensors");
+            }
+        }
     
         // okay!
         return toHit;
@@ -777,5 +808,17 @@ public class WeaponAttackAction
      */
     public void setNemesisConfused(boolean nemesisConfused) {
         this.nemesisConfused = nemesisConfused;
+    }
+    
+    public boolean isSwarmingMissles() {
+        return swarmingMissiles;
+    }
+    
+    public void setSwarmingMissiles(boolean swarmingMissiles) {
+        this.swarmingMissiles = swarmingMissiles;
+    }
+    
+    public void setOldTargetId(int id) {
+        this.oldTargetId = id;
     }
 }

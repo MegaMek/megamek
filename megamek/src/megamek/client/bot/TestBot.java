@@ -223,6 +223,7 @@ public class TestBot extends BotClient {
                 }
                 
                 CEntity enemy = centities.get(en);
+                enemy.refresh();
                 int[] modifiers = option.getModifiers(enemy.getEntity());
                 if (modifiers[MoveOption.DEFENCE_MOD] == ToHitData.IMPOSSIBLE
                     && modifiers[MoveOption.ATTACK_MOD] == ToHitData.IMPOSSIBLE) {

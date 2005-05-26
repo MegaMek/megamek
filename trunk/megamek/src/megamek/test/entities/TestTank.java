@@ -8,12 +8,13 @@ import java.lang.StringBuffer;
 public class TestTank extends TestEntity
 {
     private Tank tank = null;
-    
-    public TestTank(Tank tank, TestEntityOption options)
+
+    public TestTank(Tank tank, TestEntityOption options, String fileString)
         throws EngineException
     {
         super(options, getEngine(tank), getArmor(tank), getStructure(tank));
         this.tank = tank;
+        this.fileString = fileString;
     }
 
     public static int getTankEngineRating(Tank tank)
@@ -234,6 +235,7 @@ public class TestTank extends TestEntity
     {
         StringBuffer buff = new StringBuffer();
         buff.append("Tank: ").append(tank.getDisplayName()).append("\n");
+        buff.append("Found in: ").append(this.fileString).append("\n");
         buff.append(printTechLevel());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true))

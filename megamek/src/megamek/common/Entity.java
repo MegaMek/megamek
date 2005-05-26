@@ -253,7 +253,17 @@ public abstract class Entity
 
     /** Whether this entity is captured or not. */
     private boolean captured = false;
-
+    
+    /** 
+     * 2 vectors holding entity and weapon ids,
+     * to see who hit us this round with a swarm volley from what
+     * launcher
+     */
+    
+    private Vector hitBySwarmsEntity = new Vector();
+    private Vector hitBySwarmsWeapon = new Vector();
+    
+    
     /**
      * Generates a new, blank, entity.
      */
@@ -2370,6 +2380,8 @@ public abstract class Entity
         moved = Entity.MOVE_NONE;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
+        hitBySwarmsEntity = new Vector();
+        hitBySwarmsWeapon = new Vector();
 
         setArmsFlipped(false);
         setDisplacementAttack(null);
@@ -4127,5 +4139,22 @@ public abstract class Entity
                     " died in the wreckage. ***\n");
         }
         return sb.toString();        
+    }
+    
+    public void addSwarmHit(int entityId, int weaponId) {
+        hitBySwarmsEntity.add(new Integer(entityId));
+        hitBySwarmsWeapon.add(new Integer(weaponId));
+    }
+    
+    public boolean getHitBySwarm(int entityId, int weaponId) {
+        for (int i = 0;i < hitBySwarmsEntity.size();i++) {
+            Integer entityIdToTest = (Integer)hitBySwarmsEntity.elementAt(i);
+            Integer weaponIdToTest = (Integer)hitBySwarmsWeapon.elementAt(i);
+            if (entityId == entityIdToTest.intValue() &&
+                weaponId == weaponIdToTest.intValue()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

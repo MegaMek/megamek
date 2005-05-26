@@ -121,7 +121,6 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"set_arty_player_homeedge", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_premove_vibra", false); //$NON-NLS-1$
         addOption(ruleBreakers,"auto_spot", false); //$NON-NLS-1$
-        addOption(ruleBreakers,"no_pilot_pickup", false); //$NON-NLS-1$
         addOption(ruleBreakers,"margin_scatter_distance", false); //$NON-NLS-1$
     }
 

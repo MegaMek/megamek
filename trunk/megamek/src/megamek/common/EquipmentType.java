@@ -131,36 +131,79 @@ public class EquipmentType {
     public double getBV(Entity entity) {
         return bv;
     }
-    
-    public Enumeration getModes() {
-        return modes.elements();
-    }
 
+    /**
+     * 
+     * @return <code>true</code> if this type of equipment has set of modes
+     * that it can be in.
+     */
     public boolean hasModes() {
         return modes != null;
     }
 
+    /**
+     * 
+     * @return the number of modes that this type of equipment can be in or
+     * <code>0</code> if it doesn't have modes.
+     */
     public int getModesCount() {
         if (modes != null)
             return modes.size();
         else
             return 0;
     }
-    
-    protected void setModes(String[] modes) {
-        Vector newModes  = null;
+
+    /**
+     * 
+     * @return <code>Enumeration</code> of the <code>EquipmentMode</code> 
+     * that this type of equipment can be in
+     */
+    public Enumeration getModes() {
         if (modes != null) {
-            newModes = new Vector(modes.length);
-            for (int i = 0 ,l = modes.length; i < l; i++) {
-                newModes.addElement(EquipmentMode.getMode(modes[i]));
-            }
+            return modes.elements();
+        } else {
+            return new Enumeration() {
+                public boolean hasMoreElements() {
+                    return false;
+                }
+                public Object nextElement() {
+                    return null;
+                }
+                
+            };
+        }
+    }
+
+    /**
+     * Sets the modes that this type of equipment can be in. By default the EquipmentType
+     * doesn't have the modes, so don't try to call this method with null or empty argument. 
+     * @param modes non null, non empty list of available mode names.
+     */
+    protected void setModes(String[] modes) {
+        megamek.debug.Assert.assertTrue(modes != null && modes.length >= 0, 
+                "List of modes must not be null or empty");
+        Vector newModes = new Vector(modes.length);
+        for (int i = 0 ,l = modes.length; i < l; i++) {
+            newModes.addElement(EquipmentMode.getMode(modes[i]));
         }
         this.modes = newModes;
     }
 
-    public EquipmentMode getMode(int mode) {
-        megamek.debug.Assert.assertTrue(modes != null && mode >= 0 && mode < modes.size());
-        return (EquipmentMode)modes.elementAt(mode);
+    /**
+     * <p>Returns the mode number <code>modeNum</code> from the list of modes available
+     * for this type of equipment. Modes are numbered from <code>0<code> to 
+     * <code>getModesCount()-1</code>
+     * <p>Fails if this type of the equipment doesn't have modes, or given mode is out of
+     * the valid range.    
+     * @param modeNum
+     * @return mode number <code>modeNum</code> from the list of modes available
+     * for this type of equipment.
+     * @see getModesCount
+     * @see hasModes  
+     */
+    public EquipmentMode getMode(int modeNum) {
+        megamek.debug.Assert.assertTrue(modes != null && modeNum >= 0 && modeNum < modes.size());
+        return (EquipmentMode)modes.elementAt(modeNum);
     }
     
     public void setInstantModeSwitch(boolean b) {

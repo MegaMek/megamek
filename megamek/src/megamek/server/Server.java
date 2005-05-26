@@ -5533,7 +5533,7 @@ implements Runnable, ConnectionHandler {
     }
     
     private boolean resolveWeaponAttack(WeaponResult wr, int lastEntityId, boolean isNemesisConfused) {
-        return resolveWeaponAttack(wr, lastEntityId, false, 0);
+        return resolveWeaponAttack(wr, lastEntityId, isNemesisConfused, 0);
     }
     
     /**

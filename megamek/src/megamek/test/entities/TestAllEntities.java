@@ -58,32 +58,34 @@ public class TestAllEntities implements MechSummaryCache.Listener
         }
     }
 
-    public void checkEntity(Entity entity, boolean all)
+    public void checkEntity(Entity entity, String fileString, boolean all)
     {
         try
         {
             StringBuffer buff = new StringBuffer();
-            TestEntity testVehicles = null;
+            TestEntity testEntity = null;
             if (entity instanceof Mech)
-                testVehicles = new TestMech((Mech)entity, mechOption);
+                testEntity = new TestMech((Mech)entity, mechOption, fileString);
             else if (entity instanceof Tank)
-                testVehicles = new TestTank((Tank)entity, tankOption);
+                testEntity = new TestTank((Tank)entity, tankOption, fileString);
             else
             {
                 System.out.println("UnknownType: "+entity.getDisplayName());
+                System.out.println("Found in: "+fileString);
                 return;
             }
 
 
             if (all)
             {
-                buff = testVehicles.printEntity();
+                buff = testEntity.printEntity();
             }
             else
             {
-                if (!testVehicles.correctEntity(buff))
+                if (!testEntity.correctEntity(buff))
                 {
-                    System.out.println(testVehicles.getName());
+                    System.out.println(testEntity.getName());
+                    System.out.println("Found in: "+testEntity.fileString);
                 }
             }
             System.out.print(buff);
@@ -107,6 +109,11 @@ public class TestAllEntities implements MechSummaryCache.Listener
         return entity;
     }
 
+    //This is the listener method that MechSummaryCache calls when it
+    // finishes loading all the mechs.  This should only happen if no
+    // specific files were passed to main() as arguments (which implies
+    // all units that are loaded when MegaMek normally runs should be
+    // checked).
     public void doneLoading()
     {
         MechSummary[] ms = mechSummaryCache.getAllMechs();
@@ -127,7 +134,7 @@ public class TestAllEntities implements MechSummaryCache.Listener
                         ms[i].getEntryName());
                 if (entity==null)
                     continue;
-                checkEntity(entity, false);
+                checkEntity(entity, ms[i].getSourceFile().toString(), false);
             }
         }
     }
@@ -192,7 +199,7 @@ public class TestAllEntities implements MechSummaryCache.Listener
                 System.err.println("Exception: "+e.getMessage());
                 return;
             }
-            new TestAllEntities(config, false).checkEntity(entity, true);
+            new TestAllEntities(config, false).checkEntity(entity, f.toString(), true);
         }
         else
         {

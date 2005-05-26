@@ -11,11 +11,12 @@ public class TestMech extends TestEntity
 {
     private Mech mech = null;
 
-    public TestMech(Mech mech, TestEntityOption option)
+    public TestMech(Mech mech, TestEntityOption option, String fileString)
         throws EngineException
     {
         super(option, getEngine(mech), getArmor(mech), getStructure(mech));
         this.mech = mech;
+        this.fileString = fileString;
     }
 
     private static Engine getEngine(Mech mech)
@@ -374,6 +375,7 @@ public class TestMech extends TestEntity
     {
         StringBuffer buff = new StringBuffer();
         buff.append("Mech: ").append(mech.getDisplayName()).append("\n");
+        buff.append("Found in: ").append(this.fileString).append("\n");
         buff.append(printTechLevel());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true))

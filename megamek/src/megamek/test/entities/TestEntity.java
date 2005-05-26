@@ -38,6 +38,8 @@ public abstract class TestEntity implements TestEntityOption
     public abstract StringBuffer printEntity();
     public abstract String getName();
 
+    public String fileString = null; //where the unit came from
+
     public TestEntity(TestEntityOption options, Engine engine,
             Armor armor, Structure structure)
     {

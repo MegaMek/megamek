@@ -6,6 +6,7 @@ v0.29.79 (CVS)
 + Bug 1180526: bot not clicking done when player unloads BA from omni
 + Unit verifier now lists what file each failed unit came from.
 + Bug 1208611: LRMs default to indirect mode and can't be changed to direct
++ Bug 1209357: Movement after unloading
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

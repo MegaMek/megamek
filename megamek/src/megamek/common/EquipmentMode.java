@@ -74,7 +74,7 @@ public class EquipmentMode {
     }
 
     public boolean equals (String s) {
-        return modesHash.containsKey(s);
+        return name.equals(s);
     }
 }
 

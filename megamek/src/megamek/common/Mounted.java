@@ -111,17 +111,34 @@ public class Mounted implements Serializable, RoundUpdated {
         return type;
     }
 
+    /**
+     * 
+     * @return the current mode of the equipment, or <code>null</code> 
+     * if it's not available.
+     */
     public EquipmentMode curMode() {
-        return type.getMode(mode);
+        if (mode >= 0 && mode < type.getModesCount())
+            return type.getMode(mode);
+        else
+            return null;
     }
 
+    /**
+     * 
+     * @return the pending mode of the equipment.
+     */
     public EquipmentMode pendingMode() {
-        if (pendingMode == -1) {
+        if (pendingMode < 0 || pendingMode >= type.getModesCount()) {
             return EquipmentMode.getMode("None");
+        } else {        
+            return type.getMode(pendingMode);
         }
-        return type.getMode(pendingMode);
     }
 
+    /**
+     * Switches the equipment mode to the next available.
+     * @return new mode number, or <code>-1</code> if it's not available.
+     */
     public int switchMode() {
         if (type.hasModes()) {
             int nMode = 0;
@@ -137,9 +154,14 @@ public class Mounted implements Serializable, RoundUpdated {
         return -1;
     }
 
-    public int setMode(String s) {
+    /**
+     * Sets the equipment mode to the mode denoted by the given mode name  
+     * @param newMode the name of the desired new mode
+     * @return new mode number on success, <code>-1<code> otherwise.
+     */
+    public int setMode(String newMode) {
         for (int x = 0, e = type.getModesCount(); x < e; x++) {
-            if (type.getMode(x).equals(s)) {
+            if (type.getMode(x).equals(newMode)) {
                 setMode(x);
                 return x;
             }
@@ -147,13 +169,17 @@ public class Mounted implements Serializable, RoundUpdated {
         return -1;
     }
 
-    public void setMode(int n) {
+    /**
+     * Sets the equipment mode to the mode denoted by the given mode number
+     * @param newMode the number of the desired new mode
+     */
+    public void setMode(int newMode) {
         if (type.hasModes()) {
             if (type.hasInstantModeSwitch()) {
-                mode = n;
+                mode = newMode;
             }
-            else if (pendingMode != n) {
-                pendingMode = n;
+            else if (pendingMode != newMode) {
+                pendingMode = newMode;
             }
         }
     }

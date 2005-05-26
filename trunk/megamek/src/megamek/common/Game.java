@@ -1253,6 +1253,32 @@ public class Game implements Serializable, IGame
                     }
                 });
     }
+    
+    /**
+     * Returns an <code>Enumeration</code> of friendly active
+     * entities at the given coordinates.
+     *
+     * @param   c the <code>Coords</code> of the hex being examined.
+     * @param   currentEntity the <code>Entity</code> whose friends are needed.
+     * @return  an <code>Enumeration</code> of <code>Entity</code>s at the
+     *          given coordinates who are friends of the given unit.
+     */
+    public Enumeration getFriendlyEntities( final Coords c,
+                                         final Entity currentEntity ) {
+        // Use an EntitySelector to avoid walking the entities vector twice.
+        return this.getSelectedEntities
+            (new EntitySelector() {
+                    private Coords coords = c;
+                    private Entity friendly = currentEntity;
+                    public boolean accept (Entity entity) {
+                        if ( coords.equals(entity.getPosition())
+                             && entity.isTargetable()
+                             && !entity.isEnemyOf(friendly) )
+                            return true;
+                        return false;
+                    }
+                });
+    }
 
     /**
      * Moves an entity into the graveyard so it stops getting sent

@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 12th February 2004.  MegaMek Version 0.22.65. Best viewed in 1024x768.
+The Great MegaMek Feature list. 26th May 2005.  MegaMek Version 0.22.79. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -332,7 +332,7 @@ Equipment
 - Light Engines			Yes		None
 - Machine Guns			Yes		None
 - Missile Lanchers		Yes		None
-- Missile Munitions		Partial		Incendiary, Semiguided, Swarm, and Swarm-I not implemented
+- Missile Munitions		Partial		Incendiary and Semiguided not implemented
 - MASC				Yes		None
 - Narc				Yes		None
 - Narc Munitions		Yes		None

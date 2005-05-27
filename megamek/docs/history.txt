@@ -16,7 +16,9 @@ v0.29.79 (CVS)
 + ejected pilots loaded in troop carriers should not be considered picked up
 + i18n of the launcher
 + Removed changes from client/messages_de.properties, they completely messed up
-  the GUI.
+     the GUI.
++ Bug 1207269: lobby shows pilot advantage when weapon specialist: none and
+     using one of the translations.
   
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

@@ -14,6 +14,7 @@ v0.29.79 (CVS)
      RMG enhancements. See map-enhancements.txt
 + Infantry should not die when loaded in vehicles in extreme temperature
 + ejected pilots loaded in troop carriers should not be considered picked up
++ i18n of the launcher
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

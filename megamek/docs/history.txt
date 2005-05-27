@@ -12,6 +12,8 @@ v0.29.79 (CVS)
 + RFE 1007856, patch sent by Shane Kearns:
      Use RMG in the "New Board" dialog of the Map Editor, and lots of other
      RMG enhancements. See map-enhancements.txt
++ Infantry should not die when loaded in vehicles in extreme temperature
++ ejected pilots loaded in troop carriers should not be considered picked up
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

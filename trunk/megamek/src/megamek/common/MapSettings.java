@@ -91,6 +91,15 @@ public class MapSettings implements Serializable {
     /** maximum Size of a swamp spot */
     private int maxSwampSize = 2;
     
+    /** how much pavement spots at least */
+    private int minPavementSpots = 0;
+    /** how much pavement spots  at most */
+    private int maxPavementSpots = 0;
+    /** minimum size of a pavement spot */
+    private int minPavementSize = 1;
+    /** maximum Size of a pavement spot */
+    private int maxPavementSize = 6;
+    
     /** probability for a road, range 0..100 */
     private int probRoad = 0;
     
@@ -115,6 +124,20 @@ public class MapSettings implements Serializable {
     /** which landscape generation Algortihm to use */
     /* atm there are 2 different: 0= first, 1=second */
     private int algorithmToUse = 0;
+    
+    /** a tileset theme to apply */
+    private String theme = "";
+    
+    /** probability of flooded map */
+    private int probFlood = 0;
+    /** probability of forest fire */
+    private int probForestFire = 0;
+    /** probability of frozen map */
+    private int probFreeze = 0;
+    /** probability of drought */
+    private int probDrought = 0;
+    /** special FX modifier */
+    private int fxMod = 0;
 
     /** end Map Generator Parameters */
 
@@ -160,6 +183,10 @@ public class MapSettings implements Serializable {
         this.maxSwampSpots = other.getMaxSwampSpots();
         this.minSwampSize = other.getMinSwampSize();
         this.maxSwampSize = other.getMaxSwampSize();
+        this.minPavementSpots = other.getMinPavementSpots();
+        this.maxPavementSpots = other.getMaxPavementSpots();
+        this.minPavementSize = other.getMinPavementSize();
+        this.maxPavementSize = other.getMaxPavementSize();
         this.probRoad = other.getProbRoad();
         this.probRiver = other.getProbRiver();
         this.probCrater = other.getProbCrater();
@@ -168,6 +195,12 @@ public class MapSettings implements Serializable {
         this.minCraters = other.getMinCraters();
         this.maxCraters = other.getMaxCraters();
         this.algorithmToUse = other.getAlgorithmToUse();
+        this.theme = other.getTheme();
+        this.probFlood = other.getProbFlood();
+        this.probForestFire = other.getProbForestFire();
+        this.probFreeze = other.getProbFreeze();
+        this.probDrought = other.getProbDrought();
+        this.fxMod = other.getFxMod();
     }
     
     public int getBoardWidth() {
@@ -192,6 +225,14 @@ public class MapSettings implements Serializable {
         }
     }
 
+    public String getTheme() {
+        return theme;
+    }
+    
+    public void setTheme(String th) {
+        theme = th;
+    }
+    
     public int getMapWidth() {
         return mapWidth;
     }
@@ -287,8 +328,8 @@ public class MapSettings implements Serializable {
     if (hilliness < 0) {
         hilliness = 0;
     }
-    if (hilliness > 1000) {
-        hilliness = 1000;
+    if (hilliness > 99) {
+        hilliness = 99;
     }
     if (range < 0 ) {
         range = 0;
@@ -352,6 +393,18 @@ public class MapSettings implements Serializable {
     }
     if (maxSwampSize < minSwampSize) {
         maxSwampSize = minSwampSize;
+    }
+    if (minPavementSpots < 0) {
+        minPavementSpots = 0;
+    }
+    if (maxPavementSpots < minPavementSpots) {
+        maxPavementSpots = minPavementSpots;
+    }
+    if (minPavementSize < 0) {
+        minPavementSize = 0;
+    }
+    if (maxPavementSize < minPavementSize) {
+        maxPavementSize = minPavementSize;
     }
     if (probRoad < 0) {
         probRoad = 0;
@@ -428,6 +481,10 @@ public class MapSettings implements Serializable {
             (this.maxSwampSpots != other.getMaxSwampSpots()) ||
             (this.minSwampSize != other.getMinSwampSize()) ||
             (this.maxSwampSize != other.getMaxSwampSize()) ||
+            (this.minPavementSpots != other.getMinPavementSpots()) ||
+            (this.maxPavementSpots != other.getMaxPavementSpots()) ||
+            (this.minPavementSize != other.getMinPavementSize()) ||
+            (this.maxPavementSize != other.getMaxPavementSize()) ||
             (this.probRoad != other.getProbRoad()) ||
             (this.probInvert != other.getProbInvert()) ||
             (this.probRiver != other.getProbRiver()) ||
@@ -436,6 +493,12 @@ public class MapSettings implements Serializable {
             (this.maxRadius != other.getMaxRadius()) ||
             (this.minCraters != other.getMinCraters()) ||
             (this.maxCraters != other.getMaxCraters()) ||
+            (this.theme != other.getTheme()) ||
+            (this.fxMod != other.getFxMod()) ||
+            (this.probFlood != other.getProbFlood()) ||
+            (this.probForestFire != other.getProbForestFire()) ||
+            (this.probFreeze != other.getProbFreeze()) ||
+            (this.probDrought != other.getProbDrought()) ||
             (this.algorithmToUse != other.getAlgorithmToUse())) {
             return false;
         } else { 
@@ -474,6 +537,11 @@ public class MapSettings implements Serializable {
     public int getMinSwampSize() { return minSwampSize; }
     public int getMaxSwampSize() { return maxSwampSize; }
     
+    public int getMinPavementSpots() { return minPavementSpots; }
+    public int getMaxPavementSpots() { return maxPavementSpots; }
+    public int getMinPavementSize() { return minPavementSize; }
+    public int getMaxPavementSize() { return maxPavementSize; }
+    
     public int getProbRoad() { return probRoad; }
     
     public int getProbRiver() { return probRiver; }
@@ -484,7 +552,12 @@ public class MapSettings implements Serializable {
     public int getMinCraters() { return minCraters; }
     public int getMaxCraters() { return maxCraters; }
     public int getAlgorithmToUse() { return algorithmToUse; }
-    
+ 
+    public int getProbFlood() {return probFlood;}
+    public int getProbForestFire() {return probForestFire;}
+    public int getProbFreeze() {return probFreeze;}
+    public int getProbDrought() {return probDrought;}
+    public int getFxMod() {return fxMod;}
  
     /** set the Parameters for the Map Generator 
     */
@@ -537,6 +610,16 @@ public class MapSettings implements Serializable {
      }
     
     /** set the Parameters for the Map Generator 
+     */
+     public void setPavementParams(int minSpots, int maxSpots,
+                                 int minSize, int maxSize) {
+         minPavementSpots = minSpots;
+         maxPavementSpots = maxSpots;
+         minPavementSize = minSize;
+         maxPavementSize = maxSize;
+     }
+    
+    /** set the Parameters for the Map Generator 
     */
     public void setRiverParam(int prob) { probRiver = prob; }
     
@@ -556,6 +639,16 @@ public class MapSettings implements Serializable {
         maxRadius = maxRad;
     }
     
+    /** 
+     * set Map generator parameters
+     */
+    public void setSpecialFX(int modifier, int fire, int freeze, int flood, int drought) {
+        fxMod = modifier;
+        probForestFire = fire;
+        probFreeze = freeze;
+        probFlood = flood;
+        probDrought = drought;
+    }
     public void setAlgorithmToUse(int alg) {
         algorithmToUse = alg;
     }    

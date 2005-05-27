@@ -653,7 +653,9 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         
         option = comp.getOption();
         
-        entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
+        if ( (comp.getValue() == Messages.getString("CustomMechDialog.None")) ) { //NON-NLS-$1
+            entity.getCrew().getOptions().getOption(option.getName()).setValue("None"); //NON-NLS-$1
+        } else entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
       }
     }
     

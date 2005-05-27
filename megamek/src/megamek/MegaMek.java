@@ -26,6 +26,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.client.*;
+import megamek.client.Messages;
 import megamek.client.util.AdvancedLabel;
 import megamek.client.util.PlayerColors;
 import megamek.client.util.widget.*;
@@ -34,8 +35,8 @@ import megamek.server.*;
 import megamek.test.*;
 
 public class MegaMek implements ActionListener {
-    public static String VERSION = "0.29.79-dev";
-    public static long TIMESTAMP = new File("timestamp").lastModified();
+    public static String VERSION = "0.29.79-dev"; //$NON-NLS-1$
+    public static long TIMESTAMP = new File("timestamp").lastModified(); //$NON-NLS-1$
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
 
@@ -53,7 +54,7 @@ public class MegaMek implements ActionListener {
      * specified frame.
      */
     public MegaMek() {
-        this.frame = new Frame("MegaMek");
+        this.frame = new Frame("MegaMek"); //$NON-NLS-1$
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 quit();
@@ -63,7 +64,7 @@ public class MegaMek implements ActionListener {
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
 
-        frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
+        frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif")); //$NON-NLS-1$
 
         CommonMenuBar menuBar = new CommonMenuBar();
         menuBar.addActionListener(this);
@@ -71,18 +72,18 @@ public class MegaMek implements ActionListener {
         showMainMenu();
 
         // echo some useful stuff
-        System.out.println("Starting MegaMek v" + VERSION + " ...");
-        System.out.println("Timestamp " + new Date(TIMESTAMP).toString());
-        System.out.println("Java vendor " + System.getProperty("java.vendor"));
-        System.out.println("Java version " + System.getProperty("java.version"));
+        System.out.println("Starting MegaMek v" + VERSION + " ..."); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println("Timestamp " + new Date(TIMESTAMP).toString()); //$NON-NLS-1$
+        System.out.println("Java vendor " + System.getProperty("java.vendor")); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println("Java version " + System.getProperty("java.version")); //$NON-NLS-1$ //$NON-NLS-2$
         System.out.println(
-                           "Platform "
-                           + System.getProperty("os.name")
-                           + " "
-                           + System.getProperty("os.version")
-                           + " ("
-                           + System.getProperty("os.arch")
-                           + ")");
+                           "Platform " //$NON-NLS-1$
+                           + System.getProperty("os.name") //$NON-NLS-1$
+                           + " " //$NON-NLS-1$
+                           + System.getProperty("os.version") //$NON-NLS-1$
+                           + " (" //$NON-NLS-1$
+                           + System.getProperty("os.arch") //$NON-NLS-1$
+                           + ")"); //$NON-NLS-1$
         /*/ BEGIN DEBUG memory
         if ( System.getProperties().getProperty( "java.version" ).charAt(2)
              >= '4' ) {
@@ -102,7 +103,7 @@ public class MegaMek implements ActionListener {
 
         // Apparently, the MSJDK doesn't handle the menu bar very well,
         //  so we'll try this hack.
-        if (System.getProperty("java.vendor").indexOf("Microsoft") != -1) {
+        if (System.getProperty("java.vendor").indexOf("Microsoft") != -1) { //$NON-NLS-1$ //$NON-NLS-2$
             Dimension windowSize = frame.getSize();
             windowSize.height += 25;
             frame.setSize(windowSize);
@@ -115,13 +116,10 @@ public class MegaMek implements ActionListener {
 
         // tell the user about the readme...
         if (true == GUIPreferences.getInstance().getNagForReadme()) {
-            String title = "Welcome to MegaMek " + VERSION;
-            String body =
-                "MegaMek is a complex application -- if you ever need any help you\n"
-                    + "should start by reading the documentation, accessible through\n"
-                    + "the Help menu.\n"
-                    + " \nWould you like to view the documentation now?\n";
-            ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);
+            ConfirmDialog confirm = new ConfirmDialog(frame, 
+                    Messages.getString("MegaMek.welcome.title") + VERSION, //$NON-NLS-1$ 
+                    Messages.getString("MegaMek.welcome.message"), //$NON-NLS-1$
+                    true);
             confirm.show();
 
             if (!confirm.getShowAgain()) {
@@ -141,38 +139,38 @@ public class MegaMek implements ActionListener {
         Button hostB, connectB, botB, editB, scenB, loadB, quitB;
         Label labVersion = new Label();
 
-        labVersion.setText("MegaMek version " + VERSION);
+        labVersion.setText(Messages.getString("MegaMek.Version") + VERSION); //$NON-NLS-1$
 
-        hostB = new Button("Host a New Game...");
-        hostB.setActionCommand("fileGameNew");
+        hostB = new Button(Messages.getString("MegaMek.hostNewGame.label")); //$NON-NLS-1$
+        hostB.setActionCommand("fileGameNew"); //$NON-NLS-1$
         hostB.addActionListener(this);
 
-        scenB = new Button("Host a Scenario...");
-        scenB.setActionCommand("fileGameScenario");
+        scenB = new Button(Messages.getString("MegaMek.hostScenario.label")); //$NON-NLS-1$
+        scenB.setActionCommand("fileGameScenario"); //$NON-NLS-1$
         scenB.addActionListener(this);
 
-        loadB = new Button("Host a Saved Game...");
-        loadB.setActionCommand("fileGameOpen");
+        loadB = new Button(Messages.getString("MegaMek.hostSavedGame.label")); //$NON-NLS-1$
+        loadB.setActionCommand("fileGameOpen"); //$NON-NLS-1$
         loadB.addActionListener(this);
 
-        connectB = new Button("Connect to a Game...");
-        connectB.setActionCommand("fileGameConnect");
+        connectB = new Button(Messages.getString("MegaMek.Connect.label")); //$NON-NLS-1$
+        connectB.setActionCommand("fileGameConnect"); //$NON-NLS-1$
         connectB.addActionListener(this);
 
-        botB = new Button("Connect as a Bot...");
-        botB.setActionCommand("fileGameConnectBot");
+        botB = new Button(Messages.getString("MegaMek.ConnectAsBot.label")); //$NON-NLS-1$
+        botB.setActionCommand("fileGameConnectBot"); //$NON-NLS-1$
         botB.addActionListener(this);
 
-        editB = new Button("Map Editor");
-        editB.setActionCommand("fileBoardNew");
+        editB = new Button(Messages.getString("MegaMek.MapEditor.label")); //$NON-NLS-1$
+        editB.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         editB.addActionListener(this);
 
-        quitB = new Button("Quit");
-        quitB.setActionCommand("quit");
+        quitB = new Button(Messages.getString("MegaMek.Quit.label")); //$NON-NLS-1$
+        quitB.setActionCommand("quit"); //$NON-NLS-1$
         quitB.addActionListener(this);
 
         // initialize splash image
-        Image imgSplash = frame.getToolkit().getImage("data/images/megamek-splash.jpg");
+        Image imgSplash = frame.getToolkit().getImage("data/images/megamek-splash.jpg"); //$NON-NLS-1$
 
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
@@ -321,7 +319,7 @@ public class MegaMek implements ActionListener {
             }
         }
         if (!foundValid) {
-            new AlertDialog(frame, "Host a Game", "Error: enter a player name.").show();
+            new AlertDialog(frame, Messages.getString("MegaMek.PlayerNameAlert.title"), Messages.getString("MegaMek.PlayerNameAlert.message")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -330,7 +328,7 @@ public class MegaMek implements ActionListener {
         // start server
         server = new Server(hd.serverPass, hd.port);
         // initialize client
-        client = new Client(hd.name, "localhost", hd.port);
+        client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
         try {
@@ -345,19 +343,19 @@ public class MegaMek implements ActionListener {
     }
 
     public void loadGame() {
-        FileDialog fd = new FileDialog(frame, "Select saved game...", FileDialog.LOAD);
-        fd.setDirectory(".");
+        FileDialog fd = new FileDialog(frame, Messages.getString("MegaMek.SaveGameDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
+        fd.setDirectory("."); //$NON-NLS-1$
         // limit file-list to savedgames only
         fd.setFilenameFilter(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return (null != name && name.endsWith(".sav"));
+                return (null != name && name.endsWith(".sav")); //$NON-NLS-1$
             }
         });
         //Using the FilenameFilter class would be the appropriate way to
         // filter for certain extensions, but it's broken under windoze.  See
         // http://developer.java.sun.com/developer/bugParade/bugs/4031440.html
         // for details.  The hack below is better than nothing.
-        fd.setFile("*.sav");
+        fd.setFile("*.sav"); //$NON-NLS-1$
 
         fd.show();
         if (fd.getFile() == null) {
@@ -379,7 +377,7 @@ public class MegaMek implements ActionListener {
             }
         }
         if (!foundValid) {
-            new AlertDialog(frame, "Load a Game", "Error: enter a player name.").show();
+            new AlertDialog(frame, Messages.getString("MegaMek.PlayerNameAlert1.title"), Messages.getString("MegaMek.PlayerNameAlert1.message")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -388,11 +386,11 @@ public class MegaMek implements ActionListener {
         // start server
         server = new Server(hd.serverPass, hd.port);
         if (!server.loadGame(new File(fd.getDirectory(), fd.getFile()))) {
-            new AlertDialog(frame, "Load a Game", "Error: unable to load game file.").show();
+            new AlertDialog(frame, Messages.getString("MegaMek.LoadGameAlert.title"), Messages.getString("MegaMek.LoadGameAlert.message")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             server = null;
             return;
         }
-        client = new Client(hd.name, "localhost", hd.port);
+        client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
         try {
@@ -408,17 +406,17 @@ public class MegaMek implements ActionListener {
      * Host a game constructed from a scenario file
      */
     public void scenario() {
-        FileDialog fd = new FileDialog(frame, "Select a scenario file...", FileDialog.LOAD);
-        fd.setDirectory("data" + File.separatorChar + "scenarios");
+        FileDialog fd = new FileDialog(frame, Messages.getString("MegaMek.SelectScenarioDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
+        fd.setDirectory("data" + File.separatorChar + "scenarios"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // the filter doesn't seem to do anything in windows.  oh well
         FilenameFilter ff = new FilenameFilter() {
             public boolean accept(File f, String s) {
-                return s.endsWith(".mms");
+                return s.endsWith(".mms"); //$NON-NLS-1$
             }
         };
         fd.setFilenameFilter(ff);
-        fd.setFile("*.mms"); //see comment above for load game dialog
+        fd.setFile("*.mms"); //see comment above for load game dialog //$NON-NLS-1$
         fd.show();
         if (fd.getFile() == null) {
             return;
@@ -428,7 +426,7 @@ public class MegaMek implements ActionListener {
         try {
             g = sl.createGame();
         } catch (Exception e) {
-            new AlertDialog(frame, "Host Scenario", "Error: " + e.getMessage()).show();
+            new AlertDialog(frame, Messages.getString("MegaMek.HostScenarioAllert.title"), Messages.getString("MegaMek.HostScenarioAllert.message") + e.getMessage()).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -460,7 +458,7 @@ public class MegaMek implements ActionListener {
             }
         }
         if (!foundValid) {
-            new AlertDialog(frame, "Host Scenario", "Error: enter a player name.").show();
+            new AlertDialog(frame, Messages.getString("MegaMek.HostScenarioAllert1.title"), Messages.getString("MegaMek.HostScenarioAllert1.message")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -473,9 +471,9 @@ public class MegaMek implements ActionListener {
         // apply any scenario damage
         sl.applyDamage(server);
         ClientGUI gui = null;
-        if (sd.localName != "") {
+        if (sd.localName != "") { //$NON-NLS-1$
             // initialize game
-            client = new Client(hd.name, "localhost", hd.port);
+            client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
             gui = new ClientGUI(client);
             gui.initialize();
             try {
@@ -494,7 +492,7 @@ public class MegaMek implements ActionListener {
         // setup any bots
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
-                BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port);
+                BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
                 c.game.addGameListener(new BotGUI(c));
                 try {
                     c.connect();
@@ -529,7 +527,7 @@ public class MegaMek implements ActionListener {
             }
         }
         if (!foundValid) {
-            new AlertDialog(frame, "Connect to Game", "Error: enter a player name.").show();
+            new AlertDialog(frame, Messages.getString("MegaMek.ConnectAllert.title"), Messages.getString("MegaMek.ConnectAllert.message")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -544,7 +542,7 @@ public class MegaMek implements ActionListener {
             error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(
                 cd.port).append(
                 ".");
-            new AlertDialog(frame, "Host a Game", error.toString()).show();
+            new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).show(); //$NON-NLS-1$
             frame.setVisible(false);
             client.die();
         }
@@ -570,7 +568,7 @@ public class MegaMek implements ActionListener {
             }
         }
         if (!foundValid) {
-            new AlertDialog(frame, "Connect to Game", "Error: enter a player name.").show();
+            new AlertDialog(frame, Messages.getString("MegaMek.ConnectGameAllert.title"), Messages.getString("MegaMek.ConnectGameAllert.message")).show(); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -586,7 +584,7 @@ public class MegaMek implements ActionListener {
             error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(
                 cd.port).append(
                 ".");
-            new AlertDialog(frame, "Host a Game", error.toString()).show();
+            new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).show(); //$NON-NLS-1$
             frame.setVisible(false);
             client.die();
         }
@@ -617,7 +615,7 @@ public class MegaMek implements ActionListener {
      */
     private void showHelp() {
         if (this.help == null) {
-            help = showHelp(this.frame, "readme");
+            help = showHelp(this.frame, "readme"); //$NON-NLS-1$
         }
         // Show the help dialog.
         this.help.show();
@@ -628,9 +626,9 @@ public class MegaMek implements ActionListener {
      */
     private static CommonHelpDialog showHelp(Frame frame, String filename) {
         Locale l = Locale.getDefault();
-        File helpfile = new File(filename + "-" + l.getDisplayLanguage(Locale.ENGLISH) + ".txt");
+        File helpfile = new File(filename + "-" + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
         if (!helpfile.exists()) {
-            helpfile = new File(filename + ".txt");
+            helpfile = new File(filename + ".txt"); //$NON-NLS-1$
         }
         return new CommonHelpDialog(frame, helpfile);
     }
@@ -690,16 +688,16 @@ public class MegaMek implements ActionListener {
     public static void main(String[] args) {
         int usePort = 2346;
         
-        String logFileName = "MegaMek.log";
+        String logFileName = "MegaMek.log"; //$NON-NLS-1$
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-testdice")) {
+            if (args[i].equals("-testdice")) { //$NON-NLS-1$
                 TestDice.testDice();
                 return;
-            } else if (args[i].equals("-dedicated")) {
+            } else if (args[i].equals("-dedicated")) { //$NON-NLS-1$
                 // Next argument may be the savegame file's name.
                 String savegameFileName = null;
                 i++;
-                if (i >= args.length || args[i].startsWith("-")) {
+                if (i >= args.length || args[i].startsWith("-")) { //$NON-NLS-1$
                     // no filename -- bump the argument processing back up
                     i--;
                 } else {
@@ -709,7 +707,7 @@ public class MegaMek implements ActionListener {
                 // Next argument may be "-port <number>"
                 i++;
                 if (i<args.length) {
-                    if (args[i].equals("-port")) {
+                    if (args[i].equals("-port")) { //$NON-NLS-1$
                         i++;
                         if (i<args.length) {
                             usePort = Integer.decode(args[i]).intValue();
@@ -733,21 +731,21 @@ public class MegaMek implements ActionListener {
                     dedicated.loadGame(new File(savegameFileName));
                 };
                 return;
-            } else if (args[i].equals("-log")) {
+            } else if (args[i].equals("-log")) { //$NON-NLS-1$
                 // Next argument is the log file's name.
                 i++;
-                if (i >= args.length || args[i].equals("none") || args[i].equals("off")) {
+                if (i >= args.length || args[i].equals("none") || args[i].equals("off")) { //$NON-NLS-1$ //$NON-NLS-2$
                     logFileName = null;
                 } else {
                     logFileName = args[i];
                 }
-            } else if (args[i].equals("-testxml")) {
+            } else if (args[i].equals("-testxml")) { //$NON-NLS-1$
                 // Next argument is the log file's name.
                 i++;
                 if (i >= args.length) {
-                    System.err.println("The '-testxml' flag requires a file name.");
+                    System.err.println("The '-testxml' flag requires a file name."); //$NON-NLS-1$
                 } else {
-                    new TinyXMLTest("xml", args[i]);
+                    new TinyXMLTest("xml", args[i]); //$NON-NLS-1$
                 }
                 return;
             }
@@ -756,12 +754,12 @@ public class MegaMek implements ActionListener {
         // Redirect output to logfiles, unless turned off.
         if (logFileName != null) {
             try {
-                System.out.println("Redirecting output to " + logFileName);
+                System.out.println("Redirecting output to " + logFileName); //$NON-NLS-1$
                 PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(logFileName), 64));
                 System.setOut(ps);
                 System.setErr(ps);
             } catch (Exception e) {
-                System.err.println("Unable to redirect output to " + logFileName);
+                System.err.println("Unable to redirect output to " + logFileName); //$NON-NLS-1$
                 e.printStackTrace();
             }
         } // End log-to-file
@@ -773,47 +771,47 @@ public class MegaMek implements ActionListener {
         long heap = Runtime.getRuntime().totalMemory();
         long free = Runtime.getRuntime().freeMemory();
         long used = (heap - free) / 1024;
-        return MegaMek.commafy.format(used) + " kB";
+        return MegaMek.commafy.format(used) + " kB"; //$NON-NLS-1$
     }
 
     //
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase("fileBoardNew")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileBoardNew")) { //$NON-NLS-1$
             showEditor();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("fileBoardOpen")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileBoardOpen")) { //$NON-NLS-1$
             showEditorOpen();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("fileGameNew")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameNew")) { //$NON-NLS-1$
             host();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("fileGameScenario")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameScenario")) { //$NON-NLS-1$
             scenario();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("fileGameConnect")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameConnect")) { //$NON-NLS-1$
             connect();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("fileGameConnectBot")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameConnectBot")) { //$NON-NLS-1$
             connectBot();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("fileGameOpen")) {
+        if (ev.getActionCommand().equalsIgnoreCase("fileGameOpen")) { //$NON-NLS-1$
             loadGame();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
+        if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) { //$NON-NLS-1$
             showGameOptions();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("helpAbout")) {
+        if (ev.getActionCommand().equalsIgnoreCase("helpAbout")) { //$NON-NLS-1$
             showAbout();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("helpContents")) {
+        if (ev.getActionCommand().equalsIgnoreCase("helpContents")) { //$NON-NLS-1$
             showHelp();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
+        if (ev.getActionCommand().equalsIgnoreCase("viewClientSettings")) { //$NON-NLS-1$
             showSettings();
         }
-        if (ev.getActionCommand().equalsIgnoreCase("quit")) {
+        if (ev.getActionCommand().equalsIgnoreCase("quit")) { //$NON-NLS-1$
             quit();
         }
     }
@@ -840,33 +838,33 @@ class HostDialog extends Dialog implements ActionListener {
     protected Button okayB, cancelB;
 
     public HostDialog(Frame frame) {
-        super(frame, "Host New Game...", true);
+        super(frame, Messages.getString("MegaMek.HostDialog.title"), true); //$NON-NLS-1$
 
-        yourNameL = new Label("Your Name:", Label.RIGHT);
-        serverPassL = new Label("Server Password:", Label.RIGHT);
-        portL = new Label("Port:", Label.RIGHT);
+        yourNameL = new Label(Messages.getString("MegaMek.yourNameL"), Label.RIGHT); //$NON-NLS-1$
+        serverPassL = new Label(Messages.getString("MegaMek.serverPassL"), Label.RIGHT); //$NON-NLS-1$
+        portL = new Label(Messages.getString("MegaMek.portL"), Label.RIGHT); //$NON-NLS-1$
 
         yourNameF = new TextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
         serverPassF = new TextField(PreferenceManager.getClientPreferences().getLastServerPass(), 16);
         serverPassF.addActionListener(this);
-        portF = new TextField(PreferenceManager.getClientPreferences().getLastServerPort() + "", 4);
+        portF = new TextField(PreferenceManager.getClientPreferences().getLastServerPort() + "", 4); //$NON-NLS-1$
         portF.addActionListener(this);
  
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         metaserver = cs.getMetaServerName();
-        metaserverL = new Label ("Megaserver Name:", Label.RIGHT);
+        metaserverL = new Label (Messages.getString("MegaMek.metaserverL"), Label.RIGHT); //$NON-NLS-1$
         metaserverF = new TextField (metaserver);
         metaserverL.setEnabled (register);
         metaserverF.setEnabled (register);
 
         int goalNumber = cs.getGoalPlayers();
-        goalL = new Label ("# Players:", Label.RIGHT);
+        goalL = new Label (Messages.getString("MegaMek.goalL"), Label.RIGHT); //$NON-NLS-1$
         goalF = new TextField (Integer.toString(goalNumber), 2);
         goalL.setEnabled (register);
         goalF.setEnabled (register);
 
-        registerC = new Checkbox ("Register Game");
+        registerC = new Checkbox (Messages.getString("MegaMek.registerC")); //$NON-NLS-1$
         register = false;
         registerC.setState (register);
         registerC.addItemListener( new ItemListener() {
@@ -882,13 +880,13 @@ class HostDialog extends Dialog implements ActionListener {
                 }
             });
 
-        okayB = new Button("Okay");
-        okayB.setActionCommand("done");
+        okayB = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+        okayB.setActionCommand("done"); //$NON-NLS-1$
         okayB.addActionListener(this);
         okayB.setSize(80, 24);
 
-        cancelB = new Button("Cancel");
-        cancelB.setActionCommand("cancel");
+        cancelB = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
+        cancelB.setActionCommand("cancel"); //$NON-NLS-1$
         cancelB.addActionListener(this);
         cancelB.setSize(80, 24);
 
@@ -977,7 +975,7 @@ class HostDialog extends Dialog implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (!e.getActionCommand().equals("cancel")) {
+        if (!e.getActionCommand().equals("cancel")) { //$NON-NLS-1$
             try {
                 name = yourNameF.getText();
                 serverPass = serverPassF.getText();
@@ -995,9 +993,9 @@ class HostDialog extends Dialog implements ActionListener {
             PreferenceManager.getClientPreferences().setLastPlayerName(name);
             PreferenceManager.getClientPreferences().setLastServerPass(serverPass);
             PreferenceManager.getClientPreferences().setLastServerPort(port);
-            PreferenceManager.getClientPreferences().setValue("megamek.megamek.metaservername",
+            PreferenceManager.getClientPreferences().setValue("megamek.megamek.metaservername", //$NON-NLS-1$
                                         metaserver);
-            PreferenceManager.getClientPreferences().setValue("megamek.megamek.goalplayers",
+            PreferenceManager.getClientPreferences().setValue("megamek.megamek.goalplayers", //$NON-NLS-1$
                                         Integer.toString (goalPlayers));
         }
         setVisible(false);
@@ -1016,26 +1014,26 @@ class ConnectDialog extends Dialog implements ActionListener {
     protected Button okayB, cancelB;
 
     public ConnectDialog(Frame frame) {
-        super(frame, "Connect To Game...", true);
+        super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true); //$NON-NLS-1$
 
-        yourNameL = new Label("Your Name:", Label.RIGHT);
-        serverAddrL = new Label("Server Address:", Label.RIGHT);
-        portL = new Label("Port:", Label.RIGHT);
+        yourNameL = new Label(Messages.getString("MegaMek.yourNameL"), Label.RIGHT); //$NON-NLS-1$
+        serverAddrL = new Label(Messages.getString("MegaMek.serverAddrL"), Label.RIGHT); //$NON-NLS-1$
+        portL = new Label(Messages.getString("MegaMek.portL"), Label.RIGHT); //$NON-NLS-1$
 
         yourNameF = new TextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
         serverAddrF = new TextField(PreferenceManager.getClientPreferences().getLastConnectAddr(), 16);
         serverAddrF.addActionListener(this);
-        portF = new TextField(PreferenceManager.getClientPreferences().getLastConnectPort() + "", 4);
+        portF = new TextField(PreferenceManager.getClientPreferences().getLastConnectPort() + "", 4); //$NON-NLS-1$
         portF.addActionListener(this);
 
-        okayB = new Button("Okay");
-        okayB.setActionCommand("done");
+        okayB = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+        okayB.setActionCommand("done"); //$NON-NLS-1$
         okayB.addActionListener(this);
         okayB.setSize(80, 24);
 
-        cancelB = new Button("Cancel");
-        cancelB.setActionCommand("cancel");
+        cancelB = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
+        cancelB.setActionCommand("cancel"); //$NON-NLS-1$
         cancelB.addActionListener(this);
         cancelB.setSize(80, 24);
 
@@ -1097,7 +1095,7 @@ class ConnectDialog extends Dialog implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (!e.getActionCommand().equals("cancel")) {
+        if (!e.getActionCommand().equals("cancel")) { //$NON-NLS-1$
             try {
                 name = yourNameF.getText();
                 serverAddr = serverAddrF.getText();
@@ -1137,10 +1135,10 @@ class ScenarioDialog extends Dialog implements ActionListener {
 
     public boolean bSet = false;
     public int[] playerTypes;
-    public String localName = "";
+    public String localName = ""; //$NON-NLS-1$
 
     public ScenarioDialog(Frame frame, Player[] pa) {
-        super(frame, "Set Scenario Players...", true);
+        super(frame, Messages.getString("MegaMek.ScenarioDialog.title"), true); //$NON-NLS-1$
         m_frame = frame;
         camoDialog = new CamoChoiceDialog(frame);
         m_players = pa;
@@ -1157,17 +1155,17 @@ class ScenarioDialog extends Dialog implements ActionListener {
             m_labels[x] = new Label(pa[x].getName(), Label.LEFT);
 
             m_typeChoices[x] = new Choice();
-            m_typeChoices[x].add("Me");
-            m_typeChoices[x].add("Other Human");
-            m_typeChoices[x].add("Bot");
+            m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.me")); //$NON-NLS-1$
+            m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
+            m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
             final Color defaultBackground = m_typeChoices[x].getBackground();
 
             m_camoButtons[x] = new ImageButton();
             final ImageButton curButton = m_camoButtons[x];
-            curButton.setLabel("No Camo");
+            curButton.setLabel(Messages.getString("MegaMek.NoCamoBtn")); //$NON-NLS-1$
             curButton.setPreferredSize(84, 72);
             curButton.setBackground(PlayerColors.getColor(x));
-            curButton.setActionCommand("camo");
+            curButton.setActionCommand("camo"); //$NON-NLS-1$
 
             // When a camo button is pressed, remove any previous
             // listener from the dialog, update the dialog for the
@@ -1199,8 +1197,8 @@ class ScenarioDialog extends Dialog implements ActionListener {
         setLayout(new BorderLayout());
         Panel choicePanel = new Panel();
         choicePanel.setLayout(new GridLayout(pa.length + 1, 0));
-        choicePanel.add(new AdvancedLabel("Player Name\nPlayer Type"));
-        choicePanel.add(new Label("Camo"));
+        choicePanel.add(new AdvancedLabel(Messages.getString("MegaMek.ScenarioDialog.pNameType"))); //$NON-NLS-1$
+        choicePanel.add(new Label(Messages.getString("MegaMek.ScenarioDialog.Camo"))); //$NON-NLS-1$
         for (int x = 0; x < pa.length; x++) {
             Panel typePanel = new Panel();
             typePanel.setLayout(new GridLayout(0, 1));
@@ -1213,11 +1211,11 @@ class ScenarioDialog extends Dialog implements ActionListener {
 
         Panel butPanel = new Panel();
         butPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        Button bOkay = new Button("Okay");
-        bOkay.setActionCommand("okay");
+        Button bOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+        bOkay.setActionCommand("okay"); //$NON-NLS-1$
         bOkay.addActionListener(this);
-        Button bCancel = new Button("Cancel");
-        bCancel.setActionCommand("cancel");
+        Button bCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
+        bCancel.setActionCommand("cancel"); //$NON-NLS-1$
         bCancel.addActionListener(this);
         butPanel.add(bOkay);
         butPanel.add(bCancel);
@@ -1230,13 +1228,13 @@ class ScenarioDialog extends Dialog implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("okay")) {
+        if (e.getActionCommand().equals("okay")) { //$NON-NLS-1$
             boolean bMeSet = false;
             for (int x = 0; x < m_players.length; x++) {
                 playerTypes[x] = m_typeChoices[x].getSelectedIndex();
                 if (playerTypes[x] == T_ME) {
                     if (bMeSet) {
-                        new AlertDialog(m_frame, "Scenario Error", "Only one faction can be set to 'Me'.").show();
+                        new AlertDialog(m_frame, Messages.getString("MegaMek.ScenarioErrorAllert.title"), Messages.getString("MegaMek.ScenarioErrorAllert.message")).show(); //$NON-NLS-1$ //$NON-NLS-2$
                         return;
                     }
                     bMeSet = true;
@@ -1245,7 +1243,7 @@ class ScenarioDialog extends Dialog implements ActionListener {
             }
             bSet = true;
             setVisible(false);
-        } else if (e.getActionCommand().equals("cancel")) {
+        } else if (e.getActionCommand().equals("cancel")) { //$NON-NLS-1$
             setVisible(false);
         }
     }

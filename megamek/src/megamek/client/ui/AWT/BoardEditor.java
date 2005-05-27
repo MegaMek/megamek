@@ -23,9 +23,10 @@ import keypoint.PngEncoder;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.common.*;
+import megamek.common.util.BoardUtilities;
 
 public class BoardEditor extends Container implements ItemListener,
-        ActionListener, TextListener, KeyListener, WindowListener {
+        ActionListener, TextListener, KeyListener, WindowListener, IMapSettingsObserver {
 
     private Frame frame = new Frame();
 
@@ -85,6 +86,7 @@ public class BoardEditor extends Container implements ItemListener,
     private Dialog minimapW;
     private MiniMap minimap;
     
+    private MapSettings mapSettings = new MapSettings();
     /**
      * Creates and lays out a new Board Editor frame.
      */
@@ -434,7 +436,7 @@ public class BoardEditor extends Container implements ItemListener,
      * are valid, creates new board data and fills it with the
      * selected hex.
      */
-    public void boardNew() {
+    public void boardNewXX() {
         // display new board dialog
         BoardNewDialog bnd = new BoardNewDialog(frame, lisTerrain.getItems(), lisTerrain.getSelectedIndex());
         bnd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
@@ -451,6 +453,22 @@ public class BoardEditor extends Container implements ItemListener,
             frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
             menuBar.setBoard( true );
         }
+    }
+    
+    public void boardNew() {
+        RandomMapDialog rmd = new RandomMapDialog(frame, this, mapSettings);
+        rmd.show();
+        
+        board = BoardUtilities.generateRandom(mapSettings);
+        game.setBoard(board);
+        curpath = null;
+        curfile = null;
+        frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
+        menuBar.setBoard( true );
+    }
+    
+    public void updateMapSettings(MapSettings newSettings) {
+        mapSettings = newSettings;
     }
     
     public void boardLoad() {

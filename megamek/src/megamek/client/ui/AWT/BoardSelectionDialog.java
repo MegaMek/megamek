@@ -32,7 +32,7 @@ import megamek.common.*;
  * @version 
  */
 public class BoardSelectionDialog 
-    extends Dialog implements ActionListener, ItemListener, KeyListener
+    extends Dialog implements ActionListener, ItemListener, KeyListener, IMapSettingsObserver
 {
     private ClientGUI client;
     private MapSettings mapSettings;

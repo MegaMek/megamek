@@ -43,6 +43,7 @@ Lot of people have contributed to the MegaMek project.
      Reinhard Vicinus <rvicinus@users.sourceforge.net>
      Chris Nelson <albinosqrl@users.sourceforge.net>
      fastsammy <fastsammy@users.sourceforge.net>
+     Shane Kearns <shane.kearns@ntlworld.com>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

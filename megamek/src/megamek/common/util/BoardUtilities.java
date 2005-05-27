@@ -97,7 +97,7 @@ public class BoardUtilities {
         int index = 0;
         for (int h = 0; h < mapSettings.getBoardHeight(); h++) {
             for (int w = 0; w < mapSettings.getBoardWidth(); w++) {
-                nb[index++] = new Hex(elevationMap[w][h],"","");
+                nb[index++] = new Hex(elevationMap[w][h],"",mapSettings.getTheme());
             }
         }
         
@@ -120,21 +120,9 @@ public class BoardUtilities {
             placeSomeTerrain(result, Terrains.WOODS, mapSettings.getProbHeavy() ,
                     mapSettings.getMinForestSize(), 
                     mapSettings.getMaxForestSize(),
-                    reverseHex);
+                    reverseHex,
+                    true);
         }
-        /* Add the water */
-        count = mapSettings.getMinWaterSpots();
-        if (mapSettings.getMaxWaterSpots() > 0) { 
-            count += Compute.randomInt(mapSettings.getMaxWaterSpots());
-        }
-        count *= sizeScale;
-        for (int i = 0; i < count; i++) {
-            placeSomeTerrain(result, Terrains.WATER, mapSettings.getProbDeep() ,
-                    mapSettings.getMinWaterSize(), 
-                    mapSettings.getMaxWaterSize(),
-                    reverseHex);
-        }
-        
         /* Add the rough */
         count = mapSettings.getMinRoughSpots();
         if (mapSettings.getMaxRoughSpots() > 0) {
@@ -145,7 +133,8 @@ public class BoardUtilities {
             placeSomeTerrain(result, Terrains.ROUGH, 0,
                     mapSettings.getMinRoughSize(), 
                     mapSettings.getMaxRoughSize(),
-                    reverseHex);
+                    reverseHex,
+                    true);
         }
         /* Add the swamp */
         count = mapSettings.getMinSwampSpots();
@@ -157,8 +146,36 @@ public class BoardUtilities {
             placeSomeTerrain(result, Terrains.SWAMP, 0,
                     mapSettings.getMinSwampSize(), 
                     mapSettings.getMaxSwampSize(),
-                    reverseHex);
+                    reverseHex,
+                    false); // can stack with woods or roughs
         }
+        /* Add the water */
+        count = mapSettings.getMinWaterSpots();
+        if (mapSettings.getMaxWaterSpots() > 0) { 
+            count += Compute.randomInt(mapSettings.getMaxWaterSpots());
+        }
+        count *= sizeScale;
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.WATER, mapSettings.getProbDeep() ,
+                    mapSettings.getMinWaterSize(), 
+                    mapSettings.getMaxWaterSize(),
+                    reverseHex,
+                    true);
+        }
+        /* Add the pavements (ice) */
+        count = mapSettings.getMinPavementSpots();
+        if (mapSettings.getMaxPavementSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxPavementSpots());
+        }
+        count *= sizeScale;
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.PAVEMENT, 0,
+                    mapSettings.getMinPavementSize(), 
+                    mapSettings.getMaxPavementSize(),
+                    reverseHex,
+                    true); 
+        }
+        
         /* Add the craters */
         if (Compute.randomInt(100) < mapSettings.getProbCrater()) {
             addCraters(result, mapSettings.getMinRadius(), mapSettings.getMaxRadius(),
@@ -169,6 +186,20 @@ public class BoardUtilities {
         /* Add the river */
         if (Compute.randomInt(100)<mapSettings.getProbRiver()) {
             addRiver(result, reverseHex);
+        }
+        
+        /* Add special effects */
+        if(Compute.randomInt(100)<mapSettings.getProbFlood()) {
+            PostProcessFlood(nb, mapSettings.getFxMod());
+        }
+        if(Compute.randomInt(100)<mapSettings.getProbDrought()) {
+            PostProcessDrought(nb, mapSettings.getFxMod());
+        }
+        if(Compute.randomInt(100)<mapSettings.getProbFreeze()) {
+            PostProcessDeepFreeze(nb, mapSettings.getFxMod());
+        }
+        if(Compute.randomInt(100)<mapSettings.getProbForestFire()) {
+            PostProcessForestFire(nb, mapSettings.getFxMod());
         }
         
         /* Add the road */
@@ -183,7 +214,7 @@ public class BoardUtilities {
      * @param probHeavy The probability that a wood is a heavy wood (in %).
      * @param maxWoods Maximum Number of Woods placed.
      */
-    protected static void placeSomeTerrain(IBoard board, int terrainType, int probMore,int minHexes, int maxHexes, HashMap reverseHex) {
+    protected static void placeSomeTerrain(IBoard board, int terrainType, int probMore,int minHexes, int maxHexes, HashMap reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()),Compute.randomInt(board.getHeight()));
         int count = minHexes;
         if ((maxHexes - minHexes) > 0) {
@@ -210,7 +241,9 @@ public class BoardUtilities {
             for (int n = 0; n < (which - 1); n++)
                 iter.next();
             field = (IHex)iter.next();
-            field.removeAllTerrains();
+            if (exclusive) {
+                field.removeAllTerrains();
+            }
             int tempInt = (Compute.randomInt(100) < probMore)? 2 : 1;
             ITerrain tempTerrain = f.createTerrain(terrainType, tempInt);
             field.addTerrain(tempTerrain);
@@ -525,6 +558,128 @@ public class BoardUtilities {
         } 
     }
     
+    /** Flood negative hex levels 
+     *  Shoreline / salt marshes effect
+     *  Works best with more elevation
+     */    
+    protected static void PostProcessFlood(IHex[] hexSet, int modifier) {
+        int n;
+        IHex field;
+        ITerrainFactory f = Terrains.getTerrainFactory();
+        for (n=0;n<hexSet.length;n++) {
+            field = hexSet[n];
+            int elev = field.getElevation() - modifier;
+            if(elev == 0 &&
+               !(field.containsTerrain(Terrains.WATER)) &&
+               !(field.containsTerrain(Terrains.PAVEMENT))) {
+                field.addTerrain(f.createTerrain(Terrains.SWAMP,1));
+            } else if(elev < 0) {
+                if(elev < -4) elev=-4;
+                field.removeAllTerrains();
+                field.addTerrain(f.createTerrain(Terrains.WATER,-elev));
+                field.setElevation(modifier);
+            }
+        }                
+    }
+    
+    /** 
+     * Converts water hexes to ice hexes.
+     * Works best with snow&ice theme.
+     * When megamek has multilevel support etc, should be frozen over water
+     */
+    protected static void PostProcessDeepFreeze(IHex[] hexSet, int modifier) {
+        int n;
+        IHex field;
+        ITerrainFactory f = Terrains.getTerrainFactory();
+        for (n=0;n<hexSet.length;n++) {
+            field = hexSet[n];
+            if(field.containsTerrain(Terrains.WATER)) {
+                field.removeTerrain(Terrains.WATER);
+                field.addTerrain(f.createTerrain(Terrains.PAVEMENT,1));
+            } else if(field.containsTerrain(Terrains.SWAMP)) {
+                field.removeTerrain(Terrains.SWAMP);
+                if(field.terrainsPresent() == 0) {
+                    if(Compute.randomInt(100) < 30) {
+                        //if no other terrains present, 30% chance to change to rough
+                        field.addTerrain(f.createTerrain(Terrains.ROUGH,1));
+                    } else {
+                        field.addTerrain(f.createTerrain(Terrains.PAVEMENT,1));
+                    }
+                }
+            }
+        }        
+    }
+    
+    /** 
+     * Burning woods, with chance to be burnt down already
+     */
+    protected static void PostProcessForestFire(IHex[] hexSet, int modifier) {
+        int n;
+        IHex field;
+        int level, newlevel;
+        int severity; 
+        ITerrainFactory f = Terrains.getTerrainFactory();
+        for (n=0;n<hexSet.length;n++) {
+            field = hexSet[n];
+            level = field.terrainLevel(Terrains.WOODS);
+            if (level != ITerrain.LEVEL_NONE) {
+                severity = Compute.randomInt(5) - 2 + modifier;
+                newlevel = level - severity;
+                
+                if (newlevel <= level) {
+                    field.removeTerrain(Terrains.WOODS);
+                    if(newlevel <= 0) {
+                        field.addTerrain(f.createTerrain(Terrains.ROUGH,1));
+                    } else {
+                        field.addTerrain(f.createTerrain(Terrains.WOODS,newlevel));
+                        field.addTerrain(f.createTerrain(Terrains.FIRE,1));
+                        field.addTerrain(f.createTerrain(Terrains.SMOKE,1));
+                    }
+                }
+            }
+        }        
+    }
+    
+    /** Dries up all bodies of water by 1-3 levels.
+     * dried up water becomes swamp then rough
+     */
+    protected static void PostProcessDrought(IHex[] hexSet, int modifier) {
+        int n;
+        IHex field;
+        int level, newlevel;
+        int severity = 1 + Compute.randomInt(3) + modifier;
+        if(severity < 0)return;
+        ITerrainFactory f = Terrains.getTerrainFactory();
+        for (n=0;n<hexSet.length;n++) {
+            field = hexSet[n];
+            if(field.containsTerrain(Terrains.SWAMP)) {
+                field.removeTerrain(Terrains.SWAMP); //any swamps are dried up to hardened mud
+                if (field.terrainsPresent() == 0 &&
+                    Compute.randomInt(100) < 30) {
+                    //if no other terrains present, 30% chance to change to rough
+                    field.addTerrain(f.createTerrain(Terrains.ROUGH,1));
+                }
+            }
+            level = field.terrainLevel(Terrains.WATER);
+            if (level != ITerrain.LEVEL_NONE) {
+                newlevel = level - severity;
+                field.removeTerrain(Terrains.WATER);
+                if (newlevel == 0) {
+                    field.addTerrain(f.createTerrain(Terrains.SWAMP,1));
+                } else if(newlevel < 0) {
+                    field.addTerrain(f.createTerrain(Terrains.ROUGH,1));
+                } else {
+                    field.addTerrain(f.createTerrain(Terrains.WATER,newlevel));
+                }
+                if (level > severity)
+                    newlevel = severity;
+                else newlevel = level;
+                
+                field.setElevation(field.getElevation() - newlevel);
+            }
+        }
+    }
+    
     /** 
      * Generates the elevations 
      * @param hilliness The Hilliness
@@ -815,7 +970,7 @@ public class BoardUtilities {
                     tmpElevation[w][h] = 0;
                 }
         for (int i = steps; i > 0; i--) {
-            midPointStep((double)hilliness/1000, size, 1000,
+            midPointStep((double)hilliness/100, size, 100,
                     tmpElevation, i, true);
         }
         for (int w = 0; w < width; w++) {

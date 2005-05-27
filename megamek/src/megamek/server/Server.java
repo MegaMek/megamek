@@ -8810,7 +8810,8 @@ implements Runnable, ConnectionHandler {
             if (entity instanceof Infantry &&
                     !(entity instanceof BattleArmor) &&
                     game.getTemperatureDifference() > 0 &&
-                    !(entityHex.containsTerrain(Terrains.BUILDING))) {
+                    !(entityHex.containsTerrain(Terrains.BUILDING)) && 
+                    (entity.getTransportId() == Entity.NONE) ) {
                 phaseReport.append(entity.getDisplayName() )
                            .append( " is in extreme temperatures and dies.\n" );
                 phaseReport.append(destroyEntity(entity, "heat/cold", false, false));
@@ -13886,7 +13887,8 @@ implements Runnable, ConnectionHandler {
                 public boolean accept(Entity entity) {
                     if (entity instanceof MechWarrior) {
                         MechWarrior mw = (MechWarrior)entity;
-                        if (mw.getPickedUpById() == Entity.NONE && !mw.isDoomed()) {
+                        if (mw.getPickedUpById() == Entity.NONE &&
+                            !mw.isDoomed() && (mw.getTransportId() == Entity.NONE) ) {
                             return true;
                         }
                     }

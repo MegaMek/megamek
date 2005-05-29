@@ -134,6 +134,14 @@ public class MechSelectorDialog
         addWindowListener(this);
     }
 
+    private void updateTechChoice() {
+        m_chType.removeAll();
+        int maxTech = (m_client.game.getOptions().booleanOption("allow_level_3_units")?TechConstants.SIZE:TechConstants.SIZE_LEVEL_2);
+        for (int i=0; i<maxTech; i++) {
+            m_chType.addItem(TechConstants.getLevelDisplayableName(i));
+        }        
+    }
+
     private void updatePlayerChoice() {
         String lastChoice = m_chPlayer.getSelectedItem();
         m_chPlayer.removeAll();
@@ -172,16 +180,17 @@ public class MechSelectorDialog
         m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chWeightClass.select(0);
 
-        for (int i=0; i<TechConstants.SIZE; i++) {
+        int maxTech = (m_client.game.getOptions().booleanOption("allow_level_3_units")?TechConstants.SIZE:TechConstants.SIZE_LEVEL_2);
+        for (int i=0; i<maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }        
-        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAll")); //$NON-NLS-1$
-        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAndClan")); //$NON-NLS-1$
+//        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAll")); //$NON-NLS-1$
+//        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAndClan")); //$NON-NLS-1$
         // More than 8 items causes the drop down to sprout a vertical
         //  scroll bar.  I guess we'll sacrifice this next one to stay
         //  under the limit.  Stupid AWT Choice class!
         //m_chType.addItem("Mixed All");
-        m_chType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
+//        m_chType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chType.select(0);
 
 
@@ -209,18 +218,18 @@ public class MechSelectorDialog
             if ( /* Weight */
                 (nClass == EntityWeightClass.SIZE || mechs[x].getWeightClass() == nClass)
                 && /* Technology Level */
-                (sType.equals(Messages.getString("MechSelectorDialog.All")) //$NON-NLS-1$
-                 || (sType.equals(Messages.getString("MechSelectorDialog.ISAll")) && //$NON-NLS-1$
-                     mechs[x].getType() <= TechConstants.T_IS_LEVEL_2)
-                 || (sType.equals(Messages.getString("MechSelectorDialog.ISAndClan")) && //$NON-NLS-1$
-                     (mechs[x].getType() <= TechConstants.T_IS_LEVEL_2 ||
-                      mechs[x].getType() == TechConstants.T_CLAN_LEVEL_2))
-                 || (sType.equals(Messages.getString("MechSelectorDialog.MixedAll")) && //$NON-NLS-1$
-                     (mechs[x].getType() ==
-                      TechConstants.T_MIXED_BASE_IS_LEVEL_2 ||
-                      mechs[x].getType() ==
-                      TechConstants.T_MIXED_BASE_CLAN_LEVEL_2))
-                 || TechConstants.getLevelDisplayableName(mechs[x].getType()).equals(sType))
+                ((nType == TechConstants.T_ALL)
+                    || (nType == mechs[x].getType())
+                    || ((nType == TechConstants.T_MIXED_ALL)
+                        && ((mechs[x].getType() == TechConstants.T_MIXED_BASE_IS_LEVEL_2)
+                        || (mechs[x].getType() == TechConstants.T_MIXED_BASE_CLAN_LEVEL_2)))
+                    || ((nType == TechConstants.T_LEVEL_2_ALL)
+                        && ((mechs[x].getType() == TechConstants.T_IS_LEVEL_1)
+                        || (mechs[x].getType() == TechConstants.T_IS_LEVEL_2)
+                        || (mechs[x].getType() == TechConstants.T_CLAN_LEVEL_2)))
+                    || ((nType == TechConstants.T_IS_LEVEL_2_ALL)
+                        && ((mechs[x].getType() == TechConstants.T_IS_LEVEL_1)
+                        || (mechs[x].getType() == TechConstants.T_IS_LEVEL_2))))
                 && /* Unit Type (Mek, Infantry, etc.) */
                 ( nUnitType == UnitType.SIZE ||
                   mechs[x].getUnitType().equals(UnitType.getTypeName(nUnitType))))
@@ -256,6 +265,7 @@ public class MechSelectorDialog
     
     public void show() {
         updatePlayerChoice();
+        updateTechChoice();
         setLocation(m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2,
                     m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2);
         super.show();

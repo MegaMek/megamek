@@ -384,10 +384,40 @@ public class HmpFile
       mech.setOmni(chassisType == ChassisType.BIPED_OMNI ||
                    chassisType == ChassisType.QUADRAPED_OMNI);
 
-      int techLevel = rulesLevel == 1 ? TechConstants.T_IS_LEVEL_1 :
-        techType == TechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 :
-        TechConstants.T_IS_LEVEL_2;
-      mech.setTechLevel(techLevel);
+      if (techType == TechType.INNER_SPHERE) {
+          switch (rulesLevel) {
+          case 1 :
+              mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+              break;
+          case 2 :
+              mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+              break;
+          case 3 :
+              mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+              break;
+          default :
+              throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
+          }
+      } else if (techType == TechType.CLAN) {
+          switch (rulesLevel) {
+          case 2 :
+              mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+              break;
+          case 3 :
+              mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+              break;
+          default :
+              throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
+          }
+      } else if (techType == TechType.MIXED && mixedBaseTechType == TechType.INNER_SPHERE) {
+          mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+          mech.setMixedTech(true);
+      } else if (techType == TechType.MIXED && mixedBaseTechType == TechType.CLAN) {
+          mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+          mech.setMixedTech(true);
+      } else {
+          throw new EntityLoadingException("Unsupported tech base: " + techType);
+      }
 
       mech.setWeight(tonnage);
 

@@ -433,14 +433,11 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                     bTechMatch = true;
                 }
                 
-                //allow mixed Tech Mechs to use both IS and Clan Ammo
-                if (entity.getTechLevel() == TechConstants.T_MIXED_BASE_CLAN_LEVEL_2) {
-                   bTechMatch = TechConstants.T_CLAN_LEVEL_2 > atCheck.getTechType();                       
+                //allow mixed Tech Mechs to use both IS and Clan ammo of any
+                // level (since mixed tech is always level 3)
+                if (entity.isMixedTech()) {
+                    bTechMatch = true;
                 }
-                
-                if (entity.getTechLevel() == TechConstants.T_MIXED_BASE_IS_LEVEL_2) {
-                   bTechMatch = TechConstants.T_IS_LEVEL_2 >= atCheck.getTechType();
-                }                
 
                 // If clan_ignore_eq_limits is unchecked,
                 // do NOT allow Clans to use IS-only ammo.

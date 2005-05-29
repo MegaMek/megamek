@@ -1956,7 +1956,7 @@ public class Compute
         Enumeration entities = game.getEnemyEntities(coords, te);
         while (entities.hasMoreElements()) {
             tempEntity = (Entity)entities.nextElement();
-            if (!tempEntity.getHitBySwarm(aeId, weaponId)) {
+            if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                 // we found a target
                 return tempEntity;
             }
@@ -1973,7 +1973,7 @@ public class Compute
             entities = game.getEnemyEntities(tempcoords, te);
             if (entities.hasMoreElements()) {
                 tempEntity = (Entity)entities.nextElement();
-                if (!tempEntity.getHitBySwarm(aeId, weaponId)) {
+                if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                     // we found a target
                     return tempEntity;
                 }
@@ -1981,7 +1981,7 @@ public class Compute
             entities = game.getFriendlyEntities(tempcoords, te);
             if (entities.hasMoreElements()) {
                 tempEntity = (Entity)entities.nextElement();
-                if (!tempEntity.getHitBySwarm(aeId, weaponId)) {
+                if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                     // we found a target
                     return tempEntity;
                 }

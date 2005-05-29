@@ -4149,13 +4149,26 @@ public abstract class Entity
         }
         return sb.toString();        
     }
-    
-    public void addSwarmHit(int entityId, int weaponId) {
+    /**
+     * Add a targeting by a swarm volley from a specified entity
+     * @param entityId The <code>int</code> id of the shooting entity
+     * @param weaponId The <code>int</code> id of the shooting lrm launcher
+     */
+    public void addTargetedBySwarm(int entityId, int weaponId) {
         hitBySwarmsEntity.add(new Integer(entityId));
         hitBySwarmsWeapon.add(new Integer(weaponId));
     }
     
-    public boolean getHitBySwarm(int entityId, int weaponId) {
+    /**
+     * Where we targeted by a certain swarm/swarm-i volley this turn?
+     * 
+     * @param entityId The <code>int</code> id of the shooting entity we are
+     *                 checking
+     * @param weaponId The <code>int</code> id of the launcher to check
+     * @return a fitting <code>boolean</code> value
+     * 
+     */
+    public boolean getTargetedBySwarm(int entityId, int weaponId) {
         for (int i = 0;i < hitBySwarmsEntity.size();i++) {
             Integer entityIdToTest = (Integer)hitBySwarmsEntity.elementAt(i);
             Integer weaponIdToTest = (Integer)hitBySwarmsWeapon.elementAt(i);

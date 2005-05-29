@@ -5602,6 +5602,9 @@ implements Runnable, ConnectionHandler {
       if(bArtillery && game.getPhase()==IGame.PHASE_FIRING) { //if direct artillery
           wr.artyAttackerCoords=ae.getPosition();
       }
+      if ( (bSwarm || bSwarmI) && entityTarget != null) {
+          entityTarget.addTargetedBySwarm(ae.getId(), wr.waa.getWeaponId());
+      }
 
       // Which building takes the damage?
       Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -7135,9 +7138,6 @@ implements Runnable, ConnectionHandler {
                         }
                         if (bAntiTSM) {
                             entityTarget.hitThisRoundByAntiTSM = true;
-                        }
-                        if (bSwarm || bSwarmI) {
-                            entityTarget.addSwarmHit(ae.getId(), wr.waa.getWeaponId());
                         }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage) );

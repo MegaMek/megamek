@@ -390,19 +390,30 @@ public class TdbFile implements MechLoader {
                 case 2 :
                     mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
                     break;
+                case 3 :
+                    mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                    break;
                 default :
                     throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
                 }
             } else if (techBase.equals("Clan")) {
-                if (Integer.parseInt(rulesLevel) == 2)
+                switch (Integer.parseInt(rulesLevel)) {
+                case 2 :
                     mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
-                else
+                    break;
+                case 3 :
+                    mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                    break;
+                default :
                     throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
+                }
             } else if (techBase.equals("Mixed (IS Chassis)") ||
                        techBase.equals("Inner Sphere 'C'")) {
-                mech.setTechLevel(TechConstants.T_MIXED_BASE_IS_LEVEL_2);
+                mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                mech.setMixedTech(true);
             } else if (techBase.equals("Mixed (Clan Chassis)")) {
-                mech.setTechLevel(TechConstants.T_MIXED_BASE_CLAN_LEVEL_2);
+                mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                mech.setMixedTech(true);
             } else {
                 throw new EntityLoadingException("Unsupported tech base: " + techBase);
             }

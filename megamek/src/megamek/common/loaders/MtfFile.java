@@ -198,28 +198,6 @@ public class MtfFile implements MechLoader {
                 mech.setOmni(true);
             }
 
-            /*
-            //TODO: this ought to be a better test
-            boolean innerSphere = "Inner Sphere".equals(this.techBase.substring(9).trim());
-            boolean mixed = "Mixed".equals(this.techBase.substring(9).trim());
-            switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
-                case 1 :
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
-                    break;
-                case 2 :
-                    if (innerSphere) {
-                        mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
-                    } else if (mixed) {
-                        mech.setTechLevel(TechConstants.T_MIXED_LEVEL_2);
-                    } else {
-                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
-                    }
-                    break;
-                default :
-                    throw new EntityLoadingException("Unsupported tech base and/or level: " + this.techBase.substring(9) + " (level " + this.rulesLevel.substring(12) + ")");
-            }
-            */
-
             if (techBase.substring(9).trim().equals("Inner Sphere")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                 case 1 :
@@ -228,18 +206,29 @@ public class MtfFile implements MechLoader {
                 case 2 :
                     mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
                     break;
+                case 3 :
+                    mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                    break;
                 default :
                     throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
                 }
             } else if (techBase.substring(9).trim().equals("Clan")) {
-                if (Integer.parseInt(rulesLevel.substring(12).trim()) == 2)
+                switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                case 2 :
                     mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
-                else
+                    break;
+                case 3 :
+                    mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                    break;
+                default :
                     throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                }
             } else if (techBase.substring(9).trim().equals("Mixed (IS Chassis)")) {
-                mech.setTechLevel(TechConstants.T_MIXED_BASE_IS_LEVEL_2);
+                mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                mech.setMixedTech(true);
             } else if (techBase.substring(9).trim().equals("Mixed (Clan Chassis)")) {
-                mech.setTechLevel(TechConstants.T_MIXED_BASE_CLAN_LEVEL_2);
+                mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                mech.setMixedTech(true);
             } else if (techBase.substring(9).trim().equals("Mixed")) {
                 throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
             } else {

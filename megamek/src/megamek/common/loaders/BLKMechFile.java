@@ -99,9 +99,11 @@ public class BLKMechFile extends BLKFile implements MechLoader {
         } else if (dataFile.getDataAsString("type")[0].equals("Clan")) {
             mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {
-            mech.setTechLevel(TechConstants.T_MIXED_BASE_IS_LEVEL_2);
+            mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+            mech.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis)")) {
-            mech.setTechLevel(TechConstants.T_MIXED_BASE_CLAN_LEVEL_2);
+            mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+            mech.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
             throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
         } else {

@@ -16,6 +16,7 @@
 package megamek.server;
 
 import megamek.common.*;
+import megamek.common.util.StringUtil;
 import java.util.*;
 
 public abstract class UnitStatusFormatter
@@ -102,7 +103,7 @@ public abstract class UnitStatusFormatter
     {
         StringBuffer sb = new StringBuffer();
         for (int x = 0; x < e.locations(); x++) {
-            sb.append(makeLength(e.getLocationName(x), 12)).append(": ");
+            sb.append(StringUtil.makeLength(e.getLocationName(x), 12)).append(": ");
             int nCount = 0;
             for (int y = 0; y < e.getNumberOfCriticals(x); y++) {
                 CriticalSlot cs = e.getCritical(x, y);
@@ -386,34 +387,10 @@ public abstract class UnitStatusFormatter
             }
         }
         else {
-            return makeLength(String.valueOf(nArmor), spaces, true);
+            return StringUtil.makeLength(String.valueOf(nArmor), spaces, true);
         }
     }
-    
-    private static final String SPACES = "                                   ";
-    private static String makeLength(String s, int n) {
-        return makeLength(s, n, false);
-    }
-    
-    private static String makeLength(String s, int n, boolean bRightJustify)
-    {
-        int l = s.length();
-        if (l == n) {
-            return s;
-        }
-        else if (l < n) {
-            if (bRightJustify) {
-                return SPACES.substring(0, n - l) + s;
-            }
-            else {
-                return s + SPACES.substring(0, n - l);
-            }
-        }
-        else {
-            return s.substring(0, n - 2) + "..";
-        }
-    }
-    
+
     public static void main(String[] ARGS)
         throws Exception
     {

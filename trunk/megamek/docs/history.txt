@@ -22,6 +22,10 @@ v0.29.79 (CVS)
 + Patch 1209460:  Level 3 'Mechs, Protected by Option
 + Bug 1209501: Exception when kicking while mulekick turned off
 + Added level 3 parsing support (but no level 3 equipment yet)
++ Preliminary steps taken to convert stand-alone unit verifier into built-in
+     feature.  Previous megamek.test.entities package moved to
+     megamek.common.verifier and TestAllEntities renamed to EntityVerifier.
+     Other small changes made to bring it up to date.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

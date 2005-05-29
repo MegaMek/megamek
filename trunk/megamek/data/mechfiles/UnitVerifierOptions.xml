@@ -1,5 +1,5 @@
 <!-- Sample Entity Test options file -->
-<testallentities>
+<entityverifier>
   <mech>
     <ceilweight>
       <engine>0.25</engine>
@@ -73,4 +73,4 @@
     false
     </skip>
   </tank>
-</testallentities>
+</entityverifier>

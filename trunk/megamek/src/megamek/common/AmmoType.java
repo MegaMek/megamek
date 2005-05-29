@@ -2718,7 +2718,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Advanced SRM 2 Ammo";
-        ammo.setInternalName("BA-Advanced SRM2 Ammo");
+        ammo.setInternalName("BA-Advanced SRM-2 Ammo");
         ammo.addLookupName("BAAdvancedSRM2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;

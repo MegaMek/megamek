@@ -19,6 +19,7 @@ v0.29.79 (CVS)
      the GUI.
 + Bug 1207269: lobby shows pilot advantage when weapon specialist: none and
      using one of the translations.
++ Patch 1209460:  Level 3 'Mechs, Protected by Option
   
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

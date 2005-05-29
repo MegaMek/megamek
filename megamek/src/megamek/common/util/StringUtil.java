@@ -73,5 +73,35 @@ public class StringUtil {
         }
         return false;
     }
-    
+
+    private static final String SPACES =
+       "                                                                     ";
+
+    public static String makeLength(String s, int n) {
+        return makeLength(s, n, false);
+    }
+
+    public static String makeLength(int s, int n)
+    {
+        return makeLength(Integer.toString(s), n, true);
+    }
+
+    public static String makeLength(String s, int n, boolean bRightJustify)
+    {
+        int l = s.length();
+        if (l == n) {
+            return s;
+        }
+        else if (l < n) {
+            if (bRightJustify) {
+                return SPACES.substring(0, n - l) + s;
+            }
+            else {
+                return s + SPACES.substring(0, n - l);
+            }
+        }
+        else {
+            return s.substring(0, n - 2) + "..";
+        }
+    }
 }

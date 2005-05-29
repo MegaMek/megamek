@@ -1709,7 +1709,8 @@ public class Compute
              KickAttackAction.RIGHT ).getValue()
             != ToHitData.IMPOSSIBLE;
 
-        if (game.getOptions().booleanOption("maxtech_mulekicks")) {
+        if (game.getOptions().booleanOption("maxtech_mulekicks") &&
+            game.getEntity(entityId) instanceof QuadMech) {
             canHit |= KickAttackAction.toHit
             ( game, entityId, target,
               KickAttackAction.LEFTMULE ).getValue()

@@ -381,8 +381,13 @@ public class PhysicalDisplay
     private void kick() {
         ToHitData leftLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFT);
         ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
-        ToHitData rightRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHTMULE);
-        ToHitData leftRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFTMULE);
+        ToHitData rightRearLeg = null;
+        ToHitData leftRearLeg = null;
+        if (client.game.getEntity(cen) instanceof QuadMech &&
+            client.game.getOptions().booleanOption("maxtech_mulekicks")) {
+            rightRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHTMULE);
+            leftRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFTMULE);
+        }
         ToHitData attackLeg;
         int attackSide=KickAttackAction.LEFT;
         int value = leftLeg.getValue();
@@ -393,17 +398,19 @@ public class PhysicalDisplay
             attackSide = KickAttackAction.RIGHT;
             attackLeg = rightLeg;
         }
-        if (value>rightRearLeg.getValue()) {
-            value = rightRearLeg.getValue();
-            attackSide = KickAttackAction.RIGHTMULE;
-            attackLeg = rightRearLeg;
+        if (client.game.getEntity(cen) instanceof QuadMech &&
+            client.game.getOptions().booleanOption("maxtech_mulekicks")) {
+            if (value>rightRearLeg.getValue()) {
+                value = rightRearLeg.getValue();
+                attackSide = KickAttackAction.RIGHTMULE;
+                attackLeg = rightRearLeg;
+            }
+            if (value>leftRearLeg.getValue()) {
+                value = leftRearLeg.getValue();
+                attackSide = KickAttackAction.LEFTMULE;
+                attackLeg = leftRearLeg;
+            }
         }
-        if (value>leftRearLeg.getValue()) {
-            value = leftRearLeg.getValue();
-            attackSide = KickAttackAction.LEFTMULE;
-            attackLeg = leftRearLeg;
-        }
-        
         String title = Messages.getString("PhysicalDisplay.KickDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
         String message = Messages.getString("PhysicalDisplay.KickDialog.message", new Object[]{ //$NON-NLS-1$
                 attackLeg.getValueAsString(), new Double(Compute.oddsAbove(attackLeg.getValue())), attackLeg.getDesc()

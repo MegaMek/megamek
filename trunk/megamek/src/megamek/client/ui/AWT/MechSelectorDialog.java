@@ -220,9 +220,6 @@ public class MechSelectorDialog
                 && /* Technology Level */
                 ((nType == TechConstants.T_ALL)
                     || (nType == mechs[x].getType())
-                    || ((nType == TechConstants.T_MIXED_ALL)
-                        && ((mechs[x].getType() == TechConstants.T_MIXED_BASE_IS_LEVEL_2)
-                        || (mechs[x].getType() == TechConstants.T_MIXED_BASE_CLAN_LEVEL_2)))
                     || ((nType == TechConstants.T_LEVEL_2_ALL)
                         && ((mechs[x].getType() == TechConstants.T_IS_LEVEL_1)
                         || (mechs[x].getType() == TechConstants.T_IS_LEVEL_2)

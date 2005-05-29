@@ -93,6 +93,7 @@ public abstract class Entity
     protected String            model;
     protected int               year;
     protected int               techLevel;
+    protected boolean           mixedTech = false;
 
     protected String            displayName = null;
     protected String            shortName = null;
@@ -373,7 +374,15 @@ public abstract class Entity
 
     public boolean isClan() {
         return ( techLevel == TechConstants.T_CLAN_LEVEL_2 ||
-                 techLevel == TechConstants.T_MIXED_BASE_CLAN_LEVEL_2 );
+                 techLevel == TechConstants.T_CLAN_LEVEL_3 );
+    }
+
+    public boolean isMixedTech() {
+        return mixedTech;
+    }
+
+    public void setMixedTech(boolean mixedTech) {
+        this.mixedTech = mixedTech;
     }
 
     public int getYear() {

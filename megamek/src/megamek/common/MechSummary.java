@@ -34,7 +34,7 @@
     private int m_nTons;
     private int m_nBV;
     private long m_lModified; // for comparison when loading
-
+    private String m_sLevel;
     
     public String getName() { return (this.m_sName); }
     public String getChassis() { return (this.m_sChassis); }
@@ -62,6 +62,7 @@
     public int getTons() { return (this.m_nTons); }
     public int getBV() { return (this.m_nBV); }
     public long getModified() { return (this.m_lModified); }
+    public String getLevel() { return (this.m_sLevel); }
     
     public void setName(String m_sName) { this.m_sName = m_sName; }
     public void setChassis(String m_sChassis) { this.m_sChassis = m_sChassis; }
@@ -74,6 +75,7 @@
     public void setTons(int m_nTons) { this.m_nTons = m_nTons; }
     public void setBV(int m_nBV) { this.m_nBV = m_nBV; }
     public void setModified(long m_lModified) { this.m_lModified = m_lModified; }
+    public void setLevel(String level) { this.m_sLevel = level; }
     
     public int getWeightClass() {
         return EntityWeightClass.getWeightClass(m_nTons);

@@ -706,17 +706,28 @@ class Engine
     public final static int XL_ENGINE =    2;
     public final static int LIGHT_ENGINE = 3;
 
+    public boolean engineValid;
     private int engineRating;
     private int engineType;
     private int engineFlags;
+    public StringBuffer problem = new StringBuffer("Illegal engine: ");
 
     public Engine(int engineRating, int engineType, int engineFlags)
-        throws EngineException
     {
-        isValidEngine(engineRating, engineType, engineFlags);
-        this.engineRating = engineRating;
-        this.engineType = engineType;
-        this.engineFlags = engineFlags;
+        if (!isValidEngine(engineRating, engineType, engineFlags))
+        {
+            this.engineValid = false;
+            this.engineRating = 0;
+            this.engineType = -1;
+            this.engineFlags = -1;
+        }
+        else
+        {
+            this.engineValid = true;
+            this.engineRating = engineRating;
+            this.engineType = engineType;
+            this.engineFlags = engineFlags;
+        }
     }
 
     private static boolean hasFlag(int x, int flag)
@@ -726,11 +737,13 @@ class Engine
         return false;
     }
 
-    public static boolean isValidEngine(int rating, int type, int flags)
-        throws EngineException
+    public boolean isValidEngine(int rating, int type, int flags)
     {
         if (hasFlag(flags, ~(CLAN_ENGINE|TANK_ENGINE)))
-            throw new EngineException("Flags", flags);
+        {
+            this.problem.append("Flags:" + flags);
+            return false;
+        }
         switch (type)
         {
             case COMPUSTION_ENGINE:
@@ -739,11 +752,15 @@ class Engine
             case LIGHT_ENGINE:
                 break;
             default:
-                throw new EngineException("Type", type);
+                this.problem.append("Type:" + type);
+                return false;
         }
         if ((int)Math.ceil(rating/5)>ENGINE_RATINGS.length ||
                 rating<0)
-            throw new EngineException("Rating", rating);
+        {
+            this.problem.append("Rating:" + rating);
+            return false;
+        }
         return true;
     }
     public boolean isFusionEngine()
@@ -835,8 +852,9 @@ class Engine
             case LIGHT_ENGINE:
                 return Integer.toString(engineRating)+ " Light"+
                     (hasFlag(engineFlags, CLAN_ENGINE)?" (Clan)":"");
+            default:
+                return "Invalid Engine!";
         }
-        return null;
     }
     public static String getEngineName(int engineRating, int engineType,
             int engineFlags)
@@ -970,16 +988,3 @@ class Structure
     }
 } // End class Structure
 
-
-class EngineException extends Exception
-{
-    private int failure;
-    private String art;
-
-    public EngineException(String art, int failure)
-    {
-        super("Engine "+art+" Failure: "+Integer.toString(failure));
-        this.art = art;
-        this.failure = failure;
-    }
-} // End class EngineException

@@ -62,14 +62,14 @@ public class EntityVerifier implements MechSummaryCache.Listener
                     readOptions(child);
                 }
             }
-            System.out.println("Using config file: " + config.getPath());
+            //System.out.println("Using config file: " + config.getPath());
         } catch (ParseException e)
         {
-            System.err.println("Failure parsing config file:");
+            System.err.println("EntityVerifier: Failure parsing config file:");
             System.err.println(e.getMessage());
         } catch (FileNotFoundException e)
         {
-            System.err.println("Configfile not found:");
+            System.err.println("EntityVerifier: Configfile not found:");
             System.err.println(e.getMessage());
         }
     }
@@ -77,46 +77,38 @@ public class EntityVerifier implements MechSummaryCache.Listener
     public boolean checkEntity(Entity entity, String fileString, boolean verbose)
     {
         boolean retVal = false;
-        try
+
+        TestEntity testEntity = null;
+        if (entity instanceof Mech)
+            testEntity = new TestMech((Mech)entity, mechOption, fileString);
+        else if (entity instanceof Tank)
+            testEntity = new TestTank((Tank)entity, tankOption, fileString);
+        else
         {
-            TestEntity testEntity = null;
-            if (entity instanceof Mech)
-                testEntity = new TestMech((Mech)entity, mechOption, fileString);
-            else if (entity instanceof Tank)
-                testEntity = new TestTank((Tank)entity, tankOption, fileString);
-            else
-            {
-                System.err.println("UnknownType: "+entity.getDisplayName());
-                System.err.println("Found in: "+fileString);
-                return false;
-            }
-
-
-            if (verbose)
-            {
-                System.out.print(testEntity.printEntity());
-
-            }
-            else
-            {
-                StringBuffer buff = new StringBuffer();
-                if (testEntity.correctEntity(buff))
-                {
-                    retVal = true;
-                }
-                else
-                {
-                    System.out.println(testEntity.getName());
-                    System.out.println("Found in: "+testEntity.fileString);
-                    System.out.print(buff);
-                }
-            }
-
-        } catch(EngineException e)
-        {
-            System.out.println(entity.getDisplayName());
-            System.out.println(e.getMessage());
+            System.err.println("UnknownType: "+entity.getDisplayName());
+            System.err.println("Found in: "+fileString);
+            return false;
         }
+
+        if (verbose)
+        {
+            System.out.print(testEntity.printEntity());
+        }
+        else
+        {
+            StringBuffer buff = new StringBuffer();
+            if (testEntity.correctEntity(buff))
+            {
+                retVal = true;
+            }
+            else
+            {
+                System.out.println(testEntity.getName());
+                System.out.println("Found in: "+testEntity.fileString);
+                System.out.print(buff);
+            }
+        }
+
         return retVal;
     }
 
@@ -214,7 +206,6 @@ public class EntityVerifier implements MechSummaryCache.Listener
             Entity entity = null;
             try
             {
-                System.err.println(entityName);
                 entity = new MechFileParser(f, entityName).getEntity();
             } catch (megamek.common.loaders.EntityLoadingException e)
             {

@@ -267,16 +267,24 @@ public class MechSelectorDialog
                     m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2);
         super.show();
     }
-    
+
     private String formatMech(MechSummary ms)
     {
+        String levelOrValid;
+
+        if (!ms.getLevel().equals("F")) {
+            levelOrValid = TechConstants.T_SIMPLE_LEVEL[ms.getType()];
+        } else {
+            levelOrValid = "F";
+        }
         return makeLength(ms.getModel(), 10) + " " +  //$NON-NLS-1$
                 makeLength(ms.getChassis(), 20) + " " +  //$NON-NLS-1$
                 makeLength("" + ms.getTons(), 3) + " " +  //$NON-NLS-1$ //$NON-NLS-2$
-                makeLength("" + ms.getBV(),5)+""+ //$NON-NLS-1$ //$NON-NLS-2$
-            ms.getYear();
+                makeLength("" + ms.getBV(),5)+" "+ //$NON-NLS-1$ //$NON-NLS-2$
+            ms.getYear() + " " +
+            levelOrValid + " ";
     }
-    
+
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == m_bCancel) {
             this.setVisible(false);

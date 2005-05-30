@@ -890,7 +890,8 @@ public class ChatLounge
                             new Integer(entity.calculateBattleValue()),
                             strTreeView,
                             ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
-                            ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : "")})); //$NON-NLS-1$ //$NON-NLS-2$
+                            ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : ""), //$NON-NLS-1$ //$NON-NLS-2$
+                            (entity.isDesignValid() ? "" : Messages.getString("ChatLounge.invalidDesign"))})); //$NON-NLS-1$ //$NON-NLS-2$
                 entityCorrespondance[listIndex++] = entity.getId();
             }
         }

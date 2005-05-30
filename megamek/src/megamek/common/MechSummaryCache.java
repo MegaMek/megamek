@@ -25,6 +25,10 @@ import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestTank;
 
 import com.sun.java.util.collections.*;
 
@@ -46,6 +50,8 @@ public class MechSummaryCache {
     private static ArrayList listeners = new ArrayList();
 
     private static StringBuffer loadReport = new StringBuffer();
+    private final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml"; //should be a client option?
+    private static EntityVerifier entityVerifier = null;
 
     public static synchronized MechSummaryCache getInstance() {
         if (!initialized && !initializing) {
@@ -123,7 +129,7 @@ public class MechSummaryCache {
         Vector vMechs = new Vector();
         Set sKnownFiles = new HashSet();
         long lLastCheck = 0;
-
+        entityVerifier = new EntityVerifier(new File(CONFIG_FILENAME));
         hFailedFiles = new Hashtable();
 
         EquipmentType.initializeTypes(); // load master equipment lists
@@ -170,7 +176,10 @@ public class MechSummaryCache {
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setTons(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-                    ms.setBV(Integer.parseInt(s.substring(nIndex2 + 1)));
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setBV(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+                    ms.setLevel(s.substring(nIndex2 + 1));
 
                     // Verify that this file still exists and is older than
                     //  the cache.
@@ -266,10 +275,39 @@ public class MechSummaryCache {
                     + m_data[x].getTons()
                     + SEPARATOR
                     + m_data[x].getBV()
+                    + SEPARATOR
+                    + m_data[x].getLevel()
                     + "\r\n");
         }
         wr.flush();
         wr.close();
+    }
+
+    private static MechSummary getSummary(Entity e, File f, String entry) {
+        MechSummary ms = new MechSummary();
+        ms.setName(e.getShortName());
+        ms.setChassis(e.getChassis());
+        ms.setModel(e.getModel());
+        ms.setUnitType(MechSummary.determineUnitType(e));
+        ms.setSourceFile(f);
+        ms.setEntryName(entry);
+        ms.setYear(e.getYear());
+        ms.setType(e.getTechLevel());
+        ms.setTons((int) e.getWeight());
+        ms.setBV(e.calculateBattleValue());
+        ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
+        // we can only test meks and vehicles right now
+        if (e instanceof Mech || e instanceof Tank) {
+            TestEntity testEntity = null;
+            if (e instanceof Mech)
+                testEntity = new TestMech((Mech)e, entityVerifier.mechOption, null);
+            else
+                testEntity = new TestTank((Tank)e, entityVerifier.tankOption, null);
+            if (!testEntity.correctEntity(new StringBuffer())) {
+                ms.setLevel("F");
+            }
+        }
+        return ms;
     }
 
     // Loading a complete mech object for each summary is a bear and should be 
@@ -317,24 +355,14 @@ public class MechSummaryCache {
             }
             try {
                 MechFileParser mfp = new MechFileParser(f);
-                Entity m = mfp.getEntity();
-                MechSummary ms = new MechSummary();
-                ms.setName(m.getShortName());
-                ms.setChassis(m.getChassis());
-                ms.setModel(m.getModel());
-                ms.setUnitType(MechSummary.determineUnitType(m));
-                ms.setSourceFile(f);
-                ms.setEntryName(null);
-                ms.setYear(m.getYear());
-                ms.setType(m.getTechLevel());
-                ms.setTons((int) m.getWeight());
-                ms.setBV(m.calculateBattleValue());
+                Entity e = mfp.getEntity();
+                MechSummary ms = getSummary(e, f, null);
                 vMechs.addElement(ms);
                 sKnownFiles.add(f.toString());
                 bNeedsUpdate = true;
                 thisDirectoriesFileCount++;
                 fileCount++;
-                Enumeration failedEquipment = m.getFailedEquipment();
+                Enumeration failedEquipment = e.getFailedEquipment();
                 if (failedEquipment.hasMoreElements()) {
                     loadReport.append("    Loading from ").append(f)
                         .append("\n");
@@ -394,24 +422,14 @@ public class MechSummaryCache {
 
             try {
                 MechFileParser mfp = new MechFileParser(zFile.getInputStream(zEntry), zEntry.getName());
-                Entity m = mfp.getEntity();
-                MechSummary ms = new MechSummary();
-                ms.setName(m.getShortName());
-                ms.setChassis(m.getChassis());
-                ms.setModel(m.getModel());
-                ms.setUnitType(MechSummary.determineUnitType(m));
-                ms.setSourceFile(fZipFile);
-                ms.setEntryName(zEntry.getName());
-                ms.setYear(m.getYear());
-                ms.setType(m.getTechLevel());
-                ms.setTons((int) m.getWeight());
-                ms.setBV(m.calculateBattleValue());
+                Entity e = mfp.getEntity();
+                MechSummary ms = getSummary(e, fZipFile, zEntry.getName());
                 vMechs.addElement(ms);
                 sKnownFiles.add(zEntry.getName());
                 bNeedsUpdate = true;
                 thisZipFileCount++;
                 zipCount++;
-                Enumeration failedEquipment = m.getFailedEquipment();
+                Enumeration failedEquipment = e.getFailedEquipment();
                 if (failedEquipment.hasMoreElements()) {
                     loadReport.append("    Loading from zip file")
                         .append(" >> ").append(zEntry.getName()).append("\n");

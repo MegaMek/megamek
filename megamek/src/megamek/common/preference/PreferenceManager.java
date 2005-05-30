@@ -144,6 +144,47 @@ public class PreferenceManager {
             
             output.write("<?xml version=\"1.0\"?>");
             output.write(CommonConstants.NL);
+
+            /* It seems that comments in an XML file crashes the TinyXML parser
+            rather nastily.  Bummer.  Maybe these should be moved to a text
+            file instead?
+            -----
+            output.write("<!--");
+            output.write("This file contains the client preferences for MegaMek.  It");
+            output.write(CommonConstants.NL);
+            output.write("is machine-generated, but you may also modify it by hand.");
+            output.write(CommonConstants.NL);
+            output.write("Most of the settings in this file can be changed from the");
+            output.write(CommonConstants.NL);
+            output.write("\"View->Client Settings\" menu option within the game.");
+            output.write(CommonConstants.NL);
+            output.write("The few that can only be changed by hand-modifying this");
+            output.write(CommonConstants.NL);
+            output.write("file are listed directly below:");
+            output.write(CommonConstants.NL);
+            output.write("\"MechDisplayArmorLargeFontSize\"  -  Integer font size in points, default value is 12.");
+            output.write(CommonConstants.NL);
+            output.write("\"MechDisplayArmorMediumFontSize\"  -  Integer font size in points, default value is 10.");
+            output.write(CommonConstants.NL);
+            output.write("\"MechDisplayArmorSmallFontSize\"  -  Integer font size in points, default value is 10.");
+            output.write(CommonConstants.NL);
+            output.write("\"MechDisplayLargeFontSize\"  -  Integer font size in points, default value is 10.");
+            output.write(CommonConstants.NL);
+            output.write("\"MechDisplayMediumFontSize\"  -  Integer font size in points, default value is 10.");
+            output.write(CommonConstants.NL);
+            output.write("\"MechDisplayWrapLength\"  -  Integer value specifying the maximum number of characters");
+            output.write(CommonConstants.NL);
+            output.write("to display on one line for the unit name, default value is 24.");
+            output.write(CommonConstants.NL);
+            output.write("All of the above options must go within the megamek.client.GUIPrefernces section.");
+            output.write(CommonConstants.NL);
+            output.write("Here is an example tag:");
+            output.write(CommonConstants.NL);
+            output.write("(preference name=\"MechDisplayLargeFontSize\" value=\"20\"/)");
+            output.write("-->");
+            output.write(CommonConstants.NL);
+            */
+
             output.write("<"+ROOT_NODE_NAME+">");
             output.write(CommonConstants.NL);
 

@@ -1736,7 +1736,7 @@ class ExtraPanel
             } else if (en.heat >= 17) {
                 heatR.append (Messages.getString("MechDisplay.mf+3")); //$NON-NLS-1$
             } else if (en.heat >= 13) {
-                heatR.append (Messages.getString("MechDisplay.mf+3")); //$NON-NLS-1$
+                heatR.append (Messages.getString("MechDisplay.mf+2")); //$NON-NLS-1$
             } else if (en.heat >= 8) {
                 heatR.append (Messages.getString("MechDisplay.mf+1")); //$NON-NLS-1$
             }

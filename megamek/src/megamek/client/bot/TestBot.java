@@ -223,7 +223,6 @@ public class TestBot extends BotClient {
                 }
                 
                 CEntity enemy = centities.get(en);
-                enemy.refresh();
                 int[] modifiers = option.getModifiers(enemy.getEntity());
                 if (modifiers[MoveOption.DEFENCE_MOD] == ToHitData.IMPOSSIBLE
                     && modifiers[MoveOption.ATTACK_MOD] == ToHitData.IMPOSSIBLE) {
@@ -1148,25 +1147,92 @@ public class TestBot extends BotClient {
         chatp.processChat(ge, this);
     }
 
-    protected void calculateDeployment() {
-        // Use the old clumping algorithm until someone puts AI in here
-        int entNum = game.getFirstDeployableEntityNum();        
-        Coords cStart = getStartingCoords();
-        Coords cDeploy = getCoordsAround(cStart);
 
-        Coords cCenter = new Coords(game.getBoard().getWidth() / 2, game.getBoard().getHeight() / 2);
-        int nDir;
-        if (getLocalPlayer().getStartingPos() != 0) {
-            // face towards center if you aren't already there
-            nDir = cDeploy.direction(cCenter);
-        } else {
-            // otherwise, face away
-            nDir = cCenter.direction(cDeploy);
+
+
+// Where do I put my units?  This prioritizes hexes and facings
+    protected void calculateDeployment() {
+
+        int weapon_count;
+        int hex_count, x_ave, y_ave, nDir;
+        double av_range;
+
+        Coords pointing_to = new Coords();
+        Entity test_ent;
+        Enumeration weapons, ammo_slots, valid_attackers;
+        
+        int entNum = game.getFirstDeployableEntityNum();
+        Coords cStart = getStartingCoords();
+        Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
+
+// Now that we have a location to deploy to, get a direction
+// Using average long range of deploying unit, point towards the largest cluster of enemies in range
+
+        av_range = 0.0;
+        weapon_count = 0;
+        weapons = getEntity(entNum).getWeapons();
+        while (weapons.hasMoreElements()) {
+            Mounted mounted = (Mounted)weapons.nextElement();
+            WeaponType wtype = (WeaponType)mounted.getType();
+            if ((wtype.getName() != "ATM 3") && (wtype.getName() != "ATM 6") && (wtype.getName() != "ATM 9") && (wtype.getName() != "ATM 12")){
+                if (getEntity(entNum).getC3Master() != null){
+                    av_range += (((double) wtype.getLongRange()) * 1.25);
+                } else {
+                    av_range += (double) wtype.getLongRange();
+                }
+                weapon_count = ++weapon_count;
+            }
         }
+        ammo_slots = getEntity(entNum).getAmmo();
+        while (ammo_slots.hasMoreElements()) {
+            Mounted mounted = (Mounted)ammo_slots.nextElement();
+            AmmoType atype = (AmmoType)mounted.getType();
+            if (atype.getAmmoType() == AmmoType.T_ATM){
+                weapon_count = ++weapon_count;
+                av_range += 15.0;
+                if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE){
+                    av_range -= 6;
+                }
+                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE){
+                    av_range += 12.0;
+                }
+            }
+        }
+
+        av_range = av_range/weapon_count;   
+
+        hex_count = 0;
+        x_ave = 0;
+        y_ave = 0;
+        valid_attackers = game.getEntities();
+        while (valid_attackers.hasMoreElements()){
+            test_ent = (Entity)valid_attackers.nextElement();
+            if (test_ent.isDeployed()){
+                if (test_ent.isVisibleToEnemy()){
+                    if (cDeploy.distance(test_ent.getPosition()) <= (int) av_range){
+                        hex_count++;
+                        x_ave += test_ent.getPosition().x;
+                        y_ave += test_ent.getPosition().y;
+                    }
+                }
+            }
+        }
+        if (hex_count != 0){
+            pointing_to = new Coords((x_ave/hex_count),(y_ave/hex_count));
+        } else {
+            pointing_to = new Coords(game.getBoard().getWidth() / 2, game.getBoard().getHeight() / 2);
+        }
+        nDir = cDeploy.direction(pointing_to);
+
+// TO DO -> If unit has stealth armor, turn it on
+
         Entity ce = game.getEntity(entNum);
         megamek.debug.Assert.assertTrue(!ce.isHexProhibited(game.getBoard().getHex(cDeploy)));
         deploy(entNum, cDeploy, nDir);
     }
+
+
+
 
     protected MovePath continueMovementFor(Entity entity) {
         return new MovePath(game, entity);

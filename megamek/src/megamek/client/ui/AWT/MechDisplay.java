@@ -1654,7 +1654,7 @@ class ExtraPanel
         if (en instanceof Mech) {
             Mech m = (Mech)en;
             
-            int noSinks = m.getHeatCapacity();
+            int noSinks = m.getActiveSinks();
             if (m.hasDoubleHeatSinks()) {
                 sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble", new Object[]{new Integer(noSinks), new Integer(noSinks*2)}));
             } else {

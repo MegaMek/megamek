@@ -31,6 +31,7 @@ v0.29.79 (CVS)
 + Removed duplicate lines from *.properties
 + Missing translations for client
 + Some more missing translations
++ Bug 1211456: Game#entities and Game#entityIds are not in synch
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

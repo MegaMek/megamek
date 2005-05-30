@@ -1004,24 +1004,32 @@ public class Game implements Serializable, IGame
         entityIds.put(new Integer(id), entity);
         
         if(id > lastEntityId) lastEntityId = id;
+
+        megamek.debug.Assert.assertTrue(entities.size()==entityIds.size());
+
         processGameEvent(new GameEntityNewEvent(this, entity));
     }
 
     public void setEntity(int id, Entity entity) {
         setEntity(id,entity,null);
+        megamek.debug.Assert.assertTrue(entities.size()==entityIds.size());
     }
 
     public void setEntity(int id, Entity entity, Vector movePath) {
         final Entity oldEntity = getEntity(id);
-        entity.setGame(this);
         if (oldEntity == null) {
-            entities.addElement(entity);
+            addEntity(id, entity);
         } else {
-            Coords oc = entity.getPosition();
+            entity.setGame(this);
             entities.setElementAt(entity, entities.indexOf(oldEntity));
             entityIds.put(new Integer(id), entity);
+
+            //Not sure if this really required
+            if(id > lastEntityId) lastEntityId = id;            
+
             processGameEvent(new GameEntityChangeEvent(this,entity, movePath));
         }
+        megamek.debug.Assert.assertTrue(entities.size()==entityIds.size());
     }
     
     

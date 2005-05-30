@@ -19,7 +19,7 @@ v0.29.79 (CVS)
      the GUI.
 + Bug 1207269: lobby shows pilot advantage when weapon specialist: none and
      using one of the translations.
-+ Patch 1209460:  Level 3 'Mechs, Protected by Option
++ Patch 1209460: Level 3 'Mechs, Protected by Option
 + Bug 1209501: Exception when kicking while mulekick turned off
 + Added level 3 parsing support (but no level 3 equipment yet)
 + Preliminary steps taken to convert stand-alone unit verifier into built-in

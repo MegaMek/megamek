@@ -94,6 +94,7 @@ public abstract class Entity
     protected int               year;
     protected int               techLevel;
     protected boolean           mixedTech = false;
+    protected boolean           designValid = true;
 
     protected String            displayName = null;
     protected String            shortName = null;
@@ -383,6 +384,14 @@ public abstract class Entity
 
     public void setMixedTech(boolean mixedTech) {
         this.mixedTech = mixedTech;
+    }
+
+    public boolean isDesignValid() {
+        return designValid;
+    }
+
+    public void setDesignValid(boolean designValid) {
+        this.designValid = designValid;
     }
 
     public int getYear() {

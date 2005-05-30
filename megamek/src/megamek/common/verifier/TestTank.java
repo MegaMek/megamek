@@ -37,7 +37,6 @@ public class TestTank extends TestEntity
     private Tank tank = null;
 
     public TestTank(Tank tank, TestEntityOption options, String fileString)
-        throws EngineException
     {
         super(options, getEngine(tank), getArmor(tank), getStructure(tank));
         this.tank = tank;
@@ -73,7 +72,6 @@ public class TestTank extends TestEntity
     }
 
     private static Engine getEngine(Tank tank)
-        throws EngineException
     {
         int type = 0;
         int flag = Engine.TANK_ENGINE;
@@ -246,11 +244,15 @@ public class TestTank extends TestEntity
         boolean correct = true;
         if (skip())
             return true;
-        //buff.append(getName()).append("\n");
         if (!correctWeight(buff))
         {
             buff.insert(0, printTechLevel()+printShortMovement());
             buff.append(printWeightCalculation()).append("\n");
+            correct = false;
+        }
+        if (!engine.engineValid)
+        {
+            buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
         if (showFailedEquip() && hasFailedEquipment(buff))

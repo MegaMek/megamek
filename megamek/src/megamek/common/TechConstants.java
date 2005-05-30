@@ -60,6 +60,18 @@ public class TechConstants {
 
     public static final int SIZE            = T_NAMES.length;
 
+    //This translates the integer above into a simple level number.
+    // The "all" selections return -1, since they don't apply to
+    // individual units.
+    public static final String[]    T_SIMPLE_LEVEL = {"1",
+                                                      "2",
+                                                      "2",
+                                                      "-1",
+                                                      "-1",
+                                                      "3",
+                                                      "3",
+                                                      "-1"};
+
     public static String getLevelName(int level) {
         if (level >= 0 && level < SIZE) {
             return T_NAMES[level];

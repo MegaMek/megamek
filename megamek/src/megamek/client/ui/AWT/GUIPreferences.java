@@ -41,6 +41,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE="MechDisplayArmorSmallFontSize";
     public static final String MECH_DISPLAY_LARGE_FONT_SIZE="MechDisplayLargeFontSize";
     public static final String MECH_DISPLAY_MEDIUM_FONT_SIZE="MechDisplayMediumFontSize";
+    public static final String MECH_DISPLAY_WRAP_LENGTH = "MechDisplayWrapLength";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
     public static final String MINI_REPORT_SIZE_HEIGHT="MiniReportSizeHeight";
@@ -107,6 +108,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE, 9);
         store.setDefault(MECH_DISPLAY_LARGE_FONT_SIZE, 12);
         store.setDefault(MECH_DISPLAY_MEDIUM_FONT_SIZE, 10);
+        store.setDefault(MECH_DISPLAY_WRAP_LENGTH, 24);
         store.setDefault(MINIMAP_COLOURS,"defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
@@ -223,6 +225,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMechDisplayMediumFontSize() {
         return store.getInt(MECH_DISPLAY_MEDIUM_FONT_SIZE);
+    }
+
+    public int getMechDisplayWrapLength() {
+        return store.getInt(MECH_DISPLAY_WRAP_LENGTH);
     }
 
     public String getMinimapColours() {

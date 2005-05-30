@@ -21,7 +21,6 @@ package megamek.common.verifier;
 
 import megamek.common.Entity;
 import megamek.common.Mech;
-import megamek.common.TechConstants;
 import megamek.common.CriticalSlot;
 import megamek.common.Mounted;
 import megamek.common.EquipmentType;

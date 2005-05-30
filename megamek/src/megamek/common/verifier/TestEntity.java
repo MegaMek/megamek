@@ -24,7 +24,6 @@ import megamek.common.Mech;
 import megamek.common.TechConstants;
 import megamek.common.CriticalSlot;
 import megamek.common.Mounted;
-import megamek.common.EquipmentType;
 import megamek.common.WeaponType;
 import megamek.common.AmmoType;
 import megamek.common.MiscType;

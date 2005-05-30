@@ -39,7 +39,6 @@ public class TestMech extends TestEntity
     private Mech mech = null;
 
     public TestMech(Mech mech, TestEntityOption option, String fileString)
-        throws EngineException
     {
         super(option, getEngine(mech), getArmor(mech), getStructure(mech));
         this.mech = mech;
@@ -47,7 +46,6 @@ public class TestMech extends TestEntity
     }
 
     private static Engine getEngine(Mech mech)
-        throws EngineException
     {
         int type, flag = 0;
         if (mech.hasXL())
@@ -382,11 +380,15 @@ public class TestMech extends TestEntity
         boolean correct = true;
         if (skip())
             return true;
-        //buff.append(getName()).append("\n");
         if (!correctWeight(buff))
         {
             buff.insert(0, printTechLevel()+printShortMovement());
             buff.append(printWeightCalculation()).append("\n");
+            correct = false;
+        }
+        if (!engine.engineValid)
+        {
+            buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
         if (showCorrectArmor() && !correctArmor(buff))

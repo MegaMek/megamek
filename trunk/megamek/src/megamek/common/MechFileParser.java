@@ -39,7 +39,7 @@ public class MechFileParser {
                 parse(new FileInputStream(f), f.getName());
             } catch (Exception ex) {
                 if (ex instanceof EntityLoadingException) {
-                    throw new EntityLoadingException(ex.getMessage());
+                    throw new EntityLoadingException("While parsing file " + f.getName() + ", " + ex.getMessage());
                 } else {
                     throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
                 }

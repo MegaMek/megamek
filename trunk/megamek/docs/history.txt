@@ -34,6 +34,7 @@ v0.29.79 (CVS)
 + Bug 1211456: Game#entities and Game#entityIds are not in synch
 + Patch 1211062: Bot deployment - needs double blind fix
 + Fix build.xml so that .properties files are included in the jar.
++ Unit verifier is now built-in.  Meks and vehicles are currently supported.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

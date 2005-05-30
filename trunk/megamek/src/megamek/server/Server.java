@@ -28,6 +28,10 @@ import megamek.common.net.*;
 import megamek.common.options.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestTank;
 
 /**
  * @author Ben Mazur
@@ -36,6 +40,8 @@ public class Server
 implements Runnable, ConnectionHandler {
     //    public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
     public final static String  DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
+    private final static String VERIFIER_CONFIG_FILENAME =
+        "data/mechfiles/UnitVerifierOptions.xml";
 
     // server setup
     private String              password;
@@ -82,6 +88,8 @@ implements Runnable, ConnectionHandler {
     //might be a reason we're avoiding them here...if not, feel free
     //to add the import.
     //private HashSet             knownDeadEntities = new HashSet();
+
+    private static EntityVerifier entityVerifier = null;
 
     /**
      * Construct a new GameHost and begin listening for
@@ -11714,6 +11722,30 @@ implements Runnable, ConnectionHandler {
     private void receiveEntityAdd(Packet c, int connIndex) {
         final Entity entity = (Entity)c.getObject(0);
 
+        //Verify the entity's design
+        if (Server.entityVerifier == null)
+            Server.entityVerifier = new EntityVerifier(new File(VERIFIER_CONFIG_FILENAME));
+        // we can only test meks and vehicles right now
+        if (entity instanceof Mech || entity instanceof Tank) {
+            TestEntity testEntity = null;
+            entity.restore();
+            if (entity instanceof Mech)
+                testEntity = new TestMech((Mech)entity, Server.entityVerifier.mechOption, null);
+            else
+                testEntity = new TestTank((Tank)entity, Server.entityVerifier.tankOption, null);
+            if (testEntity.correctEntity(new StringBuffer())) {
+                entity.setDesignValid(true);
+            } else {
+                if (game.getOptions().booleanOption("allow_illegal_units")) {
+                    entity.setDesignValid(false);
+                } else {
+                    Player cheater = game.getPlayer( connIndex );
+                    sendServerChat("Player " + cheater.getName() + " attempted to add an illegal unit design (" + entity.getShortName() + "), the unit was rejected.");
+                    return;
+                }
+            }
+        }
+
         // If we're adding a Protomech, calculate it's unit number.
         if ( entity instanceof Protomech ) {
 
@@ -11740,8 +11772,8 @@ implements Runnable, ConnectionHandler {
         if ( Entity.NONE == entity.getId() ) {
             entity.setId(getFreeEntityId());
         }
-        game.addEntity(entity.getId(), entity);
 
+        game.addEntity(entity.getId(), entity);
         send(createAddEntityPacket(entity.getId()));
     }
 

@@ -33,15 +33,14 @@ public class GeneralInfoMapSet implements DisplayMapSet{
     private Component comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
-        weightL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
+        weightL, bvL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
         movementTypeL, ejectL;
-    private PMSimpleLabel statusR, playerR, teamR, weightR, pilotR,
-        mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR, bvL, bvR;
+    private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, pilotR,
+        mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR;
     private PMSimpleLabel[] advantagesR;
     private Vector    bgDrawers = new Vector();
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
     private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
-    private final static int MAX_STR_LENGTH = 18;
     private int yCoord = 1;
 
     /**
@@ -101,10 +100,10 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         weightR = createLabel(STAR3, fm, weightL.getSize().width + 10, getYCoord());
         content.addArea(weightR);
 
-        bvL = createLabel( Messages.getString("GeneralInfoMapSet.bvL"), fm, weightL.getSize().width + 10 + weightR.getSize().width + 10, getYCoord()); //$NON-NLS-1$
+        bvL = createLabel( Messages.getString("GeneralInfoMapSet.bvL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea( bvL );
 
-        bvR = createLabel(STAR3, fm, weightL.getSize().width + 10 + weightR.getSize().width + 10 + bvL.getSize().width + 10, getYCoord());
+        bvR = createLabel(STAR3, fm, bvL.getSize().width + 10, getYCoord());
         content.addArea( bvR );
 
         mpL0 = createLabel(Messages.getString("GeneralInfoMapSet.mpL0"), fm, 0, getNewYCoord()); //$NON-NLS-1$
@@ -114,21 +113,21 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         content.addArea(mpR0);
 
         mpL1 = createLabel(Messages.getString("GeneralInfoMapSet.mpL1"), fm, 0 , getNewYCoord()); //$NON-NLS-1$
-        mpL1.moveTo( mpL0.getSize().width - mpL1.getSize().width, 115);
+        mpL1.moveTo( mpL0.getSize().width - mpL1.getSize().width, getYCoord());
         content.addArea(mpL1);
 
         mpR1 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR1);
 
         mpL2 = createLabel(Messages.getString("GeneralInfoMapSet.mpL2"), fm, 0 , getNewYCoord()); //$NON-NLS-1$
-        mpL2.moveTo( mpL0.getSize().width - mpL2.getSize().width, 130);
+        mpL2.moveTo( mpL0.getSize().width - mpL2.getSize().width, getYCoord());
         content.addArea(mpL2);
 
         mpR2 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR2);
 
         mpL3 = createLabel(Messages.getString("GeneralInfoMapSet.mpL3"), fm, 0 , getNewYCoord()); //$NON-NLS-1$
-        mpL3.moveTo( mpL0.getSize().width - mpL3.getSize().width, 145);
+        mpL3.moveTo( mpL0.getSize().width - mpL3.getSize().width, getYCoord());
         content.addArea(mpL3);
 
         mpR3 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
@@ -181,8 +180,9 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         String s = en.getShortName();
         mechTypeL1.setVisible(false);
         
-        if(s.length() > MAX_STR_LENGTH){
-            int i = s.lastIndexOf(" ", MAX_STR_LENGTH); //$NON-NLS-1$
+        if(s.length() > GUIPreferences.getInstance().getMechDisplayWrapLength()){
+            mechTypeL1.setColor(Color.yellow);
+            int i = s.lastIndexOf(" ", GUIPreferences.getInstance().getMechDisplayWrapLength()); //$NON-NLS-1$
             mechTypeL0.setString(s.substring(0,i));
             mechTypeL1.setString(s.substring(i).trim());
             mechTypeL1.setVisible(true);
@@ -190,8 +190,15 @@ public class GeneralInfoMapSet implements DisplayMapSet{
             mechTypeL0.setString(s);
             mechTypeL1.setString(""); //$NON-NLS-1$
         }
-        
-        
+
+        if (!en.isDesignValid()) {
+            //If this is the case, we will just overwrite the name-overflow
+            // area, since this info is more important.
+            mechTypeL1.setColor(Color.red);
+            mechTypeL1.setString(Messages.getString("GeneralInfoMapSet.invalidDesign"));
+            mechTypeL1.setVisible(true);
+        }
+
         statusR.setString(en.isProne() ? Messages.getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
         playerR.setString(en.getOwner().getName());
         if (en.getOwner().getTeam() == 0) {

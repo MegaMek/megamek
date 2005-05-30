@@ -29,6 +29,7 @@ v0.29.79 (CVS)
 + Bug 1210956: Gnome missing its advanced SRM2.
 + Translation of Equipmentmessages
 + Removed duplicate lines from *.properties
++ Missing translations for client
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

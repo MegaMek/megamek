@@ -1360,8 +1360,8 @@ class SystemPanel
 class ExtraPanel
     extends BufferedPanel
 {
-    private TransparentLabel  narcLabel, unusedL, carrysL, heatL;
-    public TextArea unusedR, carrysR, heatR;
+    private TransparentLabel  narcLabel, unusedL, carrysL, heatL, sinksL;
+    public TextArea unusedR, carrysR, heatR, sinksR;
     public java.awt.List narcList;
 
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
@@ -1396,6 +1396,12 @@ class ExtraPanel
         carrysR.setEditable(false);
         carrysR.addKeyListener(clientgui.menuBar);
 
+        sinksL = new TransparentLabel
+            ( Messages.getString("MechDisplay.activeSinksLabel"), fm, Color.white, TransparentLabel.CENTER);
+        sinksR = new TextArea ("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        sinksR.setEditable(false);
+        sinksR.addKeyListener(clientgui.menuBar);
+        
         heatL = new TransparentLabel
             ( Messages.getString("MechDisplay.HeatEffects"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
         heatR = new TextArea ("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
@@ -1444,6 +1450,15 @@ class ExtraPanel
         gridbag.setConstraints(carrysR, c);
         add(carrysR);
 
+        c.weighty = 0.0;
+        gridbag.setConstraints(sinksL, c);
+        add(sinksL);
+        
+        c.insets = new Insets(1, 9, 18, 9);
+        c.weighty = 1.0;
+        gridbag.setConstraints(sinksR, c);
+        add(sinksR);
+        
         c.weighty = 0.0;
         gridbag.setConstraints(heatL, c);
         add(heatL);
@@ -1634,7 +1649,18 @@ class ExtraPanel
 
         // Show Heat Effects, but only for Mechs.
         heatR.setText(""); //$NON-NLS-1$
+        sinksR.setText("");
+        
         if (en instanceof Mech) {
+            Mech m = (Mech)en;
+            
+            int noSinks = m.getHeatCapacity();
+            if (m.hasDoubleHeatSinks()) {
+                sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble", new Object[]{new Integer(noSinks), new Integer(noSinks*2)}));
+            } else {
+                sinksR.append(Messages.getString("MechDisplay.activeSinksTextSingle", new Object[]{new Integer(noSinks)}));
+            }
+            
             boolean hasTSM = false;
             boolean mtHeat = false;
             if (((Mech)en).hasTSM()) hasTSM = true;

@@ -1982,6 +1982,18 @@ public abstract class Mech
         return sinks;
     }
     
+    public boolean hasDoubleHeatSinks() {
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+                return false;
+            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public void setActiveSinksNextRound(int sinks) {
         if(sinks!=getNumberOfSinks()) {
             sinksChanged=true;

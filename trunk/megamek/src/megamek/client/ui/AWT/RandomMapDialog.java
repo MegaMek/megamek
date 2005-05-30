@@ -32,6 +32,8 @@ public class RandomMapDialog
     private static final int NORMAL_LINE_WIDTH = 195;
     private static final int ADVANCED_LINE_WIDTH = 295;
 
+    private ScrollPane scrAll = new ScrollPane();
+
     private Button butOK = null;
     private Button butAdvanced = null;
     
@@ -196,14 +198,14 @@ public class RandomMapDialog
         this.mapSettings = mapSettings;
         this.frame = parent;
         this.bsd = bsd;
-        setResizable(false);
+        setResizable(true);
         
         createComponents();
         loadValues();
 
         setLayout(new BorderLayout());
         setupOptions();
-        add(panOptions, BorderLayout.CENTER);
+        add(scrAll, BorderLayout.CENTER);
         setupButtons();
         add(panButtons, BorderLayout.SOUTH);
 
@@ -315,6 +317,7 @@ public class RandomMapDialog
             addLabelTextField(labProbFlood, texProbFlood);
             addLabelTextField(labFxMod, texFxMod);
         }
+        scrAll.add(panOptions);
         
         if (initiated) {
             pack();

@@ -27,6 +27,8 @@ v0.29.79 (CVS)
      megamek.common.verifier and TestAllEntities renamed to EntityVerifier.
      Other small changes made to bring it up to date.
 + Bug 1210956: Gnome missing its advanced SRM2.
++ Translation of Equipmentmessages
++ Removed duplicate lines from *.properties
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

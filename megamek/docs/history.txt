@@ -36,6 +36,7 @@ v0.29.79 (CVS)
 + Fix build.xml so that .properties files are included in the jar.
 + Unit verifier is now built-in.  Meks and vehicles are currently supported.
 + Show number of active heat sinks in Mechdisplay/Extras tab
++ Made RMG dialog scrollable
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

@@ -9,9 +9,9 @@ v0.29.79 (CVS)
 + Bug 1209357: Movement after unloading
 + ejected pilots should not be able to pick up other ejected pilots.
 + Task 106037: Swarm and Swarm-I LRM submunition
-+ RFE 1007856, patch sent by Shane Kearns:
-     Use RMG in the "New Board" dialog of the Map Editor, and lots of other
-     RMG enhancements. See map-enhancements.txt
++ RFE 1007856, 903107: patch sent by Shane Kearns:
+     Use RMG in the "New Board" dialog of the Map Editor, allow RMG maps to use
+     themes, and lots of other RMG enhancements. See map-enhancements.txt
 + Infantry should not die when loaded in vehicles in extreme temperature
 + ejected pilots loaded in troop carriers should not be considered picked up
 + i18n of the launcher

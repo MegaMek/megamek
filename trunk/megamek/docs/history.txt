@@ -37,6 +37,7 @@ v0.29.79 (CVS)
 + Unit verifier is now built-in.  Meks and vehicles are currently supported.
 + Show number of active heat sinks in Mechdisplay/Extras tab
 + Made RMG dialog scrollable
++ Heat effect display for heat >= 13 and < 17 showed +3 to fire instead +2.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

@@ -121,7 +121,8 @@ public class UnitOverview implements Displayable {
             graph.setColor(getFrameColor(e));
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
             
-            if (e.isSelected()) {
+            Entity se = clientgui == null?null:clientgui.getClient().getEntity(clientgui.getSelectedEntityNum());
+            if (e == se) {
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
             }
             

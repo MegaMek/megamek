@@ -189,11 +189,21 @@ public class BoardView1
     private Coords highlighted;
     private Coords selected;
     private Coords firstLOS;
-    
+
+    private ClientGUI clientgui;
+
     /**
      * Construct a new board view for the specified game
      */
     public BoardView1(IGame game, Frame frame) throws java.io.IOException {
+        this(game, frame, null);
+    }
+
+    /**
+     * Construct a new board view for the specified game
+     */
+    public BoardView1(IGame game, Frame frame, ClientGUI clientgui) throws java.io.IOException {
+        this.clientgui = clientgui;
         this.game = game;
         this.frame = frame;
 
@@ -2043,9 +2053,10 @@ public class BoardView1
         case KeyEvent.VK_NUMPAD5 :
             // center on the selected entity
             java.util.Vector v = game.getPlayerEntities(localPlayer);
+            Entity se = clientgui == null?null:game.getEntity(clientgui.getSelectedEntityNum());
             for (int i = 0; i < v.size(); i++) {
                 Entity e = (Entity) v.elementAt(i);
-                if (e.isSelected()) {
+                if (e==se) {
                     centerOnHex(e.getPosition());
                 };
             };

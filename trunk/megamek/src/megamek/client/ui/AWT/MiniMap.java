@@ -81,6 +81,8 @@ public class MiniMap extends Canvas  {
     
     private Client       m_client;
 
+    private ClientGUI clientgui;
+
     /**
      * Creates and lays out a new mech display.
      */
@@ -117,6 +119,7 @@ public class MiniMap extends Canvas  {
 
     public MiniMap(Dialog d, ClientGUI c, BoardView1 bview) throws IOException {
         this (d, c.getClient().game, bview);
+        clientgui = c;
 
         c.minimapW.addKeyListener(c.menuBar);
         addKeyListener(c.menuBar);
@@ -642,8 +645,9 @@ public class MiniMap extends Canvas  {
             g.setColor (g.getColor().darker());
         }
         g.fillPolygon (xPoints, yPoints, xPoints.length);
-
-        if (entity.isSelected()) {
+        
+        Entity se = clientgui == null?null:m_game.getEntity(clientgui.getSelectedEntityNum());
+        if (entity == se) {
             Color w = new Color (255,255,255);
             Color b = new Color (0,0,0);
             g.setColor (b);

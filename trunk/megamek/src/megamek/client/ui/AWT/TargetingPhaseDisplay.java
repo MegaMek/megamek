@@ -210,54 +210,52 @@ public class TargetingPhaseDisplay
             clearAttacks();
             refreshAll();
         }
-
+        
         if (client.game.getEntity(en) != null) {
-                if (ce() != null) {
-                        ce().setSelected(false);
-                }
-                this.cen = en;
-                ce().setSelected(true);
-
+            
+            this.cen = en;
+            clientgui.setSelectedEntityNum(en);
+            
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.
             if ( null == ce().getPosition() ) {
-
-                            // Walk through the list of entities for this player.
-                            for ( int nextId = client.getNextEntityNum(en);
-                                    nextId != en;
-                                nextId = client.getNextEntityNum(nextId) ) {
-
-                                if (null != client.game.getEntity(nextId).getPosition()) {
-                                              this.cen = nextId;
-                                              break;
-                                }
-
+                
+                // Walk through the list of entities for this player.
+                for ( int nextId = client.getNextEntityNum(en);
+                nextId != en;
+                nextId = client.getNextEntityNum(nextId) ) {
+                    
+                    if (null != client.game.getEntity(nextId).getPosition()) {
+                        this.cen = nextId;
+                        break;
+                    }
+                    
                 } // Check the player's next entity.
-
+                
                 // We were *supposed* to have found an on-board entity.
                 if ( null == ce().getPosition() ) {
                     System.err.println
-                        ("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
-                         en);
+                    ("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
+                            en);
                     return;
                 }
-
+                
             } // End ce()-not-on-board
-
+            
             target(null);
             clientgui.getBoardView().highlight(ce().getPosition());
             clientgui.getBoardView().select(null);
             clientgui.getBoardView().cursor(null);
-
+            
             refreshAll();
-
+            
             if (!clientgui.bv.isMovingUnits()) {
                 clientgui.bv.centerOnHex(ce().getPosition());
             }
-
+            
             // Update the menu bar.
             clientgui.getMenuBar().setEntity( ce() );
-
+            
             // 2003-12-29, nemchenk -- only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
             setFlipArmsEnabled(ce().canFlipArms());

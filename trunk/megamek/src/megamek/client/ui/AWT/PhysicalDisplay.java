@@ -231,11 +231,9 @@ public class PhysicalDisplay
             System.err.println("PhysicalDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
-        if (ce() != null) {
-            ce().setSelected(false);
-        }
+
         this.cen = en;
-        ce().setSelected(true);
+        clientgui.setSelectedEntityNum(en);
         
         Entity entity = ce();
         

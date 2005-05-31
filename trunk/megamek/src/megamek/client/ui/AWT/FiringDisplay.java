@@ -271,11 +271,9 @@ public class FiringDisplay
         }
 
         if (client.game.getEntity(en) != null) {
-            if (ce() != null) {
-                ce().setSelected(false);
-            }
+
             this.cen = en;
-            ce().setSelected(true);
+            clientgui.setSelectedEntityNum(en);
 
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.

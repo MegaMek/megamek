@@ -123,6 +123,12 @@ public class ClientGUI
 
     //TODO: there's a better place for this
     private Map bots = new TreeMap(StringUtil.stringComparator());
+    
+    /**
+     * Current Selected entity
+     */
+    int selectedEntityNum = Entity.NONE;
+
     /**
      * Construct a client which will display itself in a new frame.  It will
      * not try to connect to a server yet.  When the frame closes, this client
@@ -248,7 +254,7 @@ public class ClientGUI
         try {
             client.game.addGameListener(gameListener);
             // Create the board viewer.
-            bv = new BoardView1(client.game, frame);
+            bv = new BoardView1(client.game, frame, this);
 
             // Place the board viewer in a set of scrollbars.
             scroller = new Panel();
@@ -1450,4 +1456,16 @@ public class ClientGUI
         return bots;
     }
 
+    /**
+     * @return Returns the selectedEntityNum.
+     */
+    public int getSelectedEntityNum() {
+        return selectedEntityNum;
+    }
+    /**
+     * @param selectedEntityNum The selectedEntityNum to set.
+     */
+    public void setSelectedEntityNum(int selectedEntityNum) {
+        this.selectedEntityNum = selectedEntityNum;
+    }
 }

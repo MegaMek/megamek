@@ -1200,7 +1200,7 @@ public class Compute
             AmmoType at = (AmmoType)weapon.getLinked().getType();
 
             float fHits = 0.0f;
-            if (wt.getAmmoType() == AmmoType.T_SRM_STREAK) {
+            if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK) || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 fHits = wt.getRackSize();
             }
             else if (wt.getRackSize() == 40 || wt.getRackSize() == 30) {

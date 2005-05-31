@@ -45,6 +45,7 @@ v0.29.79 (CVS)
     Extras tab.
 + Moved Client GUI specific methods 'isSelected', 'setSelected' from class 
     Entity to class ClientGUI.
++ Patch 1212216, RFE 1123632: Streak LRMS
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

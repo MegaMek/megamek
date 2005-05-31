@@ -1421,6 +1421,7 @@ public class FiringDisplay
         if (atype != null) {
             switch (atype.getAmmoType()) {
               case (AmmoType.T_SRM_STREAK) :
+              case (AmmoType.T_LRM_STREAK) :
               case (AmmoType.T_LRM) :
               case (AmmoType.T_LRM_TORPEDO) :
               case (AmmoType.T_SRM) :

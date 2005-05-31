@@ -155,8 +155,6 @@ public class EntityEncoder {
         out.write( entity.isSpotting() ? "true" : "false" );
         out.write( "\" isClearingMinefield=\"" );
         out.write( entity.isClearingMinefield() ? "true" : "false" );
-        out.write( "\" isSelected=\"" );
-        out.write( entity.isSelected() ? "true" : "false" );
         out.write( "\" isSalvage=\"" );
         out.write( entity.isSalvage() ? "true" : "false" );
         out.write( "\" isDeployed=\"" );

@@ -3687,14 +3687,6 @@ public abstract class Entity
         return ( !deployed && (getDeployRound() <= round) && !isOffBoard() );
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
     /**
      * Set the unit number for this entity.
      *

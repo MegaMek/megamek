@@ -36,7 +36,7 @@ v0.29.79 (CVS)
 + Fix build.xml so that .properties files are included in the jar.
 + Unit verifier is now built-in.  Meks and vehicles are currently supported.
 + Show number of active heat sinks in Mechdisplay/Extras tab
-+ Made RMG dialog scrollable
++ Bug 1210993: Made RMG dialog scrollable
 + Heat effect display for heat >= 13 and < 17 showed +3 to fire instead +2.
 + Bug 1211535: couldn't use Tac. Genius if opponent already had.
 + Bug 1188638: Multiple current unit marker on minimap

@@ -1370,9 +1370,17 @@ public class ClientGUI
             //  switched during a phase change.  This update is for
             //  Tactical Genius reroll requests, and therefore only
             //  resets the done button.
+        	// It also does a check if the player deserves an active reroll button (possible,
+        	// if he gets on which he didn't use, and his opponent got and used one) and if so
+        	// activates that too.
             if (curPanel instanceof ReportDisplay) {
                 ((ReportDisplay) curPanel).refresh();
                 ((ReportDisplay) curPanel).resetReadyButton();
+                if(client.game.hasTacticalGenius(client.getLocalPlayer())) {
+                	if(!((ReportDisplay) curPanel).hasRerolled()) {
+                	((ReportDisplay) curPanel).resetRerollButton();
+                	}
+                }
             }
         }
 

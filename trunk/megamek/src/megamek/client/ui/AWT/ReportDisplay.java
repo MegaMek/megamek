@@ -51,6 +51,8 @@ public class ReportDisplay
     private MovePath    md;        // movement data
     private MovePath    cmd;    // considering movement data
     
+    private boolean rerolled; //have we rerolled an init?
+    
     /**
      * Creates and lays out a new movement phase display 
      * for the specified client.
@@ -141,9 +143,16 @@ public class ReportDisplay
      * Requests an initiative reroll and disables the ready button.
      */
     public void rerollInitiative() {
+    	rerolled=true;
         rerollInitiativeB.setEnabled(false);
         readyB.setEnabled(false);
         client.sendRerollInitiativeRequest();
+    }
+    /**
+     * have we rerolled init this round?
+     */
+    public boolean hasRerolled() {
+    	return rerolled;
     }
     
     public void resetButtons() {
@@ -159,6 +168,10 @@ public class ReportDisplay
 
     public void resetReadyButton() {
         readyB.setEnabled(true);
+    }
+    
+    public void resetRerollButton() {
+    	rerollInitiativeB.setEnabled(true);
     }
 
     /**
@@ -207,6 +220,7 @@ public class ReportDisplay
 
         refresh();
         resetButtons();
+        rerolled=false;
     }
 
     /**

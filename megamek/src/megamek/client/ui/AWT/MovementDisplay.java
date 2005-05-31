@@ -307,10 +307,12 @@ public class MovementDisplay
             System.err.println("MovementDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
-        // okay...
-        if (ce != null) {
-            ce.setSelected(false);
+        
+        Entity oldSelected = client.game.getEntity(cen);
+        if (oldSelected != null) {
+            oldSelected.setSelected(false);
         }
+
         this.cen = en;
         ce.setSelected(true);
         clearAllMoves();

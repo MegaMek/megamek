@@ -165,12 +165,8 @@ public class DeploymentDisplay
             return;
         }
 
-        // okay.
-        if (ce() != null) {
-            ce().setSelected(false);
-        }
         this.cen = en;
-        ce().setSelected(true);
+        clientgui.setSelectedEntityNum(en);
 
         setTurnEnabled(true);
         butDone.setEnabled(false);

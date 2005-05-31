@@ -309,12 +309,10 @@ public class MovementDisplay
         }
         
         Entity oldSelected = client.game.getEntity(cen);
-        if (oldSelected != null) {
-            oldSelected.setSelected(false);
-        }
 
         this.cen = en;
-        ce.setSelected(true);
+        clientgui.setSelectedEntityNum(en);
+
         clearAllMoves();
         updateButtons();
         // Update the menu bar.

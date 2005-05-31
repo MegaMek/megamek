@@ -93,7 +93,7 @@ public class ClientGUI
     private FileDialog dlgLoadList = null;
     private FileDialog dlgSaveList = null;
 
-    private Client client;
+    public Client client;
 
     /**
      * Cache for the "bing" soundclip.

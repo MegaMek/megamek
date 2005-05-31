@@ -39,6 +39,7 @@ v0.29.79 (CVS)
 + Made RMG dialog scrollable
 + Heat effect display for heat >= 13 and < 17 showed +3 to fire instead +2.
 + Bug 1211535: couldn't use Tac. Genius if opponent already had.
++ Bug 1188638: Multiple current unit marker on minimap
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

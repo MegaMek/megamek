@@ -1359,11 +1359,17 @@ class SystemPanel
  */
 class ExtraPanel
     extends BufferedPanel
+    implements ItemListener, ActionListener
 {
     private TransparentLabel  narcLabel, unusedL, carrysL, heatL, sinksL;
     public TextArea unusedR, carrysR, heatR, sinksR;
+    public Button sinks2B;
     public java.awt.List narcList;
-
+    private int myMechId;
+    
+    private Prompt prompt;
+    private int sinks;
+    
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
 
     private ClientGUI clientgui;
@@ -1372,7 +1378,8 @@ class ExtraPanel
         super();
 
         this.clientgui = clientgui;
-
+        prompt = null;
+        
         FontMetrics fm = getFontMetrics(FONT_VALUE);
 
         narcLabel = new TransparentLabel
@@ -1401,6 +1408,10 @@ class ExtraPanel
         sinksR = new TextArea ("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         sinksR.setEditable(false);
         sinksR.addKeyListener(clientgui.menuBar);
+        
+        sinks2B = new Button (Messages.getString("MechDisplay.configureActiveSinksLabel"));
+        sinks2B.setActionCommand("changeSinks");
+        sinks2B.addActionListener(this);
         
         heatL = new TransparentLabel
             ( Messages.getString("MechDisplay.HeatEffects"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
@@ -1458,6 +1469,10 @@ class ExtraPanel
         c.weighty = 1.0;
         gridbag.setConstraints(sinksR, c);
         add(sinksR);
+        
+        c.weighty = 0.0;
+        gridbag.setConstraints(sinks2B, c);
+        add(sinks2B);
         
         c.weighty = 0.0;
         gridbag.setConstraints(heatL, c);
@@ -1541,7 +1556,9 @@ class ExtraPanel
 
         // Clear the "Affected By" list.
         narcList.removeAll();
-
+        sinks=0;
+        myMechId = en.getId();
+        
         // Walk through the list of teams.  There
         // can't be more teams than players.
         StringBuffer buff = null;
@@ -1654,11 +1671,12 @@ class ExtraPanel
         if (en instanceof Mech) {
             Mech m = (Mech)en;
             
-            int noSinks = m.getActiveSinks();
+            sinks2B.setEnabled(true);
+            sinks = m.getActiveSinks();
             if (m.hasDoubleHeatSinks()) {
-                sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble", new Object[]{new Integer(noSinks), new Integer(noSinks*2)}));
+                sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble", new Object[]{new Integer(sinks), new Integer(sinks*2)}));
             } else {
-                sinksR.append(Messages.getString("MechDisplay.activeSinksTextSingle", new Object[]{new Integer(noSinks)}));
+                sinksR.append(Messages.getString("MechDisplay.activeSinksTextSingle", new Object[]{new Integer(sinks)}));
             }
             
             boolean hasTSM = false;
@@ -1755,7 +1773,26 @@ class ExtraPanel
             if (en.heat <=4) {
                 heatR.append (Messages.getString("MechDisplay.None")+"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
             }
+        } else {
+            // Non-Mechs cannot configure their heatsinks
+            sinks2B.setEnabled(false);
         }
     } // End public void displayMech( Entity )
 
+    public void itemStateChanged(ItemEvent ev) {
+        ;
+    }
+    
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getActionCommand().equals("changeSinks")) { //$NON-NLS-1$
+            prompt = new Prompt (clientgui.frame, Messages.getString("MechDisplay.changeSinks"), Messages.getString("MechDisplay.changeSinks"),
+                                     String.valueOf(sinks), 10);
+            if (!prompt.showDialog()) return;
+            int helper = Integer.parseInt(prompt.getText());
+
+            ((Mech)clientgui.getClient().game.getEntity(myMechId)).setActiveSinksNextRound(helper);
+            clientgui.getClient().sendUpdateEntity(clientgui.getClient().game.getEntity(myMechId));
+            clientgui.getClient().sendChat ("Player " + clientgui.getClient().getLocalPlayer().getName() + " turned on " + helper + " heat sinks in entity " + clientgui.getClient().game.getEntity(myMechId).getDisplayName());
+        }
+    }
 } // End class ExtraPanel extends Panel

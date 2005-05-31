@@ -149,7 +149,6 @@ public abstract class Entity
 
     public boolean              spotting;
     private boolean             clearingMinefield = false;
-    private boolean             selected = false;
     private int                 killerId = Entity.NONE;
     private int                 offBoardDistance = 0;
     private int                 offBoardDirection = Entity.NONE;

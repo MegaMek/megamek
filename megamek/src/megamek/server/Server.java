@@ -5339,7 +5339,7 @@ implements Runnable, ConnectionHandler {
 
         // if the shot is possible and not a streak miss
         // and not a nemesis-confused shot, add heat and use ammo
-        streakMiss = (wtype.getAmmoType() == AmmoType.T_SRM_STREAK && wr.roll < wr.toHit.getValue());
+        streakMiss = (((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) && wr.roll < wr.toHit.getValue());
         if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE && !streakMiss &&
             !waa.isNemesisConfused()) {
             wr = addHeatUseAmmoFor(waa, wr);
@@ -6120,7 +6120,7 @@ implements Runnable, ConnectionHandler {
                     hits = 0;
                 }
             }
-            if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
+            if (( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) || ( wtype.getAmmoType() == AmmoType.T_LRM_STREAK )){
                 phaseReport.append( "fails to achieve lock.\n" );
             } else {
                 phaseReport.append("misses");
@@ -6311,6 +6311,7 @@ implements Runnable, ConnectionHandler {
         // All shots fired by a Streak SRM weapon, during
         // a Mech Swarm hit, or at an adjacent building.
         if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ||
+             wtype.getAmmoType() == AmmoType.T_LRM_STREAK ||
              wtype.getAmmoType() == AmmoType.T_NARC ||
              ae.getSwarmTargetId() == wr.waa.getTargetId() ||
              ( ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
@@ -6409,6 +6410,7 @@ implements Runnable, ConnectionHandler {
             }
 
             if ( wtype.getAmmoType() == AmmoType.T_LRM ||
+                 wtype.getAmmoType() == AmmoType.T_LRM_STREAK ||
                  wtype.getAmmoType() == AmmoType.T_MRM ||
                  wtype.getAmmoType() == AmmoType.T_ATM ||
                  wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER ) {

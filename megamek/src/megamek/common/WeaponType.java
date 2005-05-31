@@ -296,6 +296,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLATM6());
         EquipmentType.addType(createCLATM9());
         EquipmentType.addType(createCLATM12());
+        EquipmentType.addType(createCLStreakLRM5());
+        EquipmentType.addType(createCLStreakLRM10());
+        EquipmentType.addType(createCLStreakLRM15());
+        EquipmentType.addType(createCLStreakLRM20());
         EquipmentType.addType(createCLAMS());
         EquipmentType.addType(createCLNarc());
         EquipmentType.addType(createCLNarcOS());
@@ -3321,6 +3325,102 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 7.0f;
         weapon.criticals = 5;
         weapon.bv = 212;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakLRM5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak LRM 5";
+        weapon.setInternalName("CLStreakLRM5");
+        weapon.addLookupName("Clan Streak LRM-5");
+        weapon.addLookupName("Clan Streak LRM 5");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.bv = 87;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakLRM10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak LRM 10";
+        weapon.setInternalName("CLStreakLRM10");
+        weapon.addLookupName("Clan Streak LRM-10");
+        weapon.addLookupName("Clan Streak LRM 10");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_LRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 5.0f;
+        weapon.criticals = 2;
+        weapon.bv = 173;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakLRM15() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak LRM 15";
+        weapon.setInternalName("CLStreakLRM15");
+        weapon.addLookupName("Clan Streak LRM-15");
+        weapon.addLookupName("Clan Streak LRM 15");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_LRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 3;
+        weapon.bv = 260;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakLRM20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak LRM 20";
+        weapon.setInternalName("CLStreakLRM20");
+        weapon.addLookupName("Clan Streak LRM-20");
+        weapon.addLookupName("Clan Streak LRM 20");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 10.0f;
+        weapon.criticals = 5;
+        weapon.bv = 346;
         weapon.flags |= F_MISSILE;
 
         return weapon;

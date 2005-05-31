@@ -56,7 +56,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_ATM               = 29; // Clan ATM missile systems
     public static final int     T_ROCKET_LAUNCHER   = 30;
     public static final int     T_INARC             = 31;
-    public static final int     NUM_TYPES           = 32;
+    public static final int     T_LRM_STREAK        = 32;
+    public static final int     NUM_TYPES           = 33;
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
@@ -369,6 +370,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLATM12Ammo());
         EquipmentType.addType(createCLATM12ERAmmo());
         EquipmentType.addType(createCLATM12HEAmmo());
+        EquipmentType.addType(createCLStreakLRM5Ammo());
+        EquipmentType.addType(createCLStreakLRM10Ammo());
+        EquipmentType.addType(createCLStreakLRM15Ammo());
+        EquipmentType.addType(createCLStreakLRM20Ammo());
         base = createCLLongTomAmmo();
         artyAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -2659,6 +2664,74 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_HIGH_EXPLOSIVE;
         ammo.shots = 5;
         ammo.bv = 52;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLStreakLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Streak LRM 5 Ammo";
+        ammo.setInternalName("Clan Streak LRM 5 Ammo");
+//        ammo.addLookupName("Clan Ammo Streak-5");
+        ammo.addLookupName("CLStreakLRM5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+        ammo.shots = 24;
+        ammo.bv = 11;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLStreakLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Streak LRM 10 Ammo";
+        ammo.setInternalName("Clan Streak LRM 10 Ammo");
+//        ammo.addLookupName("Clan Ammo Streak-10");
+        ammo.addLookupName("CLStreakLRM10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+        ammo.shots = 12;
+        ammo.bv = 22;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLStreakLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Streak LRM 15 Ammo";
+        ammo.setInternalName("Clan Streak LRM 15 Ammo");
+//        ammo.addLookupName("Clan Ammo Streak-15");
+        ammo.addLookupName("CLStreakLRM15 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+        ammo.shots = 8;
+        ammo.bv = 32;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLStreakLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Streak LRM 20 Ammo";
+        ammo.setInternalName("Clan Streak LRM 20 Ammo");
+//        ammo.addLookupName("Clan Ammo Streak-20");
+        ammo.addLookupName("CLStreakLRM20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+        ammo.shots = 6;
+        ammo.bv = 43;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;

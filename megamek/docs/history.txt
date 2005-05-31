@@ -41,6 +41,7 @@ v0.29.79 (CVS)
 + Bug 1211535: couldn't use Tac. Genius if opponent already had.
 + Bug 1188638: Multiple current unit marker on minimap
 + Bug 1182138: PM says no underwater ammo dumps.
++ Change number of active heat sinks via button on Mechdisplay->Extras tab.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

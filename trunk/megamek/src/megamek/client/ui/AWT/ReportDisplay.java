@@ -143,7 +143,7 @@ public class ReportDisplay
      * Requests an initiative reroll and disables the ready button.
      */
     public void rerollInitiative() {
-    	rerolled=true;
+        rerolled=true;
         rerollInitiativeB.setEnabled(false);
         readyB.setEnabled(false);
         client.sendRerollInitiativeRequest();
@@ -152,7 +152,7 @@ public class ReportDisplay
      * have we rerolled init this round?
      */
     public boolean hasRerolled() {
-    	return rerolled;
+        return rerolled;
     }
     
     public void resetButtons() {
@@ -171,7 +171,7 @@ public class ReportDisplay
     }
     
     public void resetRerollButton() {
-    	rerollInitiativeB.setEnabled(true);
+        rerollInitiativeB.setEnabled(true);
     }
 
     /**

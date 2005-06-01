@@ -198,6 +198,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLargePulseLaser());
         EquipmentType.addType(createISMediumPulseLaser());
         EquipmentType.addType(createISSmallPulseLaser());
+        EquipmentType.addType(createISLargeXPulseLaser());
+        EquipmentType.addType(createISMediumXPulseLaser());
+        EquipmentType.addType(createISSmallXPulseLaser());
         EquipmentType.addType(createISLBXAC2());
         EquipmentType.addType(createISLBXAC5());
         EquipmentType.addType(createISLBXAC10());
@@ -1226,6 +1229,90 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 12;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLargeXPulseLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Large X-Pulse Laser";
+        weapon.setInternalName("ISLargeXPulseLaser");
+        weapon.addLookupName("IS X-Pulse Large Laser");
+        weapon.addLookupName("IS Large X-Pulse Laser");
+        weapon.heat = 14;
+        weapon.damage = 9;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.extremeRange = 20;
+        weapon.waterShortRange = 2;
+        weapon.waterMediumRange = 5;
+        weapon.waterLongRange = 7;
+        weapon.waterExtremeRange = 10;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 2;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 178;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMediumXPulseLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Medium X-Pulse Laser";
+        weapon.setInternalName("ISMediumXPulseLaser");
+        weapon.addLookupName("IS X-Pulse Med Laser");
+        weapon.addLookupName("IS Medium X-Pulse Laser");
+        weapon.heat = 6;
+        weapon.damage = 6;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.waterShortRange = 2;
+        weapon.waterMediumRange = 3;
+        weapon.waterLongRange = 4;
+        weapon.waterExtremeRange = 6;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 71;
+
+        return weapon;
+    }
+
+    public static WeaponType createISSmallXPulseLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Small X-Pulse Laser";
+        weapon.setInternalName("ISSmallXPulseLaser");
+        weapon.addLookupName("IS X-Pulse Small Laser");
+        weapon.addLookupName("IS Small X-Pulse Laser");
+        weapon.heat = 3;
+        weapon.damage = 3;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 5;
+        weapon.extremeRange = 8;
+        weapon.waterShortRange = 1;
+        weapon.waterMediumRange = 2;
+        weapon.waterLongRange = 2;
+        weapon.waterExtremeRange = 4;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 21;
 
         return weapon;
     }

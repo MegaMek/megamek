@@ -259,6 +259,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLLargePulseLaser());
         EquipmentType.addType(createCLMediumPulseLaser());
         EquipmentType.addType(createCLSmallPulseLaser());
+        EquipmentType.addType(createCLERLargePulseLaser());
+        EquipmentType.addType(createCLERMediumPulseLaser());
+        EquipmentType.addType(createCLERSmallPulseLaser());
         EquipmentType.addType(createCLMicroPulseLaser());
         EquipmentType.addType(createCLLBXAC2());
         EquipmentType.addType(createCLLBXAC5());
@@ -2848,6 +2851,90 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 24;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLERLargePulseLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "ER Large Pulse Laser";
+        weapon.setInternalName("CLERLargePulseLaser");
+        weapon.addLookupName("Clan ER Pulse Large Laser");
+        weapon.addLookupName("Clan ER Large Pulse Laser");
+        weapon.heat = 13;
+        weapon.damage = 10;
+        weapon.toHitModifier = -1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 15;
+        weapon.longRange = 23;
+        weapon.extremeRange = 30;
+        weapon.waterShortRange = 4;
+        weapon.waterMediumRange = 10;
+        weapon.waterLongRange = 14;
+        weapon.waterExtremeRange = 20;
+        weapon.tonnage = 6.0f;
+        weapon.criticals = 3;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 271;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLERMediumPulseLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "ER Medium Pulse Laser";
+        weapon.setInternalName("CLERMediumPulseLaser");
+        weapon.addLookupName("Clan ER Pulse Med Laser");
+        weapon.addLookupName("Clan ER Medium Pulse Laser");
+        weapon.heat = 6;
+        weapon.damage = 7;
+        weapon.toHitModifier = -1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 9;
+        weapon.longRange = 14;
+        weapon.extremeRange = 18;
+        weapon.waterShortRange = 3;
+        weapon.waterMediumRange = 5;
+        weapon.waterLongRange = 8;
+        weapon.waterExtremeRange = 10;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 2;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 116;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLERSmallPulseLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "ER Small Pulse Laser";
+        weapon.setInternalName("CLERSmallPulseLaser");
+        weapon.addLookupName("Clan ER Pulse Small Laser");
+        weapon.addLookupName("Clan ER Small Pulse Laser");
+        weapon.heat = 3;
+        weapon.damage = 5;
+        weapon.toHitModifier = -1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.waterShortRange = 1;
+        weapon.waterMediumRange = 2;
+        weapon.waterLongRange = 4;
+        weapon.waterExtremeRange = 4;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 36;
 
         return weapon;
     }

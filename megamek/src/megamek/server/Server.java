@@ -11740,7 +11740,8 @@ implements Runnable, ConnectionHandler {
                 testEntity = new TestMech((Mech)entity, Server.entityVerifier.mechOption, null);
             else
                 testEntity = new TestTank((Tank)entity, Server.entityVerifier.tankOption, null);
-            if (testEntity.correctEntity(new StringBuffer())) {
+            StringBuffer sb = new StringBuffer();
+            if (testEntity.correctEntity(sb)) {
                 entity.setDesignValid(true);
             } else {
                 if (game.getOptions().booleanOption("allow_illegal_units")) {
@@ -11748,6 +11749,7 @@ implements Runnable, ConnectionHandler {
                 } else {
                     Player cheater = game.getPlayer( connIndex );
                     sendServerChat("Player " + cheater.getName() + " attempted to add an illegal unit design (" + entity.getShortName() + "), the unit was rejected.");
+                    System.err.println(sb);
                     return;
                 }
             }

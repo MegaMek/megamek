@@ -236,7 +236,12 @@ public class WeaponAttackAction
                         (atype.getMunitionType() == AmmoType.M_INFERNO_IV)))) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
         }
-        // Arrow IV submunition TargetTypes must use appropriate ammo
+        if ( (target.getTargetType() == Targetable.TYPE_HEX_FASCAM ||
+              target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV ||
+              target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV) &&
+             !wtype.hasFlag(WeaponType.F_ARTILLERY) ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
+        }
         if (!((target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) ||
               (target.getTargetType() == Targetable.TYPE_HEX_FASCAM) ||
               (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV) ||
@@ -244,6 +249,7 @@ public class WeaponAttackAction
               wtype.hasFlag(WeaponType.F_ARTILLERY)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
         }
+        // Arrow IV submunition TargetTypes must use appropriate ammo
         if (target.getTargetType() == Targetable.TYPE_HEX_FASCAM && atype != null && !(atype.getMunitionType() == AmmoType.M_FASCAM)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
         }

@@ -52,6 +52,7 @@ v0.29.79 (CVS)
 + Patch 1212743: IS X-Pulse Lasers.
 + Bug 1212867: Don't allow normal weapons to make Arrow-IV specific attacks.
 + Fixed layout problem with MechDisplay
++ Patch 1212964: Equipment tech levels
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

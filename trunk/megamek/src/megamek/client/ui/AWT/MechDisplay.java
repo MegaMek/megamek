@@ -1458,7 +1458,7 @@ class ExtraPanel
         gridbag.setConstraints(carrysL, c);
         add(carrysL);
 
-        c.insets = new Insets(1, 9, 18, 9);
+        c.insets = new Insets(1, 9, 1, 9);
         c.weighty = 1.0;
         gridbag.setConstraints(carrysR, c);
         add(carrysR);
@@ -1467,7 +1467,7 @@ class ExtraPanel
         gridbag.setConstraints(sinksL, c);
         add(sinksL);
         
-        c.insets = new Insets(1, 9, 18, 9);
+        c.insets = new Insets(1, 9, 1, 9);
         c.weighty = 1.0;
         gridbag.setConstraints(sinksR, c);
         add(sinksR);

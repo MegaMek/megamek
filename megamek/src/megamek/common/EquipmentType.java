@@ -51,6 +51,7 @@ public class EquipmentType {
     // can the crits for this be spread over locations?
     protected boolean   spreadable = false;
     protected int       toHitModifier = 0;
+    protected int       techLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected int       flags = 0;
       
@@ -89,6 +90,11 @@ public class EquipmentType {
     
     public String getInternalName() {
         return internalName;
+    }
+
+    public int getTechLevel()
+    {
+        return techLevel;
     }
     
     public float getTonnage(Entity entity) {

@@ -1367,7 +1367,9 @@ class ExtraPanel
     public java.awt.List narcList;
     private int myMechId;
     
-    private Prompt prompt;
+//    private Prompt prompt;
+    private Slider prompt;
+    
     private int sinks;
     
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
@@ -1785,10 +1787,14 @@ class ExtraPanel
     
     public void actionPerformed(ActionEvent ae) {
         if (ae.getActionCommand().equals("changeSinks")) { //$NON-NLS-1$
-            prompt = new Prompt (clientgui.frame, Messages.getString("MechDisplay.changeSinks"), Messages.getString("MechDisplay.changeSinks"),
+/*            prompt = new Prompt (clientgui.frame, Messages.getString("MechDisplay.changeSinks"), Messages.getString("MechDisplay.changeSinks"),
                                      String.valueOf(sinks), 10);
             if (!prompt.showDialog()) return;
-            int helper = Integer.parseInt(prompt.getText());
+            int helper = Integer.parseInt(prompt.getText()); */
+            prompt = new Slider (clientgui.frame, Messages.getString("MechDisplay.changeSinks"), Messages.getString("MechDisplay.changeSinks"),
+                                 sinks, 0, ((Mech)clientgui.getClient().game.getEntity(myMechId)).getNumberOfSinks());
+            if (!prompt.showDialog()) return;
+            int helper = prompt.getValue();
 
             ((Mech)clientgui.getClient().game.getEntity(myMechId)).setActiveSinksNextRound(helper);
             clientgui.getClient().sendUpdateEntity(clientgui.getClient().game.getEntity(myMechId));

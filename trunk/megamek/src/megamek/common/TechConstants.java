@@ -31,6 +31,7 @@ public class TechConstants {
     /*
      * These can apply to entities or individual pieces of equipment
      */
+    public static final int         T_TECH_UNKNOWN      = -1;
     public static final int         T_IS_LEVEL_1        = 0;
     public static final int         T_IS_LEVEL_2        = 1;
     public static final int         T_CLAN_LEVEL_2      = 2;

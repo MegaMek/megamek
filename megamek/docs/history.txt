@@ -47,6 +47,8 @@ v0.29.79 (CVS)
     Entity to class ClientGUI.
 + Patch 1212216, RFE 1123632: Streak LRMS
 + Dialog to change number of active heat sinks changed to use a slider.
++ Patch 1212351: Clan ER Pulse Lasers.
++ Patch 1212346: Unit verifier output in MegaMek.log when a unit is rejected.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

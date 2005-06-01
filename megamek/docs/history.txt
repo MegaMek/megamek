@@ -46,6 +46,7 @@ v0.29.79 (CVS)
 + Moved Client GUI specific methods 'isSelected', 'setSelected' from class 
     Entity to class ClientGUI.
 + Patch 1212216, RFE 1123632: Streak LRMS
++ Dialog to change number of active heat sinks changed to use a slider.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

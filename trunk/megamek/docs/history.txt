@@ -50,6 +50,7 @@ v0.29.79 (CVS)
 + Patch 1212351: Clan ER Pulse Lasers.
 + Patch 1212346: Unit verifier output in MegaMek.log when a unit is rejected.
 + Patch 1212743: IS X-Pulse Lasers.
++ Bug 1212867: Don't allow normal weapons to make Arrow-IV specific attacks.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

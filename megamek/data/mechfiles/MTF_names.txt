@@ -236,3 +236,28 @@ Clan Level 2 Tech:
   Ferro-Fibrous
   Endo Steel
   Fusion Engine
+  
+Inner Sphere Level 3 Tech:
+ Weapons:
+  ISERLargeLaserPrototype
+  ISMediumPulseLaserPrototype
+  ISGaussRiflePrototype
+  ISLBXAC10Prototype
+  ISUltraAC5Prototype
+  ISLaserAntiMissileSystem
+  ISLaserAntiMissileSystemTHB
+
+Clan Level 3 Tech:
+ Weapons:
+  CLLaserAntiMissileSystem
+  CLStreakLRM5
+  CLStreakLRM10
+  CLStreakLRM15
+  CLStreakLRM20
+ Ammo:
+  CLStreakLRM5 Ammo
+  CLStreakLRM10 Ammo
+  CLStreakLRM15 Ammo
+  CLStreakLRM20 Ammo
+
+  

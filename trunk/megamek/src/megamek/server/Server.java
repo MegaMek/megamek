@@ -13906,6 +13906,10 @@ implements Runnable, ConnectionHandler {
                         send(createRemoveEntityPacket(pilot.getId(), Entity.REMOVE_IN_RETREAT) );
                     }
                 }
+                if (game.getOptions().booleanOption("ejected_pilots_flee")) {
+                    game.removeEntity(pilot.getId(), Entity.REMOVE_IN_RETREAT);
+                    send(createRemoveEntityPacket(pilot.getId(), Entity.REMOVE_IN_RETREAT));
+                }
             } // Pilot safely ejects.
 
         } // End entity-is-Mek

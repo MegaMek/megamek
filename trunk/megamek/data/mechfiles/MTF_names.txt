@@ -254,10 +254,18 @@ Clan Level 3 Tech:
   CLStreakLRM10
   CLStreakLRM15
   CLStreakLRM20
+  CLRotaryAC2
+  CLRotaryAC5
+  CLRotaryAC10
+  CLRotaryAC20
  Ammo:
   CLStreakLRM5 Ammo
   CLStreakLRM10 Ammo
   CLStreakLRM15 Ammo
   CLStreakLRM20 Ammo
+  CLRotaryAC2 Ammo
+  CLRotaryAC5 Ammo
+  CLRotaryAC10 Ammo
+  CLRotaryAC20 Ammo
 
   

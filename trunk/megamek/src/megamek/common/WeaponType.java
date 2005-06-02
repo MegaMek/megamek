@@ -296,6 +296,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLUltraAC5());
         EquipmentType.addType(createCLUltraAC10());
         EquipmentType.addType(createCLUltraAC20());
+        EquipmentType.addType(createCLRAC2());
+        EquipmentType.addType(createCLRAC5());
+        EquipmentType.addType(createCLRAC10());
+        EquipmentType.addType(createCLRAC20());
         EquipmentType.addType(createCLStreakSRM2());
         EquipmentType.addType(createCLStreakSRM4());
         EquipmentType.addType(createCLStreakSRM6());
@@ -3427,6 +3431,110 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 337;
         String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
+
+        return weapon;
+    }
+
+    public static WeaponType createCLRAC2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Rotary AC/2";
+        weapon.setInternalName("CLRotaryAC2");
+        weapon.addLookupName("Clan Rotary AC/2");
+        weapon.heat = 1;
+        weapon.damage = 2;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_AC_ROTARY;
+        weapon.minimumRange = 2;
+        weapon.shortRange = 9;
+        weapon.mediumRange = 18;
+        weapon.longRange = 27;
+        weapon.extremeRange = 36;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 4;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 185;
+        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        weapon.setModes(modes);
+
+        return weapon;
+    }
+
+    public static WeaponType createCLRAC5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Rotary AC/5";
+        weapon.setInternalName("CLRotaryAC5");
+        weapon.addLookupName("Clan Rotary AC/5");
+        weapon.heat = 1;
+        weapon.damage = 5;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_AC_ROTARY;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 10.0f;
+        weapon.criticals = 5;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 360;
+        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        weapon.setModes(modes);
+
+        return weapon;
+    }
+
+    public static WeaponType createCLRAC10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Rotary AC/10";
+        weapon.setInternalName("CLRotaryAC10");
+        weapon.addLookupName("Clan Rotary AC/10");
+        weapon.heat = 3;
+        weapon.damage = 10;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_AC_ROTARY;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.tonnage = 14.0f;
+        weapon.criticals = 7;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 617;
+        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        weapon.setModes(modes);
+
+        return weapon;
+    }
+
+    public static WeaponType createCLRAC20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Rotary AC/20";
+        weapon.setInternalName("CLRotaryAC20");
+        weapon.addLookupName("Clan Rotary AC/20");
+        weapon.heat = 7;
+        weapon.damage = 20;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_AC_ROTARY;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 16.0f;
+        weapon.criticals = 10;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
+        weapon.bv = 823;
+        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
 
         return weapon;

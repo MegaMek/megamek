@@ -343,6 +343,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLUltra5Ammo());
         EquipmentType.addType(createCLUltra10Ammo());
         EquipmentType.addType(createCLUltra20Ammo());
+        EquipmentType.addType(createCLRotary2Ammo());
+        EquipmentType.addType(createCLRotary5Ammo());
+        EquipmentType.addType(createCLRotary10Ammo());
+        EquipmentType.addType(createCLRotary20Ammo());
         EquipmentType.addType(createCLGaussAmmo());
         EquipmentType.addType(createCLStreakSRM1Ammo());
         EquipmentType.addType(createCLStreakSRM2Ammo());
@@ -2000,6 +2004,74 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 35;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLRotary2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        ammo.name = "Rotary AC/2 Ammo";
+        ammo.setInternalName("CLRotaryAC2 Ammo");
+        ammo.addLookupName("CL Rotary AC/2 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_AC_ROTARY;
+        ammo.shots = 45;
+        ammo.bv = 22;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_3;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLRotary5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        ammo.name = "Rotary AC/5 Ammo";
+        ammo.setInternalName("CLRotaryAC5 Ammo");
+        ammo.addLookupName("CL Rotary AC/5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_AC_ROTARY;
+        ammo.shots = 20;
+        ammo.bv = 43;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_3;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLRotary10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        ammo.name = "Rotary AC/10 Ammo";
+        ammo.setInternalName("CLRotaryAC10 Ammo");
+        ammo.addLookupName("CL Rotary AC/10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_AC_ROTARY;
+        ammo.shots = 10;
+        ammo.bv = 74;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_3;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLRotary20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        ammo.name = "Rotary AC/20 Ammo";
+        ammo.setInternalName("CLRotaryAC20 Ammo");
+        ammo.addLookupName("CL Rotary AC/20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_AC_ROTARY;
+        ammo.shots = 5;
+        ammo.bv = 118;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_3;
 
         return ammo;
     }

@@ -986,6 +986,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             nextOne = client.game.getNextEntity(entity);
         }
         if (nextOne!=null) {
+            clientgui.chatlounge.refreshEntities();
             clientgui.chatlounge.customizeMech(nextOne);
         }
     }

@@ -60,6 +60,7 @@ v0.29.79 (CVS)
 + Updated MTF_names.txt for new level 3 equipment
 + Added GUI for chatlounge tab setting.
 + RFE 1081676: Ejected pilots auto-flee
++ Patch 1213780: Clan RACs (MechForce UK)
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

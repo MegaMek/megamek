@@ -75,7 +75,9 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private Panel panButtons = new Panel();
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
-
+    private Button butNext = new Button(Messages.getString("Next"));
+    private Button butPrev = new Button(Messages.getString("Previous"));
+    
     private Vector m_vMunitions = new Vector();
     private Panel panMunitions = new Panel();
     private Vector m_vMGs = new Vector();
@@ -358,25 +360,17 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private void setupButtons() {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
+        butNext.addActionListener(this);
+        butPrev.addActionListener(this);
         
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panButtons.setLayout(gridbag);
-            
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(5, 5, 0, 0);
-        c.weightx = 1.0;    c.weighty = 1.0;
-        c.fill = GridBagConstraints.VERTICAL;
-        c.ipadx = 20;    c.ipady = 5;
-        c.gridwidth = 1;
-        gridbag.setConstraints(butOkay, c);
+
+        panButtons.setLayout(new GridLayout(1, 4, 10, 0));
+        panButtons.add(butPrev);
         panButtons.add(butOkay);
-            
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(butCancel, c);
         panButtons.add(butCancel);
-    }
+        panButtons.add(butNext);
+     }
     
     private void setupRapidfireMGs() {
         GridBagLayout gbl = new GridBagLayout();
@@ -983,7 +977,16 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             
             okay = true;
         }
-        
         this.setVisible(false);
+        Entity nextOne = null;
+        if (actionEvent.getSource() == butOkay) {
+        } else if (actionEvent.getSource() == butPrev) {
+            nextOne = client.game.getPreviousEntity(entity);
+        } else if (actionEvent.getSource() == butNext) {
+            nextOne = client.game.getNextEntity(entity);
+        }
+        if (nextOne!=null) {
+            clientgui.chatlounge.customizeMech(nextOne);
+        }
     }
 }

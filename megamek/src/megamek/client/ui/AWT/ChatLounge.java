@@ -1107,11 +1107,16 @@ public class ChatLounge
     /**
      * Pop up the customize mech dialog
      */
+    
     public void customizeMech() {
         if (lisEntities.getSelectedIndex() == -1) {
             return;
         }
-        Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+        Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);    
+        customizeMech (entity);
+    }
+    
+    public void customizeMech(Entity entity) {
         boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
         Client c = null;
         if (editable) {

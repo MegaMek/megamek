@@ -79,7 +79,8 @@ public class ClientGUI
     private UnitOverview uo;
     public Ruler ruler; // added by kenn
     protected Component curPanel;
-
+    public ChatLounge chatlounge = null;
+    
     // some dialogs...
     private BoardSelectionDialog boardSelectionDialog;
     private GameOptionsDialog gameOptionsDialog;
@@ -651,6 +652,7 @@ public class ClientGUI
         switch (phase) {
             case IGame.PHASE_LOUNGE :
                 component = new ChatLounge(this);
+                chatlounge = (ChatLounge)component;
                 main = "ChatLounge"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);

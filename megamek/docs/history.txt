@@ -61,6 +61,7 @@ v0.29.79 (CVS)
 + Added GUI for chatlounge tab setting.
 + RFE 1081676: Ejected pilots auto-flee
 + Patch 1213780: Clan RACs (MechForce UK)
++ RFE 1057378: Prev/Next on Configure Units window
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

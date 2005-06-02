@@ -765,7 +765,7 @@ public class ChatLounge
     /**
      * Refreshes the entities from the client
      */
-    private void refreshEntities() {
+    public void refreshEntities() {
         lisEntities.removeAll();
         int listIndex = 0;
         String strTreeSet = ""; //$NON-NLS-1$

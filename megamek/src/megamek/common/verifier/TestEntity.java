@@ -24,6 +24,7 @@ import megamek.common.Mech;
 import megamek.common.TechConstants;
 import megamek.common.CriticalSlot;
 import megamek.common.Mounted;
+import megamek.common.EquipmentType;
 import megamek.common.WeaponType;
 import megamek.common.AmmoType;
 import megamek.common.MiscType;
@@ -596,6 +597,24 @@ public abstract class TestEntity implements TestEntityOption
              return false;
         }
         return true;
+    }
+    
+    public boolean hasIllegalTechLevels(StringBuffer buff)
+    {
+        boolean retVal = false;
+        int eTechLevel = getEntity().getTechLevel();
+        for(Enumeration e = getEntity().getEquipment();
+                e.hasMoreElements(); )
+        {
+            EquipmentType nextE = ((Mounted)e.nextElement()).getType();
+            if (!(TechConstants.isLegal(eTechLevel, nextE.getTechLevel(), true))) {
+                if (!retVal)
+                    buff.append("Equipment illegal at unit's tech level:\n");
+                retVal = true;
+                buff.append(nextE.getName()).append("\n");
+            }
+        }
+        return retVal;
     }
 
     public boolean hasFailedEquipment(StringBuffer buff)

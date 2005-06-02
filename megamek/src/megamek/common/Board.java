@@ -464,6 +464,8 @@ public class Board implements Serializable, IBoard {
             st.commentChar('#');
             st.quoteChar('"');
             st.wordChars('_', '_');
+            int count1 = 1;
+            int count2 = 1;
             while(st.nextToken() != StreamTokenizer.TT_EOF) {
                 if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("size")) {
                     // read rest of line
@@ -499,8 +501,13 @@ public class Board implements Serializable, IBoard {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int)st.nval + "" : st.sval;
                     }
                     int elevation = Integer.parseInt(args[1]);
-                    nd[indexFor(args[0], nw)] = new Hex(elevation, args[2], args[3]);
-                    
+                    int newIndex = indexFor(args[0], nw, count2);
+                    nd[newIndex] = new Hex(elevation, args[2], args[3]);
+                    count1++;
+                    if (count1 > nw) {
+                        count2++;
+                        count1 = 1;
+                    }
                 } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("end")) {
                     break;
                 }
@@ -525,9 +532,12 @@ public class Board implements Serializable, IBoard {
         }
     }
     
-    private int indexFor(String hexNum, int width) {
-        int x = Integer.parseInt(hexNum.substring(0, hexNum.length() - 2)) - 1;
-        int y = Integer.parseInt(hexNum.substring(hexNum.length() - 2)) - 1;
+    private int indexFor(String hexNum, int width, int row) {
+        int substringDiff = 2;
+        if (row > 99)
+            substringDiff = Integer.toString(width).length();
+        int x = Integer.parseInt(hexNum.substring(0, hexNum.length() - substringDiff)) - 1;
+        int y = Integer.parseInt(hexNum.substring(hexNum.length() - substringDiff)) - 1;
         return y * width + x;
     }
     

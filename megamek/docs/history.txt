@@ -53,6 +53,10 @@ v0.29.79 (CVS)
 + Bug 1212867: Don't allow normal weapons to make Arrow-IV specific attacks.
 + Fixed layout problem with MechDisplay
 + Patch 1212964: Equipment tech levels
++ Bug 1163096, Patch 1213195: maximum Size of Maps (partial fix)
++ Patch 1213244: Laser AMS (Clan and IS, IS versions from MaxTech
+    and Tactical Handbook) and minor AMS refactoring.
++ Patch 1213260: Unit Tech Level/Equipment Tech Level Verification
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

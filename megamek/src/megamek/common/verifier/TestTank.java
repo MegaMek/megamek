@@ -254,6 +254,8 @@ public class TestTank extends TestEntity
         }
         if (showFailedEquip() && hasFailedEquipment(buff))
             correct = false;
+        if (hasIllegalTechLevels(buff))
+            correct = false;
         return correct;
     }
 

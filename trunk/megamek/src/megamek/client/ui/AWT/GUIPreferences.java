@@ -414,6 +414,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setAutoEndFiring(boolean state) {
         store.setValue(AUTO_END_FIRING, state);
     }
+    
+    public void setChatloungeTabs(boolean state) {
+        store.setValue(CHAT_LOUNGE_TABS, state);
+    }
 
     public void setClickEdgeScroll(boolean state) {
         store.setValue(CLICK_EDGE_SCROLL, state);

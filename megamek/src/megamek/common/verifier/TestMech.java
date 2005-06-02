@@ -396,6 +396,8 @@ public class TestMech extends TestEntity
             correct = false;
         if (showFailedEquip() && hasFailedEquipment(buff))
             correct = false;
+        if (hasIllegalTechLevels(buff))
+            correct = false;
         return correct;
     }
 

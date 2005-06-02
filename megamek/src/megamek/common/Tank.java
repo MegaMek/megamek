@@ -461,7 +461,7 @@ public class Tank
             if (mounted.isDestroyed())
                 continue;
 
-            if ((etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
+            if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
             || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
             || etype.hasFlag(MiscType.F_ECM)) {
                 dEquipmentBV += etype.getBV(this);
@@ -511,7 +511,7 @@ public class Tank
                 continue;
 
             // don't count AMS, it's defensive
-            if (wtype.getAmmoType() == AmmoType.T_AMS) {
+            if (wtype.hasFlag(WeaponType.F_AMS)) {
                 continue;
             }
             

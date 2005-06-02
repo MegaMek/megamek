@@ -996,4 +996,7 @@ public interface IGame {
      *         friendly with the attacker.
      */
     public abstract Enumeration getNemesisTargets(Entity attacker, Coords target);
+
+    public abstract Entity getPreviousEntity (Entity current);
+    public abstract Entity getNextEntity (Entity current);
 }

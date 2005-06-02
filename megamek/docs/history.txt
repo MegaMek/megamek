@@ -57,6 +57,7 @@ v0.29.79 (CVS)
 + Patch 1213244: Laser AMS (Clan and IS, IS versions from MaxTech
     and Tactical Handbook) and minor AMS refactoring.
 + Patch 1213260: Unit Tech Level/Equipment Tech Level Verification
++ Updated MTF_names.txt for new level 3 equipment
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

@@ -53,6 +53,7 @@ public class CommonSettingsDialog extends ClientDialog
     private Checkbox    defaultAutoejectDisabled;
     private Checkbox    showUnitId;
     private TextField   locale;
+    private Checkbox    chatloungeTabs;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
@@ -207,7 +208,11 @@ public class CommonSettingsDialog extends ClientDialog
         locale = new TextField(8);
         panSetting.add( locale);
         tempPanel.add( panSetting );
-
+        
+        //chatloungtab setting
+        chatloungeTabs 
+            = new Checkbox( Messages.getString("CommonSettingsDialog.chatloungeTabs") ); //$NON-NLS-1$
+        tempPanel.add( chatloungeTabs );
         
         // add the scrollable panel
         GridBagLayout gridbag = new GridBagLayout();
@@ -301,6 +306,8 @@ public class CommonSettingsDialog extends ClientDialog
 
         locale.setText(cs.getLocaleString());
         
+        chatloungeTabs.setState(gs.getChatLoungeTabs() );
+        
         getFocus.setState( gs.getFocus() );
         super.show();
     }
@@ -350,6 +357,8 @@ public class CommonSettingsDialog extends ClientDialog
         cs.setShowUnitId(showUnitId.getState());
 
         cs.setLocale(locale.getText());
+        
+        gs.setChatloungeTabs(chatloungeTabs.getState());
 
         this.setVisible( false );
     }

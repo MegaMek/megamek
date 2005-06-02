@@ -42,7 +42,7 @@ Lot of people have contributed to the MegaMek project.
      Stefan Bissell <weaselflink@users.sourceforge.net>
      Reinhard Vicinus <rvicinus@users.sourceforge.net>
      Chris Nelson <albinosqrl@users.sourceforge.net>
-     fastsammy <fastsammy@users.sourceforge.net>
+     Robin Toll <fastsammy@users.sourceforge.net>
      Shane Kearns <shane.kearns@ntlworld.com>
 
   XML Parser:

@@ -2487,7 +2487,7 @@ public abstract class Entity
 
         for (Enumeration e = getWeapons(); e.hasMoreElements(); ) {
             Mounted weapon = (Mounted)e.nextElement();
-            if (((WeaponType)weapon.getType()).getAmmoType() == AmmoType.T_AMS) {
+            if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
                 if (!weapon.isReady() || weapon.isMissing()) {
                     continue;
                 }
@@ -2498,15 +2498,15 @@ public abstract class Entity
 
                 // make sure ammo is loaded
                 Mounted ammo = weapon.getLinked();
-                if ( ammo == null || ammo.getShotsLeft() == 0 ||
-                     ammo.isDumping() ) {
+                if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) && ( ammo == null || ammo.getShotsLeft() == 0 ||
+                     ammo.isDumping() )) {
                     loadWeapon(weapon);
                     ammo = weapon.getLinked();
                 }
 
                 // try again
-                if ( ammo == null || ammo.getShotsLeft() == 0 ||
-                     ammo.isDumping() ) {
+                if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) && ( ammo == null || ammo.getShotsLeft() == 0 ||
+                     ammo.isDumping() )) {
                     // No ammo for this AMS.
                     continue;
                 }

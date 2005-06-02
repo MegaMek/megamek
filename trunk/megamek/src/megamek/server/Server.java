@@ -5421,19 +5421,24 @@ implements Runnable, ConnectionHandler {
 
                 Mounted counter = (Mounted)vCounters.elementAt(x);
                 Mounted mAmmo = counter.getLinked();
-                if (!(counter.getType() instanceof WeaponType)
-                || ((WeaponType)counter.getType()).getAmmoType() != AmmoType.T_AMS
-                || !counter.isReady() || counter.isMissing()) {
+                if ((!(counter.getType() instanceof WeaponType))
+                        || (!(counter.getType().hasFlag(WeaponType.F_AMS)))
+                        || (!counter.isReady())
+                        || (counter.isMissing())) {
                     continue;
                 }
                 // roll hits
                 int amsHits = Compute.d6(((WeaponType)counter.getType()).getDamage());
 
                 // build up some heat (assume target is ams owner)
-                te.heatBuildup += ((WeaponType)counter.getType()).getHeat();
+                if (counter.getType().hasFlag(WeaponType.F_HEATASDICE))
+                    te.heatBuildup += Compute.d6(((WeaponType)counter.getType()).getHeat());
+                else
+                    te.heatBuildup += ((WeaponType)counter.getType()).getHeat();
 
                 // decrement the ammo
-                mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
+                if (mAmmo != null)
+                    mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
 
                 // set the ams as having fired
                 counter.setUsedThisRound(true);

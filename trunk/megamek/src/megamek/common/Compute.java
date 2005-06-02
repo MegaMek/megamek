@@ -1215,7 +1215,7 @@ public class Compute
                 for (int x = 0; x < vCounters.size(); x++) {
                     Mounted counter = (Mounted)vCounters.elementAt(x);
                     if (counter.getType() instanceof WeaponType &&
-                            ((WeaponType)counter.getType()).getAmmoType() == AmmoType.T_AMS) {
+                            counter.getType().hasFlag(WeaponType.F_AMS)) {
                         float fAMS = 3.5f * ((WeaponType)counter.getType()).getDamage();
                         fHits = Math.max(0.0f, fHits - fAMS);
                     }

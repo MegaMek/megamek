@@ -93,5 +93,45 @@ public class TechConstants {
         }
     }
 
+    /**
+     * Returns true if the equipment is legal for a unit with the paired tech levels;
+     * Returns false if it is not.
+     */
+    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel, boolean ignoreUnknown)
+    {
+        if (equipmentTechlevel == T_TECH_UNKNOWN)
+            if (ignoreUnknown)
+                return true;
+            else
+                return false;
+        if (entityTechlevel == equipmentTechlevel)
+            return true;
+        if ((equipmentTechlevel == T_IS_LEVEL_1)
+            && ((entityTechlevel == T_IS_LEVEL_2)
+                || (entityTechlevel == T_IS_LEVEL_2_ALL)
+                || (entityTechlevel == T_LEVEL_2_ALL)
+                || (entityTechlevel == T_IS_LEVEL_3)
+                || (entityTechlevel == T_ALL)))
+            return true;
+        if ((equipmentTechlevel == T_IS_LEVEL_2)
+            && ((entityTechlevel == T_IS_LEVEL_2_ALL)
+                || (entityTechlevel == T_LEVEL_2_ALL)
+                || (entityTechlevel == T_IS_LEVEL_3)
+                || (entityTechlevel == T_ALL)))
+            return true;
+        if ((equipmentTechlevel == T_CLAN_LEVEL_2)
+            && ((entityTechlevel == T_CLAN_LEVEL_2)
+                || (entityTechlevel == T_CLAN_LEVEL_3)
+                || (entityTechlevel == T_ALL)))
+            return true;
+        if ((equipmentTechlevel == T_IS_LEVEL_3)
+            && ((entityTechlevel == T_IS_LEVEL_3)
+                || (entityTechlevel == T_ALL)))
+            return true;
+        if ((equipmentTechlevel == T_CLAN_LEVEL_3)
+            && (entityTechlevel == T_ALL))
+            return true;
+        return false;
+    }
 }
 

@@ -40,6 +40,8 @@ public class WeaponType extends EquipmentType {
     public static final int     F_PLASMA        = 0x100000; // For fires
     public static final int F_INCENDIARY_NEEDLES = 0x200000; // For fires
     public static final int     F_PROTOTYPE     = 0x400000; // for war of 3039 prototype weapons
+    public static final int     F_HEATASDICE     = 0x800000; // heat is listed in dice, not points
+    public static final int     F_AMS           = 0x1000000; // Weapon is an anti-missile system.
 
     public static final int     F_SPLITABLE     = 0x0100; // Weapons that can be split between locations
     public static final int     F_MG            = 0x0200; // MG; for rapid fire set up
@@ -236,6 +238,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLRM15OS());
         EquipmentType.addType(createISLRM20OS());
         EquipmentType.addType(createISAMS());
+        EquipmentType.addType(createISLaserAMS());
+        EquipmentType.addType(createISLaserAMSTHB());
         EquipmentType.addType(createISNarc());
         EquipmentType.addType(createISNarcOS());
         EquipmentType.addType(createISImprovedNarc());
@@ -307,6 +311,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLStreakLRM15());
         EquipmentType.addType(createCLStreakLRM20());
         EquipmentType.addType(createCLAMS());
+        EquipmentType.addType(createCLLaserAMS());
         EquipmentType.addType(createCLNarc());
         EquipmentType.addType(createCLNarcOS());
         EquipmentType.addType(createCLArrowIVSystem());
@@ -2144,7 +2149,53 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 32;
-        weapon.flags |= F_AUTO_TARGET;
+        weapon.flags |= F_AUTO_TARGET | F_AMS;
+        String[] modes = { "On", "Off" };
+        weapon.setModes(modes);
+        weapon.setInstantModeSwitch(false);
+
+        return weapon;
+    }
+
+    public static WeaponType createISLaserAMS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Laser AMS";
+        weapon.setInternalName("ISLaserAntiMissileSystem");
+        weapon.addLookupName("IS Laser Anti-Missile System");
+        weapon.addLookupName("IS Laser AMS");
+        weapon.heat = 2;
+        weapon.rackSize = 2;
+        weapon.damage = 2;  // # of d6 of missiles affected
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 2;
+        weapon.bv = 105;
+        weapon.flags |= F_AUTO_TARGET | F_HEATASDICE | F_ENERGY| F_AMS;
+        String[] modes = { "On", "Off" };
+        weapon.setModes(modes);
+        weapon.setInstantModeSwitch(false);
+
+        return weapon;
+    }
+
+    public static WeaponType createISLaserAMSTHB() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Laser AMS (THB)";
+        weapon.setInternalName("ISLaserAntiMissileSystemTHB");
+        weapon.addLookupName("IS Laser Anti-Missile System (THB)");
+        weapon.addLookupName("IS Laser AMS (THB)");
+        weapon.heat = 3;
+        weapon.rackSize = 2;
+        weapon.damage = 2;  // # of d6 of missiles affected
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 2;
+        weapon.bv = 105;
+        weapon.flags |= F_AUTO_TARGET | F_HEATASDICE | F_ENERGY | F_AMS;
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
@@ -3906,7 +3957,30 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 63;
-        weapon.flags |= F_AUTO_TARGET;
+        weapon.flags |= F_AUTO_TARGET | F_AMS;
+        String[] modes = { "On", "Off" };
+        weapon.setModes(modes);
+        weapon.setInstantModeSwitch(false);
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLaserAMS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Laser AMS";
+        weapon.setInternalName("CLLaserAntiMissileSystem");
+        weapon.addLookupName("Clan Laser Anti-Missile Sys");
+        weapon.addLookupName("Clan Laser AMS");
+        weapon.heat = 2;
+        weapon.rackSize = 2;
+        weapon.damage = 2; // # of d6 of missiles affected
+        weapon.ammoType = AmmoType.T_AMS;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 2;
+        weapon.bv = 105;
+        weapon.flags |= F_AUTO_TARGET | F_HEATASDICE | F_ENERGY | F_AMS;
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);

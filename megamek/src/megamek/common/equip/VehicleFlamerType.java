@@ -23,7 +23,7 @@ public class VehicleFlamerType extends BallisticType {
 
     public VehicleFlamerType(int tech, Vector valid_ammo ) {    
     super(valid_ammo);
-    this.techType = tech;
+    this.techLevel = tech;
     this.heat = 3;
     this.damage = 2;
     

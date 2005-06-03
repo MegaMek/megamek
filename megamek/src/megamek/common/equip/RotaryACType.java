@@ -52,7 +52,7 @@ public class RotaryACType extends BallisticType {
     this.size = size;
     this.setModes(RAC_MODES);
     this.flags |= F_DIRECT_FIRE;
-    this.techType = TechConstants.T_IS_LEVEL_2;
+    this.techLevel = TechConstants.T_IS_LEVEL_2;
 
     switch(size) {
     case 2:

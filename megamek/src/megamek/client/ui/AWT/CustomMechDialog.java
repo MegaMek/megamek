@@ -409,21 +409,21 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = (AmmoType)vAllTypes.elementAt(x);
-                boolean bTechMatch = (entity.getTechLevel() == atCheck.getTechType());
+                boolean bTechMatch = TechConstants.isLegal(entity.getTechLevel(), atCheck.getTechLevel());
                                 
                 // allow all lvl2 IS units to use level 1 ammo
                 // lvl1 IS units don't need to be allowed to use lvl1 ammo,
                 // because there is no special lvl1 ammo, therefore it doesn't
                 // need to show up in this display.
                 if (!bTechMatch && entity.getTechLevel() == TechConstants.T_IS_LEVEL_2 &&
-                    atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
+                    atCheck.getTechLevel() == TechConstants.T_IS_LEVEL_1) {
                     bTechMatch = true;
                 }
                 
                 // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
                 if (!clientgui.getClient().game.getOptions().booleanOption("is_eq_limits") //$NON-NLS-1$
                     && entity.getTechLevel() == TechConstants.T_IS_LEVEL_1
-                    && atCheck.getTechType() == TechConstants.T_IS_LEVEL_2) {
+                    && atCheck.getTechLevel() == TechConstants.T_IS_LEVEL_2) {
                     bTechMatch = true;
                 }
                 

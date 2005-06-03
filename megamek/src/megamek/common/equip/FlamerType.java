@@ -29,7 +29,7 @@ public class FlamerType extends EnergyType implements BattleArmorWeapon {
     this.criticals = 1;
     this.bv = 6;
     this.setModes(FLAMER_MODES);
-    this.techType = tech;
+    this.techLevel = tech;
 
     if (tech == TechConstants.T_IS_LEVEL_1) {
         this.tonnage = 1.0f;

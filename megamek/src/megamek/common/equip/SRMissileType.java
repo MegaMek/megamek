@@ -24,7 +24,7 @@ public class SRMissileType extends MissileType {
 
     public SRMissileType( int tech, int size, Vector valid_ammo ) {    
     super(size, valid_ammo);
-    this.techType = tech;
+    this.techLevel = tech;
     
     if (tech == TechConstants.T_IS_LEVEL_1 ) {
         switch(size) {

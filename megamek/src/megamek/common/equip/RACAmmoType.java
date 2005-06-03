@@ -18,7 +18,7 @@ import megamek.common.*;
 
 public class RACAmmoType extends AmmoType {
     public RACAmmoType(int size) {
-    this.techType = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_LEVEL_2;
     this.rackSize = size;
     this.damagePerShot = this.rackSize;
 

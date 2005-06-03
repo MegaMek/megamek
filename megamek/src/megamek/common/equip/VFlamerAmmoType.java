@@ -19,7 +19,7 @@ import megamek.common.*;
 public class VFlamerAmmoType extends AmmoType {
     // Overload the constructor 
     public VFlamerAmmoType(int tech) {
-    this.techType = tech;
+    this.techLevel = tech;
     this.damagePerShot = 2;
     this.heat = 3;
     this.range = new RangeType(1,2,3);

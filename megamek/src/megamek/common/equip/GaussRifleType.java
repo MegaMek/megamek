@@ -36,7 +36,7 @@ public class GaussRifleType extends BallisticType {
     public GaussRifleType( int tech, int type, Vector valid_ammo ) {    
     super(valid_ammo);
     this.flags = F_DIRECT_FIRE;
-    this.techType = tech;
+    this.techLevel = tech;
 
     if (tech == TechConstants.T_IS_LEVEL_2 ) {
         switch(type) {

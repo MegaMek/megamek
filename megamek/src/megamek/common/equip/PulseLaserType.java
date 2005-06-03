@@ -27,7 +27,7 @@ public class PulseLaserType extends LaserType {
 
     public PulseLaserType (int tech, int size) {
     super(tech,size);
-    this.techType = tech;
+    this.techLevel = tech;
 
     if (tech == TechConstants.T_IS_LEVEL_2) {
         switch(size) {

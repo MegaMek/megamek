@@ -93,6 +93,11 @@ public class TechConstants {
         }
     }
 
+    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel)
+    {
+        return isLegal(entityTechlevel, equipmentTechlevel, false);
+    }
+
     /**
      * Returns true if the equipment is legal for a unit with the paired tech levels;
      * Returns false if it is not.

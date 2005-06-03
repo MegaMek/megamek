@@ -24,7 +24,7 @@ public class MachineGunAmmoType extends AmmoType {
     }
     
     public MachineGunAmmoType(int tech, int size, boolean half_ton) {
-        this.techType = tech;
+        this.techLevel = tech;
         this.bv = 1;
         
         if (tech == TechConstants.T_IS_LEVEL_1) {

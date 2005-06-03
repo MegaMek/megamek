@@ -35,7 +35,7 @@ public class RocketLauncherType extends MissileType {
     super(size, valid_ammo);
     this.def_ammo_type = ammo_type;
     this.def_ammo_name = ammo_type.getInternalName();
-    this.techType = TechConstants.T_IS_LEVEL_2;
+    this.techLevel = TechConstants.T_IS_LEVEL_2;
 
     switch (size) {
     case 10:

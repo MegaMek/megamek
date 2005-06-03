@@ -20,7 +20,7 @@ public class PrecisionACAmmoType extends ACAmmoType {
     // Overload the constructor 
     public PrecisionACAmmoType(int size) {
         super(size);
-        this.techType = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_LEVEL_2;
         
         // Precision rounds have half the ammo per ton
         this.shots = this.shots / 2;

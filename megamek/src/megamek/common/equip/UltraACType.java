@@ -52,7 +52,7 @@ public class UltraACType extends BallisticType {
     this.size = size;
     this.setModes(UAC_MODES);
     this.flags |= F_DIRECT_FIRE;
-    this.techType = tech;
+    this.techLevel = tech;
 
     if (tech == TechConstants.T_IS_LEVEL_2) {
         switch(size) {

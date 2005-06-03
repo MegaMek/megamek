@@ -19,7 +19,7 @@ import megamek.common.*;
 public class UACAmmoType extends AmmoType {
 
     public UACAmmoType(int size, int tech) {
-        this.techType = tech;
+        this.techLevel = tech;
         this.rackSize = size;
         this.damagePerShot = this.rackSize;
         

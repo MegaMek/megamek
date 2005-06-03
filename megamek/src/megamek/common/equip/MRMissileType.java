@@ -25,7 +25,7 @@ public class MRMissileType extends MissileType {
     super(size, valid_ammo);
     // IS ONLY
 
-    this.techType = TechConstants.T_IS_LEVEL_2;
+    this.techLevel = TechConstants.T_IS_LEVEL_2;
 
     switch(size) {
     case 10:

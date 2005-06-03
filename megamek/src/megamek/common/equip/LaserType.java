@@ -33,7 +33,7 @@ public class LaserType extends EnergyType implements BattleArmorWeapon {
 
     public LaserType (int tech, int size) {
     this.size = size;
-    this.techType = tech;
+    this.techLevel = tech;
     this.flags |= F_DIRECT_FIRE;
 
     if (tech == TechConstants.T_IS_LEVEL_1 ||

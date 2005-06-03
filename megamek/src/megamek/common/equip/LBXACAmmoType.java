@@ -19,7 +19,7 @@ import megamek.common.*;
 public class LBXACAmmoType extends AmmoType {
 
     public LBXACAmmoType(int tech, int size) {
-    this.techType = tech;
+    this.techLevel = tech;
     this.rackSize = size;
     this.damagePerShot = this.rackSize;
     

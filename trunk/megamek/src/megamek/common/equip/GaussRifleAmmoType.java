@@ -21,7 +21,7 @@ public class GaussRifleAmmoType extends AmmoType {
     protected int type;
 
     public GaussRifleAmmoType(int tech, int type) {
-    this.techType = tech;
+    this.techLevel = tech;
     this.type = type;
 
     if (tech == TechConstants.T_IS_LEVEL_2) {

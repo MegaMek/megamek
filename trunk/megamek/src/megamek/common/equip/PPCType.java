@@ -28,7 +28,7 @@ public class PPCType extends EnergyType {
         this.tonnage = 7.0f;
         this.criticals = 3;
         this.flags |= F_DIRECT_FIRE;
-        this.techType = tech;
+        this.techLevel = tech;
     
         if (!is_ER) {
         this.bv = 176;

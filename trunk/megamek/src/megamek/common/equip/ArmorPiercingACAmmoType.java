@@ -20,7 +20,7 @@ public class ArmorPiercingACAmmoType extends ACAmmoType {
     // Overload the constructor 
     public ArmorPiercingACAmmoType(int size) {
         super(size);
-        this.techType = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_LEVEL_2;
         
         // AP rounds have half the ammo per ton
         this.shots = this.shots / 2;

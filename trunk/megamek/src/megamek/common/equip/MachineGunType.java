@@ -34,7 +34,7 @@ public class MachineGunType extends BallisticType {
     public MachineGunType( int tech, int size, Vector valid_ammo ) {    
     super(valid_ammo);
 
-    this.techType = tech;
+    this.techLevel = tech;
     this.criticals = 1;
 
     if (tech == TechConstants.T_IS_LEVEL_1 ) {

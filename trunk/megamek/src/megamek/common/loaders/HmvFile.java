@@ -190,7 +190,7 @@ public class HmvFile
                          weaponAmmo % ammoType.getShots() > 0 ) {
                         switch ( ammoType.getAmmoType() ) {
                         case AmmoType.T_MG:
-                            if ( ammoType.getTechType() ==
+                            if ( ammoType.getTechLevel() ==
                                  TechConstants.T_IS_LEVEL_1 ) {
                                 ammoType = (AmmoType) EquipmentType
                                     .get( "ISMG Ammo (100)" );

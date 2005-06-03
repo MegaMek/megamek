@@ -1007,7 +1007,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 45;
         ammo.bv = 5;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1026,7 +1025,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 20;
         ammo.bv = 10;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1045,7 +1043,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 10;
         ammo.bv = 19;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1064,7 +1061,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 5;
         ammo.bv = 27;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1086,7 +1082,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 45;
         ammo.bv = 5;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1108,7 +1103,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 20;
         ammo.bv = 10;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1130,7 +1124,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 10;
         ammo.bv = 19;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1152,7 +1145,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 5;
         ammo.bv = 27;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1170,7 +1162,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 45;
         ammo.bv = 7;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1188,7 +1179,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 20;
         ammo.bv = 14;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1206,7 +1196,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 10;
         ammo.bv = 29;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1224,7 +1213,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 5;
         ammo.bv = 32;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1241,7 +1229,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ROTARY;
         ammo.shots = 45;
         ammo.bv = 15;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1258,7 +1245,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ROTARY;
         ammo.shots = 20;
         ammo.bv = 31;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1277,7 +1263,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_GAUSS;
         ammo.shots = 8;
         ammo.bv = 37;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1295,7 +1280,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_GAUSS_LIGHT;
         ammo.shots = 16;
         ammo.bv = 20;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1312,7 +1296,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_GAUSS_HEAVY;
         ammo.shots = 4;
         ammo.bv = 43;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1330,7 +1313,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 50;
         ammo.bv = 4;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1348,7 +1330,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 25;
         ammo.bv = 7;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1366,7 +1347,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 15;
         ammo.bv = 11;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1383,7 +1363,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MRM;
         ammo.shots = 24;
         ammo.bv = 7;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1400,7 +1379,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MRM;
         ammo.shots = 12;
         ammo.bv = 14;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1417,7 +1395,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MRM;
         ammo.shots = 8;
         ammo.bv = 21;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1434,7 +1411,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MRM;
         ammo.shots = 6;
         ammo.bv = 28;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1497,7 +1473,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AMS;
         ammo.shots = 12;
         ammo.bv = 11;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1514,7 +1489,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_NARC;
         ammo.shots = 6;
         ammo.bv = 0;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1530,7 +1504,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_NARC_EX;
         ammo.shots = 6;
         ammo.bv = 0;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1547,7 +1520,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_INARC;
         ammo.shots = 4;
         ammo.bv = 0;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1563,7 +1535,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_EXPLOSIVE;
         ammo.shots = 4;
         ammo.bv = 0;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1579,7 +1550,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_ECM;
         ammo.shots = 4;
         ammo.bv = 0;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1595,7 +1565,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_HAYWIRE;
         ammo.shots = 4;
         ammo.bv = 0;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1611,7 +1580,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_NEMESIS;
         ammo.shots = 4;
         ammo.bv = 0;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -1630,7 +1598,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_GAUSS;
         ammo.shots = 8;
         ammo.bv = 33;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1649,7 +1616,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 45;
         ammo.bv = 6;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1668,7 +1634,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 20;
         ammo.bv = 12;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1687,7 +1652,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 10;
         ammo.bv = 19;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1706,7 +1670,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 5;
         ammo.bv = 33;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1728,7 +1691,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 45;
         ammo.bv = 6;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1750,7 +1712,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 20;
         ammo.bv = 12;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1772,7 +1733,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 10;
         ammo.bv = 19;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1794,7 +1754,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 5;
         ammo.bv = 33;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1812,7 +1771,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_VEHICLE_FLAMER;
         ammo.shots = 20;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1831,7 +1789,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG;
         ammo.shots = 100;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1851,7 +1808,6 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.tonnage = 0.5f;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1871,7 +1827,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG;
         ammo.shots = 200;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1892,7 +1847,6 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1911,7 +1865,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG;
         ammo.shots = 200;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1931,7 +1884,6 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1949,7 +1901,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 45;
         ammo.bv = 6;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1967,7 +1918,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 20;
         ammo.bv = 15;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -1985,7 +1935,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 10;
         ammo.bv = 26;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2003,7 +1952,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 5;
         ammo.bv = 35;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2020,7 +1968,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ROTARY;
         ammo.shots = 45;
         ammo.bv = 22;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_3;
 
         return ammo;
     }
@@ -2037,7 +1984,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ROTARY;
         ammo.shots = 20;
         ammo.bv = 43;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_3;
 
         return ammo;
     }
@@ -2054,7 +2000,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ROTARY;
         ammo.shots = 10;
         ammo.bv = 74;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_3;
 
         return ammo;
     }
@@ -2071,7 +2016,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ROTARY;
         ammo.shots = 5;
         ammo.bv = 118;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_3;
 
         return ammo;
     }
@@ -2089,7 +2033,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 2;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2107,7 +2050,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 3;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2125,7 +2067,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 5;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2143,7 +2084,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 6;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2161,7 +2101,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 24;
         ammo.bv = 7;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2179,7 +2118,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 9;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2197,7 +2135,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 12;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2215,7 +2152,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 12;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2233,7 +2169,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 12;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2251,7 +2186,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 12;
         ammo.bv = 14;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2269,7 +2203,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 18;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2287,7 +2220,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 18;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2305,7 +2237,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 20;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2323,7 +2254,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 21;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2341,7 +2271,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 8;
         ammo.bv = 21;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2359,7 +2288,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 27;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2377,7 +2305,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 27;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2395,7 +2322,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 27;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2413,7 +2339,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 28;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         return ammo;
 
     }
@@ -2431,7 +2356,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 6;
         ammo.bv = 27;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2449,7 +2373,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 2;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2467,7 +2390,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 50;
         ammo.bv = 3;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2485,7 +2407,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 4;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2503,7 +2424,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 25;
         ammo.bv = 5;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2521,7 +2441,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 5;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2539,7 +2458,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 15;
         ammo.bv = 7;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2556,7 +2474,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 3;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2574,7 +2491,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 50;
         ammo.bv = 5;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2591,7 +2507,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 8;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2609,7 +2524,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 25;
         ammo.bv = 10;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2626,7 +2540,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 13;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2644,7 +2557,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 15;
         ammo.bv = 15;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2662,7 +2574,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AMS;
         ammo.shots = 24;
         ammo.bv = 21;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2679,7 +2590,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_NARC;
         ammo.shots = 6;
         ammo.bv = 0;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2695,7 +2605,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_NARC_EX;
         ammo.shots = 6;
         ammo.bv = 0;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2713,7 +2622,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ATM;
         ammo.shots = 20;
         ammo.bv = 14;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2732,7 +2640,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 20;
         ammo.bv = 14;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2751,7 +2658,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_HIGH_EXPLOSIVE;
         ammo.shots = 20;
         ammo.bv = 14;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2769,7 +2675,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ATM;
         ammo.shots = 10;
         ammo.bv = 26;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2788,7 +2693,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 10;
         ammo.bv = 26;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2807,7 +2711,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_HIGH_EXPLOSIVE;
         ammo.shots = 10;
         ammo.bv = 26;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2825,7 +2728,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ATM;
         ammo.shots = 7;
         ammo.bv = 36;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2844,7 +2746,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 7;
         ammo.bv = 36;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2863,7 +2764,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_HIGH_EXPLOSIVE;
         ammo.shots = 7;
         ammo.bv = 36;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2881,7 +2781,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ATM;
         ammo.shots = 5;
         ammo.bv = 52;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2900,7 +2799,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 5;
         ammo.bv = 52;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2919,7 +2817,6 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = M_HIGH_EXPLOSIVE;
         ammo.shots = 5;
         ammo.bv = 52;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2937,7 +2834,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 24;
         ammo.bv = 11;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2955,7 +2851,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 12;
         ammo.bv = 22;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2973,7 +2868,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 8;
         ammo.bv = 32;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -2991,7 +2885,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 6;
         ammo.bv = 43;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -3236,7 +3129,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG | F_PROTOMECH;
         ammo.shots = 100;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -3255,7 +3147,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG | F_PROTOMECH;
         ammo.shots = 200;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -3274,7 +3165,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG | F_PROTOMECH;
         ammo.shots = 200;
         ammo.bv = 1;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
     }
@@ -3293,7 +3183,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ARROW_IV;
         ammo.shots = 5;
         ammo.bv = 11;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
 
         return ammo;
     }
@@ -3312,7 +3201,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ARROW_IV;
         ammo.shots = 5;
         ammo.bv = 11;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
       }
@@ -3332,7 +3220,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LONG_TOM;
         ammo.shots = 5;
         ammo.bv = 11;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
       }
@@ -3352,7 +3239,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SNIPER;
         ammo.shots = 10;
         ammo.bv = 5;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
       }
@@ -3372,7 +3258,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_THUMPER;
         ammo.shots = 20;
         ammo.bv = 3;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
       }
@@ -3615,14 +3500,6 @@ public class AmmoType extends EquipmentType {
 
             // Reduce base number of shots to reflect the munition's weight.
             munition.shots = base.shots / this.weight;
-
-            // Assign techlevel of the munition type.
-            // TODO : find a non-hardcoded way of doing this.
-            if ( TechConstants.T_CLAN_LEVEL_2 == base.techType ) {
-                munition.techType = TechConstants.T_CLAN_LEVEL_2;
-            } else {
-                munition.techType = TechConstants.T_IS_LEVEL_2;
-            }
 
             // Copy over all other values.
             munition.damagePerShot = base.damagePerShot;

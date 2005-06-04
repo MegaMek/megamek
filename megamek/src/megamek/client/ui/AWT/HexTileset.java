@@ -20,14 +20,26 @@
 
 package megamek.client;
 
-import com.sun.java.util.collections.*;
-import java.awt.Image;
 import java.awt.Component;
+import java.awt.Image;
 import java.awt.MediaTracker;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StreamTokenizer;
 
-import megamek.common.*;
+
+import megamek.common.Hex;
+import megamek.common.IHex;
+import megamek.common.ITerrain;
+import megamek.common.Terrains;
 import megamek.common.util.StringUtil;
+import megamek.client.util.ImageCache;
+
+import com.sun.java.util.collections.ArrayList;
+import com.sun.java.util.collections.Iterator;
+import com.sun.java.util.collections.List;
 
 /**
  * Matches each hex with an appropriate image.
@@ -37,16 +49,18 @@ import megamek.common.util.StringUtil;
  */
 public class HexTileset {
     
-    ArrayList bases = new ArrayList();
-    ArrayList supers = new ArrayList();
-    
-    Image clear;
-    Image woods;
+    private ArrayList bases = new ArrayList();
+    private ArrayList supers = new ArrayList();
+    private ImageCache hexToImageCache = new ImageCache();
 
     /** Creates new HexTileset */
     public HexTileset() {
     }
     
+    public void clearHex(IHex hex) {
+        hexToImageCache.remove(hex);
+    }
+
     /**
      * This assigns images to a hex based on the best matches it can find.
      *
@@ -58,10 +72,29 @@ public class HexTileset {
      * Any terrain left is used to match a base image for the hex.  This time,
      * a match can be any value, and the first, best image is used.
      */
-    public void assignMatch(IHex hex, Component comp) {
+    public Object[] assignMatch(IHex hex, Component comp) {
         IHex hexCopy = hex.duplicate();
-        hex.setSupers(supersFor(hexCopy, comp));
-        hex.setBase(baseFor(hexCopy, comp));
+        List supers = supersFor(hexCopy, comp);
+        Image base = baseFor(hexCopy, comp);
+        Object[] pair = new Object[] {base, supers};
+        hexToImageCache.put(hex, pair);
+        return pair;
+    }
+    
+    public Image getBase(IHex hex, Component comp) {
+        Object[] pair = (Object[])hexToImageCache.get(hex);
+        if (pair == null) {
+          pair = assignMatch(hex, comp);
+        }
+        return (Image) pair[0];
+    }
+    
+    public List getSupers(IHex hex, Component comp) {
+        Object[] pair = (Object[])hexToImageCache.get(hex);
+        if (pair == null) {
+          pair = assignMatch(hex, comp);
+        }
+        return (List) pair[1];
     }
     
     /**
@@ -192,11 +225,13 @@ public class HexTileset {
      * Adds all images associated with the hex to the specified tracker
      */
     public void trackHexImages(IHex hex, MediaTracker tracker) {
+
+        Image base = (Image)((Object[])hexToImageCache.get(hex))[0];
+        List superImgs = (List)((Object[])hexToImageCache.get(hex))[1];
+
         // add base
-        tracker.addImage((Image)hex.getBase(), 1);
-        
+        tracker.addImage(base, 1);        
         // add superImgs
-        List superImgs = hex.getSupers();
         if (superImgs != null) {
             for (Iterator i = superImgs.iterator(); i.hasNext();) {
                 tracker.addImage((Image)i.next(), 1);

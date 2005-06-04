@@ -139,18 +139,15 @@ public class TilesetManager {
     /**
      * Return the base image for the hex
      */
-    public Image baseFor(IHex hex) {
-        if (hex.getBase() == null) {
-            hexTileset.assignMatch(hex, comp);
-        }
-        return (Image)hex.getBase();
+    public Image baseFor(IHex hex) {    
+        return hexTileset.getBase(hex, comp);
     }
     
     /**
      * Return a list of superimposed images for the hex
      */
     public List supersFor(IHex hex) {
-        return hex.getSupers();
+        return hexTileset.getSupers(hex, comp);
     }
     
     public Image getMinefieldSign() {
@@ -207,7 +204,14 @@ public class TilesetManager {
         hexTileset.assignMatch(hex, comp);
         hexTileset.trackHexImages(hex, tracker);
     }
-    
+
+    /**
+     * Removes the hex images from the cache.
+     * @param hex
+     */
+    public void clearHex(IHex hex) {
+        hexTileset.clearHex(hex);
+    }
     /**
      * Waits until a certain hex's images are done loading.
      * @param hex the hex to wait for

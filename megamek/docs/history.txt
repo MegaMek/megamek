@@ -67,6 +67,7 @@ v0.29.79 (CVS)
 + Default locale set to english, locales now restricted to ones we support.
 + Chatbox size now adjustable
 + Added "advanced" tab to the client settings window.
++ Patch 1194414: fix memory leak
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

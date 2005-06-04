@@ -56,7 +56,7 @@ public class ProtomechMapSet implements DisplayMapSet{
     
     private int stepY = 53;
     
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayArmorLargeFontSize()); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
     
     /**
      * This constructor have to be called anly from addNotify() method

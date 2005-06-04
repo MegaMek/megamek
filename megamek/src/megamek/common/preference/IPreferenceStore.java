@@ -260,5 +260,6 @@ public interface IPreferenceStore {
      * <strong>does not fire preference change event</strong> 
      */    
     public abstract void putValue(String name, String value);
-    
+
+    public abstract String[] getAdvancedProperties();
 }

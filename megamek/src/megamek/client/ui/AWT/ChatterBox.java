@@ -48,7 +48,7 @@ public class ChatterBox implements KeyListener {
     private List                playerList;
     private TextField           inputField;
     private Button              butDone;
-    
+
     public ChatterBox(ClientGUI clientgui) {
         this.client = clientgui.getClient();
         client.game.addGameListener(new GameListenerAdapter(){
@@ -73,9 +73,9 @@ public class ChatterBox implements KeyListener {
             }
         });
         
-        chatArea = new TextArea(" \n", 5, 40, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
+        chatArea = new TextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
         chatArea.setEditable(false);
-        playerList = new List();
+        playerList = new List(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
         inputField = new TextField();
         inputField.addKeyListener(this);
         butDone = new Button( Messages.getString("ChatterBox.ImDone") ); //$NON-NLS-1$

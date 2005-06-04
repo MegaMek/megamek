@@ -40,7 +40,7 @@ public class InfantryMapSet implements DisplayMapSet{
     private Vector    bgDrawers = new Vector();
 
     
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayArmorMediumFontSize()); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorMediumFontSize")); //$NON-NLS-1$
 
     
     public InfantryMapSet(Component c){

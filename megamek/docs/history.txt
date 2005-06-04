@@ -64,6 +64,9 @@ v0.29.79 (CVS)
 + RFE 1057378: Prev/Next on Configure Units window
 + Prev/Next unit didn't refresh displayed data
 + Patch 1214273: Duplicate Variable Fix
++ Default locale set to english, locales now restricted to ones we support.
++ Chatbox size now adjustable
++ Added "advanced" tab to the client settings window.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

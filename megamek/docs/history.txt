@@ -1,7 +1,6 @@
 VERSION HISTORY:
 ----------------
 v0.29.79 (CVS)
-+ Cleanup of WeaponType Level 3 weapons
 + i18n of the Equipment
 + Mule kicks for Quads
 + Bug 1180526: bot not clicking done when player unloads BA from omni
@@ -69,6 +68,8 @@ v0.29.79 (CVS)
 + Chatbox size now adjustable
 + Added "advanced" tab to the client settings window.
 + Patch 1194414: fix memory leak
++ Cleanup of WeaponType Level 3 weapons
++ Bug 1213599: Procyon should have ER Small Lasers.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

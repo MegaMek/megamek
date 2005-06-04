@@ -53,7 +53,7 @@ public class BattleArmorMapSet implements DisplayMapSet{
     private int stepY = 53;
     
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$ 
-            GUIPreferences.getInstance().getMechDisplayArmorLargeFontSize());
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
     
     /**
      * This constructor have to be called anly from addNotify() method

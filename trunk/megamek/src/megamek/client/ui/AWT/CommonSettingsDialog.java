@@ -16,16 +16,21 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Arrays;
+
+import gov.nist.gui.TabPanel;
 
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.client.util.AdvancedLabel;
 
 
 public class CommonSettingsDialog extends ClientDialog
-    implements ActionListener, ItemListener
+    implements ActionListener, ItemListener, FocusListener
 {
-    private ScrollPane  scrOptions = new ScrollPane();
-
+    private ScrollPane  scrolledPane = new ScrollPane();;
+    private TabPanel    panTabs;
+    
     private Checkbox    minimapEnabled;
     private Checkbox    autoEndFiring;
     private Checkbox    nagForMASC;
@@ -52,14 +57,19 @@ public class CommonSettingsDialog extends ClientDialog
     private TextField   serverlogMaxSize;
     private Checkbox    defaultAutoejectDisabled;
     private Checkbox    showUnitId;
-    private TextField   locale;
+    private Choice      locale;
     private Checkbox    chatloungeTabs;
+
+    private List        keys;
+    private int         keysIndex = 0;
+    private TextField   value;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
-    
 
-    /**
+    private static final String[] LOCALE_CHOICES = {"en", "de", "ru"};
+
+     /**
      * Standard constructor.  There is no default constructor for this class.
      *
      * @param   owner - the <code>Frame</code> that owns this dialog.
@@ -68,12 +78,51 @@ public class CommonSettingsDialog extends ClientDialog
         // Initialize our superclass with a title.
         super( owner, Messages.getString("CommonSettingsDialog.title") ); //$NON-NLS-1$
 
+        panTabs = new TabPanel();
+        Panel settingsPanel = getSettingsPanel();
+        scrolledPane.add(settingsPanel);
+        panTabs.add("Main", scrolledPane);
+        panTabs.add("Advanced", getAdvancedSettingsPanel());
+        setLayout(new BorderLayout());
+        this.add(panTabs, BorderLayout.CENTER);
+        this.add( getButtonsPanel(), BorderLayout.SOUTH );
+
+        // Close this dialog when the window manager says to.
+        addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) { cancel(); }
+        });
+
+        // Center this dialog.
+        pack();
+
+        // Make the thing wide enough so a horizontal scrollbar isn't
+        //  necessary.  I'm not sure why the extra hardcoded 10 pixels
+        //  is needed, maybe it's a ms windows thing.
+        setLocationAndSize(settingsPanel.getPreferredSize().width + scrolledPane.getInsets().right + 10, settingsPanel.getPreferredSize().height);
+    }
+
+    private Panel getButtonsPanel() {
+        // Add the dialog controls.
+        Panel buttons = new Panel();
+        buttons.setLayout( new GridLayout(1, 0, 20, 5) );
+        Button update = new Button( Messages.getString("CommonSettingsDialog.Update") ); //$NON-NLS-1$
+        update.setActionCommand( CommonSettingsDialog.UPDATE );
+        update.addActionListener( this );
+        buttons.add( update );
+        Button cancel = new Button( Messages.getString("Cancel") ); //$NON-NLS-1$
+        cancel.setActionCommand( CommonSettingsDialog.CANCEL );
+        cancel.addActionListener( this );
+        buttons.add( cancel );
+
+        return buttons;
+    }
+
+    private Panel getSettingsPanel() {
         // Lay out this dialog.
         Panel tempPanel = new Panel();
         tempPanel.setLayout( new GridLayout(0, 1) );
 
         // Add the setting controls.
-        Panel panSetting;
         minimapEnabled
             = new Checkbox( Messages.getString("CommonSettingsDialog.minimapEnabled") ); //$NON-NLS-1$
         tempPanel.add( minimapEnabled );
@@ -110,14 +159,16 @@ public class CommonSettingsDialog extends ClientDialog
             = new Checkbox( Messages.getString("CommonSettingsDialog.showMapHexPopup") ); //$NON-NLS-1$
         tempPanel.add( showMapHexPopup );
 
-        panSetting = new Panel();
+        Panel panSetting;
+        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.tooltipDelay")) ); //$NON-NLS-1$
         tooltipDelay
             = new TextField(4);
         panSetting.add( tooltipDelay );
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.tooltipDelay")) ); //$NON-NLS-1$
+
         tempPanel.add( panSetting );
 
-        panSetting = new Panel();
+        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
         unitStartChar
             = new Choice();
         // Add option for "A, B, C, D..."
@@ -129,12 +180,13 @@ public class CommonSettingsDialog extends ClientDialog
         panSetting.add( unitStartChar );
         panSetting.add( new Label(Messages.getString("CommonSettingsDialog.protoMechUnitCodes")) ); //$NON-NLS-1$
 
-        panSetting = new Panel();
+        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit")) ); //$NON-NLS-1$
         maxPathfinderTime
             = new TextField(5);
         panSetting.add( maxPathfinderTime );
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit")) ); //$NON-NLS-1$
         tempPanel.add( panSetting );
+
         getFocus
             = new Checkbox( Messages.getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
         tempPanel.add( getFocus );
@@ -156,22 +208,23 @@ public class CommonSettingsDialog extends ClientDialog
             = new Checkbox( Messages.getString("CommonSettingsDialog.keepServerlog") ); //$NON-NLS-1$
         keepServerlog.addItemListener(this);
         tempPanel.add( keepServerlog );
-        panSetting = new Panel();
-        serverlogFilename
-            = new TextField(20);
-        panSetting.add( serverlogFilename );
+
+        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
         panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileName")) ); //$NON-NLS-1$
+        serverlogFilename
+            = new TextField(15);
+        panSetting.add( serverlogFilename );
         tempPanel.add( panSetting );
-        panSetting = new Panel();
+
+        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileMaxSize")) ); //$NON-NLS-1$
         serverlogMaxSize
             = new TextField(5);
         panSetting.add( serverlogMaxSize );
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileMaxSize")) ); //$NON-NLS-1$
         tempPanel.add( panSetting );
 
         // scrolling options
-        tempPanel.add( new Label(Messages.getString("CommonSettingsDialog.minimapScroll")) ); //$NON-NLS-1$
-        tempPanel.add( new Label(Messages.getString("CommonSettingsDialog.additionalScroll")) ); //$NON-NLS-1$
+        tempPanel.add( new AdvancedLabel(Messages.getString("CommonSettingsDialog.mapScrollText")) ); //$NON-NLS-1$
 
         rightDragScroll
             = new Checkbox( Messages.getString("CommonSettingsDialog.rightDragScroll") ); //$NON-NLS-1$
@@ -193,67 +246,30 @@ public class CommonSettingsDialog extends ClientDialog
             = new Checkbox( Messages.getString("CommonSettingsDialog.autoEdgeScroll") ); //$NON-NLS-1$
             tempPanel.add( autoEdgeScroll );
 
-        panSetting = new Panel();
+        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.scrollSesitivity")) ); //$NON-NLS-1$
         scrollSensitivity
             = new TextField(4);
         panSetting.add( scrollSensitivity );
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.scrollSesitivity")) ); //$NON-NLS-1$
         tempPanel.add( panSetting );
 
-        scrOptions.add(tempPanel);
-        
         //locale settings
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
         panSetting.add( new Label(Messages.getString("CommonSettingsDialog.locale")) ); //$NON-NLS-1$
-        locale = new TextField(8);
+        //        locale = new TextField(8);
+        locale = new Choice();
+        locale.add("English");
+        locale.add("Deutsch");
+        locale.add("Pyccko");  //Is that "Russian"?
         panSetting.add( locale);
         tempPanel.add( panSetting );
-        
+
         //chatloungtab setting
         chatloungeTabs 
             = new Checkbox( Messages.getString("CommonSettingsDialog.chatloungeTabs") ); //$NON-NLS-1$
         tempPanel.add( chatloungeTabs );
-        
-        // add the scrollable panel
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-            
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;    c.weighty = 1.0;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(scrOptions, c);
-        this.add(scrOptions);
 
-        // Add the dialog controls.
-        Panel buttons = new Panel();
-        buttons.setLayout( new GridLayout(1, 0) );
-        buttons.add( new Label() );
-        Button update = new Button( Messages.getString("CommonSettingsDialog.Update") ); //$NON-NLS-1$
-        update.setActionCommand( CommonSettingsDialog.UPDATE );
-        update.addActionListener( this );
-        buttons.add( update );
-        buttons.add( new Label() );
-        Button cancel = new Button( Messages.getString("Cancel") ); //$NON-NLS-1$
-        cancel.setActionCommand( CommonSettingsDialog.CANCEL );
-        cancel.addActionListener( this );
-        buttons.add( cancel );
-        buttons.add( new Label() );
-
-        c.weightx = 1.0;    c.weighty = 0.0;
-        gridbag.setConstraints(buttons, c);
-        this.add( buttons );
-
-        // Close this dialog when the window manager says to.
-        addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) { cancel(); }
-        });
-
-        // Center this dialog.
-        pack();
-
-        setLocationAndSize(tempPanel.getSize());
+        return tempPanel;
     }
 
     /**
@@ -304,7 +320,12 @@ public class CommonSettingsDialog extends ClientDialog
         defaultAutoejectDisabled.setState( cs.defaultAutoejectDisabled() );
         showUnitId.setState( cs.getShowUnitId() );
 
-        locale.setText(cs.getLocaleString());
+        int index = 0;
+        if (cs.getLocaleString().startsWith("de"))
+            index = 1;
+        if (cs.getLocaleString().startsWith("ru"))
+            index = 2;
+        locale.select(index);
         
         chatloungeTabs.setState(gs.getChatLoungeTabs() );
         
@@ -356,7 +377,7 @@ public class CommonSettingsDialog extends ClientDialog
         cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.getState());
         cs.setShowUnitId(showUnitId.getState());
 
-        cs.setLocale(locale.getText());
+        cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[locale.getSelectedIndex()]);
         
         gs.setChatloungeTabs(chatloungeTabs.getState());
 
@@ -393,5 +414,34 @@ public class CommonSettingsDialog extends ClientDialog
             serverlogFilename.setEnabled(keepServerlog.getState());
             serverlogMaxSize.setEnabled(keepServerlog.getState());
         }
+        if ( event.getSource() == keys && event.getStateChange() == ItemEvent.SELECTED) {
+            value.setText(GUIPreferences.getInstance().getString("Advanced" + keys.getSelectedItem()));
+            keysIndex = keys.getSelectedIndex();
+        }
+    }
+
+    public void focusGained( FocusEvent e ) {}
+
+    public void focusLost( FocusEvent e ) {
+        GUIPreferences.getInstance().setValue("Advanced" + keys.getItem(keysIndex), value.getText());
+    }
+
+    private Panel getAdvancedSettingsPanel() {
+        Panel p = new Panel();
+
+        keys = new List(10, false);
+        String[] s = GUIPreferences.getInstance().getAdvancedProperties();
+        Arrays.sort(s);
+        for (int i = 0; i < s.length; i++) {
+            keys.add(s[i].substring(s[i].indexOf("Advanced") + 8, s[i].length()));
+        }
+        keys.addItemListener(this);
+        p.add(keys);
+
+        value = new TextField(10);
+        value.addFocusListener(this);
+        p.add(value);
+
+        return p;
     }
 }

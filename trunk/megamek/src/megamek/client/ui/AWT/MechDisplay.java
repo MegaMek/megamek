@@ -312,7 +312,7 @@ class WeaponPanel extends BufferedPanel
     private Entity entity;
     private ClientGUI client;
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayMediumFontSize()); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayMediumFontSize")); //$NON-NLS-1$
 
     public WeaponPanel(ClientGUI client) {
         super(new GridBagLayout());
@@ -985,7 +985,7 @@ class SystemPanel
     //public Label modeLabel;
     private ClientGUI clientgui;
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
 
     Entity en;
 
@@ -1372,7 +1372,7 @@ class ExtraPanel
     
     private int sinks;
     
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
 
     private ClientGUI clientgui;
 

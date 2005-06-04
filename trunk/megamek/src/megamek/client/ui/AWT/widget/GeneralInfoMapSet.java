@@ -39,8 +39,8 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR;
     private PMSimpleLabel[] advantagesR;
     private Vector    bgDrawers = new Vector();
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
-    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, GUIPreferences.getInstance().getMechDisplayLargeFontSize()); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
     private int yCoord = 1;
 
     /**
@@ -180,9 +180,9 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         String s = en.getShortName();
         mechTypeL1.setVisible(false);
         
-        if(s.length() > GUIPreferences.getInstance().getMechDisplayWrapLength()){
+        if(s.length() > GUIPreferences.getInstance().getInt("AdvancedMechDisplayWrapLength")){
             mechTypeL1.setColor(Color.yellow);
-            int i = s.lastIndexOf(" ", GUIPreferences.getInstance().getMechDisplayWrapLength()); //$NON-NLS-1$
+            int i = s.lastIndexOf(" ", GUIPreferences.getInstance().getInt("AdvancedMechDisplayWrapLength")); //$NON-NLS-1$
             mechTypeL0.setString(s.substring(0,i));
             mechTypeL1.setString(s.substring(i).trim());
             mechTypeL1.setVisible(true);

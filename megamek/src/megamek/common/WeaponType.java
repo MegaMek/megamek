@@ -200,9 +200,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLargePulseLaser());
         EquipmentType.addType(createISMediumPulseLaser());
         EquipmentType.addType(createISSmallPulseLaser());
-        EquipmentType.addType(createISLargeXPulseLaser());
-        EquipmentType.addType(createISMediumXPulseLaser());
-        EquipmentType.addType(createISSmallXPulseLaser());
         EquipmentType.addType(createISLBXAC2());
         EquipmentType.addType(createISLBXAC5());
         EquipmentType.addType(createISLBXAC10());
@@ -238,8 +235,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLRM15OS());
         EquipmentType.addType(createISLRM20OS());
         EquipmentType.addType(createISAMS());
-        EquipmentType.addType(createISLaserAMS());
-        EquipmentType.addType(createISLaserAMSTHB());
         EquipmentType.addType(createISNarc());
         EquipmentType.addType(createISNarcOS());
         EquipmentType.addType(createISImprovedNarc());
@@ -251,6 +246,13 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLongTom());
         EquipmentType.addType(createISSniper());
         EquipmentType.addType(createISThumper());
+
+        // Start of Inner Sphere Level3 weapons
+        EquipmentType.addType(createISLargeXPulseLaser());
+        EquipmentType.addType(createISMediumXPulseLaser());
+        EquipmentType.addType(createISSmallXPulseLaser());
+        EquipmentType.addType(createISLaserAMS());
+        EquipmentType.addType(createISLaserAMSTHB());
 
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -266,9 +268,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLLargePulseLaser());
         EquipmentType.addType(createCLMediumPulseLaser());
         EquipmentType.addType(createCLSmallPulseLaser());
-        EquipmentType.addType(createCLERLargePulseLaser());
-        EquipmentType.addType(createCLERMediumPulseLaser());
-        EquipmentType.addType(createCLERSmallPulseLaser());
         EquipmentType.addType(createCLMicroPulseLaser());
         EquipmentType.addType(createCLLBXAC2());
         EquipmentType.addType(createCLLBXAC5());
@@ -296,10 +295,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLUltraAC5());
         EquipmentType.addType(createCLUltraAC10());
         EquipmentType.addType(createCLUltraAC20());
-        EquipmentType.addType(createCLRAC2());
-        EquipmentType.addType(createCLRAC5());
-        EquipmentType.addType(createCLRAC10());
-        EquipmentType.addType(createCLRAC20());
         EquipmentType.addType(createCLStreakSRM2());
         EquipmentType.addType(createCLStreakSRM4());
         EquipmentType.addType(createCLStreakSRM6());
@@ -310,18 +305,27 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLATM6());
         EquipmentType.addType(createCLATM9());
         EquipmentType.addType(createCLATM12());
-        EquipmentType.addType(createCLStreakLRM5());
-        EquipmentType.addType(createCLStreakLRM10());
-        EquipmentType.addType(createCLStreakLRM15());
-        EquipmentType.addType(createCLStreakLRM20());
         EquipmentType.addType(createCLAMS());
-        EquipmentType.addType(createCLLaserAMS());
         EquipmentType.addType(createCLNarc());
         EquipmentType.addType(createCLNarcOS());
         EquipmentType.addType(createCLArrowIVSystem());
         EquipmentType.addType(createCLLongTom());
         EquipmentType.addType(createCLSniper());
         EquipmentType.addType(createCLThumper());
+
+        // Start of Clan Level3 weapons
+        EquipmentType.addType(createCLERLargePulseLaser());
+        EquipmentType.addType(createCLERMediumPulseLaser());
+        EquipmentType.addType(createCLERSmallPulseLaser());
+        EquipmentType.addType(createCLRAC2());
+        EquipmentType.addType(createCLRAC5());
+        EquipmentType.addType(createCLRAC10());
+        EquipmentType.addType(createCLRAC20());
+        EquipmentType.addType(createCLStreakLRM5());
+        EquipmentType.addType(createCLStreakLRM10());
+        EquipmentType.addType(createCLStreakLRM15());
+        EquipmentType.addType(createCLStreakLRM20());
+        EquipmentType.addType(createCLLaserAMS());
 
         //Protomech weapons
         EquipmentType.addType(createCLPROLRM1() );

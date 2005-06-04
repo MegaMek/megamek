@@ -71,6 +71,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private Choice choOffBoardDirection = new Choice();
     private Label labOffBoardDistance = new Label(Messages.getString("CustomMechDialog.labOffBoardDistance"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldOffBoardDistance = new TextField(4);
+    private Button butOffBoardDistance = new Button ("0");
     
     private Panel panButtons = new Panel();
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
@@ -100,6 +101,9 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private TextArea texDesc = new TextArea(Messages.getString("CustomMechDialog.texDesc"), 3, 35, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
 
     private boolean editable;
+    
+    private int direction = -1;
+    private int distance = 17;
     
     /** Creates new CustomMechDialog */
     public CustomMechDialog(ClientGUI clientgui, Client client, Entity entity, boolean editable) {
@@ -236,7 +240,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             choOffBoardDirection.add(Messages.getString("CustomMechDialog.South")); //$NON-NLS-1$
             choOffBoardDirection.add(Messages.getString("CustomMechDialog.East")); //$NON-NLS-1$
             choOffBoardDirection.add(Messages.getString("CustomMechDialog.West")); //$NON-NLS-1$
-            int direction = entity.getOffBoardDirection();
+            direction = entity.getOffBoardDirection();
             if ( Entity.NONE == direction ) {
                 direction = Entity.NORTH;
             }
@@ -247,12 +251,18 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labOffBoardDistance, c);
             tempPanel.add(labOffBoardDistance);
+
             
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
+            /*
             gridbag.setConstraints(fldOffBoardDistance, c);
-            fldOffBoardDistance.setText(Integer.toString(entity.getOffBoardDistance()));
-            tempPanel.add(fldOffBoardDistance);
+            */
+            
+            butOffBoardDistance.addActionListener(this);
+            gridbag.setConstraints(butOffBoardDistance, c);
+            butOffBoardDistance.setLabel(Integer.toString(distance));
+            tempPanel.add(butOffBoardDistance);
         }
 
         if ( entity instanceof Protomech ) {
@@ -881,6 +891,16 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     }
 
     public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+        if (actionEvent.getSource() == butOffBoardDistance) {
+            Slider sl = new Slider (clientgui.frame, Messages.getString("CustomMechDialog.offboardDistanceTitle"), Messages.getString("CustomMechDialog.offboardDistanceQuestion"),
+                                    entity.getOffBoardDistance(), 17, 170);
+            if (!sl.showDialog()) return;
+            distance = sl.getValue();
+            butOffBoardDistance.setLabel(Integer.toString(distance));
+            // butOffBoardDistance = new Button (Integer.toString(sl.getValue()));
+            // butOffBoardDistance.addActionListener(this);
+            return;
+        }
         if (actionEvent.getSource() != butCancel) {
             // get values
             String name = fldName.getText();
@@ -903,7 +923,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
             if (chOffBoard.getState()){
                 try {
-                    offBoardDistance = Integer.parseInt(fldOffBoardDistance.getText());
+                    offBoardDistance = distance;
                 } catch (NumberFormatException e) {
                     new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterValidSkills")).show(); //$NON-NLS-1$ //$NON-NLS-2$
                     return;

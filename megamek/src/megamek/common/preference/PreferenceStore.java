@@ -15,6 +15,7 @@
 package megamek.common.preference;
 
 import java.util.Properties;
+import java.util.Enumeration;
 import java.util.Vector;
 
 
@@ -280,5 +281,21 @@ class PreferenceStore implements IPreferenceStore {
             }
         }
     }
-    
+
+    public String[] getAdvancedProperties() {
+        properties.list(System.out);
+        Vector v = new Vector();
+        String s;
+        for (Enumeration e = properties.propertyNames(); e.hasMoreElements(); ) {
+            s = (String)e.nextElement();
+            if (s.startsWith("Advanced")) {
+                v.addElement(s);
+            }
+        }
+        String props[] = new String[v.size()];
+        for (int i = 0; i < v.size(); i++) {
+            props[i] = (String)v.elementAt(i);
+        }
+        return props;
+    }
 }

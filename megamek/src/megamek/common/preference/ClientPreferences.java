@@ -67,6 +67,10 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         setMekHitLocLog();
     }
 
+    public String[] getAdvancedProperties() {
+        return store.getAdvancedProperties();
+    }
+
     public boolean defaultAutoejectDisabled() {
         return store.getBoolean(DEFAULT_AUTOEJECT_DISABLED);
     }
@@ -226,8 +230,10 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
     }
 
     public Locale getLocale() {
-        if (locale == null)
-            return Locale.getDefault();
+        if (locale == null) {
+            //return Locale.getDefault();
+            return Locale.US;
+        }
         else
             return locale;
     }

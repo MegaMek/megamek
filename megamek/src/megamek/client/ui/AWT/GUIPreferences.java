@@ -22,6 +22,37 @@ import megamek.common.preference.PreferenceManager;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
+    /* --Begin advanced settings section--
+    Options with the "ADVANCED" prefix are treated specially.  They
+    are quick and easy to add, at the expense of some
+    user-friendliness (that's why they are "advanced<grin>).  Only the
+    appropriate declaration below and the default value (further down
+    in this file) need be added.  The code will then automatically add
+    the option to the advanced tab of the client settings.  In order
+    to retrieve one of these settings, use a line like:
+    GUIPreferences.getInstance().getInt("AdvancedWhateverOption"),
+    where getInt is replaced with getBoolean, getString, etc as
+    necessary.  The reason these options were made this way is that
+    GUI options have a way of quickly multiplying and we need a quick
+    and dirty way of adding them without having to code too many new
+    lines.  In addition, keeping them seperated in the settings dialog
+    shields new users from unecessary complication.
+    */
+    public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
+    public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE =
+        "AdvancedMechDisplayArmorLargeFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE =
+        "AdvancedMechDisplayArmorMediumFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE =
+        "AdvancedMechDisplayArmorSmallFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE =
+        "AdvancedMechDisplayLargeFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE =
+        "AdvancedMechDisplayMediumFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_WRAP_LENGTH =
+        "AdvancedMechDisplayWrapLength";
+    /* --End advanced settings-- */
+
     public static final String ALWAYS_RIGHT_CLICK_SCROLL="AlwaysRightClickScroll";
     public static final String AUTO_EDGE_SCROLL = "AutoEdgeScroll";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
@@ -33,15 +64,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
-    public static final String FOCUS = "Focus";    
+    public static final String FOCUS = "Focus";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
-    public static final String MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE="MechDisplayArmorLargeFontSize";
-    public static final String MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE="MechDisplayArmorMediumFontSize";
-    public static final String MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE="MechDisplayArmorSmallFontSize";
-    public static final String MECH_DISPLAY_LARGE_FONT_SIZE="MechDisplayLargeFontSize";
-    public static final String MECH_DISPLAY_MEDIUM_FONT_SIZE="MechDisplayMediumFontSize";
-    public static final String MECH_DISPLAY_WRAP_LENGTH = "MechDisplayWrapLength";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
     public static final String MINI_REPORT_SIZE_HEIGHT="MiniReportSizeHeight";
@@ -96,6 +121,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
 
+        store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
+        store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE, 12);
+        store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE, 10);
+        store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE, 9);
+        store.setDefault(ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE, 12);
+        store.setDefault(ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE, 10);
+        store.setDefault(ADVANCED_MECH_DISPLAY_WRAP_LENGTH, 24);
+
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(CHAT_LOUNGE_TAB_FONT_SIZE, 16);
         store.setDefault(CHAT_LOUNGE_TABS, true);
@@ -103,12 +136,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DISPLAY_SIZE_WIDTH, 235);
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
-        store.setDefault(MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE, 12);
-        store.setDefault(MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE, 10);
-        store.setDefault(MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE, 9);
-        store.setDefault(MECH_DISPLAY_LARGE_FONT_SIZE, 12);
-        store.setDefault(MECH_DISPLAY_MEDIUM_FONT_SIZE, 10);
-        store.setDefault(MECH_DISPLAY_WRAP_LENGTH, 24);
         store.setDefault(MINIMAP_COLOURS,"defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
@@ -149,6 +176,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDefault(String name, Color color) {
         store.setDefault(name, getColorString(color));
+    }
+
+    public String[] getAdvancedProperties() {
+        return store.getAdvancedProperties();
     }
 
     public boolean getAlwaysRightClickScroll() {
@@ -205,30 +236,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMapZoomIndex() {
         return store.getInt(MAP_ZOOM_INDEX);
-    }
-
-    public int getMechDisplayArmorLargeFontSize() {
-        return store.getInt(MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE);
-    }
-
-    public int getMechDisplayArmorMediumFontSize() {
-        return store.getInt(MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE);
-    }
-
-    public int getMechDisplayArmorSmallFontSize() {
-        return store.getInt(MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE);
-    }
-
-    public int getMechDisplayLargeFontSize() {
-        return store.getInt(MECH_DISPLAY_LARGE_FONT_SIZE);
-    }
-
-    public int getMechDisplayMediumFontSize() {
-        return store.getInt(MECH_DISPLAY_MEDIUM_FONT_SIZE);
-    }
-
-    public int getMechDisplayWrapLength() {
-        return store.getInt(MECH_DISPLAY_WRAP_LENGTH);
     }
 
     public String getMinimapColours() {

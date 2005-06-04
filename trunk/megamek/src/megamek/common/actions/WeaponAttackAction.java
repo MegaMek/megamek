@@ -816,7 +816,7 @@ public class WeaponAttackAction
         this.nemesisConfused = nemesisConfused;
     }
     
-    public boolean isSwarmingMissles() {
+    public boolean isSwarmingMissiles() {
         return swarmingMissiles;
     }
     

@@ -5363,6 +5363,8 @@ implements Runnable, ConnectionHandler {
      * @returns modified WeaponResult
      */
     private WeaponResult addHeatUseAmmoFor(WeaponAttackAction waa, WeaponResult wr) {
+        if (waa.isSwarmingMissiles()) return wr;
+        
         final Entity ae = game.getEntity(waa.getEntityId());
         final Mounted weapon = ae.getEquipment(waa.getWeaponId());
         final WeaponType wtype = (WeaponType)weapon.getType();
@@ -7175,7 +7177,7 @@ implements Runnable, ConnectionHandler {
                 newWaa.setOldTargetId(target.getTargetId());
                 WeaponResult newWr = preTreatWeaponAttack(newWaa);
                 resolveWeaponAttack(newWr, lastEntityId, false, swarmMissilesNowLeft);
-            } else phaseReport.append("    The remaining missiles find no new target.");
+            } else phaseReport.append("    The remaining missiles find no new target.\n");
         }
         return !bMissed;
     }

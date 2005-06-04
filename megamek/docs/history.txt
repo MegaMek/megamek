@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.79 (CVS)
++ Cleanup of WeaponType Level 3 weapons
 + i18n of the Equipment
 + Mule kicks for Quads
 + Bug 1180526: bot not clicking done when player unloads BA from omni

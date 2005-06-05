@@ -46,6 +46,8 @@
             return "Infantry";
         } else if (e instanceof Tank) {
             return "Tank";
+        } else if (e instanceof VTOL) { //for now
+            return "Tank";
         } else if (e instanceof Mech) {
             return "Mek";
         } else if (e instanceof Protomech) {

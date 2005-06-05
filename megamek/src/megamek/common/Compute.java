@@ -167,6 +167,7 @@ public class Compute
 
     /**
      * @return true if a piloting skill roll is needed to traverse the terrain
+     * TODO: VTOL sideslipping
      */
     public static boolean isPilotingSkillNeeded(IGame game, int entityId,
                                                 Coords src, Coords dest,
@@ -239,6 +240,12 @@ public class Compute
         if ( ( nSrcEl < srcHex.terrainLevel( Terrains.BLDG_ELEV ) ||
                nDestEl < destHex.terrainLevel( Terrains.BLDG_ELEV ) ) &&
              !(entity instanceof Infantry) ) {
+            return true;
+        }
+        
+        //check sideslips
+        if (entity instanceof VTOL) {
+            if(isTurning && movementType == Entity.MOVE_RUN)
             return true;
         }
 
@@ -1015,7 +1022,7 @@ public class Compute
     public static ToHitData getTargetMovementModifier(IGame game, int entityId) {
         Entity entity = game.getEntity(entityId);
         ToHitData toHit = getTargetMovementModifier
-            ( entity.delta_distance, entity.moved == Entity.MOVE_JUMP, game.getOptions().booleanOption("maxtech_target_modifiers") );
+            ( entity.delta_distance, ((entity.moved == Entity.MOVE_JUMP) || (entity instanceof VTOL)), game.getOptions().booleanOption("maxtech_target_modifiers") );
 
         // Did the target skid this turn?
         if ( entity.moved == Entity.MOVE_SKID ) {
@@ -1088,6 +1095,7 @@ public class Compute
 
     /**
      * Modifier to attacks due to target terrain
+     * TODO:um....should VTOLs get modifiers for smoke, etc.
      */
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t) {
         Entity entityTarget = null;
@@ -1095,6 +1103,8 @@ public class Compute
             entityTarget = (Entity) t;
         }
         final IHex hex = game.getBoard().getHex(t.getPosition());
+        
+        boolean isVTOL = entityTarget==null? false : (entityTarget instanceof VTOL);
 
         // you don't get terrain modifiers in midair
         // should be abstracted more into a 'not on the ground' flag for vtols and such
@@ -1123,9 +1133,9 @@ public class Compute
         if (!game.getOptions().booleanOption("maxtech_fire")) { // L2
             if (hex.containsTerrain(Terrains.SMOKE)) {
                 toHit.addModifier(2, "target in smoke");
-            } else if (hex.terrainLevel(Terrains.WOODS) == 1) {
+            } else if ((hex.terrainLevel(Terrains.WOODS) == 1) && !isVTOL) {
                 toHit.addModifier(1, "target in light woods");
-            } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
+            } else if ((hex.terrainLevel(Terrains.WOODS) > 1) && !isVTOL) {
                 toHit.addModifier(2, "target in heavy woods");
             }
             return toHit;
@@ -1136,10 +1146,13 @@ public class Compute
                 toHit.addModifier(2, "target in heavy smoke");
             }
             
+            if(!isVTOL) {
+            
             if (hex.terrainLevel(Terrains.WOODS) == 1) {
                 toHit.addModifier(1, "target in light woods");
             } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
                 toHit.addModifier(2, "target in heavy woods");
+            }
             }
             return toHit;
         }

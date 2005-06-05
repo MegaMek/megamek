@@ -38,7 +38,7 @@ public class MovementDisplay
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
-    private static final int    NUM_BUTTON_LAYOUTS = 3;
+    private static final int    NUM_BUTTON_LAYOUTS = 4;
 
     public static final String    MOVE_WALK = "moveWalk"; //$NON-NLS-1$
     public static final String    MOVE_NEXT = "moveNext"; //$NON-NLS-1$
@@ -56,6 +56,8 @@ public class MovementDisplay
     public static final String    MOVE_UNJAM = "moveUnjam"; //$NON-NLS-1$
     public static final String    MOVE_CLEAR = "moveClear"; //$NON-NLS-1$
     public static final String    MOVE_CANCEL   = "moveCancel"; //$NON-NLS-1$
+    public static final String    MOVE_RAISE_ELEVATION = "moveRaiseElevation"; //$NON-NLS-1$
+    public static final String    MOVE_LOWER_ELEVATION = "moveLowerElevation"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -87,6 +89,9 @@ public class MovementDisplay
     private Button            butNext;
     private Button            butDone;
     private Button            butMore;
+    
+    private Button            butRaise;
+    private Button            butLower;
 
     private int               buttonLayout;
 
@@ -213,6 +218,16 @@ public class MovementDisplay
         butUnload.setEnabled(false);
         butUnload.setActionCommand(MOVE_UNLOAD);
         
+        butRaise = new Button(Messages.getString("MovementDisplay.butRaise"));
+        butRaise.addActionListener(this);
+        butRaise.setEnabled(false);
+        butRaise.setActionCommand(MOVE_RAISE_ELEVATION);
+        
+        butLower = new Button(Messages.getString("MovementDisplay.butLower"));
+        butLower.addActionListener(this);
+        butLower.setEnabled(false);
+        butLower.setActionCommand(MOVE_LOWER_ELEVATION);
+        
         butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
@@ -290,6 +305,15 @@ public class MovementDisplay
             panButtons.add(butMore);
 //             panButtons.add(butDone);
             break;
+        case 3:
+            panButtons.add(butRaise);
+            panButtons.add(butLower);
+            panButtons.add(butSpace);
+            panButtons.add(butSpace);
+            panButtons.add(butSpace);
+            panButtons.add(butSpace);
+            panButtons.add(butMore);
+            
         }
 
         validate();
@@ -336,6 +360,7 @@ public class MovementDisplay
         boolean isMech      = (ce instanceof Mech);
         boolean isInfantry  = (ce instanceof Infantry);
         boolean isProtomech = (ce instanceof Protomech);
+        boolean isVTOL      = (ce instanceof VTOL);
         // ^-- I suppose these should really be methods, a-la Entity.canCharge(), Entity.canDFA()...
         
         setWalkEnabled(!ce.isImmobile() && ce.getWalkMP() > 0 && !ce.isStuck());
@@ -370,6 +395,7 @@ public class MovementDisplay
         updateProneButtons();
         updateRACButton();
         updateLoadButtons();
+        updateElevationButtons();
 
         setFleeEnabled(ce.canFlee());
         if (client.game.getOptions().booleanOption("vehicles_can_eject")) { //$NON-NLS-1$
@@ -963,6 +989,21 @@ public class MovementDisplay
         }
         setUnjamEnabled(ce.canUnjamRAC() && (gear == MovementDisplay.GEAR_LAND || gear == MovementDisplay.GEAR_TURN || gear == MovementDisplay.GEAR_BACKUP) && cmd.getMpUsed() <= ce.getWalkMP() );
     }
+    
+    private synchronized void updateElevationButtons() {
+        final Entity ce = ce();
+        
+        if(null == ce) {
+            return;
+        }
+        if(ce instanceof VTOL) {
+            setRaiseEnabled(true);
+            setLowerEnabled(((VTOL)ce).canGoDown(cmd.getFinalElevation(),cmd.getFinalCoords())? true : false);
+        } else {
+            setRaiseEnabled(false);
+            setLowerEnabled(false);
+        }
+    }
 
     private synchronized void updateLoadButtons() {
         final Entity ce = ce();
@@ -1342,10 +1383,17 @@ public class MovementDisplay
                 clientgui.bv.drawMovementData(ce, cmd);
             }
         }
+        else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION) ) {
+            cmd.addStep(MovePath.STEP_UP);
+        }
+        else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION) ) {
+            cmd.addStep(MovePath.STEP_DOWN);
+        }
 
         updateProneButtons();
         updateRACButton();
         updateLoadButtons();
+        updateElevationButtons();
     }
 
     /**
@@ -1588,7 +1636,16 @@ public class MovementDisplay
         butUp.setEnabled(enabled);
         clientgui.getMenuBar().setMoveGetUpEnabled(enabled);
     }
+    private void setRaiseEnabled(boolean enabled) {
+        butRaise.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveRaiseEnabled(enabled);
+    }
+    private void setLowerEnabled(boolean enabled) {
+        butLower.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveLowerEnabled(enabled);
+    }
 
+    
     /**
      * Determine if the listener is currently distracted.
      *

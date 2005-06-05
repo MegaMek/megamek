@@ -43,6 +43,8 @@ public class MoveStep implements Serializable {
     private int totalHeat;
 
     private int distance;
+    
+    private int elevation=0;
 
     /**
      * This step's static movement type.  Additional
@@ -161,6 +163,10 @@ public class MoveStep implements Serializable {
                 return "Unload";
             case MovePath.STEP_EJECT :
                 return "Eject";
+            case MovePath.STEP_UP :
+                return "U";
+            case MovePath.STEP_DOWN :
+                return "D";
             default :
                 return "???";
         }
@@ -287,6 +293,9 @@ public class MoveStep implements Serializable {
                     setDistance(0); //start over after shifting gears
                 }
                 addDistance(1);
+                if(entity instanceof VTOL) {
+                    setElevation(((VTOL)entity).calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation));
+                }
                 break;
             case MovePath.STEP_LATERAL_LEFT :
             case MovePath.STEP_LATERAL_RIGHT :
@@ -343,8 +352,19 @@ public class MoveStep implements Serializable {
                 break;
             case MovePath.STEP_START_JUMP :
                 break;
+            case MovePath.STEP_UP :
+                setElevation(elevation+1);
+                setMp(1);
+                break;
+            case MovePath.STEP_DOWN : 
+                setElevation(elevation-1);
+                setMp(1);
+                break;
             default :
                 setMp(0);
+        }
+        if(entity instanceof VTOL) {
+            System.out.println(entity.getPosition().toString() + " rarara " + elevation);
         }
 
         // Update the entity's total MP used.
@@ -382,6 +402,10 @@ public class MoveStep implements Serializable {
                 return false;
         }
     }
+    
+    public void setElevation(int el) {
+        elevation=el;
+    }
 
     /**
      * Takes the given state as the previous state and sets flags from it.
@@ -406,6 +430,7 @@ public class MoveStep implements Serializable {
         this.isProne = prev.isProne;
         this.isRunProhibited = prev.isRunProhibited;
         this.hasEverUnloaded = prev.hasEverUnloaded;
+        this.elevation = prev.elevation;
     }
 
     /**
@@ -420,6 +445,8 @@ public class MoveStep implements Serializable {
         this.mpUsed = entity.mpUsed;
         this.distance = entity.delta_distance;
         this.isProne = entity.isProne();
+        
+        this.elevation = (entity instanceof VTOL) ? ((VTOL)entity).getElevation() : 0;
 
         // check pavement
         if (position != null) {
@@ -885,6 +912,21 @@ public class MoveStep implements Serializable {
                 entity.gotPavementBonus = true;
             }
         }
+        /*
+        if(MovePath.STEP_DOWN==stepType) {
+            if(entity instanceof VTOL) {
+                if(!(((VTOL)entity).canGoDown(elevation+1,getPosition()))) {
+                    movementType = Entity.MOVE_ILLEGAL;//We can't intentionally crash.
+                }
+            } else {
+                movementType = Entity.MOVE_ILLEGAL;//only VTOLs can go up and down (and subs, but we don't have any.)
+            }
+        }
+        if(MovePath.STEP_UP==stepType) {
+            if(!(entity instanceof VTOL)) {
+                movementType = Entity.MOVE_ILLEGAL;
+            }
+        }*///not needed due to isMovementPossible, right?
 
         // Mechs with busted Gyro may make only one facing change
         if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
@@ -1027,6 +1069,11 @@ public class MoveStep implements Serializable {
 
         // jumping always costs 1
         if (parent.isJumping()) {
+            return;
+        }
+        
+        // VTOLs pay 1 for everything
+        if (parent.getEntity() instanceof VTOL) {
             return;
         }
 
@@ -1287,6 +1334,31 @@ public class MoveStep implements Serializable {
              && !isPavementStep ) {
             return false;
         }
+        if( movementType == MovePath.STEP_UP) {
+            //only VTOLs have Z movement.
+            return (entity instanceof VTOL)? true : false;
+        }
+        if( movementType == MovePath.STEP_DOWN) {
+            //only VTOLs have Z movement.
+            if(!(entity instanceof VTOL)) {
+                return false;
+            }
+            if(!(((VTOL)entity).canGoDown(elevation+1,getPosition()))) {
+                return false;//We can't intentionally crash.
+            }
+        }
+        if(entity instanceof VTOL) {
+            if(movementType == MovePath.STEP_BACKWARDS || movementType == MovePath.STEP_FORWARDS || movementType == MovePath.STEP_TURN_LEFT || movementType == MovePath.STEP_TURN_RIGHT) {
+                if(elevation==0) {
+                    return false;
+                }
+            }
+            if(movementType == MovePath.STEP_BACKWARDS || movementType == MovePath.STEP_FORWARDS) {
+                if(((VTOL)entity).calcElevation(srcHex,destHex,elevation)<=(destHex.ceiling()-destHex.floor())) {
+                    return false;//can't fly into woods or a cliff face 
+                }
+            }
+        }
 
         return true;
     }
@@ -1310,6 +1382,10 @@ public class MoveStep implements Serializable {
             reuse = true;
         }
         return reuse;
+    }
+
+    public int getElevation() {
+        return elevation;
     }
 
 }

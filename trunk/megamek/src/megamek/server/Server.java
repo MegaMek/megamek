@@ -11800,7 +11800,27 @@ implements Runnable, ConnectionHandler {
      * Scans the boards directory for map boards of the appropriate size
      * and returns them.
      */
+    
+    private com.sun.java.util.collections.Vector scanForBoardsInDir (File dir, String addPath, int w, int h) {
+        String fileList[] = dir.list();
+        com.sun.java.util.collections.Vector tempList = new com.sun.java.util.collections.Vector();
+        com.sun.java.util.collections.Comparator sortComp = StringUtil.stringComparator();
+        for (int i = 0; i < fileList.length; i++) {
+            if (fileList[i].indexOf(".board") == -1) {
+                continue;
+            }
+            if (Board.boardIsSize(addPath.concat("/").concat(fileList[i]), w, h)) {
+                tempList.addElement(addPath.concat("/").concat(fileList[i].substring(0, fileList[i].lastIndexOf(".board"))));
+            }
+        }
+        return tempList;
+    }
+    
     private Vector scanForBoards(int boardWidth, int boardHeight) {
+        return scanForBoards (boardWidth, boardHeight, game.getOptions().booleanOption("maps_include_subdir"));
+    }
+    
+    private Vector scanForBoards(int boardWidth, int boardHeight, boolean subdirs) {
         Vector boards = new Vector();
 
         File boardDir = new File("data/boards");
@@ -11815,6 +11835,11 @@ implements Runnable, ConnectionHandler {
         com.sun.java.util.collections.Vector tempList = new com.sun.java.util.collections.Vector();
         com.sun.java.util.collections.Comparator sortComp = StringUtil.stringComparator();
         for (int i = 0; i < fileList.length; i++) {
+            File x = new File (new String("data/boards/").concat(fileList[i]));
+            if (x.isDirectory() && subdirs) {
+                tempList.addAll(scanForBoardsInDir(x, fileList[i], boardWidth, boardHeight));
+                continue;
+            }
             if (fileList[i].indexOf(".board") == -1) {
                 continue;
             }

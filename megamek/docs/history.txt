@@ -74,7 +74,9 @@ v0.29.79 (CVS)
 + Bug 1214884: Swarm adds heat / uses ammo for each additional target
 + VTOLs added.  They should be complete, but watch out for bugs.  Use at your own risk.
 + 901959: Change in map-selection interface (sort of)
-
++ VTOL: Cleanup of code; VTOL-Files changed from type "TANK" to type "VTOL";
+  UnitSelector changed (Does not quite work yet - use "All Types" to select VTOLs).
+  
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame
 + Bug 1203746: Settings for the LOS tool

@@ -10625,6 +10625,9 @@ implements Runnable, ConnectionHandler {
         if (entity instanceof Infantry) {
             return "";
         }
+        if (entity instanceof VTOL) {
+            return "";
+        }
         // This handles both water and vacuum breaches.
         if (entity.getLocationStatus(loc) > Entity.LOC_NORMAL) {
             // Does the location have armor (check rear armor on Mek)

@@ -285,7 +285,7 @@ public class MoveStep implements Serializable {
                 // check for water
                 if (!isPavementStep()
                     && game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0
-                    && entity.getMovementType() != Entity.MovementType.HOVER) {
+                    && entity.getMovementType() != Entity.MovementType.HOVER && !(entity instanceof VTOL)) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -333,7 +333,8 @@ public class MoveStep implements Serializable {
                 setMp(getMp() + 1);
                 // check for water
                 if (!isPavementStep() &&
-                    game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0) {
+                    game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0 &&
+                    !(entity instanceof VTOL)) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -1272,12 +1273,13 @@ public class MoveStep implements Serializable {
             return false;
         }
 
-        // Can't run into water unless hovering, first step, or using a bridge.
+        // Can't run into water unless hovering, first step, using a bridge, or fly.
         if (movementType == Entity.MOVE_RUN
             && nMove != Entity.MovementType.HOVER
             && destHex.terrainLevel(Terrains.WATER) > 0
             && !firstStep
-            && !isPavementStep) {
+            && !isPavementStep
+            && !(entity instanceof VTOL)) {
             return false;
         }
 

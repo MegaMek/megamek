@@ -91,6 +91,10 @@ public class HitData
     public int getEffect() {
         return effect;
     }
+    
+    public void setEffect(int effect) {
+        this.effect= effect;
+    }
 
     public boolean hitAimedLocation() {
         return hitAimedLocation;

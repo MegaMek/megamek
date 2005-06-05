@@ -17,6 +17,7 @@ package megamek.common;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import com.sun.java.util.collections.Hashtable;
 
 import java.util.Vector;
 
@@ -219,6 +220,13 @@ public interface IBoard {
      *          have infernos still burning.
      */
     public abstract Enumeration getInfernoBurningCoords();
+    
+    /**
+     * returns a hash of the inferno trackers
+     * 
+     * @return an <code>Hashtable</code of <code>InfernoTrackers</code> on the board.
+     */
+    public abstract Hashtable getInfernos();
     
     /**
      * 

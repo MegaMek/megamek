@@ -109,6 +109,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem moveUnjam = null;
     private MenuItem moveClear = null;
     private MenuItem moveGetUp = null;
+    private MenuItem moveRaise = null;
+    private MenuItem moveLower = null;
 
     private MenuItem fireFire           = null;
     private MenuItem fireSkip           = null;
@@ -333,6 +335,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         moveGoProne = createMenuItem(menu, Messages.getString("CommonMenuBar.moveGoProne"), MovementDisplay.MOVE_GO_PRONE); //$NON-NLS-1$
         moveTurn = createMenuItem(menu, Messages.getString("CommonMenuBar.moveTurn"), MovementDisplay.MOVE_TURN); //$NON-NLS-1$
         moveNext = createMenuItem(menu, Messages.getString("CommonMenuBar.moveNext"), MovementDisplay.MOVE_NEXT, KeyEvent.VK_N); //$NON-NLS-1$
+        moveRaise= createMenuItem(menu, Messages.getString("CommonMenuBar.moveRaise"), MovementDisplay.MOVE_RAISE_ELEVATION); //$NON-NLS-1$
+        moveLower= createMenuItem(menu, Messages.getString("CommonMenuBar.moveLower"), MovementDisplay.MOVE_LOWER_ELEVATION); //$NON-NLS-1$
 
         // Create the Special sub-menu.
         submenu = new Menu( Messages.getString("CommonMenuBar.SpecialMenu") ); //$NON-NLS-1$
@@ -744,6 +748,12 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     }
     public synchronized void setMoveGetUpEnabled(boolean enabled) {
         moveGetUp.setEnabled(enabled);
+    }
+    public synchronized void setMoveRaiseEnabled(boolean enabled) {
+        moveRaise.setEnabled(enabled);
+    }
+    public synchronized void setMoveLowerEnabled(boolean enabled) {
+        moveLower.setEnabled(enabled);
     }
 
     // Manages deploy menu items...

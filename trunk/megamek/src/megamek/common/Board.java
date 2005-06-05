@@ -1029,4 +1029,9 @@ public class Board implements Serializable, IBoard {
         return boardListeners;
     }
 
+    //Is there any way I can get around using this?
+    public Hashtable getInfernos() {
+        return infernos;
+    }
+
 }

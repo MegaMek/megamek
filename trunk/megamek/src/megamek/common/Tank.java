@@ -44,8 +44,8 @@ public class Tank
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = {0, 0, 0, 0, 0, 0};
     
-    private static final String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR", "TU" };
-    private static final String[] LOCATION_NAMES = { "Body", "Front", "Right", "Left", "Rear", "Turret" };
+    protected static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR", "TU" };
+    protected static String[] LOCATION_NAMES = { "Body", "Front", "Right", "Left", "Rear", "Turret" };
     
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     public String[] getLocationNames() { return LOCATION_NAMES; }

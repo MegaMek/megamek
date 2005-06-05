@@ -72,6 +72,7 @@ v0.29.79 (CVS)
 + Bug 1213599: Procyon should have ER Small Lasers.
 + RFE 1048698: Make Off-Board Distance a Slider (A Slider Dialog, actually)
 + Bug 1214884: Swarm adds heat / uses ammo for each additional target
++ VTOLs added.  They should be complete, but watch out for bugs.  Use at your own risk.
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

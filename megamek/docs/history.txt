@@ -76,7 +76,8 @@ v0.29.79 (CVS)
 + 901959: Change in map-selection interface (sort of)
 + VTOL: Cleanup of code; VTOL-Files changed from type "TANK" to type "VTOL";
   UnitSelector changed (Does not quite work yet - use "All Types" to select VTOLs).
-  
++ VTOL: Show VTOLs as stars on the minimap
+
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame
 + Bug 1203746: Settings for the LOS tool

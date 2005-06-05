@@ -73,6 +73,7 @@ v0.29.79 (CVS)
 + RFE 1048698: Make Off-Board Distance a Slider (A Slider Dialog, actually)
 + Bug 1214884: Swarm adds heat / uses ammo for each additional target
 + VTOLs added.  They should be complete, but watch out for bugs.  Use at your own risk.
++ 901959: Change in map-selection interface (sort of)
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

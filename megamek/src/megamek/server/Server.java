@@ -2527,6 +2527,10 @@ implements Runnable, ConnectionHandler {
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
+        int curVTOLElevation=0;
+        if(entity instanceof VTOL) {
+            curVTOLElevation=((VTOL)entity).getElevation();
+        }
         int distance = 0;
         int mpUsed = 0;
         int moveType = Entity.MOVE_NONE;
@@ -2666,6 +2670,7 @@ implements Runnable, ConnectionHandler {
             // set last step parameters
             curPos = step.getPosition();
             curFacing = step.getFacing();
+            curVTOLElevation = step.getElevation();
 
             final IHex curHex = game.getBoard().getHex(curPos);
 
@@ -3155,6 +3160,56 @@ implements Runnable, ConnectionHandler {
                 } // End failed-skid-psr
 
             } // End need-skid-psr
+            if(entity instanceof VTOL) {
+                rollTarget = ((VTOL)entity).checkSideSlip(moveType, prevHex, overallMoveType,
+                                          prevStep, prevFacing, curFacing,
+                                          lastPos, curPos,
+                                          distance);
+                if(rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                if(!doSkillCheckWhileMoving(entity,lastPos,curPos,rollTarget, false)) {
+                    phaseReport.append("\n").append( entity.getDisplayName()).append( " sideslips into hex ");
+                    Coords newPos = lastPos.translated((prevFacing));//does this work for opposing hex?
+                    phaseReport.append(newPos.getBoardNum());
+                    if(((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation)<=game.getBoard().getHex(newPos).ceiling()) {
+                        phaseReport.append(" and runs smack dab into the ground.\n");
+                        int hitSide=curFacing-prevFacing+6;
+                        hitSide=hitSide % 6;
+                        int table=0;
+                        switch(hitSide) {//quite hackish...I think it ought to work, though.
+                        case 0://can this happen?
+                            table=ToHitData.SIDE_FRONT;
+                            break;
+                        case 1:
+                        case 2:
+                            table=ToHitData.SIDE_LEFT;
+                            break;
+                        case 3:                        
+                            table=ToHitData.SIDE_REAR;
+                            break;
+                        case 4:
+                        case 5:
+                            table=ToHitData.SIDE_RIGHT;
+                            break;
+                        }
+                        phaseReport.append(crashVTOL(((VTOL)entity),true,distance,newPos,table));
+                        ((VTOL)entity).setElevation(0);
+                        if(game.getBoard().getHex(newPos).containsTerrain(Terrains.WATER) || game.getBoard().getHex(newPos).containsTerrain(Terrains.WOODS)) {
+                            phaseReport.append(destroyEntity(entity,"could not land in crash site"));                            
+                        }
+                    } else {
+                        phaseReport.append(".\n");
+                        ((VTOL)entity).setElevation(((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
+                    }
+                    curPos=newPos;
+                    
+                    if(!entity.isDestroyed() && !entity.isDoomed()) {
+                        fellDuringMovement= true; //No, but it should work...
+                    }
+                    break;
+                }
+                }
+                                          
+            }
 
             // check if we've moved into rubble
             rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
@@ -3482,6 +3537,9 @@ implements Runnable, ConnectionHandler {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
+        if(entity instanceof VTOL) {
+            ((VTOL)entity).setElevation(curVTOLElevation);
+        }
 
         // if we ran with destroyed hip or gyro, we need a psr
         rollTarget = entity.checkRunningWithDamage(overallMoveType);
@@ -4673,6 +4731,10 @@ implements Runnable, ConnectionHandler {
         entity.setPosition(coords);
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
+        if(entity instanceof VTOL) {
+            //we should let players pick, but this simplifies a lot.
+            ((VTOL)entity).setElevation(game.getBoard().getHex(coords).ceiling()-game.getBoard().getHex(coords).floor()+1);
+        }
         entity.setDone(true);
         entity.setDeployed(true);
         entityUpdate(entity.getId());
@@ -9598,6 +9660,13 @@ implements Runnable, ConnectionHandler {
                               }
                            }
                         }
+                        
+                    if (te instanceof VTOL && hit.getLocation() == VTOL.LOC_ROTOR) {
+                        //if rotor is destroyed, movement goes bleh.
+                        //I think this will work?
+                        hit.setEffect(HitData.EFFECT_VEHICLE_MOVE_DESTROYED);
+                        
+                    }
                     }
                 } if (te.getInternal(hit) <= 0) {
                     // internal structure is gone, what are the transfer potentials?
@@ -9695,6 +9764,9 @@ implements Runnable, ConnectionHandler {
                 if ( te.getMovementType() == Entity.MovementType.HOVER &&
                      te_hex.terrainLevel(Terrains.WATER) > 0 ) {
                     desc.append( destroyEntity(te, "a watery grave", false) );
+                }
+                if(te instanceof VTOL) {
+                    desc.append(crashVTOL((VTOL)te));
                 }
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
@@ -9862,6 +9934,73 @@ implements Runnable, ConnectionHandler {
 
         // Handle hits on "critical slots" of tanks.
         if ( en instanceof Tank ) {
+            if(en instanceof VTOL) {
+                VTOL vtol = (VTOL)en;
+                switch ( cs.getIndex() ) {
+                case 1:
+                    desc.append( "\n            <<<CRITICAL HIT>>> " )
+                        .append( "Crew killed" );
+                    desc.append( destroyEntity(en, "crew death", true) );
+                    en.getCrew().setDoomed(true);
+                    desc.append(crashVTOL((VTOL)en));
+                    break;
+                case 2:
+                    // this one's ridiculous.  the 'main weapon' jams.
+                    Mounted mWeap = vtol.getMainWeapon();
+                    if (mWeap == null) {
+                        desc.append( "\n            No main weapon crit, " )
+                            .append( "because no main weapon!" );
+                    }
+                    else {
+                        desc.append( "\n            <<<CRITICAL HIT>>> " )
+                            .append( mWeap.getName() );
+                        int jamTurns = vtol.getJammedTurns() + 1;
+                        if ( jamTurns > 1 ) {
+                            desc.append( " jams for 1 more turn (" )
+                                .append( jamTurns )
+                                 .append( " turns total)." );
+                        } else {
+                            desc.append( " jams for 1 turn." );
+                        }
+                        vtol.setJammedTurns( jamTurns );
+                    }
+                    break;
+                case 3:
+                    desc.append( "\n            <<<CRITICAL HIT>>> " )
+                    .append( "Engine destroyed.  Immobile." );
+                    vtol.immobilize();
+                    desc.append(crashVTOL((VTOL)en));
+                    break;
+                case 4:
+                    desc.append( "\n            <<<CRITICAL HIT>>> " )
+                    .append( "Crew killed" );
+                    desc.append( destroyEntity(en, "crew death", true) );
+                    en.getCrew().setDoomed(true);
+                    desc.append(crashVTOL((VTOL)en));
+                    break;
+                case 5 :
+                    desc.append( "\n            <<<CRITICAL HIT>>> " )
+                        .append( "Fuel Tank / Engine Shielding Hit " )
+                        .append( "(Vehicle Explodes)" );
+                    desc.append( destroyEntity
+                                 (en, "fuel tank explosion", false, false) );
+                    en.getCrew().setDoomed(true);
+                    desc.append(explodeVTOL((VTOL)en));
+                    break;
+                case 6 :
+                    desc.append( "\n            <<<CRITICAL HIT>>> " )
+                        .append( "Power plant hit.  BOOM!" );
+                    desc.append( destroyEntity
+                                 (en, "power plant destruction",
+                                  false, false) );
+                    en.getCrew().setDoomed(true);
+                    desc.append(explodeVTOL((VTOL)en));
+                    break;
+                    
+                    
+                }
+                
+            } else {
             Tank tank = (Tank)en;
             switch ( cs.getIndex() ) {
                 case 1 :
@@ -9931,6 +10070,7 @@ implements Runnable, ConnectionHandler {
                     en.getCrew().setDoomed(true);
                     break;
                 }
+            }
 
         } // End entity-is-tank
 
@@ -10158,6 +10298,145 @@ implements Runnable, ConnectionHandler {
         // Return the results of the damage.
         return desc.toString();
 
+    }
+    
+    private String crashVTOL(VTOL en,Coords crashPos) {
+        return crashVTOL(en, false, 0,crashPos,0);
+    }
+    private String crashVTOL(VTOL en) {
+        return crashVTOL(en, false, 0 , en.getPosition(),0);
+    }
+    
+    private String crashVTOL(VTOL en, boolean sideSlipCrash, int hexesMoved,Coords crashPos, int impactSide) {
+        StringBuffer desc = new StringBuffer();
+        if(!sideSlipCrash) {
+        desc.append(en.getDisplayName() + " has lost its movement and crashes.  ");
+        int fall=en.getElevation()- game.getBoard().getHex(crashPos).ceiling();
+        if(game.getBoard().getHex(crashPos).containsTerrain(Terrains.WOODS)) {
+            fall+=2;//HACK
+        }
+        if(fall==0) {
+            desc.append("However, it's already on the ground, so no harm done.");
+        } else {
+            desc.append("It plummets ").append(fall).append(" levels to the ground.\n");
+            IHex fallHex = game.getBoard().getHex(crashPos);           
+            // facing after fall
+            String side;
+            int table;
+            int facing = Compute.d6();
+            switch(facing) {
+                case 1:
+                case 2:
+                    side = "right side";
+                    table = ToHitData.SIDE_RIGHT;
+                    break;
+                case 3:
+                    side = "rear";
+                    table = ToHitData.SIDE_REAR;
+                    break;
+                case 4:
+                case 5:
+                    side = "left side";
+                    table = ToHitData.SIDE_LEFT;
+                    break;
+                case 0:
+                default:
+                    side = "front";
+                    table = ToHitData.SIDE_FRONT;
+            }
+            
+
+            boolean waterFall= fallHex.containsTerrain(Terrains.WATER);
+            if(waterFall) {
+                desc.append("It falls into water and is destroyed.");
+                en.destroy("Fell into water",false, false);//not sure, is this salvagable?
+            }
+            
+            // calculate damage for hitting the surface
+            int damage = (int)Math.round(en.getWeight() / 10.0) * (fall + 1);
+            
+            // adjust damage for gravity
+            damage = (int)Math.round(damage * game.getOptions().floatOption("gravity"));
+            // report falling
+            phaseReport.append("    " ).append( en.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage.");
+            en.setFacing((en.getFacing() + (facing - 1)) % 6);
+            if (fallHex.terrainLevel(Terrains.WATER) > 0) {
+                for (int loop=0; loop< en.locations();loop++){
+                    en.setLocationStatus(loop, Entity.LOC_WET);
+                }
+            }
+            boolean exploded=false;
+
+            // standard damage loop
+            while (damage > 0) {
+                int cluster = Math.min(5, damage);
+                HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
+                int ISBefore[]={en.getInternal(en.LOC_FRONT), en.getInternal(en.LOC_RIGHT), en.getInternal(en.LOC_LEFT), en.getInternal(en.LOC_REAR)};//hack?
+                desc.append(damageEntity(en, hit, cluster));
+                int ISAfter[]={en.getInternal(en.LOC_FRONT), en.getInternal(en.LOC_RIGHT), en.getInternal(en.LOC_LEFT), en.getInternal(en.LOC_REAR)};
+                for(int x=0;x<=3;x++) {
+                    if(ISBefore[x]!=ISAfter[x]) {
+                        exploded=true;
+                    }
+                }
+                damage -= cluster;
+            }
+            if(exploded) {
+                desc.append(en.getDisplayName() + " takes internal damage from a fall and explodes.\n");
+                desc.append(explodeVTOL(en));
+            }
+
+            //check for location exposure
+            doSetLocationsExposure(en, fallHex, fallHex.hasPavement(), false);
+            en.setElevation(0);
+        }
+        } else {
+            desc.append(en.getDisplayName() + " has crashed into the ground due to a sideslip.\n");
+            int damage = (int)Math.round(en.getWeight() / 10.0) * (hexesMoved + 1);
+            
+            boolean exploded=false;
+
+            // standard damage loop
+            while (damage > 0) {
+                int cluster = Math.min(5, damage);
+                HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, impactSide);
+                int ISBefore[]={en.getInternal(en.LOC_FRONT), en.getInternal(en.LOC_RIGHT), en.getInternal(en.LOC_LEFT), en.getInternal(en.LOC_REAR)};//hack?
+                desc.append(damageEntity(en, hit, cluster));
+                int ISAfter[]={en.getInternal(en.LOC_FRONT), en.getInternal(en.LOC_RIGHT), en.getInternal(en.LOC_LEFT), en.getInternal(en.LOC_REAR)};
+                for(int x=0;x<=3;x++) {
+                    if(ISBefore[x]!=ISAfter[x]) {
+                        exploded=true;
+                    }
+                }
+                damage -= cluster;
+            }
+            if(exploded) {
+                desc.append(en.getDisplayName() + " takes internal damage from a crash and explodes.\n");
+                desc.append(explodeVTOL(en));
+            }
+            
+            
+        }
+        return desc.toString();
+        
+    }
+    
+    private String explodeVTOL(VTOL en) {
+        StringBuffer desc = new StringBuffer();
+        if(en.getEngineType()!=1) {
+            desc.append("The VTOL has a fusion engine, so the explosion doesn't have any effect.");
+        } else {
+            Coords pos=en.getPosition();
+            IHex hex = game.getBoard().getHex(pos);
+            if(hex.containsTerrain(Terrains.WOODS)) {
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+            } else {
+                game.getBoard().addInfernoTo(pos, InfernoTracker.STANDARD_ROUND, 1);
+                ((InfernoTracker)(game.getBoard().getInfernos().get(pos))).setTurnsLeftToBurn(game.getBoard().getInfernoBurnTurns(pos)-game.getBoard().getInfernoIVBurnTurns(pos)-2);  //massive hack
+            }
+        }
+        
+        return desc.toString();
     }
 
     /**
@@ -11745,7 +12024,9 @@ implements Runnable, ConnectionHandler {
             entity.restore();
             if (entity instanceof Mech)
                 testEntity = new TestMech((Mech)entity, Server.entityVerifier.mechOption, null);
-            else
+            if (entity instanceof VTOL)
+                testEntity = new TestTank((Tank)entity, Server.entityVerifier.tankOption, null);//not implemented yet.
+            if (entity instanceof Tank)
                 testEntity = new TestTank((Tank)entity, Server.entityVerifier.tankOption, null);
             StringBuffer sb = new StringBuffer();
             if (testEntity.correctEntity(sb)) {
@@ -14072,7 +14353,7 @@ implements Runnable, ConnectionHandler {
      * Remove all iNarc pods from all vehicles that did not
      * move and shoot this round
      * NOTE: this is not quite what the rules say, the player
-     * should be able to choose wether or not to remove all iNarc Pods
+     * should be able to choose whether or not to remove all iNarc Pods
      * that are attached.
      */
     private void resolveVeeINarcPodRemoval() {

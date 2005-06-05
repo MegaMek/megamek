@@ -37,6 +37,7 @@ public abstract class Entity
       public static final int TRACKED = 3;
       public static final int WHEELED = 4;
       public static final int HOVER   = 5;
+      public static final int VTOL    = 6;
     }
 
     // Off-Board Directions
@@ -2689,6 +2690,8 @@ public abstract class Entity
             return "Wheeled";
         case Entity.MovementType.HOVER:
             return "Hover";
+        case Entity.MovementType.VTOL:
+        	return "VTOL";
         default:
             return "ERROR";
         }
@@ -2932,7 +2935,7 @@ public abstract class Entity
             && step.getMovementType() != Entity.MOVE_JUMP
             && curHex.containsTerrain(Terrains.SWAMP)) {
             // non-hovers need a simple PSR
-            if (this.getMovementType() != MovementType.HOVER) {
+            if ((this.getMovementType() != MovementType.HOVER) && (this.getMovementType() != MovementType.VTOL)) {
                 // append the reason modifier
                 roll.append(new PilotingRollData(getId(), 0, "entering Swamp"));
             // hovers don't care about swamp    
@@ -2956,6 +2959,7 @@ public abstract class Entity
             && !lastPos.equals(curPos)
             && step.getMovementType() != Entity.MOVE_JUMP
             && getMovementType() != Entity.MovementType.HOVER
+            && getMovementType() != Entity.MovementType.VTOL
             && !isPavementStep) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER));
         } else {
@@ -4160,7 +4164,7 @@ public abstract class Entity
     }
     
     /**
-     * Where we targeted by a certain swarm/swarm-i volley this turn?
+     * Were we targeted by a certain swarm/swarm-i volley this turn?
      * 
      * @param entityId The <code>int</code> id of the shooting entity we are
      *                 checking

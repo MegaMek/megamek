@@ -226,4 +226,8 @@ public class InfernoTracker
         return result;
     }
 
+    public void setTurnsLeftToBurn(int turnsLeftToBurn) {
+        this.turnsLeftToBurn = turnsLeftToBurn;
+    }
+
 }

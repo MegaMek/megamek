@@ -2822,6 +2822,10 @@ public class BoardView1
             this.entity = entity;
 
             String shortName = entity.getShortName();
+            
+            if (entity instanceof VTOL) {
+                shortName = shortName.concat(" (FL: ").concat(Integer.toString(((VTOL)entity).getElevation())).concat(")");
+            }
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55,
                                         getFontMetrics(font).stringWidth(shortName) + 1,
@@ -2868,6 +2872,9 @@ public class BoardView1
         public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
+            if (entity instanceof VTOL) {
+                shortName = shortName.concat(" (FL: ").concat(Integer.toString(((VTOL)entity).getElevation())).concat(")");
+            }
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
                 shortName+=(Messages.getString("BoardView1.ID")+entity.getId()); //$NON-NLS-1$
             }

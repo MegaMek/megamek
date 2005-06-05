@@ -602,8 +602,26 @@ public class MiniMap extends Canvas  {
             yPoints[1] = baseY + unitSize / 2;
             xPoints[2] = baseX + unitSize;
             yPoints[2] = baseY + unitSize / 2;
-        }
-        else if (entity instanceof Tank) {
+        } else if (entity instanceof VTOL) {
+            xPoints = new int[8];
+            yPoints = new int[8];
+            xPoints[0] = baseX - unitSize;
+            xPoints[1] = baseX - unitSize / 3;
+            xPoints[2] = baseX;
+            xPoints[3] = baseX + unitSize / 3;
+            xPoints[4] = baseX + unitSize;
+            xPoints[5] = xPoints[3];
+            xPoints[6] = xPoints[2];
+            xPoints[7] = xPoints[1];
+            yPoints[0] = baseY;
+            yPoints[1] = baseY - unitSize / 3;
+            yPoints[2] = baseY - unitSize;
+            yPoints[3] = baseY - unitSize / 3;
+            yPoints[4] = baseY;
+            yPoints[5] = baseY + unitSize / 3;
+            yPoints[6] = baseY + unitSize;
+            yPoints[7] = baseY + unitSize / 3;
+        } else if (entity instanceof Tank) {
             xPoints = new int[4];
             yPoints = new int[4];
             xPoints[0] = baseX - unitSize * 2 / 3;
@@ -624,9 +642,8 @@ public class MiniMap extends Canvas  {
             yPoints[1] = baseY - unitSize / 2;
             xPoints[2] = baseX - unitSize;
             yPoints[2] = baseY - unitSize / 2;
-        }
-        // entity instanceof Infantry
-        else {
+        } else {
+            // entity instanceof Infantry
             xPoints = new int[4];
             yPoints = new int[4];
             xPoints[0] = baseX;

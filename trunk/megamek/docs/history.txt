@@ -78,6 +78,7 @@ v0.29.79 (CVS)
   UnitSelector changed (Does not quite work yet - use "All Types" to select VTOLs).
 + VTOL: Show VTOLs as stars on the minimap
 + VTOL: Show FLight Level after unit name
++ VTOL: VTOLs can use flank speed when flying over water
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

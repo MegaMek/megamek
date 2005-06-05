@@ -30,18 +30,15 @@ public class VTOL extends Tank {
     //I.e.--level 0 hex, elevation 5--it moves to a level 2 hex, without going up or down.
     //elevation is now 3.
     private int elevation;
-	
-	public static final int LOC_ROTOR = 5;  //will this cause problems w/r/t turrets?
+
+    public static final int LOC_ROTOR = 5;  //will this cause problems w/r/t turrets?
     
     protected static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR", "RO" };
     protected static String[] LOCATION_NAMES = { "Body", "Front", "Right", "Left", "Rear", "Rotor" };
 
-	/**
-	 * 
-	 */
-	public VTOL() {
-		super();
-	}
+    public VTOL() {
+        super();
+    }
     
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
@@ -110,11 +107,11 @@ public class VTOL extends Tank {
         
     }
 
-	/* (non-Javadoc)
-	 * @see megamek.common.Tank#calculateBattleValue(boolean)
-	 */
-	public int calculateBattleValue(boolean assumeLinkedC3) {
-		double dbv = 0; // defensive battle value
+    /* (non-Javadoc)
+     * @see megamek.common.Tank#calculateBattleValue(boolean)
+     */
+    public int calculateBattleValue(boolean assumeLinkedC3) {
+        double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
         
         // total armor points
@@ -260,20 +257,20 @@ public class VTOL extends Tank {
         double pilotFactor = crew.getBVSkillMultiplier();
 
         return (int)Math.round((dbv + obv + xbv) * pilotFactor);
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see megamek.common.Tank#canCharge()
-	 */
-	public boolean canCharge() {
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see megamek.common.Tank#canCharge()
+     */
+    public boolean canCharge() {
+        return false;
+    }
 
-	/* TODO:make this work for VTOLs
-	 */
-	public int elevationOccupied(IHex hex) {
-		return (hex.floor() + elevation); //I wince even typing this.  I'll make it work properly so they can move up and down once they can fight and crash and move side to side.
-	}
+    /* TODO:make this work for VTOLs
+     */
+    public int elevationOccupied(IHex hex) {
+        return (hex.floor() + elevation); //I wince even typing this.  I'll make it work properly so they can move up and down once they can fight and crash and move side to side.
+    }
     
     public int getElevation() {
         return elevation;
@@ -291,28 +288,29 @@ public class VTOL extends Tank {
         int absoluteElevation = current.floor()+assumedElevation;
         return absoluteElevation-next.floor();
     }
+
     public int calcElevation(IHex current, IHex next) {
         return calcElevation(current,next,elevation);
     }
 
-	/* TODO:make this work for VTOLs
-	 */
-	public int getMaxElevationChange() {
+    /* TODO:make this work for VTOLs
+     */
+    public int getMaxElevationChange() {
         //return 0; //correct implementation, ignore it for now
         return 999; //correct?
-		//return super.getMaxElevationChange();
-	}
+        //return super.getMaxElevationChange();
+    }
 
-	/* TODO:I don't think this is actually correct...
-	 */
-	public boolean isHexProhibited(IHex hex) {
-		return false;
-	}
+    /* TODO:I don't think this is actually correct...
+     */
+    public boolean isHexProhibited(IHex hex) {
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see megamek.common.Tank#isRepairable()
-	 */
-	public boolean isRepairable() {
+    /* (non-Javadoc)
+     * @see megamek.common.Tank#isRepairable()
+     */
+    public boolean isRepairable() {
         boolean retval = this.isSalvage();
         int loc = Tank.LOC_FRONT;
         while ( retval && loc < VTOL.LOC_ROTOR ) {
@@ -321,12 +319,12 @@ public class VTOL extends Tank {
             retval = (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
         }
         return retval;
-	}
+    }
 
-	/* (non-Javadoc)
-	 * This really, really isn't right.
-	 */
-	public HitData rollHitLocation(int table, int side) {
+    /* (non-Javadoc)
+     * This really, really isn't right.
+     */
+    public HitData rollHitLocation(int table, int side) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         if (side == ToHitData.SIDE_LEFT) {
@@ -367,6 +365,6 @@ public class VTOL extends Tank {
                 
         }
         return null;
-	}
+    }
 
 }

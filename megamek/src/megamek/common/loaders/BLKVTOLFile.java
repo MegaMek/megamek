@@ -30,7 +30,7 @@ import megamek.common.util.BuildingBlock;
  */
 public class BLKVTOLFile extends BLKFile implements MechLoader {
     
-private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover","VTOL" };
+    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover","VTOL" };
     
     public BLKVTOLFile(BuildingBlock bb) {
         dataFile = bb;

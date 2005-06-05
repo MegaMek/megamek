@@ -10371,9 +10371,9 @@ implements Runnable, ConnectionHandler {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
-                int ISBefore[]={en.getInternal(en.LOC_FRONT), en.getInternal(en.LOC_RIGHT), en.getInternal(en.LOC_LEFT), en.getInternal(en.LOC_REAR)};//hack?
+                int ISBefore[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};//hack?
                 desc.append(damageEntity(en, hit, cluster));
-                int ISAfter[]={en.getInternal(en.LOC_FRONT), en.getInternal(en.LOC_RIGHT), en.getInternal(en.LOC_LEFT), en.getInternal(en.LOC_REAR)};
+                int ISAfter[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};
                 for(int x=0;x<=3;x++) {
                     if(ISBefore[x]!=ISAfter[x]) {
                         exploded=true;
@@ -10400,9 +10400,9 @@ implements Runnable, ConnectionHandler {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, impactSide);
-                int ISBefore[]={en.getInternal(en.LOC_FRONT), en.getInternal(en.LOC_RIGHT), en.getInternal(en.LOC_LEFT), en.getInternal(en.LOC_REAR)};//hack?
+                int ISBefore[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};//hack?
                 desc.append(damageEntity(en, hit, cluster));
-                int ISAfter[]={en.getInternal(en.LOC_FRONT), en.getInternal(en.LOC_RIGHT), en.getInternal(en.LOC_LEFT), en.getInternal(en.LOC_REAR)};
+                int ISAfter[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};
                 for(int x=0;x<=3;x++) {
                     if(ISBefore[x]!=ISAfter[x]) {
                         exploded=true;

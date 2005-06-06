@@ -44,9 +44,9 @@
     public static String determineUnitType(Entity e) {
         if (e instanceof Infantry) {
             return "Infantry";
-        } else if (e instanceof Tank) {
-            return "Tank";
         } else if (e instanceof VTOL) { //for now
+            return "VTOL";
+        } else if (e instanceof Tank) {
             return "Tank";
         } else if (e instanceof Mech) {
             return "Mek";

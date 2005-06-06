@@ -104,6 +104,7 @@ public class AmmoType extends EquipmentType {
     // War of 3039 ammo
     public static final int     M_LISTEN_KILL       = 1 << 29;
     public static final int     M_ANTI_TSM          = 1 << 30;
+    public static final int     M_AX_HEAD           = 1 << 31;
     
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
@@ -503,6 +504,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_LISTEN_KILL, TechConstants.T_IS_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.addElement( new MunitionMutator( "Acid",
+                                                   1, M_AX_HEAD, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -528,6 +531,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
+        munitions.addElement( new MunitionMutator( "Acid",
+                                                   1, M_AX_HEAD, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.

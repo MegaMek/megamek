@@ -34,8 +34,28 @@ public class EquipmentType {
     public static final float TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
-    
-    
+
+    public static final int     T_ARMOR_UNKNOWN         = -1;
+    public static final int     T_ARMOR_STANDARD        = 0;
+    public static final int     T_ARMOR_FERRO_FIBROUS   = 1;
+    public static final int     T_ARMOR_REACTIVE        = 2;
+    public static final int     T_ARMOR_REFLECTIVE      = 3;
+    public static final int     T_ARMOR_HARDENED        = 4;
+    public static final int     T_ARMOR_LIGHT_FERRO     = 5;
+    public static final int     T_ARMOR_HEAVY_FERRO     = 6;
+    public static final int     T_ARMOR_PATCHWORK       = 7;
+    public static final int     T_ARMOR_STEALTH         = 8;
+
+    public static final String[] armorNames = {"Standard",
+                                            "Ferro-Fibrous",
+                                            "Reactive",
+                                            "Reflective",
+                                            "Hardened",
+                                            "Light Ferro-Fibrous",
+                                            "Heavy Ferro-Fibrous",
+                                            "Patchwork",
+                                            "Stealth"};
+
     protected String    name = null;
 
     protected String    internalName = null;
@@ -259,5 +279,18 @@ public class EquipmentType {
         }
         EquipmentType.allTypes.addElement(type);
     }
-    
+
+    public static int getArmorType(String inType) {
+        for (int x=0; x<armorNames.length; x++) {
+            if (armorNames[x].indexOf(inType) >= 0)
+                return x;
+        }
+        return T_ARMOR_UNKNOWN;
+    }
+
+    public static  String getArmorTypeName(int armorType) {
+        if ((armorType < 0) || (armorType >= armorNames.length))
+            return null;
+        return armorNames[armorType];
+    }
 }

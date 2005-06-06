@@ -5656,6 +5656,7 @@ implements Runnable, ConnectionHandler {
                           atype.getMunitionType() == AmmoType.M_INFERNO);
       boolean bFragmentation = (usesAmmo &&
                                 atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
+      boolean bAcidHead = (usesAmmo && atype.getMunitionType() == AmmoType.M_AX_HEAD);
       boolean bFlechette = (usesAmmo &&
                             atype.getMunitionType() == AmmoType.M_FLECHETTE);
       boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
@@ -6491,7 +6492,7 @@ implements Runnable, ConnectionHandler {
                  wtype.getAmmoType() == AmmoType.T_SRM ||
                  wtype.getAmmoType() == AmmoType.T_ATM ) {
 
-                // check for artemis, else check for narc
+                // check for artemis, else check for narc and similar things
                 mLinker = weapon.getLinkedBy();
                 if ( wtype.getAmmoType() == AmmoType.T_ATM ||
                      ( mLinker != null &&
@@ -6559,6 +6560,13 @@ implements Runnable, ConnectionHandler {
             // it does double damage to infantry...
             if (bFragmentation) {
                 sSalvoType = " fragmentation missile(s) ";
+            }
+
+            // Acid-heads, like infernos, can't mix with any other munitions type.
+            if (bAcidHead) {
+                nDamPerHit = 1;
+                nSalvoBonus = -2;
+                sSalvoType = " acid-head missile(s) ";
             }
 
             // Large MRM missile racks roll twice.
@@ -7209,6 +7217,13 @@ implements Runnable, ConnectionHandler {
                         }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 2) );
+                    } else if (bAcidHead) {
+                        // If it's an acid-head warhead...
+                        if (glancing) {
+                            hit.makeGlancingBlow();
+                        }
+                        phaseReport.append
+                            ( damageEntity(entityTarget, hit, nDamage, false, 3) );
                     } else {
                         if (usesAmmo && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
                             hit.makeArmorPiercing(atype);
@@ -9363,6 +9378,11 @@ implements Runnable, ConnectionHandler {
         }
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
+        boolean isFerroFibrousTarget = false;
+        if ((te != null)
+                && (te.getArmor(hit) > 0)
+                && (te.getArmorType() == EquipmentType.T_ARMOR_FERRO_FIBROUS))
+            isFerroFibrousTarget = true;
         boolean wasDamageIS = false;
         IHex te_hex = null;
 
@@ -9401,6 +9421,7 @@ implements Runnable, ConnectionHandler {
         }
         // If dealing with fragmentation missiles,
         // it does double damage to infantry...
+        // We're actually going to abuse this for AX-head warheads, too, so as to not add another parameter.
         switch (bFrag)
         {
         case 1:
@@ -9423,6 +9444,13 @@ implements Runnable, ConnectionHandler {
                 desc.append( "\n        Hardened unit hit by flechette ammunition!!!  Damage halved." );
             }
             break;
+        case 3:
+            if (isFerroFibrousTarget) {
+                damage = te.getArmor(hit) >=3?3:te.getArmor(hit);
+                desc.append("\n        Ferro-fibrous target hit by acid warhead!  "+Integer.toString(damage)+" damage.");
+            } else if (te != null) {
+                desc.append("\n        Non-ferro-fibrous target hit by acid warhead!  1 damage.");
+            }
         default:
             // We can ignore this.
             break;

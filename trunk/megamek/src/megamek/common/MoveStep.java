@@ -44,7 +44,7 @@ public class MoveStep implements Serializable {
 
     private int distance;
     
-    private int elevation=0;
+    private int elevation=-999;
 
     /**
      * This step's static movement type.  Additional
@@ -364,9 +364,6 @@ public class MoveStep implements Serializable {
             default :
                 setMp(0);
         }
-        if(entity instanceof VTOL) {
-            System.out.println(entity.getPosition().toString() + " rarara " + elevation);
-        }
 
         // Update the entity's total MP used.
         addMpUsed(getMp());
@@ -447,7 +444,7 @@ public class MoveStep implements Serializable {
         this.distance = entity.delta_distance;
         this.isProne = entity.isProne();
         
-        this.elevation = (entity instanceof VTOL) ? ((VTOL)entity).getElevation() : 0;
+        this.elevation = (entity instanceof VTOL) ? ((VTOL)entity).getElevation() : -999;
 
         // check pavement
         if (position != null) {

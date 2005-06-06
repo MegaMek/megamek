@@ -23,6 +23,7 @@ import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -315,6 +316,14 @@ public class WeaponAttackAction
         if ( wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno &&
              Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can not cause fires.");
+        }
+
+        // If it's not a building or fire hex, then it can only be ignited with Infernos.
+        if ( !isInferno
+                && (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                && !((game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.WOODS))
+                    || (game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.BUILDING)))) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Only Infernos can start fires except woods and building hexes.");
         }
     
         // Can't target infantry with Inferno rounds (BMRr, pg. 141).

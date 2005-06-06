@@ -19,6 +19,7 @@
 
 package megamek.common.verifier;
 
+import megamek.common.EquipmentType;
 import megamek.common.Entity;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
@@ -102,11 +103,11 @@ public class TestTank extends TestEntity
     
     private static Armor getArmor(Tank tank)
     {
-        int type = Armor.NORMAL_ARMOR;
+        int type = EquipmentType.T_ARMOR_STANDARD;
         int flag = 0;
 
         if (tank.getArmorType()==1)
-            type = Armor.FERRO_FIBROUS_ARMOR;
+            type = EquipmentType.T_ARMOR_FERRO_FIBROUS;
         if (tank.isClan())
             flag |= Armor.CLAN_ARMOR;
         return new Armor(type, flag);

@@ -9381,7 +9381,9 @@ implements Runnable, ConnectionHandler {
         boolean isFerroFibrousTarget = false;
         if ((te != null)
                 && (te.getArmor(hit) > 0)
-                && (te.getArmorType() == EquipmentType.T_ARMOR_FERRO_FIBROUS))
+                && ((te.getArmorType() == EquipmentType.T_ARMOR_FERRO_FIBROUS)
+                    || (te.getArmorType() == EquipmentType.T_ARMOR_LIGHT_FERRO)
+                    || (te.getArmorType() == EquipmentType.T_ARMOR_HEAVY_FERRO))
             isFerroFibrousTarget = true;
         boolean wasDamageIS = false;
         IHex te_hex = null;

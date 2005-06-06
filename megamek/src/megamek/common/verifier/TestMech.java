@@ -77,14 +77,18 @@ public class TestMech extends TestEntity
 
     private static Armor getArmor(Mech mech)
     {
-        int type = Armor.NORMAL_ARMOR;
+        int type = EquipmentType.T_ARMOR_STANDARD;
         int flag = 0;
         for (Enumeration e = mech.getMisc(); e.hasMoreElements(); )
         {
             Mounted m = (Mounted)e.nextElement();
             EquipmentType etype = m.getType();
-            if (etype.getName()==MiscType.FERRO_FIBROUS)
-                type = Armor.FERRO_FIBROUS_ARMOR;
+            if (etype.getName()==EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS))
+                type = EquipmentType.T_ARMOR_FERRO_FIBROUS;
+            else if (etype.getName()==EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO))
+                type = EquipmentType.T_ARMOR_LIGHT_FERRO;
+            else if (etype.getName()==EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO))
+                type = EquipmentType.T_ARMOR_HEAVY_FERRO;
         }
         if (mech.isClan())
             flag |= Armor.CLAN_ARMOR;

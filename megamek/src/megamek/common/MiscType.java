@@ -79,8 +79,7 @@ public class MiscType extends EquipmentType {
                                                     "Multi-Trac Targetting System",
                                                     "Multi-Trac II Targetting System"};
 
-    // Define constants for Ferro-Fibrous and Endo-Steel.
-    public static final String  FERRO_FIBROUS       = "Ferro-Fibrous";
+    // Define constants for Endo-Steel.
     public static final String  ENDO_STEEL          = "Endo Steel";
 
     
@@ -130,13 +129,21 @@ public class MiscType extends EquipmentType {
             else {
                 return (float)Math.ceil(fTons / 4.0f);
             }
-        } else if ( MiscType.FERRO_FIBROUS.equals(internalName) ) {
+        } else if ( EquipmentType.getArmorTypeName(T_ARMOR_FERRO_FIBROUS).equals(internalName) ) {
             double tons = 0.0;
             if ( entity.isClan()) {
                 tons = entity.getTotalOArmor() / ( 16 * 1.2 );
             } else {
                 tons = entity.getTotalOArmor() / ( 16 * 1.12 );
             }
+            tons = (double) Math.ceil( tons * 2.0 ) / 2.0;
+            return (float) tons;
+        } else if ( EquipmentType.getArmorTypeName(T_ARMOR_LIGHT_FERRO).equals(internalName) ) {
+            double tons = entity.getTotalOArmor() / (16*1.06);
+            tons = (double) Math.ceil( tons * 2.0 ) / 2.0;
+            return (float) tons;
+        } else if ( EquipmentType.getArmorTypeName(T_ARMOR_HEAVY_FERRO).equals(internalName) ) {
+            double tons = entity.getTotalOArmor() / (16*1.24);
             tons = (double) Math.ceil( tons * 2.0 ) / 2.0;
             return (float) tons;
         } else if ( MiscType.ENDO_STEEL.equals(internalName) ) {
@@ -179,12 +186,16 @@ public class MiscType extends EquipmentType {
             else {
                 return (int)Math.ceil(fTons / 4.0f);
             }
-        } else if ( MiscType.FERRO_FIBROUS.equals(internalName) ) {
+        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS).equals(internalName) ) {
             if ( entity.isClan() ) {
                 return 7;
             } else {
                 return 14;
             }
+        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO).equals(internalName) ) {
+            return 7;
+        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO).equals(internalName) ) {
+            return 21;
         } else if ( MiscType.ENDO_STEEL.equals(internalName) ) {
             if ( entity.isClan() ) {
                 return 7;
@@ -272,6 +283,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISAPPod());
         EquipmentType.addType(createCLAPPod());
         EquipmentType.addType(createSword());
+
+        // Start of level 3 stuff
+        EquipmentType.addType(createLightFerroFibrous());
+        EquipmentType.addType(createHeavyFerroFibrous());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -856,8 +871,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createFerroFibrous() {
         MiscType misc = new MiscType();
         
-        misc.name = MiscType.FERRO_FIBROUS;
-        misc.setInternalName(MiscType.FERRO_FIBROUS);
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS));
         misc.addLookupName("Ferro-Fibrous Armor");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
@@ -865,6 +880,40 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createLightFerroFibrous() {
+        MiscType misc = new MiscType();
+        
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO));
+        misc.addLookupName("Light Ferro-Fibrous Armor");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 7;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_FERRO_FIBROUS;
+        misc.bv = 0;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        
+        return misc;
+    }
+
+    public static MiscType createHeavyFerroFibrous() {
+        MiscType misc = new MiscType();
+        
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO));
+        misc.addLookupName("Heavy Ferro-Fibrous Armor");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 21;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_FERRO_FIBROUS;
+        misc.bv = 0;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         
         return misc;
     }

@@ -8,6 +8,7 @@ v0.29.80 (CVS)
 + Bug 1208625: infernos should be allowed to target any hex
 + Bug 1215866: vtols should be in vtol tab.
 + a VTOL's movepath sprite now displays its elevation.
++ Added light and heavy ferro-fibrous armor (Level 3).
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

@@ -483,7 +483,7 @@ public abstract class Mech
         Enumeration eMisc = getMisc();
         while (eMisc.hasMoreElements()) {
             Mounted mounted = (Mounted)eMisc.nextElement();
-            if (mounted.getDesc().indexOf(MiscType.FERRO_FIBROUS) != -1) {
+            if (mounted.getDesc().indexOf(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS)) != -1) {
                 return true;
             }
         }

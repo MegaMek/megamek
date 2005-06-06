@@ -523,12 +523,15 @@ public abstract class TestEntity implements TestEntityOption
                 case FLOOR_TARGCOMP_CRITS:
                     return (int) Math.floor(weight);
             }
-        } else if ( MiscType.FERRO_FIBROUS.equals(mt.getInternalName()) )
-        {
+        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS).equals(mt.getInternalName()) ) {
             if ( isClan() )
                 return 7;
             else
                 return 14;
+        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO).equals(mt.getInternalName()) ) {
+            return 7;
+        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO).equals(mt.getInternalName()) ) {
+            return 21;
         } else if ( MiscType.ENDO_STEEL.equals(mt.getInternalName()) )
         {
             if ( isClan() )
@@ -904,9 +907,6 @@ class Engine
 
 class Armor
 {
-    public final static int NORMAL_ARMOR = 0;
-    public final static int FERRO_FIBROUS_ARMOR = 1;
-
     public final static int CLAN_ARMOR = 0x01;
 
     private int armorType;
@@ -927,12 +927,16 @@ class Armor
             int totalOArmor, float roundWeight)
     {
         float totalOArmorWeight = (float) totalOArmor / 16.0f;
-        if (armorType==FERRO_FIBROUS_ARMOR)
+        if (armorType==EquipmentType.T_ARMOR_FERRO_FIBROUS)
         {
             if ((armorFlags & CLAN_ARMOR) != 0)
                 totalOArmorWeight /= 1.2f;
             else
                 totalOArmorWeight /= 1.12f;
+        } else if (armorType == EquipmentType.T_ARMOR_LIGHT_FERRO) {
+                totalOArmorWeight /= 1.06f;
+        } else if (armorType == EquipmentType.T_ARMOR_HEAVY_FERRO) {
+                totalOArmorWeight /= 1.24f;
         }
         return TestEntity.ceilMaxHalf(totalOArmorWeight, roundWeight);
     }
@@ -946,9 +950,9 @@ class Armor
     {
         switch(armorType)
         {
-            case NORMAL_ARMOR:
+            case EquipmentType.T_ARMOR_STANDARD:
                 return "";
-            case FERRO_FIBROUS_ARMOR:
+            case EquipmentType.T_ARMOR_FERRO_FIBROUS:
                 return "(ferrous)";
             default:
                 return null;

@@ -117,6 +117,8 @@ public abstract class Entity
     protected int               walkMP = 0;
     protected int               jumpMP = 0;
 
+    protected int               targSys = MiscType.T_TARGSYS_STANDARD;
+
     protected boolean           done = false;
 
     protected boolean           prone = false;
@@ -4182,5 +4184,37 @@ public abstract class Entity
             }
         }
         return false;
+    }
+
+    public int getShortRangeModifier() {
+        if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE)
+            return -1;
+        else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE)
+            return 1;
+        return 0;
+    }
+
+    public int getMediumRangeModifier() {
+        return 2;
+    }
+
+    public int getLongRangeModifier() {
+        if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE)
+            return 5;
+        else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE)
+            return 3;
+        return 4;
+    }
+
+    public int getExtremeRangeModifier() {
+        return 8;
+    }
+
+    public int getTargSysType() {
+        return targSys;
+    }
+
+    public void setTargSysType(int targSysType) {
+        targSys = targSysType;
     }
 }

@@ -3337,6 +3337,11 @@ public class BoardView1
                 costStringBuf.append(step.getTargetNumberMASC());
                 costStringBuf.append("+]"); //$NON-NLS-1$
             }
+            
+            //hackish
+            if (step.getElevation()!=-999) {//default value, only changed for VTOLs
+                costStringBuf.append("{").append(step.getElevation()).append("}");
+            }
 
             // Convert the buffer to a String and draw it.
             costString = costStringBuf.toString();

@@ -79,7 +79,9 @@ v0.29.79 (CVS)
 + VTOL: Show VTOLs as stars on the minimap
 + VTOL: Show FLight Level after unit name
 + VTOL: VTOLs can use flank speed when flying over water
-+ Added framework for alternate targetting systems, protected by an option, and several level 3 systems (short-range, long-range, anti-air).
++ Added framework for alternate targetting systems, protected by an option, and
+     several level 3 systems (short-range, long-range, anti-air).
++ Bug 1215234: Spelling error in game options
 
 v0.29.78 (2005-05-25 8:00am)
 + Bug 1202811: Game class is used directly instead of IGame

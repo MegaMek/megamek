@@ -1361,7 +1361,7 @@ class ExtraPanel
     extends BufferedPanel
     implements ItemListener, ActionListener
 {
-    private TransparentLabel  narcLabel, unusedL, carrysL, heatL, sinksL;
+    private TransparentLabel  narcLabel, unusedL, carrysL, heatL, sinksL, targSysL;
     public TextArea unusedR, carrysR, heatR, sinksR;
     public Button sinks2B;
     public java.awt.List narcList;
@@ -1421,6 +1421,8 @@ class ExtraPanel
         heatR.setEditable(false);
         heatR.addKeyListener(clientgui.menuBar);
 
+        targSysL = new TransparentLabel((Messages.getString("MechDisplay.TargSysLabel")).concat(" "), fm, Color.white, TransparentLabel.CENTER);
+
         // layout choice panel
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -1466,7 +1468,7 @@ class ExtraPanel
         c.weighty = 0.0;
         gridbag.setConstraints(sinksL, c);
         add(sinksL);
-        
+
         c.insets = new Insets(1, 9, 1, 9);
         c.weighty = 1.0;
         gridbag.setConstraints(sinksR, c);
@@ -1475,7 +1477,7 @@ class ExtraPanel
         c.weighty = 0.0;
         gridbag.setConstraints(sinks2B, c);
         add(sinks2B);
-        
+
         c.weighty = 0.0;
         gridbag.setConstraints(heatL, c);
         add(heatL);
@@ -1484,6 +1486,9 @@ class ExtraPanel
         c.weighty = 1.0;
         gridbag.setConstraints(heatR, c);
         add(heatR);
+
+        gridbag.setConstraints(targSysL, c);
+        add(targSysL);
 
         setBackGround();
 
@@ -1779,6 +1784,8 @@ class ExtraPanel
             // Non-Mechs cannot configure their heatsinks
             sinks2B.setEnabled(false);
         }
+
+        targSysL.setText((Messages.getString("MechDisplay.TargSysLabel")).concat(" ").concat(MiscType.getTargetSysName(en.getTargSysType())));
     } // End public void displayMech( Entity )
 
     public void itemStateChanged(ItemEvent ev) {

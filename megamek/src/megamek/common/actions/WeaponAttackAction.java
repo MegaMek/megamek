@@ -613,6 +613,15 @@ public class WeaponAttackAction
     
         // add range mods
         toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
+
+        // If it's an anti-air system, add mods for that
+        if ((ae.getTargSysType() == megamek.common.MiscType.T_TARGSYS_ANTI_AIR) && (target instanceof megamek.common.Entity)) {
+            if (target instanceof megamek.common.VTOL)
+                toHit.addModifier(-2, "anti-air targetting system vs. VTOL");
+            else
+                toHit.addModifier(1, "anti-air targetting system vs. non-aerial unit");
+        }
+
     
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( !isAttackerInfantry && te != null && te instanceof BattleArmor ) {

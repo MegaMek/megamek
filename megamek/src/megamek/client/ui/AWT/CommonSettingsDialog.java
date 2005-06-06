@@ -255,14 +255,14 @@ public class CommonSettingsDialog extends ClientDialog
 
         //locale settings
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.locale")) ); //$NON-NLS-1$
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.locale"))); //$NON-NLS-1$
         //        locale = new TextField(8);
         locale = new Choice();
-        locale.add("English");
-        locale.add("Deutsch");
-        locale.add("Pyccko");  //Is that "Russian"?
-        panSetting.add( locale);
-        tempPanel.add( panSetting );
+        locale.add(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
+        locale.add(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
+        locale.add(Messages.getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
+        panSetting.add(locale);
+        tempPanel.add(panSetting);
 
         //chatloungtab setting
         chatloungeTabs 

@@ -32,14 +32,14 @@ public class UnitType {
     public static String determineUnitType(Entity e) {
         if (e instanceof Infantry) {
             return names[INFANTRY];
+        } else if (e instanceof VTOL) {
+            return names[VTOL];
         } else if (e instanceof Tank) {
             return names[TANK];
         } else if (e instanceof Mech) {
             return names[MEK];
         } else if (e instanceof Protomech) {
             return names[PROTOMEK];
-        } else if (e instanceof VTOL) {
-            return names[VTOL];
         } else {
             throw new IllegalArgumentException("Unknown unit type");
         }

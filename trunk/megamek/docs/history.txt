@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.29.80 (CVS)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.
++ Edits to a number of units to correct Mixed-Tech to level 3 from level 2
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

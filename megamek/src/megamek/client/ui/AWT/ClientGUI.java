@@ -898,7 +898,7 @@ public class ClientGUI
                 || curPanel instanceof PhysicalDisplay
                 || curPanel instanceof TargetingPhaseDisplay) {
                 IHex h = client.game.getBoard().getHex(coords);
-                if (h != null && h.containsTerrain(Terrains.WOODS) && curPanel instanceof FiringDisplay) {
+                if (h != null && curPanel instanceof FiringDisplay) {
                     popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_CLEAR)));
                     if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
                         popup.add(

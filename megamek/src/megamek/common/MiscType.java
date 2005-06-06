@@ -61,6 +61,24 @@ public class MiscType extends EquipmentType {
     public static final int     F_SEARCHLIGHT       = 0x20000000;
     public static final int     F_SWORD             = 0x40000000;
 
+    public static final int     T_TARGSYS_UNKNOWN           = -1;
+    public static final int     T_TARGSYS_STANDARD          = 0;
+    public static final int     T_TARGSYS_TARGCOMP          = 1;
+    public static final int     T_TARGSYS_LONGRANGE         = 2;
+    public static final int     T_TARGSYS_SHORTRANGE        = 3;
+    public static final int     T_TARGSYS_VARIABLE_RANGE    = 4;
+    public static final int     T_TARGSYS_ANTI_AIR          = 5;
+    public static final int     T_TARGSYS_MULTI_TRAC        = 6;
+    public static final int     T_TARGSYS_MULTI_TRAC_II     = 7;
+    public static final String[] targSysNames = {"Standard Targetting System",
+                                                    "Targetting Computer",
+                                                    "Long-Range Targetting System",
+                                                    "Short-Range Targetting System",
+                                                    "Variable-Range Targetting System",
+                                                    "Anti-Air Targetting System",
+                                                    "Multi-Trac Targetting System",
+                                                    "Multi-Trac II Targetting System"};
+
     // Define constants for Ferro-Fibrous and Endo-Steel.
     public static final String  FERRO_FIBROUS       = "Ferro-Fibrous";
     public static final String  ENDO_STEEL          = "Endo Steel";
@@ -1033,4 +1051,17 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static String getTargetSysName(int targSysType) {
+        if ((targSysType < 0) || (targSysType >= targSysNames.length))
+            return null;
+        return targSysNames[targSysType];
+    }
+
+    public static int getTargetSysType(String targSysName) {
+        for (int x=0; x<targSysNames.length; x++) {
+            if (targSysNames[x].compareTo(targSysName) == 0)
+                return x;
+        }
+        return -1;
+    }
 }

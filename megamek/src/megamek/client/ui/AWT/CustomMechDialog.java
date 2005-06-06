@@ -72,7 +72,10 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private Label labOffBoardDistance = new Label(Messages.getString("CustomMechDialog.labOffBoardDistance"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldOffBoardDistance = new TextField(4);
     private Button butOffBoardDistance = new Button ("0");
-    
+
+    private Label labTargSys = new Label(Messages.getString("CustomMechDialog.labTargSys"), Label.RIGHT);
+    private Choice choTargSys = new Choice();
+
     private Panel panButtons = new Panel();
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
@@ -263,6 +266,26 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             gridbag.setConstraints(butOffBoardDistance, c);
             butOffBoardDistance.setLabel(Integer.toString(distance));
             tempPanel.add(butOffBoardDistance);
+        }
+
+        if (!(entity.hasTargComp()) && (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_targsys")) && (entity instanceof Mech))
+        {
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labTargSys, c);
+            tempPanel.add(labTargSys);
+
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_STANDARD));
+            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_LONGRANGE));
+            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_SHORTRANGE));
+            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_ANTI_AIR));
+//            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_MULTI_TRAC));
+            gridbag.setConstraints(choTargSys, c);
+            tempPanel.add(choTargSys);
+
+            choTargSys.select(MiscType.getTargetSysName(entity.getTargSysType()));
         }
 
         if ( entity instanceof Protomech ) {
@@ -967,6 +990,17 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
             else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
                 entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
+            }
+
+            // Update the entity's targetting system type.
+            if (!(entity.hasTargComp()) && (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_targsys"))) {
+                int targSysIndex = MiscType.getTargetSysType(choTargSys.getSelectedItem());
+                if (targSysIndex >= 0)
+                    entity.setTargSysType(targSysIndex);
+                else {
+                    System.err.println("Illegal targetting system index: "+targSysIndex);
+                    entity.setTargSysType(MiscType.T_TARGSYS_STANDARD);
+                }
             }
 
             // If the player wants to swap unit numbers, update both

@@ -334,8 +334,10 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
         }
 
+System.err.println("???Here...");
         // Can't set up munitions on infantry.
         if ( !(entity instanceof Infantry) ) {
+System.err.println("???Here!!!");
             setupMunitions();
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(panMunitions, c);
@@ -439,7 +441,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             if (vAllTypes == null) {
                 continue;
             }
-            
+
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = (AmmoType)vAllTypes.elementAt(x);
                 boolean bTechMatch = TechConstants.isLegal(entity.getTechLevel(), atCheck.getTechLevel());
@@ -458,6 +460,22 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                     && entity.getTechLevel() == TechConstants.T_IS_LEVEL_1
                     && atCheck.getTechLevel() == TechConstants.T_IS_LEVEL_2) {
                     bTechMatch = true;
+                }
+
+                // Possibly allow level 3 ammos, possibly not.
+                if (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_ammo")) {
+                    if (!clientgui.getClient().game.getOptions().booleanOption("is_eq_limits")) {
+                        if (entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2
+                                && atCheck.getTechLevel() == TechConstants.T_CLAN_LEVEL_3) {
+                            bTechMatch = true;
+                        }
+                        if (((entity.getTechLevel() == TechConstants.T_IS_LEVEL_1) || (entity.getTechLevel() == TechConstants.T_IS_LEVEL_2))
+                                && (atCheck.getTechLevel() == TechConstants.T_IS_LEVEL_3)) {
+                            bTechMatch = true;
+                        }
+                    }
+                } else if ((atCheck.getTechLevel() == TechConstants.T_IS_LEVEL_3) || (atCheck.getTechLevel() == TechConstants.T_CLAN_LEVEL_3)) {
+                    bTechMatch = false;
                 }
                 
                 //allow mixed Tech Mechs to use both IS and Clan ammo of any

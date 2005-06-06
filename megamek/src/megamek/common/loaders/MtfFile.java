@@ -245,6 +245,7 @@ public class MtfFile implements MechLoader {
 
             mech.autoSetInternal();
 
+            mech.setArmorType(armorType.substring(armorType.indexOf(':')+1));
             mech.initializeArmor(Integer.parseInt(larmArmor.substring(9)), Mech.LOC_LARM);
             mech.initializeArmor(Integer.parseInt(rarmArmor.substring(9)), Mech.LOC_RARM);
             mech.initializeArmor(Integer.parseInt(ltArmor.substring(9)), Mech.LOC_LT);

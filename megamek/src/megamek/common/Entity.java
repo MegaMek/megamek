@@ -166,6 +166,8 @@ public abstract class Entity
     protected int               C3Master = NONE;
     protected int               C3CompanyMasterIndex = LOC_DESTROYED;
 
+    protected int               armorType = EquipmentType.T_ARMOR_UNKNOWN;
+
     protected Vector            equipmentList = new Vector();
     protected Vector            weaponList = new Vector();
     protected Vector            ammoList = new Vector();
@@ -4216,5 +4218,17 @@ public abstract class Entity
 
     public void setTargSysType(int targSysType) {
         targSys = targSysType;
+    }
+
+    public void setArmorType(int armType) {
+        armorType = armType;
+    }
+
+    public void setArmorType(String armType) {
+        setArmorType(EquipmentType.getArmorType(armType));
+    }
+
+    public int getArmorType() {
+        return armorType;
     }
 }

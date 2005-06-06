@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.80 (CVS)
+
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment
 + Mule kicks for Quads

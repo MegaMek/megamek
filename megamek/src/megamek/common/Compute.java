@@ -202,6 +202,7 @@ public class Compute
         
         // check for swamp
         if (destHex.containsTerrain(Terrains.SWAMP)
+            && !(entity instanceof VTOL)
             && entity.getMovementType() != Entity.MovementType.HOVER
             && movementType != Entity.MOVE_JUMP) {
             return true;
@@ -209,6 +210,7 @@ public class Compute
 
         // Check for water unless we're a hovercraft or using a bridge.
         if (movementType != Entity.MOVE_JUMP
+            && !(entity instanceof VTOL)
             && entity.getMovementType() != Entity.MovementType.HOVER
             && destHex.terrainLevel(Terrains.WATER) > 0
             && !isPavementStep) {

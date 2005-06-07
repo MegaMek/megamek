@@ -3,7 +3,8 @@ VERSION HISTORY:
 v0.29.80 (CVS)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.
 + Edits to a number of units to correct Mixed-Tech to level 3 from level 2
-+ Added Acid-head warheads.  Also put in beginnings of more efficient armor type detection (non-exhaustive-search).
++ Added Acid-head warheads.  Also put in beginnings of more efficient armor
+    type detection (non-exhaustive-search).
 + Bug 1215234: Spelling error in game options (This time for real)
 + Bug 1208625: infernos should be allowed to target any hex
 + Bug 1215866: vtols should be in vtol tab.

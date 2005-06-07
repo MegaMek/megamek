@@ -71,6 +71,8 @@ public class MechSelectorDialog
     private Label m_labelPlayer = new Label(Messages.getString("MechSelectorDialog.m_labelPlayer"), Label.RIGHT); //$NON-NLS-1$
     private Choice m_chPlayer = new Choice();
 
+    private boolean includeMaxTech;
+
     public MechSelectorDialog(ClientGUI cl, UnitLoadingDialog uld)
     {
         super(cl.frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
@@ -135,8 +137,13 @@ public class MechSelectorDialog
     }
 
     private void updateTechChoice() {
+        boolean maxTechOption = m_client.game.getOptions().booleanOption("allow_level_3_units");
+        int maxTech = (maxTechOption ? TechConstants.SIZE : TechConstants.SIZE_LEVEL_2);
+        if (includeMaxTech == maxTechOption) {
+            return;
+        }
+        includeMaxTech = maxTechOption;
         m_chType.removeAll();
-        int maxTech = (m_client.game.getOptions().booleanOption("allow_level_3_units")?TechConstants.SIZE:TechConstants.SIZE_LEVEL_2);
         for (int i=0; i<maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }        
@@ -171,7 +178,6 @@ public class MechSelectorDialog
         }
     }
     
-    
     private void populateChoices() {
         
         for (int i=0; i<EntityWeightClass.SIZE; i++) {
@@ -180,10 +186,11 @@ public class MechSelectorDialog
         m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chWeightClass.select(0);
 
-        int maxTech = (m_client.game.getOptions().booleanOption("allow_level_3_units")?TechConstants.SIZE:TechConstants.SIZE_LEVEL_2);
+        includeMaxTech = m_client.game.getOptions().booleanOption("allow_level_3_units");
+        int maxTech = (includeMaxTech ? TechConstants.SIZE : TechConstants.SIZE_LEVEL_2);
         for (int i=0; i<maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
-        }        
+        }
 //        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAll")); //$NON-NLS-1$
 //        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAndClan")); //$NON-NLS-1$
         // More than 8 items causes the drop down to sprout a vertical

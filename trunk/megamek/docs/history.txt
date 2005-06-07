@@ -21,6 +21,7 @@ v0.29.80 (CVS)
 + Small cleanup of the IBoard interface
 + Bug 1216069: Mantis VTOL shows the same image as Mantis mech
 + Added default images for VTOLs and BattleArmor
++ Bug 1216071: Make "Add Unit" dialog remember tech level choice again.
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

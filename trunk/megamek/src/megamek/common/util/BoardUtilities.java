@@ -40,37 +40,41 @@ public class BoardUtilities {
      * @param boards an array of the boards to be combined
      */
     public static IBoard combine(int width, int height, int sheetWidth, int sheetHeight, IBoard[] boards) {
+
+        int resultWidth = width * sheetWidth;
+        int resultHeight = height * sheetHeight;
         
-        IBoard result = new Board(width * sheetWidth, height * sheetHeight);
+        IHex[] resultData = new IHex[resultWidth * resultHeight];
+        boolean roadsAutoExit = true;
         
         // Copy the data from the sub-boards.
         for (int i = 0; i < sheetHeight; i++) {
             for (int j = 0; j < sheetWidth; j++) {
-                copyBoardInto(result, j * width, i * height, boards[i * sheetWidth + j]);
+                copyBoardInto(resultData, resultWidth, j * width, i * height, boards[i * sheetWidth + j]);
                 // Copy in the other board's options.
                 if ( boards[i * sheetWidth + j].getRoadsAutoExit() == false ) {
-                    result.setRoadsAutoExit(false);
+                    roadsAutoExit = false;
                 }
             }
         }
 
+        IBoard result = new Board();
+        result.setRoadsAutoExit(roadsAutoExit);
         //Initialize all hexes - buildings, exits, etc
-        result.initializeAll();
+        result.newData(resultWidth, resultHeight, resultData);
 
         return result;
     }
     
     /**
-     * Copies the data of another board into this one, offset by the specified
+     * Copies the data of another board into given array of Hexes, offset by the specified
      * x and y.
      *
-     * Currently just shallowly copies the boards.
-     *
      */
-    protected static void copyBoardInto(IBoard dest, int x, int y, IBoard copied) {
+    protected static void copyBoardInto(IHex[] dest, int destWidth, int x, int y, IBoard copied) {
         for (int i = 0; i < copied.getHeight(); i++) {
             for (int j = 0; j < copied.getWidth(); j++) {
-                dest.setHex(j+x, i+y, copied.getHex(j,i));
+                dest[(i+y) * destWidth + j+x] = copied.getHex(j,i);
             }
         }
     }

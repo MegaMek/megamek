@@ -666,6 +666,15 @@ public class MovementDisplay
                 nagReport.append(addNag(rollTarget));
             }
             
+            if(entity instanceof VTOL) {
+                rollTarget = ((VTOL)entity).checkSideSlip(moveType,prevHex,overallMoveType,
+                                             prevStep,prevFacing,curFacing,
+                                             lastPos,curPos,distance);
+                if(rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    nagReport.append(addNag(rollTarget));
+                }
+            }
+            
             // check if we've moved into swamp
             rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

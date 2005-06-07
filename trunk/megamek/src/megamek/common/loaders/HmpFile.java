@@ -708,7 +708,9 @@ public class HmpFile
 
     isCriticals.put(new Long(0x46), "ISLightGaussRifle");
     isCriticals.put(new Long(0x47), "ISGaussRifle");
-
+    isCriticals.put(new Long(0x48), "ISLargeXPulseLaser");
+    isCriticals.put(new Long(0x49), "ISMediumXPulseLaser");
+    isCriticals.put(new Long(0x4A), "ISSmallXPulseLaser");
     isCriticals.put(new Long(0x4B), "ISLBXAC2");
     isCriticals.put(new Long(0x4C), "ISLBXAC5");
     isCriticals.put(new Long(0x4D), "ISLBXAC10");
@@ -969,9 +971,9 @@ public class HmpFile
     clanCriticals.put(new Long(0x35), "CLERSmallLaser");
     clanCriticals.put(new Long(0x36), "CLERPPC");
     clanCriticals.put(new Long(0x37), "CLFlamer");
-    //    clanCriticals.put(new Long(0x38), "CLMediumLaser");
-    //    clanCriticals.put(new Long(0x39), "CLSmallLaser");
-    //    clanCriticals.put(new Long(0x3A), "CLPPC");
+    clanCriticals.put(new Long(0x38), "CLERLargePulseLaser");
+    clanCriticals.put(new Long(0x39), "CLERMediumPulseLaser");
+    clanCriticals.put(new Long(0x3A), "CLERSmallPulseLaser");
 
     clanCriticals.put(new Long(0x3C), "CLLargePulseLaser");
     clanCriticals.put(new Long(0x3D), "CLMediumPulseLaser");
@@ -1026,6 +1028,11 @@ public class HmpFile
     clanCriticals.put(new Long(0x6E), "CLSRTorpedo2");
     clanCriticals.put(new Long(0x6F), "CLSRTorpedo4");
     clanCriticals.put(new Long(0x70), "CLSRTorpedo6");
+
+    clanCriticals.put(new Long(0x71), "CLStreakLRM5");
+    clanCriticals.put(new Long(0x72), "CLStreakLRM10");
+    clanCriticals.put(new Long(0x73), "CLStreakLRM15");
+    clanCriticals.put(new Long(0x74), "CLStreakLRM20");
 
     clanCriticals.put(new Long(0x7B), "CLLRM5 (OS)");
     clanCriticals.put(new Long(0x7C), "CLLRM10 (OS)");
@@ -1129,6 +1136,11 @@ public class HmpFile
     clanCriticals.put(new Long(0x0121), "ISRotaryAC2");
     clanCriticals.put(new Long(0x0122), "ISRotaryAC5");
 
+    clanCriticals.put(new Long(0x0124), "CLRotaryAC2");
+    clanCriticals.put(new Long(0x0125), "CLRotaryAC5");
+    clanCriticals.put(new Long(0x0126), "CLRotaryAC10");
+    clanCriticals.put(new Long(0x0127), "CLRotaryAC20");
+
     //    clanCriticals.put(new Long(0x01ce), "CLAC2 Ammo");
     clanCriticals.put(new Long(0x01d0), "CLAMS Ammo");
     //    clanCriticals.put(new Long(0x01cf), "CLAC5 Ammo");
@@ -1172,8 +1184,19 @@ public class HmpFile
     clanCriticals.put(new Long(0x01ff), "CLSRTorpedo4 Ammo");
     clanCriticals.put(new Long(0x0200), "CLSRTorpedo6 Ammo");
 
+    clanCriticals.put(new Long(0x0201), "CLStreakLRM5 Ammo");
+    clanCriticals.put(new Long(0x0202), "CLStreakLRM10 Ammo");
+    clanCriticals.put(new Long(0x0203), "CLStreakLRM15 Ammo");
+    clanCriticals.put(new Long(0x0204), "CLStreakLRM20 Ammo");
+
     clanCriticals.put(new Long(0x02B1), "ISRotaryAC2 Ammo");
     clanCriticals.put(new Long(0x02B2), "ISRotaryAC5 Ammo");
+
+    clanCriticals.put(new Long(0x2b4), "CLRotaryAC2 Ammo");
+    clanCriticals.put(new Long(0x2b5), "CLRotaryAC5 Ammo");
+    clanCriticals.put(new Long(0x2b6), "CLRotaryAC10 Ammo");
+    clanCriticals.put(new Long(0x2b7), "CLRotaryAC20 Ammo");
+
     clanCriticals.put(new Long(0x021E), "ISAC2 Ammo");
     clanCriticals.put(new Long(0x021F), "ISAC5 Ammo");
     clanCriticals.put(new Long(0x0220), "ISAC10 Ammo");

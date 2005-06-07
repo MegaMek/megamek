@@ -10,6 +10,7 @@ v0.29.80 (CVS)
 + a VTOL's movepath sprite now displays its elevation.
 + Added light and heavy ferro-fibrous armor (Level 3).
 + Fixed compile error in Server.java
++ Added some corrections to HMPFile to load level 3 equipment.
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

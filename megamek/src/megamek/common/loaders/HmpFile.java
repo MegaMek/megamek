@@ -35,6 +35,7 @@ import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.IEntityMovementMode;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
@@ -465,7 +466,7 @@ public class HmpFile
   private void removeArmActuators(Mech mech, long[] criticals, int location)
   {
       // Quad have leg and foot actuators, not arm and hand actuators.
-      if ( mech.getMovementType() == Entity.MovementType.QUAD ) {
+      if ( mech.getMovementMode() == IEntityMovementMode.QUAD ) {
           if (!isLowerLegActuator(criticals[2])) {
               mech.setCritical(location, 2, null);
           }

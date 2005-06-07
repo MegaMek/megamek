@@ -194,7 +194,7 @@ public class Compute
         }
 
         // check for rubble
-        if (movementType != Entity.MOVE_JUMP
+        if (movementType != IEntityMovementType.MOVE_JUMP
             && destHex.terrainLevel(Terrains.RUBBLE) > 0
             && !isInfantry) {
             return true;
@@ -203,15 +203,15 @@ public class Compute
         // check for swamp
         if (destHex.containsTerrain(Terrains.SWAMP)
             && !(entity instanceof VTOL)
-            && entity.getMovementType() != Entity.MovementType.HOVER
-            && movementType != Entity.MOVE_JUMP) {
+            && entity.getMovementMode() != IEntityMovementMode.HOVER
+            && movementType != IEntityMovementType.MOVE_JUMP) {
             return true;
         }
 
         // Check for water unless we're a hovercraft or using a bridge.
-        if (movementType != Entity.MOVE_JUMP
+        if (movementType != IEntityMovementType.MOVE_JUMP
             && !(entity instanceof VTOL)
-            && entity.getMovementType() != Entity.MovementType.HOVER
+            && entity.getMovementMode() != IEntityMovementMode.HOVER
             && destHex.terrainLevel(Terrains.WATER) > 0
             && !isPavementStep) {
             return true;
@@ -227,8 +227,8 @@ public class Compute
                srcHex.contains(Terrain.BRIDGE) )
         */
         if ( prevStepIsOnPavement
-        //   && overallMoveType == Entity.MOVE_RUN
-             && movementType == Entity.MOVE_RUN
+        //   && overallMoveType == IMoveType.MOVE_RUN
+             && movementType == IEntityMovementType.MOVE_RUN
              && isTurning
              && !isInfantry ) {
             return true;
@@ -247,7 +247,7 @@ public class Compute
         
         //check sideslips
         if (entity instanceof VTOL) {
-            if(isTurning && movementType == Entity.MOVE_RUN)
+            if(isTurning && movementType == IEntityMovementType.MOVE_RUN)
             return true;
         }
 
@@ -291,8 +291,8 @@ public class Compute
         // unless we're displacing a tracked or wheeled vee into water
         if (entity.isHexProhibited(destHex) && 
             !(entity instanceof Tank && destHex.containsTerrain(Terrains.WATER) && 
-              (entity.movementType == Entity.MovementType.TRACKED 
-               || entity.movementType == Entity.MovementType.WHEELED))) {
+              (entity.movementMode == IEntityMovementMode.TRACKED 
+               || entity.movementMode == IEntityMovementMode.WHEELED))) {
             return false;
         }
 
@@ -502,7 +502,7 @@ public class Compute
             targEl = target.absHeight();
         }
 
-        if (ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET) {
+        if (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET) {
             weaponRanges = wtype.getWRanges();
             //HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
@@ -966,12 +966,12 @@ public class Compute
             return toHit;
         }
 
-        if (movement == Entity.MOVE_WALK) {
+        if (movement == IEntityMovementType.MOVE_WALK) {
             toHit.addModifier(1, "attacker walked");
-        } else if (movement == Entity.MOVE_RUN ||
-                   movement == Entity.MOVE_SKID) {
+        } else if (movement == IEntityMovementType.MOVE_RUN ||
+                   movement == IEntityMovementType.MOVE_SKID) {
             toHit.addModifier(2, "attacker ran");
-        } else if (movement == Entity.MOVE_JUMP) {
+        } else if (movement == IEntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
         }
 
@@ -993,12 +993,12 @@ public class Compute
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
 
-        if (movement == Entity.MOVE_WALK) {
+        if (movement == IEntityMovementType.MOVE_WALK) {
             toHit.addModifier(1, "spotter walked");
-        } else if (movement == Entity.MOVE_RUN ||
-                   movement == Entity.MOVE_SKID) {
+        } else if (movement == IEntityMovementType.MOVE_RUN ||
+                   movement == IEntityMovementType.MOVE_SKID) {
             toHit.addModifier(2, "spotter ran");
-        } else if (movement == Entity.MOVE_JUMP) {
+        } else if (movement == IEntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "spotter jumped");
         }
 
@@ -1031,10 +1031,10 @@ public class Compute
     public static ToHitData getTargetMovementModifier(IGame game, int entityId) {
         Entity entity = game.getEntity(entityId);
         ToHitData toHit = getTargetMovementModifier
-            ( entity.delta_distance, ((entity.moved == Entity.MOVE_JUMP) || (entity instanceof VTOL)), game.getOptions().booleanOption("maxtech_target_modifiers") );
+            ( entity.delta_distance, ((entity.moved == IEntityMovementType.MOVE_JUMP) || (entity instanceof VTOL)), game.getOptions().booleanOption("maxtech_target_modifiers") );
 
         // Did the target skid this turn?
-        if ( entity.moved == Entity.MOVE_SKID ) {
+        if ( entity.moved == IEntityMovementType.MOVE_SKID ) {
             toHit.addModifier( 2, "target skidded" );
         }
 
@@ -1095,7 +1095,7 @@ public class Compute
         ToHitData toHit = new ToHitData();
 
         if (hex.terrainLevel(Terrains.WATER) > 0
-        && attacker.getMovementType() != Entity.MovementType.HOVER) {
+        && attacker.getMovementMode() != IEntityMovementMode.HOVER) {
             toHit.addModifier(1, "attacker in water");
         }
 
@@ -1130,7 +1130,7 @@ public class Compute
         }
 
         if (hex.terrainLevel(Terrains.WATER) > 0
-        && entityTarget.getMovementType() != Entity.MovementType.HOVER) {
+        && entityTarget.getMovementMode() != IEntityMovementMode.HOVER) {
             toHit.addModifier(-1, "target in water");
         }
         

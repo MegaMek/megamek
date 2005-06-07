@@ -244,8 +244,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             choOffBoardDirection.add(Messages.getString("CustomMechDialog.East")); //$NON-NLS-1$
             choOffBoardDirection.add(Messages.getString("CustomMechDialog.West")); //$NON-NLS-1$
             direction = entity.getOffBoardDirection();
-            if ( Entity.NONE == direction ) {
-                direction = Entity.NORTH;
+            if ( IOffBoardDirections.NONE == direction ) {
+                direction = IOffBoardDirections.NORTH;
             }
             choOffBoardDirection.select( direction );
             tempPanel.add(choOffBoardDirection);

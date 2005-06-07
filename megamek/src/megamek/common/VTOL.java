@@ -86,14 +86,14 @@ public class VTOL extends Tank {
 
         // TODO: add check for elevation of pavement, road,
         //       or bridge matches entity elevation.
-        if (moveType != Entity.MOVE_JUMP
+        if (moveType != IEntityMovementType.MOVE_JUMP
             && prevHex != null
             /* Bug 754610: Revert fix for bug 702735.
                && ( prevHex.contains(Terrain.PAVEMENT) ||
                prevHex.contains(Terrain.ROAD) ||
                prevHex.contains(Terrain.BRIDGE) )
             */
-            && overallMoveType == Entity.MOVE_RUN
+            && overallMoveType == IEntityMovementType.MOVE_RUN
             && prevFacing != curFacing
             && !lastPos.equals(curPos))
             {
@@ -314,7 +314,7 @@ public class VTOL extends Tank {
         while ( retval && loc < VTOL.LOC_ROTOR ) {
             int loc_is = this.getInternal( loc );
             loc++;
-            retval = (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
+            retval = (loc_is != IArmorState.ARMOR_DOOMED) && (loc_is != IArmorState.ARMOR_DESTROYED);
         }
         return retval;
     }

@@ -600,8 +600,8 @@ public class MovementDisplay
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
         int distance = 0;
-        int moveType = Entity.MOVE_NONE;
-        int overallMoveType = Entity.MOVE_NONE;
+        int moveType = IEntityMovementType.MOVE_NONE;
+        int overallMoveType = IEntityMovementType.MOVE_NONE;
         boolean firstStep;
         int prevFacing = curFacing;
         IHex prevHex = null;
@@ -623,7 +623,7 @@ public class MovementDisplay
             boolean isPavementStep = step.isPavementStep();
             
             // stop for illegal movement
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+            if (step.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
             
@@ -684,14 +684,14 @@ public class MovementDisplay
             // check if we used more MPs than the Mech/Vehicle would have in normal gravity
             if (!i.hasMoreElements() && !firstStep) {
                 if (entity instanceof Mech) {
-                    if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
+                    if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_RUN)) {
                         if (step.getMpUsed() > entity.getRunMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(addNag(rollTarget));
                             }
                         }
-                    } else if (step.getMovementType() == Entity.MOVE_JUMP) {
+                    } else if (step.getMovementType() == IEntityMovementType.MOVE_JUMP) {
                         if (step.getMpUsed() > entity.getOriginalJumpMP()) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -700,7 +700,7 @@ public class MovementDisplay
                         }    
                       }
                 } else if (entity instanceof Tank) {
-                    if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
+                    if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_RUN)) {
                         // For Tanks, we need to check if the tank had more MPs because it was moving along a road
                         if (step.getMpUsed() > entity.getRunMP(false) && !step.isOnlyPavement()) {
                             rollTarget = entity.checkMovedTooFast(step);
@@ -784,7 +784,7 @@ public class MovementDisplay
         }
 
         // but the danger isn't over yet!  landing from a jump can be risky!
-        if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {
+        if (overallMoveType == IEntityMovementType.MOVE_JUMP && !entity.isMakingDfa()) {
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage();
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

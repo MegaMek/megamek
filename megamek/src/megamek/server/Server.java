@@ -682,8 +682,8 @@ implements Runnable, ConnectionHandler {
         for (Enumeration e = toRemove.elements(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
             int id = entity.getId();
-            game.removeEntity(id, Entity.REMOVE_NEVER_JOINED);
-            send(createRemoveEntityPacket(id, Entity.REMOVE_NEVER_JOINED));
+            game.removeEntity(id, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
+            send(createRemoveEntityPacket(id, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
         }
     }
 
@@ -772,9 +772,9 @@ implements Runnable, ConnectionHandler {
         // actually remove all flagged entities
         for (Enumeration e = toRemove.elements(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
-            int condition = Entity.REMOVE_SALVAGEABLE;
+            int condition = IEntityRemovalConditions.REMOVE_SALVAGEABLE;
             if ( !entity.isSalvage() ) {
-                condition = Entity.REMOVE_DEVASTATED;
+                condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
             }
 
             game.removeEntity(entity.getId(), condition);
@@ -2454,9 +2454,9 @@ implements Runnable, ConnectionHandler {
                         .append( passenger.getDisplayName() )
                         .append( " with it.\n" );
                     game.removeEntity( passenger.getId(),
-                                       Entity.REMOVE_IN_RETREAT );
+                            IEntityRemovalConditions.REMOVE_IN_RETREAT );
                     send( createRemoveEntityPacket(passenger.getId(),
-                                                   Entity.REMOVE_IN_RETREAT) );
+                            IEntityRemovalConditions.REMOVE_IN_RETREAT) );
                 }
             }
 
@@ -2467,10 +2467,10 @@ implements Runnable, ConnectionHandler {
                 Entity mw = game.getEntity(mechWarriorId.intValue());
 
                 // Is the MechWarrior an enemy?
-                int condition = Entity.REMOVE_IN_RETREAT;
+                int condition = IEntityRemovalConditions.REMOVE_IN_RETREAT;
                 String leavingText = "carries ";
                 if (mw.isCaptured()) {
-                    condition = Entity.REMOVE_CAPTURED;
+                    condition = IEntityRemovalConditions.REMOVE_CAPTURED;
                     leavingText = "takes ";
                 }
                 game.removeEntity( mw.getId(), condition );
@@ -2501,13 +2501,13 @@ implements Runnable, ConnectionHandler {
                 phaseReport.append( "   It takes " )
                     .append( swarmer.getDisplayName() )
                     .append( " with it.\n" );
-                game.removeEntity( swarmerId, Entity.REMOVE_CAPTURED );
+                game.removeEntity( swarmerId, IEntityRemovalConditions.REMOVE_CAPTURED );
                 send( createRemoveEntityPacket(swarmerId,
-                                               Entity.REMOVE_CAPTURED) );
+                        IEntityRemovalConditions.REMOVE_CAPTURED) );
             }
-            game.removeEntity( entity.getId(), Entity.REMOVE_IN_RETREAT );
+            game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT );
             send( createRemoveEntityPacket(entity.getId(),
-                                           Entity.REMOVE_IN_RETREAT) );
+                    IEntityRemovalConditions.REMOVE_IN_RETREAT) );
             return;
         }
 
@@ -2533,18 +2533,18 @@ implements Runnable, ConnectionHandler {
         }
         int distance = 0;
         int mpUsed = 0;
-        int moveType = Entity.MOVE_NONE;
-        int overallMoveType = Entity.MOVE_NONE;
+        int moveType = IEntityMovementType.MOVE_NONE;
+        int overallMoveType = IEntityMovementType.MOVE_NONE;
         // if the entity already used some MPs,
         // it previously tried to get up and fell,
         // and then got another turn. set moveType
         // and overallMoveType accordingly
         if (entity.mpUsed > 0) {
-            moveType = Entity.MOVE_WALK;
-            overallMoveType = Entity.MOVE_WALK;
+            moveType = IEntityMovementType.MOVE_WALK;
+            overallMoveType = IEntityMovementType.MOVE_WALK;
             if (entity.mpUsed > entity.getWalkMP()) {
-                moveType = Entity.MOVE_RUN;
-                overallMoveType = Entity.MOVE_RUN;
+                moveType = IEntityMovementType.MOVE_RUN;
+                overallMoveType = IEntityMovementType.MOVE_RUN;
             }
         }
         boolean firstStep;
@@ -2557,7 +2557,7 @@ implements Runnable, ConnectionHandler {
         PilotingRollData rollTarget;
         // cache this here, otherwise changing MP in the turn causes 
         // errorneous gravity PSRs
-        int cachedGravityLimit = (Entity.MOVE_JUMP == moveType)?
+        int cachedGravityLimit = (IEntityMovementType.MOVE_JUMP == moveType)?
             entity.getOriginalJumpMP() : entity.getRunMP(false); 
 
         // Compile the move
@@ -2594,7 +2594,7 @@ implements Runnable, ConnectionHandler {
             boolean entityFellWhileAttemptingToStand = false;
 
             // stop for illegal movement
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+            if (step.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
             
@@ -2708,7 +2708,7 @@ implements Runnable, ConnectionHandler {
                     entity.delta_distance = distance-1;
 
                     // Attacks against a skidding target have additional +2.
-                    moveType = Entity.MOVE_SKID;
+                    moveType = IEntityMovementType.MOVE_SKID;
 
                     // What is the first hex in the skid?
                     nextPos = curPos.translated( prevFacing );
@@ -2728,9 +2728,9 @@ implements Runnable, ConnectionHandler {
                             if (game.getOptions().booleanOption("push_off_board")) {
                                 // Yup.  One dead entity.
                                 game.removeEntity(entity.getId(),
-                                                  Entity.REMOVE_PUSHED);
+                                        IEntityRemovalConditions.REMOVE_PUSHED);
                                 send(createRemoveEntityPacket(entity.getId(),
-                                                              Entity.REMOVE_PUSHED));
+                                        IEntityRemovalConditions.REMOVE_PUSHED));
                                 phaseReport.append("*** " )
                                     .append( entity.getDisplayName() )
                                     .append( " has skidded off the field. ***\n");
@@ -2773,8 +2773,8 @@ implements Runnable, ConnectionHandler {
                         curElevation = curHex.floor();
                         nextElevation = nextHex.floor();
                         if ( entity instanceof Tank &&
-                             entity.getMovementType() ==
-                             Entity.MovementType.HOVER ) {
+                             entity.getMovementMode() ==
+                             IEntityMovementMode.HOVER ) {
                             ITerrain land = curHex.
                                 getTerrain(Terrains.WATER);
                             if ( land != null ) {
@@ -2829,8 +2829,8 @@ implements Runnable, ConnectionHandler {
 
                                     // Calculate hit location.
                                     if ( entity instanceof Tank &&
-                                         entity.getMovementType() ==
-                                         Entity.MovementType.HOVER &&
+                                         entity.getMovementMode() ==
+                                         IEntityMovementMode.HOVER &&
                                          0 < nextHex.terrainLevel(Terrains.WATER) ) {
                                         if ( 2 <= nextHex.terrainLevel(Terrains.WATER) ||
                                              target.isProne() ) {
@@ -3239,7 +3239,7 @@ implements Runnable, ConnectionHandler {
             if (entity instanceof Mech) {
                 if ( !lastPos.equals(curPos)
                     && game.getBoard().getHex(lastPos).containsTerrain(Terrains.FIRE)
-                    && ( step.getMovementType() != Entity.MOVE_JUMP
+                    && ( step.getMovementType() != IEntityMovementType.MOVE_JUMP
                          // Bug #828741 -- jumping bypasses fire, but not on the first step
                          //   getMpUsed -- total MP used to this step
                          //   getMp -- MP used in this step
@@ -3257,7 +3257,7 @@ implements Runnable, ConnectionHandler {
             if (!(entity instanceof Mech)) {
                 if ( game.getBoard().getHex(curPos).containsTerrain(Terrains.FIRE)
                     && !lastPos.equals(curPos)
-                    && step.getMovementType() != Entity.MOVE_JUMP ) {
+                    && step.getMovementType() != IEntityMovementType.MOVE_JUMP ) {
                         doFlamingDeath(entity);
                 }
             }
@@ -3266,8 +3266,8 @@ implements Runnable, ConnectionHandler {
                 checkExtremeGravityMovement(entity, step, curPos, cachedGravityLimit);
             }
             // check for minefields.
-            if ((!lastPos.equals(curPos) && (step.getMovementType() != Entity.MOVE_JUMP))
-                || ((overallMoveType == Entity.MOVE_JUMP) && (!i.hasMoreElements()))) {
+            if ((!lastPos.equals(curPos) && (step.getMovementType() != IEntityMovementType.MOVE_JUMP))
+                || ((overallMoveType == IEntityMovementType.MOVE_JUMP) && (!i.hasMoreElements()))) {
                 checkVibrabombs(entity, curPos, false, lastPos, curPos);
                 if (game.containsMinefield(curPos)) {
                     Enumeration minefields = game.getMinefields(curPos).elements();
@@ -3279,11 +3279,11 @@ implements Runnable, ConnectionHandler {
                             case (Minefield.TYPE_THUNDER) :
                             case (Minefield.TYPE_THUNDER_INFERNO) :
                             case (Minefield.TYPE_COMMAND_DETONATED) :
-                                if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
+                                if ((step.getMovementType() != IEntityMovementType.MOVE_JUMP) || (!i.hasMoreElements()))
                                     enterMinefield(entity, mf, curPos, curPos, true);
                                 break;
                             case (Minefield.TYPE_THUNDER_ACTIVE) :
-                                if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
+                                if ((step.getMovementType() != IEntityMovementType.MOVE_JUMP) || (!i.hasMoreElements()))
                                     enterMinefield(entity, mf, curPos, curPos, true);
                                 else
                                     enterMinefield(entity, mf, curPos, curPos, true, 2);
@@ -3359,7 +3359,7 @@ implements Runnable, ConnectionHandler {
             // set dry if appropriate
             //TODO: possibly make the locations local and set later
             doSetLocationsExposure(entity, curHex, isPavementStep,
-                                   step.getMovementType() == Entity.MOVE_JUMP);
+                                   step.getMovementType() == IEntityMovementType.MOVE_JUMP);
 
             // Handle loading units.
             if ( step.getType() == MovePath.STEP_LOAD ) {
@@ -3553,7 +3553,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // but the danger isn't over yet!  landing from a jump can be risky!
-        if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {
+        if (overallMoveType == IEntityMovementType.MOVE_JUMP && !entity.isMakingDfa()) {
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage();
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -4247,11 +4247,11 @@ implements Runnable, ConnectionHandler {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             // build up heat from movement
-            if (entity.moved == Entity.MOVE_WALK) {
+            if (entity.moved == IEntityMovementType.MOVE_WALK) {
                 entity.heatBuildup += 1;
-            } else if (entity.moved == Entity.MOVE_RUN || entity.moved == Entity.MOVE_SKID) {
+            } else if (entity.moved == IEntityMovementType.MOVE_RUN || entity.moved == IEntityMovementType.MOVE_SKID) {
                 entity.heatBuildup += 2;
-            } else if (entity.moved == Entity.MOVE_JUMP) {
+            } else if (entity.moved == IEntityMovementType.MOVE_JUMP) {
                 entity.heatBuildup += Math.max(3, entity.delta_distance);
             }
         }
@@ -4269,24 +4269,24 @@ implements Runnable, ConnectionHandler {
 
     public void doSetLocationsExposure(Entity entity, IHex hex, boolean isPavementStep, boolean isJump) {
         if ( hex.terrainLevel(Terrains.WATER) > 0
-            && entity.getMovementType() != Entity.MovementType.HOVER
+            && entity.getMovementMode() != IEntityMovementMode.HOVER
             && !isPavementStep &&!isJump) {
             if (entity instanceof Mech && !entity.isProne()
                 && hex.terrainLevel(Terrains.WATER) == 1) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getOptions().booleanOption("vacuum"))
-                        entity.setLocationStatus(loop, Entity.LOC_VACUUM);
-                    else entity.setLocationStatus(loop, Entity.LOC_NORMAL);
+                        entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
+                    else entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
                 }
-                entity.setLocationStatus(Mech.LOC_RLEG, Entity.LOC_WET);
-                entity.setLocationStatus(Mech.LOC_LLEG, Entity.LOC_WET);
+                entity.setLocationStatus(Mech.LOC_RLEG, ILocationExposureStatus.WET);
+                entity.setLocationStatus(Mech.LOC_LLEG, ILocationExposureStatus.WET);
                 phaseReport.append
                     (breachCheck(entity, Mech.LOC_RLEG, hex));
                 phaseReport.append
                     (breachCheck(entity, Mech.LOC_LLEG, hex));
                 if (entity instanceof QuadMech) {
-                    entity.setLocationStatus(Mech.LOC_RARM, Entity.LOC_WET);
-                    entity.setLocationStatus(Mech.LOC_LARM, Entity.LOC_WET);
+                    entity.setLocationStatus(Mech.LOC_RARM, ILocationExposureStatus.WET);
+                    entity.setLocationStatus(Mech.LOC_LARM, ILocationExposureStatus.WET);
                     phaseReport.append
                         (breachCheck(entity, Mech.LOC_RARM, hex));
                     phaseReport.append
@@ -4294,15 +4294,15 @@ implements Runnable, ConnectionHandler {
                 }
             } else {
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    entity.setLocationStatus(loop, Entity.LOC_WET);
+                    entity.setLocationStatus(loop, ILocationExposureStatus.WET);
                     phaseReport.append (breachCheck(entity, loop, hex));
                 }
             }
         }else {
             for (int loop = 0; loop < entity.locations(); loop++) {
                 if (game.getOptions().booleanOption("vacuum"))
-                    entity.setLocationStatus(loop, Entity.LOC_VACUUM);
-                else entity.setLocationStatus(loop, Entity.LOC_NORMAL);
+                    entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
+                else entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
             }
         }
 
@@ -4605,9 +4605,9 @@ implements Runnable, ConnectionHandler {
             entity.setPosition(dest);
             if (!entity.isDoomed()) {
                 game.removeEntity(entity.getId(),
-                        Entity.REMOVE_PUSHED);
+                        IEntityRemovalConditions.REMOVE_PUSHED);
                 send(createRemoveEntityPacket(entity.getId(),
-                                    Entity.REMOVE_PUSHED));
+                        IEntityRemovalConditions.REMOVE_PUSHED));
                 phaseReport.append("\n*** " ).append( entity.getDisplayName() ).append( " has been forced from the field. ***\n");
                 // TODO: remove passengers and swarmers.
             }
@@ -7595,7 +7595,7 @@ implements Runnable, ConnectionHandler {
             phaseReport.append( damageEntity(te, hit, damage) );
         }
 
-        if (te.getMovementType() == Entity.MovementType.BIPED || te.getMovementType() == Entity.MovementType.QUAD) {
+        if (te.getMovementMode() == IEntityMovementMode.BIPED || te.getMovementMode() == IEntityMovementMode.QUAD) {
             PilotingRollData kickPRD = new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was kicked");
             kickPRD.setCumulative(false); // see Bug# 811987 for more info
             game.addPSR(kickPRD);
@@ -8356,7 +8356,7 @@ implements Runnable, ConnectionHandler {
             // If target Entity underwater, damage is halved, round up
             // using getLocationStatus(1), because only Mechs and Protos
             // can be underwater, and 1 is CT for mechs and torso for Protos
-            if (te.getLocationStatus(1) == Entity.LOC_WET) {
+            if (te.getLocationStatus(1) == ILocationExposureStatus.WET) {
                 damage = (int)Math.ceil(damage * 0.5f);
             }
         }
@@ -9086,7 +9086,7 @@ implements Runnable, ConnectionHandler {
                 phaseReport.append("fails.\n");
                 // walking and running, 1 damage per MP used more than we would
                 // have normally
-                if (entity.moved == Entity.MOVE_WALK || entity.moved == Entity.MOVE_RUN) {
+                if (entity.moved == IEntityMovementType.MOVE_WALK || entity.moved == IEntityMovementType.MOVE_RUN) {
                     if (entity instanceof Mech) {
                         int j = entity.mpUsed;
                         int damage = 0;
@@ -9111,7 +9111,7 @@ implements Runnable, ConnectionHandler {
                     }
                 }
                 // jumping
-                if (entity.moved == Entity.MOVE_JUMP && entity instanceof Mech) {
+                if (entity.moved == IEntityMovementType.MOVE_JUMP && entity instanceof Mech) {
                     // low g, 1 damage for each hex jumped further than
                     // possible normally
                     if (game.getOptions().floatOption("gravity") < 1) {
@@ -9479,7 +9479,7 @@ implements Runnable, ConnectionHandler {
                 .append( "." );
 
             // was the section destroyed earlier this phase?
-            if (te.getInternal(hit) == Entity.ARMOR_DOOMED) {
+            if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
                 // cannot transfer a through armor crit if so
                 crits = 0;
             }
@@ -9561,7 +9561,7 @@ implements Runnable, ConnectionHandler {
                 } else {
                     // damage goes on to internal
                     int absorbed = Math.max(te.getArmor(hit), 0);
-                    te.setArmor(Entity.ARMOR_DESTROYED, hit);
+                    te.setArmor(IArmorState.ARMOR_DESTROYED, hit);
                     te.damageThisPhase += absorbed;
                     damage -= absorbed;
                     desc.append( " Armor destroyed," )
@@ -9784,7 +9784,7 @@ implements Runnable, ConnectionHandler {
                         // ((Tank)te).immobilize();
 
                         // Hovercraft reduced to 0MP over water sink
-                        if ( te.getMovementType() == Entity.MovementType.HOVER &&
+                        if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
                                 game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 ) {
                             desc.append( destroyEntity(te, "a watery grave", false) );
                         }
@@ -9796,7 +9796,7 @@ implements Runnable, ConnectionHandler {
                 ((Tank)te).immobilize();
                 // Does the hovercraft sink?
                 te_hex = game.getBoard().getHex( te.getPosition() );
-                if ( te.getMovementType() == Entity.MovementType.HOVER &&
+                if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
                      te_hex.terrainLevel(Terrains.WATER) > 0 ) {
                     desc.append( destroyEntity(te, "a watery grave", false) );
                 }
@@ -10075,7 +10075,7 @@ implements Runnable, ConnectionHandler {
                     // and does not occur when loading from a scenario.
                     if ( secondaryEffects ) {
                         IHex te_hex = game.getBoard().getHex( en.getPosition() );
-                        if ( en.getMovementType() == Entity.MovementType.HOVER
+                        if ( en.getMovementMode() == IEntityMovementMode.HOVER
                              && te_hex.terrainLevel(Terrains.WATER) > 0 ) {
                             desc.append( destroyEntity
                                          (en, "a watery grave", false) );
@@ -10397,7 +10397,7 @@ implements Runnable, ConnectionHandler {
             en.setFacing((en.getFacing() + (facing - 1)) % 6);
             if (fallHex.terrainLevel(Terrains.WATER) > 0) {
                 for (int loop=0; loop< en.locations();loop++){
-                    en.setLocationStatus(loop, Entity.LOC_WET);
+                    en.setLocationStatus(loop, ILocationExposureStatus.WET);
                 }
             }
             boolean exploded=false;
@@ -10665,7 +10665,7 @@ implements Runnable, ConnectionHandler {
             return "";
         }
         // This handles both water and vacuum breaches.
-        if (entity.getLocationStatus(loc) > Entity.LOC_NORMAL) {
+        if (entity.getLocationStatus(loc) > ILocationExposureStatus.NORMAL) {
             // Does the location have armor (check rear armor on Mek)
             // and is the check due to damage?
             int breachroll = 0;
@@ -10703,7 +10703,7 @@ implements Runnable, ConnectionHandler {
     private String breachLocation(Entity entity, int loc, IHex hex) {
         StringBuffer desc = new StringBuffer();
         if (entity.getInternal(loc) < 0 ||
-            entity.getLocationStatus(loc) < Entity.LOC_NORMAL) {
+            entity.getLocationStatus(loc) < ILocationExposureStatus.NORMAL) {
             //already destroyed or breached? don't bother
             return desc.toString();
         }
@@ -10764,7 +10764,7 @@ implements Runnable, ConnectionHandler {
             desc.append( destroyEntity(entity, "hull breach") );
             desc.append( "\n*** " )
                 .append( entity.getDisplayName() );
-            if (entity.getLocationStatus(loc) == Entity.LOC_WET)
+            if (entity.getLocationStatus(loc) == ILocationExposureStatus.WET)
                 desc.append( " Pilot Drowned! ***" );
             else desc.append( " Pilot died to explosive decompression! ***");
         }
@@ -10773,7 +10773,7 @@ implements Runnable, ConnectionHandler {
         // N.B. if we set the status before rolling water PSRs, we get a
         // "LEG DESTROYED" modifier; setting the status after gives a hip
         // actuator modifier.
-        entity.setLocationStatus(loc, Entity.LOC_BREACHED);
+        entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
 
         // Did the hull breach destroy the engine?
         if (entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT) +
@@ -10794,10 +10794,10 @@ implements Runnable, ConnectionHandler {
             return;
         }
         // mark armor, internal as doomed
-        en.setArmor(Entity.ARMOR_DOOMED, loc, false);
-        en.setInternal(Entity.ARMOR_DOOMED, loc);
+        en.setArmor(IArmorState.ARMOR_DOOMED, loc, false);
+        en.setInternal(IArmorState.ARMOR_DOOMED, loc);
         if (en.hasRearArmor(loc)) {
-            en.setArmor(Entity.ARMOR_DOOMED, loc, true);
+            en.setArmor(IArmorState.ARMOR_DOOMED, loc, true);
         }
         // equipment marked missing
         for (Enumeration i = en.getEquipment(); i.hasMoreElements();) {
@@ -10881,10 +10881,10 @@ implements Runnable, ConnectionHandler {
         StringBuffer sb = new StringBuffer();
 
         // The unit can suffer an ammo explosion after it has been destroyed.
-        int condition = Entity.REMOVE_SALVAGEABLE;
+        int condition = IEntityRemovalConditions.REMOVE_SALVAGEABLE;
         if ( !canSalvage ) {
             entity.setSalvage( canSalvage );
-            condition = Entity.REMOVE_DEVASTATED;
+            condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
         }
 
         // Ignore entities that are already destroyed.
@@ -11199,7 +11199,7 @@ implements Runnable, ConnectionHandler {
         entity.setSecondaryFacing(entity.getFacing());
         if (fallHex.terrainLevel(Terrains.WATER) > 0) {
             for (int loop=0; loop< entity.locations();loop++){
-                entity.setLocationStatus(loop, Entity.LOC_WET);
+                entity.setLocationStatus(loop, ILocationExposureStatus.WET);
             }
         }
 
@@ -11300,7 +11300,7 @@ implements Runnable, ConnectionHandler {
                     .append(m.getName()).append(" in the following round.\n");
                 }
                 else if (m.isDumping()) {
-                    if(entity.getLocationStatus(Mech.LOC_CT)==Entity.LOC_WET) {
+                    if(entity.getLocationStatus(Mech.LOC_CT)==ILocationExposureStatus.WET) {
                         phaseReport.append(entity.getDisplayName()).append(" would have dumped this turn, but is underwater.\n");
                         m.setDumping(false);
                     } else {
@@ -12322,8 +12322,8 @@ implements Runnable, ConnectionHandler {
 
             } // End added-Protomech
 
-            game.removeEntity(entityId, Entity.REMOVE_NEVER_JOINED);
-            send(createRemoveEntityPacket(entityId, Entity.REMOVE_NEVER_JOINED));
+            game.removeEntity(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
+            send(createRemoveEntityPacket(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
         }
     }
 
@@ -12594,7 +12594,7 @@ implements Runnable, ConnectionHandler {
      * @return  A <code>Packet</code> to be sent to clients.
      */
     private Packet createRemoveEntityPacket(int entityId) {
-        return this.createRemoveEntityPacket(entityId, Entity.REMOVE_SALVAGEABLE);
+        return this.createRemoveEntityPacket(entityId, IEntityRemovalConditions.REMOVE_SALVAGEABLE);
     }
 
     /**
@@ -12611,14 +12611,14 @@ implements Runnable, ConnectionHandler {
      * @return  A <code>Packet</code> to be sent to clients.
      */
     private Packet createRemoveEntityPacket(int entityId, int condition) {
-        if ( condition != Entity.REMOVE_UNKNOWN &&
-             condition != Entity.REMOVE_IN_RETREAT &&
-             condition != Entity.REMOVE_PUSHED &&
-             condition != Entity.REMOVE_SALVAGEABLE &&
-             condition != Entity.REMOVE_EJECTED &&
-             condition != Entity.REMOVE_CAPTURED &&
-             condition != Entity.REMOVE_DEVASTATED &&
-             condition != Entity.REMOVE_NEVER_JOINED ) {
+        if ( condition != IEntityRemovalConditions.REMOVE_UNKNOWN &&
+             condition != IEntityRemovalConditions.REMOVE_IN_RETREAT &&
+             condition != IEntityRemovalConditions.REMOVE_PUSHED &&
+             condition != IEntityRemovalConditions.REMOVE_SALVAGEABLE &&
+             condition != IEntityRemovalConditions.REMOVE_EJECTED &&
+             condition != IEntityRemovalConditions.REMOVE_CAPTURED &&
+             condition != IEntityRemovalConditions.REMOVE_DEVASTATED &&
+             condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED ) {
             throw new IllegalArgumentException( "Unknown unit condition: " +
                                                 condition );
         }
@@ -14075,12 +14075,12 @@ implements Runnable, ConnectionHandler {
         PilotingRollData rollTarget;
         if (game.getOptions().floatOption("gravity") != 1) {
             if (entity instanceof Mech) {
-                if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
+                if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_RUN)) {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We moved too fast, let's make PSR to see if we get damage
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     }
-                } else if (step.getMovementType() == Entity.MOVE_JUMP) {
+                } else if (step.getMovementType() == IEntityMovementType.MOVE_JUMP) {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We jumped too far, let's make PSR to see if we get damage
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
@@ -14092,8 +14092,8 @@ implements Runnable, ConnectionHandler {
                     }
                 }
             } else if (entity instanceof Tank) {
-                if (step.getMovementType() == Entity.MOVE_WALK
-                    || step.getMovementType() == Entity.MOVE_RUN) {
+                if (step.getMovementType() == IEntityMovementType.MOVE_WALK
+                    || step.getMovementType() == IEntityMovementType.MOVE_RUN) {
                     // For Tanks, we need to check if the tank had
                     // more MPs because it was moving along a road.
                     if ((step.getMpUsed() > cachedMaxMPExpenditure) && !step.isOnlyPavement()) {
@@ -14249,13 +14249,13 @@ implements Runnable, ConnectionHandler {
                         desc.append("Unfortunately, the pilot is not wearing a pressure suit.");
                         desc.append(destroyEntity(pilot, "explosive decompression", false, false));
                     } else {
-                        game.removeEntity( pilot.getId(), Entity.REMOVE_IN_RETREAT );
-                        send(createRemoveEntityPacket(pilot.getId(), Entity.REMOVE_IN_RETREAT) );
+                        game.removeEntity( pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT );
+                        send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT) );
                     }
                 }
                 if (game.getOptions().booleanOption("ejected_pilots_flee")) {
-                    game.removeEntity(pilot.getId(), Entity.REMOVE_IN_RETREAT);
-                    send(createRemoveEntityPacket(pilot.getId(), Entity.REMOVE_IN_RETREAT));
+                    game.removeEntity(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                    send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
                 }
             } // Pilot safely ejects.
 
@@ -14267,8 +14267,8 @@ implements Runnable, ConnectionHandler {
 
         // only remove the unit that ejected in the movement phase
         if (game.getPhase() == IGame.PHASE_MOVEMENT) {
-            game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
-            send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
+            game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED );
+            send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED));
         }
         return desc.toString();
     }
@@ -14363,8 +14363,8 @@ implements Runnable, ConnectionHandler {
                 }
                 // TODO : correctly handle bridges.
                 if (entity instanceof Tank &&
-                    (entity.getMovementType() == Entity.MovementType.TRACKED ||
-                     entity.getMovementType() == Entity.MovementType.WHEELED ) &&
+                    (entity.getMovementMode() == IEntityMovementMode.TRACKED ||
+                     entity.getMovementMode() == IEntityMovementMode.WHEELED ) &&
                     game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0) {
                         return true;
                 }

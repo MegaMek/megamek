@@ -21,6 +21,7 @@ package megamek.common.verifier;
 
 import megamek.common.EquipmentType;
 import megamek.common.Entity;
+import megamek.common.IEntityMovementMode;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.Mounted;
@@ -44,15 +45,15 @@ public class TestTank extends TestEntity
 
     public static int getTankEngineRating(Tank tank)
     {
-        switch(tank.getMovementType())
+        switch(tank.getMovementMode())
         {
-            case Entity.MovementType.TRACKED:
+            case IEntityMovementMode.TRACKED:
                 return (int) Math.round(tank.getOriginalWalkMP()*
                         tank.getWeight());
-            case Entity.MovementType.WHEELED:
+            case IEntityMovementMode.WHEELED:
                 return (int) Math.round(tank.getOriginalWalkMP()*
                         tank.getWeight())-20;
-            case Entity.MovementType.HOVER:
+            case IEntityMovementMode.HOVER:
                 int sf = 0;
                 if (tank.getWeight()<=10)
                     sf = 40;
@@ -143,7 +144,7 @@ public class TestTank extends TestEntity
 
     public float getTankWeightLifting()
     {
-        if (tank.getMovementType()==Entity.MovementType.HOVER)
+        if (tank.getMovementMode()==IEntityMovementMode.HOVER)
             return tank.getWeight() / 10.0f;
         return 0f;
     }

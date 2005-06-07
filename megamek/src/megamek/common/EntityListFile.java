@@ -36,13 +36,13 @@ public class EntityListFile {
      */
     private static String formatArmor( int points ) {
         // Is the armor destroyed or doomed?
-        if ( points == Entity.ARMOR_DOOMED ||
-             points == Entity.ARMOR_DESTROYED ) {
+        if ( points == IArmorState.ARMOR_DOOMED ||
+             points == IArmorState.ARMOR_DESTROYED ) {
             return "Destroyed";
         }
 
         // Was there armor to begin with?
-        if ( points == Entity.ARMOR_NA ) {
+        if ( points == IArmorState.ARMOR_NA ) {
             return "N/A";
         }
 
@@ -124,7 +124,7 @@ public class EntityListFile {
         for ( int loc = 0; loc < entity.locations(); loc++ ) {
 
             // Record destroyed locations.
-            if ( entity.getOInternal(loc) != Entity.ARMOR_NA &&
+            if ( entity.getOInternal(loc) != IArmorState.ARMOR_NA &&
                  entity.getInternal(loc) <= 0 ) {
                 isDestroyed = true;
             }
@@ -374,7 +374,7 @@ public class EntityListFile {
             output.write( "\" model=\"" );
             output.write( entity.getModel() );
             output.write( "\" type=\"" );
-            output.write( entity.getMovementTypeAsString() );
+            output.write( entity.getMovementModeAsString() );
             output.write( "\">" );
             output.write( CommonConstants.NL );
 

@@ -243,7 +243,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         // attacker movement
-        toHit.append(Compute.getAttackerMovementModifier(game, attackerId, Entity.MOVE_JUMP));
+        toHit.append(Compute.getAttackerMovementModifier(game, attackerId, IEntityMovementType.MOVE_JUMP));
 
         // target movement
         toHit.append(Compute.getTargetMovementModifier(game, targetId));

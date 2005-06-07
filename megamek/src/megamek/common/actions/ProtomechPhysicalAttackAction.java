@@ -19,6 +19,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.ILocationExposureStatus;
 import megamek.common.Protomech;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -48,7 +49,7 @@ public class ProtomechPhysicalAttackAction
             toReturn = 1;
         } else toReturn = 2;
         // underwater damage is half, round up (see bug 1110692)
-        if (entity.getLocationStatus(Protomech.LOC_TORSO) == Entity.LOC_WET) {
+        if (entity.getLocationStatus(Protomech.LOC_TORSO) == ILocationExposureStatus.WET) {
             toReturn = (int)Math.ceil(toReturn * 0.5f);
         }
         return toReturn;

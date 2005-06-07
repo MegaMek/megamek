@@ -30,56 +30,12 @@ import megamek.common.util.StringUtil;
 public abstract class Entity
     implements Serializable, Transporter, Targetable, RoundUpdated
 {
-    public interface MovementType {
-      public static final int NONE    = 0; //Future expansion. Turrets?
-      public static final int BIPED   = 1;
-      public static final int QUAD    = 2;
-      public static final int TRACKED = 3;
-      public static final int WHEELED = 4;
-      public static final int HOVER   = 5;
-      public static final int VTOL    = 6;
-    }
-
-    // Off-Board Directions
-    public static final int NORTH                 = 0;
-    public static final int SOUTH                 = 1;
-    public static final int EAST                  = 2;
-    public static final int WEST                  = 3;
-
-    public static final int REMOVE_UNKNOWN        = 0x0000;
-    public static final int REMOVE_IN_RETREAT     = 0x0100;
-    public static final int REMOVE_PUSHED         = 0x0110;
-    public static final int REMOVE_CAPTURED       = 0x0120;
-    public static final int REMOVE_SALVAGEABLE    = 0x0200;
-    public static final int REMOVE_EJECTED        = 0x0210;
-    public static final int REMOVE_DEVASTATED     = 0x0400;
-    public static final int REMOVE_NEVER_JOINED   = 0x0800;
-
     public static final int        NONE                = -1;
-
-    public static final int        MOVE_SKID           = -2;
-    public static final int        MOVE_ILLEGAL        = -1;
-    public static final int        MOVE_NONE           = 0;
-    public static final int        MOVE_WALK           = 1;
-    public static final int        MOVE_RUN            = 2;
-    public static final int        MOVE_JUMP           = 3;
-
-    public static final int        ARMOR_NA            = -1;
-    public static final int        ARMOR_DOOMED        = -2;
-    public static final int        ARMOR_DESTROYED     = -3;
 
     public static final int        LOC_NONE            = -1;
     public static final int        LOC_DESTROYED       = -2;
 
-    public static final int        LOC_BREACHED        = -1;
-    public static final int        LOC_NORMAL          = 0;
-    public static final int        LOC_VACUUM          = 1;
-    public static final int        LOC_WET             = 2;
-
     public static final int        MAX_C3_NODES        = 12;
-
-    // The maximum length of the icon name.
-    public static final int        ICON_NAME_MAX_LENGTH = 52;
 
     protected transient IGame    game;
 
@@ -136,7 +92,7 @@ public abstract class Entity
     public int                  heatBuildup = 0;
     public int                  delta_distance = 0;
     public int                  mpUsed = 0;
-    public int                  moved = MOVE_NONE;
+    public int                  moved = IEntityMovementType.MOVE_NONE;
     public boolean              gotPavementBonus = false;
     public boolean              hitThisRoundByAntiTSM = false;
 
@@ -154,7 +110,7 @@ public abstract class Entity
     private boolean             clearingMinefield = false;
     private int                 killerId = Entity.NONE;
     private int                 offBoardDistance = 0;
-    private int                 offBoardDirection = Entity.NONE;
+    private int                 offBoardDirection = IOffBoardDirections.NONE;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -184,7 +140,7 @@ public abstract class Entity
 
     protected CriticalSlot[][]  crits; // [loc][slot]
 
-    protected int               movementType  = MovementType.NONE;
+    protected int               movementMode  = IEntityMovementMode.NONE;
 
     /**
      * The components of this entity that can transport other entities.
@@ -226,7 +182,7 @@ public abstract class Entity
 
     /** The removal condition is set when the entitiy is removed from the game.
      */
-    private int removalCondition = REMOVE_UNKNOWN;
+    private int removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
 
     /**
      * The round this unit will be deployed
@@ -488,7 +444,7 @@ public abstract class Entity
     public void setDoomed(boolean doomed) {
         // Doomed entities aren't in retreat.
         if ( doomed ) {
-            this.setRemovalCondition( Entity.REMOVE_SALVAGEABLE );
+            this.setRemovalCondition( IEntityRemovalConditions.REMOVE_SALVAGEABLE );
         }
         this.doomed = doomed;
     }
@@ -1304,7 +1260,7 @@ public abstract class Entity
     * Is this location destroyed or breached?
     */
     public boolean isLocationBad(int loc) {
-        return getInternal(loc) == ARMOR_DESTROYED;
+        return getInternal(loc) == IArmorState.ARMOR_DESTROYED;
     }
 
     /**
@@ -1320,7 +1276,7 @@ public abstract class Entity
      * @param status the status to set
      */
     public void setLocationStatus(int loc, int status) {
-        if (exposure[loc] > LOC_BREACHED) { //can't change BREACHED status
+        if (exposure[loc] > ILocationExposureStatus.BREACHED) { //can't change BREACHED status
             exposure[loc] = status;
         }
     }
@@ -1358,9 +1314,9 @@ public abstract class Entity
      * string.
      */
     public static String armorStringFor(int value) {
-        if (value == ARMOR_NA) {
+        if (value == IArmorState.ARMOR_NA) {
             return "N/A";
-        } else if (value == ARMOR_DOOMED || value == ARMOR_DESTROYED) {
+        } else if (value == IArmorState.ARMOR_DOOMED || value == IArmorState.ARMOR_DESTROYED) {
             return "***";
         } else {
             return Integer.toString(value);
@@ -2399,7 +2355,7 @@ public abstract class Entity
         done = false;
         delta_distance = 0;
         mpUsed = 0;
-        moved = Entity.MOVE_NONE;
+        moved = IEntityMovementType.MOVE_NONE;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
         hitBySwarmsEntity = new Vector();
@@ -2455,10 +2411,10 @@ public abstract class Entity
 
         // destroy armor/internals if the section was removed
         for (int i = 0; i < locations(); i++) {
-            if (getInternal(i) == Entity.ARMOR_DOOMED) {
-                setArmor(Entity.ARMOR_DESTROYED, i);
-                setArmor(Entity.ARMOR_DESTROYED, i, true);
-                setInternal(Entity.ARMOR_DESTROYED, i);
+            if (getInternal(i) == IArmorState.ARMOR_DOOMED) {
+                setArmor(IArmorState.ARMOR_DESTROYED, i);
+                setArmor(IArmorState.ARMOR_DESTROYED, i, true);
+                setInternal(IArmorState.ARMOR_DESTROYED, i);
             }
         }
     }
@@ -2674,27 +2630,27 @@ public abstract class Entity
     }
 
     /**
-     * Get the movement type of the entity
+     * Get the movement mode of the entity
      */
-      public  int getMovementType() {
-        return movementType;
+      public  int getMovementMode() {
+        return movementMode;
       }
 
-    public String getMovementTypeAsString() {
-        switch (getMovementType()) {
-        case Entity.MovementType.NONE:
+    public String getMovementModeAsString() {
+        switch (getMovementMode()) {
+        case IEntityMovementMode.NONE:
             return "None";
-        case Entity.MovementType.BIPED:
+        case IEntityMovementMode.BIPED:
             return "Biped";
-        case Entity.MovementType.QUAD:
+        case IEntityMovementMode.QUAD:
             return "Quad";
-        case Entity.MovementType.TRACKED:
+        case IEntityMovementMode.TRACKED:
             return "Tracked";
-        case Entity.MovementType.WHEELED:
+        case IEntityMovementMode.WHEELED:
             return "Wheeled";
-        case Entity.MovementType.HOVER:
+        case IEntityMovementMode.HOVER:
             return "Hover";
-        case Entity.MovementType.VTOL:
+        case IEntityMovementMode.VTOL:
         	return "VTOL";
         default:
             return "ERROR";
@@ -2704,19 +2660,19 @@ public abstract class Entity
     /**
      * Set the movement type of the entity
      */
-      public void setMovementType(int movementType) {
-        this.movementType = movementType;
+      public void setMovementMode(int movementMode) {
+        this.movementMode = movementMode;
       }
 
     /**
      * Helper function to determine if a entity is a biped
      */
-      public boolean entityIsBiped() { return (getMovementType() == Entity.MovementType.BIPED); }
+      public boolean entityIsBiped() { return (getMovementMode() == IEntityMovementMode.BIPED); }
 
     /**
      * Helper function to determine if a entity is a quad
      */
-      public boolean entityIsQuad() { return (getMovementType() == Entity.MovementType.QUAD); }
+      public boolean entityIsQuad() { return (getMovementMode() == IEntityMovementMode.QUAD); }
 
     /**
      * Returns true is the entity needs a roll to stand up
@@ -2807,7 +2763,7 @@ public abstract class Entity
     public PilotingRollData checkRunningWithDamage(int overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll();
 
-        if (overallMoveType == Entity.MOVE_RUN
+        if (overallMoveType == IEntityMovementType.MOVE_RUN
             && !isProne()
             && (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                              Mech.SYSTEM_GYRO,
@@ -2846,13 +2802,13 @@ public abstract class Entity
     public PilotingRollData checkMovedTooFast(MoveStep step) {
         PilotingRollData roll = getBasePilotingRoll();
         switch (step.getMovementType()) {
-            case Entity.MOVE_WALK:
-            case Entity.MOVE_RUN:
+            case IEntityMovementType.MOVE_WALK:
+            case IEntityMovementType.MOVE_RUN:
                 if (step.getMpUsed() > (int)Math.ceil(getOriginalWalkMP() * 1.5)) {
                     roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
                 } else roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity did not use more MPs walking/running than possible at 1G");
                 break;
-            case Entity.MOVE_JUMP:
+            case IEntityMovementType.MOVE_JUMP:
                 if (step.getMpUsed() > getOriginalJumpMP()) {
                     roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
                 } else roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity did not use more MPs jumping than possible at 1G");
@@ -2874,7 +2830,7 @@ public abstract class Entity
 
         // TODO: add check for elevation of pavement, road,
         //       or bridge matches entity elevation.
-        if (moveType != Entity.MOVE_JUMP
+        if (moveType != IEntityMovementType.MOVE_JUMP
             && prevHex != null
             /* Bug 754610: Revert fix for bug 702735.
                && ( prevHex.contains(Terrain.PAVEMENT) ||
@@ -2882,7 +2838,7 @@ public abstract class Entity
                prevHex.contains(Terrain.BRIDGE) )
             */
             && prevStep.isPavementStep()
-            && overallMoveType == Entity.MOVE_RUN
+            && overallMoveType == IEntityMovementType.MOVE_RUN
             && prevFacing != curFacing
             && !lastPos.equals(curPos)
             && !isInfantry
@@ -2915,7 +2871,7 @@ public abstract class Entity
         PilotingRollData roll = getBasePilotingRoll();
 
         if (!lastPos.equals(curPos)
-            && step.getMovementType() != Entity.MOVE_JUMP
+            && step.getMovementType() != IEntityMovementType.MOVE_JUMP
             && curHex.terrainLevel(Terrains.RUBBLE) > 0
             && this instanceof Mech) {
             // append the reason modifier
@@ -2936,10 +2892,10 @@ public abstract class Entity
         PilotingRollData roll = getBasePilotingRoll();
 
         if (!lastPos.equals(curPos)
-            && step.getMovementType() != Entity.MOVE_JUMP
+            && step.getMovementType() != IEntityMovementType.MOVE_JUMP
             && curHex.containsTerrain(Terrains.SWAMP)) {
             // non-hovers need a simple PSR
-            if ((this.getMovementType() != MovementType.HOVER) && (this.getMovementType() != MovementType.VTOL)) {
+            if ((this.getMovementMode() != IEntityMovementMode.HOVER) && (this.getMovementMode() != IEntityMovementMode.VTOL)) {
                 // append the reason modifier
                 roll.append(new PilotingRollData(getId(), 0, "entering Swamp"));
             // hovers don't care about swamp    
@@ -2961,9 +2917,9 @@ public abstract class Entity
                                            boolean isPavementStep) {
         if (curHex.terrainLevel(Terrains.WATER) > 0
             && !lastPos.equals(curPos)
-            && step.getMovementType() != Entity.MOVE_JUMP
-            && getMovementType() != Entity.MovementType.HOVER
-            && getMovementType() != Entity.MovementType.VTOL
+            && step.getMovementType() != IEntityMovementType.MOVE_JUMP
+            && getMovementMode() != IEntityMovementMode.HOVER
+            && getMovementMode() != IEntityMovementMode.VTOL
             && !isPavementStep) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER));
         } else {
@@ -3026,7 +2982,7 @@ public abstract class Entity
                                            IHex prevHex) {
 
         if ( !lastPos.equals(curPos) &&
-             step.getMovementType() != Entity.MOVE_JUMP &&
+             step.getMovementType() != IEntityMovementType.MOVE_JUMP &&
              ( curHex.containsTerrain(Terrains.BUILDING) ||
                (prevHex != null && prevHex.containsTerrain(Terrains.BUILDING)) ) &&
              !(this instanceof Infantry) ) {
@@ -3564,7 +3520,7 @@ public abstract class Entity
     public void setSalvage( boolean canSalvage ) {
         // Unsalvageable entities aren't in retreat or salvageable.
         if ( !canSalvage ) {
-            this.setRemovalCondition( Entity.REMOVE_DEVASTATED );
+            this.setRemovalCondition( IEntityRemovalConditions.REMOVE_DEVASTATED );
         }
         this.salvageable = canSalvage;
     }
@@ -3937,16 +3893,16 @@ public abstract class Entity
             throw new IllegalArgumentException
                 ( "negative number given for distance offboard" );
         }
-        if (direction < Entity.NONE ||
-            direction > Entity.WEST) {
+        if (direction < IOffBoardDirections.NONE ||
+            direction > IOffBoardDirections.WEST) {
             throw new IllegalArgumentException
                 ( "bad direction" );
         }
-        if (0 == distance && Entity.NONE != direction) {
+        if (0 == distance && IOffBoardDirections.NONE != direction) {
             throw new IllegalArgumentException
                 ( "onboard unit was given an offboard direction" );
         }
-        if (0 != distance && Entity.NONE == direction) {
+        if (0 != distance && IOffBoardDirections.NONE == direction) {
             throw new IllegalArgumentException
                 ( "offboard unit was not given an offboard direction" );
         }
@@ -4001,16 +3957,16 @@ public abstract class Entity
         // N.B. 17 / 2 = 8, but the middle of 1..17 is 9, so we
         //      add a bit (because 17 % 2 == 1 and 16 % 2 == 0).
         switch (offBoardDirection) {
-        case Entity.NONE:
+        case IOffBoardDirections.NONE:
             break;
-        case Entity.NORTH:
+        case IOffBoardDirections.NORTH:
             setPosition( new Coords( game.getBoard().getWidth() / 2
                                      + game.getBoard().getWidth() % 2,
                                      -getOffBoardDistance() ) );
             setFacing(3);
             setDeployed( true );
             break;
-        case Entity.SOUTH:
+        case IOffBoardDirections.SOUTH:
             setPosition( new Coords( game.getBoard().getWidth() / 2
                                      + game.getBoard().getWidth() % 2,
                                      game.getBoard().getHeight()
@@ -4018,7 +3974,7 @@ public abstract class Entity
             setFacing(0);
             setDeployed( true );
             break;
-        case Entity.EAST:
+        case IOffBoardDirections.EAST:
             setPosition( new Coords( game.getBoard().getWidth()
                                      + getOffBoardDistance(),
                                      game.getBoard().getHeight() / 2
@@ -4026,7 +3982,7 @@ public abstract class Entity
             setFacing(5);
             setDeployed( true );
             break;
-        case Entity.WEST:
+        case IOffBoardDirections.WEST:
             setPosition( new Coords( -getOffBoardDistance(),
                                      game.getBoard().getHeight() / 2
                                      + game.getBoard().getHeight() % 2 ) );
@@ -4132,10 +4088,10 @@ public abstract class Entity
     public String destroy(String reason, boolean survivable, boolean canSalvage) {
         StringBuffer sb = new StringBuffer();
         
-        int condition = Entity.REMOVE_SALVAGEABLE;
+        int condition = IEntityRemovalConditions.REMOVE_SALVAGEABLE;
         if ( !canSalvage ) {
             setSalvage( canSalvage );
-            condition = Entity.REMOVE_DEVASTATED;
+            condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
         }
         
         if (isDoomed() || isDestroyed()) { 

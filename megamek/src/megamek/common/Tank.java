@@ -148,7 +148,7 @@ public class Tank
      * Hovercraft move on the surface of the water
      */
     public int elevationOccupied(IHex hex) {
-       if (movementType == MovementType.HOVER && hex.containsTerrain(Terrains.WATER)) {
+       if (movementMode == IEntityMovementMode.HOVER && hex.containsTerrain(Terrains.WATER)) {
            return hex.surface();
        } else {
            return hex.floor();
@@ -159,13 +159,13 @@ public class Tank
      * Tanks have all sorts of prohibited terrain.
      */
     public boolean isHexProhibited(IHex hex) {
-        switch(movementType) {
-            case MovementType.TRACKED :
+        switch(movementMode) {
+            case IEntityMovementMode.TRACKED :
                 return hex.terrainLevel(Terrains.WOODS) > 1 || hex.terrainLevel(Terrains.WATER) > 0;
-            case MovementType.WHEELED :
+            case IEntityMovementMode.WHEELED :
                 return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH) ||
                     hex.terrainLevel(Terrains.WATER) > 0 || hex.containsTerrain(Terrains.RUBBLE);
-            case MovementType.HOVER :
+            case IEntityMovementMode.HOVER :
                 return hex.containsTerrain(Terrains.WOODS);
             default :
                 return false;
@@ -269,15 +269,15 @@ public class Tank
      */
     public String getMovementString(int mtype) {
         switch(mtype) {
-        case MOVE_SKID :
+        case IEntityMovementType.MOVE_SKID :
             return "Skidded";
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "None";
-        case MOVE_WALK :
+        case IEntityMovementType.MOVE_WALK :
             return "Cruised";
-        case MOVE_RUN :
+        case IEntityMovementType.MOVE_RUN :
             return "Flanked";
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "Jumped";
         default :
             return "Unknown!";
@@ -290,15 +290,15 @@ public class Tank
      */
     public String getMovementAbbr(int mtype) {
         switch(mtype) {
-        case MOVE_SKID :
+        case IEntityMovementType.MOVE_SKID :
             return "S";
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "N";
-        case MOVE_WALK :
+        case IEntityMovementType.MOVE_WALK :
             return "C";
-        case MOVE_RUN :
+        case IEntityMovementType.MOVE_RUN :
             return "F";
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "J";
         default :
             return "?";
@@ -375,7 +375,7 @@ public class Tank
             case 4:
                 return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
             case 5:
-                if (bSide || getMovementType() == Entity.MovementType.HOVER) {
+                if (bSide || getMovementMode() == IEntityMovementMode.HOVER) {
                     return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
                 else {
@@ -386,7 +386,7 @@ public class Tank
             case 8:
                 return new HitData(nArmorLoc);
             case 9:
-                if (bSide && getMovementType() == Entity.MovementType.HOVER) {
+                if (bSide && getMovementMode() == IEntityMovementMode.HOVER) {
                     return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
                 else {
@@ -470,14 +470,14 @@ public class Tank
         dbv += dEquipmentBV;
         
         double typeModifier;
-        switch (getMovementType()) {
-            case Entity.MovementType.TRACKED:
+        switch (getMovementMode()) {
+            case IEntityMovementMode.TRACKED:
                 typeModifier = 0.8;
                 break;
-            case Entity.MovementType.WHEELED:
+            case IEntityMovementMode.WHEELED:
                 typeModifier = 0.7;
                 break;
-            case Entity.MovementType.HOVER:
+            case IEntityMovementMode.HOVER:
                 typeModifier = 0.6;
                 break;
             // vtol and naval to come
@@ -640,7 +640,7 @@ public class Tank
         int nInternal = (int)Math.ceil(weight / 10.0);
 
         // No internals in the body location.
-        this.initializeInternal( Entity.ARMOR_NA, LOC_BODY );
+        this.initializeInternal( IArmorState.ARMOR_NA, LOC_BODY );
 
         for (int x = 1; x < locations(); x++) {
             initializeInternal(nInternal, x);
@@ -668,7 +668,7 @@ public class Tank
         while ( retval && loc < Tank.LOC_TURRET ) {
             int loc_is = this.getInternal( loc );
             loc++;
-            retval = (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
+            retval = (loc_is != IArmorState.ARMOR_DOOMED) && (loc_is != IArmorState.ARMOR_DESTROYED);
         }
         return retval;
     }
@@ -687,7 +687,7 @@ public class Tank
 
     public boolean canCharge() {
         // Tanks can charge, except Hovers when the option is set
-        return super.canCharge() && !(game.getOptions().booleanOption("no_hover_charge") && MovementType.HOVER==getMovementType());
+        return super.canCharge() && !(game.getOptions().booleanOption("no_hover_charge") && IEntityMovementMode.HOVER==getMovementMode());
     };
 
     public boolean canDFA() {

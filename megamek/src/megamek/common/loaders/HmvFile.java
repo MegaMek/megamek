@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.IEntityMovementMode;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
@@ -351,10 +352,10 @@ public class HmvFile
                       getSuspensionFactor(roundedInternalStructure, movementType);
                   tank.setWeight((engineRating + suspensionFactor) / cruiseMP);
 
-                  tank.setMovementType(
-                                       movementType == HMVMovementType.HOVER ? Entity.MovementType.HOVER :
-                                       movementType == HMVMovementType.WHEELED ? Entity.MovementType.WHEELED :
-                                       Entity.MovementType.TRACKED);
+                  tank.setMovementMode(
+                                       movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER :
+                                       movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED :
+                                       IEntityMovementMode.TRACKED);
 
                   tank.setOriginalWalkMP(cruiseMP);
                   tank.setOriginalJumpMP(jumpMP);

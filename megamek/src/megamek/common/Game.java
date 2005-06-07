@@ -909,8 +909,8 @@ public class Game implements Serializable, IGame
 
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            if ( entity.getRemovalCondition() == Entity.REMOVE_SALVAGEABLE ||
-                 entity.getRemovalCondition() == Entity.REMOVE_EJECTED ) {
+            if ( entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE ||
+                 entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED ) {
                 graveyard.addElement(entity);
             }
         }
@@ -925,9 +925,9 @@ public class Game implements Serializable, IGame
         Vector wrecks = new Vector();
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            if ( entity.getRemovalCondition() == Entity.REMOVE_SALVAGEABLE ||
-                 entity.getRemovalCondition() == Entity.REMOVE_EJECTED ||
-                 entity.getRemovalCondition() == Entity.REMOVE_DEVASTATED ) {
+            if ( entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE ||
+                 entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED ||
+                 entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED ) {
                 wrecks.addElement(entity);
             }
         }
@@ -943,9 +943,9 @@ public class Game implements Serializable, IGame
 
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            if ( entity.getRemovalCondition() == Entity.REMOVE_IN_RETREAT ||
-                 entity.getRemovalCondition() == Entity.REMOVE_CAPTURED ||
-                 entity.getRemovalCondition() == Entity.REMOVE_PUSHED ) {
+            if ( entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT ||
+                 entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED ||
+                 entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED ) {
                 sanctuary.addElement(entity);
             }
         }
@@ -961,7 +961,7 @@ public class Game implements Serializable, IGame
 
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            if (entity.getRemovalCondition() == Entity.REMOVE_DEVASTATED) {
+            if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED) {
                 smithereens.addElement(entity);
             }
         }
@@ -1089,7 +1089,7 @@ public class Game implements Serializable, IGame
         toRemove.setRemovalCondition(condition);
         
         // do not keep never-joined entities
-        if (vOutOfGame != null && condition != Entity.REMOVE_NEVER_JOINED) {
+        if (vOutOfGame != null && condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED) {
             vOutOfGame.addElement(toRemove);
         }
         
@@ -1311,7 +1311,7 @@ public class Game implements Serializable, IGame
      * out every phase.
      */
     public void moveToGraveyard(int id) {
-        this.removeEntity( id, Entity.REMOVE_SALVAGEABLE );
+        this.removeEntity( id, IEntityRemovalConditions.REMOVE_SALVAGEABLE );
     }
 
     /**

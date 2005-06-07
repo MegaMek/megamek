@@ -24,6 +24,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IEntityMovementType;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -181,7 +182,7 @@ public class MoveOption extends MovePath implements Cloneable {
         super.addStep(step_type);
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
-        if (current.getMovementType() == Entity.MOVE_RUN
+        if (current.getMovementType() == IEntityMovementType.MOVE_RUN
             && (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0
                 || entity.hasHipCrit())) {
             this.getStep(0).setDanger(true);
@@ -189,7 +190,7 @@ public class MoveOption extends MovePath implements Cloneable {
         }
         if (current.isDanger()) {
             if (getCEntity().base_psr_odds < .1) {
-                current.setMovementType(Entity.MOVE_ILLEGAL);
+                current.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
             } else {
                 double cur_threat =
                     getCEntity().getThreatUtility(.2 * this.entity.getWeight(), ToHitData.SIDE_REAR)
@@ -208,13 +209,13 @@ public class MoveOption extends MovePath implements Cloneable {
         int heat = last.getTotalHeat();
         int move = 0;
         switch (last.getMovementType()) {
-            case Entity.MOVE_WALK :
+            case IEntityMovementType.MOVE_WALK :
                 move = 1;
                 break;
-            case Entity.MOVE_RUN :
+            case IEntityMovementType.MOVE_RUN :
                 move = 2;
                 break;
-            case Entity.MOVE_JUMP :
+            case IEntityMovementType.MOVE_JUMP :
                 move = Math.max(3, last.getMpUsed());
                 break;
             default :
@@ -228,7 +229,7 @@ public class MoveOption extends MovePath implements Cloneable {
         boolean isInfantry = (getEntity() instanceof Infantry);
         boolean isProtomech = (getEntity() instanceof Protomech);
         boolean isClan = getEntity().isClan();
-        if (last == null || last.getMovementType() == Entity.MOVE_ILLEGAL) {
+        if (last == null || last.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
             return false;
         }
         if (last.getType() != STEP_FORWARDS

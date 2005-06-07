@@ -90,7 +90,7 @@ public abstract class Mech
         
         for (int i = 0; i < locations(); i++) {
             if (!hasRearArmor(i)) {
-              initializeRearArmor(ARMOR_NA, i);
+              initializeRearArmor(IArmorState.ARMOR_NA, i);
             }
         }
 
@@ -812,15 +812,15 @@ public abstract class Mech
      */
     public String getMovementString(int mtype) {
         switch(mtype) {
-        case MOVE_SKID :
+        case IEntityMovementType.MOVE_SKID :
             return "Skidded";
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "None";
-        case MOVE_WALK :
+        case IEntityMovementType.MOVE_WALK :
             return "Walked";
-        case MOVE_RUN :
+        case IEntityMovementType.MOVE_RUN :
             return "Ran";
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "Jumped";
         default :
             return "Unknown!";
@@ -833,15 +833,15 @@ public abstract class Mech
      */
     public String getMovementAbbr(int mtype) {
         switch(mtype) {
-        case MOVE_SKID :
+        case IEntityMovementType.MOVE_SKID :
             return "S";
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "N";
-        case MOVE_WALK :
+        case IEntityMovementType.MOVE_WALK :
             return "W";
-        case MOVE_RUN :
+        case IEntityMovementType.MOVE_RUN :
             return "R";
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "J";
         default :
             return "?";
@@ -1952,7 +1952,7 @@ public abstract class Mech
         // and its CT internals are not gone.
         int loc_is = this.getInternal( Mech.LOC_CT );
         return this.isSalvage() &&
-            (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
+            (loc_is != IArmorState.ARMOR_DOOMED) && (loc_is != IArmorState.ARMOR_DESTROYED);
     }
 
     public boolean canCharge() {

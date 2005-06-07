@@ -151,25 +151,25 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
                 // set all the player's offboard arty units to be behind the newly
                 // selected home edge.
                 if (client.game.getOptions().booleanOption("set_arty_player_homeedge")) { //$NON-NLS-1$
-                    int direction = -1;
+                    int direction = IOffBoardDirections.NONE;
                     switch(i) {
                         case 0:
                             break;
                         case 1:
                         case 2:
                         case 3:
-                            direction = Entity.NORTH;
+                            direction = IOffBoardDirections.NORTH;
                             break;
                         case 4:
-                            direction = Entity.EAST;
+                            direction = IOffBoardDirections.EAST;
                             break;
                         case 5:
                         case 6:
                         case 7:
-                            direction = Entity.SOUTH;
+                            direction = IOffBoardDirections.SOUTH;
                             break;
                         case 8:
-                            direction = Entity.WEST;
+                            direction = IOffBoardDirections.WEST;
                             break;
                     }
                     Enumeration thisPlayerArtyUnits = client.game.getSelectedEntities
@@ -182,8 +182,8 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
                         } );
                     while (thisPlayerArtyUnits.hasMoreElements()) {
                         Entity entity = (Entity) thisPlayerArtyUnits.nextElement();
-                        if (entity.getOffBoardDirection() != Entity.NONE) {
-                            if (direction > -1) {
+                        if (entity.getOffBoardDirection() != IOffBoardDirections.NONE) {
+                            if (direction > IOffBoardDirections.NONE) {
                                 entity.setOffBoard(entity.getOffBoardDistance(), direction);
                             }
                         }

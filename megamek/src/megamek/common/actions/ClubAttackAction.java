@@ -61,7 +61,7 @@ public class ClubAttackAction extends AbstractAttackAction {
         if (clubLocation == Entity.LOC_NONE) {
             clubLocation = Mech.LOC_RARM;
         }
-        if (entity.getLocationStatus(clubLocation) == Entity.LOC_WET) {
+        if (entity.getLocationStatus(clubLocation) == ILocationExposureStatus.WET) {
             nDamage /= 2.0f;
         }
 

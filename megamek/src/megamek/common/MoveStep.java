@@ -285,7 +285,7 @@ public class MoveStep implements Serializable {
                 // check for water
                 if (!isPavementStep()
                     && game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0
-                    && entity.getMovementType() != Entity.MovementType.HOVER && !(entity instanceof VTOL)) {
+                    && entity.getMovementMode() != IEntityMovementMode.HOVER && !(entity instanceof VTOL)) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -572,7 +572,7 @@ public class MoveStep implements Serializable {
     public boolean isLegal() {
         // A step is legal if it's static movement type is not illegal,
         // and it is either a valid end position, or not an end position.
-        return ( movementType != Entity.MOVE_ILLEGAL
+        return ( movementType != IEntityMovementType.MOVE_ILLEGAL
                  && (isLegalEndPos() || !isEndPos) );
     }
 
@@ -587,7 +587,7 @@ public class MoveStep implements Serializable {
         // If this step's position is the end of the path, and it is not
         // a valid end postion, then the movement type is "illegal".
         if (!isLegalEndPos() && isEndPos) {
-            moveType = Entity.MOVE_ILLEGAL;
+            moveType = IEntityMovementType.MOVE_ILLEGAL;
         }
         return moveType;
     }
@@ -638,7 +638,7 @@ public class MoveStep implements Serializable {
      */
     public boolean setEndPos( boolean isEnd ) {
         // A step that is always illegal is always the end of the path.
-        if ( Entity.MOVE_ILLEGAL == movementType ) isEnd = true;
+        if ( IEntityMovementType.MOVE_ILLEGAL == movementType ) isEnd = true;
 
         // If this step didn't already know it's status as the ending
         // position of a path, then there are more updates to do.
@@ -840,11 +840,11 @@ public class MoveStep implements Serializable {
         }
 
         // guilty until proven innocent
-        movementType = Entity.MOVE_ILLEGAL;
+        movementType = IEntityMovementType.MOVE_ILLEGAL;
 
         // check for ejection (always legal?)
         if (type == MovePath.STEP_EJECT) {
-            movementType = Entity.MOVE_NONE;
+            movementType = IEntityMovementType.MOVE_NONE;
         }
 
         // check for valid jump mp
@@ -853,20 +853,20 @@ public class MoveStep implements Serializable {
              && !isProne()
              && !( entity instanceof Protomech
                    && (entity.getInternal(Protomech.LOC_LEG)
-                       == Protomech.ARMOR_DESTROYED) )
+                       == IArmorState.ARMOR_DESTROYED) )
              && !entity.isStuck() ) {
-            movementType = Entity.MOVE_JUMP;
+            movementType = IEntityMovementType.MOVE_JUMP;
         }
         
         // legged Protos may make one facing change
         if (isFirstStep()
             && entity instanceof Protomech
             && (entity.getInternal(Protomech.LOC_LEG)
-                == Protomech.ARMOR_DESTROYED)
+                == IArmorState.ARMOR_DESTROYED)
             && (stepType == MovePath.STEP_TURN_LEFT 
                 || stepType == MovePath.STEP_TURN_RIGHT)
             && !entity.isStuck()) {
-            movementType = Entity.MOVE_WALK;
+            movementType = IEntityMovementType.MOVE_WALK;
         }            
 
         // check for valid walk/run mp
@@ -879,32 +879,32 @@ public class MoveStep implements Serializable {
                 || stepType == MovePath.STEP_TURN_RIGHT)) {
 
             if (getMpUsed() <= entity.getWalkMP()) {
-                movementType = Entity.MOVE_WALK;
+                movementType = IEntityMovementType.MOVE_WALK;
 
             // Vehicles moving along pavement get "road bonus" of 1 MP.
             // N.B. The Ask Precentor Martial forum said that a 4/6
             //      tank on a road can move 5/7, **not** 5/8.
             } else if (entity instanceof Tank && isOnlyPavement()
                        && getMpUsed() == entity.getWalkMP() + 1) {
-                movementType = Entity.MOVE_WALK;
+                movementType = IEntityMovementType.MOVE_WALK;
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr
                 entity.gotPavementBonus = true;
             } else if (getMpUsed() <= entity.getRunMPwithoutMASC()
                        && !isRunProhibited()) {
-                movementType = Entity.MOVE_RUN;
+                movementType = IEntityMovementType.MOVE_RUN;
             } else if (getMpUsed() <= entity.getRunMP()
                        && !isRunProhibited()) {
                 setUsingMASC(true);
                 Mech m = (Mech) entity;
                 setTargetNumberMASC(m.getMASCTarget());
-                movementType = Entity.MOVE_RUN;
+                movementType = IEntityMovementType.MOVE_RUN;
             } else if (
                 entity instanceof Tank
                     && isOnlyPavement()
                     && getMpUsed() <= (entity.getRunMP() + 1)
                     && !isRunProhibited()) {
-                movementType = Entity.MOVE_RUN;
+                movementType = IEntityMovementType.MOVE_RUN;
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr
                 entity.gotPavementBonus = true;
@@ -914,15 +914,15 @@ public class MoveStep implements Serializable {
         if(MovePath.STEP_DOWN==stepType) {
             if(entity instanceof VTOL) {
                 if(!(((VTOL)entity).canGoDown(elevation+1,getPosition()))) {
-                    movementType = Entity.MOVE_ILLEGAL;//We can't intentionally crash.
+                    movementType = IMoveType.MOVE_ILLEGAL;//We can't intentionally crash.
                 }
             } else {
-                movementType = Entity.MOVE_ILLEGAL;//only VTOLs can go up and down (and subs, but we don't have any.)
+                movementType = IMoveType.MOVE_ILLEGAL;//only VTOLs can go up and down (and subs, but we don't have any.)
             }
         }
         if(MovePath.STEP_UP==stepType) {
             if(!(entity instanceof VTOL)) {
-                movementType = Entity.MOVE_ILLEGAL;
+                movementType = IMoveType.MOVE_ILLEGAL;
             }
         }*///not needed due to isMovementPossible, right?
 
@@ -930,34 +930,34 @@ public class MoveStep implements Serializable {
         if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                    Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1
             && !isFirstStep() ) {
-            movementType = Entity.MOVE_ILLEGAL;
+            movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
         // Mechs with 1 MP are allowed to get up, except
         // if they've used that 1MP up already
         if (MovePath.STEP_GET_UP==stepType && 1==entity.getRunMP()
             && entity.mpUsed < 1 && !entity.isStuck()) {
-            movementType = Entity.MOVE_RUN;
+            movementType = IEntityMovementType.MOVE_RUN;
         }
 
         // amnesty for the first step
         if (isFirstStep()
-            && movementType == Entity.MOVE_ILLEGAL
+            && movementType == IEntityMovementType.MOVE_ILLEGAL
             && entity.getWalkMP() > 0
             && !entity.isProne()
             && !entity.isStuck()
             && stepType == MovePath.STEP_FORWARDS) {
-            movementType = Entity.MOVE_RUN;
+            movementType = IEntityMovementType.MOVE_RUN;
         }
 
         // Is the entity unloading passeners?
         if (stepType == MovePath.STEP_UNLOAD) {
             // Prone Meks are able to unload, if they have the MP.
             if (getMpUsed() <= entity.getRunMP() && entity.isProne()
-                && movementType == Entity.MOVE_ILLEGAL) {
-                movementType = Entity.MOVE_RUN;
+                && movementType == IEntityMovementType.MOVE_ILLEGAL) {
+                movementType = IEntityMovementType.MOVE_RUN;
                 if (getMpUsed() <= entity.getWalkMP()) {
-                    movementType = Entity.MOVE_WALK;
+                    movementType = IEntityMovementType.MOVE_WALK;
                 }
             }
 
@@ -969,39 +969,39 @@ public class MoveStep implements Serializable {
                 if (null != Compute.stackingViolation(game, other,
                                                       curPos, entity)
                     || other.isHexProhibited(game.getBoard().getHex(curPos))) {
-                    movementType = Entity.MOVE_ILLEGAL;
+                    movementType = IEntityMovementType.MOVE_ILLEGAL;
                 }
             } else {
-                movementType = Entity.MOVE_ILLEGAL;
+                movementType = IEntityMovementType.MOVE_ILLEGAL;
             }
 
         }
 
         // Can't run or jump if unjamming a RAC.
-        if (isUnjammingRAC && (movementType == Entity.MOVE_RUN
+        if (isUnjammingRAC && (movementType == IEntityMovementType.MOVE_RUN
                                || parent.isJumping())) {
-            movementType = Entity.MOVE_ILLEGAL;
+            movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
         // only standing mechs may go prone
         if (stepType == MovePath.STEP_GO_PRONE
             && (isProne() || !(entity instanceof Mech) || entity.isStuck())) {
-            movementType = Entity.MOVE_ILLEGAL;
+            movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
         // check if this movement is illegal for reasons other than points
         if (!isMovementPossible(game, lastPos) || isUnloaded) {
             System.out.println(getPosition().getBoardNum() + "Rararaara");
-            movementType = Entity.MOVE_ILLEGAL;
+            movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
         // If the previous step is always illegal, then so is this one
-        if ( prev != null && Entity.MOVE_ILLEGAL == prev.movementType ) {
-            movementType = Entity.MOVE_ILLEGAL;
+        if ( prev != null && IEntityMovementType.MOVE_ILLEGAL == prev.movementType ) {
+            movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
         // Don't compute danger if the step is illegal.
-        if (movementType == Entity.MOVE_ILLEGAL) {
+        if (movementType == IEntityMovementType.MOVE_ILLEGAL) {
             return;
         }
 
@@ -1059,7 +1059,7 @@ public class MoveStep implements Serializable {
      * Amount of movement points required to move from start to dest
      */
     protected void calcMovementCostFor(IGame game, Coords prev) {
-        final int moveType = parent.getEntity().getMovementType();
+        final int moveType = parent.getEntity().getMovementMode();
         final IHex srcHex = game.getBoard().getHex(prev);
         final IHex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = parent.getEntity() instanceof Infantry;
@@ -1092,7 +1092,7 @@ public class MoveStep implements Serializable {
             }
 
             // non-hovers check for water depth and are affected by swamp
-            if (moveType != Entity.MovementType.HOVER) {
+            if (moveType != IEntityMovementMode.HOVER) {
                 if (destHex.terrainLevel(Terrains.WATER) == 1) {
                     mp++;
                 } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
@@ -1109,16 +1109,16 @@ public class MoveStep implements Serializable {
         // TODO: allow entities to occupy different levels of buildings.
         int nSrcEl = parent.getEntity().elevationOccupied(srcHex);
         int nDestEl = parent.getEntity().elevationOccupied(destHex);
-        int nMove = parent.getEntity().getMovementType();
+        int nMove = parent.getEntity().getMovementMode();
 
         if (nSrcEl != nDestEl) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
 
             // Infantry and ground vehicles are charged double.
             if (isInfantry
-                || (nMove == Entity.MovementType.TRACKED
-                    || nMove == Entity.MovementType.WHEELED
-                    || nMove == Entity.MovementType.HOVER)) {
+                || (nMove == IEntityMovementMode.TRACKED
+                    || nMove == IEntityMovementMode.WHEELED
+                    || nMove == IEntityMovementMode.HOVER)) {
                 delta_e *= 2;
             }
             mp += delta_e;
@@ -1158,7 +1158,7 @@ public class MoveStep implements Serializable {
         }
 
         /* 2004-03-31 : don't look at overall movement, just this step. **
-        if (movementType == Entity.MOVE_ILLEGAL) {
+        if (movementType == IMoveType.MOVE_ILLEGAL) {
             // that was easy
             return false;
         }
@@ -1247,17 +1247,17 @@ public class MoveStep implements Serializable {
                 break;
             }
         }
-        if (bDumping && (movementType == Entity.MOVE_RUN
-                         || movementType == Entity.MOVE_JUMP)) {
+        if (bDumping && (movementType == IEntityMovementType.MOVE_RUN
+                         || movementType == IEntityMovementType.MOVE_JUMP)) {
             return false;
         }
 
         // check elevation difference > max
         int nSrcEl = entity.elevationOccupied(srcHex);
         int nDestEl = entity.elevationOccupied(destHex);
-        int nMove = entity.getMovementType();
+        int nMove = entity.getMovementMode();
 
-        if ( movementType != Entity.MOVE_JUMP
+        if ( movementType != IEntityMovementType.MOVE_JUMP
              && ( Math.abs(nSrcEl - nDestEl)
                   > entity.getMaxElevationChange() ) ) {
             return false;
@@ -1272,8 +1272,8 @@ public class MoveStep implements Serializable {
         }
 
         // Can't run into water unless hovering, first step, using a bridge, or fly.
-        if (movementType == Entity.MOVE_RUN
-            && nMove != Entity.MovementType.HOVER
+        if (movementType == IEntityMovementType.MOVE_RUN
+            && nMove != IEntityMovementMode.HOVER
             && destHex.terrainLevel(Terrains.WATER) > 0
             && !firstStep
             && !isPavementStep
@@ -1306,7 +1306,7 @@ public class MoveStep implements Serializable {
         }
 
         // can't jump over too-high terrain
-        if ( movementType == Entity.MOVE_JUMP
+        if ( movementType == IEntityMovementType.MOVE_JUMP
              && ( destHex.getElevation()
                   > (entity.getElevation()
                      + entity.getJumpMPWithTerrain()) ) ) {
@@ -1329,7 +1329,7 @@ public class MoveStep implements Serializable {
         }
 
         // If we are *in* restricted terrain, we can only leave via roads.
-        if ( movementType != Entity.MOVE_JUMP
+        if ( movementType != IEntityMovementType.MOVE_JUMP
              && entity.isHexProhibited(srcHex)
              && !isPavementStep ) {
             return false;

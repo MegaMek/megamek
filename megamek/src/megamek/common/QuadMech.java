@@ -30,7 +30,7 @@ public class QuadMech extends Mech
   public QuadMech() {
     super();
     
-    movementType = Entity.MovementType.QUAD;
+    movementMode = IEntityMovementMode.QUAD;
 
     setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
     setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));

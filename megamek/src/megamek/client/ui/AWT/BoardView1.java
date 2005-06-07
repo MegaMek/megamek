@@ -3187,17 +3187,17 @@ public class BoardView1
             Color col;
             // set color
             switch (step.getMovementType()) {
-            case Entity.MOVE_RUN :
+            case IEntityMovementType.MOVE_RUN :
                 if (step.isUsingMASC()) {
                     col = GUIPreferences.getInstance().getMoveMASCColor();
                 } else {
                     col = GUIPreferences.getInstance().getMoveRunColor();
                 }
                 break;
-            case Entity.MOVE_JUMP :
+            case IEntityMovementType.MOVE_JUMP :
                 col = GUIPreferences.getInstance().getMoveJumpColor();
                 break;
-            case Entity.MOVE_ILLEGAL :
+            case IEntityMovementType.MOVE_ILLEGAL :
                 col = GUIPreferences.getInstance().getMoveIllegalColor();
                 break;
             default :

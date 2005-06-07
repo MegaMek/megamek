@@ -211,7 +211,7 @@ public class Infantry
         this.menShooting = 0;
         this.men = 0;
         this.weapons = INF_RIFLE;
-        setMovementType(INF_LEG);
+        setMovementMode(INF_LEG);
 
         // Populate the damage array.
         this.setDamage(this.weapons);
@@ -284,8 +284,8 @@ public class Infantry
     /**
      * Override the <code>Entity#getMovementTypeAsString()</code> method.
      */
-    public String getMovementTypeAsString() {
-        switch (this.getMovementType()) {
+    public String getMovementModeAsString() {
+        switch (this.getMovementMode()) {
         case INF_LEG:
             return "Leg";
         case INF_MOTORIZED:
@@ -303,11 +303,11 @@ public class Infantry
      */
     public String getMovementString(int mtype) {
         switch(mtype) {
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "None";
-        case MOVE_WALK :
-        case MOVE_RUN :
-            switch (this.getMovementType()) {
+        case IEntityMovementType.MOVE_WALK :
+        case IEntityMovementType.MOVE_RUN :
+            switch (this.getMovementMode()) {
             case INF_LEG:
                 return "Walked";
             case INF_MOTORIZED:
@@ -316,7 +316,7 @@ public class Infantry
             default :
                 return "Unknown!";
             }
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "Jumped";
         default :
             return "Unknown!";
@@ -329,12 +329,12 @@ public class Infantry
      */
     public String getMovementAbbr(int mtype) {
         switch(mtype) {
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "N";
-        case MOVE_WALK :
+        case IEntityMovementType.MOVE_WALK :
             return "W";
-        case MOVE_RUN :
-            switch (this.getMovementType()) {
+        case IEntityMovementType.MOVE_RUN :
+            switch (this.getMovementMode()) {
             case INF_LEG:
                 return "R";
             case INF_MOTORIZED:
@@ -342,7 +342,7 @@ public class Infantry
             default :
                 return "?";
             }
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "J";
         default :
             return "?";
@@ -396,7 +396,7 @@ public class Infantry
         if ( !this.isPlatoon() ) {
             return super.getArmor( loc, rear );
         }
-        return Entity.ARMOR_NA;
+        return IArmorState.ARMOR_NA;
     }
 
     /**
@@ -406,7 +406,7 @@ public class Infantry
         if ( !this.isPlatoon() ) {
             return super.getOArmor( loc, rear );
         }
-        return Entity.ARMOR_NA;
+        return IArmorState.ARMOR_NA;
     }
 
     /**
@@ -416,18 +416,18 @@ public class Infantry
         if ( !this.isPlatoon() ) {
             return super.getArmorRemainingPercent();
         }
-        return Entity.ARMOR_NA;
+        return IArmorState.ARMOR_NA;
     }
 
 
     /**
-     * Returns the number of men left in the platoon, or Entity.ARMOR_DESTROYED.
+     * Returns the number of men left in the platoon, or IArmorState.ARMOR_DESTROYED.
      */
     public int getInternal( int loc ) {
         if ( !this.isPlatoon() ) {
             return super.getInternal( loc );
         }
-        return ( this.men > 0 ? this.men : Entity.ARMOR_DESTROYED );
+        return ( this.men > 0 ? this.men : IArmorState.ARMOR_DESTROYED );
     }
 
     /**
@@ -483,7 +483,7 @@ public class Infantry
     }
 
     // IS platoon strength is based upon movement type.
-        switch (this.getMovementType()) {
+        switch (this.getMovementMode()) {
         case INF_LEG:
         case INF_MOTORIZED:
             this.initializeInternal( INF_PLT_MAX_MEN, LOC_INFANTRY );
@@ -493,7 +493,7 @@ public class Infantry
             break;
         default:
             throw new IllegalArgumentException
-                ( "Unknown movement type: " + this.getMovementType() );
+                ( "Unknown movement type: " + this.getMovementMode() );
         }
         return;
     }
@@ -617,70 +617,70 @@ public class Infantry
 
             switch ( this.weapons ) {
             case INF_RIFLE:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 32;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 42;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 46;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_MG:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 47;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 63;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 62;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_FLAMER:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 41;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 54;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 51;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_LASER:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 60;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 70;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 71;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_SRM:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 60;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 70;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 71;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_LRM:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 56;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 75;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 87;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             default:
                 throw new IllegalArgumentException
@@ -690,70 +690,70 @@ public class Infantry
         else {
             switch ( this.weapons ) {
             case INF_RIFLE:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 23;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 28;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 29;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_MG:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 31;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 39;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 37;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_FLAMER:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 28;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 35;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 32;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_LASER:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 37;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 42;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 41;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_SRM:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 60;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 70;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 71;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             case INF_LRM:
-                if ( INF_LEG == this.getMovementType() )
+                if ( INF_LEG == this.getMovementMode() )
                     dBV = 56;
-                else if ( INF_MOTORIZED == this.getMovementType() )
+                else if ( INF_MOTORIZED == this.getMovementMode() )
                     dBV = 75;
-                else if ( INF_JUMP == this.getMovementType() )
+                else if ( INF_JUMP == this.getMovementMode() )
                     dBV = 87;
                 else
                     throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementType() );
+                        ( "Unknown movement type: " + this.getMovementMode() );
                 break;
             default:
                 throw new IllegalArgumentException

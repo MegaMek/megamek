@@ -78,7 +78,7 @@ public class MechView {
         }
         if (isVehicle) {
             sBasic.append(" (") //$NON-NLS-1$
-                .append(entity.getMovementTypeAsString())
+                .append(entity.getMovementModeAsString())
                 .append(")"); //$NON-NLS-1$
         }
         sBasic.append( "\n" ); //$NON-NLS-1$
@@ -147,7 +147,7 @@ public class MechView {
         for ( int loc = 0; loc < mech.locations(); loc++ ) {
 
             // Skip empty sections.
-            if ( Entity.ARMOR_NA == mech.getInternal(loc) ||
+            if ( IArmorState.ARMOR_NA == mech.getInternal(loc) ||
                  ( isVehicle && (( loc == Tank.LOC_TURRET &&
                                    ((Tank)mech).hasNoTurret() ) ||
                                  (loc == Tank.LOC_BODY))) ) {
@@ -161,7 +161,7 @@ public class MechView {
                 .append( ": " ); //$NON-NLS-1$
             sIntArm.append( renderArmor(mech.getInternal(loc)) )
                 .append("   "); //$NON-NLS-1$
-            if ( Entity.ARMOR_NA != mech.getArmor(loc) ) {
+            if ( IArmorState.ARMOR_NA != mech.getArmor(loc) ) {
                 sIntArm.append( renderArmor(mech.getArmor(loc)) );
             }
             if ( mech.hasRearArmor(loc) ) {

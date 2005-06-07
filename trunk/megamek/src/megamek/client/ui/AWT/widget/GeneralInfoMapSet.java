@@ -244,7 +244,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         mpR2.setString(en.getRunMPasString());
         mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
 
-        curMoveR.setString(en.getMovementString(en.moved) + (en.moved == Entity.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
+        curMoveR.setString(en.getMovementString(en.moved) + (en.moved == IEntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
         
         int heatCap = en.getHeatCapacity();
         int heatCapWater = en.getHeatCapacityWithWater();
@@ -266,7 +266,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
 
         if (en instanceof Tank) {
             movementTypeL.setVisible(true);
-            movementTypeR.setString(en.getMovementTypeAsString());
+            movementTypeR.setString(en.getMovementModeAsString());
             movementTypeR.setVisible(true);
         } else {
             movementTypeL.setVisible(false);

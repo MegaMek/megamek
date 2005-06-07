@@ -94,8 +94,8 @@ public class ScenarioLoader
                           //one member of the squad
                           if (dp.entity instanceof BattleArmor ) {
                               if (sd.setArmorTo ==0 ) {
-                                dp.entity.setArmor(Entity.ARMOR_DOOMED, sd.loc, false);
-                                dp.entity.setInternal(Entity.ARMOR_DOOMED, sd.loc);
+                                dp.entity.setArmor(IArmorState.ARMOR_DOOMED, sd.loc, false);
+                                dp.entity.setInternal(IArmorState.ARMOR_DOOMED, sd.loc);
                               }
                               else {
                                   //For some reason setting armor to 1 will result in 2 armor points

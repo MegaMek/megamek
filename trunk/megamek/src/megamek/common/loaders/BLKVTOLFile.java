@@ -87,7 +87,7 @@ public class BLKVTOLFile extends BLKFile implements MechLoader {
             }
         }
         if (nMotion == -1) throw new EntityLoadingException("Invalid movment type: " + sMotion);
-        t.setMovementType(nMotion);
+        t.setMovementMode(nMotion);
         
         if ( dataFile.exists("transporters")) {
         String[] transporters = dataFile.getDataAsString("transporters");

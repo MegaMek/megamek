@@ -331,13 +331,13 @@ public class Protomech
      */
     public String getMovementString(int mtype) {
         switch(mtype) {
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "None";
-        case MOVE_WALK :
+        case IEntityMovementType.MOVE_WALK :
             return "Walked";
-        case MOVE_RUN :
+        case IEntityMovementType.MOVE_RUN :
             return "Ran";
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "Jumped";
         default :
             return "Unknown!";
@@ -350,13 +350,13 @@ public class Protomech
      */
     public String getMovementAbbr(int mtype) {
         switch(mtype) {
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "N";
-        case MOVE_WALK :
+        case IEntityMovementType.MOVE_WALK :
             return "W";
-        case MOVE_RUN :
+        case IEntityMovementType.MOVE_RUN :
             return "R";
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "J";
         default :
             return "?";
@@ -552,7 +552,7 @@ public class Protomech
      * weight class
      */
     public void autoSetInternal() {
-        int mainGunIS = hasMainGun() ? 1: Entity.ARMOR_NA;
+        int mainGunIS = hasMainGun() ? 1: IArmorState.ARMOR_NA;
         switch ((int)weight) {
             //                     H, TSO,ARM,LEGS,MainGun
             case 2  : setInternal(1,2,1,2,mainGunIS); break;
@@ -837,7 +837,7 @@ public class Protomech
     {
         if(loc==LOC_NMISS)
         {
-            return ARMOR_NA;
+            return IArmorState.ARMOR_NA;
         }
         else
         {
@@ -848,7 +848,7 @@ public class Protomech
     {
         if(loc==LOC_NMISS)
         {
-            return ARMOR_NA;
+            return IArmorState.ARMOR_NA;
         }
         else
         {

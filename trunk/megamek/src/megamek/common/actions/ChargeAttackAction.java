@@ -264,7 +264,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         md.compile(game, ae);
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep) i.nextElement();
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+            if (step.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
                 break;
             } else {
                 if (step.getType() == MovePath.STEP_CHARGE) {
@@ -293,7 +293,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
     public static int getDamageFor(Entity entity, int hexesMoved) {
         return (int) Math.ceil(
-            (entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
+            (entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
     }
 
     /**
@@ -314,9 +314,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     
     public static int getDamageTakenBy(Entity entity, Entity target, boolean maxtech, int distance) {
         if (!maxtech) {
-            return (int) Math.ceil(target.getWeight() / 10.0 * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
+            return (int) Math.ceil(target.getWeight() / 10.0 * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
         } else {
-            return (int) Math.floor(target.getWeight() / 20.0 * distance * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
+            return (int) Math.floor(target.getWeight() / 20.0 * distance * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
         }
     }
 

@@ -792,7 +792,7 @@ class WeaponPanel extends BufferedPanel
         int mediumR  = wtype.getMediumRange();
         int longR    = wtype.getLongRange();
         int extremeR = wtype.getExtremeRange();
-        if ( Entity.LOC_WET == entity.getLocationStatus(mounted.getLocation()) ) {
+        if ( ILocationExposureStatus.WET == entity.getLocationStatus(mounted.getLocation()) ) {
             shortR = wtype.getWShortRange();
             mediumR = wtype.getWMediumRange();
             longR = wtype.getWLongRange();
@@ -1640,7 +1640,7 @@ class ExtraPanel
 
         // Show breached locations.
         for ( int loc = 0; loc < en.locations(); loc++ ) {
-            if ( Entity.LOC_BREACHED == en.getLocationStatus(loc) ) {
+            if ( ILocationExposureStatus.BREACHED == en.getLocationStatus(loc) ) {
                 buff = new StringBuffer( en.getLocationName(loc) );
                 buff.append( Messages.getString("MechDisplay.Breached") ); //$NON-NLS-1$
                 narcList.add( buff.toString() );

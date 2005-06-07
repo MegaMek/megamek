@@ -86,10 +86,10 @@ public class XMLStreamParser implements XMLResponder {
     private void destroyLocation( Entity en, int loc) {
 
         // mark armor, internal as destroyed
-        en.setArmor(Entity.ARMOR_DESTROYED, loc, false);
-        en.setInternal(Entity.ARMOR_DESTROYED, loc);
+        en.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
+        en.setInternal(IArmorState.ARMOR_DESTROYED, loc);
         if (en.hasRearArmor(loc)) {
-            en.setArmor(Entity.ARMOR_DESTROYED, loc, true);
+            en.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
         }
         // equipment marked missing
         for (Enumeration i = en.getEquipment(); i.hasMoreElements();) {
@@ -635,10 +635,10 @@ public class XMLStreamParser implements XMLResponder {
                         // Handled by the next if test.
                     }
                     if ( points.equals( NA ) ) {
-                        pointsVal = Entity.ARMOR_NA;
+                        pointsVal = IArmorState.ARMOR_NA;
                     }
                     else if ( points.equals( DESTROYED ) ) {
-                        pointsVal = Entity.ARMOR_DESTROYED;
+                        pointsVal = IArmorState.ARMOR_DESTROYED;
                     }
                     else if ( pointsVal < 0 || pointsVal > 100 ) {
                         this.warning.append( "Found invalid points value: " )
@@ -745,7 +745,7 @@ public class XMLStreamParser implements XMLResponder {
                         // Handled by the next if test.
                     }
                     if ( index.equals( NA ) ) {
-                        indexVal = Entity.ARMOR_NA;
+                        indexVal = IArmorState.ARMOR_NA;
 
                         // Tanks don't have slots, and Protomechs only have
                         // system slots, so we have to handle the ammo specially.
@@ -789,7 +789,7 @@ public class XMLStreamParser implements XMLResponder {
                                                 // Handled by the next if test.
                                             }
                                             if ( shots.equals( NA ) ) {
-                                                shotsVal = Entity.ARMOR_NA;
+                                                shotsVal = IArmorState.ARMOR_NA;
                                                 this.warning.append( "Expected to find number of shots for " )
                                                     .append( type )
                                                     .append( ", but found " )
@@ -937,7 +937,7 @@ public class XMLStreamParser implements XMLResponder {
                                     // Handled by the next if test.
                                 }
                                 if ( shots.equals( NA ) ) {
-                                    shotsVal = Entity.ARMOR_NA;
+                                    shotsVal = IArmorState.ARMOR_NA;
                                     this.warning.append( "Expected to find number of shots for " )
                                         .append( type )
                                         .append( ", but found " )

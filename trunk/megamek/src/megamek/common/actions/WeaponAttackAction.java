@@ -27,6 +27,7 @@ import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
@@ -790,7 +791,7 @@ public class WeaponAttackAction
     
         // Change hit table for partial cover, accomodate for partial underwater(legs)
         if (los.isTargetCover()) {
-            if ( ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET && (targHex.containsTerrain(Terrains.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
+            if ( ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET && (targHex.containsTerrain(Terrains.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
                 //weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_KICK);
             } else {

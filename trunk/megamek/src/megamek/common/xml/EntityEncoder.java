@@ -69,9 +69,9 @@ public class EntityEncoder {
         out.write( "\" model=\"" );
         out.write( entity.getModel() );
         out.write( "\" type=\"" );
-        out.write( entity.getMovementTypeAsString() );
+        out.write( entity.getMovementModeAsString() );
         out.write( "\" typeVal=\"" );
-        out.write( String.valueOf(entity.getMovementType()) );
+        out.write( String.valueOf(entity.getMovementMode()) );
         out.write( "\" techBase=\"" );
         out.write ( entity.getTechLevel() + ":" + TechConstants.getLevelName(entity.getTechLevel()) );
         out.write( "\" year=\"" );
@@ -472,7 +472,7 @@ public class EntityEncoder {
 
             // Record values of armor and internal structure,
             // unless the section never has armor.
-            if ( entity.getOInternal(loc) != Entity.ARMOR_NA ) {
+            if ( entity.getOInternal(loc) != IArmorState.ARMOR_NA ) {
                 output.append( "<armor points=\"" );
                 output.append( String.valueOf(entity.getArmor(loc)) );
                 output.append( "\"/>" );
@@ -967,7 +967,7 @@ public class EntityEncoder {
             throw new IllegalStateException
                 ( "Couldn't get an integer from " + attrStr );
         }
-        entity.setMovementType( attrVal );
+        entity.setMovementMode( attrVal );
 
         // Decode the entity node's year.
         attrStr = node.getAttribute( "year" );

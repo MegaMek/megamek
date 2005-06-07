@@ -690,7 +690,7 @@ public abstract class TestEntity implements TestEntityOption
     public String printTechLevel()
     {
         return "Chassis: "+
-            MOVEMENT_CHASSIS_NAMES[getEntity().getMovementType()]+" - "+
+            MOVEMENT_CHASSIS_NAMES[getEntity().getMovementMode()]+" - "+
             TechConstants.getLevelName(getEntity().getTechLevel())+
             " ("+Integer.toString(getEntity().getYear())+")\n";
     }

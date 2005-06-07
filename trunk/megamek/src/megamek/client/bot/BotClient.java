@@ -28,6 +28,7 @@ import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
 import megamek.common.Mounted;
+import megamek.common.IEntityMovementMode;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.Terrains;
@@ -509,7 +510,7 @@ public abstract class BotClient extends Client {
                 
                 //   Tracked vehicle
                 //      -> Trees increase fitness
-                if(deployed_ent.getMovementType() == Entity.MovementType.TRACKED){
+                if(deployed_ent.getMovementMode() == IEntityMovementMode.TRACKED){
                     if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){
                         fitness[valid_arr_index] += 2;
                     }
@@ -519,7 +520,7 @@ public abstract class BotClient extends Client {
                 //      -> Not sure what any benefits wheeled vehicles can get; for now, just elevation and damage taken/given
                 //   Hover vehicle
                 //      -> Water in hex increases fitness, hover vehicles have an advantage in water areas
-                if(deployed_ent.getMovementType() == Entity.MovementType.HOVER){
+                if(deployed_ent.getMovementMode() == IEntityMovementMode.HOVER){
                     if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WATER)){
                         fitness[valid_arr_index] += 2;
                     }

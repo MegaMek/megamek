@@ -163,7 +163,7 @@ public class MovePath implements Cloneable, Serializable {
         } catch (RuntimeException re) {
 //             // N.B. the pathfinding will try steps off the map.
 //             re.printStackTrace();
-            step.setMovementType(Entity.MOVE_ILLEGAL);
+            step.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
         }
 
         // check for illegal jumps
@@ -172,7 +172,7 @@ public class MovePath implements Cloneable, Serializable {
         int distance = start.distance(land);
         if (isJumping()) {
             if (step.getMpUsed() > distance) {
-                step.setMovementType(Entity.MOVE_ILLEGAL);
+                step.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
             }
         }
 
@@ -342,7 +342,7 @@ public class MovePath implements Cloneable, Serializable {
 
     public int getLastStepMovementType() {
         if (getLastStep() == null) {
-            return Entity.MOVE_NONE;
+            return IEntityMovementType.MOVE_NONE;
         }
         return getLastStep().getMovementType();
     }
@@ -367,7 +367,7 @@ public class MovePath implements Cloneable, Serializable {
         Vector goodSteps = new Vector();
         for (final Enumeration i = steps.elements(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep) i.nextElement();
-            if (step.getMovementType() != Entity.MOVE_ILLEGAL) {
+            if (step.getMovementType() != IEntityMovementType.MOVE_ILLEGAL) {
                 goodSteps.addElement(step);
             }
         }

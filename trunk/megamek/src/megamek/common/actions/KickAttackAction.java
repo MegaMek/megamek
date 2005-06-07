@@ -22,6 +22,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -92,7 +93,7 @@ public class KickAttackAction extends AbstractAttackAction
         }
         int toReturn = (int)Math.floor(damage * multiplier) + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
-        if (entity.getLocationStatus(legLoc) == Entity.LOC_WET) {
+        if (entity.getLocationStatus(legLoc) == ILocationExposureStatus.WET) {
             toReturn = (int)Math.ceil(toReturn * 0.5f);
         }
         return toReturn;

@@ -318,12 +318,12 @@ public class BattleArmor
      */
     public String getMovementString(int mtype) {
         switch(mtype) {
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "None";
-        case MOVE_WALK :
-        case MOVE_RUN :
+        case IEntityMovementType.MOVE_WALK :
+        case IEntityMovementType.MOVE_RUN :
             return "Walked";
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "Jumped";
         default :
             return "Unknown!";
@@ -336,13 +336,13 @@ public class BattleArmor
      */
     public String getMovementAbbr(int mtype) {
         switch(mtype) {
-        case MOVE_NONE :
+        case IEntityMovementType.MOVE_NONE :
             return "N";
-        case MOVE_WALK :
+        case IEntityMovementType.MOVE_WALK :
             return "W";
-        case MOVE_RUN :
+        case IEntityMovementType.MOVE_RUN :
             return "R";
-        case MOVE_JUMP :
+        case IEntityMovementType.MOVE_JUMP :
             return "J";
         default :
             return "?";
@@ -370,8 +370,8 @@ public class BattleArmor
         // pg. 25, Randall Bills says "previously destroyed refers to a
         // previous turn and/or phase" for rolling hits on a squad
         while ( loc >= this.locations() ||
-                Entity.ARMOR_NA == this.getInternal(loc) ||
-                Entity.ARMOR_DESTROYED == this.getInternal(loc) ) {
+                IArmorState.ARMOR_NA == this.getInternal(loc) ||
+                IArmorState.ARMOR_DESTROYED == this.getInternal(loc) ) {
             loc = Compute.d6();
         }
 
@@ -411,7 +411,7 @@ public class BattleArmor
         if ( BattleArmor.LOC_SQUAD != loc ) {
             return super.getArmor( loc, rear );
         }
-        return Entity.ARMOR_NA;
+        return IArmorState.ARMOR_NA;
     }
 
     /**
@@ -423,7 +423,7 @@ public class BattleArmor
         if ( BattleArmor.LOC_SQUAD != loc ) {
             return super.getOArmor( loc, rear );
         }
-        return Entity.ARMOR_NA;
+        return IArmorState.ARMOR_NA;
     }
 
     /**
@@ -435,7 +435,7 @@ public class BattleArmor
         if ( BattleArmor.LOC_SQUAD != loc ) {
             return super.getInternal( loc );
         }
-        return Entity.ARMOR_NA;
+        return IArmorState.ARMOR_NA;
     }
 
     /**
@@ -447,7 +447,7 @@ public class BattleArmor
         if ( BattleArmor.LOC_SQUAD != loc ) {
             return super.getOInternal( loc );
         }
-        return Entity.ARMOR_NA;
+        return IArmorState.ARMOR_NA;
     }
 
     /**
@@ -456,7 +456,7 @@ public class BattleArmor
     public void autoSetInternal() {
 
         // No troopers in the squad location.
-        this.initializeInternal( Entity.ARMOR_NA, LOC_SQUAD );
+        this.initializeInternal( IArmorState.ARMOR_NA, LOC_SQUAD );
 
         // Initialize the troopers.
         for ( int loop = 1; loop < this.locations(); loop++ ) {

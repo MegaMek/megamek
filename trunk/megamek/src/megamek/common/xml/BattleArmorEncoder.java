@@ -162,7 +162,7 @@ public class BattleArmorEncoder {
                 // override these values to the actual values.
                 entity.autoSetInternal();
                 for ( int loop = 1; loop <= attrVal; loop++ ) {
-                    entity.setInternal( Entity.ARMOR_NA,
+                    entity.setInternal( IArmorState.ARMOR_NA,
                                         entity.locations() - loop );
                 }
 

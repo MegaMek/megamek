@@ -24,6 +24,7 @@ v0.29.80 (CVS)
 + Bug 1216071: Make "Add Unit" dialog remember tech level choice again.
 + Small cleanup/refactoring of the Entity and related classes/interfaces
 + Show armor type for Tanks in the Unit selector dialog.
++ Data 1216343: new default VTOL picture.
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

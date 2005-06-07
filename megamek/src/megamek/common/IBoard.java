@@ -61,11 +61,6 @@ public interface IBoard {
     public abstract void newData(int width, int height);
 
     /**
-     * Initialize all hexes
-     */
-    public abstract void initializeAll();
-    
-    /**
      * Determines if this Board contains the (x, y) Coords,
      * and if so, returns the Hex at that position.
      *

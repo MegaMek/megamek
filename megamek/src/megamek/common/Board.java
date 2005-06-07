@@ -206,7 +206,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Initialize all hexes
      */
-    public void initializeAll() {
+    protected void initializeAll() {
 
         // Initialize all buildings.
         buildings.removeAllElements();

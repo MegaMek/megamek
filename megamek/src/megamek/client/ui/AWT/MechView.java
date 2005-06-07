@@ -133,14 +133,11 @@ public class MechView {
         if ( isMech ) {
             sIntArm.append( "/" ) //$NON-NLS-1$
                 .append( maxArmor );
-            if (((Mech)mech).getArmorType() != EquipmentType.T_ARMOR_STANDARD) {
-                sIntArm.append(" (");
-                sIntArm.append(EquipmentType.getArmorTypeName(((Mech)mech).getArmorType()));
-                sIntArm.append(")");
-            }
-//            if (((Mech)mech).hasFerro()) {
-//                sIntArm.append(Messages.getString("MechView.FerroFibrous")); //$NON-NLS-1$
-//            }
+        }
+        if (mech.getArmorType() != EquipmentType.T_ARMOR_STANDARD) {
+            sIntArm.append(" (");
+            sIntArm.append(EquipmentType.getArmorTypeName(mech.getArmorType()));
+            sIntArm.append(")");
         }
         sIntArm.append( "\n" ); //$NON-NLS-1$
         // Walk through the entity's locations.

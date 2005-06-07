@@ -16,6 +16,7 @@ v0.29.80 (CVS)
 + Bug 1215893: VTOLs have problems with water hexes
 + Bug 1216098: VTOL psr nag screen
 + Bug 1215897: VTOL sideslip crash fall issue
++ Updated grass theme
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

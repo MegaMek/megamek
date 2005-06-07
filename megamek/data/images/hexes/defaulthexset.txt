@@ -677,6 +677,12 @@ base -1 "rough:1" "grass" "grass/grass_sinkhole_rough_1.gif"
 base -2 "rough:1" "grass" "grass/grass_sinkhole_rough_2.gif"
 base -3 "rough:1" "grass" "grass/grass_sinkhole_rough_3.gif"
 
+base 0 "woods:1" "grass" "grass/grass_l_woods_0.gif"
+base 1 "woods:1" "grass" "grass/grass_l_woods_1.gif"
+base 2 "woods:1" "grass" "grass/grass_l_woods_2.gif"
+base 0 "woods:2" "grass" "grass/grass_h_woods_0.gif"
+base 1 "woods:2" "grass" "grass/grass_h_woods_1.gif"
+
 #------------------- END grass theme
 
 #------------------- BEGIN mars theme

@@ -286,7 +286,7 @@ public class VTOL extends Tank {
     //Takes the current hex, a hex being moved to, returns the elevation the VTOL will be considered to be at w/r/t it's new hex.
     public int calcElevation(IHex current, IHex next,int assumedElevation) {
         int absoluteElevation = current.floor()+assumedElevation;
-        return absoluteElevation-next.floor();
+        return (absoluteElevation-next.floor());
     }
 
     public int calcElevation(IHex current, IHex next) {
@@ -296,9 +296,7 @@ public class VTOL extends Tank {
     /* TODO:make this work for VTOLs
      */
     public int getMaxElevationChange() {
-        //return 0; //correct implementation, ignore it for now
         return 999; //correct?
-        //return super.getMaxElevationChange();
     }
 
     /* TODO:I don't think this is actually correct...

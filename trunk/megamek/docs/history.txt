@@ -11,6 +11,9 @@ v0.29.80 (CVS)
 + Added light and heavy ferro-fibrous armor (Level 3).
 + Fixed compile error in Server.java
 + Added some corrections to HMPFile to load level 3 equipment.
++ Fixed problems with changing elevation levels (VTOL)
++ Bug 1216094: VTOLs can't back up over different level terrain
++ Bug 1215893: vtols have problems with water hexes
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

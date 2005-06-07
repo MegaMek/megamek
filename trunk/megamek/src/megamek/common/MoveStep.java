@@ -991,6 +991,7 @@ public class MoveStep implements Serializable {
 
         // check if this movement is illegal for reasons other than points
         if (!isMovementPossible(game, lastPos) || isUnloaded) {
+            System.out.println(getPosition().getBoardNum() + "Rararaara");
             movementType = Entity.MOVE_ILLEGAL;
         }
 
@@ -1182,7 +1183,7 @@ public class MoveStep implements Serializable {
         }
 
         // Can't back up across an elevation change.
-        if ( isThisStepBackwards()
+        if ( !(entity instanceof VTOL) && isThisStepBackwards()
              && ( entity.elevationOccupied(destHex)
                   != entity.elevationOccupied(srcHex) ) ) {
             return false;
@@ -1266,7 +1267,7 @@ public class MoveStep implements Serializable {
         if ((type == MovePath.STEP_BACKWARDS
             || type == MovePath.STEP_LATERAL_LEFT_BACKWARDS
             || type == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)
-            && nSrcEl != nDestEl) {
+            && nSrcEl != nDestEl && !(entity instanceof VTOL)) {
             return false;
         }
 
@@ -1348,14 +1349,14 @@ public class MoveStep implements Serializable {
         }
         if(entity instanceof VTOL) {
             if(movementType == MovePath.STEP_BACKWARDS || movementType == MovePath.STEP_FORWARDS || movementType == MovePath.STEP_TURN_LEFT || movementType == MovePath.STEP_TURN_RIGHT) {
-                if(elevation==0) {
+                if(elevation==0) {//can't move on the ground.
                     return false;
                 }
             }
             if(movementType == MovePath.STEP_BACKWARDS || movementType == MovePath.STEP_FORWARDS) {
-                if(((VTOL)entity).calcElevation(srcHex,destHex,elevation)<=(destHex.ceiling()-destHex.floor())) {
-                    return false;//can't fly into woods or a cliff face 
-                }
+                if(elevation<=(destHex.ceiling()-destHex.floor())) {
+                    return false;//can't fly into woods or a cliff face
+                    }
             }
         }
 

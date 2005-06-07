@@ -41,7 +41,9 @@ public class MechTileset {
     private String ASSAULT_STRING = "default_assault"; //$NON-NLS-1$
     private String QUAD_STRING = "default_quad"; //$NON-NLS-1$
     private String TANK_STRING = "default_tank"; //$NON-NLS-1$
+    private String VTOL_STRING = "default_vtol"; //$NON-NLS-1$
     private String INF_STRING = "default_infantry"; //$NON-NLS-1$
+    private String BA_STRING = "default_ba"; //$NON-NLS-1$
     private String PROTO_STRING = "default_proto"; //$NON-NLS-1$
     
     private MechEntry default_light;
@@ -50,7 +52,9 @@ public class MechTileset {
     private MechEntry default_assault;
     private MechEntry default_quad;
     private MechEntry default_tank;
+    private MechEntry default_vtol;
     private MechEntry default_inf;
+    private MechEntry default_ba;
     private MechEntry default_proto;
     
     private HashMap exact = new HashMap();
@@ -93,8 +97,14 @@ public class MechTileset {
         if (entity.entityIsQuad()) {
             return default_quad;
         }
+        if (entity instanceof VTOL) {
+            return default_vtol;
+        }
         if (entity instanceof Tank) {
             return default_tank;
+        }
+        if (entity instanceof BattleArmor) {
+            return default_ba;
         }
         if (entity instanceof Infantry) {
             return default_inf;
@@ -173,7 +183,9 @@ public class MechTileset {
         default_assault = (MechEntry)exact.get(ASSAULT_STRING.toUpperCase());
         default_quad = (MechEntry)exact.get(QUAD_STRING.toUpperCase());
         default_tank = (MechEntry)exact.get(TANK_STRING.toUpperCase());
+        default_vtol = (MechEntry)exact.get(VTOL_STRING.toUpperCase());
         default_inf = (MechEntry)exact.get(INF_STRING.toUpperCase());
+        default_ba = (MechEntry)exact.get(BA_STRING.toUpperCase());
         default_proto = (MechEntry)exact.get(PROTO_STRING.toUpperCase());
     }
     

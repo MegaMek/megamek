@@ -13,7 +13,8 @@ v0.29.80 (CVS)
 + Added some corrections to HMPFile to load level 3 equipment.
 + Fixed problems with changing elevation levels (VTOL)
 + Bug 1216094: VTOLs can't back up over different level terrain
-+ Bug 1215893: vtols have problems with water hexes
++ Bug 1215893: VTOLs have problems with water hexes
++ Bug 1216098: VTOL psr nag screen
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

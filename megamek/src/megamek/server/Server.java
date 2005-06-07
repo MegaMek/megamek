@@ -3169,8 +3169,9 @@ implements Runnable, ConnectionHandler {
                 if(!doSkillCheckWhileMoving(entity,lastPos,curPos,rollTarget, false)) {
                     phaseReport.append("\n").append( entity.getDisplayName()).append( " sideslips into hex ");
                     Coords newPos = lastPos.translated((prevFacing));//does this work for opposing hex?
+                    int newElevation=((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation);
                     phaseReport.append(newPos.getBoardNum());
-                    if(((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation)<=game.getBoard().getHex(newPos).ceiling()) {
+                    if(newElevation<=game.getBoard().getHex(newPos).ceiling()) {
                         phaseReport.append(" and runs smack dab into the ground.\n");
                         int hitSide=curFacing-prevFacing+6;
                         hitSide=hitSide % 6;
@@ -3191,16 +3192,20 @@ implements Runnable, ConnectionHandler {
                             table=ToHitData.SIDE_RIGHT;
                             break;
                         }
-                        phaseReport.append(crashVTOL(((VTOL)entity),true,distance,newPos,table));
-                        ((VTOL)entity).setElevation(0);
+                        curPos=newPos;
+                        curVTOLElevation=newElevation;
+                        phaseReport.append(crashVTOL(((VTOL)entity),true,distance,curPos,curVTOLElevation,table));
+                        curVTOLElevation=0;
                         if(game.getBoard().getHex(newPos).containsTerrain(Terrains.WATER) || game.getBoard().getHex(newPos).containsTerrain(Terrains.WOODS)) {
                             phaseReport.append(destroyEntity(entity,"could not land in crash site"));                            
+                        } else {
                         }
+                        
                     } else {
                         phaseReport.append(".\n");
                         ((VTOL)entity).setElevation(((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
                     }
-                    curPos=newPos;
+                    
                     
                     if(!entity.isDestroyed() && !entity.isDoomed()) {
                         fellDuringMovement= true; //No, but it should work...
@@ -10330,18 +10335,18 @@ implements Runnable, ConnectionHandler {
 
     }
     
-    private String crashVTOL(VTOL en,Coords crashPos) {
-        return crashVTOL(en, false, 0,crashPos,0);
+    private String crashVTOL(VTOL en,Coords crashPos,int curElevation) {
+        return crashVTOL(en, false, 0,crashPos,curElevation,0);
     }
     private String crashVTOL(VTOL en) {
-        return crashVTOL(en, false, 0 , en.getPosition(),0);
+        return crashVTOL(en, false, 0 , en.getPosition(),en.getElevation(),0);
     }
     
-    private String crashVTOL(VTOL en, boolean sideSlipCrash, int hexesMoved,Coords crashPos, int impactSide) {
+    private String crashVTOL(VTOL en, boolean sideSlipCrash, int hexesMoved,Coords crashPos, int crashElevation,int impactSide) {
         StringBuffer desc = new StringBuffer();
         if(!sideSlipCrash) {
         desc.append(en.getDisplayName() + " has lost its movement and crashes.  ");
-        int fall=en.getElevation()- game.getBoard().getHex(crashPos).ceiling();
+        int fall=crashElevation- game.getBoard().getHex(crashPos).ceiling();
         if(game.getBoard().getHex(crashPos).containsTerrain(Terrains.WOODS)) {
             fall+=2;//HACK
         }
@@ -10421,6 +10426,7 @@ implements Runnable, ConnectionHandler {
             en.setElevation(0);
         }
         } else {
+            en.setElevation(0);//considered landed in the hex.
             desc.append(en.getDisplayName() + " has crashed into the ground due to a sideslip.\n");
             int damage = (int)Math.round(en.getWeight() / 10.0) * (hexesMoved + 1);
             

@@ -57,10 +57,14 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         return toHit(game, target, src, movement, false);
     }
 
+    public ToHitData toHit(IGame game, Targetable target, Coords src, int movement, boolean skid) {
+        return toHit(game, target, src, movement, skid, false);
+    }
+
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(IGame game, Targetable target, Coords src, int movement, boolean skid) {
+    public ToHitData toHit(IGame game, Targetable target, Coords src, int movement, boolean skid, boolean gotUp) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
@@ -133,7 +137,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // can't charge while prone
-        if (ae.isProne()) {
+        if (ae.isProne() && !gotUp) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
         }
 
@@ -280,7 +284,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
         }
 
-        return toHit(game, target, chargeSrc, chargeStep.getMovementType());
+        return toHit(game, target, chargeSrc, chargeStep.getMovementType(), false, md.contains(MovePath.STEP_GET_UP));
     }
 
     /**

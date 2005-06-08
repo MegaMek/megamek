@@ -522,11 +522,11 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for Clan SRM launchers.
         munitions.removeAllElements();
         munitions.addElement( new MunitionMutator( "Inferno",
-                                                   1, M_INFERNO ) );
+                                                   1, M_INFERNO, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Fragmentation",
-                                                   1, M_FRAGMENTATION ) );
+                                                   1, M_FRAGMENTATION, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Narc capable",
-                                                   1, M_NARC_CAPABLE ) );
+                                                   1, M_NARC_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "Anti-TSM",

@@ -33,6 +33,7 @@ v0.29.80 (CVS)
 + Removed debugging code left over from an earlier update
 + Corrected ammo selection error stopping Clan units from getting alternate LRM types.
 + Corrected ammo selection error stopping Clan units from getting alternate SRM types.
++ Bug 1217038: Put in a check to only make a charge impossible if there's no interim STEP_GET_UP.
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

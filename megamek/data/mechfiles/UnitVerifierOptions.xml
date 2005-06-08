@@ -23,7 +23,7 @@
     1.0
     </minUnderweight>
     <ignoreFailedEquipment>
-    Armored Cowl, ISImprovedNarc, ISiNarc Pods, CLLRTorpedo15, CLLRTorpedo15 Ammo, CC Sensors, Command Console, Dual Cockpit
+    Armored Cowl, CLLRTorpedo15, CLLRTorpedo15 Ammo, CC Sensors, Command Console, Dual Cockpit
     </ignoreFailedEquipment>
     <skip>
     false

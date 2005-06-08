@@ -245,7 +245,7 @@ public class MtfFile implements MechLoader {
 
             mech.autoSetInternal();
 
-            String thisArmorType = armorType.substring(armorType.indexOf(':')+1).replace(" Armor", "");
+            String thisArmorType = armorType.substring(armorType.indexOf(':')+1); //.replace(" Armor", "");
             if (thisArmorType.length() > 0) {
                 mech.setArmorType(thisArmorType);
             } else {

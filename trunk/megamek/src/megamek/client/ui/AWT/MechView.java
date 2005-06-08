@@ -134,7 +134,7 @@ public class MechView {
             sIntArm.append( "/" ) //$NON-NLS-1$
                 .append( maxArmor );
         }
-        if (mech.getArmorType() != EquipmentType.T_ARMOR_STANDARD) {
+        if (mech.getArmorType() != EquipmentType.T_ARMOR_UNKNOWN) {
             sIntArm.append(" (");
             sIntArm.append(EquipmentType.getArmorTypeName(mech.getArmorType()));
             sIntArm.append(")");

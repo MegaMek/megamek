@@ -586,23 +586,23 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for Clan LRM launchers.
         munitions.removeAllElements();
         munitions.addElement( new MunitionMutator( "Fragmentation",
-                                                   1, M_FRAGMENTATION ) );
+                                                   1, M_FRAGMENTATION, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Thunder",
-                                                   1, M_THUNDER ) );
+                                                   1, M_THUNDER, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Thunder-Augmented",
-                                                   2, M_THUNDER_AUGMENTED ) );
+                                                   2, M_THUNDER_AUGMENTED, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Thunder-Inferno",
-                                                   2, M_THUNDER_INFERNO ) );
+                                                   2, M_THUNDER_INFERNO, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Thunder-Active",
-                                                   2, M_THUNDER_ACTIVE ) );
+                                                   2, M_THUNDER_ACTIVE, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Thunder-Vibrabomb",
-                                                   2, M_THUNDER_VIBRABOMB ) );
+                                                   2, M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Narc capable",
-                                                   1, M_NARC_CAPABLE ) );
+                                                   1, M_NARC_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Swarm",
-                                                   1, M_SWARM ) );
+                                                   1, M_SWARM, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Swarm-I",
-                                                   1, M_SWARM_I) );
+                                                   1, M_SWARM_I, TechConstants.T_CLAN_LEVEL_2) );
         munitions.addElement( new MunitionMutator( "Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "Anti-TSM",

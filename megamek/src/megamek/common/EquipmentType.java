@@ -282,7 +282,7 @@ public class EquipmentType {
 
     public static int getArmorType(String inType) {
         for (int x=0; x<armorNames.length; x++) {
-            if (armorNames[x].indexOf(inType) >= 0)
+            if ((armorNames[x].indexOf(inType) >= 0) || (inType.indexOf(armorNames[x]) >= 0))
                 return x;
         }
         return T_ARMOR_UNKNOWN;

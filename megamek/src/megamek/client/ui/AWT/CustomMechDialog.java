@@ -334,10 +334,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
         }
 
-System.err.println("???Here...");
         // Can't set up munitions on infantry.
         if ( !(entity instanceof Infantry) ) {
-System.err.println("???Here!!!");
             setupMunitions();
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(panMunitions, c);

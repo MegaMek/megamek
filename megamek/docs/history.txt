@@ -25,6 +25,7 @@ v0.29.80 (CVS)
 + Small cleanup/refactoring of the Entity and related classes/interfaces
 + Show armor type for Tanks in the Unit selector dialog.
 + Data 1216343: new default VTOL picture.
++ Bug 1216564: mechview armortype display wrong
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

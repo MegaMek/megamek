@@ -222,7 +222,7 @@ public class AmmoType extends EquipmentType {
         AmmoType at = null;
         for (int i = 0; i < Vammo.size(); i++) {
             at = (AmmoType)Vammo.elementAt(i);
-            if (at.getRackSize() == wt.getRackSize()) {
+            if ((at.getRackSize() == wt.getRackSize()) && (TechConstants.isLegal(mounted.getType().getTechLevel(),at.getTechLevel()))) {
                 return at;
             }
         }

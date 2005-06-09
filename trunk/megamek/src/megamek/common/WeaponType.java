@@ -32,6 +32,15 @@ public class WeaponType extends EquipmentType {
     public static final int     F_PPC           = 0x0008; //              "
     public static final int     F_AUTO_TARGET   = 0x0010; // for weapons that target automatically (AMS)
     public static final int     F_NO_FIRES      = 0x0020; // cannot start fires
+    public static final int     F_PROTOMECH     = 0x0040; //Protomech weapons, which need weird ammo stuff.
+    public static final int     F_SOLO_ATTACK   = 0x0080; // must be only weapon attacking
+    public static final int     F_SPLITABLE     = 0x0100; // Weapons that can be split between locations
+    public static final int     F_MG            = 0x0200; // MG; for rapid fire set up
+    public static final int     F_INFERNO       = 0x0400; // Inferno weapon
+    public static final int     F_INFANTRY      = 0x0800; // small calibre weapon, no ammo, damage based on # men shooting
+    public static final int     F_BATTLEARMOR   = 0x1000; // multiple shots resolved in one to-hit (kinda like RAC, only not)
+    public static final int     F_DOUBLE_HITS   = 0x2000; // two shots hit per one rolled
+    public static final int     F_MISSILE_HITS  = 0x4000; // use missile rules or # of hits
     public static final int     F_ONESHOT       = 0x8000; //weapon is oneShot.
     public static final int     F_ARTILLERY     = 0x10000;
     public static final int     F_BALLISTIC     = 0x20000; // For Gunnery/Ballistic skill
@@ -40,23 +49,10 @@ public class WeaponType extends EquipmentType {
     public static final int     F_PLASMA        = 0x100000; // For fires
     public static final int F_INCENDIARY_NEEDLES = 0x200000; // For fires
     public static final int     F_PROTOTYPE     = 0x400000; // for war of 3039 prototype weapons
-    public static final int     F_HEATASDICE     = 0x800000; // heat is listed in dice, not points
-    public static final int     F_AMS           = 0x1000000; // Weapon is an anti-missile system.
-
-    public static final int     F_SPLITABLE     = 0x0100; // Weapons that can be split between locations
-    public static final int     F_MG            = 0x0200; // MG; for rapid fire set up
-
-    // Need to distinguish infantry weapons from their bigger,
-    // vehicle- and mech-mounted cousins.
-    public static final int     F_INFERNO       = 0x0400; // Inferno weapon
-    public static final int     F_INFANTRY      = 0x0800; // small calibre weapon, no ammo, damage based on # men shooting
-    public static final int     F_PROTOMECH     = 0x0040; //Protomech weapons, which need weird ammo stuff.
-
-    // Flags for implementing the vast number of BattleArmor special rules.
-    public static final int     F_SOLO_ATTACK   = 0x0080; // must be only weapon attacking
-    public static final int     F_BATTLEARMOR   = 0x1000; // multiple shots resolved in one to-hit (kinda like RAC, only not)
-    public static final int     F_DOUBLE_HITS   = 0x2000; // two shots hit per one rolled
-    public static final int     F_MISSILE_HITS  = 0x4000; // use missile rules or # of hits
+    public static final int     F_HEATASDICE    = 0x00800000; // heat is listed in dice, not points
+    public static final int     F_AMS           = 0x01000000; // Weapon is an anti-missile system.
+    public static final int     F_BOOST_SWARM   = 0x02000000; // boost leg & swarm
+    public static final int     F_INFANTRY_ONLY = 0x04000000; // only target infantry
 
     protected RangeType range;
     protected int   heat;
@@ -405,7 +401,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createBASingleSmallPulseLaser() );
         EquipmentType.addType( createBASRM4() );
         EquipmentType.addType( createBASupportPPC() );
-        EquipmentType.addType( createBAVibroClaws() );
+        EquipmentType.addType( createBAVibroClaws1() );
+        EquipmentType.addType( createBAVibroClaws2() );
         EquipmentType.addType( createPhalanxSRM4() );
         
         // War Of 3039 prototype weapons
@@ -5975,13 +5972,39 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAVibroClaws() {
+    public static WeaponType createBAVibroClaws1() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "Single Vibroclaw";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Vibro Claws (1)");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 0;
+        weapon.mediumRange = 0;
+        weapon.longRange = 0;
+        weapon.extremeRange = 0;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR
+            | F_NO_FIRES | F_BALLISTIC
+            | F_BOOST_SWARM | F_INFANTRY_ONLY;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAVibroClaws2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Vibroclaws";
         weapon.setInternalName(weapon.name);
-        weapon.addLookupName("BA-Vibro Claws");
+        weapon.addLookupName("BA-Vibro Claws (2)");
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.rackSize = 2;
@@ -5994,7 +6017,9 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR
+            | F_NO_FIRES | F_BALLISTIC
+            | F_BOOST_SWARM | F_INFANTRY_ONLY;
 
         return weapon;
     }

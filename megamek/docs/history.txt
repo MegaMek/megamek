@@ -39,6 +39,7 @@ v0.29.80 (CVS)
 + Bug 1216076: Corrected Compute.stackingViolation to correctly take unit height and elevation into account.
 + Corrected Computer.stackingViolation to actually enforce the four-unit-max limit.
 + Bug 1215880: Change Elevation buttons now updated when clearAllMoves called.
++ Bug 1215881: MovementDisplay added as a KeyListener to MovementDisplay's child buttons.
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

@@ -656,8 +656,11 @@ public abstract class Entity
         }
 
         if ( null == pos ) {
-            throw new IllegalStateException
-                ("Entity #" + this.getId() + " does not know its position.");
+            if (isDeployed())
+                throw new IllegalStateException
+                    ("Entity #" + this.getId() + " does not know its position.");
+            else
+                return 0;
         }
         else if ( !game.getBoard().contains(pos) ) {
             throw new IllegalStateException

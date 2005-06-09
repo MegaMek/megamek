@@ -50,6 +50,7 @@ v0.29.80 (CVS)
 + Corrected engine type in VTOL data files from air.zip
 + Bug 1207706: Vibro-Claws come singly or in pairs, so show this in displays.
 + New pictures for Corona, Golem, Hellfire and Spirit.
++ Bug 1217503: Vibro-Claws can only target Infantry
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

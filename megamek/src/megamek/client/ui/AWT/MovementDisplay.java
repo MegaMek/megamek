@@ -138,98 +138,117 @@ public class MovementDisplay
         butClear.addActionListener(this);
         butClear.setEnabled(false);
         butClear.setActionCommand(MOVE_CLEAR);
+        butClear.addKeyListener(this);
 
         butWalk = new Button(Messages.getString("MovementDisplay.butWalk")); //$NON-NLS-1$
         butWalk.addActionListener(this);
         butWalk.setEnabled(false);
         butWalk.setActionCommand(MOVE_WALK);
+        butWalk.addKeyListener(this);
 
         butJump = new Button(Messages.getString("MovementDisplay.butJump")); //$NON-NLS-1$
         butJump.addActionListener(this);
         butJump.setEnabled(false);
         butJump.setActionCommand(MOVE_JUMP);
+        butJump.addKeyListener(this);
 
         butBackup = new Button(Messages.getString("MovementDisplay.butBackup")); //$NON-NLS-1$
         butBackup.addActionListener(this);
         butBackup.setEnabled(false);
         butBackup.setActionCommand(MOVE_BACK_UP);
+        butBackup.addKeyListener(this);
 
         butTurn = new Button(Messages.getString("MovementDisplay.butTurn")); //$NON-NLS-1$
         butTurn.addActionListener(this);
         butTurn.setEnabled(false);
         butTurn.setActionCommand(MOVE_TURN);
-
+        butTurn.addKeyListener(this);
 
         butUp = new Button(Messages.getString("MovementDisplay.butUp")); //$NON-NLS-1$
         butUp.addActionListener(this);
         butUp.setEnabled(false);
         butUp.setActionCommand(MOVE_GET_UP);
+        butUp.addKeyListener(this);
 
         butDown = new Button(Messages.getString("MovementDisplay.butDown")); //$NON-NLS-1$
         butDown.addActionListener(this);
         butDown.setEnabled(false);
         butDown.setActionCommand(MOVE_GO_PRONE);
+        butDown.addKeyListener(this);
 
         butCharge = new Button(Messages.getString("MovementDisplay.butCharge")); //$NON-NLS-1$
         butCharge.addActionListener(this);
         butCharge.setEnabled(false);
         butCharge.setActionCommand(MOVE_CHARGE);
+        butCharge.addKeyListener(this);
 
         butDfa = new Button(Messages.getString("MovementDisplay.butDfa")); //$NON-NLS-1$
         butDfa.addActionListener(this);
         butDfa.setEnabled(false);
         butDfa.setActionCommand(MOVE_DFA);
+        butDfa.addKeyListener(this);
 
         butFlee = new Button(Messages.getString("MovementDisplay.butFlee")); //$NON-NLS-1$
         butFlee.addActionListener(this);
         butFlee.setEnabled(false);
         butFlee.setActionCommand(MOVE_FLEE);
+        butFlee.addKeyListener(this);
 
         butEject = new Button(Messages.getString("MovementDisplay.butEject")); //$NON-NLS-1$
         butEject.addActionListener(this);
         butEject.setEnabled(false);
         butEject.setActionCommand(MOVE_EJECT);
+        butEject.addKeyListener(this);
 
         butRAC = new Button(Messages.getString("MovementDisplay.butRAC")); //$NON-NLS-1$
         butRAC.addActionListener(this);
         butRAC.setEnabled(false);
         butRAC.setActionCommand(MOVE_UNJAM);
+        butRAC.addKeyListener(this);
 
         butMore = new Button(Messages.getString("MovementDisplay.butMore")); //$NON-NLS-1$
         butMore.addActionListener(this);
         butMore.setEnabled(false);
+        butMore.addKeyListener(this);
 
         butNext = new Button(Messages.getString("MovementDisplay.butNext")); //$NON-NLS-1$
         butNext.addActionListener(this);
         butNext.setEnabled(false);
         butNext.setActionCommand(MOVE_NEXT);
+        butNext.addKeyListener(this);
 
         butDone = new Button(Messages.getString("MovementDisplay.butDone")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
+        butDone.addKeyListener(this);
 
         butLoad = new Button(Messages.getString("MovementDisplay.butLoad")); //$NON-NLS-1$
         butLoad.addActionListener(this);
         butLoad.setEnabled(false);
         butLoad.setActionCommand(MOVE_LOAD);
+        butLoad.addKeyListener(this);
 
         butUnload = new Button(Messages.getString("MovementDisplay.butUnload")); //$NON-NLS-1$
         butUnload.addActionListener(this);
         butUnload.setEnabled(false);
         butUnload.setActionCommand(MOVE_UNLOAD);
+        butUnload.addKeyListener(this);
         
         butRaise = new Button(Messages.getString("MovementDisplay.butRaise"));
         butRaise.addActionListener(this);
         butRaise.setEnabled(false);
         butRaise.setActionCommand(MOVE_RAISE_ELEVATION);
+        butRaise.addKeyListener(this);
         
         butLower = new Button(Messages.getString("MovementDisplay.butLower"));
         butLower.addActionListener(this);
         butLower.setEnabled(false);
         butLower.setActionCommand(MOVE_LOWER_ELEVATION);
+        butLower.addKeyListener(this);
         
         butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
+        butSpace.addKeyListener(this);
 
         // layout button grid
         panButtons = new Panel();
@@ -1489,6 +1508,7 @@ public class MovementDisplay
             return;
         }
 
+System.err.println("!!!Here I am!");
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearAllMoves();
         }

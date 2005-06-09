@@ -223,7 +223,13 @@ public class WeaponAttackAction
             return new ToHitData( ToHitData.IMPOSSIBLE,
                                   "Weapon can only deliver minefields" );
         }
-    
+        if ( wtype.hasFlag(WeaponType.F_INFANTRY_ONLY) ) {
+            if (te != null && !(te instanceof Infantry) ||
+                target.getTargetType() != Targetable.TYPE_ENTITY) {
+                return new ToHitData( ToHitData.IMPOSSIBLE,
+                "Weapon can only be used against infantry" );
+            }
+        }    
         // make sure weapon can clear minefield
         if (target instanceof MinefieldTarget &&
             !AmmoType.canClearMinefield(atype)) {

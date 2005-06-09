@@ -51,6 +51,7 @@ v0.29.80 (CVS)
 + Bug 1207706: Vibro-Claws come singly or in pairs, so show this in displays.
 + New pictures for Corona, Golem, Hellfire and Spirit.
 + Bug 1217503: Vibro-Claws can only target Infantry
++ Dev Forum: Behaviour of Add Unit dialog changed, doesn't close after selection
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

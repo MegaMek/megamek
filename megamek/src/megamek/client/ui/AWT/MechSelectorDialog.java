@@ -59,7 +59,7 @@ public class MechSelectorDialog
     private Panel m_pParams = new Panel();
     List m_mechList = new List(10);
     private Button m_bPick = new Button(Messages.getString("MechSelectorDialog.m_bPick")); //$NON-NLS-1$
-    private Button m_bCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
+    private Button m_bCancel = new Button(Messages.getString("Close")); //$NON-NLS-1$
     private Panel m_pButtons = new Panel();
     private TextArea m_mechViewLeft = new TextArea("",18,25,TextArea.SCROLLBARS_HORIZONTAL_ONLY); //$NON-NLS-1$
     private TextArea m_mechViewRight = new TextArea(18,28);
@@ -319,7 +319,7 @@ public class MechSelectorDialog
                 ex.printStackTrace();
                 return;
             }
-            this.setVisible(false);
+            //this.setVisible(false);
         }
     }
     

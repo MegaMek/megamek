@@ -106,43 +106,58 @@ public class Compute
                                              Entity transport ) {
         boolean isMech = entering instanceof Mech;
         Entity firstEntity = transport;
+        int totalUnits = 1;
+        int thisLowStackingLevel = entering.getElevation();
+        int thisHighStackingLevel = thisLowStackingLevel+entering.height();
 
         // Walk through the entities in the given hex.
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
 
-            // Don't compare the entering entity to itself.
-            if (inHex.equals(entering)) {
-                continue;
-            }
+            int lowStackinglevel = inHex.getElevation();
+            int highStackingLevel = lowStackinglevel+inHex.height();
 
-            // Ignore the transport of the entering entity.
-            if ( inHex.equals(transport) ) {
-                continue;
-            }
-
-            // DFAing units don't count towards stacking
-            if (inHex.isMakingDfa()) {
-                continue;
-            }
-
-            // If the entering entity is a mech,
-            // then any other mech in the hex is a violation.
-            if (isMech && (inHex instanceof Mech)) {
-                return inHex;
-            }
-
-            // Otherwise, if there are two present entities controlled
-            // by this player, returns a random one of the two.
-            // Somewhat arbitrary, but how else should we resolve it?
-            if ( !inHex.getOwner().isEnemyOf(entering.getOwner()) ) {
-                if (firstEntity == null) {
-                    firstEntity = inHex;
-                } else {
-                    return d6() > 3 ? firstEntity : inHex;
+            // Only do all this jazz if they're close enough together on level to interfere.
+            if ((thisLowStackingLevel <= highStackingLevel) && (thisHighStackingLevel >= lowStackinglevel)) {
+                // Don't compare the entering entity to itself.
+                if (inHex.equals(entering)) {
+                    continue;
+                }
+    
+                // Ignore the transport of the entering entity.
+                if ( inHex.equals(transport) ) {
+                    continue;
+                }
+    
+                // DFAing units don't count towards stacking
+                if (inHex.isMakingDfa()) {
+                    continue;
+                }
+    
+                // If the entering entity is a mech,
+                // then any other mech in the hex is a violation.
+                if (isMech && (inHex instanceof Mech)) {
+                    return inHex;
+                }
+    
+                totalUnits++;
+                // If the new one is the most 
+                if (totalUnits > 4) {
+                    // Arbitrarily return this one, because we can, and it's simpler.
+                    return inHex;
+                }
+    
+                // Otherwise, if there are two present entities controlled
+                // by this player, returns a random one of the two.
+                // Somewhat arbitrary, but how else should we resolve it?
+                if ( !inHex.getOwner().isEnemyOf(entering.getOwner()) ) {
+                    if (firstEntity == null) {
+                        firstEntity = inHex;
+                    } else {
+                        return d6() > 3 ? firstEntity : inHex;
+                    }
                 }
             }
-
         }
 
         // okay, all clear

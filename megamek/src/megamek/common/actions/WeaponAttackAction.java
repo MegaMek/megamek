@@ -223,6 +223,7 @@ public class WeaponAttackAction
             return new ToHitData( ToHitData.IMPOSSIBLE,
                                   "Weapon can only deliver minefields" );
         }
+        // some weapons can only target infantry
         if ( wtype.hasFlag(WeaponType.F_INFANTRY_ONLY) ) {
             if (te != null && !(te instanceof Infantry) ||
                 target.getTargetType() != Targetable.TYPE_ENTITY) {

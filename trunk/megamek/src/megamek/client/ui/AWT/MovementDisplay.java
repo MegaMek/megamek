@@ -489,6 +489,7 @@ public class MovementDisplay
         butDone.setLabel(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
         updateProneButtons();
         updateRACButton();
+        updateElevationButtons();
 
         // We may not have an entity selected yet (race condition).
         if ( ce != null ) {

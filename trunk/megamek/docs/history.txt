@@ -15,7 +15,7 @@ v0.29.80 (CVS)
 + Fixed problems with changing elevation levels (VTOL)
 + Bug 1216094: VTOLs can't back up over different level terrain
 + Bug 1215893: VTOLs have problems with water hexes
-+ Bug 1216098: VTOL psr nag screen
++ Bug 1216098: VTOL PSR nag screen
 + Bug 1215897: VTOL sideslip crash fall issue
 + Updated grass theme
 + Small cleanup of the IBoard interface
@@ -29,20 +29,27 @@ v0.29.80 (CVS)
 + NPE on loading images with VTOLs
 + Syntax Error in MtfFile: replace cannot be called for Strings, only Chars.
 + Corrected error with tech level verification on some one-shot weapons.
-+ Correct standard armor detection for units (hopefully without breaking versions before 1.5 this time)
++ Correct standard armor detection for units (hopefully without breaking 
+    versions before 1.5 this time)
 + Removed debugging code left over from an earlier update
-+ Corrected ammo selection error stopping Clan units from getting alternate LRM types.
-+ Corrected ammo selection error stopping Clan units from getting alternate SRM types.
-+ Bug 1217038: Put in a check to only make a charge impossible if there's no interim STEP_GET_UP.
-+ Altered BLK tank and 'Mech loaders to allow more specific definition of unit level beyond year.
-+ Altered Self-Propelled Sniper and its ammo carrier from unnofficial.zip to make them load correctly as level 2 units.
-+ Bug 1216076: Corrected Compute.stackingViolation to correctly take unit height and elevation into account.
-+ Corrected Computer.stackingViolation to actually enforce the four-unit-max limit.
++ Corrected ammo selection error stopping Clan units from getting alternate 
+    LRM and SRM ammo.
++ Bug 1217038: Put in a check to only make a charge impossible if there's no
+    interim STEP_GET_UP.
++ Altered BLK tank and 'Mech loaders to allow more specific definition of unit
+    level beyond year.
++ Altered Self-Propelled Sniper and its ammo carrier from unnofficial.zip to
+    make them load correctly as level 2 units.
++ Bug 1216076: Corrected Compute.stackingViolation to correctly take unit
+    height and elevation into account.
++ Corrected Compute.stackingViolation to actually enforce the four-unit limit.
 + Bug 1215880: Change Elevation buttons now updated when clearAllMoves called.
-+ Bug 1215881: MovementDisplay added as a KeyListener to MovementDisplay's child buttons.
++ Bug 1215881: MovementDisplay added as a KeyListener to MovementDisplay's 
+    child buttons.
 + Fixed NPE in CustomMechDialog to do with targetting system selection.
 + Corrected engine type in VTOL data files from air.zip
 + Bug 1207706: Vibro-Claws come singly or in pairs, so show this in displays.
++ New pictures for Corona, Golem, Hellfire and Spirit.
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

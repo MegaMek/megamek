@@ -1010,7 +1010,9 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
 
             // Update the entity's targetting system type.
             if (!(entity.hasTargComp()) && (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_targsys"))) {
-                int targSysIndex = MiscType.getTargetSysType(choTargSys.getSelectedItem());
+                int targSysIndex = MiscType.T_TARGSYS_STANDARD;
+                if (choTargSys.getSelectedItem() != null)
+                    targSysIndex = MiscType.getTargetSysType(choTargSys.getSelectedItem());
                 if (targSysIndex >= 0)
                     entity.setTargSysType(targSysIndex);
                 else {

@@ -4739,6 +4739,12 @@ implements Runnable, ConnectionHandler {
         if(entity instanceof VTOL) {
             //we should let players pick, but this simplifies a lot.
             ((VTOL)entity).setElevation(game.getBoard().getHex(coords).ceiling()-game.getBoard().getHex(coords).floor()+1);
+            while ((Compute.stackingViolation(game, entity, coords, null) != null) && (entity.getElevation() <= 50)) {
+                ((VTOL)entity).setElevation(entity.getElevation() + 1);
+            }
+            if (entity.getElevation() > 50) {
+                throw new IllegalStateException("Entity #" + entity.getId() + " appears to be in an infinite loop trying to get a legal elevation.");
+            }
         }
         entity.setDone(true);
         entity.setDeployed(true);

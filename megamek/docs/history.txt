@@ -50,9 +50,12 @@ v0.29.80 (CVS)
 + Corrected engine type in VTOL data files from air.zip
 + Bug 1207706: Vibro-Claws come singly or in pairs, so show this in displays.
 + New pictures for Corona, Golem, Hellfire, Spirit, Beowulf, Conjurer, Cronus,
-    Grand Crusader, Lightray, Mandrill, Yu Huang.
+    Grand Crusader, Lightray, Mandrill, Yu Huang, Emperor, Glass Spider,
+    Gunslinger, No-Dachi, Predator, Sha Yu, Tai-Sho, Thresher.
+    Fixed pic for Shadowcat variants.
 + Bug 1217503: Vibro-Claws can only target Infantry
 + Dev Forum: Behaviour of Add Unit dialog changed, doesn't close after selection
++ No-Dachi was misnamed.
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

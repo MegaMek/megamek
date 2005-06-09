@@ -1037,14 +1037,22 @@ public class MovementDisplay
     private synchronized void updateLoadButtons() {
         final Entity ce = ce();
         
-        
+        boolean legalGear = ((gear == MovementDisplay.GEAR_LAND)
+                                || (gear == MovementDisplay.GEAR_TURN)
+                                || (gear == MovementDisplay.GEAR_BACKUP));
+        boolean vtolLoaded = false;
+        for (Enumeration e = loadedUnits.elements(); e.hasMoreElements(); ) {
+            Entity en = (Entity)e.nextElement();
+            if (en.getMovementMode() == IEntityMovementMode.VTOL) {
+                vtolLoaded = true;
+                break;
+            }
+        }
         // Disable the "Unload" button if we're in the wrong
         // gear or if the entity is not transporting units.
-        if ( ( gear != MovementDisplay.GEAR_LAND &&
-               gear != MovementDisplay.GEAR_TURN &&
-               gear != MovementDisplay.GEAR_BACKUP ) ||
+        if ( !legalGear ||
              loadedUnits.size() == 0 
-             || cen == Entity.NONE) {
+             || cen == Entity.NONE || (getCeElevation() > 0 && !vtolLoaded)) {
             setUnloadEnabled( false );
         }
         else {
@@ -1715,4 +1723,16 @@ System.err.println("!!!Here I am!");
         clientgui.getBoardView().removeBoardViewListener(this);
     }
 
+    public int getCeElevation() {
+        Entity ce = ce();
+        int retVal = ce.getElevation();
+        for (Enumeration e = cmd.getSteps(); e.hasMoreElements(); ) {
+            MoveStep ms = (MoveStep)e.nextElement();
+            if (ms.getType() == MovePath.STEP_UP)
+                retVal++;
+            else if (ms.getType() == MovePath.STEP_DOWN)
+                retVal--;
+        }
+        return retVal;
+    }
 }

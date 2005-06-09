@@ -41,6 +41,7 @@ v0.29.80 (CVS)
 + Bug 1215880: Change Elevation buttons now updated when clearAllMoves called.
 + Bug 1215881: MovementDisplay added as a KeyListener to MovementDisplay's child buttons.
 + Fixed NPE in CustomMechDialog to do with targetting system selection.
++ Corrected engine type in VTOL data files from air.zip
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

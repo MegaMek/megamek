@@ -34,7 +34,7 @@ import megamek.common.util.*;
 public class BLKBattleArmorFile extends BLKFile implements MechLoader {
 
     // HACK!!!  BattleArmor movement reuses Mech and Vehicle movement.
-    private static final String[] MOVES = { "", "Leg", "", "", "", "Jump" };
+    private static final String[] MOVES = { "", "Leg", "", "", "", "Jump", "VTOL" };
 
     public BLKBattleArmorFile(BuildingBlock bb) {
         dataFile = bb;

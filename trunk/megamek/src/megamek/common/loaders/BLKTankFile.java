@@ -63,6 +63,10 @@ public class BLKTankFile extends BLKFile implements MechLoader {
             } else {
                 t.setTechLevel(TechConstants.T_IS_LEVEL_2);
             }
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
+            t.setTechLevel(TechConstants.T_IS_LEVEL_1);
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
+            t.setTechLevel(TechConstants.T_IS_LEVEL_2);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {

@@ -249,6 +249,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISSmallXPulseLaser());
         EquipmentType.addType(createISLaserAMS());
         EquipmentType.addType(createISLaserAMSTHB());
+        
+        EquipmentType.addType( createISGaussRiflePrototype() );
+        EquipmentType.addType( createISLBXAC10Prototype() );
+        EquipmentType.addType( createISUltraAC5Prototype() );
+        EquipmentType.addType( createISERLargeLaserPrototype() );
+        EquipmentType.addType( createISMediumPulseLaserPrototype() );
 
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -404,12 +410,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createBAVibroClaws1() );
         EquipmentType.addType( createBAVibroClaws2() );
         EquipmentType.addType( createPhalanxSRM4() );
-        
-        // War Of 3039 prototype weapons
-        EquipmentType.addType( createISGaussRiflePrototype() );
-        EquipmentType.addType( createISUltraAC5Prototype() );
-        EquipmentType.addType( createISERLargeLaserPrototype() );
-        EquipmentType.addType( createISMediumPulseLaserPrototype() );
+
     }
 
     public static WeaponType createFlamer() {

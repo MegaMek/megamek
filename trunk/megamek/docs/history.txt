@@ -60,6 +60,7 @@ v0.29.80 (CVS)
      necessarily fully featured yet.
 + Bug 1216081: Only VTOL-able infantry may unload when you're above ground level.
 + Updated Snow and Grass theme.
++ The constantd for the compass directions moved from Entity.
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

@@ -283,7 +283,6 @@ class PreferenceStore implements IPreferenceStore {
     }
 
     public String[] getAdvancedProperties() {
-        properties.list(System.out);
         Vector v = new Vector();
         String s;
         for (Enumeration e = properties.propertyNames(); e.hasMoreElements(); ) {

@@ -62,7 +62,9 @@ v0.29.80 (CVS)
 + Updated Snow and Grass theme.
 + The constantd for the compass directions moved from Entity.
 + Prototype LB-10X AC not loading
-
++ MechSelector changed to 3-Button layout: Select (keeps the dialog open), Select & close,
+  Close.
+  
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment
 + Mule kicks for Quads
@@ -2930,7 +2932,7 @@ version 0.06
 + saving and loading of maps
 + slightly more intuitive new map starting
 
-versions before 0.06
+versions before 0.06 
 + i dunno
 
 

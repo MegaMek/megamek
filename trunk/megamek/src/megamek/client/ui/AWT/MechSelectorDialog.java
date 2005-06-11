@@ -59,6 +59,7 @@ public class MechSelectorDialog
     private Panel m_pParams = new Panel();
     List m_mechList = new List(10);
     private Button m_bPick = new Button(Messages.getString("MechSelectorDialog.m_bPick")); //$NON-NLS-1$
+    private Button m_bPickClose = new Button(Messages.getString("MechSelectorDialog.m_bPickClose")); //$NON-NLS-1$    
     private Button m_bCancel = new Button(Messages.getString("Close")); //$NON-NLS-1$
     private Panel m_pButtons = new Panel();
     private TextArea m_mechViewLeft = new TextArea("",18,25,TextArea.SCROLLBARS_HORIZONTAL_ONLY); //$NON-NLS-1$
@@ -97,6 +98,7 @@ public class MechSelectorDialog
         
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         m_pButtons.add(m_bPick);
+        m_pButtons.add(m_bPickClose);
         m_pButtons.add(m_bCancel);
         m_pButtons.add(m_labelPlayer);
         m_pButtons.add(m_chPlayer);
@@ -128,6 +130,7 @@ public class MechSelectorDialog
         m_chSort.addItemListener(this);
         m_mechList.addItemListener(this);
         m_bPick.addActionListener(this);
+        m_bPickClose.addActionListener(this);
         m_bCancel.addActionListener(this);
         setSize(770, 320);
         setLocation(m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2,
@@ -296,7 +299,8 @@ public class MechSelectorDialog
         if (ae.getSource() == m_bCancel) {
             this.setVisible(false);
         }
-        else if (ae.getSource() == m_bPick) {
+        else if (ae.getSource() == m_bPick ||
+                 ae.getSource() == m_bPickClose) {
             int x = m_mechList.getSelectedIndex();
             if (x == -1) {
                 return;
@@ -319,7 +323,9 @@ public class MechSelectorDialog
                 ex.printStackTrace();
                 return;
             }
-            //this.setVisible(false);
+            if (ae.getSource() == m_bPickClose) {
+                this.setVisible(false);
+            }
         }
     }
     

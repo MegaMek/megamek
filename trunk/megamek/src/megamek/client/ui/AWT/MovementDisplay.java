@@ -703,7 +703,7 @@ public class MovementDisplay
             
             // check if we used more MPs than the Mech/Vehicle would have in normal gravity
             if (!i.hasMoreElements() && !firstStep) {
-                if (entity instanceof Mech) {
+                if ((entity instanceof Mech) || (entity instanceof VTOL)) {
                     if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_RUN)) {
                         if (step.getMpUsed() > entity.getRunMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step);

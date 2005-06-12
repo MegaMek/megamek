@@ -693,7 +693,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     
     public void disableMGSetting() {
         for (int i = 0; i < m_vMGs.size(); i++) {
-            ((MunitionChoicePanel)m_vMGs.elementAt(i)).setEnabled(false);
+            ((RapidfireMGPanel)m_vMGs.elementAt(i)).setEnabled(false);
         }
     }
 

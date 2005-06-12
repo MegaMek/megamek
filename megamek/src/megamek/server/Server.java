@@ -9778,6 +9778,17 @@ implements Runnable, ConnectionHandler {
                             .append( " damage transfers to " )
                             .append( te.getLocationAbbr(nextHit) )
                             .append( "." );
+                        // If there are split weapons in this location, mark it as
+                        // destroyed, even if it took no criticals.
+                        for (Enumeration enum=te.getWeapons(); enum.hasMoreElements(); ) {
+                            Mounted m = (Mounted)enum.nextElement();
+                            if (m.isSplit()) {
+                                if (m.getLocation() == hit.getLocation() ||
+                                    m.getLocation() == nextHit.getLocation()) {
+                                    te.setWeaponDestroyed(m);
+                                }
+                            }
+                        }
                     }
                 }
             }

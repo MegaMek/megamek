@@ -4190,4 +4190,12 @@ public abstract class Entity
     public int getArmorType() {
         return armorType;
     }
+    
+    public void setWeaponDestroyed (Mounted which) {
+        if (weaponList.contains(which)) {
+            which.setDestroyed(true);
+            weaponList.remove(which);
+            weaponList.add(which);
+        }
+    }
 }

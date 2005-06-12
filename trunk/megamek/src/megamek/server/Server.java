@@ -8931,6 +8931,15 @@ implements Runnable, ConnectionHandler {
         if ( Entity.NONE != entity.getSwarmTargetId() ) {
             return;
         }
+        if (entity instanceof VTOL) {
+            // VTOLs don't check as long as they are flying higher than
+            // the burning terrain. TODO: Check for rules conformity (ATPM?)
+            Coords c = entity.getPosition();
+            IHex h = game.getBoard().getHex(c.x, c.y);
+            if (((VTOL)entity).getElevation()+h.getElevation() > h.ceiling()) {
+                return;
+            }
+        }
         // Battle Armor squads equipped with fire protection
         // gear automatically avoid flaming death.
         for ( Enumeration iter = entity.getMisc(); iter.hasMoreElements(); ) {

@@ -393,28 +393,15 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private void setupButtons() {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
-        boolean usesMSJVM = !(System.getProperty("java.vendor").indexOf("Microsoft") != -1);
-        
-        if (usesMSJVM) {
-            butNext.addActionListener(this);
-            butPrev.addActionListener(this);
-        }
-        
-        // layout
+        butNext.addActionListener(this);
+        butPrev.addActionListener(this);
 
-        if (usesMSJVM) {
-            panButtons.setLayout(new GridLayout(1, 2, 10, 0));
-        } else {
-            panButtons.setLayout(new GridLayout(1, 4, 10, 0));
-        }
-        if (usesMSJVM) {
-            panButtons.add(butPrev);
-        }
+        // layout
+        panButtons.setLayout(new GridLayout(1, 4, 10, 0));
+        panButtons.add(butPrev);
         panButtons.add(butOkay);
         panButtons.add(butCancel);
-        if (usesMSJVM) {
-            panButtons.add(butNext);
-        }
+        panButtons.add(butNext);
      }
     
     private void setupRapidfireMGs() {
@@ -1063,11 +1050,10 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         }
         this.setVisible(false);
         Entity nextOne = null;
-        if (actionEvent.getSource() == butOkay) {
-        } else if (actionEvent.getSource() == butPrev) {
-            nextOne = client.game.getPreviousEntity(entity);
+        if (actionEvent.getSource() == butPrev) {
+            nextOne = client.game.getPreviousEntityFromList(entity);
         } else if (actionEvent.getSource() == butNext) {
-            nextOne = client.game.getNextEntity(entity);
+            nextOne = client.game.getNextEntityFromList(entity);
         }
         if (nextOne!=null) {
             clientgui.chatlounge.refreshEntities();

@@ -4122,8 +4122,8 @@ public abstract class Entity
      * @param weaponId The <code>int</code> id of the shooting lrm launcher
      */
     public void addTargetedBySwarm(int entityId, int weaponId) {
-        hitBySwarmsEntity.add(new Integer(entityId));
-        hitBySwarmsWeapon.add(new Integer(weaponId));
+        hitBySwarmsEntity.addElement(new Integer(entityId));
+        hitBySwarmsWeapon.addElement(new Integer(weaponId));
     }
     
     /**
@@ -4194,8 +4194,8 @@ public abstract class Entity
     public void setWeaponDestroyed (Mounted which) {
         if (weaponList.contains(which)) {
             which.setDestroyed(true);
-            weaponList.remove(which);
-            weaponList.add(which);
+            weaponList.removeElement(which);
+            weaponList.addElement(which);
         }
     }
 }

@@ -1130,17 +1130,16 @@ public class Compute
         
         boolean isVTOL = entityTarget==null? false : (entityTarget instanceof VTOL);
 
-        // you don't get terrain modifiers in midair
-        // should be abstracted more into a 'not on the ground' flag for vtols and such
-        if (entityTarget != null && entityTarget.isMakingDfa()) {
-            return null;
-        }
-
         ToHitData toHit = new ToHitData();
-
+        
         // only entities get terrain bonuses
         // TODO: should this be changed for buildings???
         if (entityTarget == null) {
+            return toHit;
+        } else if (entityTarget.isMakingDfa()) {
+            // you don't get terrain modifiers in midair
+            // should be abstracted more into a 'not on the ground' 
+            // flag for vtols and such
             return toHit;
         }
 

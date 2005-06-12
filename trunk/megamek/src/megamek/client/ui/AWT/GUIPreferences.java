@@ -51,6 +51,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         "AdvancedMechDisplayMediumFontSize";
     public static final String ADVANCED_MECH_DISPLAY_WRAP_LENGTH =
         "AdvancedMechDisplayWrapLength";
+    public static final String ADVANCED_MOVE_DEFAULT_COLOR = "AdvancedMoveDefaultColor";
+    public static final String ADVANCED_MOVE_ILLEGAL_COLOR = "AdvancedMoveIllegalColor";
+    public static final String ADVANCED_MOVE_JUMP_COLOR = "AdvancedMoveJumpColor";
+    public static final String ADVANCED_MOVE_MASC_COLOR = "AdvancedMoveMASCColor";
+    public static final String ADVANCED_MOVE_RUN_COLOR = "AdvancedMoveRunColor";
+    public static final String ADVANCED_MOVE_STEP_DELAY = "AdvancedMoveStepDelay";
     /* --End advanced settings-- */
 
     public static final String ALWAYS_RIGHT_CLICK_SCROLL="AlwaysRightClickScroll";
@@ -78,12 +84,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINIMAP_ZOOM = "MinimapZoom";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
-    public static final String MOVE_DEFAULT_COLOR = "MoveDefaultColor";
-    public static final String MOVE_ILLEGAL_COLOR = "MoveIllegalColor";
-    public static final String MOVE_JUMP_COLOR = "MoveJumpColor";
-    public static final String MOVE_MASC_COLOR = "MoveMASCColor";
-    public static final String MOVE_RUN_COLOR = "MoveRunColor";
-    public static final String MOVE_STEP_DELAY = "MoveStepDelay";
     public static final String NAG_FOR_BOT_README = "NagForBotReadme";
     public static final String NAG_FOR_MAP_ED_README="NagForMapEdReadme";
     public static final String NAG_FOR_MASC = "NagForMASC";
@@ -128,6 +128,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_WRAP_LENGTH, 24);
+        setDefault(ADVANCED_MOVE_DEFAULT_COLOR, "cyan");
+        setDefault(ADVANCED_MOVE_ILLEGAL_COLOR, "darkGray");
+        setDefault(ADVANCED_MOVE_JUMP_COLOR, "red");
+        setDefault(ADVANCED_MOVE_MASC_COLOR, new Color(255,140,0));
+        setDefault(ADVANCED_MOVE_RUN_COLOR, "yellow");
+        store.setDefault(ADVANCED_MOVE_STEP_DELAY, 100);
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(CHAT_LOUNGE_TAB_FONT_SIZE, 16);
@@ -144,12 +150,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_POS_Y, 150);
         store.setDefault(MINI_REPORT_SIZE_HEIGHT, 300);
         store.setDefault(MINI_REPORT_SIZE_WIDTH, 400);
-        setDefault(MOVE_DEFAULT_COLOR, Color.cyan);
-        setDefault(MOVE_ILLEGAL_COLOR, Color.darkGray);
-        setDefault(MOVE_JUMP_COLOR, Color.red);
-        setDefault(MOVE_MASC_COLOR, new Color(255,140,0));
-        setDefault(MOVE_RUN_COLOR, Color.yellow);
-        setDefault(MOVE_STEP_DELAY, 500);
         store.setDefault(NAG_FOR_BOT_README, true);
         store.setDefault(NAG_FOR_MAP_ED_README, true);
         store.setDefault(NAG_FOR_MASC, true);
@@ -280,30 +280,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMiniReportSizeWidth() {
         return store.getInt(MINI_REPORT_SIZE_WIDTH);
-    }
-
-    public Color getMoveDefaultColor() {
-        return getColor(MOVE_DEFAULT_COLOR);
-    }
-
-    public Color getMoveIllegalColor() {
-        return getColor(MOVE_ILLEGAL_COLOR);
-    }
-
-    public Color getMoveJumpColor() {
-        return getColor(MOVE_JUMP_COLOR);
-    }
-
-    public Color getMoveMASCColor() {
-        return getColor(MOVE_MASC_COLOR);
-    }
-
-    public Color getMoveRunColor() {
-        return getColor(MOVE_RUN_COLOR);
-    }
-
-    public int getMoveStepDelay() {
-        return store.getInt(MOVE_STEP_DELAY);
     }
 
     public boolean getNagForBotReadme() {

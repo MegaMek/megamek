@@ -641,6 +641,12 @@ public interface IGame {
      */
     public abstract Entity getNextEntity(int start);
     
+    /**
+     * Returns the next selectable entity ID that can act this turn,
+     * or null if none can.
+     *
+     * @param start the index number to start at
+     */
     public abstract int getNextEntityNum(int start);
     
     /**
@@ -997,6 +1003,23 @@ public interface IGame {
      */
     public abstract Enumeration getNemesisTargets(Entity attacker, Coords target);
 
-    public abstract Entity getPreviousEntity (Entity current);
-    public abstract Entity getNextEntity (Entity current);
+    /**
+     * Returns the previous entity from the master list of entities.  Will
+     * wrap around to the end of the list if necessary.
+     *
+     * @param current The <code>Entity</code> whose list position you wish
+     * to start from.
+     * @return  The previous <code>Entity</code> in the list.
+     */
+    public abstract Entity getPreviousEntityFromList (Entity current);
+
+    /**
+     * Returns the next entity from the master list of entities.  Will
+     * wrap around to the begining of the list if necessary.
+     *
+     * @param current The <code>Entity</code> whose list position you wish
+     * to start from.
+     * @return  The next <code>Entity</code> in the list.
+     */
+    public abstract Entity getNextEntityFromList (Entity current);
 }

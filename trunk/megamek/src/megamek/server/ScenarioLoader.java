@@ -575,25 +575,28 @@ public class ScenarioLoader
         props.load(fis);
         fis.close();
       
-        // Strip trailing spaces
-        int loop;
-        String key;
-        StringBuffer value;
-        Properties fixed = new Properties();
-        Enumeration keyIt = props.keys();
-        while (keyIt.hasMoreElements()) {
-            key = (String) keyIt.nextElement();
-            value = new StringBuffer( props.getProperty(key) );
-            for (loop = value.length() - 1; loop >= 0; loop--) {
-                if(!Character.isWhitespace( value.charAt( loop ) ))
-                    break;
+        // Strip trailing spaces - does not work under MS JVM
+        if (System.getProperty("java.vendor").indexOf("Microsoft") == -1) {
+            int loop;
+            String key;
+            StringBuffer value;
+            Properties fixed = new Properties();
+            Enumeration keyIt = props.keys();
+            while (keyIt.hasMoreElements()) {
+                key = (String) keyIt.nextElement();
+                value = new StringBuffer( props.getProperty(key) );
+                for (loop = value.length() - 1; loop >= 0; loop--) {
+                    if(!Character.isWhitespace( value.charAt( loop ) ))
+                        break;
+                }
+
+                value.setLength( loop + 1 );
+                fixed.setProperty( key, value.toString() );
             }
-        
-            value.setLength( loop + 1 );
-            fixed.setProperty( key, value.toString() );
+            return fixed;
+        } else {
+            return props;
         }
-      
-        return fixed;
     }
     
     public static void main(String[] saArgs)

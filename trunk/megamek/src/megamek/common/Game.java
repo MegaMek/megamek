@@ -701,24 +701,26 @@ public class Game implements Serializable, IGame
         return entities.elements();
     }
 
-    public Entity getPreviousEntity (Entity current) {
+    public Entity getPreviousEntityFromList (Entity current) {
         if (current!=null && entities != null && entities.contains(current)) {
-            int help = entities.indexOf(current) - 1;
-            if (help<0) help=0;
-            return (Entity)entities.get(help);
+            int prev = entities.indexOf(current) - 1;
+            if (prev < 0)
+                prev = entities.size() - 1; //wrap around to end
+            return (Entity)entities.elementAt(prev);
         }
         return null;
     }
-    
-    public Entity getNextEntity (Entity current) {
+
+    public Entity getNextEntityFromList (Entity current) {
         if (current!=null && entities!=null && entities.contains(current)) {
-            int help = entities.indexOf(current)+1;
-            if (help>entities.size()) help=entities.size();
-            return (Entity)entities.get(help);
+            int next = entities.indexOf(current)+1;
+            if (next >= entities.size())
+                next = 0; // wrap-around to begining
+            return (Entity)entities.elementAt(next);
         }
         return null;
     }
-    
+
     /**
      * Returns the actual vector for the entities
      */

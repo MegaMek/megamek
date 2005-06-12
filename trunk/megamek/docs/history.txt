@@ -3,6 +3,8 @@ VERSION HISTORY:
 v0.29.81 (CVS)
 + Bug 1219175: Can't access client settings with MS JRE
 + Bug 1219313: "configure unit" not working for mechs with MGs
++ Several fixes for the Microsoft JVM, including bug 1219222,
+    bug 1219175(sorting re-enabled), and a re-enabling of scenarios.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

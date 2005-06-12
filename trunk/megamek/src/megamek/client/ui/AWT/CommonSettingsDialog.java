@@ -16,7 +16,9 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Arrays;
+
+import com.sun.java.util.collections.Arrays;
+import com.sun.java.util.collections.Comparator;
 
 import gov.nist.gui.TabPanel;
 
@@ -431,9 +433,18 @@ public class CommonSettingsDialog extends ClientDialog
 
         keys = new List(10, false);
         String[] s = GUIPreferences.getInstance().getAdvancedProperties();
-        if (!(System.getProperty("java.vendor").indexOf("Microsoft") != -1)) {
-            Arrays.sort(s);
-        }
+        //You would think that a simple "Arrays.sort(s)" would work below,
+        // but it does not.  Something funky is going on with the
+        // collections.jar classes - specifically spelling out the comparator
+        // seems to fix it.  This kludge can be removed when we drop Java
+        // 1.1 compatability.
+        Arrays.sort(s, new Comparator() {
+                public int compare( Object a, Object b ) {
+                    String sa = (String)a;
+                    String sb = (String)b;
+                    return sa.compareTo(sb);
+                }
+            });
         for (int i = 0; i < s.length; i++) {
             keys.add(s[i].substring(s[i].indexOf("Advanced") + 8, s[i].length()));
         }

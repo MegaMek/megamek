@@ -258,7 +258,7 @@ public class TestMech extends TestEntity
                 }
                 if (!(m.getType() instanceof MiscType))
                 {
-                    unallocated.add(m);
+                    unallocated.addElement(m);
                     continue;
                 }
                 MiscType mt = (MiscType) m.getType();
@@ -267,7 +267,7 @@ public class TestMech extends TestEntity
                     countInternalHeatSinks++;
                 else
                 {
-                    unallocated.add(m);
+                    unallocated.addElement(m);
                     continue;
                 }
 
@@ -280,7 +280,7 @@ public class TestMech extends TestEntity
                  countInternalHeatSinks!=((Mech)entity).heatSinks() &&
                  !entity.isOmni()))
         {
-            heatSinks.add(new Integer(countInternalHeatSinks));
+            heatSinks.addElement(new Integer(countInternalHeatSinks));
         }
     }
 

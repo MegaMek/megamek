@@ -1140,6 +1140,7 @@ public class ChatLounge
         // display dialog
         CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entity, editable);
         cmd.refreshOptions();
+        cmd.setTitle(entity.getShortName());
         cmd.show();
         if (editable && cmd.isOkay()) {
             // send changes

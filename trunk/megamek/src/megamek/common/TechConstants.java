@@ -50,13 +50,13 @@ public class TechConstants {
 
     // this made public because MekWars accesses it
     // It must match the index to the constant's value.
-    public static final String[]    T_NAMES = {"IS level 1",
-                                               "IS level 2",
-                                               "Clan level 2",
-                                               "IS level 1 and 2",
-                                               "All level 2",
-                                               "IS level 3",
-                                               "Clan level 3",
+    public static final String[]    T_NAMES = {"IS_level_1",
+                                               "IS_level_2",
+                                               "Clan_level_2",
+                                               "IS_level_1_and_2",
+                                               "All_level_2",
+                                               "IS_level_3",
+                                               "Clan_level_3",
                                                 "All"};
 
     public static final int SIZE            = T_NAMES.length;

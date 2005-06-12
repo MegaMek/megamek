@@ -1981,7 +1981,7 @@ public class BoardView1
 
             moveWait += idleTime;
 
-            if (moveWait > GUIPreferences.getInstance().getMoveStepDelay()) {
+            if (moveWait > GUIPreferences.getInstance().getInt("AdvancedMoveStepDelay")) {
 
                 java.util.Vector spent = new java.util.Vector();
 
@@ -3189,19 +3189,19 @@ public class BoardView1
             switch (step.getMovementType()) {
             case IEntityMovementType.MOVE_RUN :
                 if (step.isUsingMASC()) {
-                    col = GUIPreferences.getInstance().getMoveMASCColor();
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveMASCColor");
                 } else {
-                    col = GUIPreferences.getInstance().getMoveRunColor();
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
                 }
                 break;
             case IEntityMovementType.MOVE_JUMP :
-                col = GUIPreferences.getInstance().getMoveJumpColor();
+                col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
                 break;
             case IEntityMovementType.MOVE_ILLEGAL :
-                col = GUIPreferences.getInstance().getMoveIllegalColor();
+                col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
                 break;
             default :
-                col = GUIPreferences.getInstance().getMoveDefaultColor();
+                col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
                 break;
             }
 

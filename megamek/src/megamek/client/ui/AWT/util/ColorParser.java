@@ -17,7 +17,7 @@ package megamek.client.util;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.StreamTokenizer;
-import java.io.StringBufferInputStream;
+import java.io.StringReader;
 
 public class ColorParser {
 
@@ -40,7 +40,7 @@ public class ColorParser {
 
     public boolean parse(String color) {
         clear();
-        StringBufferInputStream s = new StringBufferInputStream(color);  
+        StringReader s = new StringReader(color);  
         st = new StreamTokenizer(s);
         return parse();
     }
@@ -80,6 +80,7 @@ public class ColorParser {
             for (int x = 0; x < colorNames.length; x++) {
                 if (colorNames[x].equalsIgnoreCase(sName)) {
                     color = colorValues[x];
+                    return;
                 }
             }
             throw new ParseException("Unrecognized color: " + sName);
@@ -99,13 +100,13 @@ public class ColorParser {
             nextToken();
             color = new Color(red, green, blue);
         } else {
-            throw new ParseException("color name or integer read component value expected");                            
+            throw new ParseException("color name or integer read component value expected");
         }
     }
         
     protected void nextToken() {
         try {
-            currentToken = st.nextToken();            
+            currentToken = st.nextToken();
         } catch (IOException e1) {
             currentToken = StreamTokenizer.TT_EOF;
         }

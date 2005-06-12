@@ -884,7 +884,7 @@ public class MoveStep implements Serializable {
             // Vehicles moving along pavement get "road bonus" of 1 MP.
             // N.B. The Ask Precentor Martial forum said that a 4/6
             //      tank on a road can move 5/7, **not** 5/8.
-            } else if (entity instanceof Tank && isOnlyPavement()
+            } else if (entity instanceof Tank && !(entity instanceof VTOL) && isOnlyPavement()
                        && getMpUsed() == entity.getWalkMP() + 1) {
                 movementType = IEntityMovementType.MOVE_WALK;
                 // store if we got the pavement Bonus for end of phase
@@ -901,6 +901,7 @@ public class MoveStep implements Serializable {
                 movementType = IEntityMovementType.MOVE_RUN;
             } else if (
                 entity instanceof Tank
+                    && !(entity instanceof VTOL)
                     && isOnlyPavement()
                     && getMpUsed() <= (entity.getRunMP() + 1)
                     && !isRunProhibited()) {

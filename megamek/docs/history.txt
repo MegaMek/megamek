@@ -64,6 +64,7 @@ v0.29.80 (CVS)
 + Prototype LB-10X AC not loading
 + MechSelector changed to 3-Button layout: Select (keeps the dialog open), Select & close,
   Close.
++ Bug 1218551: Removed road bonus for VTOLs.
   
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

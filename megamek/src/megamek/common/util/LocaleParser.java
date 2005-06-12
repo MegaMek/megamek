@@ -17,7 +17,7 @@ package megamek.common.util;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
-import java.io.StringBufferInputStream;
+import java.io.StringReader;
 
 public class LocaleParser {
 
@@ -40,7 +40,7 @@ public class LocaleParser {
 
     public boolean parse(String locstring ) {
         clear();
-        StringBufferInputStream s = new StringBufferInputStream(locstring);  
+        StringReader s = new StringReader(locstring);  
         st = new StreamTokenizer(s);
         return parse();
     }

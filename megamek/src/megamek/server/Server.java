@@ -9780,8 +9780,8 @@ implements Runnable, ConnectionHandler {
                             .append( "." );
                         // If there are split weapons in this location, mark it as
                         // destroyed, even if it took no criticals.
-                        for (Enumeration enum=te.getWeapons(); enum.hasMoreElements(); ) {
-                            Mounted m = (Mounted)enum.nextElement();
+                        for (Enumeration weapons=te.getWeapons(); weapons.hasMoreElements(); ) {
+                            Mounted m = (Mounted)weapons.nextElement();
                             if (m.isSplit()) {
                                 if (m.getLocation() == hit.getLocation() ||
                                     m.getLocation() == nextHit.getLocation()) {

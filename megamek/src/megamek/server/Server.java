@@ -6245,7 +6245,8 @@ implements Runnable, ConnectionHandler {
             // and any building is safe from damage.
             if ( (usesAmmo && wr.amsShotDownTotal >= maxMissiles) ||
                  toHit.getValue() == TargetRoll.AUTOMATIC_FAIL ||
-                 wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
+                 wtype.getAmmoType() == AmmoType.T_SRM_STREAK  || 
+                 wtype.getAmmoType() == AmmoType.T_LRM_STREAK) {
                 return !bMissed;
             }
             // If we're using swarm munition, set the number of missiles that

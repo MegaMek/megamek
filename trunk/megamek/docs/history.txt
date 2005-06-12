@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.80 (CVS)
+v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.
 + Edits to a number of units to correct Mixed-Tech to level 3 from level 2
 + Added Acid-head warheads.  Also put in beginnings of more efficient armor
@@ -60,7 +60,7 @@ v0.29.80 (CVS)
      necessarily fully featured yet.
 + Bug 1216081: Only VTOL-able infantry may unload when you're above ground level.
 + Updated Snow and Grass theme.
-+ The constantd for the compass directions moved from Entity.
++ The constants for the compass directions moved from Entity.
 + Prototype LB-10X AC not loading
 + MechSelector changed to 3-Button layout: Select (keeps the dialog open), Select & close,
   Close.

@@ -69,6 +69,7 @@ v0.29.80 (CVS)
 + Bug 1216083: VTOLs and Fires
 + Bug 1014263: Split weapons not working correctly
 + Bug 1219182: Garbled "Type" filter in MS JRE
++ Bug 1219222: Next/previous buttons don't work in MS JRE
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

@@ -393,16 +393,28 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private void setupButtons() {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
-        butNext.addActionListener(this);
-        butPrev.addActionListener(this);
+        boolean usesMSJVM = !(System.getProperty("java.vendor").indexOf("Microsoft") != -1);
+        
+        if (usesMSJVM) {
+            butNext.addActionListener(this);
+            butPrev.addActionListener(this);
+        }
         
         // layout
 
-        panButtons.setLayout(new GridLayout(1, 4, 10, 0));
-        panButtons.add(butPrev);
+        if (usesMSJVM) {
+            panButtons.setLayout(new GridLayout(1, 2, 10, 0));
+        } else {
+            panButtons.setLayout(new GridLayout(1, 4, 10, 0));
+        }
+        if (usesMSJVM) {
+            panButtons.add(butPrev);
+        }
         panButtons.add(butOkay);
         panButtons.add(butCancel);
-        panButtons.add(butNext);
+        if (usesMSJVM) {
+            panButtons.add(butNext);
+        }
      }
     
     private void setupRapidfireMGs() {

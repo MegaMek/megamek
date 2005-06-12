@@ -431,7 +431,9 @@ public class CommonSettingsDialog extends ClientDialog
 
         keys = new List(10, false);
         String[] s = GUIPreferences.getInstance().getAdvancedProperties();
-        Arrays.sort(s);
+        if (!(System.getProperty("java.vendor").indexOf("Microsoft") != -1)) {
+            Arrays.sort(s);
+        }
         for (int i = 0; i < s.length; i++) {
             keys.add(s[i].substring(s[i].indexOf("Advanced") + 8, s[i].length()));
         }

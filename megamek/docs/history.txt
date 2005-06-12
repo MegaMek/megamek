@@ -66,7 +66,8 @@ v0.29.80 (CVS)
   Close.
 + Bug 1218551: Removed road bonus for VTOLs.
 + Bug 1219010: Streak-LRMs that miss shouldn't be able to start a fire, like Streak-SRMs.
-  
++ Bug 1216083: VTOLs and Fires
+
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment
 + Mule kicks for Quads

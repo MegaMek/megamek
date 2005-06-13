@@ -57,6 +57,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_MOVE_MASC_COLOR = "AdvancedMoveMASCColor";
     public static final String ADVANCED_MOVE_RUN_COLOR = "AdvancedMoveRunColor";
     public static final String ADVANCED_MOVE_STEP_DELAY = "AdvancedMoveStepDelay";
+    public static final String ADVANCED_DARKEN_MAP_AT_NIGHT = "AdvancedDarkenMapAtNight";
     /* --End advanced settings-- */
 
     public static final String ALWAYS_RIGHT_CLICK_SCROLL="AlwaysRightClickScroll";
@@ -134,6 +135,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MOVE_MASC_COLOR, new Color(255,140,0));
         setDefault(ADVANCED_MOVE_RUN_COLOR, "yellow");
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 100);
+        store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(CHAT_LOUNGE_TAB_FONT_SIZE, 16);

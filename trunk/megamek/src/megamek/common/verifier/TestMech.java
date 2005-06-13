@@ -60,14 +60,21 @@ public class TestMech extends TestEntity
 
     private static Structure getStructure(Mech mech)
     {
-        int type = Structure.NORMAL_STRUCTURE;
+        int type = EquipmentType.T_STRUCTURE_STANDARD;
         int flag = 0;
         for (Enumeration e = mech.getMisc(); e.hasMoreElements(); )
         {
             Mounted m = (Mounted)e.nextElement();
             EquipmentType etype = m.getType();
-            if (etype.getName()==MiscType.ENDO_STEEL || etype.getName()==MiscType.ENDO_STEEL_PROTO)
-                type = Structure.ENDO_STEEL_STRUCTURE;
+            if (etype.getName().equals(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL))) {
+                type = EquipmentType.T_STRUCTURE_ENDO_STEEL;
+            } else if (etype.getName().equals(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE))) {
+                type = EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE;
+            } else if (etype.getName().equals(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_REINFORCED))) {
+                type = EquipmentType.T_STRUCTURE_REINFORCED;
+            } else if (etype.getName().equals(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_COMPOSITE))) {
+                type = EquipmentType.T_STRUCTURE_COMPOSITE;
+            }
         }
 
         if (mech.isClan())

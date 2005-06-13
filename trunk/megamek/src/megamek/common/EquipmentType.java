@@ -35,17 +35,24 @@ public class EquipmentType {
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
 
-    public static final int     T_ARMOR_UNKNOWN         = -1;
-    public static final int     T_ARMOR_STANDARD        = 0;
-    public static final int     T_ARMOR_FERRO_FIBROUS   = 1;
-    public static final int     T_ARMOR_REACTIVE        = 2;
-    public static final int     T_ARMOR_REFLECTIVE      = 3;
-    public static final int     T_ARMOR_HARDENED        = 4;
-    public static final int     T_ARMOR_LIGHT_FERRO     = 5;
-    public static final int     T_ARMOR_HEAVY_FERRO     = 6;
-    public static final int     T_ARMOR_PATCHWORK       = 7;
-    public static final int     T_ARMOR_STEALTH         = 8;
-    public static final int T_ARMOR_FERRO_FIBROUS_PROTO = 9;
+    public static final int     T_ARMOR_UNKNOWN             = -1;
+    public static final int     T_ARMOR_STANDARD            = 0;
+    public static final int     T_ARMOR_FERRO_FIBROUS       = 1;
+    public static final int     T_ARMOR_REACTIVE            = 2;
+    public static final int     T_ARMOR_REFLECTIVE          = 3;
+    public static final int     T_ARMOR_HARDENED            = 4;
+    public static final int     T_ARMOR_LIGHT_FERRO         = 5;
+    public static final int     T_ARMOR_HEAVY_FERRO         = 6;
+    public static final int     T_ARMOR_PATCHWORK           = 7;
+    public static final int     T_ARMOR_STEALTH             = 8;
+    public static final int     T_ARMOR_FERRO_FIBROUS_PROTO = 9;
+
+    public static final int     T_STRUCTURE_UNKNOWN         = -1;
+    public static final int     T_STRUCTURE_STANDARD        = 0;
+    public static final int     T_STRUCTURE_ENDO_STEEL      = 1;
+    public static final int     T_STRUCTURE_ENDO_PROTOTYPE  = 2;
+    public static final int     T_STRUCTURE_REINFORCED      = 3;
+    public static final int     T_STRUCTURE_COMPOSITE       = 4;
 
     public static final String[] armorNames = {"Standard",
                                             "Ferro-Fibrous",
@@ -57,6 +64,12 @@ public class EquipmentType {
                                             "Patchwork",
                                             "Stealth",
                                             "Ferro-Fibrous Prototype"};
+
+    public static final String[] structureNames = {"Standard",
+                                            "Endo Steel",
+                                            "Endo Steel Prototype",
+                                            "Reinforced",
+                                            "Composite"};
 
     protected String    name = null;
 
@@ -294,5 +307,19 @@ public class EquipmentType {
         if ((armorType < 0) || (armorType >= armorNames.length))
             return null;
         return armorNames[armorType];
+    }
+
+    public static int getStructureType(String inType) {
+        for (int x=0; x<structureNames.length; x++) {
+            if ((structureNames[x].indexOf(inType) >= 0) || (inType.indexOf(structureNames[x]) >= 0))
+                return x;
+        }
+        return T_ARMOR_UNKNOWN;
+    }
+
+    public static  String getStructureTypeName(int structureType) {
+        if ((structureType < 0) || (structureType >= structureNames.length))
+            return null;
+        return structureNames[structureType];
     }
 }

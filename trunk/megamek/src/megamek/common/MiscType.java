@@ -79,12 +79,6 @@ public class MiscType extends EquipmentType {
                                                     "Anti-Air Targetting System",
                                                     "Multi-Trac Targetting System",
                                                     "Multi-Trac II Targetting System"};
-
-    // Define constants for Endo-Steel.
-    public static final String  ENDO_STEEL          = "Endo Steel";
-    
-    public static final String  ENDO_STEEL_PROTO    = "Endo Steel Prototype";
-
     
     /** Creates new MiscType */
     public MiscType() {
@@ -149,12 +143,16 @@ public class MiscType extends EquipmentType {
             double tons = entity.getTotalOArmor() / (16*1.24);
             tons = (double) Math.ceil( tons * 2.0 ) / 2.0;
             return (float) tons;
-        } else if ( MiscType.ENDO_STEEL.equals(internalName) ) {
+        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName) ) {
+            double tons = 0.0;
+            tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
+            return (float) tons;
+        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE).equals(internalName) ) {
             double tons = 0.0;
             tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
             return (float) tons;
         }
-        
+
         // okay, I'm out of ideas
         return 1.0f;
     }
@@ -201,13 +199,13 @@ public class MiscType extends EquipmentType {
             return 7;
         } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO).equals(internalName) ) {
             return 21;
-        } else if ( MiscType.ENDO_STEEL.equals(internalName) ) {
+        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName) ) {
             if ( entity.isClan() ) {
                 return 7;
             } else {
                 return 14;
             }
-        } else if ( MiscType.ENDO_STEEL_PROTO.equals(internalName) ) {
+        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE).equals(internalName) ) {
             return 16;
         }
         // right, well I'll just guess then
@@ -947,8 +945,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createEndoSteel() {
         MiscType misc = new MiscType();
         
-        misc.name = MiscType.ENDO_STEEL;
-        misc.setInternalName(MiscType.ENDO_STEEL);
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
         misc.addLookupName("Endo-Steel");
         misc.addLookupName("EndoSteel");
         misc.addLookupName("Endosteel");
@@ -965,8 +963,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createEndoSteelPrototype() {
         MiscType misc = new MiscType();
         
-        misc.name = MiscType.ENDO_STEEL_PROTO;
-        misc.setInternalName(MiscType.ENDO_STEEL_PROTO);
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE);
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE));
         misc.addLookupName("Endo-Steel Prototype");
         misc.addLookupName("EndoSteelPrototype");
         misc.addLookupName("Endosteelprototype");

@@ -518,6 +518,7 @@ public class MovementDisplay
             loadedUnits = new Vector();
         }
         updateLoadButtons();
+        updateElevationButtons();
     }
 
     private void removeLastStep() {
@@ -993,6 +994,7 @@ public class MovementDisplay
             updateProneButtons();
             updateRACButton();
             updateLoadButtons();
+            updateElevationButtons();
         }
     }
 

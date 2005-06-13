@@ -31,7 +31,7 @@ import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
 import megamek.common.util.*;
 
-public class BLKTankFile extends BLKFile implements MechLoader {    
+public class BLKTankFile extends BLKFile implements IMechLoader {    
     
     private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover" };
     

@@ -52,7 +52,7 @@ import megamek.common.WeaponType;
  */
 public class HmpFile
 /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
-    implements MechLoader
+    implements IMechLoader
 /* BLOCK_END */
 {
   private String name;

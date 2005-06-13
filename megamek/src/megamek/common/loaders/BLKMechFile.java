@@ -35,7 +35,7 @@ import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.util.*;
 
-public class BLKMechFile extends BLKFile implements MechLoader {
+public class BLKMechFile extends BLKFile implements IMechLoader {
 
     //armor locatioms
     public static final int HD = 0;

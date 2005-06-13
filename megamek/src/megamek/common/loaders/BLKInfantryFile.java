@@ -31,7 +31,7 @@ import megamek.common.Infantry;
 import megamek.common.TechConstants;
 import megamek.common.util.*;
 
-public class BLKInfantryFile extends BLKFile implements MechLoader {    
+public class BLKInfantryFile extends BLKFile implements IMechLoader {    
     
     // HACK!!!  Infantry movement reuses Mech and Vehicle movement.
     private static final String[] MOVES = { "", "Leg", "", "", "Motorized", "Jump" };

@@ -31,7 +31,7 @@ import megamek.common.Entity;
  * @author  Ben
  * @version 
  */
-public interface MechLoader {
+public interface IMechLoader {
     
     /**
      * Return a valid mech, matching the file to the best of MegaMek's current

@@ -45,6 +45,7 @@ public class EquipmentType {
     public static final int     T_ARMOR_HEAVY_FERRO     = 6;
     public static final int     T_ARMOR_PATCHWORK       = 7;
     public static final int     T_ARMOR_STEALTH         = 8;
+    public static final int T_ARMOR_FERRO_FIBROUS_PROTO = 9;
 
     public static final String[] armorNames = {"Standard",
                                             "Ferro-Fibrous",
@@ -54,7 +55,8 @@ public class EquipmentType {
                                             "Light Ferro-Fibrous",
                                             "Heavy Ferro-Fibrous",
                                             "Patchwork",
-                                            "Stealth"};
+                                            "Stealth",
+                                            "Ferro-Fibrous Prototype"};
 
     protected String    name = null;
 

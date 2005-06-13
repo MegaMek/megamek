@@ -246,6 +246,10 @@ Inner Sphere Level 3 Tech:
   ISUltraAC5Prototype
   ISLaserAntiMissileSystem
   ISLaserAntiMissileSystemTHB
+  
+ Equipment:
+  Endo-Steel Prototype
+  Ferro-Fibrous Prototype
 
 Clan Level 3 Tech:
  Weapons:

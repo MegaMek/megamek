@@ -44,7 +44,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_ARTEMIS           = 0x1000;
     public static final int     F_ECM               = 0x2000;
     public static final int     F_TARGCOMP          = 0x4000;
-    public static final int     F_OTHER             = 0x8000;
+    //public static final int     F_OTHER             = 0x8000;
     public static final int     F_BAP               = 0x00010000;
     public static final int     F_TAG               = 0x00020000;
     public static final int     F_BOARDING_CLAW     = 0x00040000;
@@ -60,7 +60,8 @@ public class MiscType extends EquipmentType {
     public static final int     F_AP_POD            = 0x10000000;
     public static final int     F_SEARCHLIGHT       = 0x20000000;
     public static final int     F_SWORD             = 0x40000000;
-
+    public static final int   F_FERRO_FIBROUS_PROTO = 0x80000000;
+    public static final int   F_ENDO_STEEL_PROTO    = 0x8000;
     public static final int     T_TARGSYS_UNKNOWN           = -1;
     public static final int     T_TARGSYS_STANDARD          = 0;
     public static final int     T_TARGSYS_TARGCOMP          = 1;
@@ -81,6 +82,8 @@ public class MiscType extends EquipmentType {
 
     // Define constants for Endo-Steel.
     public static final String  ENDO_STEEL          = "Endo Steel";
+    
+    public static final String  ENDO_STEEL_PROTO    = "Endo Steel Prototype";
 
     
     /** Creates new MiscType */
@@ -192,6 +195,8 @@ public class MiscType extends EquipmentType {
             } else {
                 return 14;
             }
+        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO).equals(internalName) ) {
+            return 16;
         } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO).equals(internalName) ) {
             return 7;
         } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO).equals(internalName) ) {
@@ -202,6 +207,8 @@ public class MiscType extends EquipmentType {
             } else {
                 return 14;
             }
+        } else if ( MiscType.ENDO_STEEL_PROTO.equals(internalName) ) {
+            return 16;
         }
         // right, well I'll just guess then
         return 1;
@@ -287,6 +294,8 @@ public class MiscType extends EquipmentType {
         // Start of level 3 stuff
         EquipmentType.addType(createLightFerroFibrous());
         EquipmentType.addType(createHeavyFerroFibrous());
+        EquipmentType.addType(createEndoSteelPrototype());
+        EquipmentType.addType(createFerroFibrousPrototype());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -883,6 +892,23 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
+    
+    public static MiscType createFerroFibrousPrototype() {
+        MiscType misc = new MiscType();
+        
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO));
+        misc.addLookupName("Ferro-Fibrous Armor Prototype");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_FERRO_FIBROUS;
+        misc.bv = 0;
+        misc.bv = TechConstants.T_IS_LEVEL_3;
+        
+        return misc;
+    }
 
     public static MiscType createLightFerroFibrous() {
         MiscType misc = new MiscType();
@@ -932,6 +958,25 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_ENDO_STEEL;
         misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createEndoSteelPrototype() {
+        MiscType misc = new MiscType();
+        
+        misc.name = MiscType.ENDO_STEEL_PROTO;
+        misc.setInternalName(MiscType.ENDO_STEEL_PROTO);
+        misc.addLookupName("Endo-Steel Prototype");
+        misc.addLookupName("EndoSteelPrototype");
+        misc.addLookupName("Endosteelprototype");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_ENDO_STEEL;
+        misc.bv = 0;
+        misc.bv = TechConstants.T_IS_LEVEL_3;
         
         return misc;
     }

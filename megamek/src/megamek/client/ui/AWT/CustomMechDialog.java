@@ -381,13 +381,21 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
 
         // add the scrollable panel
         this.add(scrAll);
-        
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) { setVisible(false); }
         });
 
         pack();
-        setLocationAndSize(tempPanel.getSize());
+
+        //Why do we have to add all this stuff together to get the
+        // right size?  I hate GUI programming...especially AWT.
+        int w = tempPanel.getPreferredSize().width +
+            scrAll.getInsets().right;
+        int h = tempPanel.getPreferredSize().height +
+            panButtons.getPreferredSize().height +
+            scrAll.getInsets().bottom;
+        setLocationAndSize(w,h);
     }
     
     private void setupButtons() {
@@ -567,7 +575,6 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 }
             }
             int loc;
-            setLayout(new GridLayout(2, 2));
             if (m.getLocation() == Entity.LOC_NONE) {
                 // oneshot weapons don't have a location of their own
                 Mounted linkedBy = m.getLinkedBy();
@@ -576,10 +583,30 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 loc = m.getLocation();
             }
             String sDesc = "(" + entity.getLocationAbbr(loc) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-            add(new Label(sDesc));
+            Label lLoc = new Label(sDesc);
+            GridBagLayout g = new GridBagLayout();
+            setLayout(g);
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.EAST;
+            g.setConstraints(lLoc, c);
+            add(lLoc);
+            c.gridx = 1;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.WEST;
+            g.setConstraints(m_choice, c);
             add(m_choice);
             if (clientgui.getClient().game.getOptions().booleanOption("lobby_ammo_dump") ) { //$NON-NLS-1$
+                c.gridx = 0;
+                c.gridy = 1;
+                c.anchor = GridBagConstraints.EAST;
+                g.setConstraints(labDump, c);
                 add(labDump);
+                c.gridx = 1;
+                c.gridy = 1;
+                c.anchor = GridBagConstraints.WEST;
+                g.setConstraints(chDump, c);
                 add(chDump);
             }
         }

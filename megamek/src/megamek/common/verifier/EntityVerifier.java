@@ -74,7 +74,11 @@ public class EntityVerifier implements MechSummaryCache.Listener
         }
     }
 
-    public boolean checkEntity(Entity entity, String fileString, boolean verbose)
+    public boolean checkEntity(Entity entity, String fileString, boolean verbose) {
+        return checkEntity(entity, fileString, verbose, false);
+    }
+
+    public boolean checkEntity(Entity entity, String fileString, boolean verbose, boolean ignoreAmmo)
     {
         boolean retVal = false;
 
@@ -97,7 +101,7 @@ public class EntityVerifier implements MechSummaryCache.Listener
         else
         {
             StringBuffer buff = new StringBuffer();
-            if (testEntity.correctEntity(buff))
+            if (testEntity.correctEntity(buff, ignoreAmmo))
             {
                 retVal = true;
             }

@@ -19,6 +19,7 @@ v0.29.81 (CVS)
 + Added Ninja-To, Solitaire, Huntsman Prime pic
 + Added Endo-Steel and Ferro-Fibrous prototype from War of 3039 book.
 + Pics for Anhur and Donar VTOls.
++ Bug 1219924: Corrected verifier for loading units based on option.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

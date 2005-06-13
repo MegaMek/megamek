@@ -239,7 +239,11 @@ public class TestTank extends TestEntity
         return tank;
     }
 
-    public boolean correctEntity(StringBuffer buff)
+    public boolean correctEntity(StringBuffer buff) {
+        return correctEntity(buff, true);
+    }
+
+    public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo)
     {
         if(tank instanceof VTOL) {return true;} //don't bother checking, won't work.  Needs fixing (new class needed.)
         boolean correct = true;
@@ -258,7 +262,7 @@ public class TestTank extends TestEntity
         }
         if (showFailedEquip() && hasFailedEquipment(buff))
             correct = false;
-        if (hasIllegalTechLevels(buff))
+        if (hasIllegalTechLevels(buff, ignoreAmmo))
             correct = false;
         return correct;
     }

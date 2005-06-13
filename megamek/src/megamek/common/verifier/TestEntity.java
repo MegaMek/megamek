@@ -528,6 +528,8 @@ public abstract class TestEntity implements TestEntityOption
                 return 7;
             else
                 return 14;
+        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO).equals(mt.getInternalName()) ) {
+            return 16;
         } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO).equals(mt.getInternalName()) ) {
             return 7;
         } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO).equals(mt.getInternalName()) ) {
@@ -538,6 +540,9 @@ public abstract class TestEntity implements TestEntityOption
                 return 7;
             else
                 return 14;
+        } else if ( MiscType.ENDO_STEEL_PROTO.equals(mt.getInternalName()) )
+        {
+            return 16;
         }
         return mt.getCriticals(getEntity());
     }

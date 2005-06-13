@@ -472,9 +472,11 @@ public abstract class Mech
         Enumeration eMisc = getMisc();
         while (eMisc.hasMoreElements()) {
             Mounted mounted = (Mounted)eMisc.nextElement();
-            if (mounted.getDesc().indexOf(MiscType.ENDO_STEEL) != -1) {
+            if (mounted.getDesc().indexOf(MiscType.ENDO_STEEL) != -1 ||
+                mounted.getDesc().indexOf(MiscType.ENDO_STEEL_PROTO) != -1) {
                 return true;
             }
+            
         }
         return false;
     }
@@ -483,7 +485,8 @@ public abstract class Mech
         Enumeration eMisc = getMisc();
         while (eMisc.hasMoreElements()) {
             Mounted mounted = (Mounted)eMisc.nextElement();
-            if (mounted.getDesc().indexOf(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS)) != -1) {
+            if (mounted.getDesc().indexOf(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS)) != -1 ||
+                mounted.getDesc().indexOf(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO)) != -1) {
                 return true;
             }
         }

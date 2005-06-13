@@ -17,6 +17,7 @@ v0.29.81 (CVS)
 + Picture for Bloodhound
 + Bug 1219814: VTOL wreck image missing.
 + Added Ninja-To, Solitaire, Huntsman Prime pic
++ Added Endo-Steel and Ferro-Fibrous prototype from War of 3039 book.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

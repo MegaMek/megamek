@@ -457,6 +457,9 @@ public class BoardView1
 
         // Minefield signs all over the place!
         drawMinefields();
+        
+        // Artillery targets
+        drawArtilleryHexes();
 
         // draw highlight border
         drawSprite(highlightSprite);
@@ -713,6 +716,106 @@ public class BoardView1
     }
 
     /**
+     * returns the weapon selected in the mech display,
+     * or null if none selected or it is not artillery
+     **/
+    private Mounted getSelectedArtilleryWeapon() {
+        Entity e = clientgui.mechD.getCurrentEntity();
+        Mounted weapon = null;
+        
+        if(e != null) {
+            weapon = e.getEquipment(clientgui.mechD.wPan.getSelectedWeaponNum());
+        }
+        if (weapon != null) {
+            if(!(weapon.getType() instanceof WeaponType && weapon.getType().hasFlag(WeaponType.F_ARTILLERY))) {
+                weapon = null;
+            }
+            //otherwise, a weapon is selected, and it is artillery
+        }
+        return weapon;
+    }
+    
+    /** Display artillery modifier in pretargeted hexes
+     */
+    private void drawArtilleryHexes() {
+        
+        Entity e = clientgui.mechD.getCurrentEntity();
+        Mounted weapon = getSelectedArtilleryWeapon();
+        
+        if(game.getArtillerySize()==0 && weapon==null) {
+            return; //nothing to do
+        }
+                
+        int drawX = view.x / (int)(HEX_WC*scale) - 1;
+        int drawY = view.y / (int)(HEX_H*scale) - 1;
+
+        int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
+        int drawHeight = view.height / (int)(HEX_H*scale) + 3;
+
+        IBoard board = game.getBoard();
+        Image scaledImage;
+
+        // loop through the hexes
+        for (int i = 0; i < drawHeight; i++) {
+            for (int j = 0; j < drawWidth; j++) {
+                Coords c = new Coords(j + drawX, i + drawY);
+                Point p = getHexLocation(c);
+                p.translate(-(view.x), -(view.y));
+
+                if (!board.contains(c)){ continue; }
+
+                if(weapon != null) {
+                    //process targetted hexes
+                    int amod = 0;
+                    //Check the predesignated hexes
+                    if(e.getOwner().getArtyAutoHitHexes().contains(c)) {
+                        amod = TargetRoll.AUTOMATIC_SUCCESS;
+                    }
+                    else {
+                        amod = e.aTracker.getModifier(weapon, c);
+                    }
+
+                    if(amod!=0) {
+
+                        //draw the crosshairs
+                        if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
+                            //predesignated or already hit
+                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT));
+                        } else {
+                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED));
+                        }
+
+                        backGraph.drawImage(scaledImage, p.x, p.y, this);
+                    }
+                }
+                //process incoming attacks - requires server to update client's view of game
+                
+                for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
+                    ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
+
+                    if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
+                        scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING));
+                        backGraph.drawImage(scaledImage, p.x, p.y, this);
+                        break; //do not draw multiple times, tooltop will show all attacks
+                    }
+                }
+            }
+        }
+    }
+    
+    private Vector getArtilleryAttacksAtLocation(Coords c) {
+        Vector v = new Vector();
+        for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
+            ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
+
+            if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
+                v.addElement(a);
+            }
+        }
+        return v;
+    }
+    
+    /**
      * Writes "MINEFIELD" in minefield hexes...
      */
     private void drawMinefields() {
@@ -858,6 +961,7 @@ public class BoardView1
             boardRect = new Rectangle(view);
             System.out.println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
             drawHexes(view);
+            
         }
         if (!boardRect.union(view).equals(boardRect)) {
             moveBoardImage();
@@ -1006,6 +1110,11 @@ public class BoardView1
             }
         }
         
+        if(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) && 
+            game.getOptions().booleanOption("night_battle")) {
+            scaledImage = getScaledImage(tileManager.getNightFog());
+            boardGraph.drawImage(scaledImage, drawX, drawY, this);
+        }
         boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
         
         // draw hex number
@@ -1201,6 +1310,15 @@ public class BoardView1
         }
 
         stringsSize += game.getNbrMinefields(mcoords);
+        
+        // Artillery
+        final Vector artilleryAttacks = getArtilleryAttacksAtLocation(mcoords);
+        stringsSize += artilleryAttacks.size();
+
+        // Artillery fire adjustment
+        final Mounted selectedWeapon = getSelectedArtilleryWeapon();
+        if(selectedWeapon != null)
+            stringsSize++;
 
         // if the size is zip, you must a'quit
         if (stringsSize == 0) {
@@ -1291,7 +1409,48 @@ public class BoardView1
                 stringsIndex += 1 + aSprite.weaponDescs.size();
             }
         }
+        
+        // check artillery attacks
+        for(Iterator i = artilleryAttacks.iterator(); i.hasNext();) {
+            final ArtilleryAttackAction aaa = (ArtilleryAttackAction)i.next();
+            final WeaponResult wr = aaa.getWR();
+            final Entity ae = game.getEntity(wr.waa.getEntityId());
+            String s = null;
+            if(ae != null) {
+                if(wr.waa.getWeaponId() > -1) {
+                    Mounted weap = ae.getEquipment(wr.waa.getWeaponId());
+                    s = weap.getName();
+                    if(wr.waa.getAmmoId() > -1) {
+                        Mounted ammo = ae.getEquipment(wr.waa.getAmmoId());
+                        s += "(" + ammo.getName() + ")";
+                    }
+                }
+            }
+            if(s == null) {
+                s = Messages.getString("BoardView1.Artillery");
+            }
+            strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAttack", 
+                    new Object[] { s, new Integer(aaa.turnsTilHit), wr.toHit.getValueAsString() } );
+        }
+        //check artillery fire adjustment
+        final Entity selectedEntity = clientgui.mechD.getCurrentEntity();
+        if(selectedWeapon != null && selectedEntity != null) {
+            //process targetted hexes
+            int amod = 0;
+            //Check the predesignated hexes
+            if(selectedEntity.getOwner().getArtyAutoHitHexes().contains(mcoords)) {
+                amod = TargetRoll.AUTOMATIC_SUCCESS;
+            }
+            else {
+                amod = selectedEntity.aTracker.getModifier(selectedWeapon, mcoords);
+            }
 
+            if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
+                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAutohit");
+            } else {
+                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAdjustment", new Object[] { new Integer(amod) } );
+            }
+        }
         return strings;
     }
 

@@ -65,6 +65,18 @@ public class TilesetManager {
     private HexTileset hexTileset = new HexTileset();
     
     private Image minefieldSign;    
+    private Image nightFog;
+    private Image artilleryAutohit;
+    private Image artilleryAdjusted;
+    private Image artilleryIncoming;
+    private static final String NIGHT_IMAGE_FILE = "data/hexes/fog.gif";
+    private static final String ARTILLERY_AUTOHIT_IMAGE_FILE = "data/hexes/artyauto.gif";
+    private static final String ARTILLERY_ADJUSTED_IMAGE_FILE = "data/hexes/artyadj.gif";
+    private static final String ARTILLERY_INCOMING_IMAGE_FILE = "data/hexes/artyinc.gif";
+
+    public static final int ARTILLERY_AUTOHIT = 0;
+    public static final int ARTILLERY_ADJUSTED = 1;
+    public static final int ARTILLERY_INCOMING = 2;
 
     /** Creates new TilesetManager */
     public TilesetManager(Component comp) throws java.io.IOException {
@@ -154,6 +166,22 @@ public class TilesetManager {
         return minefieldSign;
     }    
     
+    public Image getNightFog() {
+        return nightFog;
+    }
+    
+    public Image getArtilleryTarget(int which) {
+        switch(which) {
+            case ARTILLERY_AUTOHIT:
+                return artilleryAutohit;
+            case ARTILLERY_ADJUSTED:
+                return artilleryAdjusted;
+            case ARTILLERY_INCOMING:
+            default:
+                return artilleryIncoming;
+        }
+    }
+    
     /**
      * @returns true if we're in the process of loading some images
      */
@@ -192,6 +220,16 @@ public class TilesetManager {
         
         // load minefield sign
         minefieldSign = comp.getToolkit().getImage(Minefield.IMAGE_FILE);
+        
+        // load night overlay
+        if(game.getOptions().booleanOption("night_battle")) {
+            nightFog = comp.getToolkit().getImage(NIGHT_IMAGE_FILE);
+        }
+        
+        //load artillery targets
+        artilleryAutohit = comp.getToolkit().getImage(ARTILLERY_AUTOHIT_IMAGE_FILE);
+        artilleryAdjusted = comp.getToolkit().getImage(ARTILLERY_ADJUSTED_IMAGE_FILE);
+        artilleryIncoming = comp.getToolkit().getImage(ARTILLERY_INCOMING_IMAGE_FILE);
 
         started = true;
     }

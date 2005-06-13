@@ -747,6 +747,8 @@ public interface IGame {
     
     public abstract int getArtillerySize();
     
+    public abstract void setArtilleryVector(Vector v);
+    
     /** 
      * Returns an Enumeration of actions scheduled for this phase. 
      */

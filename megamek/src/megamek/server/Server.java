@@ -11327,13 +11327,8 @@ implements Runnable, ConnectionHandler {
                     .append(m.getName()).append(" in the following round.\n");
                 }
                 else if (m.isDumping()) {
-                    if(entity.getLocationStatus(Mech.LOC_CT)==ILocationExposureStatus.WET) {
-                        phaseReport.append(entity.getDisplayName()).append(" would have dumped this turn, but is underwater.\n");
-                        m.setDumping(false);
-                    } else {
                         phaseReport.append(entity.getDisplayName()).append(" has finished dumping ")
                         .append(m.getName()).append(".\n");
-                    }
                 }
             }
         }

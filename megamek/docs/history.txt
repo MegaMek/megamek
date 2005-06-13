@@ -7,6 +7,7 @@ v0.29.81 (CVS)
     bug 1219175(sorting re-enabled), and a re-enabling of scenarios.
 + Change button text on mek selector so preview has more room.
 + Patch 1219378, RFE 1216109: Bot weapon controls
++ Underwater ammo dumps are legal, says the PM.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

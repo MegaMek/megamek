@@ -21,6 +21,8 @@ v0.29.81 (CVS)
 + Pics for Anhur and Donar VTOls.
 + Bug 1219924: Corrected verifier for loading units based on option.
 + Bug 1219991: Updates elevation buttons on moves.
++ Minor correction to Endo Steel Prototype implementation.
++ Change of Structure type and name to match current Armor implementation.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

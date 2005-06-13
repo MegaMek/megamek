@@ -25,6 +25,7 @@ public class ToHitData extends TargetRoll
     public static final int HIT_SWARM       = 3;
     public static final int HIT_ABOVE       = 4;
     public static final int HIT_BELOW       = 5;
+    public static final int HIT_PARTIAL_COVER = 6;
     
     public static final int SIDE_FRONT      = 0;
     public static final int SIDE_REAR       = 1;
@@ -122,6 +123,9 @@ public class ToHitData extends TargetRoll
                 break;
             case HIT_BELOW :
                 tdesc += "Below ";
+                break;
+            case HIT_PARTIAL_COVER:
+                tdesc += "Partial cover ";
                 break;
             }
             return " (using " + tdesc + "table)";

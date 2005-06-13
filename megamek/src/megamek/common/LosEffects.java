@@ -299,7 +299,11 @@ public class LosEffects {
         }
 
         if (targetCover) {
-            modifiers.addModifier(3, "target has partial cover");
+            if(game.getOptions().booleanOption("maxtech_partial_cover")) {
+                modifiers.addModifier(1, "target has partial cover");
+            } else {
+                modifiers.addModifier(3, "target has partial cover");
+            }
         }
         
         return modifiers;

@@ -802,7 +802,11 @@ public class WeaponAttackAction
                 //weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_KICK);
             } else {
-                toHit.setHitTable(ToHitData.HIT_PUNCH);
+                if(game.getOptions().booleanOption("maxtech_partial_cover")) {
+                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                } else {
+                    toHit.setHitTable(ToHitData.HIT_PUNCH);
+                }
             }
         }
     

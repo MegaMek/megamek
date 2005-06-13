@@ -7200,6 +7200,13 @@ implements Runnable, ConnectionHandler {
                     // Report the result
                     phaseReport.append( specialDamage );
                 }
+                else if(game.getOptions().booleanOption("maxtech_partial_cover") &&
+                  toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
+                  (hit.getLocation() == Mech.LOC_LLEG || hit.getLocation() == Mech.LOC_RLEG)) {
+                    phaseReport.append( "\n        " )
+                               .append( entityTarget.getDisplayName() )
+                               .append( " suffers no damage.(hit partial cover)" );
+                }
                 else {
                     // Resolve damage normally.
                     nDamage = nDamPerHit * Math.min(nCluster, hits);

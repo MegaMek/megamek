@@ -38,7 +38,7 @@ import megamek.common.TechConstants;
 import gd.xml.*;
 import gd.xml.tiny.*;
 
-public class TdbFile implements MechLoader {
+public class TdbFile implements IMechLoader {
 
     private ParsedXML root = null;
 

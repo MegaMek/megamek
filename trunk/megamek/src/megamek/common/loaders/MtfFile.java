@@ -39,7 +39,7 @@ import megamek.common.TechConstants;
  * @author  Ben
  * @version
  */
-public class MtfFile implements MechLoader {
+public class MtfFile implements IMechLoader {
 
     String version;
 

@@ -27,7 +27,7 @@ import megamek.common.TechConstants;
 
 // Known bug!  Split-location weapons are not supported.
 
-public class MepFile implements MechLoader {
+public class MepFile implements IMechLoader {
     String version;
     String name;
     

@@ -16,6 +16,7 @@ v0.29.81 (CVS)
 + RFE 1100565: Darken the map for night battle
 + Picture for Bloodhound
 + Bug 1219814: VTOL wreck image missing.
++ Added Ninja-To and Solitaire pic.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

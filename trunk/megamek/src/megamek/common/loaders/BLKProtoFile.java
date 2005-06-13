@@ -33,7 +33,7 @@ import megamek.common.Protomech;
 import megamek.common.TechConstants;
 import megamek.common.util.*;
 
-public class BLKProtoFile extends BLKFile implements MechLoader {
+public class BLKProtoFile extends BLKFile implements IMechLoader {
 
     public BLKProtoFile(BuildingBlock bb) {
         dataFile = bb;

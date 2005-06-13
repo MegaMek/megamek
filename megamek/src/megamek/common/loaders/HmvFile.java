@@ -37,7 +37,7 @@ import megamek.common.TroopSpace;
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
  */
 public class HmvFile
-  implements MechLoader
+  implements IMechLoader
 {
   private String name;
   private String model;

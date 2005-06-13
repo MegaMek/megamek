@@ -28,7 +28,7 @@ import megamek.common.util.BuildingBlock;
  * @author Andrew Hunter
  *
  */
-public class BLKVTOLFile extends BLKFile implements MechLoader {
+public class BLKVTOLFile extends BLKFile implements IMechLoader {
     
     private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover","VTOL" };
     

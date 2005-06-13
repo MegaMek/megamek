@@ -76,7 +76,7 @@ public class MechFileParser {
 
     public void parse(InputStream is, String fileName) throws EntityLoadingException {
         String lowerName = fileName.toLowerCase();
-        MechLoader loader;
+        IMechLoader loader;
 
         if (lowerName.endsWith(".mep")) {
             loader = new MepFile(is);

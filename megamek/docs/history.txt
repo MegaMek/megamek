@@ -13,6 +13,7 @@ v0.29.81 (CVS)
 + Patch 1217913, RFE 1013642: UI for artillery targets and auto-hit-hexes
 + Removed duplicate Kesterl VTOL.
 + Patch 1219841: MaxTech partial cover.
++ RFE 1100565: Darken the map for night battle
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

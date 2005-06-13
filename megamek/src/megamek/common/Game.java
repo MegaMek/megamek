@@ -1735,6 +1735,9 @@ public class Game implements Serializable, IGame
     public Vector getArtilleryVector() {
         return offboardArtilleryAttacks;
     }
+    public void setArtilleryVector(Vector v) {
+        offboardArtilleryAttacks = v;
+    }
     public Enumeration getArtilleryAttacks() {
         return offboardArtilleryAttacks.elements(); //Fix?
     }

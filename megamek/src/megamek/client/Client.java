@@ -849,6 +849,10 @@ public class Client implements Runnable {
                     // save victory report
                     saveEntityStatus(sReport);
                     break;
+                case Packet.COMMAND_SENDING_ARTILLERYATTACKS :
+                    Vector v = (Vector)c.getObject(0);
+                    game.setArtilleryVector(v);
+                    break;
             }
         }
     }

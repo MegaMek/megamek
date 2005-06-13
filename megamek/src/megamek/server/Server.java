@@ -463,6 +463,8 @@ implements Runnable, ConnectionHandler {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket());
             }
+            
+            send(connId, createArtilleryPacket(player));
 
         } // Found the player.
 
@@ -12733,6 +12735,26 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
+     * Creates a packet containing offboard artillery attacks
+     **/
+    private Packet createArtilleryPacket(Player p) {
+        
+        if(p.getSeeAll()) {
+            return new Packet(Packet.COMMAND_SENDING_ARTILLERYATTACKS, game.getArtilleryVector());
+        }
+        Vector v = new Vector();
+        int team = p.getTeam();
+        for(Enumeration i = game.getArtilleryAttacks();i.hasMoreElements();) {
+            ArtilleryAttackAction aaa = (ArtilleryAttackAction)i.nextElement();
+            if(aaa.getPlayerId() == p.getId() ||
+                    (team != Player.TEAM_NONE && team == game.getPlayer(aaa.getPlayerId()).getTeam())) {
+                v.addElement(aaa);
+            }
+        }
+        return new Packet(Packet.COMMAND_SENDING_ARTILLERYATTACKS, v);
+    }
+    
+    /**
      * Send a packet to all connected clients.
      */
     private void send(Packet packet) {
@@ -13863,6 +13885,11 @@ implements Runnable, ConnectionHandler {
             game.removeArtilleryAttack
                 ( (ArtilleryAttackAction) i.nextElement() );
         }
+        for(Enumeration i = game.getPlayers();i.hasMoreElements();) {
+            Player player = (Player)i.nextElement();
+            int connId = player.getId();
+            send(connId, createArtilleryPacket(player));
+        }
     }
 
     /**
@@ -13917,6 +13944,11 @@ implements Runnable, ConnectionHandler {
             }
         }
         game.resetActions();
+        for(Enumeration i = game.getPlayers();i.hasMoreElements();) {
+            Player player = (Player)i.nextElement();
+            int connId = player.getId();
+            send(connId, createArtilleryPacket(player));
+        }
     }
 
     /**

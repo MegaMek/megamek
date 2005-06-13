@@ -21,7 +21,6 @@ import megamek.common.*;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.ToHitData;
@@ -816,6 +815,8 @@ public class TestBot extends BotClient {
         int weaponID = en.getEquipmentNum(mw);
         Vector result = new Vector();
         Enumeration ents = game.getValidTargets(en).elements();
+        WeaponAttackAction wep_test;
+        WeaponType spinner;
         AttackOption a = null;
         AttackOption max = new AttackOption(null, null, 0, null);
         while (ents.hasMoreElements()) {
@@ -824,24 +825,19 @@ public class TestBot extends BotClient {
             ToHitData th = WeaponAttackAction.toHit(game, from, e, weaponID);
             if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
                 double expectedDmg;
-                // Are we an Infantry platoon?
-                if (en instanceof Infantry) {
-                    // Get the expected damage, given our current
-                    // manpower level.
-                    Infantry inf = (Infantry) en;
-                    expectedDmg = inf.getDamage(inf.getShootingStrength());
-                } else {
-                    // Get the expected damage of the weapon.
-                    expectedDmg = CEntity.getExpectedDamage((WeaponType) mw.getType());
+
+                wep_test = new WeaponAttackAction(from, e.getId(), weaponID);
+
+                // If this is an Ultra or Rotary cannon, check for spin up
+                spinner = (WeaponType) mw.getType();
+                if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA) || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)){
+                    Compute.spinUpCannon(game, wep_test);
                 }
 
-                // Infantry in the open suffer double damage.
-                if (e instanceof Infantry) {
-                    IHex e_hex = game.getBoard().getHex(e.getPosition());
-                    if (!e_hex.containsTerrain(Terrains.WOODS) && !e_hex.containsTerrain(Terrains.BUILDING)) {
-                        expectedDmg *= 2;
-                    }
-                }
+                // Ammo cycler runs each valid ammo type through the weapon while 
+                // calling for expected damage on each type; best type by damage is loaded
+
+                expectedDmg = Compute.getAmmoAdjDamage(game, wep_test);
 
                 a = new AttackOption(enemy, mw, expectedDmg, th);
                 if (a.value > max.value) {
@@ -951,6 +947,7 @@ public class TestBot extends BotClient {
         int[] results = null;
         Vector winner = null;
         int arc = 0;
+        WeaponType spinner;
 
         if (entity_num == -1) {
             return;
@@ -989,8 +986,22 @@ public class TestBot extends BotClient {
             Iterator i = tm.values().iterator();
             while (i.hasNext()) {
                 AttackOption a = (AttackOption) i.next();
-                av.addElement(
-                    new WeaponAttackAction(en.getId(), a.target.getEntity().getId(), en.getEquipmentNum(a.weapon)));
+                WeaponAttackAction new_attack = new WeaponAttackAction(en.getId(), a.target.getEntity().getId(), en.getEquipmentNum(a.weapon));
+                if (en.getEquipment(new_attack.getWeaponId()).getLinked() != null){
+                    spinner = (WeaponType) a.weapon.getType();
+
+// If this is an ultra-cannon or rotary cannon, try to spin it up
+
+                    if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA) || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)){
+                        Compute.spinUpCannon(game, new_attack);
+                    }
+                    Mounted cur_ammo = (Mounted) en.getEquipment(new_attack.getWeaponId()).getLinked();
+                    new_attack.setAmmoId(en.getEquipmentNum(cur_ammo));
+                    Compute.getAmmoAdjDamage(game, new_attack);
+
+                }
+                av.addElement(new_attack);
+                
             }
         }
         switch (arc) {

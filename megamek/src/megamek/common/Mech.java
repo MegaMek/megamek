@@ -993,7 +993,7 @@ public abstract class Mech
             }
         }
 
-        if(table == ToHitData.HIT_NORMAL) {
+        if(table == ToHitData.HIT_NORMAL || table == ToHitData.HIT_PARTIAL_COVER) {
             roll = Compute.d6(2);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();

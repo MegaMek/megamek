@@ -62,6 +62,7 @@ public abstract class TestEntity implements TestEntityOption
     public abstract String printWeightControls();
 
     public abstract boolean correctEntity(StringBuffer buff);
+    public abstract boolean correctEntity(StringBuffer buff, boolean ignoreAmmo);
     public abstract StringBuffer printEntity();
     public abstract String getName();
 
@@ -607,7 +608,11 @@ public abstract class TestEntity implements TestEntityOption
         return true;
     }
     
-    public boolean hasIllegalTechLevels(StringBuffer buff)
+    public boolean hasIllegalTechLevels(StringBuffer buff) {
+        return hasIllegalTechLevels(buff, true);
+    }
+
+    public boolean hasIllegalTechLevels(StringBuffer buff, boolean ignoreAmmo)
     {
         boolean retVal = false;
         int eTechLevel = getEntity().getTechLevel();
@@ -615,7 +620,9 @@ public abstract class TestEntity implements TestEntityOption
                 e.hasMoreElements(); )
         {
             EquipmentType nextE = ((Mounted)e.nextElement()).getType();
-            if (!(TechConstants.isLegal(eTechLevel, nextE.getTechLevel(), true))) {
+            if ((ignoreAmmo) && (nextE instanceof AmmoType)) {
+                continue;
+            } else if (!(TechConstants.isLegal(eTechLevel, nextE.getTechLevel(), true))) {
                 if (!retVal)
                     buff.append("Equipment illegal at unit's tech level:\n");
                 retVal = true;

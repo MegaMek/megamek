@@ -378,7 +378,11 @@ public class TestMech extends TestEntity
         return correct;
     }
 
-    public boolean correctEntity(StringBuffer buff)
+    public boolean correctEntity(StringBuffer buff) {
+        return correctEntity(buff, true);
+    }
+
+    public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo)
     {
         boolean correct = true;
         if (skip())
@@ -400,7 +404,7 @@ public class TestMech extends TestEntity
             correct = false;
         if (showFailedEquip() && hasFailedEquipment(buff))
             correct = false;
-        if (hasIllegalTechLevels(buff))
+        if (hasIllegalTechLevels(buff, ignoreAmmo))
             correct = false;
         return correct;
     }

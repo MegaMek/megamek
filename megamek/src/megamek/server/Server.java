@@ -12124,7 +12124,7 @@ implements Runnable, ConnectionHandler {
             if (entity instanceof Tank)
                 testEntity = new TestTank((Tank)entity, Server.entityVerifier.tankOption, null);
             StringBuffer sb = new StringBuffer();
-            if (testEntity.correctEntity(sb)) {
+            if (testEntity.correctEntity(sb, !game.getOptions().booleanOption("is_eq_limits"))) {
                 entity.setDesignValid(true);
             } else {
                 if (game.getOptions().booleanOption("allow_illegal_units")) {

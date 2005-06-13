@@ -28,6 +28,7 @@ exact "default_quad" "large_boom.gif"
 exact "default_tank" "default_tank_wreck.gif"
 exact "default_infantry" "small_boom.gif"
 exact "default_proto" "large_boom.gif"
+exact "default_vtol" "default_vtol_wreck.gif"
 
 # put custom pictures here:
 

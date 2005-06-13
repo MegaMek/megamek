@@ -1201,19 +1201,37 @@ public class Compute
 
     // store these as constants since the tables will never change
     private static float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f, 2.63f, 3.17f,
-            4.0f, 0.0f, 0.0f, 5.47f, 6.31f, 0.0f, 8.14f, 0.0f, 0.0f, 9.5f, 0.0f, 0.0f, 0.0f,
-            0.0f, 12.7f };
+            4.0f, 4.49f, 4.98f, 5.47f, 6.31f, 7.23f, 8.14f, 8.59f, 9.04f, 9.5f, 10.1f, 10.8f, 11.42f,
+            12.1f, 12.7f };
 
     /**
      * Determines the expected damage of a weapon attack, based on to-hit, salvo sizes, etc.
      */
     public static float getExpectedDamage(IGame g, WeaponAttackAction waa)
     {
+
+        boolean use_table = false;
+
+        AmmoType loaded_ammo = new AmmoType();
+
         Entity attacker = g.getEntity(waa.getEntityId());
+        Infantry inf_attacker = new Infantry();
+        BattleArmor ba_attacker = new BattleArmor();
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
-        System.out.println("Computing expected damage for " + attacker.getShortName() + " " +
-                weapon.getName());
+        Mounted lnk_guide;
+
         ToHitData hitData = waa.toHit(g);
+
+        if (attacker instanceof BattleArmor){
+            ba_attacker = (BattleArmor) g.getEntity(waa.getEntityId());
+        }
+        if ((attacker instanceof Infantry) && !(attacker instanceof BattleArmor)){
+            inf_attacker = (Infantry) g.getEntity(waa.getEntityId());
+        }
+
+        float fDamage = 0.0f;
+        WeaponType wt = (WeaponType) weapon.getType();
+
         if (hitData.getValue() == ToHitData.IMPOSSIBLE || hitData.getValue() == ToHitData.AUTOMATIC_FAIL) {
             return 0.0f;
         }
@@ -1221,53 +1239,510 @@ public class Compute
         float fChance = 0.0f;
         if (hitData.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
             fChance = 1.0f;
-        }
-        else {
+        } else {
             fChance = (float)oddsAbove(hitData.getValue()) / 100.0f;
         }
-        System.out.println("\tHit Chance: " + fChance);
 
-        // TODO : update for BattleArmor.
+        // Missiles, LBX cluster rounds, and ultra/rotary cannons (when spun up) use the missile hits table
 
-        float fDamage = 0.0f;
-        WeaponType wt = (WeaponType)weapon.getType();
-        if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
+        if (wt.getDamage() == WeaponType.DAMAGE_MISSILE){
+            use_table = true;
+        }
+        if (wt.getAmmoType() == AmmoType.T_AC_LBX){
+            loaded_ammo = (AmmoType) weapon.getLinked().getType();
+            if (loaded_ammo.getMunitionType() == AmmoType.M_CLUSTER){
+                use_table = true;
+            }
+        }
+        
+        if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA) || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)){
+            if ((weapon.curMode().getName() == "Ultra") || (weapon.curMode().getName() == "2-shot") ||
+                    (weapon.curMode().getName() == "4-shot") || (weapon.curMode().getName() == "6-shot")) {
+                use_table = true;
+            }
+        }
+
+        // Kinda cheap, but lets use the missile hits table for Battle armor weapons too
+
+        if (wt.hasFlag(WeaponType.F_BATTLEARMOR)){
+            use_table = true;
+        }
+
+        if (use_table == true) {
             if (weapon.getLinked() == null) return 0.0f;
             AmmoType at = (AmmoType)weapon.getLinked().getType();
 
             float fHits = 0.0f;
+            fHits = expectedHitsByRackSize[wt.getRackSize()];
             if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK) || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 fHits = wt.getRackSize();
             }
-            else if (wt.getRackSize() == 40 || wt.getRackSize() == 30) {
+            if (wt.getRackSize() == 40 || wt.getRackSize() == 30) {
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
             }
-            else {
-                fHits = expectedHitsByRackSize[wt.getRackSize()];
+            if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA) || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)){
+                if ((weapon.curMode().getName() == "Ultra") || (weapon.curMode().getName() == "2-shot")){
+                    fHits = expectedHitsByRackSize[2];
+                }
+                if (weapon.curMode().getName() == "4-shot"){
+                    fHits = expectedHitsByRackSize[4];
+                }
+                if (weapon.curMode().getName() == "6-shot"){
+                    fHits = expectedHitsByRackSize[6];
+                }
             }
+            // Most Battle Armor units have a weapon per trooper
+            if (attacker instanceof BattleArmor){
+                if (wt.getDamage() == WeaponType.DAMAGE_MISSILE){
+                    fHits *= ba_attacker.getShootingStrength();
+                }
+                else {
+                fHits = expectedHitsByRackSize[ba_attacker.getShootingStrength()];
+                }
+            }
+
+            // If there is no ECM coverage to the target, guidance systems are good for another 1.20x damage
+
+            if (!isAffectedByECM(attacker, attacker.getPosition(), g.getEntity(waa.getTargetId()).getPosition())){
+
+// Check for linked artemis guidance system
+
+                if (wt.getAmmoType() == AmmoType.T_LRM ||
+                    wt.getAmmoType() == AmmoType.T_SRM) {
+
+                    lnk_guide = weapon.getLinkedBy();
+                    if (lnk_guide != null && lnk_guide.getType() instanceof MiscType && !lnk_guide.isDestroyed() &&
+                            !lnk_guide.isMissing() && !lnk_guide.isBreached() &&
+                            lnk_guide.getType().hasFlag(MiscType.F_ARTEMIS) ) {
+
+// Don't use artemis if this is indirect fire
+//-> HACK! Artemis-specific ammo should be used for this, NOT standard ammo!
+//-> Hook for Artemis V Level 3 Clan tech here; use 1.30f multiplier when implemented
+
+                            if ((!weapon.curMode().equals("Indirect")) &&
+                                    at.getMunitionType() == AmmoType.M_STANDARD){
+                                fHits *= 1.2f;
+                            }
+                    }
+                }
+
+// Check for ATMs, which have built in Artemis
+
+                if (wt.getAmmoType() == AmmoType.T_ATM){
+                    fHits *= 1.2f;
+                }
+
+// Check for target with attached Narc or iNarc homing pod from friendly unit
+
+                if (g.getEntity(waa.getTargetId()).isNarcedBy(attacker.getOwner().getTeam()) || 
+                         g.getEntity(waa.getTargetId()).isINarcedBy(attacker.getOwner().getTeam())) {
+                    if (at.getMunitionType() == AmmoType.M_NARC_CAPABLE){
+                        fHits *= 1.2f;
+                    }
+                }
+
+            }
+
             // adjust for previous AMS
-            Vector vCounters = waa.getCounterEquipment();
-            if (vCounters != null) {
-                for (int x = 0; x < vCounters.size(); x++) {
-                    Mounted counter = (Mounted)vCounters.elementAt(x);
-                    if (counter.getType() instanceof WeaponType &&
-                            counter.getType().hasFlag(WeaponType.F_AMS)) {
-                        float fAMS = 3.5f * ((WeaponType)counter.getType()).getDamage();
-                        fHits = Math.max(0.0f, fHits - fAMS);
+            if (wt.getDamage() == WeaponType.DAMAGE_MISSILE){
+                Vector vCounters = waa.getCounterEquipment();
+                if (vCounters != null) {
+                    for (int x = 0; x < vCounters.size(); x++) {
+                        Mounted counter = (Mounted)vCounters.elementAt(x);
+                        if (counter.getType() instanceof WeaponType &&
+                                counter.getType().hasFlag(WeaponType.F_AMS)) {
+                            float fAMS = 3.5f * ((WeaponType)counter.getType()).getDamage();
+                            fHits = Math.max(0.0f, fHits - fAMS);
+                        }
                     }
                 }
             }
-            System.out.println("\tExpected Hits: " + fHits);
-            // damage is expected missiles * damage per missile
-            fDamage = fHits * (float)at.getDamagePerShot();
-        }
-        else {
-            fDamage = (float)wt.getDamage();
+
+            fDamage = fHits * (float) at.getDamagePerShot();
+            if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA) || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)){
+                fDamage = fHits * (float) wt.getDamage();
+            }
+        } else {
+
+// Direct fire weapons (and LBX slug rounds) just do a single shot so they don't use the missile hits table
+
+            fDamage = (float) wt.getDamage();
+
+// Infantry follow some special rules, but do fixed amounts of damage                   
+// Anti-mek attacks are weapon-like in nature, so include them here as well
+
+            if (attacker instanceof Infantry){
+                if (wt.getInternalName() == Infantry.LEG_ATTACK){
+                    fDamage = 10.0f; // Actually 5, but the chance of crits deserves a boost
+                }
+
+                if (inf_attacker.isPlatoon()){
+                    if (wt.getInternalName() == Infantry.SWARM_MEK){
+                        // If the target is a Mek that is not swarmed, this is a good thing
+                        if ( (g.getEntity(waa.getTargetId()).getSwarmAttackerId() == Entity.NONE) && 
+                         (g.getEntity(waa.getTargetId()) instanceof Mech)){
+                            fDamage = 1.5f * (float) inf_attacker.getDamage(inf_attacker.getShootingStrength());
+                        }
+                        // Otherwise, call it 0 damage
+                        else {
+                            fDamage = 0.0f;
+                        }
+                    }
+
+                    else {
+                        // conventional weapons; field guns should be handled under the standard weapons section
+                        fDamage = (float) inf_attacker.getDamage(inf_attacker.getShootingStrength());
+                    }
+
+                }
+                else {
+                    // Battle armor units conducting swarm attack
+                    if (wt.getInternalName() == Infantry.SWARM_MEK){
+                        // If the target is a Mek that is not swarmed, this is a good thing
+                        if ( (g.getEntity(waa.getTargetId()).getSwarmAttackerId() == Entity.NONE) &&
+                         (g.getEntity(waa.getTargetId()) instanceof Mech)){
+                            // Overestimated, but the chance at crits and head shots deserves a boost
+                            fDamage = 5.0f * ba_attacker.getShootingStrength();
+                        }
+                        // Otherwise, call it 0 damage
+                        else {
+                            fDamage = 0.0f;
+                        }
+                    }
+
+                }
+            }
+
         }
 
         fDamage *= fChance;
-        System.out.println("\tExpected Damage: " + fDamage);
+
+// Conventional infantry take double damage in the open
+
+        if ((g.getEntity(waa.getTargetId()) instanceof Infantry) && 
+                !(g.getEntity(waa.getTargetId()) instanceof BattleArmor)){
+            IHex e_hex = g.getBoard().getHex(g.getEntity(waa.getTargetId()).getPosition().x,
+                g.getEntity(waa.getTargetId()).getPosition().y);
+            if (!e_hex.containsTerrain(Terrains.WOODS) && !e_hex.containsTerrain(Terrains.BUILDING)) {
+                fDamage *= 2.0f;
+            }
+        } 
+
         return fDamage;
+    }
+
+
+
+
+    /**
+     * If the unit is carrying multiple types of ammo for the specified weapon,
+     * cycle through them and choose the type best suited to engage the specified target
+     * Value returned is expected damage
+     * Note that some ammo types, such as infernos, do no damage or have special properties and so the damage
+     * is an estimation of effectiveness
+     */
+
+    public static double getAmmoAdjDamage(IGame cgame, WeaponAttackAction atk){
+
+        boolean no_bin = true;
+        boolean multi_bin = false;
+
+        int bin_count = 0;
+        int weapon_count = 0;
+
+        double ammo_multiple, ex_damage, max_damage;
+    
+        Enumeration ammo_bin_list, target_weapons;
+    
+        Entity shooter, target;
+    
+        Mounted abin, fabin, best_bin;
+        AmmoType abin_type = new AmmoType();
+        AmmoType fabin_type = new AmmoType();
+        WeaponType wtype = new WeaponType();
+        WeaponType target_weapon = new WeaponType();
+
+        // Get shooter entity, target entity, and weapon being fired
+        target = cgame.getEntity(atk.getTargetId());
+        shooter = atk.getEntity(cgame);
+        wtype = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
+        
+        max_damage = 0.0;
+
+        // If the weapon doesn't require ammo, just get the estimated damage
+        if (wtype.hasFlag(WeaponType.F_ENERGY) || wtype.hasFlag(WeaponType.F_ONESHOT) || 
+                wtype.hasFlag(WeaponType.F_INFANTRY)){
+            return getExpectedDamage(cgame, atk);
+        }
+    
+        // Get a list of ammo bins and the first valid bin
+        fabin = null;
+        best_bin = null;
+        ammo_bin_list = shooter.getAmmo();
+
+        while (ammo_bin_list.hasMoreElements()){
+            abin = (Mounted) ammo_bin_list.nextElement();
+            if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)){
+                if (abin.getShotsLeft() > 0){
+                    abin_type = (AmmoType) abin.getType();
+                    if (!AmmoType.canDeliverMinefield(abin_type)){
+                        fabin = abin;
+                        fabin_type = (AmmoType) fabin.getType();
+                        break;
+                    }
+                }
+            }
+        }
+    
+        // To save processing time, lets see if we have more than one type of bin
+        // Thunder-type ammos and empty bins are excluded from the list
+        ammo_bin_list = shooter.getAmmo();
+        while (ammo_bin_list.hasMoreElements()){
+            abin = (Mounted) ammo_bin_list.nextElement();
+            if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)){
+                if (abin.getShotsLeft() > 0){
+                    abin_type = (AmmoType) abin.getType();
+                    if (!AmmoType.canDeliverMinefield(abin_type)){
+                        bin_count++;
+                        no_bin = false;
+                        if (abin_type.getMunitionType() != fabin_type.getMunitionType()){
+                            multi_bin = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // If no_bin is true, then either all bins are empty or contain Thunder-type rounds and
+        // we can safely say that the expected damage is 0.0
+        // If no_bin is false, then we have at least one good bin
+        if (no_bin){
+            return 0.0;
+        } else {
+            // If multi_bin is true, then multiple ammo types are present and an appropriate type must be selected
+            // If multi_bin is false, then all bin types are the same; skip down to getting the expected damage
+            if (!multi_bin){
+                return getExpectedDamage(cgame, atk);
+            }
+            if (multi_bin){
+                // Set default max damage as 0, and the best bin as the first bin
+                max_damage = 0.0;
+                best_bin = fabin;
+
+                // Reload list of ammo bins
+                ammo_bin_list = shooter.getAmmo();
+
+                // For each valid ammo bin
+                while (ammo_bin_list.hasMoreElements()){
+                    abin = (Mounted) ammo_bin_list.nextElement();
+                    if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)){
+                        if (abin.getShotsLeft() > 0){
+                            abin_type = (AmmoType) abin.getType();
+                            if (!AmmoType.canDeliverMinefield(abin_type)){
+                                // Load weapon with specified bin
+                                shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin);
+                                atk.setAmmoId(shooter.getEquipmentNum(abin));
+                                
+                                // Get expected damage
+                                ex_damage = getExpectedDamage(cgame, atk);
+
+                                // Calculate any modifiers due to ammo type
+                                ammo_multiple = 1.0;
+
+                                // Frag missiles, flechette AC rounds do double damage against conventional infantry
+                                // and 0 damage against everything else
+                                // Any further anti-personnel specialized rounds should be tested for here
+                                if ((abin_type.getMunitionType() == AmmoType.M_FRAGMENTATION) ||
+                                    (abin_type.getMunitionType() == AmmoType.M_FLECHETTE)){
+                                    ammo_multiple = 0.0;
+                                    if (target instanceof Infantry){
+                                        if (!(target instanceof BattleArmor)) {
+                                            ammo_multiple = 2.0;
+                                        }
+                                    }
+                                }
+
+                                // LBX cluster rounds work better against units with little armor, vehicles, and Meks in partial cover
+                                // Other ammo that deliver lots of small submunitions should be tested for here too
+                                if (abin_type.getMunitionType() == AmmoType.M_CLUSTER){
+                                    if (target.getArmorRemainingPercent() <= 0.25) {
+                                        ammo_multiple = 1.0 + (wtype.getRackSize()/10);
+                                    }
+                                    if (target instanceof Tank){
+                                        ammo_multiple += 1.0;
+                                    }
+                                }
+
+                                // AP autocannon rounds work much better against Meks and vehicles than infantry,
+                                // give a damage boost in proportion to calibre to reflect scaled crit chance
+                                // Other armor-penetrating ammo types should be tested here, such as Tandem-charge SRMs
+                                if (abin_type.getMunitionType() == AmmoType.M_ARMOR_PIERCING){
+                                    if ((target instanceof Mech) || (target instanceof Tank)){
+                                        ammo_multiple = 1.0 + (wtype.getRackSize()/10);
+                                    }
+                                    if (target instanceof Infantry){
+                                        ammo_multiple = 0.6;
+                                    }
+                                }
+
+                                // Inferno SRMs work better against overheating Meks that are not/almost not on fire,
+                                // and against vehicles and protos if allowed by game option
+                                if (abin_type.getMunitionType() == AmmoType.M_INFERNO){
+                                    ammo_multiple = 0.5;
+                                    if (target instanceof Mech){
+                                        if ((target.infernos.getTurnsLeftToBurn() < 4) && (target.heat >= 5)){
+                                            ammo_multiple = 1.1;
+                                        }
+                                    }
+                                    if ((target instanceof Tank) &&
+                                        !(cgame.getOptions().booleanOption("vehicles_safe_from_infernos"))){
+                                            ammo_multiple = 1.1;
+                                    }
+                                    if ((target instanceof Protomech) &&
+                                        !(cgame.getOptions().booleanOption("protos_safe_from_infernos"))){
+                                            ammo_multiple = 1.1;
+                                    }
+                                }
+
+                                // Narc beacon doesn't really do damage but if the target is not infantry and doesn't have
+                                // one, give 'em one by making it an attractive option
+                                if ((wtype.getAmmoType() == AmmoType.T_NARC) && (abin_type.getMunitionType() == AmmoType.M_STANDARD)){
+                                    if (!(target.isNarcedBy(shooter.getOwner().getTeam())) && 
+                                        !(target instanceof Infantry)){
+                                        ex_damage = 5.0;
+                                    } else {
+                                        ex_damage = 0.5;
+                                    }
+                                }
+
+                                // iNarc beacon doesn't really do damage, but if the target is not infantry and doesn't have
+                                // one, give 'em one by making it an attractive option
+                                if (wtype.getAmmoType() == AmmoType.T_INARC){
+                                    if ((abin_type.getMunitionType() == AmmoType.M_STANDARD) && 
+                                            !(target instanceof Infantry)){
+                                        if (!(target.isINarcedBy(shooter.getOwner().getTeam()))) {
+                                            ex_damage = 7.0;
+                                        } else {
+                                            ex_damage = 1.0;
+                                        }
+                                    }
+
+                                    // iNarc ECM doesn't really do damage, but if the target has a C3 link or missile launchers
+                                    // make it a priority
+                                    // Checking for actual ammo types carried would be nice, but can't be sure of exact loads
+                                    // when "true" double blind is implemented
+                                    if ((abin_type.getMunitionType() == AmmoType.M_ECM) &&
+                                        !(target instanceof Infantry)) {
+                                        if (!target.isINarcedWith(AmmoType.M_ECM)) {
+                                            if (!(target.getC3MasterId() == Entity.NONE) ||
+                                                target.hasC3M() || target.hasC3MM() ||
+                                                target.hasC3i()) {
+                                                ex_damage = 8.0;
+                                            } else {
+                                                ex_damage = 0.5;
+                                            }
+                                            target_weapons = target.getWeapons();
+                                            while (target_weapons.hasMoreElements()){
+                                                target_weapon = (WeaponType) ((Mounted)target_weapons.nextElement()).getType();
+                                                if ((target_weapon.getAmmoType() == AmmoType.T_LRM) ||
+                                                    (target_weapon.getAmmoType() == AmmoType.T_SRM)){
+                                                    ex_damage = ex_damage + (target_weapon.getRackSize()/2);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // iNarc Nemesis doesn't really do damage, but if the target is not infantry and doesn't have
+                                    // one give it a try; make fast units a priority because they are usually out front
+                                    if ((abin_type.getMunitionType() == AmmoType.M_NEMESIS) && 
+                                            !(target instanceof Infantry)){
+                                        if (!target.isINarcedWith(AmmoType.M_NEMESIS)) {
+                                            ex_damage = (double) (target.getOriginalWalkMP() + target.getOriginalJumpMP())/2;
+                                        } else {
+                                            ex_damage = 0.5;
+                                        }
+                                    }
+                                }
+
+                                // If the adjusted damage is highest, store the damage and bin
+                                if ((ex_damage * ammo_multiple) > max_damage){
+                                    max_damage = ex_damage * ammo_multiple;
+                                    best_bin = abin;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Now that the best bin has been found, reload the weapon with it
+                shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), best_bin);
+                atk.setAmmoId(shooter.getEquipmentNum(best_bin));
+            }
+        }
+        return max_damage;
+    }
+
+
+    /**
+     * If this is an ultra or rotary cannon, lets see about
+     *   'spinning it up' for extra damage
+     */
+
+    public static void spinUpCannon(IGame cgame, WeaponAttackAction atk) {
+
+        int threshold = 12;
+        int test;
+        Entity shooter;
+        Mounted weapon;
+        WeaponType wtype = new WeaponType();
+
+        // Double check this is an Ultra or Rotary cannon
+        shooter = atk.getEntity(cgame);
+        weapon = shooter.getEquipment(atk.getWeaponId());
+        wtype = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
+
+        if (!((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ROTARY))){
+            return;
+        }
+
+        // Get the to-hit number
+        threshold = atk.toHit(cgame).getValue();
+
+        // Set the weapon to single shot mode
+        weapon.setMode("Single");
+
+        // If weapon can't hit target, exit the function with the weapon on single shot
+        if ((threshold == ToHitData.IMPOSSIBLE) || (threshold == ToHitData.AUTOMATIC_FAIL)) {
+            return;
+        }
+
+        // Set a random 2d6 roll
+        test = d6(2);
+
+        // If random roll is >= to-hit + 1, then set double-spin
+        if (test >= threshold + 1){
+            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA){
+                weapon.setMode("Ultra");
+            }
+            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY){
+                weapon.setMode("2-shot");
+            }
+        }
+
+        // If this is a Rotary cannon
+        if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY){
+
+            // If random roll is >= to-hit + 2 then set to quad-spin
+            if (test >= threshold + 2){
+                weapon.setMode("4-shot");
+            }
+
+            // If random roll is >= to-hit + 3 then set to six-spin
+            if (test >= threshold + 3){
+                weapon.setMode("6-shot");
+            }
+        }
     }
 
     /**
@@ -2027,3 +2502,5 @@ public class Compute
     }
     
 } // End public class Compute
+
+

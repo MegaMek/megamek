@@ -61,7 +61,7 @@ public class MechView {
             sBasic.append( Math.round(mech.getWeight()) )
                 .append(Messages.getString("MechView.tons") ); //$NON-NLS-1$
         }
-        sBasic.append(TechConstants.getLevelName(mech.getTechLevel()));
+        sBasic.append(TechConstants.getLevelDisplayableName(mech.getTechLevel()));
         sBasic.append("\n"); //$NON-NLS-1$
         if ( mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
             sBasic.append( Messages.getString("MechView.Linkedc3bv")); //$NON-NLS-1$

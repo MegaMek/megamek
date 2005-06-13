@@ -1244,7 +1244,6 @@ public class Compute
         }
 
         // Missiles, LBX cluster rounds, and ultra/rotary cannons (when spun up) use the missile hits table
-
         if (wt.getDamage() == WeaponType.DAMAGE_MISSILE){
             use_table = true;
         }
@@ -1262,7 +1261,7 @@ public class Compute
             }
         }
 
-        // Kinda cheap, but lets use the missile hits table for Battle armor weapons too
+// Kinda cheap, but lets use the missile hits table for Battle armor weapons too
 
         if (wt.hasFlag(WeaponType.F_BATTLEARMOR)){
             use_table = true;
@@ -1302,11 +1301,9 @@ public class Compute
             }
 
             // If there is no ECM coverage to the target, guidance systems are good for another 1.20x damage
-
             if (!isAffectedByECM(attacker, attacker.getPosition(), g.getEntity(waa.getTargetId()).getPosition())){
 
-// Check for linked artemis guidance system
-
+                // Check for linked artemis guidance system
                 if (wt.getAmmoType() == AmmoType.T_LRM ||
                     wt.getAmmoType() == AmmoType.T_SRM) {
 
@@ -1315,10 +1312,9 @@ public class Compute
                             !lnk_guide.isMissing() && !lnk_guide.isBreached() &&
                             lnk_guide.getType().hasFlag(MiscType.F_ARTEMIS) ) {
 
-// Don't use artemis if this is indirect fire
-//-> HACK! Artemis-specific ammo should be used for this, NOT standard ammo!
-//-> Hook for Artemis V Level 3 Clan tech here; use 1.30f multiplier when implemented
-
+                            // Don't use artemis if this is indirect fire
+                            //-> HACK! Artemis-specific ammo should be used for this, NOT standard ammo!
+                            //-> Hook for Artemis V Level 3 Clan tech here; use 1.30f multiplier when implemented
                             if ((!weapon.curMode().equals("Indirect")) &&
                                     at.getMunitionType() == AmmoType.M_STANDARD){
                                 fHits *= 1.2f;
@@ -1326,21 +1322,18 @@ public class Compute
                     }
                 }
 
-// Check for ATMs, which have built in Artemis
-
+                // Check for ATMs, which have built in Artemis
                 if (wt.getAmmoType() == AmmoType.T_ATM){
                     fHits *= 1.2f;
                 }
 
-// Check for target with attached Narc or iNarc homing pod from friendly unit
-
+                // Check for target with attached Narc or iNarc homing pod from friendly unit
                 if (g.getEntity(waa.getTargetId()).isNarcedBy(attacker.getOwner().getTeam()) || 
                          g.getEntity(waa.getTargetId()).isINarcedBy(attacker.getOwner().getTeam())) {
                     if (at.getMunitionType() == AmmoType.M_NARC_CAPABLE){
                         fHits *= 1.2f;
                     }
                 }
-
             }
 
             // adjust for previous AMS
@@ -1364,13 +1357,11 @@ public class Compute
             }
         } else {
 
-// Direct fire weapons (and LBX slug rounds) just do a single shot so they don't use the missile hits table
-
+            // Direct fire weapons (and LBX slug rounds) just do a single shot so they don't use the missile hits table
             fDamage = (float) wt.getDamage();
 
-// Infantry follow some special rules, but do fixed amounts of damage                   
-// Anti-mek attacks are weapon-like in nature, so include them here as well
-
+            // Infantry follow some special rules, but do fixed amounts of damage                   
+            // Anti-mek attacks are weapon-like in nature, so include them here as well
             if (attacker instanceof Infantry){
                 if (wt.getInternalName() == Infantry.LEG_ATTACK){
                     fDamage = 10.0f; // Actually 5, but the chance of crits deserves a boost
@@ -1417,8 +1408,7 @@ public class Compute
 
         fDamage *= fChance;
 
-// Conventional infantry take double damage in the open
-
+        // Conventional infantry take double damage in the open
         if ((g.getEntity(waa.getTargetId()) instanceof Infantry) && 
                 !(g.getEntity(waa.getTargetId()) instanceof BattleArmor)){
             IHex e_hex = g.getBoard().getHex(g.getEntity(waa.getTargetId()).getPosition().x,
@@ -1427,12 +1417,8 @@ public class Compute
                 fDamage *= 2.0f;
             }
         } 
-
         return fDamage;
     }
-
-
-
 
     /**
      * If the unit is carrying multiple types of ammo for the specified weapon,
@@ -1526,6 +1512,7 @@ public class Compute
                 return getExpectedDamage(cgame, atk);
             }
             if (multi_bin){
+
                 // Set default max damage as 0, and the best bin as the first bin
                 max_damage = 0.0;
                 best_bin = fabin;
@@ -1540,10 +1527,11 @@ public class Compute
                         if (abin.getShotsLeft() > 0){
                             abin_type = (AmmoType) abin.getType();
                             if (!AmmoType.canDeliverMinefield(abin_type)){
+
                                 // Load weapon with specified bin
                                 shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin);
                                 atk.setAmmoId(shooter.getEquipmentNum(abin));
-                                
+
                                 // Get expected damage
                                 ex_damage = getExpectedDamage(cgame, atk);
 
@@ -1684,15 +1672,17 @@ public class Compute
     }
 
 
+
     /**
      * If this is an ultra or rotary cannon, lets see about
      *   'spinning it up' for extra damage
+     * @return the <code>int</code> ID of weapon mode
      */
 
-    public static void spinUpCannon(IGame cgame, WeaponAttackAction atk) {
+    public static int spinUpCannon(IGame cgame, WeaponAttackAction atk) {
 
         int threshold = 12;
-        int test;
+        int test, final_spin;
         Entity shooter;
         Mounted weapon;
         WeaponType wtype = new WeaponType();
@@ -1703,7 +1693,7 @@ public class Compute
         wtype = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
 
         if (!((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ROTARY))){
-            return;
+            return 0;
         }
 
         // Get the to-hit number
@@ -1711,10 +1701,11 @@ public class Compute
 
         // Set the weapon to single shot mode
         weapon.setMode("Single");
+        final_spin = 0;
 
         // If weapon can't hit target, exit the function with the weapon on single shot
         if ((threshold == ToHitData.IMPOSSIBLE) || (threshold == ToHitData.AUTOMATIC_FAIL)) {
-            return;
+            return final_spin;
         }
 
         // Set a random 2d6 roll
@@ -1722,6 +1713,7 @@ public class Compute
 
         // If random roll is >= to-hit + 1, then set double-spin
         if (test >= threshold + 1){
+            final_spin = 1;
             if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA){
                 weapon.setMode("Ultra");
             }
@@ -1735,15 +1727,21 @@ public class Compute
 
             // If random roll is >= to-hit + 2 then set to quad-spin
             if (test >= threshold + 2){
+                final_spin = 2;
                 weapon.setMode("4-shot");
             }
 
             // If random roll is >= to-hit + 3 then set to six-spin
             if (test >= threshold + 3){
+                final_spin = 3;
                 weapon.setMode("6-shot");
             }
         }
+        return final_spin;
     }
+
+
+
 
     /**
      * Checks to see if a target is in arc of the specified

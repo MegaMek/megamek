@@ -813,6 +813,7 @@ public class TestBot extends BotClient {
     protected Vector calculateWeaponAttacks(Entity en, Mounted mw, boolean best_only) {
         int from = en.getId();
         int weaponID = en.getEquipmentNum(mw);
+        int spin_mode = 0;
         Vector result = new Vector();
         Enumeration ents = game.getValidTargets(en).elements();
         WeaponAttackAction wep_test;
@@ -831,7 +832,8 @@ public class TestBot extends BotClient {
                 // If this is an Ultra or Rotary cannon, check for spin up
                 spinner = (WeaponType) mw.getType();
                 if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA) || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)){
-                    Compute.spinUpCannon(game, wep_test);
+                    spin_mode = Compute.spinUpCannon(game, wep_test);
+                    super.sendModeChange(from, weaponID, spin_mode);
                 }
 
                 // Ammo cycler runs each valid ammo type through the weapon while 
@@ -943,6 +945,7 @@ public class TestBot extends BotClient {
         int first_entity = game.getFirstEntityNum();
         int entity_num = first_entity;
         int best_entity = first_entity;
+        int spin_mode = 0;
         double max = java.lang.Double.MIN_VALUE;
         int[] results = null;
         Vector winner = null;
@@ -993,7 +996,8 @@ public class TestBot extends BotClient {
 // If this is an ultra-cannon or rotary cannon, try to spin it up
 
                     if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA) || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)){
-                        Compute.spinUpCannon(game, new_attack);
+                        spin_mode = Compute.spinUpCannon(game, new_attack);
+                        super.sendModeChange(en.getId(), a.target.getEntity().getId(), spin_mode);
                     }
                     Mounted cur_ammo = (Mounted) en.getEquipment(new_attack.getWeaponId()).getLinked();
                     new_attack.setAmmoId(en.getEquipmentNum(cur_ammo));

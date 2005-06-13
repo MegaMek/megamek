@@ -66,7 +66,7 @@ public class TestMech extends TestEntity
         {
             Mounted m = (Mounted)e.nextElement();
             EquipmentType etype = m.getType();
-            if (etype.getName()==MiscType.ENDO_STEEL)
+            if (etype.getName()==MiscType.ENDO_STEEL || etype.getName()==MiscType.ENDO_STEEL_PROTO)
                 type = Structure.ENDO_STEEL_STRUCTURE;
         }
 

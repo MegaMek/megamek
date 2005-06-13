@@ -535,13 +535,13 @@ public abstract class TestEntity implements TestEntityOption
             return 7;
         } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO).equals(mt.getInternalName()) ) {
             return 21;
-        } else if ( MiscType.ENDO_STEEL.equals(mt.getInternalName()) )
+        } else if ( EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL).equals(mt.getInternalName()) )
         {
             if ( isClan() )
                 return 7;
             else
                 return 14;
-        } else if ( MiscType.ENDO_STEEL_PROTO.equals(mt.getInternalName()) )
+        } else if ( EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE).equals(mt.getInternalName()) )
         {
             return 16;
         }
@@ -976,9 +976,6 @@ class Armor
 
 class Structure
 {
-    public final static int NORMAL_STRUCTURE = 0;
-    public final static int ENDO_STEEL_STRUCTURE = 1;
-
     public final static int CLAN_STRUCTURE = 0x01;
 
     private int structureType;
@@ -998,7 +995,7 @@ class Structure
     public static float getWeightStructure(int structureType, float weight,
             float roundWeight)
     {
-        if (structureType==ENDO_STEEL_STRUCTURE)
+        if (structureType==EquipmentType.T_STRUCTURE_ENDO_STEEL)
             return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
         return weight / 10.0f;
     }
@@ -1012,10 +1009,10 @@ class Structure
     {
         switch(structureType)
         {
-            case NORMAL_STRUCTURE:
+            case EquipmentType.T_STRUCTURE_STANDARD:
                 return "";
-            case ENDO_STEEL_STRUCTURE:
-                return "(endo steel)";
+            case EquipmentType.T_STRUCTURE_ENDO_STEEL:
+                return "(Endo Steel)";
             default:
                 return null;
         }

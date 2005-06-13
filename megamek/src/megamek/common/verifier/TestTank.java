@@ -91,11 +91,11 @@ public class TestTank extends TestEntity
 
     private static Structure getStructure(Tank tank)
     {
-        int type = Structure.NORMAL_STRUCTURE;
+        int type = EquipmentType.T_STRUCTURE_STANDARD;
         int flag = 0;
 
         if (tank.getStructureType()==1)
-            type = Structure.ENDO_STEEL_STRUCTURE;
+            type = EquipmentType.T_STRUCTURE_ENDO_STEEL;
 
         if (tank.isClan())
             flag |= Structure.CLAN_STRUCTURE;

@@ -472,8 +472,8 @@ public abstract class Mech
         Enumeration eMisc = getMisc();
         while (eMisc.hasMoreElements()) {
             Mounted mounted = (Mounted)eMisc.nextElement();
-            if (mounted.getDesc().indexOf(MiscType.ENDO_STEEL) != -1 ||
-                mounted.getDesc().indexOf(MiscType.ENDO_STEEL_PROTO) != -1) {
+            if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL)) != -1 ||
+                mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE)) != -1) {
                 return true;
             }
             

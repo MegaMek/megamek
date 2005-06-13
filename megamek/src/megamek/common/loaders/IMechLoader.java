@@ -13,7 +13,7 @@
  */
 
 /*
- * MechFileLoader.java
+ * IMechLoader.java
  *
  * Created on June 21, 2002, 11:03 AM
  */

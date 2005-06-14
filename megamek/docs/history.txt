@@ -23,6 +23,11 @@ v0.29.81 (CVS)
 + Bug 1219991: Updates elevation buttons on moves.
 + Minor correction to Endo Steel Prototype implementation.
 + Change of Structure type and name to match current Armor implementation.
+<<<<<<< history.txt
++ Addition of Composite and Reinforced Structures, loadable from HMP and MTF files.
++ Bug 1219501, 1219502, 1219503: Added ability for VTOLs in BLK form to be read as level 1 regardless of year, and fixed four VTOLs.
++ Bug 1219922: Now lets VTOLs pass over other units as long as they're high enough.
++ Bug 1219997: I discovered I have the ability to turn off my opponent's heatsinks
 + Addition of Composite and Reinforced Structures, loadable from HMP/MTF files.
 + Bug 1219501, 1219502, 1219503: Added ability for VTOLs in BLK form to be read
    as level 1 regardless of year, and fixed four VTOLs.
@@ -30,6 +35,7 @@ v0.29.81 (CVS)
 + Bug 1219997: Players should not be able to turn off their opponents' mech's
    heatsinks.
 + Bug 1219886: Mantis VTOL should not have BAP/ECM.
++ Missing translation for VTOL movement buttons & menu entries
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

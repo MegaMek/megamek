@@ -992,11 +992,16 @@ class Structure
         return getWeightStructure(structureType, weight, roundWeight);
     }
 
-    public static float getWeightStructure(int structureType, float weight,
-            float roundWeight)
-    {
-        if (structureType==EquipmentType.T_STRUCTURE_ENDO_STEEL)
+    public static float getWeightStructure(int structureType, float weight, float roundWeight) {
+        if (structureType==EquipmentType.T_STRUCTURE_ENDO_STEEL) {
             return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
+        } else if (structureType==EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE) {
+            return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
+        } else if (structureType==EquipmentType.T_STRUCTURE_REINFORCED) {
+            return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
+        } else if (structureType==EquipmentType.T_STRUCTURE_COMPOSITE) {
+            return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
+        }
         return weight / 10.0f;
     }
 
@@ -1013,6 +1018,12 @@ class Structure
                 return "";
             case EquipmentType.T_STRUCTURE_ENDO_STEEL:
                 return "(Endo Steel)";
+            case EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE:
+                return "(Endo Steel Prototype)";
+            case EquipmentType.T_STRUCTURE_REINFORCED:
+                return "(Reinforced)";
+            case EquipmentType.T_STRUCTURE_COMPOSITE:
+                return "(Composite)";
             default:
                 return null;
         }

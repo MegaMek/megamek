@@ -123,6 +123,7 @@ public abstract class Entity
     protected int               C3CompanyMasterIndex = LOC_DESTROYED;
 
     protected int               armorType = EquipmentType.T_ARMOR_UNKNOWN;
+    protected int               structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
 
     protected Vector            equipmentList = new Vector();
     protected Vector            weaponList = new Vector();
@@ -4183,14 +4184,26 @@ public abstract class Entity
         armorType = armType;
     }
 
+    public void setStructureType(int strucType) {
+        structureType = strucType;
+    }
+
     public void setArmorType(String armType) {
         setArmorType(EquipmentType.getArmorType(armType));
+    }
+
+    public void setStructureType(String strucType) {
+        setStructureType(EquipmentType.getStructureType(strucType));
     }
 
     public int getArmorType() {
         return armorType;
     }
-    
+
+    public int getStructureType() {
+        return structureType;
+    }
+
     public void setWeaponDestroyed (Mounted which) {
         if (weaponList.contains(which)) {
             which.setDestroyed(true);

@@ -469,16 +469,49 @@ public abstract class Mech
     }
 
     public boolean hasEndo() {
-        Enumeration eMisc = getMisc();
-        while (eMisc.hasMoreElements()) {
-            Mounted mounted = (Mounted)eMisc.nextElement();
-            if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL)) != -1 ||
-                mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE)) != -1) {
-                return true;
+        if (getStructureType() == EquipmentType.T_STRUCTURE_UNKNOWN) {
+            Enumeration eMisc = getMisc();
+            while (eMisc.hasMoreElements()) {
+                Mounted mounted = (Mounted)eMisc.nextElement();
+                if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL)) != -1) {
+                    setStructureType(EquipmentType.T_STRUCTURE_ENDO_STEEL);
+                    break;
+                }
+                if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE)) != -1) {
+                    setStructureType(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE);
+                    break;
+                }
             }
-            
         }
-        return false;
+        return ((getStructureType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) || (getStructureType() == EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE));
+    }
+
+    public boolean hasCompositeStructure() {
+        if (getStructureType() == EquipmentType.T_STRUCTURE_UNKNOWN) {
+            Enumeration eMisc = getMisc();
+            while (eMisc.hasMoreElements()) {
+                Mounted mounted = (Mounted)eMisc.nextElement();
+                if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_COMPOSITE)) != -1) {
+                    setStructureType(EquipmentType.T_STRUCTURE_COMPOSITE);
+                    break;
+                }
+            }
+        }
+        return (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE);
+    }
+
+    public boolean hasReinforcedStructure() {
+        if (getStructureType() == EquipmentType.T_STRUCTURE_UNKNOWN) {
+            Enumeration eMisc = getMisc();
+            while (eMisc.hasMoreElements()) {
+                Mounted mounted = (Mounted)eMisc.nextElement();
+                if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_REINFORCED)) != -1) {
+                    setStructureType(EquipmentType.T_STRUCTURE_REINFORCED);
+                    break;
+                }
+            }
+        }
+        return (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED);
     }
 
     public boolean hasFerro() {

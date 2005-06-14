@@ -4741,7 +4741,7 @@ implements Runnable, ConnectionHandler {
         entity.setSecondaryFacing(nFacing);
         if(entity instanceof VTOL) {
             //we should let players pick, but this simplifies a lot.
-            ((VTOL)entity).setElevation(game.getBoard().getHex(coords).ceiling()-game.getBoard().getHex(coords).floor()+1);
+            ((VTOL)entity).setElevation(game.getBoard().getHex(coords).ceiling()-game.getBoard().getHex(coords).surface()+1);
             while ((Compute.stackingViolation(game, entity, coords, null) != null) && (entity.getElevation() <= 50)) {
                 ((VTOL)entity).setElevation(entity.getElevation() + 1);
             }

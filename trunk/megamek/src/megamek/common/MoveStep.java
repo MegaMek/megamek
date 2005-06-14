@@ -1354,7 +1354,7 @@ public class MoveStep implements Serializable {
                 }
             }
             if(movementType == MovePath.STEP_BACKWARDS || movementType == MovePath.STEP_FORWARDS) {
-                if(elevation<=(destHex.ceiling()-destHex.floor())) {
+                if(elevation<=(destHex.ceiling()-destHex.surface())) {
                     return false;//can't fly into woods or a cliff face
                     }
             }

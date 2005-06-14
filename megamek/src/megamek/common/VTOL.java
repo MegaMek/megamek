@@ -25,7 +25,7 @@ import java.util.Enumeration;
  */
 public class VTOL extends Tank {
     
-    //this is the elevation of the VTOL--with respect to the floor of the hex it's in.
+    //this is the elevation of the VTOL--with respect to the surface of the hex it's in.
     //In other words, this may need to *change* as it moves from hex to hex--without it going up or down.
     //I.e.--level 0 hex, elevation 5--it moves to a level 2 hex, without going up or down.
     //elevation is now 3.
@@ -66,7 +66,7 @@ public class VTOL extends Tank {
     public boolean canGoDown(int assumedElevation,Coords assumedPos) {
         boolean inWaterOrWoods = false;
         IHex hex = getGame().getBoard().getHex(assumedPos);
-        int absoluteElevation = assumedElevation+hex.floor();
+        int absoluteElevation = assumedElevation+hex.surface();
         if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER)) {
             inWaterOrWoods=true;
         }
@@ -266,10 +266,8 @@ public class VTOL extends Tank {
         return false;
     }
 
-    /* TODO:make this work for VTOLs
-     */
     public int elevationOccupied(IHex hex) {
-        return (hex.floor() + elevation); //I wince even typing this.  I'll make it work properly so they can move up and down once they can fight and crash and move side to side.
+        return (hex.surface() + elevation);
     }
     
     public int getElevation() {
@@ -285,8 +283,8 @@ public class VTOL extends Tank {
     //A helper function for fiddling with elevation.
     //Takes the current hex, a hex being moved to, returns the elevation the VTOL will be considered to be at w/r/t it's new hex.
     public int calcElevation(IHex current, IHex next,int assumedElevation) {
-        int absoluteElevation = current.floor()+assumedElevation;
-        return (absoluteElevation-next.floor());
+        int absoluteElevation = current.surface()+assumedElevation;
+        return (absoluteElevation-next.surface());
     }
 
     public int calcElevation(IHex current, IHex next) {

@@ -33,6 +33,8 @@ v0.29.81 (CVS)
 + Missing translation for VTOL movement buttons & menu entries
 + Bug 1220332: VTOL sideslipping not working correctly.
 + Show VTOL current elevation in MechDisplay.
++ Make VTOL flight elevation relative to surface of hexes, not floor
+   This causes less confusion when flying above water hexes.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

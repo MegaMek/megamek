@@ -1295,7 +1295,7 @@ public class MoveStep implements Serializable {
 
             // Can't move out of a hex with an enemy unit unless we started
             // there, BUT we're allowed to turn, unload, or go prone.
-            if ( Compute.isEnemyIn(game, entity.getId(), src, false)
+            if ( Compute.isEnemyIn(game, entity.getId(), src, false, getElevation())
                  && !src.equals(entity.getPosition())
                  && type != MovePath.STEP_TURN_LEFT
                  && type != MovePath.STEP_TURN_RIGHT
@@ -1303,7 +1303,6 @@ public class MoveStep implements Serializable {
                  && type != MovePath.STEP_GO_PRONE ) {
                 return false;
             }
-
         }
 
         // can't jump over too-high terrain

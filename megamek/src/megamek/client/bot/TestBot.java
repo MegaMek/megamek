@@ -785,9 +785,14 @@ public class TestBot extends BotClient {
         int filter) {
         Arrays.sort(move_array, comp);
 
+        int j = 0;
         //top 100 utility, mostly conservative
-        for (int i = 0; i < filter && i < move_array.length; i++) {
-            pass.put((MoveOption) move_array[i]);
+        for (int i = 0; j < filter && i < move_array.length; i++) {
+            MoveOption mop = (MoveOption)move_array[i];
+            if (mop.isMoveLegal()) {
+                pass.put(mop);
+                j++;
+            }
         }
     }
 

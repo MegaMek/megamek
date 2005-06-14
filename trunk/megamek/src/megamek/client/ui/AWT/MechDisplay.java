@@ -1371,6 +1371,7 @@ class ExtraPanel
     private Slider prompt;
     
     private int sinks;
+    private boolean dontChange;
     
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
 
@@ -1565,7 +1566,13 @@ class ExtraPanel
         narcList.removeAll();
         sinks=0;
         myMechId = en.getId();
-        
+        if (clientgui.getClient().getLocalPlayer().getId() != en.getOwnerId()) {
+            sinks2B.setEnabled(false);
+            dontChange=true;
+        } else {
+            sinks2B.setEnabled(true);
+            dontChange=false;
+        }
         // Walk through the list of teams.  There
         // can't be more teams than players.
         StringBuffer buff = null;
@@ -1793,11 +1800,7 @@ class ExtraPanel
     }
     
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getActionCommand().equals("changeSinks")) { //$NON-NLS-1$
-/*            prompt = new Prompt (clientgui.frame, Messages.getString("MechDisplay.changeSinks"), Messages.getString("MechDisplay.changeSinks"),
-                                     String.valueOf(sinks), 10);
-            if (!prompt.showDialog()) return;
-            int helper = Integer.parseInt(prompt.getText()); */
+        if (ae.getActionCommand().equals("changeSinks") && !dontChange) { //$NON-NLS-1$
             prompt = new Slider (clientgui.frame, Messages.getString("MechDisplay.changeSinks"), Messages.getString("MechDisplay.changeSinks"),
                                  sinks, 0, ((Mech)clientgui.getClient().game.getEntity(myMechId)).getNumberOfSinks());
             if (!prompt.showDialog()) return;

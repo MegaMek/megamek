@@ -9602,6 +9602,19 @@ implements Runnable, ConnectionHandler {
                     if ( !isPlatoon && !isBattleArmor ) {
                         crits++;
                     }
+
+                    // Now we need to consider alternate structure types!
+                    int tmpDamageHold = -1;
+                    if ((te instanceof Mech) && (((Mech)te).hasCompositeStructure())) {
+                        tmpDamageHold = damage;
+                        damage *= 2;
+                    }
+                    if ((te instanceof Mech) && (((Mech)te).hasReinforcedStructure())) {
+                        tmpDamageHold = damage;
+                        damage /= 2;
+                        damage += (tmpDamageHold%2);
+                    }
+
                     if (te.getInternal(hit) > damage) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - damage, hit);
@@ -9689,6 +9702,19 @@ implements Runnable, ConnectionHandler {
                         te.damageThisPhase += absorbed;
                         damage -= absorbed;
 
+                        // Now we need to consider alternate structure types!
+                        if (tmpDamageHold > 0) {
+                            if (((Mech)te).hasCompositeStructure()) {
+                                // If there's a remainder, we can actually ignore it.
+                                damage /= 2;
+System.err.println("@@@"+damage);
+                            } else if (((Mech)te).hasReinforcedStructure()) {
+                                damage *= 2;
+                                damage -= (tmpDamageHold%2);
+System.err.println("@@@"+damage);
+                            }
+                        }
+
                         if (te instanceof Mech &&
                             (hit.getLocation() == Mech.LOC_RT ||
                              hit.getLocation() == Mech.LOC_LT)) {
@@ -9721,12 +9747,12 @@ implements Runnable, ConnectionHandler {
                            }
                         }
                         
-                    if (te instanceof VTOL && hit.getLocation() == VTOL.LOC_ROTOR) {
-                        //if rotor is destroyed, movement goes bleh.
-                        //I think this will work?
-                        hit.setEffect(HitData.EFFECT_VEHICLE_MOVE_DESTROYED);
-                        
-                    }
+                        if (te instanceof VTOL && hit.getLocation() == VTOL.LOC_ROTOR) {
+                            //if rotor is destroyed, movement goes bleh.
+                            //I think this will work?
+                            hit.setEffect(HitData.EFFECT_VEHICLE_MOVE_DESTROYED);
+                            
+                        }
                     }
                 } if (te.getInternal(hit) <= 0) {
                     // internal structure is gone, what are the transfer potentials?

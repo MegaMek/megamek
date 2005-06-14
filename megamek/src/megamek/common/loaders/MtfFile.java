@@ -243,9 +243,15 @@ public class MtfFile implements IMechLoader {
             boolean dblSinks = heatSinks.substring(14).equalsIgnoreCase("Double");
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 14).trim());
 
+            String thisStructureType = internalType.substring(internalType.indexOf(':')+1);
+            if (thisStructureType.length() > 0) {
+                mech.setStructureType(thisStructureType);
+            } else {
+                mech.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
+            }
             mech.autoSetInternal();
 
-            String thisArmorType = armorType.substring(armorType.indexOf(':')+1); //.replace(" Armor", "");
+            String thisArmorType = armorType.substring(armorType.indexOf(':')+1);
             if (thisArmorType.length() > 0) {
                 mech.setArmorType(thisArmorType);
             } else {

@@ -151,6 +151,14 @@ public class MiscType extends EquipmentType {
             double tons = 0.0;
             tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
             return (float) tons;
+        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED).equals(internalName) ) {
+            double tons = 0.0;
+            tons = (double)Math.ceil( entity.getWeight() / 10.0 ) * 2.0;
+            return (float) tons;
+        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE).equals(internalName) ) {
+            double tons = 0.0;
+            tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
+            return (float) tons;
         }
 
         // okay, I'm out of ideas
@@ -207,6 +215,10 @@ public class MiscType extends EquipmentType {
             }
         } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE).equals(internalName) ) {
             return 16;
+        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED).equals(internalName) ) {
+            return 0;
+        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE).equals(internalName) ) {
+            return 0;
         }
         // right, well I'll just guess then
         return 1;
@@ -290,10 +302,12 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createSword());
 
         // Start of level 3 stuff
+        EquipmentType.addType(createFerroFibrousPrototype());
         EquipmentType.addType(createLightFerroFibrous());
         EquipmentType.addType(createHeavyFerroFibrous());
         EquipmentType.addType(createEndoSteelPrototype());
-        EquipmentType.addType(createFerroFibrousPrototype());
+        EquipmentType.addType(createReinforcedStructure());
+        EquipmentType.addType(createCompositeStructure());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -959,7 +973,7 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    
+
     public static MiscType createEndoSteelPrototype() {
         MiscType misc = new MiscType();
         
@@ -973,6 +987,38 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags |= F_ENDO_STEEL;
+        misc.bv = 0;
+        misc.bv = TechConstants.T_IS_LEVEL_3;
+        
+        return misc;
+    }
+
+    public static MiscType createReinforcedStructure() {
+        MiscType misc = new MiscType();
+        
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED);
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED));
+        misc.addLookupName("Reinforced");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.bv = 0;
+        misc.bv = TechConstants.T_IS_LEVEL_3;
+        
+        return misc;
+    }
+
+    public static MiscType createCompositeStructure() {
+        MiscType misc = new MiscType();
+        
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE);
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE));
+        misc.addLookupName("Composite");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = true;
         misc.bv = 0;
         misc.bv = TechConstants.T_IS_LEVEL_3;
         

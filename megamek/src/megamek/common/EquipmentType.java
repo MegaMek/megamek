@@ -71,6 +71,12 @@ public class EquipmentType {
                                             "Reinforced",
                                             "Composite"};
 
+    public static final int[] structureLevels = {1,
+                                            2,
+                                            3,
+                                            3,
+                                            3};
+
     protected String    name = null;
 
     protected String    internalName = null;

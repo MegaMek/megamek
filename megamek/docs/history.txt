@@ -29,6 +29,7 @@ v0.29.81 (CVS)
 + Bug 1219922: Let VTOLs pass over other units as long as they're high enough.
 + Bug 1219997: Players should not be able to turn off their opponents' mech's
    heatsinks.
++ Bug 1219886: Mantis VTOL should not have BAP/ECM.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

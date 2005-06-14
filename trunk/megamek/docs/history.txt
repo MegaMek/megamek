@@ -31,6 +31,8 @@ v0.29.81 (CVS)
    heatsinks.
 + Bug 1219886: Mantis VTOL should not have BAP/ECM.
 + Missing translation for VTOL movement buttons & menu entries
++ Bug 1220332: VTOL sideslipping not working correctly.
++ Show VTOL current elevation in MechDisplay.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

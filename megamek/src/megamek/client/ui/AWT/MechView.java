@@ -126,6 +126,10 @@ public class MechView {
             .append( mech.getTotalInternal() );
         if (isMech && ((Mech)mech).hasEndo()) {
             sIntArm.append(Messages.getString("MechView.EndoSteel")); //$NON-NLS-1$
+        } else if (isMech && ((Mech)mech).hasReinforcedStructure()) {
+            sIntArm.append(Messages.getString("MechView.Reinforced")); //$NON-NLS-1$
+        } else if (isMech && ((Mech)mech).hasCompositeStructure()) {
+            sIntArm.append(Messages.getString("MechView.Composite")); //$NON-NLS-1$
         }
         sIntArm.append( "\n" ); //$NON-NLS-1$
         sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$

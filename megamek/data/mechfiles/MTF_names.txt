@@ -127,11 +127,15 @@ Inner Sphere Level 2 Tech: [Note: All IS Level 1 tech is present in IS
   ISTAG
   ISImprovedC3CPU
   Stealth Armor
-  Endo-Steel
   Ferro-Fibrous
   Triple Strength Myomer
   ISDouble Heat Sink
   ISAntiPersonnelPod
+
+ Structures:
+  Endo-Steel
+  Composite
+  Reinforced
 
 Clan Level 2 Tech:
  Weapons:

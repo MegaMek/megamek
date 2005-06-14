@@ -425,6 +425,7 @@ public class HmpFile
       mech.setOriginalWalkMP(walkMP);
       mech.setOriginalJumpMP(jumpMP);
 
+        mech.setStructureType(internalStructureType.toString());
       mech.autoSetInternal();
 
       mech.initializeArmor(laArmor, Mech.LOC_LARM);
@@ -1733,13 +1734,13 @@ class InternalStructureType
   public static final Hashtable types = new Hashtable();
 
   public static final InternalStructureType STANDARD =
-    new InternalStructureType("Standard", 0);
+    new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD), 0);
   public static final InternalStructureType ENDO_STEEL =
-    new InternalStructureType("Endo Steel", 1);
+    new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL), 1);
   public static final InternalStructureType COMPOSITE =
-    new InternalStructureType("Composite", 2);
+    new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_COMPOSITE), 2);
   public static final InternalStructureType REINFORCED =
-    new InternalStructureType("Reinforced", 3);
+    new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_REINFORCED), 3);
   public static final InternalStructureType UTILITY =
     new InternalStructureType("Utility", 4);
 

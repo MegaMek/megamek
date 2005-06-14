@@ -124,7 +124,6 @@ public class MechFileParser {
         }
 
         m_entity = loader.getEntity();
-
         postLoadInit(m_entity);
     }
 

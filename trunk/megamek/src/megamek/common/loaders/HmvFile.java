@@ -29,6 +29,7 @@ import megamek.common.IEntityMovementMode;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
+import megamek.common.VTOL;
 
 /**
  * Based on the hmpread.c program and the MtfFile object.  This class
@@ -327,80 +328,122 @@ public class HmvFile
         return false;
     }
 
-  public Entity getEntity() throws EntityLoadingException {
-      try  {
-      Entity entity = null;
+    public Entity getEntity() throws EntityLoadingException {
+        try  {
+            Entity entity = null;
+            
+            if (movementType == HMVMovementType.TRACKED ||
+                    movementType == HMVMovementType.WHEELED ||
+                    movementType == HMVMovementType.HOVER) {
+                Tank tank = new Tank();
+                entity = tank;
+    
+                tank.setChassis(name);
+                tank.setModel(model);
+                tank.setYear(year);
+                tank.setOmni( isOmni );
+    
+                int techLevel = rulesLevel == 1 ? TechConstants.T_IS_LEVEL_1 :
+                    techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 :
+                    TechConstants.T_IS_LEVEL_2;
+                tank.setTechLevel(techLevel);
+    
+                int suspensionFactor = getSuspensionFactor(roundedInternalStructure, movementType);
+                tank.setWeight((engineRating + suspensionFactor) / cruiseMP);
+    
+                tank.setMovementMode(
+                    movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER :
+                    movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED :
+                    IEntityMovementMode.TRACKED);
+    
+                tank.setOriginalWalkMP(cruiseMP);
+                tank.setOriginalJumpMP(jumpMP);
+    
+                // hmmm...
+                tank.setHasNoTurret(turretArmor == 0);
+    
+                tank.autoSetInternal();
+    
+                tank.initializeArmor(frontArmor, Tank.LOC_FRONT);
+                tank.initializeArmor(leftArmor, Tank.LOC_LEFT);
+                tank.initializeArmor(rightArmor, Tank.LOC_RIGHT);
+                tank.initializeArmor(rearArmor, Tank.LOC_REAR);
+                if (!tank.hasNoTurret()) {
+                    tank.initializeArmor(turretArmor, Tank.LOC_TURRET);
+                }
 
-      if (movementType == HMVMovementType.TRACKED ||
-          movementType == HMVMovementType.WHEELED ||
-          movementType == HMVMovementType.HOVER)
-              {
-                  Tank tank = new Tank();
-                  entity = tank;
+                addEquipment(tank, HMVWeaponLocation.FRONT, Tank.LOC_FRONT);
+                addEquipment(tank, HMVWeaponLocation.LEFT, Tank.LOC_LEFT);
+                addEquipment(tank, HMVWeaponLocation.RIGHT, Tank.LOC_RIGHT);
+                addEquipment(tank, HMVWeaponLocation.REAR, Tank.LOC_REAR);
+                if (!tank.hasNoTurret()) {
+                    addEquipment(tank, HMVWeaponLocation.TURRET, Tank.LOC_TURRET);
+                }
 
-                  tank.setChassis(name);
-                  tank.setModel(model);
-                  tank.setYear(year);
-                  tank.setOmni( isOmni );
+                addEquipment(tank, HMVWeaponLocation.BODY, Tank.LOC_BODY);
 
-                  int techLevel = rulesLevel == 1 ? TechConstants.T_IS_LEVEL_1 :
-                      techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 :
-                      TechConstants.T_IS_LEVEL_2;
-                  tank.setTechLevel(techLevel);
+                // Do we have any infantry/cargo bays?
+                if ( troopSpace > 0 ) {
+                    entity.addTransporter( new TroopSpace( troopSpace ) );
+                }
+            } else if (movementType == HMVMovementType.VTOL) {
+                VTOL vtol = new VTOL();
+                entity = vtol;
+    
+                entity.setChassis(name);
+                entity.setModel(model);
+                entity.setYear(year);
+                entity.setOmni( isOmni );
+    
+                int techLevel = rulesLevel == 1 ? TechConstants.T_IS_LEVEL_1 :
+                    techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 :
+                    TechConstants.T_IS_LEVEL_2;
+                entity.setTechLevel(techLevel);
+    
+                int suspensionFactor = getSuspensionFactor(roundedInternalStructure, movementType);
+                entity.setWeight((engineRating + suspensionFactor) / cruiseMP);
+    
+                entity.setMovementMode(IEntityMovementMode.VTOL);
+    
+                entity.setOriginalWalkMP(cruiseMP);
+                entity.setOriginalJumpMP(jumpMP);
+    
+                // hmmm...
+                vtol.setHasNoTurret(turretArmor == 0);
+    
+                entity.autoSetInternal();
+    
+                entity.initializeArmor(frontArmor, Tank.LOC_FRONT);
+                entity.initializeArmor(leftArmor, Tank.LOC_LEFT);
+                entity.initializeArmor(rightArmor, Tank.LOC_RIGHT);
+                entity.initializeArmor(rearArmor, Tank.LOC_REAR);
+                entity.initializeArmor(turretArmor, VTOL.LOC_ROTOR);
 
-                  int suspensionFactor =
-                      getSuspensionFactor(roundedInternalStructure, movementType);
-                  tank.setWeight((engineRating + suspensionFactor) / cruiseMP);
+                addEquipment(vtol, HMVWeaponLocation.FRONT, Tank.LOC_FRONT);
+                addEquipment(vtol, HMVWeaponLocation.LEFT, Tank.LOC_LEFT);
+                addEquipment(vtol, HMVWeaponLocation.RIGHT, Tank.LOC_RIGHT);
+                addEquipment(vtol, HMVWeaponLocation.REAR, Tank.LOC_REAR);
+                if (!vtol.hasNoTurret()) {
+                    addEquipment(vtol, HMVWeaponLocation.TURRET, Tank.LOC_TURRET);
+                }
 
-                  tank.setMovementMode(
-                                       movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER :
-                                       movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED :
-                                       IEntityMovementMode.TRACKED);
+                addEquipment(vtol, HMVWeaponLocation.BODY, Tank.LOC_BODY);
 
-                  tank.setOriginalWalkMP(cruiseMP);
-                  tank.setOriginalJumpMP(jumpMP);
-
-                  // hmmm...
-                  tank.setHasNoTurret(turretArmor == 0);
-
-                  tank.autoSetInternal();
-
-                  tank.initializeArmor(frontArmor, Tank.LOC_FRONT);
-                  tank.initializeArmor(leftArmor, Tank.LOC_LEFT);
-                  tank.initializeArmor(rightArmor, Tank.LOC_RIGHT);
-                  tank.initializeArmor(rearArmor, Tank.LOC_REAR);
-                  if (!tank.hasNoTurret())
-                      {
-                          tank.initializeArmor(turretArmor, Tank.LOC_TURRET);
-                      }
-
-                  addEquipment(tank, HMVWeaponLocation.FRONT, Tank.LOC_FRONT);
-                  addEquipment(tank, HMVWeaponLocation.LEFT, Tank.LOC_LEFT);
-                  addEquipment(tank, HMVWeaponLocation.RIGHT, Tank.LOC_RIGHT);
-                  addEquipment(tank, HMVWeaponLocation.REAR, Tank.LOC_REAR);
-                  if (!tank.hasNoTurret())
-                      {
-                          addEquipment(tank, HMVWeaponLocation.TURRET, Tank.LOC_TURRET);
-                      }
-
-                  addEquipment(tank, HMVWeaponLocation.BODY, Tank.LOC_BODY);
-
-                  // Do we have any infantry/cargo bays?
-                  if ( troopSpace > 0 ) {
-                      entity.addTransporter( new TroopSpace( troopSpace ) );
-                  }
-              }
-          else {
-              throw new EntityLoadingException
-                  ( "Unsupported vehicle movement type:" + movementType );
-          }
-          return entity;
-      }
-      catch (Exception e) {
-          e.printStackTrace();
-          throw new EntityLoadingException(e.getMessage());
-      }
-  }
+                // Do we have any infantry/cargo bays?
+                if ( troopSpace > 0 ) {
+                    entity.addTransporter( new TroopSpace( troopSpace ) );
+                }
+            } else {
+                throw new EntityLoadingException
+                    ( "Unsupported vehicle movement type:" + movementType );
+            }
+            return entity;
+        }
+            catch (Exception e) {
+                e.printStackTrace();
+                throw new EntityLoadingException(e.getMessage());
+        }
+    }
 
   private void addEquipmentType(EquipmentType equipmentType, int weaponCount,
                                 HMVWeaponLocation weaponLocation)

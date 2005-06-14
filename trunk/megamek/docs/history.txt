@@ -35,6 +35,7 @@ v0.29.81 (CVS)
 + Show VTOL current elevation in MechDisplay.
 + Make VTOL flight elevation relative to surface of hexes, not floor
    This causes less confusion when flying above water hexes.
++ Bug 1220129: HMVee now should load VTOLs.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

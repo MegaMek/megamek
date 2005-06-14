@@ -6461,7 +6461,8 @@ implements Runnable, ConnectionHandler {
                 sSalvoType = " Inferno missle(s) ";
                 bSalvo = false;
             }
-
+            if (ae.getSwarmTargetId() == wr.waa.getTargetId())
+                nDamPerHit += ((BattleArmor)ae).getVibroClawDamage();
         }
 
         // Infantry damage depends on # men left in platoon.
@@ -7191,10 +7192,12 @@ implements Runnable, ConnectionHandler {
 
                     // Replace "no effect" results with 4 points of damage.
                     if ( specialDamage.endsWith(" no effect.") ) {
+                        int damage = 4;
+                        if (ae instanceof BattleArmor)
+                            damage += ((BattleArmor)ae).getVibroClawDamage();
                         // ASSUMPTION: buildings CAN'T absorb *this* damage.
-                        specialDamage = damageEntity(entityTarget, hit, 4);
-                    }
-                    else {
+                        specialDamage = damageEntity(entityTarget, hit, damage);
+                    } else {
                         specialDamage = "\n" + specialDamage;
                     }
 
@@ -9708,11 +9711,9 @@ implements Runnable, ConnectionHandler {
                             if (((Mech)te).hasCompositeStructure()) {
                                 // If there's a remainder, we can actually ignore it.
                                 damage /= 2;
-System.err.println("@@@"+damage);
                             } else if (((Mech)te).hasReinforcedStructure()) {
                                 damage *= 2;
                                 damage -= (tmpDamageHold%2);
-System.err.println("@@@"+damage);
                             }
                         }
 

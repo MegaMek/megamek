@@ -107,6 +107,8 @@ public class BattleArmor
     private int         longStealthMod = 0;
     private String      stealthName = null;
 
+    private int         vibroClawDamage = -1;
+
     // Public and Protected constants, constructors, and methods.
 
     /**
@@ -728,5 +730,18 @@ public class BattleArmor
 
     } // End public TargetRoll getStealthModifier( char )
 
+    public int getVibroClawDamage() {
+        if (vibroClawDamage < 0) {
+            vibroClawDamage = 0;
+            Enumeration eW = getWeapons();
+            while (eW.hasMoreElements()) {
+                Mounted mounted = (Mounted)eW.nextElement();
+                if (mounted.getType().hasFlag(WeaponType.F_BOOST_SWARM)) {
+                    vibroClawDamage = ((WeaponType)(mounted.getType())).getRackSize();
+                    break;
+                }
+            }
+        }
+        return vibroClawDamage;
+    }
 } // End public class BattleArmor extends Infantry implements Serializable
-

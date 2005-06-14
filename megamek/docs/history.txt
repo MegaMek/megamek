@@ -39,6 +39,7 @@ v0.29.81 (CVS)
 + Correct TechConstants to allow pretty much any equipment of known tech level 
    if the unit's level 3 (un-breaks mixed tech units).
 + Bug 1219499: Tweak to bot movement code to eliminate stacking violations.
++ Bug 1217504: Vibro-claw damage bonus added to leg and swarm attacks.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

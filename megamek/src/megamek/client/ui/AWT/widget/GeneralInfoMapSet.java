@@ -34,7 +34,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
         weightL, bvL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
-        movementTypeL, ejectL;
+        movementTypeL, ejectL, elevationL, elevationR;
     private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, pilotR,
         mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR;
     private PMSimpleLabel[] advantagesR;
@@ -159,6 +159,11 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         content.addArea( ejectL );
         ejectR = createLabel(STAR3, fm, ejectL.getSize().width + 10, getYCoord());
         content.addArea( ejectR );
+        
+        elevationL = createLabel( Messages.getString("GeneralInfoMapSet.elevationL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea( elevationL );
+        elevationR = createLabel(STAR3, fm, ejectL.getSize().width + 10, getYCoord());
+        content.addArea( elevationR );
 
         advantagesR = new PMSimpleLabel[24];
         for (int i=0; i < advantagesR.length; i++) {
@@ -220,7 +225,11 @@ public class GeneralInfoMapSet implements DisplayMapSet{
             } else {
                 ejectR.setString( Messages.getString("GeneralInfoMapSet.Disabled") ); //$NON-NLS-1$
             }
-        }                
+        }
+        elevationR.setString( Messages.getString("GeneralInfoMapSet.NA") ); //$NON-NLS-1$
+        if (en instanceof VTOL) {
+            elevationR.setString(Integer.toString(((VTOL)en).getElevation()));
+        }
 
         for (int i=0; i < advantagesR.length; i++ ) {
             advantagesR[i].setString(""); //$NON-NLS-1$

@@ -3206,6 +3206,7 @@ implements Runnable, ConnectionHandler {
                     } else {
                         phaseReport.append(".\n");
                         ((VTOL)entity).setElevation(((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
+                        curPos=newPos;
                     }
                     
                     

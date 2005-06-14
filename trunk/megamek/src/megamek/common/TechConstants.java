@@ -102,15 +102,23 @@ public class TechConstants {
      * Returns true if the equipment is legal for a unit with the paired tech levels;
      * Returns false if it is not.
      */
-    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel, boolean ignoreUnknown)
-    {
+    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel, boolean ignoreUnknown) {
+        // If it's unknown, we're not gonna be able to check it one way or the other, so...
         if (equipmentTechlevel == T_TECH_UNKNOWN)
             if (ignoreUnknown)
                 return true;
             else
                 return false;
+
+        // If they match, we're all good.
         if (entityTechlevel == equipmentTechlevel)
             return true;
+
+        // If the entity is level 3, it can legally be mixed tech, so we pretty much just smile and nod.
+        if ((entityTechlevel == T_IS_LEVEL_3) || (entityTechlevel == T_CLAN_LEVEL_3))
+            return true;
+
+        // If none of the catch-alls above are true, we go to specific cases
         if ((equipmentTechlevel == T_IS_LEVEL_1)
             && ((entityTechlevel == T_IS_LEVEL_2)
                 || (entityTechlevel == T_IS_LEVEL_2_ALL)

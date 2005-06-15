@@ -21,6 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Infantry;
+import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.Protomech;
@@ -162,6 +163,9 @@ public class CEntity {
     boolean moved = false;
     boolean justMoved = false;
 
+    // TSM equipped Mechs work better at 9+ heat, so flag if mounted
+    boolean tsm_offset = false;
+
     int[] minRangeMods = new int[7];
 
     public CEntity(Entity en, TestBot tb) {
@@ -221,12 +225,28 @@ public class CEntity {
         this.jumpMP = entity.getJumpMP();
         this.overall_armor_percent = entity.getArmorRemainingPercent();
         this.base_psr_odds = Compute.oddsAbove(entity.getBasePilotingRoll().getValue()) / 100;
+
+        // If this is a Mech equipped with TSM, push for the sweet spot at 9 heat
+        if (this.entity instanceof Mech){
+            if (((Mech)tb.game.getEntity(this.entity.getId())).hasTSM()){
+                this.tsm_offset = true;
+            }
+        }
+
         //begin weapons characterization
         double heat_mod = .9; //these estimates are consistently too high
         if (entity.heat > 7)
             heat_mod = .8; //reduce effectiveness
         if (entity.heat > 12)
             heat_mod = .5;
+        if (this.tsm_offset){
+            if (entity.heat == 9){
+                heat_mod = 1.0;
+            }
+            if (entity.heat < 12 && entity.heat > 9){
+                heat_mod = 0.8;
+            }
+        }
         if (entity.heat > 16)
             heat_mod = .35;
         int capacity = entity.getHeatCapacity();
@@ -483,6 +503,14 @@ public class CEntity {
                 next.movement_threat += this.bv / 1000 * next.getMovementheatBuildup();
                 if (entity.heat > 7) {
                     next.movement_threat += this.bv / 500 * next.getMovementheatBuildup();
+                }
+                if (this.tsm_offset){
+                    if (entity.heat == 9){
+                        next.movement_threat -= this.bv / 100 * next.getMovementheatBuildup();
+                    }
+                    if (entity.heat < 12 && entity.heat > 9){
+                        next.movement_threat -= this.bv / 500 * next.getMovementheatBuildup();
+                    }
                 }
                 if (entity.heat > 12) {
                     next.movement_threat += this.bv / 100 * next.getMovementheatBuildup();

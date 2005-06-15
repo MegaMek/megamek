@@ -230,10 +230,13 @@ public class Compute
             return true;
         }
 
-        // Check for water unless we're a hovercraft or using a bridge.
+        // Check for water unless we're a hovercraft or naval or using a bridge.
         if (movementType != IEntityMovementType.MOVE_JUMP
             && !(entity instanceof VTOL)
-            && entity.getMovementMode() != IEntityMovementMode.HOVER
+            && ((entity.getMovementMode() != IEntityMovementMode.HOVER)
+                || (entity.getMovementMode() != IEntityMovementMode.NAVAL)
+                || (entity.getMovementMode() != IEntityMovementMode.HYDROFOIL)
+                || (entity.getMovementMode() != IEntityMovementMode.SUBMARINE))
             && destHex.terrainLevel(Terrains.WATER) > 0
             && !isPavementStep) {
             return true;
@@ -1116,8 +1119,9 @@ public class Compute
         final IHex hex = game.getBoard().getHex(attacker.getPosition());
         ToHitData toHit = new ToHitData();
 
+        // Only BattleMechs in water get the terrain penalty for firing!
         if (hex.terrainLevel(Terrains.WATER) > 0
-        && attacker.getMovementMode() != IEntityMovementMode.HOVER) {
+                && (attacker instanceof Mech)) {
             toHit.addModifier(1, "attacker in water");
         }
 
@@ -1150,11 +1154,12 @@ public class Compute
             return toHit;
         }
 
+        // -1 bonus only against BattleMechs in water!
         if (hex.terrainLevel(Terrains.WATER) > 0
-        && entityTarget.getMovementMode() != IEntityMovementMode.HOVER) {
+                && (entityTarget instanceof Mech)) {
             toHit.addModifier(-1, "target in water");
         }
-        
+
         if (entityTarget.isStuck()) {
             toHit.addModifier(-2, "target stuck in swamp");
         }

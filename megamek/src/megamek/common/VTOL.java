@@ -118,7 +118,7 @@ public class VTOL extends Tank {
         dbv += getTotalArmor();
         
         // total internal structure        
-        dbv += getTotalInternal() / 2;
+        dbv += (double)getTotalInternal() / 2;
         
         // add defensive equipment
         double dEquipmentBV = 0;
@@ -158,7 +158,7 @@ public class VTOL extends Tank {
         dbv *= typeModifier;
         
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), true).getValue();
         if (tmmRan > 5) {
             tmmRan = 5;
         }
@@ -205,6 +205,21 @@ public class VTOL extends Tank {
                 weaponsBVFront += dBV;
             }
         }
+        for (Enumeration i=equipmentList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.isDestroyed()) {
+                continue;
+            }
+            if (mounted.getName().equals("Beagle Active Probe")) {
+                weaponsBVFront += 10; 
+            }
+            if (mounted.getName().equals("Active Probe")) {
+                weaponsBVFront += 12;
+            }
+            if (mounted.getName().equals("Light Active Probe")) {
+                weaponsBVFront += 7;
+            }
+        }
         if (weaponsBVFront > weaponsBVRear) {
             weaponBV += weaponsBVFront;
             weaponBV += (weaponsBVRear * 0.5);
@@ -233,7 +248,7 @@ public class VTOL extends Tank {
         weaponBV += ammoBV;
         
         // adjust further for speed factor
-        double speedFactor = getOriginalRunMP() - 5;
+        double speedFactor = 2*getOriginalRunMP() - 5;
         speedFactor /= 10;
         speedFactor++;
         speedFactor = Math.pow(speedFactor, 1.2);

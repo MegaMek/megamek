@@ -314,6 +314,11 @@ public class WeaponAttackAction
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
     
+        // can't target non-wood hexes for clearing
+        if (Targetable.TYPE_HEX_CLEAR == target.getTargetType() &&
+             !game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.WOODS)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not woods.");
+        }
         // Infantry can't clear woods.
         if ( isAttackerInfantry &&
              Targetable.TYPE_HEX_CLEAR == target.getTargetType() ) {

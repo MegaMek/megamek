@@ -40,6 +40,8 @@ v0.29.81 (CVS)
    if the unit's level 3 (un-breaks mixed tech units).
 + Bug 1219499: Tweak to bot movement code to eliminate stacking violations.
 + Bug 1217504: Vibro-claw damage bonus added to leg and swarm attacks.
++ Bug 1220825: it should not be possible to target non-wood hexes to try to
+   clear them.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

@@ -2830,13 +2830,14 @@ implements Runnable, ConnectionHandler {
                                     ToHitData toHit = caa.toHit(game, true);
 
                                     // Calculate hit location.
-                                    if ( entity instanceof Tank &&
-                                         entity.getMovementMode() ==
-                                         IEntityMovementMode.HOVER &&
-                                         0 < nextHex.terrainLevel(Terrains.WATER) ) {
+                                    if ( entity instanceof Tank
+                                         && ((entity.getMovementMode() == IEntityMovementMode.HOVER)
+                                         || (entity.getMovementMode() == IEntityMovementMode.NAVAL)
+                                         || (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL))
+                                         && 0 < nextHex.terrainLevel(Terrains.WATER)) {
                                         if ( 2 <= nextHex.terrainLevel(Terrains.WATER) ||
                                              target.isProne() ) {
-                                            // Hovercraft can't hit the Mek.
+                                            // Hovercraft/Naval Craft can't hit the Mek.
                                             continue;
                                         }
                                         else {
@@ -4272,8 +4273,11 @@ implements Runnable, ConnectionHandler {
 
     public void doSetLocationsExposure(Entity entity, IHex hex, boolean isPavementStep, boolean isJump) {
         if ( hex.terrainLevel(Terrains.WATER) > 0
-            && entity.getMovementMode() != IEntityMovementMode.HOVER
-            && !isPavementStep &&!isJump) {
+            && ((entity.getMovementMode() != IEntityMovementMode.HOVER)
+            || (entity.getMovementMode() != IEntityMovementMode.NAVAL)
+            || (entity.getMovementMode() != IEntityMovementMode.HYDROFOIL))
+            && !isPavementStep
+            && !isJump) {
             if (entity instanceof Mech && !entity.isProne()
                 && hex.terrainLevel(Terrains.WATER) == 1) {
                 for (int loop = 0; loop < entity.locations(); loop++) {

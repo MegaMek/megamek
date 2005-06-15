@@ -45,6 +45,7 @@ public class TestTank extends TestEntity
 
     public static int getTankEngineRating(Tank tank)
     {
+        int sf = 0;
         switch(tank.getMovementMode())
         {
             case IEntityMovementMode.TRACKED:
@@ -54,7 +55,7 @@ public class TestTank extends TestEntity
                 return (int) Math.round(tank.getOriginalWalkMP()*
                         tank.getWeight())-20;
             case IEntityMovementMode.HOVER:
-                int sf = 0;
+                sf = 0;
                 if (tank.getWeight()<=10)
                     sf = 40;
                 else if (tank.getWeight()<=20)
@@ -67,6 +68,34 @@ public class TestTank extends TestEntity
                     sf = 235;
                 return (int) Math.round(tank.getOriginalWalkMP()*
                         tank.getWeight())-sf;
+            case IEntityMovementMode.HYDROFOIL:
+                sf = 0;
+                if (tank.getWeight()<=10)
+                    sf = 60;
+                else if (tank.getWeight()<=20)
+                    sf = 105;
+                else if (tank.getWeight()<=30)
+                    sf = 150;
+                else if (tank.getWeight()<=40)
+                    sf = 195;
+                else if (tank.getWeight()<=50)
+                    sf = 255;
+                else if (tank.getWeight()<=60)
+                    sf = 300;
+                else if (tank.getWeight()<=70)
+                    sf = 345;
+                else if (tank.getWeight()<=80)
+                    sf = 390;
+                else if (tank.getWeight()<=90)
+                    sf = 435;
+                else if (tank.getWeight()<=100)
+                    sf = 480;
+                return (int) Math.round(tank.getOriginalWalkMP()*
+                        tank.getWeight())-sf;
+            case IEntityMovementMode.NAVAL:
+            case IEntityMovementMode.SUBMARINE:
+                return (int) Math.round(tank.getOriginalWalkMP()*
+                        tank.getWeight())-30;
         }
         return 0;
     }

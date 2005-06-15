@@ -24,16 +24,20 @@ public class UnitType {
     public static final int INFANTRY = 2;
     public static final int PROTOMEK = 3;
     public static final int VTOL = 4;
+    public static final int NAVAL = 5;
     
-    private static String[] names = {"Mek", "Tank", "Infantry", "ProtoMek", "VTOL"};
+    private static String[] names = {"Mek", "Tank", "Infantry", "ProtoMek", "VTOL", "Naval"};
 
     public static final int SIZE = names.length;
 
     public static String determineUnitType(Entity e) {
+        int mm = e.getMovementMode();
         if (e instanceof Infantry) {
             return names[INFANTRY];
         } else if (e instanceof VTOL) {
             return names[VTOL];
+        } else if ((mm == IEntityMovementMode.NAVAL) || (mm == IEntityMovementMode.HYDROFOIL) || (mm == IEntityMovementMode.SUBMARINE)) {
+            return names[NAVAL];
         } else if (e instanceof Tank) {
             return names[TANK];
         } else if (e instanceof Mech) {

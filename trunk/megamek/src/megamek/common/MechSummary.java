@@ -42,10 +42,13 @@
     public String getUnitType() { return (this.m_sUnitType); }
     
     public static String determineUnitType(Entity e) {
+        int mm = e.getMovementMode();
         if (e instanceof Infantry) {
             return "Infantry";
         } else if (e instanceof VTOL) { //for now
             return "VTOL";
+        } else if ((mm == IEntityMovementMode.NAVAL) || (mm == IEntityMovementMode.HYDROFOIL) || (mm == IEntityMovementMode.SUBMARINE)) {
+            return "Naval";
         } else if (e instanceof Tank) {
             return "Tank";
         } else if (e instanceof Mech) {

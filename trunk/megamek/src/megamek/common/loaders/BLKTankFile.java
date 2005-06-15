@@ -33,7 +33,7 @@ import megamek.common.util.*;
 
 public class BLKTankFile extends BLKFile implements IMechLoader {    
     
-    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover" };
+    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover", "", "Naval", "Hydrofoil", "Submarine" };
     
     public BLKTankFile(BuildingBlock bb) {
         dataFile = bb;
@@ -140,11 +140,9 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         for (int x = 0; x < fullArmor.length; x++) {
             t.initializeArmor(fullArmor[x], x);
         }
-        
-        
-        
+
         t.autoSetInternal();
-        
+
         loadEquipment(t, "Front", Tank.LOC_FRONT);
         loadEquipment(t, "Right", Tank.LOC_RIGHT);
         loadEquipment(t, "Left", Tank.LOC_LEFT);

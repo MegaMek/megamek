@@ -285,7 +285,11 @@ public class MoveStep implements Serializable {
                 // check for water
                 if (!isPavementStep()
                     && game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0
-                    && entity.getMovementMode() != IEntityMovementMode.HOVER && !(entity instanceof VTOL)) {
+                    && entity.getMovementMode() != IEntityMovementMode.HOVER
+                    && entity.getMovementMode() != IEntityMovementMode.NAVAL
+                    && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
+                    && entity.getMovementMode() != IEntityMovementMode.SUBMARINE
+                    && !(entity instanceof VTOL)) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -1092,8 +1096,11 @@ public class MoveStep implements Serializable {
                 mp += 2;
             }
 
-            // non-hovers check for water depth and are affected by swamp
-            if (moveType != IEntityMovementMode.HOVER) {
+            // non-hovers and non-navals check for water depth and are affected by swamp
+            if ((moveType != IEntityMovementMode.HOVER)
+                    && (moveType != IEntityMovementMode.NAVAL)
+                    && (moveType != IEntityMovementMode.HYDROFOIL)
+                    && (moveType != IEntityMovementMode.SUBMARINE)) {
                 if (destHex.terrainLevel(Terrains.WATER) == 1) {
                     mp++;
                 } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
@@ -1272,9 +1279,12 @@ public class MoveStep implements Serializable {
             return false;
         }
 
-        // Can't run into water unless hovering, first step, using a bridge, or fly.
+        // Can't run into water unless hovering, naval, first step, using a bridge, or fly.
         if (movementType == IEntityMovementType.MOVE_RUN
             && nMove != IEntityMovementMode.HOVER
+            && nMove != IEntityMovementMode.NAVAL
+            && nMove != IEntityMovementMode.HYDROFOIL
+            && nMove != IEntityMovementMode.SUBMARINE
             && destHex.terrainLevel(Terrains.WATER) > 0
             && !firstStep
             && !isPavementStep

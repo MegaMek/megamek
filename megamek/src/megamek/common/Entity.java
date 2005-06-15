@@ -2656,6 +2656,12 @@ public abstract class Entity
             return "Hover";
         case IEntityMovementMode.VTOL:
         	return "VTOL";
+        case IEntityMovementMode.NAVAL:
+        	return "Naval";
+        case IEntityMovementMode.HYDROFOIL:
+        	return "Hydrofoil";
+        case IEntityMovementMode.SUBMARINE:
+        	return "Submarine";
         default:
             return "ERROR";
         }
@@ -2924,6 +2930,9 @@ public abstract class Entity
             && step.getMovementType() != IEntityMovementType.MOVE_JUMP
             && getMovementMode() != IEntityMovementMode.HOVER
             && getMovementMode() != IEntityMovementMode.VTOL
+            && getMovementMode() != IEntityMovementMode.NAVAL
+            && getMovementMode() != IEntityMovementMode.HYDROFOIL
+            && getMovementMode() != IEntityMovementMode.SUBMARINE
             && !isPavementStep) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER));
         } else {

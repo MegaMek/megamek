@@ -178,6 +178,13 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createSRM2());
         EquipmentType.addType(createSRM4());
         EquipmentType.addType(createSRM6());
+        EquipmentType.addType(createLRT5());
+        EquipmentType.addType(createLRT10());
+        EquipmentType.addType(createLRT15());
+        EquipmentType.addType(createLRT20());
+        EquipmentType.addType(createSRT2());
+        EquipmentType.addType(createSRT4());
+        EquipmentType.addType(createSRT6());
 
         // Start of Infantry weapons (Level1)
         EquipmentType.addType(createInfRifle());
@@ -816,6 +823,114 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createLRT5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRT 5";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS LRT-5");
+        weapon.addLookupName("ISLRT5");
+        weapon.addLookupName("IS LRT 5");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.bv = 45;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createLRT10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRT 10";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS LRT-10");
+        weapon.addLookupName("ISLRT10");
+        weapon.addLookupName("IS LRT 10");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 5.0f;
+        weapon.criticals = 2;
+        weapon.bv = 90;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createLRT15() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRT 15";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS LRT-15");
+        weapon.addLookupName("ISLRT15");
+        weapon.addLookupName("IS LRT 15");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 3;
+        weapon.bv = 136;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createLRT20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRT 20";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS LRT-20");
+        weapon.addLookupName("ISLRT20");
+        weapon.addLookupName("IS LRT 20");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 10.0f;
+        weapon.criticals = 5;
+        weapon.bv = 181;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
     public static WeaponType createISLRM5OS() {
         WeaponType weapon = new WeaponType();
 
@@ -1078,6 +1193,83 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createSRT2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "SRT 2";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS SRT-2");
+        weapon.addLookupName("ISSRT2");
+        weapon.addLookupName("IS SRT 2");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_MISSILE;
+        weapon.bv = 21;
+
+        return weapon;
+    }
+
+    public static WeaponType createSRT4() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "SRT 4";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS SRT-4");
+        weapon.addLookupName("ISSRT4");
+        weapon.addLookupName("IS SRT 4");
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.bv = 39;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createSRT6() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "SRT 6";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS SRT-6");
+        weapon.addLookupName("ISSRT6");
+        weapon.addLookupName("IS SRT 6");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 3.0f;
+        weapon.criticals = 2;
+        weapon.bv = 59;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
 
     //Start of Inner Sphere Level2 weapons
 

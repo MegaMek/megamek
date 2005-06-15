@@ -145,14 +145,17 @@ public class Tank
     }
     
     /**
-     * Hovercraft move on the surface of the water
+     * Hovercraft, naval vessels, and hydrofoils move on the surface of the water
      */
     public int elevationOccupied(IHex hex) {
-       if (movementMode == IEntityMovementMode.HOVER && hex.containsTerrain(Terrains.WATER)) {
-           return hex.surface();
-       } else {
-           return hex.floor();
-       }
+        if (((movementMode == IEntityMovementMode.HOVER)
+                ||  (movementMode == IEntityMovementMode.NAVAL)
+                ||  (movementMode == IEntityMovementMode.HYDROFOIL))
+                && hex.containsTerrain(Terrains.WATER)) {
+            return hex.surface();
+        } else {
+            return hex.floor();
+        }
     }
     
     /**
@@ -167,6 +170,12 @@ public class Tank
                     hex.terrainLevel(Terrains.WATER) > 0 || hex.containsTerrain(Terrains.RUBBLE);
             case IEntityMovementMode.HOVER :
                 return hex.containsTerrain(Terrains.WOODS);
+            case IEntityMovementMode.NAVAL:
+                return (hex.terrainLevel(Terrains.WATER) <= 0);
+            case IEntityMovementMode.HYDROFOIL:
+                return (hex.terrainLevel(Terrains.WATER) <= 0);
+            case IEntityMovementMode.SUBMARINE:
+                return (hex.terrainLevel(Terrains.WATER) <= 0);
             default :
                 return false;
         }
@@ -375,7 +384,7 @@ public class Tank
             case 4:
                 return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
             case 5:
-                if (bSide || getMovementMode() == IEntityMovementMode.HOVER) {
+                if (bSide || getMovementMode() == IEntityMovementMode.HOVER || getMovementMode() == IEntityMovementMode.HYDROFOIL) {
                     return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
                 else {
@@ -386,7 +395,7 @@ public class Tank
             case 8:
                 return new HitData(nArmorLoc);
             case 9:
-                if (bSide && getMovementMode() == IEntityMovementMode.HOVER) {
+                if (bSide && ((getMovementMode() == IEntityMovementMode.HOVER) || (getMovementMode() == IEntityMovementMode.HYDROFOIL))) {
                     return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
                 else {

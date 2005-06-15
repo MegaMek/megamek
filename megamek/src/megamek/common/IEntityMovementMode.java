@@ -26,5 +26,7 @@ public interface IEntityMovementMode {
     public static final int WHEELED = 4;
     public static final int HOVER = 5;
     public static final int VTOL = 6;
-
+    public static final int NAVAL = 7;
+    public static final int HYDROFOIL = 8;
+    public static final int SUBMARINE = 9;
 }

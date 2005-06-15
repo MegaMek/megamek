@@ -52,6 +52,9 @@ public class GAAttack extends GA {
         }
         targets = new CEntity.Table(tb);
         this.valid_target_indexes = temp;
+        if (attacker.tsm_offset){
+            this.overheat_eligible = true;
+        }
         if (isEnemy || (attacker.last != null && (!attacker.last.inDanger || attacker.last.doomed))) {
             this.overheat_eligible = true;
         }
@@ -188,6 +191,14 @@ public class GAAttack extends GA {
             if (attacker.entity.heat > 7) {
                 total_utility += attacker.bv / 50;
             }
+            if (attacker.tsm_offset){
+                if (attacker.entity.heat == 9) {
+                    total_utility -= attacker.bv/10;
+                }
+                if (attacker.entity.heat < 12 && attacker.entity.heat > 9) {
+                    total_utility -= attacker.bv/20;
+                }
+            }
             if (attacker.entity.heat > 12) {
                 total_utility += attacker.bv / 20;
             }
@@ -195,15 +206,23 @@ public class GAAttack extends GA {
                 total_utility += attacker.bv / 10;
             }
         } else if (overheat > 0) {
-            if (overheat > 4) {
+            if (overheat > 4 && !attacker.tsm_offset) {
                 total_utility *= (this.overheat_eligible && attacker.jumpMP > 2) ? .9 : .85;
-            }
-            if (overheat > 7) {
+            } 
+            if (overheat > 7 && !attacker.tsm_offset) {
                 double mod = this.overheat_eligible ? + ((attacker.jumpMP > 2) ? 0 : 10) : 40;
                 if (this.attacker.overheat > CEntity.OVERHEAT_LOW) {
                     total_utility -= attacker.bv / mod;
                 } else {
                     total_utility -= attacker.bv / (mod + 10);
+                }
+            }
+            if (attacker.tsm_offset){
+                if (overheat == 9) {
+                    total_utility += attacker.bv/10;
+                }
+                if (attacker.entity.heat < 12 && attacker.entity.heat > 9) {
+                    total_utility += attacker.bv/20;
                 }
             }
             if (overheat > 12) {

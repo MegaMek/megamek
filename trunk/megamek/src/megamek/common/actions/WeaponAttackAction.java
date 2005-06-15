@@ -40,6 +40,7 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.common.WeaponType;
 
 /**
@@ -758,7 +759,9 @@ public class WeaponAttackAction
         }
     
         // ammo to-hit modifier
-        if (usesAmmo && atype.getToHitModifier() != 0) {
+        if ((te instanceof VTOL) && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
+            toHit.addModifier(-3, "flak to-hit modifier");
+        } else if (usesAmmo && atype.getToHitModifier() != 0) {
             toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
         }
         

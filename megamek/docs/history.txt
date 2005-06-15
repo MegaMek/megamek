@@ -44,7 +44,9 @@ v0.29.81 (CVS)
    clear them.
 + Fixed most of the mistakes in BV calculation for VTOLs. Some VTOLs are still
   wrong.
-  
++ Mantis Light Attack VTOL has ECM and BAP: (see
+  http://www.classicbattletech.com/cbt_errata_TR3060.html)
+
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.
 + Edits to a number of units to correct Mixed-Tech to level 3 from level 2

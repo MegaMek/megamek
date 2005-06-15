@@ -48,6 +48,7 @@ v0.29.81 (CVS)
   http://www.classicbattletech.com/cbt_errata_TR3060.html)
 + Patch 1220922: Bot equipment usage: TSM
 + Initial implementation of surface naval vessels and hydrofoils
++ Added flak rules for LB-X Cluster vs. VTOLs.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

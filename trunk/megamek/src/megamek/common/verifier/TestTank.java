@@ -175,6 +175,12 @@ public class TestTank extends TestEntity
     {
         if (tank.getMovementMode()==IEntityMovementMode.HOVER)
             return tank.getWeight() / 10.0f;
+        else if (tank.getMovementMode()==IEntityMovementMode.VTOL)
+            return tank.getWeight() / 10.0f;
+        else if (tank.getMovementMode()==IEntityMovementMode.HYDROFOIL)
+            return tank.getWeight() / 10.0f;
+        else if (tank.getMovementMode()==IEntityMovementMode.SUBMARINE)
+            return tank.getWeight() / 10.0f;
         return 0f;
     }
     public float getTankPowerAmplifier()

@@ -7,6 +7,9 @@
   <!-- Global properties for this build -->
   
   <property name="srcdir" value="${basedir}"/>
+  <property name="propdir" value="${basedir}"/>
+<!--   <property name="propdir" value="properties/"/> -->
+<!--   <property name="propdir" value="l10n/"/> -->
   <property name="builddir" value="classes"/>
   <property name="datadir" value="data"/>
   <property name="maindir" value="megamek"/>
@@ -87,7 +90,7 @@
   <target name="jar" depends="compile" description="Generates JAR File from compiled sources">
         <!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->  
         <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
-        <fileset dir="${srcdir}" includes="**/*.properties"/>
+        <fileset dir="${propdir}" includes="**/*.properties"/>
         <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
 	    	<attribute name="Class-Path" value="${jarclasspath}"/>

@@ -54,6 +54,7 @@ v0.29.81 (CVS)
 + Fixed NPE for bots in Compute where a weapon didn't have a current firing mode.
 + Bug 1215885: landing vtol issues
 + Bug 1215877: landing vtol issues
++ Updated build.xml in anticipation of moving *.properties to their own dir.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

@@ -59,6 +59,7 @@ v0.29.81 (CVS)
 + Bug 1222152: Can't customize artillery ammo.
 + Do not allow clan units to choose Anti-TSM or Listen-Kill ammo
    when the "clan ignores equipment limits" option is not checked.
++ Bug 1215898: VTOLs have wrong engine type
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

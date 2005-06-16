@@ -1327,7 +1327,7 @@ public class Compute
                             // Don't use artemis if this is indirect fire
                             //-> HACK! Artemis-specific ammo should be used for this, NOT standard ammo!
                             //-> Hook for Artemis V Level 3 Clan tech here; use 1.30f multiplier when implemented
-                            if ((!weapon.curMode().equals("Indirect")) &&
+                            if ((weapon.curMode() == null || !weapon.curMode().equals("Indirect")) &&
                                     at.getMunitionType() == AmmoType.M_STANDARD){
                                 fHits *= 1.2f;
                             }

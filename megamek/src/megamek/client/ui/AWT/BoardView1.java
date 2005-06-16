@@ -738,65 +738,66 @@ public class BoardView1
     /** Display artillery modifier in pretargeted hexes
      */
     private void drawArtilleryHexes() {
-        
-        Entity e = clientgui.mechD.getCurrentEntity();
-        Mounted weapon = getSelectedArtilleryWeapon();
-        
-        if(game.getArtillerySize()==0 && weapon==null) {
-            return; //nothing to do
-        }
-                
-        int drawX = view.x / (int)(HEX_WC*scale) - 1;
-        int drawY = view.y / (int)(HEX_H*scale) - 1;
-
-        int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
-        int drawHeight = view.height / (int)(HEX_H*scale) + 3;
-
-        IBoard board = game.getBoard();
-        Image scaledImage;
-
-        // loop through the hexes
-        for (int i = 0; i < drawHeight; i++) {
-            for (int j = 0; j < drawWidth; j++) {
-                Coords c = new Coords(j + drawX, i + drawY);
-                Point p = getHexLocation(c);
-                p.translate(-(view.x), -(view.y));
-
-                if (!board.contains(c)){ continue; }
-
-                if(weapon != null) {
-                    //process targetted hexes
-                    int amod = 0;
-                    //Check the predesignated hexes
-                    if(e.getOwner().getArtyAutoHitHexes().contains(c)) {
-                        amod = TargetRoll.AUTOMATIC_SUCCESS;
-                    }
-                    else {
-                        amod = e.aTracker.getModifier(weapon, c);
-                    }
-
-                    if(amod!=0) {
-
-                        //draw the crosshairs
-                        if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
-                            //predesignated or already hit
-                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT));
-                        } else {
-                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED));
+        if (clientgui != null) {
+            Entity e = clientgui.mechD.getCurrentEntity();
+            Mounted weapon = getSelectedArtilleryWeapon();
+            
+            if(game.getArtillerySize()==0 && weapon==null) {
+                return; //nothing to do
+            }
+                    
+            int drawX = view.x / (int)(HEX_WC*scale) - 1;
+            int drawY = view.y / (int)(HEX_H*scale) - 1;
+    
+            int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
+            int drawHeight = view.height / (int)(HEX_H*scale) + 3;
+    
+            IBoard board = game.getBoard();
+            Image scaledImage;
+    
+            // loop through the hexes
+            for (int i = 0; i < drawHeight; i++) {
+                for (int j = 0; j < drawWidth; j++) {
+                    Coords c = new Coords(j + drawX, i + drawY);
+                    Point p = getHexLocation(c);
+                    p.translate(-(view.x), -(view.y));
+    
+                    if (!board.contains(c)){ continue; }
+    
+                    if(weapon != null) {
+                        //process targetted hexes
+                        int amod = 0;
+                        //Check the predesignated hexes
+                        if(e.getOwner().getArtyAutoHitHexes().contains(c)) {
+                            amod = TargetRoll.AUTOMATIC_SUCCESS;
                         }
-
-                        backGraph.drawImage(scaledImage, p.x, p.y, this);
+                        else {
+                            amod = e.aTracker.getModifier(weapon, c);
+                        }
+    
+                        if(amod!=0) {
+    
+                            //draw the crosshairs
+                            if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
+                                //predesignated or already hit
+                                scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT));
+                            } else {
+                                scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED));
+                            }
+    
+                            backGraph.drawImage(scaledImage, p.x, p.y, this);
+                        }
                     }
-                }
-                //process incoming attacks - requires server to update client's view of game
-                
-                for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
-                    ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
-
-                    if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
-                        scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING));
-                        backGraph.drawImage(scaledImage, p.x, p.y, this);
-                        break; //do not draw multiple times, tooltop will show all attacks
+                    //process incoming attacks - requires server to update client's view of game
+                    
+                    for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
+                        ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
+    
+                        if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
+                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING));
+                            backGraph.drawImage(scaledImage, p.x, p.y, this);
+                            break; //do not draw multiple times, tooltop will show all attacks
+                        }
                     }
                 }
             }

@@ -503,7 +503,9 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                           muniType == AmmoType.M_THUNDER_VIBRABOMB ||
                           muniType == AmmoType.M_THUNDER_ACTIVE ||
                           muniType == AmmoType.M_INFERNO_IV ||
-                          muniType == AmmoType.M_VIBRABOMB_IV)) {
+                          muniType == AmmoType.M_VIBRABOMB_IV ||
+                          muniType == AmmoType.M_LISTEN_KILL ||
+                          muniType == AmmoType.M_ANTI_TSM)) {
                     bTechMatch = false;
                 }
 

@@ -49,6 +49,7 @@ v0.29.81 (CVS)
 + Patch 1220922: Bot equipment usage: TSM
 + Initial implementation of surface naval vessels and hydrofoils
 + Added flak rules for LB-X Cluster vs. VTOLs.
++ Fixed NPE for map editor where BoardView1 referrenced a null clientgui.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

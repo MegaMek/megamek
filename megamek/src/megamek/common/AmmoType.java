@@ -237,7 +237,9 @@ public class AmmoType extends EquipmentType {
         Vector clanLrmAmmos = new Vector();
         Vector acAmmos  = new Vector(4);
         Vector arrowAmmos = new Vector(4);
+        Vector clanArrowAmmos = new Vector(4);
         Vector artyAmmos = new Vector(6);
+        Vector clanArtyAmmos = new Vector(6);
         Vector munitions = new Vector();
 
         Enumeration baseTypes = null;
@@ -382,16 +384,16 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLStreakLRM15Ammo());
         EquipmentType.addType(createCLStreakLRM20Ammo());
         base = createCLLongTomAmmo();
-        artyAmmos.addElement( base );
+        clanArtyAmmos.addElement( base );
         EquipmentType.addType( base );
         base = createCLSniperAmmo();
-        artyAmmos.addElement( base );
+        clanArtyAmmos.addElement( base );
         base = createCLThumperAmmo();
         EquipmentType.addType( base );
-        artyAmmos.addElement( base );
+        clanArtyAmmos.addElement( base );
         EquipmentType.addType( base );
         base = createCLArrowIVAmmo();
-        arrowAmmos.addElement( base );
+        clanArrowAmmos.addElement( base );
         EquipmentType.addType( base );
         base = createCLSRM1Ammo();
         clanSrmAmmos.addElement( base );
@@ -641,16 +643,16 @@ public class AmmoType extends EquipmentType {
             }
         }
 
-        // Create the munition types for Arrow IV launchers.
+        // Create the munition types for IS Arrow IV launchers.
         munitions.removeAllElements();
         munitions.addElement( new MunitionMutator( "Homing",
-                                                   1, M_HOMING ) );
+                                                   1, M_HOMING, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "FASCAM",
-                                                   1, M_FASCAM ) );
+                                                   1, M_FASCAM, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Inferno-IV",
-                                                   1, M_INFERNO_IV ) );
+                                                   1, M_INFERNO_IV, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
-                                                   1, M_VIBRABOMB_IV ) );
+                                                   1, M_VIBRABOMB_IV, TechConstants.T_IS_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -663,15 +665,55 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.addType( mutator.createMunitionType( base ) );
             }
         }
+        
+        // Create the munition types for clan Arrow IV launchers.
+        munitions.removeAllElements();
+        munitions.addElement( new MunitionMutator( "Homing",
+                                                   1, M_HOMING, TechConstants.T_CLAN_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "FASCAM",
+                                                   1, M_FASCAM, TechConstants.T_CLAN_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "Inferno-IV",
+                                                   1, M_INFERNO_IV, TechConstants.T_CLAN_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
+                                                   1, M_VIBRABOMB_IV, TechConstants.T_CLAN_LEVEL_2 ) );
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        baseTypes = clanArrowAmmos.elements();
+        while ( baseTypes.hasMoreElements() ) {
+            base = (AmmoType) baseTypes.nextElement();
+            mutators = munitions.elements();
+            while ( mutators.hasMoreElements() ) {
+                mutator =  (MunitionMutator) mutators.nextElement();
+                EquipmentType.addType( mutator.createMunitionType( base ) );
+            }
+        }
 
         // Create the munition types for Artillery launchers.
         munitions.removeAllElements();
         munitions.addElement( new MunitionMutator( "Smoke",
-                                                   1, M_SMOKE ) );
+                                                   1, M_SMOKE, TechConstants.T_IS_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
         baseTypes = artyAmmos.elements();
+        while ( baseTypes.hasMoreElements() ) {
+            base = (AmmoType) baseTypes.nextElement();
+            mutators = munitions.elements();
+            while ( mutators.hasMoreElements() ) {
+                mutator =  (MunitionMutator) mutators.nextElement();
+                EquipmentType.addType( mutator.createMunitionType( base ) );
+            }
+        }
+        
+        // Create the munition types for Clan Artillery launchers.
+        munitions.removeAllElements();
+        munitions.addElement( new MunitionMutator( "Smoke",
+                                                   1, M_SMOKE, TechConstants.T_CLAN_LEVEL_2 ) );
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        baseTypes = clanArtyAmmos.elements();
         while ( baseTypes.hasMoreElements() ) {
             base = (AmmoType) baseTypes.nextElement();
             mutators = munitions.elements();
@@ -1968,6 +2010,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Rotary AC/2 Ammo";
         ammo.setInternalName("CLRotaryAC2 Ammo");
         ammo.addLookupName("CL Rotary AC/2 Ammo");
+        ammo.addLookupName("Rotary Assault Cannon/2 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_ROTARY;
@@ -1984,6 +2027,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Rotary AC/5 Ammo";
         ammo.setInternalName("CLRotaryAC5 Ammo");
         ammo.addLookupName("CL Rotary AC/5 Ammo");
+        ammo.addLookupName("Rotary Assault Cannon/5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC_ROTARY;
@@ -2000,6 +2044,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Rotary AC/10 Ammo";
         ammo.setInternalName("CLRotaryAC10 Ammo");
         ammo.addLookupName("CL Rotary AC/10 Ammo");
+        ammo.addLookupName("Rotary Assault Cannon/10 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_ROTARY;
@@ -2016,6 +2061,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Rotary AC/20 Ammo";
         ammo.setInternalName("CLRotaryAC20 Ammo");
         ammo.addLookupName("CL Rotary AC/20 Ammo");
+        ammo.addLookupName("Rotary Assault Cannon/20 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_ROTARY;

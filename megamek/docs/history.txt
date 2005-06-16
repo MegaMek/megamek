@@ -55,6 +55,8 @@ v0.29.81 (CVS)
 + Bug 1215885: landing vtol issues
 + Bug 1215877: landing vtol issues
 + Updated build.xml in anticipation of moving *.properties to their own dir.
++ Bug 1222249: Clan LVL3 RACs don't load from TDB files.
++ Bug 1222152: Can't customize artillery ammo.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

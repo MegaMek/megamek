@@ -3637,6 +3637,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Rotary AC/2";
         weapon.setInternalName("CLRotaryAC2");
         weapon.addLookupName("Clan Rotary AC/2");
+        weapon.addLookupName("Rotary Assault Cannon/2");
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;
@@ -3663,6 +3664,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Rotary AC/5";
         weapon.setInternalName("CLRotaryAC5");
         weapon.addLookupName("Clan Rotary AC/5");
+        weapon.addLookupName("Rotary Assault Cannon/5");
         weapon.heat = 1;
         weapon.damage = 5;
         weapon.rackSize = 5;
@@ -3689,6 +3691,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Rotary AC/10";
         weapon.setInternalName("CLRotaryAC10");
         weapon.addLookupName("Clan Rotary AC/10");
+        weapon.addLookupName("Rotary Assault Cannon/10");
         weapon.heat = 3;
         weapon.damage = 10;
         weapon.rackSize = 10;
@@ -3715,6 +3718,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Rotary AC/20";
         weapon.setInternalName("CLRotaryAC20");
         weapon.addLookupName("Clan Rotary AC/20");
+        weapon.addLookupName("Rotary Assault Cannon/20");
         weapon.heat = 7;
         weapon.damage = 20;
         weapon.rackSize = 20;

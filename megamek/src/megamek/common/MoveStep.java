@@ -1148,7 +1148,6 @@ public class MoveStep implements Serializable {
      * is possible, just whether the <em>current</em> step is possible.
      */
     public boolean isMovementPossible(IGame game, Coords src) {
-        System.out.println("uuu");
         final IHex srcHex = game.getBoard().getHex(src);
         final Coords dest = this.getPosition();
         final IHex destHex = game.getBoard().getHex(dest);
@@ -1364,7 +1363,6 @@ public class MoveStep implements Serializable {
                     || (type == MovePath.STEP_FORWARDS) 
                     || (type == MovePath.STEP_TURN_LEFT) 
                     || (type == MovePath.STEP_TURN_RIGHT)) {
-                System.out.println("This is my verse, do you mind?");
                 if(elevation==0) {//can't move on the ground.
                     return false;
                 }

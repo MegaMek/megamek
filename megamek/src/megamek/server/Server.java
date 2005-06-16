@@ -2673,7 +2673,6 @@ implements Runnable, ConnectionHandler {
             curPos = step.getPosition();
             curFacing = step.getFacing();
             curVTOLElevation = step.getElevation();
-
             final IHex curHex = game.getBoard().getHex(curPos);
 
             // Check for skid.
@@ -3549,6 +3548,8 @@ implements Runnable, ConnectionHandler {
         if(entity instanceof VTOL) {
             ((VTOL)entity).setElevation(curVTOLElevation);
         }
+        
+        
 
         // if we ran with destroyed hip or gyro, we need a psr
         rollTarget = entity.checkRunningWithDamage(overallMoveType);

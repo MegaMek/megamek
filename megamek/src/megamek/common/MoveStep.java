@@ -993,10 +993,11 @@ public class MoveStep implements Serializable {
             && (isProne() || !(entity instanceof Mech) || entity.isStuck())) {
             movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
+        
+        
 
         // check if this movement is illegal for reasons other than points
         if (!isMovementPossible(game, lastPos) || isUnloaded) {
-            System.out.println(getPosition().getBoardNum() + "Rararaara");
             movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
@@ -1147,6 +1148,7 @@ public class MoveStep implements Serializable {
      * is possible, just whether the <em>current</em> step is possible.
      */
     public boolean isMovementPossible(IGame game, Coords src) {
+        System.out.println("uuu");
         final IHex srcHex = game.getBoard().getHex(src);
         final Coords dest = this.getPosition();
         final IHex destHex = game.getBoard().getHex(dest);
@@ -1344,11 +1346,11 @@ public class MoveStep implements Serializable {
              && !isPavementStep ) {
             return false;
         }
-        if( movementType == MovePath.STEP_UP) {
+        if( type == MovePath.STEP_UP) {
             //only VTOLs have Z movement.
             return (entity instanceof VTOL)? true : false;
         }
-        if( movementType == MovePath.STEP_DOWN) {
+        if( type == MovePath.STEP_DOWN) {
             //only VTOLs have Z movement.
             if(!(entity instanceof VTOL)) {
                 return false;
@@ -1358,12 +1360,16 @@ public class MoveStep implements Serializable {
             }
         }
         if(entity instanceof VTOL) {
-            if(movementType == MovePath.STEP_BACKWARDS || movementType == MovePath.STEP_FORWARDS || movementType == MovePath.STEP_TURN_LEFT || movementType == MovePath.STEP_TURN_RIGHT) {
+            if((type == MovePath.STEP_BACKWARDS) 
+                    || (type == MovePath.STEP_FORWARDS) 
+                    || (type == MovePath.STEP_TURN_LEFT) 
+                    || (type == MovePath.STEP_TURN_RIGHT)) {
+                System.out.println("This is my verse, do you mind?");
                 if(elevation==0) {//can't move on the ground.
                     return false;
                 }
             }
-            if(movementType == MovePath.STEP_BACKWARDS || movementType == MovePath.STEP_FORWARDS) {
+            if(type == MovePath.STEP_BACKWARDS || type == MovePath.STEP_FORWARDS) {
                 if(elevation<=(destHex.ceiling()-destHex.surface())) {
                     return false;//can't fly into woods or a cliff face
                     }

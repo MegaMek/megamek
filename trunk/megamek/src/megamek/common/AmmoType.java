@@ -321,6 +321,13 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISiNarcExplosiveAmmo());
         EquipmentType.addType(createISiNarcHaywireAmmo());
         EquipmentType.addType(createISiNarcNemesisAmmo());
+        EquipmentType.addType(createISLRT5Ammo());
+        EquipmentType.addType(createISLRT10Ammo());
+        EquipmentType.addType(createISLRT15Ammo());
+        EquipmentType.addType(createISLRT20Ammo());
+        EquipmentType.addType(createISSRT2Ammo());
+        EquipmentType.addType(createISSRT4Ammo());
+        EquipmentType.addType(createISSRT6Ammo());
         base = createISLongTomAmmo();
         artyAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -383,6 +390,32 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLStreakLRM10Ammo());
         EquipmentType.addType(createCLStreakLRM15Ammo());
         EquipmentType.addType(createCLStreakLRM20Ammo());
+        EquipmentType.addType(createCLSRT1Ammo());
+        EquipmentType.addType(createCLSRT2Ammo());
+        EquipmentType.addType(createCLSRT3Ammo());
+        EquipmentType.addType(createCLSRT4Ammo());
+        EquipmentType.addType(createCLSRT5Ammo());
+        EquipmentType.addType(createCLSRT6Ammo());
+        EquipmentType.addType(createCLLRT1Ammo());
+        EquipmentType.addType(createCLLRT2Ammo());
+        EquipmentType.addType(createCLLRT3Ammo());
+        EquipmentType.addType(createCLLRT4Ammo());
+        EquipmentType.addType(createCLLRT5Ammo());
+        EquipmentType.addType(createCLLRT6Ammo());
+        EquipmentType.addType(createCLLRT7Ammo());
+        EquipmentType.addType(createCLLRT8Ammo());
+        EquipmentType.addType(createCLLRT9Ammo());
+        EquipmentType.addType(createCLLRT10Ammo());
+        EquipmentType.addType(createCLLRT11Ammo());
+        EquipmentType.addType(createCLLRT12Ammo());
+        EquipmentType.addType(createCLLRT13Ammo());
+        EquipmentType.addType(createCLLRT14Ammo());
+        EquipmentType.addType(createCLLRT15Ammo());
+        EquipmentType.addType(createCLLRT16Ammo());
+        EquipmentType.addType(createCLLRT17Ammo());
+        EquipmentType.addType(createCLLRT18Ammo());
+        EquipmentType.addType(createCLLRT19Ammo());
+        EquipmentType.addType(createCLLRT20Ammo());
         base = createCLLongTomAmmo();
         clanArtyAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -975,6 +1008,125 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 15;
+        ammo.bv = 7;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISLRT5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "LRT 5 Ammo";
+        ammo.setInternalName("IS Ammo LRTorpedo-5");
+        ammo.addLookupName("ISLRTorpedo5 Ammo");
+        ammo.addLookupName("IS LRTorpedo 5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 24;
+        ammo.bv = 6;
+
+        return ammo;
+    }
+
+    public static AmmoType createISLRT10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "LRT 10 Ammo";
+        ammo.setInternalName("IS Ammo LRTorpedo-10");
+        ammo.addLookupName("ISLRTorpedo10 Ammo");
+        ammo.addLookupName("IS LRTorpedo 10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 12;
+        ammo.bv = 11;
+
+        return ammo;
+    }
+
+    public static AmmoType createISLRT15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "LRT 15 Ammo";
+        ammo.setInternalName("IS Ammo LRTorpedo-15");
+        ammo.addLookupName("ISLRTorpedo15 Ammo");
+        ammo.addLookupName("IS LRv 15 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 8;
+        ammo.bv = 17;
+
+        return ammo;
+    }
+
+    public static AmmoType createISLRT20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "LRT 20 Ammo";
+        ammo.setInternalName("IS Ammo LRTorpedo-20");
+        ammo.addLookupName("ISLRTorpedo20 Ammo");
+        ammo.addLookupName("IS LRTorpedo 20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 6;
+        ammo.bv = 23;
+
+        return ammo;
+    }
+
+    public static AmmoType createISSRT2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "SRT 2 Ammo";
+        ammo.setInternalName("IS Ammo SRTorpedo-2");
+        ammo.addLookupName("ISSRTorpedo2 Ammo");
+        ammo.addLookupName("IS SRTorpedo 2 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
+        ammo.shots = 50;
+        ammo.bv = 3;
+
+        return ammo;
+    }
+
+    public static AmmoType createISSRT4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "SRT 4 Ammo";
+        ammo.setInternalName("IS Ammo SRTorpedo-4");
+        ammo.addLookupName("ISSRTorpedo4 Ammo");
+        ammo.addLookupName("IS SRTorpedo 4 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
+        ammo.shots = 25;
+        ammo.bv = 5;
+
+        return ammo;
+    }
+
+    public static AmmoType createISSRT6Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "SRT 6 Ammo";
+        ammo.setInternalName("IS Ammo SRTorpedo-6");
+        ammo.addLookupName("ISSRTorpedo6 Ammo");
+        ammo.addLookupName("IS SRTorpedo 6 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 15;
         ammo.bv = 7;
 
@@ -2071,6 +2223,448 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    public static AmmoType createCLLRT1Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 1 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-1");
+        ammo.addLookupName("Clan Ammo LRTorpedo-1");
+        ammo.addLookupName("CLLRTorpedo1 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 1 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 100;
+        ammo.bv = 2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT2Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 2 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-2");
+        ammo.addLookupName("Clan Ammo LRTorpedo-2");
+        ammo.addLookupName("CLLRTorpedo2 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 2 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 3;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT3Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 3 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-3");
+        ammo.addLookupName("Clan Ammo LRTorpedo-3");
+        ammo.addLookupName("CLLRTorpedo3 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 3 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 5;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT4Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 4 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-4");
+        ammo.addLookupName("Clan Ammo LRTorpedo-4");
+        ammo.addLookupName("CLLRTorpedo4 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 4 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 6;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 5 Ammo";
+        ammo.setInternalName("Clan Ammo LRTorpedo-5");
+        ammo.addLookupName("CLLRTorpedo5 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 24;
+        ammo.bv = 7;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLLRT6Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 6 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-6");
+        ammo.addLookupName("Clan Ammo LRTorpedo-6");
+        ammo.addLookupName("CLLRTorpedo6 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 6 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 9;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT7Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 7 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-7");
+        ammo.addLookupName("Clan Ammo LRTorpedo-7");
+        ammo.addLookupName("CLLRTorpedo7 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 7 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 7;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 12;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT8Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 8 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-8");
+        ammo.addLookupName("Clan Ammo LRTorpedo-8");
+        ammo.addLookupName("CLLRTorpedo8 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 8 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 8;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 12;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT9Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 9 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-9");
+        ammo.addLookupName("Clan Ammo LRTorpedo-9");
+        ammo.addLookupName("CLLRTorpedo9 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 9 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 12;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 10 Ammo";
+        ammo.setInternalName("Clan Ammo LRTorpedo-10");
+        ammo.addLookupName("CLLRTorpedo10 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 12;
+        ammo.bv = 14;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLLRT11Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 11 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-11");
+        ammo.addLookupName("Clan Ammo LRTorpedo-11");
+        ammo.addLookupName("CLLRTorpedo11 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 11 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 11;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 100;
+        ammo.bv = 18;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT12Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 12 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-12");
+        ammo.addLookupName("Clan Ammo LRTorpedo-12");
+        ammo.addLookupName("CLLRTorpedo12 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 12 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 100;
+        ammo.bv = 18;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT13Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 13 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-13");
+        ammo.addLookupName("Clan Ammo LRTorpedo-13");
+        ammo.addLookupName("CLLRTorpedo13 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 13 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 13;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 100;
+        ammo.bv = 20;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT14Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 14 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-14");
+        ammo.addLookupName("Clan Ammo LRTorpedo-14");
+        ammo.addLookupName("CLLRTorpedo14 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 14 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 14;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 100;
+        ammo.bv = 21;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 15 Ammo";
+        ammo.setInternalName("Clan Ammo LRTorpedo-15");
+        ammo.addLookupName("CLLRTorpedo15 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 15 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 8;
+        ammo.bv = 21;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLLRT16Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 16 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-16");
+        ammo.addLookupName("Clan Ammo LRTorpedo-16");
+        ammo.addLookupName("CLLRTorpedo16 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 16 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 16;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 100;
+        ammo.bv = 27;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT17Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 17 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-17");
+        ammo.addLookupName("Clan Ammo LRTorpedo-17");
+        ammo.addLookupName("CLLRTorpedo17 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 17 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 17;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 100;
+        ammo.bv = 27;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT18Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 18 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-18");
+        ammo.addLookupName("Clan Ammo LRTorpedo-18");
+        ammo.addLookupName("CLLRTorpedo18 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 18 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 18;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 100;
+        ammo.bv = 27;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT19Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 19 Ammo";
+        ammo.setInternalName("Clan Ammo Protomech LRTorpedo-19");
+        ammo.addLookupName("Clan Ammo LRTorpedo-19");
+        ammo.addLookupName("CLLRTorpedo19 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 19 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 19;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 100;
+        ammo.bv = 28;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLLRT20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRT 20 Ammo";
+        ammo.setInternalName("Clan Ammo LRTorpedo-20");
+        ammo.addLookupName("CLLRTorpedo20 Ammo");
+        ammo.addLookupName("Clan LRTorpedo 20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
+        ammo.shots = 6;
+        ammo.bv = 27;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "SRM 1 Ammo";
+        ammo.setInternalName("Clan Ammo SRM-1");
+        ammo.addLookupName("CLSRM1 Ammo");
+        ammo.addLookupName("Clan SRM 1 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 100;
+        ammo.bv = 2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "SRM 2 Ammo";
+        ammo.setInternalName("Clan Ammo SRM-2");
+        ammo.addLookupName("CLSRM2 Ammo");
+        ammo.addLookupName("Clan SRM 2 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 50;
+        ammo.bv = 3;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "SRM 3 Ammo";
+        ammo.setInternalName("Clan Ammo SRM-3");
+        ammo.addLookupName("CLSRM3 Ammo");
+        ammo.addLookupName("Clan SRM 3 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 100;
+        ammo.bv = 4;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "SRM 4 Ammo";
+        ammo.setInternalName("Clan Ammo SRM-4");
+        ammo.addLookupName("CLSRM4 Ammo");
+        ammo.addLookupName("Clan SRM 4 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 25;
+        ammo.bv = 5;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "SRM 5 Ammo";
+        ammo.setInternalName("Clan Ammo SRM-5");
+        ammo.addLookupName("CLSRM5 Ammo");
+        ammo.addLookupName("Clan SRM 5 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 100;
+        ammo.bv = 5;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "SRM 6 Ammo";
+        ammo.setInternalName("Clan Ammo SRM-6");
+        ammo.addLookupName("CLSRM6 Ammo");
+        ammo.addLookupName("Clan SRM 6 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 15;
+        ammo.bv = 7;
+
+        return ammo;
+    }
+    
     public static AmmoType createCLLRM1Ammo() {
         AmmoType ammo = new AmmoType();
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -2411,107 +3005,108 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    public static AmmoType createCLSRM1Ammo() {
+    public static AmmoType createCLSRT1Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "SRM 1 Ammo";
-        ammo.setInternalName("Clan Ammo SRM-1");
-        ammo.addLookupName("CLSRM1 Ammo");
-        ammo.addLookupName("Clan SRM 1 Ammo");
+        ammo.name = "SRT 1 Ammo";
+        ammo.setInternalName("Clan Ammo SRTorpedo-1");
+        ammo.addLookupName("CLSRTorpedo1 Ammo");
+        ammo.addLookupName("Clan SRTorpedo 1 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_SRM;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 2;
 
         return ammo;
     }
 
-    public static AmmoType createCLSRM2Ammo() {
+    public static AmmoType createCLSRT2Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "SRM 2 Ammo";
-        ammo.setInternalName("Clan Ammo SRM-2");
-        ammo.addLookupName("CLSRM2 Ammo");
-        ammo.addLookupName("Clan SRM 2 Ammo");
+        ammo.name = "SRT 2 Ammo";
+        ammo.setInternalName("Clan Ammo SRTorpedo-2");
+        ammo.addLookupName("CLSRTorpedo2 Ammo");
+        ammo.addLookupName("Clan SRTorpedo 2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRM;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 50;
         ammo.bv = 3;
 
         return ammo;
     }
 
-    public static AmmoType createCLSRM3Ammo() {
+    public static AmmoType createCLSRT3Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "SRM 3 Ammo";
-        ammo.setInternalName("Clan Ammo SRM-3");
-        ammo.addLookupName("CLSRM3 Ammo");
-        ammo.addLookupName("Clan SRM 3 Ammo");
+        ammo.name = "SRT 3 Ammo";
+        ammo.setInternalName("Clan Ammo SRTorpedo-3");
+        ammo.addLookupName("CLSRTorpedo3 Ammo");
+        ammo.addLookupName("Clan SRTorpedo 3 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_SRM;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 4;
 
         return ammo;
     }
 
-    public static AmmoType createCLSRM4Ammo() {
+    public static AmmoType createCLSRT4Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "SRM 4 Ammo";
-        ammo.setInternalName("Clan Ammo SRM-4");
-        ammo.addLookupName("CLSRM4 Ammo");
-        ammo.addLookupName("Clan SRM 4 Ammo");
+        ammo.name = "SRT 4 Ammo";
+        ammo.setInternalName("Clan Ammo SRTorpedo-4");
+        ammo.addLookupName("CLSRTorpedo4 Ammo");
+        ammo.addLookupName("Clan SRTorpedo 4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_SRM;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 25;
         ammo.bv = 5;
 
         return ammo;
     }
 
-    public static AmmoType createCLSRM5Ammo() {
+    public static AmmoType createCLSRT5Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "SRM 5 Ammo";
-        ammo.setInternalName("Clan Ammo SRM-5");
-        ammo.addLookupName("CLSRM5 Ammo");
-        ammo.addLookupName("Clan SRM 5 Ammo");
+        ammo.name = "SRT 5 Ammo";
+        ammo.setInternalName("Clan Ammo SRTorpedo-5");
+        ammo.addLookupName("CLSRTorpedo5 Ammo");
+        ammo.addLookupName("Clan SRTorpedo 5 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_SRM;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 5;
 
         return ammo;
     }
 
-    public static AmmoType createCLSRM6Ammo() {
+    public static AmmoType createCLSRT6Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "SRM 6 Ammo";
-        ammo.setInternalName("Clan Ammo SRM-6");
-        ammo.addLookupName("CLSRM6 Ammo");
-        ammo.addLookupName("Clan SRM 6 Ammo");
+        ammo.name = "SRT 6 Ammo";
+        ammo.setInternalName("Clan Ammo SRTorpedo-6");
+        ammo.addLookupName("CLSRTorpedo6 Ammo");
+        ammo.addLookupName("Clan SRTorpedo 6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_SRM;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 15;
         ammo.bv = 7;
 
         return ammo;
     }
+
 
     public static AmmoType createCLStreakSRM1Ammo() {
         AmmoType ammo = new AmmoType();

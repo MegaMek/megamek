@@ -20,6 +20,13 @@ Inner Sphere Level 1 Tech:
   ISSRM2
   ISSRM4
   ISSRM6
+  ISLRTorpedo5
+  ISLRTorpedo10
+  ISLRTorpedo15
+  ISLRTorpedo20
+  ISSRTorpedo2
+  ISSRTorpedo4
+  ISSRTorpedo6
   ISMachine Gun
   ISFlamer
 
@@ -35,6 +42,13 @@ Inner Sphere Level 1 Tech:
   ISSRM2 Ammo
   ISSRM4 Ammo
   ISSRM6 Ammo
+  ISLRTorpedo5 Ammo
+  ISLRTorpedo10 Ammo
+  ISLRTorpedo15 Ammo
+  ISLRTorpedo20 Ammo
+  ISSRTorpedo2 Ammo
+  ISSRTorpedo4 Ammo
+  ISSRTorpedo6 Ammo
   ISMG Ammo
 
  Equipment:
@@ -173,10 +187,17 @@ Clan Level 2 Tech:
   CLLRM10
   CLLRM15
   CLLRM20
+  CLLRTorpedo5
+  CLLRTorpedo10
+  CLLRTorpedo15
+  CLLRTorpedo20
   CLNarcBeacon
   CLSRM2
   CLSRM4
   CLSRM6
+  CLSRTorpedo2
+  CLSRTorpedo4
+  CLSRTorpedo6
   CLStreakSRM2
   CLStreakSRM4
   CLStreakSRM6
@@ -211,6 +232,13 @@ Clan Level 2 Tech:
   CLSRM2 Ammo
   CLSRM4 Ammo
   CLSRM6 Ammo
+  CLLRTorpedo5 Ammo
+  CLLRTorpedo10 Ammo
+  CLLRTorpedo15 Ammo
+  CLLRTorpedo20 Ammo
+  CLSRTorpedo2 Ammo
+  CLSRTorpedo4 Ammo
+  CLSRTorpedo6 Ammo
   CLStreakSRM2 Ammo
   CLStreakSRM4 Ammo
   CLStreakSRM6 Ammo

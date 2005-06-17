@@ -60,8 +60,11 @@ v0.29.81 (CVS)
 + Do not allow clan units to choose Anti-TSM or Listen-Kill ammo
    when the "clan ignores equipment limits" option is not checked.
 + Bug 1215898: VTOLs have wrong engine type
-+ Bug 1221655: Fix stacking check to take account of target hex, not starting hex, for moving/deploying unit.
-+ Bug 1222251: Mobile Long Tom now correctly labelled level 2 (though it still doesn't verify for other reasons).
++ Bug 1221655: Fix stacking check to take account of target hex, not starting
+   hex, for moving/deploying unit.
++ Bug 1222251: Mobile Long Tom now correctly labelled level 2 (though it still 
+   doesn't verify for other reasons).
++ Added the rest of the torpedo weapons.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

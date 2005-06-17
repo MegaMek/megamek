@@ -104,6 +104,7 @@ public class AmmoType extends EquipmentType {
     // War of 3039 ammo
     public static final int     M_LISTEN_KILL       = 1 << 29;
     public static final int     M_ANTI_TSM          = 1 << 30;
+    // other level 3 ammo
     public static final int     M_AX_HEAD           = 1 << 31;
     
 

@@ -494,7 +494,8 @@ public class Compute
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         boolean isLRMInfantry = isWeaponInfantry && wtype.getAmmoType() == AmmoType.T_LRM;
-        boolean isIndirect = !(wtype.hasFlag(WeaponType.F_ONESHOT)) && wtype.getAmmoType() == AmmoType.T_LRM //For now, oneshot LRM launchers won't be able to indirect.  Sue me, until I can figure out a better fix.
+        boolean isIndirect = !(wtype.hasFlag(WeaponType.F_ONESHOT))
+            && ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)) //For now, oneshot LRM launchers won't be able to indirect.  Sue me, until I can figure out a better fix.
             && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption("maxtech_range");
 
@@ -552,6 +553,12 @@ public class Compute
             //target completely underwater, weapon not
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Target underwater, but not weapon.");
+        } else { // This is important for Torpedos.
+            weaponRanges = wtype.getRanges();
+            if (weaponRanges[RangeType.RANGE_SHORT] == 0) {
+                return new ToHitData(ToHitData.IMPOSSIBLE,
+                                     "Weapon can only fire underwater.");
+            }
         }
 
         // determine base distance & range bracket

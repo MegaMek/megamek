@@ -176,7 +176,7 @@ public class WeaponAttackAction
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
-        boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
+        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
             && weapon.curMode().equals("Indirect");
         boolean isInferno =
             ( atype != null &&

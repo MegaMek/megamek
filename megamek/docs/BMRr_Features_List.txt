@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 26th May 2005.  MegaMek Version 0.22.79. Best viewed in 1024x768.
+The Great MegaMek Feature list. 17th June 2005.  MegaMek Version 0.22.81. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -6,7 +6,7 @@ Components (Units)
 
 - Battlemechs			Yes		None
 - Protomechs			Yes		None
-- Vehicles			Partial		No VTOLs or Naval Units.
+- Vehicles			Partial		No Submarines.
 - Infantry			Yes		None
 
 Components (Mapsheets)
@@ -181,14 +181,14 @@ ProtoMechs (Combat)
 Vehicles (Movement)
 
 - Movement			Yes		None
-- VTOL Movement			No		None
-- Naval Movement		No		None
+- VTOL Movement			Yes		None
+- Naval Movement		Partial		Submarines are missing
 
 Vehicles (Combat)
 
 - Combat			Yes		None
-- VTOL Combat			No		None
-- Naval Combat			No		None
+- VTOL Combat			Yes		None
+- Naval Combat			Partial		Submarines are missing
 
 Infantry (Movement)
 
@@ -264,7 +264,7 @@ Special Case Rules (Fire)
 Special Case Rules (Flak)
 
 - Artillery Flak		No		Waiting on VTOL implementation.
-- LB-X Cluster Flak		No		Waiting on VTOL implementation.
+- LB-X Cluster Flak		Yes		None.
 
 Special Case Rules (Four Legged Battlemechs)
 

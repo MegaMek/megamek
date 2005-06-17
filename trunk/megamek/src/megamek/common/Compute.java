@@ -494,8 +494,7 @@ public class Compute
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         boolean isLRMInfantry = isWeaponInfantry && wtype.getAmmoType() == AmmoType.T_LRM;
-        boolean isIndirect = !(wtype.hasFlag(WeaponType.F_ONESHOT))
-            && ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)) //For now, oneshot LRM launchers won't be able to indirect.  Sue me, until I can figure out a better fix.
+        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
             && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption("maxtech_range");
 

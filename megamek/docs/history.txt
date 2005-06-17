@@ -67,6 +67,7 @@ v0.29.81 (CVS)
 + Added the rest of the torpedo weapons.
 + Corrected torpedo ranges in WeaponType and added logic to force
    underwater-only weapons to not fire above water.
++ Allow One-Shot LRMs to be fired indirectly.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

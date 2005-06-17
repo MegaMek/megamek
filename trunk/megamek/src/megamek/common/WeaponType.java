@@ -218,12 +218,15 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISRAC5());
         EquipmentType.addType(createISStreakSRM2());
         EquipmentType.addType(createISSRM2OS());
+        EquipmentType.addType(createISSRT2OS());
         EquipmentType.addType(createISStreakSRM2OS());
         EquipmentType.addType(createISStreakSRM4());
         EquipmentType.addType(createISSRM4OS());
+        EquipmentType.addType(createISSRT4OS());
         EquipmentType.addType(createISStreakSRM4OS());
         EquipmentType.addType(createISStreakSRM6());
         EquipmentType.addType(createISSRM6OS());
+        EquipmentType.addType(createISSRT6OS());
         EquipmentType.addType(createISStreakSRM6OS());
         EquipmentType.addType(createISMRM10());
         EquipmentType.addType(createISMRM20());
@@ -237,6 +240,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLRM10OS());
         EquipmentType.addType(createISLRM15OS());
         EquipmentType.addType(createISLRM20OS());
+        EquipmentType.addType(createISLRT5OS());
+        EquipmentType.addType(createISLRT10OS());
+        EquipmentType.addType(createISLRT15OS());
+        EquipmentType.addType(createISLRT20OS());
         EquipmentType.addType(createISAMS());
         EquipmentType.addType(createISNarc());
         EquipmentType.addType(createISNarcOS());
@@ -299,6 +306,20 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLSRM2OS());
         EquipmentType.addType(createCLSRM4OS());
         EquipmentType.addType(createCLSRM6OS());
+        EquipmentType.addType(createCLLRT5());
+        EquipmentType.addType(createCLLRT10());
+        EquipmentType.addType(createCLLRT15());
+        EquipmentType.addType(createCLLRT20());
+        EquipmentType.addType(createCLLRT5OS());
+        EquipmentType.addType(createCLLRT10OS());
+        EquipmentType.addType(createCLLRT15OS());
+        EquipmentType.addType(createCLLRT20OS());
+        EquipmentType.addType(createCLSRT2());
+        EquipmentType.addType(createCLSRT4());
+        EquipmentType.addType(createCLSRT6());
+        EquipmentType.addType(createCLSRT2OS());
+        EquipmentType.addType(createCLSRT4OS());
+        EquipmentType.addType(createCLSRT6OS());
         EquipmentType.addType(createCLGaussRifle());
         EquipmentType.addType(createCLUltraAC2());
         EquipmentType.addType(createCLUltraAC5());
@@ -357,18 +378,44 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLPROLRM18() );
         EquipmentType.addType(createCLPROLRM19() );
         //EquipmentType.addType(createCLPROLRM20() );
+        EquipmentType.addType(createCLPROLRT1() );
+        EquipmentType.addType(createCLPROLRT2() );
+        EquipmentType.addType(createCLPROLRT3() );
+        EquipmentType.addType(createCLPROLRT4() );
+        //EquipmentType.addType(createCLPROLRT5() );
+        EquipmentType.addType(createCLPROLRT6() );
+        EquipmentType.addType(createCLPROLRT7() );
+        EquipmentType.addType(createCLPROLRT8() );
+        EquipmentType.addType(createCLPROLRT9() );
+        //EquipmentType.addType(createCLPROLRT10() );
+        EquipmentType.addType(createCLPROLRT11() );
+        EquipmentType.addType(createCLPROLRT12() );
+        EquipmentType.addType(createCLPROLRT13() );
+        EquipmentType.addType(createCLPROLRT14() );
+        //EquipmentType.addType(createCLPROLRT15() );
+        EquipmentType.addType(createCLPROLRT16() );
+        EquipmentType.addType(createCLPROLRT17() );
+        EquipmentType.addType(createCLPROLRT18() );
+        EquipmentType.addType(createCLPROLRT19() );
+        //EquipmentType.addType(createCLPROLRT20() );
         EquipmentType.addType(createCLPROSRM1() );
+        EquipmentType.addType(createCLPROSRT1() );
         EquipmentType.addType(createCLPROStreakSRM1() );
         //EquipmentType.addType(createCLPROSRM2() );
         //EquipmentType.addType(createCLPROStreakSRM2() );
+        //EquipmentType.addType(createCLPROSRT2() );
         EquipmentType.addType(createCLPROSRM3() );
         EquipmentType.addType(createCLPROStreakSRM3() );
+        EquipmentType.addType(createCLPROSRT3() );
         //EquipmentType.addType(createCLPROSRM4() );
         //EquipmentType.addType(createCLPROStreakSRM4() );
+        //EquipmentType.addType(createCLPROSRT4() );
         EquipmentType.addType(createCLPROSRM5() );
         EquipmentType.addType(createCLPROStreakSRM5() );
+        EquipmentType.addType(createCLPROSRT5() );
         //EquipmentType.addType(createCLPROSRM6() );
         //EquipmentType.addType(createCLPROStreakSRM6() );
+        //EquipmentType.addType(createCLPROSRT6() );
 
         // Anti-Mek attacks are weapon-like in nature.
         EquipmentType.addType( createLegAttack() );
@@ -830,7 +877,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRT 5";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("IS LRT-5");
-        weapon.addLookupName("ISLRT5");
+        weapon.addLookupName("ISLRTorpedo5");
         weapon.addLookupName("IS LRT 5");
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
@@ -857,7 +904,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRT 10";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("IS LRT-10");
-        weapon.addLookupName("ISLRT10");
+        weapon.addLookupName("ISLRTorpedo10");
         weapon.addLookupName("IS LRT 10");
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
@@ -884,7 +931,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRT 15";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("IS LRT-15");
-        weapon.addLookupName("ISLRT15");
+        weapon.addLookupName("ISLRTorpedo15");
         weapon.addLookupName("IS LRT 15");
         weapon.heat = 5;
         weapon.damage = DAMAGE_MISSILE;
@@ -911,7 +958,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRT 20";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("IS LRT-20");
-        weapon.addLookupName("ISLRT20");
+        weapon.addLookupName("ISLRTorpedo20");
         weapon.addLookupName("IS LRT 20");
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
@@ -1025,6 +1072,114 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 10.5f;
+        weapon.criticals = 5;
+        weapon.bv = 36;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISLRT5OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRT 5 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS OS LRT-5");
+        weapon.addLookupName("ISLRTorpedo5 (OS)");
+        weapon.addLookupName("IS LRTorpedo 5 (OS)");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.5f;
+        weapon.criticals = 1;
+        weapon.bv = 9;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLRT10OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRT 10 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS OS LRTorpedo-10");
+        weapon.addLookupName("ISLRTorpedo10 (OS)");
+        weapon.addLookupName("IS LRTorpedo 10 (OS)");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 5.5f;
+        weapon.criticals = 2;
+        weapon.bv = 18;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLRT15OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRT 15 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS OS LRTorpedo-15");
+        weapon.addLookupName("ISLRTorpedo15 (OS)");
+        weapon.addLookupName("IS LRTorpedo 15 (OS)");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 7.5f;
+        weapon.criticals = 3;
+        weapon.bv = 27;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLRT20OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRT 20 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS OS LRTorpedo-20");
+        weapon.addLookupName("ISLRTorpedo20 (OS)");
+        weapon.addLookupName("IS LRTorpedo 20 (OS)");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
@@ -1935,6 +2090,33 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+    
+    public static WeaponType createISSRT2OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "SRT 2 (OS)";
+        weapon.setInternalName("ISSRT2OS");
+        weapon.addLookupName("ISSRTorpedo2 (OS)"); //mtf
+        weapon.addLookupName("IS SRT 2 (OS)");  //tdb
+        weapon.addLookupName("OS SRT-2");  //mep
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_ONESHOT | F_MISSILE;
+        weapon.bv = 4;
+
+        return weapon;
+    }
+
 
     public static WeaponType createISStreakSRM2OS() {
         WeaponType weapon = new WeaponType();
@@ -2012,6 +2194,32 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+    
+    public static WeaponType createISSRT4OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "SRT 4 (OS)";
+        weapon.setInternalName("ISSRT4OS");
+        weapon.addLookupName("ISSRTorpedo4 (OS)"); //mtf
+        weapon.addLookupName("IS SRTorpedo 4 (OS)");  //tdb
+        weapon.addLookupName("OS SRTorpedo-4");  //mep
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 2.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.bv = 8;
+
+        return weapon;
+    }
 
     public static WeaponType createISStreakSRM4OS() {
         WeaponType weapon = new WeaponType();
@@ -2077,6 +2285,32 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
         weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 3.5f;
+        weapon.criticals = 2;
+        weapon.bv = 12;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISSRT6OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "SRT 6 (OS)";
+        weapon.setInternalName("ISSRTorpedo6OS");
+        weapon.addLookupName("ISSRTorpedo6 (OS)"); //mtf
+        weapon.addLookupName("IS SRTorpedo 6 (OS)");  //tdb
+        weapon.addLookupName("OS SRTorpedo-6");  //mep
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -2846,6 +3080,364 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createCLLRT5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 5";
+        weapon.setInternalName("CLLRTorpedo5");
+        weapon.addLookupName("Clan LRTorpedo-5");
+        weapon.addLookupName("Clan LRTorpedo 5");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.bv = 55;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;      
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRT10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 10";
+        weapon.setInternalName("CLLRTorpedo10");
+        weapon.addLookupName("Clan LRTorpedo-10");
+        weapon.addLookupName("Clan LRTorpedo 10");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.5f;
+        weapon.criticals = 1;
+        weapon.bv = 109;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRT15() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 15";
+        weapon.setInternalName("CLLRTorpedo15");
+        weapon.addLookupName("Clan LRTorpedo-15");
+        weapon.addLookupName("Clan LRTorpedo 15");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 3.5f;
+        weapon.criticals = 2;
+        weapon.bv = 164;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRT20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 20";
+        weapon.setInternalName("CLLRTorpedo20");
+        weapon.addLookupName("Clan LRTorpedo-20");
+        weapon.addLookupName("Clan LRTorpedo 20");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 5.0f;
+        weapon.criticals = 4;
+        weapon.bv = 220;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRT5OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 5 (OS)";
+        weapon.setInternalName("CLLRTorpedo5 (OS)");
+        weapon.addLookupName("Clan OS LRTorpedo-5");
+        weapon.addLookupName("Clan LRTorpedo 5 (OS)");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 1;
+        weapon.bv = 11;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRT10OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 10 (OS)";
+        weapon.setInternalName("CLLRTorpedo10 (OS)");
+        weapon.addLookupName("Clan OS LRTorpedo-10");
+        weapon.addLookupName("Clan LTorpedoM 10 (OS)");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 3.0f;
+        weapon.criticals = 1;
+        weapon.bv = 22;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRT15OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 15 (OS)";
+        weapon.setInternalName("CLLRTorpedo15 (OS)");
+        weapon.addLookupName("Clan OS LRTorpedo-15");
+        weapon.addLookupName("Clan LRTorpedo 15 (OS)");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 4.0f;
+        weapon.criticals = 2;
+        weapon.bv = 33;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRT20OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 20 (OS)";
+        weapon.setInternalName("CLLRTorpedo20 (OS)");
+        weapon.addLookupName("Clan OS LRTorpedo-20");
+        weapon.addLookupName("Clan LRTorpedo 20 (OS)");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 5.5f;
+        weapon.criticals = 4;
+        weapon.bv = 44;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLSRT2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRT 2";
+        weapon.setInternalName("CLSRTorpedo2");
+        weapon.addLookupName("Clan SRTorpedo-2");
+        weapon.addLookupName("Clan SRTorpedo 2");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_MISSILE;
+        weapon.bv = 21;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLSRT4() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRT 4";
+        weapon.setInternalName("CLSRTorpedo4");
+        weapon.addLookupName("Clan SRTorpedo-4");
+        weapon.addLookupName("Clan SRTorpedo 4");
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.bv = 39;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLSRT6() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRT 6";
+        weapon.setInternalName("CLSRTorpedo6");
+        weapon.addLookupName("Clan SRTorpedo-6");
+        weapon.addLookupName("Clan SRTorpedo 6");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 1;
+        weapon.bv = 59;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLSRT2OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRT 2 (OS)";
+        weapon.setInternalName("CLSRTorpedo2 (OS)");
+        weapon.addLookupName("Clan OS SRTorpedo-2");
+        weapon.addLookupName("Clan SRTorpedo 2 (OS)");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
+        weapon.bv = 4;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLSRT4OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRT 4 (OS)";
+        weapon.setInternalName("CLSRTorpedo4 (OS)");
+        weapon.addLookupName("Clan OS SRTorpedo-4");
+        weapon.addLookupName("Clan SRTorpedo 4 (OS)");
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 1;
+        weapon.bv = 8;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLSRT6OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRT 6 (OS)";
+        weapon.setInternalName("CLSRTorpedo6 (OS)");
+        weapon.addLookupName("Clan OS SRTorpedo-6");
+        weapon.addLookupName("Clan SRTorpedo 6 (OS)");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.bv = 12;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+    
     public static WeaponType createCLLRM5() {
         WeaponType weapon = new WeaponType();
 
@@ -3203,6 +3795,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+
 
     public static WeaponType createCLLargePulseLaser() {
         WeaponType weapon = new WeaponType();
@@ -4996,6 +5589,717 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createCLPROLRT1() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 1";
+        weapon.setInternalName("CLLRTorpedo1");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=1;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 0.2f;
+        weapon.criticals=0;
+        weapon.bv = 17;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT2() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 2";
+        weapon.setInternalName("CLLRTorpedo2");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=2;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 0.4f;
+        weapon.criticals=0;
+        weapon.bv = 25;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT3() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 3";
+        weapon.setInternalName("CLLRTorpedo3");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=3;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 0.6f;
+        weapon.criticals=0;
+        weapon.bv = 35;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT4() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 4";
+        weapon.setInternalName("CLLRTorpedo4");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=4;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 0.8f;
+        weapon.criticals=0;
+        weapon.bv = 46;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT5() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 5";
+        weapon.setInternalName("CLCLLRTorpedo5");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=5;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 1f;
+        weapon.criticals=0;
+        weapon.bv = 55;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT6() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 6";
+        weapon.setInternalName("CLLRTorpedo6");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=6;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 1.2f;
+        weapon.criticals=0;
+        weapon.bv = 69;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT7() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 7";
+        weapon.setInternalName("CLLRTorpedo7");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=7;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 1.4f;
+        weapon.criticals=0;
+        weapon.bv = 92;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT8() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 8";
+        weapon.setInternalName("CLLRTorpedo8");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=8;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 1.6f;
+        weapon.criticals=0;
+        weapon.bv = 93;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT9() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 9";
+        weapon.setInternalName("CLLRTorpedo9");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=9;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 1.8f;
+        weapon.criticals=0;
+        weapon.bv = 95;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT10() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 10";
+        weapon.setInternalName("CLLRTorpedo10");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=10;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2f;
+        weapon.criticals=0;
+        weapon.bv = 109;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT11() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 11";
+        weapon.setInternalName("CLLRTorpedo11");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=11;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.2f;
+        weapon.criticals=0;
+        weapon.bv = 139;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT12() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 12";
+        weapon.setInternalName("CLLRTorpedo12");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=12;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.4f;
+        weapon.criticals=0;
+        weapon.bv = 141;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT13() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 13";
+        weapon.setInternalName("CLLRTorpedo13");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=13;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.6f;
+        weapon.criticals=0;
+        weapon.bv = 161;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT14() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 14";
+        weapon.setInternalName("CLLRTorpedo14");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=14;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.8f;
+        weapon.criticals=0;
+        weapon.bv = 163;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT15() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 15";
+        weapon.setInternalName("CLLRTorpedo15");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=15;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 3f;
+        weapon.criticals=0;
+        weapon.bv = 164;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT16() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 16";
+        weapon.setInternalName("CLLRTorpedo16");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=16;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 3.2f;
+        weapon.criticals=0;
+        weapon.bv = 214;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT17() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 17";
+        weapon.setInternalName("CLLRTorpedo17");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=17;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 3.4f;
+        weapon.criticals=0;
+        weapon.bv = 215;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT18() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 18";
+        weapon.setInternalName("CLLRTorpedo18");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=18;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 3.6f;
+        weapon.criticals=0;
+        weapon.bv = 217;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT19() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 19";
+        weapon.setInternalName("CLLRTorpedo19");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=19;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 3.8f;
+        weapon.criticals=0;
+        weapon.bv = 218;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPROLRT20() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "LRT 20";
+        weapon.setInternalName("CLLRTorpedo20");
+        weapon.heat = 0;
+        weapon.damage=DAMAGE_MISSILE;
+        weapon.rackSize=20;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange=14;
+        weapon.longRange =21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 4f;
+        weapon.criticals=0;
+        weapon.bv = 220;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+    public static WeaponType createCLPROSRM1() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRM 1";
+        weapon.setInternalName("CLSRM1");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.25f;
+        weapon.criticals = 0;
+        weapon.bv = 15;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROSRM2() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRM 2";
+        weapon.setInternalName("CLSRM2");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 0;
+        weapon.bv = 21;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROSRM3() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRM 3";
+        weapon.setInternalName("CLSRM3");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.75f;
+        weapon.criticals = 0;
+        weapon.bv = 30;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROSRM4() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRM 4";
+        weapon.setInternalName("CLSRM4");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1f;
+        weapon.criticals = 0;
+        weapon.bv = 39;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROSRM5() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRM 5";
+        weapon.setInternalName("CLSRM5");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.25f;
+        weapon.criticals = 0;
+        weapon.bv = 47;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROSRM6() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "SRM 6";
+        weapon.setInternalName("CLSRM6");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 0;
+        weapon.bv = 59;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROStreakSRM1() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Streak SRM 1";
+        weapon.setInternalName("CLStreakSRM1");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 0;
+        weapon.bv = 20;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROStreakSRM2() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Streak SRM 2";
+        weapon.setInternalName("CLStreakSRM2");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 1f;
+        weapon.criticals = 0;
+        weapon.bv = 40;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROStreakSRM3() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Streak SRM 3";
+        weapon.setInternalName("CLStreakSRM3");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 0;
+        weapon.bv = 59;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROStreakSRM4() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Streak SRM 4";
+        weapon.setInternalName("CLStreakSRM4");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 2f;
+        weapon.criticals = 0;
+        weapon.bv = 79;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROStreakSRM5() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Streak SRM 5";
+        weapon.setInternalName("CLStreakSRM5");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 2.5f;
+        weapon.criticals = 0;
+        weapon.bv = 99;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+
+    public static WeaponType createCLPROStreakSRM6() {
+        WeaponType weapon = new WeaponType();
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Streak SRM 6";
+        weapon.setInternalName("CLStreakSRM6");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 3f;
+        weapon.criticals = 0;
+        weapon.bv = 119;
+        weapon.flags |= F_PROTOMECH | F_MISSILE;
+        return weapon;
+    }
+    
     public static WeaponType createCLPROLRM1() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5455,15 +6759,15 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createCLPROSRM1() {
+    public static WeaponType createCLPROSRT1() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRM 1";
-        weapon.setInternalName("CLSRM1");
+        weapon.name = "SRT 1";
+        weapon.setInternalName("CLSRTorpedo1");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
-        weapon.ammoType = AmmoType.T_SRM;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -5476,15 +6780,15 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRM2() {
+    public static WeaponType createCLPROSRT2() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRM 2";
-        weapon.setInternalName("CLSRM2");
+        weapon.name = "SRT 2";
+        weapon.setInternalName("CLSRTorpedo2");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_SRM;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -5497,15 +6801,15 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRM3() {
+    public static WeaponType createCLPROSRT3() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRM 3";
-        weapon.setInternalName("CLSRM3");
+        weapon.name = "SRT 3";
+        weapon.setInternalName("CLSRTorpedo3");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 3;
-        weapon.ammoType = AmmoType.T_SRM;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -5518,15 +6822,15 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRM4() {
+    public static WeaponType createCLPROSRT4() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRM 4";
-        weapon.setInternalName("CLSRM4");
+        weapon.name = "SRT 4";
+        weapon.setInternalName("CLSRTorpedo4");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
-        weapon.ammoType = AmmoType.T_SRM;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -5539,15 +6843,15 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRM5() {
+    public static WeaponType createCLPROSRT5() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRM 5";
-        weapon.setInternalName("CLSRM5");
+        weapon.name = "SRT 5";
+        weapon.setInternalName("CLSRTorpedo5");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.T_SRM;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -5560,15 +6864,15 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRM6() {
+    public static WeaponType createCLPROSRT6() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRM 6";
-        weapon.setInternalName("CLSRM6");
+        weapon.name = "SRT 6";
+        weapon.setInternalName("CLSRTorpedo6");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
-        weapon.ammoType = AmmoType.T_SRM;
+        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -5577,132 +6881,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.5f;
         weapon.criticals = 0;
         weapon.bv = 59;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM1() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Streak SRM 1";
-        weapon.setInternalName("CLStreakSRM1");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 1;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.extremeRange = 16;
-        weapon.tonnage = 0.5f;
-        weapon.criticals = 0;
-        weapon.bv = 20;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM2() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Streak SRM 2";
-        weapon.setInternalName("CLStreakSRM2");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.extremeRange = 16;
-        weapon.tonnage = 1f;
-        weapon.criticals = 0;
-        weapon.bv = 40;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM3() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Streak SRM 3";
-        weapon.setInternalName("CLStreakSRM3");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 3;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.extremeRange = 16;
-        weapon.tonnage = 1.5f;
-        weapon.criticals = 0;
-        weapon.bv = 59;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM4() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Streak SRM 4";
-        weapon.setInternalName("CLStreakSRM4");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.extremeRange = 16;
-        weapon.tonnage = 2f;
-        weapon.criticals = 0;
-        weapon.bv = 79;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM5() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Streak SRM 5";
-        weapon.setInternalName("CLStreakSRM5");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.extremeRange = 16;
-        weapon.tonnage = 2.5f;
-        weapon.criticals = 0;
-        weapon.bv = 99;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM6() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Streak SRM 6";
-        weapon.setInternalName("CLStreakSRM6");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 6;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.extremeRange = 16;
-        weapon.tonnage = 3f;
-        weapon.criticals = 0;
-        weapon.bv = 119;
         weapon.flags |= F_PROTOMECH | F_MISSILE;
         return weapon;
     }

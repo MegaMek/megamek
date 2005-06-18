@@ -71,6 +71,7 @@ v0.29.81 (CVS)
 + Bug 1222251: Altered Mobile Long Tom to only have standard ammo in the vehicle file.
 + Bug 1222907: Fixed Flak to work against anything using VTOL movement, but only
     if it's above the ceiling of the hex.
++ Bug 1222886: L3 Mech Plasma Rifle no longer reading as infantry weapon
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

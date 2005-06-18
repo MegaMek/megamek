@@ -3175,7 +3175,9 @@ public abstract class Entity
      * @param component - One of this new entity's <code>Transporter</code>s.
      */
     public void addTransporter( Transporter component ) {
-        transports.addElement( component );
+        // Add later transporters to the *head* of the list
+        // to make Fa Shih's use their magnetic clamps by default.
+        transports.insertElementAt( component, 0 );
     }
 
     /**

@@ -25,6 +25,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
+import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -757,9 +758,11 @@ public class WeaponAttackAction
         if (wtype.getToHitModifier() != 0) {
             toHit.addModifier(wtype.getToHitModifier(), "weapon to-hit modifier");
         }
-    
+
         // ammo to-hit modifier
-        if ((te instanceof VTOL) && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
+        if ((te.getMovementMode() == IEntityMovementMode.VTOL)
+                && (atype.getMunitionType() == AmmoType.M_CLUSTER)
+                && (te.getElevation() > game.getBoard().getHex(te.getPosition()).ceiling())) {
             toHit.addModifier(-3, "flak to-hit modifier");
         } else if (usesAmmo && atype.getToHitModifier() != 0) {
             toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");

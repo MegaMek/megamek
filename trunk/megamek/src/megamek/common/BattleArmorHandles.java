@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -176,9 +177,12 @@ import java.util.*;
             Enumeration equipment = unit.getMisc();
             result = false;
             while ( !result && equipment.hasMoreElements() ) {
-                result = ( (Mounted) equipment.nextElement() )
-                    .getType().getInternalName()
-                    .equals( this.getBoardingEquipment() );
+                Mounted mount = (Mounted) equipment.nextElement();
+                EquipmentType equip = mount.getType();
+                result = equip.getInternalName().equals
+                    ( this.getBoardingEquipment() )
+                    && (!equip.hasModes() 
+                        || mount.curMode().equals( "On" )); //$NON-NLS-1$
             }
 
         }

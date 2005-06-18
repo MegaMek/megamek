@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -809,6 +810,9 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = false;
         misc.flags |= F_MAGNETIC_CLAMP;
+        String[] saModes = { "On", "Off" };
+        misc.setModes(saModes);
+        misc.setInstantModeSwitch(true);
         misc.bv = 0;
         
         return misc;

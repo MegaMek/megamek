@@ -554,8 +554,8 @@ public class Compute
             //target completely underwater, weapon not
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Target underwater, but not weapon.");
-        } else if (wtype.getAmmoType() == T_LRM_TORPEDO
-                   || wtype.getAmmoType() == T_SRM_TORPEDO)
+        } else if (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO
+                   || wtype.getAmmoType() == AmmoType.T_SRM_TORPEDO) {
             // Torpedos only fire underwater.
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Weapon can only fire underwater.");

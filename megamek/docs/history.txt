@@ -83,7 +83,9 @@ v0.29.81 (CVS)
 + Bug 1217299: TAC on destroyed location didn't transfer
 + Bug 1222839: Modified ammo mutators to allow verification of IS units
     when loading from file or unit list.
-
++ Bug 1223603: 3 batchall.de mechs bugged; preliminary solution pending repair
+  of 2 of the 3 HMP files.
+  
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.
 + Edits to a number of units to correct Mixed-Tech to level 3 from level 2

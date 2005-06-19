@@ -22,10 +22,12 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 
@@ -302,6 +304,27 @@ public class CEntity {
         }
         //what type of overheater am I
         int heat = heat_total - capacity;
+        // Include heat from active stealth armor
+        if (entity instanceof Mech && entity.isStealthActive()){
+            heat += 10;
+        }
+        // Include heat from infernos
+        if (entity.infernos.isStillBurning()){
+            heat += 6;
+        }
+        // Include heat from engine hits
+        if (entity instanceof Mech){
+            heat += entity.getEngineCritHeat();
+        }
+        // Include heat for standing in a fire
+        if (tb.game.getBoard().getHex(entity.getPosition()) != null){
+            if (tb.game.getBoard().getHex(entity.getPosition()).
+                    terrainLevel(Terrains.FIRE) == 2) {
+                heat += 5;
+            }
+        }
+        // Include heat from ambient temperature
+        heat += tb.game.getTemperatureDifference();
         if (heat < 8 && heat > 3) {
             this.overheat = OVERHEAT_LOW;
         } else if (heat > 12) {

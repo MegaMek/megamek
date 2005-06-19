@@ -41,7 +41,6 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 import megamek.common.WeaponType;
 
 /**
@@ -190,6 +189,8 @@ public class WeaponAttackAction
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
         boolean isECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
+        boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
+        boolean isHoming = false;
         if (te != null) {
             if (te.isINarcedBy(ae.getOwner().getTeam()) &&
                 atype != null &&
@@ -211,6 +212,12 @@ public class WeaponAttackAction
         }
         if ((game.getPhase() == IGame.PHASE_TARGETING) && !isArtilleryIndirect) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Only indirect artillery can be fired in the targeting phase");
+        }
+        if((game.getPhase() == IGame.PHASE_OFFBOARD) && !isTAG) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Only TAG can be fired in the offboard attack phase");
+        }
+        if((game.getPhase() != IGame.PHASE_OFFBOARD) && isTAG) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "TAG can only be fired in the offboard attack phase");
         }
     
     
@@ -240,35 +247,49 @@ public class WeaponAttackAction
         }
         
         // Arty shots have to be with arty, non arty shots with non arty.
-        if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY && 
-                (!wtype.hasFlag(WeaponType.F_ARTILLERY) || 
-                        (atype != null && (atype.getMunitionType() == AmmoType.M_FASCAM) || 
-                        (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) || 
-                        (atype.getMunitionType() == AmmoType.M_INFERNO_IV)))) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
-        }
-        if ( (target.getTargetType() == Targetable.TYPE_HEX_FASCAM ||
-              target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV ||
-              target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV) &&
-             !wtype.hasFlag(WeaponType.F_ARTILLERY) ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
-        }
-        if (!((target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) ||
-              (target.getTargetType() == Targetable.TYPE_HEX_FASCAM) ||
-              (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV) ||
-              (target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV)) && 
-              wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
-        }
-        // Arrow IV submunition TargetTypes must use appropriate ammo
-        if (target.getTargetType() == Targetable.TYPE_HEX_FASCAM && atype != null && !(atype.getMunitionType() == AmmoType.M_FASCAM)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
-        }
-        if (target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV && atype != null && !(atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
-        }
-        if (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV && atype != null && !(atype.getMunitionType() == AmmoType.M_INFERNO_IV)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
+        final int ttype = target.getTargetType();
+        if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+            //check artillery is targetted appropriately for its ammo
+            int munition = AmmoType.M_STANDARD;
+            if(atype != null) {
+                munition = atype.getMunitionType();
+            }
+            switch(munition) {
+            case AmmoType.M_FASCAM:
+                if(ttype != Targetable.TYPE_HEX_FASCAM) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "FASCAM ammo must be used with target hex (FASCAM)");
+                }
+                break;
+            case AmmoType.M_INFERNO_IV:
+                if(ttype != Targetable.TYPE_HEX_INFERNO_IV) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Inferno IV ammo must be used with target hex (Inferno IV)");
+                }
+                break;
+            case AmmoType.M_VIBRABOMB_IV:
+                if(ttype != Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Vibrabomb IV ammo must be used with target hex (Vibrabomb IV)");
+                }
+                break;
+            case AmmoType.M_HOMING:
+                if(ttype != Targetable.TYPE_ENTITY) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Homing ammo must be used to target an entity");
+                }
+                isHoming = true;
+                break;
+            default:
+                if(ttype != Targetable.TYPE_HEX_ARTILLERY) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
+                }
+                break;
+            }
+        } else {
+            //weapon is not artillery
+            if (ttype == Targetable.TYPE_HEX_ARTILLERY || 
+                ttype == Targetable.TYPE_HEX_FASCAM ||
+                ttype == Targetable.TYPE_HEX_INFERNO_IV ||
+                ttype == Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
+            }
         }
         
         // can't target yourself
@@ -288,7 +309,7 @@ public class WeaponAttackAction
     
         // Are we dumping that ammo?
         if ( usesAmmo && ammo.isDumping() ) {
-            ae.loadWeapon( weapon );
+            ae.loadWeaponWithSameAmmo( weapon );
             if ( ammo.getShotsLeft() == 0 || ammo.isDumping() ) {
                 return new ToHitData( ToHitData.IMPOSSIBLE,
                                       "Dumping remaining ammo." );
@@ -590,6 +611,11 @@ public class WeaponAttackAction
           if (distance >17) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Direct artillery attack at range >17 hexes.");
           }
+
+          if(isHoming) {
+            return new ToHitData(4, "Homing shot (will miss if TAG misses)");
+          }
+
           if(game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
               return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
           }
@@ -604,6 +630,11 @@ public class WeaponAttackAction
             if(distance<=17  && !(losMods.getValue()==ToHitData.IMPOSSIBLE)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Cannot fire indirectly at range <=17 hexes unless no LOS.");
             }
+
+            if(isHoming) {
+                return new ToHitData(4, "Homing shot (will miss if TAG misses)");
+            }
+
             if(game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
                 return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
             }
@@ -670,9 +701,18 @@ public class WeaponAttackAction
             ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getTargetId());
             toHit.append(thTemp);
             toSubtract += thTemp.getValue();
-    
+
+            // semiguided ammo negates this modifier, if TAG succeeded    
+            if (atype != null && atype.getAmmoType() == AmmoType.T_LRM &&
+                atype.getMunitionType() == AmmoType.M_SEMIGUIDED &&
+                te.getTagged()) {
+                int nAdjust = thTemp.getValue();
+                if (nAdjust > 0) {
+                    toHit.append(new ToHitData(-nAdjust, "Semi-guided ammo vs tagged target"));
+                }
+            }
             // precision ammo reduces this modifier
-            if (atype != null && atype.getAmmoType() == AmmoType.T_AC &&
+            else if (atype != null && atype.getAmmoType() == AmmoType.T_AC &&
                 atype.getMunitionType() == AmmoType.M_PRECISION) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {

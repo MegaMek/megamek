@@ -85,6 +85,7 @@ public abstract class Entity
     protected boolean           illuminated = false;
     protected boolean           spotlightIsActive = false;
     protected boolean           stuckInSwamp = false;
+    protected boolean           tagged = false;
     
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -1558,6 +1559,21 @@ public abstract class Entity
     }
 
     /**
+     * Tries to load the specified weapon with the first available ammo
+     * of the same munition type as currently in use.  If this fails, use first ammo.
+     */
+    public void loadWeaponWithSameAmmo(Mounted mounted) {
+        WeaponType wtype = (WeaponType)mounted.getType();
+        for (Enumeration i = getAmmo(); i.hasMoreElements();) {
+            Mounted mountedAmmo = (Mounted)i.nextElement();
+            if (loadWeaponWithSameAmmo(mounted, mountedAmmo))
+                return;
+        }
+        //fall back to use any ammo
+        loadWeapon(mounted);
+    }
+
+    /**
      * Tries to load the specified weapon with the specified ammo.
      * Returns true if successful, false otherwise.
      */
@@ -1576,6 +1592,22 @@ public abstract class Entity
         }
 
         return success;
+    }
+
+    /**
+     * Tries to load the specified weapon with the specified ammo.
+     * Returns true if successful, false otherwise.
+     */
+    public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo)
+    {
+        AmmoType atype = (AmmoType)mountedAmmo.getType();
+        Mounted oldammo = mounted.getLinked();
+
+        if(oldammo != null && 
+        ((AmmoType)oldammo.getType()).getMunitionType() != atype.getMunitionType())
+            return false;
+        
+        return loadWeapon(mounted, mountedAmmo);
     }
 
 
@@ -2438,7 +2470,7 @@ public abstract class Entity
                 if (mounted.getLinked() == null
                     || mounted.getLinked().getShotsLeft() <= 0
                     || mounted.getLinked().isDumping()) {
-                    loadWeapon(mounted);
+                    loadWeaponWithSameAmmo(mounted);
                 }
             }
         }
@@ -4221,5 +4253,13 @@ public abstract class Entity
             weaponList.removeElement(which);
             weaponList.addElement(which);
         }
+    }
+
+    public void setTagged(boolean tag) {
+        tagged = tag;
+    }
+
+    public boolean getTagged() {
+        return tagged;
     }
 }

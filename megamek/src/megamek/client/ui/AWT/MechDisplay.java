@@ -956,6 +956,8 @@ class WeaponPanel extends BufferedPanel
             // TODO: make this an accessor function instead of a member access.
             if ( this.client.curPanel instanceof FiringDisplay ) {
                 ( (FiringDisplay) this.client.curPanel ).updateTarget();
+            } else if (this.client.curPanel instanceof TargetingPhaseDisplay ) {
+                ( (TargetingPhaseDisplay) this.client.curPanel).updateTarget();
             }
 
             // Alert the server of the update.

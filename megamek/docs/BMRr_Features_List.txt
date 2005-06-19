@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 17th June 2005.  MegaMek Version 0.22.81. Best viewed in 1024x768.
+The Great MegaMek Feature list. 18th June 2005.  MegaMek Version 0.22.81. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -234,8 +234,8 @@ Special Case Rules (Artillery)
 - Damage			Yes		None
 - Smoke Rounds			No		None
 - Onboard Artillery		Yes		None
-- Arrows IV Artillery		Partial		Homing munition not implemented.
-- Arrows IV Munitions		Partial		Homing munition not implemented.
+- Arrows IV Artillery		Yes		None
+- Arrows IV Munitions		Yes		None
 
 Special Case Rules (Miscellaneous)
 
@@ -320,7 +320,7 @@ Equipment
 - Anti-Missile System		Yes		AMS target is selected for the player.
 - Anti-Personal Pods		Yes		None
 - Artemis IV FCS		Yes		None
-- Artillery Weapons		Partial		Need smoke and Homing Arrow IV ammo.
+- Artillery Weapons		Partial		Need smoke ammo.
 - Autocannon Munitions		Partial		Incendiary Ammo not implemented.
 - C3 Computers			Yes    		None
 - Cargo Space			No		None
@@ -332,7 +332,7 @@ Equipment
 - Light Engines			Yes		None
 - Machine Guns			Yes		None
 - Missile Lanchers		Yes		None
-- Missile Munitions		Partial		Incendiary and Semiguided not implemented
+- Missile Munitions		Partial		Incendiary not implemented
 - MASC				Yes		None
 - Narc				Yes		None
 - Narc Munitions		Yes		None
@@ -340,7 +340,7 @@ Equipment
 - Rocket Lauchers		Yes		None
 - Stealth Armor System		Yes		Activate/Disable on the systems tab.
 - Sword				Yes		None
-- TAG				Yes		Requires Homing Arrow IV implementation to work.
+- TAG				Yes		None
 - Targeting Computers		Yes		None
 - Triple Strength Myomer	Yes		None
 

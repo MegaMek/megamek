@@ -263,8 +263,8 @@ Special Case Rules (Fire)
 
 Special Case Rules (Flak)
 
-- Artillery Flak		No		Waiting on VTOL implementation.
-- LB-X Cluster Flak		Yes		None.
+- Artillery Flak		No		None
+- LB-X Cluster Flak		Yes		None
 
 Special Case Rules (Four Legged Battlemechs)
 

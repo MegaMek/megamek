@@ -8377,12 +8377,19 @@ implements Runnable, ConnectionHandler {
         int roll = pr.roll;
         Entity te = null;
         if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
+            // Lets re-write around that horrible hack that was here before.
+            // So instead of asking if a specific location is wet and praying
+            // that it won't cause an NPE...
+            // We'll check 1) if the hex has water, and 2) if it's deep enough
+            // to cover the unit in question at its current elevation.
+            // It's especially important to make sure it's done this way,
+            // because some units (Sylph, submarines) can be at ANY elevation
+            // underwater, and VTOLs can be well above the surface.
             te = (Entity)target;
-            // If target Entity underwater, damage is halved, round up
-            // using getLocationStatus(1), because only Mechs and Protos
-            // can be underwater, and 1 is CT for mechs and torso for Protos
-            if (te.getLocationStatus(1) == ILocationExposureStatus.WET) {
-                damage = (int)Math.ceil(damage * 0.5f);
+            IHex hex = game.getBoard().getHex(te.getPosition());
+            if (hex.containsTerrain(Terrains.WATER)) {
+                if (te.absHeight() < hex.getElevation())
+                    damage = (int)Math.ceil(damage * 0.5f);
             }
         }
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));

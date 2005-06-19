@@ -81,6 +81,8 @@ v0.29.81 (CVS)
 + Allow the many non-torpedo weapons with a short range of zero to attack.
 + Patch 1223382, RFE 899953: TAG, homing Arrow IV and semiguided LRM.
 + Bug 1217299: TAC on destroyed location didn't transfer
++ Bug 1222839: Modified ammo mutators to allow verification of IS units
+    when loading from file or unit list.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

@@ -1793,7 +1793,6 @@ public abstract class Mech
             if ( mtype.hasFlag(MiscType.F_HATCHET) ||
                  mtype.hasFlag(MiscType.F_SWORD) ||
                  mtype.hasFlag(MiscType.F_BAP) ||
-                 mtype.hasFlag(MiscType.F_TAG) ||
                  mtype.hasFlag(MiscType.F_AP_POD) ) {
                 oEquipmentBV += mtype.getBV(this);
             }

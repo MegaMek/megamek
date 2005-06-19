@@ -598,6 +598,8 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Narc capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_IS_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "Semi guided",
+                                                   1, M_SEMIGUIDED, TechConstants.T_IS_LEVEL_2) );
         munitions.addElement( new MunitionMutator( "Swarm",
                                                    1, M_SWARM, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Swarm-I",
@@ -4144,6 +4146,8 @@ public class AmmoType extends EquipmentType {
             // Make sure the tech level is now correct.
             if (techLevel != TechConstants.T_TECH_UNKNOWN)
                 munition.techLevel = techLevel;
+            else
+                munition.techLevel = base.techLevel;
 
             // Reduce base number of shots to reflect the munition's weight.
             munition.shots = base.shots / this.weight;

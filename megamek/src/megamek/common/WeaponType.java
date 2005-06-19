@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -5817,7 +5818,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=5;
-        weapon.ammoType = AmmoType.T_LRM;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 0;
         weapon.mediumRange = 0;

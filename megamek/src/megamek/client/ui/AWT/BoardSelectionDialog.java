@@ -423,7 +423,6 @@ public class BoardSelectionDialog
 //            for (int i = 0; i < selected.length; i++) {
 //                lisBoardsSelected.deselect(selected[i]);
 //            }
-            System.out.println("Selected!"); //$NON-NLS-1$
             if (bDelayedSingleSelect) {
                 lisBoardsSelected.setMultipleMode(false);
             }

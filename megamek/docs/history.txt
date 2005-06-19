@@ -76,6 +76,8 @@ v0.29.81 (CVS)
 + Fa Shih squads now clamp to the outside by default.
 + Bug 1222782: Indirect torpedos no longer fly nor teleport to go over land.
 + Bug 1222945: fixed major hack in DFA code causing array bounds exception.
++ Bug 1215905: rotor destruction doesn't kill a VTOL.
++ Fixed flak bug.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

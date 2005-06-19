@@ -761,7 +761,7 @@ public class WeaponAttackAction
 
         // ammo to-hit modifier
         if ((te.getMovementMode() == IEntityMovementMode.VTOL)
-                && (atype.getMunitionType() == AmmoType.M_CLUSTER)
+                && ((atype != null) && (atype.getMunitionType() == AmmoType.M_CLUSTER))
                 && (te.getElevation() > game.getBoard().getHex(te.getPosition()).ceiling())) {
             toHit.addModifier(-3, "flak to-hit modifier");
         } else if (usesAmmo && atype.getToHitModifier() != 0) {

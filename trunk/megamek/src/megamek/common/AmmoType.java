@@ -557,17 +557,17 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan SRM launchers.
         munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Inferno",
+        munitions.addElement( new MunitionMutator( "(Clan) Inferno",
                                                    1, M_INFERNO, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Fragmentation",
+        munitions.addElement( new MunitionMutator( "(Clan) Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Narc capable",
+        munitions.addElement( new MunitionMutator( "(Clan) Narc capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Listen-Kill",
+        munitions.addElement( new MunitionMutator( "(Clan) Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Anti-TSM",
+        munitions.addElement( new MunitionMutator( "(Clan) Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Acid",
+        munitions.addElement( new MunitionMutator( "(Clan) Acid",
                                                    1, M_AX_HEAD, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
@@ -623,27 +623,27 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan LRM launchers.
         munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Fragmentation",
+        munitions.addElement( new MunitionMutator( "(Clan) Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder",
+        munitions.addElement( new MunitionMutator( "(Clan) Thunder",
                                                    1, M_THUNDER, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Augmented",
+        munitions.addElement( new MunitionMutator( "(Clan) Thunder-Augmented",
                                                    2, M_THUNDER_AUGMENTED, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Inferno",
+        munitions.addElement( new MunitionMutator( "(Clan) Thunder-Inferno",
                                                    2, M_THUNDER_INFERNO, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Active",
+        munitions.addElement( new MunitionMutator( "vThunder-Active",
                                                    2, M_THUNDER_ACTIVE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Vibrabomb",
+        munitions.addElement( new MunitionMutator( "(Clan) Thunder-Vibrabomb",
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Narc capable",
+        munitions.addElement( new MunitionMutator( "(Clan) Narc capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Swarm",
+        munitions.addElement( new MunitionMutator( "(Clan) Swarm",
                                                    1, M_SWARM, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Swarm-I",
+        munitions.addElement( new MunitionMutator( "(Clan) Swarm-I",
                                                    1, M_SWARM_I, TechConstants.T_CLAN_LEVEL_2) );
-        munitions.addElement( new MunitionMutator( "Listen-Kill",
+        munitions.addElement( new MunitionMutator( "vListen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Anti-TSM",
+        munitions.addElement( new MunitionMutator( "(Clan) Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
@@ -704,13 +704,13 @@ public class AmmoType extends EquipmentType {
         
         // Create the munition types for clan Arrow IV launchers.
         munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Homing",
+        munitions.addElement( new MunitionMutator( "(Clan) Homing",
                                                    1, M_HOMING, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "FASCAM",
+        munitions.addElement( new MunitionMutator( "(Clan) FASCAM",
                                                    1, M_FASCAM, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Inferno-IV",
+        munitions.addElement( new MunitionMutator( "(Clan) Inferno-IV",
                                                    1, M_INFERNO_IV, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
+        munitions.addElement( new MunitionMutator( "(Clan) Vibrabomb-IV",
                                                    1, M_VIBRABOMB_IV, TechConstants.T_CLAN_LEVEL_2 ) );
 
         // Walk through both the base types and the
@@ -744,7 +744,7 @@ public class AmmoType extends EquipmentType {
         
         // Create the munition types for Clan Artillery launchers.
         munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Smoke",
+        munitions.addElement( new MunitionMutator( "(Clan) Smoke",
                                                    1, M_SMOKE, TechConstants.T_CLAN_LEVEL_2 ) );
 
         // Walk through both the base types and the

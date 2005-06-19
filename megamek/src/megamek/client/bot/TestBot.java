@@ -21,6 +21,7 @@ import megamek.common.*;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.ToHitData;
@@ -196,6 +197,23 @@ public class TestBot extends BotClient {
 
         long exit = System.currentTimeMillis();
         System.out.println("move turn took " + (exit - enter) + " ms");
+        
+        // If this unit has a jammed RAC, and it has only walked,
+        // add an unjam action
+        
+        if (min != null){
+            if (min.getLastStep() != null){
+            if (min.getCEntity().entity.canUnjamRAC()){
+                if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK) ||
+                    (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
+                    // Cycle through all available weapons, only unjam if the jam(med)
+                    // RACs count for a significant portion of possible damage
+        	        min.addStep(MovePath.STEP_UNJAM_RAC);
+                }
+        	}
+            }
+        }
+        
         return min;
     }
 
@@ -785,14 +803,9 @@ public class TestBot extends BotClient {
         int filter) {
         Arrays.sort(move_array, comp);
 
-        int j = 0;
         //top 100 utility, mostly conservative
-        for (int i = 0; j < filter && i < move_array.length; i++) {
-            MoveOption mop = (MoveOption)move_array[i];
-            if (mop.isMoveLegal()) {
-                pass.put(mop);
-                j++;
-            }
+        for (int i = 0; i < filter && i < move_array.length; i++) {
+            pass.put((MoveOption) move_array[i]);
         }
     }
 
@@ -1179,7 +1192,7 @@ public class TestBot extends BotClient {
 
         Coords pointing_to = new Coords();
         Entity test_ent;
-        Enumeration weapons, ammo_slots, valid_attackers;
+        Enumeration weapons, ammo_slots, valid_attackers, equips;
         
         int entNum = game.getFirstDeployableEntityNum();
         Coords cStart = getStartingCoords();
@@ -1244,7 +1257,20 @@ public class TestBot extends BotClient {
         }
         nDir = cDeploy.direction(pointing_to);
 
-// TO DO -> If unit has stealth armor, turn it on
+// If unit has stealth armor, turn it on
+        
+        if (getEntity(entNum) instanceof Mech){
+            for ( equips = getEntity(entNum).getMisc(); equips.hasMoreElements(); ) {
+                Mounted test_equip = (Mounted) equips.nextElement();
+                MiscType test_type = (MiscType) test_equip.getType();
+                if ( Mech.STEALTH.equals(test_type.getInternalName()) ) {
+                    if (test_equip.curMode().getName() != "On") {
+                        test_equip.setMode("On");
+                        super.sendModeChange(entNum, getEntity(entNum).getEquipmentNum(test_equip), 1);
+                    }
+                }
+            }
+        }
 
         Entity ce = game.getEntity(entNum);
         megamek.debug.Assert.assertTrue(!ce.isHexProhibited(game.getBoard().getHex(cDeploy)));

@@ -334,7 +334,9 @@ public class HmvFile
             
             if (movementType == HMVMovementType.TRACKED ||
                     movementType == HMVMovementType.WHEELED ||
-                    movementType == HMVMovementType.HOVER) {
+                    movementType == HMVMovementType.HOVER ||
+                    movementType == HMVMovementType.DISPLACEMENT_HULL ||
+                    movementType == HMVMovementType.HYDROFOIL) {
                 Tank tank = new Tank();
                 entity = tank;
     
@@ -352,6 +354,8 @@ public class HmvFile
                 tank.setWeight((engineRating + suspensionFactor) / cruiseMP);
     
                 tank.setMovementMode(
+                    movementType == HMVMovementType.DISPLACEMENT_HULL ? IEntityMovementMode.NAVAL :
+                    movementType == HMVMovementType.HYDROFOIL ? IEntityMovementMode.HYDROFOIL :
                     movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER :
                     movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED :
                     IEntityMovementMode.TRACKED);

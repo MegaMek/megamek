@@ -704,13 +704,13 @@ public class AmmoType extends EquipmentType {
         
         // Create the munition types for clan Arrow IV launchers.
         munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "(Clan) Homing",
+        munitions.addElement( new MunitionMutator( "Homing",
                                                    1, M_HOMING, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) FASCAM",
+        munitions.addElement( new MunitionMutator( "FASCAM",
                                                    1, M_FASCAM, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Inferno-IV",
+        munitions.addElement( new MunitionMutator( "Inferno-IV",
                                                    1, M_INFERNO_IV, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Vibrabomb-IV",
+        munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
                                                    1, M_VIBRABOMB_IV, TechConstants.T_CLAN_LEVEL_2 ) );
 
         // Walk through both the base types and the

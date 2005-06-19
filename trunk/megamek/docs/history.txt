@@ -78,6 +78,7 @@ v0.29.81 (CVS)
 + Bug 1222945: fixed major hack in DFA code causing array bounds exception.
 + Bug 1215905: rotor destruction doesn't kill a VTOL.
 + Fixed flak bug.
++ Allow the many non-torpedo weapons with a short range of zero to attack.
 
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

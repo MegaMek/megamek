@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -533,7 +534,8 @@ public class Compute
             targEl = target.absHeight();
         }
 
-        if (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET) {
+        if (ae.getLocationStatus(weapon.getLocation())
+            == ILocationExposureStatus.WET) {
             weaponRanges = wtype.getWRanges();
             //HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
@@ -552,12 +554,11 @@ public class Compute
             //target completely underwater, weapon not
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Target underwater, but not weapon.");
-        } else { // This is important for Torpedos.
-            weaponRanges = wtype.getRanges();
-            if (weaponRanges[RangeType.RANGE_SHORT] == 0) {
-                return new ToHitData(ToHitData.IMPOSSIBLE,
-                                     "Weapon can only fire underwater.");
-            }
+        } else if (wtype.getAmmoType() == T_LRM_TORPEDO
+                   || wtype.getAmmoType() == T_SRM_TORPEDO)
+            // Torpedos only fire underwater.
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Weapon can only fire underwater.");
         }
 
         // determine base distance & range bracket

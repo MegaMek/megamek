@@ -9786,7 +9786,7 @@ implements Runnable, ConnectionHandler {
                           engineExploded = checkEngineExplosion(te, desc);
                         }
 
-                        if ( !engineExploded ) {
+                        if ( !engineExploded && !((te instanceof VTOL) && hit.getLocation() == VTOL.LOC_ROTOR)) {
                           // Entity destroyed.  Ammo explosions are
                           // neither survivable nor salvagable.
                           // Only ammo explosions in the CT are devastating.

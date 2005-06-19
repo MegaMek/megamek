@@ -1517,8 +1517,6 @@ public class MovementDisplay
         if ( this.isIgnoringEvents() ) {
             return;
         }
-
-System.err.println("!!!Here I am!");
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearAllMoves();
         }

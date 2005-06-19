@@ -18,6 +18,8 @@ import megamek.client.bot.ga.GA;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Mech;
+import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
 import com.sun.java.util.collections.Vector;
@@ -181,11 +183,32 @@ public class GAAttack extends GA {
         int capacity = attacker.entity.getHeatCapacityWithWater();
         int currentHeat = attacker.entity.heatBuildup + attacker.entity.heat;
         int overheat = currentHeat + heat_total - capacity;
+        // Don't forget heat from stealth armor...
+        if (attacker.entity instanceof Mech && ((Mech) attacker.entity).isStealthActive()){
+            overheat += 10;
+        }
+        // ... or infernos...
+        if (attacker.entity.infernos.isStillBurning()){
+            overheat += 6;
+        }
+        //... or standing in fire...
+        if (game.getBoard().getHex(attacker.entity.getPosition()) != null){
+            if (game.getBoard().getHex(attacker.entity.getPosition()).
+                    terrainLevel(Terrains.FIRE) == 2) {
+                overheat += 5;
+            }
+        }
+        //... or from engine hits
+        if (attacker.entity instanceof Mech){
+            overheat += attacker.entity.getEngineCritHeat();
+        }
+        //... or ambient temperature
+        overheat += game.getTemperatureDifference();
         if (attacker.entity.heat > 0 && overheat < 0) {
             //always perfer smaller heat numbers
             total_utility -= attacker.bv / 1000 * overheat;
             //but add clear deliniations at the breaks
-            if (attacker.entity.heat > 4) {
+            if (attacker.entity.heat > 4) { 
                 total_utility *= 1.2;
             }
             if (attacker.entity.heat > 7) {

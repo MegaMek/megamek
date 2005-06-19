@@ -1002,7 +1002,7 @@ public class TestBot extends BotClient {
 
                     if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA) || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)){
                         spin_mode = Compute.spinUpCannon(game, new_attack);
-                        super.sendModeChange(en.getId(), a.target.getEntity().getId(), spin_mode);
+                        super.sendModeChange(en.getId(), en.getEquipmentNum(a.weapon), spin_mode);
                     }
                     Mounted cur_ammo = (Mounted) en.getEquipment(new_attack.getWeaponId()).getLinked();
                     new_attack.setAmmoId(en.getEquipmentNum(cur_ammo));

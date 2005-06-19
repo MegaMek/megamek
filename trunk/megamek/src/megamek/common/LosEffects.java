@@ -44,6 +44,7 @@ public class LosEffects {
         public int targetAbsHeight;
         public int attackHeight;
         public int targetHeight;
+        public int minimumWaterDepth = -1;
     }
 
     boolean blocked = false;
@@ -331,7 +332,11 @@ public class LosEffects {
         for (int i = 0; i < in.length; i++) {
             los.add( LosEffects.losForCoords(game, ai, in[i], los.getThruBldg()) );
         }
-    
+
+        if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
+            los.blocked = true;
+        }
+
         // Infantry inside a building can only be
         // targeted by units in the same building.
         if ( ai.targetInfantry && targetInBuilding &&
@@ -383,23 +388,27 @@ public class LosEffects {
         if (ai.targetEntity) {
             targetInBuilding = Compute.isInBuilding(game, game.getBoard().getHex(ai.targetPos).floor(), ai.targetPos);
         }
-            
+
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if ( targetInBuilding && Compute.isInBuilding( game, game.getBoard().getHex(ai.attackPos).floor(), ai.attackPos ) ) {
             los.setThruBldg( game.getBoard().getBuildingAt( in[0] ) );
         }
-    
+
         // add non-divided line segments
         for (int i = 3; i < in.length - 2; i += 3) {
             los.add( losForCoords(game, ai, in[i], los.getThruBldg()) );
         }
-        
+
+        if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
+            los.blocked = true;
+        }
+
         // if blocked already, return that
         if (los.losModifiers(game).getValue() == ToHitData.IMPOSSIBLE) {
             return los;
         }
-        
+
         // go through divided line segments
         for (int i = 1; i < in.length - 2; i += 3) {
             // get effects of each side
@@ -410,7 +419,11 @@ public class LosEffects {
             // attacker, and if the attack is through a building, the
             // target has cover.
             final boolean isElevDiff = ai.attackAbsHeight != ai.targetAbsHeight;
-            
+
+            if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
+                los.blocked = true;
+            }
+
             if ( targetInBuilding && isElevDiff ) {
                  if ( null != left.getThruBldg() ) {
                      left.setTargetCover(true);
@@ -477,6 +490,15 @@ public class LosEffects {
     
         IHex hex = game.getBoard().getHex(coords);
         int hexEl = ai.underWaterCombat ? hex.floor() : hex.surface();
+
+        // Handle minimum water depth.
+        // Applies to Torpedos.
+        if (!(hex.containsTerrain(Terrains.WATER)))
+            ai.minimumWaterDepth = 0;
+        else if ((hex.terrainLevel(Terrains.WATER) >= 0)
+                && ((ai.minimumWaterDepth == -1)
+                || (hex.terrainLevel(Terrains.WATER) < ai.minimumWaterDepth)))
+            ai.minimumWaterDepth = hex.terrainLevel(Terrains.WATER);
     
         // Handle building elevation.
         // Attacks thru a building are not blocked by that building.

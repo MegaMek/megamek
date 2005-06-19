@@ -112,6 +112,9 @@ Lot of people have contributed to the MegaMek project.
      Alan Bell
      victor23
 
+  MegaMek Developers, Emeritus
+     James Lacy <freakboy2571@users.sourceforge.net>
+
   And Of Course...
      FASA, WizKids and FanPro for creating and publishing the original game of 
      BattleTech, a source of fun and inspiration to us all.

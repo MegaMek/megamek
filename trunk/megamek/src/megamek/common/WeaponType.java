@@ -54,6 +54,7 @@ public class WeaponType extends EquipmentType {
     public static final int     F_AMS           = 0x01000000; // Weapon is an anti-missile system.
     public static final int     F_BOOST_SWARM   = 0x02000000; // boost leg & swarm
     public static final int     F_INFANTRY_ONLY = 0x04000000; // only target infantry
+    public static final int     F_TAG           = 0x08000000; // Target acquisition gear
 
     protected RangeType range;
     protected int   heat;
@@ -257,6 +258,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLongTom());
         EquipmentType.addType(createISSniper());
         EquipmentType.addType(createISThumper());
+        EquipmentType.addType(createISTAG());
+        EquipmentType.addType(createISLightTAG());
+        EquipmentType.addType(createCLTAG());
+        EquipmentType.addType(createCLLightTAG());
 
         // Start of Inner Sphere Level3 weapons
         EquipmentType.addType(createISLargeXPulseLaser());
@@ -7748,6 +7753,105 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createISTAG() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "IS TAG";
+        weapon.setInternalName("ISTAG");
+        weapon.addLookupName("IS TAG");
+        weapon.tonnage = 1;
+        weapon.criticals = 1;
+        weapon.hittable = true;
+        weapon.spreadable = false;
+        weapon.flags |= F_TAG | F_NO_FIRES;
+        weapon.heat = 0;
+        weapon.damage = 0;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.extremeRange = 15;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+
+    public static WeaponType createISLightTAG() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "IS Light TAG";
+        weapon.setInternalName("ISLightTAG");
+        weapon.addLookupName("Light TAG");
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.hittable = true;
+        weapon.spreadable = false;
+        weapon.flags |= F_TAG | F_NO_FIRES;
+        weapon.heat = 0;
+        weapon.damage = 0;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 9;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+
+    public static WeaponType createCLTAG() {
+        WeaponType weapon = new WeaponType();
+                
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Clan TAG";
+        weapon.setInternalName("CLTAG");
+        weapon.addLookupName("Clan TAG");
+        weapon.tonnage = 1;
+        weapon.criticals = 1;
+        weapon.hittable = true;
+        weapon.spreadable = false;
+        weapon.flags |= F_TAG | F_NO_FIRES;
+        weapon.heat = 0;
+        weapon.damage = 0;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.extremeRange = 15;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+
+    public static WeaponType createCLLightTAG() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Clan Light TAG";
+        weapon.setInternalName("CLLightTAG");
+        weapon.addLookupName("Clan Light TAG");
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.hittable = true;
+        weapon.spreadable = false;
+        weapon.flags |= F_TAG | F_NO_FIRES;
+        weapon.heat = 0;
+        weapon.damage = 0;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 9;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
 
     public String toString() {
         return "WeaponType: " + name;

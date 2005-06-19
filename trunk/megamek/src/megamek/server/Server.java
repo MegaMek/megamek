@@ -804,6 +804,13 @@ implements Runnable, ConnectionHandler {
             } else {
               entity.setDone(false);
             }
+            
+            // reset spotlights & TAG
+            if(phase == IGame.PHASE_END) {
+                entity.setSpotlightState(false);
+                entity.setIlluminated(false);
+                entity.setTagged(false);
+            }
         }
     }
 
@@ -1392,6 +1399,7 @@ implements Runnable, ConnectionHandler {
             case IGame.PHASE_FIRING :
             case IGame.PHASE_PHYSICAL :
             case IGame.PHASE_TARGETING :
+            case IGame.PHASE_OFFBOARD :
                 changeToNextTurn();
                 if (game.getOptions().booleanOption("paranoid_autosave")) autoSave();
                 break;
@@ -1507,6 +1515,7 @@ implements Runnable, ConnectionHandler {
                 break;
             case IGame.PHASE_OFFBOARD :
                 roundReport.append("\nOffboard Attack Phase\n-----------------\n");
+                resolveOnlyWeaponAttacks(); //should only be TAG at this point
                 resolveIndirectArtilleryAttacks();
                 applyBuildingDamage();
                 checkFor20Damage();
@@ -2187,6 +2196,14 @@ implements Runnable, ConnectionHandler {
         if (entity.isOffBoard()) {
             return false;
         }
+
+        for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
+              Mounted mounted = (Mounted)i.nextElement();
+              WeaponType wtype = (WeaponType)mounted.getType();
+              if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isUsedThisRound()) {
+                  return false; //no weapons fire if you fired TAG
+              }
+          }
 
         // check game options
         if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
@@ -4836,7 +4853,8 @@ implements Runnable, ConnectionHandler {
         // is this the right phase?
         if (game.getPhase() != IGame.PHASE_FIRING
         && game.getPhase() != IGame.PHASE_PHYSICAL
-        && game.getPhase() != IGame.PHASE_TARGETING) {
+        && game.getPhase() != IGame.PHASE_TARGETING
+        && game.getPhase() != IGame.PHASE_OFFBOARD) {
             System.err.println("error: server got attack packet in wrong phase");
             return;
         }
@@ -5405,9 +5423,12 @@ implements Runnable, ConnectionHandler {
         }
         // make sure ammo is loaded
         if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isDumping())) {
-            ae.loadWeapon(weapon);
+            ae.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
+
+        // store the ammo type for later use (needed for artillery attacks)
+        waa.setAmmoId(ae.getEquipmentNum(ammo));
 
         // compute to-hit
         wr.toHit = waa.toHit(game);
@@ -5473,7 +5494,7 @@ implements Runnable, ConnectionHandler {
         if (usesAmmo) {
             for (int i = 0; i < nShots; i++) {
                 if (ammo.getShotsLeft() <= 0) {
-                    ae.loadWeapon(weapon);
+                    ae.loadWeaponWithSameAmmo(weapon);
                     ammo = weapon.getLinked();
                 }
                 ammo.setShotsLeft(ammo.getShotsLeft() - 1);
@@ -5666,7 +5687,9 @@ implements Runnable, ConnectionHandler {
           wtype.getAmmoType() != AmmoType.T_BA_MG &&
           wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
           !isWeaponInfantry;
-      Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+      //retrieve ammo from the WeaponAttackAction rather than weapon.getLinked, because selected ammo may have changed
+      //in the case of artillery attacks
+      Mounted ammo = usesAmmo ? ae.getEquipment(wr.waa.getAmmoId()) : null;
       final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
       Infantry platoon = null;
       final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
@@ -5751,6 +5774,15 @@ implements Runnable, ConnectionHandler {
               }
               ae.setSwarmTargetId(Entity.NONE);
               return true;
+          }
+      }
+
+      // adjust BTH for homing shots
+      if(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING) {
+          if(entityTarget != null && entityTarget.getTagged()) {
+              toHit = new ToHitData(4, "homing ammo");
+          } else {
+              toHit = new ToHitData(TargetRoll.AUTOMATIC_FAIL, "target not tagged");
           }
       }
 
@@ -6292,6 +6324,17 @@ implements Runnable, ConnectionHandler {
             }
         }
 
+        // special case TAG hits.  No damage, but target is tagged until end of turn
+        if (!bMissed && wtype.hasFlag(WeaponType.F_TAG)) {
+            if(entityTarget == null) {
+                phaseReport.append("hits, but doesn't do anything.\n");
+            } else {
+                entityTarget.setTagged(true);
+                phaseReport.append("hits, target tagged.\n");
+            }
+            return !bMissed;
+        }
+
         // special case NARC hits.  No damage, but a beacon is appended
         if (!bMissed &&
             wtype.getAmmoType() == AmmoType.T_NARC &&
@@ -6744,6 +6787,14 @@ implements Runnable, ConnectionHandler {
         // Some weapons double the number of hits scored.
         if ( wtype.hasFlag(WeaponType.F_DOUBLE_HITS) ) {
             hits *= 2;
+        }
+
+        //Arrow IV homing hits single location, like an AC20
+        if(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING) {
+            nDamPerHit = wtype.getRackSize();
+            if(wr.artyAttackerCoords!=null && entityTarget!=null) {
+                toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entityTarget.getPosition(),entityTarget.getFacing(),entityTarget instanceof Tank));
+            }
         }
 
         // We've calculated how many hits.  At this point, any missed
@@ -7271,6 +7322,43 @@ implements Runnable, ConnectionHandler {
                 creditKill(entityTarget, ae);
             }
         } // Handle the next cluster.
+
+        //deal with splash damage from Arrow IV homing
+        if(atype != null && atype.getMunitionType() == AmmoType.M_HOMING) {
+            Coords coords = target.getPosition();
+
+            if(!bMissed) {
+                int ratedDamage = nDamPerHit / 4;
+                bldg = null;
+                bldg = game.getBoard().getBuildingAt(coords);
+                bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
+                bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+                ratedDamage -= bldgAbsorbs;
+                if ((bldg != null) && (bldgAbsorbs > 0)) {
+                    phaseReport.append("The building in the hex absorbs " + bldgAbsorbs + "damage from the artillery strike!\n");
+                    phaseReport.append(damageBuilding(bldg, ratedDamage));   
+                }
+
+                if(ratedDamage > 0) {
+                    for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+                        Entity entity = (Entity)impactHexHits.nextElement();
+
+                        if(entity == entityTarget) continue;
+            
+                        if(wr.artyAttackerCoords!=null) {
+                            toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
+                        }
+                        HitData hit = entity.rollHitLocation
+                            ( toHit.getHitTable(),
+                              toHit.getSideTable(),
+                              wr.waa.getAimedLocation(),
+                              wr.waa.getAimingMode() );
+
+                        phaseReport.append(damageEntity(entity, hit, ratedDamage, false, 0, false, true) + "\n");
+                    }
+                }
+            }
+        }
 
         phaseReport.append("\n");
         if (swarmMissilesNowLeft > 0) {
@@ -9886,18 +9974,21 @@ implements Runnable, ConnectionHandler {
             }
 
             // roll all critical hits against this location
-            for (int i = 0; i < crits; i++) {
-                desc.append( "\n" )
-                    .append( criticalEntity(te, hit.getLocation(), hit.glancingMod()) );
-            }
-            crits = 0;
+            // unless the section destroyed in a previous phase?
+            if (te.getInternal(hit) != IArmorState.ARMOR_DESTROYED) {
+                for (int i = 0; i < crits; i++) {
+                    desc.append( "\n" )
+                        .append( criticalEntity(te, hit.getLocation(), hit.glancingMod()) );
+                }
+                crits = 0;
 
-            for (int i = 0; i < specCrits; i++) {
-                desc.append( "\n" )
-                    .append( criticalEntity(te, hit.getLocation(),
-                                            hit.getSpecCritMod()+hit.glancingMod()) );
+                for (int i = 0; i < specCrits; i++) {
+                    desc.append( "\n" )
+                        .append( criticalEntity(te, hit.getLocation(),
+                                                hit.getSpecCritMod()+hit.glancingMod()) );
+                }
+                specCrits = 0;
             }
-            specCrits = 0;
 
             if (te instanceof Mech && hit.getLocation() == Mech.LOC_HEAD) {
                 desc.append( "\n" ).append( damageCrew(te, 1) );
@@ -13814,8 +13905,16 @@ implements Runnable, ConnectionHandler {
 
     }
     private boolean isEligibleForOffboard(Entity entity) {
-        return false;//only things w/ tag are, and we don't yet have TAG.
+        for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
+              Mounted mounted = (Mounted)i.nextElement();
+              WeaponType wtype = (WeaponType)mounted.getType();
+              if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()) {
+                  return true;
+              }
+          }
+        return false;//only things w/ tag are
     }
+
 
     /**
      * resolve Indirect Artillery Attacks for this turn
@@ -13840,73 +13939,79 @@ implements Runnable, ConnectionHandler {
                 final int playerId = aaa.getPlayerId();
                 Entity bestSpotter=null;
 
-                // Are there any valid spotters?
-                if ( null != spottersBefore ) {
+                // This section only applies to artillery aimed at a hex (not homing arrow IV)
+                if(target.getTargetType() == Targetable.TYPE_HEX_FASCAM ||
+                target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY ||
+                target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV ||
+                target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                    // Are there any valid spotters?
+                    if ( null != spottersBefore ) {
 
-                    //fetch possible spotters now
-                    Enumeration spottersAfter=
-                        game.getSelectedEntities( new EntitySelector() {
-                                public int player = playerId;
-                                public Targetable targ = target;
-                                public boolean accept(Entity entity) {
-                                    Integer id = new Integer( entity.getId() );
-                                    if ( player == entity.getOwnerId() &&
-                                         spottersBefore.contains(id) &&
-                                         !( LosEffects.calculateLos
-                                            (game, entity.getId(), targ)
-                                            ).isBlocked() &&
-                                         entity.isActive() &&
-                                         !entity.isINarcedWith(INarcPod.HAYWIRE)) {
-                                        return true;
+                        //fetch possible spotters now
+                        Enumeration spottersAfter=
+                            game.getSelectedEntities( new EntitySelector() {
+                                    public int player = playerId;
+                                    public Targetable targ = target;
+                                    public boolean accept(Entity entity) {
+                                        Integer id = new Integer( entity.getId() );
+                                        if ( player == entity.getOwnerId() &&
+                                             spottersBefore.contains(id) &&
+                                             !( LosEffects.calculateLos
+                                                (game, entity.getId(), targ)
+                                                ).isBlocked() &&
+                                             entity.isActive() &&
+                                             !entity.isINarcedWith(INarcPod.HAYWIRE)) {
+                                            return true;
+                                        }
+                                        return false;
                                     }
-                                    return false;
-                                }
-                            } );
+                                } );
 
-                    // Out of any valid spotters, pick the best.
-                    while ( spottersAfter.hasMoreElements() ) {
-                        Entity ent = (Entity) spottersAfter.nextElement();
-                        if ( bestSpotter == null || ent.crew.getGunnery() <
-                             bestSpotter.crew.getGunnery() ){
-                            bestSpotter = ent;
+                        // Out of any valid spotters, pick the best.
+                        while ( spottersAfter.hasMoreElements() ) {
+                            Entity ent = (Entity) spottersAfter.nextElement();
+                            if ( bestSpotter == null || ent.crew.getGunnery() <
+                                 bestSpotter.crew.getGunnery() ){
+                                bestSpotter = ent;
+                            }
                         }
+
+                    } // End have-valid-spotters
+
+                    //If at least one valid spotter, then get the benefits thereof.
+                    if (null != bestSpotter) {
+                        int mod = (bestSpotter.crew.getGunnery() - 4) / 2;
+                        wr.toHit.addModifier(mod, "Spotting modifier");
                     }
 
-                } // End have-valid-spotters
+                    // Is the attacker still alive?
+                    Entity artyAttacker = wr.waa.getEntity( game );
+                    if (null != artyAttacker) {
 
-                //If at least one valid spotter, then get the benefits thereof.
-                if (null != bestSpotter) {
-                    int mod = (bestSpotter.crew.getGunnery() - 4) / 2;
-                    wr.toHit.addModifier(mod, "Spotting modifier");
+                        // Get the arty weapon.
+                        Mounted weapon = artyAttacker.getEquipment
+                            ( wr.waa.getWeaponId() );
+
+                        // If the shot hit the target hex, then all subsequent
+                        // fire will hit the hex automatically.
+                        if(wr.roll >= wr.toHit.getValue()) {
+                            artyAttacker.aTracker.setModifier
+                                ( weapon,
+                                  ToHitData.AUTOMATIC_SUCCESS,
+                                  targetPos );
+                        }
+                        // If the shot missed, but was adjusted by a
+                        // spotter, future shots are more likely to hit.
+                        else if (null != bestSpotter) {
+                            artyAttacker.aTracker.setModifier
+                                ( weapon,
+                                  artyAttacker.aTracker.getModifier
+                                  ( weapon, targetPos ) - 1,
+                                  targetPos );
+                        }
+
+                    } // End artyAttacker-alive
                 }
-
-                // Is the attacker still alive?
-                Entity artyAttacker = wr.waa.getEntity( game );
-                if (null != artyAttacker) {
-
-                    // Get the arty weapon.
-                    Mounted weapon = artyAttacker.getEquipment
-                        ( wr.waa.getWeaponId() );
-
-                    // If the shot hit the target hex, then all subsequent
-                    // fire will hit the hex automatically.
-                    if(wr.roll >= wr.toHit.getValue()) {
-                        artyAttacker.aTracker.setModifier
-                            ( weapon,
-                              ToHitData.AUTOMATIC_SUCCESS,
-                              targetPos );
-                    }
-                    // If the shot missed, but was adjusted by a
-                    // spotter, future shots are more likely to hit.
-                    else if (null != bestSpotter) {
-                        artyAttacker.aTracker.setModifier
-                            ( weapon,
-                              artyAttacker.aTracker.getModifier
-                              ( weapon, targetPos ) - 1,
-                              targetPos );
-                    }
-
-                } // End artyAttacker-alive
 
                 // Schedule this attack to be resolved.
                 results.addElement(wr);

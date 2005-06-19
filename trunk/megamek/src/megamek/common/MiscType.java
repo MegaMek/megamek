@@ -47,7 +47,6 @@ public class MiscType extends EquipmentType {
     public static final int     F_TARGCOMP          = 0x4000;
     //public static final int     F_OTHER             = 0x8000;
     public static final int     F_BAP               = 0x00010000;
-    public static final int     F_TAG               = 0x00020000;
     public static final int     F_BOARDING_CLAW     = 0x00040000;
     public static final int     F_ASSAULT_CLAW      = 0x00080000;
     public static final int     F_FIRE_RESISTANT    = 0x00100000;
@@ -294,10 +293,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createBeagleActiveProbe());
         EquipmentType.addType(createCLActiveProbe());
         EquipmentType.addType(createCLLightActiveProbe());
-        EquipmentType.addType(createISTAG());
-        EquipmentType.addType(createISLightTAG());
-        EquipmentType.addType(createCLTAG());
-        EquipmentType.addType(createCLLightTAG());
         EquipmentType.addType(createISAPPod());
         EquipmentType.addType(createCLAPPod());
         EquipmentType.addType(createSword());
@@ -1078,70 +1073,6 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 7;
-        
-        return misc;
-    }
-
-    public static MiscType createISTAG() {
-        MiscType misc = new MiscType();
-        
-        misc.name = "IS TAG";
-        misc.setInternalName("ISTAG");
-        misc.addLookupName("IS TAG");
-        misc.tonnage = 1;
-        misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
-        misc.flags |= F_TAG;
-        misc.bv = 0;
-        
-        return misc;
-    }
-
-    public static MiscType createISLightTAG() {
-        MiscType misc = new MiscType();
-        
-        misc.name = "IS Light TAG";
-        misc.setInternalName("ISLightTAG");
-        misc.addLookupName("Light TAG");
-        misc.tonnage = 0.5f;
-        misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
-        misc.flags |= F_TAG;
-        misc.bv = 0;
-        
-        return misc;
-    }
-
-    public static MiscType createCLTAG() {
-        MiscType misc = new MiscType();
-        
-        misc.name = "Clan TAG";
-        misc.setInternalName("CLTAG");
-        misc.addLookupName("Clan TAG");
-        misc.tonnage = 1;
-        misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
-        misc.flags |= F_TAG;
-        misc.bv = 0;
-        
-        return misc;
-    }
-
-    public static MiscType createCLLightTAG() {
-        MiscType misc = new MiscType();
-        
-        misc.name = "Clan Light TAG";
-        misc.setInternalName("CLLightTAG");
-        misc.addLookupName("Clan Light TAG");
-        misc.tonnage = 0.5f;
-        misc.criticals = 1;
-        misc.hittable = true;
-        misc.spreadable = false;
-        misc.flags |= F_TAG;
-        misc.bv = 0;
         
         return misc;
     }

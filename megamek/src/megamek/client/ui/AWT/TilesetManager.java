@@ -82,8 +82,12 @@ public class TilesetManager {
     public TilesetManager(Component comp) throws java.io.IOException {
         this.comp = comp;
         this.tracker = new MediaTracker(comp);
-        camos = new DirectoryItems( new File("data/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
-                                    ImageFileFactory.getInstance() );
+        try {
+            camos = new DirectoryItems( new File("data/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
+                                        ImageFileFactory.getInstance() );
+        } catch (Exception e) {
+            camos = null;
+        }
         mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
         wreckTileset.loadFromFile("wreckset.txt"); //$NON-NLS-1$
         hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());

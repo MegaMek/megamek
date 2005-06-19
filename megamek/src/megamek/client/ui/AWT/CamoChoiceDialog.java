@@ -220,8 +220,12 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         String name;
 
         // Parse the camo directory.
-        camos = new DirectoryItems( new File("data/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
-                                    ImageFileFactory.getInstance() );
+        try {
+            camos = new DirectoryItems( new File("data/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
+                                        ImageFileFactory.getInstance() );
+        } catch (Exception e) {
+            camos = null;
+        }
 
         // Close the window, when the WM says to.
         addWindowListener(new WindowAdapter() {
@@ -244,14 +248,16 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         // Make sure the "no camo" and "root camo" are at top.
         // Only add the "root camo" category if it contains items.
         categories.addItem( Player.NO_CAMO );
-        if ( camos.getItemNames("").hasMoreElements() ) { //$NON-NLS-1$
-            categories.addItem( Player.ROOT_CAMO );
-        }
-        names = camos.getCategoryNames();
-        while ( names.hasMoreElements() ) {
-            name = (String) names.nextElement();
-            if ( !name.equals("") ) { //$NON-NLS-1$
-                categories.addItem( name );
+        if (camos != null) {
+            if ( camos.getItemNames("").hasMoreElements() ) { //$NON-NLS-1$
+                categories.addItem( Player.ROOT_CAMO );
+            }
+            names = camos.getCategoryNames();
+            while ( names.hasMoreElements() ) {
+                name = (String) names.nextElement();
+                if ( !name.equals("") ) { //$NON-NLS-1$
+                    categories.addItem( name );
+                }
             }
         }
 

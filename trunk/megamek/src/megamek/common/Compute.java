@@ -1152,7 +1152,7 @@ public class Compute
         }
         final IHex hex = game.getBoard().getHex(t.getPosition());
         
-        boolean isVTOL = (entityTarget.getElevation() >= hex.ceiling());
+        boolean isVTOL = ((entityTarget != null) && (hex != null))?(entityTarget.getElevation() >= hex.ceiling()):false;
 
         ToHitData toHit = new ToHitData();
         

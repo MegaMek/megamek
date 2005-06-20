@@ -15,6 +15,7 @@ v0.29.82 (CVS)
 + Bug 1220797: NPE in deployment phase
 + Bug 1223864: VTOL displays mis-named
 + Extracted common functions for several DisplayMapSets into a common file.
++ Bug 1224051: Capitalization matters in names of Triton 2's ER Micro Lasers.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

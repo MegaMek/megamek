@@ -193,6 +193,7 @@ class ArmorPanel  extends PicMap
     private InfantryMapSet infantry;
     private BattleArmorMapSet battleArmor;
     private ProtomechMapSet proto;
+    private VTOLMapSet vtol;
     private int minTopMargin = 0;
     private int minLeftMargin = 0;
     private int minBottomMargin = 0;
@@ -200,6 +201,8 @@ class ArmorPanel  extends PicMap
 
     private static final int minTankTopMargin = 8;
     private static final int minTankLeftMargin = 8;
+    private static final int minVTOLTopMargin = 8;
+    private static final int minVTOLLeftMargin = 8;
     private static final int minMechTopMargin = 18;
     private static final int minMechLeftMargin = 7;
     private static final int minMechBottomMargin = 0;
@@ -214,6 +217,7 @@ class ArmorPanel  extends PicMap
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
         proto = new ProtomechMapSet(this);
+        vtol = new VTOLMapSet(this);
     }
 
     public void onResize(){
@@ -242,6 +246,12 @@ class ArmorPanel  extends PicMap
             minTopMargin = minMechTopMargin;
             minBottomMargin = minMechBottomMargin;
             minRightMargin = minMechRightMargin;
+        } else if (en instanceof VTOL) {
+            ams = (DisplayMapSet) vtol;
+            minLeftMargin = minVTOLLeftMargin;
+            minTopMargin = minVTOLTopMargin;
+            minBottomMargin = minVTOLTopMargin;
+            minRightMargin = minVTOLLeftMargin;
         } else if (en instanceof Tank) {
             ams = (DisplayMapSet) tank;
             minLeftMargin = minTankLeftMargin;

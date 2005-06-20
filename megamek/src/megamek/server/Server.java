@@ -805,11 +805,10 @@ implements Runnable, ConnectionHandler {
               entity.setDone(false);
             }
             
-            // reset spotlights & TAG
+            // reset spotlights
             if(phase == IGame.PHASE_END) {
                 entity.setSpotlightState(false);
                 entity.setIlluminated(false);
-                entity.setTagged(false);
             }
         }
     }
@@ -5682,7 +5681,7 @@ implements Runnable, ConnectionHandler {
 
       // adjust BTH for homing shots
       if(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING) {
-          if(entityTarget != null && entityTarget.getTagged()) {
+          if(entityTarget != null && entityTarget.getTaggedBy() != -1) {
               toHit = new ToHitData(4, "homing ammo");
           } else {
               toHit = new ToHitData(TargetRoll.AUTOMATIC_FAIL, "target not tagged");
@@ -6232,7 +6231,7 @@ implements Runnable, ConnectionHandler {
             if(entityTarget == null) {
                 phaseReport.append("hits, but doesn't do anything.\n");
             } else {
-                entityTarget.setTagged(true);
+                entityTarget.setTaggedBy(ae.getId());
                 phaseReport.append("hits, target tagged.\n");
             }
             return !bMissed;
@@ -6695,8 +6694,9 @@ implements Runnable, ConnectionHandler {
         //Arrow IV homing hits single location, like an AC20
         if(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING) {
             nDamPerHit = wtype.getRackSize();
-            if(wr.artyAttackerCoords!=null && entityTarget!=null) {
-                toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entityTarget.getPosition(),entityTarget.getFacing(),entityTarget instanceof Tank));
+            if (entityTarget!=null && entityTarget.getTaggedBy() != -1) {
+                toHit.setSideTable(Compute.targetSideTable
+                        (game.getEntity(entityTarget.getTaggedBy()), entityTarget));
             }
         }
 
@@ -7246,10 +7246,10 @@ implements Runnable, ConnectionHandler {
                     for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
                         Entity entity = (Entity)impactHexHits.nextElement();
 
-                        if(entity == entityTarget) continue;
+                        if (entity == entityTarget) continue;
             
-                        if(wr.artyAttackerCoords!=null) {
-                            toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
+                        if (wr.artyAttackerCoords != null) {
+                            toHit.setSideTable(Compute.targetSideTable(game.getEntity(entityTarget.getTaggedBy()),entity));
                         }
                         HitData hit = entity.rollHitLocation
                             ( toHit.getHitTable(),

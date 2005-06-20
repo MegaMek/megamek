@@ -596,6 +596,12 @@ public class Game implements Serializable, IGame
             case PHASE_LOUNGE :
                 reset();
                 break;
+            case IGame.PHASE_MOVEMENT :
+                resetActions();
+                break;
+            case IGame.PHASE_FIRING :
+                resetActions();
+                break;
             case IGame.PHASE_PHYSICAL :
                 resetActions();
                 break;

@@ -313,12 +313,14 @@ public class MiniMap extends Canvas  {
 
             // draw Drop Zone
             if (null!=m_client && null!=m_game) {   // sanity check!
-                if (IGame.PHASE_DEPLOYMENT == m_game.getPhase()
-                    && m_game.getTurn().getPlayerNum() == m_client.getLocalPlayer().getId()) {
-                    for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
-                        for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
-                            if (m_game.getBoard().isLegalDeployment(new Coords(j,k), m_client.getLocalPlayer())) {
-                                paintSingleCoordBorder(g,j,k,Color.yellow);
+                if (IGame.PHASE_DEPLOYMENT == m_game.getPhase()) {
+                    GameTurn turn = m_game.getTurn();
+                    if (turn != null && turn.getPlayerNum() == m_client.getLocalPlayer().getId()) {
+                        for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
+                            for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
+                                if (m_game.getBoard().isLegalDeployment(new Coords(j,k), m_client.getLocalPlayer())) {
+                                    paintSingleCoordBorder(g,j,k,Color.yellow);
+                                }
                             }
                         }
                     }

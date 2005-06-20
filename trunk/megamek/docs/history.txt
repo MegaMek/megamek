@@ -12,6 +12,7 @@ v0.29.82 (CVS)
 + Bug 1223837: ArrayIndexOutOfBounds exception when verifying naval units.
 + Bug 1223841: Do not allow TAGging during DFA.
 + Prevent NPE when not targeting units.
++ Bug 1220797: NPE in deployment phase
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

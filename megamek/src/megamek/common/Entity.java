@@ -85,7 +85,7 @@ public abstract class Entity
     protected boolean           illuminated = false;
     protected boolean           spotlightIsActive = false;
     protected boolean           stuckInSwamp = false;
-    protected boolean           tagged = false;
+    protected int               taggedBy = -1;
     
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -2396,6 +2396,7 @@ public abstract class Entity
         hitThisRoundByAntiTSM = false;
         hitBySwarmsEntity = new Vector();
         hitBySwarmsWeapon = new Vector();
+        setTaggedBy(-1);
 
         setArmsFlipped(false);
         setDisplacementAttack(null);
@@ -4379,11 +4380,11 @@ public abstract class Entity
         }
     }
 
-    public void setTagged(boolean tag) {
-        tagged = tag;
+    public void setTaggedBy(int tagger) {
+        taggedBy = tagger;
     }
 
-    public boolean getTagged() {
-        return tagged;
+    public int getTaggedBy() {
+        return taggedBy;
     }
 }

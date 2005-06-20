@@ -705,7 +705,7 @@ public class WeaponAttackAction
             // semiguided ammo negates this modifier, if TAG succeeded    
             if (atype != null && atype.getAmmoType() == AmmoType.T_LRM &&
                 atype.getMunitionType() == AmmoType.M_SEMIGUIDED &&
-                te.getTagged()) {
+                te.getTaggedBy() != -1) {
                 int nAdjust = thTemp.getValue();
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, "Semi-guided ammo vs tagged target"));

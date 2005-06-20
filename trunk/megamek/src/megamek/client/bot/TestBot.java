@@ -21,7 +21,6 @@ import megamek.common.*;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.ToHitData;

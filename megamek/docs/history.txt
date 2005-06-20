@@ -18,6 +18,10 @@ v0.29.82 (CVS)
 + Bug 1224051: Capitalization matters in names of Triton 2's ER Micro Lasers.
 + Bug 1223867: TAG attack arrows remain on map
 + Bug 1224230: Homing Arrow IV uses wrong attack direction
++ Refactor of elevation from VTOL into Entity, to ensure that only one
+    version of getElevation exists and always returns a correct value.
++ Change of expectation of elevation value (vs. zero, vs. floor, vs.
+    ceiling) to match in various places it's called.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

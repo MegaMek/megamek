@@ -2449,8 +2449,8 @@ implements Runnable, ConnectionHandler {
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
         int curVTOLElevation=0;
-        if(entity instanceof VTOL) {
-            curVTOLElevation=((VTOL)entity).getElevation();
+        if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            curVTOLElevation = entity.getElevation();
         }
         int distance = 0;
         int mpUsed = 0;
@@ -3124,7 +3124,7 @@ implements Runnable, ConnectionHandler {
                         
                     } else {
                         phaseReport.append(".\n");
-                        ((VTOL)entity).setElevation(((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
+                        entity.setElevation(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
                         curPos=newPos;
                     }
                     
@@ -3464,8 +3464,8 @@ implements Runnable, ConnectionHandler {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        if(entity instanceof VTOL) {
-            ((VTOL)entity).setElevation(curVTOLElevation);
+        if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
+            entity.setElevation(curVTOLElevation);
         }
         
         
@@ -4664,15 +4664,16 @@ implements Runnable, ConnectionHandler {
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
         if(entity instanceof VTOL) {
-            //we should let players pick, but this simplifies a lot.
-            ((VTOL)entity).setElevation(game.getBoard().getHex(coords).ceiling()-game.getBoard().getHex(coords).surface()+1);
+            // We should let players pick, but this simplifies a lot.
+            // Only do it for VTOLs, though; assume everything else is on the ground.
+            entity.setElevation(game.getBoard().getHex(coords).ceiling()-game.getBoard().getHex(coords).surface()+1);
             while ((Compute.stackingViolation(game, entity, coords, null) != null) && (entity.getElevation() <= 50)) {
-                ((VTOL)entity).setElevation(entity.getElevation() + 1);
+                entity.setElevation(entity.getElevation() + 1);
             }
             if (entity.getElevation() > 50) {
                 throw new IllegalStateException("Entity #" + entity.getId() + " appears to be in an infinite loop trying to get a legal elevation.");
             }
-        }
+        } // TODO: Implement this for Submarines.  Assume they're at the surface?
         entity.setDone(true);
         entity.setDeployed(true);
         entityUpdate(entity.getId());
@@ -10415,86 +10416,89 @@ implements Runnable, ConnectionHandler {
     private String crashVTOL(VTOL en, boolean sideSlipCrash, int hexesMoved,Coords crashPos, int crashElevation,int impactSide) {
         StringBuffer desc = new StringBuffer();
         if(!sideSlipCrash) {
-        desc.append(en.getDisplayName() + " has lost its movement and crashes.  ");
-        int fall=crashElevation- game.getBoard().getHex(crashPos).ceiling();
-        if(game.getBoard().getHex(crashPos).containsTerrain(Terrains.WOODS)) {
-            fall+=2;//HACK
-        }
-        if(fall==0) {
-            desc.append("However, it's already on the ground, so no harm done.");
-        } else {
-            desc.append("It plummets ").append(fall).append(" levels to the ground.\n");
-            IHex fallHex = game.getBoard().getHex(crashPos);           
-            // facing after fall
-            String side;
-            int table;
-            int facing = Compute.d6();
-            switch(facing) {
-                case 1:
-                case 2:
-                    side = "right side";
-                    table = ToHitData.SIDE_RIGHT;
-                    break;
-                case 3:
-                    side = "rear";
-                    table = ToHitData.SIDE_REAR;
-                    break;
-                case 4:
-                case 5:
-                    side = "left side";
-                    table = ToHitData.SIDE_LEFT;
-                    break;
-                case 0:
-                default:
-                    side = "front";
-                    table = ToHitData.SIDE_FRONT;
+            desc.append(en.getDisplayName() + " has lost its movement and crashes.  ");
+            int fall = crashElevation;
+/*
+            int fall=crashElevation- game.getBoard().getHex(crashPos).ceiling();
+            if(game.getBoard().getHex(crashPos).containsTerrain(Terrains.WOODS)) {
+                fall+=2;//HACK
             }
-            
-
-            boolean waterFall= fallHex.containsTerrain(Terrains.WATER);
-            if(waterFall) {
-                desc.append("It falls into water and is destroyed.");
-                en.destroy("Fell into water",false, false);//not sure, is this salvagable?
-            }
-            
-            // calculate damage for hitting the surface
-            int damage = (int)Math.round(en.getWeight() / 10.0) * (fall + 1);
-            
-            // adjust damage for gravity
-            damage = (int)Math.round(damage * game.getOptions().floatOption("gravity"));
-            // report falling
-            phaseReport.append("    " ).append( en.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage.");
-            en.setFacing((en.getFacing() + (facing - 1)) % 6);
-            if (fallHex.terrainLevel(Terrains.WATER) > 0) {
-                for (int loop=0; loop< en.locations();loop++){
-                    en.setLocationStatus(loop, ILocationExposureStatus.WET);
+*/
+            if(fall==0) {
+                desc.append("However, it's already on the ground, so no harm done.");
+            } else {
+                desc.append("It plummets ").append(fall).append(" levels to the ground.\n");
+                IHex fallHex = game.getBoard().getHex(crashPos);           
+                // facing after fall
+                String side;
+                int table;
+                int facing = Compute.d6();
+                switch(facing) {
+                    case 1:
+                    case 2:
+                        side = "right side";
+                        table = ToHitData.SIDE_RIGHT;
+                        break;
+                    case 3:
+                        side = "rear";
+                        table = ToHitData.SIDE_REAR;
+                        break;
+                    case 4:
+                    case 5:
+                        side = "left side";
+                        table = ToHitData.SIDE_LEFT;
+                        break;
+                    case 0:
+                    default:
+                        side = "front";
+                        table = ToHitData.SIDE_FRONT;
                 }
-            }
-            boolean exploded=false;
-
-            // standard damage loop
-            while (damage > 0) {
-                int cluster = Math.min(5, damage);
-                HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
-                int ISBefore[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};//hack?
-                desc.append(damageEntity(en, hit, cluster));
-                int ISAfter[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};
-                for(int x=0;x<=3;x++) {
-                    if(ISBefore[x]!=ISAfter[x]) {
-                        exploded=true;
+                
+    
+                boolean waterFall= fallHex.containsTerrain(Terrains.WATER);
+                if(waterFall) {
+                    desc.append("It falls into water and is destroyed.");
+                    en.destroy("Fell into water",false, false);//not sure, is this salvagable?
+                }
+                
+                // calculate damage for hitting the surface
+                int damage = (int)Math.round(en.getWeight() / 10.0) * (fall + 1);
+                
+                // adjust damage for gravity
+                damage = (int)Math.round(damage * game.getOptions().floatOption("gravity"));
+                // report falling
+                phaseReport.append("    " ).append( en.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage.");
+                en.setFacing((en.getFacing() + (facing - 1)) % 6);
+                if (fallHex.terrainLevel(Terrains.WATER) > 0) {
+                    for (int loop=0; loop< en.locations();loop++){
+                        en.setLocationStatus(loop, ILocationExposureStatus.WET);
                     }
                 }
-                damage -= cluster;
+                boolean exploded=false;
+    
+                // standard damage loop
+                while (damage > 0) {
+                    int cluster = Math.min(5, damage);
+                    HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
+                    int ISBefore[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};//hack?
+                    desc.append(damageEntity(en, hit, cluster));
+                    int ISAfter[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};
+                    for(int x=0;x<=3;x++) {
+                        if(ISBefore[x]!=ISAfter[x]) {
+                            exploded=true;
+                        }
+                    }
+                    damage -= cluster;
+                }
+                if(exploded) {
+                    desc.append(en.getDisplayName() + " takes internal damage from a fall and explodes.\n");
+                    desc.append(explodeVTOL(en));
+                }
+    
+                //check for location exposure
+                doSetLocationsExposure(en, fallHex, fallHex.hasPavement(), false);
+                en.setElevation(0);
             }
-            if(exploded) {
-                desc.append(en.getDisplayName() + " takes internal damage from a fall and explodes.\n");
-                desc.append(explodeVTOL(en));
-            }
-
-            //check for location exposure
-            doSetLocationsExposure(en, fallHex, fallHex.hasPavement(), false);
-            en.setElevation(0);
-        }
         } else {
             en.setElevation(0);//considered landed in the hex.
             desc.append(en.getDisplayName() + " has crashed into the ground due to a sideslip.\n");

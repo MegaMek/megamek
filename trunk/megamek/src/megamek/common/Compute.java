@@ -231,15 +231,15 @@ public class Compute
         
         // check for swamp
         if (destHex.containsTerrain(Terrains.SWAMP)
-            && !(entity instanceof VTOL)
+            && !(entity.getElevation() > destHex.getElevation())
             && entity.getMovementMode() != IEntityMovementMode.HOVER
             && movementType != IEntityMovementType.MOVE_JUMP) {
             return true;
         }
 
-        // Check for water unless we're a hovercraft or naval or using a bridge.
+        // Check for water unless we're a hovercraft or naval or using a bridge or flying.
         if (movementType != IEntityMovementType.MOVE_JUMP
-            && !(entity instanceof VTOL)
+            && !(entity.getElevation() > destHex.ceiling())
             && ((entity.getMovementMode() != IEntityMovementMode.HOVER)
                 || (entity.getMovementMode() != IEntityMovementMode.NAVAL)
                 || (entity.getMovementMode() != IEntityMovementMode.HYDROFOIL)
@@ -1152,7 +1152,7 @@ public class Compute
         }
         final IHex hex = game.getBoard().getHex(t.getPosition());
         
-        boolean isVTOL = entityTarget==null? false : (entityTarget instanceof VTOL);
+        boolean isVTOL = (entityTarget.getElevation() >= hex.ceiling());
 
         ToHitData toHit = new ToHitData();
         
@@ -1193,14 +1193,12 @@ public class Compute
             } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
                 toHit.addModifier(2, "target in heavy smoke");
             }
-            
             if(!isVTOL) {
-            
-            if (hex.terrainLevel(Terrains.WOODS) == 1) {
-                toHit.addModifier(1, "target in light woods");
-            } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
-                toHit.addModifier(2, "target in heavy woods");
-            }
+                if (hex.terrainLevel(Terrains.WOODS) == 1) {
+                    toHit.addModifier(1, "target in light woods");
+                } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
+                    toHit.addModifier(2, "target in heavy woods");
+                }
             }
             return toHit;
         }

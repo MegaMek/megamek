@@ -25,12 +25,6 @@ import java.util.Enumeration;
  */
 public class VTOL extends Tank {
     
-    //this is the elevation of the VTOL--with respect to the surface of the hex it's in.
-    //In other words, this may need to *change* as it moves from hex to hex--without it going up or down.
-    //I.e.--level 0 hex, elevation 5--it moves to a level 2 hex, without going up or down.
-    //elevation is now 3.
-    private int elevation;
-
     public static final int LOC_ROTOR = 5;  //will this cause problems w/r/t turrets?
     
     protected static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR", "RO" };
@@ -55,26 +49,6 @@ public class VTOL extends Tank {
         PilotingRollData roll = getBasePilotingRoll();
         roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: VTOLs can't skid");
         return roll;
-    }
-    
-    public boolean canGoDown() {
-        return canGoDown(elevation,getPosition());
-    }
-    
-    //is it possible to go down, or are we landed/just above the water/treeline?
-    //assuming passed elevation.
-    public boolean canGoDown(int assumedElevation,Coords assumedPos) {
-        boolean inWaterOrWoods = false;
-        IHex hex = getGame().getBoard().getHex(assumedPos);
-        int absoluteElevation = assumedElevation+hex.surface();
-        if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER)) {
-            inWaterOrWoods=true;
-        }
-        if(inWaterOrWoods) {
-            return ((absoluteElevation-1)>hex.ceiling());
-        } else {
-            return ((absoluteElevation-1)>=hex.ceiling());
-        }
     }
 
     public PilotingRollData checkSideSlip(int moveType, IHex prevHex,
@@ -279,31 +253,6 @@ public class VTOL extends Tank {
      */
     public boolean canCharge() {
         return false;
-    }
-
-    public int elevationOccupied(IHex hex) {
-        return (hex.surface() + elevation);
-    }
-    
-    public int getElevation() {
-        return elevation;
-    }
-    
-    public void setElevation(int elevation) {
-        this.elevation=elevation;
-    }
-    
-    
-    
-    //A helper function for fiddling with elevation.
-    //Takes the current hex, a hex being moved to, returns the elevation the VTOL will be considered to be at w/r/t it's new hex.
-    public int calcElevation(IHex current, IHex next,int assumedElevation) {
-        int absoluteElevation = current.surface()+assumedElevation;
-        return (absoluteElevation-next.surface());
-    }
-
-    public int calcElevation(IHex current, IHex next) {
-        return calcElevation(current,next,elevation);
     }
 
     /* TODO:make this work for VTOLs

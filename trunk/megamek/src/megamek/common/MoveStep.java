@@ -289,7 +289,7 @@ public class MoveStep implements Serializable {
                     && entity.getMovementMode() != IEntityMovementMode.NAVAL
                     && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
                     && entity.getMovementMode() != IEntityMovementMode.SUBMARINE
-                    && !(entity instanceof VTOL)) {
+                    && !(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -297,8 +297,8 @@ public class MoveStep implements Serializable {
                     setDistance(0); //start over after shifting gears
                 }
                 addDistance(1);
-                if(entity instanceof VTOL) {
-                    setElevation(((VTOL)entity).calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation));
+                if(entity.getMovementMode() == IEntityMovementMode.VTOL) {
+                    setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation));
                 }
                 break;
             case MovePath.STEP_LATERAL_LEFT :
@@ -338,7 +338,7 @@ public class MoveStep implements Serializable {
                 // check for water
                 if (!isPavementStep() &&
                     game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0 &&
-                    !(entity instanceof VTOL)) {
+                    !(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -448,7 +448,7 @@ public class MoveStep implements Serializable {
         this.distance = entity.delta_distance;
         this.isProne = entity.isProne();
         
-        this.elevation = (entity instanceof VTOL) ? ((VTOL)entity).getElevation() : -999;
+        this.elevation = (entity.getMovementMode() == IEntityMovementMode.VTOL) ? entity.getElevation() : -999;
 
         // check pavement
         if (position != null) {
@@ -1078,7 +1078,7 @@ public class MoveStep implements Serializable {
         }
         
         // VTOLs pay 1 for everything
-        if (parent.getEntity() instanceof VTOL) {
+        if (parent.getEntity().getMovementMode() == IEntityMovementMode.VTOL) {
             return;
         }
 
@@ -1289,7 +1289,7 @@ public class MoveStep implements Serializable {
             && destHex.terrainLevel(Terrains.WATER) > 0
             && !firstStep
             && !isPavementStep
-            && !(entity instanceof VTOL)) {
+            && !(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
             return false;
         }
 
@@ -1347,14 +1347,14 @@ public class MoveStep implements Serializable {
         }
         if( type == MovePath.STEP_UP) {
             //only VTOLs have Z movement.
-            return (entity instanceof VTOL)? true : false;
+            return (entity.getMovementMode() == IEntityMovementMode.VTOL)? true : false;
         }
         if( type == MovePath.STEP_DOWN) {
             //only VTOLs have Z movement.
-            if(!(entity instanceof VTOL)) {
+            if(!(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
                 return false;
             }
-            if(!(((VTOL)entity).canGoDown(elevation+1,getPosition()))) {
+            if(!(entity.canGoDown(elevation+1,getPosition()))) {
                 return false;//We can't intentionally crash.
             }
         }
@@ -1367,11 +1367,12 @@ public class MoveStep implements Serializable {
                     return false;
                 }
             }
-            if(type == MovePath.STEP_BACKWARDS || type == MovePath.STEP_FORWARDS) {
-                if(elevation<=(destHex.ceiling()-destHex.surface())) {
-                    return false;//can't fly into woods or a cliff face
-                    }
-            }
+        }
+        if ((entity.getMovementMode() == IEntityMovementMode.VTOL)
+                && (type == MovePath.STEP_BACKWARDS || type == MovePath.STEP_FORWARDS)) {
+            if(elevation<=(destHex.ceiling()-destHex.surface())) {
+                return false;//can't fly into woods or a cliff face
+                }
         }
 
         return true;

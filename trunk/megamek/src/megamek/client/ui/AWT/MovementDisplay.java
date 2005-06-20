@@ -1027,9 +1027,9 @@ public class MovementDisplay
         if(null == ce) {
             return;
         }
-        if(ce instanceof VTOL) {
+        if(ce.getMovementMode() == IEntityMovementMode.VTOL) {
             setRaiseEnabled(true);
-            setLowerEnabled(((VTOL)ce).canGoDown(cmd.getFinalElevation(),cmd.getFinalCoords())? true : false);
+            setLowerEnabled(ce.canGoDown(cmd.getFinalElevation(),cmd.getFinalCoords())? true : false);
         } else {
             setRaiseEnabled(false);
             setLowerEnabled(false);

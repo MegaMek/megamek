@@ -641,7 +641,7 @@ public class AmmoType extends EquipmentType {
                                                    1, M_SWARM, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Swarm-I",
                                                    1, M_SWARM_I, TechConstants.T_CLAN_LEVEL_2) );
-        munitions.addElement( new MunitionMutator( "vListen-Kill",
+        munitions.addElement( new MunitionMutator( "(Clan) Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );

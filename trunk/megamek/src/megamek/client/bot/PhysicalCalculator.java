@@ -56,10 +56,10 @@ public class PhysicalCalculator {
                     // Meks can kick Vehicles and Infantry, too!
                     double mod = 1.0;
                     if (bestAttack.target instanceof Mech) {
-                        double llarmor =
-                            bestAttack.target.getArmor(Mech.LOC_LLEG) / bestAttack.target.getOArmor(Mech.LOC_LLEG);
-                        double rlarmor =
-                            bestAttack.target.getArmor(Mech.LOC_RLEG) / bestAttack.target.getOArmor(Mech.LOC_RLEG);
+                        double llarmor = (bestAttack.target.getOArmor(Mech.LOC_LLEG) > 0) ?
+                            (bestAttack.target.getArmor(Mech.LOC_LLEG) / bestAttack.target.getOArmor(Mech.LOC_LLEG)):0;
+                        double rlarmor = (bestAttack.target.getOArmor(Mech.LOC_RLEG) > 0) ?
+                            (bestAttack.target.getArmor(Mech.LOC_RLEG) / bestAttack.target.getOArmor(Mech.LOC_RLEG)):0;
                         switch (side) {
                         case ToHitData.SIDE_FRONT :
                             mod = (llarmor + rlarmor) / 2;
@@ -76,24 +76,24 @@ public class PhysicalCalculator {
                     } else if (bestAttack.target instanceof Tank) {
                         switch (side) {
                         case ToHitData.SIDE_FRONT :
-                            mod =
-                                bestAttack.target.getArmor(Tank.LOC_FRONT)
-                                / bestAttack.target.getOArmor(Tank.LOC_FRONT);
+                            mod = (bestAttack.target.getOArmor(Tank.LOC_FRONT) > 0) ?
+                                ((bestAttack.target.getArmor(Tank.LOC_FRONT)
+                                / bestAttack.target.getOArmor(Tank.LOC_FRONT))) : 0;
                             break;
                         case ToHitData.SIDE_LEFT :
-                            mod =
+                            mod = (bestAttack.target.getOArmor(Tank.LOC_LEFT) > 0) ?
                                 bestAttack.target.getArmor(Tank.LOC_LEFT)
-                                / bestAttack.target.getOArmor(Tank.LOC_LEFT);
+                                / bestAttack.target.getOArmor(Tank.LOC_LEFT) : 0;
                             break;
                         case ToHitData.SIDE_RIGHT :
-                            mod =
+                            mod = (bestAttack.target.getOArmor(Tank.LOC_RIGHT) > 0) ?
                                 bestAttack.target.getArmor(Tank.LOC_RIGHT)
-                                / bestAttack.target.getOArmor(Tank.LOC_RIGHT);
+                                / bestAttack.target.getOArmor(Tank.LOC_RIGHT) : 0;
                             break;
                         case ToHitData.SIDE_REAR :
-                            mod =
+                            mod = (bestAttack.target.getOArmor(Tank.LOC_REAR) > 0) ?
                                 bestAttack.target.getArmor(Tank.LOC_REAR)
-                                / bestAttack.target.getOArmor(Tank.LOC_REAR);
+                                / bestAttack.target.getOArmor(Tank.LOC_REAR) : 0;
                             break;
                         }
                     }

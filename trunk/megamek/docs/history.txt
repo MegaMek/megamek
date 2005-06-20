@@ -9,6 +9,7 @@ v0.29.82 (CVS)
 + Bug 1223820: Fixed HMVFile so it should now load surface and hydrofoil
     ships.
 + Corrected Clan Arrow IVs (didn't need prefix, prefix broke some 'mechs)
++ Bug 1223837: ArrayIndexOutOfBounds exception when verifying naval units.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

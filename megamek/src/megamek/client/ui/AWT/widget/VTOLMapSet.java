@@ -20,6 +20,7 @@ import java.util.*;
 import megamek.client.GUIPreferences;
 import megamek.client.Messages;
 import megamek.common.*;
+import megamek.client.util.widget.WidgetUtils;
 
 /**
  * Class which keeps set of all areas required to 
@@ -139,7 +140,7 @@ public class VTOLMapSet implements DisplayMapSet {
             a = t.getArmor(x);
             a0 = t.getOArmor(x);
             vLabels[i].setValue(t.getArmorString(x));
-            setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
         }
         for(int i = 9; i <= 15; i++) {
             switch (i) {
@@ -154,7 +155,7 @@ public class VTOLMapSet implements DisplayMapSet {
             a = t.getInternal(x);
             a0 = t.getOInternal(x);
             vLabels[i].setValue(t.getInternalString(x));
-            setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
         }
     }
     
@@ -190,46 +191,46 @@ public class VTOLMapSet implements DisplayMapSet {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
     
         //Labels for Front view
-        labels[1] = createLabel(Messages.getString("VTOLMapSet.FrontArmor"), fm, Color.black,68,20); //$NON-NLS-1$
-        labels[2] = createLabel(Messages.getString("VTOLMapSet.LS"), fm, Color.black,44,50); //$NON-NLS-1$
-        labels[3] = createLabel(Messages.getString("VTOLMapSet.LS"), fm, Color.black,44,100); //$NON-NLS-1$
-        labels[4] = createLabel(Messages.getString("VTOLMapSet.RS"), fm, Color.black,104,50); //$NON-NLS-1$
-        labels[5] = createLabel(Messages.getString("VTOLMapSet.RS"), fm, Color.black,104,100); //$NON-NLS-1$
-        labels[6] = createLabel(Messages.getString("VTOLMapSet.RearArmor1"), fm, Color.black,76,185); //$NON-NLS-1$
-        labels[7] = createLabel(Messages.getString("VTOLMapSet.RearArmor2"), fm, Color.black,76,195); //$NON-NLS-1$
-        labels[8] = createLabel(Messages.getString("VTOLMapSet.RotorArmor"), fm, Color.black,18,82); //$NON-NLS-1$
-        labels[9] = createLabel(Messages.getString("VTOLMapSet.RotorArmor"), fm, Color.black,123,82); //$NON-NLS-1$
-        labels[10] = createLabel(Messages.getString("VTOLMapSet.FrontIS"), fm, Color.black,68,35); //$NON-NLS-1$
-        labels[11] = createLabel(Messages.getString("VTOLMapSet.LIS1"), fm, Color.black,68,48); //$NON-NLS-1$
-        labels[12] = createLabel(Messages.getString("VTOLMapSet.LIS2"), fm, Color.black,68,57); //$NON-NLS-1$
-        labels[13] = createLabel(Messages.getString("VTOLMapSet.LIS1"), fm, Color.black,68,100); //$NON-NLS-1$
-        labels[14] = createLabel(Messages.getString("VTOLMapSet.LIS2"), fm, Color.black,68,110); //$NON-NLS-1$
-        labels[15] = createLabel(Messages.getString("VTOLMapSet.RIS1"), fm, Color.black,84,48); //$NON-NLS-1$
-        labels[16] = createLabel(Messages.getString("VTOLMapSet.RIS2"), fm, Color.black,84,57); //$NON-NLS-1$
-        labels[17] = createLabel(Messages.getString("VTOLMapSet.RIS1"), fm, Color.black,84,100); //$NON-NLS-1$
-        labels[18] = createLabel(Messages.getString("VTOLMapSet.RIS2"), fm, Color.black,84,110); //$NON-NLS-1$
-        labels[19] = createLabel(Messages.getString("VTOLMapSet.RearIS1"), fm, Color.black,76,152); //$NON-NLS-1$
-        labels[20] = createLabel(Messages.getString("VTOLMapSet.RearIS2"), fm, Color.black,76,161); //$NON-NLS-1$
-        labels[21] = createLabel(Messages.getString("VTOLMapSet.RotorIS"), fm, Color.black,73,82); //$NON-NLS-1$
+        labels[1] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontArmor"), fm, Color.black,68,20); //$NON-NLS-1$
+        labels[2] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"), fm, Color.black,44,50); //$NON-NLS-1$
+        labels[3] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"), fm, Color.black,44,100); //$NON-NLS-1$
+        labels[4] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"), fm, Color.black,104,50); //$NON-NLS-1$
+        labels[5] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"), fm, Color.black,104,100); //$NON-NLS-1$
+        labels[6] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor1"), fm, Color.black,76,185); //$NON-NLS-1$
+        labels[7] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor2"), fm, Color.black,76,195); //$NON-NLS-1$
+        labels[8] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"), fm, Color.black,18,82); //$NON-NLS-1$
+        labels[9] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"), fm, Color.black,123,82); //$NON-NLS-1$
+        labels[10] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontIS"), fm, Color.black,68,35); //$NON-NLS-1$
+        labels[11] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"), fm, Color.black,68,48); //$NON-NLS-1$
+        labels[12] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"), fm, Color.black,68,57); //$NON-NLS-1$
+        labels[13] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"), fm, Color.black,68,100); //$NON-NLS-1$
+        labels[14] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"), fm, Color.black,68,110); //$NON-NLS-1$
+        labels[15] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"), fm, Color.black,84,48); //$NON-NLS-1$
+        labels[16] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"), fm, Color.black,84,57); //$NON-NLS-1$
+        labels[17] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"), fm, Color.black,84,100); //$NON-NLS-1$
+        labels[18] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"), fm, Color.black,84,110); //$NON-NLS-1$
+        labels[19] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS1"), fm, Color.black,76,152); //$NON-NLS-1$
+        labels[20] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS2"), fm, Color.black,76,161); //$NON-NLS-1$
+        labels[21] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorIS"), fm, Color.black,73,82); //$NON-NLS-1$
     
         //Value labels for all parts of mek
         //front 
         fm = comp.getFontMetrics(FONT_VALUE);   
-        vLabels[1] = createValueLabel(101, 22, "", fm); //$NON-NLS-1$ Front
-        vLabels[2] = createValueLabel(44, 65, "", fm); //$NON-NLS-1$ LS
-        vLabels[3] = createValueLabel(44, 115, "", fm); //$NON-NLS-1$ LS
-        vLabels[4] = createValueLabel(105, 65, "", fm); //$NON-NLS-1$ RS
-        vLabels[5] = createValueLabel(105, 115, "", fm); //$NON-NLS-1$ RS
-        vLabels[6] = createValueLabel(76, 207, "", fm); //$NON-NLS-1$ Rear
-        vLabels[7] = createValueLabel(38, 83, "", fm); //$NON-NLS-1$ Rotor
-        vLabels[8] = createValueLabel(143, 83, "", fm); //$NON-NLS-1$ Rotor
-        vLabels[9] = createValueLabel(94, 37, "", fm); //$NON-NLS-1$ Front
-        vLabels[10] = createValueLabel(68, 68, "", fm); //$NON-NLS-1$ LS
-        vLabels[11] = createValueLabel(68, 122, "", fm); //$NON-NLS-1$ LS
-        vLabels[12] = createValueLabel(84, 68, "", fm); //$NON-NLS-1$ RS
-        vLabels[13] = createValueLabel(84, 122, "", fm); //$NON-NLS-1$ RS
-        vLabels[14] = createValueLabel(76, 172, "", fm); //$NON-NLS-1$ Rear
-        vLabels[15] = createValueLabel(98, 83, "", fm); //$NON-NLS-1$ Rotor
+        vLabels[1] = WidgetUtils.createValueLabel(101, 22, "", fm); //$NON-NLS-1$ Front
+        vLabels[2] = WidgetUtils.createValueLabel(44, 65, "", fm); //$NON-NLS-1$ LS
+        vLabels[3] = WidgetUtils.createValueLabel(44, 115, "", fm); //$NON-NLS-1$ LS
+        vLabels[4] = WidgetUtils.createValueLabel(105, 65, "", fm); //$NON-NLS-1$ RS
+        vLabels[5] = WidgetUtils.createValueLabel(105, 115, "", fm); //$NON-NLS-1$ RS
+        vLabels[6] = WidgetUtils.createValueLabel(76, 207, "", fm); //$NON-NLS-1$ Rear
+        vLabels[7] = WidgetUtils.createValueLabel(38, 83, "", fm); //$NON-NLS-1$ Rotor
+        vLabels[8] = WidgetUtils.createValueLabel(143, 83, "", fm); //$NON-NLS-1$ Rotor
+        vLabels[9] = WidgetUtils.createValueLabel(94, 37, "", fm); //$NON-NLS-1$ Front
+        vLabels[10] = WidgetUtils.createValueLabel(68, 68, "", fm); //$NON-NLS-1$ LS
+        vLabels[11] = WidgetUtils.createValueLabel(68, 122, "", fm); //$NON-NLS-1$ LS
+        vLabels[12] = WidgetUtils.createValueLabel(84, 68, "", fm); //$NON-NLS-1$ RS
+        vLabels[13] = WidgetUtils.createValueLabel(84, 122, "", fm); //$NON-NLS-1$ RS
+        vLabels[14] = WidgetUtils.createValueLabel(76, 172, "", fm); //$NON-NLS-1$ Rear
+        vLabels[15] = WidgetUtils.createValueLabel(98, 83, "", fm); //$NON-NLS-1$ Rotor
     }
     
     private void setBackGround() {
@@ -293,44 +294,4 @@ public class VTOLMapSet implements DisplayMapSet {
     
     private void translateAreas() {
     }
-    
-    private PMSimpleLabel createLabel(String s, FontMetrics fm,Color color, int x, int y) {
-        PMSimpleLabel l = new PMSimpleLabel(s, fm, color);
-        centerLabelAt(l,x,y);
-        return l; 
-    }
-    
-    private PMValueLabel createValueLabel(int x, int y, String v, FontMetrics fm) {
-        PMValueLabel l = new PMValueLabel(fm, Color.red);
-        centerLabelAt(l, x, y);
-        l.setValue(v);
-        return l;
-    }
-    
-    private void centerLabelAt(PMSimpleLabel l, int x, int y) {
-        if (l == null) return;
-        Dimension d = l.getSize();
-        l.moveTo( x - d.width/2, y + d.height/2); 
-    }
-    
-    private void setAreaColor(PMSimplePolygonArea ha, PMValueLabel l, double percentRemaining) {
-        if ( percentRemaining <= 0 ){
-            ha.backColor = Color.darkGray.brighter();
-            l.setColor(Color.blue);
-            ha.highlightBorderColor = Color.green;          
-        } else if ( percentRemaining <= .25 ){
-            ha.backColor = Color.red.brighter();
-            l.setColor(Color.blue);
-            ha.highlightBorderColor = Color.green;          
-        } else if ( percentRemaining <= .75 ){
-            ha.backColor = Color.yellow;
-            l.setColor(Color.blue);
-            ha.highlightBorderColor = Color.green;
-        } else {
-            ha.backColor = Color.gray.brighter();
-            l.setColor(Color.red);
-            ha.highlightBorderColor = Color.red;
-        }
-    }
-    
 }

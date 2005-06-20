@@ -20,6 +20,7 @@ import java.util.*;
 import megamek.client.GUIPreferences;
 import megamek.client.Messages;
 import megamek.common.*;
+import megamek.client.util.widget.WidgetUtils;
 
 /**
  * Class which keeps set of all areas required to 
@@ -114,13 +115,13 @@ public class TankMapSet implements DisplayMapSet{
            a = t.getArmor(i);
              a0 = t.getOArmor(i);
              vLabels[i].setValue(t.getArmorString(i));
-             setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
+             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
       }
       for(int i = 7; i < 12; i++){
              a = t.getInternal(i-6);
              a0 = t.getOInternal(i-6);
              vLabels[i].setValue(t.getInternalString(i-6));
-             setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
+             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
       }
       
     }
@@ -155,30 +156,30 @@ public class TankMapSet implements DisplayMapSet{
     FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
     
     //Labels for Front view
-    labels[Tank.LOC_FRONT] = createLabel(Messages.getString("TankMapSet.FrontArmor"), fm, Color.black,65,35); //$NON-NLS-1$
-    labels[Tank.LOC_FRONT + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,63,57); //$NON-NLS-1$
-    labels[Tank.LOC_LEFT] = createLabel(Messages.getString("TankMapSet.LS"), fm, Color.black,19,135); //$NON-NLS-1$
-    labels[Tank.LOC_LEFT + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,49,106); //$NON-NLS-1$
-    labels[Tank.LOC_RIGHT] = createLabel(Messages.getString("TankMapSet.RS"), fm, Color.black,124,135); //$NON-NLS-1$
-    labels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,95,106); //$NON-NLS-1$
-    labels[Tank.LOC_REAR] = createLabel(Messages.getString("TankMapSet.RearArmor"), fm, Color.black,65,257); //$NON-NLS-1$
-    labels[Tank.LOC_REAR + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.RearIS"), fm, Color.black,63,239); //$NON-NLS-1$
-    labels[Tank.LOC_TURRET] = createLabel(Messages.getString("TankMapSet.TurretArmor"), fm, Color.black,73,145); //$NON-NLS-1$
-    labels[Tank.LOC_TURRET + INT_STR_OFFSET] = createLabel(Messages.getString("TankMapSet.TurretIS"), fm, Color.black,73,173); //$NON-NLS-1$
+    labels[Tank.LOC_FRONT] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontArmor"), fm, Color.black,65,35); //$NON-NLS-1$
+    labels[Tank.LOC_FRONT + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,63,57); //$NON-NLS-1$
+    labels[Tank.LOC_LEFT] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LS"), fm, Color.black,19,135); //$NON-NLS-1$
+    labels[Tank.LOC_LEFT + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,49,106); //$NON-NLS-1$
+    labels[Tank.LOC_RIGHT] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RS"), fm, Color.black,124,135); //$NON-NLS-1$
+    labels[Tank.LOC_RIGHT + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,95,106); //$NON-NLS-1$
+    labels[Tank.LOC_REAR] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RearArmor"), fm, Color.black,65,257); //$NON-NLS-1$
+    labels[Tank.LOC_REAR + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RearIS"), fm, Color.black,63,239); //$NON-NLS-1$
+    labels[Tank.LOC_TURRET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.TurretArmor"), fm, Color.black,73,145); //$NON-NLS-1$
+    labels[Tank.LOC_TURRET + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.TurretIS"), fm, Color.black,73,173); //$NON-NLS-1$
     
     //Value labels for all parts of mek
         //front
     fm =  comp.getFontMetrics(FONT_VALUE);   
-    vLabels[Tank.LOC_FRONT] = createValueLabel(101, 37, "", fm); //$NON-NLS-1$
-    vLabels[Tank.LOC_FRONT + INT_STR_OFFSET] = createValueLabel(91, 58, "", fm); //$NON-NLS-1$
-    vLabels[Tank.LOC_LEFT] = createValueLabel(20, 150, "", fm); //$NON-NLS-1$
-    vLabels[Tank.LOC_LEFT + INT_STR_OFFSET] = createValueLabel(44, 121, "", fm); //$NON-NLS-1$
-    vLabels[Tank.LOC_RIGHT] = createValueLabel(125, 150, "", fm); //$NON-NLS-1$
-    vLabels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createValueLabel(102, 121, "", fm); //$NON-NLS-1$
-    vLabels[Tank.LOC_REAR] = createValueLabel(99, 258, "", fm); //$NON-NLS-1$
-    vLabels[Tank.LOC_REAR + INT_STR_OFFSET] = createValueLabel(91, 241, "", fm); //$NON-NLS-1$
-    vLabels[Tank.LOC_TURRET] = createValueLabel(73, 159, "", fm); //$NON-NLS-1$
-    vLabels[Tank.LOC_TURRET + INT_STR_OFFSET] = createValueLabel(73, 193, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_FRONT] = WidgetUtils.createValueLabel(101, 37, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_FRONT + INT_STR_OFFSET] = WidgetUtils.createValueLabel(91, 58, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_LEFT] = WidgetUtils.createValueLabel(20, 150, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_LEFT + INT_STR_OFFSET] = WidgetUtils.createValueLabel(44, 121, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_RIGHT] = WidgetUtils.createValueLabel(125, 150, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_RIGHT + INT_STR_OFFSET] = WidgetUtils.createValueLabel(102, 121, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_REAR] = WidgetUtils.createValueLabel(99, 258, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_REAR + INT_STR_OFFSET] = WidgetUtils.createValueLabel(91, 241, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_TURRET] = WidgetUtils.createValueLabel(73, 159, "", fm); //$NON-NLS-1$
+    vLabels[Tank.LOC_TURRET + INT_STR_OFFSET] = WidgetUtils.createValueLabel(73, 193, "", fm); //$NON-NLS-1$
     }
     
     private void setBackGround(){
@@ -253,44 +254,4 @@ public class TankMapSet implements DisplayMapSet{
         areas[Tank.LOC_TURRET].translate(8,29);
         areas[Tank.LOC_TURRET + INT_STR_OFFSET].translate(8,29);
     }
-    
-    private PMSimpleLabel createLabel(String s, FontMetrics fm,Color color, int x, int y){
-        PMSimpleLabel l = new PMSimpleLabel(s, fm, color);
-        centerLabelAt(l,x,y);
-        return l; 
-    }
-    
-    private PMValueLabel createValueLabel(int x, int y, String v, FontMetrics fm){
-        PMValueLabel l = new PMValueLabel(fm, Color.red);
-        centerLabelAt(l, x, y);
-        l.setValue(v);
-        return l;
-    }
-    
-    private void centerLabelAt(PMSimpleLabel l, int x, int y){
-        if (l == null) return;
-        Dimension d = l.getSize();
-        l.moveTo( x - d.width/2, y + d.height/2); 
-    }
-    
-    private void setAreaColor(PMSimplePolygonArea ha, PMValueLabel l, double percentRemaining) {
-        if ( percentRemaining <= 0 ){
-            ha.backColor = Color.darkGray.brighter();
-            l.setColor(Color.blue);
-            ha.highlightBorderColor = Color.green;          
-        } else if ( percentRemaining <= .25 ){
-            ha.backColor = Color.red.brighter();
-            l.setColor(Color.blue);
-            ha.highlightBorderColor = Color.green;          
-        } else if ( percentRemaining <= .75 ){
-            ha.backColor = Color.yellow;
-            l.setColor(Color.blue);
-            ha.highlightBorderColor = Color.green;
-        } else {
-            ha.backColor = Color.gray.brighter();
-            l.setColor(Color.red);
-            ha.highlightBorderColor = Color.red;
-        }
-    }
-    
-}
+ }

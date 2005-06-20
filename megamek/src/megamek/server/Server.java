@@ -1277,7 +1277,7 @@ implements Runnable, ConnectionHandler {
                             private Player owner = p;
                             public boolean accept (Entity entity) {
                                 if ( owner.equals( entity.getOwner() ) &&
-                                     isEligibleForTargetingPhase( entity ) )
+                                     entity.isEligibleForTargetingPhase() )
                                     return true;
                                 return false;
                             }
@@ -2124,108 +2124,11 @@ implements Runnable, ConnectionHandler {
     private void setIneligible(int phase) {
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             Entity entity = (Entity)e.nextElement();
-            if (!isEligibleFor(entity, phase)) {
+            if (!entity.isEligibleFor(phase)) {
                 entity.setDone(true);
             }
         }
     }
-
-    /**
-     * Determines if an entity is eligible for a phase.
-     */
-    private boolean isEligibleFor(Entity entity, int phase) {
-        // only deploy in deployment phase
-        if ((phase == IGame.PHASE_DEPLOYMENT) == entity.isDeployed()) {
-            return false;
-        }
-
-        switch (phase) {
-            case IGame.PHASE_MOVEMENT :
-                return isEligibleForMovement(entity);
-            case IGame.PHASE_FIRING :
-                return isEligibleForFiring(entity);
-            case IGame.PHASE_PHYSICAL :
-                return entity.isEligibleForPhysical();
-            case IGame.PHASE_TARGETING :
-                return isEligibleForTargetingPhase(entity);
-            case IGame.PHASE_OFFBOARD :
-                return isEligibleForOffboard(entity);
-            default:
-                return true;
-        }
-    }
-
-    /**
-     * Pretty much anybody's eligible for movement. If the game option
-     * is toggled on, inactive and immobile entities are not eligible.
-     * OffBoard units are always ineligible
-     * @param entity
-     * @return
-     */
-    private boolean isEligibleForMovement(Entity entity) {
-        // check if entity is offboard
-        if (entity.isOffBoard()) {
-            return false;
-        }
-        // check game options
-        if (!game.getOptions().booleanOption("skip_ineligable_movement")) {
-            return true;
-        }
-
-        // must be active
-        if (!entity.isActive() || entity.isImmobile()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * An entity is eligible if its to-hit number is anything but impossible.
-     * This is only really an issue if friendly fire is turned off.
-     */
-    private boolean isEligibleForFiring(Entity entity) {
-        // if you're charging, no shooting
-        if (entity.isUnjammingRAC()
-            || entity.isCharging()
-            || entity.isMakingDfa()) {
-            return false;
-        }
-
-        // if you're offboard, no shooting
-        if (entity.isOffBoard()) {
-            return false;
-        }
-
-        for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
-              Mounted mounted = (Mounted)i.nextElement();
-              WeaponType wtype = (WeaponType)mounted.getType();
-              if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isUsedThisRound()) {
-                  return false; //no weapons fire if you fired TAG
-              }
-          }
-
-        // check game options
-        if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
-            return true;
-        }
-
-        // must be active
-        if (!entity.isActive()) {
-            return false;
-        }
-
-        // TODO: check for any weapon attacks
-
-        return true;
-    }
-
-    /*
-     * public boolean isEligibleForPhysical()
-     *
-     * This method moved to Entity class.  Perhaps the other
-     * isEligible methods should also be moved?
-     */
 
     /**
      * Have the loader load the indicated unit.
@@ -13893,28 +13796,6 @@ implements Runnable, ConnectionHandler {
 
         }
     }
-    private boolean isEligibleForTargetingPhase(Entity entity) {
-        for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
-              Mounted mounted = (Mounted)i.nextElement();
-              WeaponType wtype = (WeaponType)mounted.getType();
-              if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-                  return true;
-              }
-          }
-          return false;
-
-    }
-    private boolean isEligibleForOffboard(Entity entity) {
-        for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
-              Mounted mounted = (Mounted)i.nextElement();
-              WeaponType wtype = (WeaponType)mounted.getType();
-              if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()) {
-                  return true;
-              }
-          }
-        return false;//only things w/ tag are
-    }
-
 
     /**
      * resolve Indirect Artillery Attacks for this turn

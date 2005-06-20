@@ -227,8 +227,8 @@ public class GeneralInfoMapSet implements DisplayMapSet{
             }
         }
         elevationR.setString( Messages.getString("GeneralInfoMapSet.NA") ); //$NON-NLS-1$
-        if (en instanceof VTOL) {
-            elevationR.setString(Integer.toString(((VTOL)en).getElevation()));
+        if (en.getMovementMode() == IEntityMovementMode.VTOL) {
+            elevationR.setString(Integer.toString(en.getElevation()));
         }
 
         for (int i=0; i < advantagesR.length; i++ ) {

@@ -172,12 +172,12 @@ public class LosEffects {
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targetHex = game.getBoard().getHex(target.getPosition());
         
-        int attEl = ae.absHeight();
+        int attEl = ae.absHeight() + attHex.getElevation();
         int targEl;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ||
              target.getTargetType() == Targetable.TYPE_BUILDING ||
              target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
-            targEl = target.absHeight();
+            targEl = target.absHeight() + targetHex.getElevation();
         } else {
             targEl = game.getBoard().getHex(target.getPosition()).floor();
         }

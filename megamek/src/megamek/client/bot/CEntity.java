@@ -22,7 +22,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.Mech;
-import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.Protomech;

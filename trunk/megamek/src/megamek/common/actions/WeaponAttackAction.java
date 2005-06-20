@@ -800,7 +800,7 @@ public class WeaponAttackAction
         }
 
         // ammo to-hit modifier
-        if ((te.getMovementMode() == IEntityMovementMode.VTOL)
+        if (( te != null && te.getMovementMode() == IEntityMovementMode.VTOL)
                 && ((atype != null) && (atype.getMunitionType() == AmmoType.M_CLUSTER))
                 && (te.getElevation() > game.getBoard().getHex(te.getPosition()).ceiling())) {
             toHit.addModifier(-3, "flak to-hit modifier");
@@ -819,14 +819,14 @@ public class WeaponAttackAction
     
         // add targeting computer (except with LBX cluster ammo)
         if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP &&
-          aimingAt != Mech.LOC_NONE) {
-          toHit.addModifier(3, "aiming with targeting computer");
+            aimingAt != Mech.LOC_NONE) {
+            toHit.addModifier(3, "aiming with targeting computer");
         } else {
-          if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
+            if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
                (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
-              toHit.addModifier(-1, "targeting computer");
-          }
-      }
+                toHit.addModifier(-1, "targeting computer");
+            }
+        }
     
         // Change hit table for elevation differences inside building.
         if ( null != los.getThruBldg() && aElev != tElev ) {

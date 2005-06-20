@@ -1331,6 +1331,7 @@ public class ClientGUI
                 }
             break;
             case IGame.PHASE_MOVEMENT :
+                bv.refreshAttacks();
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
@@ -1341,6 +1342,7 @@ public class ClientGUI
                 }
             break;
             case IGame.PHASE_FIRING :
+                bv.refreshAttacks();
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }

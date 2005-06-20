@@ -3804,6 +3804,119 @@ public abstract class Entity
     public boolean getGaveKillCredit() {
         return this.killerId != Entity.NONE;
     }
+    
+    /**
+     * Determines if an entity is eligible for a phase.
+     */
+    public boolean isEligibleFor(int phase) {
+        // only deploy in deployment phase
+        if ((phase == IGame.PHASE_DEPLOYMENT) == isDeployed()) {
+            return false;
+        }
+
+        switch (phase) {
+            case IGame.PHASE_MOVEMENT :
+                return isEligibleForMovement();
+            case IGame.PHASE_FIRING :
+                return isEligibleForFiring();
+            case IGame.PHASE_PHYSICAL :
+                return isEligibleForPhysical();
+            case IGame.PHASE_TARGETING :
+                return isEligibleForTargetingPhase();
+            case IGame.PHASE_OFFBOARD :
+                return isEligibleForOffboard();
+            default:
+                return true;
+        }
+    }
+    
+    /**
+     * An entity is eligible if its to-hit number is anything but impossible.
+     * This is only really an issue if friendly fire is turned off.
+     */
+    public boolean isEligibleForFiring() {
+        // if you're charging, no shooting
+        if (isUnjammingRAC()
+            || isCharging()
+            || isMakingDfa()) {
+            return false;
+        }
+
+        // if you're offboard, no shooting
+        if (isOffBoard()) {
+            return false;
+        }
+
+        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
+              Mounted mounted = (Mounted)i.nextElement();
+              WeaponType wtype = (WeaponType)mounted.getType();
+              if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isUsedThisRound()) {
+                  return false; //no weapons fire if you fired TAG
+              }
+          }
+
+        // check game options
+        if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
+            return true;
+        }
+
+        // must be active
+        if (!isActive()) {
+            return false;
+        }
+
+        // TODO: check for any weapon attacks
+
+        return true;
+    }
+    
+    /**
+     * Pretty much anybody's eligible for movement. If the game option
+     * is toggled on, inactive and immobile entities are not eligible.
+     * OffBoard units are always ineligible
+     * @param entity
+     * @return
+     */
+    public boolean isEligibleForMovement() {
+        // check if entity is offboard
+        if (isOffBoard()) {
+            return false;
+        }
+        // check game options
+        if (!game.getOptions().booleanOption("skip_ineligable_movement")) {
+            return true;
+        }
+
+        // must be active
+        if (!isActive() || isImmobile()) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    public boolean isEligibleForOffboard() {
+        
+        // if you're charging, no shooting
+        if (isUnjammingRAC()
+            || isCharging()
+            || isMakingDfa()) {
+            return false;
+        }
+
+        // if you're offboard, no shooting
+        if (isOffBoard()) {
+            return false;
+        }
+        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
+              Mounted mounted = (Mounted)i.nextElement();
+              WeaponType wtype = (WeaponType)mounted.getType();
+              if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()) {
+                  return true;
+              }
+          }
+        return false;//only things w/ tag are
+    }
 
     /**
      * Check if the entity has any valid targets for physical attacks.
@@ -3898,6 +4011,17 @@ public abstract class Entity
         } // Check the next building
 
         return canHit;
+    }
+    
+    public boolean isEligibleForTargetingPhase() {
+        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
+              Mounted mounted = (Mounted)i.nextElement();
+              WeaponType wtype = (WeaponType)mounted.getType();
+              if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                  return true;
+              }
+          }
+          return false;
     }
 
     public int getTroopCarryingSpace()

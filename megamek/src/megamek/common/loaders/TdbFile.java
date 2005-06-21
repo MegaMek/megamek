@@ -64,6 +64,7 @@ public class TdbFile implements IMechLoader {
     private static final String  JUMP    = "jump";
     private static final String  HEAT_SINKS    = "heatsinks";
     private static final String  ARMOR    = "armor"; // also attribute
+    private static final String  STRUCTURE    = "internal"; // also attribute
     private static final String  MOUNTED_ITEM    = "mounteditem";
     private static final String  LOCATION= "location";
 
@@ -121,6 +122,9 @@ public class TdbFile implements IMechLoader {
     private String[][][] critData;
     private boolean isRearMounted[];
     private boolean isSplit[];
+
+    private String armorType;
+    private String structureType;
 
     private Hashtable hSharedEquip = new Hashtable();
     private Vector vSplitWeapons = new Vector();
@@ -232,6 +236,10 @@ public class TdbFile implements IMechLoader {
                 dblSinks = false;
             }
             heatSinks = node.getAttribute(COUNT);
+        } else if (node.getName().equals(ARMOR)) {
+            armorType = ((ParsedXML)children.nextElement()).getContent();
+        } else if (node.getName().equals(STRUCTURE)) {
+            structureType = ((ParsedXML)children.nextElement()).getContent();
         } else if (children != null) {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
@@ -378,6 +386,18 @@ public class TdbFile implements IMechLoader {
             }
             mech.setYear(Integer.parseInt(techYear));
             mech.setOmni(isOmni);
+
+System.err.println(armorType);
+            if (armorType.equals("Ferro-Fibrous"))
+                mech.setArmorType(EquipmentType.T_ARMOR_FERRO_FIBROUS);
+            else
+                mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+
+System.err.println(structureType);
+            if (structureType.equals("EndoSteel"))
+                mech.setStructureType(EquipmentType.T_STRUCTURE_ENDO_STEEL);
+            else
+                mech.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
 
             if (LAMTonnage != null) {
                 throw new EntityLoadingException("Unsupported tech: LAM?");

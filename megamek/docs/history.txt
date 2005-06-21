@@ -24,6 +24,7 @@ v0.29.82 (CVS)
     ceiling) to match in various places it's called.
 + Bug 1224438: Checks for null entity and hex to avoid NPE.
 + Bug 842048: Fix div/0 error.
++ Bug 1224274: Repaired Ferro Fibrous and Endo for TDB loader.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

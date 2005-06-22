@@ -281,7 +281,7 @@ public class MapSettings implements Serializable {
     public void replaceBoardWithRandom(String board) {
         for (int i = 0; i < boardsSelected.size(); i++) {
             if (boardsSelected.elementAt(i).equals(board)) {
-                int rindex = Compute.randomInt(boardsAvailable.size() - 2) + 2;
+                int rindex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
                 // Do a one pi rotation half of the time.
                 if ( 0 == Compute.randomInt(2) ) {
                     boardsSelected.setElementAt

@@ -107,10 +107,9 @@ public class Protomech
         bHasLArmGun=false;
         bHasTorsoAGun=false;
         bHasTorsoBGun=false;
-
-
-
+        m_bHasNoMainGun=true;
     }
+
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
     }

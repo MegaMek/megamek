@@ -201,7 +201,10 @@ public final class Player extends TurnOrdered
     }
 
     public boolean isObserver() {
-        return observer;
+        if (game != null && game.getPhase() == IGame.PHASE_VICTORY)
+            return false;
+        else
+            return observer;
     }
 
     public void setSeeAll(boolean see_all)

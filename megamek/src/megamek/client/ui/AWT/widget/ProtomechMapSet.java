@@ -18,7 +18,6 @@ import java.awt.*;
 import java.util.*;
 
 import megamek.client.GUIPreferences;
-import megamek.client.Messages;
 import megamek.common.*;
 
 /**
@@ -34,19 +33,27 @@ public class ProtomechMapSet implements DisplayMapSet{
         new PMValueLabel[Protomech.NUM_PMECH_LOCATIONS];
     private PMValueLabel[] internalLabels =
         new PMValueLabel[Protomech.NUM_PMECH_LOCATIONS];
-    /* BEGIN killme block **
-    //Picture with figure
-    private Image battleArmorImage;
-    //Images that shows how much armor + 1 internal damage left.
-    private Image[] armorImage = new Image[5];
-    //Set of areas to show BA figures
-    private PMPicArea[] unitAreas =  new PMPicArea[5];
-    //Set of areas to show BA armor left
-    private PMPicArea[] armorAreas = new PMPicArea[5];
-    //Set of labels to show BA armor left
-    private PMValueLabel[]    armorLabels = new PMValueLabel[5];
-    **  END  killme block */
+    private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[Protomech.NUM_PMECH_LOCATIONS];
 
+    private Polygon head = new Polygon (new int[]{50,50,60,80,90,90,80,60},
+                                        new int[]{40,20,10,10,20,40,50,50},
+                                        8);
+    private Polygon mainGun = new Polygon (new int[]{20,20,50,50},
+                                           new int[]{30,0,0,30},
+                                           4);
+    private Polygon leftArm = new Polygon (new int[]{0,0,20,30,40,30,20,20,10},
+                                           new int[]{100,40,30,30,60,60,70,110,110},
+                                           9);
+    private Polygon rightArm = new Polygon (new int[]{120,120,110,100,110,120,140,140,130},
+                                            new int[]{110,70,60,60,30,30,40,100,110,110},
+                                            9);
+    private Polygon torso = new Polygon (new int[]{40,40,30,50,50,60,80,90,90,110,100,100},
+                                         new int[]{130,60,30,30,40,50,50,40,30,30,60,130},
+                                         12);
+    private Polygon legs = new Polygon (new int[]{0,0,10,30,30,40,100,110,110,130,140,140,100,90,90,80,60,50,50,40},
+                                        new int[]{240,230,220,220,160,130,130,160,220,220,230,240,240,230,190,170,170,190,230,240},
+                                        20);
+    
     //Reference to Component (required for Image handling)
     private Component comp;
     //Content group which will be sent to PicMap component
@@ -56,8 +63,9 @@ public class ProtomechMapSet implements DisplayMapSet{
     
     private int stepY = 53;
     
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
-    
+
     /**
      * This constructor have to be called anly from addNotify() method
      */
@@ -71,23 +79,45 @@ public class ProtomechMapSet implements DisplayMapSet{
     ** Set the armor diagram on the mapset.
     */
     private void setAreas() {
+        areas[Protomech.LOC_HEAD] = new PMSimplePolygonArea(head);
+        areas[Protomech.LOC_LEG] = new PMSimplePolygonArea(legs);
+        areas[Protomech.LOC_LARM] = new PMSimplePolygonArea(leftArm);
+        areas[Protomech.LOC_RARM] = new PMSimplePolygonArea(rightArm);
+        areas[Protomech.LOC_TORSO] = new PMSimplePolygonArea(torso);
+        areas[Protomech.LOC_MAINGUN] = new PMSimplePolygonArea(mainGun);
+        
+        for (int i=0; i<=5; i++) {
+            content.addArea(areas[i]);
+        }
+        
         FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
         
         for(int i = 0; i < Protomech.NUM_PMECH_LOCATIONS; i++){
-            int shiftY = i * stepY;
-
-            sectionLabels[i] = new PMValueLabel(fm, Color.white.brighter());
-            sectionLabels[i]. moveTo(0, shiftY + 24);
+            sectionLabels[i] = new PMValueLabel(fm, Color.black);
             content.addArea((PMElement) sectionLabels[i]);
-
             armorLabels[i] = new PMValueLabel(fm, Color.yellow.brighter());
-            armorLabels[i]. moveTo(80, shiftY + 24);
             content.addArea((PMElement) armorLabels[i]);
-
             internalLabels[i] = new PMValueLabel(fm, Color.red.brighter());
-            internalLabels[i]. moveTo(160, shiftY + 24);
             content.addArea((PMElement) internalLabels[i]);
         }
+        sectionLabels[0].moveTo(70, 30);
+        armorLabels[0].moveTo(60, 45);
+        internalLabels[0].moveTo(80, 45);
+        sectionLabels[1].moveTo(70, 70);
+        armorLabels[1].moveTo(70,85);
+        internalLabels[1].moveTo(70,100);
+        sectionLabels[2].moveTo(125, 55);
+        armorLabels[2].moveTo(125,70);
+        internalLabels[2].moveTo(125,85);
+        sectionLabels[3].moveTo(15, 55);
+        armorLabels[3].moveTo(15,70);
+        internalLabels[3].moveTo(15,85);
+        sectionLabels[4].moveTo(70, 150);
+        armorLabels[4].moveTo(60,165);
+        internalLabels[4].moveTo(80,165);
+        sectionLabels[5].moveTo(35, 15);
+        armorLabels[5].moveTo(25,30);
+        internalLabels[5].moveTo(45,30);
     }
     
     public PMAreasGroup getContentGroup(){
@@ -109,42 +139,22 @@ public class ProtomechMapSet implements DisplayMapSet{
         int armor = 0;
         int internal =0;
         int loc = proto.locations();
-
-        // Not all Protomechs have a Main Gun.
-        if ( Protomech.NUM_PMECH_LOCATIONS == loc ){
-            sectionLabels[Protomech.NUM_PMECH_LOCATIONS - 1].setVisible(true);
-            armorLabels[Protomech.NUM_PMECH_LOCATIONS - 1].setVisible(true);
-            internalLabels[Protomech.NUM_PMECH_LOCATIONS - 1].setVisible(true);
-        } else{
-            sectionLabels[Protomech.NUM_PMECH_LOCATIONS - 1].setVisible(false);
-            armorLabels[Protomech.NUM_PMECH_LOCATIONS - 1].setVisible(false);
-            internalLabels[Protomech.NUM_PMECH_LOCATIONS - 1].setVisible(false);
+        if (loc!=Protomech.NUM_PMECH_LOCATIONS) {
+            armorLabels[5].setVisible(false);
+            internalLabels[5].setVisible(false);
+            sectionLabels[5].setVisible(false);
+        } else {
+            armorLabels[5].setVisible(true);
+            internalLabels[5].setVisible(true);
+            sectionLabels[5].setVisible(true);
         }
-
-        // Set the armor and internal labels for each of the sections.
-        for ( int i = 0; i < loc ; i++ ) {
-
-            // Handle ARMOR_NA, ARMOR_DOOMED< and ARMOR_DESTROYED.
-            armor = proto.getArmor(i, false);
-            if ( armor < 0 ) {
-                armor = 0;
-            }
-                internal = proto.getInternal(i);
-            if ( internal < 0 ) {
-                internal = 0;
-            }
-
-            // Now set the labels.
-            sectionLabels[i].setValue( proto.getLocationName(i) );
-            armorLabels[i].setValue( Integer.toString(armor) );
-                if ( armor + internal == 0 ) {
-                    internalLabels[i].setValue( Messages.getString("ProtomechMapSet.Destroyed") ); //$NON-NLS-1$
-                } else {
-                    internalLabels[i].setValue( Integer.toString(internal) );
-                }
-
-        } // Handle the next location.
-
+        for (int i=0; i<loc; i++) {
+            armor = proto.getArmor(i);
+            internal = proto.getInternal(i);
+            armorLabels[i].setValue(new Integer(armor).toString());
+            internalLabels[i].setValue(new Integer(internal).toString());
+            sectionLabels[i].setValue(proto.getLocationAbbr(i));
+        }
     }
 
     /*

@@ -1340,6 +1340,7 @@ implements Runnable, ConnectionHandler {
                 if (game.getOptions().booleanOption("paranoid_autosave")) autoSave();
                 break;
             case IGame.PHASE_VICTORY :
+                resetPlayersDone();
                 prepareVictoryReport();
                 log.append( "\n" );
                 log.append( roundReport.toString() );

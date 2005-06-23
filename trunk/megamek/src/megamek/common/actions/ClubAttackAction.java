@@ -97,10 +97,12 @@ public class ClubAttackAction extends AbstractAttackAction {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
-        final int attackerElevation = ae.getElevation();
-        final int attackerHeight = ae.absHeight();
-        final int targetHeight = target.absHeight();
-        final int targetElevation = target.getElevation();
+        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex targHex = game.getBoard().getHex(te.getPosition());
+        final int attackerElevation = ae.getElevation() + attHex.getElevation();
+        final int attackerHeight = attackerElevation + ae.height();
+        final int targetElevation = target.getElevation() + targHex.getElevation();
+        final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
         Building bldg = null;
@@ -295,7 +297,6 @@ public class ClubAttackAction extends AbstractAttackAction {
         }
 
         // water partial cover?
-        IHex targHex = game.getBoard().getHex(te.getPosition());
         if (te.height() > 0 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }

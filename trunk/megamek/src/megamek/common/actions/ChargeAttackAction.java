@@ -83,10 +83,12 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
-        final int attackerElevation = ae.elevationOccupied(game.getBoard().getHex(src));
+        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex targHex = game.getBoard().getHex(te.getPosition());
+        final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int attackerHeight = attackerElevation + ae.height();
-        final int targetElevation = target.getElevation();
-        final int targetHeight = target.absHeight();
+        final int targetElevation = target.getElevation() + targHex.getElevation();
+        final int targetHeight = targetElevation + target.getHeight();
         Building bldg = game.getBoard().getBuildingAt( this.getTargetPos() );
         ToHitData toHit = null;
 
@@ -211,7 +213,6 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // water partial cover?
-        IHex targHex = game.getBoard().getHex(te.getPosition());
         if (te.height() > 0 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }

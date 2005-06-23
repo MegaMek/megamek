@@ -75,9 +75,11 @@ public class PunchAttackAction
             te = (Entity) target;
             targetId = target.getTargetId();
         }
-        final int attackerHeight = ae.absHeight();
-        final int targetHeight = target.absHeight();
-        final int targetElevation = target.getElevation();
+        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex targHex = game.getBoard().getHex(te.getPosition());
+        final int attackerHeight = ae.absHeight() + attHex.getElevation();
+        final int targetElevation = target.getElevation() + targHex.getElevation();
+        final int targetHeight = targetElevation + target.getHeight();
         final int armLoc = (arm == PunchAttackAction.RIGHT)
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         final int armArc = (arm == PunchAttackAction.RIGHT)
@@ -252,7 +254,6 @@ public class PunchAttackAction
         }
 
         // water partial cover?
-        IHex targHex = game.getBoard().getHex(te.getPosition());
         if (te.height() > 0 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }

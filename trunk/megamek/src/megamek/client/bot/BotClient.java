@@ -199,7 +199,18 @@ public abstract class BotClient extends Client {
     /**
      * Gets valid & empty starting coords around the specified point
      */
-    protected Coords getCoordsAround(Entity deploy_me, Coords c) {
+    protected Coords getCoordsAround(Entity deploy_me, Coords[] c) {
+        // Check all of the hexes in order.
+        for (int x=0; x<c.length; x++) {
+            // Verify that the unit can be placed in this hex
+            if (!deploy_me.isHexProhibited(game.getBoard().getHex(c[x].x, c[x].y))) {
+                return c[x];
+            }
+        }
+
+        // If NONE of them are acceptable, then just return null.
+        return null;
+/*
         // check the requested coords
         if (game.getBoard().isLegalDeployment(c, this.getLocalPlayer()) && game.getFirstEntity(c) == null) {
             // Verify that the unit can be placed in this hex
@@ -207,8 +218,8 @@ public abstract class BotClient extends Client {
                 return c;
             }
         }
-        
-        // check the surrounding coords
+
+        // check the rest of the list.
         for (int x = 0; x < 6; x++) {
             Coords c2 = c.translated(x);
             if (game.getBoard().isLegalDeployment(c2, this.getLocalPlayer()) && game.getFirstEntity(c2) == null) {
@@ -217,9 +228,10 @@ public abstract class BotClient extends Client {
                 }
             }
         }
-        
+
         // recurse in a random direction
         return getCoordsAround(deploy_me, c.translated(Compute.randomInt(6)));
+*/
     }
     
     
@@ -227,37 +239,42 @@ public abstract class BotClient extends Client {
     // New bot deploy algorithm
     // Screens out invalid hexes then rates them
     // Highest rating wins out; if this applies to multiple hexes then randomly select among them
-    
     protected Coords getStartingCoords() {
-        
+        Coords[] calc = getStartingCoordsArray();
+        if ((calc != null) && (calc.length > 0))
+            return calc[0];
+        return null;
+    }
+
+    protected Coords[] getStartingCoordsArray() {
         int test_x, test_y, highest_elev, lowest_elev;
         int counter, valid_arr_index, arr_x_index;
         int weapon_count;
         int incoming_damage, incoming_odds;
         int fitness_count1, fitness_count2;
-        
+
         double av_range, best_fitness, ideal_elev;
         double[] fitness;
         double adjusted_damage, max_damage, total_damage;
-        
+
         Coords highest_hex = new Coords();
         Coords test_hex = new Coords();
         Coords[] valid_array;
-        
+
         Entity test_ent, deployed_ent;
-        
+
         Vector weapons = new Vector();
         Vector valid_attackers = new Vector();
         Enumeration ammo_slots;
-        
+
         deployed_ent = getEntity(game.getFirstDeployableEntityNum());
-        
+
         WeaponAttackAction test_attack;
         ToHitData test_hit;
-        
+
         //  Create array of hexes in the deployment zone that can be deployed to
         //   Check for prohibited terrain, stacking limits
-        
+
         switch (getLocalPlayer().getStartingPos()) {
         default :
         case 0 :
@@ -297,7 +314,7 @@ public abstract class BotClient extends Client {
             fitness = new double[game.getBoard().getHeight()*3];
             break;
         }
-        
+
         counter = 0;
         for (test_x = 0; test_x <= game.getBoard().getWidth(); test_x++){
             for (test_y = 0; test_y <= game.getBoard().getHeight(); test_y++){
@@ -311,10 +328,10 @@ public abstract class BotClient extends Client {
                 }
             }
         }
-        
+
         // Randomize hexes so hexes are not in order
         // This is to prevent clumping at the upper-left corner on very flat maps
-        
+
         for (valid_arr_index = 0; valid_arr_index < counter; valid_arr_index++){
             arr_x_index = Compute.randomInt(counter);
             if (arr_x_index < 0){
@@ -324,9 +341,9 @@ public abstract class BotClient extends Client {
             valid_array[valid_arr_index] = valid_array[arr_x_index];
             valid_array[arr_x_index] = test_hex;
         }
-        
+
         // Now get minimum and maximum elevation levels for these hexes
-        
+
         highest_elev = -100;
         lowest_elev = 100;
         for (valid_arr_index = 0; valid_arr_index < counter; valid_arr_index++){            
@@ -337,11 +354,11 @@ public abstract class BotClient extends Client {
                 lowest_elev = game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).getElevation();
             }
         }
-        
+
         // Calculate average range of all weapons
         //   Do not include ATMs, but DO include each bin of ATM ammo
         //   Increase average range if the unit has an active c3 link
-        
+
         av_range = 0.0;
         weapon_count = 0;
         weapons = deployed_ent.getWeaponList();
@@ -372,24 +389,24 @@ public abstract class BotClient extends Client {
                 }
             }
         }
-        
+
         av_range = av_range/weapon_count;            
-        
+
         //   Calculate ideal elevation as a factor of average range of 18 being highest elevation
-        
+
         ideal_elev = lowest_elev + ((av_range/18) * (highest_elev - lowest_elev));
         if (ideal_elev > highest_elev){
             ideal_elev = highest_elev;
         }
-        
+
         best_fitness = -100.0;
         for (valid_arr_index = 0; valid_arr_index < counter; valid_arr_index++){
-            
+
             // Calculate the fitness factor for each hex and save it to the array
             //      -> Absolute difference between hex elevation and ideal elevation decreases fitness
-            
+
             fitness[valid_arr_index] = (double) -1*(Math.abs(ideal_elev - game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).getElevation()));
-            
+
             //      -> Approximate total damage taken in the current position; this keeps units from deploying into x-fires
             total_damage = 0.0;
             deployed_ent.setPosition(valid_array[valid_arr_index]);
@@ -400,24 +417,24 @@ public abstract class BotClient extends Client {
                     weapons = test_ent.getWeaponList();
                     test_hit = new ToHitData();
                     for (Enumeration j = weapons.elements(); j.hasMoreElements();) {
-                        
+
                         Mounted mounted = (Mounted)j.nextElement();
                         WeaponType wtype = (WeaponType)mounted.getType();
-                        
+
                         test_attack = new WeaponAttackAction(test_ent.getId(), deployed_ent.getId(), test_ent.getEquipmentNum(mounted));
                         adjusted_damage = getDeployDamage(game, test_attack);
                         total_damage += adjusted_damage;
                     }
-                    
+
                 }
-                
+
             }
-            
+
             fitness[valid_arr_index] = fitness[valid_arr_index] - (total_damage/10);
-            
+
             //      -> Find the best target for each weapon and approximate the damage; maybe we can kill stuff without moving!
             //      -> Conventional infantry ALWAYS come out on the short end of the stick in damage given/taken... solutions?   
-            
+
             total_damage = 0.0;
             weapons = deployed_ent.getWeaponList();
             for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
@@ -438,14 +455,13 @@ public abstract class BotClient extends Client {
                 total_damage += max_damage;
             }
             fitness[valid_arr_index] = fitness[valid_arr_index] + (total_damage/10);
-            
+
             //   Mech
-            
+
             if(deployed_ent instanceof Mech){
                 //      -> Trees are good
                 //      -> Water isn't that great below depth 1 -> this saves actual ground space for infantry/vehicles (minor)
-                
-                
+
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){
                     fitness[valid_arr_index] += 1;
                 }
@@ -455,14 +471,13 @@ public abstract class BotClient extends Client {
                     }
                 }
             }
-            
+
             //   Infantry
-            
-            if(deployed_ent instanceof Infantry){
-                
+
+            if(deployed_ent instanceof Infantry) {
                 //      -> Trees and buildings make good cover, esp for conventional infantry
                 //      -> Massed infantry is more effective, so try to cluster them
-                
+
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){
                     fitness[valid_arr_index] += 2;
                 }
@@ -497,17 +512,17 @@ public abstract class BotClient extends Client {
                             }
                         }
                     }
-                
+
                 // Not sure why bot tries to deploy infantry in water, it SHOULD be caught by the isHexProhibited method when
                 //   selecting hexes, but sometimes it has a mind of its own so...
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WATER)){
                     fitness[valid_arr_index] -= 10;
                 }
-                
+
             }
-            
+
             if(deployed_ent instanceof Tank){
-                
+
                 //   Tracked vehicle
                 //      -> Trees increase fitness
                 if(deployed_ent.getMovementMode() == IEntityMovementMode.TRACKED){
@@ -515,7 +530,7 @@ public abstract class BotClient extends Client {
                         fitness[valid_arr_index] += 2;
                     }
                 }
-                
+
                 //   Wheeled vehicle
                 //      -> Not sure what any benefits wheeled vehicles can get; for now, just elevation and damage taken/given
                 //   Hover vehicle
@@ -525,28 +540,29 @@ public abstract class BotClient extends Client {
                         fitness[valid_arr_index] += 2;
                     }
                 }
-                
+
             }
             //   ProtoMech
             //      -> 
             //      -> Trees icrease fitness by +2 (minor)
-            
+
             if(deployed_ent instanceof Protomech){
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){
                     fitness[valid_arr_index] += 2;
                 }
             }
             //   VTOL *PLACEHOLDER*
-            
+
             // Record the highest fitness factor
-            
+
             if (fitness[valid_arr_index] > best_fitness){
                 best_fitness = fitness[valid_arr_index];
             }
         }
-        
+
         // For each valid deployment hex, find the first hex with the matching fitness factor
         // The array has already been randomized
+        /*
         fitness_count2 = 0;
         for (valid_arr_index = 0; valid_arr_index < counter; valid_arr_index++){
             if (fitness[valid_arr_index] == best_fitness){
@@ -554,10 +570,30 @@ public abstract class BotClient extends Client {
                 valid_arr_index = fitness.length-1;
             }
         }
-        
-        return highest_hex;
+        */
+
+        // Now sort the valid array.
+        // Okay, this is gonna be INSANELY inefficient.
+        // That's mostly because we're using an annoying early version of Java.
+        // Once we get up to Java 1.5, we can streamline this like a bunch.
+        // Or just rewrite the damned function.
+        // FIXME
+        for (int x=0; x<valid_array.length; x++) {
+            for (int y=x; y<(valid_array.length-1); y++) {
+                if (fitness[y] < fitness[y+1]) {
+                    double tmpI = fitness[y];
+                    Coords tmpC = valid_array[y];
+                    fitness[y] = fitness[x];
+                    valid_array[y] = valid_array[x];
+                    fitness[x] = tmpI;
+                    valid_array[x] = tmpC;
+                }
+            }
+        }
+
+        return valid_array;
     }
-    
+
     // Missile hits table
     // Some of these are interpolated for odd weapons sizes found in Protos and new BAs
     private static float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f, 2.63f, 3.17f,

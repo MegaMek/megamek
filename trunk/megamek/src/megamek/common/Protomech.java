@@ -918,4 +918,13 @@ public class Protomech
         // Protos can't DFA
         return false;
     };
+
+    /**
+     * @return The cost in C-Bills of the ProtoMech in question.
+     */
+    public double getCost() {
+        // FIXME
+        // There should be an implementation here!
+        return 0;
+    }
 }

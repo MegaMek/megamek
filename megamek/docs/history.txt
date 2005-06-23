@@ -34,6 +34,7 @@ v0.29.82 (CVS)
 + Bug 1224504: Artillery attacks no longer freeze MS JVM.
 + Bug 1225945: Fixed jump elevation limit check.
 + Bug 1219996: Fixed elevation checks for physical attacks.
++ Bug 1225949: Player Setup menu after defeat at the hands of a Bot. 
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

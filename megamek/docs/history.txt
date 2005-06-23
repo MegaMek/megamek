@@ -31,6 +31,7 @@ v0.29.82 (CVS)
 + Patch 1225186, Bug 1224520: Repeated NPEs on loading images
 + Bug 1020921: (Bot) End of Game screen passing too quickly
 + Bug 1225642: Fixed possibility of infinite recursion in bot deployment.
++ Bug 1224504: Artillery attacks no longer freeze MS JVM.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

@@ -20,7 +20,8 @@
 
 package megamek.common;
 
-import com.sun.java.util.collections.*;
+import java.util.Vector;
+import java.util.Enumeration;
 import java.io.Serializable;
 
 /**
@@ -41,7 +42,7 @@ public class TargetRoll implements Serializable {
        wasn't needed after all. */
     public final static int CHECK_FALSE         = Integer.MIN_VALUE + 1;
     
-    private ArrayList modifiers = new ArrayList();
+    private Vector modifiers = new Vector();
     
     private int total;
 
@@ -89,8 +90,8 @@ public class TargetRoll implements Serializable {
         boolean first = true;
         StringBuffer allDesc = new StringBuffer();
         
-        for (Iterator i = modifiers.iterator(); i.hasNext();) {
-            Modifier modifier = (Modifier)i.next();
+        for (Enumeration e = getModifiers(); e.hasMoreElements();) {
+            Modifier modifier = (Modifier)e.nextElement();
             
             // check for break condition
             if (modifier.value == IMPOSSIBLE
@@ -119,8 +120,8 @@ public class TargetRoll implements Serializable {
      * Returns the first description found
      */
     public String getPlainDesc() {
-        for (Iterator i = getModifiers(); i.hasNext();) {
-            return ((Modifier)i.next()).desc;
+        for (Enumeration e = getModifiers(); e.hasMoreElements();) {
+            return ((Modifier)e.nextElement()).desc;
         }
         return "";
     }
@@ -129,12 +130,12 @@ public class TargetRoll implements Serializable {
      * Returns the last description found
      */
     public String getLastPlainDesc() {
-        Modifier last = (Modifier)modifiers.get(modifiers.size() - 1);
+        Modifier last = (Modifier)modifiers.elementAt(modifiers.size() - 1);
         return last.desc;
     }
     
-    public Iterator getModifiers() {
-        return modifiers.iterator();
+    public Enumeration getModifiers() {
+        return modifiers.elements();
     }
     
     public void addModifier(int value, String desc) {
@@ -145,7 +146,7 @@ public class TargetRoll implements Serializable {
         if (modifier.value == CHECK_FALSE) {
             removeAutos(true);
         }
-        modifiers.add(modifier);
+        modifiers.addElement(modifier);
         recalculate();
     }
     
@@ -156,8 +157,8 @@ public class TargetRoll implements Serializable {
         if (other == null) {
             return;
         }
-        for (Iterator i = other.getModifiers(); i.hasNext();) {
-            addModifier((Modifier)i.next());
+        for (Enumeration e = other.getModifiers(); e.hasMoreElements();) {
+            addModifier((Modifier)e.nextElement());
         }
     }
     
@@ -177,17 +178,17 @@ public class TargetRoll implements Serializable {
      */
     
     public void removeAutos(boolean removeImpossibles) {
-        ArrayList toKeep = new ArrayList();
-        for (Iterator i = modifiers.iterator(); i.hasNext();) {
-            Modifier modifier = (Modifier)i.next();
+        Vector toKeep = new Vector();
+        for (Enumeration e = getModifiers(); e.hasMoreElements();) {
+            Modifier modifier = (Modifier)e.nextElement();
             if (!removeImpossibles) {
                 if (modifier.value != AUTOMATIC_FAIL && modifier.value != AUTOMATIC_SUCCESS) {
-                    toKeep.add(modifier);
+                    toKeep.addElement(modifier);
                 }
             } else if (modifier.value != AUTOMATIC_FAIL &&
                        modifier.value != AUTOMATIC_SUCCESS &&
                        modifier.value != IMPOSSIBLE) {
-                toKeep.add(modifier);
+                toKeep.addElement(modifier);
             }
         }
         modifiers = toKeep;
@@ -202,8 +203,8 @@ public class TargetRoll implements Serializable {
     private void recalculate() {
         total = 0;
         
-        for (Iterator i = modifiers.iterator(); i.hasNext();) {
-            Modifier modifier = (Modifier)i.next();
+        for (Enumeration e = getModifiers(); e.hasMoreElements();) {
+            Modifier modifier = (Modifier)e.nextElement();
             
             // check for break condition
             if (modifier.value == IMPOSSIBLE

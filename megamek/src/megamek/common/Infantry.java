@@ -850,4 +850,14 @@ public class Infantry
     public void setOriginalRunMP(int runMP) {
         this.runMP = runMP;
     }
+
+
+    /**
+     * @return The cost in C-Bills of the 'Mech in question.
+     */
+    public double getCost() {
+        // FIXME
+        // There should be an implementation here!
+        return 0;
+    }
 } // End class Infantry

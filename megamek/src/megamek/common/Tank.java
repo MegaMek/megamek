@@ -733,4 +733,13 @@ public class Tank
     {
         structureType = type;
     }
+
+    /**
+     * @return The cost in C-Bills of the 'Mech in question.
+     */
+    public double getCost() {
+        // FIXME
+        // There should be an implementation here!
+        return 0;
+    }
 }

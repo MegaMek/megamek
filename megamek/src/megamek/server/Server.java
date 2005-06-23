@@ -535,13 +535,21 @@ implements Runnable, ConnectionHandler {
      * housekeeping.
      */
     void disconnected(Player player) {
+        int phase = game.getPhase();
+
         // in the lounge, just remove all entities for that player
-        if (game.getPhase() == IGame.PHASE_LOUNGE) {
+        if (phase == IGame.PHASE_LOUNGE) {
             removeAllEntitesOwnedBy(player);
         }
 
         // if a player has active entities, he becomes a ghost
-        if (game.getEntitiesOwnedBy(player) > 0) {
+        
+        // except the VICTORY_PHASE when the dosconnected 
+        // player is most likely the Bot disconnected after receiving
+        // the COMMAND_END_OF_GAME command 
+        // see the Bug 1225949.
+        // TODO Perhaps there is a better solution to handle the Bot disconnect
+        if (game.getEntitiesOwnedBy(player) > 0 && phase != IGame.PHASE_VICTORY) {
             player.setGhost(true);
             player.setDone(true);
             send(createPlayerUpdatePacket(player.getId()));

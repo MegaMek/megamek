@@ -1320,6 +1320,7 @@ public class MoveStep implements Serializable {
         if ( movementType == IEntityMovementType.MOVE_JUMP
              && ( destHex.getElevation()
                   > (entity.getElevation()
+                     + entity.game.getBoard().getHex(entity.getPosition()).getElevation()
                      + entity.getJumpMPWithTerrain()) ) ) {
             return false;
         }

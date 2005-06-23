@@ -1179,10 +1179,7 @@ public class TestBot extends BotClient {
         chatp.processChat(ge, this);
     }
 
-
-
-
-// Where do I put my units?  This prioritizes hexes and facings
+    // Where do I put my units?  This prioritizes hexes and facings
     protected void calculateDeployment() {
 
         int weapon_count;
@@ -1194,11 +1191,11 @@ public class TestBot extends BotClient {
         Enumeration weapons, ammo_slots, valid_attackers, equips;
         
         int entNum = game.getFirstDeployableEntityNum();
-        Coords cStart = getStartingCoords();
+        Coords[] cStart = getStartingCoordsArray();
         Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
 
-// Now that we have a location to deploy to, get a direction
-// Using average long range of deploying unit, point towards the largest cluster of enemies in range
+    // Now that we have a location to deploy to, get a direction
+    // Using average long range of deploying unit, point towards the largest cluster of enemies in range
 
         av_range = 0.0;
         weapon_count = 0;

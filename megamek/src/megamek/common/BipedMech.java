@@ -231,5 +231,13 @@ public class BipedMech extends Mech {
     protected String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
-}
 
+    /**
+     * @return The cost in C-Bills of the 'Mech in question.
+     */
+    public double getCost() {
+        // FIXME
+        // There should be an implementation here!
+        return 0;
+    }
+}

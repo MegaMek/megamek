@@ -4446,4 +4446,6 @@ public abstract class Entity
     public int getTaggedBy() {
         return taggedBy;
     }
+
+    public abstract double getCost();
 }

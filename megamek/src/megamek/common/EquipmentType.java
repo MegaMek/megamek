@@ -77,6 +77,23 @@ public class EquipmentType {
                                             3,
                                             3};
 
+    public static final double[] armorCosts = {10000,
+                                            20000,
+                                            30000,
+                                            20000,
+                                            15000,
+                                            15000,
+                                            25000,
+                                            10000,  // This is obviously wrong...
+                                            50000,
+                                            20000};   // Assume for now that prototype is not more expensive
+
+    public static final double[] structureCosts = {400,
+                                            1600,
+                                            1600,   // Assume for now that prototype is not more expensive
+                                            6400,
+                                            1600};
+
     protected String    name = null;
 
     protected String    internalName = null;
@@ -85,7 +102,7 @@ public class EquipmentType {
 
     protected float     tonnage = 0;
     protected int       criticals = 0;
-    
+
     protected boolean   explosive = false;
     protected boolean   hittable = true; // if false, reroll critical hits
     // can the crits for this be spread over locations?
@@ -94,9 +111,10 @@ public class EquipmentType {
     protected int       techLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected int       flags = 0;
-      
+
     protected double     bv = 0; // battle value point system
-    
+    protected double    cost = 0; // The C-Bill cost of the item.
+
     /**
      * what modes can this equipment be in?
      */
@@ -327,5 +345,24 @@ public class EquipmentType {
         if ((structureType < 0) || (structureType >= structureNames.length))
             return null;
         return structureNames[structureType];
+    }
+
+    /**
+     * @return The C-Bill cost of the piece of equipment.
+     */
+    public double getCost() {
+        return cost;
+    }
+
+    public double getArmorCost(int inArmor) {
+        if ((inArmor < 0) || (inArmor >= armorCosts.length))
+            return -1;
+        return armorCosts[inArmor];
+    }
+
+    public double getStructureCost(int inStructure) {
+        if ((inStructure < 0) || (inStructure >= structureCosts.length))
+            return -1;
+        return structureCosts[inStructure];
     }
 }

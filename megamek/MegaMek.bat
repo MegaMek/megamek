@@ -10,8 +10,8 @@ rem Uncomment the next two lines to run the packet tool.
 rem java -classpath MegaMek.jar megamek.test.PacketTool
 rem goto done
 
-if exist jvm_ms.cfg goto ms_jvm
-if exist jvm_sun.cfg goto sun_jvm
+if exist mmconf\jvm_ms.cfg goto ms_jvm
+if exist mmconf\jvm_sun.cfg goto sun_jvm
 
 :jvm_tests
 java > NUL
@@ -24,7 +24,7 @@ jview > NUL
 if errorlevel 2 goto failure
 echo Microsoft JVM found.  Defaulting to Microsoft JVM from now on.
 :ms_jvm_prefer
-echo This file causes MegaMek to prefer the Microsoft JVM > jvm_ms.cfg
+echo This file causes MegaMek to prefer the Microsoft JVM > mmconf\jvm_ms.cfg
 :ms_jvm
 for %%A in (%1 %2 %3 %4 %5 %6 %7 %8 %9) do if X%%A==X-dedicated goto ms_dedicated
 start wjview /vst /cp collections.jar;TinyXML.jar;PngEncoder.jar;TabPanel.jar;MegaMek.jar megamek/MegaMek %1 %2 %3 %4 %5 %6 %7 %8 %9
@@ -39,7 +39,7 @@ goto done
 :only_found_sun
 echo Microsoft JVM not found.  Defaulting to Sun JVM from now on.
 :sun_jvm_prefer
-echo This file causes MegaMek to prefer the Sun JVM > jvm_sun.cfg
+echo This file causes MegaMek to prefer the Sun JVM > mmconf\jvm_sun.cfg
 :sun_jvm
 for %%A in (%1 %2 %3 %4 %5 %6 %7 %8 %9) do if X%%A==X-dedicated goto sun_dedicated
 start javaw -Xmx128m -jar MegaMek.jar %1 %2 %3 %4 %5 %6 %7 %8 %9
@@ -72,7 +72,7 @@ echo results in MegaMek's interface running faster.
 echo.
 echo Note: This menu will not be displayed anymore once you have made
 echo your choice.  To choose again, delete any file that begins with
-echo "jvm" in your main MegaMek directory.
+echo "jvm" in the mmconf directory.
 echo.
 echo Press [s] for the Sun JVM, [m] for the Microsoft JVM, or [q] to quit.
 echo.

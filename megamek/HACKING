@@ -22,26 +22,27 @@ to MegaMek that are available if a more recent version of Java is installed.
 That means that MegaMek can not be *compiled* by a v1.1 JDK.  Still, I haven't
 found a "modern" Java compiler that won't build MegaMek.  Please report any
 problems that you run into on your environment.  One notable exception to this
-rule is the file "megamek/client/ClientGUI.java": due to popular demand, sounds
-have been added to MegaMek; the only v1.1 sound API is java.applet.AudioClip,
-which does not always work.  As a "backup", a Sun-specific API was used; it
-should be obvious that FLOSS Java environments will not build this file. 
-Please apply the patch named "gcj.patch" to correct this problem.
+rule is the file "src/megamek/client/ClientGUI.java": due to popular demand,
+sounds have been added to MegaMek; sadly, the only v1.1 sound API is 
+java.applet.AudioClip, which does not always work.  As a "backup", a 
+Sun-specific API was used; it should be obvious that FLOSS Java environments 
+will not build this file.  Please apply the patch named "gcj.patch" to correct 
+this problem.
 
 While there is no Makefile, it's very easy to build MegaMek with Jikes.  My
 computer is running Debian Sarge with GCC installed.  Therefore, I can build
 MegaMek with the following command; please modify the command to meet your
 environment (email me if you have any problems).
 
-jikes-gij -q -d classes --target 1.1 --classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:TabPanel.jar `find megamek -name '*.java'`
+jikes-gij -q -d classes --target 1.1 -classpath classes -extdirs lib -sourcepath src `find src -name '*.java' | sed -e 's/^src\///'`
 
 Once MegaMek is built, I can run it with GIJ with the following command.
 
-gij --classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:TabPanel.jar:classes megamek.MegaMek -log | tee MegaMek.log
+gij --classpath lib/Ostermiller.jar:lib/PngEncoder.jar:lib/TabPanel.jar:lib/TinyXML.jar:lib/collections.jar:classes megamek.MegaMek -log | tee MegaMek.log
 
 I can run it under Kaffe with a similar command.
 
-kaffe -classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:TabPanel.jar:classes megamek.MegaMek -log | tee MegaMek.log
+kaffe -classpath lib/Ostermiller.jar:lib/PngEncoder.jar:lib/TabPanel.jar:lib/TinyXML.jar:lib/collections.jar:classes megamek.MegaMek -log | tee MegaMek.log
 
 The following runtime flags are available:
         -testdice : Test the random number generator used by MegaMek, and exit.
@@ -70,4 +71,4 @@ TODO list:
 
 James Damour
 suvarov454@users.sourceforge.net
-last updated 2004-09-15
+last updated 2005-06-24

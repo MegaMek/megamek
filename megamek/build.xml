@@ -6,11 +6,11 @@
 <project default="all" name="MegaMek" basedir=".">
   <!-- Global properties for this build -->
   
-  <property name="srcdir" value="${basedir}"/>
-  <property name="propdir" value="${basedir}"/>
-<!--   <property name="propdir" value="properties/"/> -->
-<!--   <property name="propdir" value="l10n/"/> -->
+  <property name="srcdir" value="src"/>
+  <property name="propdir" value="l10n"/>
+  <property name="confdir" value="mmconf"/>
   <property name="builddir" value="classes"/>
+  <property name="libdir" value="lib"/>
   <property name="datadir" value="data"/>
   <property name="maindir" value="megamek"/>
   <property name="apidocdir" value="apidocs"/>
@@ -29,15 +29,6 @@
   <property name="timestampfile" value="timestamp"/>
   <property name="TinyXMLsrc" value="TinyXML07-src.zip" />
   
-  <!-- Name of libraries which are needed for compilation and running -->
-  <!-- When adding additional libraries update the property 'jarclasspath' -->
-  <!-- and add pathelements to all javac & java tasks! --> 
-  <property name="lib.collections" value="collections.jar"/>
-  <property name="lib.tinyxml" value="TinyXML.jar"/>
-  <property name="lib.ostermiller" value="Ostermiller.jar"/>
-  <property name="lib.png" value="PngEncoder.jar"/>
-  <property name="lib.tabs" value="TabPanel.jar"/>
-
   <!-- Name of the target jarfile and the class containing the main-Method -->
   <property name="jarfile" value="MegaMek.jar"/>
   <property name="jarmainclass" value="megamek.MegaMek"/>
@@ -46,7 +37,7 @@
   <property name="dataclasspath" value="."/>
   
   <!-- This is the classpath of the jar -->  
-  <property name="jarclasspath" value="${dataclasspath} ${lib.collections} ${lib.tinyxml} ${lib.ostermiller} ${lib.png} ${lib.tabs}"/>
+  <property name="jarclasspath" value="${dataclasspath} ${libdir}"/>
 
   <!-- initializes system before build -->
   <target name="init">
@@ -59,13 +50,8 @@
   <target name="compile" depends="init" description="Compile java sources into class files">
     <javac debug="true" debuglevel="lines,source" destdir="${builddir}" srcdir="${srcdir}" target="1.1" source="1.2">
         <classpath>
-            <!-- KEEP this updated when additional libraries are available -->
             <pathelement location="${basedir}"/>
-            <pathelement location="${lib.collections}"/>
-            <pathelement location="${lib.tinyxml}"/>
-            <pathelement location="${lib.ostermiller}"/>
-            <pathelement location="${lib.png}"/>
-            <pathelement location="${lib.tabs}"/>
+            <fileset dir="${libdir}" includes="*.jar"/>
          </classpath>
     </javac>
     <touch file="${timestampfile}"/>
@@ -75,13 +61,8 @@
     <echo message="Compiling using Microsoft Java Compiler"/>
     <javac debug="true" destdir="${builddir}" srcdir="${srcdir}" target="1.1" compiler="microsoft">
         <classpath>
-            <!-- KEEP this updated when additional libraries are available -->
             <pathelement location="${basedir}"/>
-            <pathelement location="${lib.collections}"/>
-            <pathelement location="${lib.tinyxml}"/>
-            <pathelement location="${lib.ostermiller}"/>
-            <pathelement location="${lib.png}"/>
-            <pathelement location="${lib.tabs}"/>
+            <fileset dir="${libdir}" includes="*.jar"/>
          </classpath>
     </javac>
     <touch file="${timestampfile}"/>
@@ -103,14 +84,9 @@
     <echo message="Running MegaMek from build directory: ${builddir}"/>
      <java classname="megamek.MegaMek" fork="true">
         <classpath>
-            <!-- KEEP this updated when additional libraries are available -->
            <pathelement path="${basedir}"/>
            <pathelement path="${builddir}"/>
-           <pathelement location="${lib.collections}"/>
-           <pathelement location="${lib.tinyxml}"/>
-           <pathelement location="${lib.ostermiller}"/>
-           <pathelement location="${lib.png}"/>
-           <pathelement location="${lib.tabs}"/>
+           <fileset dir="${libdir}" includes="*.jar"/>
         </classpath>
      </java>
   </target>
@@ -124,7 +100,7 @@
   <target name="clean" description="Remove all compiled and generated files">
     <!-- Delete the ${build} directory tree -->
     <delete dir="${builddir}/megamek"/>
-    <delete dir="${docdir}"/>
+    <delete dir="${apidocdir}"/>
     <delete file="${timestampfile}"/>
     <delete file="${jarfile}"/>
     <delete>
@@ -141,11 +117,11 @@
   </target>
 
   <target name="packageCode" description="Generates code package only" depends="cvsdev-get, cvsdev-build">
-    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-code-${DSTAMP}.zip" includes="${jarfile} history.txt license.txt"/>
+    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-code-${DSTAMP}.zip" includes="${jarfile} ${propdir}/ history.txt license.txt MegaMek.bat"/>
   </target>
 
   <target name="packageMedia" description="Generates media package only" depends="cvsdev-get">
-    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-media-${DSTAMP}.zip" includes="${datadir}/ *.txt stats.pl" excludes="*.jar"/>
+    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-media-${DSTAMP}.zip" includes="${datadir}/ ${confdir}/ ${docdir}/ *.txt stats.pl" excludes="*.jar"/>
   </target>
 
   <target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from cvs." depends="cvsdev-init"> 
@@ -153,13 +129,8 @@
     <antcall target="cvsdev-clean"/>
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/megamek"/>
 
-    <!-- KEEP this updated when additional libraries are available -->
     <!-- downloading precompiled libraries that are needed for a successful build -->
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.collections}"/>
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.tinyxml}"/>
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.ostermiller}"/>
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.png}"/>
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.tabs}"/>
+    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${libdir}"/>
     
     <antcall target="cvsdev-build"/>
     
@@ -191,15 +162,10 @@
     <mkdir dir="${cvsbuilddir}"/>
     <!-- compile -->
     <echo message="building MegaMek from CVS sources"/>
-    <javac debug="true" debuglevel="lines,source" destdir="${cvsbuilddir}" srcdir="${cvsmaindir}" target="1.1">
+    <javac debug="true" debuglevel="lines,source" destdir="${cvsbuilddir}" srcdir="${srcdir}" target="1.1">
         <classpath> 
-           <!-- KEEP this updated when additional libraries are available -->
            <pathelement location="${cvsmaindir}"/>
-           <pathelement location="${cvsmaindir}/${lib.collections}"/>
-           <pathelement location="${cvsmaindir}/${lib.tinyxml}"/> 
-           <pathelement location="${cvsmaindir}/${lib.ostermiller}"/> 
-           <pathelement location="${cvsmaindir}/${lib.png}"/>
-           <pathelement location="${cvsmaindir}/${lib.tabs}"/>
+           <fileset dir="${libdir}" includes="*.jar"/>
         </classpath>
     </javac>
     
@@ -207,9 +173,9 @@
     <echo message="generating Jar in: ${basedir}/${cvsmaindir}"/>
     <jar basedir="${cvsbuilddir}" jarfile="${cvsmaindir}/${jarfile}">
         <manifest>
-		    <attribute name="Built-By" value="${user.name}"/>
-	    	<attribute name="Class-Path" value="${jarclasspath}"/>
-    		<attribute name="Main-Class" value="${jarmainclass}"/>			
+            <attribute name="Built-By" value="${user.name}"/>
+            <attribute name="Class-Path" value="${jarclasspath}"/>
+            <attribute name="Main-Class" value="${jarmainclass}"/>
         </manifest>
     </jar>
     
@@ -222,7 +188,7 @@
     <!-- keep in mind that directory references for 'excludes' are -->
     <!-- relative to the zip-tasks basedir but 'zipfile' uses the -->
     <!-- absolute (project) ${basedir} -->
-    <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsmaindir}" excludes="${builddir}/, com/"/>
+    <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsmaindir}" excludes="${builddir}/"/>
   </target>
   
   <target name="cvsdev-clean">

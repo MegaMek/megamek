@@ -35,20 +35,48 @@
   
   <!-- This is the relative path to the 'data' directory -->
   <property name="dataclasspath" value="."/>
+
+
   
-  <!-- This is the classpath of the jar -->  
-  <property name="jarclasspath" value="${dataclasspath} ${libdir}"/>
+  <!-- Build the "Class-Path" attribute of the jar's manifest dynamically.  -->
+  <path id="jarclasspath.pathset">
+     <!-- We'll be accessing the "data" directory -->
+     <filelist dir="${dataclasspath}" files="."/> 
+     <!-- We'll include the jars in the "lib" directory -->
+     <fileset dir="lib">
+        <include name="*.jar"/>
+     </fileset>
+  </path>
+  <property name="jarclasspath.abs" refid="jarclasspath.pathset"/>
 
   <!-- initializes system before build -->
   <target name="init">
      <!-- Create the time stamp -->
      <tstamp/>
+
      <!-- Ensure that the build directory exists. -->
-     <mkdir dir="${builddir}"/>    
+     <mkdir dir="${builddir}"/>
+
+     <!-- Use a temprorary file in the build directory to format the    -->
+     <!-- "Class-Path" value correctly, and store it in ${jarclasspath} -->
+     <tempfile property="jarclasspath.temp" destDir="${builddir}"
+        suffix=".tmp" />
+     <echo>Building  temporary file: 
+${jarclasspath.temp}</echo>
+     <echo message="jarclasspath:${jarclasspath.abs}"
+           file="${jarclasspath.temp}" />
+     <replace file="${jarclasspath.temp}"
+         token=":${basedir}/" value=" " />
+     <property file="${jarclasspath.temp}" />
+     <!-- Why can't I suppress output when deleting the temporary file?? -->
+     <delete file="${jarclasspath.temp}" verbose="false" quiet="true" />
+
   </target>
 
   <target name="compile" depends="init" description="Compile java sources into class files">
-    <javac debug="true" debuglevel="lines,source" destdir="${builddir}" srcdir="${srcdir}" target="1.1" source="1.2">
+    <javac debug="true" debuglevel="lines,source"
+        target="1.1" source="1.2"
+        destdir="${builddir}" srcdir="${srcdir}" >
         <classpath>
             <pathelement location="${basedir}"/>
             <fileset dir="${libdir}" includes="*.jar"/>
@@ -69,8 +97,8 @@
   </target>
 
   <target name="jar" depends="compile" description="Generates JAR File from compiled sources">
-        <!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->  
-        <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
+     <!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->  
+     <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
         <fileset dir="${propdir}" includes="**/*.properties"/>
         <manifest>
                 <attribute name="Built-By" value="${user.name}"/>

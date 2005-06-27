@@ -56,6 +56,12 @@ v0.29.82 (CVS)
     for).
 + Cost for Ammunition.
 + Created "savegames" directory.  Added "very paranoid autosave" feature.
++ Bug 1226724: Corrected BV
++ Bug 1226725: Corrected BV
++ Bug 1226726: Corrected BV
++ Bug 1226727: Corrected BV
++ Bug 1226728: Corrected BV
++ Bug 1226729: Corrected BV
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

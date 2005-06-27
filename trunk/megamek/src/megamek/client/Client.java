@@ -94,7 +94,7 @@ public class Client implements Runnable {
             // we need to keep a copy of the log
             serverlog = new megamek.server.ServerLog(PreferenceManager.getClientPreferences().getServerlogFilename(), 
                     true, (new Integer(PreferenceManager.getClientPreferences().getServerlogMaxSize()).longValue() * 1024 * 1024) );
-        };
+        }
     }
 
 
@@ -139,7 +139,7 @@ public class Client implements Runnable {
             } catch (IOException e) {
                 System.err.print("Exception closing logfile: "); //$NON-NLS-1$
                 e.printStackTrace();
-            };
+            }
         }
         System.out.println("client: died"); //$NON-NLS-1$
         
@@ -294,7 +294,7 @@ public class Client implements Runnable {
                 try {
                     wait(100);
                 } catch (InterruptedException ex) {
-                    ;
+                    
                 }
             }
         }
@@ -763,7 +763,7 @@ public class Client implements Runnable {
                 case Packet.COMMAND_CHAT :
                     if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
                         serverlog.append( (String) c.getObject(0) );
-                    };
+                    }
                     game.processGameEvent(new GamePlayerChatEvent(this,null, (String) c.getObject(0)));
                     break;
                 case Packet.COMMAND_ENTITY_ADD :
@@ -825,8 +825,8 @@ public class Client implements Runnable {
                         } else {
                             // append only the new part, not what's already in eotr
                             serverlog.append( ((String) c.getObject(0)).substring(eotr.length()) );
-                        };
-                    };
+                        }
+                    }
                     eotr = (String) c.getObject(0);
                     game.processGameEvent(new GameReportEvent(this));
                     break;

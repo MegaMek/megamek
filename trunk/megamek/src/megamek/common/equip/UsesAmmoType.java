@@ -24,7 +24,7 @@ public abstract class UsesAmmoType extends WeaponType {
     
     public UsesAmmoType (Vector valid_ammo) {
         this.valid_ammo = valid_ammo;
-    };
+    }
     
     // is fed to the lower classes
     public EquipmentState getNewState(Mounted location) {

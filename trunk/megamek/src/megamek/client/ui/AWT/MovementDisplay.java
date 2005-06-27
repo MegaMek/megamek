@@ -942,7 +942,7 @@ public class MovementDisplay
                     } else {
                         // else clear movement
                         clearAllMoves();
-                    };
+                    }
                     return;
                 } else {
                     // if not valid, tell why
@@ -979,7 +979,7 @@ public class MovementDisplay
                     } else {
                         // else clear movement
                         clearAllMoves();
-                    };
+                    }
                     return;
 
                 } else {

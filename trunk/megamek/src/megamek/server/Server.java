@@ -238,7 +238,7 @@ implements Runnable, ConnectionHandler {
         // close socket
         try {
             serverSocket.close();
-        } catch(IOException ex) { ; }
+        } catch(IOException ex) {}
 
         // kill pending connnections
         for (Enumeration i=connectionsPending.elements();i.hasMoreElements();){
@@ -2584,7 +2584,7 @@ implements Runnable, ConnectionHandler {
                     sendServerChat("Please make sure "+entity.getOwner().getName()+" is running MegaMek "+MegaMek.VERSION+
                                    ", or if that is already the case, submit a bug report at http://megamek.sf.net/");
                     return;
-                };
+                }
                 break;
             }
 
@@ -2603,7 +2603,7 @@ implements Runnable, ConnectionHandler {
                     sendServerChat("Please make sure "+entity.getOwner().getName()+" is running MegaMek "+MegaMek.VERSION+
                                    ", or if that is already the case, submit a bug report at http://megamek.sf.net/");
                     return;
-                };
+                }
                 break;
             }
 
@@ -3651,8 +3651,8 @@ implements Runnable, ConnectionHandler {
                 send(createRemoveEntityPacket(entity.getId(), entity.getRemovalCondition()));
             } else {
                 entityUpdate( entity.getId(), movePath  );
-            };
-        };
+            }
+        }
 
         // if using double blind, update the player on new units he might see
         if (doBlind()) {
@@ -6902,15 +6902,14 @@ implements Runnable, ConnectionHandler {
                         phaseReport.append(" missile gets through.");
                     } else {
                         phaseReport.append(" missiles get through.");
-                    };
-                };
+                    }
+                }
             }
         }
 
         // convert the ATM missile damages to LRM type 5 point cluster damage
         // done here after AMS has been performed
-        if (wtype.getAmmoType() == AmmoType.T_ATM)
-        {
+        if (wtype.getAmmoType() == AmmoType.T_ATM) {
             hits = nDamPerHit * hits;
             nDamPerHit = 1;
         }
@@ -6946,8 +6945,8 @@ implements Runnable, ConnectionHandler {
                             phaseReport.append(" missile gets through.");
                         } else {
                             phaseReport.append(" missiles get through.");
-                        };
-                    };
+                        }
+                    }
                     if ( hits <= 0 ) {
                         continue;
                     }
@@ -9879,8 +9878,8 @@ implements Runnable, ConnectionHandler {
                                 game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 ) {
                             desc.append( destroyEntity(te, "a watery grave", false) );
                         }
-                    };
-                };
+                    }
+                }
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
                 desc.append( "\n            Movement system destroyed!" );
@@ -13040,7 +13039,7 @@ implements Runnable, ConnectionHandler {
 
                 greeting(id);
             } catch(IOException ex) {
-                ;
+
             }
         }
     }

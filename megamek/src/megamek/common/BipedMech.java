@@ -257,11 +257,14 @@ public class BipedMech extends Mech {
         int numOfHands=0;
         if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ) {
             numOfHands++;
-        } else if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ) {
+        }
+        if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ) {
             numOfLowerArmActuators++;
-        } else if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ) {
+        }
+        if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ) {
             numOfHands++;
-        } else if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ) {
+        }
+        if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ) {
             numOfLowerArmActuators++;
         }
         cost+=(2*100+numOfLowerArmActuators*50+numOfHands*80)*weight;//arm actuators

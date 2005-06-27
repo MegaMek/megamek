@@ -56,8 +56,8 @@ public class TilesetManager {
     private DirectoryItems camos;
     
     // mech images
-    private MechTileset mechTileset = new MechTileset("data/mex/"); //$NON-NLS-1$
-    private MechTileset wreckTileset = new MechTileset("data/mex/wrecks/"); //$NON-NLS-1$
+    private MechTileset mechTileset = new MechTileset("data/images/units/"); //$NON-NLS-1$
+    private MechTileset wreckTileset = new MechTileset("data/images/units/wrecks/"); //$NON-NLS-1$
     private ArrayList mechImageList = new ArrayList();
     private HashMap mechImages = new HashMap();
     
@@ -69,10 +69,10 @@ public class TilesetManager {
     private Image artilleryAutohit;
     private Image artilleryAdjusted;
     private Image artilleryIncoming;
-    private static final String NIGHT_IMAGE_FILE = "data/hexes/fog.gif";
-    private static final String ARTILLERY_AUTOHIT_IMAGE_FILE = "data/hexes/artyauto.gif";
-    private static final String ARTILLERY_ADJUSTED_IMAGE_FILE = "data/hexes/artyadj.gif";
-    private static final String ARTILLERY_INCOMING_IMAGE_FILE = "data/hexes/artyinc.gif";
+    private static final String NIGHT_IMAGE_FILE = "data/images/hexes/fog.gif";
+    private static final String ARTILLERY_AUTOHIT_IMAGE_FILE = "data/images/hexes/artyauto.gif";
+    private static final String ARTILLERY_ADJUSTED_IMAGE_FILE = "data/images/hexes/artyadj.gif";
+    private static final String ARTILLERY_INCOMING_IMAGE_FILE = "data/images/hexes/artyinc.gif";
 
     public static final int ARTILLERY_AUTOHIT = 0;
     public static final int ARTILLERY_ADJUSTED = 1;
@@ -83,7 +83,7 @@ public class TilesetManager {
         this.comp = comp;
         this.tracker = new MediaTracker(comp);
         try {
-            camos = new DirectoryItems( new File("data/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
+            camos = new DirectoryItems( new File("data/images/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
                                         ImageFileFactory.getInstance() );
         } catch (Exception e) {
             camos = null;

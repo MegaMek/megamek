@@ -28,8 +28,8 @@ import megamek.common.*;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
- * with the appropriate image.  It requires data/mex/mechset.txt, the format of
- * which is explained in that file.
+ * with the appropriate image.  It requires data/images/units/mechset.txt, 
+ * the format of which is explained in that file.
  *
  * @author  Ben
  * @version

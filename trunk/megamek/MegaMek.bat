@@ -27,13 +27,13 @@ echo Microsoft JVM found.  Defaulting to Microsoft JVM from now on.
 echo This file causes MegaMek to prefer the Microsoft JVM > mmconf\jvm_ms.cfg
 :ms_jvm
 for %%A in (%1 %2 %3 %4 %5 %6 %7 %8 %9) do if X%%A==X-dedicated goto ms_dedicated
-start wjview /vst /cp collections.jar;TinyXML.jar;PngEncoder.jar;TabPanel.jar;MegaMek.jar megamek/MegaMek %1 %2 %3 %4 %5 %6 %7 %8 %9
+start wjview /vst /cp lib\collections.jar;lib\TinyXML.jar;lib\PngEncoder.jar;lib\TabPanel.jar;MegaMek.jar megamek/MegaMek %1 %2 %3 %4 %5 %6 %7 %8 %9
 goto done
 :ms_dedicated
 echo Starting dedicated server.  Closing this window or pressing [ctrl]-[c] will
 echo quit the server.
 echo.
-jview /vst /cp collections.jar;TinyXML.jar;MegaMek.jar megamek/MegaMek %1 %2 %3 %4 %5 %6 %7 %8 %9
+jview /vst /cp lib\collections.jar;lib\TinyXML.jar;MegaMek.jar megamek/MegaMek %1 %2 %3 %4 %5 %6 %7 %8 %9
 goto done
 
 :only_found_sun

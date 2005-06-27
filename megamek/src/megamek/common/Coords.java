@@ -306,13 +306,22 @@ public class Coords
      * (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
      */
     public static Coords[] intervening(Coords src, Coords dest) {
+        return intervening(src,dest,false);
+    }
+
+    public static Coords[] intervening(Coords src, Coords dest, boolean split) {
         IdealHex iSrc = IdealHex.get(src);
         IdealHex iDest = IdealHex.get(dest);
     
         int[] directions = new int[3];
-        directions[2] = src.direction(dest); // center last
-        directions[1] = (directions[2] + 5) % 6;
-        directions[0] = (directions[2] + 1) % 6;
+        int centerDirection = src.direction(dest);
+        if(split) {
+            // HACK to make left appear before right in the sequence reliably
+            centerDirection = (int)Math.round(src.radian(dest) + 0.0001 / HEXSIDE) % 6;
+        }
+        directions[2] = centerDirection; // center last
+        directions[1] = (centerDirection + 5) % 6;
+        directions[0] = (centerDirection + 1) % 6;
     
         Vector hexes = new Vector();
         Coords current = src;

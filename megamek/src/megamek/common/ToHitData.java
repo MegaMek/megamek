@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import megamek.common.LosEffects;
+
 /**
  * Contains the to-hit number and a short description of how it was reached
  */
@@ -35,6 +37,7 @@ public class ToHitData extends TargetRoll
   
     private int             hitTable = HIT_NORMAL;
     private int             sideTable = SIDE_FRONT;
+    private int             cover = LosEffects.COVER_NONE;
     
     /**
      * Construct default.
@@ -132,5 +135,13 @@ public class ToHitData extends TargetRoll
         } else {
             return "";
         }
+    }
+    
+    public int getCover() {
+       return cover;
+    }
+    
+    public void setCover(int cover) {
+        this.cover = cover;
     }
 }

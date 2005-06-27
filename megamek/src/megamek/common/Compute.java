@@ -452,7 +452,7 @@ public class Compute
             // what are this guy's mods to the attack?
             LosEffects los = LosEffects.calculateLos(game, other.getId(), target);
             ToHitData mods = los.losModifiers(game);
-            los.setTargetCover(false);
+            los.setTargetCover(LosEffects.COVER_NONE);
             mods.append(getAttackerMovementModifier(game, other.getId()));
             // is this guy a better spotter?
             if (spotter == null || mods.getValue() < bestMods.getValue()) {

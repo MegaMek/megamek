@@ -1523,6 +1523,7 @@ implements Runnable, ConnectionHandler {
                 break;
             case IGame.PHASE_OFFBOARD :
                 roundReport.append("\nOffboard Attack Phase\n-----------------\n");
+                resolveAllButWeaponAttacks(); //torso twist or flip arms possible
                 resolveOnlyWeaponAttacks(); //should only be TAG at this point
                 resolveIndirectArtilleryAttacks();
                 applyBuildingDamage();
@@ -7176,10 +7177,12 @@ implements Runnable, ConnectionHandler {
                 }
                 else if(game.getOptions().booleanOption("maxtech_partial_cover") &&
                   toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
-                  (hit.getLocation() == Mech.LOC_LLEG || hit.getLocation() == Mech.LOC_RLEG)) {
+                  entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), toHit.getSideTable())) {
                     phaseReport.append( "\n        " )
                                .append( entityTarget.getDisplayName() )
-                               .append( " suffers no damage.(hit partial cover)" );
+                               .append( " suffers no damage.(")
+                               .append( entityTarget.getLocationAbbr(hit))
+                               .append( " behind cover)" );
                 }
                 else {
                     // Resolve damage normally.

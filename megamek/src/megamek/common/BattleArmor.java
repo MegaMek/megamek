@@ -254,7 +254,7 @@ public class BattleArmor
 
         // Construction complete.
         this.isInitialized = true;
-    };
+    }
 
     /**
      * Returns this entity's original jumping mp.

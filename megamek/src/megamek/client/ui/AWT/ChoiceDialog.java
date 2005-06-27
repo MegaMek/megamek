@@ -171,7 +171,7 @@ public class ChoiceDialog
         }
         setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
                     parent.getLocation().y + parent.getSize().height/2 - size.height/2);
-    };
+    }
 
     private void setupButtons() {
         butOK.addActionListener(this);

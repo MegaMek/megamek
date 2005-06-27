@@ -290,7 +290,7 @@ public class TilesetManager {
         try {
             loadTracker.waitForID(0);
         } catch (InterruptedException e) {
-            ;
+
         }
 
     }

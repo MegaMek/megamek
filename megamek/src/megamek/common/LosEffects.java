@@ -69,7 +69,7 @@ public class LosEffects {
     
     /** Creates a new instance of LosEffects */
     public LosEffects() {
-        ;
+
     }
     
     public void add(LosEffects other) {

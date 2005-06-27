@@ -202,11 +202,11 @@ public class Pilot
 
             if ( group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
                 return group.getOptions();
-        };
+        }
 
         // no pilot advantages -- return an empty Enumeration
         return new java.util.Vector().elements();
-    };
+    }
 
     /**
         Returns a string of all the LVL3 Pilot Advantage "codes" for this pilot,

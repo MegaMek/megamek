@@ -1995,12 +1995,12 @@ public abstract class Mech
     public boolean canCharge() {
         // Mechs can charge, unless they are Clan and the "no clan physicals" option is set
         return super.canCharge() && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
-    };
+    }
 
     public boolean canDFA() {
         // Mechs can DFA, unless they are Clan and the "no clan physicals" option is set
         return super.canDFA() && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
-    };
+    }
     
     //gives total number of sinks
     public int getNumberOfSinks() {

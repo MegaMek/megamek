@@ -837,12 +837,12 @@ public class Infantry
     public boolean canCharge() {
         // Infantry can't Charge
         return false;
-    };
+    }
 
     public boolean canDFA() {
         // Infantry can't DFA
         return false;
-    };
+    }
     
     /**
      * Sets this entity's original walking movement points

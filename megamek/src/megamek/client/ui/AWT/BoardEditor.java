@@ -96,7 +96,7 @@ public class BoardEditor extends Container implements ItemListener,
         } catch (IOException e) {
             new AlertDialog(frame,Messages.getString("BoardEditor.FatalError"), Messages.getString("BoardEditor.CouldntInitialize")+e); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
-        };
+        }
 
         this.addKeyListener(bv);
         this.addKeyListener(this);
@@ -146,12 +146,12 @@ public class BoardEditor extends Container implements ItemListener,
 
             if ( !confirm.getShowAgain() ) {
                 GUIPreferences.getInstance().setNagForMapEdReadme(false);
-            };
+            }
 
             if ( confirm.getAnswer() ) {
                 showHelp();
-            };
-        };
+            }
+        }
     }
     
     /**
@@ -336,7 +336,7 @@ public class BoardEditor extends Container implements ItemListener,
         } catch (IOException e) {
             new AlertDialog(frame,Messages.getString("BoardEditor.FatalError"), Messages.getString("BoardEditor.CouldNotInitialiseMinimap")+e); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
-        };
+        }
         minimapW.add(minimap);
 
         setMapVisible(true);
@@ -713,7 +713,6 @@ public class BoardEditor extends Container implements ItemListener,
         }
     }
     public void keyTyped(KeyEvent ke) {
-        ;
     }
 
     /**
@@ -871,7 +870,6 @@ public class BoardEditor extends Container implements ItemListener,
     public void windowOpened(java.awt.event.WindowEvent windowEvent) {
     }
     public void boardNewAttack(BoardViewEvent a) {
-        ;
     }
 
 }

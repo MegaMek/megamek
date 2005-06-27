@@ -74,7 +74,7 @@ public class WeaponType extends EquipmentType {
 
 
     protected WeaponType() {
-        ;
+
     }
 
     public int getHeat() {

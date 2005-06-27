@@ -148,7 +148,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     public CommonMenuBar(Client parent) {
         this();
         client=parent;
-    };
+    }
 
     public CommonMenuBar() {
         Menu menu = null;
@@ -411,7 +411,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         item.setActionCommand( "helpContents" ); //$NON-NLS-1$
         menu.add( item );
         menu.addSeparator();
-        item = new MenuItem( Messages.getString("CommonMenuBar.helpAbout") );; //$NON-NLS-1$
+        item = new MenuItem( Messages.getString("CommonMenuBar.helpAbout") ); //$NON-NLS-1$
         item.setActionCommand( "helpAbout" ); //$NON-NLS-1$
         item.addActionListener( this );
         menu.add( item );
@@ -515,7 +515,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             viewGameOptions.setEnabled( true );
         } else {
             viewGameOptions.setEnabled( false );
-        };
+        }
 
         // As of 2003-09-04, we can't ever print.
         filePrint.setEnabled( false );
@@ -534,7 +534,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             fileBoardSave.setEnabled( false );
             fileBoardSaveAs.setEnabled( false );
             fileBoardSaveAsImage.setEnabled( false );
-        };
+        }
 
         // If we have a board, we can perform board actions and view the mini map.
         if ( this.hasBoard ) {
@@ -543,7 +543,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
                 fileBoardSave.setEnabled( true );
                 fileBoardSaveAs.setEnabled( true );
                 fileBoardSaveAsImage.setEnabled( true );
-            };
+            }
             viewMiniMap.setEnabled( true );
             if ( isJ2RE ){
                 viewZoomIn.setEnabled( true );
@@ -859,16 +859,16 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
                     // fire off the menu action event if the menu is active
                     if (getShortcutMenuItem(shortcut).isEnabled()) {
                         actionPerformed( new ActionEvent(this,1,getShortcutMenuItem(shortcut).getActionCommand()) );
-                    };
-                };
-            };
+                    }
+                }
+            }
         }
     }
+    
     public void keyReleased(KeyEvent ev) {
-        ;
     }
+    
     public void keyTyped(KeyEvent ev) {
-        ;
     }
 
 }

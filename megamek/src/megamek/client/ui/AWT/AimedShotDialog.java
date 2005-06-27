@@ -77,7 +77,7 @@ public class AimedShotDialog
         pack();
         setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
                     parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
-    };
+    }
     
     public void setEnableAll(boolean enableAll) {
         for (int i = 0; i < checkboxes.length; i++) {

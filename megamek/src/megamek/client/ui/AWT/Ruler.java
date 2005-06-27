@@ -440,11 +440,9 @@ public class Ruler extends Dialog implements BoardViewListener {
    }
 
    public void boardChangedEntity(BoardViewEvent b) {
-        ;
     }
 
     public void boardNewAttack(BoardViewEvent a) {
-        ;
     }
 
     /* (non-Javadoc)

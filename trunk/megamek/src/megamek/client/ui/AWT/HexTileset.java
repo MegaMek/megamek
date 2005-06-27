@@ -161,7 +161,7 @@ public class HexTileset {
     
     public void loadFromFile(String filename) throws IOException {
         // make inpustream for board
-        Reader r = new BufferedReader(new FileReader("data/hexes/" + filename)); //$NON-NLS-1$
+        Reader r = new BufferedReader(new FileReader("data/images/hexes/" + filename)); //$NON-NLS-1$
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
         st.eolIsSignificant(true);
@@ -366,7 +366,7 @@ public class HexTileset {
         }
 
        public String getImageFileName() {
-           return "data/hexes/" + imageFile; //$NON-NLS-1$
+           return "data/images/hexes/" + imageFile; //$NON-NLS-1$
        }
         
         public Image getImage(Component comp) {
@@ -390,9 +390,9 @@ public class HexTileset {
           images = new java.util.Vector();
           for (int i = 0; i < filenames.size(); i++) {
             String filename = (String) filenames.elementAt(i);
-            images.addElement(comp.getToolkit().getImage("data/hexes/" + filename)); //$NON-NLS-1$
+            images.addElement(comp.getToolkit().getImage("data/images(hexes/" + filename)); //$NON-NLS-1$
           }
-//      image = comp.getToolkit().getImage("data/hexes/" + imageFile);
+//      image = comp.getToolkit().getImage("data/images/hexes/" + imageFile);
         }
     }
 }

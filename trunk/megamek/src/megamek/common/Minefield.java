@@ -39,7 +39,7 @@ public class Minefield implements Serializable, Cloneable {
 
     public static final int MAX_DAMAGE = 20;
 
-    public static final String IMAGE_FILE = "data/hexes/minefieldsign.gif";
+    public static final String IMAGE_FILE = "data/imags/hexes/minefieldsign.gif";
 
     private static String[] names = {"Conventional", "Command-detonated", "Vibrabomb", "Thunder", "Thunder-Inferno", "Thunder-Active", "Thunder-Vibrabomb"};
     

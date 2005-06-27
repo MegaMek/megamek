@@ -38,6 +38,8 @@ v0.29.82 (CVS)
 + First steps towards automatic cost calculation.
 + Added costs for most weapons.
 + Added costs for remaining non-BA, non-infantry weapons.
++ Fix references to data/camo, data/widget, data/mex to data/images/camo,
+    data/images/widget, data/images/units
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

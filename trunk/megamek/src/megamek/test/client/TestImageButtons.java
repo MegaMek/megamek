@@ -68,10 +68,10 @@ public class TestImageButtons {
 
         // Create a list as the center of the dialog.
         list = new List(5);
-        list.add( "data/camo/Wood1.jpg" );
-        list.add( "data/camo/Wood2.jpg" );
-        list.add( "data/camo/Urban.jpg" );
-        list.add( "data/camo/Winter.jpg" );
+        list.add( "data/images/camo/Wood1.jpg" );
+        list.add( "data/images/camo/Wood2.jpg" );
+        list.add( "data/images/camo/Urban.jpg" );
+        list.add( "data/images/camo/Winter.jpg" );
         list.select( 0 );
         list.addItemListener( new ItemListener() {
                 public void itemStateChanged( ItemEvent event ) {
@@ -133,7 +133,7 @@ public class TestImageButtons {
                 }
             } );
         imgButton.setImage
-            ( Toolkit.getDefaultToolkit().getImage("data/camo/Wood1.jpg") );
+            ( Toolkit.getDefaultToolkit().getImage("data/images/camo/Wood1.jpg") );
         panel.add( imgButton );
 
         // Create a "no camo" button on the panel.

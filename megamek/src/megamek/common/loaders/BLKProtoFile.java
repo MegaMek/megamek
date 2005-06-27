@@ -64,8 +64,16 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             } else {
                 t.setTechLevel(TechConstants.T_IS_LEVEL_2);
             }
-        } else {
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
+            t.setTechLevel(TechConstants.T_IS_LEVEL_1);
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
+            t.setTechLevel(TechConstants.T_IS_LEVEL_2);
+        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
+            t.setTechLevel(TechConstants.T_IS_LEVEL_3);
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
+            t.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
         }
 
         if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find weight block.");

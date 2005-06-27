@@ -6213,9 +6213,10 @@ implements Runnable, ConnectionHandler {
                         swarmTarget.getTargetId(), wr.waa.getWeaponId());
                     newWaa.setSwarmingMissiles(true);
                     newWaa.setOldTargetId(target.getTargetId());
+                    newWaa.setAmmoId(wr.waa.getAmmoId());
                     WeaponResult newWr = preTreatWeaponAttack(newWaa);
-                    resolveWeaponAttack(newWr, lastEntityId, false, swarmMissilesNowLeft);
-                } else phaseReport.append("    The remaining missiles find no new target.");
+                    resolveWeaponAttack(newWr, ae.getId(), false, swarmMissilesNowLeft);
+                } else phaseReport.append("    The remaining missiles find no new target.\n");
             }
 
             // Shots that miss an entity can set fires.
@@ -7283,8 +7284,9 @@ implements Runnable, ConnectionHandler {
                     swarmTarget.getTargetId(), wr.waa.getWeaponId());
                 newWaa.setSwarmingMissiles(true);
                 newWaa.setOldTargetId(target.getTargetId());
+                newWaa.setAmmoId(wr.waa.getAmmoId());
                 WeaponResult newWr = preTreatWeaponAttack(newWaa);
-                resolveWeaponAttack(newWr, lastEntityId, false, swarmMissilesNowLeft);
+                resolveWeaponAttack(newWr, ae.getId(), false, swarmMissilesNowLeft);
             } else phaseReport.append("    The remaining missiles find no new target.\n");
         }
         return !bMissed;
@@ -9810,7 +9812,7 @@ implements Runnable, ConnectionHandler {
                         damage = 0;
                     } else if (ammoExplosion && te.locationHasCase(hit.getLocation())) {
                         // Remaining damage prevented...
-                        desc.append( " remaining " )
+                        desc.append( "        remaining " )
                             .append( damage )
                             .append( " damage prevented by CASE." );
 

@@ -30,7 +30,7 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
 public class CommonSettingsDialog extends ClientDialog
     implements ActionListener, ItemListener, FocusListener
 {
-    private ScrollPane  scrolledPane = new ScrollPane();;
+    private ScrollPane  scrolledPane = new ScrollPane();
     private TabPanel    panTabs;
     
     private Checkbox    minimapEnabled;

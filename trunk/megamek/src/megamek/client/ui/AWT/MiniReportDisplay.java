@@ -46,7 +46,7 @@ public class MiniReportDisplay extends Dialog
         addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     actionPerformed(new ActionEvent(butOkay,ActionEvent.ACTION_PERFORMED,butOkay.getLabel()));
-                };
+                }
         });
 
         butOkay.requestFocus();

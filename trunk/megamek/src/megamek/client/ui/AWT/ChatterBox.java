@@ -141,10 +141,8 @@ public class ChatterBox implements KeyListener {
         }
     }
     public void keyReleased(KeyEvent ev) {
-        ;
     }
     public void keyTyped(KeyEvent ev) {
-        ;
     }
 
 }

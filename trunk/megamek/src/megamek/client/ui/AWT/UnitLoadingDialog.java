@@ -68,7 +68,7 @@ public class UnitLoadingDialog extends Dialog {
                     try {
                         Thread.sleep(UPDATE_FREQUENCY);
                     } catch (Exception e) {
-                        ;
+                        
                     }
                 }
             }

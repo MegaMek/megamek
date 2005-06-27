@@ -912,12 +912,12 @@ public class Protomech
     public boolean canCharge() {
         // Protos can't Charge
         return false;
-    };
+    }
 
     public boolean canDFA() {
         // Protos can't DFA
         return false;
-    };
+    }
 
     /**
      * @return The cost in C-Bills of the ProtoMech in question.

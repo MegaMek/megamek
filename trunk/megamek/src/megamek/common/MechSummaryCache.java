@@ -109,7 +109,7 @@ public class MechSummaryCache {
                 try {
                     m_instance.wait();
                 } catch (Exception e) {
-                    ;
+
                 }
             }
         }

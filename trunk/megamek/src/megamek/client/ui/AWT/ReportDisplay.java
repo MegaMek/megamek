@@ -206,10 +206,8 @@ public class ReportDisplay
         }
     }
     public void keyReleased(KeyEvent ev) {
-        ;
     }
     public void keyTyped(KeyEvent ev) {
-        ;
     }
 
     public void gamePhaseChange(GamePhaseChangeEvent e){

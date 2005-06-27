@@ -194,11 +194,9 @@ public class ClientGUI
     }
 
     public void keyTyped(KeyEvent ke) {
-        ;
     }
 
     public void keyReleased(KeyEvent ke) {
-        ;
     }
 
     /**
@@ -332,7 +330,7 @@ public class ClientGUI
         } catch (IOException e) {
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message1") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
-        };
+        }
         minimap.addKeyListener(this);
         minimapW.addWindowListener(this);
         minimapW.addKeyListener(this);
@@ -466,7 +464,7 @@ public class ClientGUI
 
             if (null!=fd.getFile()) {
                 client.sendChat("/save "+fd.getFile()); //$NON-NLS-1$
-            };
+            }
         }
 
         if (event.getActionCommand().equalsIgnoreCase("helpAbout")) { //$NON-NLS-1$

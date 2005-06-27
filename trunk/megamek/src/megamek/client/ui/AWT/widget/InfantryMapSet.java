@@ -58,7 +58,7 @@ public class InfantryMapSet implements DisplayMapSet{
     
     public Vector getBackgroundDrawers(){
         return bgDrawers;
-    };
+    }
     
     public void setEntity(Entity e){
        Infantry inf = (Infantry) e;

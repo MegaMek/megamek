@@ -697,12 +697,12 @@ public class Tank
     public boolean canCharge() {
         // Tanks can charge, except Hovers when the option is set
         return super.canCharge() && !(game.getOptions().booleanOption("no_hover_charge") && IEntityMovementMode.HOVER==getMovementMode());
-    };
+    }
 
     public boolean canDFA() {
         // Tanks can't DFA
         return false;
-    };
+    }
 
     public int getEngineType()
     {

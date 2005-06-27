@@ -126,7 +126,7 @@ public class Game implements Serializable, IGame
      * Constructor
      */
     public Game() {
-        ;
+
     }
 
     public IBoard getBoard() {
@@ -1866,13 +1866,13 @@ public class Game implements Serializable, IGame
             roll = (PilotingRollData)pilotRolls.elementAt(i);
             if ( roll.getEntityId()==entity.getId() ) {
                rollsToRemove.addElement(new Integer(i));
-            };
-        };
+            }
+        }
 
         // now, clear them out
         for (i=rollsToRemove.size()-1; i > -1; i--) {
             pilotRolls.removeElementAt( ((Integer)rollsToRemove.elementAt(i)).intValue() );
-        };
+        }
     }
 
     /** Resets the extreme Gravity PSR list. */
@@ -1891,13 +1891,13 @@ public class Game implements Serializable, IGame
             roll = (PilotingRollData)extremeGravityRolls.elementAt(i);
             if ( roll.getEntityId()==entity.getId() ) {
                rollsToRemove.addElement(new Integer(i));
-            };
-        };
+            }
+        }
 
         // now, clear them out
         for (i=rollsToRemove.size()-1; i > -1; i--) {
             extremeGravityRolls.removeElementAt( ((Integer)rollsToRemove.elementAt(i)).intValue() );
-        };
+        }
     }
 
     /** Resets the PSR list. */

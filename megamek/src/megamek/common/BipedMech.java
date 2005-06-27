@@ -276,10 +276,13 @@ public class BipedMech extends Mech {
             engineCost=15000;
         }
         cost+=(weight*getOriginalWalkMP()*weight*engineCost)/75;//(weight*walk=rating; rating*weight*cost factor = cost of engine.
-        cost+=300000*getOriginalWalkMP()*weight;//gyro;
+        cost+=300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);//gyro;
+        cost+=getOriginalJumpMP()*getOriginalJumpMP()*weight*200;
         int freeSinks= hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
         int sinkCost= hasDoubleHeatSinks()? 6000: 2000;
         cost+=sinkCost*(heatSinks()-freeSinks);//cost of sinks
+        System.out.println(getDisplayName());
+        System.out.println(cost); 
         double totalArmorWeight = (double) getTotalOArmor() / 16.0f;
         totalArmorWeight/=EquipmentType.getArmorPointMultiplier(armorType,techLevel);
         totalArmorWeight=(double)Math.ceil(totalArmorWeight*2f)/2f;

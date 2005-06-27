@@ -62,6 +62,7 @@ v0.29.82 (CVS)
 + Bug 1226727: Corrected BV
 + Bug 1226728: Corrected BV
 + Bug 1226729: Corrected BV
++ more cost stuff.  Biped mech BV is semi-correct (in some cases, needs more testing) and all costs (0 for everything but biped mechs) are displayed in mech selector.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

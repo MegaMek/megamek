@@ -293,7 +293,8 @@ public class MechSelectorDialog
                 makeLength("" + ms.getTons(), 3) + " " +  //$NON-NLS-1$ //$NON-NLS-2$
                 makeLength("" + ms.getBV(),5)+" "+ //$NON-NLS-1$ //$NON-NLS-2$
             ms.getYear() + " " +
-            levelOrValid + " ";
+            levelOrValid + " " +
+            ms.getCost() + " ";
     }
 
     public void actionPerformed(ActionEvent ae) {

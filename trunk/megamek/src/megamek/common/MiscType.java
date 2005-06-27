@@ -394,6 +394,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
         misc.flags |= F_HATCHET;
         misc.bv = BV_VARIABLE;
         
@@ -442,6 +443,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.hittable = false;
         misc.flags |= F_CASE;
+        misc.cost=50000;
         misc.bv = 0;
         
         return misc;
@@ -457,6 +459,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.flags |= F_CASE;
+        misc.cost=50000;
         misc.bv = 0;
         
         return misc;
@@ -470,6 +473,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS MASC");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags |= F_MASC;
@@ -490,6 +494,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
+        misc.cost = COST_VARIABLE;
         misc.spreadable = true;
         misc.flags |= F_MASC;
         misc.bv = 0;
@@ -527,6 +532,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.hittable = true;
         misc.spreadable = false;
+        misc.cost = 250000;
         misc.flags |= F_C3S;
         misc.bv = 0;
         
@@ -544,6 +550,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 5;
         misc.hittable = true;
         misc.spreadable = false;
+        misc.cost = 1500000;
         misc.flags |= F_C3M;
         misc.bv = 0;
         
@@ -561,6 +568,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.hittable = true;
         misc.spreadable = false;
+        misc.cost = 750000;
         misc.flags |= F_C3I;
         misc.bv = 0;
         
@@ -574,6 +582,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Artemis IV FCS");
         misc.tonnage = 1.0f;
         misc.criticals = 1;
+        misc.cost = 100000;
         misc.flags |= F_ARTEMIS;
         return misc;
     }
@@ -584,6 +593,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("CLArtemisIV");
         misc.addLookupName("Clan Artemis IV FCS");
         misc.tonnage = 1.0f;
+        misc.cost = 100000;
         misc.criticals = 1;
         misc.flags |= F_ARTEMIS;
         return misc;
@@ -600,6 +610,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.hittable = true;
+        misc.cost = 200000;
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 61;
@@ -615,6 +626,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan ECM Suite");
         misc.tonnage = 1;
         misc.criticals = 1;
+        misc.cost = 200000;
         misc.hittable = true;
         misc.spreadable = false;
         misc.flags |= F_ECM;
@@ -630,6 +642,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
         misc.flags |= F_SWORD;
         misc.bv = BV_VARIABLE;
         
@@ -654,6 +667,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Targeting Computer");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
         misc.bv = BV_VARIABLE;
         misc.flags |= F_TARGCOMP;
         // see note above
@@ -672,6 +686,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Targeting Computer");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
         misc.bv = BV_VARIABLE;
         misc.flags |= F_TARGCOMP;
         // see note above
@@ -1035,6 +1050,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.hittable = true;
+        misc.cost = 200000;
         misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 10;
@@ -1053,6 +1069,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.hittable = true;
         misc.spreadable = false;
+        misc.cost = 200000;
         misc.flags |= F_BAP;
         misc.bv = 12;
         
@@ -1070,6 +1087,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;
+        misc.cost = 150000;
         misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 7;
@@ -1086,6 +1104,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;
+        misc.cost = 1500;
         misc.spreadable = false;
         misc.flags |= F_AP_POD;
         misc.bv = 1;
@@ -1102,6 +1121,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;
+        misc.cost = 1500;
         misc.spreadable = false;
         misc.flags |= F_AP_POD;
         misc.bv = 1;

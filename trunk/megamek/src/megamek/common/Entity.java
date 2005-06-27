@@ -4453,8 +4453,12 @@ public abstract class Entity
         int cost=0;
         for (Enumeration i = equipmentList.elements();i.hasMoreElements();) {
              Mounted mounted = (Mounted)i.nextElement();
-             cost +=mounted.getType().getCost();
+             int itemCost=(int)mounted.getType().getCost();
+             if(itemCost==EquipmentType.COST_VARIABLE) {
+                itemCost=mounted.getType().resolveVariableCost(this);
             }
+            cost +=itemCost;
+        }
         return cost;
     }
 

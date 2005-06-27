@@ -167,7 +167,7 @@ public class MiniMap extends Canvas  {
         int green;
         int blue;
 
-        File coloursFile = new File("data/hexes/" + GUIPreferences.getInstance().getMinimapColours()); //$NON-NLS-1$
+        File coloursFile = new File("data/images/hexes/" + GUIPreferences.getInstance().getMinimapColours()); //$NON-NLS-1$
 
         // only while the defaults are hard-coded!
         if(!coloursFile.exists()) { return; }

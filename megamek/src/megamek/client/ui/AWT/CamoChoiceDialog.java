@@ -37,7 +37,7 @@ import megamek.common.util.DirectoryItems;
  * This dialog allows players to select the camo pattern (or color) used by
  * their units during the game.  It automatically fills itself with all the
  * color choices in <code>Settings</code> and all the camo patterns in the
- * "data/camo" directory tree.
+ * "data/iamges/camo" directory tree.
  *
  * Created on January 19, 2004
  *
@@ -221,7 +221,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
         // Parse the camo directory.
         try {
-            camos = new DirectoryItems( new File("data/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
+            camos = new DirectoryItems( new File("data/images/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
                                         ImageFileFactory.getInstance() );
         } catch (Exception e) {
             camos = null;

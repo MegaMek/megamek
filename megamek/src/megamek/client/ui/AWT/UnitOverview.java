@@ -63,13 +63,13 @@ public class UnitOverview implements Displayable {
         fm = clientgui.bv.getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.bv.getToolkit();
-        scrollUp = toolkit.getImage("data/widgets/scrollUp.gif"); //$NON-NLS-1$
+        scrollUp = toolkit.getImage("data/images/widgets/scrollUp.gif"); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDown = toolkit.getImage("data/widgets/scrollDown.gif"); //$NON-NLS-1$
+        scrollDown = toolkit.getImage("data/images/widgets/scrollDown.gif"); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUp = toolkit.getImage("data/widgets/pageUp.gif"); //$NON-NLS-1$
+        pageUp = toolkit.getImage("data/images/widgets/pageUp.gif"); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDown = toolkit.getImage("data/widgets/pageDown.gif"); //$NON-NLS-1$
+        pageDown = toolkit.getImage("data/images/widgets/pageDown.gif"); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
     }
 

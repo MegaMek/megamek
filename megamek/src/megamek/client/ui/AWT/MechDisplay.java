@@ -562,32 +562,32 @@ class WeaponPanel extends BufferedPanel
     }
 
     private void setBackGround(){
-        Image tile = getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
+        Image tile = getToolkit().getImage("data/images/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_TOP;
-        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_BOTTOM;
-        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -595,28 +595,28 @@ class WeaponPanel extends BufferedPanel
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/tl_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/bl_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/tr_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/br_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -1304,32 +1304,32 @@ class SystemPanel
     }
 
     private void setBackGround(){
-        Image tile = getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
+        Image tile = getToolkit().getImage("data/images/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_TOP;
-        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_BOTTOM;
-        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -1337,28 +1337,28 @@ class SystemPanel
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/tl_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/bl_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/tr_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/br_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -1510,32 +1510,32 @@ class ExtraPanel
     }
 
    private void setBackGround(){
-        Image tile = getToolkit().getImage("data/widgets/tile.gif"); //$NON-NLS-1$
+        Image tile = getToolkit().getImage("data/images/widgets/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_TOP;
-        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_HORIZONTAL |
                 BackGroundDrawer.VALIGN_BOTTOM;
-        tile = getToolkit().getImage("data/widgets/h_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.TILING_VERTICAL |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/v_line.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
@@ -1543,28 +1543,28 @@ class ExtraPanel
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/tl_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage("data/widgets/bl_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/tr_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 
             b = BackGroundDrawer.NO_TILING |
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage("data/widgets/br_corner.gif"); //$NON-NLS-1$
+        tile = getToolkit().getImage("data/images/widgets/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
 

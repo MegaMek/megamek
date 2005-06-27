@@ -22,7 +22,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 
 /**
- * This class will list all of the camo files under "data/camo", according to
+ * This class will list all of the camo files under "data/images/camo", according to
  * their categories.
  *
  * Created on January 18, 2004
@@ -36,7 +36,7 @@ public class ListCamoFiles {
 
         try {
             String rootDir = PreferenceManager.getClientPreferences().getDataDirectory();
-            File camoLib = new File( rootDir + "/camo");
+            File camoLib = new File( rootDir + "/images/camo");
             DirectoryItems images = new DirectoryItems
                 ( camoLib, "", ImageFileFactory.getInstance() );
             Enumeration categories = images.getCategoryNames();

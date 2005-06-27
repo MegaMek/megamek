@@ -334,9 +334,9 @@ public class MiniMap extends Canvas  {
                     Object action = iter.nextElement();
                     if (action instanceof AttackAction) {
                         paintAttack(g,(AttackAction) action);
-                    };
-                };
-            };
+                    }
+                }
+            }
 
             for (Enumeration iter = m_game.getEntities(); iter.hasMoreElements(); ) {
                 Entity e = (Entity)iter.nextElement();
@@ -512,7 +512,9 @@ public class MiniMap extends Canvas  {
         Entity source = m_game.getEntity(attack.getEntityId());
         Targetable target = m_game.getTarget(attack.getTargetType(), attack.getTargetId());
         // sanity check...
-        if (null==source || null==target) { return; };
+        if (null==source || null==target) {
+            return;
+        }
 
         if (attack instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction)attack;
@@ -545,7 +547,7 @@ public class MiniMap extends Canvas  {
         } else {
             yPoints[3] = yPoints[0]-2;
             yPoints[2] = yPoints[1]-2;
-        };
+        }
         g.setColor(PlayerColors.getColor(source.getOwner().getColorIndex()));
         g.fillPolygon(xPoints,yPoints,4);
         g.setColor(Color.black);
@@ -578,17 +580,17 @@ public class MiniMap extends Canvas  {
                     } else {
                         yPoints[3] = yPoints[0]-2;
                         yPoints[2] = yPoints[1]-2;
-                    };
+                    }
                     g.fillPolygon(xPoints,yPoints,4);
                     g.setColor(Color.black);
                     g.drawPolygon(xPoints,yPoints,4);
                     break;
-                };
-            };
-        };
+                }
+            }
+        }
 
         g.setColor(oldColor);
-    };
+    }
 
     private void paintUnit (Graphics g, Entity entity, boolean border) {
         int baseX = entity.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];
@@ -786,7 +788,7 @@ public class MiniMap extends Canvas  {
         if (x.getElevation() < 0) {
             // sinkholes have their own colour
             terrColor = SINKHOLE;
-        };
+        }
 
         int level = 0;
         int terrain = 0;
@@ -802,7 +804,7 @@ public class MiniMap extends Canvas  {
                 // make heavy woods darker
                 if (j == Terrains.WOODS && x.getTerrain(j).getLevel() > 1) {
                     terrColor = HEAVY_WOODS;
-                };
+                }
                 // contains both smoke and fire
                 if (j == Terrains.SMOKE && x.getTerrain(Terrains.FIRE) != null) {
                     terrColor = SMOKE_AND_FIRE;

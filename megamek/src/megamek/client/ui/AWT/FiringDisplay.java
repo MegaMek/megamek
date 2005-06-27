@@ -374,7 +374,7 @@ public class FiringDisplay
              && null != ce()
              && next.getOwnerId() != ce().getOwnerId() ) {
             clientgui.setDisplayVisible(false);
-        };
+        }
         cen = Entity.NONE;
         target(null);
         clientgui.getBoardView().select(null);

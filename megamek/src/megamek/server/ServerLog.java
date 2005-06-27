@@ -71,5 +71,5 @@ public class ServerLog {
     
     public void close() throws java.io.IOException {
         writer.close();
-    };
+    }
 }

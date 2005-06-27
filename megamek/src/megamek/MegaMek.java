@@ -137,12 +137,12 @@ public class MegaMek implements ActionListener {
 
             if (!confirm.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForReadme(false);
-            };
+            }
 
             if (confirm.getAnswer()) {
                 showHelp();
-            };
-        };
+            }
+        }
     }
 
     /**
@@ -191,7 +191,7 @@ public class MegaMek implements ActionListener {
         try {
             tracker.waitForID(0);
         } catch (InterruptedException e) {
-            ;
+            
         }
         // make splash image panel
         BufferedPanel panTitle = new BufferedPanel();
@@ -347,7 +347,7 @@ public class MegaMek implements ActionListener {
         try {
             client.connect();
         } catch (Exception e) {
-            ;
+            
         }
         launch(gui.getFrame());
 
@@ -411,7 +411,7 @@ public class MegaMek implements ActionListener {
         try {
             client.connect();
         } catch (Exception e) {
-            ;
+            
         }
         optdlg = null;
         launch(gui.getFrame());
@@ -494,7 +494,7 @@ public class MegaMek implements ActionListener {
             try {
                 client.connect();
             } catch (Exception e) {
-                ;
+                
             }
             server.getGame().getOptions().loadOptions(client, hd.serverPass);
 
@@ -512,7 +512,7 @@ public class MegaMek implements ActionListener {
                 try {
                     c.connect();
                 } catch (Exception e) {
-                    ;
+                    
                 }
                 c.retrieveServerInfo(); 
             }
@@ -744,7 +744,7 @@ public class MegaMek implements ActionListener {
                 dedicated.getGame().getOptions().loadOptions(null, null);
                 if (null != savegameFileName) {
                     dedicated.loadGame(new File(savegameFileName));
-                };
+                }
                 return;
             } else if (args[i].equals("-log")) { //$NON-NLS-1$
                 // Next argument is the log file's name.

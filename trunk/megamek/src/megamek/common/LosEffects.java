@@ -47,13 +47,24 @@ public class LosEffects {
         public int minimumWaterDepth = -1;
     }
 
+    //                                                  MAXTECH             BMR
+    public static final int COVER_NONE =        0;      //no cover          (none)
+    public static final int COVER_LOWLEFT =     0x1;    //25% cover         (partial)
+    public static final int COVER_LOWRIGHT =    0x2;    //25% cover         (partial)
+    public static final int COVER_LEFT =        0x4;    //vertical cover    (blocked)
+    public static final int COVER_RIGHT =       0x8;    //vertical cover    (blocked)
+    public static final int COVER_HORIZONTAL =  0x3;    //50% cover         (partial)
+    public static final int COVER_FULL =        0xC;    //blocked           (blocked)
+    public static final int COVER_75LEFT =      0x7;    //75% cover         (blocked)
+    public static final int COVER_75RIGHT =     0xB;    //75% cover         (blocked)
+    
     boolean blocked = false;
     int lightWoods = 0;
     int heavyWoods = 0;
     int lightSmoke = 0;
     int heavySmoke = 0; // heavySmoke is also standard for normal L2 smoke
-    boolean targetCover = false;  // that means partial cover
-    boolean attackerCover = false;  // ditto
+    int targetCover = COVER_NONE;  // that means partial cover
+    int attackerCover = COVER_NONE;  // ditto
     Building thruBldg = null;
     
     /** Creates a new instance of LosEffects */
@@ -98,13 +109,17 @@ public class LosEffects {
      * @return Value of property targetCover.
      */
     public boolean isTargetCover() {
+        return targetCover >= COVER_HORIZONTAL;
+    }
+    
+    public int getTargetCover() {    
         return targetCover;
     }
     
     /** Setter for property targetCover.
      * @param targetCover New value of property targetCover.
      */
-    public void setTargetCover(boolean targetCover) {
+    public void setTargetCover(int targetCover) {
         this.targetCover = targetCover;
     }
 
@@ -112,13 +127,17 @@ public class LosEffects {
      * @return Value of property attackerCover.
      */
     public boolean isAttackerCover() {
+        return attackerCover >= COVER_HORIZONTAL;
+    }
+    
+    public int getAttackerCover() {
         return attackerCover;
     }
     
     /** Setter for property attackerCover.
      * @param attackerCover New value of property attackerCover.
      */
-    public void setAttackerCover(boolean attackerCover) {
+    public void setAttackerCover(int attackerCover) {
         this.attackerCover = attackerCover;
     }
 
@@ -299,9 +318,15 @@ public class LosEffects {
             modifiers.addModifier(heavySmoke * 2, text.toString());
         }
 
-        if (targetCover) {
-            if(game.getOptions().booleanOption("maxtech_partial_cover")) {
-                modifiers.addModifier(1, "target has partial cover");
+        if (targetCover != COVER_NONE) {
+            if (game.getOptions().booleanOption("maxtech_partial_cover")) {
+                if (targetCover == COVER_75LEFT || targetCover == COVER_75RIGHT)
+                    modifiers.addModifier(1, "target has 75% cover");
+                else if(targetCover >= COVER_HORIZONTAL) 
+                    modifiers.addModifier(1, "target has 50% cover");
+                else
+                    //no bth mod for 25% cover
+                    modifiers.addModifier(0, "target has 25% cover");
             } else {
                 modifiers.addModifier(3, "target has partial cover");
             }
@@ -349,7 +374,7 @@ public class LosEffects {
         // target has cover.
         if ( null != los.getThruBldg() &&
              ai.attackAbsHeight != ai.targetAbsHeight ) {
-            los.setTargetCover( true );
+            los.setTargetCover( COVER_HORIZONTAL );
         }
     
         return los;
@@ -382,7 +407,7 @@ public class LosEffects {
      * what weapon is attacking.
      */
     private static LosEffects losDivided(IGame game, AttackInfo ai) {
-        Coords[] in = Coords.intervening(ai.attackPos, ai.targetPos);
+        Coords[] in = Coords.intervening(ai.attackPos, ai.targetPos, true);
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
@@ -426,10 +451,10 @@ public class LosEffects {
 
             if ( targetInBuilding && isElevDiff ) {
                  if ( null != left.getThruBldg() ) {
-                     left.setTargetCover(true);
+                     left.setTargetCover(COVER_HORIZONTAL);
                  }
                  if ( null != right.getThruBldg() ) {
-                     right.setTargetCover(true);
+                     right.setTargetCover(COVER_HORIZONTAL);
                  }
             }
     
@@ -455,6 +480,17 @@ public class LosEffects {
                 los = left;
             } else {
                 los = right;
+            }
+            if (game.getOptions().booleanOption("maxtech_partial_cover")) {
+                int cover = COVER_NONE;
+                if (left.blocked) cover |= COVER_LEFT + COVER_LOWLEFT;
+                if (right.blocked) cover |= COVER_RIGHT + COVER_LOWRIGHT;
+                if ((left.targetCover & COVER_HORIZONTAL) != 0) cover |= COVER_LOWLEFT;
+                if ((right.targetCover & COVER_HORIZONTAL) != 0) cover |= COVER_LOWRIGHT;
+                if (cover < COVER_FULL) {
+                    los.blocked = false;
+                    los.targetCover = cover;
+                }
             }
         }
         return los;
@@ -579,14 +615,14 @@ public class LosEffects {
         if ( ai.targetPos.distance(coords) == 1 &&
              hexEl + bldgEl == ai.targetAbsHeight &&
              ai.attackAbsHeight <= ai.targetAbsHeight && ai.targetHeight > 0) {
-            los.targetCover = true;
+            los.targetCover |= COVER_HORIZONTAL;
         }
     
         // check for attacker partial cover
         if (ai.attackPos.distance(coords) == 1 &&
             hexEl + bldgEl == ai.attackAbsHeight &&
             ai.attackAbsHeight >= ai.targetAbsHeight && ai.attackHeight > 0) {
-            los.attackerCover = true;
+            los.attackerCover |= COVER_HORIZONTAL;
         }
         
         return los;

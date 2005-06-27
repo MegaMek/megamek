@@ -18,6 +18,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Enumeration;
 
+import megamek.common.LosEffects;
+import megamek.common.ToHitData;
 import megamek.common.preference.PreferenceManager;
 
 /**
@@ -2055,5 +2057,31 @@ public abstract class Mech
      */
     public void setAutoEject(boolean autoEject) {
         this.autoEject = autoEject;
+    }
+    
+    public boolean removePartialCoverHits(int location, int cover, int side) {
+        System.out.println("remove PC ("+location+","+cover+")");
+        //left and right cover are from attacker's POV.
+        //if hitting front arc, need to swap them
+        if (side == ToHitData.SIDE_FRONT) {
+            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && location == Mech.LOC_LLEG)
+                return true;
+            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && location == Mech.LOC_RLEG)
+                return true;
+            if ((cover & LosEffects.COVER_RIGHT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LT))
+                return true;
+            if ((cover & LosEffects.COVER_LEFT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RT))
+                return true;
+        } else {
+            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && location == Mech.LOC_LLEG)
+                return true;
+            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && location == Mech.LOC_RLEG)
+                return true;
+            if ((cover & LosEffects.COVER_LEFT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LT))
+                return true;
+            if ((cover & LosEffects.COVER_RIGHT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RT))
+                return true;
+        }
+        return false;
     }
 }

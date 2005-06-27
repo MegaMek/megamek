@@ -336,8 +336,9 @@ public class MoveOption extends MovePath implements Cloneable {
         pc = los.isTargetCover();
         apc = los.isAttackerCover();
         // reverse attacker & target partial cover & calc defender los mods
-        los.setTargetCover(apc);
-        los.setAttackerCover(pc);
+        int temp = los.getTargetCover();
+        los.setTargetCover(los.getAttackerCover());
+        los.setAttackerCover(temp);
         toHitd.append(los.losModifiers(game));
 
         // heatBuildup

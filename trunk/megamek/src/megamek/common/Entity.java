@@ -4456,6 +4456,9 @@ public abstract class Entity
              cost +=mounted.getType().getCost();
             }
         return cost;
-                  
+    }
+
+    public boolean removePartialCoverHits(int location, int cover, int side) {
+        return false;
     }
 }

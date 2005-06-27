@@ -442,7 +442,7 @@ public class WeaponAttackAction
         } else {
             los = LosEffects.calculateLos(game, spotter.getId(), target);
             // do not count attacker partial cover in indirect fire
-            los.setAttackerCover(false);
+            los.setAttackerCover(LosEffects.COVER_NONE);
             losMods = los.losModifiers(game);
         }
     
@@ -745,7 +745,7 @@ public class WeaponAttackAction
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
         if (targHex.containsTerrain(Terrains.WATER) && targHex.surface() == targEl && te.height() > 0) { //target in partial water
-            los.setTargetCover(true);
+            los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
             losMods = los.losModifiers(game);
         }
     
@@ -848,13 +848,14 @@ public class WeaponAttackAction
         }
     
         // Change hit table for partial cover, accomodate for partial underwater(legs)
-        if (los.isTargetCover()) {
+        if (los.getTargetCover() != LosEffects.COVER_NONE) {
             if ( ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET && (targHex.containsTerrain(Terrains.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
                 //weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_KICK);
             } else {
                 if(game.getOptions().booleanOption("maxtech_partial_cover")) {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                    toHit.setCover(los.getTargetCover());
                 } else {
                     toHit.setHitTable(ToHitData.HIT_PUNCH);
                 }

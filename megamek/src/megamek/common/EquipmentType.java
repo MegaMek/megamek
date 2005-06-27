@@ -338,7 +338,7 @@ public class EquipmentType {
             if ((structureNames[x].indexOf(inType) >= 0) || (inType.indexOf(structureNames[x]) >= 0))
                 return x;
         }
-        return T_ARMOR_UNKNOWN;
+        return T_STRUCTURE_UNKNOWN;
     }
 
     public static  String getStructureTypeName(int structureType) {

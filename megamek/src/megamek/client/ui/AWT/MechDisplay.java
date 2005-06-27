@@ -1816,7 +1816,6 @@ class ExtraPanel
     } // End public void displayMech( Entity )
 
     public void itemStateChanged(ItemEvent ev) {
-        ;
     }
     
     public void actionPerformed(ActionEvent ae) {

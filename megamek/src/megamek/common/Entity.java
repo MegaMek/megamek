@@ -3292,7 +3292,7 @@ public abstract class Entity
                     return true;
                 }
             }
-        };
+        }
 
         // If we got here, none of our transports can carry the unit.
         return false;
@@ -3820,12 +3820,12 @@ public abstract class Entity
     /** Whether this type of unit can perform charges */
     public boolean canCharge() {
         return !isImmobile() && getWalkMP() > 0 && !isStuck();
-    };
+    }
 
     /** Whether this type of unit can perform DFA attacks */
     public boolean canDFA() {
         return !isImmobile() && getJumpMP() > 0 && !isStuck();
-    };
+    }
     
     boolean isUsingManAce() {
         return getCrew().getOptions().booleanOption("maneuvering_ace");

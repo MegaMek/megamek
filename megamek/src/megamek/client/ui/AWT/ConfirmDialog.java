@@ -89,7 +89,7 @@ public class ConfirmDialog
 
         if ('n'==defButton) {
             defaultButton = butNo;
-        };
+        }
         
         super.setResizable(false);
         useCheckbox = includeCheckbox;
@@ -98,7 +98,7 @@ public class ConfirmDialog
         addQuestion(question);
         addInputs();
         finishSetup(p);
-    };
+    }
 
     private void addQuestion(String question) {
         AdvancedLabel questionLabel = new AdvancedLabel(question);
@@ -172,7 +172,7 @@ public class ConfirmDialog
             firstFocusable=botherCheckbox;
         } else {
             firstFocusable=butYes;
-        };
+        }
         // we'd like the default button to have focus, but that can only be done on displayed
         // dialogs in Windows. So, this rather elaborate setup: as soon as the first focusable
         // component receives the focus, it shunts the focus to the OK button, and then
@@ -187,7 +187,7 @@ public class ConfirmDialog
                     firstFocusable.removeFocusListener(this); // refers to listener
                 }
             });
-        };
+        }
     }
     
     public boolean getAnswer() {

@@ -48,7 +48,7 @@ public class TargetRoll implements Serializable {
 
     /** Creates new TargetRoll */
     public TargetRoll() {
-        ;
+
     }
     
     /** 

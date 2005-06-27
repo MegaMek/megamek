@@ -2224,8 +2224,8 @@ public class BoardView1
                 Entity e = (Entity) v.elementAt(i);
                 if (e==se) {
                     centerOnHex(e.getPosition());
-                };
-            };
+                }
+            }
             break;
         case KeyEvent.VK_CONTROL :
             ctlKeyHeld = true;
@@ -2247,7 +2247,6 @@ public class BoardView1
         }
     }
     public void keyTyped(KeyEvent ke) {
-        ;
     }
 
     //
@@ -2286,21 +2285,21 @@ public class BoardView1
         // disable auto--edge-scrolling if no option set
         if ( !GUIPreferences.getInstance().getAutoEdgeScroll() ) {
             mask |= InputEvent.BUTTON1_MASK;
-        };
+        }
         // disable edge-scrolling if no option set
         if ( !GUIPreferences.getInstance().getClickEdgeScroll() ) {
             mask |= InputEvent.BUTTON3_MASK;
-        };
+        }
         
         if ( GUIPreferences.getInstance().getRightDragScroll() ) {
             mask |= InputEvent.BUTTON2_MASK;
-        };
+        }
 
         if ( (me.getModifiers() & mask ) == 0 ) {
             isScrolling = true; //activate scrolling
         } else {
             isScrolling = false; //activate scrolling
-        };
+        }
 
         if (isTipShowing()) {
             hideTooltip();
@@ -2332,14 +2331,12 @@ public class BoardView1
     }
 
     public void mouseEntered(MouseEvent me) {
-        ;
     }
 
     public void mouseExited(MouseEvent me) {
         isTipPossible = false;
     }
     public void mouseClicked(MouseEvent me) {
-        ;
     }
 
     //
@@ -2374,27 +2371,27 @@ public class BoardView1
             //  this means the user wants to activate the
             //  popup menu or ruler tool.
             mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
-        };
+        }
 
         if ( GUIPreferences.getInstance().getRightDragScroll() ) {
             mask |= InputEvent.BUTTON1_MASK | InputEvent.BUTTON2_MASK;
-        };
+        }
 
         // disable auto--edge-scrolling if no option set
         if ( !GUIPreferences.getInstance().getAutoEdgeScroll() ) {
             mask |= InputEvent.BUTTON1_MASK;
-        };
+        }
 
         // disable edge-scrolling if no option set
         if ( !GUIPreferences.getInstance().getClickEdgeScroll() && !GUIPreferences.getInstance().getRightDragScroll() ) {
             mask |= InputEvent.BUTTON3_MASK;
-        };
+        }
         
         if ( (me.getModifiers() & mask ) == 0 ) {
             isScrolling = true; //activate scrolling
         } else {
             isScrolling = false; //activate scrolling
-        };
+        }
 
         mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiers());
     }
@@ -3567,7 +3564,6 @@ public class BoardView1
         }
 
         public void prepare() {
-            ;
         }
 
         private void makePoly( ){
@@ -3767,7 +3763,6 @@ public class BoardView1
         }
 
         public void prepare() {
-            ;
         }
 
         public boolean isReady() {

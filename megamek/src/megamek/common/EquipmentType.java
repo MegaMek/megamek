@@ -144,7 +144,7 @@ public class EquipmentType {
 
     /** Creates new EquipmentType */
     public EquipmentType() {
-        ;
+
     }
 
     public String getName() {

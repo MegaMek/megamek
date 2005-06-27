@@ -50,15 +50,15 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     
     private Label labName = new Label(Messages.getString("CustomMechDialog.labName"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldName = new TextField(20);
-    private Label labGunnery = new Label(Messages.getString("CustomMechDialog.labGunnery"), Label.RIGHT);; //$NON-NLS-1$
+    private Label labGunnery = new Label(Messages.getString("CustomMechDialog.labGunnery"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldGunnery = new TextField(3);
-    private Label labPiloting = new Label(Messages.getString("CustomMechDialog.labPiloting"), Label.RIGHT);; //$NON-NLS-1$
+    private Label labPiloting = new Label(Messages.getString("CustomMechDialog.labPiloting"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldPiloting = new TextField(3);
-    private Label labC3 = new Label(Messages.getString("CustomMechDialog.labC3"), Label.RIGHT);; //$NON-NLS-1$
+    private Label labC3 = new Label(Messages.getString("CustomMechDialog.labC3"), Label.RIGHT); //$NON-NLS-1$
     private Choice choC3 = new Choice();
     private int[] entityCorrespondance;
-    private Label labCallsign = new Label(Messages.getString("CustomMechDialog.labCallsign"), Label.CENTER);; //$NON-NLS-1$
-    private Label labUnitNum = new Label(Messages.getString("CustomMechDialog.labUnitNum"), Label.CENTER);; //$NON-NLS-1$
+    private Label labCallsign = new Label(Messages.getString("CustomMechDialog.labCallsign"), Label.CENTER); //$NON-NLS-1$
+    private Label labUnitNum = new Label(Messages.getString("CustomMechDialog.labUnitNum"), Label.CENTER); //$NON-NLS-1$
     private Choice choUnitNum = new Choice();
     private Vector entityUnitNum = new Vector();
     private Label labDeployment = new Label(Messages.getString("CustomMechDialog.labDeployment"), Label.RIGHT); //$NON-NLS-1$

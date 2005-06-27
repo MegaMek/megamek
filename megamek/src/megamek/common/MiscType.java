@@ -82,7 +82,7 @@ public class MiscType extends EquipmentType {
     
     /** Creates new MiscType */
     public MiscType() {
-        ;
+
     }
     
     

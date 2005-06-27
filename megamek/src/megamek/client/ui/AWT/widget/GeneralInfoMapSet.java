@@ -171,7 +171,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         for (int i=0; i < advantagesR.length; i++) {
             advantagesR[i] = createLabel(new Integer(i).toString(), fm, pilotL.getSize().width + 10, getNewYCoord());
             content.addArea(advantagesR[i]);
-        };
+        }
         //DO NOT PLACE ANY MORE LABELS BELOW HERE.  They will get
         //pushed off the bottom of the screen by the pilot advantage
         //labels.  Why not just allocate the number of pilot advantage
@@ -242,9 +242,9 @@ public class GeneralInfoMapSet implements DisplayMapSet{
                 IOption option = (IOption)advantages.nextElement();
                 if (option.booleanValue()) {
                     advantagesR[i++].setString(option.getDisplayableName());
-                };
-            };
-        };
+                }
+            }
+        }
         
         if (en.mpUsed > 0) {
             mpR0.setString("("+ en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$

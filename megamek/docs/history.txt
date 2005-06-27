@@ -39,14 +39,16 @@ v0.29.82 (CVS)
 + Added costs for most weapons.
 + Added costs for remaining non-BA, non-infantry weapons.
 + Fix references to data/camo, data/widget, data/mex to data/images/camo,
-    data/images/widget, data/images/units
+    data/images/widget, data/images/units.
 + Move MegaMekSettings.XML to mmconf/clientsettings.xml, move gameoptions.xml 
     and bot.properties to the mmconf folder.
 + Bug 1224458: Targeting computer mixup on mixed-tech HMP files fixed.
 + Bug 1226159: Heavy Machine Gun bug fixed for TDB mech loader.
-+ Minor refactoring of the usage the data/widget/* files
-+ cost stuff; a few helper functions, a (I hope? can't test) calculation for biped mechs.
++ Minor refactoring of the usage the data/widgets/* files.
++ cost stuff; a few helper functions, a (I hope? can't test) calculation for
+    biped mechs.
 + Minor update to EquipmentType's helper function for armor point multipliers.
++ Bug 1227724: too many missiles hitting in swarm attack.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

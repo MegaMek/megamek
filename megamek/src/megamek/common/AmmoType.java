@@ -115,9 +115,11 @@ public class AmmoType extends EquipmentType {
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
         "Extended Range", "High Explosive", "Flare", "Fragmentation", "Inferno",
-        "Semiguided", "Swarm", "SwarmI", "Thunder", "Thunder/Augmented",
+        "Semiguided", "Swarm", "Swarm-I", "Thunder", "Thunder/Augmented",
         "Thunder/Inferno", "Thunder/Vibrabomb", "Thunder/Active", "Explosive",
-        "ECM", "Haywire", "Nemesis" };
+        "ECM", "Haywire", "Nemesis", "Homing", "FASCAM", "Inferno-IV",
+        "Vibrabomb-IV", "Smoke", "Narc-Capable", "Artemis-Capable",
+        "Listen-Kill", "Anti-TSM", "Acid-Head" };
         */
     private static Vector[] m_vaMunitions = new Vector[NUM_TYPES];
 
@@ -654,9 +656,9 @@ public class AmmoType extends EquipmentType {
         munitions.addElement( new MunitionMutator( "(Clan) Swarm-I",
                                                    1, M_SWARM_I, TechConstants.T_CLAN_LEVEL_2) );
         munitions.addElement( new MunitionMutator( "(Clan) Listen-Kill",
-                                                   1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
+                                                 1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Anti-TSM",
-                                                   1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
+                                                 1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -4335,6 +4337,10 @@ public class AmmoType extends EquipmentType {
             if (munition.hasFlag(AmmoType.M_NARC_CAPABLE))
                 cost *= 2;
             if (munition.hasFlag(AmmoType.M_ARTEMIS_CAPABLE))
+                cost *= 2;
+            if (munition.hasFlag(AmmoType.M_LISTEN_KILL))
+                cost *= 1.1;
+            if (munition.hasFlag(AmmoType.M_ANTI_TSM))
                 cost *= 2;
             munition.cost = cost;
             

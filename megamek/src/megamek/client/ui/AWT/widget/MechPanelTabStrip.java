@@ -6,6 +6,8 @@ import megamek.client.ui.AWT.MechDisplay;
 
 public class MechPanelTabStrip extends PicMap {
     
+    private static final String IMAGE_DIR = "data/images/widgets";
+
     private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[5];
     private static final Image[] idleImage = new Image[5];
     private static final Image[] activeImage = new Image[5];
@@ -39,18 +41,18 @@ public class MechPanelTabStrip extends PicMap {
     private void setImages(){
         MediaTracker mt = new MediaTracker(this);
         Toolkit tk = getToolkit();
-        idleImage[0] = tk.getImage("data/images/widgets/tab_general_idle.gif"); //$NON-NLS-1$
-        idleImage[1] = tk.getImage("data/images/widgets/tab_armor_idle.gif"); //$NON-NLS-1$
-        idleImage[2] = tk.getImage("data/images/widgets/tab_systems_idle.gif"); //$NON-NLS-1$
-        idleImage[3] = tk.getImage("data/images/widgets/tab_weapon_idle.gif"); //$NON-NLS-1$
-        idleImage[4] = tk.getImage("data/images/widgets/tab_extras_idle.gif"); //$NON-NLS-1$
-        activeImage[0] = tk.getImage("data/images/widgets/tab_general_active.gif"); //$NON-NLS-1$
-        activeImage[1] = tk.getImage("data/images/widgets/tab_armor_active.gif"); //$NON-NLS-1$
-        activeImage[2] = tk.getImage("data/images/widgets/tab_systems_active.gif"); //$NON-NLS-1$
-        activeImage[3] = tk.getImage("data/images/widgets/tab_weapon_active.gif"); //$NON-NLS-1$
-        activeImage[4] = tk.getImage("data/images/widgets/tab_extras_active.gif"); //$NON-NLS-1$
-        idleCorner = tk.getImage("data/images/widgets/idle_corner.gif"); //$NON-NLS-1$
-        selectedCorner = tk.getImage("data/images/widgets/active_corner.gif"); //$NON-NLS-1$
+        idleImage[0] = tk.getImage(IMAGE_DIR+"/tab_general_idle.gif"); //$NON-NLS-1$
+        idleImage[1] = tk.getImage(IMAGE_DIR+"/tab_armor_idle.gif"); //$NON-NLS-1$
+        idleImage[2] = tk.getImage(IMAGE_DIR+"/tab_systems_idle.gif"); //$NON-NLS-1$
+        idleImage[3] = tk.getImage(IMAGE_DIR+"/tab_weapon_idle.gif"); //$NON-NLS-1$
+        idleImage[4] = tk.getImage(IMAGE_DIR+"/tab_extras_idle.gif"); //$NON-NLS-1$
+        activeImage[0] = tk.getImage(IMAGE_DIR+"/tab_general_active.gif"); //$NON-NLS-1$
+        activeImage[1] = tk.getImage(IMAGE_DIR+"/tab_armor_active.gif"); //$NON-NLS-1$
+        activeImage[2] = tk.getImage(IMAGE_DIR+"/tab_systems_active.gif"); //$NON-NLS-1$
+        activeImage[3] = tk.getImage(IMAGE_DIR+"/tab_weapon_active.gif"); //$NON-NLS-1$
+        activeImage[4] = tk.getImage(IMAGE_DIR+"/tab_extras_active.gif"); //$NON-NLS-1$
+        idleCorner = tk.getImage(IMAGE_DIR+"/idle_corner.gif"); //$NON-NLS-1$
+        selectedCorner = tk.getImage(IMAGE_DIR+"/active_corner.gif"); //$NON-NLS-1$
         
         for (int i = 0; i < 5 ; i++){
             mt.addImage(idleImage[i],0);

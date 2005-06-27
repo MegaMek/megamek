@@ -34,6 +34,7 @@ public class EquipmentType {
     public static final float TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
+    public static final int COST_VARIABLE = Integer.MIN_VALUE;
 
     public static final int     T_ARMOR_UNKNOWN             = -1;
     public static final int     T_ARMOR_STANDARD            = 0;
@@ -393,5 +394,52 @@ public class EquipmentType {
         if ((inArmor == T_ARMOR_FERRO_FIBROUS) && clanArmor)
             return POINT_MULTIPLIER_CLAN_FF;
         return armorPointMultipliers[inArmor];
+    }
+    
+    //stuff like hatchets, which depend on an unknown quality (usually tonnage of the unit.)
+    //entity is whatever has this item
+    public int resolveVariableCost(Entity entity) {
+        //TODO implement this!
+        int cost=0;
+        if(this instanceof MiscType) {
+            if(this.hasFlag(MiscType.F_MASC)) {
+                //masc=engine rating*masc tonnage*1000
+                int mascTonnage=0;
+                if (this.getInternalName().equals("ISMASC")) {
+                    mascTonnage = (int)Math.round(entity.getWeight() / 20.0f);
+                } else if (this.getInternalName().equals("CLMASC")) {
+                    mascTonnage = (int)Math.round(entity.getWeight() / 25.0f);
+                }
+                cost=mascTonnage*entity.getOriginalWalkMP()*(int)entity.getWeight()*1000;
+            } else if(this.hasFlag(MiscType.F_TARGCOMP)) {
+                int tCompTons=0;
+                float fTons = 0.0f;
+                for (Enumeration i = entity.getWeapons(); i.hasMoreElements();)
+                {
+                    Mounted mo = (Mounted)i.nextElement();
+                    WeaponType wt = (WeaponType)mo.getType();
+                    if (wt.hasFlag(WeaponType.F_DIRECT_FIRE))
+                    fTons += wt.getTonnage(entity);
+                }
+                if (this.getInternalName().equals("ISTargeting Computer")) {
+                    tCompTons=(int)Math.ceil(fTons / 4.0f);
+                } else if (this.getInternalName().equals("CLTargeting Computer")) {
+                    tCompTons=(int)Math.ceil(fTons / 5.0f);
+                }
+                cost=tCompTons*10000;
+            } else if(this.hasFlag(MiscType.F_HATCHET)) {
+                int hatchetTons=(int) Math.ceil(entity.getWeight() / 15.0);
+                cost=hatchetTons*5000;
+            } else if(this.hasFlag(MiscType.F_SWORD)) {
+                int swordTons=(int) Math.ceil(entity.getWeight() / 15.0);
+                cost=swordTons*10000;
+            }
+        } else {
+            if(cost==0) {
+                //if we don't know what it is...
+                System.out.println("I don't know how much " + this.name + " costs.");
+            }
+        }
+        return cost;
     }
 }

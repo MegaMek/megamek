@@ -33,6 +33,7 @@
     private int m_nType;
     private int m_nTons;
     private int m_nBV;
+    private int m_nCost;
     private long m_lModified; // for comparison when loading
     private String m_sLevel;
     
@@ -66,6 +67,7 @@
     public int getType() { return (this.m_nType); }
     public int getTons() { return (this.m_nTons); }
     public int getBV() { return (this.m_nBV); }
+    public int getCost() { return (this.m_nCost); }
     public long getModified() { return (this.m_lModified); }
     public String getLevel() { return (this.m_sLevel); }
     
@@ -78,6 +80,7 @@
     public void setYear(int m_nYear) { this.m_nYear = m_nYear; }
     public void setType(int m_nType) { this.m_nType = m_nType; }
     public void setTons(int m_nTons) { this.m_nTons = m_nTons; }
+    public void setCost(int m_nCost) { this.m_nCost = m_nCost; }
     public void setBV(int m_nBV) { this.m_nBV = m_nBV; }
     public void setModified(long m_lModified) { this.m_lModified = m_lModified; }
     public void setLevel(String level) { this.m_sLevel = level; }

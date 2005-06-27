@@ -384,10 +384,13 @@ public class EquipmentType {
     }
 
     public static double getArmorPointMultiplier(int inArmor, int inTechLevel) {
+        return getArmorPointMultiplier(inArmor, ((inTechLevel == TechConstants.T_CLAN_LEVEL_2) || (inTechLevel == TechConstants.T_CLAN_LEVEL_3)));
+    }
+
+    public static double getArmorPointMultiplier(int inArmor, boolean clanArmor) {
         if ((inArmor < 0) || (inArmor >= armorPointMultipliers.length))
             return POINT_MULTIPLIER_UNKNOWN;
-        if ((inArmor == T_ARMOR_FERRO_FIBROUS) 
-                && ((inTechLevel == TechConstants.T_CLAN_LEVEL_2) || (inTechLevel == TechConstants.T_CLAN_LEVEL_3)))
+        if ((inArmor == T_ARMOR_FERRO_FIBROUS) && clanArmor)
             return POINT_MULTIPLIER_CLAN_FF;
         return armorPointMultipliers[inArmor];
     }

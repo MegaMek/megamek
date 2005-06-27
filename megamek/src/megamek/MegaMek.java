@@ -357,7 +357,7 @@ public class MegaMek implements ActionListener {
 
     public void loadGame() {
         FileDialog fd = new FileDialog(frame, Messages.getString("MegaMek.SaveGameDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
-        fd.setDirectory("."); //$NON-NLS-1$
+        fd.setDirectory("savegames"); //$NON-NLS-1$
         // limit file-list to savedgames only
         fd.setFilenameFilter(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -368,7 +368,9 @@ public class MegaMek implements ActionListener {
         // filter for certain extensions, but it's broken under windoze.  See
         // http://developer.java.sun.com/developer/bugParade/bugs/4031440.html
         // for details.  The hack below is better than nothing.
-        fd.setFile("*.sav"); //$NON-NLS-1$
+        //New note: Since we have a dedicated save dir now, I'm commenting
+        // this out.
+        //fd.setFile("*.sav"); //$NON-NLS-1$
 
         fd.show();
         if (fd.getFile() == null) {

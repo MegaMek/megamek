@@ -622,7 +622,11 @@ implements Runnable, ConnectionHandler {
 
     public void autoSave()
     {
-        saveGame("autosave",game.getOptions().booleanOption("autosave_msg"));
+        String fileName = "autosave";
+        if (game.getOptions().booleanOption("very_paranoid_autosave")) {
+            fileName += "_" + game.getRoundCount() + "_" + game.getPhase();
+        }
+        saveGame(fileName,game.getOptions().booleanOption("autosave_msg"));
     }
 
     public void saveGame(String sFile, boolean sendChat) {
@@ -631,6 +635,12 @@ implements Runnable, ConnectionHandler {
             sFinalFile = sFile + ".sav";
         }
         try {
+            //            boolean success = (new File("savegames")).mkdir();
+            File sDir = new File("savegames");
+            if (!sDir.exists()) {
+                sDir.mkdir();
+            }
+            sFinalFile = sDir + "/" + sFinalFile;
             ObjectOutputStream oos = new ObjectOutputStream(
                     new FileOutputStream(sFinalFile));
             oos.writeObject(game);

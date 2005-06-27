@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -20,10 +20,11 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.io.*;
 
+import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
-import megamek.client.util.PlayerColors;
+import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.event.BoardEvent;

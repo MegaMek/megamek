@@ -16,8 +16,8 @@ package megamek.test.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import megamek.client.util.widget.ImageButton;
-import megamek.client.util.widget.SizedButton;
+import megamek.client.ui.AWT.widget.ImageButton;
+import megamek.client.ui.AWT.widget.SizedButton;
 
 public class TestImageButtons {
 

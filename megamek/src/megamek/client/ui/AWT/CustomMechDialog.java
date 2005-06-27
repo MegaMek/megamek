@@ -18,10 +18,11 @@
  * Created on March 18, 2002, 2:56 PM
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 
+import megamek.client.Client;
 import megamek.common.*;
 
 import java.awt.event.ActionListener;

@@ -12,14 +12,15 @@
  *  for more details.
  */
  
-package megamek.client;
+package megamek.client.ui.AWT;
  
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.client.util.widget.BufferedPanel;
+import megamek.client.Client;
+import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
 

@@ -23,9 +23,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import megamek.client.CamoChoiceDialog;
-import megamek.client.util.PlayerColors;
-import megamek.client.util.widget.ImageButton;
+
+import megamek.client.ui.AWT.CamoChoiceDialog;
+import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.widget.ImageButton;
 import megamek.common.Player;
 
 /**

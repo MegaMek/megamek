@@ -12,12 +12,13 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import megamek.client.Client;
 import megamek.common.*;
 
 /**

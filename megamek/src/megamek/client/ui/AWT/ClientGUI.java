@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -27,9 +27,10 @@ import com.sun.java.util.collections.Iterator;
 import com.sun.java.util.collections.Map;
 import com.sun.java.util.collections.TreeMap;
 
+import megamek.client.Client;
 import megamek.client.event.BoardViewListener;
-import megamek.client.util.PlayerColors;
-import megamek.client.util.widget.BufferedPanel;
+import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.*;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListener;
@@ -226,7 +227,7 @@ public class ClientGUI
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
 
-        frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif")); //$NON-NLS-1$
+        frame.setIconImage(frame.getToolkit().getImage("data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
     }
 
     /**

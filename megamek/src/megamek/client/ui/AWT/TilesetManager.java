@@ -18,7 +18,7 @@
  * Created on April 15, 2002, 11:41 PM
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import com.sun.java.util.collections.*;
 import java.awt.image.*;
@@ -28,11 +28,11 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.io.File;
-import megamek.client.util.ImageFileFactory;
-import megamek.client.util.PlayerColors;
-import megamek.client.util.RotateFilter;
-import megamek.client.util.widget.BufferedPanel;
-import megamek.client.util.widget.BackGroundDrawer;
+import megamek.client.ui.AWT.util.ImageFileFactory;
+import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.util.RotateFilter;
+import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.client.ui.AWT.widget.BackGroundDrawer;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 

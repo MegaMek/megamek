@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-package megamek.client.util.widget;
+package megamek.client.ui.AWT.widget;
 
 import java.awt.Color;
 import java.awt.Dimension;

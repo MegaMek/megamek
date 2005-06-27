@@ -12,11 +12,11 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
-import megamek.client.util.AdvancedLabel;
+import megamek.client.ui.AWT.widget.AdvancedLabel;
 
 /**
  * A (somewhat primitive) dialog with a message and an okay button that makes

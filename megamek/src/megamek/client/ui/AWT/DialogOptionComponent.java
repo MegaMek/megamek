@@ -18,7 +18,7 @@
  * @author Cord Awtry
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 

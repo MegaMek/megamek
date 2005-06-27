@@ -1,8 +1,8 @@
-package megamek.client.util.widget;
+package megamek.client.ui.AWT.widget;
 
 import java.awt.*;
 import java.awt.event.*;
-import megamek.client.*;
+import megamek.client.ui.AWT.MechDisplay;
 
 public class MechPanelTabStrip extends PicMap {
     

@@ -242,7 +242,7 @@ public class Client implements Runnable {
      * Changes the game phase, and the displays that go
      * along with it.
      */
-    protected void changePhase(int phase) {
+    public void changePhase(int phase) {
         game.setPhase(phase);
         // Handle phase-specific items.
         switch (phase) {

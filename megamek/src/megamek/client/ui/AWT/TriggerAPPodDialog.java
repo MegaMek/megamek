@@ -12,13 +12,13 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
-import megamek.client.util.AdvancedLabel;
+import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.MiscType;

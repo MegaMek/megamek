@@ -12,9 +12,10 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
-import megamek.client.util.*;
+import megamek.client.ui.AWT.widget.IndexedCheckbox;
+
 import java.awt.*;
 import java.awt.event.*;
 

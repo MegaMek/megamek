@@ -12,12 +12,12 @@
  *  for more details.
  */
 
-package megamek.client.util.widget;
+package megamek.client.ui.AWT.widget;
 
 import java.awt.*;
 import java.util.*;
 
-import megamek.client.GUIPreferences;
+import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.*;
 
 /**

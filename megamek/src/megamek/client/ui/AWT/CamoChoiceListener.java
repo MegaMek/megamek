@@ -12,15 +12,16 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import megamek.client.util.PlayerColors;
-import megamek.client.util.widget.ImageButton;
+import megamek.client.Client;
+import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.widget.ImageButton;
 import megamek.common.Player;
 
 /**

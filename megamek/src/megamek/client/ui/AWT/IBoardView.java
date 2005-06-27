@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;

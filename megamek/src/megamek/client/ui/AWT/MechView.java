@@ -18,7 +18,7 @@
  * Created on January 20, 2003 by Ryan McConnell
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.util.Enumeration;
 import java.util.Vector;

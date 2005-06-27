@@ -495,7 +495,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 // N.B. play bit-shifting games to allow "incendiary"
                 //      to be combined to other munition types.
                 int muniType = atCheck.getMunitionType();
-                muniType &= ~AmmoType.M_INCENDIARY;
+                muniType &= ~AmmoType.M_INCENDIARY_LRM;
                 if ( !clientgui.getClient().game.getOptions().booleanOption("clan_ignore_eq_limits") //$NON-NLS-1$
                      && entity.isClan()
                      && ( muniType == AmmoType.M_SEMIGUIDED ||

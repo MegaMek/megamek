@@ -238,6 +238,55 @@ public class BipedMech extends Mech {
     public double getCost() {
         // FIXME
         // There should be an implementation here!
-        return 0;
+        int cost=0;
+        cost+=200000;//cockpit
+        cost+=50000;//life support
+        cost+=weight*2000;//sensors
+        int muscCost=this.hasTSM()? 160000 : 2000;
+        cost+=muscCost*weight;//musculature
+        int structureCost=400;
+        if(hasEndo() || hasCompositeStructure()) {
+            structureCost=1600;
+        }
+        if(hasReinforcedStructure()) {
+            structureCost=6400;
+        }
+        cost+=structureCost*weight;//IS
+        cost+=2*(150+80+120)*weight;//leg actuators;
+        int numOfLowerArmActuators=0;
+        int numOfHands=0;
+        if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ) {
+            numOfHands++;
+        } else if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ) {
+            numOfLowerArmActuators++;
+        } else if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ) {
+            numOfHands++;
+        } else if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ) {
+            numOfLowerArmActuators++;
+        }
+        cost+=(2*100+numOfLowerArmActuators*50+numOfHands*80)*weight;//arm actuators
+        int engineCost=5000;
+        if(hasXL()) {
+            engineCost=20000;
+        }
+        if(hasLightEngine()) {
+            engineCost=15000;
+        }
+        cost+=(weight*getOriginalWalkMP()*weight*engineCost)/75;//(weight*walk=rating; rating*weight*cost factor = cost of engine.
+        cost+=300000*getOriginalWalkMP()*weight;//gyro;
+        int freeSinks= hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
+        int sinkCost= hasDoubleHeatSinks()? 6000: 2000;
+        cost+=sinkCost*(heatSinks()-freeSinks);//cost of sinks
+        double totalArmorWeight = (double) getTotalOArmor() / 16.0f;
+        totalArmorWeight/=EquipmentType.getArmorPointMultiplier(armorType,techLevel);
+        totalArmorWeight=(double)Math.ceil(totalArmorWeight*2f)/2f;
+        cost+=totalArmorWeight*EquipmentType.getArmorCost(armorType);//armor
+        cost+=getWeaponsAndEquipmentCost();
+        if(isOmni()) {
+            cost+=cost*0.25f;
+        }
+        cost*=(1+(weight/100f));
+        return cost;
+                       
     }
 }

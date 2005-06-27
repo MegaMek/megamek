@@ -4448,4 +4448,14 @@ public abstract class Entity
     }
 
     public abstract double getCost();
+    
+    public int getWeaponsAndEquipmentCost() {
+        int cost=0;
+        for (Enumeration i = equipmentList.elements();i.hasMoreElements();) {
+             Mounted mounted = (Mounted)i.nextElement();
+             cost +=mounted.getType().getCost();
+            }
+        return cost;
+                  
+    }
 }

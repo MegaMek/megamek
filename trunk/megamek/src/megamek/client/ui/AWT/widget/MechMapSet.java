@@ -30,6 +30,9 @@ import megamek.common.*;
 
 
 public class MechMapSet implements DisplayMapSet{
+
+    private static final String IMAGE_DIR = "data/images/widgets";
+    
     //Because of keeping all areas of single type in one array
     //some index offset values required
     private static final int  REAR_AREA_OFFSET = 7;
@@ -327,11 +330,11 @@ public class MechMapSet implements DisplayMapSet{
     }
     
     private void setBackGround(){
-        Image tile = comp.getToolkit().getImage("data/images/widgets/tile.gif"); //$NON-NLS-1$
+        Image tile = comp.getToolkit().getImage(IMAGE_DIR+"/tile.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        tile = comp.getToolkit().getImage("data/images/widgets/bg_mech.gif"); //$NON-NLS-1$
+        tile = comp.getToolkit().getImage(IMAGE_DIR+"/bg_mech.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER | BackGroundDrawer.HALIGN_CENTER;
         BackGroundDrawer bgd = new BackGroundDrawer (tile,b);

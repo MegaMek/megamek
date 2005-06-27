@@ -24,6 +24,8 @@ import megamek.client.ui.AWT.widget.PMUtil;
 
 public class UnitOverview implements Displayable {
 
+    private static final String IMAGE_DIR = "data/images/widgets";
+    
     private static final int    UNKNOWN_UNITS_PER_PAGE = -1;
 
     /**
@@ -63,13 +65,13 @@ public class UnitOverview implements Displayable {
         fm = clientgui.bv.getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.bv.getToolkit();
-        scrollUp = toolkit.getImage("data/images/widgets/scrollUp.gif"); //$NON-NLS-1$
+        scrollUp = toolkit.getImage(IMAGE_DIR+"/scrollUp.gif"); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDown = toolkit.getImage("data/images/widgets/scrollDown.gif"); //$NON-NLS-1$
+        scrollDown = toolkit.getImage(IMAGE_DIR+"/scrollDown.gif"); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUp = toolkit.getImage("data/images/widgets/pageUp.gif"); //$NON-NLS-1$
+        pageUp = toolkit.getImage(IMAGE_DIR+"/pageUp.gif"); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDown = toolkit.getImage("data/images/widgets/pageDown.gif"); //$NON-NLS-1$
+        pageDown = toolkit.getImage(IMAGE_DIR+"/pageDown.gif"); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
     }
 

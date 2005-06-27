@@ -52,7 +52,8 @@ v0.29.82 (CVS)
 + Small improvement of the generation the manifest.mf in the build.xml.
 + Bug 1223722: TAG ignores torso twist.
 + Bug 1223955, Patch 1226590: MaxTech partial cover part 2.
-
++ Error in cost calculation for biped Mechs (not all arm actuators were accounted
+    for).
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

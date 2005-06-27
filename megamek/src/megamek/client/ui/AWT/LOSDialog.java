@@ -38,7 +38,7 @@ public class LOSDialog
         addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     actionPerformed(new ActionEvent(butOK,ActionEvent.ACTION_PERFORMED,butOK.getLabel()));
-                };
+                }
         });
 
         GridBagLayout gridbag = new GridBagLayout();

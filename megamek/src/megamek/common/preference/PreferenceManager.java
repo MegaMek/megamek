@@ -35,7 +35,7 @@ import com.sun.java.util.collections.Hashtable;
 
 public class PreferenceManager {
 
-    public static final String DEFAULT_CFG_FILE_NAME = "MegaMekSettings.xml";
+    public static final String DEFAULT_CFG_FILE_NAME = "mmconf/clientsettings.xml";
     public static final String CFG_FILE_OPTION_NAME = "cfgfilename";
     public static final String ROOT_NODE_NAME = "MegaMekSettings";
     public static final String CLIENT_SETTINGS_STORE_NAME = "ClientSettings";    

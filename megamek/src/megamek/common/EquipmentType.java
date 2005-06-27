@@ -77,6 +77,12 @@ public class EquipmentType {
                                             3,
                                             3};
 
+    public static final double[] structureCosts = {400,
+                                            1600,
+                                            1600,   // Assume for now that prototype is not more expensive
+                                            6400,
+                                            1600};
+
     public static final double[] armorCosts = {10000,
                                             20000,
                                             30000,
@@ -88,11 +94,18 @@ public class EquipmentType {
                                             50000,
                                             20000};   // Assume for now that prototype is not more expensive
 
-    public static final double[] structureCosts = {400,
-                                            1600,
-                                            1600,   // Assume for now that prototype is not more expensive
-                                            6400,
-                                            1600};
+    public static final double[] armorPointMultipliers = {1,
+                                            1.12,
+                                            1,
+                                            1,
+                                            1,
+                                            1.06,
+                                            1.24,
+                                            1,
+                                            1,
+                                            1.12};
+    public static final double POINT_MULTIPLIER_UNKNOWN = 1;
+    public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 
     protected String    name = null;
 
@@ -354,15 +367,28 @@ public class EquipmentType {
         return cost;
     }
 
-    public double getArmorCost(int inArmor) {
+    public static double getArmorCost(int inArmor) {
         if ((inArmor < 0) || (inArmor >= armorCosts.length))
             return -1;
         return armorCosts[inArmor];
     }
 
-    public double getStructureCost(int inStructure) {
+    public static double getStructureCost(int inStructure) {
         if ((inStructure < 0) || (inStructure >= structureCosts.length))
             return -1;
         return structureCosts[inStructure];
+    }
+
+    public static double getArmorPointMultiplier(int inArmor) {
+        return getArmorPointMultiplier(inArmor, TechConstants.T_IS_LEVEL_2);
+    }
+
+    public static double getArmorPointMultiplier(int inArmor, int inTechLevel) {
+        if ((inArmor < 0) || (inArmor >= armorPointMultipliers.length))
+            return POINT_MULTIPLIER_UNKNOWN;
+        if ((inArmor == T_ARMOR_FERRO_FIBROUS) 
+                && ((inTechLevel == TechConstants.T_CLAN_LEVEL_2) || (inTechLevel == TechConstants.T_CLAN_LEVEL_3)))
+            return POINT_MULTIPLIER_CLAN_FF;
+        return armorPointMultipliers[inArmor];
     }
 }

@@ -44,6 +44,7 @@ v0.29.82 (CVS)
     and bot.properties to the mmconf folder.
 + Bug 1224458: Targeting computer mixup on mixed-tech HMP files fixed.
 + Bug 1226159: Heavy Machine Gun bug fixed for TDB mech loader.
++ Minor refactoring of the usage the data/widget/* files
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

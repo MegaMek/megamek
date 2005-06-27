@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client.util;
+package megamek.client.ui.AWT.util;
 
 import com.sun.java.util.collections.Hashtable;
 import com.sun.java.util.collections.LinkedList;

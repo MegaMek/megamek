@@ -17,7 +17,7 @@
  * Created on 25 May 2005, 21:17
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 import megamek.common.*;
 
 /**

@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -24,7 +24,7 @@ import gov.nist.gui.TabPanel;
 
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
-import megamek.client.util.AdvancedLabel;
+import megamek.client.ui.AWT.widget.AdvancedLabel;
 
 
 public class CommonSettingsDialog extends ClientDialog

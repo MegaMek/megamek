@@ -105,7 +105,7 @@ public abstract class BotClient extends Client {
     }
     
     //TODO: move initMovement to be called on phase end
-    protected void changePhase(int phase) {
+    public void changePhase(int phase) {
         super.changePhase(phase);
         
         try {

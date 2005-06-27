@@ -17,7 +17,7 @@ package megamek.test.client;
 import java.io.File;
 import java.util.Enumeration;
 
-import megamek.client.util.ImageFileFactory;
+import megamek.client.ui.AWT.util.ImageFileFactory;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 

@@ -18,7 +18,7 @@
  * Created on May 9, 2002, 1:33 PM
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.Component;
 import java.awt.Image;
@@ -35,7 +35,7 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Terrains;
 import megamek.common.util.StringUtil;
-import megamek.client.util.ImageCache;
+import megamek.client.ui.AWT.util.ImageCache;
 
 import com.sun.java.util.collections.ArrayList;
 import com.sun.java.util.collections.Iterator;

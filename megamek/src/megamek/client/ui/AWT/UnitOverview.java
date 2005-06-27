@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.util.Vector;
@@ -20,7 +20,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.util.StringUtil;
 import megamek.client.event.BoardViewEvent;
-import megamek.client.util.widget.PMUtil;
+import megamek.client.ui.AWT.widget.PMUtil;
 
 public class UnitOverview implements Displayable {
 

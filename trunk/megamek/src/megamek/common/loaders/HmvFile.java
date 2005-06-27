@@ -207,7 +207,7 @@ public class HmvFile
                             break;
                         case AmmoType.T_MG_HEAVY:
                             ammoType = (AmmoType) EquipmentType
-                                .get( "CLHeavyMG Ammo (100)" );
+                                .get( "CLHeavyMG Ammo (50)" );
                             break;
                         default:
                             // Only MG ammo comes in half ton lots.
@@ -827,7 +827,7 @@ public class HmvFile
     clanEquipment.put(new Long(0x63), "CLStreakSRM2 (OS)");
     clanEquipment.put(new Long(0x64), "CLStreakSRM4 (OS)");
     clanEquipment.put(new Long(0x65), "CLStreakSRM6 (OS)");
-    clanEquipment.put(new Long(0x66), "CLFlamer (Vehicle)");
+    clanEquipment.put(new Long(0x66), "CLVehicleFlamer");
     clanEquipment.put(new Long(0x67), "CLSRM2");
     clanEquipment.put(new Long(0x68), "CLSniperArtillery");
     clanEquipment.put(new Long(0x69), "CLThumperArtillery");
@@ -846,7 +846,7 @@ public class HmvFile
     clanEquipment.put(new Long(0x80), "CLHeavyLargeLaser");
     clanEquipment.put(new Long(0x81), "CLHeavyMediumLaser");
     clanEquipment.put(new Long(0x82), "CLHeavySmallLaser");
-    clanEquipment.put(new Long(0x85), "CLFlamer (Vehicle)");
+    clanEquipment.put(new Long(0x85), "CLFlamer (Vehicle)"); //?
     clanEquipment.put(new Long(0x92), "CLLRTorpedo5");
     clanEquipment.put(new Long(0x93), "CLLRTorpedo10");
     clanEquipment.put(new Long(0x94), "CLLRTorpedo15");
@@ -894,7 +894,7 @@ public class HmvFile
     clanEquipment.put(new Long(0x01e9), "CLNarc Pods");
     clanEquipment.put(new Long(0x0215), "CLFlamer Ammo");
     clanEquipment.put(new Long(0x023d), "CLLightMG Ammo (200)");
-    clanEquipment.put(new Long(0x023e), "CLHeavyMG Ammo (200)");
+    clanEquipment.put(new Long(0x023e), "CLHeavyMG Ammo (100)");
     clanEquipment.put(new Long(0x01f6), "CLFlamer (Vehicle) Ammo");
     clanEquipment.put(new Long(0x01f7), "CLSRM2 Ammo");
     clanEquipment.put(new Long(0x01f8), "CLSniper Ammo");
@@ -953,7 +953,7 @@ public class HmvFile
     clAmmo.put(new Long(0x6E), "CLTorpedoSRM2 Ammo");
     clAmmo.put(new Long(0x6F), "CLTorpedoSRM4 Ammo");
     clAmmo.put(new Long(0x70), "CLTorpedoSRM6 Ammo");
-    clAmmo.put(new Long(0x85), "CLVehicleFlamer Ammo");
+    clAmmo.put(new Long(0x85), "CLVehicleFlamer Ammo"); //?
     clAmmo.put(new Long(0x92), "CLTorpedoLRM5 Ammo");
     clAmmo.put(new Long(0x93), "CLTorpedoLRM10 Ammo");
     clAmmo.put(new Long(0x94), "CLTorpedoLRM15 Ammo");
@@ -962,7 +962,7 @@ public class HmvFile
     clAmmo.put(new Long(0x97), "CLTorpedoSRM4 Ammo");
     clAmmo.put(new Long(0x98), "CLTorpedoSRM6 Ammo");
     clAmmo.put(new Long(0xAD), "CLLightMG Ammo (200)");
-    clAmmo.put(new Long(0xAE), "CLHeavyMG Ammo (200)");
+    clAmmo.put(new Long(0xAE), "CLHeavyMG Ammo (100)");
     clAmmo.put(new Long(0xFC), "CLATM3 Ammo");
     clAmmo.put(new Long(0xFD), "CLATM6 Ammo");
     clAmmo.put(new Long(0xFE), "CLATM9 Ammo");

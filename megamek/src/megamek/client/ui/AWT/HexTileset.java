@@ -390,7 +390,7 @@ public class HexTileset {
           images = new java.util.Vector();
           for (int i = 0; i < filenames.size(); i++) {
             String filename = (String) filenames.elementAt(i);
-            images.addElement(comp.getToolkit().getImage("data/images(hexes/" + filename)); //$NON-NLS-1$
+            images.addElement(comp.getToolkit().getImage("data/images/hexes/" + filename)); //$NON-NLS-1$
           }
 //      image = comp.getToolkit().getImage("data/images/hexes/" + imageFile);
         }

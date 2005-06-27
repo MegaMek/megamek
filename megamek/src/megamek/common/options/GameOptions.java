@@ -41,7 +41,7 @@ import megamek.common.CommonConstants;
  */
 public class GameOptions extends AbstractOptions implements Serializable {
 
-    private static final String GAME_OPTIONS_FILE_NAME = "gameoptions.xml"; //$NON-NLS-1$
+    private static final String GAME_OPTIONS_FILE_NAME = "mmconf/gameoptions.xml"; //$NON-NLS-1$
     
     public GameOptions() {
         super();

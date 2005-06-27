@@ -9,7 +9,7 @@ public class BotConfiguration {
 
     static {
         try {
-            BotProperties.load(new FileInputStream("bot.properties")); //$NON-NLS-1$
+            BotProperties.load(new FileInputStream("mmconf/bot.properties")); //$NON-NLS-1$
         } catch (Exception e) {
             System.out.println("Bot properties could not be loaded, will use defaults"); //$NON-NLS-1$
         }

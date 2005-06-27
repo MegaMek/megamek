@@ -36,18 +36,22 @@
   <!-- This is the relative path to the 'data' directory -->
   <property name="dataclasspath" value="."/>
 
-
   
-  <!-- Build the "Class-Path" attribute of the jar's manifest dynamically.  -->
-  <path id="jarclasspath.pathset">
-     <!-- We'll be accessing the "data" directory -->
-     <filelist dir="${dataclasspath}" files="."/> 
-     <!-- We'll include the jars in the "lib" directory -->
-     <fileset dir="lib">
-        <include name="*.jar"/>
-     </fileset>
-  </path>
-  <property name="jarclasspath.abs" refid="jarclasspath.pathset"/>
+  <!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
+  <pathconvert pathsep=" " property="libjars">
+     <path>
+        <!-- We'll include the jars in the "lib" directory -->
+        <fileset dir="lib/">
+           <include name="*.jar"/>
+        </fileset>
+     </path>
+     <mapper>
+        <chainedmapper>
+          <flattenmapper/>
+          <globmapper from="*" to="lib/*" casesensitive="no"/>
+        </chainedmapper>
+     </mapper>
+  </pathconvert>
 
   <!-- initializes system before build -->
   <target name="init">
@@ -56,21 +60,6 @@
 
      <!-- Ensure that the build directory exists. -->
      <mkdir dir="${builddir}"/>
-
-     <!-- Use a temprorary file in the build directory to format the    -->
-     <!-- "Class-Path" value correctly, and store it in ${jarclasspath} -->
-     <tempfile property="jarclasspath.temp" destDir="${builddir}"
-        suffix=".tmp" />
-     <echo>Building  temporary file: 
-${jarclasspath.temp}</echo>
-     <echo message="jarclasspath:${jarclasspath.abs}"
-           file="${jarclasspath.temp}" />
-     <replace file="${jarclasspath.temp}"
-         token=":${basedir}/" value=" " />
-     <property file="${jarclasspath.temp}" />
-     <!-- Why can't I suppress output when deleting the temporary file?? -->
-     <delete file="${jarclasspath.temp}" verbose="false" quiet="true" />
-
   </target>
 
   <target name="compile" depends="init" description="Compile java sources into class files">
@@ -102,7 +91,7 @@ ${jarclasspath.temp}</echo>
         <fileset dir="${propdir}" includes="**/*.properties"/>
         <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
-	    	<attribute name="Class-Path" value="${jarclasspath}"/>
+	    	<attribute name="Class-Path" value=". ${libjars}"/>
     		<attribute name="Main-Class" value="${jarmainclass}"/>
         </manifest>
     </jar>

@@ -12,11 +12,11 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.Color;
 
-import megamek.client.util.ColorParser;
+import megamek.client.ui.AWT.util.ColorParser;
 import megamek.common.preference.PreferenceStoreProxy;
 import megamek.common.preference.PreferenceManager;
 

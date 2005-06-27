@@ -17,7 +17,7 @@
  *  Created by Ryan McConnell on June 15, 2003
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;

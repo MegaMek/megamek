@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;

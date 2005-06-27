@@ -1080,7 +1080,7 @@ public class HmvFile
     for (int i = 0; i < args.length; i++)
     {
       HmvFile hmvFile = new HmvFile(new FileInputStream(args[i]));
-      System.out.println(new megamek.client.MechView(hmvFile.getEntity()).getMechReadout());
+      System.out.println(new megamek.client.ui.AWT.MechView(hmvFile.getEntity()).getMechReadout());
     }
   }
 }

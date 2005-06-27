@@ -16,13 +16,13 @@
 
 
 
-package megamek.client.util.widget;
+package megamek.client.ui.AWT.widget;
 
 import java.awt.*;
 import java.util.*;
 
-import megamek.client.GUIPreferences;
-import megamek.client.Messages;
+import megamek.client.ui.AWT.GUIPreferences;
+import megamek.client.ui.AWT.Messages;
 import megamek.common.*;
 
 /**

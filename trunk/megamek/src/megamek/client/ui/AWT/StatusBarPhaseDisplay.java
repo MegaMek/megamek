@@ -12,12 +12,14 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import megamek.client.Client;
 
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay implements ActionListener
 {

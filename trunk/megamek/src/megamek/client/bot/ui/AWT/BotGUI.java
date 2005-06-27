@@ -1,12 +1,14 @@
-package megamek.client.bot;
+package megamek.client.bot.ui.AWT;
 
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.io.File;
 
-import megamek.client.CommonHelpDialog;
-import megamek.client.ConfirmDialog;
-import megamek.client.GUIPreferences;
+import megamek.client.bot.BotClient;
+import megamek.client.bot.Messages;
+import megamek.client.ui.AWT.CommonHelpDialog;
+import megamek.client.ui.AWT.ConfirmDialog;
+import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.IGame;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GameBoardChangeEvent;

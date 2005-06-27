@@ -12,15 +12,15 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-import megamek.client.util.widget.BackGroundDrawer;
-import megamek.client.util.widget.BufferedPanel;
-import megamek.client.util.AdvancedLabel;
+import megamek.client.ui.AWT.widget.BackGroundDrawer;
+import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.client.ui.AWT.widget.AdvancedLabel;
 
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
@@ -45,7 +45,7 @@ public class CommonAboutDialog extends Dialog
         if ( imgTitleImage == null ) {
             // Nope.  Load it.
             Image image = frame.getToolkit().getImage
-                ( "data/images/megamek-splash2.gif" ); //$NON-NLS-1$
+                ( "data/images/misc/megamek-splash2.gif" ); //$NON-NLS-1$
             MediaTracker tracker = new MediaTracker( frame );
             tracker.addImage( image, 0 );
             try {

@@ -12,14 +12,15 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import java.util.Enumeration;
 
-import megamek.client.util.widget.*;
+import megamek.client.Client;
+import megamek.client.ui.AWT.widget.*;
 import megamek.common.*;
 
 /**

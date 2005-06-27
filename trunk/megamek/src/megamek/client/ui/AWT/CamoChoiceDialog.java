@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,10 +26,10 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Vector;
-import megamek.client.util.AdvancedLabel;
-import megamek.client.util.ImageFileFactory;
-import megamek.client.util.PlayerColors;
-import megamek.client.util.widget.ImageButton;
+import megamek.client.ui.AWT.widget.AdvancedLabel;
+import megamek.client.ui.AWT.util.ImageFileFactory;
+import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.widget.ImageButton;
 import megamek.common.Player;
 import megamek.common.util.DirectoryItems;
 

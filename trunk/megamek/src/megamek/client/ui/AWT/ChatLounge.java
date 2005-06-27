@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -26,13 +26,14 @@ import com.sun.java.util.collections.Collections;
 
 import gov.nist.gui.TabPanel;
 
+import megamek.client.Client;
 import megamek.client.bot.BotClient;
-import megamek.client.bot.BotGUI;
+import megamek.client.bot.ui.AWT.BotGUI;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewListener;
-import megamek.client.util.PlayerColors;
-import megamek.client.util.widget.BufferedPanel;
-import megamek.client.util.widget.ImageButton;
+import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.client.ui.AWT.widget.ImageButton;
 import megamek.common.*;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;

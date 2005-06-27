@@ -26,11 +26,24 @@ import megamek.common.options.GameOptions;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.client.*;
-import megamek.client.Messages;
-import megamek.client.util.AdvancedLabel;
-import megamek.client.util.PlayerColors;
-import megamek.client.util.widget.*;
+import megamek.client.ui.AWT.AlertDialog;
+import megamek.client.ui.AWT.BoardEditor;
+import megamek.client.ui.AWT.CamoChoiceDialog;
+import megamek.client.ui.AWT.CamoChoiceListener;
+import megamek.client.ui.AWT.ClientGUI;
+import megamek.client.ui.AWT.CommonAboutDialog;
+import megamek.client.ui.AWT.CommonHelpDialog;
+import megamek.client.ui.AWT.CommonMenuBar;
+import megamek.client.ui.AWT.CommonSettingsDialog;
+import megamek.client.ui.AWT.ConfirmDialog;
+import megamek.client.ui.AWT.GUIPreferences;
+import megamek.client.ui.AWT.GameOptionsDialog;
+import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.AWT.widget.AdvancedLabel;
+import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.widget.*;
 import megamek.client.bot.*;
+import megamek.client.bot.ui.AWT.BotGUI;
 import megamek.server.*;
 import megamek.test.*;
 
@@ -64,7 +77,7 @@ public class MegaMek implements ActionListener {
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
 
-        frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif")); //$NON-NLS-1$
+        frame.setIconImage(frame.getToolkit().getImage("data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
 
         CommonMenuBar menuBar = new CommonMenuBar();
         menuBar.addActionListener(this);
@@ -170,7 +183,7 @@ public class MegaMek implements ActionListener {
         quitB.addActionListener(this);
 
         // initialize splash image
-        Image imgSplash = frame.getToolkit().getImage("data/images/megamek-splash.jpg"); //$NON-NLS-1$
+        Image imgSplash = frame.getToolkit().getImage("data/images/misc/megamek-splash.jpg"); //$NON-NLS-1$
 
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);

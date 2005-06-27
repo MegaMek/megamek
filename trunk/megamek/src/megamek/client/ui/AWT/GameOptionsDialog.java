@@ -18,7 +18,7 @@
  * Created on April 26, 2002, 2:14 PM
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;

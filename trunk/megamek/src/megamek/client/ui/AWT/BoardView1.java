@@ -13,7 +13,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.ui.AWT;
 
 // Defines Iterator class for JDK v1.1
 import com.sun.java.util.collections.*;
@@ -24,7 +24,7 @@ import java.util.Enumeration;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.util.*;
+import megamek.client.ui.AWT.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.event.BoardEvent;

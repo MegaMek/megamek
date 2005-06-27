@@ -13,7 +13,7 @@
  */
 
 
-package megamek.client.util;
+package megamek.client.ui.AWT.util;
 import java.awt.*;
 
 

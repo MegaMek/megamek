@@ -493,6 +493,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER | F_ENERGY;
         weapon.bv = 6;
+        weapon.cost = 7500;
         String[] modes = { "Damage", "Heat" };
         weapon.setModes(modes);
 
@@ -520,6 +521,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER | F_ENERGY;
         weapon.bv = 5;
+        weapon.cost = 7500;
         String[] modes = { "Damage", "Heat" };
         weapon.setModes(modes);
 
@@ -550,6 +552,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY ;
         weapon.bv = 124;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -578,6 +581,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 46;
+        weapon.cost = 40000;
 
         return weapon;
     }
@@ -606,6 +610,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
         weapon.bv = 9;
+        weapon.cost = 11250;
 
         return weapon;
     }
@@ -635,6 +640,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 176;
         weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
+        weapon.cost = 200000;
 
         return weapon;
     }
@@ -660,6 +666,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 5;
         weapon.flags |= F_BALLISTIC | F_MG;
+        weapon.cost = 5000;
 
         return weapon;
     }
@@ -686,6 +693,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 37;
+        weapon.cost = 75000;
 
         return weapon;
     }
@@ -712,6 +720,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 70;
+        weapon.cost = 125000;
 
         return weapon;
     }
@@ -738,6 +747,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 124;
+        weapon.cost = 200000;
 
         return weapon;
     }
@@ -764,6 +774,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 10;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 178;
+        weapon.cost = 300000;
 
         return weapon;
     }
@@ -791,6 +802,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 45;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 30000;
 
         return weapon;
     }
@@ -818,6 +830,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 90;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -845,6 +858,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 136;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -872,6 +886,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 181;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -903,6 +918,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 45;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 30000;
 
         return weapon;
     }
@@ -934,6 +950,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 90;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -965,6 +982,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 136;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -996,6 +1014,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 181;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -1023,6 +1042,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 9;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 30000;
 
         return weapon;
     }
@@ -1050,6 +1070,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 18;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -1077,6 +1098,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 27;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -1104,6 +1126,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 36;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -1135,6 +1158,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 9;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 30000;
 
         return weapon;
     }
@@ -1166,6 +1190,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 18;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -1197,6 +1222,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 27;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -1228,84 +1254,88 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 36;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 250000;
 
         return weapon;
     }
 
     public static WeaponType createISRL10()  {
-      WeaponType weapon = new WeaponType();
+        WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-      weapon.name = "RL 10";
-      weapon.setInternalName("RL10");
-      weapon.addLookupName("ISRocketLauncher10");
-      weapon.addLookupName("IS RLauncher-10");
-      weapon.heat = 3;
-      weapon.damage= DAMAGE_MISSILE;
-      weapon.rackSize= 10;
-      weapon.minimumRange = WEAPON_NA;
-      weapon.shortRange= 5;
-      weapon.mediumRange= 11;
-      weapon.longRange = 18;
-      weapon.extremeRange = 22;
-      weapon.tonnage = .5f;
-      weapon.criticals = 1;
-      weapon.bv= 18;
-      weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-      weapon.flags |= F_ONESHOT | F_MISSILE;
-      weapon.toHitModifier=1;
+        weapon.name = "RL 10";
+        weapon.setInternalName("RL10");
+        weapon.addLookupName("ISRocketLauncher10");
+        weapon.addLookupName("IS RLauncher-10");
+        weapon.heat = 3;
+        weapon.damage= DAMAGE_MISSILE;
+        weapon.rackSize= 10;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange= 5;
+        weapon.mediumRange= 11;
+        weapon.longRange = 18;
+        weapon.extremeRange = 22;
+        weapon.tonnage = .5f;
+        weapon.criticals = 1;
+        weapon.bv= 18;
+        weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.toHitModifier=1;
+        weapon.cost = 15000;
 
-      return weapon;
+        return weapon;
     }
     public static WeaponType createISRL15()  {
-      WeaponType weapon = new WeaponType();
+        WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-      weapon.name = "RL 15";
-      weapon.setInternalName("RL15");
-      weapon.addLookupName("ISRocketLauncher15");
-      weapon.addLookupName("IS RLauncher-15");
-      weapon.heat = 4;
-      weapon.damage= DAMAGE_MISSILE;
-      weapon.rackSize= 15;
-      weapon.minimumRange = WEAPON_NA;
-      weapon.shortRange= 4;
-      weapon.mediumRange= 9;
-      weapon.longRange = 15;
-      weapon.extremeRange = 18;
-      weapon.tonnage = 1.0f;
-      weapon.criticals = 2;
-      weapon.bv= 23;
-      weapon.flags |= F_ONESHOT | F_MISSILE;
-      weapon.toHitModifier=1;
-      weapon.ammoType= AmmoType.T_ROCKET_LAUNCHER;
+        weapon.name = "RL 15";
+        weapon.setInternalName("RL15");
+        weapon.addLookupName("ISRocketLauncher15");
+        weapon.addLookupName("IS RLauncher-15");
+        weapon.heat = 4;
+        weapon.damage= DAMAGE_MISSILE;
+        weapon.rackSize= 15;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange= 4;
+        weapon.mediumRange= 9;
+        weapon.longRange = 15;
+        weapon.extremeRange = 18;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 2;
+        weapon.bv= 23;
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.toHitModifier=1;
+        weapon.ammoType= AmmoType.T_ROCKET_LAUNCHER;
+        weapon.cost = 30000;
 
-      return weapon;
+        return weapon;
     }
     public static WeaponType createISRL20()  {
-     WeaponType weapon = new WeaponType();
+        WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-     weapon.name = "RL 20";
-     weapon.setInternalName("RL20");
-     weapon.addLookupName("ISRocketLauncher20");
-     weapon.addLookupName("IS RLauncher-20");
-     weapon.heat = 5;
-     weapon.damage= DAMAGE_MISSILE;
-     weapon.rackSize= 20;
-     weapon.minimumRange = WEAPON_NA;
-     weapon.shortRange= 3;
-     weapon.mediumRange= 7;
-     weapon.longRange = 12;
-     weapon.extremeRange = 14;
-     weapon.tonnage = 1.5f;
-     weapon.criticals = 3;
-     weapon.bv= 24;
-     weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-     weapon.flags |= F_ONESHOT | F_MISSILE;
-     weapon.toHitModifier=1;
+        weapon.name = "RL 20";
+        weapon.setInternalName("RL20");
+        weapon.addLookupName("ISRocketLauncher20");
+        weapon.addLookupName("IS RLauncher-20");
+        weapon.heat = 5;
+        weapon.damage= DAMAGE_MISSILE;
+        weapon.rackSize= 20;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange= 3;
+        weapon.mediumRange= 7;
+        weapon.longRange = 12;
+        weapon.extremeRange = 14;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 3;
+        weapon.bv= 24;
+        weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.toHitModifier=1;
+        weapon.cost = 45000;
 
-     return weapon;
+        return weapon;
    }
 
     public static WeaponType createSRM2() {
@@ -1330,6 +1360,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
         weapon.bv = 21;
+        weapon.cost = 10000;
 
         return weapon;
     }
@@ -1356,6 +1387,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 39;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -1382,6 +1414,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 59;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -1412,6 +1445,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
         weapon.bv = 21;
+        weapon.cost = 10000;
 
         return weapon;
     }
@@ -1442,6 +1476,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 39;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -1472,6 +1507,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 59;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -1501,6 +1537,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 229;
+        weapon.cost = 300000;
 
         return weapon;
     }
@@ -1528,6 +1565,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 163;
+        weapon.cost = 200000;
 
         return weapon;
     }
@@ -1555,6 +1593,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 62;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -1582,6 +1621,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
         weapon.bv = 17;
+        weapon.cost = 11250;
 
         return weapon;
     }
@@ -1611,6 +1651,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 119;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -1640,6 +1681,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 48;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -1669,6 +1711,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 12;
+        weapon.cost = 16000;
 
         return weapon;
     }
@@ -1698,6 +1741,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 178;
+        weapon.cost = 275000;
 
         return weapon;
     }
@@ -1727,6 +1771,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 71;
+        weapon.cost = 110000;
 
         return weapon;
     }
@@ -1756,6 +1801,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 21;
+        weapon.cost = 31000;
 
         return weapon;
     }
@@ -1780,6 +1826,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 42;
+        weapon.cost = 150000;
 
         return weapon;
     }
@@ -1804,6 +1851,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 83;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -1828,6 +1876,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 6;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 148;
+        weapon.cost = 400000;
 
         return weapon;
     }
@@ -1852,6 +1901,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 11;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 237;
+        weapon.cost = 600000;
 
         return weapon;
     }
@@ -1876,6 +1926,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
         weapon.explosive = true;
         weapon.bv = 321;
+        weapon.cost = 300000;
 
         return weapon;
     }
@@ -1900,6 +1951,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
         weapon.explosive = true;
         weapon.bv = 159;
+        weapon.cost = 275000;
 
         return weapon;
     }
@@ -1924,6 +1976,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SPLITABLE;
         weapon.explosive = true;
         weapon.bv = 346;
+        weapon.cost = 500000;
 
         return weapon;
     }
@@ -1950,6 +2003,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 56;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
+        weapon.cost = 120000;
 
         return weapon;
     }
@@ -1976,6 +2030,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 113;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
+        weapon.cost = 200000;
 
         return weapon;
     }
@@ -2002,6 +2057,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 253;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
+        weapon.cost = 320000;
 
         return weapon;
     }
@@ -2028,6 +2084,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 282;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
+        weapon.cost = 480000;
 
         return weapon;
     }
@@ -2057,6 +2114,7 @@ public class WeaponType extends EquipmentType {
 
         // explosive when jammed
         weapon.explosive = true;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -2086,6 +2144,7 @@ public class WeaponType extends EquipmentType {
 
         // explosive when jammed
         weapon.explosive = true;
+        weapon.cost = 275000;
 
         return weapon;
     }
@@ -2111,6 +2170,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
         weapon.bv = 30;
+        weapon.cost = 15000;
 
         return weapon;
     }
@@ -2137,6 +2197,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_ONESHOT | F_MISSILE;
         weapon.bv = 4;
+        weapon.cost = 10000;
 
         return weapon;
     }
@@ -2167,6 +2228,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_ONESHOT | F_MISSILE;
         weapon.bv = 4;
+        weapon.cost = 10000;
 
         return weapon;
     }
@@ -2194,6 +2256,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_ONESHOT | F_MISSILE;
         weapon.bv = 6;
+        weapon.cost = 15000;
 
         return weapon;
     }
@@ -2219,6 +2282,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_MISSILE;
         weapon.bv = 59;
+        weapon.cost = 90000;
 
         return weapon;
     }
@@ -2245,6 +2309,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_ONESHOT | F_MISSILE;
         weapon.bv = 8;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -2275,6 +2340,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_ONESHOT | F_MISSILE;
         weapon.bv = 8;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -2301,6 +2367,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_MISSILE | F_ONESHOT;
         weapon.bv = 12;
+        weapon.cost = 90000;
 
         return weapon;
     }
@@ -2326,6 +2393,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 89;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 120000;
 
         return weapon;
     }
@@ -2352,6 +2420,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 12;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -2382,6 +2451,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 12;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -2408,6 +2478,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 18;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 120000;
 
         return weapon;
     }
@@ -2435,6 +2506,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 56;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 50000;
 
         return weapon;
     }
@@ -2462,6 +2534,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.bv = 112;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 125000;
 
         return weapon;
     }
@@ -2489,6 +2562,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.bv = 168;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 225000;
 
         return weapon;
     }
@@ -2516,6 +2590,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.bv = 224;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 350000;
 
         return weapon;
     }
@@ -2543,6 +2618,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 11;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 50000;
 
         return weapon;
     }
@@ -2570,6 +2646,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.bv = 22;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 125000;
 
         return weapon;
     }
@@ -2597,6 +2674,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.bv = 34;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 225000;
 
         return weapon;
     }
@@ -2624,6 +2702,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.bv = 45;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -2647,6 +2726,7 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -2670,6 +2750,7 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -2693,6 +2774,7 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -2718,6 +2800,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 30;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -2743,6 +2826,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 6;
         weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -2768,6 +2852,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.bv = 75;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -2793,6 +2878,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 15;
         weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -2822,6 +2908,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 412;
+        weapon.cost = 300000;
 
         return weapon;
     }
@@ -2849,6 +2936,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 249;
+        weapon.cost = 200000;
 
         return weapon;
     }
@@ -2876,6 +2964,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 108;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -2903,6 +2992,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
         weapon.bv = 31;
+        weapon.cost = 11250;
 
         return weapon;
     }
@@ -2930,6 +3020,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
         weapon.bv = 7;
+        weapon.cost = 10000;
 
         return weapon;
     }
@@ -2955,6 +3046,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 6;
         String[] modes = { "Damage", "Heat" };
         weapon.setModes(modes);
+        weapon.cost = 7500;
 
         return weapon;
     }
@@ -2981,6 +3073,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 5;
         String[] modes = { "Damage", "Heat" };
         weapon.setModes(modes);
+        weapon.cost = 7500;
 
         return weapon;
     }
@@ -3010,6 +3103,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 243;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -3038,6 +3132,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 76;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -3066,6 +3161,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 15;
+        weapon.cost = 20000;
 
         return weapon;
     }
@@ -3090,6 +3186,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 5;
         weapon.flags |= F_BALLISTIC | F_MG;
+        weapon.cost = 5000;
 
         return weapon;
     }
@@ -3114,6 +3211,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 5;
         weapon.flags |= F_BALLISTIC | F_MG;
+        weapon.cost = 5000;
 
         return weapon;
     }
@@ -3138,6 +3236,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 6;
         weapon.flags |= F_BALLISTIC | F_MG;
+        weapon.cost = 7500;
 
         return weapon;
     }
@@ -3168,6 +3267,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 55;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;      
+        weapon.cost = 30000;
 
         return weapon;
     }
@@ -3198,6 +3298,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 109;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -3228,6 +3329,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 164;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -3258,6 +3360,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 220;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -3288,6 +3391,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 11;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 30000;
 
         return weapon;
     }
@@ -3318,6 +3422,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 22;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -3348,6 +3453,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 33;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -3378,6 +3484,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 44;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 200000;
 
         return weapon;
     }
@@ -3407,6 +3514,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
         weapon.bv = 21;
+        weapon.cost = 10000;
 
         return weapon;
     }
@@ -3436,6 +3544,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 39;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -3465,6 +3574,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 59;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -3494,6 +3604,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
         weapon.bv = 4;
+        weapon.cost = 10000;
 
         return weapon;
     }
@@ -3523,6 +3634,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 8;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -3552,6 +3664,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 12;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -3578,6 +3691,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 55;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;      
+        weapon.cost = 30000;
 
         return weapon;
     }
@@ -3604,6 +3718,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 109;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -3630,6 +3745,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 164;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -3656,6 +3772,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 220;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -3682,6 +3799,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 11;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 30000;
 
         return weapon;
     }
@@ -3708,6 +3826,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 22;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -3734,6 +3853,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 33;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -3760,6 +3880,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 44;
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -3785,6 +3906,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
         weapon.bv = 21;
+        weapon.cost = 10000;
 
         return weapon;
     }
@@ -3810,6 +3932,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 39;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -3835,6 +3958,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 59;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -3860,6 +3984,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
         weapon.bv = 4;
+        weapon.cost = 10000;
 
         return weapon;
     }
@@ -3885,6 +4010,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 8;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -3910,6 +4036,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 12;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 80000;
 
         return weapon;
     }
@@ -3940,6 +4067,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 265;
+        weapon.cost = 175000;
 
         return weapon;
     }
@@ -3969,6 +4097,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 111;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -3998,6 +4127,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 24;
+        weapon.cost = 16000;
 
         return weapon;
     }
@@ -4027,6 +4157,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 271;
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4056,6 +4187,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 116;
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4085,6 +4217,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 36;
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4113,6 +4246,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
         weapon.bv = 12;
+        weapon.cost = 12500;
 
         return weapon;
     }
@@ -4137,6 +4271,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 47;
+        weapon.cost = 150000;
 
         return weapon;
     }
@@ -4161,6 +4296,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 93;
+        weapon.cost = 250000;
 
         return weapon;
     }
@@ -4185,6 +4321,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 148;
+        weapon.cost = 400000;
 
         return weapon;
     }
@@ -4209,6 +4346,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 9;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 237;
+        weapon.cost = 600000;
 
         return weapon;
     }
@@ -4233,6 +4371,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
         weapon.explosive = true;
         weapon.bv = 321;
+        weapon.cost = 300000;
 
         return weapon;
     }
@@ -4259,6 +4398,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 62;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
+        weapon.cost = 120000;
 
         return weapon;
     }
@@ -4285,6 +4425,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 123;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
+        weapon.cost = 200000;
 
         return weapon;
     }
@@ -4311,6 +4452,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 211;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
+        weapon.cost = 320000;
 
         return weapon;
     }
@@ -4337,6 +4479,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 337;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
+        weapon.cost = 480000;
 
         return weapon;
     }
@@ -4364,6 +4507,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 185;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4391,6 +4535,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 360;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4418,6 +4563,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 617;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4445,6 +4591,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 823;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4470,6 +4617,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
         weapon.bv = 40;
+        weapon.cost = 15000;
 
         return weapon;
     }
@@ -4495,6 +4643,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 79;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 90000;
 
         return weapon;
     }
@@ -4520,6 +4669,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 119;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 120000;
 
         return weapon;
     }
@@ -4545,6 +4695,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
         weapon.bv = 8;
+        weapon.cost = 15000;
 
         return weapon;
     }
@@ -4570,6 +4721,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 16;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 90000;
 
         return weapon;
     }
@@ -4595,6 +4747,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 24;
         weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 120000;
 
         return weapon;
     }
@@ -4619,6 +4772,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 53;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 50000;
 
         return weapon;
     }
@@ -4643,6 +4797,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.bv = 105;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 125000;
 
         return weapon;
     }
@@ -4667,6 +4822,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.bv = 147;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 225000;
 
         return weapon;
     }
@@ -4691,6 +4847,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.bv = 212;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 350000;
 
         return weapon;
     }
@@ -4716,6 +4873,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 87;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4741,6 +4899,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 173;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4766,6 +4925,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.bv = 260;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4791,6 +4951,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.bv = 346;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -4978,6 +5139,7 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -5001,6 +5163,7 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
+        weapon.cost = 0; // FIXME
 
         return weapon;
     }
@@ -5026,6 +5189,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 30;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -5051,6 +5215,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 6;
         weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -5073,6 +5238,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES;
+        weapon.cost = 0;
 
         return weapon;
     }
@@ -5094,6 +5260,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES;
+        weapon.cost = 0;
 
         return weapon;
     }
@@ -5115,6 +5282,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES;
+        weapon.cost = 0;
 
         return weapon;
     }
@@ -7104,6 +7272,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 15;
         weapon.bv = 171;
         weapon.flags |= F_ARTILLERY | F_SPLITABLE;
+        weapon.cost = 450000;
+
         return weapon;
     }
 
@@ -7128,6 +7298,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 12;
         weapon.bv = 171;
         weapon.flags |= F_ARTILLERY | F_SPLITABLE;
+        weapon.cost = 450000;
+
         return weapon;
     }
 
@@ -7151,6 +7323,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 30;
         weapon.bv = 171;
         weapon.flags |= F_ARTILLERY;
+        weapon.cost = 450000;
+
         return weapon;
     }
 
@@ -7174,6 +7348,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 30;
         weapon.bv = 171;
         weapon.flags |= F_ARTILLERY;
+        weapon.cost = 450000;
+
         return weapon;
     }
 
@@ -7197,6 +7373,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 20;
         weapon.bv = 86;
         weapon.flags |= F_ARTILLERY | F_SPLITABLE;
+        weapon.cost = 300000;
+
         return weapon;
     }
 
@@ -7220,6 +7398,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 20;
         weapon.bv = 86;
         weapon.flags |= F_ARTILLERY | F_SPLITABLE;
+        weapon.cost = 300000;
+
         return weapon;
     }
 
@@ -7243,6 +7423,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 15;
         weapon.bv = 40;
         weapon.flags |= F_ARTILLERY | F_SPLITABLE;
+        weapon.cost = 187500;
+
         return weapon;
     }
 
@@ -7266,6 +7448,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 15;
         weapon.bv = 40;
         weapon.flags |= F_ARTILLERY | F_SPLITABLE;
+        weapon.cost = 187500;
+
         return weapon;
     }
 
@@ -7642,6 +7826,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_PROTOTYPE;
         weapon.bv = 148;
+        weapon.cost = 400000;
 
         return weapon;
     }
@@ -7666,6 +7851,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_PROTOTYPE;
         weapon.explosive = true;
         weapon.bv = 321;
+        weapon.cost = 300000;
 
         return weapon;
     }
@@ -7694,6 +7880,7 @@ public class WeaponType extends EquipmentType {
         weapon.toHitModifier = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_PROTOTYPE;
         weapon.bv = 163;
+        weapon.cost = 200000;
 
         return weapon;
     }
@@ -7723,6 +7910,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_PROTOTYPE;
         weapon.bv = 48;
+        weapon.cost = 60000;
 
         return weapon;
     }
@@ -7749,6 +7937,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 113;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
+        weapon.cost = 200000;
 
         return weapon;
     }
@@ -7774,7 +7963,8 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 15;
         weapon.extremeRange = 15;
         weapon.bv = 0;
-        
+        weapon.cost = 50000;
+
         return weapon;
     }
 
@@ -7799,7 +7989,8 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.extremeRange = 9;
         weapon.bv = 0;
-        
+        weapon.cost = 40000;
+
         return weapon;
     }
 
@@ -7824,7 +8015,8 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 15;
         weapon.extremeRange = 15;
         weapon.bv = 0;
-        
+        weapon.cost = 50000;
+
         return weapon;
     }
 
@@ -7849,7 +8041,8 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.extremeRange = 9;
         weapon.bv = 0;
-        
+        weapon.cost = 40000;
+
         return weapon;
     }
 

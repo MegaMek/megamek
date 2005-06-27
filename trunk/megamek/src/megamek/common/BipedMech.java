@@ -281,8 +281,6 @@ public class BipedMech extends Mech {
         int freeSinks= hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
         int sinkCost= hasDoubleHeatSinks()? 6000: 2000;
         cost+=sinkCost*(heatSinks()-freeSinks);//cost of sinks
-        System.out.println(getDisplayName());
-        System.out.println(cost); 
         double totalArmorWeight = (double) getTotalOArmor() / 16.0f;
         totalArmorWeight/=EquipmentType.getArmorPointMultiplier(armorType,techLevel);
         totalArmorWeight=(double)Math.ceil(totalArmorWeight*2f)/2f;

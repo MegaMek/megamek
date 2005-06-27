@@ -61,7 +61,15 @@ public class MechView {
             sBasic.append( Math.round(mech.getWeight()) )
                 .append(Messages.getString("MechView.tons") ); //$NON-NLS-1$
         }
-        sBasic.append(TechConstants.getLevelDisplayableName(mech.getTechLevel()));
+        if (mech.isMixedTech()) {
+            if (mech.isClan()) {
+                sBasic.append(Messages.getString("MechView.MixedClan"));
+            } else {
+                sBasic.append(Messages.getString("MechView.MixedIS"));
+            }
+        } else {
+            sBasic.append(TechConstants.getLevelDisplayableName(mech.getTechLevel()));
+        }
         sBasic.append("\n"); //$NON-NLS-1$
         if ( mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
             sBasic.append( Messages.getString("MechView.Linkedc3bv")); //$NON-NLS-1$
@@ -138,10 +146,14 @@ public class MechView {
             sIntArm.append( "/" ) //$NON-NLS-1$
                 .append( maxArmor );
         }
-        if (mech.getArmorType() != EquipmentType.T_ARMOR_UNKNOWN) {
-            sIntArm.append(" (");
-            sIntArm.append(EquipmentType.getArmorTypeName(mech.getArmorType()));
-            sIntArm.append(")");
+        if (mech.getArmorType() != EquipmentType.T_ARMOR_STANDARD) {
+            if (mech.getArmorType() != EquipmentType.T_ARMOR_UNKNOWN) {
+                sIntArm.append(" (");
+                sIntArm.append(EquipmentType.getArmorTypeName(mech.getArmorType()));
+                sIntArm.append(")");
+            } else {
+                sIntArm.append(" (unknown)");
+            }
         }
         sIntArm.append( "\n" ); //$NON-NLS-1$
         // Walk through the entity's locations.

@@ -194,14 +194,14 @@ public class HmpFile
           //  It also doubles as the internal structure type.
           mixedBaseTechType = TechType.getType(readUnsignedShort(dis));
           // Next we have engine, heat sinks, physical attack weapon,
-          //  targeting computer, myomer, and finally armor.  Note that
+          //  myomer, targeting computer, and finally armor.  Note that
           //  these 14 bytes are always present in mixed-tech designs,
           //  whether the specific equipment exists on the mech or not.
           engineTechType = TechType.getType(readUnsignedShort(dis));
           heatSinkTechType = TechType.getType(readUnsignedShort(dis));
           physicalWeaponTechType = TechType.getType(readUnsignedShort(dis));
-          targetingComputerTechType = TechType.getType(readUnsignedShort(dis));
           myomerTechType = TechType.getType(readUnsignedShort(dis));
+          targetingComputerTechType = TechType.getType(readUnsignedShort(dis));
           armorTechType = TechType.getType(readUnsignedShort(dis));
       }
 
@@ -425,9 +425,10 @@ public class HmpFile
       mech.setOriginalWalkMP(walkMP);
       mech.setOriginalJumpMP(jumpMP);
 
-        mech.setStructureType(internalStructureType.toString());
+      mech.setStructureType(internalStructureType.toString());
       mech.autoSetInternal();
 
+      mech.setArmorType(armorType.toString());
       mech.initializeArmor(laArmor, Mech.LOC_LARM);
       mech.initializeArmor(ltArmor, Mech.LOC_LT);
       mech.initializeRearArmor(ltrArmor, Mech.LOC_LT);
@@ -765,7 +766,7 @@ public class HmpFile
     isCriticals.put(new Long(0x82), "ISStreakSRM2 (OS)");
     isCriticals.put(new Long(0x83), "ISStreakSRM4 (OS)");
     isCriticals.put(new Long(0x84), "ISStreakSRM6 (OS)");
-    isCriticals.put(new Long(0x85), "ISFlamer (Vehicle)");
+    isCriticals.put(new Long(0x85), "ISVehicleFlamer");
 
     isCriticals.put(new Long(0x87), "ISSniperArtillery");
     isCriticals.put(new Long(0x88), "ISThumperArtillery");
@@ -836,7 +837,7 @@ public class HmpFile
     isCriticals.put(new Long(0xD7), "CLStreakSRM2 (OS)");
     isCriticals.put(new Long(0xD8), "CLStreakSRM4 (OS)");
     isCriticals.put(new Long(0xD9), "CLStreakSRM6 (OS)");
-    isCriticals.put(new Long(0xDA), "CLFlamer (Vehicle)");
+    isCriticals.put(new Long(0xDA), "CLVehicleFlamer");
 
     isCriticals.put(new Long(0xDC), "CLSniperArtillery");
     isCriticals.put(new Long(0xDD), "CLThumperArtillery");
@@ -939,7 +940,7 @@ public class HmpFile
 
     isCriticals.put(new Long(0x025D), "CLNarc Pods");
 
-    isCriticals.put(new Long(0x026A), "CLFlamer (Vehicle) Ammo");
+    isCriticals.put(new Long(0x026A), "CLVehicleFlamer Ammo");
     isCriticals.put(new Long(0x026C), "CLSniper Ammo");
     isCriticals.put(new Long(0x026D), "CLThumper Ammo");
     isCriticals.put(new Long(0x026E), "CLLRTorpedo5 Ammo");
@@ -1019,7 +1020,7 @@ public class HmpFile
     clanCriticals.put(new Long(0x63), "CLStreakSRM2 (OS)");
     clanCriticals.put(new Long(0x64), "CLStreakSRM4 (OS)");
     clanCriticals.put(new Long(0x65), "CLStreakSRM6 (OS)");
-    clanCriticals.put(new Long(0x66), "CLFlamer (Vehicle)");
+    clanCriticals.put(new Long(0x66), "CLVehicleFlamer");
     clanCriticals.put(new Long(0x67), "CLSRM2");
     clanCriticals.put(new Long(0x68), "CLSniperArtillery");
     clanCriticals.put(new Long(0x69), "CLThumperArtillery");
@@ -1119,7 +1120,7 @@ public class HmpFile
     clanCriticals.put(new Long(0xD2), "ISStreakSRM2 (OS)");
     clanCriticals.put(new Long(0xD3), "ISStreakSRM4 (OS)");
     clanCriticals.put(new Long(0xD4), "ISStreakSRM6 (OS)");
-    clanCriticals.put(new Long(0xD5), "ISFlamer (Vehicle)");
+    clanCriticals.put(new Long(0xD5), "ISVehicleFlamer");
 
     clanCriticals.put(new Long(0xE2), "ISLRTorpedo5");
     clanCriticals.put(new Long(0xE3), "ISLRTorpedo10");
@@ -1174,7 +1175,7 @@ public class HmpFile
     clanCriticals.put(new Long(0x01f1), "CLLRM10 Ammo");
     clanCriticals.put(new Long(0x01f2), "CLLRM15 Ammo");
     clanCriticals.put(new Long(0x01f3), "CLLRM20 Ammo");
-    clanCriticals.put(new Long(0x01f6), "CLFlamer (Vehicle) Ammo");
+    clanCriticals.put(new Long(0x01f6), "CLVehicleFlamer Ammo");
     clanCriticals.put(new Long(0x01f7), "CLSRM2 Ammo");
     clanCriticals.put(new Long(0x01f8), "CLSniper Ammo");
     clanCriticals.put(new Long(0x01f9), "CLThumper Ammo");
@@ -1240,7 +1241,7 @@ public class HmpFile
 
     clanCriticals.put(new Long(0x0259), "ISNarc Pods");
 
-    clanCriticals.put(new Long(0x0265), "ISFlamer (Vehicle) Ammo");
+    clanCriticals.put(new Long(0x0265), "ISVehicleFlamer Ammo");
 
     clanCriticals.put(new Long(0x0272), "ISLRTorpedo15 Ammo");
     clanCriticals.put(new Long(0x0273), "ISLRTorpedo20 Ammo");

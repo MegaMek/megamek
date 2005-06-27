@@ -2750,7 +2750,7 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
-        weapon.cost = 0; // FIXME
+        weapon.cost = 225000;
 
         return weapon;
     }
@@ -2774,7 +2774,7 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
-        weapon.cost = 0; // FIXME
+        weapon.cost = 300000;
 
         return weapon;
     }
@@ -4157,7 +4157,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 271;
-        weapon.cost = 0; // FIXME
+        weapon.cost = 400000;
 
         return weapon;
     }
@@ -4187,7 +4187,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 116;
-        weapon.cost = 0; // FIXME
+        weapon.cost = 150000;
 
         return weapon;
     }
@@ -4217,7 +4217,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 36;
-        weapon.cost = 0; // FIXME
+        weapon.cost = 30000;
 
         return weapon;
     }
@@ -4507,7 +4507,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 185;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
-        weapon.cost = 0; // FIXME
+        weapon.cost = 240000;
 
         return weapon;
     }
@@ -4535,7 +4535,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 360;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
-        weapon.cost = 0; // FIXME
+        weapon.cost = 400000;
 
         return weapon;
     }
@@ -4563,7 +4563,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 617;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
-        weapon.cost = 0; // FIXME
+        weapon.cost = 640000;
 
         return weapon;
     }
@@ -4591,7 +4591,7 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 823;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
-        weapon.cost = 0; // FIXME
+        weapon.cost = 960000;
 
         return weapon;
     }
@@ -4873,7 +4873,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 87;
         weapon.flags |= F_MISSILE;
-        weapon.cost = 0; // FIXME
+        weapon.cost = 75000;
 
         return weapon;
     }
@@ -4899,7 +4899,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 173;
         weapon.flags |= F_MISSILE;
-        weapon.cost = 0; // FIXME
+        weapon.cost = 225000;
 
         return weapon;
     }
@@ -4925,7 +4925,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.bv = 260;
         weapon.flags |= F_MISSILE;
-        weapon.cost = 0; // FIXME
+        weapon.cost = 400000;
 
         return weapon;
     }
@@ -4951,7 +4951,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.bv = 346;
         weapon.flags |= F_MISSILE;
-        weapon.cost = 0; // FIXME
+        weapon.cost = 600000;
 
         return weapon;
     }
@@ -5163,7 +5163,7 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
-        weapon.cost = 0; // FIXME
+        weapon.cost = 225000;
 
         return weapon;
     }

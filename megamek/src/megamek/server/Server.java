@@ -635,7 +635,6 @@ implements Runnable, ConnectionHandler {
             sFinalFile = sFile + ".sav";
         }
         try {
-            //            boolean success = (new File("savegames")).mkdir();
             File sDir = new File("savegames");
             if (!sDir.exists()) {
                 sDir.mkdir();

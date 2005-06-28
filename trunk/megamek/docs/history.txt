@@ -73,8 +73,9 @@ v0.29.82 (CVS)
     IS Level 2 and Clan)
 + Cost for Quad mechs (not calculating perfectly, too).
 + Allow sorting the units in MechSelectorDialog by cost.
-+ Cost for BAs and Infantry (BMRr & MTR only)
-+ Show cost in Chatlounge
++ Cost for BAs and Infantry (BMRr & MTR only).
++ Show cost in Chatlounge.
++ Bug 1226732: Read Me for the mechfiles out of date.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

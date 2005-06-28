@@ -756,16 +756,19 @@ public class Game implements Serializable, IGame
      *          <code>null</code>.
      */
     public void setOutOfGameEntitiesVector(Vector vOutOfGame) {
-        if ( null == vOutOfGame ) {
-            throw new IllegalArgumentException
-                ( "New out-of-game list is null." );
-        }
-        this.vOutOfGame = vOutOfGame;
-        // Add these entities to the game.
+        megamek.debug.Assert.assertTrue(vOutOfGame != null, "New out-of-game list should not be null.");
+        Vector newOutOfGame = new Vector();
+
+        // Add entities for the existing players to the game.
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            entity.setGame(this);
+            int ownerId = entity.getOwnerId();
+            if (ownerId != Entity.NONE && getPlayer(ownerId) != null) {
+                entity.setGame(this);
+                newOutOfGame .addElement(entity);
+            }
         }
+        this.vOutOfGame = newOutOfGame;
         processGameEvent(new GameEntityNewOffboardEvent(this));
     }
 

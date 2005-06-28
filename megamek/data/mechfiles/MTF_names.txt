@@ -1,7 +1,10 @@
 MegaMek Weapon and Equipment Lists for MTF file construction.
 Written by Robert Heath<blasty_mcnasty@users.sourceforge.net>
 
- This a list of weapons, ammo and equipment names for use in the construction of .mtf files. I am not sure if I have all item names for .mtf files listed. Should there be any that I have missed, or that have been added into the game, please insert them in the appropriate place. Thank you - Blasty McNasty
+ This a list of weapons, ammo and equipment names for use in the construction 
+ of .mtf files. I am not sure if I have all item names for .mtf files listed.
+ Should there be any that I have missed, or that have been added into the game,
+ please insert them in the appropriate place. Thank you - Blasty McNasty
 
 Inner Sphere Level 1 Tech:
  Weapons:

@@ -1,4 +1,4 @@
-Last updated May 5, 2005 by Hopalong
+Last updated June 23, 2005 by Hopalong
 
 Customs:
 You can unzip the files and hand edit a unit
@@ -7,14 +7,12 @@ The Drawing Board free designer with newest patch, save as "xml" format
 To match a unit with a gif (picture) you'll need to edit the "mechset" in mex folder
 
 Mechs:
-Maces/Claws replaced with Hatchets
 Changed some mech names (MFUK) when they are duplicated
-ultra lights and dreadnoughts do not have internals
-Blackjack and Scorpion (3050) have double heatsinks (this is official)
+dreadnoughts do not have internals
+Blackjack/Ostroc/Scorpion (3050) have double heatsinks (this is official)
 Shogun SHG-2E is a lvl2 mech
 
 Vehs:
-
 armor type: 0=standard 1=ferrofibrous
 engine type: 0=fusion 1=ICE 2=xl
 
@@ -39,20 +37,17 @@ Standard					(leave blank)
 Standard Stealth				Standard Stealth
 
 -Manipulators
-Armored Glove					BA-Boarding Claw
 Basic Manipulater				BA-Boarding Claw
 Basic Manipulater (Mine Clearance)		Minesweeper
-Battle Claw					BA-Boarding Claw
-Battle Claw (Vibro)				BA-Vibro Claws
-Heavy Battle Claw				BA-Assault Claws
+Battle Claw (Vibro) (2 claws)			BA-Vibro Claws
+Salamander Claw (-1 to hit)			BA-Assault Claws
 
 -Weapons
 IS
-Bearhunter Superheavy AC			BA-Bearhunter Superheavy AC
 ER Small Laser					BA-IS ER Small Laser
 Firedrake Incendiary Needler			BA-Firedrake Incendiary Needler
 Flamer						BA-Flamer
-Grenade Launcher				BA-Auto GL
+Heavy Grenade Launcher				BA-Auto GL
 King David Light Gauss Rifle			BA-King David Light Gauss Rifle
 Light Recoilless Rifle				BA-Light Recoilless Rifle
 LRM 5						ISLRM5
@@ -75,10 +70,11 @@ SRM 2 (Inferno)					BA-Inferno SRM
 Support PPC					BA-Support PPC
 
 Clan
-Advanced SRM 2					Advanced SRM-2
-(2 shots)					BA-Advanced SRM2 Ammo
+Advanced SRM 2					Clan Advanced SRM-2
+(2 shots)					BA-Advanced SRM-2 Ammo
 Advanced SRM 5					BA-Advanced SRM-5
 (2 shots)					BA-Advanced SRM-5 Ammo
+Bearhunter Superheavy AC			BA-Bearhunter Superheavy AC
 ER Small Laser					BA-Clan ER Small Laser
 Medium Pulse Laser				BA-CL Medium Pulse Laser
 SRM 2						CLSRM2
@@ -113,10 +109,12 @@ SRM 4						Phalanx SRM4
 (2 shots)					Phalanx SRM4 Ammo 
 
 -Equipment
-Active Probe (2 Hex)				Beagle Active Probe/BAP (2 Hex)
-Active Probe (3 Hex)				BAP (3 Hex)
+Active Probe					Beagle Active Probe
+Active Probe (Clan)
 Camo System					Simple Camo
 ECM						Single-Hex ECM
+Improved Sensors				BAP (2 Hex)
+Improved Sensors (Clan)				BAP (3 Hex)
 Light TAG					Light TAG
 Magnetic Clamps					BA-Magnetic Clamp
 Mine Dispenser					BA-Mine Launcher

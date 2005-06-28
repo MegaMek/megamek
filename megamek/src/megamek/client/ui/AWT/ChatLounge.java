@@ -110,6 +110,8 @@ public class ChatLounge
     private CheckboxGroup bvCbg;
     private Checkbox chkBV;
     private Checkbox chkTons;
+    private Checkbox chkCost;
+    
     private Panel panBVs;
 
     private TabPanel panTabs;
@@ -677,7 +679,7 @@ public class ChatLounge
      * Sets up the battle values panel
      */
     private void setupBVs() {
-        labBVs = new Label(Messages.getString("ChatLounge.labBVs"), Label.CENTER); //$NON-NLS-1$
+        labBVs = new Label(Messages.getString("ChatLounge.labBVs.BV"), Label.CENTER); //$NON-NLS-1$
 
         lisBVs = new List(5);
 
@@ -688,6 +690,8 @@ public class ChatLounge
         chkBV.addItemListener(this);
         chkTons = new Checkbox(Messages.getString("ChatLounge.chkTons"), bvCbg, false); //$NON-NLS-1$
         chkTons.addItemListener(this);
+        chkCost = new Checkbox(Messages.getString("ChatLounge.chkCost"), bvCbg, false);
+        chkCost.addItemListener(this);
 
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -716,6 +720,10 @@ public class ChatLounge
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(lisBVs, c);
         panBVs.add(chkTons);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(lisBVs, c);
+        panBVs.add(chkCost);
     }
 
     /**
@@ -965,7 +973,8 @@ public class ChatLounge
      */
     private void refreshBVs() {
         final boolean useBv = chkBV.getState();
-
+        final boolean useCost = chkCost.getState();
+        
         lisBVs.removeAll();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player) i.nextElement();
@@ -978,13 +987,17 @@ public class ChatLounge
                 if (entity.getOwner().equals(player)) {  
                     if (useBv) 
                         playerValue += entity.calculateBattleValue();        
-                    else{
+                    else if (useCost) {
+                        playerValue += entity.getCost();
+                    } else { 
                         playerValue += entity.getWeight();     
                     }
                }
             }
             if (useBv) {
                 lisBVs.add(player.getName() + Messages.getString("ChatLounge.BV") + (int) playerValue); //$NON-NLS-1$
+            } else if (useCost) {
+                lisBVs.add(player.getName() + Messages.getString("ChatLounge.Cost") + (int) playerValue);
             } else {
                 lisBVs.add(player.getName() + Messages.getString("ChatLounge.Tons") + playerValue); //$NON-NLS-1$
             }
@@ -1285,8 +1298,15 @@ public class ChatLounge
 
         if (ev.getSource() == choTeam) {
             changeTeam(choTeam.getSelectedIndex());
-        } else if (ev.getSource() == chkBV || ev.getSource() == chkTons) {
+        } else if (ev.getSource() == chkBV || ev.getSource() == chkTons || ev.getSource() == chkCost) {
             refreshBVs();
+            if (ev.getSource() == chkBV) {
+                labBVs.setText(Messages.getString("ChatLounge.labBVs.BV"));
+            } else if (ev.getSource() == chkTons) {
+                labBVs.setText(Messages.getString("ChatLounge.labBVs.Tons"));
+            } else {
+                labBVs.setText(Messages.getString("ChatLounge.labBVs.Cost"));
+            }
         } else if (ev.getSource() == lisEntities) {
             boolean selected = lisEntities.getSelectedIndex() != -1;
             butCustom.setEnabled(selected);

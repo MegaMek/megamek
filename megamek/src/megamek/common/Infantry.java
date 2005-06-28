@@ -858,6 +858,86 @@ public class Infantry
     public double getCost() {
         // FIXME
         // There should be an implementation here!
-        return 0;
+        double cost = 0;
+        double multiplier = 0;
+        
+        if ( this.antiMek ) {
+            multiplier = 5;
+        } else {
+            multiplier = 1;
+        }
+        switch ( this.weapons ) {
+            case INF_RIFLE:
+                if ( INF_LEG == this.getMovementMode() )
+                    cost = 600000;
+                else if ( INF_MOTORIZED == this.getMovementMode() )
+                    cost = 960000;
+                else if ( INF_JUMP == this.getMovementMode() )
+                    cost = 1200000;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementMode() );
+                break;
+            case INF_MG:
+                if ( INF_LEG == this.getMovementMode() )
+                    cost = 800000;
+                else if ( INF_MOTORIZED == this.getMovementMode() )
+                    cost = 1280000;
+                else if ( INF_JUMP == this.getMovementMode() )
+                    cost = 1600000;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementMode() );
+                break;
+            case INF_FLAMER:
+                if ( INF_LEG == this.getMovementMode() )
+                    cost = 800000;
+                else if ( INF_MOTORIZED == this.getMovementMode() )
+                    cost = 1280000;
+                else if ( INF_JUMP == this.getMovementMode() )
+                    cost = 1600000;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementMode() );
+                break;
+            case INF_LASER:
+                if ( INF_LEG == this.getMovementMode() )
+                    cost = 1200000;
+                else if ( INF_MOTORIZED == this.getMovementMode() )
+                    cost = 1920000;
+                else if ( INF_JUMP == this.getMovementMode() )
+                    cost = 2400000;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementMode() );
+                break;
+            case INF_SRM:
+                if ( INF_LEG == this.getMovementMode() )
+                    cost = 1400000;
+                else if ( INF_MOTORIZED == this.getMovementMode() )
+                    cost = 2240000;
+                else if ( INF_JUMP == this.getMovementMode() )
+                    cost = 2800000;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementMode() );
+                break;
+            case INF_LRM:
+                if ( INF_LEG == this.getMovementMode() )
+                    cost = 1400000;
+                else if ( INF_MOTORIZED == this.getMovementMode() )
+                    cost = 2240000;
+                else if ( INF_JUMP == this.getMovementMode() )
+                    cost = 2800000;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementMode() );
+                break;
+            default:
+                throw new IllegalArgumentException
+                    ( "Unknown infantry weapon: " + this.weapons );
+        } // End not-anti-Mek
+
+        return cost*multiplier;
     }
 } // End class Infantry

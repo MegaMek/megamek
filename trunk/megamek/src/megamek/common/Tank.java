@@ -740,6 +740,8 @@ public class Tank
     public double getCost() {
         // FIXME
         // There should be an implementation here!
-        return 0;
+        double cost = 0;
+        
+        return cost;
     }
 }

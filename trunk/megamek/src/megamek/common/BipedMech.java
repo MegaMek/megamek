@@ -238,11 +238,11 @@ public class BipedMech extends Mech {
     public double getCost() {
         // FIXME
         // There should be an implementation here!
-        int cost=0;
+        double cost=0.0;
         cost+=200000;//cockpit
         cost+=50000;//life support
         cost+=weight*2000;//sensors
-        int muscCost=this.hasTSM()? 160000 : 2000;
+        int muscCost=this.hasTSM()? 16000 : 2000;
         cost+=muscCost*weight;//musculature
         int structureCost=400;
         if(hasEndo() || hasCompositeStructure()) {
@@ -281,16 +281,18 @@ public class BipedMech extends Mech {
         int freeSinks= hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
         int sinkCost= hasDoubleHeatSinks()? 6000: 2000;
         cost+=sinkCost*(heatSinks()-freeSinks);//cost of sinks
-        double totalArmorWeight = (double) getTotalOArmor() / 16.0f;
-        totalArmorWeight/=EquipmentType.getArmorPointMultiplier(armorType,techLevel);
-        totalArmorWeight=(double)Math.ceil(totalArmorWeight*2f)/2f;
+        double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
+
+        double totalArmorWeight=Math.ceil((double)getTotalOArmor()/armorPerTon);
         cost+=totalArmorWeight*EquipmentType.getArmorCost(armorType);//armor
-        cost+=getWeaponsAndEquipmentCost();
+        cost += getWeaponsAndEquipmentCost();
+        double omniCost=0.0;
         if(isOmni()) {
-            cost+=cost*0.25f;
+            omniCost = cost*0.25f;
         }
+        cost+=omniCost;
         cost*=(1+(weight/100f));
-        return cost;
+        return Math.round(cost);
                        
     }
 }

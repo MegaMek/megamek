@@ -54,7 +54,8 @@ public class LosEffects {
     public static final int COVER_LEFT =        0x4;    //vertical cover    (blocked)
     public static final int COVER_RIGHT =       0x8;    //vertical cover    (blocked)
     public static final int COVER_HORIZONTAL =  0x3;    //50% cover         (partial)
-    public static final int COVER_FULL =        0xC;    //blocked           (blocked)
+    public static final int COVER_UPPER =       0xC;    //blocked           (blocked) - in case of future rule where only legs are exposed
+    public static final int COVER_FULL =        0xF;    //blocked           (blocked)
     public static final int COVER_75LEFT =      0x7;    //75% cover         (blocked)
     public static final int COVER_75RIGHT =     0xB;    //75% cover         (blocked)
     
@@ -482,14 +483,17 @@ public class LosEffects {
                 los = right;
             }
             if (game.getOptions().booleanOption("maxtech_partial_cover")) {
-                int cover = COVER_NONE;
-                if (left.blocked) cover |= COVER_LEFT + COVER_LOWLEFT;
-                if (right.blocked) cover |= COVER_RIGHT + COVER_LOWRIGHT;
-                if ((left.targetCover & COVER_HORIZONTAL) != 0) cover |= COVER_LOWLEFT;
-                if ((right.targetCover & COVER_HORIZONTAL) != 0) cover |= COVER_LOWRIGHT;
-                if (cover < COVER_FULL) {
+                int cover = (left.targetCover & (COVER_LEFT | COVER_LOWLEFT)) |
+                            (right.targetCover & (COVER_RIGHT | COVER_LOWRIGHT));
+                if (cover < COVER_FULL && !(left.blocked && right.blocked)) {
                     los.blocked = false;
                     los.targetCover = cover;
+                }
+                cover = (left.attackerCover & (COVER_LEFT | COVER_LOWLEFT)) |
+                        (right.attackerCover & (COVER_RIGHT | COVER_LOWRIGHT));
+                if (cover < COVER_FULL && !(left.blocked && right.blocked)) {
+                    los.blocked = false;
+                    los.attackerCover = cover;
                 }
             }
         }
@@ -612,17 +616,25 @@ public class LosEffects {
         }
         
         // check for target partial cover
-        if ( ai.targetPos.distance(coords) == 1 &&
-             hexEl + bldgEl == ai.targetAbsHeight &&
+        if ( ai.targetPos.distance(coords) == 1) {
+            if (los.blocked && game.getOptions().booleanOption("maxtech_partial_cover")) {
+                los.targetCover = COVER_FULL;
+            } 
+            else if(hexEl + bldgEl == ai.targetAbsHeight &&
              ai.attackAbsHeight <= ai.targetAbsHeight && ai.targetHeight > 0) {
-            los.targetCover |= COVER_HORIZONTAL;
+                los.targetCover |= COVER_HORIZONTAL;
+            }
         }
     
         // check for attacker partial cover
-        if (ai.attackPos.distance(coords) == 1 &&
-            hexEl + bldgEl == ai.attackAbsHeight &&
-            ai.attackAbsHeight >= ai.targetAbsHeight && ai.attackHeight > 0) {
-            los.attackerCover |= COVER_HORIZONTAL;
+        if (ai.attackPos.distance(coords) == 1) {
+            if (los.blocked && game.getOptions().booleanOption("maxtech_partial_cover")) {
+                los.attackerCover = COVER_FULL;
+            } 
+            else if(hexEl + bldgEl == ai.attackAbsHeight &&
+               ai.attackAbsHeight >= ai.targetAbsHeight && ai.attackHeight > 0) {
+                los.attackerCover |= COVER_HORIZONTAL;
+            }
         }
         
         return los;

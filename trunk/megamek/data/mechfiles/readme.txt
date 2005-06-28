@@ -39,7 +39,8 @@ Standard Stealth				Standard Stealth
 -Manipulators
 Basic Manipulater				BA-Boarding Claw
 Basic Manipulater (Mine Clearance)		Minesweeper
-Battle Claw (Vibro) (2 claws)			BA-Vibro Claws
+Battle Claw (Vibro) (1 claw)			BA-Vibro Claws (1)
+Battle Claw (Vibro) (2 claws)			BA-Vibro Claws (2)
 Salamander Claw (-1 to hit)			BA-Assault Claws
 
 -Weapons

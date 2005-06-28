@@ -69,6 +69,8 @@ v0.29.82 (CVS)
 + Corrected build.xml to allow using Ant 1.6.2
 + Added assertion in Mounted#setMode.
 + Added check for Entity existance before drawing it as moving unit.
++ Streamlined & debugged Biped mech cost (Still wrong in many cases, especially
+    IS Level 2 and Clan)
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

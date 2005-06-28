@@ -299,6 +299,42 @@ public class QuadMech extends Mech
     public double getCost() {
         // FIXME
         // There should be an implementation here!
-        return 0;
+        double cost = 250000; // Cockpit + Life Support
+        double musclesCost = this.hasTSM() ? 16000 : 2000;
+        double structureCost = 400;
+        if(hasEndo() || hasCompositeStructure()) {
+            structureCost = 1600;
+        }
+        if(hasReinforcedStructure()) {
+            structureCost = 6400;
+        }
+        double legCost = 1400;
+        double engineCost = 5000;
+        if(hasXL()) {
+            engineCost = 20000;
+        }
+        if(hasLightEngine()) {
+            engineCost = 15000;
+        }
+        double rating = weight*getOriginalWalkMP();
+        int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
+        double sinkCost = hasDoubleHeatSinks()? 6000: 2000;
+        double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
+        double totalArmorWeight = Math.ceil((double)getTotalOArmor()/armorPerTon);
+        cost += (musclesCost+structureCost+legCost)*weight;
+        cost += rating*weight*engineCost/75.0;
+        cost += 300000 * Math.ceil(rating/100.0);
+        cost += getOriginalJumpMP()*getOriginalJumpMP()*weight*200;
+        cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks
+        cost += totalArmorWeight*EquipmentType.getArmorCost(armorType);//armor
+        cost += getWeaponsAndEquipmentCost();
+        double omniCost=0.0;
+        if(isOmni()) {
+            omniCost = cost*0.25f;
+        }
+        cost += omniCost;
+        cost *= (1+(weight/100f));
+
+        return Math.round(cost);
     }
 }

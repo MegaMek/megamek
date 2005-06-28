@@ -2150,17 +2150,21 @@ public class BoardView1
                     Entity e = (Entity) move[0];
                     java.util.Vector movePath = (java.util.Vector) move[1];
                     movingSomething = true;
-
+                    Entity ge = game.getEntity(e.getId()); 
                     if (movePath.size() > 0) {
                         int j = ((Integer) movePath.elementAt(0)).intValue();
                         int y = j & 255;
                         int x = (j >> 8) & 255;
                         int facing = (j >> 16) & 255;
 
-                        redrawMovingEntity(e, new Coords(x, y), facing);
+                        if (ge != null) {
+                            redrawMovingEntity(e, new Coords(x, y), facing);
+                        }
                         movePath.removeElementAt(0);
                     } else {
-                        redrawEntity(game.getEntity(e.getId()));
+                        if (ge != null) {
+                            redrawEntity(ge);
+                        }
                         spent.addElement(move);
                     }
 

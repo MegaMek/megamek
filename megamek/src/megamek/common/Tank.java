@@ -737,11 +737,115 @@ public class Tank
     /**
      * @return The cost in C-Bills of the 'Mech in question.
      */
+    private double getSuspensionFactor () {
+        switch (movementMode) {
+            case IEntityMovementMode.HOVER:
+                if (weight<=10) return 40;
+                if (weight<=20) return 85;
+                if (weight<=30) return 130;
+                if (weight<=40) return 175;
+                return 235;
+            case IEntityMovementMode.HYDROFOIL:
+                if (weight<=10) return 60;
+                if (weight<=20) return 105;
+                if (weight<=30) return 150;
+                if (weight<=40) return 195;
+                if (weight<=50) return 255;
+                if (weight<=60) return 300;
+                if (weight<=70) return 345;
+                if (weight<=80) return 390;
+                if (weight<=90) return 435;
+                return 480;
+            case IEntityMovementMode.NAVAL:
+            case IEntityMovementMode.SUBMARINE:
+                return 30;
+            case IEntityMovementMode.TRACKED:
+                return 0;
+            case IEntityMovementMode.WHEELED:
+                return 20;
+            case IEntityMovementMode.VTOL:
+                if (weight<=10) return 50;
+                if (weight<=20) return 95;
+                return 140;
+        }
+        return 0;
+    }
+    
     public double getCost() {
-        // FIXME
-        // There should be an implementation here!
         double cost = 0;
-        
-        return cost;
+        double rating = weight*getOriginalWalkMP() - getSuspensionFactor();
+        double engineCost = 0;
+        switch (engineType) {
+            case 0: // Fusion Engine
+                engineCost = 5000;
+                break;
+            case 1: // I.C.E. Engine
+                engineCost = 1250;
+                break;
+            case 2: // XL Fusion Engine
+                engineCost = 20000;
+                break;
+            case 3: // Light Fusion?
+                engineCost = 15000;
+                break;
+            default: // Oops
+                engineCost = 0;
+        }
+        cost += rating*weight*engineCost/75.0;
+        double controlWeight = Math.ceil(weight*0.05*2.0)/2.0; //? should be rounded up to nearest half-ton
+        cost += 10000*controlWeight;
+        cost += weight/10.0*10000; // IS has no variations, no Endo etc.
+        double freeHeatSinks=10;
+        if (engineType==1) freeHeatSinks=0;
+        // cost += 2000*(heatSinks()-freeHeatSinks);
+        // TODO: Get the number of mounted heatsinks...
+        double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
+        double totalArmorWeight=Math.ceil((double)getTotalOArmor()/armorPerTon);
+        cost+=totalArmorWeight*EquipmentType.getArmorCost(armorType);//armor
+
+        double diveTonnage;
+        switch (movementMode) {
+            case IEntityMovementMode.HOVER:
+            case IEntityMovementMode.HYDROFOIL:
+            case IEntityMovementMode.VTOL:
+            case IEntityMovementMode.SUBMARINE:
+                diveTonnage = weight/10.0;
+                break;
+            default:
+                diveTonnage = 0.0;
+                break;
+        }
+        if (movementMode!=IEntityMovementMode.VTOL) {
+            cost += diveTonnage*20000;
+        } else {
+            cost += diveTonnage*40000;
+        }
+        // TODO: get the turret tonnage
+        if (!hasNoTurret()) {
+            // cost += turretTonnage()*5000;
+        }
+        cost += getWeaponsAndEquipmentCost();
+        double multiplier = 1.0;
+        switch (movementMode) {
+            case IEntityMovementMode.HOVER:
+            case IEntityMovementMode.SUBMARINE:
+                multiplier += weight/50.0;
+                break;
+            case IEntityMovementMode.HYDROFOIL:
+                multiplier += weight/75.0;
+                break;
+            case IEntityMovementMode.NAVAL:
+            case IEntityMovementMode.WHEELED:
+                multiplier += weight/200.0;
+                break;
+            case IEntityMovementMode.TRACKED:
+                multiplier += weight/100.0;
+                break;
+            case IEntityMovementMode.VTOL:
+                multiplier += weight/30.0;
+                break;
+        }
+ 
+        return Math.round(cost*multiplier);
     }
 }

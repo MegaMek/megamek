@@ -48,7 +48,7 @@
      <mapper>
         <chainedmapper>
           <flattenmapper/>
-          <globmapper from="*" to="lib/*" casesensitive="no"/>
+          <globmapper from="*" to="lib/*"/>
         </chainedmapper>
      </mapper>
   </pathconvert>

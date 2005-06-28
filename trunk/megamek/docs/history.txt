@@ -72,6 +72,7 @@ v0.29.82 (CVS)
 + Streamlined & debugged Biped mech cost (Still wrong in many cases, especially
     IS Level 2 and Clan)
 + Cost for Quad mechs (not calculating perfectly, too).
++ Allow sorting the units in MechSelectorDialog by cost.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

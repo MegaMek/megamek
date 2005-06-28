@@ -23,6 +23,7 @@
     public static final int T_WEIGHT = 2;
     public static final int T_BV = 3;
     public static final int T_YEAR = 4;
+    public static final int T_COST = 5;
     
     private int m_nType;
     
@@ -47,6 +48,8 @@
                 return numCompare(ms1.getBV(), ms2.getBV());
             case T_YEAR :
                 return numCompare(ms1.getYear(), ms2.getYear());
+            case T_COST :
+                return numCompare(ms1.getCost(), ms2.getCost());
             default :
                 return 0;
         }
@@ -63,5 +66,5 @@
         else {
             return 1;
         }
-    }
+    } 
 }

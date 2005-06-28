@@ -12495,13 +12495,38 @@ implements Runnable, ConnectionHandler {
                 .append( "." );
             sendServerChat( message.toString() );
             originalOption.setValue(option.getValue());
-            changed++;
+            changed++;            
         }
 
         // Set proper RNG
         Compute.setRNG(game.getOptions().intOption("rng_type"));
 
         return changed > 0;
+    }
+
+    /**
+     * Performs the additional processing of the received options after the the 
+     * <code>receiveGameOptions<code> done its job; should be called after
+     * <code>receiveGameOptions<code> only if the <code>receiveGameOptions<code> 
+     * returned <code>true</code>    
+     * @param packet
+     * @param connId
+     */
+    private void receiveGameOptionsAux(Packet packet, int connId) {
+
+        for (Enumeration i = ((Vector)packet.getObject(1)).elements(); i.hasMoreElements();) {
+            IBasicOption option = (IBasicOption)i.nextElement();
+            IOption originalOption = game.getOptions().getOption(option.getName());
+            if (originalOption != null) {
+                if ("maps_include_subdir".equals(originalOption.getName())) {
+                    mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings.getBoardWidth(), mapSettings.getBoardHeight()));
+                    mapSettings.removeUnavailable();
+                    mapSettings.setNullBoards(DEFAULT_BOARD);
+                    send(createMapSettingsPacket());                                    
+                }
+            }
+        }
+        
     }
 
     /**
@@ -12989,6 +13014,7 @@ implements Runnable, ConnectionHandler {
                     resetPlayersDone();
                     transmitAllPlayerDones();
                     send(createGameSettingsPacket());
+                    receiveGameOptionsAux(packet, connId);
                 }
                 break;
             case Packet.COMMAND_SENDING_MAP_SETTINGS :

@@ -77,6 +77,7 @@ v0.29.82 (CVS)
 + Show cost in Chatlounge.
 + Bug 1226732: Read Me for the mechfiles out of date.
 + Cost for Vehicles (Approximation only, there is some needed data missing)
++ Bug 1224507: "Use maps from subdirectories" option doesn't work properly
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

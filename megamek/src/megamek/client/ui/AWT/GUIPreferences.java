@@ -25,7 +25,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     /* --Begin advanced settings section--
     Options with the "ADVANCED" prefix are treated specially.  They
     are quick and easy to add, at the expense of some
-    user-friendliness (that's why they are "advanced<grin>).  Only the
+    user-friendliness (that's why they are "advanced"<grin>).  Only the
     appropriate declaration below and the default value (further down
     in this file) need be added.  The code will then automatically add
     the option to the advanced tab of the client settings.  In order
@@ -75,6 +75,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOCUS = "Focus";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
+    public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
+    public static final String MECH_SELECTOR_INCLUDE_NAME = "MechSelectorIncludeName";
+    public static final String MECH_SELECTOR_INCLUDE_TONS = "MechSelectorIncludeTons";
+    public static final String MECH_SELECTOR_INCLUDE_BV = "MechSelectorIncludeBV";
+    public static final String MECH_SELECTOR_INCLUDE_YEAR = "MechSelectorIncludeYear";
+    public static final String MECH_SELECTOR_INCLUDE_LEVEL = "MechSelectorIncludeLevel";
+    public static final String MECH_SELECTOR_INCLUDE_COST = "MechSelectorIncludeCost";
+    //public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
+    //public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
     public static final String MINI_REPORT_SIZE_HEIGHT="MiniReportSizeHeight";
@@ -147,6 +156,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DISPLAY_SIZE_WIDTH, 235);
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
+        store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
+        store.setDefault(MECH_SELECTOR_INCLUDE_NAME, true);
+        store.setDefault(MECH_SELECTOR_INCLUDE_TONS, true);
+        store.setDefault(MECH_SELECTOR_INCLUDE_BV, true);
+        store.setDefault(MECH_SELECTOR_INCLUDE_YEAR, true);
+        store.setDefault(MECH_SELECTOR_INCLUDE_LEVEL, true);
+        store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
         store.setDefault(MINIMAP_COLOURS,"defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
@@ -243,6 +259,42 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(MAP_ZOOM_INDEX);
     }
 
+    public boolean getMechSelectorIncludeModel() {
+        return store.getBoolean(MECH_SELECTOR_INCLUDE_MODEL);
+    }
+
+    public boolean getMechSelectorIncludeName() {
+        return store.getBoolean(MECH_SELECTOR_INCLUDE_NAME);
+    }
+
+    public boolean getMechSelectorIncludeTons() {
+        return store.getBoolean(MECH_SELECTOR_INCLUDE_TONS);
+    }
+
+    public boolean getMechSelectorIncludeBV() {
+        return store.getBoolean(MECH_SELECTOR_INCLUDE_BV);
+    }
+
+    public boolean getMechSelectorIncludeYear() {
+        return store.getBoolean(MECH_SELECTOR_INCLUDE_YEAR);
+    }
+
+    public boolean getMechSelectorIncludeLevel() {
+        return store.getBoolean(MECH_SELECTOR_INCLUDE_LEVEL);
+    }
+
+    public boolean getMechSelectorIncludeCost() {
+        return store.getBoolean(MECH_SELECTOR_INCLUDE_COST);
+    }
+    /*
+    public int getMechSelectorSizeHeight() {
+        return store.getInt(MECH_SELECTOR_SIZE_HEIGHT);
+    }
+
+    public int getMechSelectorSizeWidth() {
+        return store.getInt(MECH_SELECTOR_SIZE_WIDTH);
+    }
+    */
     public String getMinimapColours() {
         return store.getString(MINIMAP_COLOURS);
     }
@@ -443,6 +495,42 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MAP_ZOOM_INDEX, zoomIndex);
     }
 
+    public void setMechSelectorIncludeModel(boolean includeModel) {
+        store.setValue(MECH_SELECTOR_INCLUDE_MODEL, includeModel);
+    }
+
+    public void setMechSelectorIncludeName(boolean includeName) {
+        store.setValue(MECH_SELECTOR_INCLUDE_NAME, includeName);
+    }
+
+    public void setMechSelectorIncludeTons(boolean includeTons) {
+        store.setValue(MECH_SELECTOR_INCLUDE_TONS, includeTons);
+    }
+
+    public void setMechSelectorIncludeBV(boolean includeBV) {
+        store.setValue(MECH_SELECTOR_INCLUDE_BV, includeBV);
+    }
+
+    public void setMechSelectorIncludeYear(boolean includeYear) {
+        store.setValue(MECH_SELECTOR_INCLUDE_YEAR, includeYear);
+    }
+
+    public void setMechSelectorIncludeLevel(boolean includeLevel) {
+        store.setValue(MECH_SELECTOR_INCLUDE_LEVEL, includeLevel);
+    }
+
+    public void setMechSelectorIncludeCost(boolean includeCost) {
+        store.setValue(MECH_SELECTOR_INCLUDE_COST, includeCost);
+    }
+    /*
+    public void setMechSelectorSizeHeight(int i) {
+        store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i);
+    }
+
+    public void setMechSelectorSizeWidth(int i) {
+        store.setValue(MECH_SELECTOR_SIZE_WIDTH, i);
+    }
+    */
     public void setMinimapEnabled(boolean b) {
         store.setValue(MINIMAP_ENABLED, b);
     }

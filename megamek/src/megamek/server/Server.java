@@ -6213,7 +6213,7 @@ implements Runnable, ConnectionHandler {
             }
             // If we're using swarm munition, set the number of missiles that
             // are left
-            if (bSwarm || bSwarmI) {
+            if ((bSwarm || bSwarmI) && entityTarget != null) {
                 swarmMissilesNowLeft -= wr.amsShotDownTotal;
                 Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, wr.waa.getWeaponId());
                 if (swarmTarget != null) {
@@ -7286,7 +7286,7 @@ implements Runnable, ConnectionHandler {
         }
 
         phaseReport.append("\n");
-        if (swarmMissilesNowLeft > 0) {
+        if (swarmMissilesNowLeft > 0 && entityTarget != null) {
             Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, wr.waa.getWeaponId());
             if (swarmTarget != null) {
                 phaseReport.append("    ").append(swarmMissilesNowLeft).append( " missiles continue.\n");

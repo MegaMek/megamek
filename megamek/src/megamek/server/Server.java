@@ -3106,55 +3106,74 @@ implements Runnable, ConnectionHandler {
                                           lastPos, curPos,
                                           distance);
                 if(rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                if(!doSkillCheckWhileMoving(entity,lastPos,curPos,rollTarget, false)) {
-                    phaseReport.append("\n").append( entity.getDisplayName()).append( " sideslips into hex ");
-                    Coords newPos = lastPos.translated((prevFacing));//does this work for opposing hex?
-                    int newElevation=((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation);
-                    phaseReport.append(newPos.getBoardNum());
-                    if(newElevation<=game.getBoard().getHex(newPos).ceiling()) {
-                        phaseReport.append(" and runs smack dab into the ground.\n");
-                        int hitSide=curFacing-prevFacing+6;
-                        hitSide=hitSide % 6;
-                        int table=0;
-                        switch(hitSide) {//quite hackish...I think it ought to work, though.
-                        case 0://can this happen?
-                            table=ToHitData.SIDE_FRONT;
-                            break;
-                        case 1:
-                        case 2:
-                            table=ToHitData.SIDE_LEFT;
-                            break;
-                        case 3:                        
-                            table=ToHitData.SIDE_REAR;
-                            break;
-                        case 4:
-                        case 5:
-                            table=ToHitData.SIDE_RIGHT;
+                    if(!doSkillCheckWhileMoving(entity,lastPos,curPos,rollTarget, false)) {
+                        phaseReport.append("\n").append( entity.getDisplayName()).append( " sideslips into hex ");
+                        Coords newPos = lastPos.translated((prevFacing));//does this work for opposing hex?
+                        // Is the next hex off the board?
+                        if ( !game.getBoard().contains(newPos) ) {
+                            // Can the entity skid off the map?
+                            if (game.getOptions().booleanOption("push_off_board")) {
+                                // Yup.  One dead entity.
+                                game.removeEntity(entity.getId(),
+                                        IEntityRemovalConditions.REMOVE_PUSHED);
+                                send(createRemoveEntityPacket(entity.getId(),
+                                        IEntityRemovalConditions.REMOVE_PUSHED));
+                                phaseReport.append("*** " )
+                                    .append( entity.getDisplayName() )
+                                    .append( " has skidded off the field. ***\n");
+                                // TODO: remove passengers and swarmers.
+                                // The entity's movement is completed.
+                                return;
+                            } else {
+                                // Nope.  Update the report.
+                                phaseReport.append("   Can't skid off the field.\n");
+                            }
+                            // Stay in the current hex and stop skidding.
                             break;
                         }
-                        curPos=newPos;
-                        curVTOLElevation=newElevation;
-                        phaseReport.append(crashVTOL(((VTOL)entity),true,distance,curPos,curVTOLElevation,table));
-                        curVTOLElevation=0;
-                        if(game.getBoard().getHex(newPos).containsTerrain(Terrains.WATER) || game.getBoard().getHex(newPos).containsTerrain(Terrains.WOODS)) {
-                            phaseReport.append(destroyEntity(entity,"could not land in crash site"));                            
+                        int newElevation=((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation);
+                        phaseReport.append(newPos.getBoardNum());
+                        if(newElevation<=game.getBoard().getHex(newPos).ceiling()) {
+                            phaseReport.append(" and runs smack dab into the ground.\n");
+                            int hitSide=curFacing-prevFacing+6;
+                            hitSide=hitSide % 6;
+                            int table=0;
+                            switch(hitSide) {//quite hackish...I think it ought to work, though.
+                                case 0://can this happen?
+                                    table=ToHitData.SIDE_FRONT;
+                                    break;
+                                case 1:
+                                case 2:
+                                    table=ToHitData.SIDE_LEFT;
+                                    break;
+                                case 3:                        
+                                    table=ToHitData.SIDE_REAR;
+                                    break;
+                                case 4:
+                                case 5:
+                                    table=ToHitData.SIDE_RIGHT;
+                                    break;
+                            }
+                            curPos=newPos;
+                            curVTOLElevation=newElevation;
+                            phaseReport.append(crashVTOL(((VTOL)entity),true,distance,curPos,curVTOLElevation,table));
+                            curVTOLElevation=0;
+                            if(game.getBoard().getHex(newPos).containsTerrain(Terrains.WATER) || game.getBoard().getHex(newPos).containsTerrain(Terrains.WOODS)) {
+                                phaseReport.append(destroyEntity(entity,"could not land in crash site"));                            
+                            } else {
+                            }
                         } else {
+                            phaseReport.append(".\n");
+                            entity.setElevation(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
+                            curPos=newPos;
                         }
-                        
-                    } else {
-                        phaseReport.append(".\n");
-                        entity.setElevation(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
-                        curPos=newPos;
+
+                        if(!entity.isDestroyed() && !entity.isDoomed()) {
+                            fellDuringMovement= true; //No, but it should work...
+                        }
+                        break;
                     }
-                    
-                    
-                    if(!entity.isDestroyed() && !entity.isDoomed()) {
-                        fellDuringMovement= true; //No, but it should work...
-                    }
-                    break;
                 }
-                }
-                                          
             }
 
             // check if we've moved into rubble
@@ -3647,10 +3666,9 @@ implements Runnable, ConnectionHandler {
         // Update the entitiy's position,
         // unless it is off the game map.
         if (!game.isOutOfGame(entity)) {
+            entityUpdate( entity.getId(), movePath  );
             if (entity.isDoomed()) {
                 send(createRemoveEntityPacket(entity.getId(), entity.getRemovalCondition()));
-            } else {
-                entityUpdate( entity.getId(), movePath  );
             }
         }
 

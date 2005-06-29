@@ -1178,6 +1178,36 @@ public class BoardView1
             boardGraph.drawLine(drawX, drawY + (int)(35*scale), drawX + (int)(21*scale), drawY);
         }
 
+        // draw mapsheet borders
+        if(GUIPreferences.getInstance().getShowMapsheets()) {
+            boardGraph.setColor(GUIPreferences.getInstance().getColor(GUIPreferences.ADVANCED_MAPSHEET_COLOR));
+            if(c.x % 16 == 0) {
+                //left edge of sheet (edge 4 & 5)
+                boardGraph.drawLine(drawX + (int)(21*scale), drawY + (int)(71*scale), drawX, drawY + (int)(36*scale));
+                boardGraph.drawLine(drawX, drawY + (int)(35*scale), drawX + (int)(21*scale), drawY);
+            }
+            else if(c.x % 16 == 15) {
+                //right edge of sheet (edge 1 & 2)
+                boardGraph.drawLine(drawX + (int)(62*scale), drawY, drawX + (int)(83*scale), drawY + (int)(35*scale));
+                boardGraph.drawLine(drawX + (int)(83*scale), drawY + (int)(36*scale), drawX + (int)(62*scale), drawY + (int)(71*scale));
+            }
+            if(c.y % 17 == 0) {
+                //top edge of sheet (edge 0 and possible 1 & 5)
+                boardGraph.drawLine(drawX + (int)(21*scale), drawY, drawX + (int)(62*scale), drawY);
+                if(c.x % 2 == 0) {
+                    boardGraph.drawLine(drawX + (int)(62*scale), drawY, drawX + (int)(83*scale), drawY + (int)(35*scale));
+                    boardGraph.drawLine(drawX, drawY + (int)(35*scale), drawX + (int)(21*scale), drawY);
+                }
+            } else if (c.y % 17 == 16) {
+                //bottom edge of sheet (edge 3 and possible 2 & 4)
+                boardGraph.drawLine(drawX + (int)(62*scale), drawY + (int)(71*scale), drawX + (int)(21*scale), drawY + (int)(71*scale));
+                if(c.x % 2 == 1) {
+                    boardGraph.drawLine(drawX + (int)(83*scale), drawY + (int)(36*scale), drawX + (int)(62*scale), drawY + (int)(71*scale));
+                    boardGraph.drawLine(drawX + (int)(21*scale), drawY + (int)(71*scale), drawX, drawY + (int)(36*scale));
+                }
+            }
+            boardGraph.setColor(Color.black);
+        }
     }
 
     /**

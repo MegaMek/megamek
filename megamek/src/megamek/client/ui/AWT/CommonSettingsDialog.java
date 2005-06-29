@@ -62,6 +62,8 @@ public class CommonSettingsDialog extends ClientDialog
     private Choice      locale;
     private Checkbox    chatloungeTabs;
 
+    private Checkbox    showMapsheets;
+
     private List        keys;
     private int         keysIndex = 0;
     private TextField   value;
@@ -271,6 +273,10 @@ public class CommonSettingsDialog extends ClientDialog
             = new Checkbox( Messages.getString("CommonSettingsDialog.chatloungeTabs") ); //$NON-NLS-1$
         tempPanel.add( chatloungeTabs );
 
+        //showMapsheets setting
+        showMapsheets
+            = new Checkbox( Messages.getString("CommonSettingsDialog.showMapsheets") ); //$NON-NLS-1$
+        tempPanel.add(showMapsheets);
         return tempPanel;
     }
 
@@ -331,6 +337,8 @@ public class CommonSettingsDialog extends ClientDialog
         
         chatloungeTabs.setState(gs.getChatLoungeTabs() );
         
+        showMapsheets.setState(gs.getShowMapsheets());
+
         getFocus.setState( gs.getFocus() );
         super.show();
     }
@@ -382,6 +390,7 @@ public class CommonSettingsDialog extends ClientDialog
         cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[locale.getSelectedIndex()]);
         
         gs.setChatloungeTabs(chatloungeTabs.getState());
+        gs.setShowMapsheets(showMapsheets.getState());
 
         this.setVisible( false );
     }

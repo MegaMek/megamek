@@ -772,6 +772,7 @@ public class Tank
     }
     
     public double getCost() {
+        System.out.println(getDisplayName());
         double cost = 0;
         double rating = weight*getOriginalWalkMP() - getSuspensionFactor();
         double engineCost = 0;
@@ -797,12 +798,31 @@ public class Tank
         cost += weight/10.0*10000; // IS has no variations, no Endo etc.
         double freeHeatSinks=10;
         if (engineType==1) freeHeatSinks=0;
-        // cost += 2000*(heatSinks()-freeHeatSinks);
-        // TODO: Get the number of mounted heatsinks...
+        int sinks=0;
+        double turretWeight=0;
+        double paWeight=0;
+        for (Enumeration i = getWeapons();i.hasMoreElements();) {
+        	Mounted m = (Mounted) i.nextElement();
+        	WeaponType wt = (WeaponType) m.getType();
+        	if(wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
+        	    sinks+=wt.getHeat();
+        	    paWeight+=wt.getTonnage(this)/10.0;
+        	}
+        	if(!hasNoTurret() && m.getLocation()==Tank.LOC_TURRET) {
+        	    turretWeight+=wt.getTonnage(this)/10.0;
+        	}
+        }
+        if(engineType!=1) {
+            paWeight=0;
+        }
+        paWeight=Math.ceil(paWeight*10.0)/10;
+        turretWeight=Math.ceil(turretWeight*2)/2;
+        cost+=20000*paWeight;
+        cost+=2000*Math.max(0,sinks-freeHeatSinks);
+        cost+=turretWeight*5000;
         double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
-        double totalArmorWeight=Math.ceil((double)getTotalOArmor()/armorPerTon);
+        double totalArmorWeight=Math.ceil((double)getTotalOArmor()/armorPerTon*2)/2;
         cost+=totalArmorWeight*EquipmentType.getArmorCost(armorType);//armor
-
         double diveTonnage;
         switch (movementMode) {
             case IEntityMovementMode.HOVER:
@@ -819,10 +839,6 @@ public class Tank
             cost += diveTonnage*20000;
         } else {
             cost += diveTonnage*40000;
-        }
-        // TODO: get the turret tonnage
-        if (!hasNoTurret()) {
-            // cost += turretTonnage()*5000;
         }
         cost += getWeaponsAndEquipmentCost();
         double multiplier = 1.0;

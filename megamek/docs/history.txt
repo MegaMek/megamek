@@ -90,6 +90,9 @@ v0.29.82 (CVS)
 + Bug 1215899: Wreckage for crashed VTOLs now appears in the right place.
 + Fixed NPE when VTOLs sideslip off the map.
 + Bug 1229232: Another HMP machine gun issue fixed.
++ Bug 1226731: BV corrected.
++ Bug 1226730: BV corrected.
++ Bug 1226726: Equpment added.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

@@ -58,6 +58,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_MOVE_RUN_COLOR = "AdvancedMoveRunColor";
     public static final String ADVANCED_MOVE_STEP_DELAY = "AdvancedMoveStepDelay";
     public static final String ADVANCED_DARKEN_MAP_AT_NIGHT = "AdvancedDarkenMapAtNight";
+    public static final String ADVANCED_MAPSHEET_COLOR = "AdvancedMapsheetColor";
     /* --End advanced settings-- */
 
     public static final String ALWAYS_RIGHT_CLICK_SCROLL="AlwaysRightClickScroll";
@@ -111,6 +112,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String WINDOW_SIZE_WIDTH = "WindowSizeWidth";
     public static final String LOS_MECH_IN_FIRST = "LOSMechInFirst";
     public static final String LOS_MECH_IN_SECOND = "LOSMechInSecond";
+    public static final String SHOW_MAPSHEETS = "ShowMapsheets";
     
     protected static GUIPreferences instance = new GUIPreferences();
     
@@ -136,6 +138,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MOVE_RUN_COLOR, "yellow");
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 100);
         store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
+        setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(CHAT_LOUNGE_TAB_FONT_SIZE, 16);
@@ -173,7 +176,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
-        
+        store.setDefault(SHOW_MAPSHEETS, false);    
     }
 
     public void setDefault(String name, Color color) {
@@ -387,6 +390,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getMechInSecond() {
         return store.getBoolean(LOS_MECH_IN_SECOND);        
     }
+
+    public boolean getShowMapsheets() {
+        return store.getBoolean(SHOW_MAPSHEETS);
+    }
     
     public void setAlwaysRightClickScroll(boolean state) {
         store.setValue(ALWAYS_RIGHT_CLICK_SCROLL, state);
@@ -562,6 +569,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setMechInSecond(boolean b) {
         store.setValue(LOS_MECH_IN_SECOND, b);        
+    }
+
+    public void setShowMapsheets(boolean b) {
+        store.setValue(SHOW_MAPSHEETS, b);
     }
 
     protected ColorParser p = new ColorParser();    

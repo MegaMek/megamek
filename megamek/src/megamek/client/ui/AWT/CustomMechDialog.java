@@ -411,6 +411,9 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         panButtons.add(butOkay);
         panButtons.add(butCancel);
         panButtons.add(butNext);
+
+        butNext.setEnabled(getNextEntity(true) != null);        
+        butPrev.setEnabled(getNextEntity(false) != null);        
      }
     
     private void setupRapidfireMGs() {
@@ -1081,13 +1084,38 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         this.setVisible(false);
         Entity nextOne = null;
         if (actionEvent.getSource() == butPrev) {
-            nextOne = client.game.getPreviousEntityFromList(entity);
+            nextOne = getNextEntity(false);
         } else if (actionEvent.getSource() == butNext) {
-            nextOne = client.game.getNextEntityFromList(entity);
+            nextOne = getNextEntity(true);
         }
         if (nextOne!=null) {
             clientgui.chatlounge.refreshEntities();
             clientgui.chatlounge.customizeMech(nextOne);
         }
+    }
+    
+    private Entity getNextEntity(boolean forward){
+        IGame game = client.game;
+        boolean bd = game.getOptions().booleanOption("blind_drop"); //$NON-NLS-1$
+        boolean rbd = game.getOptions().booleanOption("real_blind_drop"); //$NON-NLS-1$
+        Player p = client.getLocalPlayer();
+        
+        Entity nextOne = null;
+        if (forward) {
+            nextOne = game.getNextEntityFromList(entity);
+        } else {
+            nextOne = game.getPreviousEntityFromList(entity);
+        }        
+        while(nextOne != entity && nextOne != null) {
+            if (nextOne.getOwner().equals(p) || !(bd || rbd)) {
+                return nextOne;
+            }
+            if (forward) {
+                nextOne = game.getNextEntityFromList(nextOne);
+            } else {
+                nextOne = game.getPreviousEntityFromList(nextOne);
+            }
+        }        
+        return null;
     }
 }

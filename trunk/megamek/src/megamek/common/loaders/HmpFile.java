@@ -1267,10 +1267,12 @@ public class HmpFile
         //  the type, the third is the ammo count, and I don't know
         //  what the fourth is.
 
-        byte ammoCount = 0;
+        short ammoCount = 0;
         if (critical.longValue() > Short.MAX_VALUE) {
-            //Grab the ammo count from the third byte.
-            ammoCount = (byte)((critical.longValue() >> 16) & 0xFF);
+            //Grab the ammo count from the third byte.  It is stored as
+            // an unsigned 8-bit number, so we'll fit it into a signed
+            // 16-bit number.
+            ammoCount = (short)((critical.longValue() >> 16) & 0xFF);
             //Mask off everything but the first two bytes.
             critical = new Long(critical.longValue() & 0xFFFF);
         }

@@ -82,6 +82,7 @@ v0.29.82 (CVS)
 + Patch 1229086: MaxTech Partial Cover, only give vertical cover when the
     cover is adjacent to unit.
 + Fixed tank cost calculation, also bug with clan CASE (and cost)
++ RFE 1121035: Quads get their own ArmorPanel
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

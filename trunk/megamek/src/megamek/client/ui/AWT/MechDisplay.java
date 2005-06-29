@@ -195,6 +195,7 @@ class ArmorPanel  extends PicMap
     private BattleArmorMapSet battleArmor;
     private ProtomechMapSet proto;
     private VTOLMapSet vtol;
+    private QuadMapSet quad;
     private int minTopMargin = 0;
     private int minLeftMargin = 0;
     private int minBottomMargin = 0;
@@ -219,6 +220,7 @@ class ArmorPanel  extends PicMap
         battleArmor = new BattleArmorMapSet(this);
         proto = new ProtomechMapSet(this);
         vtol = new VTOLMapSet(this);
+        quad = new QuadMapSet(this);
     }
 
     public void onResize(){
@@ -241,7 +243,13 @@ class ArmorPanel  extends PicMap
         }
         DisplayMapSet ams = (DisplayMapSet) mech;
         removeAll();
-        if (en instanceof Mech) {
+        if (en instanceof QuadMech) {
+            ams = (DisplayMapSet) quad;
+            minLeftMargin = minMechLeftMargin;
+            minTopMargin = minMechTopMargin;
+            minBottomMargin = minMechBottomMargin;
+            minRightMargin = minMechRightMargin;
+        } else if (en instanceof Mech) {
             ams = (DisplayMapSet) mech;
             minLeftMargin = minMechLeftMargin;
             minTopMargin = minMechTopMargin;

@@ -1495,14 +1495,25 @@ public abstract class Mech
      * Adds clan CASE in every location
      */
     public void addClanCase() {
+        boolean explosiveFound=false;
         EquipmentType clCase = EquipmentType.get("CLCASE");
         for (int i = 0; i < locations(); i++) {
-            try {
-                addEquipment(new Mounted(this, clCase), i, false);
-            } catch (LocationFullException ex) {
-                // um, that's impossible.
+            explosiveFound=false;
+            for(Enumeration equip = getEquipment();equip.hasMoreElements();) {
+                Mounted m = (Mounted)equip.nextElement();
+                if(m.getType().isExplosive()) {
+                    explosiveFound=true;
+                }
             }
-        }
+            if(explosiveFound) {
+                try {
+                    addEquipment(new Mounted(this, clCase), i, false);
+                    } catch (LocationFullException ex) {
+                        // um, that's impossible.
+                        }
+                    }
+         }            
+        
     }
     
     /**

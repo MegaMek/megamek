@@ -236,9 +236,7 @@ public class BipedMech extends Mech {
      * @return The cost in C-Bills of the 'Mech in question.
      */
     public double getCost() {
-        // FIXME
-        // There should be an implementation here!
-        double cost=0.0;
+        double cost=0;
         cost+=200000;//cockpit
         cost+=50000;//life support
         cost+=weight*2000;//sensors

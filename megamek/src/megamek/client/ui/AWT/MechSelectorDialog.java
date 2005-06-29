@@ -58,6 +58,15 @@ public class MechSelectorDialog
     private Label m_labelSort = new Label(Messages.getString("MechSelectorDialog.m_labelSort"), Label.RIGHT); //$NON-NLS-1$
     private Choice m_chSort = new Choice();
     private Panel m_pParams = new Panel();
+    private Panel m_pListOptions = new Panel();
+    private Label m_labelListOptions = new Label(Messages.getString("MechSelectorDialog.m_labelListOptions"));
+    private Checkbox m_cModel = new Checkbox(Messages.getString("MechSelectorDialog.m_cModel"), GUIPreferences.getInstance().getMechSelectorIncludeModel());
+    private Checkbox m_cName = new Checkbox(Messages.getString("MechSelectorDialog.m_cName"), GUIPreferences.getInstance().getMechSelectorIncludeName());
+    private Checkbox m_cTons = new Checkbox(Messages.getString("MechSelectorDialog.m_cTons"), GUIPreferences.getInstance().getMechSelectorIncludeTons());
+    private Checkbox m_cBV = new Checkbox(Messages.getString("MechSelectorDialog.m_cBV"), GUIPreferences.getInstance().getMechSelectorIncludeBV());
+    private Checkbox m_cYear = new Checkbox(Messages.getString("MechSelectorDialog.m_cYear"), GUIPreferences.getInstance().getMechSelectorIncludeYear());
+    private Checkbox m_cLevel = new Checkbox(Messages.getString("MechSelectorDialog.m_cLevel"), GUIPreferences.getInstance().getMechSelectorIncludeLevel());
+    private Checkbox m_cCost = new Checkbox(Messages.getString("MechSelectorDialog.m_cCost"), GUIPreferences.getInstance().getMechSelectorIncludeCost());
     List m_mechList = new List(10);
     private Button m_bPick = new Button(Messages.getString("MechSelectorDialog.m_bPick")); //$NON-NLS-1$
     private Button m_bPickClose = new Button(Messages.getString("MechSelectorDialog.m_bPickClose")); //$NON-NLS-1$    
@@ -81,7 +90,7 @@ public class MechSelectorDialog
         m_client = cl.getClient();
         m_clientgui = cl;
         unitLoadingDialog = uld;
-        
+
         for (int x = 0; x < m_saSorts.length; x++) {
             m_chSort.addItem(m_saSorts[x]);
         }
@@ -96,7 +105,23 @@ public class MechSelectorDialog
         m_pParams.add(m_chUnitType);
         m_pParams.add(m_labelSort);
         m_pParams.add(m_chSort);
-        
+
+        m_pListOptions.add(m_labelListOptions);
+        m_cModel.addItemListener(this);
+        m_pListOptions.add(m_cModel);
+        m_cName.addItemListener(this);
+        m_pListOptions.add(m_cName);
+        m_cTons.addItemListener(this);
+        m_pListOptions.add(m_cTons);
+        m_cBV.addItemListener(this);
+        m_pListOptions.add(m_cBV);
+        m_cYear.addItemListener(this);
+        m_pListOptions.add(m_cYear);
+        m_cLevel.addItemListener(this);
+        m_pListOptions.add(m_cLevel);
+        m_cCost.addItemListener(this);
+        m_pListOptions.add(m_cCost);
+
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         m_pButtons.add(m_bPick);
         m_pButtons.add(m_bPickClose);
@@ -108,6 +133,7 @@ public class MechSelectorDialog
         m_pPreview.setPreferredSize(84, 72);
         m_pUpper.add(m_pParams, BorderLayout.WEST);
         m_pUpper.add(m_pPreview, BorderLayout.CENTER);
+        m_pUpper.add(m_pListOptions, BorderLayout.SOUTH);
 
         m_pLeft.setLayout(new BorderLayout());
         m_pLeft.add(m_pUpper, BorderLayout.NORTH);
@@ -133,9 +159,8 @@ public class MechSelectorDialog
         m_bPick.addActionListener(this);
         m_bPickClose.addActionListener(this);
         m_bCancel.addActionListener(this);
-        setSize(770, 320);
-        setLocation(m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2,
-                    m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2);
+        setSize(770, 350);
+        setLocation(computeDesiredLocation());
         populateChoices();
         addWindowListener(this);
     }
@@ -173,6 +198,9 @@ public class MechSelectorDialog
         // This prevents the UI from freezing, and allows the
         // "Please wait..." dialog to behave properly on various Java VMs.
         filterMechs();
+        m_mechList.invalidate();  // force re-layout of window
+        pack();
+        setLocation(computeDesiredLocation());
 
         unitLoadingDialog.hide();
 
@@ -270,17 +298,27 @@ public class MechSelectorDialog
             }
         }
     }
-    
+
+    private Point computeDesiredLocation() {
+        int desiredX = m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2;
+        if (desiredX < 0)
+            desiredX = 0;
+        int desiredY = m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2;
+        if (desiredY < 0)
+            desiredY = 0;
+        return new Point(desiredX, desiredY);
+    }
+
     public void show() {
         updatePlayerChoice();
         updateTechChoice();
-        setLocation(m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2,
-                    m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2);
+        setLocation(computeDesiredLocation());
         super.show();
     }
 
     private String formatMech(MechSummary ms)
     {
+        String val = "";
         String levelOrValid;
 
         if (!ms.getLevel().equals("F")) {
@@ -288,13 +326,21 @@ public class MechSelectorDialog
         } else {
             levelOrValid = "F";
         }
-        return makeLength(ms.getModel(), 10) + " " +  //$NON-NLS-1$
-                makeLength(ms.getChassis(), 20) + " " +  //$NON-NLS-1$
-                makeLength("" + ms.getTons(), 3) + " " +  //$NON-NLS-1$ //$NON-NLS-2$
-                makeLength("" + ms.getBV(),5)+" "+ //$NON-NLS-1$ //$NON-NLS-2$
-            ms.getYear() + " " +
-            levelOrValid + " " +
-            ms.getCost() + " ";
+        if (GUIPreferences.getInstance().getMechSelectorIncludeModel())
+            val += makeLength(ms.getModel(), 10) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+        if (GUIPreferences.getInstance().getMechSelectorIncludeName())
+            val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+        if (GUIPreferences.getInstance().getMechSelectorIncludeTons())
+            val += makeLength("" + ms.getTons(), 3) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+        if (GUIPreferences.getInstance().getMechSelectorIncludeBV())
+            val += makeLength("" + ms.getBV(),5) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+        if (GUIPreferences.getInstance().getMechSelectorIncludeYear())
+            val += ms.getYear() + " ";
+        if (GUIPreferences.getInstance().getMechSelectorIncludeLevel())
+            val += levelOrValid + " ";
+        if (GUIPreferences.getInstance().getMechSelectorIncludeCost())
+            val += ms.getCost() + " ";
+        return val;
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -360,6 +406,25 @@ public class MechSelectorDialog
                     return;
                 }
             }
+        } else if (ie.getSource() == m_cModel ||
+                   ie.getSource() == m_cName ||
+                   ie.getSource() == m_cTons ||
+                   ie.getSource() == m_cBV ||
+                   ie.getSource() == m_cYear ||
+                   ie.getSource() == m_cLevel ||
+                   ie.getSource() == m_cCost) {
+            GUIPreferences.getInstance().setMechSelectorIncludeModel(m_cModel.getState());
+            GUIPreferences.getInstance().setMechSelectorIncludeName(m_cName.getState());
+            GUIPreferences.getInstance().setMechSelectorIncludeTons(m_cTons.getState());
+            GUIPreferences.getInstance().setMechSelectorIncludeBV(m_cBV.getState());
+            GUIPreferences.getInstance().setMechSelectorIncludeYear(m_cYear.getState());
+            GUIPreferences.getInstance().setMechSelectorIncludeLevel(m_cLevel.getState());
+            GUIPreferences.getInstance().setMechSelectorIncludeCost(m_cCost.getState());
+            clearMechPreview();
+            sortMechs(); // sorting has side-effect of repopulating list
+            m_mechList.invalidate();  // force re-layout of window
+            pack();
+            setLocation(computeDesiredLocation());
         }
     }
     

@@ -291,6 +291,5 @@ public class BipedMech extends Mech {
         cost+=omniCost;
         cost*=(1+(weight/100f));
         return Math.round(cost);
-                       
     }
 }

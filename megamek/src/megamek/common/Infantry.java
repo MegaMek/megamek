@@ -940,4 +940,12 @@ public class Infantry
 
         return cost*multiplier;
     }
+
+    public boolean doomedInVacuum() {
+        // FIXME
+        // We're assuming that infantry have environmental suits of some sort.
+        // Vac suits, battle armor, whatever.
+        // This isn't necessarily a true assumption.
+        return false;
+    }
 } // End class Infantry

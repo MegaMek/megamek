@@ -1336,6 +1336,9 @@ implements Runnable, ConnectionHandler {
                 resolveHeat();
                 phaseReport.append("\n\nEnd Phase\n------------------------\n");
                 checkForSuffocation();
+                if (game.getOptions().booleanOption("vacuum")) {
+                    checkForVacuumDeath();
+                }
                 resolveFire();
                 resolveExtremeTempInfantryDeath();
                 resolveAmmoDumps();
@@ -9089,6 +9092,25 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
+     * Check to see if anyone dies due to being in a vacuum.
+     */
+    private void checkForVacuumDeath() {
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if (null == entity.getPosition() || entity.isOffBoard()) {
+                // If it's not on the board - aboard something else, for example...
+                continue;
+            }
+            if (entity.doomedInVacuum()) {
+                roundReport.append("\n" );
+                roundReport.append(entity.getDisplayName());
+                roundReport.append( " is in a vacuum and cannot survive there!!!.\n");
+                roundReport.append(destroyEntity(entity, "being in a vacuum where it can't survive", true, true));
+            }
+        }
+    }
+
+    /**
      * Checks to see if any entities are underwater with damaged life support.
      * Called during the end phase.
      */
@@ -9105,7 +9127,6 @@ implements Runnable, ConnectionHandler {
             && entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0) {
                 roundReport.append("\n" ).append( entity.getDisplayName() ).append( " is underwater with damaged life support.  Mechwarrior takes 1 damage.\n");
                 roundReport.append( damageCrew(entity, 1) );
-
             }
         }
     }

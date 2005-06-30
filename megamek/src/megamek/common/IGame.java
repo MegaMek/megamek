@@ -24,6 +24,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
+import megamek.common.TagInfo;
 
 /**
  * This interface is the root of all data about the game in progress.
@@ -1024,4 +1025,31 @@ public interface IGame {
      * @return  The next <code>Entity</code> in the list.
      */
     public abstract Entity getNextEntityFromList (Entity current);
+
+    /**
+     * Returns this turn's tag information
+     */
+    public abstract Vector getTagInfo();
+
+    /**
+     * add the results of one tag attack
+     */
+    public abstract void addTagInfo(TagInfo info);
+
+    /**
+     * modify tag information
+     */
+    public abstract void updateTagInfo(TagInfo info, int index);
+
+    /**
+     * clears the "shots" attribute of all TagInfos
+     * where attacker is on same team as ae
+     * and target is on same mapsheet as tc
+     */
+    public abstract void clearTagInfoShots(Entity ae, Coords tc);
+
+    /**
+     * Reset tag information
+     */
+    public abstract void resetTagInfo();
 }

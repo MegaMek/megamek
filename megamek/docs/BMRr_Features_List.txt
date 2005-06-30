@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 18th June 2005.  MegaMek Version 0.22.81. Best viewed in 1024x768.
+The Great MegaMek Feature list. 30th June 2005.  MegaMek Version 0.22.82. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -205,7 +205,7 @@ Clan Battle Armor Variants
 
 - Gnome				Yes		None
 - Salamander			Yes		None
-- Sylph				No		Waiting on VTOL movement.
+- Sylph				Yes		None
 - Undine			No		Waiting on underwater movement.
 
 Innersphere Battle Armor Variants
@@ -283,7 +283,7 @@ Special Case Rules (Hostile Environments)
 - Ice				Partial		Skiding on Ice has been simulated with pavement (*not* the same rules!!)
 - High /Low Gravity		Yes		None
 - Swamp				Yes		None
-- Vacuum			Partial		Vehicle restrictions not implemented
+- Vacuum			Yes		Vehicles can deploy in vacuum, but die at the end of turn.
 
 Special Case Rules (Minefields)
 

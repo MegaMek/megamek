@@ -105,6 +105,20 @@ v0.29.82 (CVS)
 + Make sure cvsdev-package and jar tasks produce identical MegaMek.jar files.
 + Don't need properties directory in megamek-code-*.jar files.
 + Partial refactor of munition type checks.
++ Patch 1230249, Bugs 1224113, 1224451: Arrow IV homing targets mapsheet.
+   The server tries to share out homing missiles fairly among TAGs fired
+   at targets on the same mapsheet. 
+   TAG has a "mode" setting, allowing that TAG shot to take 1,2,3 or 4 shares
+   of the incoming missiles. This allows the player some control over target
+   priority (e.g. send 3 missiles at the Atlas and 1 at the Marksman).
+   If there are more incoming missiles than the sum of the priorities, it
+   starts over (so no need to mess with mode
+   setting at all if you just want an even split).
+   The "Rulebreaker" option "a4homing_target_area" uses 8 hex radius from the
+   target hex instead of mapsheets for eligible targets.
++ TAG should not be able to target infantry.
++ Arrow IV homing misses still do 5 damage when they miss but the TAG hit.
++ Patch 1230251: IS Copperhead ammo for Sniper and Long Tom.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

@@ -119,6 +119,10 @@ v0.29.82 (CVS)
 + TAG should not be able to target infantry.
 + Arrow IV homing misses still do 5 damage when they miss but the TAG hit.
 + Patch 1230251: IS Copperhead ammo for Sniper and Long Tom.
++ Bug 1228911: AmmoType and friends refactored to use a long flag for
+    munition types.
++ Force ammo type check when checking against munition types in almost all
+    places throughout the code.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

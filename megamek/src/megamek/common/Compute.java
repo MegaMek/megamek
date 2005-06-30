@@ -507,10 +507,12 @@ public class Compute
         // TODO: this is not the right place to hardcode these
         if (wtype.getAmmoType() == AmmoType.T_ATM) {
             AmmoType atype = (AmmoType)weapon.getLinked().getType();
-            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+            if ((atype.getAmmoType() == AmmoType.T_ATM)
+                        && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
                 weaponRanges = new int[] {4, 9, 18, 27, 36};
             }
-            else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+            else if ((atype.getAmmoType() == AmmoType.T_ATM)
+                        && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
                 weaponRanges = new int[] {0, 3, 6, 9, 12};
             }
         }
@@ -1278,7 +1280,8 @@ public class Compute
         }
         if (wt.getAmmoType() == AmmoType.T_AC_LBX){
             loaded_ammo = (AmmoType) weapon.getLinked().getType();
-            if (loaded_ammo.getMunitionType() == AmmoType.M_CLUSTER){
+            if ((loaded_ammo.getAmmoType() == AmmoType.T_AC)
+                    && loaded_ammo.getMunitionType() == AmmoType.M_CLUSTER) {
                 use_table = true;
             }
         }
@@ -1359,7 +1362,8 @@ public class Compute
                 // Check for target with attached Narc or iNarc homing pod from friendly unit
                 if (g.getEntity(waa.getTargetId()).isNarcedBy(attacker.getOwner().getTeam()) || 
                          g.getEntity(waa.getTargetId()).isINarcedBy(attacker.getOwner().getTeam())) {
-                    if (at.getMunitionType() == AmmoType.M_NARC_CAPABLE){
+                    if (((at.getAmmoType() == AmmoType.T_LRM) || (at.getAmmoType() == AmmoType.T_SRM))
+                            && at.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
                         fHits *= 1.2f;
                     }
                 }
@@ -1570,8 +1574,10 @@ public class Compute
                                 // Frag missiles, flechette AC rounds do double damage against conventional infantry
                                 // and 0 damage against everything else
                                 // Any further anti-personnel specialized rounds should be tested for here
-                                if ((abin_type.getMunitionType() == AmmoType.M_FRAGMENTATION) ||
-                                    (abin_type.getMunitionType() == AmmoType.M_FLECHETTE)){
+                                if (((((abin_type.getAmmoType() == AmmoType.T_LRM) || (abin_type.getAmmoType() == AmmoType.T_SRM)))
+                                        && (abin_type.getMunitionType() == AmmoType.M_FRAGMENTATION))
+                                        || ((abin_type.getAmmoType() == AmmoType.T_AC)
+                                        && (abin_type.getMunitionType() == AmmoType.M_FLECHETTE))) {
                                     ammo_multiple = 0.0;
                                     if (target instanceof Infantry){
                                         if (!(target instanceof BattleArmor)) {
@@ -1582,7 +1588,8 @@ public class Compute
 
                                 // LBX cluster rounds work better against units with little armor, vehicles, and Meks in partial cover
                                 // Other ammo that deliver lots of small submunitions should be tested for here too
-                                if (abin_type.getMunitionType() == AmmoType.M_CLUSTER){
+                                if ((abin_type.getAmmoType() == AmmoType.T_AC)
+                                        && abin_type.getMunitionType() == AmmoType.M_CLUSTER){
                                     if (target.getArmorRemainingPercent() <= 0.25) {
                                         ammo_multiple = 1.0 + (wtype.getRackSize()/10);
                                     }
@@ -1594,7 +1601,8 @@ public class Compute
                                 // AP autocannon rounds work much better against Meks and vehicles than infantry,
                                 // give a damage boost in proportion to calibre to reflect scaled crit chance
                                 // Other armor-penetrating ammo types should be tested here, such as Tandem-charge SRMs
-                                if (abin_type.getMunitionType() == AmmoType.M_ARMOR_PIERCING){
+                                if ((abin_type.getAmmoType() == AmmoType.T_AC)
+                                        && abin_type.getMunitionType() == AmmoType.M_ARMOR_PIERCING){
                                     if ((target instanceof Mech) || (target instanceof Tank)){
                                         ammo_multiple = 1.0 + (wtype.getRackSize()/10);
                                     }

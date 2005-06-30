@@ -381,10 +381,12 @@ public abstract class BotClient extends Client {
             if (atype.getAmmoType() == AmmoType.T_ATM){
                 weapon_count = ++weapon_count;
                 av_range += 15.0;
-                if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE){
+                if ((atype.getAmmoType() == AmmoType.T_ATM)
+                        && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE){
                     av_range -= 6;
                 }
-                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE){
+                if ((atype.getAmmoType() == AmmoType.T_ATM)
+                        && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE){
                     av_range += 12.0;
                 }
             }

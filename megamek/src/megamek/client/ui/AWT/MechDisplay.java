@@ -925,7 +925,8 @@ class WeaponPanel extends BufferedPanel
         // Only override the display for the various ATM ammos
         if(AmmoType.T_ATM == atype.getAmmoType())
         {
-            if(atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)
+            if((atype.getAmmoType() == AmmoType.T_ATM)
+                        && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)
             {
                 wMinR.setText("4"); //$NON-NLS-1$
                 wShortR.setText("1 - 9"); //$NON-NLS-1$
@@ -933,7 +934,8 @@ class WeaponPanel extends BufferedPanel
                 wLongR.setText("19 - 27"); //$NON-NLS-1$
                 wExtR.setText("28 - 36"); //$NON-NLS-1$
             }
-            else if(atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
+            else if ((atype.getAmmoType() == AmmoType.T_ATM)
+                        && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
             {
                 wMinR.setText("---"); //$NON-NLS-1$
                 wShortR.setText("1 - 3"); //$NON-NLS-1$

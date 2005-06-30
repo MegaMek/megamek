@@ -5642,18 +5642,22 @@ implements Runnable, ConnectionHandler {
       ToHitData toHit = wr.toHit;
       boolean bInferno = (usesAmmo &&
                           atype.getMunitionType() == AmmoType.M_INFERNO);
-      boolean bFragmentation = (usesAmmo &&
-                                atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
+      boolean bFragmentation = (usesAmmo
+                                && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
+                                && atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
       boolean bAcidHead = (usesAmmo && atype.getMunitionType() == AmmoType.M_AX_HEAD);
-      boolean bFlechette = (usesAmmo &&
-                            atype.getMunitionType() == AmmoType.M_FLECHETTE);
+      boolean bFlechette = (usesAmmo && (atype.getAmmoType() == AmmoType.T_AC)
+                            && atype.getMunitionType() == AmmoType.M_FLECHETTE);
       boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
-      boolean bAntiTSM = (usesAmmo &&
-                            atype.getMunitionType() == AmmoType.M_ANTI_TSM);
-      boolean bSwarm = (usesAmmo &&
-                            atype.getMunitionType() == AmmoType.M_SWARM);
-      boolean bSwarmI = (usesAmmo &&
-                            atype.getMunitionType() == AmmoType.M_SWARM_I);
+      boolean bAntiTSM = (usesAmmo
+                            && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
+                             && atype.getMunitionType() == AmmoType.M_ANTI_TSM);
+      boolean bSwarm = (usesAmmo
+                            && (atype.getAmmoType() == AmmoType.T_LRM)
+                            && atype.getMunitionType() == AmmoType.M_SWARM);
+      boolean bSwarmI = (usesAmmo
+                            && (atype.getAmmoType() == AmmoType.T_LRM)
+                            && atype.getMunitionType() == AmmoType.M_SWARM_I);
       boolean glancing = false; // For Glancing Hits Rule
       int swarmMissilesNowLeft = 0;
       int hits = 1, glancingMissileMod = 0;
@@ -5684,8 +5688,9 @@ implements Runnable, ConnectionHandler {
              !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() &&
              mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) ) {
           if ((!weapon.getType().hasModes()
-               || !weapon.curMode().equals("Indirect")) &&
-              (atype.getMunitionType() == AmmoType.M_STANDARD ||
+               || !weapon.curMode().equals("Indirect"))
+               && (atype.getAmmoType() == AmmoType.T_ATM)
+                && (atype.getMunitionType() == AmmoType.M_STANDARD ||
                atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE ||
                atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) {
               isNemesisConfusable = true;
@@ -5924,22 +5929,27 @@ implements Runnable, ConnectionHandler {
         }
 
         // Handle the thunder munitions.
-        if (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
+        if ((atype.getAmmoType() == AmmoType.T_LRM)
+                && atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
           deliverThunderAugMinefield(coords, ae.getOwner().getId(),
                                      atype.getRackSize());
         }
-        else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
+        else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                && atype.getMunitionType() == AmmoType.M_THUNDER) {
           deliverThunderMinefield(coords, ae.getOwner().getId(),
                                   atype.getRackSize());
         }
-        else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
+        else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                && atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
           deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
                                          atype.getRackSize());
-        else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+        else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                && atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
           deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
                                        atype.getRackSize(),
                                        wr.waa.getOtherAttackInfo());
-        else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
+        else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                && atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
           deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
                                         atype.getRackSize());
           //else
@@ -6524,6 +6534,7 @@ implements Runnable, ConnectionHandler {
                     if (!bECMAffected&& !bMekStealthActive
                         && (!weapon.getType().hasModes()
                             || !weapon.curMode().equals("Indirect"))
+                        && (atype.getAmmoType() == AmmoType.T_ATM)
                         && (atype.getMunitionType() == AmmoType.M_STANDARD
                             || atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE
                             || atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) {
@@ -6543,7 +6554,10 @@ implements Runnable, ConnectionHandler {
                     }
                     // only apply Narc bonus if we're not suffering ECM effect
                     // and we are using standard ammo.
-                    if (!bECMAffected && !bMekStealthActive && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
+                    if (!bECMAffected
+                            && !bMekStealthActive
+                            && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
+                            && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
                         nSalvoBonus += 2;
                     }
                 }
@@ -6649,7 +6663,9 @@ implements Runnable, ConnectionHandler {
                 }
             }
 
-        } else if (usesAmmo && atype.getMunitionType() == AmmoType.M_CLUSTER) {
+        } else if (usesAmmo
+                && (atype.getAmmoType() == AmmoType.T_AC) 
+                && atype.getMunitionType() == AmmoType.M_CLUSTER) {
             // Cluster shots break into single point clusters.
             bSalvo = true;
             hits = wtype.getRackSize();
@@ -6726,8 +6742,9 @@ implements Runnable, ConnectionHandler {
         }
         // only halve damage for non-missiles and non-cluster,
         // because cluster lbx gets handled above.
-        if (glancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS) &&
-                !(usesAmmo && atype.getMunitionType() == AmmoType.M_CLUSTER)) {
+        if (glancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS)
+                && !(usesAmmo && (atype.getAmmoType() == AmmoType.T_AC) 
+                && atype.getMunitionType() == AmmoType.M_CLUSTER)) {
             nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
         }
 
@@ -7255,7 +7272,9 @@ implements Runnable, ConnectionHandler {
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 3) );
                     } else {
-                        if (usesAmmo && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
+                        if (usesAmmo
+                                && (atype.getAmmoType() == AmmoType.T_AC)
+                                && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
                             hit.makeArmorPiercing(atype);
                         if (glancing) {
                             hit.makeGlancingBlow();

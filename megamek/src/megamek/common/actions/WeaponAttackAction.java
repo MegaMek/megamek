@@ -194,6 +194,7 @@ public class WeaponAttackAction
         if (te != null) {
             if (te.isINarcedBy(ae.getOwner().getTeam()) &&
                 atype != null &&
+                ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM)) && 
                 atype.getMunitionType() == AmmoType.M_NARC_CAPABLE &&
                 (wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_SRM)) {
@@ -571,9 +572,10 @@ public class WeaponAttackAction
         }
         
         // Do we use Listen-Kill ammo from War of 3039 sourcebook?
-        if (!isECMAffected && atype != null && 
-             atype.getMunitionType() == AmmoType.M_LISTEN_KILL &&
-             !(te != null && te.isClan())) {
+        if (!isECMAffected && atype != null
+                && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
+                && atype.getMunitionType() == AmmoType.M_LISTEN_KILL
+                && !(te != null && te.isClan())) {
             toHit.addModifier ( -1, "Listen-Kill ammo");            
         }
     
@@ -712,8 +714,9 @@ public class WeaponAttackAction
                 }
             }
             // precision ammo reduces this modifier
-            else if (atype != null && atype.getAmmoType() == AmmoType.T_AC &&
-                atype.getMunitionType() == AmmoType.M_PRECISION) {
+            else if (atype != null && atype.getAmmoType() == AmmoType.T_AC
+                    && (atype.getAmmoType() == AmmoType.T_AC)
+                    && atype.getMunitionType() == AmmoType.M_PRECISION) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, "Precision Ammo"));
@@ -722,8 +725,9 @@ public class WeaponAttackAction
         }
     
         // Armor Piercing ammo is a flat +1
-        if ( (atype != null) &&
-             (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) ) {
+        if ( (atype != null)
+             && ((atype.getAmmoType() == AmmoType.T_AC)
+             && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING)) ) {
             toHit.addModifier( 1, "Armor-Piercing Ammo" );
         }
     
@@ -801,7 +805,8 @@ public class WeaponAttackAction
 
         // ammo to-hit modifier
         if (( te != null && te.getMovementMode() == IEntityMovementMode.VTOL)
-                && ((atype != null) && (atype.getMunitionType() == AmmoType.M_CLUSTER))
+                && ((atype != null) && (atype.getAmmoType() == AmmoType.T_AC)
+                && (atype.getMunitionType() == AmmoType.M_CLUSTER))
                 && (te.getElevation() > game.getBoard().getHex(te.getPosition()).ceiling())) {
             toHit.addModifier(-3, "flak to-hit modifier");
         } else if (usesAmmo && atype.getToHitModifier() != 0) {
@@ -822,8 +827,10 @@ public class WeaponAttackAction
             aimingAt != Mech.LOC_NONE) {
             toHit.addModifier(3, "aiming with targeting computer");
         } else {
-            if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-               (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
+            if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
+                    (!usesAmmo
+                    || ((atype.getAmmoType() == AmmoType.T_AC)
+                    && atype.getMunitionType() != AmmoType.M_CLUSTER))) {
                 toHit.addModifier(-1, "targeting computer");
             }
         }

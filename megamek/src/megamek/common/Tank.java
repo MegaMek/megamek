@@ -866,9 +866,12 @@ public class Tank
     }
 
     public boolean doomedInVacuum() {
-        // FIXME
-        // This is actually NOT true for this unit!
-        // It's possible for a tank to survive in vacuum!
-        return true;
+        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

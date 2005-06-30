@@ -307,6 +307,8 @@ public abstract class TestEntity implements TestEntityOption
                 return ceil(fTons / 4.0f, getWeightCeilingTargComp());
             else if (mt.getInternalName().equals("CLTargeting Computer"))
                 return ceil(fTons / 5.0f, getWeightCeilingTargComp());
+        } else if (mt.hasFlag(MiscType.F_VACUUM_PROTECTION)) {
+            return (float)Math.round(getWeight() / 10.0f);
         } else
             return mt.getTonnage(getEntity());
         return 0f;

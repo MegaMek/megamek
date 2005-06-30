@@ -7961,9 +7961,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
-        weapon.extremeRange = 15;
+        weapon.extremeRange = 20;
         weapon.bv = 0;
         weapon.cost = 50000;
+        String[] modes = { "1-shot", "2-shot", "3-shot", "4-shot" };
+        weapon.setModes( modes );
 
         return weapon;
     }
@@ -7987,9 +7989,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
-        weapon.extremeRange = 9;
+        weapon.extremeRange = 12;
         weapon.bv = 0;
         weapon.cost = 40000;
+        String[] modes = { "1-shot", "2-shot", "3-shot", "4-shot" };
+        weapon.setModes( modes );
 
         return weapon;
     }
@@ -8013,9 +8017,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
-        weapon.extremeRange = 15;
+        weapon.extremeRange = 20;
         weapon.bv = 0;
         weapon.cost = 50000;
+        String[] modes = { "1-shot", "2-shot", "3-shot", "4-shot" };
+        weapon.setModes( modes );
 
         return weapon;
     }
@@ -8039,9 +8045,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
-        weapon.extremeRange = 9;
+        weapon.extremeRange = 12;
         weapon.bv = 0;
         weapon.cost = 40000;
+        String[] modes = { "1-shot", "2-shot", "3-shot", "4-shot" };
+        weapon.setModes( modes );
 
         return weapon;
     }

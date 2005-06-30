@@ -130,6 +130,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"margin_scatter_distance", false); //$NON-NLS-1$
         addOption(ruleBreakers,"allow_illegal_units", false); //$NON-NLS-1$
         addOption(ruleBreakers,"ejected_pilots_flee", false);
+        addOption(ruleBreakers,"a4homing_target_area", false); //$NON-NLS-1$
     }
 
     public void loadOptions(Client client, String password) {

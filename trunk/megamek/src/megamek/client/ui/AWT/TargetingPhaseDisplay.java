@@ -40,8 +40,10 @@ public class TargetingPhaseDisplay
 
     // Action command names
     public static final String FIRE_FIRE       = "fireFire"; //$NON-NLS-1$
+    public static final String FIRE_MODE       = "fireMode"; //$NON-NLS-1$
     public static final String FIRE_FLIP_ARMS  = "fireFlipArms"; //$NON-NLS-1$
     public static final String FIRE_NEXT       = "fireNext"; //$NON-NLS-1$
+    public static final String FIRE_NEXT_TARG  = "fireNextTarg"; //$NON-NLS-1$
     public static final String FIRE_SKIP       = "fireSkip"; //$NON-NLS-1$
     public static final String FIRE_TWIST      = "fireTwist"; //$NON-NLS-1$
     public static final String FIRE_CANCEL     = "fireCancel"; //$NON-NLS-1$
@@ -58,9 +60,11 @@ public class TargetingPhaseDisplay
     private Button            butTwist;
     private Button            butSkip;
     private Button            butFlipArms;
+    private Button            butFireMode;
 //    private Button            butReport;
     private Button            butSpace;
     private Button            butNext;
+    private Button            butNextTarg;
     private Button            butDone;
 
     private int               buttonLayout;
@@ -78,6 +82,9 @@ public class TargetingPhaseDisplay
 
     private final int           phase;
 
+    private Entity[]            visibleTargets  = null;
+    private int                 lastTargetID    = -1;
+    private boolean            showTargetChoice = true;
 
     /**
      * Creates and lays out a new targeting phase display
@@ -113,6 +120,17 @@ public class TargetingPhaseDisplay
         butFlipArms.addActionListener(this);
         butFlipArms.setActionCommand(FIRE_FLIP_ARMS);
         butFlipArms.setEnabled(false);
+
+        butFireMode = new Button(Messages.getString("TargetingPhaseDisplay.Mode")); //$NON-NLS-1$
+        butFireMode.addActionListener(this);
+        butFireMode.setActionCommand(FIRE_MODE);
+        butFireMode.setEnabled(false);
+
+        butNextTarg = new Button(Messages.getString("FiringDisplay.NextTarget")); //$NON-NLS-1$
+        butNextTarg.addActionListener(this);
+        butNextTarg.addKeyListener(this);
+        butNextTarg.setActionCommand(FIRE_NEXT_TARG);
+        butNextTarg.setEnabled(false);
 
         butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
@@ -193,8 +211,10 @@ public class TargetingPhaseDisplay
             panButtons.add(butNext);
             panButtons.add(butFire);
             panButtons.add(butSkip);
+            panButtons.add(butNextTarg);
             panButtons.add(butFlipArms);
             panButtons.add(butTwist);
+            panButtons.add(butFireMode);
          // panButtons.add(butDone);
             break;
 
@@ -249,6 +269,7 @@ public class TargetingPhaseDisplay
             clientgui.getBoardView().cursor(null);
             
             refreshAll();
+            cacheVisibleTargets();
             
             if (!clientgui.bv.isMovingUnits()) {
                 clientgui.bv.centerOnHex(ce().getPosition());
@@ -260,6 +281,8 @@ public class TargetingPhaseDisplay
             // 2003-12-29, nemchenk -- only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
             setFlipArmsEnabled(ce().canFlipArms());
+
+            setFireModeEnabled(true);
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
@@ -329,11 +352,43 @@ public class TargetingPhaseDisplay
         setNextEnabled(false);
         butDone.setEnabled(false);
         setFlipArmsEnabled(false);
+        setFireModeEnabled(false);
+        setNextTargetEnabled(false);
     }
 
+   /**
+    * Fire Mode - Adds a Fire Mode Change to the current Attack Action
+    */
+    private void changeMode() {
+        int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
 
+        // Do nothing we have no unit selected.
+        if ( null == ce() ) {
+            return;
+        }
 
+        // If the weapon does not have modes, just exit.
+        Mounted m = ce().getEquipment(wn);
+        if ( m == null || !m.getType().hasModes() ) {
+            return;
+        }
+        
+        // send change to the server
+        int nMode = m.switchMode();
+        client.sendModeChange(cen, wn, nMode);
+        
+        // notify the player
+        if (m.getType().hasInstantModeSwitch()) {
+            clientgui.systemMessage(Messages.getString("FiringDisplay.switched", new Object[]{m.getName(), m.curMode().getDisplayableName()})); //$NON-NLS-1$
+        }
+        else {
+            clientgui.systemMessage(Messages.getString("FiringDisplay.willSwitch", new Object[]{m.getName(), m.pendingMode().getDisplayableName()})); //$NON-NLS-1$
+        }
 
+        this.updateTarget();
+        clientgui.mechD.wPan.displayMech(ce());
+        clientgui.mechD.wPan.selectWeapon(wn);
+    }
 
     /**
      * Called when the current entity is done firing.  Send out our attack
@@ -594,6 +649,86 @@ public class TargetingPhaseDisplay
         }        
     }
 
+   /**
+     * Cache the list of visible targets. This is used for the 'next target' button.
+     *
+     * We'll sort it by range to us.
+     */
+      private void cacheVisibleTargets() {
+        clearVisibleTargets();
+        
+        Vector vec = client.game.getValidTargets( ce() );
+        com.sun.java.util.collections.Comparator sortComp = new com.sun.java.util.collections.Comparator() {
+          public int compare(java.lang.Object x, java.lang.Object y) {
+            Entity entX = (Entity)x;
+            Entity entY = (Entity)y;
+        
+            int rangeToX = ce().getPosition().distance(entX.getPosition());
+            int rangeToY = ce().getPosition().distance(entY.getPosition());
+        
+            if ( rangeToX == rangeToY ) return ((entX.getId() < entY.getId()) ? -1 : 1);
+          
+            return ((rangeToX < rangeToY) ? -1 : 1);
+          }
+        };
+          
+        com.sun.java.util.collections.TreeSet tree = new com.sun.java.util.collections.TreeSet(sortComp);
+        visibleTargets = new Entity[vec.size()];
+              
+        for ( int i = 0; i < vec.size(); i++ ) {
+          tree.add((Entity)vec.elementAt(i));
+          }
+        
+        com.sun.java.util.collections.Iterator it = tree.iterator();
+        int count = 0;
+        while ( it.hasNext() ) {
+          visibleTargets[count++] = (Entity)it.next();
+        }
+
+        setNextTargetEnabled(visibleTargets.length > 0);
+      }
+
+      private void clearVisibleTargets() {
+        visibleTargets = null;
+        lastTargetID = -1;
+        setNextTargetEnabled(false);
+      }
+      
+    /**
+     * Get the next target. Return null if we don't have any targets.
+     */
+      private Entity getNextTarget() {
+        if ( null == visibleTargets )
+          return null;
+        
+        lastTargetID++;
+
+        if ( lastTargetID >= visibleTargets.length )
+          lastTargetID = 0;
+        
+        return (Entity)visibleTargets[lastTargetID];
+      }
+    
+    /**
+     * Jump to our next target. If there isn't one, well, don't do anything.
+     */
+      private void jumpToNextTarget() {
+        Entity targ = getNextTarget();
+        
+        if ( null == targ )
+          return;
+
+        // HACK : don't show the choice dialog.
+        this.showTargetChoice = false;
+
+        clientgui.bv.centerOnHex(targ.getPosition());
+        clientgui.getBoardView().select(targ.getPosition());
+
+        // HACK : show the choice dialog again.
+        this.showTargetChoice = true;
+        target(targ);
+    }
+
     /**
      * Returns the current entity.
      */
@@ -732,8 +867,12 @@ public class TargetingPhaseDisplay
             twisting = true;
         } else if (ev.getActionCommand().equals(FIRE_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
+        } else if (ev.getActionCommand().equals(FIRE_NEXT_TARG)) {
+            jumpToNextTarget();
         } else if (ev.getActionCommand().equals(FIRE_FLIP_ARMS)) {
             updateFlipArms(!ce().getArmsFlipped());
+        } else if (ev.getActionCommand().equals(FIRE_MODE)) {
+            changeMode();
         } else if (ev.getActionCommand().equals(FIRE_CANCEL)) {
             clearAttacks();
             clientgui.getBoardView().select(null);
@@ -778,6 +917,14 @@ public class TargetingPhaseDisplay
                 butNext.setEnabled(enabled);
         clientgui.getMenuBar().setFireNextEnabled(enabled);
         }
+    private void setFireModeEnabled(boolean enabled) {
+        butFireMode.setEnabled(enabled);
+        clientgui.getMenuBar().setFireModeEnabled(enabled);
+    }
+    private void setNextTargetEnabled(boolean enabled) {
+        butNextTarg.setEnabled(enabled);
+        clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
+    }
 
     //
     // KeyListener

@@ -32,6 +32,7 @@ import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
+import megamek.common.TagInfo;
 
 /**
  * @author Ben Mazur
@@ -1228,6 +1229,7 @@ implements Runnable, ConnectionHandler {
                 // remove the last traces of last round
                 game.resetActions();
                 game.resetRoundReport();
+                game.resetTagInfo();
                 roundReport = game.getRoundReport(); //HACK
                 resetEntityRound();
                 resetEntityPhase(phase);
@@ -5728,15 +5730,6 @@ implements Runnable, ConnectionHandler {
           }
       }
 
-      // adjust BTH for homing shots
-      if(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING) {
-          if(entityTarget != null && entityTarget.getTaggedBy() != -1) {
-              toHit = new ToHitData(4, "homing ammo");
-          } else {
-              toHit = new ToHitData(TargetRoll.AUTOMATIC_FAIL, "target not tagged");
-          }
-      }
-
       // Report weapon attack and its to-hit value.
       phaseReport.append("    ").append(wtype.getName()).append(" at ").append(
           target.getDisplayName());
@@ -5907,6 +5900,40 @@ implements Runnable, ConnectionHandler {
         glancingCritMod = 0;
       }
       
+        // special case TAG.  No damage, but target is tagged until end of turn
+        if (wtype.hasFlag(WeaponType.F_TAG)) {
+            if(entityTarget == null) {
+                phaseReport.append("does nothing (didnt target a unit).\n");
+            } else {
+                int priority = 1;
+                EquipmentMode mode = (weapon.curMode());
+                if(mode != null) {
+                    if(mode.getName() == "1-shot") {
+                        priority=1;
+                    } else if(mode.getName() == "2-shot") {
+                        priority=2;
+                    } else if(mode.getName() == "3-shot") {
+                        priority=3;
+                    } else if(mode.getName() == "4-shot") {
+                        priority=4;
+                    }
+                }
+                if(priority < 1) priority = 1;
+                //add even misses, as they waste homing missiles.
+                //it is possible for 2 or more tags to hit the same entity, 
+                //but this only matters in the offboard phase
+                TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(), priority, bMissed);
+                game.addTagInfo(info);
+                if(!bMissed) {
+                    entityTarget.setTaggedBy(ae.getId());
+                    phaseReport.append("hits, target tagged.\n");
+                } else {
+                    phaseReport.append("misses.\n");
+                }
+            }
+            return !bMissed;
+        }
+
       // special case minefield delivery, no damage and scatters if misses.
       if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
         Coords coords = target.getPosition();
@@ -6076,7 +6103,8 @@ implements Runnable, ConnectionHandler {
           return !bMissed;
       }
       //special case artillery
-      if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) {
+      if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY &&
+          !(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING)) { //when M_SMOKE implemented, change this to positive ID on M_STANDARD
         Coords coords = target.getPosition();
         if (!bMissed) {
           phaseReport.append("hits the intended hex ")
@@ -6276,20 +6304,12 @@ implements Runnable, ConnectionHandler {
 
             // BMRr, pg. 51: "All shots that were aimed at a target inside
             // a building and miss do full damage to the building instead."
-            if ( !targetInBuilding ) {
+            // BMRr, pg. 77: If the spotting unit successfully designates the target but
+            // the missile misses, it still detonates in the hex and causes 5
+            // points of artillery damage each to all units in the target hex
+            if ( !targetInBuilding && !(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING)) {
                 return !bMissed;
             }
-        }
-
-        // special case TAG hits.  No damage, but target is tagged until end of turn
-        if (!bMissed && wtype.hasFlag(WeaponType.F_TAG)) {
-            if(entityTarget == null) {
-                phaseReport.append("hits, but doesn't do anything.\n");
-            } else {
-                entityTarget.setTaggedBy(ae.getId());
-                phaseReport.append("hits, target tagged.\n");
-            }
-            return !bMissed;
         }
 
         // special case NARC hits.  No damage, but a beacon is appended
@@ -6758,7 +6778,8 @@ implements Runnable, ConnectionHandler {
             nDamPerHit = wtype.getRackSize();
             if (entityTarget!=null && entityTarget.getTaggedBy() != -1) {
                 toHit.setSideTable(Compute.targetSideTable
-                        (game.getEntity(entityTarget.getTaggedBy()), entityTarget));
+                        (wr.artyAttackerCoords, entityTarget.getPosition(), 
+                         entityTarget.getFacing(), entityTarget instanceof Tank));
             }
         }
 
@@ -7288,6 +7309,12 @@ implements Runnable, ConnectionHandler {
                 }
                 hits -= nCluster;
                 creditKill(entityTarget, ae);
+            } else {
+                System.err.println("Unable to resolve hit against "+target.getDisplayName());
+                if(entityTarget == null) {
+                    System.err.println("   entityTarget is null");
+                }
+                hits = 0; //prevents server lock-up
             }
         } // Handle the next cluster.
 
@@ -7295,35 +7322,36 @@ implements Runnable, ConnectionHandler {
         if(atype != null && atype.getMunitionType() == AmmoType.M_HOMING) {
             Coords coords = target.getPosition();
 
-            if(!bMissed) {
-                int ratedDamage = nDamPerHit / 4;
-                bldg = null;
-                bldg = game.getBoard().getBuildingAt(coords);
-                bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
-                bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-                ratedDamage -= bldgAbsorbs;
-                if ((bldg != null) && (bldgAbsorbs > 0)) {
-                    phaseReport.append("The building in the hex absorbs " + bldgAbsorbs + "damage from the artillery strike!\n");
-                    phaseReport.append(damageBuilding(bldg, ratedDamage));   
-                }
-
-                if(ratedDamage > 0) {
-                    for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-                        Entity entity = (Entity)impactHexHits.nextElement();
-
-                        if (entity == entityTarget) continue;
             
-                        if (wr.artyAttackerCoords != null) {
-                            toHit.setSideTable(Compute.targetSideTable(game.getEntity(entityTarget.getTaggedBy()),entity));
-                        }
-                        HitData hit = entity.rollHitLocation
-                            ( toHit.getHitTable(),
-                              toHit.getSideTable(),
-                              wr.waa.getAimedLocation(),
-                              wr.waa.getAimingMode() );
+            int ratedDamage = 5; //splash damage is 5 from all launchers
+            bldg = null;
+            bldg = game.getBoard().getBuildingAt(coords);
+            bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
+            bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+            ratedDamage -= bldgAbsorbs;
+            if ((bldg != null) && (bldgAbsorbs > 0)) {
+                phaseReport.append("The building in the hex absorbs " + bldgAbsorbs + "damage from the artillery strike!\n");
+                phaseReport.append(damageBuilding(bldg, ratedDamage));   
+            }
 
-                        phaseReport.append(damageEntity(entity, hit, ratedDamage, false, 0, false, true) + "\n");
+            if(ratedDamage > 0) {
+                for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+                    Entity entity = (Entity)impactHexHits.nextElement();
+
+                    if(!bMissed) {
+                        if (entity == entityTarget) continue; //don't splash the target unless missile missed
                     }
+        
+                    if (wr.artyAttackerCoords != null) {
+                        toHit.setSideTable(Compute.targetSideTable(game.getEntity(entityTarget.getTaggedBy()),entity));
+                    }
+                    HitData hit = entity.rollHitLocation
+                        ( toHit.getHitTable(),
+                          toHit.getSideTable(),
+                          wr.waa.getAimedLocation(),
+                          wr.waa.getAimingMode() );
+
+                    phaseReport.append(damageEntity(entity, hit, ratedDamage, false, 0, false, true) + "\n");
                 }
             }
         }
@@ -13914,6 +13942,82 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
+    * Find the tagged entity for this attack
+    *
+    * Each TAG will attract a number of shots up to its priority number (mode setting)
+    * When all the TAGs are used up, the shots fired are reset.
+    * So if you leave them all on 1-shot, then homing attacks will be evenly split, however many shots you fire.
+    *
+    * Priority setting is to allocate more homing attacks to a more important target as decided by player.
+    * 
+    * TAGs fired by the enemy aren't eligable, nor are TAGs fired at a target on a different map sheet.
+    */
+    private WeaponResult ConvertHomingShotToEntityTarget(ArtilleryAttackAction aaa, Entity ae) {
+        WeaponResult wr = aaa.getWR();
+        Targetable target = wr.waa.getTarget(game);
+        
+        final Coords tc = target.getPosition();
+        Entity entityTarget = null;
+
+        TagInfo info = null;
+        Entity tagger = null;
+
+        for(int pass=0;pass<2;pass++) {
+            int bestDistance = Integer.MAX_VALUE;
+            int bestIndex = -1;
+            Vector v = game.getTagInfo();
+            for(int i=0;i<v.size();i++) {
+                info = (TagInfo)v.elementAt(i);
+                tagger = game.getEntity(info.attackerId);
+                if(info.shots < info.priority && !ae.isEnemyOf(tagger)) {
+                    System.err.println("Checking TAG "+i+" with priority "+info.priority);
+                    entityTarget = game.getEntity(info.targetId);
+                    if(entityTarget != null && entityTarget.isOnSameSheet(tc)) {
+                        if(tc.distance(entityTarget.getPosition()) < bestDistance) {
+                            bestIndex = i;
+                            bestDistance = tc.distance(entityTarget.getPosition());
+                            if(!game.getOptions().booleanOption("a4homing_target_area")) {
+                                break; //first will do if mapsheets can't overlap
+                            }
+                        }
+                    }
+                }
+            }
+            if(bestIndex != -1) {
+                info = (TagInfo)v.elementAt(bestIndex);
+                entityTarget = game.getEntity(info.targetId);
+                tagger = game.getEntity(info.attackerId);
+                System.err.println("attacker: " + ae.getDisplayName());
+                System.err.println("   " + tagger.getDisplayName() + " selected to TAG");
+                System.err.println("   " + entityTarget.getDisplayName() + " selected as target");
+                info.shots++;
+                game.updateTagInfo(info,bestIndex);
+                break; //got a target, stop searching
+            } else {
+                entityTarget = null;
+            }
+            //nothing found on 1st pass, so clear shots fired to 0
+            System.err.println("nothing on 1st pass");
+            game.clearTagInfoShots(ae, tc);
+        }
+
+        if(entityTarget == null || info == null) {
+            wr.toHit = new ToHitData(ToHitData.IMPOSSIBLE, "no targets tagged on map sheet");
+        } 
+        else if(info.missed) {
+            wr.waa.setTargetId(entityTarget.getId());
+            wr.toHit = new ToHitData(ToHitData.IMPOSSIBLE, "tag missed the target");
+        } else {
+            //update for hit table resolution
+            wr.artyAttackerCoords = tagger.getPosition();
+            wr.waa.setTargetId(entityTarget.getId());
+            wr.waa.setTargetType(Targetable.TYPE_ENTITY);
+        }
+
+        return wr;
+    }
+
+    /**
      * resolve Indirect Artillery Attacks for this turn
      */
     private void resolveIndirectArtilleryAttacks()  {
@@ -13927,7 +14031,7 @@ implements Runnable, ConnectionHandler {
 
             // Does the attack land this turn?
             if (aaa.turnsTilHit <= 0) {
-                final WeaponResult wr = aaa.getWR();
+                WeaponResult wr = aaa.getWR();
                 //HACK, for correct hit table resolution.
                 wr.artyAttackerCoords=aaa.getCoords();
                 final Vector spottersBefore=aaa.getSpotterIds();
@@ -13936,11 +14040,15 @@ implements Runnable, ConnectionHandler {
                 final int playerId = aaa.getPlayerId();
                 Entity bestSpotter=null;
 
-                // This section only applies to artillery aimed at a hex (not homing arrow IV)
-                if(target.getTargetType() == Targetable.TYPE_HEX_FASCAM ||
-                target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY ||
-                target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV ||
-                target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                Entity ae = game.getEntity(wr.waa.getEntityId());
+                if (ae == null) {
+                  ae = game.getOutOfGameEntity( wr.waa.getEntityId() );
+                }
+                Mounted ammo = ae.getEquipment(wr.waa.getAmmoId());
+                final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
+                if(atype != null && atype.getMunitionType() == AmmoType.M_HOMING) {
+                    wr = ConvertHomingShotToEntityTarget(aaa, ae);
+                } else {
                     // Are there any valid spotters?
                     if ( null != spottersBefore ) {
 

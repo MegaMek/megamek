@@ -175,7 +175,7 @@ public class LosEffects {
         final Entity ae = game.getEntity(attackerId);
                 
         // LOS fails if one of the entities is not deployed.
-        if (null == ae.getPosition() || null == target.getPosition()) {
+        if (null == ae.getPosition() || null == target.getPosition() || ae.isOffBoard()) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
             return los;

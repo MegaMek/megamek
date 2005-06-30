@@ -1139,6 +1139,7 @@ public class Game implements Serializable, IGame
         resetActions();
         resetCharges();
         resetPSRs();
+        resetArtilleryAttacks();
         removeMinefields();
         removeArtyAutoHitHexes();
 
@@ -1748,6 +1749,9 @@ public class Game implements Serializable, IGame
     }
     public void setArtilleryVector(Vector v) {
         offboardArtilleryAttacks = v;
+    }
+    public void resetArtilleryAttacks() {
+        offboardArtilleryAttacks.removeAllElements();
     }
     public Enumeration getArtilleryAttacks() {
         return offboardArtilleryAttacks.elements(); //Fix?

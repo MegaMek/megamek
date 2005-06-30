@@ -75,58 +75,59 @@ public class AmmoType extends EquipmentType {
     // Since we ran out.
 
     // M_STANDARD can be used for anything.
-    public static final int     M_STANDARD          = 0; // x
+    public static final long     M_STANDARD          = 0; // x
 
     // AC Munition Types
-    public static final int     M_CLUSTER           = 1; // x
-    public static final int     M_ARMOR_PIERCING    = 1 << 1; // x
-    public static final int     M_FLECHETTE         = 1 << 2; // x
+    public static final long     M_CLUSTER           = 1; // x
+    public static final long     M_ARMOR_PIERCING    = 1 << 1; // x
+    public static final long     M_FLECHETTE         = 1 << 2; // x
     //FIXME - I'm not implemented!!! vvv
-    public static final int     M_INCENDIARY_AC     = 1 << 4; // x
-    public static final int     M_PRECISION         = 1 << 5; // x
+    public static final long     M_INCENDIARY_AC     = 1 << 3; // x
+    public static final long     M_PRECISION         = 1 << 4; // x
 
     // ATM Munition Types
-    public static final int     M_EXTENDED_RANGE    = 1 << 6; // x
-    public static final int     M_HIGH_EXPLOSIVE    = 1 << 7; // x
+    public static final long     M_EXTENDED_RANGE    = 1 << 5; // x
+    public static final long     M_HIGH_EXPLOSIVE    = 1 << 6; // x
 
     // LRM & SRM Munition Types
-    public static final int     M_FRAGMENTATION     = 1 << 9; // x
-    public static final int     M_LISTEN_KILL       = 1 << 31; // x
-    public static final int     M_ANTI_TSM          = 1 << 3; // x
-    public static final int     M_NARC_CAPABLE      = 1 << 29; // x
-    public static final int     M_ARTEMIS_CAPABLE   = 1 << 30; // x
+    public static final long     M_FRAGMENTATION     = 1 << 7; // x
+    public static final long     M_LISTEN_KILL       = 1 << 8; // x
+    public static final long     M_ANTI_TSM          = 1 << 9; // x
+    public static final long     M_NARC_CAPABLE      = 1 << 10; // x
+    public static final long     M_ARTEMIS_CAPABLE   = 1 << 11; // x
 
     // LRM Munition Types
-    public static final int     M_INCENDIARY_LRM    = 1 << 32; // ???
-    public static final int     M_FLARE             = 1 << 8; // x
-    public static final int     M_SEMIGUIDED        = 1 << 11; // x
-    public static final int     M_SWARM             = 1 << 12; // x
-    public static final int     M_SWARM_I           = 1 << 13; // x
-    public static final int     M_THUNDER           = 1 << 14; // x
-    public static final int     M_THUNDER_AUGMENTED = 1 << 15; // x
-    public static final int     M_THUNDER_INFERNO   = 1 << 16; // x
-    public static final int     M_THUNDER_VIBRABOMB = 1 << 17; // x
-    public static final int     M_THUNDER_ACTIVE    = 1 << 18; // x
+    // Incendiary is special, though...
+    public static final long     M_INCENDIARY_LRM    = 1 << 12; // ???
+    public static final long     M_FLARE             = 1 << 13; // x
+    public static final long     M_SEMIGUIDED        = 1 << 14; // x
+    public static final long     M_SWARM             = 1 << 15; // x
+    public static final long     M_SWARM_I           = 1 << 16; // x
+    public static final long     M_THUNDER           = 1 << 17; // x
+    public static final long     M_THUNDER_AUGMENTED = 1 << 18; // x
+    public static final long     M_THUNDER_INFERNO   = 1 << 19; // x
+    public static final long     M_THUNDER_VIBRABOMB = 1 << 20; // x
+    public static final long     M_THUNDER_ACTIVE    = 1 << 21; // x
 
     // SRM Munition Types
-    public static final int     M_INFERNO           = 1 << 10;
-    public static final int     M_AX_HEAD           = 1 << 33;
+    public static final long     M_INFERNO           = 1 << 22;
+    public static final long     M_AX_HEAD           = 1 << 23; // x
 
     // iNarc Munition Types
-    public static final int     M_EXPLOSIVE         = 1 << 19;
-    public static final int     M_ECM               = 1 << 20;
-    public static final int     M_HAYWIRE           = 1 << 21;
-    public static final int     M_NEMESIS           = 1 << 22;
+    public static final long     M_EXPLOSIVE         = 1 << 24; // x
+    public static final long     M_ECM               = 1 << 25; // x
+    public static final long     M_HAYWIRE           = 1 << 26; // x
+    public static final long     M_NEMESIS           = 1 << 27; // x
 
     // Narc Munition Types
-    public static final int     M_NARC_EX           = 1 << 23;
+    public static final long     M_NARC_EX           = 1 << 28; // x
 
     // Arrow IV Munition Types
-    public static final int     M_HOMING            = 1 << 24;
-    public static final int     M_FASCAM            = 1 << 25;
-    public static final int     M_INFERNO_IV        = 1 << 26;
-    public static final int     M_VIBRABOMB_IV      = 1 << 27;
-    public static final int     M_SMOKE             = 1 << 28;
+    public static final long     M_HOMING            = 1 << 29;
+    public static final long     M_FASCAM            = 1 << 30;
+    public static final long     M_INFERNO_IV        = 1 << 31;
+    public static final long     M_VIBRABOMB_IV      = 1 << 32;
+    public static final long     M_SMOKE             = 1 << 33;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -146,7 +147,7 @@ public class AmmoType extends EquipmentType {
     protected int damagePerShot;
     protected int rackSize;
     private int ammoType;
-    private int munitionType;
+    private long munitionType;
     protected int shots;
 
     public AmmoType() {
@@ -174,7 +175,7 @@ public class AmmoType extends EquipmentType {
         return ammoType;
     }
 
-    public int getMunitionType() {
+    public long getMunitionType() {
         return munitionType;
     }
 
@@ -4152,7 +4153,7 @@ public class AmmoType extends EquipmentType {
 
         /** The munition flag(s) for this type.
          */
-        private int type;
+        private long type;
 
         private int techLevel = TechConstants.T_TECH_UNKNOWN;
 
@@ -4170,7 +4171,7 @@ public class AmmoType extends EquipmentType {
          *          the base ammo type.
          */
         public MunitionMutator( String munitionName, int weightRatio,
-                                int munitionType, int newTechLevel ) {
+                                long munitionType, int newTechLevel ) {
             name = munitionName;
             weight = weightRatio;
             type = munitionType;
@@ -4189,7 +4190,7 @@ public class AmmoType extends EquipmentType {
          *          of this type.
          */
         public MunitionMutator( String munitionName, int weightRatio,
-                                int munitionType ) {
+                                long munitionType ) {
             name = munitionName;
             weight = weightRatio;
             type = munitionType;
@@ -4328,64 +4329,67 @@ public class AmmoType extends EquipmentType {
             // check for cost
             //TODO: ammo for weapons using artemis should cost double
             double cost = base.cost;
-            if ((munition.getAmmoType() == AmmoType.T_AC) && (munition.hasFlag(AmmoType.M_ARMOR_PIERCING)))
+            if ((munition.getAmmoType() == AmmoType.T_AC) && (munition.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
                 cost *= 4;
-            if ((munition.getAmmoType() == AmmoType.T_AC) && munition.hasFlag(AmmoType.M_FLECHETTE))
+            if ((munition.getAmmoType() == AmmoType.T_AC) && munition.getMunitionType() == AmmoType.M_FLECHETTE)
                 cost *= 1.5;
-            if ((munition.getAmmoType() == AmmoType.T_AC) && munition.hasFlag(AmmoType.M_INCENDIARY_AC))
+            if ((munition.getAmmoType() == AmmoType.T_AC) && munition.getMunitionType() == AmmoType.M_INCENDIARY_AC)
                 cost *= 2;
-            if ((munition.getAmmoType() == AmmoType.T_AC) && munition.hasFlag(AmmoType.M_PRECISION))
+            if ((munition.getAmmoType() == AmmoType.T_AC) && munition.getMunitionType() == AmmoType.M_PRECISION)
                 cost *= 6;
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.hasFlag(AmmoType.M_FRAGMENTATION))
+                    && munition.getMunitionType() == AmmoType.M_FRAGMENTATION)
                 cost *= 2;
+/*
             if (munition.hasFlag(AmmoType.M_INCENDIARY_LRM))
                 cost *= 1.5;
-            if (munition.hasFlag(AmmoType.M_INFERNO))
+*/
+            if ((munition.getAmmoType() == AmmoType.T_SRM)
+                    && munition.getMunitionType() == AmmoType.M_INFERNO)
                 cost = 13500;
             if ((munition.getAmmoType() == AmmoType.T_LRM)
-                    && munition.hasFlag(AmmoType.M_SEMIGUIDED))
+                    && munition.getMunitionType() == AmmoType.M_SEMIGUIDED)
                 cost *= 3;
             if ((munition.getAmmoType() == AmmoType.T_LRM)
-                    && munition.hasFlag(AmmoType.M_SWARM))
+                    && munition.getMunitionType() == AmmoType.M_SWARM)
                 cost *= 2;
             if ((munition.getAmmoType() == AmmoType.T_LRM)
-                    && munition.hasFlag(AmmoType.M_SWARM_I))
+                    && munition.getMunitionType() == AmmoType.M_SWARM_I)
                 cost *= 3;
             if ((munition.getAmmoType() == AmmoType.T_LRM)
-                    && munition.hasFlag(AmmoType.M_THUNDER))
+                    && munition.getMunitionType() == AmmoType.M_THUNDER)
                 cost *= 2;
             if ((munition.getAmmoType() == AmmoType.T_LRM)
-                    && munition.hasFlag(AmmoType.M_THUNDER_AUGMENTED))
+                    && munition.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED)
                 cost *= 4;
             if ((munition.getAmmoType() == AmmoType.T_LRM)
-                    && munition.hasFlag(AmmoType.M_THUNDER_INFERNO))
+                    && munition.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
                 cost *= 1;
             if ((munition.getAmmoType() == AmmoType.T_LRM)
-                    && munition.hasFlag(AmmoType.M_THUNDER_VIBRABOMB))
+                    && munition.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
                 cost *= 2.5;
             if ((munition.getAmmoType() == AmmoType.T_LRM)
-                    && munition.hasFlag(AmmoType.M_THUNDER_ACTIVE))
+                    && munition.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
                 cost *= 3;
-            if (munition.hasFlag(AmmoType.M_HOMING))
+            if (munition.getMunitionType() == AmmoType.M_HOMING)
                 cost = 15000;
-            if (munition.hasFlag(AmmoType.M_FASCAM))
+            if (munition.getMunitionType() == AmmoType.M_FASCAM)
                 cost *= 1.5;
-            if (munition.hasFlag(AmmoType.M_INFERNO_IV))
+            if (munition.getMunitionType() == AmmoType.M_INFERNO_IV)
                 cost *= 1;
-            if (munition.hasFlag(AmmoType.M_VIBRABOMB_IV))
+            if (munition.getMunitionType() == AmmoType.M_VIBRABOMB_IV)
                 cost *= 2;
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.hasFlag(AmmoType.M_NARC_CAPABLE))
+                    && munition.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                 cost *= 2;
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.hasFlag(AmmoType.M_ARTEMIS_CAPABLE))
+                    && munition.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)
                 cost *= 2;
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.hasFlag(AmmoType.M_LISTEN_KILL))
+                    && munition.getMunitionType() == AmmoType.M_LISTEN_KILL)
                 cost *= 1.1;
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.hasFlag(AmmoType.M_ANTI_TSM))
+                    && munition.getMunitionType() == AmmoType.M_ANTI_TSM)
                 cost *= 2;
             munition.cost = cost;
             

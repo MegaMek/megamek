@@ -180,6 +180,8 @@ public class WeaponAttackAction
             && weapon.curMode().equals("Indirect");
         boolean isInferno =
             ( atype != null &&
+            ((atype.getAmmoType() == AmmoType.T_SRM)
+            || (atype.getAmmoType() == AmmoType.T_BA_INFERNO)) &&
               atype.getMunitionType() == AmmoType.M_INFERNO ) ||
             ( isWeaponInfantry &&
               wtype.hasFlag(WeaponType.F_INFERNO) );
@@ -251,35 +253,29 @@ public class WeaponAttackAction
         final int ttype = target.getTargetType();
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
             //check artillery is targetted appropriately for its ammo
-            int munition = AmmoType.M_STANDARD;
+            long munition = AmmoType.M_STANDARD;
             if(atype != null) {
                 munition = atype.getMunitionType();
             }
-            switch(munition) {
-            case AmmoType.M_FASCAM:
+            if (munition == AmmoType.M_FASCAM) {
                 if(ttype != Targetable.TYPE_HEX_FASCAM) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "FASCAM ammo must be used with target hex (FASCAM)");
                 }
-                break;
-            case AmmoType.M_INFERNO_IV:
+            } else if (munition == AmmoType.M_INFERNO_IV) {
                 if(ttype != Targetable.TYPE_HEX_INFERNO_IV) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Inferno IV ammo must be used with target hex (Inferno IV)");
                 }
-                break;
-            case AmmoType.M_VIBRABOMB_IV:
+            } else if (munition == AmmoType.M_VIBRABOMB_IV) {
                 if(ttype != Targetable.TYPE_HEX_VIBRABOMB_IV) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Vibrabomb IV ammo must be used with target hex (Vibrabomb IV)");
                 }
-                break;
-            case AmmoType.M_HOMING:
+            } else if (munition == AmmoType.M_HOMING) {
                 //target type checked later because its different for direct/indirect (BMRr p77 on board arrow IV)
                 isHoming = true;
-                break;
-            default:
+            } else {
                 if(ttype != Targetable.TYPE_HEX_ARTILLERY) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
                 }
-                break;
             }
         } else {
             //weapon is not artillery

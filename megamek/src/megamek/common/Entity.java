@@ -2640,7 +2640,7 @@ public abstract class Entity
      * @param type the <code>int</code> type of iNarc pod.
      * @return <code>true</code> if we have.
      */
-    public boolean isINarcedWith( int type ) {
+    public boolean isINarcedWith( long type ) {
         for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
             INarcPod pod = (INarcPod)e.nextElement();
             if (pod.getType() == type)
@@ -3610,8 +3610,9 @@ public abstract class Entity
         for (Enumeration j = getAmmo(); j.hasMoreElements() && !found;) {
             Mounted amounted = (Mounted)j.nextElement();
             AmmoType atype = (AmmoType)amounted.getType();
-            if ( atype.getMunitionType() == AmmoType.M_INFERNO &&
-                 amounted.getShotsLeft() > 0 ) {
+            if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_BA_INFERNO))
+                    && atype.getMunitionType() == AmmoType.M_INFERNO
+                    && amounted.getShotsLeft() > 0 ) {
                 found = true;
             }
         }

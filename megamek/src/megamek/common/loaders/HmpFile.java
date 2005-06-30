@@ -1542,7 +1542,7 @@ public class HmpFile
             try {
                 hmpFile = new HmpFile(new FileInputStream(args[i]));
             } catch (Exception e) {
-                System.out.println(e);
+                e.printStackTrace();
                 return;
             }
             filename = filename.substring(0, filename.lastIndexOf(".hmp"));
@@ -1552,7 +1552,7 @@ public class HmpFile
                 out = new BufferedWriter(new FileWriter(new File(filename)));
                 out.write(hmpFile.getMtf());
             } catch (Exception e) {
-                System.out.println(e);
+                e.printStackTrace();
             } finally {
                 if (out != null) {
                     try {

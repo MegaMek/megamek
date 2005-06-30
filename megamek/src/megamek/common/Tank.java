@@ -772,7 +772,7 @@ public class Tank
     }
     
     public double getCost() {
-        System.out.println(getDisplayName());
+//         System.out.println(getDisplayName()); // killme
         double cost = 0;
         double rating = weight*getOriginalWalkMP() - getSuspensionFactor();
         double engineCost = 0;

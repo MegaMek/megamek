@@ -123,6 +123,7 @@ v0.29.82 (CVS)
     munition types.
 + Force ammo type check when checking against munition types in almost all
     places throughout the code.
++ Bug 1224336: /reset didn't clear out artillery attacks.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

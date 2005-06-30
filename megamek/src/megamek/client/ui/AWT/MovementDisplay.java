@@ -706,7 +706,10 @@ public class MovementDisplay
             // check if we used more MPs than the Mech/Vehicle would have in normal gravity
             if (!i.hasMoreElements() && !firstStep) {
                 if ((entity instanceof Mech) || (entity instanceof VTOL)) {
-                    if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_RUN)) {
+                    if ((step.getMovementType() == IEntityMovementType.MOVE_WALK)
+                            || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
+                            || (step.getMovementType() == IEntityMovementType.MOVE_RUN)
+                            || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
                         if (step.getMpUsed() > entity.getRunMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -722,7 +725,11 @@ public class MovementDisplay
                         }    
                       }
                 } else if (entity instanceof Tank) {
-                    if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_RUN)) {
+                    if ((step.getMovementType() == IEntityMovementType.MOVE_WALK)
+                            || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
+                            || (step.getMovementType() == IEntityMovementType.MOVE_RUN)
+                            || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
+
                         // For Tanks, we need to check if the tank had more MPs because it was moving along a road
                         if (step.getMpUsed() > entity.getRunMP(false) && !step.isOnlyPavement()) {
                             rollTarget = entity.checkMovedTooFast(step);

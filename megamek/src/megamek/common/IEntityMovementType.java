@@ -25,5 +25,6 @@ public interface IEntityMovementType {
     public static final int MOVE_WALK = 1;
     public static final int MOVE_RUN = 2;
     public static final int MOVE_JUMP = 3;
-
+    public static final int MOVE_VTOL_WALK = 4;
+    public static final int MOVE_VTOL_RUN = 5;
 }

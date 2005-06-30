@@ -4211,9 +4211,12 @@ implements Runnable, ConnectionHandler {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             // build up heat from movement
-            if (entity.moved == IEntityMovementType.MOVE_WALK) {
+            if (entity.moved == IEntityMovementType.MOVE_WALK
+                    || entity.moved == IEntityMovementType.MOVE_VTOL_WALK) {
                 entity.heatBuildup += 1;
-            } else if (entity.moved == IEntityMovementType.MOVE_RUN || entity.moved == IEntityMovementType.MOVE_SKID) {
+            } else if (entity.moved == IEntityMovementType.MOVE_RUN
+                    || entity.moved == IEntityMovementType.MOVE_VTOL_RUN
+                    || entity.moved == IEntityMovementType.MOVE_SKID) {
                 entity.heatBuildup += 2;
             } else if (entity.moved == IEntityMovementType.MOVE_JUMP) {
                 entity.heatBuildup += Math.max(3, entity.delta_distance);
@@ -9180,7 +9183,10 @@ implements Runnable, ConnectionHandler {
                 phaseReport.append("fails.\n");
                 // walking and running, 1 damage per MP used more than we would
                 // have normally
-                if (entity.moved == IEntityMovementType.MOVE_WALK || entity.moved == IEntityMovementType.MOVE_RUN) {
+                if (entity.moved == IEntityMovementType.MOVE_WALK
+                        || entity.moved == IEntityMovementType.MOVE_VTOL_WALK
+                        || entity.moved == IEntityMovementType.MOVE_RUN
+                        || entity.moved == IEntityMovementType.MOVE_VTOL_RUN) {
                     if (entity instanceof Mech) {
                         int j = entity.mpUsed;
                         int damage = 0;
@@ -14253,7 +14259,10 @@ implements Runnable, ConnectionHandler {
         PilotingRollData rollTarget;
         if (game.getOptions().floatOption("gravity") != 1) {
             if (entity instanceof Mech) {
-                if ((step.getMovementType() == IEntityMovementType.MOVE_WALK) || (step.getMovementType() == IEntityMovementType.MOVE_RUN)) {
+                if (step.getMovementType() == IEntityMovementType.MOVE_WALK
+                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
+                        || step.getMovementType() == IEntityMovementType.MOVE_RUN
+                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We moved too fast, let's make PSR to see if we get damage
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
@@ -14271,7 +14280,9 @@ implements Runnable, ConnectionHandler {
                 }
             } else if (entity instanceof Tank) {
                 if (step.getMovementType() == IEntityMovementType.MOVE_WALK
-                    || step.getMovementType() == IEntityMovementType.MOVE_RUN) {
+                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
+                        || step.getMovementType() == IEntityMovementType.MOVE_RUN
+                        || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
                     // For Tanks, we need to check if the tank had
                     // more MPs because it was moving along a road.
                     if ((step.getMpUsed() > cachedMaxMPExpenditure) && !step.isOnlyPavement()) {

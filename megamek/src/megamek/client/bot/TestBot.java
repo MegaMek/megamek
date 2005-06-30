@@ -199,11 +199,11 @@ public class TestBot extends BotClient {
         
         // If this unit has a jammed RAC, and it has only walked,
         // add an unjam action
-        
         if (min != null){
             if (min.getLastStep() != null){
             if (min.getCEntity().entity.canUnjamRAC()){
                 if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK) ||
+                    (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) ||
                     (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
                     // Cycle through all available weapons, only unjam if the jam(med)
                     // RACs count for a significant portion of possible damage

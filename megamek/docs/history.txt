@@ -102,6 +102,8 @@ v0.29.82 (CVS)
 + Minor feature - skip blank button panels on MovementDisplay.
 + Bug 1224335: VTOL default wreck now shows.
 + Commented out line in Tank#getCost that output the tank's name.
++ Make sure cvsdev-package and jar tasks produce identical MegaMek.jar files.
++ Don't need properties directory in megamek-code-*.jar files.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

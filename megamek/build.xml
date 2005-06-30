@@ -38,7 +38,7 @@
 
   
   <!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
-  <pathconvert pathsep=" " property="libjars">
+  <pathconvert pathsep=" " property="jarclasspath">
      <path>
         <!-- We'll include the jars in the "lib" directory -->
         <fileset dir="lib/">
@@ -90,9 +90,9 @@
      <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
         <fileset dir="${propdir}" includes="**/*.properties"/>
         <manifest>
-                <attribute name="Built-By" value="${user.name}"/>
-	    	<attribute name="Class-Path" value=". ${libjars}"/>
-    		<attribute name="Main-Class" value="${jarmainclass}"/>
+            <attribute name="Built-By" value="${user.name}"/>
+            <attribute name="Class-Path" value=". ${jarclasspath}"/>
+            <attribute name="Main-Class" value="${jarmainclass}"/>
         </manifest>
     </jar>
   </target>
@@ -134,7 +134,7 @@
   </target>
 
   <target name="packageCode" description="Generates code package only" depends="cvsdev-get, cvsdev-build">
-    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-code-${DSTAMP}.zip" includes="${jarfile} ${propdir}/ history.txt license.txt MegaMek.bat"/>
+    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-code-${DSTAMP}.zip" includes="${jarfile} history.txt license.txt MegaMek.bat"/>
   </target>
 
   <target name="packageMedia" description="Generates media package only" depends="cvsdev-get">
@@ -189,9 +189,10 @@
     <!-- jar -->
     <echo message="generating Jar in: ${basedir}/${cvsmaindir}"/>
     <jar basedir="${cvsbuilddir}" jarfile="${cvsmaindir}/${jarfile}">
+        <fileset dir="${propdir}" includes="**/*.properties"/>
         <manifest>
             <attribute name="Built-By" value="${user.name}"/>
-            <attribute name="Class-Path" value="${jarclasspath}"/>
+            <attribute name="Class-Path" value=". ${jarclasspath}"/>
             <attribute name="Main-Class" value="${jarmainclass}"/>
         </manifest>
     </jar>

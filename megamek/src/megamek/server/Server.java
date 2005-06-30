@@ -5642,12 +5642,16 @@ implements Runnable, ConnectionHandler {
       Infantry platoon = null;
       final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
       ToHitData toHit = wr.toHit;
-      boolean bInferno = (usesAmmo &&
-                          atype.getMunitionType() == AmmoType.M_INFERNO);
+      boolean bInferno = (usesAmmo
+                        && ((atype.getAmmoType() == AmmoType.T_SRM)
+                        || (atype.getAmmoType() == AmmoType.T_BA_INFERNO))
+                        && atype.getMunitionType() == AmmoType.M_INFERNO);
       boolean bFragmentation = (usesAmmo
                                 && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
                                 && atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
-      boolean bAcidHead = (usesAmmo && atype.getMunitionType() == AmmoType.M_AX_HEAD);
+      boolean bAcidHead = (usesAmmo
+                            && atype.getAmmoType() == AmmoType.T_SRM
+                            && atype.getMunitionType() == AmmoType.M_AX_HEAD);
       boolean bFlechette = (usesAmmo && (atype.getAmmoType() == AmmoType.T_AC)
                             && atype.getMunitionType() == AmmoType.M_FLECHETTE);
       boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
@@ -6349,23 +6353,19 @@ implements Runnable, ConnectionHandler {
                 phaseReport.append("hits, but doesn't do anything.\n");
             } else {
                 INarcPod pod = null;
-                switch (atype.getMunitionType()) {
-                case AmmoType.M_ECM:
+                if (atype.getMunitionType() == AmmoType.M_ECM) {
                     pod = new INarcPod( ae.getOwner().getTeam(),
                                         INarcPod.ECM );
                     phaseReport.append("hits.  ECM Pod attached.\n");
-                    break;
-                case AmmoType.M_HAYWIRE:
+                } else if (atype.getMunitionType() == AmmoType.M_HAYWIRE) {
                     pod = new INarcPod( ae.getOwner().getTeam(),
                                         INarcPod.HAYWIRE );
                     phaseReport.append("hits.  Haywire Pod attached.\n");
-                    break;
-                case AmmoType.M_NEMESIS:
+                } else if (atype.getMunitionType() == AmmoType.M_NEMESIS) {
                     pod = new INarcPod( ae.getOwner().getTeam(),
                                         INarcPod.NEMESIS );
                     phaseReport.append("hits.  Nemesis Pod attached.\n");
-                    break;
-                default:
+                } else {
                     pod = new INarcPod( ae.getOwner().getTeam(),
                                         INarcPod.HOMING );
                     phaseReport.append("hits.  Homing Pod attached.\n");
@@ -11211,9 +11211,11 @@ implements Runnable, ConnectionHandler {
         }
 
         // Inferno ammo causes heat buildup as well as the damage
-        if ( mounted.getType() instanceof AmmoType &&
-             ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO &&
-              mounted.getShotsLeft() > 0) {
+        if (mounted.getType() instanceof AmmoType
+                && ((((AmmoType)mounted.getType()).getAmmoType() == AmmoType.T_SRM)
+                || (((AmmoType)mounted.getType()).getAmmoType() == AmmoType.T_BA_INFERNO))
+                && ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO
+                && mounted.getShotsLeft() > 0) {
             en.heatBuildup += 30;
         }
 

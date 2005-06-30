@@ -1613,7 +1613,9 @@ public class Compute
 
                                 // Inferno SRMs work better against overheating Meks that are not/almost not on fire,
                                 // and against vehicles and protos if allowed by game option
-                                if (abin_type.getMunitionType() == AmmoType.M_INFERNO){
+                                if (((abin_type.getAmmoType() == AmmoType.T_SRM)
+                                        || (abin_type.getAmmoType() == AmmoType.T_BA_INFERNO))
+                                        && abin_type.getMunitionType() == AmmoType.M_INFERNO){
                                     ammo_multiple = 0.5;
                                     if (target instanceof Mech){
                                         if ((target.infernos.getTurnsLeftToBurn() < 4) && (target.heat >= 5)){
@@ -1657,8 +1659,9 @@ public class Compute
                                     // make it a priority
                                     // Checking for actual ammo types carried would be nice, but can't be sure of exact loads
                                     // when "true" double blind is implemented
-                                    if ((abin_type.getMunitionType() == AmmoType.M_ECM) &&
-                                        !(target instanceof Infantry)) {
+                                    if ((abin_type.getAmmoType() == AmmoType.T_INARC)
+                                            && (abin_type.getMunitionType() == AmmoType.M_ECM)
+                                            &&!(target instanceof Infantry)) {
                                         if (!target.isINarcedWith(AmmoType.M_ECM)) {
                                             if (!(target.getC3MasterId() == Entity.NONE) ||
                                                 target.hasC3M() || target.hasC3MM() ||
@@ -1680,8 +1683,9 @@ public class Compute
 
                                     // iNarc Nemesis doesn't really do damage, but if the target is not infantry and doesn't have
                                     // one give it a try; make fast units a priority because they are usually out front
-                                    if ((abin_type.getMunitionType() == AmmoType.M_NEMESIS) && 
-                                            !(target instanceof Infantry)){
+                                    if ((abin_type.getAmmoType() == AmmoType.T_INARC)
+                                            && (abin_type.getMunitionType() == AmmoType.M_NEMESIS)
+                                            && !(target instanceof Infantry)){
                                         if (!target.isINarcedWith(AmmoType.M_NEMESIS)) {
                                             ex_damage = (double) (target.getOriginalWalkMP() + target.getOriginalJumpMP())/2;
                                         } else {

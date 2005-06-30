@@ -872,6 +872,7 @@ public class WeaponAttackAction
                     toHit.setCover(los.getTargetCover());
                 } else {
                     toHit.setHitTable(ToHitData.HIT_PUNCH);
+                    toHit.setCover(LosEffects.COVER_HORIZONTAL);
                 }
             }
         }

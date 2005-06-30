@@ -39,7 +39,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_CASE              = 0x0040;
     public static final int     F_MASC              = 0x0080;
     public static final int     F_TSM               = 0x0100;
-    public static final int     F_C3M               = 0x0200;
+    //public static final int     F_C3M               = 0x0200;
     public static final int     F_C3S               = 0x0400;
     public static final int     F_C3I               = 0x0800;
     public static final int     F_ARTEMIS           = 0x1000;
@@ -279,7 +279,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLMASC());
         EquipmentType.addType(createTSM());
         EquipmentType.addType(createC3S());
-        EquipmentType.addType(createC3M());
+        //EquipmentType.addType(createC3M());
         EquipmentType.addType(createC3I());
         EquipmentType.addType(createISArtemis());
         EquipmentType.addType(createCLArtemis());
@@ -534,24 +534,6 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.cost = 250000;
         misc.flags |= F_C3S;
-        misc.bv = 0;
-        
-        return misc;
-    }
-
-    public static MiscType createC3M() {
-        MiscType misc = new MiscType();
-        
-        misc.name = "C3 Master";
-        misc.setInternalName("ISC3MasterUnit");
-        misc.addLookupName("IS C3 Computer");
-        misc.addLookupName("ISC3MasterComputer");
-        misc.tonnage = 5;
-        misc.criticals = 5;
-        misc.hittable = true;
-        misc.spreadable = false;
-        misc.cost = 1500000;
-        misc.flags |= F_C3M;
         misc.bv = 0;
         
         return misc;

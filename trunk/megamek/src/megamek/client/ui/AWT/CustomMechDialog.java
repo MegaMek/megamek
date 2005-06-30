@@ -497,7 +497,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 // do NOT allow Clans to use IS-only ammo.
                 // N.B. play bit-shifting games to allow "incendiary"
                 //      to be combined to other munition types.
-                int muniType = atCheck.getMunitionType();
+                long muniType = atCheck.getMunitionType();
                 muniType &= ~AmmoType.M_INCENDIARY_LRM;
                 if ( !clientgui.getClient().game.getOptions().booleanOption("clan_ignore_eq_limits") //$NON-NLS-1$
                      && entity.isClan()

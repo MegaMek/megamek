@@ -71,6 +71,7 @@ Inner Sphere Level 1 Tech:
   Lower Leg Actuator
   Foot Actuator
   Heat Sink
+  Vacuum Protection
 
 Inner Sphere Level 2 Tech: [Note: All IS Level 1 tech is present in IS
  Weapons:                   Level 2 play and won't be posted again by

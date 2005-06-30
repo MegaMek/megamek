@@ -62,6 +62,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_SWORD             = 0x40000000;
     public static final int   F_FERRO_FIBROUS_PROTO = 0x80000000;
     public static final int   F_ENDO_STEEL_PROTO    = 0x8000;
+    public static final int     F_VACUUM_PROTECTION = 0x0200;
     public static final int     T_TARGSYS_UNKNOWN           = -1;
     public static final int     T_TARGSYS_STANDARD          = 0;
     public static final int     T_TARGSYS_TARGCOMP          = 1;
@@ -159,8 +160,9 @@ public class MiscType extends EquipmentType {
             double tons = 0.0;
             tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
             return (float) tons;
+        } else if (hasFlag(F_VACUUM_PROTECTION)) {
+            return (float)Math.ceil(entity.getWeight() / 10.0);
         }
-
         // okay, I'm out of ideas
         return 1.0f;
     }
@@ -269,6 +271,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createGirderClub());
         EquipmentType.addType(createLimbClub());
         EquipmentType.addType(createHatchet());
+        EquipmentType.addType(createVacuumProtection());
         
         // Start of Level2 stuff
         EquipmentType.addType(createISDoubleHeatSink());
@@ -1121,6 +1124,20 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = false;
         misc.flags |= F_SEARCHLIGHT;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createVacuumProtection() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Vacuum Protection";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags |= F_VACUUM_PROTECTION;
         misc.bv = 0;
         
         return misc;

@@ -55,6 +55,7 @@ public class WeaponType extends EquipmentType {
     public static final int     F_BOOST_SWARM   = 0x02000000; // boost leg & swarm
     public static final int     F_INFANTRY_ONLY = 0x04000000; // only target infantry
     public static final int     F_TAG           = 0x08000000; // Target acquisition gear
+    public static final int     F_C3M           = 0x10000000; // C3 Master with Target acquisition gear
 
     protected RangeType range;
     protected int   heat;
@@ -262,6 +263,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLightTAG());
         EquipmentType.addType(createCLTAG());
         EquipmentType.addType(createCLLightTAG());
+        
 
         // Start of Inner Sphere Level3 weapons
         EquipmentType.addType(createISLargeXPulseLaser());
@@ -470,6 +472,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createBAVibroClaws1() );
         EquipmentType.addType( createBAVibroClaws2() );
         EquipmentType.addType( createPhalanxSRM4() );
+        
+        // hack for C3 Master TAG
+        EquipmentType.addType( createC3M() );
 
     }
 
@@ -8051,6 +8056,34 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "1-shot", "2-shot", "3-shot", "4-shot" };
         weapon.setModes( modes );
 
+        return weapon;
+    }
+    
+    public static WeaponType createC3M() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "C3 Master with TAG";
+        weapon.setInternalName("ISC3MasterUnit");
+        weapon.addLookupName("IS C3 Computer");
+        weapon.addLookupName("ISC3MasterComputer");
+        weapon.tonnage = 5;
+        weapon.criticals = 5;
+        weapon.hittable = true;
+        weapon.spreadable = false;
+        weapon.cost = 1500000;
+        weapon.bv = 0;
+        weapon.flags |= F_C3M | F_TAG | F_NO_FIRES;
+        weapon.heat = 0;
+        weapon.damage = 0;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.extremeRange = 20;
+        String[] modes = { "1-shot", "2-shot", "3-shot", "4-shot" };
+        weapon.setModes( modes );
+        
         return weapon;
     }
 

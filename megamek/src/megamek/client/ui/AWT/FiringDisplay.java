@@ -29,6 +29,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
+import megamek.common.LosEffects;
 
 public class FiringDisplay 
     extends StatusBarPhaseDisplay
@@ -815,7 +816,7 @@ public class FiringDisplay
                 toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
                 clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
               }
-              ash.setPartialCover(toHit.getHitTable() == ToHitData.HIT_PUNCH);
+              ash.setPartialCover(toHit.getCover());
             } else {
               toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
               clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
@@ -1216,7 +1217,7 @@ public class FiringDisplay
   private class AimedShotHandler implements ActionListener, ItemListener {  
     private int aimingAt = Mech.LOC_NONE;
     private int aimingMode = IAimingModes.AIM_MODE_NONE;
-    private boolean partialCover = false;
+    private int partialCover = LosEffects.COVER_NONE;
 
     private boolean lockedLocation = false;
     private int lockedLoc = Mech.LOC_NONE;
@@ -1274,17 +1275,36 @@ public class FiringDisplay
         mask[i] = true;
       }
 
-      // Can't target legs if target  has partial cover.
-      if (partialCover) {
-        mask[Mech.LOC_RLEG] = false;
-        mask[Mech.LOC_LLEG] = false;
+      int side = Compute.targetSideTable(ce(), target);
+
+      // remove locations hidden by partial cover
+      if(side == ToHitData.SIDE_FRONT) {
+        if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) mask[Mech.LOC_RLEG] = false;
+        if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) mask[Mech.LOC_LLEG] = false;
+        if ((partialCover & LosEffects.COVER_LEFT) != 0) {
+            mask[Mech.LOC_RARM] = false;
+            mask[Mech.LOC_RT] = false;
+        }
+        if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
+            mask[Mech.LOC_LARM] = false;
+            mask[Mech.LOC_LT] = false;
+        }
+      } else {
+        if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) mask[Mech.LOC_LLEG] = false;
+        if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) mask[Mech.LOC_RLEG] = false;
+        if ((partialCover & LosEffects.COVER_LEFT) != 0) {
+            mask[Mech.LOC_LARM] = false;
+            mask[Mech.LOC_LT] = false;
+        }
+        if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
+            mask[Mech.LOC_RARM] = false;
+            mask[Mech.LOC_RT] = false;
+        }
       }
 
       if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
         // Can't target head with Clan targeting computer.
         mask[Mech.LOC_HEAD] = false;
-
-        int side = Compute.targetSideTable(ce(), target);
 
         switch (side) {
           case (ToHitData.SIDE_RIGHT) :
@@ -1339,7 +1359,7 @@ public class FiringDisplay
       }
     }
 
-    public void setPartialCover(boolean partialCover) {
+    public void setPartialCover(int partialCover) {
       this.partialCover = partialCover;
     }
 

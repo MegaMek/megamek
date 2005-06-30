@@ -62,7 +62,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base,"autosave_msg", true);  //$NON-NLS-1$
         addOption(base,"paranoid_autosave", false);  //$NON-NLS-1$
         addOption(base,"very_paranoid_autosave", false);  //$NON-NLS-1$
-        addOption(base,"maps_include_subdir", false);
+        addOption(base,"maps_include_subdir", false); //$NON-NLS-1$
         
         OptionGroup level2 = addGroup("level2"); //$NON-NLS-1$
         addOption(level2,"flamer_heat", true); //$NON-NLS-1$
@@ -98,9 +98,9 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level3,"maxtech_glancing_blows", false); //$NON-NLS-1$
         addOption(level3,"maxtech_burst", false); //$NON-NLS-1$
         addOption(level3,"maxtech_heat", false); //$NON-NLS-1$
-        addOption(level3,"maxtech_mulekicks", false);
-        addOption(level3,"maxtech_partial_cover", false);
-        addOption(level3,"allow_level_3_targsys", false);
+        addOption(level3,"maxtech_mulekicks", false); //$NON-NLS-1$
+        addOption(level3,"maxtech_partial_cover", false); //$NON-NLS-1$
+        addOption(level3,"allow_level_3_targsys", false); //$NON-NLS-1$ 
 
         OptionGroup ruleBreakers = addGroup("ruleBreakers"); //$NON-NLS-1$
         addOption(ruleBreakers,"no_tac", false); //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"auto_spot", false); //$NON-NLS-1$
         addOption(ruleBreakers,"margin_scatter_distance", false); //$NON-NLS-1$
         addOption(ruleBreakers,"allow_illegal_units", false); //$NON-NLS-1$
-        addOption(ruleBreakers,"ejected_pilots_flee", false);
+        addOption(ruleBreakers,"ejected_pilots_flee", false); //$NON-NLS-1$
         addOption(ruleBreakers,"a4homing_target_area", false); //$NON-NLS-1$
     }
 

@@ -5903,7 +5903,7 @@ implements Runnable, ConnectionHandler {
         // special case TAG.  No damage, but target is tagged until end of turn
         if (wtype.hasFlag(WeaponType.F_TAG)) {
             if(entityTarget == null) {
-                phaseReport.append("does nothing (didnt target a unit).\n");
+                phaseReport.append("does nothing (didn't target a unit).\n");
             } else {
                 int priority = 1;
                 EquipmentMode mode = (weapon.curMode());

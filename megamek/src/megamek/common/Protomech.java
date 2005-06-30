@@ -927,4 +927,8 @@ public class Protomech
         // There should be an implementation here!
         return 0;
     }
+
+    public boolean doomedInVacuum() {
+        return false;
+    }
 }

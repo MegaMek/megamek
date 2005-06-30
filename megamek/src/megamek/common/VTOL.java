@@ -327,4 +327,8 @@ public class VTOL extends Tank {
         return null;
     }
 
+    public boolean doomedInVacuum() {
+        // I think this is true...
+        return true;
+    }
 }

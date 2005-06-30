@@ -2096,4 +2096,8 @@ public abstract class Mech
         }
         return false;
     }
+
+    public boolean doomedInVacuum() {
+        return false;
+    }
 }

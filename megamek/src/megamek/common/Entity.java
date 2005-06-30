@@ -4465,4 +4465,6 @@ public abstract class Entity
     public boolean removePartialCoverHits(int location, int cover, int side) {
         return false;
     }
+
+    public abstract boolean doomedInVacuum();
 }

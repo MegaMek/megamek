@@ -316,6 +316,9 @@ public class Infantry
             default :
                 return "Unknown!";
             }
+        case IEntityMovementType.MOVE_VTOL_WALK:
+        case IEntityMovementType.MOVE_VTOL_RUN:
+            return "Flew";
         case IEntityMovementType.MOVE_JUMP :
             return "Jumped";
         default :

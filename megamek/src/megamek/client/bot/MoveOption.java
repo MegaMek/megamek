@@ -210,9 +210,11 @@ public class MoveOption extends MovePath implements Cloneable {
         int move = 0;
         switch (last.getMovementType()) {
             case IEntityMovementType.MOVE_WALK :
+            case IEntityMovementType.MOVE_VTOL_WALK :
                 move = 1;
                 break;
             case IEntityMovementType.MOVE_RUN :
+            case IEntityMovementType.MOVE_VTOL_RUN :
                 move = 2;
                 break;
             case IEntityMovementType.MOVE_JUMP :

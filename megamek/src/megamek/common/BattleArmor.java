@@ -324,6 +324,8 @@ public class BattleArmor
             return "None";
         case IEntityMovementType.MOVE_WALK :
         case IEntityMovementType.MOVE_RUN :
+        case IEntityMovementType.MOVE_VTOL_WALK :
+        case IEntityMovementType.MOVE_VTOL_RUN :
             return "Walked";
         case IEntityMovementType.MOVE_JUMP :
             return "Jumped";
@@ -341,8 +343,10 @@ public class BattleArmor
         case IEntityMovementType.MOVE_NONE :
             return "N";
         case IEntityMovementType.MOVE_WALK :
+        case IEntityMovementType.MOVE_VTOL_WALK :
             return "W";
         case IEntityMovementType.MOVE_RUN :
+        case IEntityMovementType.MOVE_VTOL_RUN :
             return "R";
         case IEntityMovementType.MOVE_JUMP :
             return "J";

@@ -334,8 +334,7 @@ public class TilesetManager {
         Image base = mechTileset.imageFor(entity, comp);
         Image wreck = null;
         if ( !(entity instanceof Infantry) &&
-             !(entity instanceof Protomech) &&
-             !(entity instanceof VTOL) ) {
+             !(entity instanceof Protomech)) {
             wreck = wreckTileset.imageFor(entity, comp);
         }
         Player player = entity.getOwner();

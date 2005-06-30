@@ -2041,7 +2041,7 @@ public abstract class Entity
         if (isShutDown() || isOffBoard()) return false;
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3M)
+            if (m.getType() instanceof WeaponType && m.getType().hasFlag(WeaponType.F_C3M)
                     && !m.isDestroyed() && !m.isBreached()) {
                 // If this unit is configured as a company commander,
                 // and if this computer is the company master, then
@@ -2068,15 +2068,15 @@ public abstract class Entity
             while ( C3CompanyMasterIndex == LOC_DESTROYED &&
                     e.hasMoreElements() ) {
                 Mounted m = (Mounted)e.nextElement();
-                if ( m.getType() instanceof MiscType &&
-                     m.getType().hasFlag(MiscType.F_C3M) &&
+                if ( m.getType() instanceof WeaponType &&
+                     m.getType().hasFlag(WeaponType.F_C3M) &&
                      !m.isDestroyed() && !m.isBreached() ) {
                     // Now look for the company command master.
                     while ( C3CompanyMasterIndex == LOC_DESTROYED &&
                             e.hasMoreElements() ) {
                         m = (Mounted)e.nextElement();
-                        if ( m.getType() instanceof MiscType &&
-                             m.getType().hasFlag(MiscType.F_C3M) &&
+                        if ( m.getType() instanceof WeaponType &&
+                             m.getType().hasFlag(WeaponType.F_C3M) &&
                              !m.isDestroyed() && !m.isBreached() ) {
                             // Found the comany command master
                             this.C3CompanyMasterIndex = getEquipmentNum( m );

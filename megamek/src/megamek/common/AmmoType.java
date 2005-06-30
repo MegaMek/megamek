@@ -261,6 +261,7 @@ public class AmmoType extends EquipmentType {
         Vector acAmmos  = new Vector(4);
         Vector arrowAmmos = new Vector(4);
         Vector clanArrowAmmos = new Vector(4);
+        Vector thumperAmmos = new Vector(2);
         Vector artyAmmos = new Vector(6);
         Vector clanArtyAmmos = new Vector(6);
         Vector munitions = new Vector();
@@ -358,7 +359,7 @@ public class AmmoType extends EquipmentType {
         artyAmmos.addElement( base );
         EquipmentType.addType( base );
         base = createISThumperAmmo();
-        artyAmmos.addElement( base );
+        thumperAmmos.addElement( base );
         EquipmentType.addType( base );
         base = createISArrowIVAmmo();
         arrowAmmos.addElement( base );
@@ -759,6 +760,21 @@ public class AmmoType extends EquipmentType {
         munitions.removeAllElements();
         munitions.addElement( new MunitionMutator( "Smoke",
                                                    1, M_SMOKE, TechConstants.T_IS_LEVEL_2 ) );
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        baseTypes = thumperAmmos.elements();
+        while ( baseTypes.hasMoreElements() ) {
+            base = (AmmoType) baseTypes.nextElement();
+            mutators = munitions.elements();
+            while ( mutators.hasMoreElements() ) {
+                mutator =  (MunitionMutator) mutators.nextElement();
+                EquipmentType.addType( mutator.createMunitionType( base ) );
+            }
+        }
+
+        // extra level 3 ammo for sniper & long tom but not thumper
+        munitions.addElement( new MunitionMutator( "Copperhead",
+                                                   1, M_HOMING, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.

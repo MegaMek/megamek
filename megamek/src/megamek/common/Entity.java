@@ -4468,5 +4468,23 @@ public abstract class Entity
         return false;
     }
 
+    /** returns true if this is a valid target for Arrow IV homing
+     *  which was aimed at hex (tc)
+    */
+    public boolean isOnSameSheet(Coords tc) {
+        if(game.getOptions().booleanOption("a4homing_target_area")) {
+            //unofficial rule which may be better with odd sized boards
+            if(tc.distance(getPosition()) <= 8)
+                return true;
+            return false;
+        } else {
+            //using FASA map sheets
+            if((tc.x / 16 == getPosition().x / 16) && (tc.y / 17 == getPosition().y / 17)) {
+                return true;
+            }
+            return false;
+        }
+    }
+
     public abstract boolean doomedInVacuum();
 }

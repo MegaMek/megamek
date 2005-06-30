@@ -45,6 +45,7 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.TagInfo;
 
 /**
  * The game class is the root of all data about the game in progress.
@@ -121,6 +122,7 @@ public class Game implements Serializable, IGame
     
     private int lastEntityId;
     
+    private Vector tagInfoForTurn = new Vector();
     
     /**
      * Constructor
@@ -2354,5 +2356,34 @@ public class Game implements Serializable, IGame
         }
     }
 
+    /**
+     * Returns this turn's tag information
+     */
+    public Vector getTagInfo() {
+        return tagInfoForTurn;
+    }
+
+    public void addTagInfo(TagInfo info) {
+        tagInfoForTurn.addElement(info);
+    }
+
+    public void updateTagInfo(TagInfo info, int index) {
+        tagInfoForTurn.set(index, info);
+    }
+
+    public void resetTagInfo() {
+        tagInfoForTurn.removeAllElements();
+    }
     
+    public void clearTagInfoShots(Entity ae, Coords tc) {
+        for(int i=0;i<tagInfoForTurn.size();i++) {
+            TagInfo info = (TagInfo)tagInfoForTurn.elementAt(i);
+            Entity attacker = getEntity(info.attackerId);
+            Entity target = getEntity(info.targetId);
+            if(!ae.isEnemyOf(attacker) && target.isOnSameSheet(tc)) {
+                info.shots = 0;
+                tagInfoForTurn.set(i, info);
+            }
+        }
+    }
 }

@@ -272,9 +272,7 @@ public class WeaponAttackAction
                 }
                 break;
             case AmmoType.M_HOMING:
-                if(ttype != Targetable.TYPE_ENTITY) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Homing ammo must be used to target an entity");
-                }
+                //target type checked later because its different for direct/indirect (BMRr p77 on board arrow IV)
                 isHoming = true;
                 break;
             default:
@@ -377,6 +375,12 @@ public class WeaponAttackAction
                                   "Can not target that unit type with Inferno rounds." );
         }
     
+        // The TAG system cannot target infantry.
+        if( isTAG && te instanceof Infantry ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Can not target infantry with TAG." );
+        }
+
         // Can't raise the heat of infantry or tanks.
         if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
              wtype.hasModes() &&
@@ -615,7 +619,11 @@ public class WeaponAttackAction
           }
 
           if(isHoming) {
-            return new ToHitData(4, "Homing shot (will miss if TAG misses)");
+              if(te == null || te.getTaggedBy() == -1) {
+                  // see BMRr p77 on board arrow IV
+                  return new ToHitData(ToHitData.IMPOSSIBLE, "On board homing shot must target a unit tagged this turn");
+              }
+            return new ToHitData(4, "Homing shot");
           }
 
           if(game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
@@ -634,6 +642,9 @@ public class WeaponAttackAction
             }
 
             if(isHoming) {
+                if(ttype != Targetable.TYPE_HEX_ARTILLERY) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Off board homing shot must target a map sheet");
+                }
                 return new ToHitData(4, "Homing shot (will miss if TAG misses)");
             }
 

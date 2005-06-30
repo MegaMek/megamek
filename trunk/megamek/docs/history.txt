@@ -40,7 +40,7 @@ v0.29.82 (CVS)
 + Added costs for remaining non-BA, non-infantry weapons.
 + Fix references to data/camo, data/widget, data/mex to data/images/camo,
     data/images/widget, data/images/units.
-+ Move MegaMekSettings.XML to mmconf/clientsettings.xml, move gameoptions.xml 
++ Move MegaMekSettings.XML to mmconf/clientsettings.xml, move gameoptions.xml
     and bot.properties to the mmconf folder.
 + Bug 1224458: Targeting computer mixup on mixed-tech HMP files fixed.
 + Bug 1226159: Heavy Machine Gun bug fixed for TDB mech loader.
@@ -52,8 +52,8 @@ v0.29.82 (CVS)
 + Small improvement of the generation the manifest.mf in the build.xml.
 + Bug 1223722: TAG ignores torso twist.
 + Bug 1223955, Patch 1226590: MaxTech partial cover part 2.
-+ Error in cost calculation for biped Mechs (not all arm actuators were accounted
-    for).
++ Error in cost calculation for biped Mechs (not all arm actuators were 
+    accounted for).
 + Cost for Ammunition.
 + Created "savegames" directory.  Added "very paranoid autosave" feature.
 + Bug 1226724: Corrected BV
@@ -192,9 +192,10 @@ v0.29.81 (2005-06-19 3:45pm)
 + Corrected torpedo ranges in WeaponType and added logic to force
    underwater-only weapons to not fire above water.
 + Allow One-Shot LRMs to be fired indirectly.
-+ Bug 1222251: Altered Mobile Long Tom to only have standard ammo in the vehicle file.
-+ Bug 1222907: Fixed Flak to work against anything using VTOL movement, but only
-    if it's above the ceiling of the hex.
++ Bug 1222251: Altered Mobile Long Tom to only have standard ammo in the
+   vehicle file.
++ Bug 1222907: Fixed Flak to work against anything using VTOL movement, but 
+    only if it's above the ceiling of the hex.
 + Bug 1222886: L3 Mech Plasma Rifle no longer reading as infantry weapon
 + Allow players to choose to load Fa Shih squads *inside* APCs.
 + Fa Shih squads now clamp to the outside by default.
@@ -264,18 +265,21 @@ v0.29.80 (2005-06-12 4:30pm)
     Gunslinger, No-Dachi, Predator, Sha Yu, Tai-Sho, Thresher.
     Fixed pic for Shadowcat variants.
 + Bug 1217503: Vibro-Claws can only target Infantry
-+ Dev Forum: Behaviour of Add Unit dialog changed, doesn't close after selection
++ Dev Forum: Behaviour of Add Unit dialog changed, doesn't close after
+    selection
 + No-Dachi was misnamed.
 + Added Sylph data file and change to BLKBattleArmorFile to make it load.  Not
-     necessarily fully featured yet.
-+ Bug 1216081: Only VTOL-able infantry may unload when you're above ground level.
+    necessarily fully featured yet.
++ Bug 1216081: Only VTOL-able infantry may unload when you're above ground
+    level.
 + Updated Snow and Grass theme.
 + The constants for the compass directions moved from Entity.
 + Prototype LB-10X AC not loading
-+ MechSelector changed to 3-Button layout: Select (keeps the dialog open), Select & close,
-  Close.
++ MechSelector changed to 3-Button layout: Select (keeps the dialog open), 
+    Select & close, Close.
 + Bug 1218551: Removed road bonus for VTOLs.
-+ Bug 1219010: Streak-LRMs that miss shouldn't be able to start a fire, like Streak-SRMs.
++ Bug 1219010: Streak-LRMs that miss shouldn't be able to start a fire, like
+    Streak-SRMs.
 + Bug 1216083: VTOLs and Fires
 + Bug 1014263: Split weapons not working correctly
 + Bug 1219182: Garbled "Type" filter in MS JRE
@@ -356,10 +360,12 @@ v0.29.79 (2005-06-08 8:00am)
 + Bug 1213599: Procyon should have ER Small Lasers.
 + RFE 1048698: Make Off-Board Distance a Slider (A Slider Dialog, actually)
 + Bug 1214884: Swarm adds heat / uses ammo for each additional target
-+ VTOLs added.  They should be complete, but watch out for bugs.  Use at your own risk.
++ VTOLs added.  They should be complete, but watch out for bugs.  Use at your
+    own risk.
 + 901959: Change in map-selection interface (sort of)
 + VTOL: Cleanup of code; VTOL-Files changed from type "TANK" to type "VTOL";
-  UnitSelector changed (Does not quite work yet - use "All Types" to select VTOLs).
+  UnitSelector changed (Does not quite work yet - use "All Types" to select 
+    VTOLs).
 + VTOL: Show VTOLs as stars on the minimap
 + VTOL: Show FLight Level after unit name
 + VTOL: VTOLs can use flank speed when flying over water
@@ -389,10 +395,10 @@ v0.29.78 (2005-05-25 8:00am)
     than the normal versions of the weapon, and the equipment name in the mech-
     file needs to be appended by " Prototype", e.g. for a Gauss Rifle, instead
     of "IS Gauss Rifle", you write "IS Gauss Rifle Prototype".
-    For MTF files, you need to append "Prototyp" without a space in front of it.
+    For MTF files, append "Prototype" without a space in front of it.
 + Thunder Vibrabomb damage should _not_ be in 5 point clusters.
 + Added some network debug code to client
-+ Do not allow a player's opponent to set his opponent's Mechs' autoeject status
++ Don't allow a player's opponent to set his opponent's Mechs' autoeject status
 + Bug 1207130: when ejecting a mech, sprite gets updated too late
 + Bug 1205317: MGs in rapid fire ignore ammo depletion
 + Added Swamp support to the random map generator.
@@ -435,9 +441,10 @@ v0.29.76 (2005-05-09 8:00am)
 + Data 1197659: New Combat Equipment Protomechs.
 
 v0.29.75 (2005-05-03 8:15am)
-+ Added -port parameter to set the port a dedicated server will be listening to.
-  Only valid if next parameter after -dedicated (and savegame name, if there).
-  See also http://sourceforge.net/forum/forum.php?thread_id=1267994&forum_id=154580.
++ Added -port parameter to set the port a dedicated server will be listening 
+  to. Only valid if next parameter after -dedicated (and savegame name, if 
+  there).
+  See http://sourceforge.net/forum/forum.php?thread_id=1267994&forum_id=154580.
 + Bug 1189805: Golem ASRM5 doing 5 damage per missile that hits, instead of 2.
 + Patch 1187324: Settings refactoring. The previous implementation was 
     marked with symbolic tag 'before-preferences'
@@ -466,7 +473,7 @@ v0.29.74 (2005-04-25 8:15am)
 + Bug 1185495: Aerie BA should have only 1 armor.
 + Bug 1185682: Settings loading doesn't skip comments
 + Bug 1185492: Kobold TAG BA should have Light Tag only for Trooper 1.
-+ Implemented storing/reading the user defined locale for ResourceBundles in the
++ Implemented storing/reading the user defined locale for ResourceBundles in
     MegaMek.cfg.
 + Bug 1185331: Golem Advanced SRM5 should have 2 shots, not 1.
 + Added option to disallow ejected pilots picking up/capturing other ejected
@@ -479,8 +486,8 @@ v0.29.73 (2005-04-18 8:00am)
 + Bug 1176985: Nighthawk BA should have stealth.
 + Added Aerie BA.
 + Added pictures for Fire Falcon, Crossbow, Grendel, Hankyu, Hellion, Huntsman,
-    Kingfisher, Linebacker, Nightgyr, Nova Cat, Phantom, Pouncer, Savage Coyote,
-    Shadowcat, Stooping Hawk, Turkina variants and Jupiter 1 and 2 and Lobo.
+    Kingfisher, Linebacker, Nightgyr, Nova Cat, Phantom, Pouncer, Savage 
+    Coyote, Shadowcat, Stooping Hawk, Turkina variants, Jupiter 1/2 and Lobo.
 + Added pics for Shamash, Shoden and Svantovit tanks.
 + Added pics for Icestorm, Maxim Heavy Hover Transport, Tyr, Odin and Dire Wolf
     Hohiro.

@@ -279,7 +279,9 @@ public class Compute
         
         //check sideslips
         if (entity instanceof VTOL) {
-            if(isTurning && movementType == IEntityMovementType.MOVE_RUN)
+            if (isTurning
+                    && ((movementType == IEntityMovementType.MOVE_RUN)
+                    || (movementType == IEntityMovementType.MOVE_VTOL_RUN)))
             return true;
         }
 
@@ -1004,10 +1006,12 @@ public class Compute
             return toHit;
         }
 
-        if (movement == IEntityMovementType.MOVE_WALK) {
+        if (movement == IEntityMovementType.MOVE_WALK
+                || movement == IEntityMovementType.MOVE_VTOL_WALK) {
             toHit.addModifier(1, "attacker walked");
         } else if (movement == IEntityMovementType.MOVE_RUN ||
-                   movement == IEntityMovementType.MOVE_SKID) {
+                    movement == IEntityMovementType.MOVE_VTOL_RUN ||
+                    movement == IEntityMovementType.MOVE_SKID) {
             toHit.addModifier(2, "attacker ran");
         } else if (movement == IEntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
@@ -1031,9 +1035,11 @@ public class Compute
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
 
-        if (movement == IEntityMovementType.MOVE_WALK) {
+        if (movement == IEntityMovementType.MOVE_WALK
+                || movement == IEntityMovementType.MOVE_VTOL_WALK) {
             toHit.addModifier(1, "spotter walked");
         } else if (movement == IEntityMovementType.MOVE_RUN ||
+                   movement == IEntityMovementType.MOVE_VTOL_RUN ||
                    movement == IEntityMovementType.MOVE_SKID) {
             toHit.addModifier(2, "spotter ran");
         } else if (movement == IEntityMovementType.MOVE_JUMP) {

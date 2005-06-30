@@ -2906,6 +2906,8 @@ public abstract class Entity
         switch (step.getMovementType()) {
             case IEntityMovementType.MOVE_WALK:
             case IEntityMovementType.MOVE_RUN:
+            case IEntityMovementType.MOVE_VTOL_WALK:
+            case IEntityMovementType.MOVE_VTOL_RUN:
                 if (step.getMpUsed() > (int)Math.ceil(getOriginalWalkMP() * 1.5)) {
                     roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
                 } else roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity did not use more MPs walking/running than possible at 1G");

@@ -67,7 +67,8 @@ public class VTOL extends Tank {
                prevHex.contains(Terrain.ROAD) ||
                prevHex.contains(Terrain.BRIDGE) )
             */
-            && overallMoveType == IEntityMovementType.MOVE_RUN
+            && (overallMoveType == IEntityMovementType.MOVE_RUN
+                || overallMoveType == IEntityMovementType.MOVE_VTOL_RUN)
             && prevFacing != curFacing
             && !lastPos.equals(curPos))
             {

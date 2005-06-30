@@ -3378,22 +3378,23 @@ public class BoardView1
             Color col;
             // set color
             switch (step.getMovementType()) {
-            case IEntityMovementType.MOVE_RUN :
-                if (step.isUsingMASC()) {
-                    col = GUIPreferences.getInstance().getColor("AdvancedMoveMASCColor");
-                } else {
-                    col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
-                }
-                break;
-            case IEntityMovementType.MOVE_JUMP :
-                col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
-                break;
-            case IEntityMovementType.MOVE_ILLEGAL :
-                col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
-                break;
-            default :
-                col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
-                break;
+                case IEntityMovementType.MOVE_RUN:
+                case IEntityMovementType.MOVE_VTOL_RUN:
+                    if (step.isUsingMASC()) {
+                        col = GUIPreferences.getInstance().getColor("AdvancedMoveMASCColor");
+                    } else {
+                        col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
+                    }
+                    break;
+                case IEntityMovementType.MOVE_JUMP :
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
+                    break;
+                case IEntityMovementType.MOVE_ILLEGAL :
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
+                    break;
+                default :
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
+                    break;
             }
 
             // draw arrows and cost for the step

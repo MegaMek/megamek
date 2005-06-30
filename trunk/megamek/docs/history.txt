@@ -104,6 +104,7 @@ v0.29.82 (CVS)
 + Commented out line in Tank#getCost that output the tank's name.
 + Make sure cvsdev-package and jar tasks produce identical MegaMek.jar files.
 + Don't need properties directory in megamek-code-*.jar files.
++ Partial refactor of munition type checks.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

@@ -294,6 +294,23 @@ public class MovementDisplay
         panButtons.removeAll();
         panButtons.setLayout(new GridLayout(0, 8));
 
+        if ((buttonLayout == 1)
+                && !(butCharge.isEnabled()
+                || butDfa.isEnabled()
+                || butDown.isEnabled()
+                || butFlee.isEnabled()
+                || butEject.isEnabled()))
+            buttonLayout = 2;
+        if ((buttonLayout == 2)
+                && !(butLoad.isEnabled()
+                || butUnload.isEnabled()
+                || butRAC.isEnabled()
+                || butClear.isEnabled()))
+            buttonLayout = 3;
+        if ((buttonLayout == 3)
+                && !(butRaise.isEnabled()
+                || butLower.isEnabled()))
+            buttonLayout = 0;
         switch (buttonLayout) {
         case 0 :
             panButtons.add(butNext);

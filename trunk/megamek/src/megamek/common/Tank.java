@@ -864,4 +864,11 @@ public class Tank
  
         return Math.round(cost*multiplier);
     }
+
+    public boolean doomedInVacuum() {
+        // FIXME
+        // This is actually NOT true for this unit!
+        // It's possible for a tank to survive in vacuum!
+        return true;
+    }
 }

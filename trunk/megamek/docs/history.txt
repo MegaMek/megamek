@@ -96,6 +96,7 @@ v0.29.82 (CVS)
 + Mek selector dialog: Add options for what should be displayed in list.  Also
     improve sizing and initial location.
 + Unit cache now remembers cost properly.
++ Bug 1042069: Now checks for units in vacuum like extreme temperatures.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

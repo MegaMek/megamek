@@ -1171,7 +1171,9 @@ public class ClientGUI
         Entity entity;
 
         public ViewMenuItem(Entity entity) {
-            super(Messages.getString("ClientGUI.viewMenuItem") + entity.getDisplayName()); //$NON-NLS-1$
+            super(Messages.getString("ClientGUI.viewMenuItem")
+                + entity.getDisplayName()
+                + (entity.isDone()?" (" + Messages.getString("ClientGUI.doneMenuItem").trim() + ")":"")); //$NON-NLS-1$
             this.entity = entity;
             addActionListener(this);
         }

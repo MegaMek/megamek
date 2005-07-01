@@ -320,13 +320,12 @@ public class QuadMech extends Mech
         int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
         double sinkCost = hasDoubleHeatSinks()? 6000: 2000;
         double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
-        double totalArmorWeight = Math.ceil((double)getTotalOArmor()/armorPerTon);
         cost += (musclesCost+structureCost+legCost)*weight;
         cost += rating*weight*engineCost/75.0;
         cost += 300000 * Math.ceil(rating/100.0);
         cost += getOriginalJumpMP()*getOriginalJumpMP()*weight*200;
         cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks
-        cost += totalArmorWeight*EquipmentType.getArmorCost(armorType);//armor
+        cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
         cost += getWeaponsAndEquipmentCost();
         double omniCost=0.0;
         if(isOmni()) {

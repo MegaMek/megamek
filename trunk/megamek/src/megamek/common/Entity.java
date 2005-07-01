@@ -4488,4 +4488,12 @@ public abstract class Entity
     }
 
     public abstract boolean doomedInVacuum();
+    
+    public double getArmorWeight() {
+        //this roundabout method is actually necessary to avoid rounding weirdness.  Yeah, it's dumb.
+        double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
+        double weight=0.0;
+        for(;((int)Math.round(weight*armorPerTon))<getTotalOArmor();weight+=.5) {}
+        return weight;
+    }
 }

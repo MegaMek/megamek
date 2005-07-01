@@ -1501,7 +1501,7 @@ public abstract class Mech
             explosiveFound=false;
             for(Enumeration equip = getEquipment();equip.hasMoreElements();) {
                 Mounted m = (Mounted)equip.nextElement();
-                if(m.getType().isExplosive()) {
+                if(m.getType().isExplosive() && m.getLocation()==i) {
                     explosiveFound=true;
                 }
             }

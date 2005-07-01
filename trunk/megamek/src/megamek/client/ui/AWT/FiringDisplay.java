@@ -591,10 +591,11 @@ public class FiringDisplay
         if ( null != mounted.getLinked() && 
              ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA ) {
             Mounted ammoMount = mounted.getLinked();
+            AmmoType ammoType = (AmmoType)ammoMount.getType();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
-            if (((((AmmoType)(ammoMount.getType())).getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-                && (((AmmoType)(ammoMount.getType())).getAmmoType() == AmmoType.T_LRM))
-                 || (((AmmoType)(ammoMount.getType())).getMunitionType() == AmmoType.M_VIBRABOMB_IV))
+            if ( ((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+                && (ammoType.getAmmoType() == AmmoType.T_LRM))
+                 || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)
                  
             {
                 VibrabombSettingDialog vsd  =
@@ -1460,7 +1461,7 @@ public class FiringDisplay
               case (AmmoType.T_ATM) :
               return false;
             }
-            if ((atype.getAmmoType() == AmmoType.T_AC)
+            if ((atype.getAmmoType() == AmmoType.T_AC_LBX)
                     && (atype.getMunitionType() == AmmoType.M_CLUSTER))
                 return false;
           }
@@ -1470,7 +1471,7 @@ public class FiringDisplay
             return false;
           }
           if ((atype != null)
-                && (atype.getAmmoType() == AmmoType.T_AC)
+                && (atype.getAmmoType() == AmmoType.T_AC_LBX)
                 && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
             return false;
           }

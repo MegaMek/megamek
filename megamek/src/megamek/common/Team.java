@@ -140,4 +140,27 @@ public final class Team extends TurnOrdered implements Serializable
         return true;
     }
 
+    public boolean hasTAG(IGame game) {
+       for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
+            Player m = (Player)e.nextElement();
+            if (getId() == m.getTeam()) {
+                if (m.hasTAG()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean hasHomingRounds(IGame game) {
+       for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
+            Player m = (Player)e.nextElement();
+            if (getId() == m.getTeam()) {
+                if (m.hasHomingRounds()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

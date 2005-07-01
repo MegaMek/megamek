@@ -242,7 +242,15 @@ public class VTOL extends Tank {
             assumeLinkedC3) {
                 xbv = (double)(Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear)));
         }
-        
+
+        // Possibly adjust for TAG and Arrow IV.
+        if (getsTagBVPenalty()) {
+            dbv += 200;
+        }
+        if (getsHomingBVPenalty()) {
+            dbv += 200;
+        }
+
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
 

@@ -801,14 +801,18 @@ public class Protomech
 
         obv = weaponBV * speedFactor;
 
-
+        // Possibly adjust for TAG and Arrow IV.
+        if (getsTagBVPenalty()) {
+            dbv += 200;
+        }
+        if (getsHomingBVPenalty()) {
+            dbv += 200;
+        }
 
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
 
         return (int)Math.round((dbv + obv) * pilotFactor);
-
-
     }
 
     /**

@@ -282,4 +282,46 @@ public final class Player extends TurnOrdered
     public Vector getArtyAutoHitHexes() {
         return artyAutoHitHexes;
     }
+
+    public boolean hasTAG() {
+        for (Enumeration e = game.getSelectedEntities(new EntitySelector() {
+                    private final int ownerId = getId();
+                        public boolean accept( Entity entity ) {
+                            if (entity.getOwner() == null)
+                                return false;
+                            if ( ownerId == entity.getOwner().getId())
+                                return true;
+                            return false;
+                        }
+                    }
+                ); e.hasMoreElements(); ) {
+            Entity m = (Entity)e.nextElement();
+            if (m.hasTAG()) {
+                return true;
+            }
+            // A player can't be on two teams.
+        }
+        return false;
+    }
+
+    public boolean hasHomingRounds() {
+        for (Enumeration e = game.getSelectedEntities(new EntitySelector() {
+                    private final int ownerId = getId();
+                        public boolean accept( Entity entity ) {
+                            if (entity.getOwner() == null)
+                                return false;
+                            if ( ownerId == entity.getOwner().getId())
+                                return true;
+                            return false;
+                        }
+                    }
+                ); e.hasMoreElements(); ) {
+            Entity m = (Entity)e.nextElement();
+            if (m.hasHomingRounds()) {
+                return true;
+            }
+            // A player can't be on two teams.
+        }
+        return false;
+    }
 }

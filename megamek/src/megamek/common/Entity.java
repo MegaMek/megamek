@@ -4496,4 +4496,88 @@ public abstract class Entity
         for(;((int)Math.round(weight*armorPerTon))<getTotalOArmor();weight+=.5) {}
         return weight;
     }
+
+    public boolean hasTAG() {
+        for (Enumeration e = this.getWeapons(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            WeaponType equip = (WeaponType)(m.getType());
+            if (equip.hasFlag(WeaponType.F_TAG)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasHomingRounds() {
+        for (Enumeration e = this.getAmmo(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            AmmoType equip = (AmmoType)(m.getType());
+            if (equip.getMunitionType() == AmmoType.M_HOMING) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean getsTagBVPenalty() {
+        // Check a couple of automatic failures first.
+        if (!hasTAG())
+            return false;
+        Player tmpP = getOwner();
+        if (tmpP == null)
+            return false;
+
+        // Okay, actually check for friendly homing rounds.
+        if (tmpP.getTeam() != Player.TEAM_NONE) {
+           for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+                Team m = (Team)e.nextElement();
+                if (m.getId() == tmpP.getTeam()) {
+                    if (m.hasHomingRounds(game)) {
+                        return true;
+                    }
+                    // A player can't be on two teams.
+                    // If we check his team and don't give the penalty, that's it.
+                    break;
+                }
+            }
+            return false;
+        } else {
+            if (tmpP.hasHomingRounds())
+                return true;
+        }
+
+        // If all else fails, don't give the penalty.
+        return false;
+    }
+
+    public boolean getsHomingBVPenalty() {
+        // Check a couple of automatic failures first.
+        if (!hasHomingRounds())
+            return false;
+        Player tmpP = getOwner();
+        if (tmpP == null)
+            return false;
+
+        // Okay, actually check for friendly TAG.
+        if (tmpP.getTeam() != Player.TEAM_NONE) {
+           for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+                Team m = (Team)e.nextElement();
+                if (m.getId() == tmpP.getTeam()) {
+                    if (m.hasTAG(game)) {
+                        return true;
+                    }
+                    // A player can't be on two teams.
+                    // If we check his team and don't give the penalty, that's it.
+                    break;
+                }
+            }
+            return false;
+        } else {
+            if (tmpP.hasTAG())
+                return true;
+        }
+
+        // If all else fails, don't give the penalty.
+        return false;
+    }
 }

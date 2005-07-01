@@ -548,6 +548,14 @@ public class BattleArmor
         // Adjust for missing troopers
         bv = bv * getInternalRemainingPercent();
 
+        // Possibly adjust for TAG and Arrow IV.
+        if (getsTagBVPenalty()) {
+            bv += 200;
+        }
+        if (getsHomingBVPenalty()) {
+            bv += 200;
+        }
+
         // Adjust BV for crew skills.
         double pilotFactor = crew.getBVSkillMultiplier();
         bv = pilotFactor * bv;

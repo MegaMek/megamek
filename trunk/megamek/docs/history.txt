@@ -134,6 +134,7 @@ v0.29.82 (CVS)
 + Bug 1194504: Added "done" marker to right-click and pop-up window on
     BoardView1, to make it easier to determine if something has moved.
 + Allow autoeject setting in Scenario files.
++ Minor change to IEntityMovementType for future work on submarines.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

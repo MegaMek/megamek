@@ -76,6 +76,10 @@ Unit_PlayerC_1=Locust LCT-1M,PilotB2,4,5
 Unit_PlayerA_2_Advantages=melee_specialist pain_resistance
 Unit_PlayerB_2_Advantages=dodge_maneuver
 
+#set autoeject, only for mechs
+Unit_PlayerA_2_AutoEject=false
+Unit_PlayerB_2_AutoEject=true
+
 # To initially damage units, you can use a unit armor property, which specifies
 # armor and internal values.  Values above the unit's nominal value for that
 # location will be ignored.  

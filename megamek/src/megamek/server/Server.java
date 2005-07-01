@@ -6684,7 +6684,7 @@ implements Runnable, ConnectionHandler {
             }
 
         } else if (usesAmmo
-                && (atype.getAmmoType() == AmmoType.T_AC) 
+                && (atype.getAmmoType() == AmmoType.T_AC_LBX) 
                 && atype.getMunitionType() == AmmoType.M_CLUSTER) {
             // Cluster shots break into single point clusters.
             bSalvo = true;

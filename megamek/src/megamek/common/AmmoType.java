@@ -67,68 +67,63 @@ public class AmmoType extends EquipmentType {
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
-    //      to be combined to othter munition types.
-
-    // The little "x"s below are because I'm checking through the code and making sure
-    // that all references to a flag also reference the type.
-    // This is so that we can overlap flags and therefore use them more extensively...
-    // Since we ran out.
+    //      to be combined to other munition types.
 
     // M_STANDARD can be used for anything.
     public static final long     M_STANDARD          = 0;
 
     // AC Munition Types
-    public static final long     M_CLUSTER           = 1;
-    public static final long     M_ARMOR_PIERCING    = 1 << 1;
-    public static final long     M_FLECHETTE         = 1 << 2;
+    public static final long     M_CLUSTER           = 0x000000001L;
+    public static final long     M_ARMOR_PIERCING    = 0x000000002L;
+    public static final long     M_FLECHETTE         = 0x000000004L;
     //FIXME - I'm not implemented!!!
-    public static final long     M_INCENDIARY_AC     = 1 << 3;
-    public static final long     M_PRECISION         = 1 << 4;
+    public static final long     M_INCENDIARY_AC     = 0x000000008L;
+    public static final long     M_PRECISION         = 0x000000010L;
 
     // ATM Munition Types
-    public static final long     M_EXTENDED_RANGE    = 1 << 5;
-    public static final long     M_HIGH_EXPLOSIVE    = 1 << 6;
+    public static final long     M_EXTENDED_RANGE    = 0x000000020L;
+    public static final long     M_HIGH_EXPLOSIVE    = 0x000000040L;
 
     // LRM & SRM Munition Types
-    public static final long     M_FRAGMENTATION     = 1 << 7;
-    public static final long     M_LISTEN_KILL       = 1 << 8;
-    public static final long     M_ANTI_TSM          = 1 << 9;
-    public static final long     M_NARC_CAPABLE      = 1 << 10;
-    public static final long     M_ARTEMIS_CAPABLE   = 1 << 11;
+    public static final long     M_FRAGMENTATION     = 0x000000080L;
+    public static final long     M_LISTEN_KILL       = 0x000000100L;
+    public static final long     M_ANTI_TSM          = 0x000000200L;
+    public static final long     M_NARC_CAPABLE      = 0x000000400L;
+    public static final long     M_ARTEMIS_CAPABLE   = 0x000000800L;
 
     // LRM Munition Types
     // Incendiary is special, though...
     //FIXME - I'm not implemented!!!
-    public static final long     M_INCENDIARY_LRM    = 1 << 12;
-    public static final long     M_FLARE             = 1 << 13;
-    public static final long     M_SEMIGUIDED        = 1 << 14;
-    public static final long     M_SWARM             = 1 << 15;
-    public static final long     M_SWARM_I           = 1 << 16;
-    public static final long     M_THUNDER           = 1 << 17;
-    public static final long     M_THUNDER_AUGMENTED = 1 << 18;
-    public static final long     M_THUNDER_INFERNO   = 1 << 19;
-    public static final long     M_THUNDER_VIBRABOMB = 1 << 20;
-    public static final long     M_THUNDER_ACTIVE    = 1 << 21;
+    public static final long     M_INCENDIARY_LRM    = 0x000001000L;
+    public static final long     M_FLARE             = 0x000002000L;
+    public static final long     M_SEMIGUIDED        = 0x000004000L;
+    public static final long     M_SWARM             = 0x000008000L;
+    public static final long     M_SWARM_I           = 0x000010000L;
+    public static final long     M_THUNDER           = 0x000020000L;
+    public static final long     M_THUNDER_AUGMENTED = 0x000040000L;
+    public static final long     M_THUNDER_INFERNO   = 0x000080000L;
+    public static final long     M_THUNDER_VIBRABOMB = 0x000100000L;
+    public static final long     M_THUNDER_ACTIVE    = 0x000200000L;
 
     // SRM Munition Types
-    public static final long     M_INFERNO           = 1 << 22;
-    public static final long     M_AX_HEAD           = 1 << 23;
+    public static final long     M_INFERNO           = 0x000400000L;
+    public static final long     M_AX_HEAD           = 0x000800000L;
 
     // iNarc Munition Types
-    public static final long     M_EXPLOSIVE         = 1 << 24;
-    public static final long     M_ECM               = 1 << 25;
-    public static final long     M_HAYWIRE           = 1 << 26;
-    public static final long     M_NEMESIS           = 1 << 27;
+    public static final long     M_EXPLOSIVE         = 0x001000000L;
+    public static final long     M_ECM               = 0x002000000L;
+    public static final long     M_HAYWIRE           = 0x004000000L;
+    public static final long     M_NEMESIS           = 0x008000000L;
 
     // Narc Munition Types
-    public static final long     M_NARC_EX           = 1 << 28;
+    public static final long     M_NARC_EX           = 0x010000000L;
 
     // Arrow IV Munition Types
-    public static final long     M_HOMING            = 1 << 29;
-    public static final long     M_FASCAM            = 1 << 30;
-    public static final long     M_INFERNO_IV        = 1 << 31;
-    public static final long     M_VIBRABOMB_IV      = 1 << 32;
-    public static final long     M_SMOKE             = 1 << 33;
+    public static final long     M_HOMING            = 0x020000000L;
+    public static final long     M_FASCAM            = 0x040000000L;
+    public static final long     M_INFERNO_IV        = 0x080000000L;
+    public static final long     M_VIBRABOMB_IV      = 0x100000000L;
+    public static final long     M_SMOKE             = 0x200000000L;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",

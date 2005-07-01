@@ -3329,6 +3329,8 @@ public class BoardView1
                 .append( ");" ) //$NON-NLS-1$
                 .append( Messages.getString("BoardView1.Heat") ) //$NON-NLS-1$
                 .append( entity.heat );
+            if (entity.isDone())
+                buffer.append(" (").append(Messages.getString("BoardView1.done")).append(")");
             tipStrings[1] = buffer.toString();
 
             buffer = new StringBuffer();

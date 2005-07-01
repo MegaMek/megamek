@@ -49,7 +49,7 @@ import megamek.test.*;
 
 public class MegaMek implements ActionListener {
     public static String VERSION = "0.29.82-dev"; //$NON-NLS-1$
-    public static long TIMESTAMP = new File("timestamp").lastModified(); //$NON-NLS-1$
+    public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
 
@@ -703,7 +703,7 @@ public class MegaMek implements ActionListener {
     public static void main(String[] args) {
         int usePort = 2346;
         
-        String logFileName = "MegaMek.log"; //$NON-NLS-1$
+        String logFileName = "megameklog.txt"; //$NON-NLS-1$
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-testdice")) { //$NON-NLS-1$
                 TestDice.testDice();
@@ -770,7 +770,12 @@ public class MegaMek implements ActionListener {
         if (logFileName != null) {
             try {
                 System.out.println("Redirecting output to " + logFileName); //$NON-NLS-1$
-                PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(logFileName), 64));
+                String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+                File logDir = new File(sLogDir);
+                if (!logDir.exists()) {
+                    logDir.mkdir();
+                }
+                PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(sLogDir + File.separator + logFileName), 64));
                 System.setOut(ps);
                 System.setErr(ps);
             } catch (Exception e) {

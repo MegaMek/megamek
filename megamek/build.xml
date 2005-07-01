@@ -9,6 +9,7 @@
   <property name="srcdir" value="src"/>
   <property name="propdir" value="l10n"/>
   <property name="confdir" value="mmconf"/>
+  <property name="logdir" value="logs"/>
   <property name="builddir" value="classes"/>
   <property name="libdir" value="lib"/>
   <property name="datadir" value="data"/>
@@ -26,7 +27,7 @@
   <!-- cvsroot used for cvs authentification --> 
   <property name="cvsroot" value=":pserver:anonymous@cvs-pserver.sourceforge.net:80/cvsroot/megamek" />
   
-  <property name="timestampfile" value="timestamp"/>
+  <property name="timestampfile" value="${logdir}/timestamp"/>
   <property name="TinyXMLsrc" value="TinyXML07-src.zip" />
   
   <!-- Name of the target jarfile and the class containing the main-Method -->

@@ -15,6 +15,7 @@
 
 package megamek.client;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -652,7 +653,12 @@ public class Client implements Runnable {
      */
     private void saveEntityStatus(String sStatus) {
         try {
-            FileWriter fw = new FileWriter("entitystatus.txt"); //$NON-NLS-1$
+            String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+            File logDir = new File(sLogDir);
+            if (!logDir.exists()) {
+                logDir.mkdir();
+            }
+            FileWriter fw = new FileWriter(sLogDir + File.separator + "entitystatus.txt"); //$NON-NLS-1$
             fw.write(sStatus);
             fw.flush();
             fw.close();

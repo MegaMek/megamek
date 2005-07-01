@@ -424,7 +424,7 @@ public class ScenarioLoader
     private void parseAutoEject(Entity entity, String eject) {
         if (entity instanceof Mech) {
             Mech mech = (Mech)entity;
-            mech.setAutoEject(Boolean.parseBoolean(eject));
+            mech.setAutoEject(Boolean.valueOf(eject).booleanValue());
         }
     }
     

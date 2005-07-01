@@ -165,6 +165,7 @@ public class DeployMinefieldDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
+        p = client.getLocalPlayer();//necessary to make it work after resets.
         setConventionalEnabled(p.getNbrMFConventional());
         setCommandEnabled(p.getNbrMFCommand());
         setVibrabombEnabled(p.getNbrMFVibra());

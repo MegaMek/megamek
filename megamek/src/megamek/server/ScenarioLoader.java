@@ -338,7 +338,13 @@ public class ScenarioLoader
                   if ( null != s ) {
                     parseAdvantages(e, s);
                   }
-                
+                  
+                //Check for autoeject
+                  s = p.getProperty("Unit_" + sFaction + "_" + i + "_AutoEject");
+                  if ( null != s) {
+                      parseAutoEject(e, s);
+                  }
+                  
                 //Check for deployment
                   s = p.getProperty("Unit_" + sFaction + "_" + i + "_DeploymentRound");
                   if ( null != s ) {
@@ -413,6 +419,13 @@ public class ScenarioLoader
           option.setValue(true);
         }
       }
+    }
+    
+    private void parseAutoEject(Entity entity, String eject) {
+        if (entity instanceof Mech) {
+            Mech mech = (Mech)entity;
+            mech.setAutoEject(Boolean.parseBoolean(eject));
+        }
     }
     
     private int findIndex(String[] sa, String s)

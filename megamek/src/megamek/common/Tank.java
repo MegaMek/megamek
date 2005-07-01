@@ -821,8 +821,7 @@ public class Tank
         cost+=2000*Math.max(0,sinks-freeHeatSinks);
         cost+=turretWeight*5000;
         double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
-        double totalArmorWeight=Math.ceil((double)getTotalOArmor()/armorPerTon*2)/2;
-        cost+=totalArmorWeight*EquipmentType.getArmorCost(armorType);//armor
+        cost+=getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
         double diveTonnage;
         switch (movementMode) {
             case IEntityMovementMode.HOVER:

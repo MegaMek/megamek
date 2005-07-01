@@ -279,10 +279,7 @@ public class BipedMech extends Mech {
         int freeSinks= hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
         int sinkCost= hasDoubleHeatSinks()? 6000: 2000;
         cost+=sinkCost*(heatSinks()-freeSinks);//cost of sinks
-        double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
-
-        double totalArmorWeight=Math.ceil((double)getTotalOArmor()/armorPerTon);
-        cost+=totalArmorWeight*EquipmentType.getArmorCost(armorType);//armor
+        cost+=getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
         cost += getWeaponsAndEquipmentCost();
         double omniCost=0.0;
         if(isOmni()) {
@@ -292,4 +289,13 @@ public class BipedMech extends Mech {
         cost*=(1+(weight/100f));
         return Math.round(cost);
     }
+    
+    public double getArmorWeight() {
+        //this roundabout method is actually necessary to avoid rounding weirdness.  Yeah, it's dumb.
+        double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
+        double weight=0.0;
+        for(;((int)Math.round(weight*armorPerTon))<getTotalOArmor();weight+=.5) {}
+        return weight;
+    }
+        
 }

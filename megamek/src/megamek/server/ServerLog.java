@@ -23,6 +23,8 @@ package megamek.server;
 import java.io.*;
 import java.util.*;
 
+import megamek.common.preference.PreferenceManager;
+
 /**
  *
  * @author  Ben
@@ -30,6 +32,8 @@ import java.util.*;
  */
 public class ServerLog {
     
+    public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
+
     public static final String LOG_FILE = "serverlog.txt"; //$NON-NLS-1$
     
     private long maxFilesize = Long.MAX_VALUE;
@@ -40,13 +44,18 @@ public class ServerLog {
     /** Appends to/Creates ServerLog named @filename */
     public ServerLog(String filename, boolean append, long maxSize) {
         try {
-            logfile = new File(filename);
+            File logDir = new File(LOG_DIR);
+            if (!logDir.exists()) {
+                logDir.mkdir();
+            }
+            logfile = new File(LOG_DIR + File.separator + filename);
             maxFilesize = maxSize;
-            writer = new BufferedWriter(new FileWriter(filename, append));
+            writer = new BufferedWriter(new FileWriter(LOG_DIR + File.separator + filename, append));
             append("Log file opened " + new Date().toString()); //$NON-NLS-1$
         } catch (IOException ex) {
             //TODO: I dunno.  report this... to the log? ;)
             writer = null;
+            System.err.println("ServerLog:" + ex.getMessage());
         }
     }
     

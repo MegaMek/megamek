@@ -640,7 +640,7 @@ implements Runnable, ConnectionHandler {
             if (!sDir.exists()) {
                 sDir.mkdir();
             }
-            sFinalFile = sDir + "/" + sFinalFile;
+            sFinalFile = sDir + File.separator + sFinalFile;
             ObjectOutputStream oos = new ObjectOutputStream(
                     new FileOutputStream(sFinalFile));
             oos.writeObject(game);

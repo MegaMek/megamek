@@ -38,6 +38,7 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
     public static final String MAP_TILESET = "MapTileset";
     public static final String MAX_PATHFINDER_TIME = "MaxPathfinderTime";
     public static final String DATA_DIRECTORY = "DataDirectory";
+    public static final String LOG_DIRECTORY = "LogDirectory";
     public static final String MECH_DIRECTORY = "MechDirectory";
     public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
@@ -57,6 +58,7 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setDefault(MAP_TILESET, "defaulthexset.txt");
         store.setDefault(MAX_PATHFINDER_TIME, MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY,"data");
+        store.setDefault(LOG_DIRECTORY,"logs");
         store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "mechfiles");
         store.setDefault(METASERVER_NAME, "http://www.damour.info/cgi-bin/james/metaserver");
         store.setDefault(GOAL_PLAYERS, 2);
@@ -105,6 +107,10 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
 
     public String getDataDirectory() {
         return store.getString(DATA_DIRECTORY);
+    }
+
+    public String getLogDirectory() {
+        return store.getString(LOG_DIRECTORY);
     }
 
     public String getMechDirectory() {

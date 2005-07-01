@@ -44,6 +44,8 @@ public interface IClientPreferences extends IPreferenceStore {
 
     String getDataDirectory();
 
+    String getLogDirectory();
+
     String getMechDirectory();
 
     PrintWriter getMekHitLocLog();

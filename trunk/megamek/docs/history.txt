@@ -124,7 +124,7 @@ v0.29.82 (CVS)
 + Force ammo type check when checking against munition types in almost all
     places throughout the code.
 + Bug 1224336: /reset didn't clear out artillery attacks.
-+ Patch 1229924, Bug 1229105: Another MT Partial Cover Bug.
++ Patch 1229924, Bugs 1229105, 1228454: Another MT Partial Cover Bug.
 + Bug 1230607: C3 Masters should be able to TAG.
 + Bug 1042069: Allow Fusion Vehicles that have Vacuum Protection to survive in
     vacuum. To add Vacuum Protection to a unit, give it an equipment named

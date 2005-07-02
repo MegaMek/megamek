@@ -72,6 +72,8 @@
             <fileset dir="${libdir}" includes="*.jar"/>
          </classpath>
     </javac>
+    <!-- Ensure that the log directory exists. -->
+    <mkdir dir="${logdir}"/>
     <touch file="${timestampfile}"/>
   </target>
 
@@ -83,6 +85,8 @@
             <fileset dir="${libdir}" includes="*.jar"/>
          </classpath>
     </javac>
+    <!-- Ensure that the log directory exists. -->
+    <mkdir dir="${logdir}"/>
     <touch file="${timestampfile}"/>
   </target>
 

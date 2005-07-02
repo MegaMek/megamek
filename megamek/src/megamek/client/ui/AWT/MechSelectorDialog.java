@@ -23,7 +23,7 @@ import megamek.client.Client;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
-
+import megamek.common.options.*;
 import com.sun.java.util.collections.Arrays;
 import com.sun.java.util.collections.Iterator;
 
@@ -268,7 +268,8 @@ public class MechSelectorDialog
                         || (mechs[x].getType() == TechConstants.T_IS_LEVEL_2))))
                 && /* Unit Type (Mek, Infantry, etc.) */
                 ( nUnitType == UnitType.SIZE ||
-                  mechs[x].getUnitType().equals(UnitType.getTypeName(nUnitType))))
+                  mechs[x].getUnitType().equals(UnitType.getTypeName(nUnitType)))
+                && /*canon required*/ (!m_client.game.getOptions().booleanOption("canon_only") || mechs[x].isCanon()))
                 {
                     vMechs.addElement(mechs[x]);
                 }

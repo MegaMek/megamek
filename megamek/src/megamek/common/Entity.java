@@ -233,6 +233,9 @@ public abstract class Entity
     private Vector hitBySwarmsEntity = new Vector();
     private Vector hitBySwarmsWeapon = new Vector();
     
+    //Whether this unit is canon;
+    private boolean canon;
+    
     
     /**
      * Generates a new, blank, entity.
@@ -4583,5 +4586,13 @@ public abstract class Entity
 
         // If all else fails, don't give the penalty.
         return false;
+    }
+    
+    public boolean isCanon() {
+        return canon;
+    }
+    
+    public void setCanon(boolean canon) {
+        this.canon=canon;
     }
 }

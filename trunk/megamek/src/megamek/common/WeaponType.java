@@ -699,6 +699,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 37;
         weapon.cost = 75000;
+        weapon.explosive = true; //when firing incendiary ammo
 
         return weapon;
     }
@@ -726,6 +727,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 70;
         weapon.cost = 125000;
+        weapon.explosive = true; //when firing incendiary ammo
 
         return weapon;
     }
@@ -753,6 +755,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 124;
         weapon.cost = 200000;
+        weapon.explosive = true; //when firing incendiary ammo
 
         return weapon;
     }
@@ -780,6 +783,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 178;
         weapon.cost = 300000;
+        weapon.explosive = true; //when firing incendiary ammo
 
         return weapon;
     }

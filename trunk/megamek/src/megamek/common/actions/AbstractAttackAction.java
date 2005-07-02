@@ -17,6 +17,8 @@ package megamek.common.actions;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Targetable;
+import megamek.common.ToHitData;
+import megamek.common.AmmoType;
 
 /**
  * Abstract superclass for any action where an entity is attacking another
@@ -64,6 +66,49 @@ public abstract class AbstractAttackAction
     
     public Entity getEntity(IGame g) {
         return g.getEntity(getEntityId());
+    }
+    
+    /**
+     * used by the toHit of derived classes
+     * atype may be null if not using an ammo based weapon
+    */
+    public static ToHitData nightModifiers(IGame game, Targetable target, AmmoType atype) {
+        ToHitData toHit = null;
+        if(game.getOptions().booleanOption("night_battle")) {
+            Entity te = null;
+            if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+                te = (Entity) target;
+            }
+            toHit = new ToHitData();
+
+            //The base night penalty
+            int night_modifier;
+            if(game.getOptions().booleanOption("dusk")) {
+                night_modifier = 1;
+                toHit.addModifier(night_modifier, "Dusk");
+            } else {
+                night_modifier = 2;
+                toHit.addModifier(night_modifier, "Night");
+            }
+
+            //Searchlights reduce the penalty to zero
+            if(te!=null && te.isUsingSpotlight()) {
+                toHit.addModifier(-night_modifier, "target using searchlight");
+            }
+            else if(te!=null && te.isIlluminated()) {
+                toHit.addModifier(-night_modifier, "target illuminated by searchlight");
+            }
+            //Certain ammunitions reduce the penalty
+            else if(atype != null) {
+                if(atype.getAmmoType() == AmmoType.T_AC &&
+                   (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC || 
+                   atype.getMunitionType() == AmmoType.M_TRACER)) {
+                    toHit.addModifier(-1, "incendiary/tracer ammo");
+                    night_modifier--;
+                }
+            }
+        }
+        return toHit;
     }
     
 }

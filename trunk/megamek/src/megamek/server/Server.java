@@ -5655,6 +5655,10 @@ implements Runnable, ConnectionHandler {
       boolean bFlechette = (usesAmmo && (atype.getAmmoType() == AmmoType.T_AC)
                             && atype.getMunitionType() == AmmoType.M_FLECHETTE);
       boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
+      boolean bIncendiary = (usesAmmo && atype.getAmmoType() == AmmoType.T_AC &&
+              (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC));
+      boolean bTracer = (usesAmmo && atype.getAmmoType() == AmmoType.T_AC &&
+              (atype.getMunitionType() == AmmoType.M_TRACER));
       boolean bAntiTSM = (usesAmmo
                             && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
                              && atype.getMunitionType() == AmmoType.M_ANTI_TSM);
@@ -5904,6 +5908,7 @@ implements Runnable, ConnectionHandler {
         glancingCritMod = 0;
       }
       
+
         // special case TAG.  No damage, but target is tagged until end of turn
         if (wtype.hasFlag(WeaponType.F_TAG)) {
             if(entityTarget == null) {
@@ -6760,6 +6765,12 @@ implements Runnable, ConnectionHandler {
             wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
             ae.heatBuildup += Compute.d6();
         }
+
+        // tracer rounds do -1 damage.
+        if(bTracer) {
+            nDamPerHit--;
+        }
+
         // only halve damage for non-missiles and non-cluster,
         // because cluster lbx gets handled above.
         if (glancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS)
@@ -7079,6 +7090,9 @@ implements Runnable, ConnectionHandler {
                 }
                 // We handle Inferno rounds above.
                 int tn = wtype.getFireTN();
+                if(bIncendiary) {
+                    tn = 5; // Incendiary AC and LRM
+                }
                 if (tn != TargetRoll.IMPOSSIBLE) {
                     if ( bldg != null ) {
                         tn += bldg.getType() - 1;
@@ -7292,6 +7306,13 @@ implements Runnable, ConnectionHandler {
                         }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 3) );
+                    } else if(bIncendiary && usesAmmo && atype.getAmmoType() == AmmoType.T_AC) {
+                        //incendiary AC ammo
+                        if (glancing) {
+                            hit.makeGlancingBlow();
+                        }
+                        phaseReport.append
+                            ( damageEntity(entityTarget, hit, nDamage, false, 4) );
                     } else {
                         if (usesAmmo
                                 && (atype.getAmmoType() == AmmoType.T_AC)
@@ -7343,7 +7364,9 @@ implements Runnable, ConnectionHandler {
                     }
         
                     if (wr.artyAttackerCoords != null) {
-                        toHit.setSideTable(Compute.targetSideTable(game.getEntity(entityTarget.getTaggedBy()),entity));
+                        toHit.setSideTable(Compute.targetSideTable
+                                (wr.artyAttackerCoords, entity.getPosition(), 
+                                 entity.getFacing(), entity instanceof Tank));
                     }
                     HitData hit = entity.rollHitLocation
                         ( toHit.getHitTable(),
@@ -9605,6 +9628,14 @@ implements Runnable, ConnectionHandler {
             } else if (te != null) {
                 desc.append("\n        Non-ferro-fibrous target hit by acid warhead!  1 damage.");
             }
+            break;
+        case 4:
+            //Incendiary AC ammo does +2 damage to unarmoured infantry
+            if(isPlatoon ) {
+                damage += 2;
+            }
+            break;
+
         default:
             // We can ignore this.
             break;
@@ -11206,6 +11237,19 @@ implements Runnable, ConnectionHandler {
         if (mounted.getType() instanceof WeaponType &&
                 ((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_AC_ROTARY) {
             if (!mounted.isJammed()) {
+                return "";
+            }
+        }
+
+        // special case.  ACs only explode when firing incendiary ammo
+        if (mounted.getType() instanceof WeaponType &&
+                ((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_AC) {
+            if (!mounted.isUsedThisRound()) {
+                return "";
+            }
+            Mounted ammo = mounted.getLinked();
+            if(ammo == null || !(ammo.getType() instanceof AmmoType) || 
+            ((AmmoType)ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC ) {
                 return "";
             }
         }

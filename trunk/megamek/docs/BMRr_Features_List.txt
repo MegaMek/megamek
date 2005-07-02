@@ -294,7 +294,7 @@ Special Case Rules (Minefields)
 
 Special Case Rules (Night Combat)
 
-- Night Combat			No		None
+- Night Combat			Yes		None
 - Searchlights			No		None
 
 Special Case Rules (Scavenging and Repairs)
@@ -321,7 +321,7 @@ Equipment
 - Anti-Personal Pods		Yes		None
 - Artemis IV FCS		Yes		None
 - Artillery Weapons		Partial		Need smoke ammo.
-- Autocannon Munitions		Partial		Incendiary Ammo not implemented.
+- Autocannon Munitions		Yes		None
 - C3 Computers			Yes    		None
 - Cargo Space			No		None
 - CASE				Yes		None

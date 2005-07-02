@@ -140,6 +140,7 @@ v0.29.82 (CVS)
 + Bug 1224232: Now correctly penalises BV for TAG and homing rounds.
 + Created new /logs directory and moved appropriate files there.  Also
     renamed MegaMek.log to megameklog.txt for ease of use.
++ Bug 1230913: Old techbase bugfix for HMPRead not committed until now.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

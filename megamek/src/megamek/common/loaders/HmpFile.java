@@ -1764,7 +1764,7 @@ class TechType
 {
   public static final Hashtable types = new Hashtable();
 
-  public static final TechType INNER_SPHERE = new TechType("IS", 0);
+  public static final TechType INNER_SPHERE = new TechType("Inner Sphere", 0);
   public static final TechType CLAN = new TechType("Clan", 1);
   public static final TechType MIXED = new TechType("Mixed", 2);
 

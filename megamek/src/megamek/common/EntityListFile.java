@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -253,6 +253,10 @@ public class EntityListFile {
 
                 } // Check the next ammo.
 
+                // TODO: handle slotless equipment.
+
+                // TODO: handle tank crits.
+
             } // End is-tank-or-proto
 
             // Did we record information for this location?
@@ -337,10 +341,6 @@ public class EntityListFile {
     public static void saveTo( String filePath, String fileName, Vector list )
         throws IOException {
 
-        /*
-        ** The EXE can't seem to handle UTF-8 files.  Possible build problem.
-        ** TODO: restore UTF-8 once root cause solved.
-        **
         // Open up the file.  Produce UTF-8 output.
         Writer output = new BufferedWriter( new OutputStreamWriter
             ( new FileOutputStream(new File(filePath, fileName)), "UTF-8" )
@@ -348,7 +348,6 @@ public class EntityListFile {
 
         // Output the doctype and header stuff.
         output.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" );
-        */
 
         // Open up the file.
         Writer output = new BufferedWriter( new OutputStreamWriter

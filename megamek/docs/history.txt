@@ -148,6 +148,9 @@ v0.29.82 (CVS)
 + Bug 1231362: Verification of custom TDB meks not working
 + Fixed build.xml to create the logdir if neccessary
 + Build.bat should be working again.
++ Obsolete TODO in EntityListFile.java was only valid when we created an EXE;
+    produce XML files in UTF-8 format.
++ Added TODOs to handle slotless equipment and tank crits.
 
 v0.29.81 (2005-06-19 3:45pm)
 + Bug 1219175: Can't access client settings with MS JRE

@@ -439,7 +439,7 @@ public class EntityListFile {
 
         // Open up the file.
         InputStream listStream = new FileInputStream
-            ( new File(filePath, fileName), "UTF-8" );
+            ( new File(filePath, fileName) );
 
         // Read a Vector from the file.
         try {

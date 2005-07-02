@@ -36,11 +36,13 @@
     private int m_nCost;
     private long m_lModified; // for comparison when loading
     private String m_sLevel;
+    private boolean canon;
     
     public String getName() { return (this.m_sName); }
     public String getChassis() { return (this.m_sChassis); }
     public String getModel() { return (this.m_sModel); }
     public String getUnitType() { return (this.m_sUnitType); }
+    public boolean isCanon() { return this.canon;}
     
     public static String determineUnitType(Entity e) {
         int mm = e.getMovementMode();
@@ -84,6 +86,7 @@
     public void setBV(int m_nBV) { this.m_nBV = m_nBV; }
     public void setModified(long m_lModified) { this.m_lModified = m_lModified; }
     public void setLevel(String level) { this.m_sLevel = level; }
+    public void setCanon(boolean canon) { this.canon = canon; }
     
     public int getWeightClass() {
         return EntityWeightClass.getWeightClass(m_nTons);

@@ -109,7 +109,6 @@ public class ClubAttackAction extends AbstractAttackAction {
         if ( targetInBuilding ) {
             bldg = game.getBoard().getBuildingAt( te.getPosition() );
         }
-        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         
         ToHitData toHit;
 
@@ -304,9 +303,7 @@ public class ClubAttackAction extends AbstractAttackAction {
         // target immobile
         toHit.append(Compute.getImmobileMod(te));
 
-        if (nightModifier>0) {
-            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
-        }
+        toHit.append(nightModifiers(game, target, null));
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 

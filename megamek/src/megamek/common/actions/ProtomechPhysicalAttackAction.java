@@ -77,7 +77,6 @@ public class ProtomechPhysicalAttackAction
         if ( targetInBuilding ) {
             bldg = game.getBoard().getBuildingAt( te.getPosition() );
         }
-        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         ToHitData toHit;
 
         // arguments legal?
@@ -195,9 +194,7 @@ public class ProtomechPhysicalAttackAction
         // target immobile
         toHit.append(Compute.getImmobileMod(te));
 
-        if (nightModifier>0) {
-            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
-        }
+        toHit.append(nightModifiers(game, target, null));
         
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 

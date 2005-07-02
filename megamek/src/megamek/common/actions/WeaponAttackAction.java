@@ -203,7 +203,6 @@ public class WeaponAttackAction
                 isINarcGuided = true;
             }
         }
-        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         int toSubtract = 0;
         
         ToHitData toHit = null;
@@ -584,9 +583,7 @@ public class WeaponAttackAction
         int tElev = target.getElevation();
         int distance = Compute.effectiveDistance(game, ae, target);
     
-        if (nightModifier>0) {
-            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
-        }
+        toHit.append(nightModifiers(game, target, atype));
     
         // Handle direct artillery attacks.
         if(isArtilleryDirect) {

@@ -143,7 +143,6 @@ public class DfaAttackAction extends DisplacementAttackAction {
      */
     public static ToHitData toHit(IGame game, int attackerId, Targetable target, Coords src) {
         final Entity ae = game.getEntity(attackerId);
-        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         
         // arguments legal?
         if ( ae == null ) {
@@ -261,9 +260,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // target immobile
         toHit.append(Compute.getImmobileMod(te));
 
-        if (nightModifier>0) {
-            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
-        }
+        toHit.append(nightModifiers(game, target, null));
         
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 

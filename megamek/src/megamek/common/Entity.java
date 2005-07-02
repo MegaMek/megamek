@@ -4268,6 +4268,10 @@ public abstract class Entity
         this.illuminated = arg;
     }
 
+    public boolean isUsingSpotlight() {
+        return hasSpotlight && spotlightIsActive;
+    }
+
     /**
      * illuminate an entity and all entities that are between us and the hex
      * @param target the <code>Entity</code> to illuminate

@@ -145,7 +145,6 @@ public class KickAttackAction extends AbstractAttackAction
         }
         final int legLoc = 
             ( (leg == KickAttackAction.RIGHTMULE) || (leg == KickAttackAction.RIGHT) ) ? kickLegs[0] : kickLegs[1];
-        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
 
         ToHitData toHit;
 
@@ -335,9 +334,7 @@ public class KickAttackAction extends AbstractAttackAction
             toHit.addModifier(3, "target has partial cover");
         }
 
-        if (nightModifier>0) {
-            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
-        }
+        toHit.append(nightModifiers(game, target, null));
         
         // target immobile
         toHit.append(Compute.getImmobileMod(te));

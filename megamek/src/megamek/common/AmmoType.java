@@ -76,9 +76,9 @@ public class AmmoType extends EquipmentType {
     public static final long     M_CLUSTER           = 0x000000001L;
     public static final long     M_ARMOR_PIERCING    = 0x000000002L;
     public static final long     M_FLECHETTE         = 0x000000004L;
-    //FIXME - I'm not implemented!!!
     public static final long     M_INCENDIARY_AC     = 0x000000008L;
     public static final long     M_PRECISION         = 0x000000010L;
+    public static final long     M_TRACER            = 0x400000000L;
 
     // ATM Munition Types
     public static final long     M_EXTENDED_RANGE    = 0x000000020L;
@@ -694,6 +694,10 @@ public class AmmoType extends EquipmentType {
                                                    2, M_ARMOR_PIERCING, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Flechette",
                                                    1, M_FLECHETTE, TechConstants.T_IS_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "Incendiary",
+                                                   1, M_INCENDIARY_AC, TechConstants.T_IS_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "Tracer",
+                                                   1, M_TRACER, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.

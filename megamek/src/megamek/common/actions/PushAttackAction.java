@@ -60,7 +60,6 @@ public class PushAttackAction
         if ( targetInBuilding ) {
             bldg = game.getBoard().getBuildingAt( te.getPosition() );
         }
-        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         ToHitData toHit = null;
 
         // arguments legal?
@@ -230,9 +229,7 @@ public class PushAttackAction
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-        if (nightModifier>0) {
-            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
-        }
+        toHit.append(nightModifiers(game, target, null));
         // side and elevation shouldn't matter
 
         // done!

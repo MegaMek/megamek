@@ -58,10 +58,15 @@ public class TestMech extends TestEntity
         return new Engine(mech.engineRating(), type, flag);
     }
 
-    private static Structure getStructure(Mech mech)
-    {
-        int type = mech.getStructureType();
+    private static Structure getStructure(Mech mech) {
+        int type = EquipmentType.T_STRUCTURE_STANDARD;
         int flag = 0;
+        for (Enumeration e = mech.getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType etype = m.getType();
+            if (etype.getName()==EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL))
+                type = EquipmentType.T_STRUCTURE_ENDO_STEEL;
+        }
         if (mech.isClan())
             flag |= Structure.CLAN_STRUCTURE;
         return new Structure(type, flag);

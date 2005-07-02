@@ -348,14 +348,6 @@ public class EntityListFile {
 
         // Output the doctype and header stuff.
         output.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" );
-
-        // Open up the file.
-        Writer output = new BufferedWriter( new OutputStreamWriter
-            ( new FileOutputStream(new File(filePath, fileName)) )
-            );
-
-        // Output the doctype and header stuff.
-        output.write( "<?xml version=\"1.0\"?>" );
         output.write( CommonConstants.NL );
         output.write( CommonConstants.NL );
         output.write( "<unit>" );
@@ -447,7 +439,7 @@ public class EntityListFile {
 
         // Open up the file.
         InputStream listStream = new FileInputStream
-            ( new File(filePath, fileName) );
+            ( new File(filePath, fileName), "UTF-8" );
 
         // Read a Vector from the file.
         try {

@@ -182,7 +182,10 @@ public class MechSummaryCache {
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 +1);
                     ms.setLevel(s.substring(nIndex1 + 1, nIndex2));
-                    ms.setCost(Integer.parseInt(s.substring(nIndex2 + 1)));
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 +1);
+                    ms.setCost(Integer.parseInt(s.substring(nIndex1 + 1,nIndex2)));
+                    ms.setCanon(s.substring(nIndex2+1).equals("T")? true : false);
 
                     // Verify that this file still exists and is older than
                     //  the cache.
@@ -282,6 +285,8 @@ public class MechSummaryCache {
                     + m_data[x].getLevel()
                     + SEPARATOR
                     + m_data[x].getCost()
+                    + SEPARATOR
+                    + (m_data[x].isCanon()? 'T' : 'F')
                     + "\r\n");
         }
         wr.flush();
@@ -302,6 +307,7 @@ public class MechSummaryCache {
         ms.setBV(e.calculateBattleValue());
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setCost((int)e.getCost());
+        ms.setCanon(e.isCanon());
         // we can only test meks and vehicles right now
         if (e instanceof Mech || e instanceof Tank) {
             TestEntity testEntity = null;

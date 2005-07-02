@@ -16,7 +16,9 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
+import java.util.Vector;
 import java.util.zip.*;
+import megamek.common.preference.PreferenceManager;
 
 import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
@@ -27,6 +29,9 @@ import megamek.common.util.BuildingBlock;
 
 public class MechFileParser {
     private Entity m_entity = null;
+    private static Vector canonUnitNames = null;
+    private static final File ROOT = new File(PreferenceManager.getClientPreferences().getMechDirectory());
+    private static final File OFFICIALUNITS = new File(ROOT, "OfficialUnitList.txt");
 
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);
@@ -194,6 +199,36 @@ public class MechFileParser {
             } // End link-Stealth
 
         } // Check the next piece of equipment.
+        
+        //Check if it's canon; if it is, mark it as such.
+        ent.setCanon(false);//Guilty until proven innocent
+        try {
+            if(canonUnitNames==null) {
+                canonUnitNames=new Vector();
+                //init the list.
+                BufferedReader br = null;
+                try {
+                    br = new BufferedReader(new FileReader(OFFICIALUNITS));
+                } catch (FileNotFoundException e) {
+                }
+                String s;
+                String name;
+                while ((s = br.readLine()) != null) {
+                    int nIndex1 = s.indexOf('|');
+                    name=s.substring(0, nIndex1);
+                    canonUnitNames.add(name);
+                }
+            }
+        } catch (IOException e) {
+            }
+        for(Enumeration i = canonUnitNames.elements(); i.hasMoreElements();) {
+            String s = (String)i.nextElement();
+            if(s.equals(ent.getShortName())) {
+                ent.setCanon(true);
+            }
+        }
+        
+            
 
     } // End private void postLoadInit(Entity) throws EntityLoadingException
 

@@ -235,6 +235,8 @@ v0.29.81 (2005-06-19 3:45pm)
     when loading from file or unit list.
 + Bug 1223603: 3 batchall.de mechs bugged; preliminary solution pending repair
   of 2 of the 3 HMP files.
++ "Canon units only" option added--doesn't work 100% of the time, bunches of
+our unit names (like all infantry) are wrong, according to my master list.
   
 v0.29.80 (2005-06-12 4:30pm)
 + Corrected the i18n of the locale option in the CommonSettingsDialog.

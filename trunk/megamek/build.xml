@@ -64,9 +64,10 @@
   </target>
 
   <target name="compile" depends="init" description="Compile java sources into class files">
+    <!-- compile -->
     <javac debug="true" debuglevel="lines,source"
-        target="1.1" source="1.2"
-        destdir="${builddir}" srcdir="${srcdir}" >
+         target="1.1" source="1.2"
+         destdir="${builddir}" srcdir="${srcdir}" >
         <classpath>
             <pathelement location="${basedir}"/>
             <fileset dir="${libdir}" includes="*.jar"/>
@@ -178,14 +179,17 @@
 
   <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
   <target name="cvsdev-get" depends="cvsdev-init">
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" command="export -D '1 second ago'"  package="megamek"/>
+    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" command="-z3 export -D '1 second ago'"  package="megamek"/>
   </target>
 
   <target name="cvsdev-build" depends="cvsdev-init">
     <mkdir dir="${cvsbuilddir}"/>
+
     <!-- compile -->
     <echo message="building MegaMek from CVS sources"/>
-    <javac debug="true" debuglevel="lines,source" destdir="${cvsbuilddir}" srcdir="${srcdir}" target="1.1">
+    <javac debug="true" debuglevel="lines,source"
+         target="1.1" source="1.2"
+         destdir="${cvsbuilddir}" srcdir="${srcdir}">
         <classpath> 
            <pathelement location="${cvsmaindir}"/>
            <fileset dir="${libdir}" includes="*.jar"/>
@@ -204,7 +208,7 @@
     </jar>
     
     <!-- Ensure that the log directory exists. -->
-    <mkdir dir="${cvsbuilddir}/${logdir}"/>
+    <mkdir dir="${cvsmaindir}/${logdir}"/>
     <touch file="${cvsmaindir}/${timestampfile}"/>
   </target>
 

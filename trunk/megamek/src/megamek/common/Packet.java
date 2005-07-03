@@ -82,6 +82,7 @@ implements Serializable {
     
     public static final int        COMMAND_SET_ARTYAUTOHITHEXES = 42;
     public static final int        COMMAND_SENDING_ARTILLERYATTACKS = 43;
+    public static final int        COMMAND_SENDING_FLARES       = 44;
     
     private int command;
     private Object[] data;

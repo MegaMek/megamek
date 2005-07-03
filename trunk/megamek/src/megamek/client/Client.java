@@ -859,6 +859,10 @@ public class Client implements Runnable {
                     Vector v = (Vector)c.getObject(0);
                     game.setArtilleryVector(v);
                     break;
+                case Packet.COMMAND_SENDING_FLARES :
+                    Vector v2 = (Vector)c.getObject(0);
+                    game.setFlares(v2);
+                    break;
             }
         }
     }

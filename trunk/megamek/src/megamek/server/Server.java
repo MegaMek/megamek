@@ -466,6 +466,7 @@ implements Runnable, ConnectionHandler {
             }
             
             send(connId, createArtilleryPacket(player));
+            send(connId, createFlarePacket());
 
         } // Found the player.
 
@@ -1342,6 +1343,8 @@ implements Runnable, ConnectionHandler {
                     checkForVacuumDeath();
                 }
                 resolveFire();
+                phaseReport.append(game.ageFlares());
+                send(createFlarePacket());
                 resolveExtremeTempInfantryDeath();
                 resolveAmmoDumps();
                 resolveCrewDamage();
@@ -3912,6 +3915,19 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
+     * Creates a flare above the target
+     */
+    private void deliverFlare(Coords coords, int rackSize) {
+        Flare flare = new Flare(coords, Math.max(1, rackSize / 5), 3, 0);
+        game.addFlare(flare);
+    }
+    
+    private void deliverArtilleryFlare(Coords coords, int radius) {
+        Flare flare = new Flare(coords, 12, radius, Flare.F_DRIFTING);
+        game.addFlare(flare);
+    }
+
+    /**
      * When an entity enters a conventional or Thunder minefield.
      */
     private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow) {
@@ -5944,7 +5960,8 @@ implements Runnable, ConnectionHandler {
         }
 
       // special case minefield delivery, no damage and scatters if misses.
-      if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
+      if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER
+          || target.getTargetType() == Targetable.TYPE_FLARE_DELIVER) {
         Coords coords = target.getPosition();
         if (!bMissed) {
           phaseReport.append("hits the intended hex ")
@@ -5988,6 +6005,9 @@ implements Runnable, ConnectionHandler {
                 && atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
           deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
                                         atype.getRackSize());
+        else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                && atype.getMunitionType() == AmmoType.M_FLARE)
+          deliverFlare(coords, atype.getRackSize());
           //else
           //{
           //...This is an error, but I'll just ignore it for now.
@@ -6131,6 +6151,17 @@ implements Runnable, ConnectionHandler {
             phaseReport.append("misses and scatters off the board\n");
             return !bMissed;
           }
+        }
+
+        if(usesAmmo && atype.getMunitionType() == AmmoType.M_FLARE) {
+            int radius;
+            if(atype.getAmmoType() == AmmoType.T_ARROW_IV)
+                radius = 4;
+            else if(atype.getAmmoType() == AmmoType.T_LONG_TOM)
+                radius = 3;
+            else radius = Math.max(1,atype.getRackSize() / 5);
+            deliverArtilleryFlare(coords,radius);
+            return !bMissed;
         }
 
         int nCluster = 5;
@@ -12982,6 +13013,14 @@ implements Runnable, ConnectionHandler {
             }
         }
         return new Packet(Packet.COMMAND_SENDING_ARTILLERYATTACKS, v);
+    }
+    
+    /**
+     * Creates a packet containing flares
+     **/
+    private Packet createFlarePacket() {
+        
+        return new Packet(Packet.COMMAND_SENDING_FLARES, game.getFlares());
     }
     
     /**

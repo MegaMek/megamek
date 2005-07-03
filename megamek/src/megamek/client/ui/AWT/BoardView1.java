@@ -32,6 +32,7 @@ import megamek.common.event.BoardListener;
 import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListener;
@@ -1112,7 +1113,8 @@ public class BoardView1
         }
         
         if(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) && 
-            game.getOptions().booleanOption("night_battle")) {
+            game.getOptions().booleanOption("night_battle") &&
+            !game.isPositionIlluminated(c)) {
             scaledImage = getScaledImage(tileManager.getNightFog());
             boardGraph.drawImage(scaledImage, drawX, drawY, this);
         }
@@ -4202,6 +4204,12 @@ public class BoardView1
             }
             updateBoard();
         }        
+
+        public void gameBoardChanged(GameBoardChangeEvent e) {
+            boardImage = null;
+            boardGraph = null;
+            redrawAllEntities();
+        }
     };
 
     protected void updateBoard() {

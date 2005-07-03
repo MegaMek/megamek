@@ -1052,4 +1052,31 @@ public interface IGame {
      * Reset tag information
      */
     public abstract void resetTagInfo();
+
+    /** 
+     * Get a list of flares
+     */
+    public abstract Vector getFlares();
+
+    /**
+     * Set the list of flares
+     */
+    public abstract void setFlares(Vector flares);
+
+    /**
+     * Add a new flare
+     */
+    public abstract void addFlare(Flare flare);
+
+    /**
+     * returns true if the hex is illuminated by a flare
+     */
+    public abstract boolean isPositionIlluminated(Coords c);
+
+    /**
+     * Age the flare list and remove any which have burnt out
+     * Artillery flares drift with wind.
+     * (called at end of turn)
+     */
+    public abstract String ageFlares();
 }

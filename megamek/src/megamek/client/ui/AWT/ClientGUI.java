@@ -916,6 +916,8 @@ public class ClientGUI
                     popup.add(
                         new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_MINEFIELD_DELIVER)));
                     popup.add(
+                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_FLARE_DELIVER)));
+                    popup.add(
                         new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
                     popup.add(
                         new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_FASCAM)));

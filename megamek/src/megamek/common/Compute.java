@@ -1163,8 +1163,32 @@ public class Compute
         boolean isVTOL = ((entityTarget != null) && (hex != null))?(entityTarget.getElevation() >= hex.ceiling()):false;
 
         ToHitData toHit = new ToHitData();
+
+        // Smoke and woods. With L3, the effects STACK.
+        if (!game.getOptions().booleanOption("maxtech_fire")) { // L2
+            if (hex.containsTerrain(Terrains.SMOKE)) {
+                toHit.addModifier(2, "target in smoke");
+            } else if ((hex.terrainLevel(Terrains.WOODS) == 1) && !isVTOL) {
+                toHit.addModifier(1, "target in light woods");
+            } else if ((hex.terrainLevel(Terrains.WOODS) > 1) && !isVTOL) {
+                toHit.addModifier(2, "target in heavy woods");
+            }
+        } else { // L3
+            if (hex.terrainLevel(Terrains.SMOKE) == 1) {
+                toHit.addModifier(1, "target in light smoke");
+            } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
+                toHit.addModifier(2, "target in heavy smoke");
+            }
+            if(!isVTOL) {
+                if (hex.terrainLevel(Terrains.WOODS) == 1) {
+                    toHit.addModifier(1, "target in light woods");
+                } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
+                    toHit.addModifier(2, "target in heavy woods");
+                }
+            }
+        }
         
-        // only entities get terrain bonuses
+        // only entities get remaining terrain bonuses
         // TODO: should this be changed for buildings???
         if (entityTarget == null) {
             return toHit;
@@ -1184,32 +1208,7 @@ public class Compute
         if (entityTarget.isStuck()) {
             toHit.addModifier(-2, "target stuck in swamp");
         }
-
-        // Smoke and woods. With L3, the effects STACK.
-        if (!game.getOptions().booleanOption("maxtech_fire")) { // L2
-            if (hex.containsTerrain(Terrains.SMOKE)) {
-                toHit.addModifier(2, "target in smoke");
-            } else if ((hex.terrainLevel(Terrains.WOODS) == 1) && !isVTOL) {
-                toHit.addModifier(1, "target in light woods");
-            } else if ((hex.terrainLevel(Terrains.WOODS) > 1) && !isVTOL) {
-                toHit.addModifier(2, "target in heavy woods");
-            }
-            return toHit;
-        } else { // L3
-            if (hex.terrainLevel(Terrains.SMOKE) == 1) {
-                toHit.addModifier(1, "target in light smoke");
-            } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
-                toHit.addModifier(2, "target in heavy smoke");
-            }
-            if(!isVTOL) {
-                if (hex.terrainLevel(Terrains.WOODS) == 1) {
-                    toHit.addModifier(1, "target in light woods");
-                } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
-                    toHit.addModifier(2, "target in heavy woods");
-                }
-            }
-            return toHit;
-        }
+        return toHit;
     }
 
     /**

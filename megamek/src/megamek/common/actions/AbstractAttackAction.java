@@ -98,6 +98,10 @@ public abstract class AbstractAttackAction
             else if(te!=null && te.isIlluminated()) {
                 toHit.addModifier(-night_modifier, "target illuminated by searchlight");
             }
+            //So do flares
+            else if(game.isPositionIlluminated(target.getPosition())) {
+                toHit.addModifier(-night_modifier, "target illuminated by flare");
+            }
             //Certain ammunitions reduce the penalty
             else if(atype != null) {
                 if(atype.getAmmoType() == AmmoType.T_AC &&

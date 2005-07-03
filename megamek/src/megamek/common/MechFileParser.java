@@ -216,7 +216,7 @@ public class MechFileParser {
                 while ((s = br.readLine()) != null) {
                     int nIndex1 = s.indexOf('|');
                     name=s.substring(0, nIndex1);
-                    canonUnitNames.add(name);
+                    canonUnitNames.addElement(name);
                 }
             }
         } catch (IOException e) {

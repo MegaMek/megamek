@@ -2377,7 +2377,7 @@ public class Game implements Serializable, IGame
     }
 
     public void updateTagInfo(TagInfo info, int index) {
-        tagInfoForTurn.set(index, info);
+        tagInfoForTurn.setElementAt(info, index);
     }
 
     public void resetTagInfo() {
@@ -2391,7 +2391,7 @@ public class Game implements Serializable, IGame
             Entity target = getEntity(info.targetId);
             if(!ae.isEnemyOf(attacker) && target.isOnSameSheet(tc)) {
                 info.shots = 0;
-                tagInfoForTurn.set(i, info);
+                tagInfoForTurn.setElementAt(info, i);
             }
         }
     }
@@ -2468,7 +2468,7 @@ public class Game implements Serializable, IGame
                 report.append(" has ");
                 report.append(flare.turnsToBurn);
                 report.append(" turns left to burn.");
-                flares.set(i, flare);
+                flares.setElementAt(flare, i);
             }
             report.append("\n");
         }

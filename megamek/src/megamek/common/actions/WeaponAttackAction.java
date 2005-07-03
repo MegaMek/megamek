@@ -212,6 +212,12 @@ public class WeaponAttackAction
             !AmmoType.canDeliverMinefield(atype)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
         }
+        if (target.getTargetType() == Targetable.TYPE_FLARE_DELIVER &&
+            !(usesAmmo &&
+             atype.getAmmoType() == AmmoType.T_LRM && 
+             atype.getMunitionType() == AmmoType.M_FLARE)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver flares");
+        }
         if ((game.getPhase() == IGame.PHASE_TARGETING) && !isArtilleryIndirect) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Only indirect artillery can be fired in the targeting phase");
         }
@@ -233,6 +239,13 @@ public class WeaponAttackAction
              target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
             return new ToHitData( ToHitData.IMPOSSIBLE,
                                   "Weapon can only deliver minefields" );
+        }
+        if ( atype != null &&
+             atype.getAmmoType() == AmmoType.T_LRM &&
+             atype.getMunitionType() == AmmoType.M_FLARE &&
+             target.getTargetType() != Targetable.TYPE_FLARE_DELIVER) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Weapon can only deliver flares" );
         }
         // some weapons can only target infantry
         if ( wtype.hasFlag(WeaponType.F_INFANTRY_ONLY) ) {

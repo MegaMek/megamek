@@ -608,6 +608,8 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS LRM launchers.
         munitions.removeAllElements();
+        munitions.addElement( new MunitionMutator( "Flare",
+                                                   1, M_FLARE, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Thunder",
@@ -649,6 +651,8 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan LRM launchers.
         munitions.removeAllElements();
+        munitions.addElement( new MunitionMutator( "(Clan) Flare",
+                                                   1, M_FLARE, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Thunder",
@@ -721,6 +725,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_INFERNO_IV, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
                                                    1, M_VIBRABOMB_IV, TechConstants.T_IS_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "Illumination",
+                                                   1, M_FLARE, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -776,6 +782,8 @@ public class AmmoType extends EquipmentType {
         // extra level 3 ammo for sniper & long tom but not thumper
         munitions.addElement( new MunitionMutator( "Copperhead",
                                                    1, M_HOMING, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.addElement( new MunitionMutator( "Illumination",
+                                                   1, M_FLARE, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.

@@ -23,7 +23,6 @@ import megamek.client.Client;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.*;
 import com.sun.java.util.collections.Arrays;
 import com.sun.java.util.collections.Iterator;
 

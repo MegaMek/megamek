@@ -46,6 +46,7 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.TagInfo;
+import megamek.common.Flare;
 
 /**
  * The game class is the root of all data about the game in progress.
@@ -123,6 +124,7 @@ public class Game implements Serializable, IGame
     private int lastEntityId;
     
     private Vector tagInfoForTurn = new Vector();
+    private Vector flares = new Vector();
     
     /**
      * Constructor
@@ -999,6 +1001,7 @@ public class Game implements Serializable, IGame
         case Targetable.TYPE_HEX_CLEAR :
         case Targetable.TYPE_HEX_IGNITE :
         case Targetable.TYPE_MINEFIELD_DELIVER :
+        case Targetable.TYPE_FLARE_DELIVER :
             return new HexTarget(HexTarget.idToCoords(nID), board, nType);
         case Targetable.TYPE_BUILDING :
         case Targetable.TYPE_BLDG_IGNITE :
@@ -1142,6 +1145,7 @@ public class Game implements Serializable, IGame
         resetArtilleryAttacks();
         removeMinefields();
         removeArtyAutoHitHexes();
+        flares.removeAllElements();
 
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;
@@ -1749,6 +1753,7 @@ public class Game implements Serializable, IGame
     }
     public void setArtilleryVector(Vector v) {
         offboardArtilleryAttacks = v;
+        processGameEvent(new GameBoardChangeEvent(this));
     }
     public void resetArtilleryAttacks() {
         offboardArtilleryAttacks.removeAllElements();
@@ -2389,5 +2394,85 @@ public class Game implements Serializable, IGame
                 tagInfoForTurn.set(i, info);
             }
         }
+    }
+
+    /** 
+     * Get a list of flares
+     */
+    public Vector getFlares() {
+        return flares;
+    }
+
+    /**
+     * Set the list of flares
+     */
+    public void setFlares(Vector flares) {
+        this.flares = flares;
+        processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    /**
+     * Add a new flare
+     */
+    public void addFlare(Flare flare) {
+        flares.addElement(flare);
+        processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    /**
+     * returns true if the hex is illuminated by a flare
+     */
+    public boolean isPositionIlluminated(Coords c) {
+        for(Enumeration e = flares.elements();e.hasMoreElements();) {
+            Flare flare = (Flare)e.nextElement();
+            if(flare.illuminates(c)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Age the flare list and remove any which have burnt out
+     * Artillery flares drift with wind.
+     * (called at end of turn)
+     */
+    public String ageFlares() {
+        StringBuffer report=new StringBuffer();
+        for(int i=flares.size() - 1;i>=0;i--) {
+            Flare flare = (Flare)flares.elementAt(i);
+            report.append("Flare in hex ");
+            report.append(flare.position.getBoardNum());
+
+            if((flare.flags & Flare.F_IGNITED) != 0) {
+                flare.turnsToBurn--;
+                if ((flare.flags & Flare.F_DRIFTING) != 0) {
+                    int dir = getWindDirection();
+                    int str = getWindStrength();
+                    if(str > 0) {
+                        flare.position = flare.position.translated(dir);
+                        if(str == 3) {
+                            flare.position = flare.position.translated(dir);
+                        }
+                    report.append(" drifts to hex ");
+                    report.append(flare.position.getBoardNum());
+                    report.append(" and");
+                    }
+                }
+            } else {
+                report.append(" ignites, and");
+                flare.flags |= Flare.F_IGNITED;
+            }
+            if(flare.turnsToBurn <= 0) {
+                report.append(" burns out.");
+                flares.removeElementAt(i);
+            } else {
+                report.append(" has ");
+                report.append(flare.turnsToBurn);
+                report.append(" turns left to burn.");
+                flares.set(i, flare);
+            }
+            report.append("\n");
+        }
+        processGameEvent(new GameBoardChangeEvent(this));
+        return report.toString();
     }
 }

@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.83 (CVS)
++ Patch 1231769: flare LRM & illumination artillery.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

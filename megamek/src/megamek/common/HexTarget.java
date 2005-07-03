@@ -59,17 +59,20 @@ public class HexTarget implements Targetable
     public String getDisplayName() {
         String name = "";
         switch (m_type) {
+        case (Targetable.TYPE_FLARE_DELIVER) :
+            name = Messages.getString("HexTarget.DeliverFlare");
+            break;
         case (Targetable.TYPE_MINEFIELD_DELIVER) :
-            name = " (Deliver minefield)";
+            name = Messages.getString("HexTarget.DeliverMinefield");
             break;
         case (Targetable.TYPE_HEX_CLEAR) :
-            name = " (Clear)";
+            name = Messages.getString("HexTarget.Clear");
             break;
         case (Targetable.TYPE_HEX_IGNITE) :
-            name = " (Ignite)";
+            name = Messages.getString("HexTarget.Ignite");
             break;
         case (Targetable.TYPE_HEX_ARTILLERY) :
-            name = " (Artillery)";
+            name = Messages.getString("HexTarget.Artillery");
             break;
         case (Targetable.TYPE_HEX_FASCAM) :
             name = " (FASCAM)";

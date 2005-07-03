@@ -72,6 +72,7 @@
             <fileset dir="${libdir}" includes="*.jar"/>
          </classpath>
     </javac>
+
     <!-- Ensure that the log directory exists. -->
     <mkdir dir="${logdir}"/>
     <touch file="${timestampfile}"/>
@@ -202,6 +203,8 @@
         </manifest>
     </jar>
     
+    <!-- Ensure that the log directory exists. -->
+    <mkdir dir="${cvsbuilddir}/${logdir}"/>
     <touch file="${cvsmaindir}/${timestampfile}"/>
   </target>
 

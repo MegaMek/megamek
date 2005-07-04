@@ -105,7 +105,7 @@ public class WeaponAttackAction
         this.aimedLocation = aimedLocation;
     }
     
-    public void setAimimgMode(int aimMode) {
+    public void setAimingMode(int aimMode) {
         this.aimMode = aimMode;
     }
     

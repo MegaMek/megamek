@@ -5,6 +5,7 @@ v0.29.83 (CVS)
 + Bug 1231904: Fix for MS JRE.  Vector.set() bad!  Vector.setElementAt() good!
 + Data 1230132: Unit Images for Karnov, Warrior and Yellow Jacket VTOLs, Sea
     Skimmer Hydrofoil and Scimitar Hover Tank.
++ Bug 1000958: Infantry leg and swarm attacks shouldn't be possible to be aimed
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

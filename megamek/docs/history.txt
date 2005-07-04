@@ -27,6 +27,7 @@ v0.29.83 (CVS)
 + In MechView, don't show "unknown" as armor type for BA.
 + Bug 1174455: animated movement not working.
 + LBX Glancing blows should deal damage.
++ Bug 1232365: Incorrect BV: All units with normal autocannons.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

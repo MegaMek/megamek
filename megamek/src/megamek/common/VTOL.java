@@ -332,8 +332,10 @@ public class VTOL extends Tank {
                 return new HitData(nArmorLoc);
             case 9:
                 if (bSide) {
+                    //TODO:somehow report this to the serverlog
+                    Mounted mWeap = getMainWeapon();
+                    mWeap.setHit(true);
                     return new HitData(nArmorLoc);
-                    //TODO:should be main weapon destroyed, but how in the world?
                 }
                 else {
                     return new HitData(nArmorLoc);
@@ -342,9 +344,11 @@ public class VTOL extends Tank {
             case 11:
                 return new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
             case 12:
-                return new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL);
-                //TODO:but also -1 to move?  how?
-                
+                if (getOriginalWalkMP() > 0) {
+                    //TODO:somehow get this to report in the serverlog
+                    setOriginalWalkMP(getOriginalWalkMP()-1);
+                }
+                return new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL);                
         }
         return null;
     }

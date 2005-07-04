@@ -1303,12 +1303,13 @@ public class Compute
             AmmoType at = (AmmoType)weapon.getLinked().getType();
 
             float fHits = 0.0f;
-            fHits = expectedHitsByRackSize[wt.getRackSize()];
+            if (wt.getRackSize() != 40 && wt.getRackSize() != 30) {
+                fHits = expectedHitsByRackSize[wt.getRackSize()];
+            } else {
+                fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
+            }
             if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK) || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 fHits = wt.getRackSize();
-            }
-            if (wt.getRackSize() == 40 || wt.getRackSize() == 30) {
-                fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
             }
             if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA) || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)){
                 if ((weapon.curMode().getName() == "Ultra") || (weapon.curMode().getName() == "2-shot")){

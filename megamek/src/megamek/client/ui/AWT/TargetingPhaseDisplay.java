@@ -432,7 +432,7 @@ public class TargetingPhaseDisplay
      * queue.
      */
     private void fire() {
-        // get the sepected weaponnum
+        // get the selected weaponnum
         int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted mounted = ce().getEquipment(weaponNum);
 

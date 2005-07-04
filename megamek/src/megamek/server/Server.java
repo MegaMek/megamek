@@ -6309,6 +6309,7 @@ implements Runnable, ConnectionHandler {
             }
             if (bSwarm || bSwarmI) {
                 swarmMissilesNowLeft = swarmMissilesLeft > 0 ? swarmMissilesLeft : maxMissiles;
+                maxMissiles = swarmMissilesLeft > 0 ? swarmMissilesLeft : maxMissiles;
             }
 
             // If the AMS shot down *all* incoming missiles, if
@@ -6703,7 +6704,7 @@ implements Runnable, ConnectionHandler {
             }
             // swarm or swarm-I shots may just hit with the remaining missiles
             if ((bSwarm || bSwarmI) && (swarmMissilesLeft > 0)) {
-                int swarmsForHitTable;
+                int swarmsForHitTable = swarmMissilesLeft;
                 if (swarmMissilesLeft < 20 && swarmMissilesLeft > 15)
                     swarmsForHitTable = 15;
                 else if (swarmMissilesLeft < 15 && swarmMissilesLeft > 10)

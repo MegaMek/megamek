@@ -289,7 +289,7 @@ public class MoveStep implements Serializable {
                     && entity.getMovementMode() != IEntityMovementMode.NAVAL
                     && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
                     && entity.getMovementMode() != IEntityMovementMode.SUBMARINE
-                    && !(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+                    && entity.getMovementMode() != IEntityMovementMode.VTOL) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -1108,11 +1108,12 @@ public class MoveStep implements Serializable {
                 mp += 2;
             }
 
-            // non-hovers and non-navals check for water depth and are affected by swamp
+            // non-hovers, non-navals and non-VTOLs check for water depth and are affected by swamp
             if ((moveType != IEntityMovementMode.HOVER)
                     && (moveType != IEntityMovementMode.NAVAL)
                     && (moveType != IEntityMovementMode.HYDROFOIL)
-                    && (moveType != IEntityMovementMode.SUBMARINE)) {
+                    && (moveType != IEntityMovementMode.SUBMARINE)
+                    && (moveType != IEntityMovementMode.VTOL)) {
                 if (destHex.terrainLevel(Terrains.WATER) == 1) {
                     mp++;
                 } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
@@ -1134,8 +1135,9 @@ public class MoveStep implements Serializable {
         if (nSrcEl != nDestEl) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
 
-            // Infantry and ground vehicles are charged double.
-            if (isInfantry
+            // non-flying Infantry and ground vehicles are charged double.
+            if ((isInfantry && !(movementType == IEntityMovementType.MOVE_VTOL_WALK ||
+                                 movementType == IEntityMovementType.MOVE_VTOL_RUN))
                 || (nMove == IEntityMovementMode.TRACKED
                     || nMove == IEntityMovementMode.WHEELED
                     || nMove == IEntityMovementMode.HOVER)) {
@@ -1176,13 +1178,6 @@ public class MoveStep implements Serializable {
                 .append( " are not adjacent." );
             throw new IllegalArgumentException( buf.toString() );
         }
-
-        /* 2004-03-31 : don't look at overall movement, just this step. **
-        if (movementType == IMoveType.MOVE_ILLEGAL) {
-            // that was easy
-            return false;
-        }
-        /* 2004-03-31 : don't look at overall movement, just this step. */
 
         // If we're a tank and immobile, check if we try to unjam
         // or eject and the crew is not unconscious
@@ -1308,10 +1303,10 @@ public class MoveStep implements Serializable {
                 && nMove != IEntityMovementMode.NAVAL
                 && nMove != IEntityMovementMode.HYDROFOIL
                 && nMove != IEntityMovementMode.SUBMARINE
+                && nMove != IEntityMovementMode.VTOL
                 && destHex.terrainLevel(Terrains.WATER) > 0
                 && !firstStep
-                && !isPavementStep
-                && !(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+                && !isPavementStep) {
             return false;
         }
 
@@ -1348,8 +1343,11 @@ public class MoveStep implements Serializable {
         }
 
         // Certain movement types have terrain restrictions; terrain
-        // restrictions are lifted when moving along a road or bridge.
-        if (entity.isHexProhibited(destHex) && !isPavementStep()) {
+        // restrictions are lifted when moving along a road or bridge,
+        // or when flying        
+        if (entity.isHexProhibited(destHex) && !isPavementStep() &&
+            movementType != IEntityMovementType.MOVE_VTOL_WALK &&
+            movementType != IEntityMovementType.MOVE_VTOL_RUN) {
 
             // We're allowed to pass *over* invalid
             // terrain, but we can't end there.
@@ -1364,6 +1362,8 @@ public class MoveStep implements Serializable {
 
         // If we are *in* restricted terrain, we can only leave via roads.
         if ( movementType != IEntityMovementType.MOVE_JUMP
+             && movementType != IEntityMovementType.MOVE_VTOL_WALK
+             && movementType != IEntityMovementType.MOVE_VTOL_RUN
              && entity.isHexProhibited(srcHex)
              && !isPavementStep ) {
             return false;

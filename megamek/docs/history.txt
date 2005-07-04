@@ -16,6 +16,7 @@ v0.29.83 (CVS)
     If you by some circumstances needs overlapping deploying zones (e.g. more
     than 4 players in a DB game, or team games where 2 players start on the
     same side, disable the game option "exclusive_db_deployment".
++ Missing translations and removal of duplicates in *.properties - again!
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

@@ -62,17 +62,12 @@ public class VTOL extends Tank {
         //       or bridge matches entity elevation.
         if (moveType != IEntityMovementType.MOVE_JUMP
             && prevHex != null
-            /* Bug 754610: Revert fix for bug 702735.
-               && ( prevHex.contains(Terrain.PAVEMENT) ||
-               prevHex.contains(Terrain.ROAD) ||
-               prevHex.contains(Terrain.BRIDGE) )
-            */
             && (overallMoveType == IEntityMovementType.MOVE_RUN
                 || overallMoveType == IEntityMovementType.MOVE_VTOL_RUN)
             && prevFacing != curFacing
             && !lastPos.equals(curPos))
             {
-                roll.append(new PilotingRollData(getId(), 0, "VTOL flanking and turning"));//is there a mod on this roll?
+                roll.append(new PilotingRollData(getId(), 0, "VTOL flanking and turning"));
              
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: VTOL is not apparently sideslipping");
@@ -114,26 +109,12 @@ public class VTOL extends Tank {
         dbv += dEquipmentBV;
         
         double typeModifier;
-        /*switch (getMovementType()) {
-            case Entity.MovementType.TRACKED:
-                typeModifier = 0.8;
-                break;
-            case Entity.MovementType.WHEELED:
-                typeModifier = 0.7;
-                break;
-            case Entity.MovementType.HOVER:
-                typeModifier = 0.6;
-                break;
-            // vtol and naval to come
-            default:
-                typeModifier = 0.5;
-        }*/
         typeModifier=.4;
         
         dbv *= typeModifier;
         
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), true).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), true, false, true).getValue();
         if (tmmRan > 5) {
             tmmRan = 5;
         }
@@ -263,15 +244,45 @@ public class VTOL extends Tank {
     public boolean canCharge() {
         return false;
     }
-
-    /* TODO:make this work for VTOLs
+    
+    /**
+     * Returns the name of the type of movement used.
+     * This is VTOL-specific.
      */
-    public int getMaxElevationChange() {
-        return 999; //correct?
+    public String getMovementString(int mtype) {
+        switch(mtype) {
+        case IEntityMovementType.MOVE_VTOL_WALK :
+            return "Cruised";
+        case IEntityMovementType.MOVE_VTOL_RUN :
+            return "Flanked";
+        case IEntityMovementType.MOVE_NONE :
+            return "None";
+        default :
+            return "Unknown!";
+        }
+    }
+    
+    /**
+     * Returns the name of the type of movement used.
+     * This is tank-specific.
+     */
+    public String getMovementAbbr(int mtype) {
+        switch(mtype) {
+        case IEntityMovementType.MOVE_VTOL_WALK :
+            return "C";
+        case IEntityMovementType.MOVE_VTOL_RUN :
+            return "F";
+        case IEntityMovementType.MOVE_NONE :
+            return "N";
+        default :
+            return "?";
+        }
     }
 
-    /* TODO:I don't think this is actually correct...
-     */
+    public int getMaxElevationChange() {
+        return 999;
+    }
+
     public boolean isHexProhibited(IHex hex) {
         return false;
     }
@@ -321,7 +332,8 @@ public class VTOL extends Tank {
                 return new HitData(nArmorLoc);
             case 9:
                 if (bSide) {
-                    return new HitData(nArmorLoc); //should be main weapon destroyed, but how in the world?
+                    return new HitData(nArmorLoc);
+                    //TODO:should be main weapon destroyed, but how in the world?
                 }
                 else {
                     return new HitData(nArmorLoc);
@@ -330,14 +342,14 @@ public class VTOL extends Tank {
             case 11:
                 return new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
             case 12:
-                return new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL); //but also -1 to move?  how?
+                return new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL);
+                //TODO:but also -1 to move?  how?
                 
         }
         return null;
     }
 
     public boolean doomedInVacuum() {
-        // I think this is true...
         return true;
     }
 }

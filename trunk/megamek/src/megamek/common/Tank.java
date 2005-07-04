@@ -295,7 +295,7 @@ public class Tank
     
     /**
      * Returns the name of the type of movement used.
-     * This is mech-specific.
+     * This is tank-specific.
      */
     public String getMovementAbbr(int mtype) {
         switch(mtype) {
@@ -497,7 +497,7 @@ public class Tank
         dbv *= typeModifier;
         
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false, false).getValue();
         if (tmmRan > 5) {
             tmmRan = 5;
         }

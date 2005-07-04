@@ -650,8 +650,12 @@ class WeaponPanel extends BufferedPanel
         int currentHeatBuildup = en.heat // heat from last round
             + en.getEngineCritHeat() // heat engine crits will add
             + en.heatBuildup; // heat we're building up this round
-        if ( en instanceof Mech && en.infernos.isStillBurning() ) { // hit with inferno ammo
-            currentHeatBuildup += en.infernos.getHeat();
+        if ( en instanceof Mech) {
+            if (en.infernos.isStillBurning() ) { // hit with inferno ammo
+                currentHeatBuildup += en.infernos.getHeat();
+            }
+            // extreme temperatures.
+            currentHeatBuildup += game.getTemperatureDifference();
         }
         Coords position = entity.getPosition();
         if (!en.isOffBoard()) {
@@ -730,6 +734,10 @@ class WeaponPanel extends BufferedPanel
         String heatText = Integer.toString(currentHeatBuildup);
         if (currentHeatBuildup > en.getHeatCapacityWithWater()) {
             heatText += "*"; // overheat indication //$NON-NLS-1$
+        }
+        // check for negative values due to extreme temp
+        if (currentHeatBuildup < 0) {
+            currentHeatBuildup = 0;
         }
         this.currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 

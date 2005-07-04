@@ -889,7 +889,8 @@ public class MoveStep implements Serializable {
                 || stepType == MovePath.STEP_TURN_RIGHT)) {
 
             if (getMpUsed() <= tmpWalkMP) {
-                if (parent.getEntity().getMovementMode() == IEntityMovementMode.VTOL)
+                if (parent.getEntity().getMovementMode() == IEntityMovementMode.VTOL &&
+                    getElevation() > 0)
                     movementType = IEntityMovementType.MOVE_VTOL_WALK;
                 else
                     movementType = IEntityMovementType.MOVE_WALK;

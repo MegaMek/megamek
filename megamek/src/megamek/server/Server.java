@@ -3496,7 +3496,7 @@ implements Runnable, ConnectionHandler {
             // used for movement animation stuff.
             // broken for maps larget than 255 hexes across
             movePath.addElement
-                (new Integer(((curPos.x & 0xFF) << 8) | (curPos.y& 0xFF) | (curFacing << 16)));
+                (new Integer(((curPos.x & 0xFF) << 8) | (curPos.y & 0xFF) | (curFacing << 16)));
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
             prevStep = step;
@@ -5692,7 +5692,7 @@ implements Runnable, ConnectionHandler {
       boolean bSwarmI = (usesAmmo
                             && (atype.getAmmoType() == AmmoType.T_LRM)
                             && atype.getMunitionType() == AmmoType.M_SWARM_I);
-      boolean glancing = false; // For Glancing Hits Rule
+      boolean bGlancing = false; // For Glancing Hits Rule
       int swarmMissilesNowLeft = 0;
       int hits = 1, glancingMissileMod = 0;
       int glancingCritMod = 0;
@@ -5917,17 +5917,17 @@ implements Runnable, ConnectionHandler {
       boolean bMissed = wr.roll < toHit.getValue();
       if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
         if (wr.roll == toHit.getValue()) {
-            glancing = true;
+            bGlancing = true;
             glancingMissileMod = -4;
             glancingCritMod = -2;
             phaseReport.append(" - Glancing Blow - ");
         } else {
-            glancing = false;
+            bGlancing = false;
             glancingMissileMod = 0;
             glancingCritMod = 0;
         }
       } else {
-        glancing = false;
+        bGlancing = false;
         glancingMissileMod = 0;
         glancingCritMod = 0;
       }
@@ -6661,8 +6661,8 @@ implements Runnable, ConnectionHandler {
             // Large MRM missile racks roll twice.
             // MRM missiles never recieve hit bonuses.
             if ( wtype.getRackSize() == 30 || wtype.getRackSize() == 40 ) {
-                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod, maxtechmissiles | glancing) +
-                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod, maxtechmissiles | glancing);
+                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod, maxtechmissiles | bGlancing) +
+                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod, maxtechmissiles | bGlancing);
             }
 
             // Battle Armor units multiply their racksize by the number
@@ -6678,10 +6678,10 @@ implements Runnable, ConnectionHandler {
                     // Account for more than 20 missles hitting.
                     hits = 0;
                     while ( temp > 20 ) {
-                        hits += Compute.missilesHit( 20, nMissilesModifier+glancingMissileMod, maxtechmissiles | glancing );
+                        hits += Compute.missilesHit( 20, nMissilesModifier+glancingMissileMod, maxtechmissiles | bGlancing );
                         temp -= 20;
                     }
-                    hits += Compute.missilesHit( temp, nMissilesModifier+glancingMissileMod, maxtechmissiles | glancing );
+                    hits += Compute.missilesHit( temp, nMissilesModifier+glancingMissileMod, maxtechmissiles | bGlancing );
                 } // End not-all-shots-hit
             }
 
@@ -6691,7 +6691,7 @@ implements Runnable, ConnectionHandler {
             }
             // In all other circumstances, roll for hits.
             else {
-                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | glancing);
+                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | bGlancing);
                 // swarm missiles that didn't hit continue 
                 if ( (bSwarm || bSwarmI) && swarmMissilesLeft == 0) {
                     swarmMissilesNowLeft = wtype.getRackSize() - hits;
@@ -6711,7 +6711,7 @@ implements Runnable, ConnectionHandler {
                 else if (swarmMissilesLeft < 10 && swarmMissilesLeft > 5)
                     swarmsForHitTable = 5;
                 else swarmsForHitTable = 5;
-                hits = Compute.missilesHit(swarmsForHitTable, nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | glancing);
+                hits = Compute.missilesHit(swarmsForHitTable, nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | bGlancing);
                 if (hits > swarmMissilesLeft) {
                     hits = swarmMissilesLeft;
                 }
@@ -6736,7 +6736,7 @@ implements Runnable, ConnectionHandler {
             // war of 3039 prototype LBXs get -1 mod on missile chart
             int nMod = wtype.hasFlag(WeaponType.F_PROTOTYPE) ? 0 : -1;
             if ( !bAllShotsHit ) {
-                if (!glancing) {
+                if (!bGlancing) {
                     hits = Compute.missilesHit( hits, nMod );
                 } else {
                     // if glancing blow, half the number of missiles that hit,
@@ -6812,8 +6812,8 @@ implements Runnable, ConnectionHandler {
 
         // only halve damage for non-missiles and non-cluster,
         // because cluster lbx gets handled above.
-        if (glancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS)
-                && !(usesAmmo && (atype.getAmmoType() == AmmoType.T_AC) 
+        if (bGlancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS)
+                && !(usesAmmo && (atype.getAmmoType() == AmmoType.T_AC_LBX) 
                 && atype.getMunitionType() == AmmoType.M_CLUSTER)) {
             nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
         }
@@ -7326,28 +7326,28 @@ implements Runnable, ConnectionHandler {
                             .append( " suffers no damage." );
                     } else if (bFragmentation) {
                         // If it's a frag missile...
-                        if (glancing) {
+                        if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 1) );
                     } else if (bFlechette) {
                         // If it's a frag missile...
-                        if (glancing) {
+                        if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 2) );
                     } else if (bAcidHead) {
                         // If it's an acid-head warhead...
-                        if (glancing) {
+                        if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 3) );
                     } else if(bIncendiary && usesAmmo && atype.getAmmoType() == AmmoType.T_AC) {
                         //incendiary AC ammo
-                        if (glancing) {
+                        if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
                         phaseReport.append
@@ -7357,7 +7357,7 @@ implements Runnable, ConnectionHandler {
                                 && (atype.getAmmoType() == AmmoType.T_AC)
                                 && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
                             hit.makeArmorPiercing(atype);
-                        if (glancing) {
+                        if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
                         if (bAntiTSM) {

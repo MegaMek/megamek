@@ -734,7 +734,7 @@ public class Protomech
         dbv += dEquipmentBV;
         dbv +=weight;
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false, false).getValue();
         if (tmmRan > 5) {
             tmmRan = 5;
         }

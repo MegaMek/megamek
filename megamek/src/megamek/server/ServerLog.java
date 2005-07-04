@@ -53,7 +53,6 @@ public class ServerLog {
             writer = new BufferedWriter(new FileWriter(LOG_DIR + File.separator + filename, append));
             append("Log file opened " + new Date().toString()); //$NON-NLS-1$
         } catch (IOException ex) {
-            //TODO: I dunno.  report this... to the log? ;)
             writer = null;
             System.err.println("ServerLog:" + ex.getMessage());
         }

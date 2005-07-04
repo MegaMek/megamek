@@ -29,4 +29,7 @@ public interface IEntityMovementMode {
     public static final int NAVAL = 7;
     public static final int HYDROFOIL = 8;
     public static final int SUBMARINE = 9;
+    public static final int INF_LEG = 10;
+    public static final int INF_MOTORIZED = 11;
+    public static final int INF_JUMP = 12;
 }

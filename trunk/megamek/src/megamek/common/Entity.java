@@ -2757,6 +2757,12 @@ public abstract class Entity
         	return "Hydrofoil";
         case IEntityMovementMode.SUBMARINE:
         	return "Submarine";
+        case IEntityMovementMode.INF_LEG:
+            return "Leg";
+        case IEntityMovementMode.INF_MOTORIZED:
+            return "Motorized";
+        case IEntityMovementMode.INF_JUMP:
+            return "Jump";
         default:
             return "ERROR";
         }

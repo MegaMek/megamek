@@ -13,10 +13,12 @@ v0.29.83 (CVS)
 + Bug 691362: can deploy on top of unseen mechs. This is realized by not
     allowing players to choose overlapping deployment zones while playing
     double blind games.
-    If you by some circumstances needs overlapping deploying zones (e.g. more
+    If you by some circumstances need overlapping deploying zones (e.g. more
     than 4 players in a DB game, or team games where 2 players start on the
     same side, disable the game option "exclusive_db_deployment".
 + Missing translations and removal of duplicates in *.properties - again!
++ Bug 1231672: Mackie incorrectly listed as level 1
++ Missing TechLevel display in MechSelectionDialog for Mixed Tech units
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

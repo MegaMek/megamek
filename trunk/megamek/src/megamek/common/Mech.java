@@ -1657,6 +1657,11 @@ public abstract class Mech
             if (etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AC_ROTARY) {
                 tonnage = 0.0f;
             }
+            // normal ACs only marked as explosive because they are when they just
+            // fired incendiary ammo, therefore they don't count for explosive BV
+            if (etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AC) {
+                tonnage = 0.0f;
+            }
            
             ammoPenalty += 20.0 * tonnage;
         }

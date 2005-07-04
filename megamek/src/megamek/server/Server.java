@@ -2225,6 +2225,12 @@ implements Runnable, ConnectionHandler {
         // Point the unloaded unit in the given direction.
         unit.setFacing( facing );
         unit.setSecondaryFacing( facing );
+        
+        // Flying units onload to the same elevation as the flying transport
+        if (unloader.getMovementMode() == IEntityMovementMode.VTOL &&
+            unit.getMovementMode() == IEntityMovementMode.VTOL) {
+            unit.setElevation(unloader.getElevation());
+        }
 
         // Update the unloaded unit.
         this.entityUpdate( unit.getId() );

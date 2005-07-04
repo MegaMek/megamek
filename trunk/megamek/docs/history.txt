@@ -6,6 +6,11 @@ v0.29.83 (CVS)
 + Data 1230132: Unit Images for Karnov, Warrior and Yellow Jacket VTOLs, Sea
     Skimmer Hydrofoil and Scimitar Hover Tank.
 + Bug 1000958: Infantry leg and swarm attacks shouldn't be possible to be aimed
++ Prevent Bot NPE when firing MRM 30 or 40.
++ Bug 1048473: Bot doesn't click done in designate artillery hex phase.
++ Bot now clicks done in Offboard and Targeting when he has a unit with TAG or
+    Artillery.
+
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

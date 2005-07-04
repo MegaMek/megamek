@@ -18,13 +18,6 @@ package megamek.client.bot;
 import java.util.Enumeration;
 
 import megamek.common.*;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.TorsoTwistAction;
@@ -1290,6 +1283,12 @@ public class TestBot extends BotClient {
         deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFVibra(), 2);
 
         return deployedMinefields;
+    }
+    
+    protected java.util.Vector calculateArtyAutoHitHexes() {
+        java.util.Vector  artyAutoHitHexes = new java.util.Vector();
+        artyAutoHitHexes.insertElementAt(new Integer(this.getLocalPlayer().getId()), 0);
+        return artyAutoHitHexes;
     }
 
     protected java.util.Vector deployMinefields(java.util.Vector deployedMinefields, int number, int type) {

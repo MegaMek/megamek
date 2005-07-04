@@ -81,6 +81,7 @@ public abstract class BotClient extends Client {
     protected abstract PhysicalOption calculatePhysicalTurn();
     protected abstract MovePath continueMovementFor(Entity entity);
     protected abstract Vector calculateMinefieldDeployment();
+    protected abstract Vector calculateArtyAutoHitHexes();
     
     public ArrayList getEntitiesOwned() {
         ArrayList result = new ArrayList();
@@ -135,11 +136,8 @@ public abstract class BotClient extends Client {
             case IGame.PHASE_INITIATIVE :
             case IGame.PHASE_MOVEMENT_REPORT :
             case IGame.PHASE_FIRING_REPORT :
-            case IGame.PHASE_END :/*
+            case IGame.PHASE_END :
             case IGame.PHASE_OFFBOARD_REPORT :
-            case IGame.PHASE_SET_ARTYAUTOHITHEXES:
-            case IGame.PHASE_OFFBOARD:
-            case IGame.PHASE_TARGETING:*/
                 sendDone(true);
             break;
             case IGame.PHASE_VICTORY :
@@ -189,6 +187,16 @@ public abstract class BotClient extends Client {
                 }
                 sendDeployMinefields(mines);
                 sendPlayerInfo();
+            } else if (game.getPhase() == IGame.PHASE_SET_ARTYAUTOHITHEXES) {
+                // For now, declare no autohit hexes.
+                Vector autoHitHexes = calculateArtyAutoHitHexes();
+                sendArtyAutoHitHexes(autoHitHexes);
+            } else if (game.getPhase() == IGame.PHASE_TARGETING ||
+                       game.getPhase() == IGame.PHASE_OFFBOARD) {
+                // Send a "no attack" to clear the game turn, if any.
+                // TODO: Fix for real arty stuff
+                sendAttackData( game.getFirstEntityNum(), new Vector(0) );
+                sendDone(true);
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -623,7 +631,6 @@ public abstract class BotClient extends Client {
         else {
             fChance = (float)Compute.oddsAbove(hitData.getValue()) / 100.0f;
         }
-        System.out.println("\tHit Chance: " + fChance);
         
         // TODO : update for BattleArmor.
         

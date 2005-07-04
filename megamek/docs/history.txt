@@ -19,6 +19,8 @@ v0.29.83 (CVS)
 + Missing translations and removal of duplicates in *.properties - again!
 + Bug 1231672: Mackie incorrectly listed as level 1
 + Missing TechLevel display in MechSelectionDialog for Mixed Tech units
++ Show heatbuildup/dissipation from extreme temperature in expected heat
+    display in MechDisplay
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

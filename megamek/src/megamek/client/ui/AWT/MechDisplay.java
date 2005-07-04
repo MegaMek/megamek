@@ -96,7 +96,6 @@ public class MechDisplay extends BufferedPanel {
      */
     public void displayEntity(Entity en) {
 
-        // 2003-12-30, nemchenk
         clientgui.mechW.setTitle(en.getShortName());
 
         this.currentlyDisplaying = en;

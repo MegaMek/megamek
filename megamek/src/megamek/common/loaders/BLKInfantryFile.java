@@ -34,7 +34,7 @@ import megamek.common.util.*;
 public class BLKInfantryFile extends BLKFile implements IMechLoader {    
     
     // HACK!!!  Infantry movement reuses Mech and Vehicle movement.
-    private static final String[] MOVES = { "", "Leg", "", "", "Motorized", "Jump" };
+    private static final String[] MOVES = { "","","","","","","","","","", "Leg","Motorized","Jump" };
         
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;
@@ -94,27 +94,6 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("jumpingMP"))
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
 
-    /* Infanty *have* no armor (that's why they're PBI :).
-        if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find armor block.");
-        
-        int[] armor = dataFile.getDataAsInt("armor");
-        
-        if (armor.length < 4 || armor.length > 5) {
-            throw new EntityLoadingException("Incorrect armor array length");   
-        }
-        
-        t.setHasNoTurret(armor.length == 4);
-        
-        // add the body to the armor array
-        int[] fullArmor = new int[armor.length + 1];
-        fullArmor[0] = 0;
-        System.arraycopy(armor, 0, fullArmor, 1, armor.length);
-        for (int x = 0; x < fullArmor.length; x++) {
-            t.initializeArmor(fullArmor[x], x);
-        }
-        
-        
-    */        
         t.autoSetInternal();
         
         loadEquipment(t, "Platoon", Infantry.LOC_INFANTRY);

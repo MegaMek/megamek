@@ -31,6 +31,8 @@ v0.29.83 (CVS)
 + VTOLs get +1 to-hit only when they used MPs.
 + Show what movementtype VTOLs used in MechDisplay.
 + Show correct movementtype for Sylphs in MechDisplay.
++ Bug 1227724: too many missiles hitting in swarm attack. Also corrected to-Hit
+    calculation for swarm missiles that try to target another unit.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

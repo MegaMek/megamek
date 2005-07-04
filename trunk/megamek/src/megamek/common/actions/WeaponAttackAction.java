@@ -310,7 +310,8 @@ public class WeaponAttackAction
         }
     
         // got ammo?
-        if ( usesAmmo && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isBreached()) ) {
+        // don't check if it's a swarm-missile-follow-on-attack, we used the ammo previously
+        if ( usesAmmo && !exchangeSwarmTarget && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isBreached()) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon out of ammo.");
         }
     
@@ -339,7 +340,7 @@ public class WeaponAttackAction
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon blocked by passenger.");
         }
     
-        // Can't target a entity conducting a swarm attack.
+        // Can't target an entity conducting a swarm attack.
         if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
@@ -902,10 +903,12 @@ public class WeaponAttackAction
             toHit.append(Compute.getTargetMovementModifier(game, oldTarget.getId()));
             toHit.append(Compute.getTargetTerrainModifier(game, game.getEntity(oldTarget.getId())));
             if (!isECMAffected && !oldTarget.isEnemyOf(ae) &&
-                !(oldTarget.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)) {
+                !(oldTarget.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0) &&
+                atype.getMunitionType() == AmmoType.M_SWARM_I) {
                    toHit.addModifier( +2, "Swarm-I at friendly unit with intact sensors");
             }
         }
+        System.out.println(toHit.getDesc());
     
         // okay!
         return toHit;

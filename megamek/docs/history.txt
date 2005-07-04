@@ -21,6 +21,8 @@ v0.29.83 (CVS)
 + Missing TechLevel display in MechSelectionDialog for Mixed Tech units
 + Show heatbuildup/dissipation from extreme temperature in expected heat
     display in MechDisplay
++ Sylphs unloading from VTOLs should be unloaded to the elevation the VTOL was
+    flying at.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

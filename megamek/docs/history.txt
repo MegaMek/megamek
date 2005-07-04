@@ -28,6 +28,8 @@ v0.29.83 (CVS)
 + Bug 1174455: animated movement not working.
 + LBX Glancing blows should deal damage.
 + Bug 1232365: Incorrect BV: All units with normal autocannons.
++ VTOLs get +1 to-hit only when they used MPs.
++ Show what movementtype VTOLs used in MechDisplay.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

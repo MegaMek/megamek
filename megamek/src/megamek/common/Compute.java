@@ -1077,7 +1077,7 @@ public class Compute
     public static ToHitData getTargetMovementModifier(IGame game, int entityId) {
         Entity entity = game.getEntity(entityId);
         ToHitData toHit = getTargetMovementModifier
-            ( entity.delta_distance, ((entity.moved == IEntityMovementType.MOVE_JUMP) || (entity instanceof VTOL)), game.getOptions().booleanOption("maxtech_target_modifiers") );
+            ( entity.delta_distance, ((entity.moved == IEntityMovementType.MOVE_JUMP) || (entity instanceof VTOL && entity.moved != IEntityMovementType.MOVE_NONE)), game.getOptions().booleanOption("maxtech_target_modifiers"), entity.getMovementMode() == IEntityMovementMode.VTOL);
 
         // Did the target skid this turn?
         if ( entity.moved == IEntityMovementType.MOVE_SKID ) {
@@ -1090,11 +1090,8 @@ public class Compute
     /**
      * Target movement modifer for the specified delta_distance
      */
-    public static ToHitData getTargetMovementModifier(int distance, boolean jumped) {
-        return getTargetMovementModifier(distance, jumped, false);
-    }
 
-    public static ToHitData getTargetMovementModifier(int distance, boolean jumped, boolean maxtech) {
+    public static ToHitData getTargetMovementModifier(int distance, boolean jumped, boolean maxtech, boolean isVTOL) {
         ToHitData toHit = new ToHitData();
 
         if (!maxtech) {
@@ -1126,7 +1123,10 @@ public class Compute
         }
 
         if (jumped) {
-            toHit.addModifier(1, "target jumped");
+            if (isVTOL) {
+                toHit.addModifier(1, "target VTOL used MPs");
+            } else
+                toHit.addModifier(1, "target jumped");            
         }
 
         return toHit;

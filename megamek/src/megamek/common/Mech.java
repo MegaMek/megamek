@@ -1737,8 +1737,8 @@ public abstract class Mech
         if (hasTSM()) {
             runMP = (int)Math.ceil((getWalkMP() + 1) * 1.5);
         }
-        int tmmRan = Compute.getTargetMovementModifier(runMP, false).getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false, false).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false, false).getValue();
         int targetMovementModidifer = Math.max(tmmRan, tmmJumped);
         if (targetMovementModidifer > 5) {
             targetMovementModidifer = 5;

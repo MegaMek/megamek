@@ -609,14 +609,14 @@ public class FiringDisplay
           ash.inAimingMode() && 
           ash.isAimingAtLocation()) {
           waa.setAimedLocation(ash.getAimingAt());
-          waa.setAimimgMode(ash.getAimingMode());
+          waa.setAimingMode(ash.getAimingMode());
 
           if (ash.getAimingMode() == IAimingModes.AIM_MODE_TARG_COMP) {
             ash.lockLocation(true);
           }
         } else {
           waa.setAimedLocation(Mech.LOC_NONE);
-          waa.setAimimgMode(IAimingModes.AIM_MODE_NONE);
+          waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
         }
 
         // add the attack to our temporary queue
@@ -1426,7 +1426,7 @@ public class FiringDisplay
 
     // Determines if a certain weapon may aimed at a specific
     // hit location.
-      public boolean allowAimedShotWith(Mounted weapon) {
+    public boolean allowAimedShotWith(Mounted weapon) {
       WeaponType wtype = (WeaponType)weapon.getType();
       boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
       boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
@@ -1436,6 +1436,11 @@ public class FiringDisplay
       Mounted ammo = usesAmmo ? weapon.getLinked() : null;
       AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
 
+      // Leg and swarm attacks can't be aimed.
+      if (wtype.getInternalName() == Infantry.LEG_ATTACK ||
+          wtype.getInternalName() == Infantry.SWARM_MEK) {
+          return false;
+      }
       switch (aimingMode) {
         case (IAimingModes.AIM_MODE_NONE) :
         return false;

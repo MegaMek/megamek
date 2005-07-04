@@ -1336,6 +1336,30 @@ public class ChatLounge
         }
 
         if (ev.getSource() == butDone) {
+            
+            // enforce exclusive deployment zones in double blind
+            if (client.game.getOptions().booleanOption("double_blind") &&
+                client.game.getOptions().booleanOption("exclusive_db_deployment")) {
+                int i = client.getLocalPlayer().getStartingPos();
+                if (i == 0) {
+                    clientgui.doAlertDialog("Starting Position not allowed","In Double Blind play, you cannot choose 'Any' as starting position.");
+                    return;
+                }
+                for (Enumeration e = client.game.getPlayers();e.hasMoreElements();) {
+                    Player player = (Player)e.nextElement();
+                    if (player.getStartingPos() == 0) {
+                        continue;
+                    }
+                    // check for overlapping starting directions
+                    if ((player.getStartingPos() == i ||
+                        player.getStartingPos()+1 == i ||
+                        player.getStartingPos()-1 == i) &&
+                        player.getId() != client.getLocalPlayer().getId() ) {
+                       clientgui.doAlertDialog("Must choose exclusive deployment zone","When using double blind, each player needs to have an exclusive deployment zone.");
+                       return;
+                    }
+                }
+            }
             boolean anyDelayed = false;
 
             Enumeration iter = client.getEntities();

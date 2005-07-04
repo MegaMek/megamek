@@ -21,6 +21,7 @@
 package megamek.client.ui.AWT;
 
 import megamek.client.Client;
+import megamek.client.ui.AWT.ClientGUI;
 import megamek.common.*;
 
 import java.awt.*;
@@ -35,6 +36,7 @@ import java.util.Enumeration;
 public class StartingPositionDialog extends java.awt.Dialog implements ActionListener {
 
     private Client client;
+    private ClientGUI clientgui;
 
     private Panel panButtons = new Panel();
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
@@ -49,6 +51,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
     public StartingPositionDialog(ClientGUI clientgui) {
         super(clientgui.frame, Messages.getString("StartingPositionDialog.title"), true); //$NON-NLS-1$
         this.client = clientgui.getClient();
+        this.clientgui = clientgui;
         
         lisStartList.setEnabled(false);
 
@@ -81,7 +84,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
                 setVisible(false);
             }
         });
-
+        
         pack();
         setResizable(false);
         setLocation(
@@ -146,6 +149,27 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         for (int i = 0; i < 9; i++) {
             if (ev.getSource() == butStartPos[i]) {
+                if (client.game.getOptions().booleanOption("double_blind") &&
+                    client.game.getOptions().booleanOption("exclusive_db_deployment")) {
+                    if (i == 0) {
+                        clientgui.doAlertDialog("Starting Position not allowed","In Double Blind play, you cannot choose 'Any' as starting position.");
+                        return;
+                    }
+                    for (Enumeration e = client.game.getPlayers();e.hasMoreElements();) {
+                        Player player = (Player)e.nextElement();
+                        if (player.getStartingPos() == 0) {
+                            continue;
+                        }
+                        // check for overlapping starting directions
+                        if ((player.getStartingPos() == i ||
+                            player.getStartingPos()+1 == i ||
+                            player.getStartingPos()-1 == i) &&
+                            player.getId() != client.getLocalPlayer().getId() ) {
+                           clientgui.doAlertDialog("Must choose exclusive deployment zone","When using double blind, each player needs to have an exclusive deployment zone.");
+                           return;
+                        }
+                    }
+                }
                 client.getLocalPlayer().setStartingPos(i);
                 client.sendPlayerInfo();
                 // If the gameoption set_arty_player_homeedge is set,

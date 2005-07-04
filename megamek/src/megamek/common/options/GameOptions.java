@@ -63,6 +63,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base,"paranoid_autosave", false);  //$NON-NLS-1$
         addOption(base,"very_paranoid_autosave", false);  //$NON-NLS-1$
         addOption(base,"maps_include_subdir", false); //$NON-NLS-1$
+        addOption(base,"exclusive_db_deployment", true); //$NON-NLS-1$
         
         OptionGroup level2 = addGroup("level2"); //$NON-NLS-1$
         addOption(level2,"flamer_heat", true); //$NON-NLS-1$
@@ -132,7 +133,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"allow_illegal_units", false); //$NON-NLS-1$
         addOption(ruleBreakers,"ejected_pilots_flee", false); //$NON-NLS-1$
         addOption(ruleBreakers,"a4homing_target_area", false); //$NON-NLS-1$
-        addOption(ruleBreakers,"canon_only",false);
+        addOption(ruleBreakers,"canon_only",false); //$NON-NLS-1$
     }
 
     public void loadOptions(Client client, String password) {

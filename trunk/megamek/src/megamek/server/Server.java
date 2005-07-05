@@ -3491,10 +3491,12 @@ implements Runnable, ConnectionHandler {
                 }
             }
 
-            // Track this step's location.
-            movePath.addElement( new UnitLocation( entity.getId(),
-                                                   curPos,
-                                                   curFacing ) );
+            // What the *heck* is this???
+            // it's a monster hack, and wrong too  :) 
+            // used for movement animation stuff.
+            // broken for maps larget than 255 hexes across
+            movePath.addElement
+                (new Integer(((curPos.x & 0xFF) << 8) | (curPos.y & 0xFF) | (curFacing << 16)));
 
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);

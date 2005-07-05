@@ -344,8 +344,10 @@ public class BoardView1
             ghostEntitySprites.addElement(ghostSprite);
 
             // Center on the starting hex of the moving unit.
-            UnitLocation loc = ( (UnitLocation) movePath.elementAt(0) );
-            centerOnHex( loc.getCoords() );
+            int j = ((Integer) movePath.elementAt(0)).intValue();
+            int y = j & 255;
+            int x = (j >> 8) & 255;
+            centerOnHex(new Coords(x, y));
         }
     }
 
@@ -2182,12 +2184,12 @@ public class BoardView1
                     movingSomething = true;
                     Entity ge = game.getEntity(e.getId()); 
                     if (movePath.size() > 0) {
-                        UnitLocation loc =
-                            ( (UnitLocation) movePath.elementAt(0) );
+                        int j = ((Integer) movePath.elementAt(0)).intValue();
+                        int y = j & 255;
+                        int x = (j >> 8) & 255;
+                        int facing = (j >> 16) & 255;
                         if (ge != null) {
-                            redrawMovingEntity( e,
-                                                loc.getCoords(),
-                                                loc.getFacing() );
+                            redrawMovingEntity(e, new Coords(x, y), facing);
                         }
                         movePath.removeElementAt(0);
                     } else {

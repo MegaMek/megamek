@@ -963,8 +963,20 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
 
     public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
         if (actionEvent.getSource() == butOffBoardDistance) {
+            int maxDistance = 19*17; // Long Tom
+            for (Enumeration i=entity.getWeapons(); i.hasMoreElements();) {
+                Mounted wep = (Mounted)i.nextElement();
+                EquipmentType e = wep.getType();
+                WeaponType w = (WeaponType)e;
+                if (w.hasFlag(WeaponType.F_ARTILLERY)) {
+                    int nDistance = (w.getLongRange()-1)*17;
+                    if (nDistance<maxDistance) {
+                        maxDistance = nDistance;
+                    }
+                }
+            }
             Slider sl = new Slider (clientgui.frame, Messages.getString("CustomMechDialog.offboardDistanceTitle"), Messages.getString("CustomMechDialog.offboardDistanceQuestion"),
-                                    entity.getOffBoardDistance(), 17, 170);
+                                    entity.getOffBoardDistance(), 17, maxDistance);
             if (!sl.showDialog()) return;
             distance = sl.getValue();
             butOffBoardDistance.setLabel(Integer.toString(distance));

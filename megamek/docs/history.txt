@@ -37,6 +37,7 @@ v0.29.83 (CVS)
     destroyed on a 9 on a crit roll on a side table. Note: These are not reported
     to the serverlog.
 + RFE 1231014: auto-skip out of ammo weapons
++ RFE 1161913: "back up" movement arrow in different color
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

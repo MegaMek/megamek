@@ -30,8 +30,10 @@ import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
 import megamek.common.Targetable;
+import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
@@ -409,6 +411,7 @@ public class MoveOption extends MovePath implements Cloneable {
             temp_threat += this.centity.entity.getWeight();
         }
         double retVal = temp_threat - temp_damage;
+        // If the move has a chance of making MASC fail...
         if (hasActiveMASC()) {
             int mascTN = 0;
             for (final Enumeration i = getSteps(); i.hasMoreElements();) {
@@ -419,6 +422,15 @@ public class MoveOption extends MovePath implements Cloneable {
             }
             double mascMult = Compute.oddsAbove(mascTN)/100;
             retVal *= (mascMult > 0) ? mascMult : 0.01;
+        }
+        // If getting up is difficult...
+        if (prone) {
+            PilotingRollData tmpPRD = this.centity.getEntity().checkGetUp(getStep(0));
+            if ((tmpPRD != null)
+                    && ((tmpPRD.getValue() == TargetRoll.IMPOSSIBLE)
+                    || (tmpPRD.getValue() == TargetRoll.AUTOMATIC_FAIL))) {
+                retVal *= 0.01;
+            }
         }
         return retVal;
     }

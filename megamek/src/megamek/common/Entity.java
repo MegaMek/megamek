@@ -1585,7 +1585,11 @@ public abstract class Entity
         boolean past = false;
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (past && mounted.isReady() && mounted.getLinked().getShotsLeft()>0) {
+            if (past
+                    && (mounted != null)
+                    && (mounted.isReady())
+                    && ((mounted.getLinked() == null)
+                    || (mounted.getLinked().getShotsLeft()>0))) {
                 return getEquipmentNum(mounted);
             }
             if (getEquipmentNum(mounted) == start) {
@@ -2854,7 +2858,8 @@ public abstract class Entity
     public PilotingRollData checkGetUp(MoveStep step) {
         PilotingRollData roll = getBasePilotingRoll();
 
-        if (step.getType() != MovePath.STEP_GET_UP) {
+        if ((step == null)
+                || (step.getType() != MovePath.STEP_GET_UP)) {
             roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not attempting to get up.");
             return roll;
         }

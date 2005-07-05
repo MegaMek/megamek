@@ -41,6 +41,8 @@ v0.29.83 (CVS)
 + Replaced hacked int for animated movement with a Java object.
 + RFE 1048695: Limit Off-Board Distance
 + Bug 1232815: VTOLs now only set off Thunder-Actives.
++ Bug 1171594: Added check to bot to reduce chance of standing when impossible.
++ Fixed NPE in nextWeapon check from RFE 1231014.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

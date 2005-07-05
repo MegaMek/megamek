@@ -1012,6 +1012,7 @@ public abstract class Entity
      * into the specified hex.
      */
     public int elevationOccupied(IHex hex) {
+        if (hex==null) return 0;
         return hex.floor()+elevation;
     }
 

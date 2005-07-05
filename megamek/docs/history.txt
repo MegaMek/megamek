@@ -38,6 +38,7 @@ v0.29.83 (CVS)
     to the serverlog.
 + RFE 1231014: auto-skip out of ammo weapons
 + RFE 1161913: "back up" movement arrow in different color
++ Replaced hacked int for animated movement with a Java object.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

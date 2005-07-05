@@ -3397,7 +3397,11 @@ public class BoardView1
                     col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
                     break;
                 default :
-                    col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
+                    if (step.getType()==MovePath.STEP_BACKWARDS) {
+                        col = GUIPreferences.getInstance().getColor("AdvancedMoveBackColor");
+                    } else {
+                        col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
+                    }
                     break;
             }
 

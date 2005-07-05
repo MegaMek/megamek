@@ -1584,12 +1584,15 @@ public abstract class Entity
         boolean past = false;
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (past && mounted.isReady()) {
+            if (past && mounted.isReady() && mounted.getLinked().getShotsLeft()>0) {
                 return getEquipmentNum(mounted);
             }
             if (getEquipmentNum(mounted) == start) {
                 past = true;
                 continue;
+            }
+            if (past && getEquipmentNum(mounted)==start) {
+                return getFirstWeapon();
             }
         }
         return getFirstWeapon();

@@ -97,29 +97,25 @@ public class MechFileParser {
             BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {
                 String sType = bb.getDataAsString("UnitType")[0];
-                if (sType.equals("Tank")) {
+                if (sType.equals("Tank")
+                        || sType.equals("Naval")
+                        || sType.equals("Surface")
+                        || sType.equals("Hydrofoil")) {
                     loader = new BLKTankFile(bb);
-                }
-                else if (sType.equals("Infantry")) {
+                } else if (sType.equals("Infantry")) {
                     loader = new BLKInfantryFile(bb);
-                }
-                else if (sType.equals("BattleArmor")) {
+                } else if (sType.equals("BattleArmor")) {
                     loader = new BLKBattleArmorFile(bb);
-                }
-                else if (sType.equals("ProtoMech")) {
+                } else if (sType.equals("ProtoMech")) {
                     loader = new BLKProtoFile(bb);
-                }
-                else if (sType.equals("Mech")) {
+                } else if (sType.equals("Mech")) {
                     loader = new BLKMechFile(bb);
-                }
-                else if (sType.equals("VTOL")) {
+                } else if (sType.equals("VTOL")) {
                     loader = new BLKVTOLFile(bb);
-                }
-                else {
+                } else {
                     throw new EntityLoadingException("Unknown UnitType: " + sType);
                 }
-            }
-            else {
+            } else {
                 loader = new BLKMechFile(bb);
             }
         } else if (lowerName.endsWith(".dbm")) {

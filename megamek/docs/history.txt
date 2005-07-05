@@ -36,6 +36,7 @@ v0.29.83 (CVS)
 + Make VTOLs lose movement on a 12 on a crit roll, and make the main weapon
     destroyed on a 9 on a crit roll on a side table. Note: These are not reported
     to the serverlog.
++ RFE 1231014: auto-skip out of ammo weapons
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

@@ -3248,20 +3248,13 @@ implements Runnable, ConnectionHandler {
                     while (minefields.hasMoreElements()) {
                         Minefield mf = (Minefield) minefields.nextElement();
 
-                        switch (mf.getType()) {
-                            case (Minefield.TYPE_CONVENTIONAL) :
-                            case (Minefield.TYPE_THUNDER) :
-                            case (Minefield.TYPE_THUNDER_INFERNO) :
-                            case (Minefield.TYPE_COMMAND_DETONATED) :
-                                if ((step.getMovementType() != IEntityMovementType.MOVE_JUMP) || (!i.hasMoreElements()))
-                                    enterMinefield(entity, mf, curPos, curPos, true);
-                                break;
-                            case (Minefield.TYPE_THUNDER_ACTIVE) :
-                                if ((step.getMovementType() != IEntityMovementType.MOVE_JUMP) || (!i.hasMoreElements()))
-                                    enterMinefield(entity, mf, curPos, curPos, true);
-                                else
-                                    enterMinefield(entity, mf, curPos, curPos, true, 2);
-                                break;
+                        boolean isOnGround = (!i.hasMoreElements());
+                        isOnGround |= (step.getMovementType() != IEntityMovementType.MOVE_JUMP);
+                        isOnGround &= entity.getElevation() == 0;
+                        if (isOnGround) {
+                            enterMinefield(entity, mf, curPos, curPos, true);
+                        } else if (mf.getType() == Minefield.TYPE_THUNDER_ACTIVE) {
+                            enterMinefield(entity, mf, curPos, curPos, true, 2);
                         }
                     }
                 }

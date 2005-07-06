@@ -221,12 +221,8 @@ public class MechFileParser {
             String s = (String)i.nextElement();
             if(s.equals(ent.getShortName())) {
                 ent.setCanon(true);
+                break;
             }
         }
-        
-            
-
     } // End private void postLoadInit(Entity) throws EntityLoadingException
-
-
 }

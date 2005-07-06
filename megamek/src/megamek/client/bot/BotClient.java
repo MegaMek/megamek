@@ -25,6 +25,7 @@ import megamek.common.GameTurn;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
 import megamek.common.Mounted;
@@ -137,6 +138,9 @@ public abstract class BotClient extends Client {
             case IGame.PHASE_MOVEMENT_REPORT :
             case IGame.PHASE_FIRING_REPORT :
             case IGame.PHASE_END :
+                // Check if stealth armor should be switched on/off
+                // Kinda cheap leaving this until the end phase, players can't do this
+                toggleStealth();
             case IGame.PHASE_OFFBOARD_REPORT :
                 sendDone(true);
             break;
@@ -671,6 +675,88 @@ public abstract class BotClient extends Client {
         
         fDamage *= fChance;
         return fDamage;
+    }
+
+
+
+    /**
+     * If the unit has stealth armor, turning it off is probably a good
+     *   idea if most of the enemy force is at 'short' range or if in danger
+     *   of overheating
+     * @return the <code>int</code> ID of stealth armor mode, -1 if unit
+     *      is not equipped with stealth armor or armor is disabled
+     */
+
+    private void toggleStealth() {
+
+        int total_bv, known_bv, known_range, known_count, trigger_range;
+        int new_stealth = 1;
+        Enumeration equips, all_units;
+        Entity test_ent;
+
+        for (Enumeration i=game.getEntities(); i.hasMoreElements();){
+            Entity check_ent = (Entity) i.nextElement();
+            if ((check_ent.getOwnerId() == this.local_pn) && (check_ent instanceof Mech)){
+                if (((Mech)check_ent).hasStealth()){
+                    for ( equips = check_ent.getMisc(); equips.hasMoreElements(); ) {
+                        Mounted mEquip = (Mounted) equips.nextElement();
+                        MiscType mtype = (MiscType) mEquip.getType();
+                        if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {  
+
+            // If the Mech is in danger of shutting down (14+ heat), consider shutting
+            // off the armor
+
+                            trigger_range = 13 + Compute.randomInt(7);
+                            if (check_ent.heat > trigger_range) {
+                                new_stealth = 0;
+                            } else {
+ 
+            // Mech is not in danger of shutting down soon; if most of the
+            // enemy is right next to the Mech deactivate armor to free up
+            // heatsinks for weapons fire
+
+                                total_bv = 0;
+                                known_bv = 0;
+                                known_range = 0;
+                                known_count = 0;
+                                trigger_range = 5;
+
+                                for (all_units = game.getEntities(); all_units.hasMoreElements();){
+                                    test_ent = (Entity) all_units.nextElement();
+                                    if (check_ent.isEnemyOf(test_ent)) {
+                                        total_bv += test_ent.calculateBattleValue();
+                                        if (test_ent.isVisibleToEnemy()){
+                                            known_count++;
+                                            known_bv += test_ent.calculateBattleValue();
+                                            known_range += Compute.effectiveDistance(game,
+                                                check_ent, test_ent);
+                                        }
+                                    }
+                                }
+
+        // If no or few enemy units are visible, they're hiding;
+        // Default to stealth armor on in this case
+
+                                if ((known_count == 0) || (known_bv < (total_bv/2))){
+                                    new_stealth = 1;
+                                } else {
+                                    if (known_count != 0){
+                                        if ((known_range/known_count) <= (5 + Compute.randomInt(5))){
+                                            new_stealth = 0;
+                                        } else {
+                                            new_stealth = 1;
+                                        }
+                                    }
+                                }
+                            }
+                            mEquip.setMode(new_stealth);
+                            this.sendModeChange(check_ent.getId(), check_ent.getEquipmentNum(mEquip), new_stealth);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
     
     

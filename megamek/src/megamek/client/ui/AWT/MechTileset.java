@@ -40,7 +40,14 @@ public class MechTileset {
     private String HEAVY_STRING = "default_heavy"; //$NON-NLS-1$
     private String ASSAULT_STRING = "default_assault"; //$NON-NLS-1$
     private String QUAD_STRING = "default_quad"; //$NON-NLS-1$
-    private String TANK_STRING = "default_tank"; //$NON-NLS-1$
+    private String TRACKED_STRING = "default_tracked"; //$NON-NLS-1$
+    private String TRACKED_HEAVY_STRING = "default_tracked_heavy"; //$NON-NLS-1$
+    private String TRACKED_ASSAULT_STRING = "default_tracked_assault"; //$NON-NLS-1$
+    private String WHEELED_STRING = "default_wheeled"; //$NON-NLS-1$
+    private String WHEELED_HEAVY_STRING = "default_wheeled_heavy"; //$NON-NLS-1$
+    private String HOVER_STRING = "default_hover"; //$NON-NLS-1$
+    private String NAVAL_STRING = "default_naval"; //$NON-NLS-1$
+    private String HYDROFOIL_STRING = "default_hydrofoil"; //$NON-NLS-1$
     private String VTOL_STRING = "default_vtol"; //$NON-NLS-1$
     private String INF_STRING = "default_infantry"; //$NON-NLS-1$
     private String BA_STRING = "default_ba"; //$NON-NLS-1$
@@ -51,7 +58,14 @@ public class MechTileset {
     private MechEntry default_heavy;
     private MechEntry default_assault;
     private MechEntry default_quad;
-    private MechEntry default_tank;
+    private MechEntry default_tracked;
+    private MechEntry default_tracked_heavy;
+    private MechEntry default_tracked_assault;
+    private MechEntry default_wheeled;
+    private MechEntry default_wheeled_heavy;
+    private MechEntry default_hover;
+    private MechEntry default_naval;
+    private MechEntry default_hydrofoil;
     private MechEntry default_vtol;
     private MechEntry default_inf;
     private MechEntry default_ba;
@@ -94,15 +108,6 @@ public class MechTileset {
     }
     
     public MechEntry genericFor(Entity entity) {
-        if (entity.entityIsQuad()) {
-            return default_quad;
-        }
-        if (entity instanceof VTOL) {
-            return default_vtol;
-        }
-        if (entity instanceof Tank) {
-            return default_tank;
-        }
         if (entity instanceof BattleArmor) {
             return default_ba;
         }
@@ -113,14 +118,46 @@ public class MechTileset {
             return default_proto;
         }
         // mech, by weight
-        if (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
-            return default_light;
-        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
-            return default_medium;
-        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
-            return default_heavy;
-        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
-            return default_assault;
+        if (entity instanceof Mech) {
+            if (entity.getMovementMode() == IEntityMovementMode.BIPED) {
+                return default_quad;
+            }
+            if (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
+                return default_light;
+            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                return default_medium;
+            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
+                return default_heavy;
+            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
+                return default_assault;
+            }
+        }
+        if (entity.getMovementMode() == IEntityMovementMode.NAVAL) {
+            return default_naval;
+        }
+        if (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL) {
+            return default_hydrofoil;
+        }
+        if (entity instanceof Tank) {
+            if (entity.getMovementMode() == IEntityMovementMode.TRACKED) {
+                if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
+                    return default_tracked_heavy;
+                } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
+                    return default_tracked_assault;
+                } else return default_tracked;
+            }
+            if (entity.getMovementMode() == IEntityMovementMode.WHEELED) {
+                if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
+                    return default_wheeled_heavy;
+                } else return default_wheeled;
+            }
+            if (entity.getMovementMode() == IEntityMovementMode.HOVER) {
+                return default_hover;
+            }
+            if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
+                return default_vtol;
+            }
+            
         }
         
         //TODO: better exception?
@@ -182,7 +219,14 @@ public class MechTileset {
         default_heavy = (MechEntry)exact.get(HEAVY_STRING.toUpperCase());
         default_assault = (MechEntry)exact.get(ASSAULT_STRING.toUpperCase());
         default_quad = (MechEntry)exact.get(QUAD_STRING.toUpperCase());
-        default_tank = (MechEntry)exact.get(TANK_STRING.toUpperCase());
+        default_tracked = (MechEntry)exact.get(TRACKED_STRING.toUpperCase());
+        default_tracked_heavy = (MechEntry)exact.get(TRACKED_HEAVY_STRING.toUpperCase());
+        default_tracked_assault = (MechEntry)exact.get(TRACKED_ASSAULT_STRING.toUpperCase());
+        default_wheeled = (MechEntry)exact.get(WHEELED_STRING.toUpperCase());
+        default_wheeled_heavy = (MechEntry)exact.get(WHEELED_HEAVY_STRING.toUpperCase());
+        default_hover = (MechEntry)exact.get(HOVER_STRING.toUpperCase());
+        default_naval = (MechEntry)exact.get(NAVAL_STRING.toUpperCase());
+        default_hydrofoil = (MechEntry)exact.get(HYDROFOIL_STRING.toUpperCase());
         default_vtol = (MechEntry)exact.get(VTOL_STRING.toUpperCase());
         default_inf = (MechEntry)exact.get(INF_STRING.toUpperCase());
         default_ba = (MechEntry)exact.get(BA_STRING.toUpperCase());

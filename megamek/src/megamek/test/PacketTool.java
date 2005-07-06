@@ -22,11 +22,9 @@ import java.net.ServerSocket;
 
 import megamek.common.Board;
 import megamek.common.Packet;
-import megamek.common.net.Connection;
-import megamek.common.net.ConnectionListenerAdaptor;
-import megamek.common.net.DisconnectedEvent;
-import megamek.common.net.PacketReceivedEvent;
+import megamek.common.net.ConnectionHandler;
 import megamek.common.net.XmlConnection;
+import megamek.server.Connection;
 
 /**
  * This class provides an AWT GUI for testing the transmission
@@ -34,7 +32,7 @@ import megamek.common.net.XmlConnection;
  *
  * @author      James Damour <suvarov454@users.sourceforge.net>
  */
-public class PacketTool extends Frame implements Runnable {
+public class PacketTool extends Frame implements Runnable, ConnectionHandler {
 
     /**
      * The currently-loaded <code>Board</code>.  May be <code>null</code>.
@@ -178,7 +176,7 @@ public class PacketTool extends Frame implements Runnable {
      */
     public synchronized void quit() {
         if ( null != this.conn ) {
-            conn.close();
+            conn.die();
         }
         System.exit(0);
     }
@@ -192,7 +190,7 @@ public class PacketTool extends Frame implements Runnable {
         try {
             port = Integer.parseInt( hostPort.getText() );
             //conn = new Connection( this, new Socket(host, port), 1 );
-            conn = new XmlConnection(new Socket(host, port), 1);
+            conn = new XmlConnection( this, new Socket(host, port), 1 );
             System.out.println( "Connected to peer." );
 
             board = new Board();
@@ -270,20 +268,8 @@ public class PacketTool extends Frame implements Runnable {
                 
             System.out.println("Accepted peer connection.");
                 
-            conn = new XmlConnection(s, 0);
-            conn.addConnectionListener(new ConnectionListenerAdaptor(){
-
-                public void disconnected(DisconnectedEvent e) {
-                    PacketTool.this.disconnected(e.getConnection());
-                }
-
-                public void packetReceived(PacketReceivedEvent e) {
-                    PacketTool.this.handle(e.getConnection().getId(),e.getPacket());
-                }
-                
-            });
-
-            conn.open();
+            //conn = new Connection(this, s, 0);
+            conn = new XmlConnection(this, s, 0);
             board = new Board();
             panConnect.setEnabled( false );
             panXmit.setEnabled( true );
@@ -423,6 +409,7 @@ public class PacketTool extends Frame implements Runnable {
         butSend.setEnabled( false );
         boardName.setText( "" );
         board = null;
+        conn.die();
         conn = null;
         panConnect.setEnabled( true );
     }

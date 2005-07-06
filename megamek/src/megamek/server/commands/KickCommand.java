@@ -54,7 +54,7 @@ public class KickCommand extends ServerCommand {
                 }
                 
                 server.sendServerChat(server.getPlayer(connId).getName() + " attempts to kick player #" + kickedId + " (" + server.getPlayer(kickedId).getName() + ")...");
-                server.getConnection(kickedId).close();
+                server.getConnection(kickedId).die();
                 
             } catch (ArrayIndexOutOfBoundsException ex) {
                 server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");

@@ -344,10 +344,8 @@ public class BoardView1
             ghostEntitySprites.addElement(ghostSprite);
 
             // Center on the starting hex of the moving unit.
-            int j = ((Integer) movePath.elementAt(0)).intValue();
-            int y = j & 255;
-            int x = (j >> 8) & 255;
-            centerOnHex(new Coords(x, y));
+            UnitLocation loc = ( (UnitLocation) movePath.elementAt(0) );
+            centerOnHex( loc.getCoords() );
         }
     }
 

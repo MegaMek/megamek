@@ -37,7 +37,8 @@ import megamek.common.TagInfo;
 /**
  * @author Ben Mazur
  */
-public class Server implements Runnable {
+public class Server
+implements Runnable, ConnectionHandler {
     //    public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
     public final static String  DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
     private final static String VERIFIER_CONFIG_FILENAME =
@@ -90,35 +91,6 @@ public class Server implements Runnable {
     //private HashSet             knownDeadEntities = new HashSet();
 
     private static EntityVerifier entityVerifier = null;
-
-    private ConnectionListenerAdaptor connectionListener = new ConnectionListenerAdaptor() {
-
-        /**
-         * Called when it is sensed that a connection has terminated.
-         */
-        public void disconnected(DisconnectedEvent e) {
-            Connection conn = e.getConnection();
-            
-            // write something in the log
-            System.out.println("s: connection " + conn.getId()+ " disconnected");
-
-            connections.removeElement(conn);
-            connectionsPending.removeElement(conn);
-            connectionIds.remove(new Integer(conn.getId()));
-
-            // if there's a player for this connection, remove it too
-            Player player = getPlayer(conn.getId());
-            if (null != player) {
-                Server.this.disconnected( player );
-            }
-            
-        }
-
-        public void packetReceived(PacketReceivedEvent e) {
-            Server.this.handle(e.getConnection().getId(),e.getPacket());
-        }
-
-    };
     
     /**
      * Construct a new GameHost and begin listening for
@@ -272,7 +244,7 @@ public class Server implements Runnable {
         // kill pending connnections
         for (Enumeration i=connectionsPending.elements();i.hasMoreElements();){
             final Connection conn = (Connection)i.nextElement();
-            conn.close();
+            conn.die();
         }
         connectionsPending.removeAllElements();
 
@@ -286,7 +258,7 @@ public class Server implements Runnable {
         // kill active connnections
         for (Enumeration i = connections.elements(); i.hasMoreElements();) {
             final Connection conn = (Connection)i.nextElement();
-            conn.close();
+            conn.die();
         }
         connections.removeAllElements();
         connectionIds.clear();
@@ -537,6 +509,26 @@ public class Server implements Runnable {
             }
         }
 
+    }
+
+    /**
+     * Called when it is sensed that a connection has terminated.
+     */
+    public void disconnected(Connection conn) {
+        // write something in the log
+        System.out.println("s: connection " + conn.getId() + " disconnected");
+
+        // kill the connection and remove it from any lists it might be on
+        conn.die();
+        connections.removeElement(conn);
+        connectionsPending.removeElement(conn);
+        connectionIds.remove(new Integer(conn.getId()));
+
+        // if there's a player for this connection, remove it too
+        Player player = getPlayer(conn.getId());
+        if (null != player) {
+            disconnected( player );
+        }
     }
 
     /**
@@ -13108,7 +13100,7 @@ public class Server implements Runnable {
      *          received the packet.
      * @param   packet - the <code>Packet</code> to be processed.
      */
-    protected synchronized void handle(int connId, Packet packet) {
+    public synchronized void handle(int connId, Packet packet) {
         Player player = game.getPlayer( connId );
         // Check player.  Please note, the connection may be pending.
         if ( null == player && null == getPendingConnection(connId) ) {
@@ -13127,10 +13119,7 @@ public class Server implements Runnable {
         switch(packet.getCommand()) {
             case Packet.COMMAND_CLOSE_CONNECTION :
                 // We have a client going down!
-                Connection c = getConnection(connId);
-                if ( c!= null) {
-                    c.close();
-                }
+                this.disconnected( this.getConnection(connId) );
                 break;
             case Packet.COMMAND_CLIENT_NAME :
                 receivePlayerName(packet, connId);
@@ -13249,10 +13238,7 @@ public class Server implements Runnable {
                 int id = getFreeConnectionId();
                 System.out.println("s: accepting player connection #" + id + " ...");
 
-                Connection c =  new ObjectStreamConnection(s, id);
-                c.addConnectionListener(connectionListener);
-                c.open();
-                connectionsPending.addElement(c);
+                connectionsPending.addElement(new Connection(this, s, id));
 
                 greeting(id);
             } catch(IOException ex) {

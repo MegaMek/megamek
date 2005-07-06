@@ -119,7 +119,7 @@ public class MechTileset {
         }
         // mech, by weight
         if (entity instanceof Mech) {
-            if (entity.getMovementMode() == IEntityMovementMode.BIPED) {
+            if (entity.getMovementMode() == IEntityMovementMode.QUAD) {
                 return default_quad;
             }
             if (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {

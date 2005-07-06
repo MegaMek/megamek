@@ -330,6 +330,8 @@ public class Board implements Serializable, IBoard {
      * @param c the Coords.
      */
     public IHex getHex(Coords c) {
+        if (c == null)
+            return null;
         return getHex(c.x, c.y);
     }
     

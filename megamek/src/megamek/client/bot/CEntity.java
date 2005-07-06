@@ -316,7 +316,8 @@ public class CEntity {
             heat += entity.getEngineCritHeat();
         }
         // Include heat for standing in a fire
-        if (tb.game.getBoard().getHex(entity.getPosition()) != null){
+        if ((entity.getPosition() != null)
+                && (tb.game.getBoard().getHex(entity.getPosition()) != null)) {
             if (tb.game.getBoard().getHex(entity.getPosition()).
                     terrainLevel(Terrains.FIRE) == 2) {
                 heat += 5;

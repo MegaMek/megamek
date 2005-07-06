@@ -14,7 +14,14 @@
 #  for more details.
 # 
 
+# Define script constants.
 MEGAMEK_MAIN_CLASS="megamek.MegaMek"
+MEGAMEK_DEFAULT_JARNAME="MegaMek.jar"
+MEGAMEK_DEFAULT_CLASSPATH="/usr/share/java"
+MEGAMEK_DEFAULT_CONFROOT="$HOME"
+MEGAMEK_DEFAULT_CONFPATH="$MEGAMEK_DEFAULT_CONFROOT/.megamek"
+MEGAMEK_DEFAULT_DATAPATH="/usr/share/MegaMek"
+
 
 # Try to find the executable for Java.
 JAVA=/usr/bin/java
@@ -23,24 +30,24 @@ test -x "$JAVA_HOME/bin/java" && JAVA="$JAVA_HOME/bin/java"
 # Try to find the directory containing MegaMek JARs.
 if [ "X$MEGAMEK_CLASSPATH" != "X" ]; then
     if ! test -d "/.$MEGAMEK_CLASSPATH" -a \
-        -f "/.$MEGAMEK_CLASSPATH/MegaMek.jar"; then
+        -f "/.$MEGAMEK_CLASSPATH/$MEGAMEK_DEFAULT_JARNAME"; then
         echo "Relative path: $MEGAMEK_CLASSPATH.  Clearing."
         MEGAMEK_CLASSPATH=""
     fi
 fi
 if [ "X$MEGAMEK_CLASSPATH" == "X" ]; then
-    temp_path=/usr/share/java
+    temp_path=$MEGAMEK_DEFAULT_CLASSPATH
     if test -d $temp_path -a \
-        -f "$temp_path/MegaMek.jar"; then
+        -f "$temp_path/$MEGAMEK_DEFAULT_JARNAME"; then
         MEGAMEK_CLASSPATH=$temp_path
     else
-        if test -f "$PWD/MegaMek.jar"; then
+        if test -f "$PWD/$MEGAMEK_DEFAULT_JARNAME"; then
             MEGAMEK_CLASSPATH=$PWD
         fi
     fi
 fi
 
-# Exit if we could not find MegaMek.jar.
+# Exit if we could not find $MEGAMEK_DEFAULT_JARNAME.
 if [ "X$MEGAMEK_CLASSPATH" == "X" ]; then
     echo "Could not find the MegaMek JAR file.  Exiting."
     exit 1
@@ -49,20 +56,22 @@ fi
 # Try to find the configuration directory.
 if [ "X$MEGAMEK_CONFPATH" != "X" ]; then
     if ! test -d "/.$MEGAMEK_CONFPATH" -a \
-        -f "/.$MEGAMEK_CONFPATH/MegaMek.jar"; then
+        -f "/.$MEGAMEK_CONFPATH/$MEGAMEK_DEFAULT_JARNAME"; then
         echo "Relative path: $MEGAMEK_CONFPATH.  Clearing."
         MEGAMEK_CONFPATH=""
     fi
 fi
 if [ "X$MEGAMEK_CONFPATH" == "X" ]; then
-    if test -d "$HOME/.megamek"; then
-        MEGAMEK_CONFPATH=$HOME/.megamek
+    temp_path=$MEGAMEK_DEFAULT_CONFPATH
+    if test -d $temp_path; then
+        MEGAMEK_CONFPATH=$temp_path
     else
-        # See if we should create $HOME/.megamek.
-        if test -d $HOME -a -w $HOME; then
-            mkdir "$HOME/.megamek"
-            if test -d "$HOME/.megamek"; then
-                MEGAMEK_CONFPATH=$HOME/.megamek
+        # See if we should create the default configuration directory.
+        if test -d $MEGAMEK_DEFAULT_CONFROOT -a \
+            -w $MEGAMEK_DEFAULT_CONFROOT; then
+            mkdir $temp_path
+            if test -d $temp_path; then
+                MEGAMEK_CONFPATH=$temp_path
             fi
         fi
 
@@ -84,7 +93,7 @@ fi
 # Try to find the data directory.
 if [ "X$MEGAMEK_DATAPATH" != "X" ]; then
     if ! test -d "/.$MEGAMEK_DATAPATH" -a \
-        -f "/.$MEGAMEK_DATAPATH/MegaMek.jar"; then
+        -f "/.$MEGAMEK_DATAPATH/$MEGAMEK_DEFAULT_JARNAME"; then
         echo "Relative path: $MEGAMEK_DATAPATH.  Clearing."
         MEGAMEK_DATAPATH=""
     fi
@@ -95,7 +104,7 @@ if [ "X$MEGAMEK_DATAPATH" == "X" ]; then
         -d "$temp_path/data"; then
         MEGAMEK_DATAPATH=$temp_path
     else
-        temp_path=/usr/share/MegaMek
+        temp_path=$MEGAMEK_DEFAULT_DATAPATH
         if test -d $temp_path -a \
             -d "$temp_path/data"; then
             MEGAMEK_DATAPATH=$temp_path

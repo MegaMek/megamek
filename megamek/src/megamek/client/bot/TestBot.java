@@ -878,10 +878,11 @@ public class TestBot extends BotClient {
 
     public GAAttack bestAttack(MoveOption es, CEntity target, int search_level) {
         Entity en = es.getEntity();
-        int attacks[] = new int[3];
+        int attacks[] = new int[4];
         Vector front = new Vector();
         Vector left = new Vector();
         Vector right = new Vector();
+        Vector rear = new Vector();
         GAAttack result = null;
         int o_facing = en.getFacing();
         for (Enumeration i = en.getWeapons(); i.hasMoreElements();) {
@@ -904,6 +905,12 @@ public class TestBot extends BotClient {
                     right.add(c);
                     attacks[2] = Math.max(attacks[2], c.size());
                 }
+                en.setSecondaryFacing((o_facing + 3) % 6);
+                c = this.calculateWeaponAttacks(en, mw, true);
+                if (c.size() > 0) {
+                    rear.add(c);
+                    attacks[1] = Math.max(attacks[3], c.size());
+                }
             } else {
                 attacks[1] = 0;
                 attacks[2] = 0;
@@ -915,6 +922,7 @@ public class TestBot extends BotClient {
         if (!es.getFinalProne() && en.canChangeSecondaryFacing()) {
             arcs.add(left);
             arcs.add(right);
+            arcs.add(rear);
         }
         for (int i = 0; i < arcs.size(); i++) {
             Vector v = (Vector) arcs.elementAt(i);
@@ -1024,6 +1032,9 @@ public class TestBot extends BotClient {
                 break;
             case 2 :
                 av.insertElementAt(new TorsoTwistAction(en.getId(), (en.getFacing() + 1) % 6), 0);
+                break;
+            case 3 :
+                av.insertElementAt(new TorsoTwistAction(en.getId(), (en.getFacing() + 3) % 6), 0);
                 break;
         }
         sendAttackData(best_entity, av);

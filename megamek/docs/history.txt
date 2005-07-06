@@ -54,6 +54,7 @@ v0.29.83 (CVS)
 + Bug 1231990: Fixed exception from null entity position.
 + Client-Server communication code was extracted to class Connection and descendants
 + Bug 1232097: TDB loader now correctly puts in Clan TCs and XLs on IS Mixed Chassis.
++ Bug 1115591: Bot now rotates the turret to shoot something behind them.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

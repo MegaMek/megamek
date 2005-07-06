@@ -1628,6 +1628,9 @@ Catapult CPLT-C2|MWDA|BattleMech|3132
 Catapult CPLT-K2K|MWDA|BattleMech|3132
 Centurion CN9-D3D|MWDA|BattleMech|3132
 Centurion CN9-D4D|MWDA|BattleMech|3132
+Cougar X|MWDA|BattleMech|3132
+Cougar X2|MWDA|BattleMech|3132
+Cougar X3|MWDA|BattleMech|3132
 Firestarter FS9-M2|MWDA|BattleMech|3132
 Firestarter FS9-M3|MWDA|BattleMech|3132
 Hatchetman HCT-5D|MWDA|BattleMech|3132
@@ -1653,3 +1656,6 @@ Spider SDR-7K|MWDA|BattleMech|3132
 Tundra Wolf|MWDA|BattleMech|3132
 Tundra Wolf 2|MWDA|BattleMech|3132
 Tundra Wolf 3|MWDA|BattleMech|3132
+Zeus ZEU-X|MWDA|BattleMech|3132
+Zeus ZEU-X2|MWDA|BattleMech|3132
+Zeus ZEU-X3|MWDA|BattleMech|3132

@@ -51,6 +51,7 @@ v0.29.83 (CVS)
 + Bug 1232714: All currently-existing MWDA units now canon by the list.
 + Fixed listings for a number of infantry types in the canon list.
 + Data 1223604: updated some lvl3 mechs.
++ Bug 1231990: Fixed exception from null entity position.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

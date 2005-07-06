@@ -50,6 +50,7 @@ public abstract class Entity
     protected String            model;
     protected int               year;
     protected int               techLevel;
+    protected int               engineTechLevel = TechConstants.T_TECH_UNKNOWN;
     protected boolean           mixedTech = false;
     protected boolean           designValid = true;
 
@@ -4609,5 +4610,13 @@ public abstract class Entity
     
     public void setCanon(boolean canon) {
         this.canon=canon;
+    }
+
+    public int getEngineTechLevel() {
+        return engineTechLevel;
+    }
+
+    public void setEngineTechLevel(int etl) {
+        engineTechLevel = etl;
     }
 }

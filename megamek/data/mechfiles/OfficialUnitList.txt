@@ -1169,13 +1169,13 @@ Toyama TYM-1A|Word of Blake|BattleMech|3057
 Vanquisher VQR-2A|Word of Blake|BattleMech|3062
 Vanquisher VQR-2B|Word of Blake|BattleMech|3067
 White Flame WHF-3B|Word of Blake|BattleMech|3067
-Fah Shih BA Squad Flamer|Capellan Confederation|Infantry|3062
-Fah Shih BA Squad Machine Gun|Capellan Confederation|Infantry|3062
-Fah Shih BA Squad Small Laser|Capellan Confederation|Infantry|3062
-Fah Shih BA Squad TAG|Capellan Confederation|Infantry|3062
-Elemental BA Point Flamer|Clan General|Infantry|2868
-Elemental BA Point Machinegun|Clan General|Infantry|2868
-Elemental BA Point Small Laser|Clan General|Infantry|2868
+Fa Shih (Flamer)|Capellan Confederation|Infantry|3062
+Fa Shih (Laser)|Capellan Confederation|Infantry|3062
+Fa Shih (MG)|Capellan Confederation|Infantry|3062
+Fa Shih (TAG)|Capellan Confederation|Infantry|3062
+Clan Elemental (Flamer)|Clan General|Infantry|2868
+Clan Elemental (MG)|Clan General|Infantry|2868
+Clan Elemental (Laser)|Clan General|Infantry|2868
 Foot Infantry Point Flamer|Clan General|Infantry|2800
 Foot Infantry Point Laser|Clan General|Infantry|2800
 Foot Infantry Point Machine Gun|Clan General|Infantry|2800
@@ -1192,31 +1192,31 @@ Motorized Infantry Point Machine Gun|Clan General|Infantry|2800
 Motorized Infantry Point Rifle|Clan General|Infantry|2800
 Motorized Infantry Point SRM|Clan General|Infantry|2800
 Sylph BA Point|Cloud Cobra,Diamond Shark,Snow Raven|Infantry|3060
-Kage Light BA Flamer|Draconis Combine|Infantry|3056
-Kage Light BA Machine Gun|Draconis Combine|Infantry|3056
-Kage Light BA Small Laser|Draconis Combine|Infantry|3056
-Kage Light BA TAG|Draconis Combine|Infantry|3056
+Kage (Flamer)|Draconis Combine|Infantry|3056
+Kage (Laser)|Draconis Combine|Infantry|3056
+Kage (MG)|Draconis Combine|Infantry|3056
+Kage (TAG)|Draconis Combine|Infantry|3056
 Kanazuchi BA Squad|Draconis Combine|Infantry|3058
 Raiden BA Squad (Standard) Flamer|Draconis Combine|Infantry|3055
 Raiden BA Squad (Standard) Machine Gun|Draconis Combine|Infantry|3055
 Raiden BA Squad (Standard) Small Laser  |Draconis Combine|Infantry|3055
 Raiden BA Squad (Standard) SRM |Draconis Combine|Infantry|3055
-Cavalier BA Squad (Standard) Flamer|Federated Suns|Infantry|3058
-Cavalier BA Squad (Standard) Machine Gun|Federated Suns|Infantry|3060
-Cavalier BA Squad (Standard) Small Laser  |Federated Suns|Infantry|3060
-Cavalier BA Squad (Standard) SRM |Federated Suns|Infantry|3058
-Infiltrator BA Squad|Federated Suns|Infantry|3057
-Infiltrator Mk. II BA Squad|Federated Suns|Infantry|3060
+Cavalier (Flamer)|Federated Suns|Infantry|3058
+Cavalier (Laser)|Federated Suns|Infantry|3060
+Cavalier (MG)|Federated Suns|Infantry|3060
+Cavalier (SRM)|Federated Suns|Infantry|3058
+Infiltrator Mk I|Federated Suns|Infantry|3057
+Infiltrator Mk II|Federated Suns|Infantry|3060
 Sloth BA Squad|Federated Suns,Lyran Alliance|Infantry|3057
-Salamander BA Point|Fire Mandrill,Hell's Horses|Infantry|3058
-Achileus Light BA Squad Flamer|Free Worlds League,Word of Blake|Infantry|3057
-Achileus Light BA Squad Machine Gun|Free Worlds League,Word of Blake|Infantry|3057
-Achileus Light BA Squad Small Laser|Free Worlds League,Word of Blake|Infantry|3057
+Clan Salamander|Fire Mandrill,Hell's Horses|Infantry|3058
+Achileus (Flamer)|Free Worlds League,Word of Blake|Infantry|3057
+Achileus (Laser)|Free Worlds League,Word of Blake|Infantry|3057
+Achileus (MG)|Free Worlds League,Word of Blake|Infantry|3057
 Longinus BA Squad Flamer|Free Worlds League|Infantry|3059
 Longinus BA Squad Machine Gun|Free Worlds League|Infantry|3059
 Longinus BA Squad Small Laser|Free Worlds League|Infantry|3059
 Undine BA Point|Goliath Scorpion|Infantry|3061
-Gnome BA Point|Hell's Horses|Infantry|3056
+Clan Gnome|Hell's Horses|Infantry|3056
 Foot Infantry Platoon Flamer|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Foot Infantry Platoon Laser|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Foot Infantry Platoon LRM|Inner Sphere General,Periphery General|Infantry|3057
@@ -1239,18 +1239,18 @@ Motorized Infantry Platoon LRM|Inner Sphere General,Periphery General|Infantry|3
 Motorized Infantry Platoon Machine Gun|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Motorized Infantry Platoon Rifle|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Motorized Infantry Platoon SRM|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
-Fenrir BA Squad 2 Small Pulse Lasers|Lyran Alliance|Infantry|3060
-Fenrir BA Squad 3 Machine Guns|Lyran Alliance|Infantry|3060
-Fenrir BA Squad 3 Small Lasers|Lyran Alliance|Infantry|3060
-Fenrir BA Squad Medium Pulse Laser|Lyran Alliance|Infantry|3060
-Fenrir BA Squad SRM 4|Lyran Alliance|Infantry|3060
+Fenrir (MG)|Lyran Alliance|Infantry|3060
+Fenrir (MPLAS)|Lyran Alliance|Infantry|3060
+Fenrir (SLAS)|Lyran Alliance|Infantry|3060
+Fenrir (SPLAS)|Lyran Alliance|Infantry|3060
+Fenrir (SRM)|Lyran Alliance|Infantry|3060
 Gray Death Light Scout Armor Squad Laser/SRM|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
 Gray Death Light Scout Armor Squad Machine Gun|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
 Gray Death Light Scout Armor Squad Rifle/Flamer|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
 Gray Death Standard BA Flamer|Lyran Alliance,Mercenary General|Infantry|3051
 Gray Death Standard BA Laser|Lyran Alliance,Mercenary General|Infantry|3051
 Gray Death Standard BA MG|Lyran Alliance,Mercenary General|Infantry|3051
-Infiltrator BA Squad|Lyran Alliance|Infantry|3060
+Infiltrator Mk I|Lyran Alliance|Infantry|3060
 Inner Sphere BA Squad (Standard) Flamer|Magistracy of Canopus,Taurian Concordat|Infantry|3055
 Inner Sphere BA Squad (Standard) Machine Gun|Magistracy of Canopus,Taurian Concordat|Infantry|3055
 Inner Sphere BA Squad (Standard) Small Laser  |Magistracy of Canopus,Taurian Concordat|Infantry|3055
@@ -1601,3 +1601,55 @@ Cyrano|SLDF 2750|VTOL|2622
 Nightshade|SLDF 2750|VTOL|2597
 Ripper|SLDF 2750|VTOL|2680
 Kestrel|Wolf's Dragoons|VTOL|3007
+Advanced Clan Armor|MWDA|Infantry|3132
+Advanced Clan Armor (IS)|MWDA|Infantry|3132
+Hauberk Assault Battle Armor|MWDA|Infantry|3132
+Hauberk Assault Battle Armor (Clan)|MWDA|Infantry|3132
+Behemoth II Tank|MWDA|Vehicle|3132
+Condor Multi-Purpose Tank|MWDA|Vehicle|3132
+Demon Medium Tank|MWDA|Vehicle|3132
+Fox Armored Car|MWDA|Vehicle|3132
+JES Tactical Missile Carrier|MWDA|Vehicle|3132
+Scimitar Mk II Hover Combat Vehicle|MWDA|Vehicle|3132
+JESII Strategic Missile Carrier|MWDA|Vehicle|3132
+Marksman Tank (M1)|MWDA|Vehicle|3132
+Joust Medium Tank (BE701)|MWDA|Vehicle|3132
+Ranger Infantry Fighting Vehicle (VV1)|MWDA|Vehicle|3132
+Shandra Advanced Scout Vehicle|MWDA|Vehicle|3132
+Tank Destroyer (SM1)|MWDA|Vehicle|3132
+DI Schmitt Tank|MWDA|Vehicle|3132
+Arbalest 2|MWDA|BattleMech|3132
+Arbalest|MWDA|BattleMech|3132
+Atlas AS7-K2|MWDA|BattleMech|3132
+Atlas AS7-K3|MWDA|BattleMech|3132
+Black Hawk 2|MWDA|BattleMech|3132
+Black Hawk|MWDA|BattleMech|3132
+Catapult CPLT-C2|MWDA|BattleMech|3132
+Catapult CPLT-K2K|MWDA|BattleMech|3132
+Centurion CN9-D3D|MWDA|BattleMech|3132
+Centurion CN9-D4D|MWDA|BattleMech|3132
+Firestarter FS9-M2|MWDA|BattleMech|3132
+Firestarter FS9-M3|MWDA|BattleMech|3132
+Hatchetman HCT-5D|MWDA|BattleMech|3132
+Hatchetman HCT-5DD|MWDA|BattleMech|3132
+Jupiter|MWDA|BattleMech|3132
+Jupiter 2|MWDA|BattleMech|3132
+Koshi|MWDA|BattleMech|3132
+Koshi 2|MWDA|BattleMech|3132
+Legionnaire LGN-2D Raul|MWDA|BattleMech|3132
+Legionnaire LGN-2D|MWDA|BattleMech|3132
+Legionnaire LGN-2K|MWDA|BattleMech|3132
+Mad Cat III|MWDA|BattleMech|3132
+Mad Cat III 2|MWDA|BattleMech|3132
+Pack Hunter 2|MWDA|BattleMech|3132
+Pack Hunter 3|MWDA|BattleMech|3132
+Panther PNT-12K|MWDA|BattleMech|3132
+Panther PNT-10K2|MWDA|BattleMech|3132
+Ryoken II 2|MWDA|BattleMech|3132
+Ryoken II|MWDA|BattleMech|3132
+Ryoken II Tassa|MWDA|BattleMech|3132
+Spider SDR-7K2|MWDA|BattleMech|3132
+Spider SDR-7K|MWDA|BattleMech|3132
+Tundra Wolf|MWDA|BattleMech|3132
+Tundra Wolf 2|MWDA|BattleMech|3132
+Tundra Wolf 3|MWDA|BattleMech|3132

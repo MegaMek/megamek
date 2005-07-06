@@ -42,14 +42,21 @@
 # As of v0.29.61, mechset files can include other mechset files.
 include localserver_mechset.txt
 
-# these 8 must be in here
+# these 17 must be in here
 exact "default_light" "default_light.gif"
 exact "default_medium" "default_medium.gif"
 exact "default_heavy" "default_heavy.gif"
 exact "default_assault" "default_assault.gif"
 exact "default_quad" "default_quad.gif"
-exact "default_tank" "default_tank.gif"
+exact "default_tracked" "default_tracked.gif"
+exact "default_tracked_heavy" "default_tracked_heavy.gif"
+exact "default_tracked_assault" "default_tracked_assault.gif"
+exact "default_wheeled" "default_wheeled.gif"
+exact "default_wheeled_heavy" "default_wheeled_heavy.gif""
+exact "default_hover" "default_hover.gif"
 exact "default_vtol" "default_vtol.gif"
+exact "default_naval" "default_naval.gif"
+exact "default_hydrofoil" "default_hydrofoil.gif"
 exact "default_infantry" "default_infantry.gif"
 exact "default_ba" "default_ba.gif"
 exact "default_proto" "default_proto.gif"

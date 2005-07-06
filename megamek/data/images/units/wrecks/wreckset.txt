@@ -19,16 +19,24 @@ Ploppy
 # tinting process is subtractive, so make images light.
 # 
 
-# these 7 must be in here 
+# these 17 must be in here 
 exact "default_light" "small_boom.gif"
 exact "default_medium" "small_boom.gif"
 exact "default_heavy" "large_boom.gif"
 exact "default_assault" "large_boom.gif"
 exact "default_quad" "large_boom.gif"
-exact "default_tank" "default_tank_wreck.gif"
-exact "default_infantry" "small_boom.gif"
-exact "default_proto" "large_boom.gif"
+exact "default_tracked" "default_tank_wreck.gif"
+exact "default_tracked_heavy" "default_tank_wreck.gif"
+exact "default_tracked_assault" "default_tank_wreck.gif"
+exact "default_wheeled" "default_tank_wreck.gif"
+exact "default_wheeled_heavy" "default_tank_wreck.gif"
+exact "default_hover" "default_tank_wreck.gif"
 exact "default_vtol" "default_vtol_wreck.gif"
+exact "default_naval" "default_naval_wreck.gif"
+exact "default_hydrofoil" "default_naval_wreck.gif"
+exact "default_infantry" "small_boom.gif"
+exact "default_ba" "small_boom.gif"
+exact "default_proto" "large_boom.gif"
 
 # put custom pictures here:
 

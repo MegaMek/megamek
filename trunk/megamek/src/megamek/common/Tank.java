@@ -810,15 +810,15 @@ public class Tank
         double turretWeight=0;
         double paWeight=0;
         for (Enumeration i = getWeapons();i.hasMoreElements();) {
-        	Mounted m = (Mounted) i.nextElement();
-        	WeaponType wt = (WeaponType) m.getType();
-        	if(wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
-        	    sinks+=wt.getHeat();
-        	    paWeight+=wt.getTonnage(this)/10.0;
-        	}
-        	if(!hasNoTurret() && m.getLocation()==Tank.LOC_TURRET) {
-        	    turretWeight+=wt.getTonnage(this)/10.0;
-        	}
+            Mounted m = (Mounted) i.nextElement();
+            WeaponType wt = (WeaponType) m.getType();
+            if(wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
+                sinks+=wt.getHeat();
+                paWeight+=wt.getTonnage(this)/10.0;
+            }
+            if(!hasNoTurret() && m.getLocation()==Tank.LOC_TURRET) {
+                turretWeight+=wt.getTonnage(this)/10.0;
+            }
         }
         if(engineType!=1) {
             paWeight=0;

@@ -344,10 +344,7 @@ public class MegaMek implements ActionListener {
         client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
-        try {
-            client.connect();
-        } catch (Exception e) {
-            
+        if (!client.connect()) {
         }
         launch(gui.getFrame());
 
@@ -408,10 +405,7 @@ public class MegaMek implements ActionListener {
         client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
-        try {
-            client.connect();
-        } catch (Exception e) {
-            
+        if (!client.connect()) {
         }
         optdlg = null;
         launch(gui.getFrame());
@@ -491,10 +485,7 @@ public class MegaMek implements ActionListener {
             client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
             gui = new ClientGUI(client);
             gui.initialize();
-            try {
-                client.connect();
-            } catch (Exception e) {
-                
+            if (!client.connect()){
             }
             server.getGame().getOptions().loadOptions(client, hd.serverPass);
 
@@ -550,9 +541,7 @@ public class MegaMek implements ActionListener {
         client = new Client(cd.name, cd.serverAddr, cd.port);
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
-        try {
-            client.connect();
-        } catch (Exception e) {
+        if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(
                 cd.port).append(
@@ -592,9 +581,7 @@ public class MegaMek implements ActionListener {
         client.game.addGameListener(new BotGUI((BotClient)client));
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
-        try {
-            client.connect();
-        } catch (Exception e) {
+        if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(
                 cd.port).append(

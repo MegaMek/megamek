@@ -22,6 +22,7 @@ package megamek.server.commands;
 
 import java.util.*;
 
+import megamek.common.net.Connection;
 import megamek.server.*;
 
 /**

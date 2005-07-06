@@ -2758,13 +2758,13 @@ public abstract class Entity
         case IEntityMovementMode.HOVER:
             return "Hover";
         case IEntityMovementMode.VTOL:
-        	return "VTOL";
+            return "VTOL";
         case IEntityMovementMode.NAVAL:
-        	return "Naval";
+            return "Naval";
         case IEntityMovementMode.HYDROFOIL:
-        	return "Hydrofoil";
+            return "Hydrofoil";
         case IEntityMovementMode.SUBMARINE:
-        	return "Submarine";
+            return "Submarine";
         case IEntityMovementMode.INF_LEG:
             return "Leg";
         case IEntityMovementMode.INF_MOTORIZED:

@@ -18,11 +18,6 @@ package megamek.client;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 import java.util.Vector;
@@ -41,24 +36,24 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.net.Connection;
+import megamek.common.net.ConnectionListenerAdaptor;
+import megamek.common.net.DisconnectedEvent;
+import megamek.common.net.ObjectStreamConnection;
+import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.CircularIntegerBuffer;
 
-public class Client implements Runnable {
+public class Client {
+
     // we need these to communicate with the server
     private String name;
-    Socket socket;
-    private ObjectInputStream in = null;
-    private ObjectOutputStream out = null;
-    private CircularIntegerBuffer debugLastFewCommandsSent =
-        new CircularIntegerBuffer(5);
-
+    
+    private Connection connection; 
+    
     // some info about us and the server
     private boolean connected = false;
     public int local_pn = -1;
-    private int connFailures = 0;
-    private static final int MAX_CONN_FAILURES = 100;
     private String host;
     private int port;
     
@@ -68,8 +63,6 @@ public class Client implements Runnable {
     // here's some game phase stuff
     private MapSettings mapSettings;
     public String eotr;
-    
-    private Thread pump;
 
     //And close client events!
     private Vector closeClientListeners = new Vector();
@@ -77,6 +70,21 @@ public class Client implements Runnable {
     // we might want to keep a server log...
     private megamek.server.ServerLog serverlog;
 
+    private ConnectionListenerAdaptor connectionListener = new ConnectionListenerAdaptor() {
+
+        /**
+         * Called when it is sensed that a connection has terminated.
+         */
+        public void disconnected(DisconnectedEvent e) {
+            Client.this.disconnected();
+        }
+
+        public void packetReceived(PacketReceivedEvent e) {
+            handlePacket(e.getPacket());
+        }
+
+    };
+    
     /**
      * Construct a client which will try to connect.  If the connection
      * fails, it will alert the player, free resources and hide the frame.
@@ -102,10 +110,13 @@ public class Client implements Runnable {
     /**
      * Attempt to connect to the specified host
      */
-    public void connect() throws UnknownHostException, IOException {
-        socket = new Socket(host, port);
-        pump = new Thread(this, "Client Pump"); //$NON-NLS-1$
-        pump.start();
+    public boolean connect() {
+        connection = new ObjectStreamConnection(host, port, 1);
+        connected = connection.open();
+        if (connected) {
+            connection.addConnectionListener(connectionListener);           
+        }
+        return connected;
     }
 
     /**
@@ -117,17 +128,10 @@ public class Client implements Runnable {
             send(new Packet(Packet.COMMAND_CLOSE_CONNECTION));
         }
         connected = false;
-        pump = null;
 
-        // shut down threads & sockets
-        try {
-            socket.close();
-            in.close();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            // not a big deal, just never connected
+        if (connection != null) {
+            connection.close();
+            connection = null;
         }
         
         for (int i = 0; i < closeClientListeners.size(); i++){
@@ -668,202 +672,137 @@ public class Client implements Runnable {
     }
 
     /**
-     * Reads a complete net command from the given input stream
-     */
-    private Packet readPacket() {
-        try {
-            if (in == null) {
-                in = new ObjectInputStream(socket.getInputStream());
-            }
-
-            Packet packet = (Packet)in.readObject();
-
-            /* Packet debug code
-            if (packet == null) {
-                System.out.println("c: received null packet");
-            } else if (packet.getData() == null) {
-                System.out.println("c: received empty packet");
-            } else {
-                System.out.println("c: received command #" + packet.getCommand() + " with " + packet.getData().length + " zipped entries totaling " + packet.byteLength + " bytes in size");
-            } */
-
-            // All went well.  Reset the failure count.
-            this.connFailures = 0;
-            return packet;
-        } catch (SocketException ex) {
-            // assume client is shutting down
-            System.err.println("client: Socket error (server closed?)"); //$NON-NLS-1$
-            if (this.connFailures > MAX_CONN_FAILURES) {
-                disconnected();
-            } else {
-                this.connFailures++;
-            }
-            return null;
-        } catch (IOException ex) {
-            System.err.println("client: IO error reading command:"); //$NON-NLS-1$
-            disconnected();
-            return null;
-        } catch (ClassNotFoundException ex) {
-            System.err.println("client: class not found error reading command:"); //$NON-NLS-1$
-            ex.printStackTrace();
-            disconnected();
-            return null;
-        }
-    }
-
-    /**
      * send the message to the server
      */
     protected void send(Packet packet) {
-        debugLastFewCommandsSent.push(packet.getCommand());
-        packet.zipData();
-        try {
-            if (out == null) {
-                out = new ObjectOutputStream(socket.getOutputStream());
-                out.flush();
-            }
-            out.reset(); // write each packet fresh; a lot changes
-            out.writeObject(packet);
-            out.flush();
-            //            System.out.println("c: packet #" + packet.getCommand() + " sent");
-        } catch (IOException ex) {
-            System.err.println("c: error sending command #" + packet.getCommand() + ": " + ex.getMessage()); //$NON-NLS-1$
-            System.err.println("    Last five commands that were sent (oldest first): " + debugLastFewCommandsSent.print());
-        }
+        connection.send(packet);
     }
 
-    //
-    // Runnable
-    //
-    public void run() {
-        Thread currentThread = Thread.currentThread();
-        while(pump == currentThread) {
-            Packet c = readPacket();
-            if (c == null) {
-                System.out.println("client: got null packet"); //$NON-NLS-1$
-                continue;
+    protected void handlePacket(Packet c) {
+        if (c == null) {
+            System.out.println("client: got null packet"); //$NON-NLS-1$
+            return;
+        }
+        switch (c.getCommand()) {
+        case Packet.COMMAND_CLOSE_CONNECTION :
+            disconnected();
+            break;
+        case Packet.COMMAND_SERVER_GREETING :
+            connected = true;
+            send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
+            break;
+        case Packet.COMMAND_LOCAL_PN :
+            this.local_pn = c.getIntValue(0);
+            break;
+        case Packet.COMMAND_PLAYER_UPDATE :
+            receivePlayerInfo(c);
+            break;
+        case Packet.COMMAND_PLAYER_READY :
+            getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
+            break;
+        case Packet.COMMAND_PLAYER_ADD :
+            receivePlayerInfo(c);
+            break;
+        case Packet.COMMAND_PLAYER_REMOVE :
+            game.removePlayer(c.getIntValue(0));
+            break;
+        case Packet.COMMAND_CHAT :
+            if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
+                serverlog.append( (String) c.getObject(0) );
             }
-            switch (c.getCommand()) {
-                case Packet.COMMAND_CLOSE_CONNECTION :
-                    disconnected();
-                    break;
-                case Packet.COMMAND_SERVER_GREETING :
-                    connected = true;
-                    send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
-                    break;
-                case Packet.COMMAND_LOCAL_PN :
-                    this.local_pn = c.getIntValue(0);
-                    break;
-                case Packet.COMMAND_PLAYER_UPDATE :
-                    receivePlayerInfo(c);
-                    break;
-                case Packet.COMMAND_PLAYER_READY :
-                    getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
-                    break;
-                case Packet.COMMAND_PLAYER_ADD :
-                    receivePlayerInfo(c);
-                    break;
-                case Packet.COMMAND_PLAYER_REMOVE :
-                    game.removePlayer(c.getIntValue(0));
-                    break;
-                case Packet.COMMAND_CHAT :
-                    if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
-                        serverlog.append( (String) c.getObject(0) );
-                    }
-                    game.processGameEvent(new GamePlayerChatEvent(this,null, (String) c.getObject(0)));
-                    break;
-                case Packet.COMMAND_ENTITY_ADD :
-                    receiveEntityAdd(c);
-                    break;
-                case Packet.COMMAND_ENTITY_UPDATE :
-                    receiveEntityUpdate(c);
-                    break;
-                case Packet.COMMAND_ENTITY_REMOVE :
-                    receiveEntityRemove(c);
-                    break;
-                case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR :
-                    receiveEntityVisibilityIndicator(c);
-                    break;
-                case Packet.COMMAND_SENDING_MINEFIELDS :
-                    receiveSendingMinefields(c);
-                    break;
-                case Packet.COMMAND_DEPLOY_MINEFIELDS :
-                    receiveDeployMinefields(c);
-                    break;
-                case Packet.COMMAND_REVEAL_MINEFIELD :
-                    receiveRevealMinefield(c);
-                    break;
-                case Packet.COMMAND_REMOVE_MINEFIELD :
-                    receiveRemoveMinefield(c);
-                    break;
-                case Packet.COMMAND_CHANGE_HEX :
-                    game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
-                    break;
-                case Packet.COMMAND_BLDG_UPDATE_CF :
-                    receiveBuildingUpdateCF(c);
-                    break;
-                case Packet.COMMAND_BLDG_COLLAPSE :
-                    receiveBuildingCollapse(c);
-                    break;
-                case Packet.COMMAND_PHASE_CHANGE :
-                    changePhase(c.getIntValue(0));
-                    break;
-                case Packet.COMMAND_TURN :
-                    changeTurnIndex(c.getIntValue(0));
-                    break;
-                case Packet.COMMAND_ROUND_UPDATE :
-                    game.setRoundCount(c.getIntValue(0));
-                    break;
-                case Packet.COMMAND_SENDING_TURNS :
-                    receiveTurns(c);
-                    break;
-                case Packet.COMMAND_SENDING_BOARD :
-                    receiveBoard(c);
-                    break;
-                case Packet.COMMAND_SENDING_ENTITIES :
-                    receiveEntities(c);
-                    break;
-                case Packet.COMMAND_SENDING_REPORT :
-                    if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
-                        if (null==eotr || ((String) c.getObject(0)).length() < eotr.length() ) {
-                            // first report packet
-                            serverlog.append( (String) c.getObject(0) );
-                        } else {
-                            // append only the new part, not what's already in eotr
-                            serverlog.append( ((String) c.getObject(0)).substring(eotr.length()) );
-                        }
-                    }
-                    eotr = (String) c.getObject(0);
-                    game.processGameEvent(new GameReportEvent(this));
-                    break;
-                case Packet.COMMAND_ENTITY_ATTACK :
-                    receiveAttack(c);
-                    break;
-                case Packet.COMMAND_SENDING_GAME_SETTINGS :
-                    game.setOptions((GameOptions) c.getObject(0));
-                    break;
-                case Packet.COMMAND_SENDING_MAP_SETTINGS :
-                    mapSettings = (MapSettings) c.getObject(0);
-                    game.processGameEvent(new GameSettingsChangeEvent(this));
-                    break;
-                case Packet.COMMAND_QUERY_MAP_SETTINGS :
-                    game.processGameEvent(new GameMapQueryEvent(this, (MapSettings)c.getObject(0)));
-                    break;
-                case Packet.COMMAND_END_OF_GAME :
-                    String sReport = (String) c.getObject(0);
-                    game.end(c.getIntValue(1), c.getIntValue(2));
-                    // save victory report
-                    saveEntityStatus(sReport);
-                    break;
-                case Packet.COMMAND_SENDING_ARTILLERYATTACKS :
-                    Vector v = (Vector)c.getObject(0);
-                    game.setArtilleryVector(v);
-                    break;
-                case Packet.COMMAND_SENDING_FLARES :
-                    Vector v2 = (Vector)c.getObject(0);
-                    game.setFlares(v2);
-                    break;
+            game.processGameEvent(new GamePlayerChatEvent(this,null, (String) c.getObject(0)));
+            break;
+        case Packet.COMMAND_ENTITY_ADD :
+            receiveEntityAdd(c);
+            break;
+        case Packet.COMMAND_ENTITY_UPDATE :
+            receiveEntityUpdate(c);
+            break;
+        case Packet.COMMAND_ENTITY_REMOVE :
+            receiveEntityRemove(c);
+            break;
+        case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR :
+            receiveEntityVisibilityIndicator(c);
+            break;
+        case Packet.COMMAND_SENDING_MINEFIELDS :
+            receiveSendingMinefields(c);
+            break;
+        case Packet.COMMAND_DEPLOY_MINEFIELDS :
+            receiveDeployMinefields(c);
+            break;
+        case Packet.COMMAND_REVEAL_MINEFIELD :
+            receiveRevealMinefield(c);
+            break;
+        case Packet.COMMAND_REMOVE_MINEFIELD :
+            receiveRemoveMinefield(c);
+            break;
+        case Packet.COMMAND_CHANGE_HEX :
+            game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
+            break;
+        case Packet.COMMAND_BLDG_UPDATE_CF :
+            receiveBuildingUpdateCF(c);
+            break;
+        case Packet.COMMAND_BLDG_COLLAPSE :
+            receiveBuildingCollapse(c);
+            break;
+        case Packet.COMMAND_PHASE_CHANGE :
+            changePhase(c.getIntValue(0));
+            break;
+        case Packet.COMMAND_TURN :
+            changeTurnIndex(c.getIntValue(0));
+            break;
+        case Packet.COMMAND_ROUND_UPDATE :
+            game.setRoundCount(c.getIntValue(0));
+            break;
+        case Packet.COMMAND_SENDING_TURNS :
+            receiveTurns(c);
+            break;
+        case Packet.COMMAND_SENDING_BOARD :
+            receiveBoard(c);
+            break;
+        case Packet.COMMAND_SENDING_ENTITIES :
+            receiveEntities(c);
+            break;
+        case Packet.COMMAND_SENDING_REPORT :
+            if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
+                if (null==eotr || ((String) c.getObject(0)).length() < eotr.length() ) {
+                    // first report packet
+                    serverlog.append( (String) c.getObject(0) );
+                } else {
+                    // append only the new part, not what's already in eotr
+                    serverlog.append( ((String) c.getObject(0)).substring(eotr.length()) );
+                }
             }
+            eotr = (String) c.getObject(0);
+            game.processGameEvent(new GameReportEvent(this));
+            break;
+        case Packet.COMMAND_ENTITY_ATTACK :
+            receiveAttack(c);
+            break;
+        case Packet.COMMAND_SENDING_GAME_SETTINGS :
+            game.setOptions((GameOptions) c.getObject(0));
+            break;
+        case Packet.COMMAND_SENDING_MAP_SETTINGS :
+            mapSettings = (MapSettings) c.getObject(0);
+            game.processGameEvent(new GameSettingsChangeEvent(this));
+            break;
+        case Packet.COMMAND_QUERY_MAP_SETTINGS :
+            game.processGameEvent(new GameMapQueryEvent(this, (MapSettings)c.getObject(0)));
+            break;
+        case Packet.COMMAND_END_OF_GAME :
+            String sReport = (String) c.getObject(0);
+            game.end(c.getIntValue(1), c.getIntValue(2));
+            // save victory report
+            saveEntityStatus(sReport);
+            break;
+        case Packet.COMMAND_SENDING_ARTILLERYATTACKS :
+            Vector v = (Vector)c.getObject(0);
+            game.setArtilleryVector(v);
+            break;
+        case Packet.COMMAND_SENDING_FLARES :
+            Vector v2 = (Vector)c.getObject(0);
+            game.setFlares(v2);
+            break;
         }
     }
 

@@ -200,9 +200,9 @@ public class TestBot extends BotClient {
                     (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
                     // Cycle through all available weapons, only unjam if the jam(med)
                     // RACs count for a significant portion of possible damage
-        	        min.addStep(MovePath.STEP_UNJAM_RAC);
+                    min.addStep(MovePath.STEP_UNJAM_RAC);
                 }
-        	}
+            }
             }
         }
         

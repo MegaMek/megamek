@@ -23,8 +23,6 @@ import java.util.Enumeration;
 
 import megamek.common.Packet;
 import megamek.common.xml.PacketEncoder;
-import megamek.server.Connection;
-import megamek.common.net.ConnectionHandler;
 
 /**
  * Transmit and receive <code>Packet</code>s that are encoded in an XML format.
@@ -49,6 +47,13 @@ public class XmlConnection extends Connection {
      */
     private DataOutputStream counter = null;
 
+    /**
+     * Initialize this XML-based connection.
+     */
+    public XmlConnection(Socket socket, int id) {
+        super( socket, id );
+    }
+    
     /**
      * Reads a complete net command from the given socket.
      * <p/>
@@ -76,7 +81,7 @@ public class XmlConnection extends Connection {
                 // We can't simply pass the socket's InputStream to the parser,
                 // as it expends and end-of-transmission to stop parsing.
                 in = new BufferedReader
-                    ( new InputStreamReader(socket.getInputStream()) );
+                    ( new InputStreamReader(getSocket().getInputStream()) );
             }
 
             // Wait for a packet.
@@ -116,7 +121,7 @@ public class XmlConnection extends Connection {
             System.err.print( "server(" );
             System.err.print( getId() );
             System.err.println( "): IO error reading command" );
-            server.disconnected(this);
+            close();
             return null;
         } catch (ParseException parseEx) {
             System.err.print( "server(" );
@@ -129,7 +134,7 @@ public class XmlConnection extends Connection {
             System.err.print( "server(" );
             System.err.print( getId() );
             System.err.println( "): Interrupted waiting for data" );
-            server.disconnected(this);
+            close();
             return null;
             /*  END  Debug code  END  */
         }
@@ -149,7 +154,7 @@ public class XmlConnection extends Connection {
         int startCount = 0;
         try {
             if (out == null) {
-                counter = new DataOutputStream( socket.getOutputStream() );
+                counter = new DataOutputStream( getSocket().getOutputStream() );
                 out = new BufferedWriter( new OutputStreamWriter(counter) );
             }
 
@@ -177,16 +182,9 @@ public class XmlConnection extends Connection {
             System.err.print( "): error sending command.  dropping player" );
             System.err.println(ex);
             System.err.println(ex.getMessage());
-            server.disconnected(this);
+            close();
         }
         return bytes;
-    }
-
-    /**
-     * Initialize this XML-based connection.
-     */
-    public XmlConnection(ConnectionHandler server, Socket socket, int id) {
-        super( server, socket, id );
     }
 
 }

@@ -46,6 +46,8 @@ v0.29.83 (CVS)
 + Bug 1233036: Altered loader to accept alternate names for "Tank".
 + Fixed several physical NPEs against non-entity targets.
 + Patch 1233142: Bot equipment usage: stealth armor mode switching.
++ Default images for naval units, different default images for different
+    vehicle types (tracked, wheeled, hover) and weight classes (heavy/assault)
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

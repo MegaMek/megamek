@@ -908,7 +908,6 @@ public class WeaponAttackAction
                    toHit.addModifier( +2, "Swarm-I at friendly unit with intact sensors");
             }
         }
-        System.out.println(toHit.getDesc());
     
         // okay!
         return toHit;

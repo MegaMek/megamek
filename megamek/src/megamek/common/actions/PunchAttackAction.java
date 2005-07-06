@@ -75,6 +75,10 @@ public class PunchAttackAction
             te = (Entity) target;
             targetId = target.getTargetId();
         }
+        if (ae == null)
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
+        if (te == null)
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target a null entity!");
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(te.getPosition());
         final int attackerHeight = ae.absHeight() + attHex.getElevation();

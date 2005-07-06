@@ -44,6 +44,7 @@ v0.29.83 (CVS)
 + Bug 1171594: Added check to bot to reduce chance of standing when impossible.
 + Fixed NPE in nextWeapon check from RFE 1231014.
 + Bug 1233036: Altered loader to accept alternate names for "Tank".
++ Fixed several physical NPEs against non-entity targets.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

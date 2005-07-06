@@ -67,6 +67,7 @@ public class TdbFile implements IMechLoader {
     private static final String  STRUCTURE    = "internal"; // also attribute
     private static final String  MOUNTED_ITEM    = "mounteditem";
     private static final String  LOCATION= "location";
+    private static final String  TARGSYS = "targsys";
 
     /**
      * The names of the attributes recognized by this parser.
@@ -125,6 +126,8 @@ public class TdbFile implements IMechLoader {
 
     private String armorType;
     private String structureType;
+    private String targSysStr;
+    private boolean clanTC = false;
 
     private Hashtable hSharedEquip = new Hashtable();
     private Vector vSplitWeapons = new Vector();
@@ -240,6 +243,12 @@ public class TdbFile implements IMechLoader {
             armorType = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(STRUCTURE)) {
             structureType = ((ParsedXML)children.nextElement()).getContent();
+        } else if (node.getName().equals(TARGSYS)) {
+            targSysStr = ((ParsedXML)children.nextElement()).getContent().trim();
+            if ((targSysStr.length() >= 3)
+                    && (targSysStr.substring(0,3).equals("(C)"))) {
+                clanTC = true;
+            }
         } else if (children != null) {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
@@ -335,6 +344,9 @@ public class TdbFile implements IMechLoader {
             while (children.hasMoreElements()) {
                 ParsedXML critSlotNode = (ParsedXML)children.nextElement();
                 critData[loc][i][0] = ((ParsedXML)critSlotNode.elements().nextElement()).getContent();
+                if (clanTC && critData[loc][i][0].equals("Targeting Computer")) {
+                    critData[loc][i][0] = "(C) "+critData[loc][i][0];
+                }
                 critData[loc][i++][1] = critSlotNode.getAttribute(ITEM_INDEX);
             }
         } else if (children != null) {
@@ -511,6 +523,8 @@ public class TdbFile implements IMechLoader {
 
             if (critName.indexOf("Engine") != -1) {
                 mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
+                if (critName.indexOf("(C)") != -1)
+                    mech.setEngineTechLevel(TechConstants.T_CLAN_LEVEL_2);
                 continue;
             }
             if (critName.endsWith("[LRM]") || critName.endsWith("[SRM]")) {

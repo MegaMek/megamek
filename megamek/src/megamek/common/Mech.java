@@ -433,7 +433,9 @@ public abstract class Mech
     public boolean hasXL() {
         int count = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
                                          Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-        if ((isClan() && count == 2) || (!isClan() && count == 3)) {
+        if ((isClan() && count == 2)
+                || (getEngineTechLevel() == TechConstants.T_CLAN_LEVEL_2 && count == 2)
+                || (!isClan() && count == 3)) {
             return true;
         }
         return false;
@@ -445,7 +447,9 @@ public abstract class Mech
     public boolean hasLightEngine() {
         int count = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
                                          Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-        if (!isClan() && count == 2) {
+        if ((!isClan()
+                || (getEngineTechLevel() == TechConstants.T_CLAN_LEVEL_2))
+                && count == 2) {
             return true;
         }
         return false;

@@ -4085,6 +4085,18 @@ implements Runnable, ConnectionHandler {
             }
         }
     }
+    /**
+     * Remove all minefields in the specified coords from the game
+     * @param coords The <code>Coords</code> from which to remove minefields
+     */
+    private void removeMinefieldsFrom(Coords coords) {
+        Vector v = game.getMinefields(coords);
+        while (v.elements().hasMoreElements()) {
+            Minefield mf = (Minefield)v.elements().nextElement();
+            removeMinefield(mf);
+        }
+        
+    }
 
     /**
      * Removes the minefield from the game.
@@ -5129,11 +5141,7 @@ implements Runnable, ConnectionHandler {
                 }
             }
             if (cleared) {
-                Enumeration minefields = game.getMinefields(pos).elements();
-                while (minefields.hasMoreElements()) {
-                    Minefield mf = (Minefield) minefields.nextElement();
-                    removeMinefield(mf);
-                }
+                removeMinefieldsFrom(pos);
             }
         }
     }

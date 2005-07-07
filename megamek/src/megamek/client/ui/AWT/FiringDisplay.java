@@ -566,7 +566,7 @@ public class FiringDisplay
             Targetable target = waa.getTarget(client.game);
             boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
             if (curInFrontArc) {
-                WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetId(), waa.getWeaponId());
+                WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId());
                 newAttacks.add(waa2);
             }
         }
@@ -576,7 +576,7 @@ public class FiringDisplay
             Targetable target = waa.getTarget(client.game);
             boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
             if (!curInFrontArc) {
-                WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetId(), waa.getWeaponId() );
+                WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId() );
                 newAttacks.add(waa2);
             }
         }
@@ -600,7 +600,7 @@ public class FiringDisplay
      * queue.
      */
     private void fire() {
-        // get the sepected weaponnum
+        // get the selected weaponnum
         int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted mounted = ce().getEquipment(weaponNum);
         
@@ -631,17 +631,16 @@ public class FiringDisplay
         }
 
         if (ash.allowAimedShotWith(mounted) &&
-          ash.inAimingMode() && 
-          ash.isAimingAtLocation()) {
-          waa.setAimedLocation(ash.getAimingAt());
-          waa.setAimingMode(ash.getAimingMode());
-
-          if (ash.getAimingMode() == IAimingModes.AIM_MODE_TARG_COMP) {
-            ash.lockLocation(true);
-          }
+            ash.inAimingMode() && 
+            ash.isAimingAtLocation()) {
+            waa.setAimedLocation(ash.getAimingAt());
+            waa.setAimingMode(ash.getAimingMode());
+            if (ash.getAimingMode() == IAimingModes.AIM_MODE_TARG_COMP) {
+                ash.lockLocation(true);
+            }
         } else {
-          waa.setAimedLocation(Mech.LOC_NONE);
-          waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+            waa.setAimedLocation(Mech.LOC_NONE);
+            waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
         }
 
         // add the attack to our temporary queue

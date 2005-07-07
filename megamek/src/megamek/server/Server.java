@@ -14069,7 +14069,7 @@ implements Runnable, ConnectionHandler {
     * 
     * TAGs fired by the enemy aren't eligable, nor are TAGs fired at a target on a different map sheet.
     */
-    private WeaponResult ConvertHomingShotToEntityTarget(ArtilleryAttackAction aaa, Entity ae) {
+    private WeaponResult convertHomingShotToEntityTarget(ArtilleryAttackAction aaa, Entity ae) {
         WeaponResult wr = aaa.getWR();
         Targetable target = wr.waa.getTarget(game);
         
@@ -14164,7 +14164,7 @@ implements Runnable, ConnectionHandler {
                 Mounted ammo = ae.getEquipment(wr.waa.getAmmoId());
                 final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
                 if(atype != null && atype.getMunitionType() == AmmoType.M_HOMING) {
-                    wr = ConvertHomingShotToEntityTarget(aaa, ae);
+                    wr = convertHomingShotToEntityTarget(aaa, ae);
                 } else {
                     // Are there any valid spotters?
                     if ( null != spottersBefore ) {

@@ -225,7 +225,7 @@ public class EntityVerifier implements MechSummaryCache.Listener
             // normally would, then verify all of them.
             EntityVerifier ev = new EntityVerifier(config);
             mechSummaryCache = MechSummaryCache.getInstance();
-            MechSummaryCache.addListener(ev);
+            mechSummaryCache.addListener(ev);
         }
     }
 }

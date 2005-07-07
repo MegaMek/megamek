@@ -293,7 +293,7 @@ public class ClientGUI
         });
 
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-        if (!MechSummaryCache.isInitialized()) {
+        if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.show();
         }
 
@@ -565,7 +565,18 @@ public class ClientGUI
         } catch (Throwable error) {
             error.printStackTrace();
         }
-        client.die();
+
+        client.die();        
+
+        //TODO Is there a better solution?
+        //This is required because the BoardView creates the redraw thread 
+        //that must be stopped explicitly 
+        bv.die();
+        
+        //TODO Is there a better solution?
+        //This is required because the ChatLounge adds the listener to the
+        //MechSummaryCache that must be removed explicitly.        
+        chatlounge.die();
     }
 
     /**

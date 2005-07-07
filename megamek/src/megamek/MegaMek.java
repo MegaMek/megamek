@@ -698,6 +698,11 @@ public class MegaMek implements ActionListener {
         }
         // show menu frame
         frame.setVisible(true);
+
+        //just to free some memory
+        client = null;        
+        System.gc();
+        System.runFinalization();
     }
 
     public static void main(String[] args) {

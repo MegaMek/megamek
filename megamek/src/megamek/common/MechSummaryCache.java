@@ -32,11 +32,11 @@ import megamek.common.verifier.TestTank;
 
 import com.sun.java.util.collections.*;
 
-/*
- * Setting this up as static so a client and server running in the same
+/**
+ * Cache of the Mech summary information.
+ * Implemented as Singleton so a client and server running in the same
  * process can share it
  */
-
 public class MechSummaryCache {
 
     public static interface Listener {
@@ -45,17 +45,17 @@ public class MechSummaryCache {
 
     private static final MechSummaryCache m_instance = new MechSummaryCache();
 
-    private static boolean initialized = false;
-    private static boolean initializing = false;
-    private static ArrayList listeners = new ArrayList();
+    private boolean initialized = false;
+    private boolean initializing = false;
+    private ArrayList listeners = new ArrayList();
 
-    private static StringBuffer loadReport = new StringBuffer();
+    private StringBuffer loadReport = new StringBuffer();
     private final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml"; //should be a client option?
-    private static EntityVerifier entityVerifier = null;
+    private EntityVerifier entityVerifier = null;
 
     public static synchronized MechSummaryCache getInstance() {
-        if (!initialized && !initializing) {
-            initializing = true;
+        if (!m_instance.initialized && !m_instance.initializing) {
+            m_instance.initializing = true;
             Thread t = new Thread(new Runnable() {
                 public void run() {
                     m_instance.loadMechData();
@@ -67,17 +67,17 @@ public class MechSummaryCache {
         return m_instance;
     }
 
-    public static boolean isInitialized() {
+    public boolean isInitialized() {
         return initialized;
     }
 
-    public static void addListener(Listener listener) {
+    public void addListener(Listener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
-    public static void removeListener(Listener listener) {
+    public void removeListener(Listener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -103,7 +103,7 @@ public class MechSummaryCache {
         return m_data;
     }
 
-    private static void block() {
+    private void block() {
         if (!initialized) {
             synchronized (m_instance) {
                 try {
@@ -293,7 +293,7 @@ public class MechSummaryCache {
         wr.close();
     }
 
-    private static MechSummary getSummary(Entity e, File f, String entry) {
+    private MechSummary getSummary(Entity e, File f, String entry) {
         MechSummary ms = new MechSummary();
         ms.setName(e.getShortName());
         ms.setChassis(e.getChassis());

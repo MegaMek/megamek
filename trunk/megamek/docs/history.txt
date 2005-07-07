@@ -63,6 +63,7 @@ v0.29.83 (CVS)
 + Bug 959012: Stacking Violation after multiple DFAs
 + Eliminated one of the possible memory leaks
 + Bug 1002223: Target in Rear, and firing arrows
++ Bug 899693: Player names now altered to disallow duplicates.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

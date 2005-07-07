@@ -4476,7 +4476,7 @@ implements Runnable, ConnectionHandler {
     private void doEntityFallsInto(Entity entity, Coords src, Coords dest, PilotingRollData roll, boolean causeAffa) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
-        final int fallElevation = Math.abs(destHex.floor() - srcHex.floor());
+        final int fallElevation = Math.abs(srcHex.floor() + entity.getElevation() - destHex.floor());
         int direction = src.direction(dest);
         // check entity in target hex
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
@@ -8547,7 +8547,7 @@ implements Runnable, ConnectionHandler {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
 
-        // entity isn't charging any more
+        // entity isn't DFAing any more
         ae.setDisplacementAttack(null);
 
         // should we even bother?
@@ -8570,6 +8570,7 @@ implements Runnable, ConnectionHandler {
         // target still in the same position?
         if ( !target.getPosition().equals(daa.getTargetPos()) ) {
             phaseReport.append(" but the target has moved.\n");
+            doEntityFallsInto(ae, ae.getPosition(), daa.getTargetPos(), ae.getBasePilotingRoll());
             return;
         }
 

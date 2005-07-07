@@ -223,7 +223,7 @@ public abstract class Entity
     //In other words, this may need to *change* as it moves from hex to hex--without it going up or down.
     //I.e.--level 0 hex, elevation 5--it moves to a level 2 hex, without going up or down.
     //elevation is now 3.
-    protected int elevation;
+    protected int elevation = 0;
     
     /** 
      * 2 vectors holding entity and weapon ids,

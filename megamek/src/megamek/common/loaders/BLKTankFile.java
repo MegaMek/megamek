@@ -117,8 +117,14 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
 
     } // End has-transporters
 
-        if (dataFile.exists("engine_type"))
-            t.setEngineType(dataFile.getDataAsInt("engine_type")[0]);
+        if (dataFile.exists("engine_type")) {
+            int tmpI = dataFile.getDataAsInt("engine_type")[0];
+            if (tmpI == 1)
+                tmpI = 0;
+            else if (tmpI == 0)
+                tmpI = 1;
+            t.setEngineType(tmpI);
+        }
         if (dataFile.exists("armor_type"))
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
         if (dataFile.exists("internal_type"))

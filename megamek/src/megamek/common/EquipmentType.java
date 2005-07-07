@@ -36,6 +36,13 @@ public class EquipmentType {
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
 
+    public static final int     T_ENGINE_UNKNOWN            = -1;
+    public static final int     T_ENGINE_ICE                = 0;
+    public static final int     T_ENGINE_FUSION             = 1;
+    public static final int     T_ENGINE_XL                 = 2;
+    public static final int     T_ENGINE_LIGHT              = 4; // don't ask
+    public static final int     T_ENGINE_XXL                = 3; // don't ask
+
     public static final int     T_ARMOR_UNKNOWN             = -1;
     public static final int     T_ARMOR_STANDARD            = 0;
     public static final int     T_ARMOR_FERRO_FIBROUS       = 1;

@@ -104,15 +104,16 @@ public class TestTank extends TestEntity
     {
         int type = 0;
         int flag = Engine.TANK_ENGINE;
-        if (tank.getEngineType()==0)
-            type = Engine.NORMAL_ENGINE;
-        else if (tank.getEngineType()==1)
-        {
+        if (tank.getEngineType()==EquipmentType.T_ENGINE_ICE) {
             type = Engine.COMPUSTION_ENGINE;
             flag = 0;
-        }
-        else if (tank.getEngineType()==2)
+        } else if (tank.getEngineType()==EquipmentType.T_ENGINE_FUSION) {
+            type = Engine.NORMAL_ENGINE;
+        } else if (tank.getEngineType()==EquipmentType.T_ENGINE_XL) {
             type = Engine.XL_ENGINE;
+        } else if (tank.getEngineType() == EquipmentType.T_ENGINE_LIGHT) {
+            type = Engine.LIGHT_ENGINE;
+        }
         if (tank.isClan())
             flag |= Engine.CLAN_ENGINE;
         return new Engine(getTankEngineRating(tank), type, flag);

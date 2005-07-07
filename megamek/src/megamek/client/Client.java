@@ -751,6 +751,9 @@ public class Client implements Runnable {
                     connected = true;
                     send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
                     break;
+                case Packet.COMMAND_SERVER_CORRECT_NAME :
+                    correctName(c);
+                    break;
                 case Packet.COMMAND_LOCAL_PN :
                     this.local_pn = c.getIntValue(0);
                     break;
@@ -907,4 +910,11 @@ public class Client implements Runnable {
         return host;
     }
 
+    private void correctName(Packet inP) {
+        setName((String)(inP.getObject(0)));
+    }
+
+    public void setName(String newN) {
+        name = newN;
+    }
 }

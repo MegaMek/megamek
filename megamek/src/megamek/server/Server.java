@@ -316,6 +316,29 @@ implements Runnable, ConnectionHandler {
         }
     }
 
+    private String correctDupeName(String oldName) {
+        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+            Player player = (Player)i.nextElement();
+            if (player.getName().equals(oldName)) {
+                // We need to correct it.
+                String newName = oldName;
+                int dupNum = 2;
+                try {
+                    dupNum = Integer.parseInt(oldName.substring(oldName.lastIndexOf(".")+1));
+                    dupNum++;
+                    newName = oldName.substring(0,oldName.lastIndexOf("."));
+                } catch (Exception e) {
+                    // If this fails, we don't care much.
+                    // Just assume it's the first time for this name.
+                    dupNum = 2;
+                }
+                newName = newName.concat(".").concat(Integer.toString(dupNum));
+                return correctDupeName(newName);
+            }
+        }
+        return oldName;
+    }
+
     /**
      * Recieves a player name, sent from a pending connection, and connects
      * that connection.
@@ -335,14 +358,20 @@ implements Runnable, ConnectionHandler {
         // check if they're connecting with the same name as a ghost player
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             Player player = (Player)i.nextElement();
-            if (player.isGhost() && player.getName().equals(name)) {
-                returning = true;
-                player.setGhost(false);
-                // switch id
-                connId = player.getId();
-                conn.setId(connId);
+            if (player.getName().equals(name)) {
+                if (player.isGhost()) {
+                    returning = true;
+                    player.setGhost(false);
+                    // switch id
+                    connId = player.getId();
+                    conn.setId(connId);
+                }
             }
         }
+
+        // Check to avoid duplicate names...
+        name = correctDupeName(name);
+        send(connId, new Packet(Packet.COMMAND_SERVER_CORRECT_NAME, name));
 
         // right, switch the connection into the "active" bin
         connectionsPending.removeElement(conn);

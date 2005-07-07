@@ -63,7 +63,7 @@ public class UnitLoadingDialog extends Dialog {
         
         Runnable r = new Runnable() {
             public void run() {
-                while (!MechSummaryCache.isInitialized()) {
+                while (!MechSummaryCache.getInstance().isInitialized()) {
                     updateCounts();
                     try {
                         Thread.sleep(UPDATE_FREQUENCY);

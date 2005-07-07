@@ -65,6 +65,7 @@ v0.29.83 (CVS)
 + Bug 1002223: Target in Rear, and firing arrows
 + Bug 899693: Player names now altered to disallow duplicates.
 + Corrected bug in player name correction relating to ghosts.
++ Bug 1234236: No more Minefields Delivered by LRM
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

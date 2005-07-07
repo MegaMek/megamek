@@ -435,7 +435,7 @@ public class MechSelectorDialog
         m_mechViewRight.setText(""); //$NON-NLS-1$
 
         // Remove preview image.        
-        if (MechSummaryCache.isInitialized()) {
+        if (MechSummaryCache.getInstance().isInitialized()) {
             m_pPreview.removeBgDrawers();
             m_pPreview.paint(m_pPreview.getGraphics());
         }

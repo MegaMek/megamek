@@ -125,6 +125,12 @@ public class ChatLounge
     
     private Button butAddBot;
     private Button butRemoveBot;
+
+    MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
+        public void doneLoading() {
+            butLoad.setEnabled(true);
+        }
+    };
     
     /**
      * Creates a new chat lounge for the client.
@@ -586,13 +592,10 @@ public class ChatLounge
         butSaveList.setEnabled(false);
 
         butLoad = new Button(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
-        MechSummaryCache.addListener(new MechSummaryCache.Listener() {
-            public void doneLoading() {
-                butLoad.setEnabled(true);
-                MechSummaryCache.removeListener(this);
-            }
-        });
-        butLoad.setEnabled(MechSummaryCache.isInitialized());
+        MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
+        mechSummaryCache.addListener(mechSummaryCacheListener);
+        butLoad.setEnabled(mechSummaryCache.isInitialized());
+
         Font font = new Font("sanserif", Font.BOLD, 18); //$NON-NLS-1$
         if (null == font) {
             System.err.println("Couldn't find the new font for the 'Add a Unit' button."); //$NON-NLS-1$
@@ -1528,6 +1531,13 @@ public class ChatLounge
      */
     public Component getSecondaryDisplay() {
         return labStatus;
+    }
+
+    //TODO Is there a better solution?
+    //This is required because the ChatLounge adds the listener to the
+    //MechSummaryCache that must be removed explicitly.            
+    public void die() {
+        MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
     }
 
 }

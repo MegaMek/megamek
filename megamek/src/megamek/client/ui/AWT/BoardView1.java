@@ -46,7 +46,7 @@ import java.util.Properties;
  */
 public class BoardView1
     extends Canvas
-    implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, Runnable, AdjustmentListener
+    implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener
 {
     private static final int        TRANSPARENT = 0xFFFF00FF;
 
@@ -97,7 +97,6 @@ public class BoardView1
     private Scrollbar vScrollbar = null;
     private Scrollbar hScrollbar = null;
     private boolean isScrolling = false;
-    private Thread scroller = new Thread(this, "BoardView Scroller Thread"); //$NON-NLS-1$
     private Point scroll = new Point();
     private boolean initCtlScroll;
     private boolean ctlKeyHeld = false;
@@ -194,6 +193,8 @@ public class BoardView1
     private Coords firstLOS;
 
     private ClientGUI clientgui;
+    
+    private RedrawWorker redrawWorker = new RedrawWorker();
 
     /**
      * Construct a new board view for the specified game
@@ -214,7 +215,7 @@ public class BoardView1
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        scroller.start();
+        redrawWorker.start();
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -2119,50 +2120,6 @@ public class BoardView1
         movementPolys[7].addPoint(40, 48);
         movementPolys[7].addPoint(35, 53);
     }
-
-
-    //
-    // Runnable
-    //
-    public void run() {
-        final Thread currentThread = Thread.currentThread();
-        long lastTime = System.currentTimeMillis();
-        long currentTime = System.currentTimeMillis();
-        while (scroller == currentThread) {
-            try {
-                Thread.sleep(20);
-            } catch(InterruptedException ex) {
-                // duh?
-            }
-            if (!isShowing()) {
-                currentTime = System.currentTimeMillis();
-                lastTime = currentTime;
-                continue;
-            }
-            currentTime = System.currentTimeMillis();
-            boolean redraw = false;
-            for (int i = 0; i < displayables.size(); i++) {
-                Displayable disp = (Displayable) displayables.elementAt(i);
-                if (!disp.isSliding()) {
-                    disp.setIdleTime(currentTime - lastTime, true);
-                } else {
-                    redraw = redraw || disp.slide();
-                }
-            }
-            if (backSize != null) {
-                redraw = redraw || doMoveUnits(currentTime - lastTime);
-                redraw = redraw || doScroll();
-                checkTooltip();
-            } else {
-                repaint(100);
-            }
-            if (redraw) {
-                repaint();
-            }
-            lastTime = currentTime;
-        }
-    }
-
 
     private synchronized boolean doMoveUnits(long idleTime) {
         boolean movingSomething = false;
@@ -4168,6 +4125,13 @@ public class BoardView1
         }
     }
 
+    //TODO Is there a better solution?
+    //This is required because the BoardView creates the redraw thread 
+    //that must be stopped explicitly     
+    public void die() {
+        redrawWorker.stop();
+    }
+
     private GameListener gameListener = new GameListenerAdapter(){
         
         public void gameEntityNew(GameEntityNewEvent e) {
@@ -4222,5 +4186,64 @@ public class BoardView1
         boardGraph = null;
         tileManager.reset();
         redrawAllEntities();
+    }
+    
+    /*
+     * It's not quite polished solution, but on other hand it's better then nothing.
+     */
+    protected class RedrawWorker implements Runnable {
+
+        private boolean finished = false;
+
+        public void start() {
+            Thread thread = new Thread(this, "BoardView RedrawWorker Thread"); //$NON-NLS-1$
+            thread.start();
+            
+        }
+        
+        public void stop() {
+            finished = true;
+        }
+
+        public void run() {
+            long lastTime = System.currentTimeMillis();
+            long currentTime = System.currentTimeMillis();
+            while (!finished) {
+                try {
+                    Thread.sleep(20);
+                } catch(InterruptedException ex) {
+                    // duh?
+                }
+                if (finished) {
+                    break;
+                }
+                if (!isShowing()) {
+                    currentTime = System.currentTimeMillis();
+                    lastTime = currentTime;
+                    continue;
+                }
+                currentTime = System.currentTimeMillis();
+                boolean redraw = false;
+                for (int i = 0; i < displayables.size(); i++) {
+                    Displayable disp = (Displayable) displayables.elementAt(i);
+                    if (!disp.isSliding()) {
+                        disp.setIdleTime(currentTime - lastTime, true);
+                    } else {
+                        redraw = redraw || disp.slide();
+                    }
+                }
+                if (backSize != null) {
+                    redraw = redraw || doMoveUnits(currentTime - lastTime);
+                    redraw = redraw || doScroll();
+                    checkTooltip();
+                } else {
+                    repaint(100);
+                }
+                if (redraw) {
+                    repaint();
+                }
+                lastTime = currentTime;
+            }
+        }
     }
 }

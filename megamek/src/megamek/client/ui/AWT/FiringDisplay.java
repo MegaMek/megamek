@@ -557,8 +557,32 @@ public class FiringDisplay
         // remove temporary attacks from game & board
         removeTempAttacks();
         
+        // For bug 1002223
+        // Re-compute the to-hit numbers by adding in correct order.
+        Vector newAttacks = new Vector();
+        for (Iterator i=attacks.iterator(); i.hasNext();) {
+            WeaponAttackAction waa = (WeaponAttackAction)i.next();
+            Entity attacker = waa.getEntity(client.game);
+            Targetable target = waa.getTarget(client.game);
+            boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
+            if (curInFrontArc) {
+                WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetId(), waa.getWeaponId());
+                newAttacks.add(waa2);
+            }
+        }
+        for (Iterator i=attacks.iterator(); i.hasNext();) {
+            WeaponAttackAction waa = (WeaponAttackAction)i.next();
+            Entity attacker = waa.getEntity(client.game);
+            Targetable target = waa.getTarget(client.game);
+            boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
+            if (!curInFrontArc) {
+                WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetId(), waa.getWeaponId() );
+                newAttacks.add(waa2);
+            }
+        }
+        
         // send out attacks
-        client.sendAttackData(cen, attacks);
+        client.sendAttackData(cen, newAttacks);
         
         // clear queue
         attacks.removeAllElements();

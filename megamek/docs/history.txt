@@ -70,6 +70,7 @@ v0.29.83 (CVS)
 + Implemented HMVee loading of engine types
 + Corrected engine loading of HMV and BLK
 + Corrected Svantovit Streak-SRM unit file
++ Bug 1053297: Multiple minefields not clearing
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

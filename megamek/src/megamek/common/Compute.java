@@ -196,7 +196,6 @@ public class Compute
 
     /**
      * @return true if a piloting skill roll is needed to traverse the terrain
-     * TODO: VTOL sideslipping
      */
     public static boolean isPilotingSkillNeeded(IGame game, int entityId,
                                                 Coords src, Coords dest,

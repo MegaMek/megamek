@@ -61,6 +61,7 @@ v0.29.83 (CVS)
 + Added MegaMek.sh to "packageCode" Ant target.
 + Fixed bad escape sequence in MegaMek.welcome.message.
 + Bug 959012: Stacking Violation after multiple DFAs
++ Eliminated one of the possible memory leaks
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

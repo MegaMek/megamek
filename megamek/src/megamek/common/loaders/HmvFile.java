@@ -56,7 +56,7 @@ public class HmvFile
   private int jumpMP;
 
   private int heatSinks;
-  private HMVHeatSinkType heatSinkType;
+  private HMVArmorType armorType;
 
   private int roundedInternalStructure;
 
@@ -127,7 +127,7 @@ public class HmvFile
       jumpMP = readUnsignedShort(dis);
 
       heatSinks = readUnsignedShort(dis);
-      heatSinkType = HMVHeatSinkType.getType(readUnsignedShort(dis));
+      armorType = HMVArmorType.getType(readUnsignedShort(dis));
 
       roundedInternalStructure = readUnsignedShort(dis);
 
@@ -152,15 +152,22 @@ public class HmvFile
       dis.skipBytes(2);
 
       rearArmor = readUnsignedShort(dis);
+        // ??
+        if (isOmni) {
+            // Skip 12 bytes for OmniVehicles
+            dis.skipBytes(12);
 
-      // ??
-      if ( isOmni ) {
-          // Skip 12 bytes for OmniVehicles
-          dis.skipBytes(12);
-      } else {
-          // Skip 14 bytes for non-OmniVehicles
-          dis.skipBytes(14);
-      }
+            // Decide whether or not the turret is a fixed weight
+            int lockedTurret = readUnsignedShort(dis);
+
+            if (lockedTurret == 2) {
+                // Skip something else?...
+                dis.skipBytes(12);
+            }
+        } else {
+            // Skip 14 bytes for non-OmniVehicles
+            dis.skipBytes(14);
+        }
 
       int weapons = readUnsignedShort(dis);
       for (int i = 1; i <= weapons; i++)
@@ -344,6 +351,7 @@ public class HmvFile
                 tank.setModel(model);
                 tank.setYear(year);
                 tank.setOmni( isOmni );
+                tank.setEngineType(engineType.getId());
     
                 int techLevel = rulesLevel == 1 ? TechConstants.T_IS_LEVEL_1 :
                     techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 :
@@ -367,7 +375,8 @@ public class HmvFile
                 tank.setHasNoTurret(turretArmor == 0);
     
                 tank.autoSetInternal();
-    
+                tank.setArmorType(armorType.getId());
+
                 tank.initializeArmor(frontArmor, Tank.LOC_FRONT);
                 tank.initializeArmor(leftArmor, Tank.LOC_LEFT);
                 tank.initializeArmor(rightArmor, Tank.LOC_RIGHT);
@@ -1124,6 +1133,10 @@ abstract class HMVType
         // Return the result
         return result;
     }
+
+    public int getId() {
+        return id;
+    }
 }
 
 class HMVEngineType
@@ -1131,8 +1144,11 @@ class HMVEngineType
 {
   public static final Hashtable types = new Hashtable();
 
-  public static final HMVEngineType ICE = new HMVEngineType("I.C.E", 0);
-  public static final HMVEngineType FUSION = new HMVEngineType("Fusion", 1);
+  public static final HMVEngineType ICE = new HMVEngineType("I.C.E", EquipmentType.T_ENGINE_ICE);
+  public static final HMVEngineType FUSION = new HMVEngineType("Fusion", EquipmentType.T_ENGINE_FUSION);
+  public static final HMVEngineType XLFUSION = new HMVEngineType("XL Fusion", EquipmentType.T_ENGINE_XL);
+  public static final HMVEngineType XXLFUSION = new HMVEngineType("XXL Fusion", EquipmentType.T_ENGINE_XXL);
+  public static final HMVEngineType LIGHTFUSION = new HMVEngineType("Light Fusion", EquipmentType.T_ENGINE_LIGHT);
 
   private HMVEngineType(String name, int id)
   {
@@ -1142,29 +1158,30 @@ class HMVEngineType
 
   public static HMVEngineType getType(int i)
   {
+System.err.println("HMV Engine Type Index: "+i);
     return (HMVEngineType) types.get(new Integer(i));
   }
 }
 
-class HMVHeatSinkType
+class HMVArmorType
   extends HMVType
 {
   public static final Hashtable types = new Hashtable();
 
-  public static final HMVHeatSinkType SINGLE = new HMVHeatSinkType("Single", 0);
-  public static final HMVHeatSinkType DOUBLE = new HMVHeatSinkType("Double", 1);
-  public static final HMVHeatSinkType COMPACT = new HMVHeatSinkType("Compact", 2);
-  public static final HMVHeatSinkType LASER = new HMVHeatSinkType("Laser", 3);
+  public static final HMVArmorType STANDARD = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD), EquipmentType.T_ARMOR_STANDARD);
+  public static final HMVArmorType FERRO = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS), EquipmentType.T_ARMOR_FERRO_FIBROUS);
+//  public static final HMVArmorType COMPACT = new HMVArmorType("Compact", 2);
+//  public static final HMVArmorType LASER = new HMVArmorType("Laser", 3);
 
-  private HMVHeatSinkType(String name, int id)
+  private HMVArmorType(String name, int id)
   {
     super(name, id);
     types.put(new Integer(id), this);
   }
 
-  public static HMVHeatSinkType getType(int i)
+  public static HMVArmorType getType(int i)
   {
-    return (HMVHeatSinkType) types.get(new Integer(i));
+    return (HMVArmorType) types.get(new Integer(i));
   }
 }
 

@@ -40,7 +40,7 @@ public class Tank
     public static final int        LOC_LEFT               = 3;
     public static final int        LOC_REAR               = 4;
     public static final int        LOC_TURRET             = 5;
-    
+
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = {0, 0, 0, 0, 0, 0};
     

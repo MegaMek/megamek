@@ -3517,7 +3517,8 @@ implements Runnable, ConnectionHandler {
 
             // Track this step's location.
             movePath.addElement( new UnitLocation( entity.getId(),
-                                 entity.getPosition(), curFacing ) );
+                                                   curPos,
+                                                   curFacing ) );
 
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);

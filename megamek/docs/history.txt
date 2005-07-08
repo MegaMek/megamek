@@ -73,6 +73,8 @@ v0.29.83 (CVS)
 + Bug 1053297: Multiple minefields not clearing
 + Bug 1234480: Corrected stacking/moving through enemies.
 + Bug 755090: unit missing in deploymemt w/3 infantry per mech move option.
++ Bug 692963: After a missed DFA, the target now chooses same-elevation hexes
+   to displace before considering higher-elevation hexes.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

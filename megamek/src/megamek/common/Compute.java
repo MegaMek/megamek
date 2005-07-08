@@ -397,6 +397,10 @@ public class Compute
                     highestElev = elevation;
                     highest = dest;
                 }
+                // preferably, go to same elevation
+                if (elevation == entity.getElevation()) {
+                    return dest;
+                }
             }
         }
         return highest;

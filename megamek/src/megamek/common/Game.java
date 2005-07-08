@@ -642,6 +642,9 @@ public class Game implements Serializable, IGame
 
       for ( int i = 0; i < entities.size(); i++ ) {
         Entity ent = (Entity)entities.elementAt(i);
+        if (ent.isDeployed()) {
+            continue;
+        }
 
         Vector roundVec = (Vector)deploymentTable.get(new Integer(ent.getDeployRound()));
 

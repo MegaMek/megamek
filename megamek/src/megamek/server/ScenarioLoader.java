@@ -391,6 +391,28 @@ public class ScenarioLoader
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
             e.setCrew(new Pilot(st.nextToken(), Integer.parseInt(st.nextToken()), 
                     Integer.parseInt(st.nextToken())));
+            try {
+                String direction = st.nextToken();
+                if (direction == "N") {
+                    e.setFacing(0);
+                } else if (direction == "NW") {
+                    e.setFacing(5);
+                } else if (direction == "SW") {
+                    e.setFacing(4);
+                } else if (direction == "S") {
+                    e.setFacing(3);
+                } else if (direction == "SE") {
+                    e.setFacing(2);
+                }  else if (direction == "NE") {
+                    e.setFacing(1);
+                }
+                int x = Integer.parseInt(st.nextToken())-1;
+                int y = Integer.parseInt(st.nextToken())-1;
+                Coords coords = new Coords(x,y);
+                e.setPosition(coords);
+                e.setDeployed(true);
+            } catch (NoSuchElementException ex) {
+            }
             return e;
         } catch (NumberFormatException e) {
             e.printStackTrace();

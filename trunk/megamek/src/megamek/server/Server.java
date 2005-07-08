@@ -1870,7 +1870,9 @@ implements Runnable, ConnectionHandler {
             ( game.getOptions().booleanOption("inf_deploy_even") &&
               game.getPhase() == IGame.PHASE_DEPLOYMENT );
         boolean infMoveMulti =
-            game.getOptions().booleanOption("inf_move_multi");
+            ( game.getOptions().booleanOption("inf_move_multi") &&
+              (game.getPhase() == IGame.PHASE_INITIATIVE ||
+               game.getPhase() == IGame.PHASE_MOVEMENT) );
         boolean protosMoveEven =
             ( game.getOptions().booleanOption("protos_move_even") &&
               (game.getPhase() == IGame.PHASE_INITIATIVE ||

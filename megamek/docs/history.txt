@@ -72,6 +72,7 @@ v0.29.83 (CVS)
 + Corrected Svantovit Streak-SRM unit file
 + Bug 1053297: Multiple minefields not clearing
 + Bug 1234480: Corrected stacking/moving through enemies.
++ Bug 755090: unit missing in deploymemt w/3 infantry per mech move option.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

@@ -448,7 +448,7 @@ public class MoveStep implements Serializable {
         this.distance = entity.delta_distance;
         this.isProne = entity.isProne();
         
-        this.elevation = (entity.getMovementMode() == IEntityMovementMode.VTOL) ? entity.getElevation() : -999;
+        this.elevation = entity.getElevation();
 
         // check pavement
         if (position != null) {

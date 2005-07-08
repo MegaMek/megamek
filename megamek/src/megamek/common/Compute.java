@@ -187,7 +187,12 @@ public class Compute
             final Entity inHex = (Entity)i.nextElement();
             int inHexEnLowEl = inHex.getElevation();
             int inHexEnHighEl = inHexEnLowEl+inHex.getHeight();
-            if ((!isMech || inHex instanceof Mech) && inHex.isEnemyOf(entity) && !inHex.isMakingDfa() && (enLowEl <= inHexEnHighEl) && (enHighEl >= inHexEnLowEl)) {
+            if ((!isMech
+                    || inHex instanceof Mech)
+                    && inHex.isEnemyOf(entity)
+                    && !inHex.isMakingDfa()
+                    && (enLowEl <= inHexEnHighEl)
+                    && (enHighEl >= inHexEnLowEl)) {
                 return true;
             }
         }

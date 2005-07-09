@@ -260,6 +260,20 @@ Drawing Board.
                 if the unit sufferes an ammo explosion.  Any boolean value is
                 valid.
 
+<movement> - Lets you define alternate (lower) speed for a tank.  This tag
+        is designed only for use on vehicles.  Also note, this can cause
+        the validator to reject the vehicle (engine rating is based on
+        the new movement value).
+     The following attributes are defined for this element:
+        speed - required - "immobile" or an integer are allowed values.
+
+<turretlock> - Lets you start a tank's turret as locked.  This tag is
+        designed only for use on vehicles.
+     The following attributes are defined for this element:
+        direction - The direction in which the turret is locked.  0 is
+                forwards, and it increases clockwise (1 is one to the right,
+                3 is backwards).
+
 <location> - The contents and condition of a single location within the
         entity.  Contains zero to three <armor> elements and zero or more
         <slot> elements.  Not every template type can have the maximum

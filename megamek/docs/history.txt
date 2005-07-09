@@ -77,6 +77,14 @@ v0.29.83 (CVS)
    to displace before considering higher-elevation hexes.
 + Bug 1107637: Scenario pre-determined deployment doesn't work.
 + Bug 1001028: Altered MUL save/loader to do vehicle movement and turret locks.
++ Bug 1235224: Applied change to Air Car.
++ Bug 1235225: Applied change to ADV10.
++ Bug 1235226: Applied change to Condor MPT.
++ Bug 1235229: Applied change to Interloper UST.
++ Bug 1235232, 1235233, 1235234, 1235235: Made IS M.A.S.H. trucks Level 3.
++ Bug 1235238: Made Mobile HQ (Kurita) Level 3.
++ Bug 1235240: Applied change to Rommel II(C) (SSRM).
++ Bug 1235242: Applied change to Skimmer.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

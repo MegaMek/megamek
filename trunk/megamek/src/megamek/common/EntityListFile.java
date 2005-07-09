@@ -398,6 +398,14 @@ public class EntityListFile {
             output.write( "\"/>" );
             output.write( CommonConstants.NL );
 
+            // If it's a tank, add a movement tag.
+            if (entity instanceof Tank) {
+                Tank tentity = (Tank)entity;
+                output.write(getMovementString(tentity));
+                if (tentity.isTurretLocked())
+                    output.write(getTurretLockedString(tentity));
+            }
+
             // Add the locations of this entity (if any are needed).
             String loc = getLocString( entity );
             if ( null != loc ) {
@@ -416,6 +424,23 @@ public class EntityListFile {
         output.write( CommonConstants.NL );
         output.flush();
         output.close();
+    }
+
+    private static String getTurretLockedString(Tank e) {
+        String retval = "      <turretlock direction=\"";
+        retval = retval.concat(Integer.toString(e.getSecondaryFacing()));
+        retval = retval.concat("\"/>\n");
+        return retval;
+    }
+
+    private static String getMovementString(Tank e) {
+        String retVal = "      <movement speed=\"";
+        if (e.isImmobile())
+            retVal = retVal.concat("immobile");
+        else
+            retVal = retVal.concat(Integer.toString(e.getOriginalWalkMP()));
+        retVal = retVal.concat("\"/>\n");
+        return retVal;
     }
 
     /**

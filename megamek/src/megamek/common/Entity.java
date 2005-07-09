@@ -839,7 +839,8 @@ public abstract class Entity
      */
     public void setSecondaryFacing(int sec_facing) {
         this.sec_facing = sec_facing;
-        game.processGameEvent(new GameEntityChangeEvent(this, this));
+        if (game != null)
+            game.processGameEvent(new GameEntityChangeEvent(this, this));
     }
 
     /**

@@ -76,6 +76,7 @@ v0.29.83 (CVS)
 + Bug 692963: After a missed DFA, the target now chooses same-elevation hexes
    to displace before considering higher-elevation hexes.
 + Bug 1107637: Scenario pre-determined deployment doesn't work.
++ Bug 1001028: Altered MUL save/loader to do vehicle movement and turret locks.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

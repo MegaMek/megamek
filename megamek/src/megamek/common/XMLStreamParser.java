@@ -125,6 +125,8 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  LOCATION= "location";
     public static final String  ARMOR   = "armor";
     public static final String  SLOT    = "slot";
+    public static final String  MOVEMENT = "movement";
+    public static final String  TURRETLOCK = "turretlock";
 
     /**
      * The names of the attributes recognized by this parser.
@@ -146,6 +148,8 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  SHOTS   = "shots";
     public static final String  IS_HIT  = "isHit";
     public static final String  MUNITION= "munition";
+    public static final String  SPEED   = "speed";
+    public static final String  DIRECTION = "direction";
 
     /**
      * Special values recognized by this parser.
@@ -598,8 +602,48 @@ public class XMLStreamParser implements XMLResponder {
                     } // End have-valid-index
                 } // End have-required-fields
             } // End ready-for-location
-        }
-        else if ( name.equals( ARMOR ) ) {
+        } else if (name.equals(TURRETLOCK)) {
+            // Are we in the outside of an Entity?
+            if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found turret lock outside of an Entity.\n" );
+            } else if (!(this.entity instanceof Tank)) {
+                this.warning.append
+                    ( "Turret crit record found outside a Tank.\n" );
+            }
+            String value = (String) attr.get( DIRECTION );
+            try {
+                int turDir = Integer.parseInt(value);
+                ((Tank)this.entity).setSecondaryFacing(turDir);
+                ((Tank)this.entity).lockTurret();
+            } catch (Exception e) {
+                System.err.println(e);
+                e.printStackTrace();
+                this.warning.append
+                    ( "Invalid turret lock direction value in movement tag.\n" );
+            }
+        } else if (name.equals(MOVEMENT)) {
+            // Are we in the outside of an Entity?
+            if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found movement crit outside of an Entity.\n" );
+            } else if (!(this.entity instanceof Tank)) {
+                this.warning.append
+                    ( "Movement crit record found outside a Tank.\n" );
+            }
+            String value = (String) attr.get( SPEED );
+            if (value.equals("immobile")) {
+                ((Tank)(this.entity)).immobilize();
+            } else {
+                try {
+                    int newSpeed = Integer.parseInt(value);
+                    this.entity.setOriginalWalkMP(newSpeed);
+                } catch (Exception e) {
+                    this.warning.append
+                        ( "Invalid speed value in movement tag.\n" );
+                }
+            }
+        } else if ( name.equals( ARMOR ) ) {
 
             // Are we in the outside of an Entity?
             if ( this.entity == null ) {

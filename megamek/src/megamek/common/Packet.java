@@ -86,6 +86,8 @@ implements Serializable {
 
     public static final int        COMMAND_SERVER_CORRECT_NAME  = 45;  // reorder me
     
+    public static final int        COMMAND_SEND_SAVEGAME        = 46;
+    
     private int command;
     private Object[] data;
     private boolean zipped = false;

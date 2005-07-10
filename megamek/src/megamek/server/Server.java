@@ -149,6 +149,7 @@ implements Runnable, ConnectionHandler {
         registerCommand(new WhoCommand(this));
         registerCommand(new SeeAllCommand(this));
         registerCommand(new HeatSinkCommand(this));
+        registerCommand(new LocalSaveGameCommand(this));
     }
 
     /**
@@ -662,6 +663,26 @@ implements Runnable, ConnectionHandler {
         saveGame(fileName,game.getOptions().booleanOption("autosave_msg"));
     }
 
+    public void sendSaveGame (int connId, String sFile) {
+        saveGame(sFile, false);
+        String sFinalFile = sFile;
+        if (!sFinalFile.endsWith(".sav")) {
+            sFinalFile = sFile + ".sav";
+        }
+        sFinalFile = "savegames" + File.separator + sFinalFile;
+        File f = new File(sFinalFile);
+        try {
+            ObjectInputStream ois = new ObjectInputStream(
+                new FileInputStream(f));
+            send(connId,new Packet(Packet.COMMAND_SEND_SAVEGAME, new Object[] {sFinalFile, ois.readObject()}));
+            sendChat(connId,"***Server","Savegame has been sent to you.");
+            ois.close();
+        } catch (Exception e) {
+            System.err.println("Unable to load file: " + f);
+            e.printStackTrace();
+        }
+    }
+    
     public void saveGame(String sFile, boolean sendChat) {
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {

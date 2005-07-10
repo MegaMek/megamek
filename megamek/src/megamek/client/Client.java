@@ -16,6 +16,7 @@
 package megamek.client;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -865,6 +866,19 @@ public class Client implements Runnable {
                 case Packet.COMMAND_SENDING_FLARES :
                     Vector v2 = (Vector)c.getObject(0);
                     game.setFlares(v2);
+                    break;
+                case Packet.COMMAND_SEND_SAVEGAME:
+                    String sFinalFile = (String)c.getObject(0);
+                    try {
+                        ObjectOutputStream oos = new ObjectOutputStream(
+                            new FileOutputStream(sFinalFile));
+                        oos.writeObject(c.getObject(1));
+                        oos.flush();
+                        oos.close();
+                    } catch (Exception e) {
+                        System.err.println("Unable to save file: " + sFinalFile);
+                        e.printStackTrace();
+                    }
                     break;
             }
         }

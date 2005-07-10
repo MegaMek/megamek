@@ -734,7 +734,7 @@ public class BoardEditor extends Container implements ItemListener,
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if ( this.help == null ) {
-            File helpfile = new File( "editor-readme.txt" ); //$NON-NLS-1$
+            File helpfile = new File( "docs", "editor-readme.txt" ); //$NON-NLS-1$
             this.help = new CommonHelpDialog( this.frame, helpfile );
         }
 

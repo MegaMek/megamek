@@ -31,7 +31,6 @@ import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.client.Client;
 import megamek.common.CommonConstants;
 
 /**
@@ -136,14 +135,15 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"canon_only",false); //$NON-NLS-1$
     }
 
-    public void loadOptions(Client client, String password) {
+    public Vector loadOptions(String password) {
       ParsedXML root = null;
       InputStream is = null;
-      
+      Vector changedOptions = new Vector();
+
       try {
         is = new FileInputStream(new File(GAME_OPTIONS_FILE_NAME));
       } catch (FileNotFoundException e) {
-        return;
+        return changedOptions;
       }
 
       try {
@@ -158,22 +158,19 @@ public class GameOptions extends AbstractOptions implements Serializable {
       
       if ( optionsNode.getName().equals("options") ) { //$NON-NLS-1$
         Enumeration children = optionsNode.elements();
-        Vector changedOptions = new Vector();
         
         while (children.hasMoreElements()) {
           IOption option = parseOptionNode((ParsedXML)children.nextElement());
           
           if ( null != option )
             changedOptions.addElement(option);
-        } 
-        
-        if ( changedOptions.size() > 0 &&
-             client != null && password != null ) {
-          client.sendGameOptions(password, changedOptions);
         }
+        
+        return changedOptions;
       } else {
         System.out.println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-      }  
+        return changedOptions;
+      }
     }
     
     private IOption parseOptionNode(ParsedXML node) {

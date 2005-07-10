@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.29.84 (CVS) RELEASE CANDIDATE!
 + The editor-readme.txt was moved to the docs/ subdirectory.
++ Untangled client package from GameOptions class (common package).
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

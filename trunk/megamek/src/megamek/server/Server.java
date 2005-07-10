@@ -9026,7 +9026,8 @@ implements Runnable, ConnectionHandler {
                                          Mech.SYSTEM_LIFE_SUPPORT,
                                          Mech.LOC_HEAD ) > 0
                  && entity.heat >= 15
-                 && !entity.crew.isDead() && !entity.crew.isDoomed() ) {
+                 && !entity.crew.isDead() && !entity.crew.isDoomed() 
+                 && !entity.crew.isEjected()) {
                 if (entity.heat >= 47) {
                     if (mtHeat) {
                         roundReport.append(entity.getDisplayName() ).append( " has 47 or higher heat and damaged life support.  Mechwarrior takes 5 damage.\n");
@@ -9092,7 +9093,7 @@ implements Runnable, ConnectionHandler {
                 }
             }
             // The pilot may have just expired.
-            if ( entity.crew.isDead() || entity.crew.isDoomed() ) {
+            if ( (entity.crew.isDead() || entity.crew.isDoomed() ) && !entity.crew.isEjected() ) {
                 roundReport.append( "*** " )
                     .append( entity.getDisplayName() )
                     .append( " PILOT BAKES TO DEATH! ***" )
@@ -14677,7 +14678,6 @@ implements Runnable, ConnectionHandler {
                 desc.append("succeeds.\n");
             }
             if (entity.getCrew().isDoomed()) {
-                desc.append("but the pilot does not survive!\n");
                 desc.append(destroyEntity(pilot, "deadly ejection", false, false));
             }
             else {

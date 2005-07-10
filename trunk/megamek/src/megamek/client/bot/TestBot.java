@@ -885,9 +885,17 @@ public class TestBot extends BotClient {
         Vector rear = new Vector();
         GAAttack result = null;
         int o_facing = en.getFacing();
+
+        // Get best physical attack
         for (Enumeration i = en.getWeapons(); i.hasMoreElements();) {
             Mounted mw = (Mounted) i.nextElement();
+
+            // If this weapon is in the same arm as a
+            // brush off attack skip to next weapon.
             Vector c = this.calculateWeaponAttacks(en, mw, true);
+
+            // If this weapon is in the same arm as a punch
+            // attack, add the damage to the running total.
             if (c.size() > 0) {
                 front.add(c);
                 attacks[0] = Math.max(attacks[0], c.size());
@@ -922,7 +930,11 @@ public class TestBot extends BotClient {
         if (!es.getFinalProne() && en.canChangeSecondaryFacing()) {
             arcs.add(left);
             arcs.add(right);
-            arcs.add(rear);
+            // Meks and protos can't twist all the way around.
+            if (!(en instanceof Mech) 
+                && !(en instanceof Mech) ) {
+                arcs.add(rear);
+            }
         }
         for (int i = 0; i < arcs.size(); i++) {
             Vector v = (Vector) arcs.elementAt(i);

@@ -91,6 +91,8 @@ v0.29.83 (CVS)
 + Bug 1235237: Added M.A.S.H. Vehicle (MIT23) to dark_ages file.
 + Bug 1235239: Added Mobile Tactical Command HQ to dark_ages file.
 + RFE 790452: Savegame to a different machine
++ Bug 1235365, Patch 1235369: Don't allow bot to twist torsos 360.
++ A bugfix for a bugfix for a bugfix for 1002223.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

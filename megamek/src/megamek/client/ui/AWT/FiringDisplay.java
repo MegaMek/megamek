@@ -578,7 +578,7 @@ public class FiringDisplay
         for (Enumeration e=attacks.elements(); e.hasMoreElements();) {
             Object o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction)e.nextElement();
+                WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);
                 Targetable target = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);

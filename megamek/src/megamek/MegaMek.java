@@ -252,7 +252,7 @@ public class MegaMek implements ActionListener {
     public void showGameOptions() {
         GameOptions options = new GameOptions();
         options.initialize();
-        options.loadOptions(null, null);
+        options.loadOptions(null);
         if (optdlg == null) {
             optdlg = new GameOptionsDialog(frame, options);
         }
@@ -351,7 +351,10 @@ public class MegaMek implements ActionListener {
         }
         launch(gui.getFrame());
 
-        server.getGame().getOptions().loadOptions(client, hd.serverPass);
+        Vector changedOptions = server.getGame().getOptions().loadOptions(hd.serverPass);
+        if ( changedOptions.size() > 0 ) {
+            client.sendGameOptions(hd.serverPass, changedOptions);
+        }
         optdlg = null;
     }
 
@@ -496,7 +499,10 @@ public class MegaMek implements ActionListener {
             } catch (Exception e) {
             
             }
-            server.getGame().getOptions().loadOptions(client, hd.serverPass);
+            Vector changedOptions = server.getGame().getOptions().loadOptions(hd.serverPass);
+            if ( changedOptions.size() > 0 ) {
+                client.sendGameOptions(hd.serverPass, changedOptions);
+            }
 
             // popup options dialog
             gui.getGameOptionsDialog().update(client.game.getOptions());
@@ -746,7 +752,7 @@ public class MegaMek implements ActionListener {
                 Server dedicated = new Server(PreferenceManager.getClientPreferences().getLastServerPass(),
                         usePort);
                 // load game options from xml file if available
-                dedicated.getGame().getOptions().loadOptions(null, null);
+                dedicated.getGame().getOptions().loadOptions(null);
                 if (null != savegameFileName) {
                     dedicated.loadGame(new File(savegameFileName));
                 }

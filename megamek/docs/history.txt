@@ -5,6 +5,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Untangled client package from GameOptions class (common package).
 + Bug 1235652: Possible to see opponents predesignated artillery hexes
 + Patch 1235650: Bot tactics: physical attacks and weapons
++ Bug 1235634: Ejected pilots still take damage from heat
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

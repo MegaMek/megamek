@@ -745,7 +745,11 @@ public class BoardView1
             if(game.getArtillerySize()==0 && weapon==null) {
                 return; //nothing to do
             }
-                    
+            
+            if (!e.getOwner().equals(clientgui.getClient().getLocalPlayer())) {
+                return; // Not my business to see this
+            }
+            
             int drawX = view.x / (int)(HEX_WC*scale) - 1;
             int drawY = view.y / (int)(HEX_H*scale) - 1;
     

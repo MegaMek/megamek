@@ -86,6 +86,7 @@ v0.29.83 (CVS)
 + Bug 1235240: Applied change to Rommel II(C) (SSRM).
 + Bug 1235242: Applied change to Skimmer.
 + Fixed Java 1.1 incompatibility introduced by fix for bug 1002223.
++ Bug 1002223: Target in Rear, and firing arrows -- Bugfix for bug in bugfix
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

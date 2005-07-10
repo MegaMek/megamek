@@ -561,23 +561,31 @@ public class FiringDisplay
         // Re-compute the to-hit numbers by adding in correct order.
         Vector newAttacks = new Vector();
         for (Enumeration e=attacks.elements(); e.hasMoreElements();) {
-            WeaponAttackAction waa = (WeaponAttackAction)e.nextElement();
-            Entity attacker = waa.getEntity(client.game);
-            Targetable target = waa.getTarget(client.game);
-            boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
-            if (curInFrontArc) {
-                WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId());
-                newAttacks.addElement(waa2);
+            Object o = e.nextElement();
+            if (o instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction)o;
+                Entity attacker = waa.getEntity(client.game);
+                Targetable target = waa.getTarget(client.game);
+                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
+                if (curInFrontArc) {
+                    WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId());
+                    newAttacks.addElement(waa2);
+                }
+            } else {
+                newAttacks.addElement(o);
             }
         }
         for (Enumeration e=attacks.elements(); e.hasMoreElements();) {
-            WeaponAttackAction waa = (WeaponAttackAction)e.nextElement();
-            Entity attacker = waa.getEntity(client.game);
-            Targetable target = waa.getTarget(client.game);
-            boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
-            if (!curInFrontArc) {
-                WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId() );
-                newAttacks.addElement(waa2);
+            Object o = e.nextElement();
+            if (o instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction)e.nextElement();
+                Entity attacker = waa.getEntity(client.game);
+                Targetable target = waa.getTarget(client.game);
+                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
+                if (!curInFrontArc) {
+                    WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId() );
+                    newAttacks.addElement(waa2);
+                }
             }
         }
         

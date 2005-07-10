@@ -560,24 +560,24 @@ public class FiringDisplay
         // For bug 1002223
         // Re-compute the to-hit numbers by adding in correct order.
         Vector newAttacks = new Vector();
-        for (Iterator i=attacks.iterator(); i.hasNext();) {
-            WeaponAttackAction waa = (WeaponAttackAction)i.next();
+        for (Enumeration e=attacks.elements(); e.hasMoreElements();) {
+            WeaponAttackAction waa = (WeaponAttackAction)e.nextElement();
             Entity attacker = waa.getEntity(client.game);
             Targetable target = waa.getTarget(client.game);
             boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
             if (curInFrontArc) {
                 WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId());
-                newAttacks.add(waa2);
+                newAttacks.addElement(waa2);
             }
         }
-        for (Iterator i=attacks.iterator(); i.hasNext();) {
-            WeaponAttackAction waa = (WeaponAttackAction)i.next();
+        for (Enumeration e=attacks.elements(); e.hasMoreElements();) {
+            WeaponAttackAction waa = (WeaponAttackAction)e.nextElement();
             Entity attacker = waa.getEntity(client.game);
             Targetable target = waa.getTarget(client.game);
             boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
             if (!curInFrontArc) {
                 WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId() );
-                newAttacks.add(waa2);
+                newAttacks.addElement(waa2);
             }
         }
         

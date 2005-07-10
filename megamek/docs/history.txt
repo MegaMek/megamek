@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.84 (CVS) RELEASE CANDIDATE!
+
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.
 + Bug 1231904: Fix for MS JRE.  Vector.set() bad!  Vector.setElementAt() good!

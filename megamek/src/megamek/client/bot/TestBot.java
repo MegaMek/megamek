@@ -879,12 +879,24 @@ public class TestBot extends BotClient {
     public GAAttack bestAttack(MoveOption es, CEntity target, int search_level) {
         Entity en = es.getEntity();
         int attacks[] = new int[4];
+        Vector c = new Vector();
         Vector front = new Vector();
         Vector left = new Vector();
         Vector right = new Vector();
         Vector rear = new Vector();
         GAAttack result = null;
         int o_facing = en.getFacing();
+        double front_la_dmg = 0;
+        double front_ra_dmg = 0;
+        double left_la_dmg = 0;
+        double left_ra_dmg = 0;
+        double right_la_dmg = 0;
+        double right_ra_dmg = 0;
+        PhysicalCalculator pc = new PhysicalCalculator();
+        PhysicalOption best_front_po = new PhysicalOption(en);
+        PhysicalOption best_left_po = new PhysicalOption(en);
+        PhysicalOption best_right_po = new PhysicalOption(en);
+        
 
         // Get best physical attack
         for (Enumeration i = en.getWeapons(); i.hasMoreElements();) {
@@ -892,7 +904,51 @@ public class TestBot extends BotClient {
 
             // If this weapon is in the same arm as a
             // brush off attack skip to next weapon.
-            Vector c = this.calculateWeaponAttacks(en, mw, true);
+            c = this.calculateWeaponAttacks(en, mw, true);       
+            // Get best physical attack
+            best_front_po = pc.getBestPhysical(en, game);
+            
+            if ((best_front_po != null) && (en instanceof Mech)) {
+                
+                // If this weapon is in the same arm as a brush off attack
+                // skip to next weapon
+ 
+               if (((best_front_po.type == PhysicalOption.BRUSH_LEFT) || 
+                       (best_front_po.type == PhysicalOption.BRUSH_BOTH)) &&
+                       (mw.getLocation() == Mech.LOC_LARM)){
+                    continue;
+                }
+               if (((best_front_po.type == PhysicalOption.BRUSH_RIGHT) || 
+                       (best_front_po.type == PhysicalOption.BRUSH_BOTH)) &&
+                       (mw.getLocation() == Mech.LOC_RARM)){
+                    continue;
+                }
+               
+               // Total the damage of all weapons fired from each arm
+               if (((best_front_po.type == PhysicalOption.PUNCH_LEFT) || 
+                       (best_front_po.type == PhysicalOption.PUNCH_BOTH)) &&
+                       (mw.getLocation() == Mech.LOC_LARM)){
+                   if (c.size() > 0){
+                       front_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                   }
+               }
+               if (((best_front_po.type == PhysicalOption.PUNCH_RIGHT) || 
+                       (best_front_po.type == PhysicalOption.PUNCH_BOTH)) &&
+                       (mw.getLocation() == Mech.LOC_RARM)){
+                   if (c.size() > 0){
+                       front_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                   }
+               }
+                // If this weapon is a push attack and an arm mounted
+                // weapon skip to next weapon
+                
+               if ((best_front_po.type == PhysicalOption.PUSH_ATTACK) && 
+                       ((mw.getLocation() == Mech.LOC_LARM) || 
+                               (mw.getLocation() == Mech.LOC_RARM))){
+                    continue;
+                }
+            }
+            
 
             // If this weapon is in the same arm as a punch
             // attack, add the damage to the running total.
@@ -904,12 +960,40 @@ public class TestBot extends BotClient {
                 en.setSecondaryFacing((o_facing + 5) % 6);
                 c = this.calculateWeaponAttacks(en, mw, true);
                 if (c.size() > 0) {
+                    // Get best physical attack
+                    best_left_po = pc.getBestPhysical(en, game);
+                    if ((best_left_po != null) && (en instanceof Mech)) {
+        	            if (((best_left_po.type == PhysicalOption.PUNCH_LEFT) || 
+        	                    (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
+        	                    (mw.getLocation() == Mech.LOC_LARM)){
+    	                    left_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+        	            }
+        	            if (((best_left_po.type == PhysicalOption.PUNCH_RIGHT) || 
+        	                    (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
+        	                    (mw.getLocation() == Mech.LOC_RARM)){
+    	                    left_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+        	            }
+                    }
                     left.add(c);
                     attacks[1] = Math.max(attacks[1], c.size());
                 }
                 en.setSecondaryFacing((o_facing + 1) % 6);
                 c = this.calculateWeaponAttacks(en, mw, true);
                 if (c.size() > 0) {
+                    // Get best physical attack
+                    best_right_po = pc.getBestPhysical(en, game);
+                    if ((best_right_po != null) && (en instanceof Mech)) {
+        	            if (((best_right_po.type == PhysicalOption.PUNCH_LEFT) || 
+        	                    (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
+        	                    (mw.getLocation() == Mech.LOC_LARM)){
+    	                    right_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+        	            }
+        	            if (((best_right_po.type == PhysicalOption.PUNCH_RIGHT) || 
+        	                    (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
+        	                    (mw.getLocation() == Mech.LOC_RARM)){
+        	                right_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+        	            }
+                    }
                     right.add(c);
                     attacks[2] = Math.max(attacks[2], c.size());
                 }
@@ -925,14 +1009,183 @@ public class TestBot extends BotClient {
             }
             en.setSecondaryFacing(o_facing);
         }
+        // If the best attack is a punch, then check each
+        // punch damage against the weapons damage from the
+        // appropriate arm; if the punch does more damage,
+        // drop the weapons in that arm to 0 expected damage
+        // Repeat this for left and right twists
+        if ((best_front_po != null) && (en instanceof Mech)){
+            if (best_front_po.type == PhysicalOption.PUNCH_LEFT) {
+                System.out.println("Best front left-punch damage: " + best_front_po.expectedDmg);
+                System.out.println("Best front la weapon damage: " + front_la_dmg);
+                if ((front_la_dmg < best_front_po.expectedDmg) && (front.size() > 0)){
+                    for (int i = 0; i < front.size(); i++){
+                        c = (Vector) front.elementAt(i);
+                        for (int j = 0; j < c.size(); j++){
+                           if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                               Mech.LOC_LARM){
+                               ((AttackOption)c.elementAt(j)).expected = 0;
+                               ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                           }
+                        }
+                    }
+                }
+            }
+            if (best_front_po.type == PhysicalOption.PUNCH_RIGHT) {
+                System.out.println("Best front right-punch damage: " + best_front_po.expectedDmg);
+                System.out.println("Best front ra weapon damage: " + front_ra_dmg);
+                if ((front_ra_dmg < best_front_po.expectedDmg) && (front.size() > 0)){
+                    for (int i = 0; i < front.size(); i++){
+                        c = (Vector) front.elementAt(i);
+                        for (int j = 0; j < c.size(); j++){
+                           if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                               Mech.LOC_RARM){
+                               ((AttackOption)c.elementAt(j)).expected = 0;
+                               ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                           }
+                        }
+                    }
+                }
+            }
+            if (best_front_po.type == PhysicalOption.PUNCH_BOTH) {
+                System.out.println("Best front double-punch damage: " + best_front_po.expectedDmg);
+                System.out.println("Best front la+ra weapon damage: " + (front_la_dmg + front_ra_dmg));
+                if (((front_la_dmg + front_ra_dmg) < best_front_po.expectedDmg) && (front.size() > 0)){
+                    for (int i = 0; i < front.size(); i++){
+                        c = (Vector) front.elementAt(i);
+                        for (int j = 0; j < c.size(); j++){
+                           if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                               Mech.LOC_LARM){
+                               ((AttackOption)c.elementAt(j)).expected = 0;
+                               ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                           }
+                           if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                               Mech.LOC_RARM){
+                               ((AttackOption)c.elementAt(j)).expected = 0;
+                               ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                           }
+                        }
+                    }
+                }
+            }
+        }
         Vector arcs = new Vector();
         arcs.add(front);
         if (!es.getFinalProne() && en.canChangeSecondaryFacing()) {
+            if ((best_left_po != null) && (en instanceof Mech)){
+                if (best_left_po.type == PhysicalOption.PUNCH_LEFT) {
+                    System.out.println("Best left left-punch damage: " + best_left_po.expectedDmg);
+                    System.out.println("Best left la weapon front damage: " + left_la_dmg);
+                    if ((left_la_dmg < best_left_po.expectedDmg) && (left.size() > 0)){
+                        for (int i = 0; i < left.size(); i++){
+                            c = (Vector) left.elementAt(i);
+                            for (int j = 0; j < c.size(); j++){
+                                if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                                    Mech.LOC_LARM){
+                                    ((AttackOption)c.elementAt(j)).expected = 0;
+                                    ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (best_left_po.type == PhysicalOption.PUNCH_RIGHT) {
+                    System.out.println("Best left right-punch damage: " + best_left_po.expectedDmg);
+                    System.out.println("Best left ra weapon front damage: " + left_ra_dmg);
+                    if ((left_ra_dmg < best_left_po.expectedDmg) && (left.size() > 0)){
+                        for (int i = 0; i < left.size(); i++){
+                            c = (Vector) left.elementAt(i);
+                            for (int j = 0; j < c.size(); j++){
+                                if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                                    Mech.LOC_RARM){
+                                    ((AttackOption)c.elementAt(j)).expected = 0;
+                                    ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (best_left_po.type == PhysicalOption.PUNCH_BOTH) {
+                    System.out.println("Best left double-punch damage: " + best_left_po.expectedDmg);
+                    System.out.println("Best left la+ra weapon front damage: " + (left_la_dmg + left_ra_dmg));
+                    if (((left_la_dmg + left_ra_dmg) < best_left_po.expectedDmg) && (left.size() > 0)){
+                        for (int i = 0; i < left.size(); i++){
+                            c = (Vector) left.elementAt(i);
+                            for (int j = 0; j < c.size(); j++){
+                                if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                                    Mech.LOC_LARM){
+                                    ((AttackOption)c.elementAt(j)).expected = 0;
+                                    ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                                }
+                                if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                                    Mech.LOC_RARM){
+                                    ((AttackOption)c.elementAt(j)).expected = 0;
+                                    ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             arcs.add(left);
+            if ((best_right_po != null) && (en instanceof Mech)) {
+                if (best_right_po.type == PhysicalOption.PUNCH_LEFT) {                     System.out.println("Best right left-punch damage: " + best_right_po.expectedDmg);
+                    System.out.println("Best right la weapon front damage: " + right_la_dmg);
+                    if ((right_la_dmg < best_right_po.expectedDmg) && (right.size() > 0)){
+                        for (int i = 0; i < right.size(); i++){
+                            c = (Vector) right.elementAt(i);
+                            for (int j = 0; j < c.size(); j++){
+                                if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                                    Mech.LOC_LARM){
+                                    ((AttackOption)c.elementAt(j)).expected = 0;
+                                    ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (best_right_po.type == PhysicalOption.PUNCH_RIGHT) {
+                    System.out.println("Best right right-punch damage: " + best_right_po.expectedDmg);
+                    System.out.println("Best right la weapon front damage: " + right_la_dmg);
+                    if ((right_ra_dmg < best_right_po.expectedDmg) && (right.size() > 0)){
+                        for (int i = 0; i < right.size(); i++){
+                            c = (Vector) right.elementAt(i);
+                            for (int j = 0; j < c.size(); j++){
+                                if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                                    Mech.LOC_RARM){
+                                    ((AttackOption)c.elementAt(j)).expected = 0;
+                                    ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (best_right_po.type == PhysicalOption.PUNCH_BOTH) {
+                    System.out.println("Best right double-punch damage: " + best_right_po.expectedDmg);
+                    System.out.println("Best right la+ra weapon front damage: " + (right_la_dmg + right_ra_dmg));
+                    if (((right_la_dmg + right_ra_dmg) < best_right_po.expectedDmg) && (right.size() > 0)){
+                        for (int i = 0; i < right.size(); i++){
+                            c = (Vector) right.elementAt(i);
+                            for (int j = 0; j < c.size(); j++){
+                                if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                                    Mech.LOC_LARM){
+                                    ((AttackOption)c.elementAt(j)).expected = 0;
+                                    ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                                }
+                                if (((AttackOption)c.elementAt(j)).weapon.getLocation() == 
+                                    Mech.LOC_RARM){
+                                    ((AttackOption)c.elementAt(j)).expected = 0;
+                                    ((AttackOption)c.elementAt(j)).primary_expected = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             arcs.add(right);
             // Meks and protos can't twist all the way around.
             if (!(en instanceof Mech) 
-                && !(en instanceof Mech) ) {
+                && !(en instanceof Protomech) ) {
                 arcs.add(rear);
             }
         }

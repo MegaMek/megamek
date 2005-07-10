@@ -15,18 +15,24 @@
 package megamek.client.bot;
 
 import java.util.Enumeration;
-
+import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.actions.BrushOffAttackAction;
+import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
+import megamek.common.actions.PushAttackAction;
 
 public class PhysicalCalculator {
 
@@ -38,120 +44,9 @@ public class PhysicalCalculator {
             Entity en = bot.game.getEntity(entNum);
             CEntity cen = bot.centities.get(en);
             PhysicalOption bestAttack = getBestPhysical(en, bot.game);
+            
             if (bestAttack != null) {
-                if (bestAttack.type == PhysicalOption.KICK_LEFT || bestAttack.type == PhysicalOption.KICK_RIGHT) {
-                    int side =
-                        CEntity.getThreatHitArc(
-                                                bestAttack.target.getPosition(),
-                                                bestAttack.target.getFacing(),
-                                                en.getPosition());
-                    double odds =
-                        1.0
-                        - (double) Compute.oddsAbove(
-                                                     KickAttackAction
-                                                     .toHit(bot.game, entNum, bestAttack.target, bestAttack.type - 3)
-                                                     .getValue())
-                        / 100;
-
-                    // Meks can kick Vehicles and Infantry, too!
-                    double mod = 1.0;
-                    if (bestAttack.target instanceof Mech) {
-                        double llarmor = (bestAttack.target.getOArmor(Mech.LOC_LLEG) > 0) ?
-                            (bestAttack.target.getArmor(Mech.LOC_LLEG) / bestAttack.target.getOArmor(Mech.LOC_LLEG)):0;
-                        double rlarmor = (bestAttack.target.getOArmor(Mech.LOC_RLEG) > 0) ?
-                            (bestAttack.target.getArmor(Mech.LOC_RLEG) / bestAttack.target.getOArmor(Mech.LOC_RLEG)):0;
-                        switch (side) {
-                        case ToHitData.SIDE_FRONT :
-                            mod = (llarmor + rlarmor) / 2;
-                            break;
-                        case ToHitData.SIDE_LEFT :
-                            mod = llarmor;
-                            break;
-                        case ToHitData.SIDE_RIGHT :
-                            mod = rlarmor;
-                            break;
-                        }
-                    } else if (bestAttack.target instanceof Infantry) {
-                        mod = 0.0;
-                    } else if (bestAttack.target instanceof Tank) {
-                        switch (side) {
-                        case ToHitData.SIDE_FRONT :
-                            mod = (bestAttack.target.getOArmor(Tank.LOC_FRONT) > 0) ?
-                                ((bestAttack.target.getArmor(Tank.LOC_FRONT)
-                                / bestAttack.target.getOArmor(Tank.LOC_FRONT))) : 0;
-                            break;
-                        case ToHitData.SIDE_LEFT :
-                            mod = (bestAttack.target.getOArmor(Tank.LOC_LEFT) > 0) ?
-                                bestAttack.target.getArmor(Tank.LOC_LEFT)
-                                / bestAttack.target.getOArmor(Tank.LOC_LEFT) : 0;
-                            break;
-                        case ToHitData.SIDE_RIGHT :
-                            mod = (bestAttack.target.getOArmor(Tank.LOC_RIGHT) > 0) ?
-                                bestAttack.target.getArmor(Tank.LOC_RIGHT)
-                                / bestAttack.target.getOArmor(Tank.LOC_RIGHT) : 0;
-                            break;
-                        case ToHitData.SIDE_REAR :
-                            mod = (bestAttack.target.getOArmor(Tank.LOC_REAR) > 0) ?
-                                bestAttack.target.getArmor(Tank.LOC_REAR)
-                                / bestAttack.target.getOArmor(Tank.LOC_REAR) : 0;
-                            break;
-                        }
-                    }
-                    double damage = 2 / (1 + mod) * bestAttack.expectedDmg;
-                    double threat = .2 * en.getWeight() * odds * (1 - cen.base_psr_odds);
-                    //check for head kick
-                    IHex h = bot.game.getBoard().getHex(bestAttack.target.getPosition());
-                    IHex h1 = bot.game.getBoard().getHex(en.getPosition());
-                    if (h1.getElevation() > h.getElevation()) {
-                        damage *= 2;
-                    }
-                    Enumeration e = bot.game.getEntities();
-                    double temp_threat = 0;
-                    int number = 0;
-                    while (e.hasMoreElements()) {
-                        Entity enemy = (Entity) e.nextElement();
-
-                        if (null == enemy.getPosition())
-                            continue;
-
-                        if (!enemy.isProne() && enemy.getPosition().distance(en.getPosition()) < 3) {
-                            if (enemy.isEnemyOf(en)) {
-                                number++;
-                            } else {
-                                number--;
-                            }
-                        }
-                    }
-                    if (number > 0) {
-                        threat += number * temp_threat;
-                    }
-                    if (!((damage > threat && !(cen.overall_armor_percent > .8 && odds > .9))
-                          || (odds < .5 && cen.base_psr_odds > .5))) {
-                        boolean left = false;
-                        boolean right = false;
-                        ToHitData toHit =
-                            PunchAttackAction.toHit(bot.game, en.getId(), bestAttack.target, PunchAttackAction.LEFT);
-                        if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
-                            left = true;
-                        }
-                        toHit =
-                            PunchAttackAction.toHit(bot.game, en.getId(), bestAttack.target, PunchAttackAction.RIGHT);
-                        if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
-                            right = true;
-                        }
-                        if (left) {
-                            if (right) {
-                                bestAttack.type = PhysicalOption.PUNCH_BOTH;
-                            } else {
-                                bestAttack.type = PhysicalOption.PUNCH_LEFT;
-                            }
-                        } else if (right) {
-                            bestAttack.type = PhysicalOption.PUNCH_RIGHT;
-                        } else {
-                            return new PhysicalOption(en);
-                        }
-                    }
-                }
+                
                 return bestAttack;
 
             } // End no-attack
@@ -176,6 +71,178 @@ public class PhysicalCalculator {
         }
 
         PhysicalOption best = null;
+        ToHitData odds;
+        double breach, breach_a, l_dmg, r_dmg, club_dmg, final_dmg;
+        int best_brush = PhysicalOption.NONE;
+
+        // If the attacker is a Mech
+        
+        if (entity instanceof Mech){
+            
+            l_dmg = 0.0;
+            r_dmg = 0.0;
+            club_dmg = 0.0;
+            final_dmg = 0.0;
+            breach_a = 0.0;
+            
+        	// If the attacker is being swarmed
+            
+            if (entity.getSwarmAttackerId() != Entity.NONE){
+        
+        		// Check for left arm punch damage to self
+                
+                odds = BrushOffAttackAction.toHit(game, entity.getId(),
+                        game.getEntity(entity.getSwarmAttackerId()), BrushOffAttackAction.LEFT);
+                if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+                    
+                    l_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.LEFT);
+                    l_dmg *= (1 - Compute.oddsAbove(odds.getValue()) / 100.0);
+                    breach = punchThroughMod(entity, game, ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT,
+                            l_dmg, l_dmg);
+                    if (breach < 1.5){
+                        best_brush = PhysicalOption.BRUSH_LEFT;
+                    	breach_a = breach;
+                    	final_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.LEFT);
+                    }
+                }
+        
+        		// Check for right arm punch damage to self
+                odds = BrushOffAttackAction.toHit(game, entity.getId(),
+                        game.getEntity(entity.getSwarmAttackerId()), BrushOffAttackAction.RIGHT);
+                if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+        
+        		// If chance of breaching armor is minimal set brush left
+                    
+                    r_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.RIGHT);
+                    r_dmg *= (1 - Compute.oddsAbove(odds.getValue()) / 100.0);
+                    breach = punchThroughMod(entity, game, ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT,
+                            r_dmg, r_dmg);
+                    if (breach < Math.min(breach_a, 1.5)){
+                        best_brush = PhysicalOption.BRUSH_RIGHT;
+                    	breach_a = breach;
+                    	final_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.RIGHT);
+                    }
+                }
+        
+        		// If both arms are capable of punching, check double punch damage
+                
+                if (l_dmg > 0 && r_dmg > 0){
+        
+        			// If chance of breaching armor is minimal set double brush
+                    
+                    breach = punchThroughMod(entity, game, ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT,
+                            l_dmg + r_dmg, (l_dmg + r_dmg)/2);
+                    if (breach < Math.min(breach_a, 1.5)){
+                        best_brush = PhysicalOption.BRUSH_BOTH;
+                        breach_a = breach;
+                    	final_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.LEFT);
+                    	final_dmg += BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.RIGHT);
+                    }
+                }
+        
+        		// Construct and return Physical option
+                if (best_brush != PhysicalOption.NONE){
+                    return new PhysicalOption(entity, game.getEntity(entity.getSwarmAttackerId()), 
+                            final_dmg, best_brush);
+                }
+            }
+        
+    		// If the attacker has attached iNarc pods, assign
+    		// a competing damage value for comparison with other
+    		// attacks
+
+            if (entity.hasINarcPodsAttached()){
+                double test_ranking, pod_ranking;
+                INarcPod test_pod, best_pod;
+                pod_ranking = 0.0;
+                Enumeration pod_list = entity.getINarcPodsAttached();
+                best_pod = (INarcPod) pod_list.nextElement();
+                for (pod_list = entity.getINarcPodsAttached(); pod_list.hasMoreElements();){
+                    test_ranking = 1.0;
+                    test_pod = (INarcPod) pod_list.nextElement();
+        			// If pod is homing and attacker has no ECM
+                    if ((test_pod.getType() == INarcPod.HOMING) && !entity.hasActiveECM()){
+        				// Pod is +1
+                        test_ranking += 1.0;
+                    }
+        			// If pod is ECM and attacker has C3 link
+                    if ((test_pod.getType() == INarcPod.ECM) && ((entity.hasC3()) || 
+                            (entity.hasC3i()))){
+                        // Pod is +2
+                        test_ranking += 2.0;
+                    }
+        			// If pod is Nemesis
+                    if (test_pod.getType() == INarcPod.NEMESIS){
+                        // Pod is +variable, based on movement
+                        test_ranking += (double) (entity.getWalkMP() + entity.getJumpMP())/2;
+                    }
+            		// If this pod is best, retain it and its ranking
+                    if (test_ranking > pod_ranking){
+                        pod_ranking = test_ranking;
+                        best_pod = test_pod;
+                    }
+                }
+                if (best_pod != null){
+	        		// Check for left arm punch damage to self
+	                odds = BrushOffAttackAction.toHit(game, entity.getId(),
+	                        best_pod, BrushOffAttackAction.LEFT);
+	                if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+	                    
+	                    l_dmg = BrushOffAttackAction.getDamageFor(entity, 
+	                            BrushOffAttackAction.LEFT);
+	                    l_dmg *= (1 - Compute.oddsAbove(odds.getValue()) / 100.0);
+	                    breach = punchThroughMod(entity, game, ToHitData.HIT_PUNCH, 
+	                            ToHitData.SIDE_FRONT, l_dmg, l_dmg);
+	                    if (breach < 1.5){
+	                        best_brush = PhysicalOption.BRUSH_LEFT;
+	                    	breach_a = breach;
+	                    	final_dmg = BrushOffAttackAction.getDamageFor(entity, 
+	                    	        BrushOffAttackAction.LEFT);
+	                    }
+	                }
+	        
+	        		// Check for right arm punch damage to self
+	                odds = BrushOffAttackAction.toHit(game, entity.getId(),
+	                        best_pod, BrushOffAttackAction.RIGHT);
+	                if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+	        
+	        		// If chance of breaching armor is minimal set brush left
+	                    
+	                    r_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.RIGHT);
+	                    r_dmg *= (1 - Compute.oddsAbove(odds.getValue()) / 100.0);
+	                    breach = punchThroughMod(entity, game, ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT,
+	                            r_dmg, r_dmg);
+	                    if (breach < Math.min(breach_a, 1.5)){
+	                        best_brush = PhysicalOption.BRUSH_RIGHT;
+	                    	breach_a = breach;
+	                    	final_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.RIGHT);
+	                    }
+	                }
+	        
+	        		// If both arms are capable of punching, check double punch damage
+	                
+	                if (l_dmg > 0 && r_dmg > 0){
+	        
+	        			// If chance of breaching armor is minimal set double brush
+	                    
+	                    breach = punchThroughMod(entity, game, ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT,
+	                            l_dmg + r_dmg, (l_dmg + r_dmg)/2);
+	                    if (breach < Math.min(breach_a, 1.5)){
+	                        best_brush = PhysicalOption.BRUSH_BOTH;
+	                        breach_a = breach;
+	                    	final_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.LEFT);
+	                    	final_dmg += BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.RIGHT);
+	                    }
+	                }
+	        
+	        		// Construct and return Physical option
+	                if(best_brush != PhysicalOption.NONE){
+	                    return new PhysicalOption(entity, best_pod, final_dmg, best_brush);
+	                }
+                }
+            }
+        }
+        
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             Entity target = (Entity) e.nextElement();
 
@@ -185,6 +252,9 @@ public class PhysicalCalculator {
                 continue;
             if (null == target.getPosition())
                 continue;
+            if (Compute.effectiveDistance(game, entity, target) > 1)
+                continue;
+            
             PhysicalOption one = getBestPhysicalAttack(entity, target, game);
             if (one != null) {
                 if (best == null || one.expectedDmg > best.expectedDmg) {
@@ -197,55 +267,257 @@ public class PhysicalCalculator {
     }
 
     PhysicalOption getBestPhysicalAttack(Entity from, Entity to, IGame game) {
-        double bestDmg = 0, dmg;
+        double bestDmg = 0, dmg, coll_damage, self_damage;
         int damage;
+        int target_arc, location_table;
         int bestType = PhysicalOption.PUNCH_LEFT;
 
-        // Infantry can't conduct physical attacks.
-        if (from instanceof Infantry) {
+        // Infantry and tanks can't conduct any of these attacks
+        if ((from instanceof Infantry) || (from instanceof Tank)){
             return null;
         }
+        
+        // Find arc the attack comes in
+        target_arc = CEntity.getThreatHitArc(to.getPosition(),
+                to.getFacing(), from.getPosition());
+        
+        // Check for punches
+        // If the target is a Mech, must determine if punch lands on the punch, kick, or full table
+        if (to instanceof Mech){
+            if (!to.isProne()){
+	            location_table = ToHitData.HIT_PUNCH;
+	            if (to.getElevation() == from.getElevation()+1){
+	                location_table = ToHitData.HIT_KICK;
+	            }
+            } else {
+                location_table = ToHitData.HIT_NORMAL;
+            }
+        } else {
+            location_table = ToHitData.HIT_NORMAL;
+        }
+        
         ToHitData odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.LEFT);
         if (odds.getValue() != ToHitData.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
             bestDmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+            // Adjust damage for targets armor
+            bestDmg *= punchThroughMod(to, game, location_table, target_arc, bestDmg, bestDmg);
         }
 
         odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
         if (odds.getValue() != ToHitData.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.RIGHT);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
-            if (dmg > 0 && bestDmg > 0) {
-                bestType = PhysicalOption.PUNCH_BOTH;
-                bestDmg += dmg;
-            } else {
+            // Adjust damage for targets armor
+            dmg *= punchThroughMod(to, game, location_table, target_arc, dmg, dmg);
+            if (dmg > bestDmg){
                 bestType = PhysicalOption.PUNCH_RIGHT;
                 bestDmg = dmg;
             }
         }
+        
+        // Check for a double punch
+        odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.LEFT);
+        ToHitData odds_a = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
+        if ((odds.getValue() != ToHitData.IMPOSSIBLE) && (odds_a.getValue() != ToHitData.IMPOSSIBLE)){
+            damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
+            int damage_a = PunchAttackAction.getDamageFor(from, PunchAttackAction.RIGHT);
+            dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+            double dmg_a = Compute.oddsAbove(odds_a.getValue()) / 100.0 * damage;
+            dmg += dmg_a;
+            dmg *= punchThroughMod(to, game, location_table, target_arc, dmg, dmg/2);
+            if (dmg > bestDmg){
+                bestType = PhysicalOption.PUNCH_BOTH;
+                bestDmg = dmg;
+            }
+        }
 
+        // Check for a kick
+        // If the target is a Mech, must determine if it lands on the kick or punch table
+        if (to instanceof Mech){
+            location_table = ToHitData.HIT_KICK;
+            if (!to.isProne()){
+	            if (to.getElevation() == from.getElevation()-1){
+	                location_table = ToHitData.HIT_PUNCH;
+	            }
+            } else {
+                location_table = ToHitData.HIT_NORMAL;
+            }
+        } else {
+            location_table = ToHitData.HIT_NORMAL;
+        }
+
+        // Calculate collateral damage, due to possible target fall
+        // = chance of successful kick * chance of target falling * target falling damage
+        coll_damage = 0;
+        if (to instanceof Mech){
+            coll_damage = (Compute.oddsAbove(odds.getValue())/100.0) * 
+            	(Compute.oddsAbove((1-to.getBasePilotingRoll().getValue()))/100.0) * 
+            	to.getWeight() * 0.1;
+        }
         odds = KickAttackAction.toHit(game, from.getId(), to, KickAttackAction.LEFT);
         if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+            self_damage = 0;
             damage = KickAttackAction.getDamageFor(from, KickAttackAction.LEFT);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+            // Adjust damage for targets armor
+            dmg *= punchThroughMod(to, game, location_table, target_arc, dmg, dmg);
+            // Calculate self damage, due to possible fall from missing a kick
+            // Odds of missing the kick, odds of falling, falling damage, and
+            // a factor to account for how bad it is for this unit to be prone
+            self_damage = 1 - Compute.oddsAbove(odds.getValue()) / 100.0;
+            self_damage = self_damage * (1 - Compute.oddsAbove(from.getBasePilotingRoll().getValue())/100.0);
+            self_damage = self_damage * from.getWeight() * 0.1;
+            if (from.getWalkMP() > 0){
+                self_damage = self_damage * Math.sqrt((1/(double)from.getWalkMP()) + from.getJumpMP());
+            } else {
+                self_damage = self_damage * Math.sqrt((double)from.getJumpMP());
+            }
+            // Add together damage values for comparison
+            dmg = dmg + coll_damage - self_damage;
             if (dmg > bestDmg) {
                 bestType = PhysicalOption.KICK_LEFT;
                 bestDmg = dmg;
             }
         }
-
         odds = KickAttackAction.toHit(game, from.getId(), to, KickAttackAction.RIGHT);
         if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+            self_damage = 0;
             damage = KickAttackAction.getDamageFor(from, KickAttackAction.RIGHT);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+            // Adjust damage for targets armor
+            dmg *= punchThroughMod(to, game, location_table, target_arc, dmg, dmg);
+            // Calculate self damage, due to possible fall from missing a kick
+            // Odds of missing the kick, odds of falling, falling damage, and
+            // a factor to account for how bad it is for this unit to be prone
+            self_damage = 1 - (Compute.oddsAbove(odds.getValue()) / 100.0);
+            self_damage = self_damage * (1 - Compute.oddsAbove(from.getBasePilotingRoll().getValue())/100.0);
+            self_damage = self_damage * from.getWeight() * 0.1;
+            if (from.getWalkMP() > 0){
+                self_damage = self_damage * Math.sqrt((1/(double)from.getWalkMP()) + from.getJumpMP());
+            } else {
+                self_damage = self_damage * Math.sqrt((double)from.getJumpMP());
+            }
+            // Add together damage values for comparison
+            dmg = dmg + coll_damage - self_damage;
             if (dmg > bestDmg) {
                 bestType = PhysicalOption.KICK_RIGHT;
                 bestDmg = dmg;
             }
         }
-
-        // Infantry in the open suffer double damage.
-        if (to instanceof Infantry) {
+        
+        // Check for mounted club-type weapon or carried improvised club
+        if (Compute.clubMechHas(from) != null) {
+            
+        // If the target is a Mech, must determine if it hits full body, punch, or kick table
+            if (to instanceof Mech){
+                location_table = ToHitData.HIT_NORMAL;
+                if ((to.getElevation() == from.getElevation()-1) && !(to.isProne())){
+                    location_table = ToHitData.HIT_PUNCH;
+                }
+                if ((to.getElevation() == from.getElevation()+1) && !(to.isProne())){
+                    location_table = ToHitData.HIT_KICK;
+                }
+            } else {
+                location_table = ToHitData.HIT_NORMAL;
+            }
+            odds = ClubAttackAction.toHit(game, from.getId(), to, Compute.clubMechHas(from));
+            if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+                damage = ClubAttackAction.getDamageFor(from, Compute.clubMechHas(from));
+                dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
+                // Adjust damage for targets armor
+                dmg *= punchThroughMod(to, game, location_table, target_arc, dmg, dmg);
+                // Some types of clubs, such as the mace, require a piloting check on a missed attack
+                // Calculate self damage in the same manner as a missed kick
+                if (dmg > bestDmg) {
+                    bestType = PhysicalOption.USE_CLUB;
+                    bestDmg = dmg;
+                }
+            }
+        }
+        // Check for a push attack
+        odds = PushAttackAction.toHit(game, from.getId(), to);
+        if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+            int elev_diff = 1;
+            double breach = 1;
+            boolean water_landing = false;
+            dmg = 0;
+            int disp_dir = from.getPosition().direction(to.getPosition());
+            Coords disp_c = to.getPosition().translated(disp_dir);
+            // If the displacement hex is a valid one
+            if (Compute.isValidDisplacement(game, to.getId(), to.getPosition(), disp_c)){
+                // If the displacement hex is not on the map, credit damage
+                // against full target armor
+                if (!game.getBoard().contains(disp_c)){
+                    dmg = to.getTotalArmor() * Compute.oddsAbove(odds.getValue()) / 100.0;
+                }
+                if (game.getBoard().contains(disp_c)){
+            	// Find the elevation difference
+                    elev_diff = game.getBoard().getHex(to.getPosition()).getElevation();
+                    elev_diff -= game.getBoard().getHex(disp_c).getElevation();
+                    if (elev_diff < 0){
+                        elev_diff = 0;
+                    }
+            	// Set a flag if the displacement hex has water
+                    if (game.getBoard().getHex(disp_c).containsTerrain(Terrains.WATER)){
+                        water_landing = true;
+                    }
+            	// Get the base damage from target falling -> chance of hitting,
+            	// chance of target falling, falling damage
+                    dmg = Compute.oddsAbove(odds.getValue()) / 100.0;
+                    dmg = dmg * (1 - Compute.oddsAbove(elev_diff + to.getBasePilotingRoll().getValue())/100.0);
+                    dmg = dmg * to.getWeight() * 0.1 * (1 + elev_diff);
+            	// Calculate breach factor of falling damage
+                    breach = punchThroughMod(to, game, ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, dmg, Math.min(dmg, 5));
+            	// If breach factor is > 1 and displacement hex has water
+                    if ((breach > 1) && water_landing){
+                        breach *= 2;
+                    }
+            	// Modify damage to reflect how bad it is for target to be prone
+                    if (to.getWalkMP() > 0){
+                        dmg = dmg * Math.sqrt((1/(double)to.getWalkMP()) + to.getJumpMP());
+                    } else {
+                        dmg = dmg * Math.max(1, Math.sqrt((double)to.getJumpMP()));
+                    }
+            	// Modify damage by breach factor
+                    dmg *= breach;
+                }
+            }
+            // If the displacement hex is not valid
+            if (!Compute.isValidDisplacement(game, to.getId(), to.getPosition(), disp_c)){
+            	// Set a flag if the displacement hex has water
+                if (game.getBoard().getHex(to.getPosition()).containsTerrain(Terrains.WATER)){
+                    water_landing = true;
+                }
+            	// Get the base damage from target falling -> chance of hitting,
+            	// chance of target falling, falling damage
+                dmg = Compute.oddsAbove(odds.getValue()) / 100.0;
+                dmg = dmg * (1 - Compute.oddsAbove(to.getBasePilotingRoll().getValue())/100.0);
+                dmg = dmg * to.getWeight() * 0.1;
+            	// Calculate breach factor of falling damage
+                breach = punchThroughMod(to, game, ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, dmg, Math.min(dmg, 5));
+            	// If breach factor is > 1 and target hex is in water
+                if ((breach > 1) && water_landing){
+                    breach *= 2;
+                }
+            	// Modify damage to reflect how bad it is for target to be prone
+                if (to.getWalkMP() > 0){
+                    dmg = dmg * Math.sqrt((1/to.getWalkMP()) + to.getJumpMP());
+                } else {
+                    dmg = dmg * Math.max(1, Math.sqrt(to.getJumpMP()));
+                }
+        		// Modify damage by breach factor
+                dmg *= breach;
+            }
+            // If damage is better than best damage
+            if (dmg > bestDmg) {
+                bestType = PhysicalOption.PUSH_ATTACK;
+                bestDmg = dmg;
+            }
+        }
+        
+        // Conventional infantry in the open suffer double damage.
+        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
             IHex e_hex = game.getBoard().getHex(to.getPosition());
             if (!e_hex.containsTerrain(Terrains.WOODS) && !e_hex.containsTerrain(Terrains.BUILDING)) {
                 bestDmg *= 2;
@@ -256,5 +528,175 @@ public class PhysicalCalculator {
             return new PhysicalOption(from, to, bestDmg, bestType);
         }
         return null;
+    }
+    
+    /* 
+     * This checks to see if the damage will punch through armor anywhere in the
+     * attacked arc.
+     * damage argument is divided into hits, using the group argument (ie, group = 5.0 for LRM).
+     * Each hit of group damage is checked against each location; if it penetrates increase the
+     * multiplier to reflect potential for additional damage
+     * Multiple passes are made with each hit being multiples of group damage to reflect shot
+     * grouping; as each pass is made the increase to the multiplier is lowered due to the lower
+     * chance of hitting the same location
+     */
+    
+    public static double punchThroughMod (Entity target, IGame g, int hit_table, int hit_side,
+    		double damage, double group){
+        
+        int armor_values[] = new int[8];
+        int max_index = 1;
+        armor_values[0] = 0;
+        
+    	// Set the final multiplier as 1.0 (no chance of penetrating armor)
+    	double final_multiplier = 1.0;
+    	
+    	// Set the base multiplier as 0.5 (good bonus for penetrating with a single hit)
+    	double base_multiplier = 0.5;
+    	
+    	// If the target is a Mech
+    	if (target instanceof Mech){
+    		// Create vector of body locations with targets current armor values
+    		// Use hit table and direction to determine locations that are hit
+    		if (hit_table == ToHitData.HIT_NORMAL){
+    		    max_index = 7;
+				armor_values[0] = target.getArmor(Mech.LOC_HEAD,false);
+    			if (hit_side != ToHitData.SIDE_FRONT){
+				armor_values[1] = target.getArmor(Mech.LOC_CT,true);
+    			} else {
+    			    armor_values[1] = target.getArmor(Mech.LOC_CT,false);
+    			}
+    			if (hit_side != ToHitData.SIDE_FRONT){
+    				armor_values[2] = target.getArmor(Mech.LOC_RT,true);
+        		} else {
+        		    armor_values[2] = target.getArmor(Mech.LOC_RT,false);
+        		}
+    			if (hit_side != ToHitData.SIDE_FRONT){
+    				armor_values[3] = target.getArmor(Mech.LOC_LT,true);
+        		} else {
+        		    armor_values[3] = target.getArmor(Mech.LOC_LT,false);
+        		}
+				armor_values[4] = target.getArmor(Mech.LOC_RARM,false);
+				armor_values[5] = target.getArmor(Mech.LOC_LARM,false);
+				armor_values[6] = target.getArmor(Mech.LOC_RLEG,false);
+				armor_values[7] = target.getArmor(Mech.LOC_RLEG,false);
+    		}
+    		if (hit_table == ToHitData.HIT_PUNCH){
+				armor_values[0] = target.getArmor(Mech.LOC_HEAD,false);
+    			if (hit_side == ToHitData.SIDE_RIGHT){
+    			    max_index = 3;
+    				armor_values[1] = target.getArmor(Mech.LOC_CT,false);
+    			    armor_values[2] = target.getArmor(Mech.LOC_RT,false);
+    				armor_values[3] = target.getArmor(Mech.LOC_RARM,false);
+    			}
+    			if (hit_side == ToHitData.SIDE_LEFT){
+    			    max_index = 3;
+    				armor_values[1] = target.getArmor(Mech.LOC_CT,false);
+    			    armor_values[2] = target.getArmor(Mech.LOC_LT,false);
+    				armor_values[3] = target.getArmor(Mech.LOC_LARM,false);
+    			}
+    			if (hit_side == ToHitData.SIDE_FRONT){
+    			    max_index = 5;
+    				armor_values[1] = target.getArmor(Mech.LOC_CT,false);
+    			    armor_values[2] = target.getArmor(Mech.LOC_RT,false);
+    			    armor_values[3] = target.getArmor(Mech.LOC_LT,false);
+    				armor_values[4] = target.getArmor(Mech.LOC_RARM,false);
+    				armor_values[5] = target.getArmor(Mech.LOC_LARM,false);
+        		}
+    			if (hit_side == ToHitData.SIDE_REAR){
+    			    max_index = 5;
+    				armor_values[1] = target.getArmor(Mech.LOC_CT,true);
+    			    armor_values[2] = target.getArmor(Mech.LOC_RT,true);
+    			    armor_values[3] = target.getArmor(Mech.LOC_LT,true);
+    				armor_values[4] = target.getArmor(Mech.LOC_RARM,false);
+    				armor_values[5] = target.getArmor(Mech.LOC_LARM,false);
+        		}
+    		}
+    		if (hit_table == ToHitData.HIT_KICK){
+    		    max_index = -1;
+    		    if ((hit_side == ToHitData.SIDE_FRONT) || (hit_side == ToHitData.SIDE_REAR) ||
+    		            (hit_side == ToHitData.SIDE_RIGHT)){
+    		        max_index++;
+    		        armor_values[max_index] = target.getArmor(Mech.LOC_RLEG,false);
+    		    }
+    		    if ((hit_side == ToHitData.SIDE_FRONT) || (hit_side == ToHitData.SIDE_REAR) ||
+    		            (hit_side == ToHitData.SIDE_LEFT)){
+    		        max_index++;
+    		        armor_values[max_index] = target.getArmor(Mech.LOC_LLEG,false);
+    		    }
+    		}
+    	}
+    	// If the target is a ProtoMech
+    	if (target instanceof Protomech){
+    	    max_index = 6;
+    		// Create vector of body locations with targets current armor values
+    	    // Create two high-armor dummy locations to represent the 'near miss' hit locations
+    	    armor_values[0] = target.getArmor(Protomech.LOC_TORSO, false);
+    	    armor_values[1] = target.getArmor(Protomech.LOC_LEG, false);
+    	    armor_values[2] = target.getArmor(Protomech.LOC_RARM, false);
+    	    armor_values[3] = target.getArmor(Protomech.LOC_LARM, false);
+    	    armor_values[4] = target.getArmor(Protomech.LOC_HEAD, false);
+    	    armor_values[5] = 100;
+    	    armor_values[6] = 100;
+    	    if (((Protomech)target).hasMainGun()){
+    	        max_index++;
+    	        armor_values[max_index] = target.getArmor(Protomech.LOC_MAINGUN, false);
+    	    }
+    	}
+    	// If the target is a vehicle
+    	if (target instanceof Tank){
+    		// Create vector of armor locations
+    	    max_index = 0;
+    	    if (hit_side == ToHitData.SIDE_FRONT){
+    	        armor_values[0] = target.getArmor(Tank.LOC_FRONT);
+    	    }
+    	    if (hit_side == ToHitData.SIDE_RIGHT){
+    	        armor_values[0] = target.getArmor(Tank.LOC_RIGHT);
+    	    }
+    	    if (hit_side == ToHitData.SIDE_LEFT){
+    	        armor_values[0] = target.getArmor(Tank.LOC_LEFT);
+    	    }
+    	    if (hit_side == ToHitData.SIDE_REAR){
+    	        armor_values[0] = target.getArmor(Tank.LOC_REAR);
+    	    }
+    	    if (!(((Tank)target).hasNoTurret())){
+    	        max_index++;
+    	        armor_values[max_index] = target.getArmor(Tank.LOC_TURRET);
+    	    }
+    	}
+    	// If the target is Battle Armor
+    	if (target instanceof BattleArmor){
+    		// Create vector of armor of surviving troopers
+    	    max_index = -1;
+    	    for (int i=1; i < ((BattleArmor)target).getShootingStrength(); i++){
+    	        if (target.getArmor(i) >= 0){
+    	            max_index++;
+    	            armor_values[max_index] = target.getArmor(i);
+    	        }
+    	    }
+    	}
+    	// If the target is conventional infantry
+    	if ((target instanceof Infantry) && !(target instanceof BattleArmor)){
+    		// Create a single element vector with total number of troopers
+    	    max_index = 0;
+    	    armor_values[0] = ((Infantry)target).getShootingStrength();
+    	}
+    	
+    	double hit_total = group;
+    	// While hit damage is less than total damage applied, increment by group value
+    	for (; hit_total <= damage; hit_total += group){
+    		for (int i = 0; i <= max_index; i++){
+    			// If hit damage can penetrate location
+    		    if (hit_total > armor_values[i]){
+    		        final_multiplier += base_multiplier;
+    		    }
+    		}
+    		base_multiplier = base_multiplier/2;
+    	}
+    	
+    	// Return final multiplier
+    	
+    	return final_multiplier;
+    	
     }
 }

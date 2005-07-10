@@ -87,6 +87,9 @@ v0.29.83 (CVS)
 + Bug 1235242: Applied change to Skimmer.
 + Fixed Java 1.1 incompatibility introduced by fix for bug 1002223.
 + Bug 1002223: Target in Rear, and firing arrows -- Bugfix for bug in bugfix
++ Bug 1235241: Eliminated Pike Support Vehicle from unofficial file.
++ Bug 1235237: Added M.A.S.H. Vehicle (MIT23) to dark_ages file.
++ Bug 1235239: Added Mobile Tactical Command HQ to dark_ages file.
 
 v0.29.82 (2005-07-03 11:00am)
 + Patch 1219378: Bot weapon controls, final, correctly working version

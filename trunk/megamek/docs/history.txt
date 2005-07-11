@@ -7,6 +7,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Patch 1235650: Bot tactics: physical attacks and weapons
 + Bug 1235634: Ejected pilots still take damage from heat
 + Bug 1235347: Water now appears to affect LOS correctly.
++ Bug 1235833: remaining Swarm missiles targeting Stealth Mechs.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

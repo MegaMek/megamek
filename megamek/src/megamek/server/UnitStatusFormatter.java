@@ -116,7 +116,6 @@ public abstract class UnitStatusFormatter
                 else if (nCount > 1) {
                     sb.append(",");
                 }
-
                 if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
                     if (cs.isHit() || cs.isDestroyed() || cs.isMissing()) {
                         sb.append("*");
@@ -130,10 +129,7 @@ public abstract class UnitStatusFormatter
                 }
                 else if (cs.getType() == CriticalSlot.TYPE_EQUIPMENT) {
                     Mounted m = e.getEquipment(cs.getIndex());
-                    if (m.isHit()) {
-                        sb.append("*");
-                    }
-                    sb.append(m.getName());
+                    sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 }
             }
             sb.append( CommonConstants.NL );

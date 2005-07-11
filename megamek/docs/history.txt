@@ -11,6 +11,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1235708, Patch 1236081: onboard homing Arrow IV NPE.
 + Button to remove a unit in the deployment phase, in case no valid
     deployment hexes are available.
++ Bug 1236201: Crit Reporting in entitystatus.txt.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

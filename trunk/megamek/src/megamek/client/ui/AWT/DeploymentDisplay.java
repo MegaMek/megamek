@@ -41,6 +41,7 @@ public class DeploymentDisplay
     public static final String DEPLOY_NEXT        = "deployNext"; //$NON-NLS-1$
     public static final String DEPLOY_LOAD        = "deployLoad"; //$NON-NLS-1$
     public static final String DEPLOY_UNLOAD      = "deployUnload"; //$NON-NLS-1$
+    public static final String DEPLOY_REMOVE      = "deployRemove"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -56,6 +57,7 @@ public class DeploymentDisplay
 //     private Button            butSpace3;
     private Button            butLoad;
     private Button            butUnload;
+    private Button            butRemove;
     private Button            butDone;
 
     private int               cen = Entity.NONE;    // current entity number
@@ -104,6 +106,11 @@ public class DeploymentDisplay
         butNext.addActionListener(this);
         butNext.setActionCommand(DEPLOY_NEXT);
         butNext.setEnabled(true);
+        
+        butRemove = new Button(Messages.getString("DeploymentDisplay.Remove")); //$NON-NLS-1$
+        butRemove.addActionListener(this);
+        butRemove.setActionCommand(DEPLOY_REMOVE);
+        butRemove.setEnabled(true);
 
         butDone = new Button(Messages.getString("DeploymentDisplay.Deploy")); //$NON-NLS-1$
         butDone.addActionListener(this);
@@ -116,6 +123,7 @@ public class DeploymentDisplay
         panButtons.add(butTurn);
         panButtons.add(butLoad);
         panButtons.add(butUnload);
+        panButtons.add(butRemove);
 //         panButtons.add(butSpace);
 //         panButtons.add(butSpace2);
 //         panButtons.add(butSpace3);
@@ -279,6 +287,15 @@ public class DeploymentDisplay
         Entity en = ce();
         client.deploy(cen, en.getPosition(), en.getFacing(), en.getLoadedUnits());
         en.setDeployed(true);
+    }
+    
+    /**
+     * Sends an entity removal to the server
+     */
+    private void remove() {
+        disableButtons();
+        client.sendDeleteEntity(cen);
+        beginMyTurn();
     }
 
     /**
@@ -503,6 +520,10 @@ public class DeploymentDisplay
             }
 
         } // End unload-unit
+        
+        else if (ev.getActionCommand().equals(DEPLOY_REMOVE)) {
+            remove();
+        }
 
     } // End public void actionPerformed(ActionEvent ev)
     
@@ -582,6 +603,10 @@ public class DeploymentDisplay
     private void setUnloadEnabled(boolean enabled) {
         butUnload.setEnabled(enabled);
         clientgui.getMenuBar().setDeployUnloadEnabled(enabled);
+    }
+    private void setRemoveEnabled(boolean enabled) {
+        butRemove.setEnabled(enabled);
+        clientgui.getMenuBar().setDeployNextEnabled(enabled);
     }
 
     /**

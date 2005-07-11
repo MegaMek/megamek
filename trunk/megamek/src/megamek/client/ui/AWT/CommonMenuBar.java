@@ -1,5 +1,4 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -94,6 +93,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem deployTurn = null;
     private MenuItem deployLoad = null;
     private MenuItem deployUnload = null;
+    private MenuItem deployRemove = null;
 
     private MenuItem moveWalk = null;
     private MenuItem moveNext = null;
@@ -320,6 +320,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         deployTurn = createMenuItem(menu, Messages.getString("CommonMenuBar.deployTurn"), DeploymentDisplay.DEPLOY_TURN); //$NON-NLS-1$
         deployLoad = createMenuItem(menu, Messages.getString("CommonMenuBar.deployLoad"), DeploymentDisplay.DEPLOY_LOAD); //$NON-NLS-1$
         deployUnload = createMenuItem(menu, Messages.getString("CommonMenuBar.deployUnload"), DeploymentDisplay.DEPLOY_UNLOAD); //$NON-NLS-1$
+        deployRemove = createMenuItem(menu, Messages.getString("CommonMenuBar.deployRemove"), DeploymentDisplay.DEPLOY_REMOVE); //$NON-NLS-1$
 
         menu.addSeparator();
 
@@ -769,6 +770,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     }
     public synchronized void setDeployUnloadEnabled(boolean enabled) {
         deployUnload.setEnabled(enabled);
+    }
+    public synchronized void setDeployRemoveEnabled(boolean enabled) {
+        deployRemove.setEnabled(enabled);
     }
 
     // Manages deploy minefield items...

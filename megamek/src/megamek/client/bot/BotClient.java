@@ -490,8 +490,12 @@ public abstract class BotClient extends Client {
 
             if(deployed_ent instanceof Infantry) {
                 //      -> Trees and buildings make good cover, esp for conventional infantry
+                //         rough is nice, to
                 //      -> Massed infantry is more effective, so try to cluster them
 
+                if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.ROUGH)){
+                    fitness[valid_arr_index] += 1.5;
+                }
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){
                     fitness[valid_arr_index] += 2;
                 }

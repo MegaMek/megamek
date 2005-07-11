@@ -8,6 +8,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1235634: Ejected pilots still take damage from heat
 + Bug 1235347: Water now appears to affect LOS correctly.
 + Bug 1235833: remaining Swarm missiles targeting Stealth Mechs.
++ Bug 1235708, Patch 1236081: onboard homing Arrow IV NPE.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

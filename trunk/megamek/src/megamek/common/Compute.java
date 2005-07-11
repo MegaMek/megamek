@@ -547,7 +547,7 @@ public class Compute
         }
 
         if (ae.getLocationStatus(weapon.getLocation())
-            == ILocationExposureStatus.WET) {
+                == ILocationExposureStatus.WET) {
             weaponRanges = wtype.getWRanges();
             //HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
@@ -561,9 +561,8 @@ public class Compute
                 return new ToHitData(ToHitData.IMPOSSIBLE,
                                      "Weapon underwater, but not target.");
             }
-        } else if (targHex.containsTerrain(Terrains.WATER) &&
-                   targHex.surface() > targEl) {
-            //target completely underwater, weapon not
+        } else if (targHex.containsTerrain(Terrains.WATER)
+                && ((targEl + targHex.terrainLevel(Terrains.WATER)) <= 0)) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Target underwater, but not weapon.");
         } else if (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO

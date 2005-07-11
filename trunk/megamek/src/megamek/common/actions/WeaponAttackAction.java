@@ -766,11 +766,14 @@ public class WeaponAttackAction
         // target in water?
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        if (targHex.containsTerrain(Terrains.WATER) && targHex.surface() == targEl && te.height() > 0) { //target in partial water
+        if (targHex.containsTerrain(Terrains.WATER)
+                && (targHex.terrainLevel(Terrains.WATER) == 1)
+                && (targEl == 0)
+                && (te.height() > 0)) { //target in partial water
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
             losMods = los.losModifiers(game);
         }
-    
+
         // add in LOS mods that we've been keeping
         toHit.append(losMods);
     

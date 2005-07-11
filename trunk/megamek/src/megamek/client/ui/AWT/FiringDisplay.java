@@ -569,6 +569,9 @@ public class FiringDisplay
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
                 if (curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId());
+                    waa2.setAimedLocation(waa.getAimedLocation());
+                    waa2.setAimingMode(waa.getAimingMode());
+                    waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     newAttacks.addElement(waa2);
                 }
             } else {
@@ -584,6 +587,9 @@ public class FiringDisplay
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
                 if (!curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId() );
+                    waa2.setAimedLocation(waa.getAimedLocation());
+                    waa2.setAimingMode(waa.getAimingMode());
+                    waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     newAttacks.addElement(waa2);
                 }
             }

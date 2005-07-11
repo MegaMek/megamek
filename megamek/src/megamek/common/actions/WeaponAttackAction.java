@@ -780,7 +780,7 @@ public class WeaponAttackAction
         // secondary targets modifier,
         // if this is not a iNarc Nemesis confused attack
         if (!isNemesisConfused) {
-            toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+            toHit.append(Compute.getSecondaryTargetMod(game, ae, target, exchangeSwarmTarget));
         }        
     
         // heat

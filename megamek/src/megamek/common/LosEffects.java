@@ -255,7 +255,6 @@ public class LosEffects {
     }
 
     public static LosEffects calculateLos(IGame game, AttackInfo ai) {
-        
         if (ai.attOffBoard) {
             LosEffects los = new LosEffects();
             los.blocked = true;
@@ -267,7 +266,7 @@ public class LosEffects {
             los.blocked = true;
             return los;             
         }
-        
+
         double degree = ai.attackPos.degree(ai.targetPos);
         if (degree % 60 == 30) {
             return LosEffects.losDivided(game, ai);

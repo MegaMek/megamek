@@ -3564,9 +3564,7 @@ implements Runnable, ConnectionHandler {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
-            entity.setElevation(curVTOLElevation);
-        }
+        entity.setElevation(curVTOLElevation);
         
         
 
@@ -4320,13 +4318,10 @@ implements Runnable, ConnectionHandler {
 
     public void doSetLocationsExposure(Entity entity, IHex hex, boolean isPavementStep, boolean isJump) {
         if ( hex.terrainLevel(Terrains.WATER) > 0
-            && ((entity.getMovementMode() != IEntityMovementMode.HOVER)
-            || (entity.getMovementMode() != IEntityMovementMode.NAVAL)
-            || (entity.getMovementMode() != IEntityMovementMode.HYDROFOIL))
-            && !isPavementStep
-            && !isJump) {
-            if (entity instanceof Mech && !entity.isProne()
-                && hex.terrainLevel(Terrains.WATER) == 1) {
+                && !isJump) {
+            if (entity instanceof Mech
+                    && !entity.isProne()
+                    && hex.terrainLevel(Terrains.WATER) == 1) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getOptions().booleanOption("vacuum"))
                         entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
@@ -4346,13 +4341,13 @@ implements Runnable, ConnectionHandler {
                     phaseReport.append
                         (breachCheck(entity, Mech.LOC_LARM, hex));
                 }
-            } else {
+            } else if (entity.getElevation() < 0) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     entity.setLocationStatus(loop, ILocationExposureStatus.WET);
                     phaseReport.append (breachCheck(entity, loop, hex));
                 }
             }
-        }else {
+        } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
                 if (game.getOptions().booleanOption("vacuum"))
                     entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);

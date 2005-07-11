@@ -284,12 +284,12 @@ public class MoveStep implements Serializable {
 
                 // check for water
                 if (!isPavementStep()
-                    && game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0
-                    && entity.getMovementMode() != IEntityMovementMode.HOVER
-                    && entity.getMovementMode() != IEntityMovementMode.NAVAL
-                    && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
-                    && entity.getMovementMode() != IEntityMovementMode.SUBMARINE
-                    && entity.getMovementMode() != IEntityMovementMode.VTOL) {
+                        && game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0
+                        && entity.getMovementMode() != IEntityMovementMode.HOVER
+                        && entity.getMovementMode() != IEntityMovementMode.NAVAL
+                        && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
+                        && entity.getMovementMode() != IEntityMovementMode.SUBMARINE
+                        && entity.getMovementMode() != IEntityMovementMode.VTOL) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -297,9 +297,7 @@ public class MoveStep implements Serializable {
                     setDistance(0); //start over after shifting gears
                 }
                 addDistance(1);
-                if(entity.getMovementMode() == IEntityMovementMode.VTOL) {
-                    setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation));
-                }
+                setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation));
                 break;
             case MovePath.STEP_LATERAL_LEFT :
             case MovePath.STEP_LATERAL_RIGHT :
@@ -1124,7 +1122,6 @@ public class MoveStep implements Serializable {
                     mp++;
                 }
             }
-
         } // End not-along-road
 
         // account for elevation?

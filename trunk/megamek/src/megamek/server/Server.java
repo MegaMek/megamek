@@ -6877,9 +6877,16 @@ implements Runnable, ConnectionHandler {
         if(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING) {
             nDamPerHit = wtype.getRackSize();
             if (entityTarget!=null && entityTarget.getTaggedBy() != -1) {
-                toHit.setSideTable(Compute.targetSideTable
-                        (wr.artyAttackerCoords, entityTarget.getPosition(), 
-                         entityTarget.getFacing(), entityTarget instanceof Tank));
+                if(wr.artyAttackerCoords != null) {
+                    toHit.setSideTable(Compute.targetSideTable
+                            (wr.artyAttackerCoords, entityTarget.getPosition(), 
+                             entityTarget.getFacing(), entityTarget instanceof Tank));
+                } else {
+                    Entity tagger = game.getEntity(entityTarget.getTaggedBy());
+                    if(tagger != null) { 
+                        toHit.setSideTable(Compute.targetSideTable(tagger, entityTarget));
+                    }
+                }
             }
         }
 
@@ -7456,6 +7463,12 @@ implements Runnable, ConnectionHandler {
                         toHit.setSideTable(Compute.targetSideTable
                                 (wr.artyAttackerCoords, entity.getPosition(), 
                                  entity.getFacing(), entity instanceof Tank));
+                    } 
+                    else if(entityTarget.getTaggedBy() != -1) {
+                        Entity tagger = game.getEntity(entityTarget.getTaggedBy());
+                        if(tagger != null) { 
+                            toHit.setSideTable(Compute.targetSideTable(tagger, entityTarget));
+                        }
                     }
                     HitData hit = entity.rollHitLocation
                         ( toHit.getHitTable(),

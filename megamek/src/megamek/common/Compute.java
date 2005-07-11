@@ -931,6 +931,10 @@ public class Compute
      * @author Ben
      */
     public static ToHitData getSecondaryTargetMod(IGame game, Entity attacker, Targetable target) {
+        return getSecondaryTargetMod(game, attacker, target, false);
+    }
+    
+    public static ToHitData getSecondaryTargetMod(IGame game, Entity attacker, Targetable target, boolean isSwarm) {
     boolean curInFrontArc = isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
 
     int primaryTarget = Entity.NONE;
@@ -952,7 +956,7 @@ public class Compute
                     continue;
                 }
                 // When targeting a stealthed Mech, you can _only_ target it, not anything else (BMRr, pg. 147)
-                if (pte instanceof Entity && ((Entity)pte).isStealthActive() && pte != target ) {
+                if (pte instanceof Entity && ((Entity)pte).isStealthActive() && pte != target && !isSwarm) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "When targeting a stealthed Mech, can not attack secondary targets");
                 }
                 if (isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), pte.getPosition(), ARC_FORWARD)) {

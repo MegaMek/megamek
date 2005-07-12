@@ -298,42 +298,10 @@ public class MovePath implements Cloneable, Serializable {
         return entity.isProne();
     }
     
-    //get final elevation relative to the hex.
-    //0 for all but VTOLs.
+    /**
+     * get final elevation relative to the hex.
+     */
     public int getFinalElevation() {
-        /* doing this was stupid.  I think.
-        if(entity instanceof VTOL) {
-            //walk through the steps so far, calculating elevation at each point.
-            VTOL v=(VTOL)entity;
-            int elevation = v.getElevation();
-            IHex current, next;
-            next=game.getBoard().getHex(v.getPosition());
-            for (final Enumeration i = getSteps(); i.hasMoreElements();) {
-                MoveStep step = (MoveStep) i.nextElement();
-                current=next;
-                next=game.getBoard().getHex(step.getPosition());
-                switch(step.getType()) {
-                case MovePath.STEP_BACKWARDS:
-                    //I hope...
-                    elevation = v.calcElevation(current,next,elevation);
-                    break;
-                case MovePath.STEP_FORWARDS:
-                    //I hope...
-                    elevation = v.calcElevation(current,next,elevation);
-                    break;
-                case MovePath.STEP_DOWN:
-                    elevation--;
-                    break;
-                case MovePath.STEP_UP:
-                    elevation++;
-                    break;
-                }
-            }       
-            return elevation;
-        } else {
-            return 0;
-        }
-        */
         if (getLastStep() != null) {
             return getLastStep().getElevation();
         }

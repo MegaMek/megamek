@@ -925,22 +925,6 @@ public class MoveStep implements Serializable {
                 entity.gotPavementBonus = true;
             }
         }
-        /*
-        if(MovePath.STEP_DOWN==stepType) {
-            if(entity instanceof VTOL) {
-                if(!(((VTOL)entity).canGoDown(elevation+1,getPosition()))) {
-                    movementType = IMoveType.MOVE_ILLEGAL;//We can't intentionally crash.
-                }
-            } else {
-                movementType = IMoveType.MOVE_ILLEGAL;//only VTOLs can go up and down (and subs, but we don't have any.)
-            }
-        }
-        if(MovePath.STEP_UP==stepType) {
-            if(!(entity instanceof VTOL)) {
-                movementType = IMoveType.MOVE_ILLEGAL;
-            }
-        }*///not needed due to isMovementPossible, right?
-
         // Mechs with busted Gyro may make only one facing change
         if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                    Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1

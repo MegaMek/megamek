@@ -19,6 +19,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1236387: Elevation shown in movestep for non-VTOLs.
 + Fixed NPE in Server for entity with null position in deployment.
 + Fixed major errors in elevation calculation for units.
++ Added future compatibility for showing elevation for subs.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

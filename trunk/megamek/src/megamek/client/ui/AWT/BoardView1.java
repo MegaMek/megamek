@@ -3496,8 +3496,10 @@ public class BoardView1
                 costStringBuf.append("+]"); //$NON-NLS-1$
             }
             
-            if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK ||
-                step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN) {
+            if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK
+                    || step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN
+                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK
+                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN) {
                 costStringBuf.append("{").append(step.getElevation()).append("}");
             }
 

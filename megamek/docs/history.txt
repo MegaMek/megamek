@@ -25,7 +25,11 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1236620: VTOLs and buildings
 + Bugfix for bugfix 1236620
 + Bugfix for bugfix for bugfix for 1236620
-+ Fix elevationOccupied() for VTOLs.
++ Fix elevationOccupied() for VTOLs, it now is only in Entity and checks for
+    MovementType, instead of having a custom one for Tank
++ Finally fixed all entity elevation issues.
++ Don't show danger marker in movesteps when moving a hover or naval unit above
+    water.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

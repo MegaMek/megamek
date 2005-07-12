@@ -229,6 +229,7 @@ public class Compute
         // check for rubble
         if (movementType != IEntityMovementType.MOVE_JUMP
             && destHex.terrainLevel(Terrains.RUBBLE) > 0
+            && entity.getMovementMode() != IEntityMovementMode.VTOL
             && !isInfantry) {
             return true;
         }
@@ -237,17 +238,18 @@ public class Compute
         if (destHex.containsTerrain(Terrains.SWAMP)
             && !(entity.getElevation() > destHex.getElevation())
             && entity.getMovementMode() != IEntityMovementMode.HOVER
+            && entity.getMovementMode() != IEntityMovementMode.VTOL
             && movementType != IEntityMovementType.MOVE_JUMP) {
             return true;
         }
 
         // Check for water unless we're a hovercraft or naval or using a bridge or flying.
         if (movementType != IEntityMovementType.MOVE_JUMP
-            && !(entity.getElevation() > destHex.ceiling())
-            && ((entity.getMovementMode() != IEntityMovementMode.HOVER)
-                || (entity.getMovementMode() != IEntityMovementMode.NAVAL)
-                || (entity.getMovementMode() != IEntityMovementMode.HYDROFOIL)
-                || (entity.getMovementMode() != IEntityMovementMode.SUBMARINE))
+            && !(entity.getElevation() > destHex.surface())
+            && !(entity.getMovementMode() == IEntityMovementMode.HOVER
+                || entity.getMovementMode() == IEntityMovementMode.NAVAL
+                || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL
+                || entity.getMovementMode() == IEntityMovementMode.SUBMARINE)
             && destHex.terrainLevel(Terrains.WATER) > 0
             && !isPavementStep) {
             return true;

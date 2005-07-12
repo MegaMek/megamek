@@ -331,66 +331,68 @@ public class MechSummaryCache {
         int thisDirectoriesFileCount = 0;
         String[] sa = fDir.list();
 
-        for (int x = 0; x < sa.length; x++) {
-            File f = new File(fDir, sa[x]);
-            if (f.equals(CACHE)) {
-                continue;
-            }
-            if (f.isDirectory()) {
-                if (f.getName().toLowerCase().equals("unsupported")) {
-                    // Mechs in this directory are ignored because
-                    //  they have features not implemented in MM yet.
+        if (sa != null) {
+            for (int x = 0; x < sa.length; x++) {
+                File f = new File(fDir, sa[x]);
+                if (f.equals(CACHE)) {
                     continue;
                 }
-                // recursion is fun
-                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f);
-                continue;
-            }
-            if (f.getName().indexOf('.') == -1) {
-                continue;
-            }
-            if (f.getName().toLowerCase().endsWith(".txt")) {
-                continue;
-            }
-            if (f.getName().toLowerCase().endsWith(".log")) {
-                continue;
-            }
-            if (f.getName().equals("UnitVerifierOptions.xml")) {
-                continue;
-            }
-            if (f.getName().toLowerCase().endsWith(".zip")) {
-                bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
-                continue;
-            }
-            if (f.lastModified() < lLastCheck && sKnownFiles.contains(f.toString())) {
-                continue;
-            }
-            try {
-                MechFileParser mfp = new MechFileParser(f);
-                Entity e = mfp.getEntity();
-                MechSummary ms = getSummary(e, f, null);
-                vMechs.addElement(ms);
-                sKnownFiles.add(f.toString());
-                bNeedsUpdate = true;
-                thisDirectoriesFileCount++;
-                fileCount++;
-                Enumeration failedEquipment = e.getFailedEquipment();
-                if (failedEquipment.hasMoreElements()) {
-                    loadReport.append("    Loading from ").append(f)
-                        .append("\n");
-                    while (failedEquipment.hasMoreElements()) {
-                        loadReport.append("      Failed to load equipment: ")
-                            .append(failedEquipment.nextElement())
-                            .append("\n");
+                if (f.isDirectory()) {
+                    if (f.getName().toLowerCase().equals("unsupported")) {
+                        // Mechs in this directory are ignored because
+                        //  they have features not implemented in MM yet.
+                        continue;
                     }
+                    // recursion is fun
+                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f);
+                    continue;
                 }
-            } catch (EntityLoadingException ex) {
-                loadReport.append("    Loading from ")
-                    .append(f).append("\n");
-                loadReport.append("***   Unable to load file: ")
-                    .append(ex.getMessage()).append("\n");
-                hFailedFiles.put(f.toString(), ex.getMessage());
-                continue;
+                if (f.getName().indexOf('.') == -1) {
+                    continue;
+                }
+                if (f.getName().toLowerCase().endsWith(".txt")) {
+                    continue;
+                }
+                if (f.getName().toLowerCase().endsWith(".log")) {
+                    continue;
+                }
+                if (f.getName().equals("UnitVerifierOptions.xml")) {
+                    continue;
+                }
+                if (f.getName().toLowerCase().endsWith(".zip")) {
+                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
+                    continue;
+                }
+                if (f.lastModified() < lLastCheck && sKnownFiles.contains(f.toString())) {
+                    continue;
+                }
+                try {
+                    MechFileParser mfp = new MechFileParser(f);
+                    Entity e = mfp.getEntity();
+                    MechSummary ms = getSummary(e, f, null);
+                    vMechs.addElement(ms);
+                    sKnownFiles.add(f.toString());
+                    bNeedsUpdate = true;
+                    thisDirectoriesFileCount++;
+                    fileCount++;
+                    Enumeration failedEquipment = e.getFailedEquipment();
+                    if (failedEquipment.hasMoreElements()) {
+                        loadReport.append("    Loading from ").append(f)
+                            .append("\n");
+                        while (failedEquipment.hasMoreElements()) {
+                            loadReport.append("      Failed to load equipment: ")
+                                .append(failedEquipment.nextElement())
+                                .append("\n");
+                        }
+                    }
+                } catch (EntityLoadingException ex) {
+                    loadReport.append("    Loading from ")
+                        .append(f).append("\n");
+                    loadReport.append("***   Unable to load file: ")
+                        .append(ex.getMessage()).append("\n");
+                    hFailedFiles.put(f.toString(), ex.getMessage());
+                    continue;
+                }
             }
         }
 

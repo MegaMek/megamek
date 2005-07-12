@@ -3496,7 +3496,7 @@ public class BoardView1
                 costStringBuf.append("+]"); //$NON-NLS-1$
             }
             
-            if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN ||
+            if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK ||
                 step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN) {
                 costStringBuf.append("{").append(step.getElevation()).append("}");
             }

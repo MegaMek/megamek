@@ -3564,6 +3564,7 @@ implements Runnable, ConnectionHandler {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
+System.err.println("@@@"+curVTOLElevation);
         entity.setElevation(curVTOLElevation);
         
         
@@ -14835,10 +14836,11 @@ implements Runnable, ConnectionHandler {
                     return false;
                 }
                 // TODO : correctly handle bridges.
-                if (entity instanceof Tank &&
-                    (entity.getMovementMode() == IEntityMovementMode.TRACKED ||
-                     entity.getMovementMode() == IEntityMovementMode.WHEELED ) &&
-                    game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0) {
+                if (entity instanceof Tank
+                        && (entity.getPosition() != null)
+                        && (entity.getMovementMode() == IEntityMovementMode.TRACKED
+                        || entity.getMovementMode() == IEntityMovementMode.WHEELED )
+                        && game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0) {
                         return true;
                 }
                 return false;

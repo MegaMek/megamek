@@ -3496,8 +3496,8 @@ public class BoardView1
                 costStringBuf.append("+]"); //$NON-NLS-1$
             }
             
-            //hackish
-            if (step.getElevation()!=-999) {//default value, only changed for VTOLs
+            if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN ||
+                step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN) {
                 costStringBuf.append("{").append(step.getElevation()).append("}");
             }
 

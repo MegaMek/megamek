@@ -16,6 +16,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1236319: aimed shots not working.
 + delivering vibrabombs was not working.
 + Update status bar in Indirect Targeting phase
++ Bug 1236387: Elevation shown in movestep for non-VTOLs.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

@@ -1722,7 +1722,7 @@ class ExtraPanel
         if (en instanceof Mech) {
             Mech m = (Mech)en;
             
-            sinks2B.setEnabled(true);
+            sinks2B.setEnabled(!dontChange);
             sinks = m.getActiveSinks();
             if (m.hasDoubleHeatSinks()) {
                 sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble", new Object[]{new Integer(sinks), new Integer(sinks*2)}));
@@ -1737,93 +1737,7 @@ class ExtraPanel
             if (clientgui.getClient().game.getOptions().booleanOption("maxtech_heat")) {
                 mtHeat = true;
             }
-            if (mtHeat && en.heat>=50) {
-                heatR.append(Messages.getString("MechDisplay.WasAutomaticlyShutDown")); //$NON-NLS-1$
-            } else if (mtHeat && en.heat>=49) {
-                if (hasTSM) {
-                    heatR.append (Messages.getString("MechDisplay.mp-8"));
-                } else {
-                    heatR.append (Messages.getString("MechDisplay.mp-9")); 
-                }
-            } else if (mtHeat && en.heat>=43) {
-                if (hasTSM) {
-                    heatR.append (Messages.getString("MechDisplay.mp-7"));
-                } else {
-                    heatR.append (Messages.getString("MechDisplay.mp-8")); 
-                }
-            } else if (mtHeat && en.heat>=37) {
-                if (hasTSM) {
-                    heatR.append (Messages.getString("MechDisplay.mp-6"));
-                } else {
-                    heatR.append (Messages.getString("MechDisplay.mp-7")); 
-                }
-            } else if (mtHeat && en.heat>=31) {
-                if (hasTSM) {
-                    heatR.append (Messages.getString("MechDisplay.mp-5"));
-                } else {
-                    heatR.append (Messages.getString("MechDisplay.mp-6")); 
-                }
-            } else if (!mtHeat && en.heat >= 30) {
-                heatR.append(Messages.getString("MechDisplay.WasAutomaticlyShutDown")); //$NON-NLS-1$
-            } else if (en.heat >=25) {
-                if (hasTSM) {
-                    heatR.append (Messages.getString("MechDisplay.mp-4")); //$NON-NLS-1$
-                } else {
-                    heatR.append(Messages.getString("MechDisplay.mp-5")); //$NON-NLS-1$
-                }
-            } else if (en.heat >= 20) {
-                if (hasTSM) {
-                    heatR.append (Messages.getString("MechDisplay.mp-3")); //$NON-NLS-1$
-                } else {
-                    heatR.append (Messages.getString("MechDisplay.mp-4")); //$NON-NLS-1$
-                }
-            } else if (en.heat >= 15) {
-                if (hasTSM) {
-                    heatR.append (Messages.getString("MechDisplay.mp-2")); //$NON-NLS-1$
-                } else {
-                    heatR.append (Messages.getString("MechDisplay.mp-3")); //$NON-NLS-1$
-                }
-            } else if (en.heat >= 10) {
-                if (hasTSM) {
-                    heatR.append (Messages.getString("MechDisplay.mp-1")); //$NON-NLS-1$
-                } else {
-                    heatR.append (Messages.getString("MechDisplay.mp-2")); //$NON-NLS-1$
-                }
-            } else if (en.heat == 9 && hasTSM) {
-                heatR.append (Messages.getString("MechDisplay.mptsm+1")); //$NON-NLS-1$
-            } else if (en.heat >= 5) {
-                heatR.append (Messages.getString("MechDisplay.mp-1")); //$NON-NLS-1$
-            }
-            if (mtHeat && en.heat >= 48) {
-                heatR.append (Messages.getString("MechDisplay.mf+7")); //$NON-NLS-1$
-            } else if (mtHeat && en.heat >= 41) {
-                heatR.append (Messages.getString("MechDisplay.mf+6")); //$NON-NLS-1$
-            } else if (mtHeat && en.heat >= 33) {
-                heatR.append (Messages.getString("MechDisplay.mf+5")); //$NON-NLS-1$
-            } else if (en.heat >= 24) {
-                heatR.append (Messages.getString("MechDisplay.mf+4")); //$NON-NLS-1$
-            } else if (en.heat >= 17) {
-                heatR.append (Messages.getString("MechDisplay.mf+3")); //$NON-NLS-1$
-            } else if (en.heat >= 13) {
-                heatR.append (Messages.getString("MechDisplay.mf+2")); //$NON-NLS-1$
-            } else if (en.heat >= 8) {
-                heatR.append (Messages.getString("MechDisplay.mf+1")); //$NON-NLS-1$
-            }
-            if (mtHeat && en.heat >= 47) {
-                heatR.append (Messages.getString("MechDisplay.phit12")); //$NON-NLS-1$
-            } else if (mtHeat && en.heat >= 39) {
-                heatR.append (Messages.getString("MechDisplay.phit10")); //$NON-NLS-1$
-            } else if (mtHeat && en.heat >= 32) {
-                heatR.append (Messages.getString("MechDisplay.phit8")); //$NON-NLS-1$
-            }
-            if (mtHeat && en.heat >= 44) {
-                heatR.append (Messages.getString("MechDisplay.sysfail10")); //$NON-NLS-1$
-            } else if (mtHeat && en.heat >= 36) {
-                heatR.append (Messages.getString("MechDisplay.sysfail8")); //$NON-NLS-1$
-            }
-            if (en.heat <=4) {
-                heatR.append (Messages.getString("MechDisplay.None")+"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
+            heatR.append(HeatEffects.getHeatEffects(en.heat, mtHeat, hasTSM));
         } else {
             // Non-Mechs cannot configure their heatsinks
             sinks2B.setEnabled(false);

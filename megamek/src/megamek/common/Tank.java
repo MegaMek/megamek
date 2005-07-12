@@ -148,13 +148,16 @@ public class Tank
      * Hovercraft, naval vessels, and hydrofoils move on the surface of the water
      */
     public int elevationOccupied(IHex hex) {
+        if (hex == null) {
+            return 0;
+        }
         if (((movementMode == IEntityMovementMode.HOVER)
                 ||  (movementMode == IEntityMovementMode.NAVAL)
                 ||  (movementMode == IEntityMovementMode.HYDROFOIL))
                 && hex.containsTerrain(Terrains.WATER)) {
-            return hex.surface();
+            return hex.surface() + elevation;
         } else {
-            return hex.floor();
+            return hex.floor() + elevation;
         }
     }
     

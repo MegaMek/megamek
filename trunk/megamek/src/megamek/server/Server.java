@@ -13412,7 +13412,7 @@ implements Runnable, ConnectionHandler {
 
         if (entity instanceof VTOL) {
             // VTOLs can fly over buildings
-            if (entity.getElevation()>game.getBoard().getHex(curPos).getElevation()) {
+            if (entity.getElevation()>game.getBoard().getHex(curPos).getCeiling()) {
                 return false;
             }
         }

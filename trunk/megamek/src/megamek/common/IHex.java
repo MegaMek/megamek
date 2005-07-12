@@ -27,7 +27,8 @@ public interface IHex extends Cloneable{
      * @return hex elevation
      */
     public abstract int getElevation();
-
+    public abstract int getCeiling();
+    
     /**
      * set the elevation
      * @param elevation

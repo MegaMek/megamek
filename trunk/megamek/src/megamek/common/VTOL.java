@@ -356,4 +356,13 @@ public class VTOL extends Tank {
     public boolean doomedInVacuum() {
         return true;
     }
+    
+    /* (non-javadoc)
+     * Here again the function from Entity, because Tank already overrides,
+     * and we can't use that.
+     */
+    public int elevationOccupied(IHex hex) {
+        if (hex==null) return 0;
+        return hex.floor()+elevation;
+    }
 }

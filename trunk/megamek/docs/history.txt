@@ -25,6 +25,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1236620: VTOLs and buildings
 + Bugfix for bugfix 1236620
 + Bugfix for bugfix for bugfix for 1236620
++ Fix elevationOccupied() for VTOLs.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

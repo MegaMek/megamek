@@ -672,6 +672,9 @@ public abstract class Entity
                 && (getMovementMode() != IEntityMovementMode.HYDROFOIL)
                 && (getMovementMode() != IEntityMovementMode.SUBMARINE)
                 && (getMovementMode() != IEntityMovementMode.VTOL)) {
+            if (current.containsTerrain(Terrains.WATER)) {
+                retVal += current.terrainLevel(Terrains.WATER);
+            }
             retVal -= next.terrainLevel(Terrains.WATER);
         }
         return retVal;
@@ -1025,10 +1028,20 @@ public abstract class Entity
     /**
      * Returns the elevation that this entity would be on if it were placed
      * into the specified hex.
+     * Hovercraft, naval vessels, and hydrofoils move on the surface of the water
      */
     public int elevationOccupied(IHex hex) {
-        if (hex==null) return 0;
-        return hex.floor()+elevation;
+        if (hex == null) {
+            return 0;
+        }
+        if (((movementMode == IEntityMovementMode.HOVER)
+                ||  (movementMode == IEntityMovementMode.NAVAL)
+                ||  (movementMode == IEntityMovementMode.HYDROFOIL))
+                && hex.containsTerrain(Terrains.WATER)) {
+            return hex.surface() + elevation;
+        } else {
+            return hex.floor() + elevation;
+        }
     }
 
     /**

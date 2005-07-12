@@ -22,6 +22,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Added future compatibility for showing elevation for subs.
 + Changed display of Heat Effects in MechView (Prepares for RFE1021681, which
     would otherwise need to duplicate this code).
++ Bug 1236620: VTOLs and buildings
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

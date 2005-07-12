@@ -13410,6 +13410,12 @@ implements Runnable, ConnectionHandler {
                                       int distance,
                                       String why ) {
 
+        if (entity instanceof VTOL) {
+            // VTOLs can fly over buildings
+            if (entity.getElevation()>game.getBoard().getHex(curPos).getElevation()) {
+                return false;
+            }
+        }
         // Need to roll based on building type.
         PilotingRollData psr = entity.rollMovementInBuilding(bldg, distance, why);
 

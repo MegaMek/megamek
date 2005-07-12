@@ -3120,7 +3120,12 @@ public abstract class Entity
     public boolean checkMovementInBuilding(Coords lastPos, Coords curPos,
                                            MoveStep step, IHex curHex,
                                            IHex prevHex) {
-
+        if (this instanceof VTOL) {
+            if (getElevation()>getGame().getBoard().getHex(curPos).getElevation()) {
+                return false;
+            }
+        }
+        
         if ( !lastPos.equals(curPos) &&
              step.getMovementType() != IEntityMovementType.MOVE_JUMP &&
              ( curHex.containsTerrain(Terrains.BUILDING) ||

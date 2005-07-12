@@ -2675,9 +2675,7 @@ implements Runnable, ConnectionHandler {
             // set last step parameters
             curPos = step.getPosition();
             curFacing = step.getFacing();
-System.err.print("!!!"+curVTOLElevation);
             curVTOLElevation = step.getElevation();
-System.err.println(":"+curVTOLElevation);
             final IHex curHex = game.getBoard().getHex(curPos);
 
             // Check for skid.

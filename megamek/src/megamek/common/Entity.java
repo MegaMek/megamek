@@ -659,10 +659,13 @@ public abstract class Entity
 
     //A helper function for fiddling with elevation.
     //Takes the current hex, a hex being moved to, returns the elevation the VTOL will be considered to be at w/r/t it's new hex.
-    public int calcElevation(IHex current, IHex next,int assumedElevation) {
-        int absoluteElevation = current.surface()+assumedElevation;
-        int retVal = current.surface();
-        retVal += assumedElevation;
+    public int calcElevation(IHex current, IHex next, int assumedElevation) {
+        int retVal = assumedElevation;
+        if ((getMovementMode() == IEntityMovementMode.SUBMARINE)
+                || (getMovementMode() == IEntityMovementMode.VTOL)) {
+            retVal += current.surface();
+            retVal -= next.surface();
+        }
         if ((next.getTerrain(Terrains.WATER) != null)
                 && (getMovementMode() != IEntityMovementMode.HOVER)
                 && (getMovementMode() != IEntityMovementMode.NAVAL)

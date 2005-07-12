@@ -2535,10 +2535,7 @@ implements Runnable, ConnectionHandler {
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
-        int curVTOLElevation=0;
-        if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
-            curVTOLElevation = entity.getElevation();
-        }
+        int curVTOLElevation = entity.getElevation();
         int distance = 0;
         int mpUsed = 0;
         int moveType = IEntityMovementType.MOVE_NONE;
@@ -2678,7 +2675,9 @@ implements Runnable, ConnectionHandler {
             // set last step parameters
             curPos = step.getPosition();
             curFacing = step.getFacing();
+System.err.print("!!!"+curVTOLElevation);
             curVTOLElevation = step.getElevation();
+System.err.println(":"+curVTOLElevation);
             final IHex curHex = game.getBoard().getHex(curPos);
 
             // Check for skid.
@@ -3564,7 +3563,6 @@ implements Runnable, ConnectionHandler {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-System.err.println("@@@"+curVTOLElevation);
         entity.setElevation(curVTOLElevation);
         
         

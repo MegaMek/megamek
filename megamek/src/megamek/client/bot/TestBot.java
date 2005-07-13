@@ -963,16 +963,16 @@ public class TestBot extends BotClient {
                     // Get best physical attack
                     best_left_po = pc.getBestPhysical(en, game);
                     if ((best_left_po != null) && (en instanceof Mech)) {
-        	            if (((best_left_po.type == PhysicalOption.PUNCH_LEFT) || 
-        	                    (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
-        	                    (mw.getLocation() == Mech.LOC_LARM)){
-    	                    left_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
-        	            }
-        	            if (((best_left_po.type == PhysicalOption.PUNCH_RIGHT) || 
-        	                    (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
-        	                    (mw.getLocation() == Mech.LOC_RARM)){
-    	                    left_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
-        	            }
+                        if (((best_left_po.type == PhysicalOption.PUNCH_LEFT) || 
+                                (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
+                                (mw.getLocation() == Mech.LOC_LARM)){
+                            left_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                        }
+                        if (((best_left_po.type == PhysicalOption.PUNCH_RIGHT) || 
+                                (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
+                                (mw.getLocation() == Mech.LOC_RARM)){
+                            left_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                        }
                     }
                     left.add(c);
                     attacks[1] = Math.max(attacks[1], c.size());
@@ -983,16 +983,16 @@ public class TestBot extends BotClient {
                     // Get best physical attack
                     best_right_po = pc.getBestPhysical(en, game);
                     if ((best_right_po != null) && (en instanceof Mech)) {
-        	            if (((best_right_po.type == PhysicalOption.PUNCH_LEFT) || 
-        	                    (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
-        	                    (mw.getLocation() == Mech.LOC_LARM)){
-    	                    right_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
-        	            }
-        	            if (((best_right_po.type == PhysicalOption.PUNCH_RIGHT) || 
-        	                    (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
-        	                    (mw.getLocation() == Mech.LOC_RARM)){
-        	                right_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
-        	            }
+                        if (((best_right_po.type == PhysicalOption.PUNCH_LEFT) || 
+                                (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
+                                (mw.getLocation() == Mech.LOC_LARM)){
+                            right_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                        }
+                        if (((best_right_po.type == PhysicalOption.PUNCH_RIGHT) || 
+                                (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
+                                (mw.getLocation() == Mech.LOC_RARM)){
+                            right_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                        }
                     }
                     right.add(c);
                     attacks[2] = Math.max(attacks[2], c.size());

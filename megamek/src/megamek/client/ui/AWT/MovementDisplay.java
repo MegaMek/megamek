@@ -59,6 +59,7 @@ public class MovementDisplay
     public static final String    MOVE_CANCEL   = "moveCancel"; //$NON-NLS-1$
     public static final String    MOVE_RAISE_ELEVATION = "moveRaiseElevation"; //$NON-NLS-1$
     public static final String    MOVE_LOWER_ELEVATION = "moveLowerElevation"; //$NON-NLS-1$
+    public static final String    MOVE_SEARCHLIGHT = "moveSearchlight"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -93,6 +94,8 @@ public class MovementDisplay
     
     private Button            butRaise;
     private Button            butLower;
+
+    private Button            butSearchlight;
 
     private int               buttonLayout;
 
@@ -207,6 +210,12 @@ public class MovementDisplay
         butRAC.setActionCommand(MOVE_UNJAM);
         butRAC.addKeyListener(this);
 
+        butSearchlight = new Button(Messages.getString("MovementDisplay.butSearchlight")); //$NON-NLS-1$
+        butSearchlight.addActionListener(this);
+        butSearchlight.setEnabled(false);
+        butSearchlight.setActionCommand(MOVE_SEARCHLIGHT);
+        butSearchlight.addKeyListener(this);
+
         butMore = new Button(Messages.getString("MovementDisplay.butMore")); //$NON-NLS-1$
         butMore.addActionListener(this);
         butMore.setEnabled(false);
@@ -305,7 +314,8 @@ public class MovementDisplay
                 && !(butLoad.isEnabled()
                 || butUnload.isEnabled()
                 || butRAC.isEnabled()
-                || butClear.isEnabled()))
+                || butClear.isEnabled()
+                || butSearchlight.isEnabled()))
             buttonLayout = 3;
         if ((buttonLayout == 3)
                 && !(butRaise.isEnabled()
@@ -338,7 +348,7 @@ public class MovementDisplay
             panButtons.add(butUnload);
             panButtons.add(butRAC);
             panButtons.add(butClear);
-            panButtons.add(butSpace);
+            panButtons.add(butSearchlight);
             panButtons.add(butMore);
 //             panButtons.add(butDone);
             break;
@@ -431,6 +441,7 @@ public class MovementDisplay
 
         updateProneButtons();
         updateRACButton();
+        updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
 
@@ -492,6 +503,7 @@ public class MovementDisplay
         setFleeEnabled(false);
         setEjectEnabled(false);
         setUnjamEnabled(false);
+        setSearchlightEnabled(false);
         setGetUpEnabled(false);
         setGoProneEnabled(false);
         setChargeEnabled(false);
@@ -526,6 +538,7 @@ public class MovementDisplay
         butDone.setLabel(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
         updateProneButtons();
         updateRACButton();
+        updateSearchlightButton();
         updateElevationButtons();
 
         // We may not have an entity selected yet (race condition).
@@ -1018,6 +1031,7 @@ public class MovementDisplay
             butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
             updateProneButtons();
             updateRACButton();
+            updateSearchlightButton();
             updateLoadButtons();
             updateElevationButtons();
         }
@@ -1044,6 +1058,15 @@ public class MovementDisplay
             return;
         }
         setUnjamEnabled(ce.canUnjamRAC() && (gear == MovementDisplay.GEAR_LAND || gear == MovementDisplay.GEAR_TURN || gear == MovementDisplay.GEAR_BACKUP) && cmd.getMpUsed() <= ce.getWalkMP() );
+    }
+
+    private void updateSearchlightButton() {
+        final Entity ce = ce();
+        
+        if ( null == ce ) {
+            return;
+        }
+        setSearchlightEnabled(ce.hasSpotlight() && !cmd.contains(MovePath.STEP_SEARCHLIGHT));
     }
     
     private synchronized void updateElevationButtons() {
@@ -1320,6 +1343,8 @@ public class MovementDisplay
               cmd.addStep(MovePath.STEP_UNJAM_RAC);
               moveTo(cmd);
             }
+        } else if (ev.getActionCommand().equals(MOVE_SEARCHLIGHT)) {
+            cmd.addStep(MovePath.STEP_SEARCHLIGHT);
         } else if (ev.getActionCommand().equals(MOVE_WALK)) {
             if (gear == MovementDisplay.GEAR_JUMP) {
                 clearAllMoves();
@@ -1456,6 +1481,7 @@ public class MovementDisplay
 
         updateProneButtons();
         updateRACButton();
+        updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
     }
@@ -1690,6 +1716,10 @@ public class MovementDisplay
     private void setUnjamEnabled(boolean enabled) {
         butRAC.setEnabled(enabled);
         clientgui.getMenuBar().setMoveUnjamEnabled(enabled);
+    }
+    private void setSearchlightEnabled(boolean enabled) {
+        butSearchlight.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveSearchlightEnabled(enabled);
     }
     private void setClearEnabled(boolean enabled) {
         butClear.setEnabled(enabled);

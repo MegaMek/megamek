@@ -877,10 +877,8 @@ implements Runnable, ConnectionHandler {
             }
             
             // reset spotlights
-            if(phase == IGame.PHASE_END) {
-                entity.setSpotlightState(false);
-                entity.setIlluminated(false);
-            }
+            entity.setIlluminated(false);
+            entity.setUsedSearchlight(false);
         }
     }
 
@@ -2627,6 +2625,12 @@ implements Runnable, ConnectionHandler {
                 game.addAction(new UnjamAction(entity.getId()));
 
                 break;
+            }
+
+            if (step.getType() == MovePath.STEP_SEARCHLIGHT && entity.hasSpotlight()) {
+                final boolean SearchOn = !entity.isUsingSpotlight();
+                entity.setSpotlightState(SearchOn);
+                sendServerChat(entity.getDisplayName() + " switched searchlight "+(SearchOn?"on":"off")+".");
             }
 
             // set most step parameters
@@ -5078,6 +5082,10 @@ implements Runnable, ConnectionHandler {
                     System.err.print( entity.getDisplayName() );
                     System.err.println(" was already triggered this round!!");
                 }
+            }
+            else if (ea instanceof SearchlightAttackAction) {
+                SearchlightAttackAction saa = (SearchlightAttackAction)ea;
+                phaseReport.append(saa.resolveAction(game));
             }
         }
 
@@ -9761,6 +9769,20 @@ implements Runnable, ConnectionHandler {
             if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
                 // cannot transfer a through armor crit if so
                 crits = 0;
+            }
+
+            // Destroy searchlights on 7+ (torso hits on mechs)
+            if(te.hasSpotlight()) {
+                int loc = hit.getLocation();
+                if(!(te instanceof Mech) || loc == Mech.LOC_CT
+                        || loc == Mech.LOC_LT || loc == Mech.LOC_RT) {
+                    int spotroll = Compute.d6(2);
+                    if(spotroll >= 7) {
+                        desc.append("\n        Searchlight destroyed!\n");
+                        te.setSpotlightState(false);
+                        te.setSpotlight(false);
+                    }
+                }
             }
 
             // Does an exterior passenger absorb some of the damage?

@@ -85,6 +85,7 @@ public abstract class Entity
     protected boolean           hasSpotlight = false;
     protected boolean           illuminated = false;
     protected boolean           spotlightIsActive = false;
+    protected boolean           usedSearchlight = false;
     protected boolean           stuckInSwamp = false;
     protected int               taggedBy = -1;
     
@@ -4322,25 +4323,15 @@ public abstract class Entity
     public boolean isUsingSpotlight() {
         return hasSpotlight && spotlightIsActive;
     }
-
-    /**
-     * illuminate an entity and all entities that are between us and the hex
-     * @param target the <code>Entity</code> to illuminate
-     */
-    public void illuminateTarget (Entity target) {
-        if (this.hasSpotlight && this.spotlightIsActive && target != null) {
-            if (!target.isIlluminated()) target.setIlluminated (true);
-            this.illuminated = true;
-            Coords[] in = Coords.intervening(this.getPosition(), target.getPosition());
-            for (int i = 0; i < in.length; i++) {
-                for (Enumeration e = game.getEntities(in[i]);e.hasMoreElements();) {
-                    Entity en = (Entity)e.nextElement();
-                    en.setIlluminated(true);
-                }
-            }
-        }
-    }
     
+    public void setUsedSearchlight(boolean arg) {
+        usedSearchlight = arg;
+    }
+
+    public boolean usedSearchlight() {
+        return usedSearchlight;
+    }
+
     /**
      * illuminate a hex and all units that are between us and the hex
      * @param target the <code>HexTarget</code> to illuminate

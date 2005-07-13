@@ -2471,7 +2471,7 @@ public class Game implements Serializable, IGame
                 report.append(" has ");
                 report.append(flare.turnsToBurn);
                 report.append(" turns left to burn.");
-                flares.setElementAt(flare, i);
+                flares.set(i, flare);
             }
             report.append("\n");
         }

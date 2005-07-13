@@ -341,13 +341,27 @@ public class EntityListFile {
     public static void saveTo( String filePath, String fileName, Vector list )
         throws IOException {
 
+        /*
+        ** The MS JVM can't handle UTF-8 files.  MS says "don't use them".
+        ** TODO: restore UTF-8 after upgrade to more recent jre.
+        **
         // Open up the file.  Produce UTF-8 output.
         Writer output = new BufferedWriter( new OutputStreamWriter
-            ( new FileOutputStream(new File(filePath, fileName)), "UTF-8" )
+            ( new FileOutputStream( new File( filePath, fileName ) ),
+                                    "UTF-8" )
             );
 
         // Output the doctype and header stuff.
         output.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" );
+        */
+
+        // Open up the file.
+        Writer output = new BufferedWriter( new OutputStreamWriter
+             ( new FileOutputStream( new File( filePath, fileName ) ) )
+             );
+
+        // Output the doctype and header stuff.
+        output.write( "<?xml version=\"1.0\"?>" );
         output.write( CommonConstants.NL );
         output.write( CommonConstants.NL );
         output.write( "<unit>" );

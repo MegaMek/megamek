@@ -30,6 +30,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Finally fixed all entity elevation issues.
 + Don't show danger marker in movesteps when moving a hover or naval unit above
     water.
++ Bug 1236475: revert UTF-8 fix because MS JVM can't handle UTF-8 code.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

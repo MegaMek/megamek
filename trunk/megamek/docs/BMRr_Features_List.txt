@@ -281,7 +281,7 @@ Special Case Rules (Hostile Environments)
 
 - Extreme Temperatures		Yes		Infantry can deploy in extreme temperatures, but dies at end of turn if not sheltered
 - Ice				Partial		Skiding on Ice has been simulated with pavement (*not* the same rules!!)
-- High /Low Gravity		Yes		None
+- High/Low Gravity		Yes		None
 - Swamp				Yes		None
 - Vacuum			Yes		Vehicles can deploy in vacuum, but die at the end of turn.
 
@@ -295,8 +295,9 @@ Special Case Rules (Minefields)
 Special Case Rules (Night Combat)
 
 - Night Combat			Yes		None
-- Searchlights			Partial		No units have spotlights.  Players
-						must activate during move phase.
+- Searchlights			Partial		Player can give spotlights to units using
+						the "customize mech" window.  Players
+						must activate them during move phase.
 						Target selected in firing phase.
 
 Special Case Rules (Scavenging and Repairs)

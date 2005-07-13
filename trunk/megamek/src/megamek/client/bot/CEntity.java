@@ -318,10 +318,10 @@ public class CEntity {
         // Include heat for standing in a fire
         if (entity.getPosition() != null){
             if (tb.game.getBoard().getHex(entity.getPosition()) != null) {
-	            if (tb.game.getBoard().getHex(entity.getPosition()).
-	                    terrainLevel(Terrains.FIRE) == 2) {
-	                heat += 5;
-	            }
+                if (tb.game.getBoard().getHex(entity.getPosition()).
+                        terrainLevel(Terrains.FIRE) == 2) {
+                    heat += 5;
+                }
             }
         }
         // Include heat from ambient temperature

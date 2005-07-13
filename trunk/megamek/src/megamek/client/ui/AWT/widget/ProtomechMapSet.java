@@ -139,7 +139,7 @@ public class ProtomechMapSet implements DisplayMapSet{
     public void setEntity(Entity entity){
         Protomech proto = (Protomech) entity;
         int armor = 0;
-        int internal =0;
+        int internal = 0;
         int loc = proto.locations();
         if (loc!=Protomech.NUM_PMECH_LOCATIONS) {
             armorLabels[5].setVisible(false);
@@ -153,9 +153,9 @@ public class ProtomechMapSet implements DisplayMapSet{
         for (int i=0; i<loc; i++) {
             armor = proto.getArmor(i);
             internal = proto.getInternal(i);
-            armorLabels[i].setValue(new Integer(armor).toString());
-            internalLabels[i].setValue(new Integer(internal).toString());
-            sectionLabels[i].setValue(proto.getLocationAbbr(i));
+            armorLabels[i].setValue(proto.getArmorString(i));
+            internalLabels[i].setValue(proto.getInternalString(i));
+            sectionLabels[i].setValue(proto.getLocationAbbr(i));            
         }
     }
 

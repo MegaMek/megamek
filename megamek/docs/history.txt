@@ -33,6 +33,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1236475: revert UTF-8 fix because MS JVM can't handle UTF-8 code.
 + Expanded tabs to spaces in the .java files
 + Patch 1236288: Searchlights, Compact Heat Sinks, Laser Heat Sinks (partially)
++ Bug 1237499: LOS reporting feature has same hex number for start and dest.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 2nd July 2005.  MegaMek Version 0.22.82. Best viewed in 1024x768.
+The Great MegaMek Feature list. 13th July 2005.  MegaMek Version 0.22.84. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -296,7 +296,8 @@ Special Case Rules (Night Combat)
 
 - Night Combat			Yes		None
 - Searchlights			Partial		No units have spotlights.  Players
-						can not activate or use spotlights.
+						must activate during move phase.
+						Target selected in firing phase.
 
 Special Case Rules (Scavenging and Repairs)
 

@@ -56,6 +56,7 @@ public class FiringDisplay
     public static final String FIRE_TWIST      = "fireTwist"; //$NON-NLS-1$
     public static final String FIRE_CANCEL     = "fireCancel"; //$NON-NLS-1$
     public static final String FIRE_REPORT     = "fireReport"; //$NON-NLS-1$
+    public static final String FIRE_SEARCHLIGHT= "fireSearchlight"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -71,6 +72,8 @@ public class FiringDisplay
     private Button            butNextTarg;
     private Button            butFlipArms;
     private Button            butSpot;
+
+    private Button            butSearchlight;
     
 //    private Button            butReport;
     private Button            butSpace;
@@ -162,6 +165,12 @@ public class FiringDisplay
         butSpot.setActionCommand(FIRE_SPOT);
         butSpot.setEnabled(false);
         
+        butSearchlight = new Button(Messages.getString("FiringDisplay.Searchlight")); //$NON-NLS-1$
+        butSearchlight.addActionListener(this);
+        butSearchlight.addKeyListener(this);
+        butSearchlight.setActionCommand(FIRE_SEARCHLIGHT);
+        butSearchlight.setEnabled(false);
+
         butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
@@ -255,7 +264,7 @@ public class FiringDisplay
             panButtons.add(butFlipArms);
             panButtons.add(butFindClub);
             panButtons.add(butSpot);
-            panButtons.add(butSpace);
+            panButtons.add(butSearchlight);
             panButtons.add(butMore);
 //             panButtons.add(butDone);
             break;
@@ -326,6 +335,7 @@ public class FiringDisplay
             setSpotEnabled(ce().canSpot()
               && client.game.getOptions().booleanOption("indirect_fire")); //$NON-NLS-1$
             setFlipArmsEnabled(ce().canFlipArms());
+            setSearchlightEnabled(ce().isUsingSpotlight());
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
@@ -609,6 +619,32 @@ public class FiringDisplay
         ash.lockLocation(false);
     }
     
+    private void doSearchlight() {
+        // validate
+        if (ce() == null || target == null) {
+            throw new IllegalArgumentException("current searchlight parameters are invalid"); //$NON-NLS-1$
+        }
+
+        if(!SearchlightAttackAction.isPossible(client.game,cen,target))
+            return;
+
+        //create and queue a searchlight action
+        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getTargetId());
+        attacks.addElement(saa);
+
+        // and add it into the game, temporarily
+        client.game.addAction(saa);
+        clientgui.bv.addAttack(saa);
+        clientgui.bv.repaint(100);
+        clientgui.minimap.drawMap();
+
+        //and prevent duplicates
+        setSearchlightEnabled(false);
+
+        //refresh weapon panel, as bth will have changed
+        updateTarget();
+    }
+
     /**
      * Adds a weapon attack with the currently selected weapon to the attack
      * queue.
@@ -1087,6 +1123,8 @@ public class FiringDisplay
             clientgui.getBoardView().select(null);
             clientgui.getBoardView().cursor(null);
             refreshAll();
+        } else if (ev.getActionCommand().equals(FIRE_SEARCHLIGHT)) {
+            doSearchlight();
         }
     }
     
@@ -1133,6 +1171,10 @@ public class FiringDisplay
     private void setSpotEnabled(boolean enabled) {
         butSpot.setEnabled(enabled);
         clientgui.getMenuBar().setFireSpotEnabled(enabled);
+    }
+    private void setSearchlightEnabled(boolean enabled) {
+        butSearchlight.setEnabled(enabled);
+        clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
     }
     private void setFireModeEnabled(boolean enabled) {
         butFireMode.setEnabled(enabled);

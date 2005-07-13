@@ -157,6 +157,8 @@ public class MoveStep implements Serializable {
                 return "ShRB";
             case MovePath.STEP_UNJAM_RAC :
                 return "Unjam";
+            case MovePath.STEP_SEARCHLIGHT :
+                return "SLight";
             case MovePath.STEP_LOAD :
                 return "Load";
             case MovePath.STEP_UNLOAD :
@@ -848,6 +850,9 @@ public class MoveStep implements Serializable {
         if (type == MovePath.STEP_EJECT) {
             movementType = IEntityMovementType.MOVE_NONE;
         }
+        if (type == MovePath.STEP_SEARCHLIGHT) {
+            movementType = IEntityMovementType.MOVE_NONE;
+        }
 
         // check for valid jump mp
         if ( parent.isJumping()
@@ -881,6 +886,7 @@ public class MoveStep implements Serializable {
         if (!parent.isJumping()
             && !entity.isStuck()
             && entity.getWalkMP() > 0
+            && getMpUsed() > 0
             && (!isProne()
                 || parent.contains(MovePath.STEP_GET_UP)
                 || stepType == MovePath.STEP_TURN_LEFT
@@ -1166,7 +1172,8 @@ public class MoveStep implements Serializable {
         if ( entity instanceof Tank
              && !entity.getCrew().isUnconscious()
              && ( type == MovePath.STEP_UNJAM_RAC
-                  || type == MovePath.STEP_EJECT) ) {
+                  || type == MovePath.STEP_EJECT
+                  || type == MovePath.STEP_SEARCHLIGHT) ) {
             return true;
         }
 

@@ -65,6 +65,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private Choice choDeployment = new Choice();
     private Label labAutoEject = new Label(Messages.getString("CustomMechDialog.labAutoEject"), Label.RIGHT); //$NON-NLS-1$
     private Checkbox chAutoEject = new Checkbox();
+    private Label labSearchlight = new Label(Messages.getString("CustomMechDialog.labSearchlight"), Label.RIGHT); //$NON-NLS-1$
+    private Checkbox chSearchlight = new Checkbox();
     
     private Label labOffBoard = new Label(Messages.getString("CustomMechDialog.labOffBoard"), Label.RIGHT); //$NON-NLS-1$
     private Checkbox chOffBoard = new Checkbox();
@@ -351,6 +353,20 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             tempPanel.add(panRapidfireMGs);
         }
         
+        // Set up searchlight
+        if (clientgui.getClient().game.getOptions().booleanOption("night_battle")) { //$NON-NLS-1$
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labSearchlight, c);
+            tempPanel.add(labSearchlight);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(chSearchlight, c);
+            tempPanel.add(chSearchlight);
+            chSearchlight.setState(entity.hasSpotlight());        
+        }
+        
         setupButtons();
         
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -372,6 +388,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             choC3.setEnabled(false);
             choDeployment.setEnabled(false);
             chAutoEject.setEnabled(false);
+            chSearchlight.setEnabled(false);
             disableMunitionEditing();
             disableMGSetting();
             chOffBoard.setEnabled(false);
@@ -1089,6 +1106,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 ((RapidfireMGPanel)e.nextElement()).applyChoice();
             }
             
+            // update searchlight setting
+            entity.setSpotlight(chSearchlight.getState());
             setOptions();
             
             okay = true;

@@ -85,7 +85,9 @@ public class TdbFile implements IMechLoader {
      */
     private static final String  TRUE    = "True";
     private static final String  FALSE   = "False";
-    private static final String  DOUBLE   = "Double";
+    private static final String  DOUBLE  = "Double";
+    private static final String  LASER   = "Laser";
+    private static final String  COMPACT = "Compact (2)";
     private static final String  TRUE_LOWER    = "true";
 
     private String creatorName = "Unknown";

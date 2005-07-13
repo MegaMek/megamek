@@ -108,6 +108,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem moveFlee = null;
     private MenuItem moveEject = null;
     private MenuItem moveUnjam = null;
+    private MenuItem moveSearchlight = null;
     private MenuItem moveClear = null;
     private MenuItem moveGetUp = null;
     private MenuItem moveRaise = null;
@@ -122,6 +123,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem fireMode           = null;
     private MenuItem fireFindClub       = null;
     private MenuItem fireSpot           = null;
+    private MenuItem fireSearchlight    = null;
     private MenuItem fireCancel         = null;
 
     private MenuItem physicalNext       = null;
@@ -353,6 +355,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         moveEject = createMenuItem(submenu, Messages.getString("CommonMenuBar.MoveEject"), MovementDisplay.MOVE_EJECT); //$NON-NLS-1$
         submenu.addSeparator();
         moveUnjam = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveUnjam"), MovementDisplay.MOVE_UNJAM); //$NON-NLS-1$
+        moveSearchlight = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveSearchlight"), MovementDisplay.MOVE_SEARCHLIGHT); //$NON-NLS-1$
         moveClear = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveClear"), MovementDisplay.MOVE_CLEAR); //$NON-NLS-1$
 
         menu.addSeparator();
@@ -384,6 +387,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 
         fireFindClub = createMenuItem(menu, Messages.getString("CommonMenuBar.fireFindClub"), FiringDisplay.FIRE_FIND_CLUB); //$NON-NLS-1$
         fireSpot = createMenuItem(menu, Messages.getString("CommonMenuBar.fireSpot"), FiringDisplay.FIRE_SPOT); //$NON-NLS-1$
+        fireSearchlight = createMenuItem(menu, Messages.getString("CommonMenuBar.fireSearchlight"), FiringDisplay.FIRE_SEARCHLIGHT); //$NON-NLS-1$
 
         menu.addSeparator();
 
@@ -745,6 +749,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     public synchronized void setMoveUnjamEnabled(boolean enabled) {
         moveUnjam.setEnabled(enabled);
     }
+    public synchronized void setMoveSearchlightEnabled(boolean enabled) {
+        moveSearchlight.setEnabled(enabled);
+    }
     public synchronized void setMoveClearEnabled(boolean enabled) {
         moveClear.setEnabled(enabled);
     }
@@ -846,6 +853,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     }
     public synchronized void setFireSpotEnabled(boolean enabled) {
         fireSpot.setEnabled(enabled);
+    }
+    public synchronized void setFireSearchlightEnabled(boolean enabled) {
+        fireSearchlight.setEnabled(enabled);
     }
 
     //

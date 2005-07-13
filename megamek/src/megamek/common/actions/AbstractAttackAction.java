@@ -14,11 +14,13 @@
 
 package megamek.common.actions;
 
+import java.util.Enumeration;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.AmmoType;
+import megamek.common.actions.SearchlightAttackAction;
 
 /**
  * Abstract superclass for any action where an entity is attacking another
@@ -91,11 +93,28 @@ public abstract class AbstractAttackAction
                 toHit.addModifier(night_modifier, "Night");
             }
 
+            boolean illuminated = false;
+            if(te!=null) {
+                illuminated = te.isIlluminated();
+                //hack for unresolved actions so client shows right BTH
+                if(!illuminated) {
+                    for(Enumeration actions=game.getActions();actions.hasMoreElements();) {
+                        Object a = actions.nextElement();
+                        if(a instanceof SearchlightAttackAction) {
+                            SearchlightAttackAction saa = (SearchlightAttackAction)a;
+                            if(saa.willIlluminate(game, te)) {
+                                illuminated = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             //Searchlights reduce the penalty to zero
             if(te!=null && te.isUsingSpotlight()) {
                 toHit.addModifier(-night_modifier, "target using searchlight");
             }
-            else if(te!=null && te.isIlluminated()) {
+            else if(illuminated) {
                 toHit.addModifier(-night_modifier, "target illuminated by searchlight");
             }
             //So do flares

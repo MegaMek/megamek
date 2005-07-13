@@ -1804,6 +1804,9 @@ public class BoardView1
                 if (aa instanceof ProtomechPhysicalAttackAction) {
                     sprite.addWeapon((ProtomechPhysicalAttackAction)aa);
                 }
+                if (aa instanceof SearchlightAttackAction) {
+                    sprite.addWeapon((SearchlightAttackAction)aa);
+                }
                 return;
             }
         }
@@ -3702,6 +3705,9 @@ public class BoardView1
             if (attack instanceof ProtomechPhysicalAttackAction) {
                 addWeapon((ProtomechPhysicalAttackAction)attack);
             }
+            if (attack instanceof SearchlightAttackAction) {
+                addWeapon((SearchlightAttackAction)attack);
+            }
 
             // nullify image
             this.image = null;
@@ -3876,6 +3882,9 @@ public class BoardView1
         public void addWeapon(ProtomechPhysicalAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
             weaponDescs.addElement(Messages.getString("BoardView1.proto", new Object[]{roll})); //$NON-NLS-1$
+        }
+        public void addWeapon(SearchlightAttackAction attack) {
+            weaponDescs.addElement(Messages.getString("BoardView1.Searchlight"));
         }
 
         private String[] getTooltip() {

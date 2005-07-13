@@ -286,6 +286,8 @@ Inner Sphere Level 3 Tech:
  Equipment:
   Endo-Steel Prototype
   Ferro-Fibrous Prototype
+  IS1 Compact Heat Sink
+  IS2 Compact Heat Sinks
 
 Clan Level 3 Tech:
  Weapons:
@@ -307,5 +309,7 @@ Clan Level 3 Tech:
   CLRotaryAC5 Ammo
   CLRotaryAC10 Ammo
   CLRotaryAC20 Ammo
+ Equipment:
+  CLLaser Heat Sink
 
   

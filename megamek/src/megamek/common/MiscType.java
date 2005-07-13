@@ -39,13 +39,12 @@ public class MiscType extends EquipmentType {
     public static final int     F_CASE              = 0x0040;
     public static final int     F_MASC              = 0x0080;
     public static final int     F_TSM               = 0x0100;
-    //public static final int     F_C3M               = 0x0200;
+    public static final int     F_LASER_HEAT_SINK   = 0x0200;
     public static final int     F_C3S               = 0x0400;
     public static final int     F_C3I               = 0x0800;
     public static final int     F_ARTEMIS           = 0x1000;
     public static final int     F_ECM               = 0x2000;
     public static final int     F_TARGCOMP          = 0x4000;
-    //public static final int     F_OTHER             = 0x8000;
     public static final int     F_BAP               = 0x00010000;
     public static final int     F_BOARDING_CLAW     = 0x00040000;
     public static final int     F_ASSAULT_CLAW      = 0x00080000;
@@ -307,6 +306,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createEndoSteelPrototype());
         EquipmentType.addType(createReinforcedStructure());
         EquipmentType.addType(createCompositeStructure());
+        EquipmentType.addType(createIS1CompactHeatSink());
+        EquipmentType.addType(createIS2CompactHeatSinks());
+        EquipmentType.addType(createCLLaserHeatSink());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -1018,6 +1020,55 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = true;
+        misc.bv = 0;
+        misc.bv = TechConstants.T_IS_LEVEL_3;
+        
+        return misc;
+    }
+
+    public static MiscType createCLLaserHeatSink() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Laser Heat Sink";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("CLDouble Heat Sink");
+        misc.tonnage = 1.0f;
+        misc.criticals = 2;
+        misc.flags |= F_DOUBLE_HEAT_SINK | F_LASER_HEAT_SINK;
+        misc.bv = 0;
+        misc.bv = TechConstants.T_CLAN_LEVEL_3;
+        
+        return misc;
+    }
+
+    //It is possible to have 1 or 2 compact heat sinks
+    //in a single critical slot - this is addressed by
+    //creating 1 slot single and 1 slot double heat sinks
+    //with the weight of 1 or 2 compact heat sinks
+    public static MiscType createIS1CompactHeatSink() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "1 Compact Heat Sink";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("IS1 Compact Heat Sink");
+        misc.tonnage = 1.5f;
+        misc.criticals = 1;
+        misc.flags |= F_HEAT_SINK;
+        misc.bv = 0;
+        misc.bv = TechConstants.T_IS_LEVEL_3;
+        
+        return misc;
+    }
+
+    public static MiscType createIS2CompactHeatSinks() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "2 Compact Heat Sinks";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("IS2 Compact Heat Sinks");
+        misc.tonnage = 3.0f;
+        misc.criticals = 1;
+        misc.flags |= F_DOUBLE_HEAT_SINK;
         misc.bv = 0;
         misc.bv = TechConstants.T_IS_LEVEL_3;
         

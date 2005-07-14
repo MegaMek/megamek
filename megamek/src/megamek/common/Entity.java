@@ -892,13 +892,13 @@ public abstract class Entity
       }
 
     /**
-     * Returns true if the entity has an RAC which is jammed
+     * Returns true if the entity has an RAC which is jammed and not destroyed
      */
       public boolean canUnjamRAC() {
           for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
               Mounted mounted = (Mounted)i.nextElement();
               WeaponType wtype = (WeaponType)mounted.getType();
-              if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY && mounted.isJammed()) {
+              if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY && mounted.isJammed() && !mounted.isDestroyed()) {
                   return true;
               }
           }

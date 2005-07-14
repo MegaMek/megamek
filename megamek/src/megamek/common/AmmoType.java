@@ -542,6 +542,39 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType( createBALRM5Ammo() );
         EquipmentType.addType( createPhalanxSRM4Ammo() );
         EquipmentType.addType( createGrenadierSRM4Ammo() );
+        EquipmentType.addType( createBAInfernoSRMAmmo() );
+        EquipmentType.addType( createAdvancedSRM1Ammo() );
+        EquipmentType.addType( createAdvancedSRM2Ammo() );
+        EquipmentType.addType( createAdvancedSRM3Ammo() );
+        EquipmentType.addType( createAdvancedSRM4Ammo() );
+        EquipmentType.addType( createAdvancedSRM5Ammo() );
+        EquipmentType.addType( createAdvancedSRM6Ammo() );
+        EquipmentType.addType( createISLAWLauncherAmmo() );
+        EquipmentType.addType( createISLAW2LauncherAmmo() );
+        EquipmentType.addType( createISLAW3LauncherAmmo() );
+        EquipmentType.addType( createISLAW4LauncherAmmo() );
+        EquipmentType.addType( createISLAW5LauncherAmmo() );
+        EquipmentType.addType( createISMRM1Ammo() );
+        EquipmentType.addType( createISMRM2Ammo() );
+        EquipmentType.addType( createISMRM3Ammo() );
+        EquipmentType.addType( createISMRM4Ammo() );
+        EquipmentType.addType( createISMRM5Ammo() );
+        EquipmentType.addType( createBAISLRM1Ammo() );
+        EquipmentType.addType( createBAISLRM2Ammo() );
+        EquipmentType.addType( createBAISLRM3Ammo() );
+        EquipmentType.addType( createBAISLRM4Ammo() );
+        EquipmentType.addType( createBAISLRM5Ammo() );
+        EquipmentType.addType( createBACLLRM1Ammo() );
+        EquipmentType.addType( createBACLLRM2Ammo() );
+        EquipmentType.addType( createBACLLRM3Ammo() );
+        EquipmentType.addType( createBACLLRM4Ammo() );
+        EquipmentType.addType( createBACLLRM5Ammo() );
+        EquipmentType.addType( createBASRM1Ammo() );
+        EquipmentType.addType( createBASRM2Ammo() );
+        EquipmentType.addType( createBASRM3Ammo() );
+        EquipmentType.addType( createBASRM4Ammo() );
+        EquipmentType.addType( createBASRM5Ammo() );
+        EquipmentType.addType( createBASRM6Ammo() );
 
         // Protomech-specific ammo
         EquipmentType.addType(createCLPROHeavyMGAmmo());
@@ -3770,7 +3803,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createBAAdvancedSRM2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
         ammo.name = "Advanced SRM 2 Ammo";
         ammo.setInternalName("BA-Advanced SRM-2 Ammo");
         ammo.addLookupName("BAAdvancedSRM2 Ammo");
@@ -3787,10 +3820,10 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createBAAdvancedSRM5Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
         ammo.name = "Advanced SRM 5 Ammo";
         ammo.setInternalName("BA-Advanced SRM-5 Ammo");
-        ammo.addLookupName("BA-Advanced SRM-5 Ammo");
+        ammo.addLookupName("BAAdvancedSRM5 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
@@ -4092,6 +4125,533 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
       }
+    
+      public static AmmoType createBAISLRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "LRM 1 Ammo";
+        ammo.setInternalName("IS Ammo LRM-1");
+        ammo.addLookupName("BAISLRM1 Ammo");
+        ammo.addLookupName("BAISLRM1 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBAISLRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "LRM 2 Ammo";
+        ammo.setInternalName("IS Ammo LRM-2");
+        ammo.addLookupName("BAISLRM2 Ammo");
+        ammo.addLookupName("BAISLRM2 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBAISLRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "LRM 3 Ammo";
+        ammo.setInternalName("IS Ammo LRM-3");
+        ammo.addLookupName("BAISLRM3 Ammo");
+        ammo.addLookupName("BAISLRM3 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBAISLRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "LRM 4 Ammo";
+        ammo.setInternalName("IS Ammo LRM-4");
+        ammo.addLookupName("BAISLRM4 Ammo");
+        ammo.addLookupName("BAISLRM4 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    public static AmmoType createBAISLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "LRM 5 Ammo";
+        ammo.setInternalName("IS Ammo LRM-5");
+        ammo.addLookupName("BAISLRM5 Ammo");
+        ammo.addLookupName("BAISLRM5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createBACLLRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRM 1 Ammo";
+        ammo.setInternalName("BACL Ammo LRM-1");
+        ammo.addLookupName("BACLLRM1 Ammo");
+        ammo.addLookupName("BACL LRM 1 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBACLLRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRM 2 Ammo";
+        ammo.setInternalName("BACL Ammo LRM-2");
+        ammo.addLookupName("BACLLRM2 Ammo");
+        ammo.addLookupName("BACL LRM 2 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBACLLRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRM 3 Ammo";
+        ammo.setInternalName("BACL Ammo LRM-3");
+        ammo.addLookupName("BACLLRM3 Ammo");
+        ammo.addLookupName("BACL LRM 3 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBACLLRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRM 4 Ammo";
+        ammo.setInternalName("BACL Ammo LRM-4");
+        ammo.addLookupName("BACLLRM4 Ammo");
+        ammo.addLookupName("BACL LRM 4 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBACLLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "LRM 5 Ammo";
+        ammo.setInternalName("BACL Ammo LRM-5");
+        ammo.addLookupName("BACLLRM5 Ammo");
+        ammo.addLookupName("BACL LRM 5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 3;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createBASRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "SRM 6 Ammo";
+        ammo.setInternalName("BA Ammo SRM-6");
+        ammo.addLookupName("BASRM-6 Ammo");
+        ammo.addLookupName("BASRM-6 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBASRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "SRM 5 Ammo";
+        ammo.setInternalName("BA Ammo SRM-5");
+        ammo.addLookupName("BASRM-5 Ammo");
+        ammo.addLookupName("BASRM-5 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBASRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "SRM 4 Ammo";
+        ammo.setInternalName("BA Ammo SRM-4");
+        ammo.addLookupName("BASRM-4 Ammo");
+        ammo.addLookupName("BASRM-4 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createBASRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "SRM 3 Ammo";
+        ammo.setInternalName("BA Ammo SRM-3");
+        ammo.addLookupName("BASRM-3 Ammo");
+        ammo.addLookupName("BASRM-3 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createBASRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "SRM 1 Ammo";
+        ammo.setInternalName("BA Ammo SRM-1");
+        ammo.addLookupName("BASRM-1 Ammo");
+        ammo.addLookupName("BASRM-1 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISMRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "MRM 1 Ammo";
+        ammo.setInternalName("IS MRM 1 Ammo");
+        ammo.addLookupName("ISMRM1 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISMRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "MRM 2 Ammo";
+        ammo.setInternalName("IS MRM 2 Ammo");
+        ammo.addLookupName("ISMRM2 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_MRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISMRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "MRM 3 Ammo";
+        ammo.setInternalName("IS MRM 3 Ammo");
+        ammo.addLookupName("ISMRM3 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_MRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISMRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "MRM 4 Ammo";
+        ammo.setInternalName("IS MRM 4 Ammo");
+        ammo.addLookupName("ISMRM4 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_MRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }   
+    
+    public static AmmoType createISMRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "MRM 5 Ammo";
+        ammo.setInternalName("IS MRM 5 Ammo");
+        ammo.addLookupName("ISMRM5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_MRM;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISLAWLauncherAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "LAW Launcher Ammo";
+        ammo.setInternalName("IS Ammo LAW Launcher");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+	    ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+	    ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISLAW2LauncherAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "LAW 2 Launcher Ammo";
+        ammo.setInternalName("IS Ammo LAW-2 Launcher");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+	    ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+	    ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISLAW3LauncherAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "LAW 3 Launcher Ammo";
+        ammo.setInternalName("IS Ammo LAW-3 Launcher");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+	    ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+	    ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISLAW4LauncherAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "LAW 4 Launcher Ammo";
+        ammo.setInternalName("IS Ammo LAW-4 Launcher");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+	    ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+	    ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISLAW5LauncherAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "LAW 5 Launcher Ammo";
+        ammo.setInternalName("IS Ammo LAW-5 Launcher");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+	    ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+	    ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createAdvancedSRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Advanced SRM 1 Ammo";
+        ammo.setInternalName("BA-Advanced SRM-1 Ammo");
+        ammo.addLookupName("BAAdvanced SRM1 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createAdvancedSRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Advanced SRM 5 Ammo";
+        ammo.setInternalName("BA-Advanced SRM-5 Ammo OS");
+        ammo.addLookupName("BAAdvancedSRM5 Ammo OS");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createAdvancedSRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Advanced SRM 3 Ammo";
+        ammo.setInternalName("BA-Advanced SRM-3 Ammo");
+        ammo.addLookupName("BAAdvanced SRM3 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createAdvancedSRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Advanced SRM 2 Ammo";
+        ammo.setInternalName("BA-Advanced SRM-2 Ammo OS");
+        ammo.addLookupName("BAAdvancedSRM2 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createAdvancedSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Advanced SRM 4 Ammo";
+        ammo.setInternalName("BA-Advanced SRM-4 Ammo");
+        ammo.addLookupName("BAAdvanced SRM4 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createAdvancedSRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Advanced SRM 6 Ammo";
+        ammo.setInternalName("BA-Advanced SRM-6 Ammo");
+        ammo.addLookupName("BAAdvanced SRM6 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+
+        return ammo;
+    }
 
     public String toString() {
         return "Ammo: " + name;

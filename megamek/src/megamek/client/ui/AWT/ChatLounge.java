@@ -143,7 +143,7 @@ public class ChatLounge
         // Create a tabbed panel to hold our components.
         panTabs = new TabPanel();
         Font tabPanelFont = new Font ("Helvetica",Font.BOLD, //$NON-NLS-1$
-                GUIPreferences.getInstance().getChatLoungeTabFontSize());
+          GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         panTabs.setTabFont (tabPanelFont);
         
         // Create a new camo selection dialog.

@@ -134,7 +134,7 @@
     </delete>
   </target>
 
-  <target depends="compile, jar" name="all"/>
+  <target depends="clean, compile, jar" name="all"/>
 
   <!-- generates the updated code & media package and the regular package (containing both) -->
   <target name="packageAll" description="Generates 3 packages: code, media, code+media" depends="cvsdev-get, cvsdev-build, packageMedia, packageCode, cvsdev-package">

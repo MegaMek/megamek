@@ -472,6 +472,36 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createBAVibroClaws1() );
         EquipmentType.addType( createBAVibroClaws2() );
         EquipmentType.addType( createPhalanxSRM4() );
+        EquipmentType.addType( createBAHeavyMG() );
+        EquipmentType.addType( createBALightMG() );
+        EquipmentType.addType( createBACLHeavyMediumLaser() );
+        EquipmentType.addType( createBAHeavyRecRifle() );
+        EquipmentType.addType( createBACLHeavySmallLaser() );
+        EquipmentType.addType( createBACLERMediumLaser() );
+        EquipmentType.addType( createBACLSmallPulseLaser() );
+        EquipmentType.addType( createBAISLightMortar() );
+        EquipmentType.addType( createBAISHeavyMortar() );
+        EquipmentType.addType( createBAMicroGrenade() );
+        EquipmentType.addType( createBAGrandMaulerGauss() );
+        EquipmentType.addType( createBATsunamiGaussRifle() );
+        EquipmentType.addType( createCLAdvancedSRM1() );
+        EquipmentType.addType( createCLAdvancedSRM3() );
+        EquipmentType.addType( createCLAdvancedSRM4() );
+        EquipmentType.addType( createCLAdvancedSRM6() );
+        EquipmentType.addType( createISLAWLauncher() );
+        EquipmentType.addType( createISLAW2Launcher() );
+        EquipmentType.addType( createISLAW3Launcher() );
+        EquipmentType.addType( createISLAW4Launcher() );
+        EquipmentType.addType( createISLAW5Launcher() );
+        EquipmentType.addType( createISMRM1() );
+        EquipmentType.addType( createISMRM2() );
+        EquipmentType.addType( createISMRM3() );
+        EquipmentType.addType( createISMRM4() );
+        EquipmentType.addType( createISMRM5() );
+        EquipmentType.addType( createLRM1() );
+        EquipmentType.addType( createLRM2() );
+        EquipmentType.addType( createLRM3() );
+        EquipmentType.addType( createLRM4() );
         
         // hack for C3 Master TAG
         EquipmentType.addType( createC3M() );
@@ -8088,6 +8118,806 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "1-shot", "2-shot", "3-shot", "4-shot" };
         weapon.setModes( modes );
         
+        return weapon;
+    }
+    
+    public static WeaponType createBAHeavyRecRifle() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "Heavy Recoilless";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Heavy Recoilless Rifle");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 5;
+        weapon.longRange = 7;
+        weapon.extremeRange = 10;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAHeavyMG() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Semi-Portable Autocannon";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-HeavyMG");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 2;
+        weapon.extremeRange = 2;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBALightMG() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Semi-Portable Machine Gun";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-LightMG");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBACLHeavyMediumLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Ultra Heavy Support Laser";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-CLHeavyMediumLaser");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 10;
+        weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.waterShortRange = 2;
+        weapon.waterMediumRange = 4;
+        weapon.waterLongRange = 6;
+        weapon.waterExtremeRange = 8;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createBACLHeavySmallLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Semi-Portable Heavy Laser";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-CLHeavySmallLaser");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 6;
+        weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
+        weapon.waterShortRange = 1;
+        weapon.waterMediumRange = 2;
+        weapon.waterLongRange = 2;
+        weapon.waterExtremeRange = 2;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createBACLERMediumLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "ER Heavy Support Laser";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-CLERMediumLaser");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 7;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.extremeRange = 20;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_LASER | F_ENERGY;
+
+        return weapon;
+    }
+
+    public static WeaponType createBACLSmallPulseLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Support Pulse Laser";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-CLSmallPulseLaser");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.waterShortRange = 1;
+        weapon.waterMediumRange = 2;
+        weapon.waterLongRange = 4;
+        weapon.waterExtremeRange = 4;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAGrandMaulerGauss() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "Grand Mauler Gauss Cannon";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-ISGrandMauler");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 5;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBATsunamiGaussRifle() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "Tsunami Heavy Gauss Rifle";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-ISTsunamiHeavyGaussRifle");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 5;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAMicroGrenade() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "Micro Grenade Launcher";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-ISMicroGrenadeLauncher");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 2;
+        weapon.extremeRange = 4;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+	  weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_BATTLEARMOR | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAISHeavyMortar() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "Heavy Mortar";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-ISHeavyMortar");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = 2;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_BATTLEARMOR | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBAISLightMortar() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "Light Mortar";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-ISLightMortar");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = 1;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_BATTLEARMOR | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLAdvancedSRM1() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Advanced SRM 1";
+        weapon.setInternalName("CLAdvancedSRM1");
+        weapon.addLookupName("Clan Advanced SRM-1");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_SRM_ADVANCED;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_NO_FIRES | F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLAdvancedSRM3() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Advanced SRM 3";
+        weapon.setInternalName("CLAdvancedSRM3");
+        weapon.addLookupName("Clan Advanced SRM-3");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_SRM_ADVANCED;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLAdvancedSRM4() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Advanced SRM 4";
+        weapon.setInternalName("CLAdvancedSRM4");
+        weapon.addLookupName("Clan Advanced SRM-4");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM_ADVANCED;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLAdvancedSRM6() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Advanced SRM 6";
+        weapon.setInternalName("CLAdvancedSRM6");
+        weapon.addLookupName("Clan Advanced SRM-6");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM_ADVANCED;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLAWLauncher() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "LAW Launcher";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISLAW");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 7;
+        weapon.longRange = 12;
+        weapon.extremeRange = 14;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLAW2Launcher() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "LAW 2 Launcher";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISLAW2");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 7;
+        weapon.longRange = 12;
+        weapon.extremeRange = 14;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLAW3Launcher() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "LAW 3 Launcher";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISLAW3");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 3;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 7;
+        weapon.longRange = 12;
+        weapon.extremeRange = 14;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLAW4Launcher() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "LAW 4 Launcher";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISLAW4");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 7;
+        weapon.longRange = 12;
+        weapon.extremeRange = 14;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLAW5Launcher() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "LAW 5 Launcher";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISLAW5");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 7;
+        weapon.longRange = 12;
+        weapon.extremeRange = 14;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMRM1() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "MRM 1";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISMRM1");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_MRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMRM2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "MRM 2";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISMRM2");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_MRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMRM3() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "MRM 3";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISMRM3");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 3;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_MRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMRM4() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "MRM 4";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISMRM4");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_MRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMRM5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "MRM 5";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISMRM5");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+	  weapon.toHitModifier = +1;
+        weapon.ammoType = AmmoType.T_MRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        // someone please explain why these misbehave if the have the flag F_BATTLEARMOR
+        // because they are battlearmor weapons.
+        // Server#resolveWeaponsAttack is a mess :-)
+        weapon.flags |= F_MISSILE;
+        weapon.bv = 0;
+
+        return weapon;
+    }
+
+    public static WeaponType createLRM1() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRM 1";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS LRM-1");
+        weapon.addLookupName("ISLRM1");
+        weapon.addLookupName("IS LRM 1");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createLRM2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRM 2";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS LRM-2");
+        weapon.addLookupName("ISLRM2");
+        weapon.addLookupName("IS LRM 2");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createLRM3() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRM 3";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS LRM-3");
+        weapon.addLookupName("ISLRM3");
+        weapon.addLookupName("IS LRM 3");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createLRM4() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_1;
+        weapon.name = "LRM 4";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS LRM-4");
+        weapon.addLookupName("ISLRM4");
+        weapon.addLookupName("IS LRM 4");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
         return weapon;
     }
 

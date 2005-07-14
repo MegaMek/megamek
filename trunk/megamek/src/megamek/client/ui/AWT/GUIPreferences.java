@@ -39,6 +39,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     shields new users from unecessary complication.
     */
     public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
+    public static final String ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE="AdvancedChatLoungeTabFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE =
         "AdvancedMechDisplayArmorLargeFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE =
@@ -65,7 +66,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ALWAYS_RIGHT_CLICK_SCROLL="AlwaysRightClickScroll";
     public static final String AUTO_EDGE_SCROLL = "AutoEdgeScroll";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
-    public static final String CHAT_LOUNGE_TAB_FONT_SIZE="ChatLoungeTabFontSize";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
     public static final String CLICK_EDGE_SCROLL = "ClickEdgeScroll";
     public static final String CTL_SCROLL = "CtlScroll";
@@ -135,6 +135,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
 
         store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
+        store.setDefault(ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE, 16);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE, 9);
@@ -152,7 +153,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
 
         store.setDefault(AUTO_END_FIRING, true);
-        store.setDefault(CHAT_LOUNGE_TAB_FONT_SIZE, 16);
         store.setDefault(CHAT_LOUNGE_TABS, true);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 370);
         store.setDefault(DISPLAY_SIZE_WIDTH, 235);
@@ -215,10 +215,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getAutoEndFiring() {
         return store.getBoolean(AUTO_END_FIRING);
-    }
-
-    public int getChatLoungeTabFontSize() {
-        return store.getInt(CHAT_LOUNGE_TAB_FONT_SIZE);
     }
 
     public boolean getChatLoungeTabs() {

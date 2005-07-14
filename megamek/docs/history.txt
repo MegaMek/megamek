@@ -37,6 +37,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1237561: protomek mapset shows negative numbers if armor/IS is gone.
 + Bug 1237956: Bot attempts to unjam destroyed RAC
 + Patch 1231130: CBT Companion BA Support Weapons. See data/mechfiles/readme.txt
++ Make the chat lounge tab font size an advanced option.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

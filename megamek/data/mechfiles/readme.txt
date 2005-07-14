@@ -51,8 +51,7 @@ Flamer						BA-Flamer
 Heavy Grenade Launcher				BA-Auto GL
 King David Light Gauss Rifle			BA-King David Light Gauss Rifle
 Light Recoilless Rifle				BA-Light Recoilless Rifle
-LRM 5						ISLRM5
-(6 shots)					BALRM5 Ammo
+
 Machine Gun					BA-Machine Gun
 Magshot Gauss Rifle				BA-Magshot GR
 Mech Taser Rifle				BA-Mech Taser Rifle
@@ -69,7 +68,37 @@ SRM 2						SRM-2
 SRM 2 (Inferno)					BA-Inferno SRM
 (1 shot)					BA-Inferno SRM Ammo
 Support PPC					BA-Support PPC
-
+Light Mortar				BA-ISLightMortar
+Heavy Mortar				BA-ISHeavyMortar
+Micro Grenade Launcher		BA-ISMicroGrenadeLauncher
+Tsunami Heavy Gauss Rifle	BA-ISTsunamiHeavyGaussRifle
+Grand Mauler				BA-ISGrandMauler
+Light Anti-Vehicle Weapon	ISLAW
+Light Anti-Vehicle Weapon 2	ISLAW2
+Light Anti-Vehicle Weapon 3	ISLAW3
+Light Anti-Vehicle Weapon 4	ISLAW4
+Light Anti-Vehicle Weapon 5	ISLAW5
+MRM 1						ISMRM1
+MRM 2						ISMRM2
+MRM 3						ISMRM3
+MRM 4						ISMRM4
+MRM 5						ISMRM5
+MRM 1 Ammo (1 shot)			ISMRM1 Ammo
+MRM 2 Ammo (1 shot)			ISMRM2 Ammo
+MRM 3 Ammo (1 shot)			ISMRM3 Ammo
+MRM 4 Ammo (1 shot)			ISMRM4 Ammo
+MRM 5 Ammo (1 shot)			ISMRM5 Ammo
+LRM 1						ISLRM1
+LRM 2						ISLRM2
+LRM 3						ISLRM3
+LRM 4						ISLRM4
+LRM 5						ISLRM5
+LRM 1 Ammo (3 shots)		BAISLRM1 Ammo
+LRM 2 Ammo (3 shots)		BAISLRM2 Ammo
+LRM 3 Ammo (3 shots)		BAISLRM3 Ammo
+LRM 4 Ammo (3 shots)		BAISLRM4 Ammo
+LRM 5 Ammo (3 shots)		BAISLRM5 Ammo
+LRM 5 Ammo (6 shots)		BALRM5 Ammo
 Clan
 Advanced SRM 2					Clan Advanced SRM-2
 (2 shots)					BA-Advanced SRM-2 Ammo
@@ -80,6 +109,44 @@ ER Small Laser					BA-Clan ER Small Laser
 Medium Pulse Laser				BA-CL Medium Pulse Laser
 SRM 2						CLSRM2
 (1 shot)					BASRM2OS Ammo
+Clan SRM 1					CLSRM1
+Clan SRM 2					CLSRM2
+Clan SRM 3					CLSRM3
+Clan SRM 4					CLSRM4
+Clan SRM 5					CLSRM5
+Clan SRM 6					CLSRM6
+Clan SRM 1 Ammo	(1 Shot)	BASRM1 Ammo
+Clan SRM 2 Ammo	(2 Shots)	BASRM2 Ammo
+Clan SRM 3 Ammo	(1 Shot)	BASRM3 Ammo
+Clan SRM 4 Ammo	(1 Shot)	BASRM4 Ammo
+Clan SRM 5 Ammo	(1 Shot)	BASRM5 Ammo
+Clan SRM 6 Ammo	(1 Shot)	BASRM6 Ammo
+Heavy Medium Laser			BA-CLHeavyMediumLaser
+Heavy Small Laser			BA-CLHeavySmallLaser
+Heavy Machine Gun			BA-HeavyMG
+Light Machine Gun			BA-LightMG
+Heavy Recoilless Rifle		BA-Heavy Recoilless Rifle
+Small Pulse Laser			BA-CLSmallPulseLaser
+Advanced SRM 1					Clan Advanced SRM-1
+Advanced SRM 3					Clan Advanced SRM-3
+Advanced SRM 4					Clan Advanced SRM-4
+Advanced SRM 6					Clan Advanced SRM-6
+Advanced SRM 1 Ammo	(1 shot)	BA-Advanced SRM-1 Ammo
+Advanced SRM 2 Ammo (1 shot)	BA-Advanced SRM-2 Ammo OS
+Advanced SRM 3 Ammo	(1 shot)	BA-Advanced SRM-3 Ammo
+Advanced SRM 4 Ammo	(1 shot)	BA-Advanced SRM-4 Ammo
+Advanced SRM 5 Ammo	(1 shot)    BA-Advanced SRM-5 Ammo OS
+Advanced SRM 6 Ammo	(1 shot)	BA-Advanced SRM-6 Ammo
+LRM 1							CLLRM1
+LRM 2							CLLRM2
+LRM 3							CLLRM3
+LRM 4							CLLRM4
+LRM 5							CLLRM5
+LRM 1 Ammo	(3 shots)			BACLLRM1 Ammo
+LRM 2 Ammo	(3 shots)			BACLLRM2 Ammo
+LRM 3 Ammo	(3 shots)			BACLLRM3 Ammo
+LRM 4 Ammo	(3 shots)			BACLLRM4 Ammo
+LRM 5 Ammo	(3 shots)			BACLLRM5 Ammo
 
 Squad Support (Trooper 1)
 Flamer						IS Flamer
@@ -122,3 +189,5 @@ Mine Dispenser					BA-Mine Launcher
 (1 shot)					BA-Mine Launcher Ammo
 Parafoil					Parafoil
 Searchlight					BASearchlight
+
+

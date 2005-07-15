@@ -65,6 +65,9 @@ public class HexTarget implements Targetable
         case (Targetable.TYPE_MINEFIELD_DELIVER) :
             name = Messages.getString("HexTarget.DeliverMinefield");
             break;
+        case (Targetable.TYPE_HEX_BOMB) :
+            name = Messages.getString("HexTarget.Bomb");
+            break;
         case (Targetable.TYPE_HEX_CLEAR) :
             name = Messages.getString("HexTarget.Clear");
             break;

@@ -3135,7 +3135,7 @@ public abstract class Entity
                                            MoveStep step, IHex curHex,
                                            IHex prevHex) {
         if (this instanceof VTOL) {
-            if (getElevation()>getGame().getBoard().getHex(curPos).ceiling()) {
+            if (step.getElevation()>getGame().getBoard().getHex(curPos).ceiling()) {
                 return false;
             }
         }

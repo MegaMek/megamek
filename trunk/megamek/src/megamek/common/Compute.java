@@ -206,7 +206,9 @@ public class Compute
                                                 Coords src, Coords dest,
                                                 int movementType,
                                                 boolean isTurning,
-                                                boolean prevStepIsOnPavement) {
+                                                boolean prevStepIsOnPavement,
+                                                int srcElevation,
+                                                int destElevation) {
         final Entity entity = game.getEntity(entityId);
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
@@ -275,10 +277,8 @@ public class Compute
         // If we entering or leaving a building, all non-infantry
         // need to make a piloting check to avoid damage.
         // TODO: allow entities to occupy different levels of buildings.
-        int nSrcEl = entity.elevationOccupied(srcHex);
-        int nDestEl = entity.elevationOccupied(destHex);
-        if ( ( nSrcEl < srcHex.terrainLevel( Terrains.BLDG_ELEV ) ||
-               nDestEl < destHex.terrainLevel( Terrains.BLDG_ELEV ) ) &&
+        if ( ( srcElevation < srcHex.terrainLevel( Terrains.BLDG_ELEV ) ||
+               destElevation < destHex.terrainLevel( Terrains.BLDG_ELEV ) ) &&
              !(entity instanceof Infantry) ) {
             return true;
         }

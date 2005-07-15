@@ -5775,12 +5775,15 @@ implements Runnable, ConnectionHandler {
              mLinker.getType() instanceof MiscType &&
              !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() &&
              mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) ) {
-          if ((!weapon.getType().hasModes()
-               || !weapon.curMode().equals("Indirect"))
-               && (atype.getAmmoType() == AmmoType.T_ATM)
-                && (atype.getMunitionType() == AmmoType.M_STANDARD ||
-               atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE ||
-               atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) {
+          if ((!weapon.getType().hasModes() ||
+               !weapon.curMode().equals("Indirect")) &&
+              ( ((atype.getAmmoType() == AmmoType.T_ATM) &&
+                 (atype.getMunitionType() == AmmoType.M_STANDARD ||
+                  atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE ||
+                  atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) ||
+                ((atype.getAmmoType() == AmmoType.T_LRM ||
+                 atype.getAmmoType() == AmmoType.T_SRM) &&
+                atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE))) {
               isNemesisConfusable = true;
           }
       } else if (wtype.getAmmoType() == AmmoType.T_LRM ||
@@ -6637,7 +6640,8 @@ implements Runnable, ConnectionHandler {
                      ( mLinker != null &&
                        mLinker.getType() instanceof MiscType &&
                        !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() &&
-                       mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) ) {
+                       mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) &&
+                       atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
 
                     // check ECM interference
                     if (!bCheckedECM) {
@@ -6649,13 +6653,16 @@ implements Runnable, ConnectionHandler {
                         bCheckedECM = true;
                     }
                     // also no artemis for IDF, and only use standard ammo (excepot for ATMs)
-                    if (!bECMAffected&& !bMekStealthActive
+                    if (!bECMAffected && !bMekStealthActive
                         && (!weapon.getType().hasModes()
                             || !weapon.curMode().equals("Indirect"))
-                        && (atype.getAmmoType() == AmmoType.T_ATM)
-                        && (atype.getMunitionType() == AmmoType.M_STANDARD
-                            || atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE
-                            || atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) {
+                        && ( (atype.getAmmoType() == AmmoType.T_ATM) &&
+                              (atype.getMunitionType() == AmmoType.M_STANDARD||
+                               atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE ||
+                               atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)) ||
+                             ( (atype.getAmmoType() == AmmoType.T_LRM ||
+                                atype.getAmmoType() == AmmoType.T_SRM) &&
+                               atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
                         nSalvoBonus += 2;
                     }
                 } else if (entityTarget != null && 
@@ -6671,7 +6678,7 @@ implements Runnable, ConnectionHandler {
                         bCheckedECM = true;
                     }
                     // only apply Narc bonus if we're not suffering ECM effect
-                    // and we are using standard ammo.
+                    // and we are using narc ammo.
                     if (!bECMAffected
                             && !bMekStealthActive
                             && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))

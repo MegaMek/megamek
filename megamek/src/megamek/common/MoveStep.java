@@ -1011,6 +1011,10 @@ public class MoveStep implements Serializable {
             return;
         }
 
+        int prevEl = getElevation();
+        if (prev != null) {
+            prevEl = prev.getElevation();
+        }
         danger
             |= Compute.isPilotingSkillNeeded(
                 game,
@@ -1019,7 +1023,9 @@ public class MoveStep implements Serializable {
                 curPos,
                 movementType,
                 isTurning,
-                prevStepOnPavement);
+                prevStepOnPavement,
+                prev.getElevation(),
+                getElevation());
 
         // getting up is also danger
         if (stepType == MovePath.STEP_GET_UP) {

@@ -11510,7 +11510,7 @@ implements Runnable, ConnectionHandler {
         // HACK: if the dest hex is water, assume that the fall height given is
         // to the floor of the hex, and modifiy it so that it's to the surface
         if (waterDepth > 0) {
-            damageHeight = Math.max(height - waterDepth, 0);
+            damageHeight = height - waterDepth;
         }
 
         // calculate damage for hitting the surface

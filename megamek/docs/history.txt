@@ -39,6 +39,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Patch 1231130: CBT Companion BA Support Weapons. See data/mechfiles/readme.txt
 + Make the chat lounge tab font size an advanced option.
 + Bug 1237748: VTOL damage out of sequence.
++ Final complete fix for Swarm and Swarm-I missiles.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

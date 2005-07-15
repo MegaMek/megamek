@@ -1024,7 +1024,7 @@ public class MoveStep implements Serializable {
                 movementType,
                 isTurning,
                 prevStepOnPavement,
-                prev.getElevation(),
+                prevEl,
                 getElevation());
 
         // getting up is also danger

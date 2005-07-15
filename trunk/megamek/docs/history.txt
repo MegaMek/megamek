@@ -42,6 +42,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Final complete fix for Swarm and Swarm-I missiles.
 + Players need to choose Artemis Capable munition if they want to get the bonus
     from Artemis IV.
++ Added Sylph pic.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

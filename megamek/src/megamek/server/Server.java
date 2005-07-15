@@ -5970,22 +5970,21 @@ implements Runnable, ConnectionHandler {
       // do we hit?
       boolean bMissed = wr.roll < toHit.getValue();
       if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
-        if (wr.roll == toHit.getValue()) {
-            bGlancing = true;
-            glancingMissileMod = -4;
-            glancingCritMod = -2;
-            phaseReport.append(" - Glancing Blow - ");
+          if (wr.roll == toHit.getValue()) {
+              bGlancing = true;
+              glancingMissileMod = -4;
+              glancingCritMod = -2;
+              phaseReport.append(" - Glancing Blow - ");
+          } else {
+              bGlancing = false;
+              glancingMissileMod = 0;
+              glancingCritMod = 0;
+          }
         } else {
             bGlancing = false;
             glancingMissileMod = 0;
             glancingCritMod = 0;
         }
-      } else {
-        bGlancing = false;
-        glancingMissileMod = 0;
-        glancingCritMod = 0;
-      }
-      
 
         // special case TAG.  No damage, but target is tagged until end of turn
         if (wtype.hasFlag(WeaponType.F_TAG)) {
@@ -6024,57 +6023,57 @@ implements Runnable, ConnectionHandler {
       // special case minefield delivery, no damage and scatters if misses.
       if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER
           || target.getTargetType() == Targetable.TYPE_FLARE_DELIVER) {
-        Coords coords = target.getPosition();
-        if (!bMissed) {
-          phaseReport.append("hits the intended hex ")
-              .append(coords.getBoardNum())
-              .append("\n");
-        }
-        else {
-          coords = Compute.scatter(coords, game.getOptions().booleanOption("margin_scatter_distance")?toHit.getValue()-wr.roll:-1);
-          if (game.getBoard().contains(coords)) {
-            phaseReport.append("misses and scatters to hex ")
-                .append(coords.getBoardNum())
-                .append("\n");
+          Coords coords = target.getPosition();
+          if (!bMissed) {
+              phaseReport.append("hits the intended hex ")
+                  .append(coords.getBoardNum())
+                  .append("\n");
           }
           else {
-            phaseReport.append("misses and scatters off the board\n");
-            return !bMissed;
+              coords = Compute.scatter(coords, game.getOptions().booleanOption("margin_scatter_distance")?toHit.getValue()-wr.roll:-1);
+              if (game.getBoard().contains(coords)) {
+                  phaseReport.append("misses and scatters to hex ")
+                             .append(coords.getBoardNum())
+                             .append("\n");
+              }
+              else {
+                  phaseReport.append("misses and scatters off the board\n");
+                  return !bMissed;
+              }
           }
-        }
 
-        // Handle the thunder munitions.
-        if ((atype.getAmmoType() == AmmoType.T_LRM)
+          // Handle the thunder munitions.
+          if ((atype.getAmmoType() == AmmoType.T_LRM)
                 && atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
-          deliverThunderAugMinefield(coords, ae.getOwner().getId(),
-                                     atype.getRackSize());
-        }
-        else if ((atype.getAmmoType() == AmmoType.T_LRM)
-                && atype.getMunitionType() == AmmoType.M_THUNDER) {
-          deliverThunderMinefield(coords, ae.getOwner().getId(),
-                                  atype.getRackSize());
-        }
-        else if ((atype.getAmmoType() == AmmoType.T_LRM)
-                && atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
-          deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
+              deliverThunderAugMinefield(coords, ae.getOwner().getId(),
                                          atype.getRackSize());
-        else if ((atype.getAmmoType() == AmmoType.T_LRM)
-                && atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-          deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
-                                       atype.getRackSize(),
-                                       wr.waa.getOtherAttackInfo());
-        else if ((atype.getAmmoType() == AmmoType.T_LRM)
-                && atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
-          deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
+          }
+          else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                    && atype.getMunitionType() == AmmoType.M_THUNDER) {
+              deliverThunderMinefield(coords, ae.getOwner().getId(),
+                                      atype.getRackSize());
+          }
+          else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                    && atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
+              deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
+                                             atype.getRackSize());
+          else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                    && atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+              deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
+                                           atype.getRackSize(),
+                                           wr.waa.getOtherAttackInfo());
+          else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                    && atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
+              deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
                                         atype.getRackSize());
-        else if ((atype.getAmmoType() == AmmoType.T_LRM)
-                && atype.getMunitionType() == AmmoType.M_FLARE)
-          deliverFlare(coords, atype.getRackSize());
+          else if ((atype.getAmmoType() == AmmoType.T_LRM)
+                    && atype.getMunitionType() == AmmoType.M_FLARE)
+              deliverFlare(coords, atype.getRackSize());
           //else
           //{
           //...This is an error, but I'll just ignore it for now.
           //}
-        return !bMissed;
+          return !bMissed;
       }
       // FASCAM Artillery
       if (target.getTargetType() == Targetable.TYPE_HEX_FASCAM) {
@@ -6758,14 +6757,13 @@ implements Runnable, ConnectionHandler {
             }
             // swarm or swarm-I shots may just hit with the remaining missiles
             if ((bSwarm || bSwarmI) && (swarmMissilesLeft > 0)) {
-                int swarmsForHitTable = swarmMissilesLeft;
-                if (swarmMissilesLeft < 20 && swarmMissilesLeft > 15)
-                    swarmsForHitTable = 15;
-                else if (swarmMissilesLeft < 15 && swarmMissilesLeft > 10)
+                int swarmsForHitTable = 5;
+                if (swarmMissilesLeft > 5 && swarmMissilesLeft <= 10)
                     swarmsForHitTable = 10;
-                else if (swarmMissilesLeft < 10 && swarmMissilesLeft > 5)
-                    swarmsForHitTable = 5;
-                else swarmsForHitTable = 5;
+                else if (swarmMissilesLeft > 10 && swarmMissilesLeft <= 15)
+                    swarmsForHitTable = 15;
+                else if (swarmMissilesLeft > 15 && swarmMissilesLeft <= 20)
+                    swarmsForHitTable = 20;
                 hits = Compute.missilesHit(swarmsForHitTable, nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | bGlancing);
                 if (hits > swarmMissilesLeft) {
                     hits = swarmMissilesLeft;

@@ -748,6 +748,20 @@ public class WeaponAttackAction
              && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING)) ) {
             toHit.addModifier( 1, "Armor-Piercing Ammo" );
         }
+        
+        // BA Micro bombs only when flying
+        if (atype != null && atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
+            if (ae.getElevation() == 0) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "attacker must be at least at elevation 1");
+            } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "must target hex with bombs");
+            }
+        }
+        if (target.getTargetType() == Targetable.TYPE_HEX_BOMB &&
+            !(usesAmmo &&
+              atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver bombs");
+        }
     
         // spotter movement, if applicable
         if (isIndirect) {

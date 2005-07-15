@@ -2244,11 +2244,13 @@ implements Runnable, ConnectionHandler {
      * @param   unloaded - the <code>Targetable</code> unit being unloaded.
      * @param   pos - the <code>Coords</code> for the unloaded unit.
      * @param   facing - the <code>int</code> facing for the unloaded unit.
+     * @param   elevation - the <code>int</code> elevation at which to unload,
+     *                      if both loader and loaded units use VTOL movement.
      * @return  <code>true</code> if the unit was successfully unloaded,
      *          <code>false</code> if the unit isn't carried in unloader.
      */
     private boolean unloadUnit( Entity unloader, Targetable unloaded,
-                             Coords pos, int facing ) {
+                             Coords pos, int facing, int elevation ) {
 
         // We can only unload Entities.
         Entity unit = null;
@@ -2281,7 +2283,7 @@ implements Runnable, ConnectionHandler {
         // Flying units onload to the same elevation as the flying transport
         if (unloader.getMovementMode() == IEntityMovementMode.VTOL &&
             unit.getMovementMode() == IEntityMovementMode.VTOL) {
-            unit.setElevation(unloader.getElevation());
+            unit.setElevation(elevation);
         }
 
         // Update the unloaded unit.
@@ -3434,7 +3436,7 @@ implements Runnable, ConnectionHandler {
             if ( step.getType() == MovePath.STEP_UNLOAD ) {
                 Targetable unloaded = step.getTarget( game );
                 if ( !this.unloadUnit( entity, unloaded,
-                                       curPos, curFacing ) ) {
+                                       curPos, curFacing, step.getElevation() ) ) {
                     System.err.println( "Error! Server was told to unload " +
                                         unloaded.getDisplayName() +
                                         " from " + entity.getDisplayName() +
@@ -11293,7 +11295,7 @@ implements Runnable, ConnectionHandler {
                     } // End can-not-unload
                     else {
                         // The other unit survives.
-                        this.unloadUnit( entity, other, curPos, curFacing );
+                        this.unloadUnit( entity, other, curPos, curFacing, entity.getElevation() );
                     }
 
                 } // Handle the next transported unit.
@@ -11306,7 +11308,7 @@ implements Runnable, ConnectionHandler {
                     ( entity.getTransportId() );
                 Coords curPos = transport.getPosition();
                 int curFacing = transport.getFacing();
-                this.unloadUnit( transport, entity, curPos, curFacing );
+                this.unloadUnit( transport, entity, curPos, curFacing, transport.getElevation() );
                 this.entityUpdate( transport.getId() );
             } // End unit-is-transported
 
@@ -14101,7 +14103,8 @@ implements Runnable, ConnectionHandler {
                         game.getEntity( entity.getTransportId() );
                     this.unloadUnit( transporter, entity,
                                      transporter.getPosition(),
-                                     transporter.getFacing() );
+                                     transporter.getFacing(),
+                                     transporter.getElevation());
                 }
             }
 

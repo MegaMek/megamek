@@ -46,6 +46,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1238916: Falling into water
 + Clan units could not use Semi-Guided LRM Munition even if "ignore clan
     equipment limits" was checked.
++ Bug 1239107: Sylphs unloaded at wrong elevation.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

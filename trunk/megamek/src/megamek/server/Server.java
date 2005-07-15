@@ -10137,7 +10137,7 @@ implements Runnable, ConnectionHandler {
                     desc.append( destroyEntity(te, "a watery grave", false) );
                 }
                 if(te instanceof VTOL) {
-                    desc.append(crashVTOL((VTOL)te));
+                    desc.append("\n        "+crashVTOL((VTOL)te));
                 }
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
@@ -10343,14 +10343,14 @@ implements Runnable, ConnectionHandler {
                     desc.append( "\n            <<<CRITICAL HIT>>> " )
                     .append( "Engine destroyed.  Immobile." );
                     vtol.immobilize();
-                    desc.append(crashVTOL((VTOL)en));
+                    desc.append("\n           "+crashVTOL((VTOL)en));
                     break;
                 case 4:
                     desc.append( "\n            <<<CRITICAL HIT>>> " )
                     .append( "Crew killed" );
                     desc.append( destroyEntity(en, "crew death", true) );
                     en.getCrew().setDoomed(true);
-                    desc.append(crashVTOL((VTOL)en));
+                    desc.append("\n           "+crashVTOL((VTOL)en));
                     break;
                 case 5 :
                     desc.append( "\n            <<<CRITICAL HIT>>> " )
@@ -10359,7 +10359,7 @@ implements Runnable, ConnectionHandler {
                     desc.append( destroyEntity
                                  (en, "fuel tank explosion", false, false) );
                     en.getCrew().setDoomed(true);
-                    desc.append(explodeVTOL((VTOL)en));
+                    desc.append("\n           "+explodeVTOL((VTOL)en));
                     break;
                 case 6 :
                     desc.append( "\n            <<<CRITICAL HIT>>> " )
@@ -10368,7 +10368,7 @@ implements Runnable, ConnectionHandler {
                                  (en, "power plant destruction",
                                   false, false) );
                     en.getCrew().setDoomed(true);
-                    desc.append(explodeVTOL((VTOL)en));
+                    desc.append("\n           "+explodeVTOL((VTOL)en));
                     break;
                     
                     
@@ -10735,7 +10735,7 @@ implements Runnable, ConnectionHandler {
                 // adjust damage for gravity
                 damage = (int)Math.round(damage * game.getOptions().floatOption("gravity"));
                 // report falling
-                phaseReport.append("    " ).append( en.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage.");
+                desc.append("    " ).append( en.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage.");
                 en.setFacing((en.getFacing() + (facing - 1)) % 6);
                 if (fallHex.terrainLevel(Terrains.WATER) > 0) {
                     for (int loop=0; loop< en.locations();loop++){

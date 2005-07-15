@@ -481,7 +481,7 @@ public class Compute
     }
 
     public static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
-        if (target.isImmobile()) {
+        if (target.isImmobile() && !(target.getTargetType() == Targetable.TYPE_HEX_BOMB) ) {
             if ((aimingAt == Mech.LOC_HEAD) &&
                 (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
                 return new ToHitData(3, "aiming at head");
@@ -1016,13 +1016,18 @@ public class Compute
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
 
-        // infantry aren't affected by their own movement
+        // infantry aren't affected by their own movement,
+        // unless it's flying Infantry (like the sylph)
         if (entity instanceof Infantry) {
+            if (movement == IEntityMovementType.MOVE_VTOL_WALK ||
+                 movement == IEntityMovementType.MOVE_VTOL_RUN) {
+                toHit.addModifier(3, "attacker flew");
+            }
             return toHit;
         }
 
-        if (movement == IEntityMovementType.MOVE_WALK
-                || movement == IEntityMovementType.MOVE_VTOL_WALK) {
+        if (movement == IEntityMovementType.MOVE_WALK ||
+             movement == IEntityMovementType.MOVE_VTOL_WALK) {
             toHit.addModifier(1, "attacker walked");
         } else if (movement == IEntityMovementType.MOVE_RUN ||
                     movement == IEntityMovementType.MOVE_VTOL_RUN ||

@@ -6024,6 +6024,88 @@ implements Runnable, ConnectionHandler {
             }
             return !bMissed;
         }
+      // special case BA micro bombs
+      if (target.getTargetType() == Targetable.TYPE_HEX_BOMB) {
+          Coords coords = target.getPosition();
+          if (!bMissed) {
+              phaseReport.append("hits the intended hex ")
+                  .append(coords.getBoardNum());
+          }
+          else {
+              coords = Compute.scatter(coords, 1);
+              if (game.getBoard().contains(coords)) {
+                  phaseReport.append("misses and scatters to hex ")
+                             .append(coords.getBoardNum());
+              }
+              else {
+                  phaseReport.append("misses and scatters off the board\n");
+                  return !bMissed;
+              }
+          }
+          int nCluster = 5;
+          Infantry ba = (Infantry)ae;
+          int ratedDamage = ba.getShootingStrength() * 2;
+          bldg = null;
+          bldg = game.getBoard().getBuildingAt(coords);
+          int bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
+          bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+          ratedDamage -= bldgAbsorbs;
+          if ((bldg != null) && (bldgAbsorbs > 0)) {
+              phaseReport.append("The building in the hex absorbs " + bldgAbsorbs + "damage from the artillery strike!\n");
+              phaseReport.append(damageBuilding(bldg, ratedDamage));   
+          }
+
+          for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+              Entity entity = (Entity)impactHexHits.nextElement();
+              if (entity.getId() == ae.getId()) {
+                  continue;
+              }
+              hits = ratedDamage;
+              
+              while(hits>0) {
+                  HitData hit = entity.rollHitLocation
+                      ( toHit.getHitTable(),
+                        toHit.getSideTable() );
+                  phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true));
+                  hits -= Math.min(nCluster,hits);
+              }
+          }
+          for(int dir=0;dir<=5;dir++) {
+              Coords tempcoords=coords.translated(dir);
+              if(!game.getBoard().contains(tempcoords)) {
+                  continue;
+              }
+              if(coords.equals(tempcoords)) {
+                  continue;
+              }
+              ratedDamage = ba.getShootingStrength();
+              bldg = null;
+              bldg = game.getBoard().getBuildingAt(tempcoords);
+              bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
+              bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+              ratedDamage -= bldgAbsorbs;
+              if ((bldg != null) && (bldgAbsorbs > 0)) {
+                  phaseReport.append("The building in the hex absorbs " + bldgAbsorbs + "damage from the bombs!\n");
+                  phaseReport.append(damageBuilding(bldg, ratedDamage));   
+              }
+              Enumeration splashHexHits = game.getEntities(tempcoords);
+              if(splashHexHits.hasMoreElements()) {
+                  phaseReport.append("\n    In hex " + tempcoords.getBoardNum()+ ":");
+              }
+              for(;splashHexHits.hasMoreElements();) {
+                  Entity entity = (Entity)splashHexHits.nextElement();
+                  hits = ratedDamage;
+                  while(hits>0) {
+                      HitData hit = entity.rollHitLocation
+                          ( toHit.getHitTable(),
+                            toHit.getSideTable());
+                      phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)));
+                      hits -= Math.min(nCluster,hits);
+                  }
+              }
+          }
+          return !bMissed;          
+      } //end ba-micro-bombs
 
       // special case minefield delivery, no damage and scatters if misses.
       if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER

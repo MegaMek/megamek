@@ -1003,6 +1003,7 @@ public class Game implements Serializable, IGame
             return getEntity(nID);
         case Targetable.TYPE_HEX_CLEAR :
         case Targetable.TYPE_HEX_IGNITE :
+        case Targetable.TYPE_HEX_BOMB :
         case Targetable.TYPE_MINEFIELD_DELIVER :
         case Targetable.TYPE_FLARE_DELIVER :
             return new HexTarget(HexTarget.idToCoords(nID), board, nType);

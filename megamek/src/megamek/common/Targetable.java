@@ -30,6 +30,7 @@ public interface Targetable
     public static final int TYPE_INARC_POD            = 11;
     public static final int TYPE_SEARCHLIGHT          = 12;
     public static final int TYPE_FLARE_DELIVER        = 13;
+    public static final int TYPE_HEX_BOMB             = 14;
 
     public int getTargetType();
     public int getTargetId();

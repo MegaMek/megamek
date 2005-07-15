@@ -702,6 +702,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Artemis capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "(Clan) Semi guided",
+                                                   1, M_SEMIGUIDED, TechConstants.T_CLAN_LEVEL_2) );
         munitions.addElement( new MunitionMutator( "(Clan) Swarm",
                                                    1, M_SWARM, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Swarm-I",

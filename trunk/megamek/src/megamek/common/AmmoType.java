@@ -1861,6 +1861,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("ISiNarc Pods");
         ammo.addLookupName("IS Ammo iNarc");
         ammo.addLookupName("IS iNarc Missile Beacon Ammo");
+        ammo.addLookupName("iNarc Ammo");
         ammo.damagePerShot = 3; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;
@@ -1876,6 +1877,7 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
         ammo.name = "iNarc Explosive Pods";
         ammo.setInternalName("ISiNarc Explosive Pods");
+        ammo.addLookupName("iNarc Explosive Ammo");
         ammo.damagePerShot = 6; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;
@@ -1892,6 +1894,7 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
         ammo.name = "iNarc ECM Pods";
         ammo.setInternalName("ISiNarc ECM Pods");
+        ammo.addLookupName("iNarc ECM Ammo");
         ammo.damagePerShot = 3; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;
@@ -1908,6 +1911,7 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
         ammo.name = "iNarc Haywire Pods";
         ammo.setInternalName("ISiNarc Haywire Pods");
+        ammo.addLookupName("iNarc Haywire Ammo");
         ammo.damagePerShot = 3; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;
@@ -1924,6 +1928,7 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
         ammo.name = "iNarc Nemesis Pods";
         ammo.setInternalName("ISiNarc Nemesis Pods");
+        ammo.addLookupName("iNarc Nemesis Ammo");
         ammo.damagePerShot = 3; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;

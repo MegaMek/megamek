@@ -45,6 +45,7 @@ Lot of people have contributed to the MegaMek project.
      Robin Toll <fastsammy@users.sourceforge.net>
      Shane Kearns <shane.kearns@ntlworld.com>
      David Gorsuch <dgorsman@users.sourceforge.net>
+     BATTLEMASTER <s_d@users.sourceforgen.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

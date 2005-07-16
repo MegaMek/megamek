@@ -49,6 +49,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1239107: Sylphs unloaded at wrong elevation.
 + Bug 1236620: VTOLs and Buildings, now completely fixed.
 + Bug 1239097: Sylph Micro bombs not working correctly.
++ Bug 1239194, Patch 1239221: iNarc Ammo doesn't load from TDB units.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

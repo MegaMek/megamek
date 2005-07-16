@@ -233,7 +233,6 @@ public class MoveStep implements Serializable {
             prev = new MoveStep(parent, MovePath.STEP_FORWARDS);
             prev.setFromEntity(entity, game);
         }
-
         switch (getType()) {
             case MovePath.STEP_UNLOAD :
                 // Infantry in immobilized transporters get
@@ -587,7 +586,6 @@ public class MoveStep implements Serializable {
      */
     public int getMovementType() {
         int moveType = movementType;
-
         // If this step's position is the end of the path, and it is not
         // a valid end postion, then the movement type is "illegal".
         if (!isLegalEndPos() && isEndPos) {
@@ -608,23 +606,16 @@ public class MoveStep implements Serializable {
         boolean legal = true;
         if (isStackingViolation) {
             legal = false;
-        }
-
-        // Can't be into invalid terrain.
-        else if (terrainInvalid) {
+        } else if (terrainInvalid) {
+            // Can't be into invalid terrain.
+            legal = false;
+        } else if (parent.isJumping() && distance == 0) {
+            // Can't jump zero hexes.
+            legal = false;
+        } else if (hasEverUnloaded && this.type != MovePath.STEP_UNLOAD) {
+            // Can't be after unloading BA/inf
             legal = false;
         }
-
-        // Can't jump zero hexes.
-        else if (parent.isJumping() && distance == 0) {
-            legal = false;
-        }
-        
-        // Can't be after unloading BA/inf
-        else if (hasEverUnloaded && this.type != MovePath.STEP_UNLOAD) {
-            legal = false;
-        }
-        
         return legal;
     }
 
@@ -941,25 +932,35 @@ public class MoveStep implements Serializable {
         // Mechs with 1 MP are allowed to get up, except
         // if they've used that 1MP up already
         if (MovePath.STEP_GET_UP==stepType && 1==entity.getRunMP()
-            && entity.mpUsed < 1 && !entity.isStuck()) {
+                && entity.mpUsed < 1 && !entity.isStuck()) {
             movementType = IEntityMovementType.MOVE_RUN;
         }
 
         // amnesty for the first step
         if (isFirstStep()
-            && movementType == IEntityMovementType.MOVE_ILLEGAL
-            && entity.getWalkMP() > 0
-            && !entity.isProne()
-            && !entity.isStuck()
-            && stepType == MovePath.STEP_FORWARDS) {
+                && movementType == IEntityMovementType.MOVE_ILLEGAL
+                && entity.getWalkMP() > 0
+                && !entity.isProne()
+                && !entity.isStuck()
+                && stepType == MovePath.STEP_FORWARDS) {
             movementType = IEntityMovementType.MOVE_RUN;
         }
 
-        // Is the entity unloading passeners?
+        // Is the entity unloading passengers?
         if (stepType == MovePath.STEP_UNLOAD) {
+            if (isFirstStep()) {
+                if (getMpUsed() <= entity.getRunMP()) {
+                    movementType = IEntityMovementType.MOVE_RUN;
+                    if (getMpUsed() <= entity.getWalkMP()) {
+                        movementType = IEntityMovementType.MOVE_WALK;
+                    }
+                }
+            }
+
             // Prone Meks are able to unload, if they have the MP.
-            if (getMpUsed() <= entity.getRunMP() && entity.isProne()
-                && movementType == IEntityMovementType.MOVE_ILLEGAL) {
+            if (getMpUsed() <= entity.getRunMP()
+                    && entity.isProne()
+                    && movementType == IEntityMovementType.MOVE_ILLEGAL) {
                 movementType = IEntityMovementType.MOVE_RUN;
                 if (getMpUsed() <= entity.getWalkMP()) {
                     movementType = IEntityMovementType.MOVE_WALK;
@@ -979,7 +980,6 @@ public class MoveStep implements Serializable {
             } else {
                 movementType = IEntityMovementType.MOVE_ILLEGAL;
             }
-
         }
 
         // Can't run or jump if unjamming a RAC.

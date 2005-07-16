@@ -654,7 +654,12 @@ class WeaponPanel extends BufferedPanel
                 currentHeatBuildup += en.infernos.getHeat();
             }
             // extreme temperatures.
-            currentHeatBuildup += game.getTemperatureDifference();
+            if (game.getOptions().intOption("temperature") > 0) {
+                currentHeatBuildup += game.getTemperatureDifference();
+            } else {
+                currentHeatBuildup -= game.getTemperatureDifference();
+            }
+            
         }
         Coords position = entity.getPosition();
         if (!en.isOffBoard()) {

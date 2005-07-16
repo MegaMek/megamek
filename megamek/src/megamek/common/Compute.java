@@ -1334,13 +1334,22 @@ public class Compute
 
 // Kinda cheap, but lets use the missile hits table for Battle armor weapons too
 
-        if (wt.hasFlag(WeaponType.F_BATTLEARMOR)){
-            use_table = true;
+        if (attacker instanceof BattleArmor){
+            if ((wt.getInternalName() != Infantry.SWARM_MEK) && 
+                    (wt.getInternalName() != Infantry.LEG_ATTACK)){
+                use_table = true;
+            }
         }
 
         if (use_table == true) {
-            if (weapon.getLinked() == null) return 0.0f;
-            AmmoType at = (AmmoType)weapon.getLinked().getType();
+            if (!(attacker instanceof BattleArmor)){
+                if (weapon.getLinked() == null) return 0.0f;
+            }
+            AmmoType at = null;
+            if (weapon.getLinked() != null){
+                at = (AmmoType)weapon.getLinked().getType();
+                fDamage = at.getDamagePerShot();
+            }
 
             float fHits = 0.0f;
             if (wt.getRackSize() != 40 && wt.getRackSize() != 30) {
@@ -1362,13 +1371,27 @@ public class Compute
                     fHits = expectedHitsByRackSize[6];
                 }
             }
-            // Most Battle Armor units have a weapon per trooper
+            
+            // Most Battle Armor units have a weapon per trooper, plus their
+            // weapons do odd things when mounting multiples
             if (attacker instanceof BattleArmor){
-                if (wt.getDamage() == WeaponType.DAMAGE_MISSILE){
-                    fHits *= ba_attacker.getShootingStrength();
-                }
-                else {
+                // The number of troopers hitting
                 fHits = expectedHitsByRackSize[ba_attacker.getShootingStrength()];
+                if (wt.getDamage() == WeaponType.DAMAGE_MISSILE){
+                    fHits *= expectedHitsByRackSize[wt.getRackSize()];
+                } 
+                if (wt.getDamage() != WeaponType.DAMAGE_MISSILE){
+                    if (wt.getDamage() != WeaponType.DAMAGE_VARIABLE){
+                        fDamage = wt.getDamage();
+                    } else {
+                        fDamage = wt.getRackSize();
+                    }
+                }
+                if (wt.hasFlag(WeaponType.F_DOUBLE_HITS)){
+                    fHits *= 2;
+                }
+                if (wt.hasFlag(WeaponType.F_MISSILE_HITS)){
+                    fHits *= expectedHitsByRackSize[wt.getRackSize()];
                 }
             }
 
@@ -1424,7 +1447,8 @@ public class Compute
                 }
             }
 
-            fDamage = fHits * (float) at.getDamagePerShot();
+            fDamage *= fHits;
+            
             if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA) || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)){
                 fDamage = fHits * (float) wt.getDamage();
             }
@@ -1478,7 +1502,6 @@ public class Compute
             }
 
         }
-
         fDamage *= fChance;
 
         // Conventional infantry take double damage in the open
@@ -1527,10 +1550,13 @@ public class Compute
         wtype = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
         
         max_damage = 0.0;
+        
 
         // If the weapon doesn't require ammo, just get the estimated damage
-        if (wtype.hasFlag(WeaponType.F_ENERGY) || wtype.hasFlag(WeaponType.F_ONESHOT) || 
-                wtype.hasFlag(WeaponType.F_INFANTRY)){
+        if (wtype.hasFlag(WeaponType.F_ENERGY) || 
+                wtype.hasFlag(WeaponType.F_ONESHOT) || 
+                wtype.hasFlag(WeaponType.F_INFANTRY) ||
+                (wtype.getAmmoType() == AmmoType.T_NA)){
             return getExpectedDamage(cgame, atk);
         }
     

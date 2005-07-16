@@ -1899,8 +1899,13 @@ public class Compute
     /**
      * LOS check from ae to te.
      */
-    public static boolean canSee(IGame game, Entity ae, Targetable target)
-    {
+    public static boolean canSee(IGame game, Entity ae, Targetable target) {
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity te = (Entity)target;
+            if (te.isOffBoard()) {
+                return false;
+            }
+        }
         return LosEffects.calculateLos(game, ae.getId(), target).canSee()
             && ae.getCrew().isActive();
     }

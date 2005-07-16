@@ -50,6 +50,7 @@ Firedrake Incendiary Needler			BA-Firedrake Incendiary Needler
 Flamer						BA-Flamer
 Heavy Grenade Launcher				BA-Auto GL
 King David Light Gauss Rifle			BA-King David Light Gauss Rifle
+David Light Gauss Rifle			BA-ISDavidLightGauss
 Light Recoilless Rifle				BA-Light Recoilless Rifle
 
 Machine Gun					BA-Machine Gun

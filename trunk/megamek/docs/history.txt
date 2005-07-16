@@ -53,6 +53,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Patch 1238506: David Light Gauss Rifle (Combat Equipment).
 + Bug 1237582: when targeting woods, modifier for target being in woods.
 + In extreme temperatues below -30°, heat display in MechDisplay was wrong.
++ Patch 1239296: Bot works again with battle armor weapons.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

@@ -55,6 +55,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + In extreme temperatues below -30°, heat display in MechDisplay was wrong.
 + Patch 1239296: Bot works again with battle armor weapons.
 + Bug 1239367: NPE after deployment with offboard units in double blind games.
++ Bug 1239105: Unload now works as first and only step.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

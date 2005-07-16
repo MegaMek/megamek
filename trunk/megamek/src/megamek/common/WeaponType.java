@@ -463,7 +463,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createBACLMediumPulseLaser() );
         EquipmentType.addType( createBAIncendiaryNeedler() );
         EquipmentType.addType( createBALightRecRifle() );
-        EquipmentType.addType( createBALightGaussRifle() );
+        EquipmentType.addType( createBAKingDavidLightGaussRifle() );
         EquipmentType.addType( createBAMediumRecRifle() );
         EquipmentType.addType( createBAPlasmaRifle() );
         EquipmentType.addType( createBASingleSmallPulseLaser() );
@@ -502,6 +502,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createLRM2() );
         EquipmentType.addType( createLRM3() );
         EquipmentType.addType( createLRM4() );
+        EquipmentType.addType( createBADavidGaussRifle() );
         
         // hack for C3 Master TAG
         EquipmentType.addType( createC3M() );
@@ -7621,11 +7622,11 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBALightGaussRifle() {
+    public static WeaponType createBAKingDavidLightGaussRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "King David Gauss Rifle";
+        weapon.name = "King David Light Gauss Rifle";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("BA-King David Light Gauss Rifle");
         weapon.heat = 0;
@@ -8919,6 +8920,31 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_MISSILE;
 
         return weapon;
+    }
+    
+    public static WeaponType createBADavidGaussRifle() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "David Light Gauss Rifle";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-ISDavidLightGauss");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 5;
+        weapon.longRange = 8;
+        weapon.extremeRange = 10;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    
     }
 
     public String toString() {

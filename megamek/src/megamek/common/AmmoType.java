@@ -4306,7 +4306,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
-        ammo.name = "SRM 6 Ammo";
+        ammo.name = "BA SRM 6 Ammo";
         ammo.setInternalName("BA Ammo SRM-6");
         ammo.addLookupName("BASRM-6 Ammo");
         ammo.addLookupName("BASRM-6 Ammo");
@@ -4323,7 +4323,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
-        ammo.name = "SRM 5 Ammo";
+        ammo.name = "BA SRM 5 Ammo";
         ammo.setInternalName("BA Ammo SRM-5");
         ammo.addLookupName("BASRM-5 Ammo");
         ammo.addLookupName("BASRM-5 Ammo");
@@ -4340,7 +4340,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
-        ammo.name = "SRM 4 Ammo";
+        ammo.name = "BA SRM 4 Ammo";
         ammo.setInternalName("BA Ammo SRM-4");
         ammo.addLookupName("BASRM-4 Ammo");
         ammo.addLookupName("BASRM-4 Ammo");
@@ -4357,7 +4357,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
-        ammo.name = "SRM 3 Ammo";
+        ammo.name = "BA SRM 3 Ammo";
         ammo.setInternalName("BA Ammo SRM-3");
         ammo.addLookupName("BASRM-3 Ammo");
         ammo.addLookupName("BASRM-3 Ammo");
@@ -4374,7 +4374,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
-        ammo.name = "SRM 1 Ammo";
+        ammo.name = "BA SRM 1 Ammo";
         ammo.setInternalName("BA Ammo SRM-1");
         ammo.addLookupName("BASRM-1 Ammo");
         ammo.addLookupName("BASRM-1 Ammo");

@@ -2434,14 +2434,15 @@ public class Game implements Serializable, IGame
      * Artillery flares drift with wind.
      * (called at end of turn)
      */
-    public String ageFlares() {
-        //report missing
-        StringBuffer report=new StringBuffer();
+    public Vector ageFlares() {
+        //TODO: get linebreaks correct
+        Vector reports = new Vector();
+        Report r;
         for(int i=flares.size() - 1;i>=0;i--) {
             Flare flare = (Flare)flares.elementAt(i);
-            report.append("Flare in hex ");
-            report.append(flare.position.getBoardNum());
-
+            r = new Report(5235);
+            r.add(flare.position.getBoardNum());
+            reports.addElement(r);
             if((flare.flags & Flare.F_IGNITED) != 0) {
                 flare.turnsToBurn--;
                 if ((flare.flags & Flare.F_DRIFTING) != 0) {
@@ -2452,27 +2453,30 @@ public class Game implements Serializable, IGame
                         if(str == 3) {
                             flare.position = flare.position.translated(dir);
                         }
-                    report.append(" drifts to hex ");
-                    report.append(flare.position.getBoardNum());
-                    report.append(" and");
+                        r = new Report(5236);
+                        r.add(flare.position.getBoardNum());
+                        reports.addElement(r);
                     }
                 }
             } else {
-                report.append(" ignites, and");
+                r = new Report(5237);
+                reports.addElement(r);
                 flare.flags |= Flare.F_IGNITED;
             }
             if(flare.turnsToBurn <= 0) {
-                report.append(" burns out.");
+                r = new Report(5238);
+                r.newlines = 1;
+                reports.addElement(r);
                 flares.removeElementAt(i);
             } else {
-                report.append(" has ");
-                report.append(flare.turnsToBurn);
-                report.append(" turns left to burn.");
+                r = new Report(5239);
+                r.add(flare.turnsToBurn);
+                r.newlines = 1;
+                reports.addElement(r);
                 flares.setElementAt(flare, i);
-            }
-            report.append("\n");
+            };
         }
         processGameEvent(new GameBoardChangeEvent(this));
-        return report.toString();
+        return reports;
     }
 }

@@ -27,10 +27,6 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 import java.util.Vector;
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.util.Hashtable;
 
 import megamek.client.bot.BotClient;
 import megamek.common.*;

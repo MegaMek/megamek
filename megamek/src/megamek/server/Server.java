@@ -34,7 +34,6 @@ import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.common.TagInfo;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
 
 /**
  * @author Ben Mazur
@@ -10878,8 +10877,10 @@ implements Runnable, ConnectionHandler {
                 && !te.isDoomed() && game.getOptions().booleanOption("vacuum")) {
             // PBI. Double damage.
             damage = damage * 2;
-            //report missing
-            desc.append( "\n        Infantry is in Vacuum!!! Space suits are breached!!! Damage doubled." );
+            r = new Report(6041);
+            r.subject = te_n;
+            r.indent(2);
+            vDesc.addElement(r);
         }
         // If dealing with fragmentation missiles,
         // it does double damage to infantry...
@@ -10921,11 +10922,16 @@ implements Runnable, ConnectionHandler {
         case 3:
             if (isFerroFibrousTarget) {
                 damage = te.getArmor(hit) >=3?3:te.getArmor(hit);
-                //report missing
-                desc.append("\n        Ferro-fibrous target hit by acid warhead!  "+Integer.toString(damage)+" damage.");
+                r = new Report(6061);
+                r.subject = te_n;
+                r.indent(2);
+                r.add(damage);
+                vDesc.addElement(r);
             } else if (te != null) {
-                //report missing
-                desc.append("\n        Non-ferro-fibrous target hit by acid warhead!  1 damage.");
+                r = new Report(6062);
+                r.subject = te_n;
+                r.indent(2);
+                vDesc.addElement(r);
             }
             break;
         case 4:
@@ -10966,9 +10972,12 @@ implements Runnable, ConnectionHandler {
                 if(!(te instanceof Mech) || loc == Mech.LOC_CT
                         || loc == Mech.LOC_LT || loc == Mech.LOC_RT) {
                     int spotroll = Compute.d6(2);
-                    if(spotroll >= 7) {
-                        //report missing
-                        desc.append("\n        Searchlight destroyed!\n");
+                    if (spotroll >= 7) {
+                        r = new Report(6071);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.newlines = 1;
+                        vDesc.addElement(r);
                         te.setSpotlightState(false);
                         te.setSpotlight(false);
                     }

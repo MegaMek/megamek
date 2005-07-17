@@ -18,6 +18,7 @@ package megamek.common;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
@@ -223,32 +224,39 @@ public abstract class Mech
         return MASC_FAILURE[nMASCLevel] + 1;
     }
 
-    public boolean checkForMASCFailure(StringBuffer phaseReport, MovePath md) {
+//    public boolean checkForMASCFailure(StringBuffer phaseReport, MovePath md) {
+    public boolean checkForMASCFailure(MovePath md, Vector vDesc) {
         if (md.hasActiveMASC()) {
+            Report r;
             boolean bFailure = false;
 
-            // if usedMASC is already set, then we've already checked MASC
-            // this turn.  
-
-            // If we succeded before, return false.
-
+            // If usedMASC is already set, then we've already checked MASC
+            // this turn.  If we succeded before, return false.
             // If we failed before, the MASC was destroyed, and we wouldn't
-            // have gotten here (havActiveMASC would return false)
+            // have gotten here (hasActiveMASC would return false)
             if (!usedMASC) {
                 int nRoll = Compute.d6(2);
-                
+
                 usedMASC = true;
-                phaseReport.append("\n" + getDisplayName() +
-                                   " checking for MASC failure.\n");       
-                phaseReport.append("Needs " + getMASCTarget() +
-                                   ", rolls " + nRoll + " : ");
-            
-            
+                //phaseReport.append("\n" + getDisplayName() +
+                //                   " checking for MASC failure.\n");       
+                r = new Report(2365);
+                r.subject = this.getId();
+                r.addDesc(this);
+                vDesc.addElement(r);
+                //phaseReport.append("Needs " + getMASCTarget() +
+                //                   ", rolls " + nRoll + " : ");
+                r = new Report(2370);
+                r.subject = this.getId();
+                r.add(getMASCTarget());
+                r.add(nRoll);
+
                 if (nRoll < getMASCTarget()) {
                     // uh oh
                     bFailure = true;
-                    phaseReport.append("MASC fails!.\n");
-                    
+                    //phaseReport.append("MASC fails!.\n");
+                    r.choose(false);
+
                     // do the damage.  Rules say 'as if you took 2 hip crits'. We'll
                     // just do the hip crits
                     getCritical(LOC_RLEG, 0).setDestroyed(true);
@@ -259,11 +267,13 @@ public abstract class Mech
                             m.setDestroyed(true);
                             m.setMode("Off");
                         }
-                    }                
+                    }
                 }
                 else {
-                    phaseReport.append("succeeds.\n");
+                    //phaseReport.append("succeeds.\n");
+                    r.choose(true);
                 }
+                vDesc.addElement(r);
             }
             return bFailure;
         }
@@ -1900,21 +1910,26 @@ public abstract class Mech
         
         return (int)Math.round((dbv + obv + xbv) * pilotFactor);
     }
-    
-    /**
-     * Returns an end-of-battle report for this mech
-     */
-    public String victoryReport() {
-        StringBuffer report = new StringBuffer();
-        
-        report.append(getDisplayName());
-        report.append('\n');
-        report.append("Pilot : " + crew.getDesc());
-        report.append('\n');
-        report.append("Kills: " + getKillNumber());
-        report.append('\n');
-        
-        return report.toString();
+
+    public Vector victoryReport() {
+        Vector vDesc = new Vector();
+
+        Report r = new Report(7025);
+        r.type = Report.PUBLIC;
+        r.addDesc(this);
+        vDesc.addElement(r);
+
+        r = new Report(7030);
+        r.type = Report.PUBLIC;
+        r.newlines = 0;
+        vDesc.addElement(r);
+        Entity.combineVectors(vDesc, crew.getDescVector(false));
+        r = new Report(7070, Report.PUBLIC);
+        r.newlines = 2;
+        r.add(getKillNumber());
+        vDesc.addElement(r);
+
+        return vDesc;
     }
   
     /**

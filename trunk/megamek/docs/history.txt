@@ -59,6 +59,8 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Stop broadcasting changed heat sink status on general chat.
 + Bug 1234866, Patch 1239594: bot deploys in same hex.
 + Bug 1239798, Patch 1239772: BA SRM/LRM Ammo Fix.
++ The report system has received a major overhaul.  This addresses several
+    RFE's, including: 676377, 704795, 770839, 770840, 879802, and 1098720.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

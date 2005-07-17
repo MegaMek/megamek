@@ -27,6 +27,10 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 import java.util.Vector;
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.util.Hashtable;
 
 import megamek.client.bot.BotClient;
 import megamek.common.*;
@@ -68,15 +72,16 @@ public class Client implements Runnable {
 
     // here's some game phase stuff
     private MapSettings mapSettings;
-    public String eotr;
+    public String phaseReport;
+    public String roundReport;
 
     private Thread pump;
     
     //And close client events!
     private Vector closeClientListeners = new Vector();
 
-    // we might want to keep a server log...
-    private megamek.server.ServerLog serverlog;
+    // we might want to keep a game log...
+    private GameLog log;
     
     /**
      * Construct a client which will try to connect.  If the connection
@@ -91,14 +96,7 @@ public class Client implements Runnable {
         this.name = name;
         this.host = host;
         this.port = port;
-
-        if (PreferenceManager.getClientPreferences().keepServerlog() && !(this instanceof BotClient)) {
-            // we need to keep a copy of the log
-            serverlog = new megamek.server.ServerLog(PreferenceManager.getClientPreferences().getServerlogFilename(), 
-                    true, (new Integer(PreferenceManager.getClientPreferences().getServerlogMaxSize()).longValue() * 1024 * 1024) );
-        }
     }
-
 
     /**
      * Attempt to connect to the specified host
@@ -135,9 +133,9 @@ public class Client implements Runnable {
             ((CloseClientListener)closeClientListeners.elementAt(i)).clientClosed();
         }
 
-        if (serverlog != null) {
+        if (log != null) {
             try {
-                serverlog.close();
+                log.close();
             } catch (IOException e) {
                 System.err.print("Exception closing logfile: "); //$NON-NLS-1$
                 e.printStackTrace();
@@ -159,7 +157,20 @@ public class Client implements Runnable {
             game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
         }
     }
-    
+
+    private void initGameLog() {
+        //log = new GameLog(
+        //  PreferenceManager.getClientPreferences().getGameLogFilename(),
+        //  false,
+        //  (new Integer(PreferenceManager.getClientPreferences().getGameLogMaxSize()).longValue() * 1024 * 1024) );
+        log = new GameLog(PreferenceManager.getClientPreferences().getGameLogFilename());
+    }
+
+    private boolean keepGameLog() {
+        return PreferenceManager.getClientPreferences().keepGameLog()
+            && !(this instanceof BotClient);
+    }
+
     /**
      * Return an enumeration of the players in the game
      */
@@ -649,6 +660,19 @@ public class Client implements Runnable {
         }
     }
 
+    //Should be private?
+    public String receiveReport(Vector v) {
+        if (v == null) {
+            return "[null report vector]";
+        }
+
+        StringBuffer report = new StringBuffer();
+        for (int i = 0; i < v.size(); i++) {
+            report.append(((Report)v.elementAt(i)).getText());
+        }
+        return report.toString();
+    }
+
     /**
      * Saves server entity status data to a local file
      */
@@ -726,7 +750,6 @@ public class Client implements Runnable {
             out.reset(); // write each packet fresh; a lot changes
             out.writeObject(packet);
             out.flush();
-            //            System.out.println("c: packet #" + packet.getCommand() + " sent");
         } catch (IOException ex) {
             System.err.println("c: error sending command #" + packet.getCommand() + ": " + ex.getMessage()); //$NON-NLS-1$
             System.err.println("    Last five commands that were sent (oldest first): " + debugLastFewCommandsSent.print());
@@ -771,8 +794,10 @@ public class Client implements Runnable {
                     game.removePlayer(c.getIntValue(0));
                     break;
                 case Packet.COMMAND_CHAT :
-                    if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
-                        serverlog.append( (String) c.getObject(0) );
+                    if (log == null)
+                        initGameLog();
+                    if (log != null && keepGameLog()) {
+                        log.append( (String) c.getObject(0) );
                     }
                     game.processGameEvent(new GamePlayerChatEvent(this,null, (String) c.getObject(0)));
                     break;
@@ -827,18 +852,42 @@ public class Client implements Runnable {
                 case Packet.COMMAND_SENDING_ENTITIES :
                     receiveEntities(c);
                     break;
-                case Packet.COMMAND_SENDING_REPORT :
-                    if (null!=serverlog && PreferenceManager.getClientPreferences().keepServerlog()) {
-                        if (null==eotr || ((String) c.getObject(0)).length() < eotr.length() ) {
-                            // first report packet
-                            serverlog.append( (String) c.getObject(0) );
-                        } else {
-                            // append only the new part, not what's already in eotr
-                            serverlog.append( ((String) c.getObject(0)).substring(eotr.length()) );
+                case Packet.COMMAND_SENDING_REPORTS :
+                case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS :
+                    phaseReport = receiveReport((Vector) c.getObject(0));
+                    if (keepGameLog()) {
+                        if (log == null && game.getRoundCount() == 1)
+                            initGameLog();
+                        if (log != null)
+                            log.append(phaseReport);
+                    }
+                    game.addReports((Vector) c.getObject(0));
+                    roundReport = receiveReport(game.getReports(game.getRoundCount()));
+                    if (c.getCommand() ==
+                        Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
+                        game.processGameEvent(new GameReportEvent(this, null));
+                    }
+                    break;
+                case Packet.COMMAND_SENDING_REPORTS_SPECIAL :
+                    game.processGameEvent(new GameReportEvent(this, receiveReport((Vector) c.getObject(0))));
+                    break;
+                case Packet.COMMAND_SENDING_REPORTS_ALL :
+                    Vector allReports = (Vector) c.getObject(0);
+                    game.setAllReports(allReports);
+                    if (keepGameLog()) {
+                        //Re-write gamelog.txt from scratch
+                        initGameLog();
+                        if (log != null) {
+                            for (int i = 0; i < allReports.size(); i++) {
+                                log.append(receiveReport((Vector)allReports.elementAt(i)));
+                            }
                         }
                     }
-                    eotr = (String) c.getObject(0);
-                    game.processGameEvent(new GameReportEvent(this));
+                    roundReport = receiveReport(game.getReports(game.getRoundCount()));
+                    //We don't really have a copy of the phase report at
+                    // this point, so I guess we'll just use the round report
+                    // until the next phase actually completes.
+                    phaseReport = roundReport;
                     break;
                 case Packet.COMMAND_ENTITY_ATTACK :
                     receiveAttack(c);
@@ -854,10 +903,10 @@ public class Client implements Runnable {
                     game.processGameEvent(new GameMapQueryEvent(this, (MapSettings)c.getObject(0)));
                     break;
                 case Packet.COMMAND_END_OF_GAME :
-                    String sReport = (String) c.getObject(0);
+                    String sEntityStatus = (String) c.getObject(0);
                     game.end(c.getIntValue(1), c.getIntValue(2));
                     // save victory report
-                    saveEntityStatus(sReport);
+                    saveEntityStatus(sEntityStatus);
                     break;
                 case Packet.COMMAND_SENDING_ARTILLERYATTACKS :
                     Vector v = (Vector)c.getObject(0);

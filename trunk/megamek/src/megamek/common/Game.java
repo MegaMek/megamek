@@ -106,8 +106,7 @@ public class Game implements Serializable, IGame
 
 
     // reports
-    private StringBuffer roundReport = new StringBuffer();
-    private StringBuffer phaseReport = new StringBuffer();
+    private GameReports gameReports = new GameReports();
 
     private boolean forceVictory = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
@@ -615,7 +614,7 @@ public class Game implements Serializable, IGame
                 break;
         }
 
-        processGameEvent(new GamePhaseChangeEvent(this));        
+        processGameEvent(new GamePhaseChangeEvent(this));
     }
 
     public int getLastPhase() {
@@ -1953,28 +1952,24 @@ public class Game implements Serializable, IGame
         this.forceVictory = forceVictory;
     }
 
-    /** Getter for property roundReport.
-     * @return Value of property roundReport.
-     */
-    public java.lang.StringBuffer getRoundReport() {
-        return roundReport;
+    public void addReports(Vector v) {
+        if (v.size() == 0) {
+            System.out.println("Game.addReports() received blank vector.");
+            return;
+        }
+        this.gameReports.add(this.roundCount, v);
     }
 
-    /** Resets the round report */
-    public void resetRoundReport() {
-        this.roundReport = new StringBuffer();
+    public Vector getReports(int r) {
+        return this.gameReports.get(r);
     }
 
-    /** Getter for property phaseReport.
-     * @return Value of property phaseReport.
-     */
-    public java.lang.StringBuffer getPhaseReport() {
-        return phaseReport;
+    public Vector getAllReports() {
+        return this.gameReports.get();
     }
 
-    /** Resets the round report */
-    public void resetPhaseReport() {
-        this.phaseReport = new StringBuffer();
+    public void setAllReports(Vector v) {
+        this.gameReports.set(v);
     }
 
     public void end(int winner, int winnerTeam){
@@ -2440,6 +2435,7 @@ public class Game implements Serializable, IGame
      * (called at end of turn)
      */
     public String ageFlares() {
+        //report missing
         StringBuffer report=new StringBuffer();
         for(int i=flares.size() - 1;i>=0;i--) {
             Flare flare = (Flare)flares.elementAt(i);
@@ -2472,7 +2468,7 @@ public class Game implements Serializable, IGame
                 report.append(" has ");
                 report.append(flare.turnsToBurn);
                 report.append(" turns left to burn.");
-                flares.set(i, flare);
+                flares.setElementAt(flare, i);
             }
             report.append("\n");
         }

@@ -44,32 +44,40 @@ public interface IGame {
     public static final int PHASE_DEPLOYMENT = 4;
     
     public static final int PHASE_INITIATIVE = 5;
+
+    public static final int PHASE_INITIATIVE_REPORT = 6;
     
-    public static final int PHASE_TARGETING = 6; 
+    public static final int PHASE_TARGETING = 7;
     
-    public static final int PHASE_MOVEMENT = 7; 
+    public static final int PHASE_MOVEMENT = 8;
     
-    public static final int PHASE_MOVEMENT_REPORT = 8; 
+    public static final int PHASE_MOVEMENT_REPORT = 9;
     
-    public static final int PHASE_OFFBOARD = 9; 
+    public static final int PHASE_OFFBOARD = 10;
     
-    public static final int PHASE_OFFBOARD_REPORT = 10;
+    public static final int PHASE_OFFBOARD_REPORT = 11;
     
-    public static final int PHASE_FIRING = 11;
+    public static final int PHASE_FIRING = 12;
     
-    public static final int PHASE_FIRING_REPORT = 12;
+    public static final int PHASE_FIRING_REPORT = 13;
     
-    public static final int PHASE_PHYSICAL = 13;
+    public static final int PHASE_PHYSICAL = 14;
+
+    public static final int PHASE_PHYSICAL_REPORT = 15;
     
-    public static final int PHASE_END = 14;
+    public static final int PHASE_END = 16;
+
+    public static final int PHASE_END_REPORT = 17;
     
-    public static final int PHASE_VICTORY = 15;
+    public static final int PHASE_VICTORY = 18;
+
+    //public static final int PHASE_VICTORY_REPORT = 19;
     
-    public static final int PHASE_DEPLOY_MINEFIELDS = 16;
+    public static final int PHASE_DEPLOY_MINEFIELDS = 20;
     
-    public static final int PHASE_STARTING_SCENARIO = 17;
+    public static final int PHASE_STARTING_SCENARIO = 21;
     
-    public static final int PHASE_SET_ARTYAUTOHITHEXES = 18;
+    public static final int PHASE_SET_ARTYAUTOHITHEXES = 22;
 
     /**
      * Adds the specified game listener to receive
@@ -873,26 +881,27 @@ public interface IGame {
     public abstract void setForceVictory(boolean forceVictory);
     
     /**
-     * Getter for property roundReport.
-     * @return Value of property roundReport.
+     * Adds the given reports vector to the GameReport collection.
+     * @param v Vector of reports
      */
-    public abstract java.lang.StringBuffer getRoundReport();
-    
+    public abstract void addReports(Vector v);
+
     /**
-     * Resets the round report
+     * Returns a vector of reports for the given round.
+     * @param r Round number
      */
-    public abstract void resetRoundReport();
-    
+    public abstract Vector getReports(int r);
+
     /**
-     * Getter for property phaseReport.
-     * @return Value of property phaseReport.
+     * Returns a vector of all the reports.
      */
-    public abstract java.lang.StringBuffer getPhaseReport();
-    
+    public abstract Vector getAllReports();
+
     /**
-     * Resets the round report 
+     * Used to populate previous game reports, e.g. after a client connects
+     *  to an existing game.
      */
-    public abstract void resetPhaseReport();
+    public void setAllReports(Vector v);
 
     public abstract void end(int winner, int winnerTeam);
 

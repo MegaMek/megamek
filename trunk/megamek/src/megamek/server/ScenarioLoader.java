@@ -54,7 +54,8 @@ public class ScenarioLoader
             for (int y = 0; y < dp.nBlocks; y++) {
                 HitData hit = dp.entity.rollHitLocation(ToHitData.HIT_NORMAL, 
                         ToHitData.SIDE_FRONT);
-                System.out.println(s.damageEntity(dp.entity, hit, 5));
+                System.out.println("[s.damageEntity(dp.entity, hit, 5)]");
+                s.damageEntity(dp.entity, hit, 5);
             }
                 
             //Apply Spec Dammage
@@ -157,10 +158,8 @@ public class ScenarioLoader
                                 ( "\n\tSlot not hittable " +
                                   ch.loc + ":" + (ch.slot+1) );
                         } else {
-                            System.out.print( s.applyCriticalHit(chp.entity,
-                                                                   ch.loc,
-                                                                   cs,
-                                                                   false) );
+                            System.out.print( "[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]" );
+                            s.applyCriticalHit(chp.entity, ch.loc, cs, false);
                         }
                     }
                     // Handle Tanks differently.
@@ -172,10 +171,8 @@ public class ScenarioLoader
                         } else {
                             CriticalSlot cs = new CriticalSlot
                                 ( CriticalSlot.TYPE_SYSTEM, ch.slot+1 );
-                            System.out.print( s.applyCriticalHit(chp.entity,
-                                                                   Entity.NONE,
-                                                                   cs,
-                                                                   false) );
+                            System.out.print( "[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]" );
+                            s.applyCriticalHit(chp.entity, Entity.NONE, cs, false);
                         }
 
                     } // End have-tank

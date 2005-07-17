@@ -60,7 +60,6 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base,"is_eq_limits", true);  //$NON-NLS-1$
         addOption(base,"autosave_msg", true);  //$NON-NLS-1$
         addOption(base,"paranoid_autosave", false);  //$NON-NLS-1$
-        addOption(base,"very_paranoid_autosave", false);  //$NON-NLS-1$
         addOption(base,"maps_include_subdir", false); //$NON-NLS-1$
         addOption(base,"exclusive_db_deployment", true); //$NON-NLS-1$
         

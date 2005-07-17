@@ -16,6 +16,8 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.Vector;
+
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
@@ -256,7 +258,7 @@ public class Pilot
         else
             return s.substring(index + 1,s.length());
     }
-    
+
     public String getDesc() {
         String s = new String(name);
         if (hits > 0) {
@@ -274,6 +276,51 @@ public class Pilot
             s += " [dead]";
         }
         return s;
+    }
+
+    public Vector getDescVector(boolean gunneryOnly) {
+        Vector vDesc = new Vector();
+        Report r;
+
+        r = new Report();
+        r.type = Report.PUBLIC;
+        r.add(name);
+        if (gunneryOnly) {
+            r.messageId = 7050;
+            r.add(getGunnery());
+        } else {
+            r.messageId = 7045;
+            r.add(getGunnery());
+            r.add(getPiloting());
+        }
+
+        if (hits > 0 || isUnconscious() || isDead()) {
+            Report r2 = new Report();
+            r2.type = Report.PUBLIC;
+            if (hits > 0) {
+                r2.messageId = 7055;
+                r2.add(hits);
+                if (isUnconscious()) {
+                    r2.messageId = 7060;
+                    r2.choose(true);
+                } else if (isDead()) {
+                    r2.messageId = 7060;
+                    r2.choose(false);
+                }
+            } else if (isUnconscious()) {
+                r2.messageId = 7065;
+                r2.choose(true);
+            } else if (isDead()) {
+                r2.messageId = 7065;
+                r2.choose(false);
+            }
+            r.newlines = 0;
+            vDesc.addElement(r);
+            vDesc.addElement(r2);
+        } else {
+            vDesc.addElement(r);
+        }
+        return vDesc;
     }
     
     /**

@@ -16,6 +16,10 @@ package megamek.common.util;
 
 import java.util.Vector;
 import com.sun.java.util.collections.Comparator;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
+import megamek.common.preference.PreferenceManager;
 
 public class StringUtil {
 
@@ -104,4 +108,26 @@ public class StringUtil {
             return s.substring(0, n - 2) + "..";
         }
     }
+
+    /**
+     * Inserts a date/time stamp into the given filename string just
+     * before the last period.  If there is no period in the filename,
+     * the stamp is added to the end.  The format of the stamp is dictated
+     * by the client option "StampFormat", which must use the same
+     * formatting as Java's SimpleDateFormat class.
+     *
+     * @param filename the String containing the filename (with extension)
+     * @return the filname with date/time stamp added
+     */
+    public static String addDateTimeStamp(String filename) {
+        SimpleDateFormat formatter =
+            new SimpleDateFormat(PreferenceManager.getClientPreferences().getStampFormat());
+        Date current = new Date();
+        if (filename.lastIndexOf(".") == -1) {
+            return filename + formatter.format(current);
+        } else {
+            return filename.substring(0, filename.lastIndexOf(".")) + formatter.format(current) + filename.substring(filename.lastIndexOf("."));
+        }
+    }
+
 }

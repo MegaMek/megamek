@@ -54,9 +54,11 @@ public class CommonSettingsDialog extends ClientDialog
     private Checkbox    autoEdgeScroll;
     private TextField   scrollSensitivity;
 
-    private Checkbox    keepServerlog;
-    private TextField   serverlogFilename;
-    private TextField   serverlogMaxSize;
+    private Checkbox    keepGameLog;
+    private TextField   gameLogFilename;
+    //private TextField   gameLogMaxSize;
+    private Checkbox    stampFilenames;
+    private TextField   stampFormat;
     private Checkbox    defaultAutoejectDisabled;
     private Checkbox    showUnitId;
     private Choice      locale;
@@ -207,24 +209,38 @@ public class CommonSettingsDialog extends ClientDialog
         showUnitId.addItemListener(this);
         tempPanel.add( showUnitId );
         
-        // client-side gamelog settings
-        keepServerlog
-            = new Checkbox( Messages.getString("CommonSettingsDialog.keepServerlog") ); //$NON-NLS-1$
-        keepServerlog.addItemListener(this);
-        tempPanel.add( keepServerlog );
+        // client-side gameLog settings
+        keepGameLog
+            = new Checkbox( Messages.getString("CommonSettingsDialog.keepGameLog") ); //$NON-NLS-1$
+        keepGameLog.addItemListener(this);
+        tempPanel.add( keepGameLog );
 
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
         panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileName")) ); //$NON-NLS-1$
-        serverlogFilename
+        gameLogFilename
             = new TextField(15);
-        panSetting.add( serverlogFilename );
+        panSetting.add( gameLogFilename );
         tempPanel.add( panSetting );
 
+        /*
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
         panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileMaxSize")) ); //$NON-NLS-1$
-        serverlogMaxSize
+        gameLogMaxSize
             = new TextField(5);
-        panSetting.add( serverlogMaxSize );
+        panSetting.add( gameLogMaxSize );
+        tempPanel.add( panSetting );
+        */
+
+        stampFilenames
+            = new Checkbox( Messages.getString("CommonSettingsDialog.stampFilenames") ); //$NON-NLS-1$
+        stampFilenames.addItemListener(this);
+        tempPanel.add( stampFilenames );
+
+        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.stampFormat")) ); //$NON-NLS-1$
+        stampFormat
+            = new TextField(15);
+        panSetting.add( stampFormat );
         tempPanel.add( panSetting );
 
         // scrolling options
@@ -319,11 +335,14 @@ public class CommonSettingsDialog extends ClientDialog
         autoEdgeScroll.setState( gs.getAutoEdgeScroll() );
         scrollSensitivity.setText( Integer.toString(gs.getScrollSensitivity() ) );
 
-        keepServerlog.setState( cs.keepServerlog() );
-        serverlogFilename.setEnabled(keepServerlog.getState());
-        serverlogFilename.setText( cs.getServerlogFilename() );
-        serverlogMaxSize.setEnabled(keepServerlog.getState());
-        serverlogMaxSize.setText( Integer.toString(cs.getServerlogMaxSize()) );
+        keepGameLog.setState( cs.keepGameLog() );
+        gameLogFilename.setEnabled(keepGameLog.getState());
+        gameLogFilename.setText( cs.getGameLogFilename() );
+        //gameLogMaxSize.setEnabled(keepGameLog.getState());
+        //gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
+        stampFilenames.setState( cs.stampFilenames() );
+        stampFormat.setEnabled(stampFilenames.getState());
+        stampFormat.setText(cs.getStampFormat());
 
         defaultAutoejectDisabled.setState( cs.defaultAutoejectDisabled() );
         showUnitId.setState( cs.getShowUnitId() );
@@ -380,9 +399,12 @@ public class CommonSettingsDialog extends ClientDialog
 
         gs.setGetFocus(getFocus.getState());
 
-        cs.setKeepServerlog(keepServerlog.getState());
-        cs.setServerlogFilename(serverlogFilename.getText());
-        cs.setServerlogMaxSize(Integer.parseInt(serverlogMaxSize.getText()));
+        cs.setKeepGameLog(keepGameLog.getState());
+        cs.setGameLogFilename(gameLogFilename.getText());
+        //cs.setGameLogMaxSize(Integer.parseInt(gameLogMaxSize.getText()));
+        cs.setStampFilenames(stampFilenames.getState());
+        cs.setStampFormat(stampFormat.getText());
+
 
         cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.getState());
         cs.setShowUnitId(showUnitId.getState());
@@ -421,9 +443,12 @@ public class CommonSettingsDialog extends ClientDialog
      */
     public void itemStateChanged( ItemEvent event ) {
         Object source = event.getItemSelectable();
-        if ( source.equals(keepServerlog) ) {
-            serverlogFilename.setEnabled(keepServerlog.getState());
-            serverlogMaxSize.setEnabled(keepServerlog.getState());
+        if ( source.equals(keepGameLog) ) {
+            gameLogFilename.setEnabled(keepGameLog.getState());
+            //gameLogMaxSize.setEnabled(keepGameLog.getState());
+        }
+        if ( source.equals(stampFilenames) ) {
+            stampFormat.setEnabled(stampFilenames.getState());
         }
         if ( event.getSource() == keys && event.getStateChange() == ItemEvent.SELECTED) {
             value.setText(GUIPreferences.getInstance().getString("Advanced" + keys.getSelectedItem()));

@@ -17,6 +17,7 @@ package megamek.common;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
 
@@ -815,22 +816,26 @@ public class Protomech
         return (int)Math.round((dbv + obv) * pilotFactor);
     }
 
-    /**
-     * Returns an end-of-battle report for this pmech
-     */
-    public String victoryReport() {
-        StringBuffer report = new StringBuffer();
+    public Vector victoryReport() {
+        Vector vDesc = new Vector();
 
-        report.append(getDisplayName());
-        report.append('\n');
-        report.append("Pilot : " + crew.getDesc());
-        report.append('\n');
-        report.append("Kills: " + getKillNumber());
-        report.append('\n');
+        Report r = new Report(7025);
+        r.type = Report.PUBLIC;
+        r.addDesc(this);
+        vDesc.addElement(r);
 
-        return report.toString();
+        r = new Report(7030);
+        r.type = Report.PUBLIC;
+        r.newlines = 0;
+        vDesc.addElement(r);
+        Entity.combineVectors(vDesc, crew.getDescVector(true));
+        r = new Report(7070, Report.PUBLIC);
+        r.newlines = 2;
+        r.add(getKillNumber());
+        vDesc.addElement(r);
+
+        return vDesc;
     }
-
 
     public int getMaxElevationChange() {
         return 1;

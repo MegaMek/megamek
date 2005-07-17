@@ -1763,7 +1763,6 @@ class ExtraPanel
 
             ((Mech)clientgui.getClient().game.getEntity(myMechId)).setActiveSinksNextRound(helper);
             clientgui.getClient().sendUpdateEntity(clientgui.getClient().game.getEntity(myMechId));
-            clientgui.getClient().sendChat ("Player " + clientgui.getClient().getLocalPlayer().getName() + " turned on " + helper + " heat sinks in entity " + clientgui.getClient().game.getEntity(myMechId).getDisplayName());
         }
     }
 } // End class ExtraPanel extends Panel

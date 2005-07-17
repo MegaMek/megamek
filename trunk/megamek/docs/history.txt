@@ -58,6 +58,7 @@ v0.29.84 (CVS) RELEASE CANDIDATE!
 + Bug 1239105: Unload now works as first and only step.
 + Stop broadcasting changed heat sink status on general chat.
 + Bug 1234866, Patch 1239594: bot deploys in same hex.
++ Patch 1239772: BA SRM Ammo Fix.
 
 v0.29.83 (2005-07-10 11:00am)
 + Patch 1231769: flare LRM & illumination artillery.

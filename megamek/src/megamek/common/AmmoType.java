@@ -4137,8 +4137,8 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_1;
-        ammo.name = "LRM 1 Ammo";
-        ammo.setInternalName("IS Ammo LRM-1");
+        ammo.name = "BA LRM 1 Ammo";
+        ammo.setInternalName("IS BA Ammo LRM-1");
         ammo.addLookupName("BAISLRM1 Ammo");
         ammo.addLookupName("BAISLRM1 Ammo");
         ammo.damagePerShot = 1;
@@ -4154,8 +4154,8 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_1;
-        ammo.name = "LRM 2 Ammo";
-        ammo.setInternalName("IS Ammo LRM-2");
+        ammo.name = "BA LRM 2 Ammo";
+        ammo.setInternalName("IS BA Ammo LRM-2");
         ammo.addLookupName("BAISLRM2 Ammo");
         ammo.addLookupName("BAISLRM2 Ammo");
         ammo.damagePerShot = 1;
@@ -4171,8 +4171,8 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_1;
-        ammo.name = "LRM 3 Ammo";
-        ammo.setInternalName("IS Ammo LRM-3");
+        ammo.name = "BA LRM 3 Ammo";
+        ammo.setInternalName("IS BA Ammo LRM-3");
         ammo.addLookupName("BAISLRM3 Ammo");
         ammo.addLookupName("BAISLRM3 Ammo");
         ammo.damagePerShot = 1;
@@ -4188,8 +4188,8 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_1;
-        ammo.name = "LRM 4 Ammo";
-        ammo.setInternalName("IS Ammo LRM-4");
+        ammo.name = "BA LRM 4 Ammo";
+        ammo.setInternalName("IS BA Ammo LRM-4");
         ammo.addLookupName("BAISLRM4 Ammo");
         ammo.addLookupName("BAISLRM4 Ammo");
         ammo.damagePerShot = 1;
@@ -4204,8 +4204,8 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_LEVEL_1;
-        ammo.name = "LRM 5 Ammo";
-        ammo.setInternalName("IS Ammo LRM-5");
+        ammo.name = "BA LRM 5 Ammo";
+        ammo.setInternalName("IS BA Ammo LRM-5");
         ammo.addLookupName("BAISLRM5 Ammo");
         ammo.addLookupName("BAISLRM5 Ammo");
         ammo.damagePerShot = 1;
@@ -4221,7 +4221,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "LRM 1 Ammo";
+        ammo.name = "BA LRM 1 Ammo";
         ammo.setInternalName("BACL Ammo LRM-1");
         ammo.addLookupName("BACLLRM1 Ammo");
         ammo.addLookupName("BACL LRM 1 Ammo");
@@ -4238,7 +4238,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "LRM 2 Ammo";
+        ammo.name = "BA LRM 2 Ammo";
         ammo.setInternalName("BACL Ammo LRM-2");
         ammo.addLookupName("BACLLRM2 Ammo");
         ammo.addLookupName("BACL LRM 2 Ammo");
@@ -4255,7 +4255,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "LRM 3 Ammo";
+        ammo.name = "BA LRM 3 Ammo";
         ammo.setInternalName("BACL Ammo LRM-3");
         ammo.addLookupName("BACLLRM3 Ammo");
         ammo.addLookupName("BACL LRM 3 Ammo");
@@ -4272,7 +4272,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "LRM 4 Ammo";
+        ammo.name = "BA LRM 4 Ammo";
         ammo.setInternalName("BACL Ammo LRM-4");
         ammo.addLookupName("BACLLRM4 Ammo");
         ammo.addLookupName("BACL LRM 4 Ammo");
@@ -4289,7 +4289,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "LRM 5 Ammo";
+        ammo.name = "BA LRM 5 Ammo";
         ammo.setInternalName("BACL Ammo LRM-5");
         ammo.addLookupName("BACLLRM5 Ammo");
         ammo.addLookupName("BACL LRM 5 Ammo");

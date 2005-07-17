@@ -1126,8 +1126,8 @@ implements Runnable, ConnectionHandler {
         }
 
         // need at least one entity in the game for the lounge phase to end
-        if (!game.phaseHasTurns(game.getPhase())
-        && (game.getPhase() != IGame.PHASE_LOUNGE || game.getNoOfEntities() > 0)) {
+        if (!game.phaseHasTurns(game.getPhase()) &&
+                (game.getPhase() != IGame.PHASE_LOUNGE || game.getNoOfEntities() > 0)) {
             endCurrentPhase();
         }
     }
@@ -1398,8 +1398,9 @@ implements Runnable, ConnectionHandler {
                     checkForVacuumDeath();
                 }
                 resolveFire();
-                //report missing
+                //report missing 
                 //phaseReport.append(game.ageFlares());
+                vPhaseReport.addAll(game.ageFlares());
                 send(createFlarePacket());
                 resolveExtremeTempInfantryDeath();
                 resolveAmmoDumps();

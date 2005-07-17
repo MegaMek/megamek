@@ -212,14 +212,43 @@ public abstract class BotClient extends Client {
      * Gets valid & empty starting coords around the specified point
      */
     protected Coords getCoordsAround(Entity deploy_me, Coords[] c) {
+        int mech_count;
+        int conv_fcount; // Friendly conventional units
+        int conv_ecount; // Enemy conventional units
         // Check all of the hexes in order.
-        for (int x=0; x<c.length; x++) {
-            // Verify that the unit can be placed in this hex
-            if (!deploy_me.isHexProhibited(game.getBoard().getHex(c[x].x, c[x].y))) {
-                return c[x];
+        for (int x = 0; x < c.length; x++) {
+            // Verify stacking limits.  Gotta do this the long way, as
+            // Compute.stackingViolation references the entity's CURRENT
+            // position as well as the hex being checked; because its not
+            // deployed yet it doesn't have a location!
+            mech_count = 0;
+            conv_fcount = 0;
+            conv_ecount = 0;
+            for (Enumeration stacked_ents = game.getEntities(c[x]); stacked_ents.hasMoreElements();){
+                Entity test_ent = (Entity) stacked_ents.nextElement();
+                if (test_ent instanceof Mech) {
+                    mech_count++;
+                } else {
+                    if (deploy_me.isEnemyOf(test_ent)){
+                        conv_ecount++;
+                    } else {
+                        conv_fcount++;
+                    }
+                }
             }
+            if (deploy_me instanceof Mech){
+                mech_count ++;
+            } else {
+                conv_fcount++;
+            }
+            if (mech_count > 1) continue;
+            if ((conv_fcount + mech_count) > 2) continue;
+            if ((conv_fcount + mech_count) > 2) continue;
+            if ((conv_fcount + conv_ecount) > 4) continue;
+            return c[x];
         }
 
+        System.out.println("Returning no deployment position; THIS IS BAD!");
         // If NONE of them are acceptable, then just return null.
         return null;
 /*
@@ -253,8 +282,11 @@ public abstract class BotClient extends Client {
     // Highest rating wins out; if this applies to multiple hexes then randomly select among them
     protected Coords getStartingCoords() {
         Coords[] calc = getStartingCoordsArray();
-        if ((calc != null) && (calc.length > 0))
-            return calc[0];
+        if (calc != null){
+            if (calc.length > 0){
+                return calc[0];
+            }
+        }
         return null;
     }
 
@@ -596,19 +628,24 @@ public abstract class BotClient extends Client {
         // Once we get up to Java 1.5, we can streamline this like a bunch.
         // Or just rewrite the damned function.
         // FIXME
-        for (int x=0; x<valid_array.length; x++) {
-            for (int y=x; y<(valid_array.length-1); y++) {
-                if (fitness[y] < fitness[y+1]) {
-                    double tmpI = fitness[y];
-                    Coords tmpC = valid_array[y];
-                    fitness[y] = fitness[x];
-                    valid_array[y] = valid_array[x];
-                    fitness[x] = tmpI;
-                    valid_array[x] = tmpC;
-                }
-            }
-        }
 
+        boolean was_changed;
+        double temp_fitness;
+        do {
+            was_changed = false;
+	        for (int x = 0; x < (valid_array.length - 1); x++){
+	            if (fitness[x] < fitness[x + 1]){
+	                test_hex = valid_array[x+1];
+	                temp_fitness = fitness[x+1];
+	                valid_array[x+1] = valid_array[x];
+	                fitness[x+1] = fitness[x];
+	                valid_array[x] = test_hex;
+	                fitness[x] = temp_fitness;
+	                was_changed = true;
+	                break;
+	            }
+	        }
+        } while (was_changed == true);
         return valid_array;
     }
 

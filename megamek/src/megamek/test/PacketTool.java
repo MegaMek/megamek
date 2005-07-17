@@ -364,8 +364,8 @@ public class PacketTool extends Frame implements Runnable, ConnectionHandler {
                 System.out.print( "COMMAND_SENDING_PLAYERS" ); break;
             case Packet.COMMAND_SENDING_TURNS:
                 System.out.print( "COMMAND_SENDING_TURNS" ); break;
-            case Packet.COMMAND_SENDING_REPORT:
-                System.out.print( "COMMAND_SENDING_REPORT" ); break;
+            case Packet.COMMAND_SENDING_REPORTS:
+                System.out.print( "COMMAND_SENDING_REPORTS" ); break;
             case Packet.COMMAND_SENDING_GAME_SETTINGS:
                 System.out.print( "COMMAND_SENDING_GAME_SETTINGS" ); break;
             case Packet.COMMAND_SENDING_MAP_SETTINGS:

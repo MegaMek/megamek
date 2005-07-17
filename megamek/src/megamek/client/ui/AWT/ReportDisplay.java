@@ -16,6 +16,9 @@ package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Vector;
+
+import gov.nist.gui.TabPanel;
 
 import megamek.client.Client;
 import megamek.common.*;
@@ -37,8 +40,9 @@ public class ReportDisplay
 //     private ChatterBox        cb;
     
     // displays
-    private TextArea        rta;
-    
+    private TabPanel        tabs;
+    private Vector          vTextArea = new Vector();
+
     private Window            mechw;
     private MechDisplay        mechd;
     private    boolean            mechdOn;
@@ -64,10 +68,24 @@ public class ReportDisplay
         client.game.addGameListener( this );
 
 //         cb = client.cb;
-        
-        rta = new TextArea(client.eotr, 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
-        rta.setEditable(false);
-        
+
+        // Create a tabbed panel to hold our reports.
+        tabs = new TabPanel();
+        //debugReport: add new client setting
+        Font tabPanelFont = new Font ("Helvetica",Font.BOLD, //$NON-NLS-1$
+         GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
+        tabs.setTabFont (tabPanelFont);
+
+        /* HACK: Without this initial empty TextArea, the tabs will be
+           blank (no TextArea at all) during the first initiative
+           phase.  I think it has something to do with the layout
+           manager, but I'm not really sure.  Maybe a strategically
+           placed validate() would be better? */
+        TextArea ta = new TextArea("", 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        ta.setEditable(false);
+        vTextArea.addElement(ta);
+        tabs.add("Phase", ta);
+
         setupStatusBar( "" ); //$NON-NLS-1$
         
         readyB = new Button(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
@@ -87,7 +105,7 @@ public class ReportDisplay
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(rta, gridbag, c);
+        addBag(tabs, gridbag, c);
 
 //         c.gridwidth = 1;
 //         c.weightx = 1.0;    c.weighty = 0.0;
@@ -158,7 +176,7 @@ public class ReportDisplay
     
     public void resetButtons() {
         resetReadyButton();
-        if (client.game.getPhase() == IGame.PHASE_INITIATIVE
+        if (client.game.getPhase() == IGame.PHASE_INITIATIVE_REPORT
             && client.game.hasTacticalGenius(client.getLocalPlayer())) {
             showRerollButton(true);
         } else {
@@ -175,13 +193,39 @@ public class ReportDisplay
         rerollInitiativeB.setEnabled(true);
     }
 
-    /**
-     * Refreshes the report
-     */
-    public void refresh() {
-        rta.setText(client.eotr);
+    public void setReportTab(int round, String roundText, String phaseText) {
+        if (round < 1) {
+            System.err.println("ERROR: ReportDisplay.setReportTab() called with round argument of less than 1, which is invalid.");
+            return;
+        }
+        if (round >= vTextArea.size()) {
+            //need new tab
+            tabs.remove((Component)vTextArea.elementAt(vTextArea.size() - 1));
+            vTextArea.removeElementAt(vTextArea.size() - 1);
+            TextArea ta;
+            while (round > vTextArea.size()) {
+                //HACK: We shouldn't have to rely on our access to the client object...
+                ta = new TextArea(client.receiveReport(client.game.getReports(vTextArea.size() + 1)), 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+                ta.setEditable(false);
+                tabs.add("Round " + (vTextArea.size() + 1),ta);
+                vTextArea.addElement(ta);
+            }
+            ta = new TextArea(phaseText, 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+            ta.setEditable(false);
+            tabs.add("Phase", ta);
+            vTextArea.addElement(ta);
+            tabs.last();
+        } else {
+            ((TextArea)vTextArea.elementAt(round - 1)).setText(roundText);
+            ((TextArea)vTextArea.elementAt(round)).setText(phaseText);
+        }
     }
-    
+
+    public void appendReportTab(String additionalText) {
+        ((TextArea)vTextArea.elementAt(vTextArea.size() - 1)).append(additionalText);
+        ((TextArea)vTextArea.elementAt(vTextArea.size() - 2)).append(additionalText);
+    }
+
     //
     // ActionListener
     //
@@ -217,7 +261,7 @@ public class ReportDisplay
             return;
         }
 
-        refresh();
+        setReportTab(client.game.getRoundCount(), client.roundReport, client.phaseReport);
         resetButtons();
         rerolled=false;
     }

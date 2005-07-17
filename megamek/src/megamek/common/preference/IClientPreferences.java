@@ -58,21 +58,25 @@ public interface IClientPreferences extends IPreferenceStore {
 
     void setGoalPlayers(int n); 
     
-    String getServerlogFilename();
+    String getGameLogFilename();
 
-    int getServerlogMaxSize();
+    //int getGameLogMaxSize();
+
+    boolean stampFilenames();
+
+    String getStampFormat();
 
     boolean getShowUnitId();
 
     char getUnitStartChar();
 
-    boolean keepServerlog();
+    boolean keepGameLog();
 
     boolean memoryDumpOn();
 
     void setDefaultAutoejectDisabled(boolean state);
 
-    void setKeepServerlog(boolean state);
+    void setKeepGameLog(boolean state);
 
     void setLastConnectAddr(String serverAddr);
 
@@ -94,9 +98,13 @@ public interface IClientPreferences extends IPreferenceStore {
 
     void setMaxPathfinderTime(int i);
 
-    void setServerlogFilename(String text);
+    void setGameLogFilename(String text);
 
-    void setServerlogMaxSize(int i);
+    //void setGameLogMaxSize(int i);
+
+    void setStampFilenames(boolean state);
+
+    void setStampFormat(String text);
 
     void setShowUnitId(boolean state);
 

@@ -60,7 +60,7 @@ public abstract class BotClient extends Client {
             }
             
             public void gameReport(GameReportEvent e) {
-                if (game.getPhase() == IGame.PHASE_INITIATIVE) {
+                if (game.getPhase() == IGame.PHASE_INITIATIVE_REPORT) {
                     //Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
                     sendDone(true);
@@ -134,14 +134,15 @@ public abstract class BotClient extends Client {
             break;
             case IGame.PHASE_PHYSICAL :
                 break;
-            case IGame.PHASE_INITIATIVE :
-            case IGame.PHASE_MOVEMENT_REPORT :
-            case IGame.PHASE_FIRING_REPORT :
-            case IGame.PHASE_END :
+            case IGame.PHASE_END_REPORT :
                 // Check if stealth armor should be switched on/off
                 // Kinda cheap leaving this until the end phase, players can't do this
                 toggleStealth();
+            case IGame.PHASE_INITIATIVE_REPORT :
+            case IGame.PHASE_MOVEMENT_REPORT :
             case IGame.PHASE_OFFBOARD_REPORT :
+            case IGame.PHASE_FIRING_REPORT :
+            case IGame.PHASE_PHYSICAL_REPORT :
                 sendDone(true);
             break;
             case IGame.PHASE_VICTORY :

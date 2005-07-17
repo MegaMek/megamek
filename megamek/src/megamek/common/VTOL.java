@@ -332,7 +332,7 @@ public class VTOL extends Tank {
                 return new HitData(nArmorLoc);
             case 9:
                 if (bSide) {
-                    //TODO:somehow report this to the serverlog
+                    //TODO:somehow report this to the gamelog
                     Mounted mWeap = getMainWeapon();
                     mWeap.setHit(true);
                     return new HitData(nArmorLoc);
@@ -345,7 +345,7 @@ public class VTOL extends Tank {
                 return new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
             case 12:
                 if (getOriginalWalkMP() > 0) {
-                    //TODO:somehow get this to report in the serverlog
+                    //TODO:somehow get this to report in the gamelog
                     setOriginalWalkMP(getOriginalWalkMP()-1);
                 }
                 return new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL);                

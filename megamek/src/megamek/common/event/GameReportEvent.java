@@ -15,16 +15,30 @@
 package megamek.common.event;
 
 /**
- * Instances of this class are sent when Server report is received
+ * Normally, reports are dealt with during report phases.  When a report is
+ * sent at an odd time though, an instance of this class is sent.
  */
 public class GameReportEvent extends GameEvent {
 
+    private String report;
+
     /**
+     * Create a new Report event.
      * 
-     * @param source
+     * @param source the Object that generated this report
+     * @param s a String of the report
      */
-    public GameReportEvent(Object source) {
+    public GameReportEvent(Object source, String s) {
         super(source, GAME_REPORT);
+        this.report = s;
     }
 
+    /**
+     * Get the text of the report associated with this event.
+     *
+     * @return a String of the report
+     */
+    public String getReport() {
+        return this.report;
+    }
 }

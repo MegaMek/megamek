@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * You know what tanks are, silly.
@@ -597,21 +598,26 @@ public class Tank
     {
         return prd;
     }
-    
-    /**
-     * Returns an end-of-battle report for this mech
-     */
-    public String victoryReport() {
-        StringBuffer report = new StringBuffer();
-        
-        report.append(getDisplayName());
-        report.append('\n');
-        report.append("Driver : " + crew.getDesc());
-        report.append('\n');
-        report.append("Kills: " + getKillNumber());
-        report.append('\n');
-        
-        return report.toString();
+
+    public Vector victoryReport() {
+        Vector vDesc = new Vector();
+
+        Report r = new Report(7025);
+        r.type = Report.PUBLIC;
+        r.addDesc(this);
+        vDesc.addElement(r);
+
+        r = new Report(7035);
+        r.type = Report.PUBLIC;
+        r.newlines = 0;
+        vDesc.addElement(r);
+        Entity.combineVectors(vDesc, crew.getDescVector(false));
+        r = new Report(7070, Report.PUBLIC);
+        r.newlines = 2;
+        r.add(getKillNumber());
+        vDesc.addElement(r);
+
+        return vDesc;
     }
     
     public int[] getNoOfSlots()

@@ -47,7 +47,6 @@ public class TargetingPhaseDisplay
     public static final String FIRE_SKIP       = "fireSkip"; //$NON-NLS-1$
     public static final String FIRE_TWIST      = "fireTwist"; //$NON-NLS-1$
     public static final String FIRE_CANCEL     = "fireCancel"; //$NON-NLS-1$
-    public static final String FIRE_REPORT     = "fireReport"; //$NON-NLS-1$
 
     // parent game
     public ClientGUI clientgui;
@@ -61,7 +60,6 @@ public class TargetingPhaseDisplay
     private Button            butSkip;
     private Button            butFlipArms;
     private Button            butFireMode;
-//    private Button            butReport;
     private Button            butSpace;
     private Button            butNext;
     private Button            butNextTarg;
@@ -848,9 +846,6 @@ public class TargetingPhaseDisplay
 
         if (ev.getSource() == butDone) {
             ready();
-        } else if (ev.getActionCommand().equals(FIRE_REPORT)) {
-            new MiniReportDisplay(clientgui.frame, client.eotr).show();
-            return;
         } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) { //$NON-NLS-1$
             // Make sure the game options dialog is not editable.
             if ( clientgui.getGameOptionsDialog().isEditable() ) {

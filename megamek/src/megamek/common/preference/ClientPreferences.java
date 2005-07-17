@@ -25,7 +25,6 @@ import megamek.common.util.LocaleParser;
 
 class ClientPreferences extends PreferenceStoreProxy implements IClientPreferences {
 
-    public static final String KEEP_SERVER_LOG = "KeepServerlog";
     public static final String LAST_CONNECT_ADDR = "LastConnectAddr";
     public static final String LAST_CONNECT_PORT = "LastConnectPort";
     public static final String LAST_PLAYER_CAMO_NAME = "LastPlayerCamoName";    
@@ -42,8 +41,11 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
     public static final String MECH_DIRECTORY = "MechDirectory";
     public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
-    public static final String SERVERLOG_FILENAME = "ServerlogFilename";
-    public static final String SERVERLOG_MAX_SIZE = "ServerlogMaxSize";
+    public static final String GAMELOG_KEEP = "KeepGameLog";
+    public static final String GAMELOG_FILENAME = "GameLogFilename";
+    //public static final String GAMELOG_MAX_SIZE = "GameLogMaxSize";
+    public static final String STAMP_FILENAMES = "StampFilenames";
+    public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
     public static final String UNIT_START_CHAR = "UnitStartChar";
     public static final String DEFAULT_AUTOEJECT_DISABLED = "DefaultAutoejectDisabled";
@@ -62,8 +64,10 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "mechfiles");
         store.setDefault(METASERVER_NAME, "http://www.damour.info/cgi-bin/james/metaserver");
         store.setDefault(GOAL_PLAYERS, 2);
-        store.setDefault(SERVERLOG_FILENAME, "gamelog.txt");
-        store.setDefault(SERVERLOG_MAX_SIZE, 1);
+        store.setDefault(GAMELOG_KEEP, true);
+        store.setDefault(GAMELOG_FILENAME, "gamelog.txt");
+        //store.setDefault(GAMELOG_MAX_SIZE, 1);
+        store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR,'A');
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
@@ -139,12 +143,20 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setValue(GOAL_PLAYERS, n);
     }
 
-    public String getServerlogFilename() {
-        return store.getString(SERVERLOG_FILENAME);
+    public String getGameLogFilename() {
+        return store.getString(GAMELOG_FILENAME);
     }
 
-    public int getServerlogMaxSize() {
-        return store.getInt(SERVERLOG_MAX_SIZE);
+    //public int getGameLogMaxSize() {
+    //    return store.getInt(GAMELOG_MAX_SIZE);
+    //}
+
+    public boolean stampFilenames() {
+        return store.getBoolean(STAMP_FILENAMES);
+    }
+
+    public String getStampFormat() {
+        return store.getString(STAMP_FORMAT);
     }
 
     public boolean getShowUnitId() {
@@ -155,8 +167,8 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         return (char)store.getInt(UNIT_START_CHAR);
     }
 
-    public boolean keepServerlog() {
-        return store.getBoolean(KEEP_SERVER_LOG);
+    public boolean keepGameLog() {
+        return store.getBoolean(GAMELOG_KEEP);
     }
 
     public boolean memoryDumpOn() {
@@ -167,8 +179,8 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setValue(DEFAULT_AUTOEJECT_DISABLED, state);
     }
 
-    public void setKeepServerlog(boolean state) {
-        store.setValue(KEEP_SERVER_LOG, state);
+    public void setKeepGameLog(boolean state) {
+        store.setValue(GAMELOG_KEEP, state);
     }
 
     public void setLastConnectAddr(String serverAddr) {
@@ -209,12 +221,20 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setValue(MAX_PATHFINDER_TIME, i);
     }
 
-    public void setServerlogFilename(String name) {
-        store.setValue(SERVERLOG_FILENAME, name);        
+    public void setGameLogFilename(String name) {
+        store.setValue(GAMELOG_FILENAME, name);        
     }
 
-    public void setServerlogMaxSize(int i) {
-        store.setValue(SERVERLOG_MAX_SIZE, i);        
+    //public void setGameLogMaxSize(int i) {
+    //    store.setValue(GAMELOG_MAX_SIZE, i);        
+    //}
+
+    public void setStampFilenames(boolean state) {
+        store.setValue(STAMP_FILENAMES, state);
+    }
+
+    public void setStampFormat(String format) {
+        store.setValue(STAMP_FORMAT, format);
     }
 
     public void setShowUnitId(boolean state) {

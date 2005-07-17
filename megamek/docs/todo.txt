@@ -10,12 +10,6 @@ BoardView1.java:
 - Board buffer should be slightly larger, to contain whole hexes, and only 
   scroll in whole hex units
 
-- the turn report could keep a list of "message" objects 
-  instead of a large report string.  This would allow some customizing of the
-  display, or even translation (vieleicht zum Deutcher sprache.)
-- This would also allow us to hide the chassis & model of units crossing
-  rivers during double-blind game when the enemy has no LOS to the unit.
-  
 - More server validation of client data
 
 - Both Server and Compute are getting WAY overcrowded.  We need to re-factor.
@@ -33,8 +27,6 @@ BoardView1.java:
 RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------
 general:
-- There are 2 report when firing phase happens and physical phase is skipped.
-  A little logic here could avoid that.
 - In Mech Selection dialog, implement an "advanced filters and sorts" pane
 
 mechs:

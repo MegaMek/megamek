@@ -25,6 +25,7 @@ import megamek.common.*;
 import megamek.common.options.GameOptions;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
 import megamek.client.*;
 import megamek.client.ui.AWT.AlertDialog;
 import megamek.client.ui.AWT.BoardEditor;
@@ -713,8 +714,11 @@ public class MegaMek implements ActionListener {
 
     public static void main(String[] args) {
         int usePort = 2346;
-        
+
         String logFileName = "megameklog.txt"; //$NON-NLS-1$
+        if (PreferenceManager.getClientPreferences().stampFilenames()) {
+            logFileName = StringUtil.addDateTimeStamp(logFileName);
+        }
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-testdice")) { //$NON-NLS-1$
                 TestDice.testDice();

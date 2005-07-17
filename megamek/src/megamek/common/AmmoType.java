@@ -4144,6 +4144,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4161,6 +4162,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4178,6 +4180,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4195,6 +4198,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4211,6 +4215,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4228,6 +4233,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4245,6 +4251,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4262,6 +4269,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4279,6 +4287,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4296,6 +4305,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
 
@@ -4313,6 +4323,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4330,6 +4341,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4347,6 +4359,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4364,6 +4377,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4381,6 +4395,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4397,6 +4412,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4413,6 +4429,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4429,6 +4446,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4445,6 +4463,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_MRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 
@@ -4461,6 +4480,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_MRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
 

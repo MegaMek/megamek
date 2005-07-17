@@ -1087,5 +1087,5 @@ public interface IGame {
      * Artillery flares drift with wind.
      * (called at end of turn)
      */
-    public abstract String ageFlares();
+    public abstract Vector ageFlares();
 }

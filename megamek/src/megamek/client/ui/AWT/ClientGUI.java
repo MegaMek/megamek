@@ -438,7 +438,7 @@ public class ClientGUI
      * Called when the user selects the "View->Turn Report" menu item.
      */
     private void showTurnReport() {
-        new MiniReportDisplay(frame, client.eotr).show();
+        new MiniReportDisplay(frame, client.roundReport).show();
     }
 
     /**
@@ -644,9 +644,6 @@ public class ClientGUI
             this.cb.setDoneButton(done);
             done.setVisible(true);
         }
-        if (curPanel instanceof ReportDisplay) {
-            //            ((ReportDisplay) curPanel).resetButtons();
-        }
 
         // Make the new panel the focus, if the Client option says so
         if (GUIPreferences.getInstance().getFocus() && !(client instanceof megamek.client.bot.TestBot)) curPanel.requestFocus();
@@ -758,7 +755,7 @@ public class ClientGUI
                 }
                 panSecondary.add(secondary, component);
                 break;
-            case IGame.PHASE_INITIATIVE :
+            case IGame.PHASE_INITIATIVE_REPORT :
                 component = new ReportDisplay(client);
                 main = "ReportDisplay"; //$NON-NLS-1$
                 secondary = main;
@@ -768,13 +765,14 @@ public class ClientGUI
             case IGame.PHASE_MOVEMENT_REPORT :
             case IGame.PHASE_OFFBOARD_REPORT :
             case IGame.PHASE_FIRING_REPORT :
-            case IGame.PHASE_END :
+            case IGame.PHASE_PHYSICAL_REPORT :
+            case IGame.PHASE_END_REPORT :
             case IGame.PHASE_VICTORY :
                 // Try to reuse the ReportDisplay for other phases...
-                component = (Component) phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE));
+                component = (Component) phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
                 if (null == component) {
                     // no ReportDisplay to reuse -- get a new one
-                    component = initializePanel(IGame.PHASE_INITIATIVE);
+                    component = initializePanel(IGame.PHASE_INITIATIVE_REPORT);
                 }
                 main = "ReportDisplay"; //$NON-NLS-1$
                 secondary = main;
@@ -1371,19 +1369,19 @@ public class ClientGUI
                 break;
             case IGame.PHASE_INITIATIVE :
                 bv.clearAllAttacks();
-            showRerollButton = client.game.hasTacticalGenius(client.getLocalPlayer());
+            case IGame.PHASE_INITIATIVE_REPORT :
+                showRerollButton = client.game.hasTacticalGenius(client.getLocalPlayer());
             case IGame.PHASE_MOVEMENT_REPORT :
             case IGame.PHASE_OFFBOARD_REPORT :
             case IGame.PHASE_FIRING_REPORT :
             case IGame.PHASE_END :
             case IGame.PHASE_VICTORY :
                 setMapVisible(false);
-            
-            // nemchenk, 2004-01-01 -- hide MechDisplay at the end
-            mechW.setVisible(false);
-            break;
+                // nemchenk, 2004-01-01 -- hide MechDisplay at the end
+                mechW.setVisible(false);
+                break;
             }
-            
+
             menuBar.setPhase(client.game.getPhase());
             cb.getComponent().setVisible(true);
             validate();
@@ -1393,20 +1391,25 @@ public class ClientGUI
 
         public void gameReport(GameReportEvent e) {
             // Normally the Report Display is updated when the panel is
-            //  switched during a phase change.  This update is for
-            //  Tactical Genius reroll requests, and therefore only
-            //  resets the done button.
-            // It also does a check if the player deserves an active reroll button (possible,
-            // if he gets on which he didn't use, and his opponent got and used one) and if so
-            // activates that too.
-            if (curPanel instanceof ReportDisplay) {
-                ((ReportDisplay) curPanel).refresh();
+            //  switched during a phase change.
+            // This update is for reports that get sent at odd times,
+            //  currently Tactical Genius reroll requests and when
+            //  a player wishes to continue moving after a fall.
+            if (e.getReport() == null && curPanel instanceof ReportDisplay) {
+                //Tactical Genius
+                ((ReportDisplay) curPanel).appendReportTab(client.phaseReport);
                 ((ReportDisplay) curPanel).resetReadyButton();
+                // Check if the player deserves an active reroll button
+                // (possible, if he gets one which he didn't use, and his
+                // opponent got and used one) and if so activates it.
                 if(client.game.hasTacticalGenius(client.getLocalPlayer())) {
                     if(!((ReportDisplay) curPanel).hasRerolled()) {
                     ((ReportDisplay) curPanel).resetRerollButton();
                     }
                 }
+            } else {
+                //Continued movement after getting up
+                doAlertDialog("Movement Report",e.getReport());
             }
         }
 

@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.*;
+import java.util.Vector;
 
 /**
  * This class represents the lowest of the low, the ground pounders, 
@@ -760,24 +761,25 @@ public class Infantry
 
     } // End public int calculateBattleValue()
 
-    /**
-     * Generates a string containing a report on all useful information about
-     * this entity.
-     */
-    public String victoryReport() {
-        StringBuffer report = new StringBuffer();
-        
-        report.append(getDisplayName());
-        report.append('\n');
-        report.append("Gunnery skill : " + crew.getGunnery());
-        report.append('\n');
-        report.append("Kills: " + getKillNumber());
-        report.append('\n');
-        if (isCaptured()) {
-            report.append("  *** CAPTURED BY THE ENEMY ***");
-            report.append('\n');
-        }        
-        return report.toString();
+    public Vector victoryReport() {
+        Vector vDesc = new Vector();
+
+        Report r = new Report(7025);
+        r.type = Report.PUBLIC;
+        r.addDesc(this);
+        vDesc.addElement(r);
+
+        r = new Report(7040);
+        r.type = Report.PUBLIC;
+        r.newlines = 0;
+        vDesc.addElement(r);
+        Entity.combineVectors(vDesc, crew.getDescVector(true));
+        r = new Report(7070, Report.PUBLIC);
+        r.newlines = 2;
+        r.add(getKillNumber());
+        vDesc.addElement(r);
+
+        return vDesc;
     }
 
     /**

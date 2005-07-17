@@ -66,7 +66,11 @@ implements Serializable {
     public static final int        COMMAND_SENDING_ENTITIES     = 18;
     public static final int        COMMAND_SENDING_PLAYERS      = 19;
     public static final int        COMMAND_SENDING_TURNS        = 28;  // reorder me
-    public static final int        COMMAND_SENDING_REPORT       = 20;
+    public static final int        COMMAND_SENDING_REPORTS      = 20;
+    public static final int        COMMAND_SENDING_REPORTS_SPECIAL= 47;
+    public static final int        COMMAND_SENDING_REPORTS_TACTICAL_GENIUS= 48;
+    public static final int        COMMAND_SENDING_REPORTS_ALL  = 49;
+
     public static final int        COMMAND_SENDING_GAME_SETTINGS= 21;
     public static final int        COMMAND_SENDING_MAP_SETTINGS = 22;
     public static final int        COMMAND_QUERY_MAP_SETTINGS   = 23;

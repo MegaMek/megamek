@@ -1398,8 +1398,6 @@ implements Runnable, ConnectionHandler {
                     checkForVacuumDeath();
                 }
                 resolveFire();
-                //report missing 
-                //phaseReport.append(game.ageFlares());
                 vPhaseReport.addAll(game.ageFlares());
                 send(createFlarePacket());
                 resolveExtremeTempInfantryDeath();
@@ -2558,17 +2556,16 @@ implements Runnable, ConnectionHandler {
 
                 // Is the MechWarrior an enemy?
                 int condition = IEntityRemovalConditions.REMOVE_IN_RETREAT;
-                String leavingText = "carries ";
+                r = new Report(2010);
                 if (mw.isCaptured()) {
+                    r = new Report(2015);
                     condition = IEntityRemovalConditions.REMOVE_CAPTURED;
-                    leavingText = "takes ";
                 }
                 game.removeEntity( mw.getId(), condition );
                 send( createRemoveEntityPacket(mw.getId(), condition) );
-                    phaseReport.append( "   It " )
-                        .append( leavingText )
-                        .append( mw.getDisplayName() )
-                        .append( " with it.\n" );
+                r.addDesc(mw);
+                r.indent();
+                vPhaseReport.addElement(r);
             }
 
             // Is the unit being swarmed?
@@ -3180,9 +3177,10 @@ implements Runnable, ConnectionHandler {
                             if (!doSkillCheckWhileMoving(entity, curPos,
                                                    nextPos, rollTarget, false)){
                                 entity.setStuck(true);
-                                phaseReport.append("\n").append(
-                                    entity.getDisplayName()).append(
-                                    " gets stuck in the swamp.\n");
+                                r = new Report(2081);
+                                r.subject = entity.getId();
+                                r.newlines = 1;
+                                r.add(entity.getDisplayName(), true);
                                 // stay here and stop skidding, see bug 1115608
                                 break;
                             }
@@ -3405,8 +3403,11 @@ implements Runnable, ConnectionHandler {
                 if (!doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
                                          false)){
                     entity.setStuck(true);
-                    phaseReport.append("\n" ).append( entity.getDisplayName()
-                    ).append( " gets stuck in the swamp.\n");
+                    r = new Report(2081);
+                    r.add(entity.getDisplayName());
+                    r.subject = entity.getId();
+                    r.newlines = 1;
+                    vPhaseReport.addElement(r);
                     break;
                 }
             }
@@ -3749,15 +3750,21 @@ implements Runnable, ConnectionHandler {
             if (game.getBoard().getHex(curPos).containsTerrain(Terrains.SWAMP)) {
                 if (entity instanceof Mech) {
                     entity.setStuck(true);
-                    phaseReport.append("\n" ).append( entity.getDisplayName()
-                    ).append( " jumps into the swamp and gets stuck.\n");
+                    r = new Report(2121);
+                    r.add(entity.getDisplayName(), true);
+                    r.newlines = 1;
+                    r.subject = entity.getId();
+                    vPhaseReport.addElement(r);
                 } else if (entity instanceof Infantry) {
                     PilotingRollData roll = entity.getBasePilotingRoll();
                     roll.addModifier(5, "infantry jumping into swamp");
                     if (!doSkillCheckWhileMoving(entity, curPos, curPos, roll, false)) {
                         entity.setStuck(true);
-                        phaseReport.append("\n" ).append( entity.getDisplayName()
-                        ).append( " gets stuck in the swamp.\n");
+                        r = new Report(2081);
+                        r.add(entity.getDisplayName());
+                        r.newlines = 1;
+                        r.subject = entity.getId();
+                        vPhaseReport.addElement(r);
                     }
                 }
             }
@@ -4256,7 +4263,12 @@ implements Runnable, ConnectionHandler {
             int actualDistance = coords.distance(mf.getCoords());
 
             if (actualDistance <= effectiveDistance) {
-                phaseReport.append("\n" + entity.getShortName() + " sets off a vibrabomb in hex " + mf.getCoords().getBoardNum() + ".\n");
+                Report r = new Report(2156);
+                r.subject = entity.getId();
+                r.add(entity.getShortName(), true);
+                r.add(mf.getCoords().getBoardNum(), true);
+                r.newlines = 1;
+                vPhaseReport.addElement(r);
                 explodeVibrabomb(mf);
             }
 
@@ -4360,7 +4372,11 @@ implements Runnable, ConnectionHandler {
             // If it's set, and the target has not yet moved,
             // it doesn't get damaged.
             if (!(entity.isDone() && game.getOptions().booleanOption("no_premove_vibra"))) {
-                phaseReport.append(entity.getShortName() + " evades a vibrabomb attack.\n");
+                r = new Report(2157);
+                r.subject = entity.getId();
+                r.add(entity.getShortName(), true);
+                r.newlines = 1;
+                vPhaseReport.addElement(r);
                 continue;
             }
             //report hitting vibrabomb
@@ -4510,9 +4526,9 @@ implements Runnable, ConnectionHandler {
                 }
                 entity.setLocationStatus(Mech.LOC_RLEG, ILocationExposureStatus.WET);
                 entity.setLocationStatus(Mech.LOC_LLEG, ILocationExposureStatus.WET);
-                phaseReport.append
+                vPhaseReport.addElement
                     (breachCheck(entity, Mech.LOC_RLEG, hex));
-                phaseReport.append
+                vPhaseReport.addElement
                     (breachCheck(entity, Mech.LOC_LLEG, hex));
                 if (entity instanceof QuadMech) {
                     entity.setLocationStatus(Mech.LOC_RARM, ILocationExposureStatus.WET);
@@ -5309,7 +5325,7 @@ implements Runnable, ConnectionHandler {
             }
             else if (ea instanceof SearchlightAttackAction) {
                 SearchlightAttackAction saa = (SearchlightAttackAction)ea;
-                phaseReport.append(saa.resolveAction(game));
+                vPhaseReport.addAll(saa.resolveAction(game));
             }
         }
 

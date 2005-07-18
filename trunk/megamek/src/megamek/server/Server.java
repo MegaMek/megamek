@@ -4520,10 +4520,10 @@ implements Runnable, ConnectionHandler {
                 }
                 entity.setLocationStatus(Mech.LOC_RLEG, ILocationExposureStatus.WET);
                 entity.setLocationStatus(Mech.LOC_LLEG, ILocationExposureStatus.WET);
-                vPhaseReport.addElement
-                    (breachCheck(entity, Mech.LOC_RLEG, hex));
-                vPhaseReport.addElement
-                    (breachCheck(entity, Mech.LOC_LLEG, hex));
+                Server.combineVectors(vPhaseReport,
+                                      breachCheck(entity, Mech.LOC_RLEG, hex));
+                Server.combineVectors(vPhaseReport,
+                                      breachCheck(entity, Mech.LOC_LLEG, hex));
                 if (entity instanceof QuadMech) {
                     entity.setLocationStatus(Mech.LOC_RARM, ILocationExposureStatus.WET);
                     entity.setLocationStatus(Mech.LOC_LARM, ILocationExposureStatus.WET);

@@ -481,11 +481,7 @@ public class Compute
     }
 
     public static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
-        if (target.isImmobile() && !(target.getTargetType() == Targetable.TYPE_HEX_BOMB ||
-                                     target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER ||
-                                     target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV ||
-                                     target.getTargetType() == Targetable.TYPE_HEX_FASCAM ||
-                                     target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV) ) {
+        if (target.isImmobile()) {
             if ((aimingAt == Mech.LOC_HEAD) &&
                 (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
                 return new ToHitData(3, "aiming at head");

@@ -1398,7 +1398,7 @@ implements Runnable, ConnectionHandler {
                     checkForVacuumDeath();
                 }
                 resolveFire();
-                vPhaseReport.addAll(game.ageFlares());
+                Server.combineVectors(vPhaseReport, game.ageFlares());
                 send(createFlarePacket());
                 resolveExtremeTempInfantryDeath();
                 resolveAmmoDumps();
@@ -5325,7 +5325,8 @@ implements Runnable, ConnectionHandler {
             }
             else if (ea instanceof SearchlightAttackAction) {
                 SearchlightAttackAction saa = (SearchlightAttackAction)ea;
-                vPhaseReport.addAll(saa.resolveAction(game));
+                Server.combineVectors(vPhaseReport,
+                                      saa.resolveAction(game));
             }
         }
 

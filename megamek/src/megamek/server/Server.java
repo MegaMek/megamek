@@ -2357,11 +2357,36 @@ implements Runnable, ConnectionHandler {
         unit.setFacing( facing );
         unit.setSecondaryFacing( facing );
         
-        // Flying units onload to the same elevation as the flying transport
-        if (unloader.getMovementMode() == IEntityMovementMode.VTOL &&
-            unit.getMovementMode() == IEntityMovementMode.VTOL) {
+        IHex hex = game.getBoard().getHex(pos);
+        boolean isBridge = hex.containsTerrain(Terrains.PAVEMENT);
+
+        if (unloader.getMovementMode() == IEntityMovementMode.VTOL) {
+            if (unit.getMovementMode() == IEntityMovementMode.VTOL) {
+                // Flying units onload to the same elevation as the flying transport
+                unit.setElevation(elevation);
+            } else if (game.getBoard().getBuildingAt(pos) != null) {
+                // non-flying unit onloaded from a flying onto a building
+                // -> sit on the roff
+                unit.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
+            }
+        } else if (game.getBoard().getBuildingAt(pos) != null) {
+            // non flying unit unloading units into a building
+            // -> sit in the building at the same elevation
             unit.setElevation(elevation);
+        } else if (hex.containsTerrain(Terrains.WATER)) {
+            if (unit.getMovementMode() == IEntityMovementMode.HOVER ||
+                unit.getMovementMode() == IEntityMovementMode.HYDROFOIL ||
+                unit.getMovementMode() == IEntityMovementMode.NAVAL ||
+                unit.getMovementMode() == IEntityMovementMode.SUBMARINE ||
+                isBridge) {
+                // units that can float stay on the surface, or we go on the bridge
+                unit.setElevation(hex.surface());
+            } 
+        } else {
+            // default to the floor of the hex.
+            unit.setElevation(hex.floor());
         }
+        doSetLocationsExposure(unit, hex, isBridge, false);
 
         // Update the unloaded unit.
         this.entityUpdate( unit.getId() );

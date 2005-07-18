@@ -10766,6 +10766,7 @@ implements Runnable, ConnectionHandler {
                 e.crew.setUnconscious(true);
                 e.crew.setKoThisRound(true);
                 r.choose(false);
+                vPhaseReport.addElement(r);
                 return true;
             }
             vPhaseReport.addElement(r);

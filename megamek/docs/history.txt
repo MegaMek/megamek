@@ -1,5 +1,8 @@
 VERSION HISTORY:
 ----------------
+v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
++ Unloaded units now should always get their elevation set correctly.
+
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.
 + Fixed some more newline problems in reports.

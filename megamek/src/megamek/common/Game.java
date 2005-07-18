@@ -2435,13 +2435,13 @@ public class Game implements Serializable, IGame
      * (called at end of turn)
      */
     public Vector ageFlares() {
-        //TODO: get linebreaks correct
         Vector reports = new Vector();
         Report r;
         for(int i=flares.size() - 1;i>=0;i--) {
             Flare flare = (Flare)flares.elementAt(i);
             r = new Report(5235);
             r.add(flare.position.getBoardNum());
+            r.newlines = 0;
             reports.addElement(r);
             if((flare.flags & Flare.F_IGNITED) != 0) {
                 flare.turnsToBurn--;
@@ -2455,23 +2455,23 @@ public class Game implements Serializable, IGame
                         }
                         r = new Report(5236);
                         r.add(flare.position.getBoardNum());
+                        r.newlines = 0;
                         reports.addElement(r);
                     }
                 }
             } else {
                 r = new Report(5237);
+                r.newlines = 0;
                 reports.addElement(r);
                 flare.flags |= Flare.F_IGNITED;
             }
             if(flare.turnsToBurn <= 0) {
                 r = new Report(5238);
-                r.newlines = 1;
                 reports.addElement(r);
                 flares.removeElementAt(i);
             } else {
                 r = new Report(5239);
                 r.add(flare.turnsToBurn);
-                r.newlines = 1;
                 reports.addElement(r);
                 flares.setElementAt(flare, i);
             };

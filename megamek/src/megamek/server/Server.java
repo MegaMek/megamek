@@ -3179,7 +3179,6 @@ implements Runnable, ConnectionHandler {
                                 entity.setStuck(true);
                                 r = new Report(2081);
                                 r.subject = entity.getId();
-                                r.newlines = 1;
                                 r.add(entity.getDisplayName(), true);
                                 // stay here and stop skidding, see bug 1115608
                                 break;
@@ -3406,7 +3405,6 @@ implements Runnable, ConnectionHandler {
                     r = new Report(2081);
                     r.add(entity.getDisplayName());
                     r.subject = entity.getId();
-                    r.newlines = 1;
                     vPhaseReport.addElement(r);
                     break;
                 }
@@ -3752,7 +3750,6 @@ implements Runnable, ConnectionHandler {
                     entity.setStuck(true);
                     r = new Report(2121);
                     r.add(entity.getDisplayName(), true);
-                    r.newlines = 1;
                     r.subject = entity.getId();
                     vPhaseReport.addElement(r);
                 } else if (entity instanceof Infantry) {
@@ -3762,7 +3759,6 @@ implements Runnable, ConnectionHandler {
                         entity.setStuck(true);
                         r = new Report(2081);
                         r.add(entity.getDisplayName());
-                        r.newlines = 1;
                         r.subject = entity.getId();
                         vPhaseReport.addElement(r);
                     }
@@ -4267,7 +4263,6 @@ implements Runnable, ConnectionHandler {
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
                 r.add(mf.getCoords().getBoardNum(), true);
-                r.newlines = 1;
                 vPhaseReport.addElement(r);
                 explodeVibrabomb(mf);
             }
@@ -4375,7 +4370,6 @@ implements Runnable, ConnectionHandler {
                 r = new Report(2157);
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
-                r.newlines = 1;
                 vPhaseReport.addElement(r);
                 continue;
             }
@@ -10887,6 +10881,7 @@ implements Runnable, ConnectionHandler {
                 r = new Report(6040);
                 r.subject = te_n;
                 r.indent(2);
+                r.newlines = 0;
                 vDesc.addElement(r);
             }
         }
@@ -10898,6 +10893,7 @@ implements Runnable, ConnectionHandler {
             r = new Report(6041);
             r.subject = te_n;
             r.indent(2);
+            r.newlines = 0;
             vDesc.addElement(r);
         }
         // If dealing with fragmentation missiles,
@@ -10911,6 +10907,7 @@ implements Runnable, ConnectionHandler {
                 r = new Report(6045);
                 r.subject = te_n;
                 r.indent(2);
+                r.newlines = 0;
                 vDesc.addElement(r);
             }
             else if (te != null) {
@@ -10918,6 +10915,7 @@ implements Runnable, ConnectionHandler {
                 r = new Report(6050);
                 r.subject = te_n;
                 r.indent(2);
+                r.newlines = 0;
                 vDesc.addElement(r);
             }
             break;
@@ -10927,6 +10925,7 @@ implements Runnable, ConnectionHandler {
                 r = new Report(6055);
                 r.subject = te_n;
                 r.indent(2);
+                r.newlines = 0;
                 vDesc.addElement(r);
             }
             else if ((te != null) && (!isBattleArmor)) {
@@ -10934,6 +10933,7 @@ implements Runnable, ConnectionHandler {
                 r = new Report(6060);
                 r.subject = te_n;
                 r.indent(2);
+                r.newlines = 0;
                 vDesc.addElement(r);
             }
             break;
@@ -10943,12 +10943,14 @@ implements Runnable, ConnectionHandler {
                 r = new Report(6061);
                 r.subject = te_n;
                 r.indent(2);
+                r.newlines = 0;
                 r.add(damage);
                 vDesc.addElement(r);
             } else if (te != null) {
                 r = new Report(6062);
                 r.subject = te_n;
                 r.indent(2);
+                r.newlines = 0;
                 vDesc.addElement(r);
             }
             break;
@@ -10994,7 +10996,6 @@ implements Runnable, ConnectionHandler {
                         r = new Report(6071);
                         r.subject = te_n;
                         r.indent(2);
-                        r.newlines = 1;
                         vDesc.addElement(r);
                         te.setSpotlightState(false);
                         te.setSpotlight(false);

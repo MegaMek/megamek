@@ -837,6 +837,12 @@ public class MoveStep implements Serializable {
         // guilty until proven innocent
         movementType = IEntityMovementType.MOVE_ILLEGAL;
 
+        // check to see if it's trying to flee and can legally do so.
+        if (type == MovePath.STEP_FLEE
+                && entity.canFlee()) {
+            movementType = IEntityMovementType.MOVE_LEGAL;
+        }
+
         // check for ejection (always legal?)
         if (type == MovePath.STEP_EJECT) {
             movementType = IEntityMovementType.MOVE_NONE;
@@ -925,7 +931,7 @@ public class MoveStep implements Serializable {
         // Mechs with busted Gyro may make only one facing change
         if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                    Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1
-            && !isFirstStep() ) {
+                && !isFirstStep() ) {
             movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 

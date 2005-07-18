@@ -18,7 +18,7 @@ package megamek.common;
  * This interface represents Entity Movement Types
  */
 public interface IEntityMovementType {
-
+    public static final int MOVE_LEGAL = -3;
     public static final int MOVE_SKID = -2;
     public static final int MOVE_ILLEGAL = -1;
     public static final int MOVE_NONE = 0;

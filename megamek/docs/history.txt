@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.85 (CVS) RELEASE CANDIDATE or STABLE RELEASE!!!
+v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.
 + Fixed some more newline problems in reports.
 + Bug 1240263: Exception when movement ends in water.

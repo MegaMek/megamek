@@ -16,11 +16,14 @@ package megamek.common.actions;
 
 import java.util.Enumeration;
 
+import java.util.Vector;
+
 import megamek.common.Coords;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.LosEffects;
+import megamek.common.Report;
 import megamek.common.Targetable;
 
 /**
@@ -57,17 +60,29 @@ public class SearchlightAttackAction
     /**
      * illuminate an entity and all entities that are between us and the hex
      */
-    public String resolveAction (IGame game) {
-        if(!isPossible(game))
-            return "Searchlight declared but not possible.\n";
+    public Vector resolveAction (IGame game) {
+        Vector reports = new Vector();
+        Report r;
+        if(!isPossible(game)) {
+            r = new Report(3445);
+            r.subject = this.getEntityId();
+            r.newlines = 1;
+            reports.addElement(r);
+            return reports;
+        }
         final Entity attacker = getEntity(game);
         final Coords apos = attacker.getPosition();
         final Targetable target = getTarget(game);
         final Coords tpos = target.getPosition();
-        String result="";
 
-        if(attacker.usedSearchlight())
-            return attacker.getDisplayName() + "already used searchlight this phase.\n";
+        if(attacker.usedSearchlight()) {
+            r = new Report(3450);
+            r.subject = this.getEntityId();
+            r.add(attacker.getDisplayName());
+            r.newlines = 1;
+            reports.addElement(r);
+            return reports;
+        }
         attacker.setUsedSearchlight(true);
 
         Coords[] in = Coords.intervening(apos, tpos); //nb includes attacker & target
@@ -77,11 +92,16 @@ public class SearchlightAttackAction
                 LosEffects los = LosEffects.calculateLos(game,getEntityId(),en);
                 if(los.canSee()) {
                     en.setIlluminated(true);
-                    result = result + en.getDisplayName() + " is illuminated by "+attacker.getDisplayName()+"'s searchlight.\n";
+                    r = new Report(3455);
+                    r.subject = this.getEntityId();
+                    r.newlines = 1;
+                    r.add(en.getDisplayName());
+                    r.add(attacker.getDisplayName());
+                    reports.add(r);
                 }
             }
         }
-        return result;
+        return reports;
     }
 
     public boolean willIlluminate (IGame game, Entity who) {

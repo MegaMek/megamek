@@ -97,7 +97,7 @@ public class SearchlightAttackAction
                     r.newlines = 1;
                     r.add(en.getDisplayName());
                     r.add(attacker.getDisplayName());
-                    reports.add(r);
+                    reports.addElement(r);
                 }
             }
         }

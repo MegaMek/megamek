@@ -224,7 +224,6 @@ public abstract class Mech
         return MASC_FAILURE[nMASCLevel] + 1;
     }
 
-//    public boolean checkForMASCFailure(StringBuffer phaseReport, MovePath md) {
     public boolean checkForMASCFailure(MovePath md, Vector vDesc) {
         if (md.hasActiveMASC()) {
             Report r;
@@ -238,14 +237,10 @@ public abstract class Mech
                 int nRoll = Compute.d6(2);
 
                 usedMASC = true;
-                //phaseReport.append("\n" + getDisplayName() +
-                //                   " checking for MASC failure.\n");       
                 r = new Report(2365);
                 r.subject = this.getId();
                 r.addDesc(this);
                 vDesc.addElement(r);
-                //phaseReport.append("Needs " + getMASCTarget() +
-                //                   ", rolls " + nRoll + " : ");
                 r = new Report(2370);
                 r.subject = this.getId();
                 r.add(getMASCTarget());
@@ -254,7 +249,6 @@ public abstract class Mech
                 if (nRoll < getMASCTarget()) {
                     // uh oh
                     bFailure = true;
-                    //phaseReport.append("MASC fails!.\n");
                     r.choose(false);
 
                     // do the damage.  Rules say 'as if you took 2 hip crits'. We'll
@@ -270,7 +264,6 @@ public abstract class Mech
                     }
                 }
                 else {
-                    //phaseReport.append("succeeds.\n");
                     r.choose(true);
                 }
                 vDesc.addElement(r);

@@ -11172,7 +11172,6 @@ implements Runnable, ConnectionHandler {
                     damage -= absorbed;
                     r = new Report(6090);
                     r.subject = te_n;
-                    r.indent();
                     r.newlines = 0;
                     vDesc.addElement(r);
                     Server.combineVectors(vDesc, breachCheck(te, hit.getLocation(), null));
@@ -11265,6 +11264,7 @@ implements Runnable, ConnectionHandler {
                             r = new Report(6120);
                             r.subject = te_n;
                             r.add(te.getLocationName(blownOffLocation));
+                            r.newlines = 0;
                             vDesc.addElement(r);
                             IHex h = game.getBoard().getHex(te.getPosition());
                             if (te instanceof BipedMech) {
@@ -11377,6 +11377,8 @@ implements Runnable, ConnectionHandler {
                         r = new Report(6125);
                         r.subject = te_n;
                         r.add(damage);
+                        r.indent(3);
+                        r.newlines = 0;
                         vDesc.addElement(r);
 
                         // ... but page 21 of the Ask The Precentor Martial FAQ
@@ -11802,8 +11804,8 @@ implements Runnable, ConnectionHandler {
                     r = new Report(6225);
                     r.subject = en.getId();
                     r.indent(3);
-                    r.add(Protomech.systemNames[cs.getIndex()]);
                     r.newlines = 0;
+                    r.add(Protomech.systemNames[cs.getIndex()]);
                     vDesc.addElement(r);
                 }
                 switch (cs.getIndex()) {
@@ -12415,6 +12417,7 @@ implements Runnable, ConnectionHandler {
                     r = new Report(6340);
                     r.subject = en.getId();
                     r.indent(3);
+                    r.newlines = 0;
                     vDesc.addElement(r);
                     break;
                 }
@@ -12881,6 +12884,8 @@ implements Runnable, ConnectionHandler {
         r.subject = en.getId();
         r.add(mounted.getName());
         r.add(damage);
+        r.indent(3);
+        r.newlines = 0;
         vDesc.addElement(r);
 
         Server.combineVectors(vDesc, damageEntity(en, new HitData(loc), damage, true));
@@ -13099,6 +13104,7 @@ implements Runnable, ConnectionHandler {
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(entity.crew.getName());
+            r.indent();
             vPhaseReport.addElement(r);
             Server.combineVectors(vPhaseReport, damageCrew(entity, 1));
             ((Report) vPhaseReport.elementAt(vPhaseReport.size() - 1)).newlines++;
@@ -16429,6 +16435,8 @@ implements Runnable, ConnectionHandler {
                 r = new Report(6395);
                 r.subject = entity.getId();
                 r.addDesc(entity);
+                r.indent(2);
+                r.newlines = 0;
                 vDesc.addElement(r);
             }
             // okay, print the info
@@ -16436,6 +16444,7 @@ implements Runnable, ConnectionHandler {
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(rollTarget.getLastPlainDesc(), true);
+            r.indent(3);
             vDesc.addElement(r);
             // roll
             final int diceRoll = Compute.d6(2);
@@ -16444,6 +16453,8 @@ implements Runnable, ConnectionHandler {
             r.add(rollTarget.getValueAsString());
             r.add(rollTarget.getDesc());
             r.add(diceRoll);
+            r.indent(4);
+            r.newlines = 0;
             // create the MechWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.setDeployed(true);
@@ -16455,8 +16466,11 @@ implements Runnable, ConnectionHandler {
             if (diceRoll < rollTarget.getValue()) {
                 r.choose(false);
                 vDesc.addElement(r);
-                Server.combineVectors(vDesc,
-                                      damageCrew(pilot, 1));
+                Report.addNewline(vDesc);
+                Vector v = damageCrew(pilot, 1);
+                r = (Report)v.firstElement();
+                r.indent(3);
+                vDesc.addElement(r);
             } else {
                 r.choose(true);
                 vDesc.addElement(r);
@@ -16486,11 +16500,13 @@ implements Runnable, ConnectionHandler {
                     //report safe ejection
                     r = new Report(6400);
                     r.subject = entity.getId();
+                    r.indent(5);
                     vDesc.addElement(r);
                     if (game.getOptions().booleanOption("vacuum")) {
                         //ended up in a vacuum
                         r = new Report(6405);
                         r.subject = entity.getId();
+                        r.indent(3);
                         vDesc.addElement(r);
                         Server.combineVectors(vDesc,
                             destroyEntity(pilot, "explosive decompression", false, false));
@@ -16507,11 +16523,13 @@ implements Runnable, ConnectionHandler {
                     //ejects safely
                     r = new Report(6410);
                     r.subject = entity.getId();
+                    r.indent(3);
                     vDesc.addElement(r);
                     if (game.getOptions().booleanOption("vacuum")) {
                         //landed in vacuum
                         r = new Report(6405);
                         r.subject = entity.getId();
+                        r.indent(3);
                         vDesc.addElement(r);
                         Server.combineVectors(vDesc,
                             destroyEntity(pilot, "explosive decompression", false, false));

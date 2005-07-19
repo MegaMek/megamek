@@ -1524,9 +1524,9 @@ public class TestBot extends BotClient {
         }
         nDir = cDeploy.direction(pointing_to);
 
-// If unit has stealth armor, turn it on
-        
-        if (getEntity(entNum) instanceof Mech){
+        // If unit has stealth armor, turn it on
+        if (getEntity(entNum) instanceof Mech &&
+            getEntity(entNum).getArmorType() ==EquipmentType.T_ARMOR_STEALTH){
             for ( equips = getEntity(entNum).getMisc(); equips.hasMoreElements(); ) {
                 Mounted test_equip = (Mounted) equips.nextElement();
                 MiscType test_type = (MiscType) test_equip.getType();

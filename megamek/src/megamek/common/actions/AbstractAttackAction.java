@@ -15,11 +15,15 @@
 package megamek.common.actions;
 
 import java.util.Enumeration;
+import java.util.Vector;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
+import megamek.common.Mech;
+import megamek.common.WeaponType;
 import megamek.common.actions.SearchlightAttackAction;
 
 /**
@@ -113,13 +117,16 @@ public abstract class AbstractAttackAction
             //Searchlights reduce the penalty to zero
             if(te!=null && te.isUsingSpotlight()) {
                 toHit.addModifier(-night_modifier, "target using searchlight");
+                night_modifier = 0;
             }
             else if(illuminated) {
                 toHit.addModifier(-night_modifier, "target illuminated by searchlight");
+                night_modifier = 0;
             }
             //So do flares
             else if(game.isPositionIlluminated(target.getPosition())) {
                 toHit.addModifier(-night_modifier, "target illuminated by flare");
+                night_modifier = 0;
             }
             //Certain ammunitions reduce the penalty
             else if(atype != null) {
@@ -128,6 +135,43 @@ public abstract class AbstractAttackAction
                    atype.getMunitionType() == AmmoType.M_TRACER)) {
                     toHit.addModifier(-1, "incendiary/tracer ammo");
                     night_modifier--;
+                }
+            }
+            //Laser heatsinks
+            if(night_modifier > 0 && te != null && te instanceof Mech && ((Mech)te).hasLaserHeatSinks()) {
+                boolean lhsused=false;
+                if(te.heat > 0) {
+                    toHit.addModifier(-night_modifier, "target overheated with laser heatsinks");
+                    night_modifier=0;
+                }
+                //actions that generate heat give a -1 modifier
+                else if(te.heatBuildup > 0 || te.isStealthActive()) {
+                    lhsused=true;
+                }
+                else {
+                    //Unfortunately, we can't just check weapons fired by the target
+                    //because isUsedThisRound() is not valid if the attacker declared first.
+                    //therefore, enumerate WeaponAttackActions...
+                    for(Enumeration actions=game.getActions();actions.hasMoreElements();) {
+                        Object a = actions.nextElement();
+                        if(a instanceof WeaponAttackAction) {
+                            WeaponAttackAction waa = (WeaponAttackAction)a;
+                            if(waa.getEntityId() == te.getId()) {
+                                Mounted weapon = te.getEquipment(waa.getWeaponId());
+                                WeaponType wtype = (WeaponType)weapon.getType();
+                                if(wtype.getHeat() != 0 ||
+                                   weapon.isRapidfire()) {
+                                    //target fired a weapon that generates heat
+                                    lhsused = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if(lhsused) {
+                    toHit.addModifier(-1, "target uses laser heatsinks");
                 }
             }
         }

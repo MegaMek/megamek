@@ -47,6 +47,7 @@ public class PhysicalDisplay
     public static final String PHYSICAL_PUSH = "push"; //$NON-NLS-1$
     public static final String PHYSICAL_NEXT = "next"; //$NON-NLS-1$
     public static final String PHYSICAL_PROTO = "protoPhysical"; //$NON-NLS-1$
+    public static final String PHYSICAL_SEARCHLIGHT= "fireSearchlight"; //$NON-NLS-1$
 
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
@@ -71,6 +72,7 @@ public class PhysicalDisplay
     
     private Button            butSpace;
     private Button            butSpace2;
+    private Button            butSearchlight;
 
     private int               buttonLayout;
         
@@ -155,6 +157,12 @@ public class PhysicalDisplay
         butMore.addActionListener(this);
         butMore.setEnabled(false);
         
+        butSearchlight = new Button(Messages.getString("FiringDisplay.Searchlight")); //$NON-NLS-1$
+        butSearchlight.addActionListener(this);
+        butSearchlight.addKeyListener(this);
+        butSearchlight.setActionCommand(PHYSICAL_SEARCHLIGHT);
+        butSearchlight.setEnabled(false);
+
         // layout button grid
         panButtons = new Panel();
         buttonLayout = 0;
@@ -214,7 +222,7 @@ public class PhysicalDisplay
             panButtons.add(butThrash);
             panButtons.add(butDodge);
             panButtons.add(butProto);
-            panButtons.add(butSpace);
+            panButtons.add(butSearchlight);
             panButtons.add(butSpace2);
             panButtons.add(butMore);
 //             panButtons.add(butDone);
@@ -374,6 +382,32 @@ public class PhysicalDisplay
         }
     }
     
+    private void doSearchlight() {
+        // validate
+        if (ce() == null || target == null) {
+            throw new IllegalArgumentException("current searchlight parameters are invalid"); //$NON-NLS-1$
+        }
+
+        if(!SearchlightAttackAction.isPossible(client.game,cen,target))
+            return;
+
+        //create and queue a searchlight action
+        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getTargetId());
+        attacks.addElement(saa);
+
+        // and add it into the game, temporarily
+        client.game.addAction(saa);
+        clientgui.bv.addAttack(saa);
+        clientgui.bv.repaint(100);
+        clientgui.minimap.drawMap();
+
+        //and prevent duplicates
+        setSearchlightEnabled(false);
+
+        //refresh weapon panel, as bth will have changed
+        updateTarget();
+    }
+
     /**
      * Kick the target!
      */
@@ -648,7 +682,7 @@ public class PhysicalDisplay
      */
     private void updateTarget() {
         // dis/enable physical attach buttons
-        if (cen != Entity.NONE && target != null) {
+        if (cen != Entity.NONE && target != null && !ce().usedTag()) {
             if (target.getTargetType() != Targetable.TYPE_INARC_POD) {
                 // punch?
                 final ToHitData leftArm = PunchAttackAction.toHit
@@ -717,6 +751,7 @@ public class PhysicalDisplay
             setThrashEnabled(false);
             setProtoEnabled(false);
         }
+        setSearchlightEnabled(ce() != null && target != null && ce().isUsingSpotlight());
     }
     
     /**
@@ -914,6 +949,8 @@ public class PhysicalDisplay
             proto();
         } else if (ev.getActionCommand().equals(PHYSICAL_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
+        } else if (ev.getActionCommand().equals(PHYSICAL_SEARCHLIGHT)) {
+            doSearchlight();
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
             
@@ -1012,6 +1049,10 @@ public class PhysicalDisplay
     public void setNextEnabled(boolean enabled) {
         butNext.setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalNextEnabled(enabled);
+    }
+    private void setSearchlightEnabled(boolean enabled) {
+        butSearchlight.setEnabled(enabled);
+        clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
     }
 
     /**

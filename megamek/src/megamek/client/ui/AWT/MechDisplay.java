@@ -653,13 +653,14 @@ class WeaponPanel extends BufferedPanel
             if (en.infernos.isStillBurning() ) { // hit with inferno ammo
                 currentHeatBuildup += en.infernos.getHeat();
             }
-            // extreme temperatures.
-            if (game.getOptions().intOption("temperature") > 0) {
-                currentHeatBuildup += game.getTemperatureDifference();
-            } else {
-                currentHeatBuildup -= game.getTemperatureDifference();
+            if(!((Mech)en).hasLaserHeatSinks()) {
+                // extreme temperatures.
+                if (game.getOptions().intOption("temperature") > 0) {
+                    currentHeatBuildup += game.getTemperatureDifference();
+                } else {
+                    currentHeatBuildup -= game.getTemperatureDifference();
+                }
             }
-            
         }
         Coords position = entity.getPosition();
         if (!en.isOffBoard()) {
@@ -1718,6 +1719,14 @@ class ExtraPanel
                 carrysR.append( "\r\n" ); //$NON-NLS-1$
             }
             carrysR.append( club.getName() );
+        }
+
+        // Show searchlight
+        if(en.hasSpotlight()) {
+            if(en.isUsingSpotlight())
+                carrysR.append(Messages.getString("MechDisplay.SearchlightOn")); //$NON-NLS-1$
+            else
+                carrysR.append(Messages.getString("MechDisplay.SearchlightOff")); //$NON-NLS-1$
         }
 
         // Show Heat Effects, but only for Mechs.

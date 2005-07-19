@@ -139,7 +139,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // can't charge while prone
-        if (ae.isProne() && !gotUp) {
+        if (ae.isProne() && !gotUp && !skid) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
         }
 

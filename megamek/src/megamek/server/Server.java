@@ -2247,16 +2247,18 @@ implements Runnable, ConnectionHandler {
                     hasEven = true;
             }
         }
-        if (hasEven) {
-            phaseReport.append( "\n    The turn order for " );
-            if (game.getOptions().booleanOption("inf_deploy_even")
-                || game.getOptions().booleanOption("protos_deploy_even"))
-                phaseReport.append( "deployment phase and " );
-            phaseReport.append( "firing phase will be different." );
-        }
-
         r.newlines = 2;
         vPhaseReport.addElement(r);
+        if (hasEven) {
+            r = new Report(1021, Report.PUBLIC);
+            if (game.getOptions().booleanOption("inf_deploy_even")
+                || game.getOptions().booleanOption("protos_deploy_even"))
+                r.choose(true);
+            else r.choose(false);
+            r.indent();
+            r.newlines = 2;
+            vPhaseReport.addElement(r);
+        }
         if (!abbreviatedReport) {
             //Wind direction and strength
             r = new Report(1025, Report.PUBLIC);

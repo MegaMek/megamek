@@ -3354,7 +3354,7 @@ public abstract class Entity
             Enumeration iter = this.transports.elements();
             while ( iter.hasMoreElements() ) {
                 Transporter next = (Transporter)iter.nextElement();
-                if ( next.canLoad( unit ) ) {
+                if ( next.canLoad( unit ) && unit.getElevation() == getElevation() ) {
                     return true;
                 }
             }
@@ -3378,7 +3378,7 @@ public abstract class Entity
         Enumeration iter = this.transports.elements();
         while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-            if ( next.canLoad( unit ) ) {
+            if ( next.canLoad(unit) && unit.getElevation() == getElevation()) {
                 next.load( unit );
                 return;
             }

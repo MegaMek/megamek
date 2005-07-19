@@ -60,8 +60,6 @@ implements Runnable, ConnectionHandler {
 
     private IGame               game = new Game();
 
-    private StringBuffer        phaseReport = new StringBuffer(); //report problem: remove me
-
     private Vector              vPhaseReport = new Vector();
 
     private MapSettings         mapSettings = new MapSettings();
@@ -2232,7 +2230,6 @@ implements Runnable, ConnectionHandler {
 
         // The turn order is different in movement phase
         // if a player has any "even" moving units.
-        phaseReport.append("\nThe turn order for movement is:\n  ");
         r = new Report(1020, Report.PUBLIC);
 
         boolean firstTurn = true;
@@ -3265,8 +3262,11 @@ implements Runnable, ConnectionHandler {
                                                 );
                             break;
                         }
-                        phaseReport.append( "    " ); // indent displacement
-                        //Not sure how to indent the vPhaseReport...
+                        // indent displacement
+                        r = new Report(1210, Report.PUBLIC);
+                        r.indent();
+                        r.newlines = 0;
+                        vPhaseReport.addElement(r);
                         doEntityDisplacement(target, curPos, nextPos, null);
                         doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
                         target = Compute.stackingViolation( game,
@@ -8456,11 +8456,6 @@ implements Runnable, ConnectionHandler {
         r.newlines = 0;
         vPhaseReport.addElement(r);
 
-//        // should we even bother?
-//        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-//            phaseReport.append(" but the target is already destroyed!\n");
-//            return;
-//        }
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             r = new Report(4015);
             r.subject = ae.getId();
@@ -8620,14 +8615,6 @@ implements Runnable, ConnectionHandler {
         r.add(target.getDisplayName());
         r.newlines = 0;
         vPhaseReport.addElement(r);
-
-
-
-//        // should we even bother?
-//        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-//            phaseReport.append(" but the target is already destroyed!\n");
-//            return;
-//        }
 
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             r = new Report(4060);
@@ -9185,11 +9172,6 @@ implements Runnable, ConnectionHandler {
         r.newlines = 0;
         vPhaseReport.addElement(r);
 
-//        // should we even bother?
-//        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-//            phaseReport.append(" but the target is already destroyed!\n");
-//            return;
-//        }
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             r = new Report(4075);
             r.subject = ae.getId();
@@ -9340,12 +9322,6 @@ implements Runnable, ConnectionHandler {
         r.addDesc(te);
         r.newlines = 0;
         vPhaseReport.addElement(r);
-
-//        // should we even bother?
-//        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-//            phaseReport.append(" but the target is already destroyed!\n");
-//            return;
-//        }
 
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             r = new Report(4160);
@@ -10911,8 +10887,8 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * Deals the listed damage to an entity.  Returns a description
-     * string for the log.
+     * Deals the listed damage to an entity.  Returns a vector of Reports
+     * for the phase report
      *
      * @param te the target entity
      * @param hit the hit data for the location hit
@@ -10925,12 +10901,12 @@ implements Runnable, ConnectionHandler {
      *          damaged directly?
      * @param areaSatArty Is the damage from an area saturating artillery
      *          attack?
+     * @return a <code>Vector</code> of <code>Report</code>s
      */
     private Vector damageEntity(Entity te, HitData hit, int damage,
                                 boolean ammoExplosion, int bFrag,
                                 boolean damageIS, boolean areaSatArty) {
 
-        StringBuffer desc = new StringBuffer(); //report problem: remove me
         Vector vDesc = new Vector();
         Report r;
         boolean autoEject = false;
@@ -15189,6 +15165,7 @@ implements Runnable, ConnectionHandler {
                                       int distance,
                                       String why ) {
 
+        Report r;
         if (entity instanceof VTOL) {
             // VTOLs can fly over buildings
             if (entity.getElevation()>game.getBoard().getHex(curPos).ceiling()) {
@@ -15208,16 +15185,16 @@ implements Runnable, ConnectionHandler {
 
             // It is possible that the unit takes no damage.
             if ( damage == 0 ) {
-                phaseReport.append( "        " )
-                    .append( entity.getDisplayName() )
-                    .append( " takes no damage.\n" );
+                r = new Report(6440);
+                r.add(entity.getDisplayName());
+                r.subject = entity.getId();
+                r.indent(2);
+                vPhaseReport.addElement(r);
             } else {
                 // BMRr, pg. 50: The attack direction for this damage is the front.
                 HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
                                                       ToHitData.SIDE_FRONT );
-                //report problem: uncomment below two lines
-                //phaseReport.append( damageEntity(entity, hit, damage) )
-                //    .append( "\n" );
+                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, damage));
             }
         }
 
@@ -15264,6 +15241,7 @@ implements Runnable, ConnectionHandler {
     private void damageInfantryIn( Building bldg, int damage ) {
         // Calculate the amount of damage the infantry will sustain.
         float percent = 0.0f;
+        Report r;
         switch( bldg.getType() ) {
         case Building.LIGHT: percent = 0.75f; break;
         case Building.MEDIUM: percent = 0.5f; break;
@@ -15275,7 +15253,8 @@ implements Runnable, ConnectionHandler {
 
         // Exit if the infantry receive no points of damage.
         if ( toInf == 0 ) {
-            phaseReport.append( "    Infantry receive no damage.\n" );
+            r = new Report(6445);
+            vPhaseReport.addElement(r);
             return;
         }
 
@@ -15298,11 +15277,12 @@ implements Runnable, ConnectionHandler {
 
                     // Yup.  Damage the entity.
                     // Battle Armor units use 5 point clusters.
-                    phaseReport.append( "      " )
-                        .append( entity.getDisplayName() )
-                        .append( " takes " )
-                        .append( toInf )
-                        .append( " damage." );
+                    r = new Report(6450);
+                    r.indent(2);
+                    r.subject = entity.getId();
+                    r.add(entity.getDisplayName());
+                    r.add(toInf);
+                    vPhaseReport.addElement(r);
                     int remaining = toInf;
                     int cluster = toInf;
                     if ( entity instanceof BattleArmor ) {
@@ -15312,11 +15292,10 @@ implements Runnable, ConnectionHandler {
                         int next = Math.min( cluster, remaining );
                         HitData hit = entity.rollHitLocation
                             ( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
-                        //report problem: uncomment below line
-                        //phaseReport.append( damageEntity(entity, hit, next) );
+                        Server.combineVectors(vPhaseReport, damageEntity(entity, hit, next) );
                         remaining -= next;
                     }
-                    phaseReport.append( "\n" );
+                    vPhaseReport.addElement(new Report(1210));
 
                 } // End infantry-inside-building
 
@@ -15326,7 +15305,7 @@ implements Runnable, ConnectionHandler {
 
         // If we found any infantry, add a line to the phase report.
         if ( foundInfantry ) {
-            phaseReport.append( "\n" );
+            vPhaseReport.addElement(new Report(1210));
         }
 
     } // End private void damageInfantryIn( Building, int )
@@ -15436,8 +15415,9 @@ implements Runnable, ConnectionHandler {
 
         // Collapse the building if the flag is set.
         if ( collapse ) {
-            phaseReport.append( bldg.getName() )
-                .append( " collapses due to heavy loads!\n" );
+            Report r = new Report(2375);
+            r.add(bldg.getName());
+            vPhaseReport.addElement(r);
             this.collapseBuilding( bldg, positionMap );
         }
 
@@ -15465,6 +15445,7 @@ implements Runnable, ConnectionHandler {
     private void collapseBuilding( Building bldg, Hashtable positionMap ) {
         // Loop through the hexes in the building, and apply
         // damage to all entities inside or on top of the building.
+        Report r;
         final int phaseCF = bldg.getPhaseCF();
         Enumeration bldgCoords = bldg.getCoords();
         while ( bldgCoords.hasMoreElements() ) {
@@ -15510,11 +15491,12 @@ implements Runnable, ConnectionHandler {
 
                     // Apply collapse damage the entity.
                     // ASSUMPTION: use 5 point clusters.
-                    phaseReport.append( "   " )
-                        .append( entity.getDisplayName() )
-                        .append( " is hit by falling debris for " )
-                        .append( damage )
-                        .append( " damage." );
+                    r = new Report(6455);
+                    r.indent();
+                    r.subject = entity.getId();
+                    r.add(entity.getDisplayName());
+                    r.add(damage);
+                    vPhaseReport.addElement(r);
                     int remaining = damage;
                     int cluster = damage;
                     if ( entity instanceof BattleArmor ||
@@ -15530,12 +15512,10 @@ implements Runnable, ConnectionHandler {
 
                         HitData hit = entity.rollHitLocation
                             (ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
-                        //report problem: uncomment below two lines
-                        //                        phaseReport.append
-                        //    ( damageEntity(entity, hit, next) );
+                        Server.combineVectors(vPhaseReport, damageEntity(entity, hit, next) );
                         remaining -= next;
                     }
-                    phaseReport.append( "\n" );
+                    vPhaseReport.addElement(new Report(1210));
                     // TODO: Why are dead entities showing up on firing phase?
 
                     // Do we need to handle falling Meks?
@@ -15648,9 +15628,9 @@ implements Runnable, ConnectionHandler {
             buildings = collapse.elements();
             while ( buildings.hasMoreElements() ) {
                 Building bldg = (Building) buildings.nextElement();
-                phaseReport.append( "\n" )
-                    .append( bldg.getName() )
-                    .append( " collapses due to damage!\n" );
+                Report r = new Report(6460);
+                r.add(bldg.getName());
+                vPhaseReport.addElement(r);
                 this.collapseBuilding( bldg, positionMap );
             }
 

@@ -3956,7 +3956,42 @@ public abstract class Entity
                 return true;
         }
     }
-    
+
+    /**
+     * Determines if an entity is eligible for a phase.
+     * Called only if at least one entity returned true to
+     * isEligibleFor()
+     *
+     * This is for using searchlights in physical&offboard phase,
+     * without forcing the phase to be played when not needed.
+     * However it could be used for other things in the future
+     */
+    public boolean canAssist(int phase) {
+        if(phase != IGame.PHASE_PHYSICAL &&
+           phase != IGame.PHASE_FIRING &&
+           phase != IGame.PHASE_OFFBOARD) {
+            return false;
+        }
+        // if you're charging or finding a club, it's already declared
+        if (isUnjammingRAC()
+            || isCharging()
+            || isMakingDfa()
+            || isFindingClub()
+            || isSpotting()
+            || isOffBoard()) {
+            return false;
+        }
+        // must be active
+        if (!isActive()) {
+            return false;
+        }
+        // If we have a searchlight, we can use it to assist
+        if (isUsingSpotlight()) {
+            return true;
+        }
+        return false;
+    }
+        
     /**
      * An entity is eligible if its to-hit number is anything but impossible.
      * This is only really an issue if friendly fire is turned off.
@@ -4653,5 +4688,16 @@ public abstract class Entity
 
     public void setEngineTechLevel(int etl) {
         engineTechLevel = etl;
+    }
+
+    public boolean usedTag() {
+        for(int i=0;i<weaponList.size();i++) {
+            Mounted weapon = (Mounted)weaponList.elementAt(i);
+            WeaponType wtype = (WeaponType)weapon.getType();
+            if(weapon.isUsedThisRound() && wtype.hasFlag(WeaponType.F_TAG)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

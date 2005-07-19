@@ -154,6 +154,7 @@ public class MtfFile implements IMechLoader {
         } catch (IOException ex) {
             throw new EntityLoadingException("I/O Error reading file");
         } catch (StringIndexOutOfBoundsException ex) {
+        ex.printStackTrace();
             throw new EntityLoadingException("StringIndexOutOfBoundsException reading file (format error)");
         } catch (NumberFormatException ex) {
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
@@ -240,7 +241,8 @@ public class MtfFile implements IMechLoader {
             mech.setOriginalWalkMP(Integer.parseInt(walkMP.substring(8)));
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
 
-            boolean dblSinks = heatSinks.substring(14).equalsIgnoreCase("Double");
+            boolean dblSinks = (heatSinks.substring(14).equalsIgnoreCase("Double") ||
+                                heatSinks.substring(14).equalsIgnoreCase("Laser"));
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 14).trim());
 
             String thisStructureType = internalType.substring(internalType.indexOf(':')+1);

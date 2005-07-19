@@ -1108,6 +1108,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             
             // update searchlight setting
             entity.setSpotlight(chSearchlight.getState());
+            entity.setSpotlightState(chSearchlight.getState());
             setOptions();
             
             okay = true;

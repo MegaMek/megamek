@@ -2277,9 +2277,20 @@ implements Runnable, ConnectionHandler {
      * Marks ineligible entities as not ready for this phase
      */
     private void setIneligible(int phase) {
+        Vector assistants = new Vector();
+        boolean assistable = false;
+        Entity entity = null;
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-            Entity entity = (Entity)e.nextElement();
+            entity = (Entity)e.nextElement();
             if (!entity.isEligibleFor(phase)) {
+                assistants.addElement(entity);
+            } else {
+                assistable=true;
+            }
+        }
+        for (int i=0;i<assistants.size();i++) {
+            entity = (Entity)assistants.elementAt(i);
+            if(!assistable || !(entity.canAssist(phase))) {
                 entity.setDone(true);
             }
         }
@@ -6233,6 +6244,7 @@ implements Runnable, ConnectionHandler {
       else {
           //roll to hit
           r = new Report(3150);
+          r.newlines = 0;
           r.subject = subjectId;
           r.add(toHit.getValue());
           vPhaseReport.addElement(r);
@@ -10053,7 +10065,8 @@ implements Runnable, ConnectionHandler {
             // If a Mek is in extreme Temperatures, add or subtract one
             // heat per 10 degrees (or fraction of 10 degrees) above or
             // below 50 or -30 degrees Celsius
-            if ( entity instanceof Mech && game.getTemperatureDifference() != 0) {
+            if ( entity instanceof Mech && game.getTemperatureDifference() != 0
+                 && !((Mech)entity).hasLaserHeatSinks()) {
                 if (game.getOptions().intOption("temperature") > 50) {
                     entity.heatBuildup += game.getTemperatureDifference();
                     r = new Report(5020);
@@ -10227,6 +10240,8 @@ implements Runnable, ConnectionHandler {
                     // Last line is a crutch; 45 heat should be no roll
                     // but automatic explosion.
                 }
+                if(entity instanceof Mech && ((Mech)entity).hasLaserHeatSinks())
+                    boom--;
                 int boomroll = Compute.d6(2);
                 r = new Report(5065);
                 r.subject = entity.getId();
@@ -10769,6 +10784,7 @@ implements Runnable, ConnectionHandler {
             r.addDesc(en);
             r.add(crew.getName());
             r.add(damage);
+            r.newlines = 0;
             vDesc.addElement(r);
             if ( Pilot.DEATH > crew.getHits() ) {
                 crew.setRollsNeeded( crew.getRollsNeeded() + damage );
@@ -10855,7 +10871,7 @@ implements Runnable, ConnectionHandler {
               roll = Math.min(12, roll + 1);
 
             int rollTarget = Compute.getConsciousnessNumber( e.crew.getHits() );
-            Report r = new Report(6030);
+            Report r = new Report(6029);
             r.subject = e.getId();
             r.addDesc(e);
             r.add(e.getCrew().getName());

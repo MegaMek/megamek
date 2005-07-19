@@ -820,6 +820,9 @@ public abstract class Mech
      * turn, factoring for water.
      */
     public int getHeatCapacityWithWater() {
+        if(hasLaserHeatSinks()) {
+            return getHeatCapacity();
+        }
         return getHeatCapacity() + Math.min(sinksUnderwater(), 6);
     }
     
@@ -2069,6 +2072,18 @@ public abstract class Mech
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 return false;
             } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasLaserHeatSinks() {
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+                return false;
+            } else if (mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 return true;
             }
         }

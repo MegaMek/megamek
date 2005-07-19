@@ -6035,11 +6035,11 @@ implements Runnable, ConnectionHandler {
       int subjectId = Entity.NONE;
       Entity entityTarget = null;
       if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-        entityTarget = (Entity) target;
-        //The target of the attack should definately see the report.
-        // The attacker usually will, but they might not if the attack
-        // was indirect without a spotter.
-        subjectId = entityTarget.getId();
+          entityTarget = (Entity) target;
+          // The target of the attack should definately see the report.
+          // The attacker usually will, but they might not if the attack
+          // was indirect without a spotter.
+          subjectId = entityTarget.getId();
       } else {
           //The target is not an entity, so we will show the report to
           // the attacker instead.
@@ -6210,33 +6210,32 @@ implements Runnable, ConnectionHandler {
           vPhaseReport.addElement(r);
       }
       if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-        r = new Report(3135);
-        r.subject = subjectId;
-        r.add(toHit.getDesc());
-        vPhaseReport.addElement(r);
-        return false;
+          r = new Report(3135);
+          r.subject = subjectId;
+          r.add(toHit.getDesc());
+          vPhaseReport.addElement(r);
+          return false;
       }
       else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
-        r = new Report(3140);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(toHit.getDesc());
-        vPhaseReport.addElement(r);
+          r = new Report(3140);
+          r.newlines = 0;
+          r.subject = subjectId;
+          r.add(toHit.getDesc());
+          vPhaseReport.addElement(r);
       }
       else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
-        r = new Report(3145);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(toHit.getDesc());
-        vPhaseReport.addElement(r);
+          r = new Report(3145);
+          r.newlines = 0;
+          r.subject = subjectId;
+          r.add(toHit.getDesc());
+          vPhaseReport.addElement(r);
       }
       else {
-        //roll to hit
-        r = new Report(3150);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(toHit.getValue());
-        vPhaseReport.addElement(r);
+          //roll to hit
+          r = new Report(3150);
+          r.subject = subjectId;
+          r.add(toHit.getValue());
+          vPhaseReport.addElement(r);
       }
 
       // if firing an HGR unbraced, schedule a PSR
@@ -6373,7 +6372,10 @@ implements Runnable, ConnectionHandler {
               bGlancing = true;
               glancingMissileMod = -4;
               glancingCritMod = -2;
-              phaseReport.append(" - Glancing Blow - ");
+              r = new  Report(3186);
+              r.subject = ae.getId();
+              r.newlines = 0;
+              vPhaseReport.addElement(r);
           } else {
               bGlancing = false;
               glancingMissileMod = 0;
@@ -6387,8 +6389,10 @@ implements Runnable, ConnectionHandler {
 
         // special case TAG.  No damage, but target is tagged until end of turn
         if (wtype.hasFlag(WeaponType.F_TAG)) {
-            if(entityTarget == null) {
-                phaseReport.append("does nothing (didn't target a unit).\n");
+            if (entityTarget == null) {
+                r = new Report(3187);
+                r.subject = ae.getId();
+                vPhaseReport.addElement(r);
             } else {
                 int priority = 1;
                 EquipmentMode mode = (weapon.curMode());
@@ -6411,9 +6415,13 @@ implements Runnable, ConnectionHandler {
                 game.addTagInfo(info);
                 if(!bMissed) {
                     entityTarget.setTaggedBy(ae.getId());
-                    phaseReport.append("hits, target tagged.\n");
+                    r = new Report(3188);
+                    r.subject = ae.getId();
+                    vPhaseReport.addElement(r);
                 } else {
-                    phaseReport.append("misses.\n");
+                    r = new Report(3220);
+                    r.subject = ae.getId();
+                    vPhaseReport.addElement(r);
                 }
             }
             return !bMissed;
@@ -6422,17 +6430,23 @@ implements Runnable, ConnectionHandler {
       if (target.getTargetType() == Targetable.TYPE_HEX_BOMB) {
           Coords coords = target.getPosition();
           if (!bMissed) {
-              phaseReport.append("hits the intended hex ")
-                  .append(coords.getBoardNum());
+              r = new Report(3190);
+              r.subject = subjectId;
+              r.add(coords.getBoardNum());
+              vPhaseReport.addElement(r);
           }
           else {
               coords = Compute.scatter(coords, 1);
               if (game.getBoard().contains(coords)) {
-                  phaseReport.append("misses and scatters to hex ")
-                             .append(coords.getBoardNum());
+                  r = new Report(3195);
+                  r.subject = subjectId;
+                  r.add(coords.getBoardNum());
+                  vPhaseReport.addElement(r);
               }
               else {
-                  phaseReport.append("misses and scatters off the board\n");
+                  r = new Report(3200);
+                  r.subject = subjectId;
+                  vPhaseReport.addElement(r);
                   return !bMissed;
               }
           }
@@ -6445,22 +6459,29 @@ implements Runnable, ConnectionHandler {
           bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
           ratedDamage -= bldgAbsorbs;
           if ((bldg != null) && (bldgAbsorbs > 0)) {
-              phaseReport.append("The building in the hex absorbs " + bldgAbsorbs + "damage from the artillery strike!\n");
-              phaseReport.append(damageBuilding(bldg, ratedDamage));   
+              //building absorbs some of the damage
+              r = new Report(6435);
+              r.subject = subjectId;
+              r.add(bldgAbsorbs);
+              vPhaseReport.addElement(r);
+              Report buildingReport = damageBuilding( bldg, ratedDamage );
+              buildingReport.subject = subjectId;
+              vPhaseReport.addElement(buildingReport);
           }
 
-          for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+          for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
               Entity entity = (Entity)impactHexHits.nextElement();
               if (entity.getId() == ae.getId()) {
                   continue;
               }
               hits = ratedDamage;
               
-              while(hits>0) {
+              while (hits>0) {
                   HitData hit = entity.rollHitLocation
                       ( toHit.getHitTable(),
                         toHit.getSideTable() );
-                  phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true));
+                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true));
+                  Report.addNewline(vPhaseReport);
                   hits -= Math.min(nCluster,hits);
               }
           }
@@ -6479,21 +6500,32 @@ implements Runnable, ConnectionHandler {
               bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
               ratedDamage -= bldgAbsorbs;
               if ((bldg != null) && (bldgAbsorbs > 0)) {
-                  phaseReport.append("The building in the hex absorbs " + bldgAbsorbs + "damage from the bombs!\n");
-                  phaseReport.append(damageBuilding(bldg, ratedDamage));   
+                  //building absorbs some of the damage
+                  r = new Report(6435);
+                  r.subject = subjectId;
+                  r.add(bldgAbsorbs);
+                  vPhaseReport.addElement(r);
+                  Report buildingReport = damageBuilding( bldg, ratedDamage );
+                  buildingReport.subject = subjectId;
+                  vPhaseReport.addElement(buildingReport);   
               }
               Enumeration splashHexHits = game.getEntities(tempcoords);
-              if(splashHexHits.hasMoreElements()) {
-                  phaseReport.append("\n    In hex " + tempcoords.getBoardNum()+ ":");
+              if (splashHexHits.hasMoreElements()) {
+                  r = new Report(3210);
+                  r.newlines = 0;
+                  r.subject = subjectId;
+                  r.add(tempcoords.getBoardNum());
+                  r.indent();
+                  vPhaseReport.addElement(r);
               }
-              for(;splashHexHits.hasMoreElements();) {
+              for (;splashHexHits.hasMoreElements();) {
                   Entity entity = (Entity)splashHexHits.nextElement();
                   hits = ratedDamage;
-                  while(hits>0) {
+                  while (hits>0) {
                       HitData hit = entity.rollHitLocation
                           ( toHit.getHitTable(),
                             toHit.getSideTable());
-                      phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)));
+                      Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits)));
                       hits -= Math.min(nCluster,hits);
                   }
               }
@@ -6504,30 +6536,30 @@ implements Runnable, ConnectionHandler {
       // special case minefield delivery, no damage and scatters if misses.
       if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER
           || target.getTargetType() == Targetable.TYPE_FLARE_DELIVER) {
-        Coords coords = target.getPosition();
-        if (!bMissed) {
-          r = new Report(3190);
-          r.subject = subjectId;
-          r.add(coords.getBoardNum());
-          vPhaseReport.addElement(r);
-        }
-        else {
-          coords = Compute.scatter(coords, game.getOptions().booleanOption("margin_scatter_distance")?toHit.getValue()-wr.roll:-1);
-          if (game.getBoard().contains(coords)) {
-              //misses and scatters to another hex
-            r = new Report(3195);
-            r.subject = subjectId;
-            r.add(coords.getBoardNum());
-            vPhaseReport.addElement(r);
+          Coords coords = target.getPosition();
+          if (!bMissed) {
+              r = new Report(3190);
+              r.subject = subjectId;
+              r.add(coords.getBoardNum());
+              vPhaseReport.addElement(r);
           }
           else {
-            //misses and scatters off-board
-            r = new Report(3200);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-            return !bMissed;
-          }
-        }//oscar should not close here?
+              coords = Compute.scatter(coords, game.getOptions().booleanOption("margin_scatter_distance")?toHit.getValue()-wr.roll:-1);
+              if (game.getBoard().contains(coords)) {
+                  //misses and scatters to another hex
+                  r = new Report(3195);
+                  r.subject = subjectId;
+                  r.add(coords.getBoardNum());
+                  vPhaseReport.addElement(r);
+              }
+              else {
+                  //misses and scatters off-board
+                  r = new Report(3200);
+                  r.subject = subjectId;
+                  vPhaseReport.addElement(r);
+                  return !bMissed;
+              }
+          }//oscar should not close here?
 
           // Handle the thunder munitions.
           if ((atype.getAmmoType() == AmmoType.T_LRM)
@@ -6693,7 +6725,7 @@ implements Runnable, ConnectionHandler {
               }
               game.getBoard().addInfernoTo( tempcoords, InfernoTracker.INFERNO_IV_ROUND, 1 );
               sendChangedHex(tempcoords);
-              for(Enumeration splashHexHits = game.getEntities(tempcoords);splashHexHits.hasMoreElements();) {
+              for (Enumeration splashHexHits = game.getEntities(tempcoords);splashHexHits.hasMoreElements();) {
                   Entity entity = (Entity)splashHexHits.nextElement();
                   entity.infernos.add( InfernoTracker.INFERNO_IV_ROUND, 1 );
                   //entity on fire
@@ -6710,130 +6742,131 @@ implements Runnable, ConnectionHandler {
       //special case artillery
       if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY &&
           !(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING)) { //when M_SMOKE implemented, change this to positive ID on M_STANDARD
-        Coords coords = target.getPosition();
-        if (!bMissed) {
-          r = new Report(3190);
-          r.subject = subjectId;
-          r.add(coords.getBoardNum());
-          vPhaseReport.addElement(r);
-        }
-        else {
-          coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
-          if (game.getBoard().contains(coords)) {
-              //misses and scatters to another hex
-            r = new Report(3195);
-            r.subject = subjectId;
-            r.add(coords.getBoardNum());
-            vPhaseReport.addElement(r);
+          Coords coords = target.getPosition();
+          if (!bMissed) {
+              r = new Report(3190);
+              r.subject = subjectId;
+              r.add(coords.getBoardNum());
+              vPhaseReport.addElement(r);
           }
           else {
-              //misses and scatters off-board
-            r = new Report(3200);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-            return !bMissed;
+              coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
+              if (game.getBoard().contains(coords)) {
+                  //misses and scatters to another hex
+                  r = new Report(3195);
+                  r.subject = subjectId;
+                  r.add(coords.getBoardNum());
+                  vPhaseReport.addElement(r);
+              }
+              else {
+                  //misses and scatters off-board
+                  r = new Report(3200);
+                  r.subject = subjectId;
+                  vPhaseReport.addElement(r);
+                  return !bMissed;
+              }
           }
-        }
 
-        if(usesAmmo && atype.getMunitionType() == AmmoType.M_FLARE) {
-            int radius;
-            if(atype.getAmmoType() == AmmoType.T_ARROW_IV)
-                radius = 4;
-            else if(atype.getAmmoType() == AmmoType.T_LONG_TOM)
-                radius = 3;
-            else radius = Math.max(1,atype.getRackSize() / 5);
-            deliverArtilleryFlare(coords,radius);
-            return !bMissed;
-        }
+          if (usesAmmo && atype.getMunitionType() == AmmoType.M_FLARE) {
+              int radius;
+              if(atype.getAmmoType() == AmmoType.T_ARROW_IV)
+                  radius = 4;
+              else if(atype.getAmmoType() == AmmoType.T_LONG_TOM)
+                  radius = 3;
+              else radius = Math.max(1,atype.getRackSize() / 5);
+                  deliverArtilleryFlare(coords,radius);
+              return !bMissed;
+          }
 
-        int nCluster = 5;
+          int nCluster = 5;
 
-        int ratedDamage = wtype.getRackSize();
-        bldg = null;
-        bldg = game.getBoard().getBuildingAt(coords);
-        int bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
-        bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-        ratedDamage -= bldgAbsorbs;
-        if ((bldg != null) && (bldgAbsorbs > 0)) {
-            //building absorbs some of the damage
-            r = new Report(6425);
-            r.subject = subjectId;
-            r.add(bldgAbsorbs);
-            vPhaseReport.addElement(r);
-            Report buildingReport = damageBuilding( bldg, ratedDamage );
-            buildingReport.subject = subjectId;
-            vPhaseReport.addElement(buildingReport);
-        }
+          int ratedDamage = wtype.getRackSize();
+          bldg = null;
+          bldg = game.getBoard().getBuildingAt(coords);
+          int bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
+          bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+          ratedDamage -= bldgAbsorbs;
+          if ((bldg != null) && (bldgAbsorbs > 0)) {
+              //building absorbs some of the damage
+              r = new Report(6425);
+              r.subject = subjectId;
+              r.add(bldgAbsorbs);
+              vPhaseReport.addElement(r);
+              Report buildingReport = damageBuilding( bldg, ratedDamage );
+              buildingReport.subject = subjectId;
+              vPhaseReport.addElement(buildingReport);
+          }
 
-        for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-            Entity entity = (Entity)impactHexHits.nextElement();
-            hits = ratedDamage;
+          for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+              Entity entity = (Entity)impactHexHits.nextElement();
+              hits = ratedDamage;
 
-            while(hits>0) {
-                if(wr.artyAttackerCoords!=null) {
-                    toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
-                }
-                HitData hit = entity.rollHitLocation
-                    ( toHit.getHitTable(),
-                      toHit.getSideTable(),
-                      wr.waa.getAimedLocation(),
-                      wr.waa.getAimingMode() );
+              while(hits>0) {
+                  if (wr.artyAttackerCoords!=null) {
+                      toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
+                  }
+                  HitData hit = entity.rollHitLocation
+                      ( toHit.getHitTable(),
+                        toHit.getSideTable(),
+                        wr.waa.getAimedLocation(),
+                        wr.waa.getAimingMode() );
 
-                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true));
-                Report.addNewline(vPhaseReport);
-                hits -= Math.min(nCluster,hits);
-            }
-        }
+                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true));
+                  Report.addNewline(vPhaseReport);
+                  hits -= Math.min(nCluster,hits);
+              }
+          }
         
-        for(int dir=0;dir<=5;dir++) {
-            Coords tempcoords=coords.translated(dir);
-            if(!game.getBoard().contains(tempcoords)) {
-                continue;
-            }
-            if(coords.equals(tempcoords)) {
-                continue;
-            }
+          for(int dir=0;dir<=5;dir++) {
+              Coords tempcoords=coords.translated(dir);
+              if (!game.getBoard().contains(tempcoords)) {
+                  continue;
+              }
+              if (coords.equals(tempcoords)) {
+                  continue;
+              }
 
-            ratedDamage = wtype.getRackSize()/2;
-            bldg = null;
-            bldg = game.getBoard().getBuildingAt(tempcoords);
-            bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
-            bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-            ratedDamage -= bldgAbsorbs;
-            if ((bldg != null) && (bldgAbsorbs > 0)) {
-                //building absorbs some of the damage
-                r = new Report(6425);
-                r.subject = subjectId;
-                r.add(bldgAbsorbs);
-                vPhaseReport.addElement(r);
-                Report buildingReport = damageBuilding( bldg, ratedDamage );
-                buildingReport.subject = subjectId;
-                vPhaseReport.addElement(buildingReport);
-            }
+              ratedDamage = wtype.getRackSize()/2;
+              bldg = null;
+              bldg = game.getBoard().getBuildingAt(tempcoords);
+              bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
+              bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+              ratedDamage -= bldgAbsorbs;
+              if ((bldg != null) && (bldgAbsorbs > 0)) {
+                  //building absorbs some of the damage
+                  r = new Report(6425);
+                  r.subject = subjectId;
+                  r.add(bldgAbsorbs);
+                  vPhaseReport.addElement(r);
+                  Report buildingReport = damageBuilding( bldg, ratedDamage );
+                  buildingReport.subject = subjectId;
+                  vPhaseReport.addElement(buildingReport);
+              }
 
-            Enumeration splashHexHits = game.getEntities(tempcoords);
-            if(splashHexHits.hasMoreElements()) {
-                r = new Report(3210);
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(tempcoords.getBoardNum());
-                vPhaseReport.addElement(r);
-            }
-            for(;splashHexHits.hasMoreElements();) {
-                Entity entity = (Entity)splashHexHits.nextElement();
-                hits = ratedDamage;
-                while(hits>0) {
-                    HitData hit = entity.rollHitLocation
-                        ( toHit.getHitTable(),
-                          toHit.getSideTable(),
-                          wr.waa.getAimedLocation(),
-                          wr.waa.getAimingMode() );
-                    Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits)));
-                    hits -= Math.min(nCluster,hits);
-                }
-            }
-        }
-        return !bMissed;
+              Enumeration splashHexHits = game.getEntities(tempcoords);
+              if (splashHexHits.hasMoreElements()) {
+                  r = new Report(3210);
+                  r.newlines = 0;
+                  r.subject = subjectId;
+                  r.add(tempcoords.getBoardNum());
+                  r.indent();
+                  vPhaseReport.addElement(r);
+              }
+              for(;splashHexHits.hasMoreElements();) {
+                  Entity entity = (Entity)splashHexHits.nextElement();
+                  hits = ratedDamage;
+                  while (hits>0) {
+                      HitData hit = entity.rollHitLocation
+                          ( toHit.getHitTable(),
+                            toHit.getSideTable(),
+                            wr.waa.getAimedLocation(),
+                            wr.waa.getAimingMode() );
+                      Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits)));
+                      hits -= Math.min(nCluster,hits);
+                  }
+              }
+          }
+          return !bMissed;
       } // End artillery
       int ammoUsage=0;
       int nDamPerHit = wtype.getDamage();
@@ -6925,7 +6958,11 @@ implements Runnable, ConnectionHandler {
                 swarmMissilesNowLeft -= wr.amsShotDownTotal;
                 Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, wr.waa.getWeaponId());
                 if (swarmTarget != null) {
-                    phaseReport.append("    ").append(swarmMissilesNowLeft).append( " missiles continue.\n");
+                    r = new Report(3420);
+                    r.subject = ae.getId();
+                    r.indent();
+                    r.add(swarmMissilesNowLeft);
+                    vPhaseReport.addElement(r);
                     weapon.setUsedThisRound(false);
                     WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
                         swarmTarget.getTargetId(), wr.waa.getWeaponId());
@@ -6934,7 +6971,12 @@ implements Runnable, ConnectionHandler {
                     newWaa.setAmmoId(wr.waa.getAmmoId());
                     WeaponResult newWr = preTreatWeaponAttack(newWaa);
                     resolveWeaponAttack(newWr, ae.getId(), false, swarmMissilesNowLeft);
-                } else phaseReport.append("    The remaining missiles find no new target.\n");
+                } else {
+                    r = new Report(3425);
+                    r.subject = ae.getId();
+                    r.indent();
+                    vPhaseReport.addElement(r);
+                }
             }
 
             // Shots that miss an entity can set fires.
@@ -6997,32 +7039,49 @@ implements Runnable, ConnectionHandler {
             atype.getMunitionType() != AmmoType.M_EXPLOSIVE) {
 
             if (wr.amsShotDownTotal > 0) {
-                phaseReport.append("would hit, but...");
+                r = new Report(3235);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
                 for (int i=0; i < wr.amsShotDown.length; i++) {
-                    phaseReport.append("\n\tAMS engages, firing ")
-                        .append(wr.amsShotDown[i]).append(" shots");
+                    r = new Report(3230);
+                    r.indent(1);
+                    r.subject = subjectId;
+                    r.add(wr.amsShotDown[i]);
+                    vPhaseReport.addElement(r);
                 }
-                phaseReport.append("\nThe pod is destroyed by AMS fire.\n");
+                r = new Report(3240);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
             } else if (entityTarget == null) {
-                phaseReport.append("hits, but doesn't do anything.\n");
+                r = new Report(3245);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
             } else {
                 INarcPod pod = null;
                 if (atype.getMunitionType() == AmmoType.M_ECM) {
                     pod = new INarcPod( ae.getOwner().getTeam(),
                                         INarcPod.ECM );
-                    phaseReport.append("hits.  ECM Pod attached.\n");
+                    r = new Report(3251);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
                 } else if (atype.getMunitionType() == AmmoType.M_HAYWIRE) {
                     pod = new INarcPod( ae.getOwner().getTeam(),
                                         INarcPod.HAYWIRE );
-                    phaseReport.append("hits.  Haywire Pod attached.\n");
+                    r = new Report(3252);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
                 } else if (atype.getMunitionType() == AmmoType.M_NEMESIS) {
                     pod = new INarcPod( ae.getOwner().getTeam(),
                                         INarcPod.NEMESIS );
-                    phaseReport.append("hits.  Nemesis Pod attached.\n");
+                    r = new Report(3253);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
                 } else {
                     pod = new INarcPod( ae.getOwner().getTeam(),
                                         INarcPod.HOMING );
-                    phaseReport.append("hits.  Homing Pod attached.\n");
+                    r = new Report(3254);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
                 }
                 entityTarget.attachINarcPod(pod);
             }
@@ -8066,11 +8125,13 @@ implements Runnable, ConnectionHandler {
                 else if(game.getOptions().booleanOption("maxtech_partial_cover") &&
                   toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
                   entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), toHit.getSideTable())) {
-                    phaseReport.append( "\n        " )
-                               .append( entityTarget.getDisplayName() )
-                               .append( " suffers no damage.(")
-                               .append( entityTarget.getLocationAbbr(hit))
-                               .append( " behind cover)" );
+                    r = new Report(3460);
+                    r.subject = entityTarget.getId();
+                    r.indent(2);
+                    r.add(entityTarget.getDisplayName());
+                    r.add(entityTarget.getLocationAbbr(hit));
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
                 }
                 else {
                     // Resolve damage normally.

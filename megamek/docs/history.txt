@@ -19,6 +19,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Bug 1241102: Moonscape maps were buggy (rough was not really rough)
 + Bug 1241081: Bot NPE when deploying and player has offboard arty.
 + Bug 1241182: Flying VTOLs can load infantry that is on the ground.
++ Bug 1241147: Stray white pixel on SW hexside of lunar rough.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

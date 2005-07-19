@@ -460,7 +460,7 @@ public abstract class BotClient extends Client {
             valid_attackers = game.getValidTargets(deployed_ent);
             for (Enumeration i = valid_attackers.elements(); i.hasMoreElements();){
                 test_ent = (Entity)i.nextElement();
-                if (test_ent.isDeployed() == true){
+                if (test_ent.isDeployed() == true && !test_ent.isOffBoard()){
                     weapons = test_ent.getWeaponList();
                     test_hit = new ToHitData();
                     for (Enumeration j = weapons.elements(); j.hasMoreElements();) {

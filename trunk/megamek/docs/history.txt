@@ -17,6 +17,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
     Stalking Spider.
 + Don't say "Vacuum breach" if a tank dies from water breaching.
 + Bug 1241102: Moonscape maps were buggy (rough was not really rough)
++ Bug 1241081: Bot NPE when deploying and player has offboard arty.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

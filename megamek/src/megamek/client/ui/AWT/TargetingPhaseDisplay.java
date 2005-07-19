@@ -47,6 +47,7 @@ public class TargetingPhaseDisplay
     public static final String FIRE_SKIP       = "fireSkip"; //$NON-NLS-1$
     public static final String FIRE_TWIST      = "fireTwist"; //$NON-NLS-1$
     public static final String FIRE_CANCEL     = "fireCancel"; //$NON-NLS-1$
+    public static final String FIRE_SEARCHLIGHT= "fireSearchlight"; //$NON-NLS-1$
 
     // parent game
     public ClientGUI clientgui;
@@ -64,6 +65,7 @@ public class TargetingPhaseDisplay
     private Button            butNext;
     private Button            butNextTarg;
     private Button            butDone;
+    private Button            butSearchlight;
 
     private int               buttonLayout;
 
@@ -129,6 +131,12 @@ public class TargetingPhaseDisplay
         butNextTarg.addKeyListener(this);
         butNextTarg.setActionCommand(FIRE_NEXT_TARG);
         butNextTarg.setEnabled(false);
+
+        butSearchlight = new Button(Messages.getString("FiringDisplay.Searchlight")); //$NON-NLS-1$
+        butSearchlight.addActionListener(this);
+        butSearchlight.addKeyListener(this);
+        butSearchlight.setActionCommand(FIRE_SEARCHLIGHT);
+        butSearchlight.setEnabled(false);
 
         butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
@@ -213,6 +221,7 @@ public class TargetingPhaseDisplay
             panButtons.add(butFlipArms);
             panButtons.add(butTwist);
             panButtons.add(butFireMode);
+            panButtons.add(butSearchlight);
          // panButtons.add(butDone);
             break;
 
@@ -279,6 +288,7 @@ public class TargetingPhaseDisplay
             // 2003-12-29, nemchenk -- only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
             setFlipArmsEnabled(ce().canFlipArms());
+            setSearchlightEnabled(ce().isUsingSpotlight() && ce().getCrew().isActive());
 
             setFireModeEnabled(true);
         } else {
@@ -423,6 +433,32 @@ public class TargetingPhaseDisplay
 
         // close aimed shot display, if any
 
+    }
+
+    private void doSearchlight() {
+        // validate
+        if (ce() == null || target == null) {
+            throw new IllegalArgumentException("current searchlight parameters are invalid"); //$NON-NLS-1$
+        }
+
+        if(!SearchlightAttackAction.isPossible(client.game,cen,target))
+            return;
+
+        //create and queue a searchlight action
+        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getTargetId());
+        attacks.addElement(saa);
+
+        // and add it into the game, temporarily
+        client.game.addAction(saa);
+        clientgui.bv.addAttack(saa);
+        clientgui.bv.repaint(100);
+        clientgui.minimap.drawMap();
+
+        //and prevent duplicates
+        setSearchlightEnabled(false);
+
+        //refresh weapon panel, as bth will have changed
+        updateTarget();
     }
 
     /**
@@ -873,6 +909,8 @@ public class TargetingPhaseDisplay
             clientgui.getBoardView().select(null);
             clientgui.getBoardView().cursor(null);
             refreshAll();
+        } else if (ev.getActionCommand().equals(FIRE_SEARCHLIGHT)) {
+            doSearchlight();
         }
     }
 
@@ -912,6 +950,10 @@ public class TargetingPhaseDisplay
                 butNext.setEnabled(enabled);
         clientgui.getMenuBar().setFireNextEnabled(enabled);
         }
+    private void setSearchlightEnabled(boolean enabled) {
+        butSearchlight.setEnabled(enabled);
+        clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
+    }
     private void setFireModeEnabled(boolean enabled) {
         butFireMode.setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);

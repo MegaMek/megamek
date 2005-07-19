@@ -918,7 +918,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
-        misc.bv = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         
         return misc;
     }
@@ -989,7 +989,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_ENDO_STEEL;
         misc.bv = 0;
-        misc.bv = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         
         return misc;
     }
@@ -1005,7 +1005,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.bv = 0;
-        misc.bv = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         
         return misc;
     }
@@ -1021,7 +1021,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.bv = 0;
-        misc.bv = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         
         return misc;
     }
@@ -1055,7 +1055,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.flags |= F_HEAT_SINK;
         misc.bv = 0;
-        misc.bv = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         
         return misc;
     }
@@ -1070,7 +1070,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.flags |= F_DOUBLE_HEAT_SINK;
         misc.bv = 0;
-        misc.bv = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         
         return misc;
     }

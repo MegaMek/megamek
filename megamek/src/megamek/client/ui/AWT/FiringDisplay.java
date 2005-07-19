@@ -334,7 +334,7 @@ public class FiringDisplay
             setSpotEnabled(ce().canSpot()
               && client.game.getOptions().booleanOption("indirect_fire")); //$NON-NLS-1$
             setFlipArmsEnabled(ce().canFlipArms());
-            setSearchlightEnabled(ce().isUsingSpotlight());
+            setSearchlightEnabled(ce().isUsingSpotlight() && ce().getCrew().isActive());
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
@@ -876,7 +876,7 @@ public class FiringDisplay
         
         // update target panel
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
-        if (target != null && weaponId != -1) {
+        if (target != null && weaponId != -1 && ce() != null && !ce().usedTag()) {
             ToHitData toHit;
             if (ash.inAimingMode()) {
             Mounted weapon = (Mounted) ce().getEquipment(weaponId);

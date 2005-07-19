@@ -210,7 +210,7 @@ public class MovementDisplay
         butRAC.setActionCommand(MOVE_UNJAM);
         butRAC.addKeyListener(this);
 
-        butSearchlight = new Button(Messages.getString("MovementDisplay.butSearchlight")); //$NON-NLS-1$
+        butSearchlight = new Button(Messages.getString("MovementDisplay.butSearchlightOn")); //$NON-NLS-1$
         butSearchlight.addActionListener(this);
         butSearchlight.setEnabled(false);
         butSearchlight.setActionCommand(MOVE_SEARCHLIGHT);
@@ -503,7 +503,7 @@ public class MovementDisplay
         setFleeEnabled(false);
         setEjectEnabled(false);
         setUnjamEnabled(false);
-        setSearchlightEnabled(false);
+        setSearchlightEnabled(false,false);
         setGetUpEnabled(false);
         setGoProneEnabled(false);
         setChargeEnabled(false);
@@ -1066,7 +1066,7 @@ public class MovementDisplay
         if ( null == ce ) {
             return;
         }
-        setSearchlightEnabled(ce.hasSpotlight() && !cmd.contains(MovePath.STEP_SEARCHLIGHT));
+        setSearchlightEnabled(ce.hasSpotlight() && !cmd.contains(MovePath.STEP_SEARCHLIGHT), ce().isUsingSpotlight());
     }
     
     private synchronized void updateElevationButtons() {
@@ -1717,7 +1717,11 @@ public class MovementDisplay
         butRAC.setEnabled(enabled);
         clientgui.getMenuBar().setMoveUnjamEnabled(enabled);
     }
-    private void setSearchlightEnabled(boolean enabled) {
+    private void setSearchlightEnabled(boolean enabled, boolean state) {
+        if(state)
+            butSearchlight.setLabel(Messages.getString("MovementDisplay.butSearchlightOff")); //$NON-NLS-1$
+        else
+            butSearchlight.setLabel(Messages.getString("MovementDisplay.butSearchlightOn")); //$NON-NLS-1$
         butSearchlight.setEnabled(enabled);
         clientgui.getMenuBar().setMoveSearchlightEnabled(enabled);
     }

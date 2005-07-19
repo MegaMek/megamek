@@ -15,6 +15,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + For debug purposes, show all units' elevation in MechDisplay.
 + Pictures for Arbalest, Basilisk, Chrysaor, Fire Scorpion, GDL Scout BA, Orc,
     Stalking Spider.
++ Don't say "Vacuum breach" if a tank dies from water breaching.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

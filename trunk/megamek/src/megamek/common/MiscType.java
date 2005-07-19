@@ -1031,7 +1031,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "Laser Heat Sink";
         misc.setInternalName(misc.name);
-        misc.addLookupName("CLDouble Heat Sink");
+        misc.addLookupName("CLLaser Heat Sink");
         misc.tonnage = 1.0f;
         misc.criticals = 2;
         misc.flags |= F_DOUBLE_HEAT_SINK | F_LASER_HEAT_SINK;

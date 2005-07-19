@@ -138,7 +138,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be within 1 elevation level");
         }
 
-        // can't charge while prone
+        // can't charge while prone, unless it's a skid charge
         if (ae.isProne() && !gotUp && !skid) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
         }

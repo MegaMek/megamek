@@ -12520,7 +12520,7 @@ implements Runnable, ConnectionHandler {
 
         if (entity instanceof Tank) {
             Server.combineVectors(vDesc,
-                destroyEntity(entity, "hull breach in vacuum", true, true));
+                destroyEntity(entity, "hull breach", true, true));
             return vDesc;
         }
         // equipment and crits will be marked in applyDamage?

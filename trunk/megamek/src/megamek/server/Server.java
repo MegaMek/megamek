@@ -16417,9 +16417,9 @@ implements Runnable, ConnectionHandler {
             if (targetHex != null) {
                 if (targetHex.terrainLevel(Terrains.WATER) > 0) {
                     rollTarget.addModifier(-1, "landing in water");
-                } else if (targetHex.terrainLevel(Terrains.ROUGH) > 0) {
+                } else if (targetHex.containsTerrain(Terrains.ROUGH)) {
                     rollTarget.addModifier(0, "landing in rough");
-                } else if (targetHex.terrainLevel(Terrains.RUBBLE) > 0) {
+                } else if (targetHex.containsTerrain(Terrains.RUBBLE)) {
                     rollTarget.addModifier(0, "landing in rubble");
                 } else if (targetHex.terrainLevel(Terrains.WOODS) == 1) {
                     rollTarget.addModifier(2, "landing in light woods");

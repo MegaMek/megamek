@@ -1097,10 +1097,10 @@ public class MoveStep implements Serializable {
         // Account for terrain, unless we're moving along a road.
         if (!isPavementStep) {
 
-            if (destHex.terrainLevel(Terrains.ROUGH) > 0) {
+            if (destHex.containsTerrain(Terrains.ROUGH)) {
                 mp++;
             }
-            if (destHex.terrainLevel(Terrains.RUBBLE) > 0) {
+            if (destHex.containsTerrain(Terrains.RUBBLE)) {
                 mp++;
             }
             if (destHex.terrainLevel(Terrains.WOODS) == 1) {

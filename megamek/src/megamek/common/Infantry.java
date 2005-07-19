@@ -242,6 +242,8 @@ public class Infantry
     public void setCrew(Pilot p) {
         super.setCrew(new Pilot(p.getName(), p.getGunnery(), 5));
         this.getCrew().setHits(p.getHits());
+        this.getCrew().setUnconscious(p.isUnconscious());
+        this.getCrew().setKoThisRound(p.isKoThisRound());
     }
 
     /**

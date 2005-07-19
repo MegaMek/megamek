@@ -9,6 +9,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Bug 1240402, Patch 1240555: searchlights & laser heatsinks pt2.
 + Bug 1240635: Ejected Mechwarrior in log file.
 + Bug 1240909: Basilisk 2 should have 10 shots of SRM2 ammo
++ More translations
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

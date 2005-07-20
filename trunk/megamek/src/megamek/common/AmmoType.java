@@ -4496,9 +4496,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-	    ammo.flags |= F_BATTLEARMOR;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-	    ammo.hittable = false;
+        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4513,9 +4513,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-	    ammo.flags |= F_BATTLEARMOR;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-	    ammo.hittable = false;
+        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4530,9 +4530,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-	    ammo.flags |= F_BATTLEARMOR;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-	    ammo.hittable = false;
+        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4547,9 +4547,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-	    ammo.flags |= F_BATTLEARMOR;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-	    ammo.hittable = false;
+        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4564,9 +4564,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-	    ammo.flags |= F_BATTLEARMOR;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-	    ammo.hittable = false;
+        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;

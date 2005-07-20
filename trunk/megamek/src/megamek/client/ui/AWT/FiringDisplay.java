@@ -1068,7 +1068,6 @@ public class FiringDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
             return;
@@ -1114,7 +1113,8 @@ public class FiringDisplay
         // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getActionCommand().equals(FIRE_MODE)) {
             changeMode();
-        } else if (ev.getActionCommand().equals(FIRE_CANCEL)) {
+        } else if ((ev.getActionCommand().equalsIgnoreCase("changeSinks"))
+                || (ev.getActionCommand().equals(FIRE_CANCEL))) {
             clearAttacks();
             clientgui.getBoardView().select(null);
             clientgui.getBoardView().cursor(null);

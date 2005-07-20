@@ -29,6 +29,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Translations of added report messages
 + Bug 1240465: Old firing arrows not cleared during 2nd game. [D.84]
 + Added Snow Fox pic.
++ Bug 1239630: Weaponfire now clears if you change the number of heat sinks.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

@@ -1328,7 +1328,7 @@ public class ClientGUI
             bv.hideTooltip();
             
             // Handle phase-specific items.
-            switch (client.game.getPhase()) {
+            switch (e.getNewPhase()) {
             case IGame.PHASE_DEPLOY_MINEFIELDS :
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
@@ -1345,7 +1345,6 @@ public class ClientGUI
                 }
             break;
             case IGame.PHASE_MOVEMENT :
-                bv.refreshAttacks();
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
@@ -1356,19 +1355,15 @@ public class ClientGUI
                 }
             break;
             case IGame.PHASE_FIRING :
-                bv.refreshAttacks();
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
             break;
             case IGame.PHASE_PHYSICAL :
-                bv.refreshAttacks();
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
                 break;
-            case IGame.PHASE_INITIATIVE :
-                bv.clearAllAttacks();
             case IGame.PHASE_INITIATIVE_REPORT :
                 showRerollButton = client.game.hasTacticalGenius(client.getLocalPlayer());
             case IGame.PHASE_MOVEMENT_REPORT :

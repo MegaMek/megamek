@@ -397,7 +397,7 @@ public class BoardView1
     /**
      * Draw the screen!
      */
-    public void update(Graphics g) {
+    public synchronized void update(Graphics g) {
         // Limit our size to the viewport of the scroll pane.
         final Dimension size = getSize();
         //         final long startTime = System.currentTimeMillis(); // commentme
@@ -2491,13 +2491,8 @@ public class BoardView1
         hex_size = new Dimension((int)(HEX_W*scale), (int)(HEX_H*scale));
 
         final Dimension size = getSize();
-        //Coords c = getCoordsAt(new Point((int)(size.width/2), (int)(size.height/2)));
 
-        boardGraph=null;
-        backGraph=null;
-        hasZoomed=true;
-
-        updateBoardSize();
+        updateBoard();
 
         view.setLocation(scroll);
         view.setSize(getOptimalView(size));
@@ -4186,13 +4181,11 @@ public class BoardView1
         }        
 
         public void gameBoardChanged(GameBoardChangeEvent e) {
-            boardImage = null;
-            boardGraph = null;
-            redrawAllEntities();
+            updateBoard();
         }
     };
 
-    protected void updateBoard() {
+    protected synchronized void updateBoard() {
         updateBoardSize();
         backGraph = null;
         backImage = null;

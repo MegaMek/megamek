@@ -37,6 +37,7 @@ import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
 import java.util.Properties;
@@ -4183,7 +4184,30 @@ public class BoardView1
         public void gameBoardChanged(GameBoardChangeEvent e) {
             updateBoard();
         }
+
+        public void gamePhaseChange(GamePhaseChangeEvent e) {
+            switch (e.getNewPhase()) {
+            case IGame.PHASE_MOVEMENT :
+            case IGame.PHASE_FIRING :
+            case IGame.PHASE_PHYSICAL :
+                refreshAttacks();
+                break;
+            case IGame.PHASE_INITIATIVE :
+                clearAllAttacks();
+                break;                
+            case IGame.PHASE_END:
+            case IGame.PHASE_VICTORY:    
+                clearSprites();                
+            }
+        }
     };
+
+    private void clearSprites() {
+        pathSprites = new Vector();
+        attackSprites = new Vector();
+        C3Sprites = new Vector();
+        
+    }
 
     protected synchronized void updateBoard() {
         updateBoardSize();

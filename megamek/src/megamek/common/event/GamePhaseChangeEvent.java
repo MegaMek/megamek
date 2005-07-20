@@ -20,11 +20,41 @@ package megamek.common.event;
 public class GamePhaseChangeEvent extends GameEvent {
     
     /**
-     * 
-     * @param source
+     * Old phase
      */
-    public GamePhaseChangeEvent(Object source) {
+    private int oldPhase;
+    
+    /**
+     * new phase
+     */
+    private int newPhase;
+
+    /**
+     * Constructs new <code>GamePhaseChangeEvent</code>
+     * @param source Event source
+     * @param oldPhase
+     * @param newPhase
+     */
+    public GamePhaseChangeEvent(Object source, int oldPhase, int newPhase) {
         super(source, GAME_PHASE_CHANGE);
+        this.oldPhase= oldPhase;
+        this.newPhase = newPhase;
+    }
+
+    /**
+     * Returns the newPhase.
+     * @return the newPhase.
+     */
+    public int getNewPhase() {
+        return newPhase;
+    }
+
+    /**
+     * Returns the oldPhase.
+     * @return the oldPhase.
+     */
+    public int getOldPhase() {
+        return oldPhase;
     }
     
 }

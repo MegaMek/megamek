@@ -594,6 +594,7 @@ public class Game implements Serializable, IGame
     }
 
     public void setPhase(int phase) {
+        final int oldPhase  = this.phase;
         this.phase = phase;
         // Handle phase-specific items.
         switch (phase) {
@@ -615,7 +616,7 @@ public class Game implements Serializable, IGame
                 break;
         }
 
-        processGameEvent(new GamePhaseChangeEvent(this));
+        processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
     }
 
     public int getLastPhase() {

@@ -3346,7 +3346,13 @@ public abstract class Entity
      * @return  <code>true</code> if the unit can be loaded,
      *          <code>false</code> otherwise.
      */
-    public boolean canLoad( Entity unit ) {
+    public boolean canLoad(Entity unit) {
+        // For now, if it's infantry, it can't load anything.
+        // Period!
+        if (this instanceof Infantry) {
+            return false;
+        }
+
         // one can only load one's own units!
         if (unit.getOwnerId() == this.getOwnerId()) {
             // Walk through this entity's transport components;

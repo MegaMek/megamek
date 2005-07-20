@@ -28,6 +28,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Disable 'Select', 'Select & Close' buttons if there is no selected Mech in MechSelectorDialog
 + Translations of added report messages
 + Bug 1240465: Old firing arrows not cleared during 2nd game. [D.84]
++ Added Snow Fox pic.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

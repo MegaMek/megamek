@@ -1768,6 +1768,7 @@ class ExtraPanel
             prompt = new Slider (clientgui.frame, Messages.getString("MechDisplay.changeSinks"), Messages.getString("MechDisplay.changeSinks"),
                                  sinks, 0, ((Mech)clientgui.getClient().game.getEntity(myMechId)).getNumberOfSinks());
             if (!prompt.showDialog()) return;
+            clientgui.menuBar.actionPerformed(ae);
             int helper = prompt.getValue();
 
             ((Mech)clientgui.getClient().game.getEntity(myMechId)).setActiveSinksNextRound(helper);

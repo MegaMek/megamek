@@ -1280,7 +1280,11 @@ implements Runnable, ConnectionHandler {
     private void prepareForPhase(int phase) {
         switch (phase) {
             case IGame.PHASE_LOUNGE :
-                mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings.getBoardWidth(), mapSettings.getBoardHeight()));
+                vPhaseReport.removeAllElements();
+                game.resetRoundReport();
+                mapSettings.setBoardsAvailableVector
+                    ( scanForBoards(mapSettings.getBoardWidth(),
+                                    mapSettings.getBoardHeight()) );
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
                 break;

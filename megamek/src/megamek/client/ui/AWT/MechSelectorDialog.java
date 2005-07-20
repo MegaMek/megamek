@@ -162,6 +162,7 @@ public class MechSelectorDialog
         setLocation(computeDesiredLocation());
         populateChoices();
         addWindowListener(this);
+        updateWidgetEnablements();
     }
 
     private void updateTechChoice() {
@@ -285,6 +286,7 @@ public class MechSelectorDialog
         for (int x = 0; x < m_mechsCurrent.length; x++) {
             m_mechList.add(formatMech(m_mechsCurrent[x]));
         }
+        updateWidgetEnablements();
         repaint();
     }
     
@@ -389,6 +391,7 @@ public class MechSelectorDialog
             clearMechPreview();
             filterMechs();
         } else if (ie.getSource() == m_mechList) {
+            updateWidgetEnablements();
             int selected = m_mechList.getSelectedIndex();
             if (selected == -1) {
                 clearMechPreview();
@@ -454,7 +457,7 @@ public class MechSelectorDialog
         m_clientgui.loadPreviewImage(m_pPreview, entity, m_client.getLocalPlayer());
         m_pPreview.paint(m_pPreview.getGraphics());
     }
-    
+
     private static final String SPACES = "                        "; //$NON-NLS-1$
     private String makeLength(String s, int nLength)
     {
@@ -507,4 +510,11 @@ public class MechSelectorDialog
     }    
     public void windowOpened(java.awt.event.WindowEvent windowEvent) {
     }
+
+    private void updateWidgetEnablements() {
+        final boolean enable = m_mechList.getSelectedIndex() != -1;
+        m_bPick.setEnabled(enable);
+        m_bPickClose.setEnabled(enable);
+    }
+
 }

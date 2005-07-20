@@ -1016,8 +1016,6 @@ public class TestBot extends BotClient {
         // Repeat this for left and right twists
         if ((best_front_po != null) && (en instanceof Mech)){
             if (best_front_po.type == PhysicalOption.PUNCH_LEFT) {
-                System.out.println("Best front left-punch damage: " + best_front_po.expectedDmg);
-                System.out.println("Best front la weapon damage: " + front_la_dmg);
                 if ((front_la_dmg < best_front_po.expectedDmg) && (front.size() > 0)){
                     for (int i = 0; i < front.size(); i++){
                         c = (Vector) front.elementAt(i);
@@ -1032,8 +1030,6 @@ public class TestBot extends BotClient {
                 }
             }
             if (best_front_po.type == PhysicalOption.PUNCH_RIGHT) {
-                System.out.println("Best front right-punch damage: " + best_front_po.expectedDmg);
-                System.out.println("Best front ra weapon damage: " + front_ra_dmg);
                 if ((front_ra_dmg < best_front_po.expectedDmg) && (front.size() > 0)){
                     for (int i = 0; i < front.size(); i++){
                         c = (Vector) front.elementAt(i);
@@ -1048,8 +1044,6 @@ public class TestBot extends BotClient {
                 }
             }
             if (best_front_po.type == PhysicalOption.PUNCH_BOTH) {
-                System.out.println("Best front double-punch damage: " + best_front_po.expectedDmg);
-                System.out.println("Best front la+ra weapon damage: " + (front_la_dmg + front_ra_dmg));
                 if (((front_la_dmg + front_ra_dmg) < best_front_po.expectedDmg) && (front.size() > 0)){
                     for (int i = 0; i < front.size(); i++){
                         c = (Vector) front.elementAt(i);
@@ -1074,8 +1068,6 @@ public class TestBot extends BotClient {
         if (!es.getFinalProne() && en.canChangeSecondaryFacing()) {
             if ((best_left_po != null) && (en instanceof Mech)){
                 if (best_left_po.type == PhysicalOption.PUNCH_LEFT) {
-                    System.out.println("Best left left-punch damage: " + best_left_po.expectedDmg);
-                    System.out.println("Best left la weapon front damage: " + left_la_dmg);
                     if ((left_la_dmg < best_left_po.expectedDmg) && (left.size() > 0)){
                         for (int i = 0; i < left.size(); i++){
                             c = (Vector) left.elementAt(i);
@@ -1090,8 +1082,6 @@ public class TestBot extends BotClient {
                     }
                 }
                 if (best_left_po.type == PhysicalOption.PUNCH_RIGHT) {
-                    System.out.println("Best left right-punch damage: " + best_left_po.expectedDmg);
-                    System.out.println("Best left ra weapon front damage: " + left_ra_dmg);
                     if ((left_ra_dmg < best_left_po.expectedDmg) && (left.size() > 0)){
                         for (int i = 0; i < left.size(); i++){
                             c = (Vector) left.elementAt(i);
@@ -1106,8 +1096,6 @@ public class TestBot extends BotClient {
                     }
                 }
                 if (best_left_po.type == PhysicalOption.PUNCH_BOTH) {
-                    System.out.println("Best left double-punch damage: " + best_left_po.expectedDmg);
-                    System.out.println("Best left la+ra weapon front damage: " + (left_la_dmg + left_ra_dmg));
                     if (((left_la_dmg + left_ra_dmg) < best_left_po.expectedDmg) && (left.size() > 0)){
                         for (int i = 0; i < left.size(); i++){
                             c = (Vector) left.elementAt(i);
@@ -1129,8 +1117,7 @@ public class TestBot extends BotClient {
             }
             arcs.add(left);
             if ((best_right_po != null) && (en instanceof Mech)) {
-                if (best_right_po.type == PhysicalOption.PUNCH_LEFT) {                     System.out.println("Best right left-punch damage: " + best_right_po.expectedDmg);
-                    System.out.println("Best right la weapon front damage: " + right_la_dmg);
+                if (best_right_po.type == PhysicalOption.PUNCH_LEFT) {
                     if ((right_la_dmg < best_right_po.expectedDmg) && (right.size() > 0)){
                         for (int i = 0; i < right.size(); i++){
                             c = (Vector) right.elementAt(i);
@@ -1145,8 +1132,6 @@ public class TestBot extends BotClient {
                     }
                 }
                 if (best_right_po.type == PhysicalOption.PUNCH_RIGHT) {
-                    System.out.println("Best right right-punch damage: " + best_right_po.expectedDmg);
-                    System.out.println("Best right la weapon front damage: " + right_la_dmg);
                     if ((right_ra_dmg < best_right_po.expectedDmg) && (right.size() > 0)){
                         for (int i = 0; i < right.size(); i++){
                             c = (Vector) right.elementAt(i);
@@ -1161,8 +1146,6 @@ public class TestBot extends BotClient {
                     }
                 }
                 if (best_right_po.type == PhysicalOption.PUNCH_BOTH) {
-                    System.out.println("Best right double-punch damage: " + best_right_po.expectedDmg);
-                    System.out.println("Best right la+ra weapon front damage: " + (right_la_dmg + right_ra_dmg));
                     if (((right_la_dmg + right_ra_dmg) < best_right_po.expectedDmg) && (right.size() > 0)){
                         for (int i = 0; i < right.size(); i++){
                             c = (Vector) right.elementAt(i);

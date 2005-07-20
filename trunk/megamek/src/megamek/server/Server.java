@@ -912,10 +912,6 @@ implements Runnable, ConnectionHandler {
      * Writes the victory report
      */
     private void prepareVictoryReport() {
-        //game.resetRoundReport();
-        //roundReport = game.getRoundReport(); //HACK
-        //vRoundReport.removeAllElements();
-
         Report r;
 
         vPhaseReport.addElement(new Report(7000, Report.PUBLIC));
@@ -1281,7 +1277,7 @@ implements Runnable, ConnectionHandler {
         switch (phase) {
             case IGame.PHASE_LOUNGE :
                 vPhaseReport.removeAllElements();
-                game.resetRoundReport();
+                game.setAllReports( new Vector() );
                 mapSettings.setBoardsAvailableVector
                     ( scanForBoards(mapSettings.getBoardWidth(),
                                     mapSettings.getBoardHeight()) );

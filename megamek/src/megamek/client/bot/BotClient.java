@@ -634,18 +634,18 @@ public abstract class BotClient extends Client {
         double temp_fitness;
         do {
             was_changed = false;
-	        for (int x = 0; x < (valid_array.length - 1); x++){
-	            if (fitness[x] < fitness[x + 1]){
-	                test_hex = valid_array[x+1];
-	                temp_fitness = fitness[x+1];
-	                valid_array[x+1] = valid_array[x];
-	                fitness[x+1] = fitness[x];
-	                valid_array[x] = test_hex;
-	                fitness[x] = temp_fitness;
-	                was_changed = true;
-	                break;
-	            }
-	        }
+            for (int x = 0; x < (valid_array.length - 1); x++){
+                if (fitness[x] < fitness[x + 1]){
+                    test_hex = valid_array[x+1];
+                    temp_fitness = fitness[x+1];
+                    valid_array[x+1] = valid_array[x];
+                    fitness[x+1] = fitness[x];
+                    valid_array[x] = test_hex;
+                    fitness[x] = temp_fitness;
+                    was_changed = true;
+                    break;
+                }
+            }
         } while (was_changed == true);
         return valid_array;
     }

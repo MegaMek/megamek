@@ -10882,7 +10882,7 @@ implements Runnable, ConnectionHandler {
     public Vector damageEntity(Entity te, HitData hit, int damage,
                                boolean ammoExplosion, int bFrag,
                                boolean damageIS) {
-    	return damageEntity(te, hit, damage, ammoExplosion, bFrag,
+        return damageEntity(te, hit, damage, ammoExplosion, bFrag,
                             damageIS, false);
     }
 
@@ -12059,7 +12059,7 @@ implements Runnable, ConnectionHandler {
      * Rolls and resolves critical hits with no die roll modifiers.
      */
     private Vector criticalEntity(Entity en, int loc) {
-    	return criticalEntity(en, loc, 0, true);
+        return criticalEntity(en, loc, 0, true);
     }
 
     private Vector criticalEntity(Entity en, int loc, int critMod) {

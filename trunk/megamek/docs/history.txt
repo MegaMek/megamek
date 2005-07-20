@@ -22,6 +22,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Bug 1241147: Stray white pixel on SW hexside of lunar rough.
 + Bug 1241150: infantry can only move forward.
 + Patch 1241389: patch for bug 1236506
++ Patch 1241331: Minor bot patches.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

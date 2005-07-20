@@ -371,16 +371,14 @@ public class MovementDisplay
      */
     public synchronized void selectEntity(int en) {
         final Entity ce = client.game.getEntity(en);
-        
-        
+
         // hmm, sometimes this gets called when there's no ready entities?
         if (ce == null) {
             System.err.println("MovementDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
-        
-        Entity oldSelected = client.game.getEntity(cen);
 
+        Entity oldSelected = client.game.getEntity(cen);
         this.cen = en;
         clientgui.setSelectedEntityNum(en);
 
@@ -1100,40 +1098,36 @@ public class MovementDisplay
         }
         // Disable the "Unload" button if we're in the wrong
         // gear or if the entity is not transporting units.
-        if ( !legalGear ||
-             loadedUnits.size() == 0 
-             || cen == Entity.NONE || (getCeElevation() > 0 && !vtolLoaded)) {
+        if ( !legalGear
+                || loadedUnits.size() == 0 
+                || cen == Entity.NONE
+                || (getCeElevation() > 0
+                    && !vtolLoaded)) {
             setUnloadEnabled( false );
-        }
-        else {
+        } else {
             setUnloadEnabled( true );
         }
-
         // If the current entity has moved, disable "Load" button.
         if ( cmd.length() > 0 || cen == Entity.NONE ) {
-
             setLoadEnabled( false );
-
         } else {
-
             // Check the other entities in the current hex for friendly units.
             Entity other = null;
-            Enumeration entities =
-                client.game.getEntities( ce.getPosition() );
-            while ( entities.hasMoreElements() ) {
-
+            Enumeration entities = client.game.getEntities(ce.getPosition());
+            boolean isGood = false;
+            while (entities.hasMoreElements()) {
                 // Is the other unit friendly and not the current entity?
                 other = (Entity)entities.nextElement();
-                if ( ce.getOwner() == other.getOwner() &&
-                     !ce.equals(other) ) {
-
+                if (ce.getOwner() == other.getOwner()
+                        && !ce.equals(other)) {
                     // Yup. If the current entity has at least 1 MP, if it can
                     // transport the other unit, and if the other hasn't moved
                     // then enable the "Load" button.
-                    if ( ce.getWalkMP() > 0 &&
-                         ce.canLoad(other) &&
-                         other.isSelectableThisTurn() ) {
-                        setLoadEnabled( true );
+                    if ( ce.getWalkMP() > 0
+                            && ce.canLoad(other)
+                            && other.isSelectableThisTurn()) {
+                        setLoadEnabled(true);
+                        isGood = true;
                     }
 
                     // We can stop looking.
@@ -1143,9 +1137,10 @@ public class MovementDisplay
                     other = null;
                 }
             } // Check the next entity in this position.
-
+            if (!isGood) {
+                setLoadEnabled(false);
+            }
         } // End ce-hasn't-moved
-
     } // private void updateLoadButtons
 
     /**

@@ -211,14 +211,15 @@ public class RandomMapDialog
 
         validate();
         pack();
-        
+        setProperSize();
+
         butOK.requestFocus();
 
-        setLocation(getParent().getLocation().x + getParent().getSize().width/2 - getSize().width/2,
-                    getParent().getLocation().y + getParent().getSize().height/2 - getSize().height/2);
+        setProperSize();
+        setProperLocation();
         initiated = true;
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOK)) {
             if (applyValues()) {
@@ -232,6 +233,7 @@ public class RandomMapDialog
                 butAdvanced.setLabel(Messages.getString("RandomMapDialog.Advanced")); //$NON-NLS-1$
             }
             setupOptions();
+            setProperSize();
         }
     }
     
@@ -321,8 +323,8 @@ public class RandomMapDialog
         
         if (initiated) {
             pack();
-            setLocation(getParent().getLocation().x + getParent().getSize().width/2 - getSize().width/2,
-                    getParent().getLocation().y + getParent().getSize().height/2 - getSize().height/2);
+            setProperSize();            
+            setProperLocation();
         }
     }
 
@@ -1171,4 +1173,22 @@ public class RandomMapDialog
         this.mapSettings = mapSettings;
         loadValues();
     }
+
+    private void setProperSize() {
+        validate();
+        pack();
+        Dimension dopt = panOptions.getPreferredSize();
+        Dimension dbt = panButtons.getPreferredSize();
+        int width = Math.min(dopt.width+dbt.width+50, 640);
+        int height = Math.min(dopt.height+dbt.height+50, 480);
+        setSize(width, height);
+    }
+    
+    private void setProperLocation() {
+        int x = (getParent().getSize().width - getSize().width)/2;
+        int y = (getParent().getSize().height - getSize().height)/2;
+        setLocation(x, y);
+        
+    }
+
 }

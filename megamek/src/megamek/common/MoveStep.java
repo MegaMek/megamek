@@ -819,7 +819,10 @@ public class MoveStep implements Serializable {
         Coords curPos = getPosition();
         Coords lastPos = prev.getPosition();
         boolean isUnjammingRAC = entity.isUnjammingRAC();
-
+        prevStepOnPavement = prev.isPavementStep();
+        isTurning = prev.isTurning();
+        isUnloaded = prev.isUnloaded();
+        
         // Infantry get a first step if all they've done is spin on the spot.
         if (isInfantry && (getMpUsed() - getMp()) == 0) {
             setFirstStep( true );
@@ -827,11 +830,7 @@ public class MoveStep implements Serializable {
             //   getMpUsed() is the MPs used in the whole MovePath
             //   getMp() is the MPs used in the last (illegal) step (this step)
             //   if the difference between the whole path and this step is 0
-            //   then this must be their first step
-            // TODO : Why are these *here*???
-            prevStepOnPavement = prev.isPavementStep();
-            isTurning = prev.isTurning();
-            isUnloaded = prev.isUnloaded();
+            //   then this must be their first step            
         }
 
         // guilty until proven innocent
@@ -871,7 +870,17 @@ public class MoveStep implements Serializable {
                 || stepType == MovePath.STEP_TURN_RIGHT)
             && !entity.isStuck()) {
             movementType = IEntityMovementType.MOVE_WALK;
-        }            
+        }
+        // Infantry that is first stepping and turning is legal 
+        if (isInfantry && 
+            (stepType == MovePath.STEP_TURN_LEFT || stepType == MovePath.STEP_TURN_RIGHT) &&
+            isFirstStep()) {
+            if (parent.isJumping()) {
+                movementType = IEntityMovementType.MOVE_JUMP;
+            } else {
+                movementType = IEntityMovementType.MOVE_WALK;
+            }
+        }
 
         int tmpWalkMP = entity.getWalkMP();
         if ((parent.getEntity().getMovementMode() == IEntityMovementMode.VTOL)

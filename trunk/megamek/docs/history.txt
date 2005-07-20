@@ -26,6 +26,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Minor tweak to "move even" report; added "move even" report to ..._de file.
 + Bug 1240663: Clear the turn report when the game resets.
 + Disable 'Select', 'Select & Close' buttons if there is no selected Mech in MechSelectorDialog
++ Translations of added report messages
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

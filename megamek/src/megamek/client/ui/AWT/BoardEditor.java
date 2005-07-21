@@ -26,7 +26,7 @@ import megamek.common.*;
 import megamek.common.util.BoardUtilities;
 
 public class BoardEditor extends Container implements ItemListener,
-        ActionListener, TextListener, KeyListener, WindowListener, IMapSettingsObserver {
+        ActionListener, TextListener, WindowListener, IMapSettingsObserver {
 
     private Frame frame = new Frame();
 
@@ -42,8 +42,6 @@ public class BoardEditor extends Container implements ItemListener,
 
     private String curpath, curfile, curfileImage;
 
-    private boolean ctrlheld, altheld;
-    
     // buttons and labels and such:
     private HexCanvas canHex;
 
@@ -98,18 +96,14 @@ public class BoardEditor extends Container implements ItemListener,
             frame.dispose();
         }
 
-        this.addKeyListener(bv);
-        this.addKeyListener(this);
-        bv.addKeyListener(this);
         bv.addBoardViewListener(new BoardViewListener(){
 
             public void hexMoused(BoardViewEvent b) {
                 bv.cursor(b.getCoords());
-                if(altheld) {
+                if((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
                     setCurrentHex(board.getHex(b.getCoords()));
-                    //board.highlight(b.getCoords());
                 }
-                if(ctrlheld) {
+                if((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
                     if(!board.getHex(b.getCoords()).equals(curHex)) {
                         paintHex(b.getCoords());
                     }
@@ -345,7 +339,6 @@ public class BoardEditor extends Container implements ItemListener,
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
-        comp.addKeyListener(this);
     }
     
     /**
@@ -687,34 +680,6 @@ public class BoardEditor extends Container implements ItemListener,
         }
     }
     
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ke) {
-        switch(ke.getKeyCode()) {
-        case KeyEvent.VK_CONTROL : 
-            paintHex(bv.getLastCursor());
-            ctrlheld = true;
-            break;
-        case KeyEvent.VK_ALT : 
-            setCurrentHex(board.getHex(bv.getLastCursor()));
-            altheld = true;
-            break;
-        }
-    }
-    public void keyReleased(KeyEvent ke) {
-        switch(ke.getKeyCode()) {
-        case KeyEvent.VK_CONTROL : 
-            ctrlheld = false; 
-            break;
-        case KeyEvent.VK_ALT : 
-            altheld = false; 
-            break;
-        }
-    }
-    public void keyTyped(KeyEvent ke) {
-    }
-
     /**
      * Called when the user selects the "Help->About" menu item.
      */

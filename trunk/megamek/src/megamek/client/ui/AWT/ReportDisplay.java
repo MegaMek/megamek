@@ -41,7 +41,7 @@ public class ReportDisplay
     
     // displays
     private TabPanel        tabs;
-    private Vector          vTextArea = new Vector();
+    private Vector          vTextArea;
 
     private Window            mechw;
     private MechDisplay        mechd;
@@ -76,6 +76,7 @@ public class ReportDisplay
          GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         tabs.setTabFont (tabPanelFont);
 
+        vTextArea = new Vector();
         /* HACK: Without this initial empty TextArea, the tabs will be
            blank (no TextArea at all) during the first initiative
            phase.  I think it has something to do with the layout
@@ -195,13 +196,18 @@ public class ReportDisplay
 
     public void setReportTab(int round, String roundText, String phaseText) {
         if (round < 1) {
-            System.err.println("ERROR: ReportDisplay.setReportTab() called with round argument of less than 1, which is invalid.");
+            System.err.println("ERROR: ReportDisplay.setReportTab() called with round argument of " + round + "; value must be at least 1.");
             return;
         }
+
         if (round >= vTextArea.size()) {
-            //need new tab
+            //Need a new tab for the new round.
+
+            //get rid of phase tab
             tabs.remove((Component)vTextArea.elementAt(vTextArea.size() - 1));
             vTextArea.removeElementAt(vTextArea.size() - 1);
+
+            //add as many round tabs as necessary to catch us up
             TextArea ta;
             while (round > vTextArea.size()) {
                 //HACK: We shouldn't have to rely on our access to the client object...
@@ -210,12 +216,15 @@ public class ReportDisplay
                 tabs.add("Round " + (vTextArea.size() + 1),ta);
                 vTextArea.addElement(ta);
             }
+
+            //add the new current phase tab
             ta = new TextArea(phaseText, 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
             ta.setEditable(false);
             tabs.add("Phase", ta);
             vTextArea.addElement(ta);
             tabs.last();
         } else {
+            //Update the previous rounds tab and the phase tab.
             ((TextArea)vTextArea.elementAt(round - 1)).setText(roundText);
             ((TextArea)vTextArea.elementAt(round)).setText(phaseText);
         }
@@ -224,6 +233,13 @@ public class ReportDisplay
     public void appendReportTab(String additionalText) {
         ((TextArea)vTextArea.elementAt(vTextArea.size() - 1)).append(additionalText);
         ((TextArea)vTextArea.elementAt(vTextArea.size() - 2)).append(additionalText);
+    }
+
+    public void resetTabs() {
+        for (int i = 0; i < vTextArea.size(); i++) {
+            tabs.remove((Component)vTextArea.elementAt(i));
+            vTextArea.removeElementAt(i);
+        }
     }
 
     //

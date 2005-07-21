@@ -915,6 +915,14 @@ public class Client implements Runnable {
                 case Packet.COMMAND_SEND_SAVEGAME:
                     String sFinalFile = (String)c.getObject(0);
                     try {
+                        File sDir = new File("savegames");
+                        if (!sDir.exists()) {
+                            sDir.mkdir();
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Unable to create savegames directory");
+                    }
+                    try {
                         ObjectOutputStream oos = new ObjectOutputStream(
                             new FileOutputStream(sFinalFile));
                         oos.writeObject(c.getObject(1));

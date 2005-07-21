@@ -44,6 +44,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + When a user has auto-scroll on and clicks a hex to select a unit near the
     edge of the map, the unit was not being selected.  Fixed now.
 + Bug 1242303: Attack arrows for charge not removed
++ + /localsave did not work when savegames directory was not present.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

@@ -105,15 +105,11 @@ public class Compute {
         Entity firstEntity = transport;
         int totalUnits = 1;
         int thisLowStackingLevel = entering.getElevation();
-        // And now, we need to correct because we're getting its elevation from
-        // the WRONG FREAKING HEX.
-        // Argh.
-        if (coords != null)
-            thisLowStackingLevel += game.getBoard().getHex(coords)
-                    .getElevation();
-        if (entering.getPosition() != null)
-            thisLowStackingLevel -= game.getBoard().getHex(
-                    entering.getPosition()).getElevation();
+        if ((coords != null)
+                && (entering.getPosition() != null))
+            thisLowStackingLevel = entering.calcElevation(
+                    game.getBoard().getHex(entering.getPosition()),
+                    game.getBoard().getHex(coords));
         int thisHighStackingLevel = thisLowStackingLevel + entering.height();
 
         // Walk through the entities in the given hex.

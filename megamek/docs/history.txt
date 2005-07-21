@@ -25,7 +25,8 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Patch 1241331: Minor bot patches.
 + Minor tweak to "move even" report; added "move even" report to ..._de file.
 + Bug 1240663: Clear the turn report when the game resets.
-+ Disable 'Select', 'Select & Close' buttons if there is no selected Mech in MechSelectorDialog
++ Disable 'Select', 'Select & Close' buttons if there is no selected
+    Mech in MechSelectorDialog
 + Translations of added report messages
 + Bug 1240465: Old firing arrows not cleared during 2nd game. [D.84]
 + Added Snow Fox pic.
@@ -35,6 +36,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Avoid NPE in canSee function.
 + Bug 1242061: Lot of NPEs when you edit map
 + Bug 1242122: NPE in the MapEditor when you press the ctrl/alt key
++ Bug 1241986: Fixed stacking to hopefully correctly handle elevation.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

@@ -2319,8 +2319,11 @@ public class BoardView1
         }
         isScrolling = false;
 
-        // no click action triggered if click was for scrolling the map. Real clicks are without scrolling.
-        if (scrolled)
+        //Unless the user has auto-scroll on and is using the left
+        //mouse button, no click action should be triggered if the map
+        //is being scrolled.
+        if (scrolled &&
+            ((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0 || !GUIPreferences.getInstance().getAutoEdgeScroll()))
             return;
         if (me.getClickCount() == 1) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK, me.getModifiers());

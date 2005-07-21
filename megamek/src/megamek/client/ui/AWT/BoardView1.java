@@ -193,7 +193,7 @@ public class BoardView1
     private Coords selected;
     private Coords firstLOS;
 
-    private ClientGUI clientgui;
+    private ClientGUI clientgui; //TODO please eliminate the usage of the clientgui 
     
     private RedrawWorker redrawWorker = new RedrawWorker();
 
@@ -208,6 +208,7 @@ public class BoardView1
      * Construct a new board view for the specified game
      */
     public BoardView1(IGame game, Frame frame, ClientGUI clientgui) throws java.io.IOException {
+        //TODO please eliminate the usage of the clientgui
         this.clientgui = clientgui;
         this.game = game;
         this.frame = frame;
@@ -721,17 +722,19 @@ public class BoardView1
      * or null if none selected or it is not artillery
      **/
     private Mounted getSelectedArtilleryWeapon() {
-        Entity e = clientgui.mechD.getCurrentEntity();
         Mounted weapon = null;
-        
-        if(e != null) {
-            weapon = e.getEquipment(clientgui.mechD.wPan.getSelectedWeaponNum());
-        }
-        if (weapon != null) {
-            if(!(weapon.getType() instanceof WeaponType && weapon.getType().hasFlag(WeaponType.F_ARTILLERY))) {
-                weapon = null;
+        //TODO please eliminate the usage of the clientgui
+        if (clientgui != null) {
+            Entity e = clientgui.mechD.getCurrentEntity();            
+            if(e != null) {
+                weapon = e.getEquipment(clientgui.mechD.wPan.getSelectedWeaponNum());
             }
-            //otherwise, a weapon is selected, and it is artillery
+            if (weapon != null) {
+                if(!(weapon.getType() instanceof WeaponType && weapon.getType().hasFlag(WeaponType.F_ARTILLERY))) {
+                    weapon = null;
+                }
+                //otherwise, a weapon is selected, and it is artillery
+            }
         }
         return weapon;
     }
@@ -739,6 +742,7 @@ public class BoardView1
     /** Display artillery modifier in pretargeted hexes
      */
     private void drawArtilleryHexes() {
+        //TODO please eliminate the usage of the clientgui
         if (clientgui != null) {
             Entity e = clientgui.mechD.getCurrentEntity();
             Mounted weapon = getSelectedArtilleryWeapon();
@@ -1469,23 +1473,27 @@ public class BoardView1
             strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAttack", 
                     new Object[] { s, new Integer(aaa.turnsTilHit), wr.toHit.getValueAsString() } );
         }
-        //check artillery fire adjustment
-        final Entity selectedEntity = clientgui.mechD.getCurrentEntity();
-        if(selectedWeapon != null && selectedEntity != null) {
-            //process targetted hexes
-            int amod = 0;
-            //Check the predesignated hexes
-            if(selectedEntity.getOwner().getArtyAutoHitHexes().contains(mcoords)) {
-                amod = TargetRoll.AUTOMATIC_SUCCESS;
-            }
-            else {
-                amod = selectedEntity.aTracker.getModifier(selectedWeapon, mcoords);
-            }
 
-            if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
-                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAutohit");
-            } else {
-                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAdjustment", new Object[] { new Integer(amod) } );
+        //TODO please eliminate the usage of the clientgui
+        if (clientgui != null) {
+            //check artillery fire adjustment
+            final Entity selectedEntity = clientgui.mechD.getCurrentEntity();
+            if(selectedWeapon != null && selectedEntity != null) {
+                //process targetted hexes
+                int amod = 0;
+                //Check the predesignated hexes
+                if(selectedEntity.getOwner().getArtyAutoHitHexes().contains(mcoords)) {
+                    amod = TargetRoll.AUTOMATIC_SUCCESS;
+                }
+                else {
+                    amod = selectedEntity.aTracker.getModifier(selectedWeapon, mcoords);
+                }
+                
+                if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
+                    strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAutohit");
+                } else {
+                    strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAdjustment", new Object[] { new Integer(amod) } );
+                }
             }
         }
         return strings;
@@ -2217,6 +2225,7 @@ public class BoardView1
         case KeyEvent.VK_NUMPAD5 :
             // center on the selected entity
             java.util.Vector v = game.getPlayerEntities(localPlayer);
+            //TODO please eliminate the usage of the clientgui
             Entity se = clientgui == null?null:game.getEntity(clientgui.getSelectedEntityNum());
             for (int i = 0; i < v.size(); i++) {
                 Entity e = (Entity) v.elementAt(i);

@@ -13918,19 +13918,23 @@ implements Runnable, ConnectionHandler {
     }
 
     private boolean canSee(Player p, Entity e) {
-        System.out.println("s: canSee(): Player: " + p.getName() + "[" + p.getId() + "]" + ", Entity: " + e.getShortName() + "(" + e.getOwner().getName() + ")" + "[" + e.getOwner().getId() + "]");
-        if (e.getOwner().getId() == p.getId()) {
-            //The owner of an entity should be able to see it, of course.
-            System.out.println("s: canSee(): Yep, my unit.");
-            return true;
-        } else {
-            System.out.println("s: canSee(): Not sure..." + e.getOwner().equals(p));
-        }
-        Vector playersWhoCanSee = whoCanSee(e);
-        for (int i = 0; i < playersWhoCanSee.size(); i++) {
-            Player currentPlayer = (Player)playersWhoCanSee.elementAt(i);
-            if (currentPlayer.equals(p)) {
+        if ((p != null)
+                && (e != null)
+                && (e.getOwner() != null)) {
+            System.out.println("s: canSee(): Player: " + p.getName() + "[" + p.getId() + "]" + ", Entity: " + e.getShortName() + "(" + e.getOwner().getName() + ")" + "[" + e.getOwner().getId() + "]");
+            if (e.getOwner().getId() == p.getId()) {
+                //The owner of an entity should be able to see it, of course.
+                System.out.println("s: canSee(): Yep, my unit.");
                 return true;
+            } else {
+                System.out.println("s: canSee(): Not sure..." + e.getOwner().equals(p));
+            }
+            Vector playersWhoCanSee = whoCanSee(e);
+            for (int i = 0; i < playersWhoCanSee.size(); i++) {
+                Player currentPlayer = (Player)playersWhoCanSee.elementAt(i);
+                if (currentPlayer.equals(p)) {
+                    return true;
+                }
             }
         }
 

@@ -614,6 +614,12 @@ public class Game implements Serializable, IGame
                 resetActions();
                 resetCharges();
                 break;
+            // TODO Is there better solution to handle charges?
+            case IGame.PHASE_PHYSICAL_REPORT:
+            case IGame.PHASE_END:
+                resetCharges();
+                break;
+
         }
 
         processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));

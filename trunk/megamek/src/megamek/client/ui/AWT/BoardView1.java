@@ -1584,11 +1584,7 @@ public class BoardView1
             newSprites.removeElement(sprite);
         }
         Coords position = entity.getPosition();
-        if (position != null) {
-            /*drawHex(position);
-            IHex foo = game.getBoard().getHex(position);
-            foo.markChanged(); */// TODO: Is this really necessary?
-            
+        if (position != null) {            
             sprite = new EntitySprite(entity);
             newSprites.addElement(sprite);
             newSpriteIds.put( entityId, sprite );
@@ -1860,10 +1856,17 @@ public class BoardView1
                 addAttack((AttackAction)ea);
             }
         }
-        for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
-            EntityAction ea = (EntityAction)i.nextElement();
-            if (ea instanceof AttackAction) {
-                addAttack((AttackAction)ea);
+
+        /*
+         * TODO the condition game.getPhase() == ... is the fix for bug 1242303. Is it correct?
+         * Show charging only in the movement phase
+         */
+        if (game.getPhase() == IGame.PHASE_MOVEMENT) {
+            for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
+                EntityAction ea = (EntityAction)i.nextElement();
+                if (ea instanceof AttackAction) {
+                    addAttack((AttackAction)ea);
+                }
             }
         }
     }
@@ -4190,6 +4193,7 @@ public class BoardView1
         }
 
         public void gamePhaseChange(GamePhaseChangeEvent e) {
+            refreshAttacks();
             switch (e.getNewPhase()) {
             case IGame.PHASE_MOVEMENT :
             case IGame.PHASE_FIRING :

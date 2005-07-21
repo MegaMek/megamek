@@ -667,8 +667,7 @@ public abstract class Entity
             retVal += current.surface();
             retVal -= next.surface();
         }
-        if ((next.getTerrain(Terrains.WATER) != null)
-                && (getMovementMode() != IEntityMovementMode.HOVER)
+        if ((getMovementMode() != IEntityMovementMode.HOVER)
                 && (getMovementMode() != IEntityMovementMode.NAVAL)
                 && (getMovementMode() != IEntityMovementMode.HYDROFOIL)
                 && (getMovementMode() != IEntityMovementMode.SUBMARINE)
@@ -676,7 +675,9 @@ public abstract class Entity
             if (current.containsTerrain(Terrains.WATER)) {
                 retVal += current.terrainLevel(Terrains.WATER);
             }
-            retVal -= next.terrainLevel(Terrains.WATER);
+            if (next.containsTerrain(Terrains.WATER)) {
+                retVal -= next.terrainLevel(Terrains.WATER);
+            }
         }
         return retVal;
     }
@@ -688,33 +689,6 @@ public abstract class Entity
     /**
      * Returns the elevation of this entity.
      */
-/*
-    public int getElevation() {
-        Coords  pos = getPosition();
-
-        if ( Entity.NONE != this.getTransportId() ) {
-            pos = game.getEntity( this.getTransportId() ).getPosition();
-        }
-
-        if (isOffBoard()) {
-            return 0;
-        }
-
-        if ( null == pos ) {
-            if (isDeployed())
-                throw new IllegalStateException
-                    ("Entity #" + this.getId() + " does not know its position.");
-            else
-                return 0;
-        }
-        else if ( !game.getBoard().contains(pos) ) {
-            throw new IllegalStateException
-                ("Board does not contain the Coords: " + pos + ".");
-        }
-        return elevationOccupied(game.getBoard().getHex(pos));
-    }
-*/
-
     public int getElevation() {
         if ( Entity.NONE != this.getTransportId() ) {
             return game.getEntity(this.getTransportId()).getElevation();

@@ -335,7 +335,7 @@ public class BoardView1
             }
         }
     }
-    
+
     public void addMovingUnit(Entity entity, java.util.Vector movePath) {
         if ( !movePath.isEmpty() ) {
             Object[] o = new Object[2];
@@ -2263,7 +2263,7 @@ public class BoardView1
         isTipPossible = false;
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);
-            if (disp.isHit(point, backSize)) {
+            if ((backSize != null) && (disp.isHit(point, backSize))) {
                 return;
             }
         }

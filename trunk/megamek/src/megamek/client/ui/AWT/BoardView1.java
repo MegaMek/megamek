@@ -1879,14 +1879,6 @@ public class BoardView1
         attackSprites.removeAllElements();
     }
 
-    public Image baseFor(IHex hex) {
-        return tileManager.baseFor(hex);
-    }
-
-    public com.sun.java.util.collections.List supersFor(IHex hex) {
-        return tileManager.supersFor(hex);
-    }
-
     protected void firstLOSHex(Coords c) {
         if (useLOSTool) {
             moveCursor(secondLOSSprite, null);

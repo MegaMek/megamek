@@ -72,6 +72,10 @@ public class GameReports implements Serializable {
         reports = v;
     }
 
+    public void clear() {
+        reports = new Vector();
+    }
+
     private static void combineVectors(Vector first, Vector second) {
         if (second == null || second.size() == 0) {
             //Hmm...no second vector, no work to do then.

@@ -903,6 +903,11 @@ public interface IGame {
      */
     public void setAllReports(Vector v);
 
+    /**
+     * Clears out all the current reports, paving the way for a new game.
+     */
+    public void clearAllReports();
+
     public abstract void end(int winner, int winnerTeam);
 
     /**

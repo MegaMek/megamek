@@ -1134,7 +1134,7 @@ public class Game implements Serializable, IGame
     }
 
     /**
-     * Resets this game by removing all entities.
+     * Resets this game.
      */
     public void reset() {
         roundCount = 0;
@@ -1151,6 +1151,7 @@ public class Game implements Serializable, IGame
         removeMinefields();
         removeArtyAutoHitHexes();
         flares.removeAllElements();
+        clearAllReports();
 
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;
@@ -1972,6 +1973,10 @@ public class Game implements Serializable, IGame
 
     public void setAllReports(Vector v) {
         this.gameReports.set(v);
+    }
+
+    public void clearAllReports() {
+        this.gameReports.clear();
     }
 
     public void end(int winner, int winnerTeam){

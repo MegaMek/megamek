@@ -307,24 +307,4 @@ public class Hex implements IHex, Serializable {
         }
         return new Hex(elevation, tcopy, theme);
     }
-
-    private transient Object base = null;
-    private transient List supers = null;
-
-    public Object getBase() {
-        return base;
-    }
-    
-    public void setBase(Object base) {
-        this.base = base;
-    }
-    
-    public void setSupers(List supers) {
-        this.supers = supers;
-    }
-    
-    public List getSupers() {
-        return supers;
-    }
-
 }

@@ -190,45 +190,5 @@ public interface IHex extends Cloneable{
      * @return new hex wich is equals to this 
      */
     public abstract IHex duplicate();
-
-    /**
-     * Returns base image for hex. It's GUI implementation specific,
-     * it might be AWT/SWT image but not neccesary. For hypothetic 
-     * 3D client for example it could be something else. 
-     * @return base image object
-     * @see megamek.client.HexTileset
-     * @see IHex#setBase(Object)
-     * @see IHex#getSupers()
-     */
-    public abstract Object getBase();
-
-    /**
-     * Sets the base image for hex. It's GUI implementation specific,
-     * it might be AWT/SWT image but not neccesary. For hypothetic 
-     * 3D client for example it could be something else. 
-     * @param base base image object
-     * @see megamek.client.HexTileset
-     * @see IHex#getBase()
-     * @see IHex#setSupers(List)
-     */
-    public abstract void setBase(Object base);
-    
-    /**
-     * Sets the list of additional/super images for hex. 
-     * It's GUI implementation specific, it might be AWT/SWT image 
-     * but not neccesary. For hypothetic 3D client for example 
-     * it could be something else. 
-     * @param supers list of super image objects
-     */
-    public abstract void setSupers(List supers);
-
-    /**
-     * returns the list of additional/super images for hex. 
-     * It's GUI implementation specific, it might be AWT/SWT image 
-     * but not neccesary. For hypothetic 3D client for example 
-     * it could be something else.
-     * @return additional/super images list 
-     */
-    public abstract List getSupers();
     
 }

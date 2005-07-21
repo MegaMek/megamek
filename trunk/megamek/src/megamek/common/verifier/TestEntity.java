@@ -77,23 +77,23 @@ public abstract class TestEntity implements TestEntityOption
         this.structure = structure;
     }
 
-    public boolean isClan()
-    {
+    public boolean isClan() {
         return getEntity().isClan();
     }
 
-    public float getWeight()
-    {
+    public boolean isClanArmor() {
+        return getEntity().isClanArmor();
+    }
+
+    public float getWeight() {
         return getEntity().getWeight();
     }
 
-    public int getTotalOArmor()
-    {
+    public int getTotalOArmor() {
         return getEntity().getTotalOArmor();
     }
 
-    public String getLocationAbbr(int location)
-    {
+    public String getLocationAbbr(int location) {
         return getEntity().getLocationAbbr(location);
     }
 
@@ -527,7 +527,7 @@ public abstract class TestEntity implements TestEntityOption
                     return (int) Math.floor(weight);
             }
         } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS).equals(mt.getInternalName()) ) {
-            if ( isClan() )
+            if ( isClanArmor() )
                 return 7;
             else
                 return 14;

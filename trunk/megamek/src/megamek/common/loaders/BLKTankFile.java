@@ -127,6 +127,8 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         }
         if (dataFile.exists("armor_type"))
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        if (dataFile.exists("armor_tech"))
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         if (dataFile.exists("internal_type"))
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");

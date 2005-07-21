@@ -87,7 +87,7 @@ public class TestMech extends TestEntity
             else if (etype.getName()==EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO))
                 type = EquipmentType.T_ARMOR_HEAVY_FERRO;
         }
-        if (mech.isClan())
+        if (mech.isClanArmor())
             flag |= Armor.CLAN_ARMOR;
         return new Armor(type, flag);
     }

@@ -139,7 +139,7 @@ public class TestTank extends TestEntity
 
         if (tank.getArmorType()==1)
             type = EquipmentType.T_ARMOR_FERRO_FIBROUS;
-        if (tank.isClan())
+        if (tank.isClanArmor())
             flag |= Armor.CLAN_ARMOR;
         return new Armor(type, flag);
     }

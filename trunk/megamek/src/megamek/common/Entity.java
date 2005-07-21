@@ -126,6 +126,7 @@ public abstract class Entity
     protected int               C3CompanyMasterIndex = LOC_DESTROYED;
 
     protected int               armorType = EquipmentType.T_ARMOR_UNKNOWN;
+    protected int               armorTechLevel = TechConstants.T_TECH_UNKNOWN;
     protected int               structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
 
     protected Vector            equipmentList = new Vector();
@@ -349,6 +350,14 @@ public abstract class Entity
     public boolean isClan() {
         return ( techLevel == TechConstants.T_CLAN_LEVEL_2 ||
                  techLevel == TechConstants.T_CLAN_LEVEL_3 );
+    }
+
+    public boolean isClanArmor() {
+        if (getArmorTechLevel() == TechConstants.T_TECH_UNKNOWN)
+            return isClan();
+        else
+            return ((getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_2)
+                    || (getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_3));
     }
 
     public boolean isMixedTech() {
@@ -4501,6 +4510,14 @@ public abstract class Entity
 
     public int getArmorType() {
         return armorType;
+    }
+
+    public void setArmorTechLevel(int newTL) {
+        armorTechLevel = newTL;
+    }
+
+    public int getArmorTechLevel() {
+        return armorTechLevel;
     }
 
     public int getStructureType() {

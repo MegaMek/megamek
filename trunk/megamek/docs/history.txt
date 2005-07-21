@@ -34,6 +34,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Bug 1241156: mapgenerator settings dialog is tiny
 + Avoid NPE in canSee function.
 + Bug 1242061: Lot of NPEs when you edit map
++ Bug 1242122: NPE in the MapEditor when you press the ctrl/alt key
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

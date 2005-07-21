@@ -17,8 +17,6 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
-import com.sun.java.util.collections.List;
-
 /**
  * Hex represents a single hex on the board. 
  *

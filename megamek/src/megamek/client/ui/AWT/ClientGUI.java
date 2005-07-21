@@ -1329,6 +1329,12 @@ public class ClientGUI
             
             // Handle phase-specific items.
             switch (e.getNewPhase()) {
+            case IGame.PHASE_LOUNGE :
+                //this will get rid of old report tabs
+                ReportDisplay rD = (ReportDisplay)phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
+                if (rD != null)
+                    rD.resetTabs();
+            break;
             case IGame.PHASE_DEPLOY_MINEFIELDS :
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);

@@ -1277,7 +1277,6 @@ implements Runnable, ConnectionHandler {
         switch (phase) {
             case IGame.PHASE_LOUNGE :
                 vPhaseReport.removeAllElements();
-                game.setAllReports( new Vector() );
                 mapSettings.setBoardsAvailableVector
                     ( scanForBoards(mapSettings.getBoardWidth(),
                                     mapSettings.getBoardHeight()) );
@@ -12406,6 +12405,7 @@ implements Runnable, ConnectionHandler {
                 r.subject = en.getId();
                 r.indent(3);
                 r.add(en.getLocationAbbr(loc));
+                r.newlines = 0;
                 vDesc.addElement(r);
             }
 

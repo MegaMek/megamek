@@ -44,16 +44,16 @@ public class UnitOverview implements Displayable {
     private static final int    PADDING = 5;
     
     private int[]               unitIds;
-    private boolean                 isHit = false;
-    private boolean                 visible = true;
-    private boolean                 scroll = false;
-    private int                     unitsPerPage = UNKNOWN_UNITS_PER_PAGE;
-    private int                     actUnitsPerPage = 0;
-    private int                     scrollOffset = 0;
+    private boolean             isHit = false;
+    private boolean             visible = true;
+    private boolean             scroll = false;
+    private int                 unitsPerPage = UNKNOWN_UNITS_PER_PAGE;
+    private int                 actUnitsPerPage = 0;
+    private int                 scrollOffset = 0;
 
-    private ClientGUI               clientgui;
+    private ClientGUI           clientgui;
 
-    private FontMetrics             fm;
+    private FontMetrics         fm;
     
     private Image               scrollUp;
     private Image               scrollDown;

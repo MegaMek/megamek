@@ -36,9 +36,10 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Avoid NPE in canSee function.
 + Bug 1242061: Lot of NPEs when you edit map
 + Bug 1242122: NPE in the MapEditor when you press the ctrl/alt key
-+ Bug 1241986: Fixed stacking to hopefully correctly handle elevation.
++ Bugs 1241986, 1241324: Fixed stacking to hopefully correctly handle elevation
 + Bug 1234778: Themes in Map Editor don't work
 + Bug 1242355: Corrected NPE caused by BoardView1.
++ Elevation was not being set correctly when jumping across water.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

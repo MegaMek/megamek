@@ -377,27 +377,22 @@ public class DeploymentDisplay
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.bv.redrawEntity(ce());
             turnMode = false;
-        }
-        else if ( !client.game.getBoard().isLegalDeployment
-                  (moveto, ce().getOwner()) ||
-                  ce().isHexProhibited(client.game.getBoard().getHex(moveto)) ) {
+        } else if (!client.game.getBoard().isLegalDeployment(moveto, ce().getOwner())
+                || ce().isHexProhibited(client.game.getBoard().getHex(moveto))) {
             AlertDialog dlg = new AlertDialog( clientgui.frame,
                                                Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
                                                Messages.getString("DeploymentDisplay.cantDeployInto", new Object[]{ce().getShortName(), moveto.getBoardNum()})); //$NON-NLS-1$
             dlg.show();
             return;
-        }
-        // check if deployed unit violates stacking
-        else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
+        } else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
+            // check if deployed unit violates stacking
             return;
-        }
-        else {    
+        } else {    
             ce().setPosition(moveto);
             clientgui.bv.redrawEntity(ce());
             butDone.setEnabled(true);
         }
         clientgui.getBoardView().select( moveto );
-
     }
 
     

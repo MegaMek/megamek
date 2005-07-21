@@ -3374,7 +3374,7 @@ implements Runnable, ConnectionHandler {
                             // Stay in the current hex and stop skidding.
                             break;
                         }
-                        int newElevation=((VTOL)entity).calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation);
+                        int newElevation=(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
                         if(newElevation<=game.getBoard().getHex(newPos).ceiling()) {
                             r = new Report(2105);
                             r.subject = entity.getId();

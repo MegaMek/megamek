@@ -128,7 +128,7 @@ public class MiscType extends EquipmentType {
             }
         } else if ( EquipmentType.getArmorTypeName(T_ARMOR_FERRO_FIBROUS).equals(internalName) ) {
             double tons = 0.0;
-            if ( entity.isClan()) {
+            if ( entity.isClanArmor()) {
                 tons = entity.getTotalOArmor() / ( 16 * 1.2 );
             } else {
                 tons = entity.getTotalOArmor() / ( 16 * 1.12 );
@@ -197,7 +197,7 @@ public class MiscType extends EquipmentType {
                 return (int)Math.ceil(fTons / 4.0f);
             }
         } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS).equals(internalName) ) {
-            if ( entity.isClan() ) {
+            if ( entity.isClanArmor() ) {
                 return 7;
             } else {
                 return 14;

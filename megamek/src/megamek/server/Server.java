@@ -575,7 +575,6 @@ implements Runnable, ConnectionHandler {
         }
 
         // if a player has active entities, he becomes a ghost
-        
         // except the VICTORY_PHASE when the dosconnected 
         // player is most likely the Bot disconnected after receiving
         // the COMMAND_END_OF_GAME command 
@@ -1830,7 +1829,7 @@ implements Runnable, ConnectionHandler {
             }
 
             if (forceVictory) {
-            return true;
+                return true;
             }
             cancelVictory();
         }

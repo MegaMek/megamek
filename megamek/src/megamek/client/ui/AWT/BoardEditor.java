@@ -21,12 +21,12 @@ import java.io.*;
 import keypoint.PngEncoder;
 
 import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
+import megamek.client.event.BoardViewListenerAdapter;
 import megamek.common.*;
 import megamek.common.util.BoardUtilities;
 
 public class BoardEditor extends Container implements ItemListener,
-        ActionListener, TextListener, WindowListener, IMapSettingsObserver {
+        ActionListener, TextListener, IMapSettingsObserver {
 
     private Frame frame = new Frame();
 
@@ -96,7 +96,7 @@ public class BoardEditor extends Container implements ItemListener,
             frame.dispose();
         }
 
-        bv.addBoardViewListener(new BoardViewListener(){
+        bv.addBoardViewListener(new BoardViewListenerAdapter(){
 
             public void hexMoused(BoardViewEvent b) {
                 bv.cursor(b.getCoords());
@@ -109,20 +109,6 @@ public class BoardEditor extends Container implements ItemListener,
                     }
                 }
             }
-            public void hexCursor(BoardViewEvent b) {}
-
-            public void boardHexHighlighted(BoardViewEvent b) {}
-
-            public void hexSelected(BoardViewEvent b) {}
-
-            public void firstLOSHex(BoardViewEvent b) {}
-
-            public void secondLOSHex(BoardViewEvent b, Coords c) {}
-
-            public void finishedMovingUnits(BoardViewEvent b) {}
-
-            public void unitSelected(BoardViewEvent b) {}
-            
         });
 
         bv.setUseLOSTool(false);
@@ -324,7 +310,6 @@ public class BoardEditor extends Container implements ItemListener,
 
         minimapW = new Dialog(frame, Messages.getString("BoardEditor.minimapW"), false); //$NON-NLS-1$
         minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY());
-        minimapW.addWindowListener(this);
         try {
             minimap = new MiniMap(minimapW, game, bv);
         } catch (IOException e) {
@@ -368,9 +353,17 @@ public class BoardEditor extends Container implements ItemListener,
         
         texTheme.setText(curHex.getTheme());
         repaint();
-        canHex.repaint();
+        repaintWorkingHex();
     }
     
+    private void repaintWorkingHex() {
+        if (curHex != null) {
+            TilesetManager tm = bv.getTilesetManager();
+            tm.clearHex(curHex);
+        }
+        canHex.repaint();
+    }
+
     /**
      * Refreshes the terrain list to match the current hex
      */
@@ -403,7 +396,7 @@ public class BoardEditor extends Container implements ItemListener,
         ITerrain toAdd = enteredTerrain();
         curHex.addTerrain(toAdd);
         refreshTerrainList();
-        canHex.repaint();
+        repaintWorkingHex();
     }
     
     /**
@@ -653,9 +646,8 @@ public class BoardEditor extends Container implements ItemListener,
         else if ( ie.getSource() == cheRoadsAutoExit ) {
             // Set the new value for the option, and refrest the board.
             board.setRoadsAutoExit(cheRoadsAutoExit.getState());
-            // TODO What does it mean ? board.newData( board );
             bv.updateBoard();
-            canHex.repaint();
+            repaintWorkingHex();
         }
     }
     
@@ -672,11 +664,11 @@ public class BoardEditor extends Container implements ItemListener,
             }
             if (value != curHex.getElevation()) {
                 curHex.setElevation(value);
-                canHex.repaint();
+                repaintWorkingHex();
             }
         } else if (te.getSource() == texTheme) {
             curHex.setTheme(texTheme.getText());
-            canHex.repaint();
+            repaintWorkingHex();
         }
     }
     
@@ -738,17 +730,17 @@ public class BoardEditor extends Container implements ItemListener,
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(lisTerrain.getSelectedItem());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
-            canHex.repaint();
+            repaintWorkingHex();
         } else if (ae.getSource() == butAddTerrain) {
             addSetTerrain();
         } else if (ae.getSource() == butElevUp && curHex.getElevation() < 9) {
             curHex.setElevation(curHex.getElevation() + 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
-            canHex.repaint();
+            repaintWorkingHex();
         } else if (ae.getSource() == butElevDown && curHex.getElevation() > -5) {
             curHex.setElevation(curHex.getElevation() - 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
-            canHex.repaint();
+            repaintWorkingHex();
         } else if (ae.getSource() == butTerrExits) {
             ExitsDialog ed = new ExitsDialog(frame);
             cheTerrExitSpecified.setState(true);
@@ -766,8 +758,6 @@ public class BoardEditor extends Container implements ItemListener,
             showSettings();
         }
     }
-
-    
     
     /**
      * Displays the currently selected hex picture, in 
@@ -785,9 +775,10 @@ public class BoardEditor extends Container implements ItemListener,
         
         public void update(Graphics g) {
             if(curHex != null) {
-                g.drawImage(bv.baseFor(curHex), 0, 0, this);
-                if (bv.supersFor(curHex) != null) {
-                    for (Iterator i = bv.supersFor(curHex).iterator(); i.hasNext();) {
+                TilesetManager tm = bv.getTilesetManager();
+                g.drawImage(tm.baseFor(curHex), 0, 0, this);
+                if (tm.supersFor(curHex) != null) {
+                    for (Iterator i = tm.supersFor(curHex).iterator(); i.hasNext();) {
                         g.drawImage((Image)i.next(), 0, 0, this);
                         g.drawString(Messages.getString("BoardEditor.SUPER"), 0, 10); //$NON-NLS-1$
                     }
@@ -816,27 +807,6 @@ public class BoardEditor extends Container implements ItemListener,
     public void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
     }
-    
-    //
-    // WindowListener
-    //
-    public void windowActivated(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowIconified(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowOpened(java.awt.event.WindowEvent windowEvent) {
-    }
-    public void boardNewAttack(BoardViewEvent a) {
-    }
-
 }
 
 /**

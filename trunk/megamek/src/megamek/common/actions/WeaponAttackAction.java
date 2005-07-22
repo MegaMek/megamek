@@ -434,8 +434,9 @@ public class WeaponAttackAction
         //      in, whichever is higher."
     
         // check if indirect fire is valid
-        if (isIndirect && !game.getOptions().booleanOption("indirect_fire")) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire option not enabled");
+        if (isIndirect
+                && !game.getOptions().booleanOption("indirect_fire")) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire option not enabled");
         }
     
         // if we're doing indirect fire, find a spotter
@@ -876,10 +877,8 @@ public class WeaponAttackAction
             // Tanks get hit in a random side.
             if ( target instanceof Tank ) {
                 toHit.setSideTable( ToHitData.SIDE_RANDOM );
-            }
-    
-            // Meks have special tables for shots from above and below.
-            else if ( target instanceof Mech ) {
+            } else if ( target instanceof Mech ) {
+                // Meks have special tables for shots from above and below.
                 if ( aElev > tElev ) {
                     toHit.setHitTable( ToHitData.HIT_ABOVE );
                 } else {
@@ -888,10 +887,13 @@ public class WeaponAttackAction
             }
     
         }
-    
+
         // Change hit table for partial cover, accomodate for partial underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if ( ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET && (targHex.containsTerrain(Terrains.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
+            if (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET
+                    && (targHex.containsTerrain(Terrains.WATER)
+                    && targHex.surface() == targEl
+                    && te.height() > 0)) {
                 //weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_KICK);
             } else {

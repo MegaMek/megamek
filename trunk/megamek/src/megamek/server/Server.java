@@ -5066,7 +5066,7 @@ implements Runnable, ConnectionHandler {
         entity.setPosition(coords);
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
-        if(entity instanceof VTOL) {
+        if (entity instanceof VTOL) {
             // We should let players pick, but this simplifies a lot.
             // Only do it for VTOLs, though; assume everything else is on the ground.
             entity.setElevation(game.getBoard().getHex(coords).ceiling()-game.getBoard().getHex(coords).surface()+1);
@@ -5076,7 +5076,19 @@ implements Runnable, ConnectionHandler {
             if (entity.getElevation() > 50) {
                 throw new IllegalStateException("Entity #" + entity.getId() + " appears to be in an infinite loop trying to get a legal elevation.");
             }
-        } // TODO: Implement this for Submarines.  Assume they're at the surface?
+        } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
+            // TODO: Submarines should have a selectable height.
+            // For now, pretend they're regular naval.
+            entity.setElevation(game.getBoard().getHex(coords).surface());
+        } else if ((entity.getMovementMode() == IEntityMovementMode.HOVER)
+                || (entity.getMovementMode() == IEntityMovementMode.NAVAL)
+                || (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL)) {
+            // For now, assume they're on the surface.
+            entity.setElevation(game.getBoard().getHex(coords).surface());
+        } else {
+            // For anything else, assume they're on the floor.
+            entity.setElevation(game.getBoard().getHex(coords).floor());
+        }
         entity.setDone(true);
         entity.setDeployed(true);
         entityUpdate(entity.getId());

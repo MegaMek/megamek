@@ -930,7 +930,7 @@ public abstract class Entity
         int minus=0;
         if (game != null && game.getOptions().booleanOption("maxtech_heat")) {
             if (heat<30) {
-                minus = (int)(heat / 5); 
+                minus = (heat / 5); 
             } else if (heat>=49) {
                 minus = 9;
             } else if (heat>=43) {
@@ -942,7 +942,7 @@ public abstract class Entity
             }
             mp = Math.max(mp-minus,0);
         } else {
-            mp = Math.max(mp - (int)(heat / 5), 0);
+            mp = Math.max(mp - (heat / 5), 0);
         }
         mp = applyGravityEffectsOnMP(mp);
         return mp;

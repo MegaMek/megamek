@@ -96,11 +96,11 @@ public class ProtomechMapSet implements DisplayMapSet{
         
         for(int i = 0; i < Protomech.NUM_PMECH_LOCATIONS; i++){
             sectionLabels[i] = new PMValueLabel(fm, Color.black);
-            content.addArea((PMElement) sectionLabels[i]);
+            content.addArea(sectionLabels[i]);
             armorLabels[i] = new PMValueLabel(fm, Color.yellow.brighter());
-            content.addArea((PMElement) armorLabels[i]);
+            content.addArea(armorLabels[i]);
             internalLabels[i] = new PMValueLabel(fm, Color.red.brighter());
-            content.addArea((PMElement) internalLabels[i]);
+            content.addArea(internalLabels[i]);
         }
         sectionLabels[0].moveTo(70, 30);
         armorLabels[0].moveTo(60, 45);

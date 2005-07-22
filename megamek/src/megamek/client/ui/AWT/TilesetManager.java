@@ -488,11 +488,11 @@ public class TilesetManager {
               float green1 = ((float) ((pixel1 >>  8) & 0xff)) / 255;
               float blue1  = ((float) ((pixel1      ) & 0xff)) / 255;
               
-              float black = (float) ((pMech[i]) & 0xff);
+              float black = ((pMech[i]) & 0xff);
 
-              int red2   = (int)Math.round(red1   * black);
-              int green2 = (int)Math.round(green1 * black);
-              int blue2  = (int)Math.round(blue1  * black);
+              int red2   = Math.round(red1   * black);
+              int green2 = Math.round(green1 * black);
+              int blue2  = Math.round(blue1  * black);
 
               pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
             }

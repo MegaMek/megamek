@@ -295,8 +295,6 @@ public abstract class BotClient extends Client {
         int test_x, test_y, highest_elev, lowest_elev;
         int counter, valid_arr_index, arr_x_index;
         int weapon_count;
-        int incoming_damage, incoming_odds;
-        int fitness_count1, fitness_count2;
 
         double av_range, best_fitness, ideal_elev;
         double[] fitness;
@@ -315,7 +313,6 @@ public abstract class BotClient extends Client {
         deployed_ent = getEntity(game.getFirstDeployableEntityNum());
 
         WeaponAttackAction test_attack;
-        ToHitData test_hit;
 
         //  Create array of hexes in the deployment zone that can be deployed to
         //   Check for prohibited terrain, stacking limits
@@ -412,9 +409,9 @@ public abstract class BotClient extends Client {
             WeaponType wtype = (WeaponType)mounted.getType();
             if ((wtype.getName() != "ATM 3") && (wtype.getName() != "ATM 6") && (wtype.getName() != "ATM 9") && (wtype.getName() != "ATM 12")){
                 if (deployed_ent.getC3Master() != null){
-                    av_range += (((double) wtype.getLongRange()) * 1.25);
+                    av_range += wtype.getLongRange() * 1.25;
                 } else {
-                    av_range += (double) wtype.getLongRange();
+                    av_range += wtype.getLongRange();
                 }
                 weapon_count = ++weapon_count;
             }
@@ -452,7 +449,7 @@ public abstract class BotClient extends Client {
             // Calculate the fitness factor for each hex and save it to the array
             //      -> Absolute difference between hex elevation and ideal elevation decreases fitness
 
-            fitness[valid_arr_index] = (double) -1*(Math.abs(ideal_elev - game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).getElevation()));
+            fitness[valid_arr_index] = -1*(Math.abs(ideal_elev - game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).getElevation()));
 
             //      -> Approximate total damage taken in the current position; this keeps units from deploying into x-fires
             total_damage = 0.0;
@@ -462,11 +459,9 @@ public abstract class BotClient extends Client {
                 test_ent = (Entity)i.nextElement();
                 if (test_ent.isDeployed() == true && !test_ent.isOffBoard()){
                     weapons = test_ent.getWeaponList();
-                    test_hit = new ToHitData();
                     for (Enumeration j = weapons.elements(); j.hasMoreElements();) {
 
                         Mounted mounted = (Mounted)j.nextElement();
-                        WeaponType wtype = (WeaponType)mounted.getType();
 
                         test_attack = new WeaponAttackAction(test_ent.getId(), deployed_ent.getId(), test_ent.getEquipmentNum(mounted));
                         adjusted_damage = getDeployDamage(game, test_attack);
@@ -486,7 +481,6 @@ public abstract class BotClient extends Client {
             weapons = deployed_ent.getWeaponList();
             for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
                 Mounted mounted = (Mounted)i.nextElement();
-                WeaponType wtype = (WeaponType)mounted.getType();
                 max_damage = 0.0;
                 for (Enumeration j = valid_attackers.elements(); j.hasMoreElements();){
                     test_ent = (Entity)j.nextElement();
@@ -709,10 +703,10 @@ public abstract class BotClient extends Client {
                 }
             }
             // damage is expected missiles * damage per missile
-            fDamage = fHits * (float)at.getDamagePerShot();
+            fDamage = fHits * at.getDamagePerShot();
         }
         else {
-            fDamage = (float)wt.getDamage();
+            fDamage = wt.getDamage();
         }
         
         fDamage *= fChance;

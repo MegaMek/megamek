@@ -155,7 +155,7 @@ public class WeaponAttackAction
             // at the end of this function, we remove target terrain
             // and movement mods, and add those for the new target
             Targetable tempTarget = target;
-            target = (Targetable)oldTarget;
+            target = oldTarget;
             oldTarget = (Entity)tempTarget;
         }
         final Entity ae = game.getEntity(attackerId);
@@ -641,7 +641,7 @@ public class WeaponAttackAction
     
         }
         if(isArtilleryIndirect) {
-            int boardRange=(int)Math.ceil(((float)distance)/17f);
+            int boardRange=(int)Math.ceil((distance)/17f);
             if(boardRange>wtype.getLongRange()) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect artillery attack out of range");
             }

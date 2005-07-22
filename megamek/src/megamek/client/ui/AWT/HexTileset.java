@@ -374,7 +374,7 @@ public class HexTileset {
                 loadImage(comp);
             }
       if (images.size() > 1) {
-        int rand = (int)(r.nextDouble() * (double)images.size());
+        int rand = (int)(r.nextDouble() * images.size());
         return (Image) images.elementAt(rand);
       } else {
         return (Image) images.firstElement();

@@ -1982,7 +1982,7 @@ implements Runnable, ConnectionHandler {
                             }
                         } );
                 int numProtoUnits =
-                    (int) Math.ceil( ((double) numPlayerProtos) / 5.0 );
+                    (int) Math.ceil( (numPlayerProtos) / 5.0 );
                 for ( int unit = 0; unit < numProtoUnits; unit++ ) {
                     if ( protosMoveEven ) player.incrementEvenTurns();
                     else player.incrementOtherTurns();
@@ -1999,7 +1999,6 @@ implements Runnable, ConnectionHandler {
             final Entity entity = (Entity)loop.nextElement();
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
-                final Team team = game.getTeamForPlayer( player );
                 if ( entity instanceof Infantry ) {
                     if ( infMoveEven ) player.incrementEvenTurns();
                     else if ( infMoveMulti ) player.incrementMultiTurns();
@@ -2080,7 +2079,7 @@ implements Runnable, ConnectionHandler {
             TurnVectors withinTeamTurns = (TurnVectors) allTeamTurns.get(team);
 
             int[] evenTracker = (int[]) evenTrackers.get (team);
-            float teamEvenTurns = (float) team.getEvenTurns();
+            float teamEvenTurns = team.getEvenTurns();
 
             // Calculate the number of "even" turns to add for this team.
             int numEven = 0;
@@ -3089,7 +3088,7 @@ implements Runnable, ConnectionHandler {
                                     // ASSUMPTION: damage is applied in one hit.
                                     Server.combineVectors(vPhaseReport,
                                       damageEntity(target, hit,
-                                      (int)Math.round(entity.getWeight()/5)));
+                                      Math.round(entity.getWeight()/5)));
                                     Report.addNewline(vPhaseReport);
                                 } // End handle-infantry
 
@@ -3986,13 +3985,13 @@ implements Runnable, ConnectionHandler {
                 if (minefield == null) {
                     // Nope.  Create a new Thunder minefield
                     minefield = Minefield.createThunderMF
-                        ( mfCoord, playerId, (int)(damage/2 + damage%2) );
+                        ( mfCoord, playerId, (damage/2 + damage%2) );
                     game.addMinefield(minefield);
                     revealMinefield(minefield);
                 } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
                     // Yup.  Replace the old one.
                     removeMinefield(minefield);
-                    int newDamage = (int)(damage/2 + damage%2);
+                    int newDamage = (damage/2 + damage%2);
                     newDamage += minefield.getDamage();
 
                     // Damage from Thunder minefields are capped.
@@ -5387,7 +5386,6 @@ implements Runnable, ConnectionHandler {
     }
 
     private void resolveClearMinefieldAttempts(Vector clearAttempts) {
-        boolean[] doneWith = new boolean[clearAttempts.size()];
 
         for (int i = 0; i < clearAttempts.size(); i++) {
             Vector temp = new Vector();
@@ -5846,7 +5844,7 @@ implements Runnable, ConnectionHandler {
 
         // do we need to revert to single shot?
         if (usesAmmo && nShots > 1) {
-            int nAvail = ae.getTotalAmmoOfType((AmmoType)ammo.getType());
+            int nAvail = ae.getTotalAmmoOfType(ammo.getType());
             if (nAvail < nShots) {
                 wr.revertsToSingleShot = true;
                 nShots = 1;
@@ -7494,7 +7492,7 @@ implements Runnable, ConnectionHandler {
                 } else if (nRange <= wtype.getLongRange()) {
                     nDamPerHit--;
                 } else if (nRange <= wtype.getExtremeRange()) {
-                    nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
+                    nDamPerHit = (int)Math.floor(nDamPerHit/2.0);
                 }
             }
         } else if (weapon.isRapidfire() &&
@@ -7535,7 +7533,7 @@ implements Runnable, ConnectionHandler {
         if (bGlancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS)
                 && !(usesAmmo && (atype.getAmmoType() == AmmoType.T_AC_LBX) 
                 && atype.getMunitionType() == AmmoType.M_CLUSTER)) {
-            nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
+            nDamPerHit = (int)Math.floor(nDamPerHit/2.0);
         }
 
         // Some weapons double the number of hits scored.
@@ -8577,7 +8575,7 @@ implements Runnable, ConnectionHandler {
             vPhaseReport.addElement(r);
         } else {
             if (glancing) {
-                damage = (int)Math.floor((double)damage/2.0);
+                damage = (int)Math.floor(damage/2.0);
             }
             Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage));
         }
@@ -8739,7 +8737,7 @@ implements Runnable, ConnectionHandler {
             vPhaseReport.addElement(r);
         } else {
             if (glancing) {
-                damage = (int)Math.floor((double)damage/2.0);
+                damage = (int)Math.floor(damage/2.0);
             }
             Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage));
         }
@@ -8892,7 +8890,7 @@ implements Runnable, ConnectionHandler {
             vPhaseReport.addElement(r);
         } else {
             if (glancing) {
-                damage = (int)Math.floor((double)damage/2.0);
+                damage = (int)Math.floor(damage/2.0);
             }
             Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage));
         }
@@ -9096,7 +9094,7 @@ implements Runnable, ConnectionHandler {
 
         // Standard damage loop in 5 point clusters.
         if (glancing) {
-            hits = (int)Math.floor((double)hits/2.0);
+            hits = (int)Math.floor(hits/2.0);
         }
 
         r = new Report(4130);
@@ -9294,7 +9292,7 @@ implements Runnable, ConnectionHandler {
             vPhaseReport.addElement(r);
         } else {
             if (glancing) {
-                damage = (int)Math.floor((double)damage/2.0);
+                damage = (int)Math.floor(damage/2.0);
             }
             Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage));
         }
@@ -9637,8 +9635,8 @@ implements Runnable, ConnectionHandler {
         if (glancing) {
             // Glancing Blow rule doesn't state whether damage to attacker on charge
             // or DFA is halved as well, assume yes. TODO: Check with PM
-            damage = (int)Math.floor((double)damage/2.0);
-            damageTaken = (int)Math.floor((double)damageTaken/2.0);
+            damage = (int)Math.floor(damage/2.0);
+            damageTaken = (int)Math.floor(damageTaken/2.0);
         }
         // Is the target inside a building?
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
@@ -9896,7 +9894,7 @@ implements Runnable, ConnectionHandler {
         // Target isn't building.
         else {
             if (glancing) {
-                damage = (int)Math.floor((double)damage/2.0);
+                damage = (int)Math.floor(damage/2.0);
             }
             //damage target
             r = new Report(4230);
@@ -9917,7 +9915,7 @@ implements Runnable, ConnectionHandler {
         if (glancing) {
             // Glancing Blow rule doesn't state whether damage to attacker on charge
             // or DFA is halved as well, assume yes. TODO: Check with PM
-            damageTaken = (int)Math.floor((double)damageTaken/2.0);
+            damageTaken = (int)Math.floor(damageTaken/2.0);
         }
 
         //damage attacker
@@ -12170,7 +12168,7 @@ implements Runnable, ConnectionHandler {
                 int damage = (int)Math.round(en.getWeight() / 10.0) * (fall + 1);
 
                 // adjust damage for gravity
-                damage = (int)Math.round(damage * game.getOptions().floatOption("gravity"));
+                damage = Math.round(damage * game.getOptions().floatOption("gravity"));
                 // report falling
                 r = new Report(6280);
                 r.subject = en.getId();
@@ -13050,8 +13048,8 @@ implements Runnable, ConnectionHandler {
             waterDamage = (int)Math.round(entity.getWeight() / 10.0) * (height + 1) /2;
         }
         // adjust damage for gravity
-        damage = (int)Math.round(damage * game.getOptions().floatOption("gravity"));
-        waterDamage = (int)Math.round(waterDamage * game.getOptions().floatOption("gravity"));
+        damage = Math.round(damage * game.getOptions().floatOption("gravity"));
+        waterDamage = Math.round(waterDamage * game.getOptions().floatOption("gravity"));
 
         // report falling
         if (waterDamage == 0) {
@@ -14366,9 +14364,9 @@ implements Runnable, ConnectionHandler {
                 // deployed in full Points of five, unless "losses" have
                 // reduced the number to less that that.
                 final char oldMax =
-                    (char)(Math.ceil( ((double)numPlayerProtos) / 5.0 )-1);
+                    (char)(Math.ceil( numPlayerProtos / 5.0 )-1);
                 char newMax =
-                    (char)(Math.ceil( ((double) (numPlayerProtos-1))/ 5.0 )-1);
+                    (char)(Math.ceil( (numPlayerProtos-1)/ 5.0 )-1);
                 char deletedUnitNum = entity.getUnitNumber();
 
                 // Do we have to update a Protomech from the last unit?
@@ -16279,16 +16277,15 @@ implements Runnable, ConnectionHandler {
      */
     private void resolvePhysicalAttack(PhysicalResult pr, int cen) {
         AbstractAttackAction aaa = pr.aaa;
-        int roll = pr.roll;
         if (aaa instanceof PunchAttackAction) {
             PunchAttackAction paa = (PunchAttackAction)aaa;
             if (paa.getArm() == PunchAttackAction.BOTH) {
                 paa.setArm(PunchAttackAction.LEFT);
-                pr.aaa = (AbstractAttackAction)paa;
+                pr.aaa = paa;
                 resolvePunchAttack(pr, cen);
                 cen = paa.getEntityId();
                 paa.setArm(PunchAttackAction.RIGHT);
-                pr.aaa = (AbstractAttackAction)paa;
+                pr.aaa = paa;
                 resolvePunchAttack(pr, cen);
             } else {
                 resolvePunchAttack(pr, cen);
@@ -16301,11 +16298,11 @@ implements Runnable, ConnectionHandler {
             BrushOffAttackAction baa = (BrushOffAttackAction)aaa;
             if (baa.getArm() == BrushOffAttackAction.BOTH) {
                 baa.setArm(BrushOffAttackAction.LEFT);
-                pr.aaa = (AbstractAttackAction)baa;
+                pr.aaa = baa;
                 resolveBrushOffAttack(pr, cen);
                 cen = baa.getEntityId();
                 baa.setArm(BrushOffAttackAction.RIGHT);
-                pr.aaa = (AbstractAttackAction)baa;
+                pr.aaa = baa;
                 resolveBrushOffAttack(pr, cen);
             } else {
                 resolveBrushOffAttack(pr, cen);

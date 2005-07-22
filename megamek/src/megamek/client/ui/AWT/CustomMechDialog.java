@@ -806,7 +806,6 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 Mounted m = (Mounted)entity.getWeaponList().elementAt(i);
                 uniqueWeapons.put(m.getName(),new Boolean(true));
             }
-            String enumValue;
             for (Enumeration e = uniqueWeapons.keys(); e.hasMoreElements(); ) {
                 optionComp.addValue((String)e.nextElement());
             }

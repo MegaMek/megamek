@@ -68,12 +68,12 @@ public class AdvancedLabel extends Component {
      */
     private void getSizes() {
         FontMetrics fm = getFontMetrics(getFont());
-        lineHeight = (int) fm.getHeight();
+        lineHeight = fm.getHeight();
         for (int i = 0; i < stringVector.size(); i++) {
-            maxLineWidth = Math.max(maxLineWidth, (int) fm.stringWidth((String) stringVector.elementAt(i)));
+            maxLineWidth = Math.max(maxLineWidth, fm.stringWidth((String) stringVector.elementAt(i)));
         }
-        ascent = (int) fm.getAscent();
-        descent = (int) fm.getDescent();
+        ascent = fm.getAscent();
+        descent = fm.getDescent();
         sized = true;
     }
 

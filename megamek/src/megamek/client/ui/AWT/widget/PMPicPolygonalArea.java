@@ -99,7 +99,7 @@ public class PMPicPolygonalArea extends PMGenericHotArea{
     
     //PMHotArea interface methods
     public Shape getAreaShape(){
-        return (Shape) this.areaShape;
+        return this.areaShape;
     }
     
     public void onMouseOver(MouseEvent e){

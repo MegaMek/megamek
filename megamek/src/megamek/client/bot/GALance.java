@@ -102,7 +102,7 @@ public class GALance extends GA {
         for (int m = 0; m < move_array.length; m++) {
             MoveOption next = (MoveOption) move_array[m];
             if (((MoveOption[]) moves.elementAt(m)).length > 1) {
-                MoveOption min = (MoveOption) ((MoveOption[]) moves.elementAt(m))[0];
+                MoveOption min = ((MoveOption[]) moves.elementAt(m))[0];
                 if (min.damage > 2 * next.damage && min.getUtility() < .5 * next.getUtility()) {
                     result += next.getCEntity().bv; //it is being endangered
                                                     // in the future

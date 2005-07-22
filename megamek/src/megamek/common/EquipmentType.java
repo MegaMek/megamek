@@ -413,9 +413,9 @@ public class EquipmentType {
                 //masc=engine rating*masc tonnage*1000
                 int mascTonnage=0;
                 if (this.getInternalName().equals("ISMASC")) {
-                    mascTonnage = (int)Math.round(entity.getWeight() / 20.0f);
+                    mascTonnage = Math.round(entity.getWeight() / 20.0f);
                 } else if (this.getInternalName().equals("CLMASC")) {
-                    mascTonnage = (int)Math.round(entity.getWeight() / 25.0f);
+                    mascTonnage = Math.round(entity.getWeight() / 25.0f);
                 }
                 cost=mascTonnage*entity.getOriginalWalkMP()*(int)entity.getWeight()*1000;
             } else if(this.hasFlag(MiscType.F_TARGCOMP)) {

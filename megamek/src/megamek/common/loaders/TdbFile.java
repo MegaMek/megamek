@@ -446,7 +446,7 @@ public class TdbFile implements IMechLoader {
             } else {
                 throw new EntityLoadingException("Unsupported tech base: " + techBase);
             }
-            mech.setWeight((float)Integer.parseInt(tonnage));
+            mech.setWeight(Integer.parseInt(tonnage));
             mech.setOriginalWalkMP(Integer.parseInt(walkMP));
             if (jumpMP != null)
                 mech.setOriginalJumpMP(Integer.parseInt(jumpMP));

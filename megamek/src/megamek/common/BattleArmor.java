@@ -545,7 +545,7 @@ public class BattleArmor
      * Calculates the battle value of this platoon.
      */
     public int calculateBattleValue() {
-        double bv = (double)myBV;
+        double bv = myBV;
 
         // Adjust for missing troopers
         bv = bv * getInternalRemainingPercent();

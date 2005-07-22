@@ -97,20 +97,12 @@ public class ClubAttackAction extends AbstractAttackAction {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(te.getPosition());
-        final int attackerElevation = ae.getElevation() + attHex.getElevation();
-        final int attackerHeight = attackerElevation + ae.height();
-        final int targetElevation = target.getElevation() + targHex.getElevation();
-        final int targetHeight = targetElevation + target.getHeight();
-        final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
-        final boolean targetInBuilding = Compute.isInBuilding( game, te );
-        Building bldg = null;
-        if ( targetInBuilding ) {
-            bldg = game.getBoard().getBuildingAt( te.getPosition() );
+
+        // Can't target a transported entity.
+        if (te != null
+                && Entity.NONE != te.getTransportId()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
-        
-        ToHitData toHit;
 
         // can't target yourself
         if (ae.equals(te)) {
@@ -123,7 +115,7 @@ public class ClubAttackAction extends AbstractAttackAction {
         }
 
         //Quads can't club
-        if ( ae.entityIsQuad() ) {
+        if (ae.entityIsQuad()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
         }
 
@@ -132,15 +124,26 @@ public class ClubAttackAction extends AbstractAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
         }
 
-        // Can't target a transported entity.
-        if ( te != null && Entity.NONE != te.getTransportId() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
-        }
-
         // Can't target a entity conducting a swarm attack.
-        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
+        if (te != null
+                && Entity.NONE != te.getSwarmTargetId()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
+
+        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex targHex = game.getBoard().getHex(target.getPosition());
+        final int attackerElevation = ae.getElevation() + attHex.getElevation();
+        final int attackerHeight = attackerElevation + ae.height();
+        final int targetElevation = target.getElevation() + targHex.getElevation();
+        final int targetHeight = targetElevation + target.getHeight();
+        final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
+        final boolean targetInBuilding = Compute.isInBuilding(game, te);
+        Building bldg = null;
+        if ( targetInBuilding ) {
+            bldg = game.getBoard().getBuildingAt( te.getPosition() );
+        }
+        
+        ToHitData toHit;
 
         // Can't target units in buildings (from the outside).
         // TODO: you can target units from within the *same* building.
@@ -157,21 +160,21 @@ public class ClubAttackAction extends AbstractAttackAction {
         if (bothArms) {
             // check if both arms are present & operational
             if (ae.isLocationBad(Mech.LOC_RARM)
-                || ae.isLocationBad(Mech.LOC_LARM)) {
+                    || ae.isLocationBad(Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
             }
             // check if attacker has fired arm-mounted weapons
             if (ae.weaponFiredFrom(Mech.LOC_RARM)
-            || ae.weaponFiredFrom(Mech.LOC_LARM)) {
+                    || ae.weaponFiredFrom(Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
             }
             // need shoulder and hand actuators
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
-            || !ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
+                    || !ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder actuator destroyed");
             }
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
-            || !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+                    || !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
             }
         } else {

@@ -29,7 +29,7 @@ public class IdealHex
     public static final int    STRAIGHT        = 0;
     public static final int    RIGHT           = -1;
     
-    private static final double XCONST = (double)Math.tan(Math.PI / 6.0);
+    private static final double XCONST = Math.tan(Math.PI / 6.0);
             
     public double[] x = new double[6];
     public double[] y = new double[6];

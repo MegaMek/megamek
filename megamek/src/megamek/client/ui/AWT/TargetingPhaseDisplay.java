@@ -683,81 +683,81 @@ public class TargetingPhaseDisplay
         }        
     }
 
-   /**
+    /**
      * Cache the list of visible targets. This is used for the 'next target' button.
      *
      * We'll sort it by range to us.
      */
-      private void cacheVisibleTargets() {
+    private void cacheVisibleTargets() {
         clearVisibleTargets();
         
         Vector vec = client.game.getValidTargets( ce() );
         com.sun.java.util.collections.Comparator sortComp = new com.sun.java.util.collections.Comparator() {
-          public int compare(java.lang.Object x, java.lang.Object y) {
-            Entity entX = (Entity)x;
-            Entity entY = (Entity)y;
-        
-            int rangeToX = ce().getPosition().distance(entX.getPosition());
-            int rangeToY = ce().getPosition().distance(entY.getPosition());
-        
-            if ( rangeToX == rangeToY ) return ((entX.getId() < entY.getId()) ? -1 : 1);
-          
-            return ((rangeToX < rangeToY) ? -1 : 1);
-          }
+            public int compare(java.lang.Object x, java.lang.Object y) {
+                Entity entX = (Entity)x;
+                Entity entY = (Entity)y;
+                
+                int rangeToX = ce().getPosition().distance(entX.getPosition());
+                int rangeToY = ce().getPosition().distance(entY.getPosition());
+                
+                if ( rangeToX == rangeToY ) return ((entX.getId() < entY.getId()) ? -1 : 1);
+                
+                return ((rangeToX < rangeToY) ? -1 : 1);
+            }
         };
-          
+        
         com.sun.java.util.collections.TreeSet tree = new com.sun.java.util.collections.TreeSet(sortComp);
         visibleTargets = new Entity[vec.size()];
-              
+        
         for ( int i = 0; i < vec.size(); i++ ) {
-          tree.add((Entity)vec.elementAt(i));
-          }
+            tree.add(vec.elementAt(i));
+        }
         
         com.sun.java.util.collections.Iterator it = tree.iterator();
         int count = 0;
         while ( it.hasNext() ) {
-          visibleTargets[count++] = (Entity)it.next();
+            visibleTargets[count++] = (Entity)it.next();
         }
-
+        
         setNextTargetEnabled(visibleTargets.length > 0);
-      }
+    }
 
-      private void clearVisibleTargets() {
+    private void clearVisibleTargets() {
         visibleTargets = null;
         lastTargetID = -1;
         setNextTargetEnabled(false);
-      }
-      
+    }
+    
     /**
      * Get the next target. Return null if we don't have any targets.
      */
-      private Entity getNextTarget() {
+    private Entity getNextTarget() {
         if ( null == visibleTargets )
-          return null;
+            return null;
         
         lastTargetID++;
-
-        if ( lastTargetID >= visibleTargets.length )
-          lastTargetID = 0;
         
-        return (Entity)visibleTargets[lastTargetID];
-      }
+        if ( lastTargetID >= visibleTargets.length )
+            lastTargetID = 0;
+        
+        return visibleTargets[lastTargetID];
+    }
     
     /**
      * Jump to our next target. If there isn't one, well, don't do anything.
      */
-      private void jumpToNextTarget() {
+    private void jumpToNextTarget() {
         Entity targ = getNextTarget();
         
         if ( null == targ )
-          return;
-
+            return;
+        
         // HACK : don't show the choice dialog.
         this.showTargetChoice = false;
-
+        
         clientgui.bv.centerOnHex(targ.getPosition());
         clientgui.getBoardView().select(targ.getPosition());
-
+        
         // HACK : show the choice dialog again.
         this.showTargetChoice = true;
         target(targ);

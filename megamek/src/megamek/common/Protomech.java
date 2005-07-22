@@ -704,7 +704,7 @@ public class Protomech
         if ( myBV > 0 ) {
             // Adjust BV for crew skills.
             double pilotFactor = crew.getBVSkillMultiplier();
-            return (int)(pilotFactor * (double)myBV);
+            return (int)(pilotFactor * myBV);
         }
 
         double dbv = 0; // defensive battle value

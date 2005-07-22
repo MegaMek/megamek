@@ -42,7 +42,6 @@ public class PhysicalCalculator {
         do {
             // take the first entity that can do an attack
             Entity en = bot.game.getEntity(entNum);
-            CEntity cen = bot.centities.get(en);
             PhysicalOption bestAttack = getBestPhysical(en, bot.game);
             
             if (bestAttack != null) {
@@ -72,7 +71,7 @@ public class PhysicalCalculator {
 
         PhysicalOption best = null;
         ToHitData odds;
-        double breach, breach_a, l_dmg, r_dmg, club_dmg, final_dmg;
+        double breach, breach_a, l_dmg, r_dmg, final_dmg;
         int best_brush = PhysicalOption.NONE;
 
         // If the attacker is a Mech
@@ -81,7 +80,6 @@ public class PhysicalCalculator {
             
             l_dmg = 0.0;
             r_dmg = 0.0;
-            club_dmg = 0.0;
             final_dmg = 0.0;
             breach_a = 0.0;
             
@@ -321,7 +319,6 @@ public class PhysicalCalculator {
         ToHitData odds_a = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
         if ((odds.getValue() != ToHitData.IMPOSSIBLE) && (odds_a.getValue() != ToHitData.IMPOSSIBLE)){
             damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
-            int damage_a = PunchAttackAction.getDamageFor(from, PunchAttackAction.RIGHT);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
             double dmg_a = Compute.oddsAbove(odds_a.getValue()) / 100.0 * damage;
             dmg += dmg_a;
@@ -371,7 +368,7 @@ public class PhysicalCalculator {
             if (from.getWalkMP() > 0){
                 self_damage = self_damage * Math.sqrt((1/(double)from.getWalkMP()) + from.getJumpMP());
             } else {
-                self_damage = self_damage * Math.sqrt((double)from.getJumpMP());
+                self_damage = self_damage * Math.sqrt(from.getJumpMP());
             }
             // Add together damage values for comparison
             dmg = dmg + coll_damage - self_damage;
@@ -396,7 +393,7 @@ public class PhysicalCalculator {
             if (from.getWalkMP() > 0){
                 self_damage = self_damage * Math.sqrt((1/(double)from.getWalkMP()) + from.getJumpMP());
             } else {
-                self_damage = self_damage * Math.sqrt((double)from.getJumpMP());
+                self_damage = self_damage * Math.sqrt(from.getJumpMP());
             }
             // Add together damage values for comparison
             dmg = dmg + coll_damage - self_damage;
@@ -477,7 +474,7 @@ public class PhysicalCalculator {
                     if (to.getWalkMP() > 0){
                         dmg = dmg * Math.sqrt((1/(double)to.getWalkMP()) + to.getJumpMP());
                     } else {
-                        dmg = dmg * Math.max(1, Math.sqrt((double)to.getJumpMP()));
+                        dmg = dmg * Math.max(1, Math.sqrt(to.getJumpMP()));
                     }
                 // Modify damage by breach factor
                     dmg *= breach;

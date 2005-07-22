@@ -506,7 +506,7 @@ public class TestBot extends BotClient {
                     int range = option.getFinalCoords().distance(enemy.current.getFinalCoords());
                     if (range > 5)
                         adjustment += Math.pow(self.overall_armor_percent, 2)
-                            * Math.sqrt((double) (range - 4) * enemy.bv / (double) self.bv)
+                            * Math.sqrt((double) (range - 4) * enemy.bv / self.bv)
                             / enemy_array.size();
                 }
             }
@@ -1265,7 +1265,7 @@ public class TestBot extends BotClient {
                         spin_mode = Compute.spinUpCannon(game, new_attack);
                         super.sendModeChange(en.getId(), en.getEquipmentNum(a.weapon), spin_mode);
                     }
-                    Mounted cur_ammo = (Mounted) en.getEquipment(new_attack.getWeaponId()).getLinked();
+                    Mounted cur_ammo = en.getEquipment(new_attack.getWeaponId()).getLinked();
                     new_attack.setAmmoId(en.getEquipmentNum(cur_ammo));
                     Compute.getAmmoAdjDamage(game, new_attack);
 
@@ -1457,9 +1457,9 @@ public class TestBot extends BotClient {
             WeaponType wtype = (WeaponType)mounted.getType();
             if ((wtype.getName() != "ATM 3") && (wtype.getName() != "ATM 6") && (wtype.getName() != "ATM 9") && (wtype.getName() != "ATM 12")){
                 if (getEntity(entNum).getC3Master() != null){
-                    av_range += (((double) wtype.getLongRange()) * 1.25);
+                    av_range += ((wtype.getLongRange()) * 1.25);
                 } else {
-                    av_range += (double) wtype.getLongRange();
+                    av_range += wtype.getLongRange();
                 }
                 weapon_count = ++weapon_count;
             }

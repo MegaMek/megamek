@@ -524,7 +524,6 @@ public class BoardEditor extends Container implements ItemListener,
         waitD.add(new Label(Messages.getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
         waitD.setSize(250,130);
         // move to middle of screen
-        Dimension screenSize = frame.getToolkit().getScreenSize();
         waitD.setLocation(
                     frame.getSize().width / 2 - waitD.getSize().width / 2,
                     frame.getSize().height / 2 - waitD.getSize().height / 2);

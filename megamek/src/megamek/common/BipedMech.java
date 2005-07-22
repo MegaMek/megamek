@@ -100,14 +100,14 @@ public class BipedMech extends Mech {
                if (game.getOptions().booleanOption("maxtech_leg_damage")) {
                  wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
                } else {
-                 wmp = (hipHits == 1) ? (int) Math.ceil( (double) wmp / 2.0) : 0;
+                 wmp = (hipHits == 1) ? (int) Math.ceil( wmp / 2.0) : 0;
                }
             }
             wmp -= actuatorHits;
         }
         
         // and we still need to factor in heat!
-        wmp -= (int)(heat / 5);
+        wmp -= (heat / 5);
         
         // TSM negates some heat
         if (heat >= 9 && hasTSM()) {

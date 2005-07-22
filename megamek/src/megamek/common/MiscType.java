@@ -105,10 +105,10 @@ public class MiscType extends EquipmentType {
             return (float)(Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
         } else if (hasFlag(F_MASC)) {
             if (entity.isClan()) {
-                return (float)Math.round(entity.getWeight() / 25.0f);
+                return Math.round(entity.getWeight() / 25.0f);
             }
             else {
-                return (float)Math.round(entity.getWeight() / 20.0f);
+                return Math.round(entity.getWeight() / 20.0f);
             }
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
@@ -133,31 +133,31 @@ public class MiscType extends EquipmentType {
             } else {
                 tons = entity.getTotalOArmor() / ( 16 * 1.12 );
             }
-            tons = (double) Math.ceil( tons * 2.0 ) / 2.0;
+            tons = Math.ceil( tons * 2.0 ) / 2.0;
             return (float) tons;
         } else if ( EquipmentType.getArmorTypeName(T_ARMOR_LIGHT_FERRO).equals(internalName) ) {
             double tons = entity.getTotalOArmor() / (16*1.06);
-            tons = (double) Math.ceil( tons * 2.0 ) / 2.0;
+            tons = Math.ceil( tons * 2.0 ) / 2.0;
             return (float) tons;
         } else if ( EquipmentType.getArmorTypeName(T_ARMOR_HEAVY_FERRO).equals(internalName) ) {
             double tons = entity.getTotalOArmor() / (16*1.24);
-            tons = (double) Math.ceil( tons * 2.0 ) / 2.0;
+            tons = Math.ceil( tons * 2.0 ) / 2.0;
             return (float) tons;
         } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName) ) {
             double tons = 0.0;
-            tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
+            tons = Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
             return (float) tons;
         } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE).equals(internalName) ) {
             double tons = 0.0;
-            tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
+            tons = Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
             return (float) tons;
         } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED).equals(internalName) ) {
             double tons = 0.0;
-            tons = (double)Math.ceil( entity.getWeight() / 10.0 ) * 2.0;
+            tons = Math.ceil( entity.getWeight() / 10.0 ) * 2.0;
             return (float) tons;
         } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE).equals(internalName) ) {
             double tons = 0.0;
-            tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
+            tons = Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
             return (float) tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float)Math.ceil(entity.getWeight() / 10.0);

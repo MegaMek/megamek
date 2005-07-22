@@ -183,7 +183,7 @@ public class Client implements Runnable {
      * parameter.
      */
     public Player getPlayer(int idx) {
-        return (Player) game.getPlayer(idx);
+        return game.getPlayer(idx);
     }
 
     /**

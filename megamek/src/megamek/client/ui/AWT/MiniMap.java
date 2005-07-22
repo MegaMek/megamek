@@ -269,8 +269,8 @@ public class MiniMap extends Canvas  {
         m_dialog.pack();
         //m_dialog.show();
         m_mapImage = createImage(getSize().width,getSize().height);
-        if (getSize().width > requiredWidth) leftMargin = (int) ((getSize().width - requiredWidth)/2) + margin;
-        if (getSize().height > requiredHeight) topMargin = (int) ((getSize().height - requiredHeight)/2) + margin;
+        if (getSize().width > requiredWidth) leftMargin = ((getSize().width - requiredWidth)/2) + margin;
+        if (getSize().height > requiredHeight) topMargin = ((getSize().height - requiredHeight)/2) + margin;
         drawMap();
     }
 
@@ -358,14 +358,14 @@ public class MiniMap extends Canvas  {
         int [] yPoints = new int[3];
         Color oldColor = g.getColor();
         if (minimized){
-            xPoints[0] = (int)Math.round((getSize().width - 11) / 2);
+            xPoints[0] = Math.round((getSize().width - 11) / 2);
             yPoints[0] = getSize().height - 10;
             xPoints[1] = xPoints[0] + 11;
             yPoints[1] = yPoints[0];
             xPoints[2] = xPoints[0] + 6;
             yPoints[2] = yPoints[0] + 5;
         } else {
-            xPoints[0] = (int)Math.round((getSize().width - 11) / 2);
+            xPoints[0] = Math.round((getSize().width - 11) / 2);
             yPoints[0] = getSize().height - 4;
             xPoints[1] = xPoints[0] + 11;
             yPoints[1] = yPoints[0];
@@ -716,8 +716,8 @@ public class MiniMap extends Canvas  {
             if ( 0 != (exits & 0x0002) ) {
                 xPoints[0] = baseX - halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY - halfRoadWidthByCos30[zoom];
-                xPoints[1] = (int) Math.round(baseX + 3*hexSide[zoom]/4 - halfRoadWidthBySin30[zoom]);
-                yPoints[1] = (int) Math.round(baseY - hexSideByCos30[zoom]/2 - halfRoadWidthByCos30[zoom]);
+                xPoints[1] = Math.round(baseX + 3*hexSide[zoom]/4 - halfRoadWidthBySin30[zoom]);
+                yPoints[1] = Math.round(baseY - hexSideByCos30[zoom]/2 - halfRoadWidthByCos30[zoom]);
                 xPoints[2] = xPoints[1] + 2 * halfRoadWidthBySin30[zoom];
                 yPoints[2] = yPoints[1] + 2 * halfRoadWidthByCos30[zoom];
                 xPoints[3] = baseX + halfRoadWidthBySin30[zoom];
@@ -729,8 +729,8 @@ public class MiniMap extends Canvas  {
             if ( 0 != (exits & 0x0004) ) {
                 xPoints[0] = baseX + halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY - halfRoadWidthByCos30[zoom];
-                xPoints[1] = (int) Math.round(baseX + 3*hexSide[zoom]/4 + halfRoadWidthBySin30[zoom]);
-                yPoints[1] = (int) Math.round(baseY + hexSideByCos30[zoom]/2 - halfRoadWidthByCos30[zoom]);
+                xPoints[1] = Math.round(baseX + 3*hexSide[zoom]/4 + halfRoadWidthBySin30[zoom]);
+                yPoints[1] = Math.round(baseY + hexSideByCos30[zoom]/2 - halfRoadWidthByCos30[zoom]);
                 xPoints[2] = xPoints[1] - 2 * halfRoadWidthBySin30[zoom];
                 yPoints[2] = yPoints[1] + 2 * halfRoadWidthByCos30[zoom];
                 xPoints[3] = baseX - halfRoadWidthBySin30[zoom];
@@ -755,8 +755,8 @@ public class MiniMap extends Canvas  {
             if ( 0 != (exits & 0x0010) ) {
                 xPoints[0] = baseX + halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY + halfRoadWidthByCos30[zoom];
-                xPoints[1] = (int) Math.round(baseX - 3*hexSide[zoom]/4 + halfRoadWidthBySin30[zoom]);
-                yPoints[1] = (int) Math.round(baseY + hexSideByCos30[zoom]/2 + halfRoadWidthByCos30[zoom]);
+                xPoints[1] = Math.round(baseX - 3*hexSide[zoom]/4 + halfRoadWidthBySin30[zoom]);
+                yPoints[1] = Math.round(baseY + hexSideByCos30[zoom]/2 + halfRoadWidthByCos30[zoom]);
                 xPoints[2] = xPoints[1] - 2*halfRoadWidthBySin30[zoom];
                 yPoints[2] = yPoints[1] - 2*halfRoadWidthByCos30[zoom];
                 xPoints[3] = baseX - halfRoadWidthBySin30[zoom];
@@ -768,8 +768,8 @@ public class MiniMap extends Canvas  {
             if ( 0 != (exits & 0x0020) ) {
                 xPoints[0] = baseX - halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY + halfRoadWidthByCos30[zoom];
-                xPoints[1] = (int) Math.round(baseX - 3*hexSide[zoom]/4 - halfRoadWidthBySin30[zoom]);
-                yPoints[1] = (int) Math.round(baseY - hexSideByCos30[zoom]/2 + halfRoadWidthByCos30[zoom]);
+                xPoints[1] = Math.round(baseX - 3*hexSide[zoom]/4 - halfRoadWidthBySin30[zoom]);
+                yPoints[1] = Math.round(baseY - hexSideByCos30[zoom]/2 + halfRoadWidthByCos30[zoom]);
                 xPoints[2] = xPoints[1] + 2*halfRoadWidthBySin30[zoom];
                 yPoints[2] = yPoints[1] - 2*halfRoadWidthByCos30[zoom];
                 xPoints[3] = baseX + halfRoadWidthBySin30[zoom];
@@ -821,7 +821,7 @@ public class MiniMap extends Canvas  {
         case Terrains.RUBBLE :
         case Terrains.WATER :
         case Terrains.PAVEMENT :
-            level = (int) Math.abs(x.floor());
+            level = Math.abs(x.floor());
             // By experiment it is possible to make only 6 distinctive color steps
             if (level > 10) level = 10;
             r = terrColor.getRed()-level*15;
@@ -833,7 +833,7 @@ public class MiniMap extends Canvas  {
             return new Color(r, g, b);
 
         case Terrains.BUILDING :
-            level = (int) Math.abs(x.ceiling());
+            level = Math.abs(x.ceiling());
             // By experiment it is possible to make only 6 distinctive color steps
             if (level > 10) level = 10;
             r = terrColor.getRed()-level*15;
@@ -863,9 +863,9 @@ public class MiniMap extends Canvas  {
     }
 
     private Coords translateCoords(int x, int y) {
-        int gridX = (int) (x / (hexSideBySin30[zoom] + hexSide[zoom]));
+        int gridX = (x / (hexSideBySin30[zoom] + hexSide[zoom]));
         int restX = x % (hexSideBySin30[zoom] + hexSide[zoom]);
-        int gridY = (int) (y / (2 * hexSideByCos30[zoom]));
+        int gridY = (y / (2 * hexSideByCos30[zoom]));
         int restY = y % (2 * hexSideByCos30[zoom]);
 
         boolean evenColumn = (gridX & 1) == 0;

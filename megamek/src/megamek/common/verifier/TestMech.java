@@ -120,7 +120,7 @@ public class TestMech extends TestEntity
 
     public float getWeightGyro()
     {
-        return ceil((float)engine.getRating() / 100.0f,
+        return ceil(engine.getRating() / 100.0f,
                 getWeightCeilingGyro());
     }
 

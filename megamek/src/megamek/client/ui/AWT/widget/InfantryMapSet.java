@@ -83,7 +83,7 @@ public class InfantryMapSet implements DisplayMapSet{
             int shiftY = (i / 5) * stepY;
             areas[i] = new PMPicArea(infImage);
             areas[i].translate(shiftX, shiftY);
-            content.addArea((PMElement) areas[i]);
+            content.addArea(areas[i]);
         }
         
         FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
@@ -92,7 +92,7 @@ public class InfantryMapSet implements DisplayMapSet{
         Dimension d = label.getSize();
         content.translate(0, d.height + 5);
         label.moveTo(d.width / 2, d.height);
-        content.addArea((PMElement) label);
+        content.addArea(label);
     }
     
     private void setBackGround(){

@@ -260,25 +260,25 @@ public class QuadMapSet implements DisplayMapSet{
         PMAreasGroup heat = new PMAreasGroup();
         
         for (int i = 0; i< 8 ; i++){
-           frontArmor.addArea((PMElement) areas[i]);
-           frontArmor.addArea((PMElement) labels[i]);
-           frontArmor.addArea((PMElement) vLabels[i]);  
+           frontArmor.addArea(areas[i]);
+           frontArmor.addArea(labels[i]);
+           frontArmor.addArea(vLabels[i]);  
         }
         
         for (int i = 0; i< 3 ; i++){
-           rearArmor.addArea((PMElement) areas[8 + i]);
-           rearArmor.addArea((PMElement) labels[8 + i]);
-           rearArmor.addArea((PMElement) vLabels[8 + i]);   
+           rearArmor.addArea(areas[8 + i]);
+           rearArmor.addArea(labels[8 + i]);
+           rearArmor.addArea(vLabels[8 + i]);   
         }
         
         for (int i = 0; i< 8 ; i++){
-           intStructure.addArea((PMElement) areas[11 + i]);
-           intStructure.addArea((PMElement) labels[11 + i]);
-           intStructure.addArea((PMElement) vLabels[11 + i]);  
+           intStructure.addArea(areas[11 + i]);
+           intStructure.addArea(labels[11 + i]);
+           intStructure.addArea(vLabels[11 + i]);  
         }
         
-        heat.addArea((PMElement) heatHotArea);
-        heat.addArea((PMElement) vLabels[19]);
+        heat.addArea(heatHotArea);
+        heat.addArea(vLabels[19]);
         
         frontArmor.translate(7,18);
         rearArmor.translate(19,20);
@@ -287,13 +287,13 @@ public class QuadMapSet implements DisplayMapSet{
         
         //This have to be left
         for (int i = 0; i< 19 ; i++){
-           content.addArea((PMElement) areas[i]);
-           content.addArea((PMElement) labels[i]);
-           content.addArea((PMElement) vLabels[i]);    
+           content.addArea(areas[i]);
+           content.addArea(labels[i]);
+           content.addArea(vLabels[i]);    
         }
         
-        content.addArea((PMElement) heatHotArea);
-        content.addArea((PMElement) vLabels[19]);   
+        content.addArea(heatHotArea);
+        content.addArea(vLabels[19]);   
     }
     
     private void setBackGround(){

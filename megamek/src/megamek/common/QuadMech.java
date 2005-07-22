@@ -90,7 +90,7 @@ public class QuadMech extends Mech
                    wmp = wmp - (2 * hipHits);
                 } else {
                     for (int i = 0; i < hipHits; i++) {
-                        wmp = (int) Math.ceil( (double) wmp / 2.0);
+                        wmp = (int) Math.ceil( wmp / 2.0);
                     }
                 }
             }
@@ -99,7 +99,7 @@ public class QuadMech extends Mech
         }
       
       // and we still need to factor in heat!
-        wmp -= (int)(heat / 5);
+        wmp -= (heat / 5);
       
         
         // TSM negates some heat

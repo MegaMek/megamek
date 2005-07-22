@@ -221,7 +221,7 @@ public class VTOL extends Tank {
             (hasC3S() && C3Master > NONE) ||
             (hasC3i() && calculateFreeC3Nodes() < 5) ||
             assumeLinkedC3) {
-                xbv = (double)(Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear)));
+                xbv = Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear));
         }
 
         // Possibly adjust for TAG and Arrow IV.

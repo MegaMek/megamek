@@ -174,9 +174,6 @@ public class SelectArtyAutoHitHexDisplay
         if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
             return;
         }
-
-        // check for shifty goodness
-        boolean shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         
         // check for a deployment
         clientgui.getBoardView().select(b.getCoords());

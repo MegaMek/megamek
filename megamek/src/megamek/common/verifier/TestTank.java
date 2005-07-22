@@ -49,10 +49,9 @@ public class TestTank extends TestEntity
         switch(tank.getMovementMode())
         {
             case IEntityMovementMode.TRACKED:
-                return (int) Math.round(tank.getOriginalWalkMP()*
-                        tank.getWeight());
+                return Math.round(tank.getOriginalWalkMP() * tank.getWeight());
             case IEntityMovementMode.WHEELED:
-                return (int) Math.round(tank.getOriginalWalkMP()*
+                return Math.round(tank.getOriginalWalkMP() *
                         tank.getWeight())-20;
             case IEntityMovementMode.HOVER:
                 sf = 0;
@@ -66,7 +65,7 @@ public class TestTank extends TestEntity
                     sf = 175;
                 else if (tank.getWeight()<=50)
                     sf = 235;
-                return (int) Math.round(tank.getOriginalWalkMP()*
+                return Math.round(tank.getOriginalWalkMP()*
                         tank.getWeight())-sf;
             case IEntityMovementMode.HYDROFOIL:
                 sf = 0;
@@ -90,11 +89,11 @@ public class TestTank extends TestEntity
                     sf = 435;
                 else if (tank.getWeight()<=100)
                     sf = 480;
-                return (int) Math.round(tank.getOriginalWalkMP()*
+                return Math.round(tank.getOriginalWalkMP()*
                         tank.getWeight())-sf;
             case IEntityMovementMode.NAVAL:
             case IEntityMovementMode.SUBMARINE:
-                return (int) Math.round(tank.getOriginalWalkMP()*
+                return Math.round(tank.getOriginalWalkMP()*
                         tank.getWeight())-30;
         }
         return 0;

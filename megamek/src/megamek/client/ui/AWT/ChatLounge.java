@@ -800,8 +800,8 @@ public class ChatLounge
                 public int compare( Object aa, Object bb ) {
                     Entity a = (Entity)aa;
                     Entity b = (Entity)bb;
-                    Player p_a = (Player)a.getOwner();
-                    Player p_b = (Player)b.getOwner();
+                    Player p_a = a.getOwner();
+                    Player p_b = b.getOwner();
                     int t_a = p_a.getTeam();
                     int t_b = p_b.getTeam();
                     if (p_a.equals(client.getLocalPlayer()) &&

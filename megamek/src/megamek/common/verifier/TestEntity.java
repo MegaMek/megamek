@@ -290,9 +290,9 @@ public abstract class TestEntity implements TestEntityOption
         else if (mt.hasFlag(MiscType.F_MASC))
         {
             if (mt.getInternalName().equals("ISMASC"))
-                return (float)Math.round(getWeight() / 20.0f);
+                return Math.round(getWeight() / 20.0f);
             else if (mt.getInternalName().equals("CLMASC"))
-                return (float)Math.round(getWeight() / 25.0f);
+                return Math.round(getWeight() / 25.0f);
         } else if (mt.hasFlag(MiscType.F_TARGCOMP))
         {
             float fTons = 0.0f;
@@ -308,7 +308,7 @@ public abstract class TestEntity implements TestEntityOption
             else if (mt.getInternalName().equals("CLTargeting Computer"))
                 return ceil(fTons / 5.0f, getWeightCeilingTargComp());
         } else if (mt.hasFlag(MiscType.F_VACUUM_PROTECTION)) {
-            return (float)Math.round(getWeight() / 10.0f);
+            return Math.round(getWeight() / 10.0f);
         } else
             return mt.getTonnage(getEntity());
         return 0f;
@@ -499,9 +499,9 @@ public abstract class TestEntity implements TestEntityOption
         else if (mt.hasFlag(MiscType.F_MASC))
         {
             if (mt.getInternalName().equals("ISMASC"))
-                return (int)Math.round(getWeight() / 20.0f);
+                return Math.round(getWeight() / 20.0f);
             else if (mt.getInternalName().equals("CLMASC"))
-                return (int)Math.round(getWeight() / 25.0f);
+                return Math.round(getWeight() / 25.0f);
         } else if (mt.hasFlag(MiscType.F_TARGCOMP))
         {
             float fTons = 0.0f;
@@ -522,7 +522,7 @@ public abstract class TestEntity implements TestEntityOption
                 case CEIL_TARGCOMP_CRITS:
                     return (int) Math.ceil(weight);
                 case ROUND_TARGCOMP_CRITS:
-                    return (int) Math.round(weight);
+                    return Math.round(weight);
                 case FLOOR_TARGCOMP_CRITS:
                     return (int) Math.floor(weight);
             }
@@ -940,7 +940,7 @@ class Armor
     public static float getWeightArmor(int armorType, int armorFlags, 
             int totalOArmor, float roundWeight)
     {
-        float totalOArmorWeight = (float) totalOArmor / 16.0f;
+        float totalOArmorWeight = totalOArmor / 16.0f;
         if (armorType==EquipmentType.T_ARMOR_FERRO_FIBROUS)
         {
             if ((armorFlags & CLAN_ARMOR) != 0)

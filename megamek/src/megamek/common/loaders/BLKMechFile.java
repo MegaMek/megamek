@@ -162,7 +162,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             
             if (!dataFile.exists("internal armor") ) {
                 //try to guess...
-                mech.setInternal( 3, (int)(armor[CF]+armor[CB])/2, (int)(armor[LF]+armor[LB])/2, (int)(armor[LA]/2), (int)(armor[LL]/2) );
+                mech.setInternal( 3, (armor[CF]+armor[CB])/2, (armor[LF]+armor[LB])/2, (armor[LA]/2), (armor[LL]/2) );
             }else {
             
                 armor = dataFile.getDataAsInt("internal armor");

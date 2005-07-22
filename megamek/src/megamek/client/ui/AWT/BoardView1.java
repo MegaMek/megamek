@@ -938,7 +938,7 @@ public class BoardView1
         FontMetrics currentMetrics = getFontMetrics(font);
         int stringWidth = currentMetrics.stringWidth(string);
         
-        x += (int)((hex_size.width - stringWidth)/2);
+        x += ((hex_size.width - stringWidth)/2);
         
         graph.setFont(font);
         graph.drawString( string, x, y );

@@ -5029,6 +5029,12 @@ implements Runnable, ConnectionHandler {
 
         // looks like mostly everything's okay
         processDeployment(entity, coords, nFacing, loadVector);
+
+        // Update visibility indications if using double blind.
+        if (doBlind()) {
+            updateVisibilityIndicator();
+        }
+
         endCurrentTurn(entity);
     }
 

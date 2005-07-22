@@ -195,11 +195,11 @@ public class ReportDisplay
     }
 
     public void setReportTab(int round, String roundText, String phaseText) {
-        if (round < 1) {
-            System.err.println("ERROR: ReportDisplay.setReportTab() called with round argument of " + round + "; value must be at least 1.");
-            return;
+        if (round == 0) {
+            //The deployment reports (round 0) are combined with round one's
+            // report.
+            round = 1;
         }
-
         if (round >= vTextArea.size()) {
             //Need a new tab for the new round.
 

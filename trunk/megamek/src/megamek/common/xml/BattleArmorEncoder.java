@@ -57,7 +57,7 @@ public class BattleArmorEncoder {
 
         // Our EntityEncoder already gave us our root element.
         out.write( "<bv value=\"");
-        value = (int) ( (double) squad.calculateBattleValue() /
+        value = (int) ( squad.calculateBattleValue() /
                         squad.getCrew().getBVSkillMultiplier() );
         out.write( value );
         out.write( "\" /><shootingStrength value=\"" );

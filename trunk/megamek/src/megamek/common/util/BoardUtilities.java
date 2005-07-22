@@ -378,7 +378,7 @@ public class BoardUtilities {
                 ((Math.exp(x * 5.0 / 0.75 - 3) - 0.04979) * 1.5 / 7.33926) - 0.5 : 
                     ((Math.cos((x-0.75)*4.0)+1.0) / 2.0);
         
-        return (int)(result * (double)scale);
+        return (int)(result * scale);
     }
     
     /**
@@ -399,7 +399,7 @@ public class BoardUtilities {
     public static void addRiver(IBoard board, HashMap reverseHex) {
         int minElevation = Integer.MAX_VALUE;
         HashSet riverHexes = new HashSet();
-        IHex field, rightHex, leftHex;
+        IHex field;
         Point p = null;
         int direction = 0;
         int nextLeft = 0;
@@ -995,7 +995,7 @@ public class BoardUtilities {
         d1 = size >> (step - 1);
         d2 = d1 / 2;
         fracdim = (1.0 - fracdim) / 2.0;
-        delta = (int)(delta * Math.exp(-0.6931 * fracdim * (2.0 * (double)step - 1)));
+        delta = (int)(delta * Math.exp(-0.6931 * fracdim * (2.0 * step - 1)));
         delta5 = delta << 5;
         x = d2;
         do {

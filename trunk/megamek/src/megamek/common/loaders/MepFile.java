@@ -164,7 +164,7 @@ public class MepFile implements IMechLoader {
                 mech.setModel(this.name.substring(5).trim());
             }
             
-            mech.setWeight((float)Integer.decode(this.tonnage.trim()).intValue());
+            mech.setWeight(Integer.decode(this.tonnage.trim()).intValue());
             mech.setYear(Integer.parseInt(this.techYear.trim()));
             mech.setOmni("OmniMech".equals(this.chassisType.trim()));
             

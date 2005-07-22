@@ -178,7 +178,7 @@ public class Coords
             return (src.cx < dst.cx) ? Math.PI / 2 : Math.PI * 1.5;
         }
         
-        double r = Math.atan((double)(dst.cx - src.cx) / (double)(src.cy - dst.cy));
+        double r = Math.atan((dst.cx - src.cx) / (src.cy - dst.cy));
         // flip if we're upside down
         if (src.cy < dst.cy) {
             r = (r + Math.PI) % (Math.PI * 2);

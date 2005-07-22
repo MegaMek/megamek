@@ -57,7 +57,7 @@ public class ProtomechEncoder {
 
         // Our EntityEncoder already gave us our root element.
         out.write( "<bv value=\"");
-        value = (int) ( (double) proto.calculateBattleValue() /
+        value = (int) ( proto.calculateBattleValue() /
                         proto.getCrew().getBVSkillMultiplier() );
         out.write( value );
         out.write( "\" /><hasMainGun value=\"" );

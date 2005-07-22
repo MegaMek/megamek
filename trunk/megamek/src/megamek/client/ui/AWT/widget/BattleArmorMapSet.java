@@ -75,17 +75,17 @@ public class BattleArmorMapSet implements DisplayMapSet{
             int shiftY = i * stepY;
             unitAreas[i] = new PMPicArea(battleArmorImage);
             unitAreas[i].translate(0, shiftY);
-            content.addArea((PMElement) unitAreas[i]);
+            content.addArea(unitAreas[i]);
             
             
             armorImage[i] = comp.createImage(105, 12);
             armorAreas[i] = new PMPicArea(armorImage[i]);
             armorAreas[i].translate(45, shiftY + 12);
-            content.addArea((PMElement) armorAreas[i]);
+            content.addArea(armorAreas[i]);
             
             armorLabels[i] = new PMValueLabel(fm, Color.red.brighter());
             armorLabels[i]. moveTo(160, shiftY + 24);
-            content.addArea((PMElement) armorLabels[i]);
+            content.addArea(armorLabels[i]);
         }
     }
     

@@ -227,9 +227,9 @@ public class BackGroundDrawer{
     private void drawTilingBoth(Graphics g, int width, int height){
         int tileWidth = mainImage.getWidth(null);
         int tileHeight = mainImage.getHeight(null);
-        int countX = (int) (width / tileWidth);
+        int countX = (width / tileWidth);
         if (width % tileWidth != 0) countX++;
-        int countY = (int) (height / tileHeight);
+        int countY = (height / tileHeight);
         if (height % tileHeight != 0) countY++;     
         for (int i = 0; i < countX; i++){
             for (int j = 0; j < countY; j++){
@@ -241,7 +241,7 @@ public class BackGroundDrawer{
     private void drawTilingVertical(Graphics g, int width, int height){
         int dx = getDX(width);
         int tileHeight = mainImage.getHeight(null);
-        int countY = (int) (height / tileHeight);
+        int countY = (height / tileHeight);
         if (height % tileHeight != 0) countY++;
         for (int j = 0; j < countY; j++){
             g.drawImage(mainImage, dx, j*tileHeight, null);
@@ -251,7 +251,7 @@ public class BackGroundDrawer{
     private void drawTilingHorizontal(Graphics g, int width, int height){
         int dy = getDY(height);
         int tileWidth = mainImage.getWidth(null);
-        int countX = (int) (width / tileWidth);
+        int countX = (width / tileWidth);
         if (width % tileWidth != 0) countX++;
         for (int i = 0; i < countX; i++){
             g.drawImage(mainImage, i*tileWidth, dy, null);

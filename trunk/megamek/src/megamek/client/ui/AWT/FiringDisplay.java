@@ -475,7 +475,7 @@ public class FiringDisplay
         visibleTargets = new Entity[vec.size()];
               
         for ( int i = 0; i < vec.size(); i++ ) {
-          tree.add((Entity)vec.elementAt(i));
+          tree.add(vec.elementAt(i));
           }
         
         com.sun.java.util.collections.Iterator it = tree.iterator();
@@ -505,7 +505,7 @@ public class FiringDisplay
         if ( lastTargetID >= visibleTargets.length )
           lastTargetID = 0;
         
-        return (Entity)visibleTargets[lastTargetID];
+        return visibleTargets[lastTargetID];
       }
     
     /**
@@ -879,7 +879,7 @@ public class FiringDisplay
         if (target != null && weaponId != -1 && ce() != null && !ce().usedTag()) {
             ToHitData toHit;
             if (ash.inAimingMode()) {
-            Mounted weapon = (Mounted) ce().getEquipment(weaponId);
+            Mounted weapon = ce().getEquipment(weaponId);
               boolean aiming = ash.isAimingAtLocation() && 
                       ash.allowAimedShotWith(weapon);
               ash.setEnableAll(aiming);
@@ -1013,7 +1013,6 @@ public class FiringDisplay
         }
 
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
-            boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
             // HACK : sometimes we don't show the target choice window
             Targetable targ = null;
             if (this.showTargetChoice)
@@ -1472,7 +1471,7 @@ public class FiringDisplay
       allowAim = ((target != null) && ce().hasAimModeTargComp() && target instanceof Mech);
       if (allowAim) {
         if (lockedLocation) {
-          allowAim = ((Entity)target).equals((Entity)lockedTarget);
+          allowAim = ((Entity)target).equals(lockedTarget);
           if (allowAim) {
             aimingMode = IAimingModes.AIM_MODE_TARG_COMP;
             return;

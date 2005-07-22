@@ -91,7 +91,7 @@ public class PMSimplePolygonArea implements PMHotArea{
 
     //PMHotArea interface methods
     public Shape getAreaShape(){
-        return (Shape) this.areaShape;
+        return this.areaShape;
     }
     
     public Cursor getCursor(){

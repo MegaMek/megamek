@@ -577,7 +577,7 @@ public class Tank
             (hasC3S() && C3Master > NONE) ||
             (hasC3i() && calculateFreeC3Nodes() < 5) ||
             assumeLinkedC3) {
-                xbv = (double)(Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear)));
+                xbv = Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear));
         }
 
         // Possibly adjust for TAG and Arrow IV.
@@ -821,7 +821,6 @@ public class Tank
         cost+=20000*paWeight;
         cost+=2000*Math.max(0,sinks-freeHeatSinks);
         cost+=turretWeight*5000;
-        double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
         cost+=getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
         double diveTonnage;
         switch (movementMode) {

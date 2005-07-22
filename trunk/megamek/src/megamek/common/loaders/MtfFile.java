@@ -131,8 +131,6 @@ public class MtfFile implements IMechLoader {
 
             weaponCount = r.readLine();
 
-            int a = 9;
-
             int weapons = Integer.parseInt(weaponCount.substring(8));
             weaponData = new String[weapons];
             for(int i = 0; i < weapons; i++) {
@@ -236,7 +234,7 @@ public class MtfFile implements IMechLoader {
                 throw new EntityLoadingException("Unsupported tech base: " + techBase.substring(9).trim());
             }
 
-            mech.setWeight((float)Integer.parseInt(tonnage.substring(5)));
+            mech.setWeight(Integer.parseInt(tonnage.substring(5)));
 
             mech.setOriginalWalkMP(Integer.parseInt(walkMP.substring(8)));
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));

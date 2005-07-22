@@ -13917,23 +13917,15 @@ implements Runnable, ConnectionHandler {
     }
 
     private boolean canSee(Player p, Entity e) {
-        if ((p != null)
-                && (e != null)
-                && (e.getOwner() != null)) {
-            System.out.println("s: canSee(): Player: " + p.getName() + "[" + p.getId() + "]" + ", Entity: " + e.getShortName() + "(" + e.getOwner().getName() + ")" + "[" + e.getOwner().getId() + "]");
-            if (e.getOwner().getId() == p.getId()) {
-                //The owner of an entity should be able to see it, of course.
-                System.out.println("s: canSee(): Yep, my unit.");
+        if (e.getOwner().getId() == p.getId()) {
+            //The owner of an entity should be able to see it, of course.
+            return true;
+        }
+        Vector playersWhoCanSee = whoCanSee(e);
+        for (int i = 0; i < playersWhoCanSee.size(); i++) {
+            Player currentPlayer = (Player)playersWhoCanSee.elementAt(i);
+            if (currentPlayer.equals(p)) {
                 return true;
-            } else {
-                System.out.println("s: canSee(): Not sure..." + e.getOwner().equals(p));
-            }
-            Vector playersWhoCanSee = whoCanSee(e);
-            for (int i = 0; i < playersWhoCanSee.size(); i++) {
-                Player currentPlayer = (Player)playersWhoCanSee.elementAt(i);
-                if (currentPlayer.equals(p)) {
-                    return true;
-                }
             }
         }
 
@@ -14026,6 +14018,16 @@ implements Runnable, ConnectionHandler {
         return filteredReportVector;
     }
 
+    /**
+     * Filter a single report so that the correct double-blind
+     * obscuration takes place.
+     *
+     * @param r the Report to filter
+     * @param p the Player that we are going to send the filtered report to
+     * @param omitCheck boolean indicating that this report hapened in
+     * the past, so we no longer have access to the Player
+     * @return a new Report, which has possibly been obscured
+     */
     private Report filterReport(Report r, Player p, boolean omitCheck) {
         if (r.subject == Entity.NONE && r.type != Report.PUBLIC) {
             //Reports that don't have a subject should be public.
@@ -14035,9 +14037,17 @@ implements Runnable, ConnectionHandler {
         if (r.type == Report.PUBLIC || (p == null && !omitCheck)) {
             return r;
         }
+        Entity entity = game.getEntity(r.subject);
+        Player owner = null;
+        if (entity != null)
+            owner = entity.getOwner();
+        if (!omitCheck && (entity == null || owner == null)) {
+            System.err.println("Error: Attempting to filter a Report object that is not public but has a subject (" + entity + ") with owner (" + owner + ").\n\tmessageId: " + r.messageId);
+            return r;
+        }
         Report copy = new Report(r);
         for (int j = 0; j < copy.dataCount(); j++) {
-            if (omitCheck || !canSee(p, game.getEntity(r.subject))) {
+            if (omitCheck || !canSee(p, entity)) {
                 if (r.isValueObscured(j)) {
                     copy.hideData(j);
                     //Mark the original report to indicate which players

@@ -34,9 +34,9 @@ public class GameReports implements Serializable {
     }
 
     public void add(int round, Vector v) {
-        if (round < 1) {
-            System.err.println("ERROR: GameReports.add() called with round argument of less than 1, which is invalid.");
-            return;
+        if (round == 0) {
+            //Combine round 0 (deployment) with round one's reports.
+            round = 1;
         }
         if (round > reports.size()) {
             //First reports for the round.
@@ -50,9 +50,9 @@ public class GameReports implements Serializable {
 
     //Get a single round's reports.
     public Vector get(int round) {
-        if (round < 1) {
-            System.err.println("ERROR: GameReports.get() called with argument of less than 1, which is invalid.");
-            return null;
+        if (round == 0) {
+            //Round 0 (deployment) reports are lumped in with round one.
+            round = 1;
         }
         if (round <= reports.size()) {
             return (Vector)reports.elementAt(round - 1);

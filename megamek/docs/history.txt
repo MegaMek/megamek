@@ -46,6 +46,9 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Bug 1242303: Attack arrows for charge not removed
 + /localsave did not work when savegames directory was not present.
 + Bug 1235228: Now can load mixed-tech armor type correctly from file.
++ Bug 1242589: Update to above fix "Avoid NPE in casSee function" to provide
+    some information to the log.  Also cleaned up some debug lines that were
+    bloating the log to an unreasonable size.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

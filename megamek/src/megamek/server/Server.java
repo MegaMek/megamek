@@ -1524,16 +1524,16 @@ implements Runnable, ConnectionHandler {
                 changePhase(IGame.PHASE_INITIATIVE);
                 break;
             case IGame.PHASE_INITIATIVE :
-                boolean doDeploy = game.shouldDeployThisRound() && (game.getLastPhase() != IGame.PHASE_DEPLOYMENT);
-                if ( doDeploy ) {
-                    changePhase(IGame.PHASE_DEPLOYMENT);
-                } else {
-                    game.addReports(vPhaseReport);
-                    changePhase(IGame.PHASE_INITIATIVE_REPORT);
-                }
+                game.addReports(vPhaseReport);
+                changePhase(IGame.PHASE_INITIATIVE_REPORT);
                 break;
             case IGame.PHASE_INITIATIVE_REPORT :
-                changePhase(IGame.PHASE_TARGETING);
+                //boolean doDeploy = game.shouldDeployThisRound() && (game.getLastPhase() != IGame.PHASE_DEPLOYMENT);
+                if ( game.shouldDeployThisRound() ) {
+                    changePhase(IGame.PHASE_DEPLOYMENT);
+                } else {
+                    changePhase(IGame.PHASE_TARGETING);
+                }
                 break;
             case IGame.PHASE_MOVEMENT :
                 addMovementHeat();
@@ -2174,6 +2174,7 @@ implements Runnable, ConnectionHandler {
     private void writeInitiativeReport(boolean abbreviatedReport) {
         // write to report
         Report r;
+        boolean deployment = false;
         if (!abbreviatedReport) {
             r = new Report();
             r.type = Report.PUBLIC;
@@ -2181,6 +2182,7 @@ implements Runnable, ConnectionHandler {
                 r.messageId = 1000;
                 r.add(game.getRoundCount());
             } else {
+                deployment = true;
                 if ( game.getRoundCount() == 0 ) {
                     r.messageId = 1005;
                 } else {
@@ -2267,6 +2269,9 @@ implements Runnable, ConnectionHandler {
             } else {
                 vPhaseReport.addElement(r);
             }
+
+            if (deployment)
+                Report.addNewline(vPhaseReport);
         }
     }
 

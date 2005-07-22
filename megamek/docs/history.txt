@@ -52,6 +52,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + In double-blind games, the "has been seen" status of a unit was not updating
     until the first unit had moved.  Fixed now.
 + Bug 1242587: Deployment initiative report was missing.
++ Bug 1239617: Water PC now appears to be working again.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

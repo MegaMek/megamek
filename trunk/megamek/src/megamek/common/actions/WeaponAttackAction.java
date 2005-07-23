@@ -299,8 +299,9 @@ public class WeaponAttackAction
             }
         }
         
-        // can't target yourself
-        if (ae.equals(te)) {
+        // can't target yourself, unless those are swarm missiles that
+        // continued to a new target
+        if (ae.equals(te) && !exchangeSwarmTarget) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
     

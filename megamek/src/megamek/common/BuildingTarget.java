@@ -112,9 +112,9 @@ public class BuildingTarget implements Targetable {
      * @exception an <code>IllegalArgumentException</code> will be thrown if
      *          the given coordinates do not contain a building.
      */
-    public BuildingTarget( Coords c, IBoard board, int nType ) {
+    public BuildingTarget( Coords coords, IBoard board, int nType ) {
         boolean ignite = (nType == Targetable.TYPE_BLDG_IGNITE);
-        this.init( c, board, ignite );
+        this.init( coords, board, ignite );
     }
 
     /**

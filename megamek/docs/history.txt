@@ -57,6 +57,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Swarming swarm/swarm-i missiles should not give "Can't target yourself"
     impossible to-hit.
 + Bug 1243674: Clan Artemis-capable ammo typo.
++ Bug 1243849: DFA damage misreported.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

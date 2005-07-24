@@ -9789,7 +9789,7 @@ implements Runnable, ConnectionHandler {
             return;
         }
 
-        r = new Report(3055);
+        r = new Report(4246);
         r.subject = ae.getId();
         r.indent();
         r.add(target.getDisplayName());

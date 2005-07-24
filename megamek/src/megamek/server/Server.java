@@ -6838,6 +6838,12 @@ implements Runnable, ConnectionHandler {
                   if (wr.artyAttackerCoords!=null) {
                       toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
                   }
+                  if (entity instanceof VTOL) {
+                      // VTOLs take no damage from normal artillery unless landed
+                      if (entity.getElevation()!=game.getBoard().getHex(entity.getPosition()).getElevation()) {
+                          break;
+                      }
+                  }
                   HitData hit = entity.rollHitLocation
                       ( toHit.getHitTable(),
                         toHit.getSideTable(),

@@ -53,7 +53,8 @@ public class HexTarget implements Targetable
     }
 
     public boolean isImmobile() {
-        return m_type != Targetable.TYPE_MINEFIELD_DELIVER;
+        return (m_type != Targetable.TYPE_MINEFIELD_DELIVER &&
+                    m_type != Targetable.TYPE_HEX_BOMB);
     }
 
     public String getDisplayName() {

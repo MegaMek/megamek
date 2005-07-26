@@ -1469,9 +1469,13 @@ public class MovementDisplay
         }
         else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION) ) {
             cmd.addStep(MovePath.STEP_UP);
+            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.repaint();
         }
         else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION) ) {
             cmd.addStep(MovePath.STEP_DOWN);
+            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.repaint();
         }
 
         updateProneButtons();

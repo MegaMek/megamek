@@ -1450,22 +1450,22 @@ public class MovementDisplay
                 other = null;
             }
 
-            // Handle not finding a unit to load.
             if ( other != null ) {
                 cmd.addStep( MovePath.STEP_LOAD );
                 clientgui.bv.drawMovementData(ce, cmd);
+                clientgui.bv.repaint();
                 gear = MovementDisplay.GEAR_LAND;
-            }
+            } //else - didn't find a unit to load
         }
         else if ( ev.getActionCommand().equals(MOVE_UNLOAD) ) {
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
 
-            // Player can cancel the unload.
             if ( other != null ) {
                 cmd.addStep( MovePath.STEP_UNLOAD, other );
                 clientgui.bv.drawMovementData(ce, cmd);
-            }
+                clientgui.bv.repaint();
+            } //else - Player canceled the unload.
         }
         else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION) ) {
             cmd.addStep(MovePath.STEP_UP);

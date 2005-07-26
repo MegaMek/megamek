@@ -66,6 +66,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Sylph should get +1 target movement modifier when expending VTOL MP
 + Bug 1243589: sylphs unable to fly in extreme temperatures.
 + Bug 1245339: Units could not be loaded after deployment.
++ "Load" and "Unload" were not always showing up after button press.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

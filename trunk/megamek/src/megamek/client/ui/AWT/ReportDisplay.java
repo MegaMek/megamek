@@ -76,16 +76,7 @@ public class ReportDisplay
          GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         tabs.setTabFont (tabPanelFont);
 
-        vTextArea = new Vector();
-        /* HACK: Without this initial empty TextArea, the tabs will be
-           blank (no TextArea at all) during the first initiative
-           phase.  I think it has something to do with the layout
-           manager, but I'm not really sure.  Maybe a strategically
-           placed validate() would be better? */
-        TextArea ta = new TextArea("", 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
-        ta.setEditable(false);
-        vTextArea.addElement(ta);
-        tabs.add("Phase", ta);
+        resetTabs();
 
         setupStatusBar( "" ); //$NON-NLS-1$
         
@@ -236,10 +227,17 @@ public class ReportDisplay
     }
 
     public void resetTabs() {
-        for (int i = 0; i < vTextArea.size(); i++) {
-            tabs.remove((Component)vTextArea.elementAt(i));
-            vTextArea.removeElementAt(i);
-        }
+        tabs.removeAll();
+        vTextArea = new Vector();
+        /* HACK: Without this initial empty TextArea, the tabs will be
+           blank (no TextArea at all) during the first initiative
+           phase.  I think it has something to do with the layout
+           manager, but I'm not really sure.  Maybe a strategically
+           placed validate() would be better? */
+        TextArea ta = new TextArea("", 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        ta.setEditable(false);
+        vTextArea.addElement(ta);
+        tabs.add("Phase", ta);
     }
 
     //

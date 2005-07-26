@@ -60,6 +60,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Bug 1243849: DFA damage misreported.
 + Bug 1243929: Artillery and VTOLs
 + Bug 1243929: Check for VTOL was not exhaustive
++ Fix for Bug 1240663 was faulty, this one should work better.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

@@ -64,6 +64,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Renamed MegaMek.sh to startup.sh to avoid confusion.
 + Sylph microbomb targets should not get -4 (immobile) to-hit modifier.
 + Sylph should get +1 target movement modifier when expending VTOL MP
++ Bug 1243589: sylphs unable to fly in extreme temperatures.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

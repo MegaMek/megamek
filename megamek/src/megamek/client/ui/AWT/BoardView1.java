@@ -594,7 +594,8 @@ public class BoardView1
      * Draws a sprite, if it is in the current view
      */
     private final void drawSprite(Sprite sprite) {
-        if (view.intersects(sprite.getBounds())) {
+        if (view.intersects(sprite.getBounds()) &&
+            !sprite.hidden) {
             final int drawX = sprite.getBounds().x - view.x;
             final int drawY = sprite.getBounds().y - view.y;
             if (!sprite.isReady()) {
@@ -1683,6 +1684,7 @@ public class BoardView1
      */
     public void drawMovementData(Entity entity, MovePath md) {
         Vector temp = pathSprites;
+        MoveStep previousStep = null;
 
         clearMovementData();
 
@@ -1698,8 +1700,19 @@ public class BoardView1
                 }
             }
             if (!found) {
+                if (previousStep != null &&
+                    (step.getType() == MovePath.STEP_UP ||
+                     step.getType() == MovePath.STEP_DOWN) &&
+                    (previousStep.getType() == MovePath.STEP_UP ||
+                     previousStep.getType() == MovePath.STEP_DOWN)) {
+                    //Mark the previous elevation change sprite hidden
+                    // so that we can draw a new one in it's place without
+                    // having overlap.
+                    ((Sprite)pathSprites.elementAt(pathSprites.size() -1 )).hidden = true;
+                }
                 pathSprites.addElement(new StepSprite(step));
             }
+            previousStep = step;
         }
     }
 
@@ -2584,6 +2597,9 @@ public class BoardView1
         protected Rectangle bounds;
         protected Image image;
 
+        //Set this to true if you don't want the sprite to be drawn.
+        protected boolean hidden = false;
+
         /**
          * Do any necessary preparation.  This is called after creation,
          * but before drawing, when a device context is ready to draw with.
@@ -3392,7 +3408,9 @@ public class BoardView1
                 drawMovementCost(step, stepPos, graph, col, true);
                 break;
             case MovePath.STEP_GO_PRONE:
+            case MovePath.STEP_DOWN:
                 // draw arrow indicating dropping prone
+                // also doubles as the descent indication
                 Polygon downPoly = movementPolys[7];
                 myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints, downPoly.npoints);
                 graph.setColor(Color.darkGray);
@@ -3405,7 +3423,9 @@ public class BoardView1
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 break;
             case MovePath.STEP_GET_UP:
+            case MovePath.STEP_UP:
                 // draw arrow indicating standing up
+                // also doubles as the climb indication
                 Polygon upPoly = movementPolys[6];
                 myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints, upPoly.npoints);
                 graph.setColor(Color.darkGray);
@@ -3506,7 +3526,9 @@ public class BoardView1
                     || step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN
                     || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK
                     || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN) {
-                costStringBuf.append("{").append(step.getElevation()).append("}");
+                costStringBuf.append("{")
+                    .append(step.getElevation())
+                    .append("}");
             }
 
             // Convert the buffer to a String and draw it.

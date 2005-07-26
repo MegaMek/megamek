@@ -68,6 +68,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + Bug 1245339: Units could not be loaded after deployment.
 + "Load" and "Unload" were not always showing up after button press.
 + Bug 1245372: Units deployed on a hill cannot be unloaded.
++ Indications added for VTOL climbs/descents during move phase.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

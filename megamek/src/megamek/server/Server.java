@@ -2391,11 +2391,13 @@ implements Runnable, ConnectionHandler {
                 unit.getMovementMode() == IEntityMovementMode.SUBMARINE ||
                 isBridge) {
                 // units that can float stay on the surface, or we go on the bridge
-                unit.setElevation(hex.surface());
+                // this means elevation 0, because elevation is relative to the surface
+                unit.setElevation(0);
             } 
         } else {
             // default to the floor of the hex.
-            unit.setElevation(hex.floor());
+            // unit elevation is relative to the surface 
+            unit.setElevation(hex.floor() - hex.surface());
         }
         doSetLocationsExposure(unit, hex, isBridge, false);
 
@@ -5077,15 +5079,17 @@ implements Runnable, ConnectionHandler {
         } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
             // TODO: Submarines should have a selectable height.
             // For now, pretend they're regular naval.
-            entity.setElevation(game.getBoard().getHex(coords).surface());
+            entity.setElevation(0);
         } else if ((entity.getMovementMode() == IEntityMovementMode.HOVER)
                 || (entity.getMovementMode() == IEntityMovementMode.NAVAL)
                 || (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL)) {
             // For now, assume they're on the surface.
-            entity.setElevation(game.getBoard().getHex(coords).surface());
+            // entity elevation is relative to hex surface
+            entity.setElevation(0);
         } else {
             // For anything else, assume they're on the floor.
-            entity.setElevation(game.getBoard().getHex(coords).floor());
+            // entity elevation is relative to hex surface
+            entity.setElevation(game.getBoard().getHex(coords).floor()-game.getBoard().getHex(coords).surface());
         }
         entity.setDone(true);
         entity.setDeployed(true);

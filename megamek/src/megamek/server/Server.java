@@ -2306,10 +2306,6 @@ implements Runnable, ConnectionHandler {
      */
     private void loadUnit( Entity loader, Entity unit ) {
 
-        // Remove the loaded unit from the screen.
-        unit.setPosition( null );
-
-
         // Remove the *last* friendly turn (removing the *first* penalizes
         // the opponent too much, and re-calculating moves is too hard).
         game.removeTurnFor(unit);
@@ -2320,6 +2316,9 @@ implements Runnable, ConnectionHandler {
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId( loader.getId() );
+
+        // Remove the loaded unit from the screen.
+        unit.setPosition( null );
 
         // Update the loaded unit.
         this.entityUpdate( unit.getId() );

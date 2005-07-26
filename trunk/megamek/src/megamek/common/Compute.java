@@ -1146,8 +1146,10 @@ public class Compute {
         Entity entity = game.getEntity(entityId);
         ToHitData toHit = getTargetMovementModifier(
                 entity.delta_distance,
-                ((entity.moved == IEntityMovementType.MOVE_JUMP) || (entity instanceof VTOL && entity.moved != IEntityMovementType.MOVE_NONE)),
+                ((entity.moved == IEntityMovementType.MOVE_JUMP) || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN) || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK)),
                 game.getOptions().booleanOption("maxtech_target_modifiers"),
+                entity.moved == IEntityMovementType.MOVE_VTOL_RUN ||
+                entity.moved == IEntityMovementType.MOVE_VTOL_WALK ||
                 entity.getMovementMode() == IEntityMovementMode.VTOL);
 
         // Did the target skid this turn?

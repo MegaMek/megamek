@@ -69,6 +69,7 @@ v0.29.86-dev (CVS) RELEASE CANDITATE 3 or STABLE RELEASE
 + "Load" and "Unload" were not always showing up after button press.
 + Bug 1245372: Units deployed on a hill cannot be unloaded.
 + Indications added for VTOL climbs/descents during move phase.
++ Bug 1244577: Errant Pixels on Catapult picture.
 
 v0.29.85 (2005-07-18 1:05pm) RELEASE CANDIDATE 2!
 + Bug 1239985: Fleeing now works again.

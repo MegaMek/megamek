@@ -8330,7 +8330,7 @@ implements Runnable, ConnectionHandler {
             } else {
                 //missiles can't find another target
                 r = new Report(3425);
-                r.subject = swarmTarget.getId();
+                r.subject = ae.getId();
                 r.indent();
                 vPhaseReport.addElement(r);
             }

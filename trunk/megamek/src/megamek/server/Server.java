@@ -12728,7 +12728,6 @@ implements Runnable, ConnectionHandler {
      */
     private Vector destroyEntity(Entity entity, String reason,
                                  boolean survivable, boolean canSalvage) {
-        StringBuffer sb = new StringBuffer();
         Vector vDesc = new Vector();
         Report r;
 
@@ -12745,6 +12744,7 @@ implements Runnable, ConnectionHandler {
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(reason);
+            r.newlines=0;
             vDesc.addElement(r);
 
             entity.setDoomed(true);
@@ -12757,8 +12757,10 @@ implements Runnable, ConnectionHandler {
                 mw.setDestroyed(true);
                 game.removeEntity( mw.getId(), condition );
                 send( createRemoveEntityPacket(mw.getId(), condition) );
-                sb.append("\n*** " ).append( mw.getDisplayName() +
-                          " died in the wreckage. ***\n");
+                r = new Report(6370);
+                r.subject = mw.getId();
+                r.addDesc(mw);
+                vDesc.addElement(r);
             }
 
             // Handle escape of transported units.

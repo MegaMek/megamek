@@ -243,6 +243,7 @@ public abstract class Mech
                 vDesc.addElement(r);
                 r = new Report(2370);
                 r.subject = this.getId();
+                r.indent();
                 r.add(getMASCTarget());
                 r.add(nRoll);
 

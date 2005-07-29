@@ -4344,8 +4344,10 @@ public abstract class Entity
     }
     
     public void setSpotlightState (boolean arg) {
-        if (this.hasSpotlight) this.spotlightIsActive = arg;
-        if (arg) this.illuminated = true;
+        if (this.hasSpotlight) {
+            this.spotlightIsActive = arg;
+            if (arg) this.illuminated = true;
+        }
     }
     
     public boolean isIlluminated() {

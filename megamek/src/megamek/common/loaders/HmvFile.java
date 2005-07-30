@@ -1082,7 +1082,7 @@ public class HmvFile
 
     return ammoType;
   }
-
+    /*
   public static void main(String[] args)
     throws Exception
   {
@@ -1092,6 +1092,7 @@ public class HmvFile
       System.out.println(new megamek.client.ui.AWT.MechView(hmvFile.getEntity()).getMechReadout());
     }
   }
+    */
 }
 
 abstract class HMVType

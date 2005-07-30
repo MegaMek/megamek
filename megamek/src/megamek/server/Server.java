@@ -1465,7 +1465,7 @@ implements Runnable, ConnectionHandler {
                 // If we add transporters for any Magnetic Clamp
                 // equiped squads, then update the clients' entities.
                 if ( game.checkForMagneticClamp() ) {
-                    send(createEntitiesPacket());
+                    entityAllUpdate();
                 }
                 // transmit the board to everybody
                 send(createBoardPacket());

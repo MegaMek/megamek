@@ -1315,6 +1315,7 @@ public class MoveStep implements Serializable {
                 && nMove != IEntityMovementMode.SUBMARINE
                 && nMove != IEntityMovementMode.VTOL
                 && destHex.terrainLevel(Terrains.WATER) > 0
+                && !dest.equals(entity.getPosition())
                 && !firstStep
                 && !isPavementStep) {
             return false;

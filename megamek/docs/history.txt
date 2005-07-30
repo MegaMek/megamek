@@ -8,6 +8,8 @@ v0.29.87-dev (CVS) RELEASE CANDITATE 4 or STABLE RELEASE
 + Bug 1244125, Patch 1247767: non-fatal exception in BoardView1#drawArtilleryHexes.
 + Bug 1247741: NPE during exit after hosting a savegame.
 + Newline issue when falling during movement.
++ If a player has more than one unit with the same name, a "#N" gets added
+    so that the units can be distinguished.
 
 v0.29.86 (2005-07-27 1:25pm) RELEASE CANDIDATE 3!
 + Unloaded units now should always get their elevation set correctly.

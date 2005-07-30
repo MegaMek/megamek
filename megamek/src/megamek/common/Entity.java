@@ -56,6 +56,7 @@ public abstract class Entity
 
     protected String            displayName = null;
     protected String            shortName = null;
+    public int                  duplicateMarker = 1;
 
     protected transient Player  owner;
     protected int               ownerId;
@@ -768,20 +769,24 @@ public abstract class Entity
      *
      * The display name is in the format [Chassis] [Model] ([Player Name]).
      */
-    protected void generateDisplayName() {
+    public void generateDisplayName() {
         StringBuffer nbuf = new StringBuffer();
         nbuf.append(chassis);
         if (model != null && model.length() > 0) {
             nbuf.append(" ").append(model);
         }
-
+        if (duplicateMarker > 1) {
+            //if a player has more than one unit with the same name,
+            // append "#N" after the model to differentiate.
+            nbuf.append(" #" + duplicateMarker);
+        }
         if (getOwner() != null) {
             nbuf.append(" (").append(getOwner().getName()).append(")");
         }
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
             nbuf.append(" ID:").append(this.getId());
         }
-        
+
         this.displayName = nbuf.toString();
     }
 
@@ -803,13 +808,29 @@ public abstract class Entity
      *
      * The display name is in the format [Chassis] [Model].
      */
-    protected void generateShortName() {
+    public void generateShortName() {
         StringBuffer nbuf = new StringBuffer();
         nbuf.append(chassis);
         if (model != null && model.length() > 0) {
             nbuf.append(" ").append(model);
         }
+        if (duplicateMarker > 1) {
+            //if a player has more than one unit with the same name,
+            // append "#N" after the model to differentiate.
+            nbuf.append(" #" + duplicateMarker);
+        }
+
         this.shortName = nbuf.toString();
+    }
+
+    public String getShortNameRaw() {
+        StringBuffer nbuf = new StringBuffer();
+        nbuf.append(chassis);
+        if (model != null && model.length() > 0) {
+            nbuf.append(" ").append(model);
+        }
+
+        return nbuf.toString();
     }
 
     /**

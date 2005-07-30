@@ -575,8 +575,10 @@ public class ClientGUI
         
         //TODO Is there a better solution?
         //This is required because the ChatLounge adds the listener to the
-        //MechSummaryCache that must be removed explicitly.        
-        chatlounge.die();
+        //MechSummaryCache that must be removed explicitly.
+        if (chatlounge != null) {
+            chatlounge.die();
+        }
     }
 
     /**

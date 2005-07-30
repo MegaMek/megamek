@@ -4795,7 +4795,6 @@ implements Runnable, ConnectionHandler {
         // falling mech falls
         r = new Report(2205);
         r.subject = entity.getId();
-        r.newlines = 0;
         r.addDesc(entity);
         r.add(fallElevation);
         r.add(dest.getBoardNum(), true);

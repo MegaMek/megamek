@@ -25,8 +25,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-
 import java.util.Vector;
+import java.util.Hashtable;
 
 import megamek.client.bot.BotClient;
 import megamek.common.*;
@@ -78,7 +78,9 @@ public class Client implements Runnable {
 
     // we might want to keep a game log...
     private GameLog log;
-    
+
+    private Hashtable duplicateNameHash = new Hashtable();
+
     /**
      * Construct a client which will try to connect.  If the connection
      * fails, it will alert the player, free resources and hide the frame.
@@ -279,6 +281,9 @@ public class Client implements Runnable {
         case IGame.PHASE_PHYSICAL :
             memDump("entering physical phase"); //$NON-NLS-1$
             break;
+        case IGame.PHASE_LOUNGE :
+            duplicateNameHash = new Hashtable(); //reset this
+            break;
         }
     }
 
@@ -477,6 +482,7 @@ public class Client implements Runnable {
      * Sends an "add entity" packet
      */
     public void sendAddEntity(Entity entity) {
+        checkDuplicateNamesDuringAdd(entity);
         send(new Packet(Packet.COMMAND_ENTITY_ADD, entity));
     }
 
@@ -505,6 +511,7 @@ public class Client implements Runnable {
      * Sends a "delete entity" packet
      */
     public void sendDeleteEntity(int id) {
+        checkDuplicateNamesDuringDelete(id);
         send(new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(id)));
     }
 
@@ -983,5 +990,48 @@ public class Client implements Runnable {
 
     public void setName(String newN) {
         name = newN;
+    }
+
+    //Before we officially "add" this unit to the game, check and see
+    // if this client (player) already has a unit in the game with the
+    // same name.  If so, add an identifier to the units name.
+    private void checkDuplicateNamesDuringAdd(Entity entity) {
+        if (duplicateNameHash.get(entity.getShortName()) == null) {
+            duplicateNameHash.put(entity.getShortName(), new Integer(1));
+        } else {
+            int count = ((Integer)duplicateNameHash.get(entity.getShortName())).intValue();
+            count++;
+            duplicateNameHash.put(entity.getShortName(), new Integer(count));
+            entity.duplicateMarker = count;
+            entity.generateShortName();
+            entity.generateDisplayName();
+
+        }
+    }
+
+    //If we remove an entity, we may need to update the duplicate identifier.
+    //TODO: This function is super slow :(
+    private void checkDuplicateNamesDuringDelete(int id) {
+        Entity entity = game.getEntity(id);
+        Object o = duplicateNameHash.get(entity.getShortNameRaw());
+        if (o != null) {
+            int count = ((Integer)o).intValue();
+            if (count > 1) {
+                Vector myEntities = game.getPlayerEntities(game.getPlayer(local_pn));
+                for (int i = 0; i < myEntities.size(); i++) {
+                    Entity e = (Entity)myEntities.elementAt(i);
+                    if (e.getShortNameRaw().equals(entity.getShortNameRaw())
+                        && e.duplicateMarker > entity.duplicateMarker) {
+                        e.duplicateMarker--;
+                        e.generateShortName();
+                        e.generateDisplayName();
+                        sendUpdateEntity(e);
+                    }
+                }
+                duplicateNameHash.put(entity.getShortNameRaw(), new Integer(count - 1));
+            } else {
+                duplicateNameHash.remove(entity.getShortNameRaw());
+            }
+        }
     }
 }

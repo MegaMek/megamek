@@ -651,8 +651,11 @@ implements Runnable, ConnectionHandler {
         changePhase(IGame.PHASE_LOUNGE);
     }
 
-    public void autoSave()
-    {
+    
+    /**
+     * automatically save the game 
+     */
+    public void autoSave() {
         String fileName = "autosave";
         if (PreferenceManager.getClientPreferences().stampFilenames()) {
             fileName = StringUtil.addDateTimeStamp(fileName);
@@ -660,6 +663,11 @@ implements Runnable, ConnectionHandler {
         saveGame(fileName,game.getOptions().booleanOption("autosave_msg"));
     }
 
+    /**
+     * save the game and send it to the sepecified connection
+     * @param connId The <code>int</code> connection id to send to
+     * @param sFile  The <code>String</code> filename to use
+     */
     public void sendSaveGame (int connId, String sFile) {
         saveGame(sFile, false);
         String sFinalFile = sFile;
@@ -680,6 +688,12 @@ implements Runnable, ConnectionHandler {
         }
     }
     
+    /**
+     * save the game
+     * @param sFile   The <code>String</code> filename to use
+     * @param sendChat A <code>boolean</code> value wether or not to announce
+     *                 the saving to the server chat. 
+     */
     public void saveGame(String sFile, boolean sendChat) {
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {
@@ -704,10 +718,19 @@ implements Runnable, ConnectionHandler {
         if (sendChat) sendChat("MegaMek", "Game saved to " + sFinalFile);
     }
 
+    /**
+     * save the game
+     * @param sFile   The <code>String</code> filename to use
+     */
     public void saveGame(String sFile) {
         saveGame(sFile,true);
     }
 
+    /**
+     * load the game
+     * @param f The <code>File</code> to load
+     * @return A <code>boolean</code> value wether or not the loading was successfull
+     */
     public boolean loadGame(File f) {
         System.out.println("s: loading saved game file '"+f+"'");
         try {
@@ -737,6 +760,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Removes all entities owned by a player.  Should only be called when it
      * won't cause trouble (the lounge, for instance, or between phases.)
+     * @param the <code>Player</code> whose entites are to be removed
      */
     private void removeAllEntitesOwnedBy(Player player) {
         Vector toRemove = new Vector();
@@ -1248,6 +1272,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Changes the current phase, does some bookkeeping and
      * then tells the players.
+     * @param phase the <code>int</code> id of the phase to change to
      */
     private void changePhase(int phase) {
         game.setLastPhase(game.getPhase());
@@ -1271,6 +1296,7 @@ implements Runnable, ConnectionHandler {
      * Prepares for, presumably, the next phase.  This typically involves
      * resetting the states of entities in the game and making sure the client
      * has the information it needs for the new phase.
+     * @param phase the <code>int</code> id of the phase to prepare for
      */
     private void prepareForPhase(int phase) {
         switch (phase) {
@@ -1664,6 +1690,12 @@ implements Runnable, ConnectionHandler {
         }
     }
 
+    /**
+     *combines two vectors into one, primarily used by the server reporting
+     *@param first The <code>Vector</code> that the second Vector will be
+     *             added to 
+     *@param second The <code>Vector</code> that will be added to the first
+     */
     private static void combineVectors(Vector first, Vector second) {
         if (second == null || second.size() == 0) {
             //Hmm...no second vector, no work to do then.
@@ -1680,8 +1712,8 @@ implements Runnable, ConnectionHandler {
      * Increment's the server's game round and send it to all the clients
      */
     private void incrementAndSendGameRound() {
-      game.incrementRoundCount();
-      send(new Packet(Packet.COMMAND_ROUND_UPDATE, new Integer(game.getRoundCount())));
+        game.incrementRoundCount();
+        send(new Packet(Packet.COMMAND_ROUND_UPDATE, new Integer(game.getRoundCount())));
     }
 
     /**
@@ -1932,6 +1964,10 @@ implements Runnable, ConnectionHandler {
         transmitAllPlayerUpdates();
     }
 
+    /**
+     * Determines the turn oder for a given phase
+     * @param phase the <code>int</code> id of the phase
+     */
     private void determineTurnOrder(int phase) {
 
         // Determine whether infantry and/or Protomechs move
@@ -2557,7 +2593,7 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * Steps thru an entity movement packet, executing it.
+     * Steps through an entity movement packet, executing it.
      */
     private void processMovement(Entity entity, MovePath md) {
         Report r;
@@ -13565,7 +13601,11 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * called when a fire is burning.  Adds smoke to hex in the direction specified.  Called 3 times per fire hex
+     * called when a fire is burning.  Adds smoke to hex in the direction
+     * specified.  Called 3 times per fire hex
+     * @param x       The <code>int</code> x-coordinate of the hex
+     * @param y       The <code>int</code> y-coordinate of the hex
+     * @param windDir The <code>int</code> specifying the winddirection
      */
     public void addSmoke(int x, int y, int windDir) {
         Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
@@ -13580,7 +13620,9 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * Called under L3 fire rules. Called once.
+     * Add lvl3 smoke to the hex specified by the parameters. Called once.
+     * @param x       The <code>int</code> x-coordinate of the hex
+     * @param y       The <code>int</code> y-coordinate of the hex
      */
     public void addL3Smoke(int x, int y) {
         IBoard board = game.getBoard();
@@ -13592,7 +13634,7 @@ implements Runnable, ConnectionHandler {
             return;
         }
         // Have to check if it's inferno smoke or from a heavy/hardened building - heavy smoke from those
-        if(infernoBurning || Building.MEDIUM < smokeHex.terrainLevel(Terrains.BUILDING)) {
+        if (infernoBurning || Building.MEDIUM < smokeHex.terrainLevel(Terrains.BUILDING)) {
             if (smokeHex.terrainLevel(Terrains.SMOKE) == 2){
                 //heavy smoke fills hex
                 r = new Report(5180, Report.PUBLIC);
@@ -13609,8 +13651,7 @@ implements Runnable, ConnectionHandler {
                 r.add(smokeCoords.getBoardNum());
                 vPhaseReport.addElement(r);
             }
-        }
-        else {
+        } else {
             if (smokeHex.terrainLevel(Terrains.SMOKE) == 2){
                 //heavy smoke overpowers light
                 r = new Report(5190, Report.PUBLIC);

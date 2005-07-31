@@ -1338,40 +1338,16 @@ public class ClientGUI
                     rD.resetTabs();
             break;
             case IGame.PHASE_DEPLOY_MINEFIELDS :
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
-                }
-            break;
             case IGame.PHASE_DEPLOYMENT :
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
-                }
-            break;
             case IGame.PHASE_TARGETING :
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
-                }
-            break;
             case IGame.PHASE_MOVEMENT :
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
-                }
-            break;
             case IGame.PHASE_OFFBOARD :
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
-                }
-            break;
             case IGame.PHASE_FIRING :
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
-                }
-            break;
             case IGame.PHASE_PHYSICAL :
                 if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
                     setMapVisible(true);
                 }
-                break;
+            break;
             case IGame.PHASE_INITIATIVE_REPORT :
                 showRerollButton = client.game.hasTacticalGenius(client.getLocalPlayer());
             case IGame.PHASE_MOVEMENT_REPORT :

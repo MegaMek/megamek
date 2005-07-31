@@ -80,8 +80,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem viewZoomOut = null;
     private MenuItem viewLOSSetting = null;
     private MenuItem viewUnitOverview = null;
-    private MenuItem viewInitiativeReport = null;
-    private MenuItem viewTurnReport = null;
+    private MenuItem viewRoundReport = null;
     private MenuItem viewGameOptions = null;
     private MenuItem viewClientSettings = null;
     private MenuItem viewPlayerList = null;
@@ -276,16 +275,12 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         menu.add( viewZoomOut );
         menu.addSeparator();
 
-        viewTurnReport = new MenuItem( Messages.getString("CommonMenuBar.viewTurnReport") ); //$NON-NLS-1$
-        viewTurnReport.addActionListener( this );
-        viewTurnReport.setActionCommand( "viewTurnReport" ); //$NON-NLS-1$
-        viewTurnReport.setShortcut(new MenuShortcut(KeyEvent.VK_R));
-        menu.add( viewTurnReport );
+        viewRoundReport = new MenuItem( Messages.getString("CommonMenuBar.viewRoundReport") ); //$NON-NLS-1$
+        viewRoundReport.addActionListener( this );
+        viewRoundReport.setActionCommand( "viewRoundReport" ); //$NON-NLS-1$
+        viewRoundReport.setShortcut(new MenuShortcut(KeyEvent.VK_R));
+        menu.add( viewRoundReport );
 
-        viewInitiativeReport = new MenuItem( Messages.getString("CommonMenuBar.viewInitiativeReport") ); //$NON-NLS-1$
-        viewInitiativeReport.addActionListener( this );
-        viewInitiativeReport.setActionCommand( "viewInitiativeReport" ); //$NON-NLS-1$
-        menu.add( viewInitiativeReport );
         menu.addSeparator();
         viewGameOptions = new MenuItem( Messages.getString("CommonMenuBar.viewGameOptions") ); //$NON-NLS-1$
         viewGameOptions.setActionCommand( "viewGameOptions" ); //$NON-NLS-1$
@@ -619,7 +614,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             viewPlayerList.setEnabled( false );
         }
 
-        // We can only view the turn report in certain phases.
+        // We can only view the round report in certain phases.
         if ( this.phase == IGame.PHASE_INITIATIVE ||
              this.phase == IGame.PHASE_MOVEMENT ||
              this.phase == IGame.PHASE_FIRING ||
@@ -628,13 +623,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
              this.phase == IGame.PHASE_TARGETING ||
              this.phase == IGame.PHASE_END ||
              this.phase == IGame.PHASE_DEPLOYMENT ) {
-            viewTurnReport.setEnabled( true );
+            viewRoundReport.setEnabled( true );
         } else {
-            viewTurnReport.setEnabled( false );
+            viewRoundReport.setEnabled( false );
         }
-
-        // As of 2003-09-04, we can't ever view the initiative report.
-        viewInitiativeReport.setEnabled( false );
 
         // As of 2003-09-04, we can always at least look at the client settings.
         viewClientSettings.setEnabled( true );

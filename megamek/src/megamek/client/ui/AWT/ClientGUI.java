@@ -435,9 +435,9 @@ public class ClientGUI
     }
 
     /**
-     * Called when the user selects the "View->Turn Report" menu item.
+     * Called when the user selects the "View->Round Report" menu item.
      */
-    private void showTurnReport() {
+    private void showRoundReport() {
         new MiniReportDisplay(frame, client.roundReport).show();
     }
 
@@ -482,8 +482,8 @@ public class ClientGUI
         if (event.getActionCommand().equalsIgnoreCase("viewPlayerList")) { //$NON-NLS-1$
             showPlayerList();
         }
-        if (event.getActionCommand().equalsIgnoreCase("viewTurnReport")) { //$NON-NLS-1$
-            showTurnReport();
+        if (event.getActionCommand().equalsIgnoreCase("viewRoundReport")) { //$NON-NLS-1$
+            showRoundReport();
         }
         if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
             toggleDisplay();

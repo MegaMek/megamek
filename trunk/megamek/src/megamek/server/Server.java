@@ -1674,7 +1674,11 @@ implements Runnable, ConnectionHandler {
                     vPhaseReport.addElement(new Report(1205, Report.PUBLIC));
                     game.addReports(vPhaseReport);
                     sendReport();
-                    changePhase(IGame.PHASE_INITIATIVE);
+                    if (victory()) {
+                        changePhase(IGame.PHASE_VICTORY);
+                    } else {
+                        changePhase(IGame.PHASE_INITIATIVE);
+                    }
                 }
                 break;
             case IGame.PHASE_END_REPORT :

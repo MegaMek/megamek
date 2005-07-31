@@ -11,6 +11,8 @@ v0.29.87-dev (CVS) RELEASE CANDITATE 4 or STABLE RELEASE
 + If a player has more than one unit with the same name, a "#N" gets added
     so that the units can be distinguished.
 + Bug 1241730: Game does not always check for victory.
++ Rename View->Turn Report to View->Round Report and remove redundant
+    View->Initiative Report.
 
 v0.29.86 (2005-07-27 1:25pm) RELEASE CANDIDATE 3!
 + Unloaded units now should always get their elevation set correctly.

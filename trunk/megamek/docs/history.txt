@@ -16,6 +16,7 @@ v0.29.87-dev (CVS) RELEASE CANDITATE 4 or STABLE RELEASE
 + Bug 1248927: Bot NPE with BA weapons.
 + Bug 1248946: No more asking position on attacks against iNarc pods.
 + Remove unnecessary linebreaks and fix indentation for breach reporting.
++ Bug 1249603: Themes don't work when shruberry.txt is used as hexset.
 
 v0.29.86 (2005-07-27 1:25pm) RELEASE CANDIDATE 3!
 + Unloaded units now should always get their elevation set correctly.

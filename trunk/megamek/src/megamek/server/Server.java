@@ -11230,7 +11230,6 @@ implements Runnable, ConnectionHandler {
                     r.newlines = 0;
                     r.add(te.getArmor(hit));
                     vDesc.addElement(r);
-                    Server.combineVectors(vDesc, breachCheck(te, hit.getLocation(), null));
                 } else {
                     // damage goes on to internal
                     int absorbed = Math.max(te.getArmor(hit), 0);
@@ -11241,7 +11240,6 @@ implements Runnable, ConnectionHandler {
                     r.subject = te_n;
                     r.newlines = 0;
                     vDesc.addElement(r);
-                    Server.combineVectors(vDesc, breachCheck(te, hit.getLocation(), null));
                 }
             }
 
@@ -11478,11 +11476,12 @@ implements Runnable, ConnectionHandler {
                         }
                     }
                 }
-            }
-            else if (hit.getSpecCritMod() < 0)
-            { // If there ISN'T any armor left but we did damage, then there's a chance of a crit, using Armor Piercing.
+            } else if (hit.getSpecCritMod() < 0) {
+                // If there ISN'T any armor left but we did damage, then there's a chance of a crit, using Armor Piercing.
                 specCrits++;
             }
+            // check for breaching
+            Server.combineVectors(vDesc, breachCheck(te, hit.getLocation(), null));
 
             // resolve special results
             if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
@@ -12547,6 +12546,7 @@ implements Runnable, ConnectionHandler {
                 r.indent(3);
                 r.add(entity.getLocationAbbr(loc));
                 r.add(breachroll);
+                r.newlines = 0;
                 vDesc.addElement(r);
             }
             // Breach by damage or lack of armor.
@@ -12584,6 +12584,7 @@ implements Runnable, ConnectionHandler {
         r.subject = entity.getId();
         r.add(entity.getShortName());
         r.add(entity.getLocationAbbr(loc));
+        r.newlines = 0;
         vDesc.addElement(r);
 
         if (entity instanceof Tank) {

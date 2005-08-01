@@ -1463,9 +1463,10 @@ public class Compute {
             }
 
             // If there is no ECM coverage to the target, guidance systems are
-            // good for another 1.20x damage
-            if (!isAffectedByECM(attacker, attacker.getPosition(), g.getEntity(
-                    waa.getTargetId()).getPosition())) {
+            // good for another 1.20x damage on missile weapons
+            if ((!isAffectedByECM(attacker, attacker.getPosition(), g.getEntity(
+                    waa.getTargetId()).getPosition()))&&
+                    (wt.getDamage() == WeaponType.DAMAGE_MISSILE)) {
 
                 // Check for linked artemis guidance system
                 if (wt.getAmmoType() == AmmoType.T_LRM
@@ -1501,8 +1502,8 @@ public class Compute {
                         attacker.getOwner().getTeam())
                         || g.getEntity(waa.getTargetId()).isINarcedBy(
                                 attacker.getOwner().getTeam())) {
-                    if (((at.getAmmoType() == AmmoType.T_LRM) || (at
-                            .getAmmoType() == AmmoType.T_SRM))
+                    if (((at.getAmmoType() == AmmoType.T_LRM) || 
+                            (at.getAmmoType() == AmmoType.T_SRM))
                             && at.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
                         fHits *= 1.2f;
                     }

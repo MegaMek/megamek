@@ -787,7 +787,6 @@ public class PhysicalDisplay
         }
     }
     public void hexSelected(BoardViewEvent b) {
-
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
             return;

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # MegaMek -
-# Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+# Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
 # 
 #  This program is free software; you can redistribute it and/or modify it
 #  under the terms of the GNU General Public License as published by the Free
@@ -28,14 +28,14 @@ JAVA=/usr/bin/java
 test -x "$JAVA_HOME/bin/java" && JAVA="$JAVA_HOME/bin/java"
 
 # Try to find the directory containing MegaMek JARs.
-if [ "X$MEGAMEK_CLASSPATH" != "X" ]; then
+if ! test -z "$MEGAMEK_CLASSPATH"; then
     if ! test -d "/.$MEGAMEK_CLASSPATH" -a \
         -f "/.$MEGAMEK_CLASSPATH/$MEGAMEK_DEFAULT_JARNAME"; then
         echo "Relative path: $MEGAMEK_CLASSPATH.  Clearing."
         MEGAMEK_CLASSPATH=""
     fi
 fi
-if [ "X$MEGAMEK_CLASSPATH" == "X" ]; then
+if test -z "$MEGAMEK_CLASSPATH"; then
     temp_path=$MEGAMEK_DEFAULT_CLASSPATH
     if test -d $temp_path -a \
         -f "$temp_path/$MEGAMEK_DEFAULT_JARNAME"; then
@@ -48,20 +48,20 @@ if [ "X$MEGAMEK_CLASSPATH" == "X" ]; then
 fi
 
 # Exit if we could not find $MEGAMEK_DEFAULT_JARNAME.
-if [ "X$MEGAMEK_CLASSPATH" == "X" ]; then
+if test -z "$MEGAMEK_CLASSPATH"; then
     echo "Could not find the MegaMek JAR file.  Exiting."
     exit 1
 fi
 
 # Try to find the configuration directory.
-if [ "X$MEGAMEK_CONFPATH" != "X" ]; then
+if ! test -z "$MEGAMEK_CONFPATH"; then
     if ! test -d "/.$MEGAMEK_CONFPATH" -a \
         -f "/.$MEGAMEK_CONFPATH/$MEGAMEK_DEFAULT_JARNAME"; then
         echo "Relative path: $MEGAMEK_CONFPATH.  Clearing."
         MEGAMEK_CONFPATH=""
     fi
 fi
-if [ "X$MEGAMEK_CONFPATH" == "X" ]; then
+if test -z "$MEGAMEK_CONFPATH"; then
     temp_path=$MEGAMEK_DEFAULT_CONFPATH
     if test -d $temp_path; then
         MEGAMEK_CONFPATH=$temp_path
@@ -76,7 +76,7 @@ if [ "X$MEGAMEK_CONFPATH" == "X" ]; then
         fi
 
         # If MEGAMEK_CONFPATH is still not set, try the PWD.
-        if [ "X$MEGAMEK_CONFPATH" == "X" ]; then
+        if test -z "$MEGAMEK_CONFPATH"; then
             if test -w $PWD; then
                 MEGAMEK_CONFPATH=$PWD
             fi
@@ -85,20 +85,20 @@ if [ "X$MEGAMEK_CONFPATH" == "X" ]; then
 fi
 
 # Exit if we could not find configuration directory.
-if [ "X$MEGAMEK_CONFPATH" == "X" ]; then
+if test -z "$MEGAMEK_CONFPATH"; then
     echo "Could not find the MegaMek config files.  Exiting."
     exit 2
 fi
 
 # Try to find the data directory.
-if [ "X$MEGAMEK_DATAPATH" != "X" ]; then
+if ! test -z "$MEGAMEK_DATAPATH"; then
     if ! test -d "/.$MEGAMEK_DATAPATH" -a \
         -f "/.$MEGAMEK_DATAPATH/$MEGAMEK_DEFAULT_JARNAME"; then
         echo "Relative path: $MEGAMEK_DATAPATH.  Clearing."
         MEGAMEK_DATAPATH=""
     fi
 fi
-if [ "X$MEGAMEK_DATAPATH" == "X" ]; then
+if test -z "$MEGAMEK_DATAPATH"; then
     temp_path=$MEGAMEK_CONFPATH
     if test -d $temp_path -a \
         -d "$temp_path/data"; then
@@ -117,7 +117,7 @@ if [ "X$MEGAMEK_DATAPATH" == "X" ]; then
 fi
 
 # Exit if we could not find data directory.
-if [ "X$MEGAMEK_DATAPATH" == "X" ]; then
+if test -z "$MEGAMEK_DATAPATH"; then
     echo "Could not find the MegaMek data files.  Exiting."
     exit 3
 fi

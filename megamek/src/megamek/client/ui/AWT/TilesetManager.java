@@ -98,12 +98,12 @@ public class TilesetManager {
         EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
-            System.out.println("Loading image for " + entity.getShortName() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+            System.out.println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
-                System.out.println("Unable to load image for entity: " + entity.getShortName()); //$NON-NLS-1$
+                System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
             }            
         }
         return entityImage.getIcon();
@@ -113,12 +113,12 @@ public class TilesetManager {
         EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
-            System.out.println("Loading image for " + entity.getShortName() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+            System.out.println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
-                System.out.println("Unable to load image for entity: " + entity.getShortName()); //$NON-NLS-1$
+                System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                 return null;
             }            
         }
@@ -140,12 +140,12 @@ public class TilesetManager {
         EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
-            System.out.println("Loading image for " + entity.getShortName() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+            System.out.println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
-                System.out.println("Unable to load image for entity: " + entity.getShortName()); //$NON-NLS-1$
+                System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
             }            
         }
         // get image rotated for facing

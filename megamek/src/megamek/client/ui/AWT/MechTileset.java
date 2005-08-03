@@ -94,8 +94,8 @@ public class MechTileset {
      */
     private MechEntry entryFor(Entity entity) {
         // first, check for exact matches
-        if (exact.containsKey(entity.getShortName().toUpperCase())) {
-            return (MechEntry)exact.get(entity.getShortName().toUpperCase());
+        if (exact.containsKey(entity.getShortNameRaw().toUpperCase())) {
+            return (MechEntry)exact.get(entity.getShortNameRaw().toUpperCase());
         }
         
         // next, chassis matches

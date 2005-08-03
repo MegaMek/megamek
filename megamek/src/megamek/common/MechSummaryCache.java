@@ -295,7 +295,7 @@ public class MechSummaryCache {
 
     private MechSummary getSummary(Entity e, File f, String entry) {
         MechSummary ms = new MechSummary();
-        ms.setName(e.getShortName());
+        ms.setName(e.getShortNameRaw());
         ms.setChassis(e.getChassis());
         ms.setModel(e.getModel());
         ms.setUnitType(MechSummary.determineUnitType(e));

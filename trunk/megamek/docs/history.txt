@@ -18,6 +18,7 @@ v0.29.87-dev (CVS) RELEASE CANDITATE 4 or STABLE RELEASE
 + Remove unnecessary linebreaks and fix indentation for breach reporting.
 + Bug 1249603: Themes don't work when shruberry.txt is used as hexset.
 + Corrected copyright in startup.sh; use "-z" flag of "test".
++ Fix bugs introduced by "#N" feature above.
 
 v0.29.86 (2005-07-27 1:25pm) RELEASE CANDIDATE 3!
 + Unloaded units now should always get their elevation set correctly.

@@ -14228,7 +14228,7 @@ implements Runnable, ConnectionHandler {
                     entity.setDesignValid(false);
                 } else {
                     Player cheater = game.getPlayer( connIndex );
-                    sendServerChat("Player " + cheater.getName() + " attempted to add an illegal unit design (" + entity.getShortName() + "), the unit was rejected.");
+                    sendServerChat("Player " + cheater.getName() + " attempted to add an illegal unit design (" + entity.getShortNameRaw() + "), the unit was rejected.");
                     System.err.println(sb);
                     return;
                 }

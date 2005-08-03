@@ -219,7 +219,7 @@ public class MechFileParser {
             }
         for(Enumeration i = canonUnitNames.elements(); i.hasMoreElements();) {
             String s = (String)i.nextElement();
-            if(s.equals(ent.getShortName())) {
+            if(s.equals(ent.getShortNameRaw())) {
                 ent.setCanon(true);
                 break;
             }

@@ -132,6 +132,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"ejected_pilots_flee", false); //$NON-NLS-1$
         addOption(ruleBreakers,"a4homing_target_area", false); //$NON-NLS-1$
         addOption(ruleBreakers,"canon_only",false); //$NON-NLS-1$
+        addOption(ruleBreakers,"indirect_always_possible",false); //$NON-NLS-1$
     }
 
     public Vector loadOptions(String password) {

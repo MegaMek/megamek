@@ -439,7 +439,12 @@ public class WeaponAttackAction
                 && !game.getOptions().booleanOption("indirect_fire")) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire option not enabled");
         }
-    
+        if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
+            !game.getOptions().booleanOption("indirect_always_possible") &&
+            LosEffects.calculateLos(game, attackerId, target).canSee()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire impossible with direct LOS");
+        }
+            
         // if we're doing indirect fire, find a spotter
         Entity spotter = null;
         if (isIndirect) {

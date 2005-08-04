@@ -41,7 +41,7 @@ public abstract class Entity
 
     protected int               id = Entity.NONE;
 
-    // ID settable by external sources (such as mm.net)
+    /** ID settable by external sources (such as mm.net) */
     protected int               externalId = Entity.NONE;
 
     protected float             weight;
@@ -186,7 +186,8 @@ public abstract class Entity
      */
     private boolean             salvageable = true;
 
-    /** The removal condition is set when the entitiy is removed from the game.
+    /**
+     * The removal condition is set when the entitiy is removed from the game.
      */
     private int removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
 
@@ -209,23 +210,27 @@ public abstract class Entity
      */
     private char unitNumber     = (char) Entity.NONE;
 
-    /** Indicates whether this entity has been seen by the enemy
-     *  during the course of this game.  Used in double-blind.
+    /** 
+     * Indicates whether this entity has been seen by the enemy
+     * during the course of this game.  Used in double-blind.
      */
     private boolean seenByEnemy = false;
 
-    /** Indicates whether this entity can currently be seen by
-     *  the enemy.  Used in double-blind.
+    /** 
+     * Indicates whether this entity can currently be seen by
+     * the enemy.  Used in double-blind.
      */
     private boolean visibleToEnemy = false;
 
     /** Whether this entity is captured or not. */
     private boolean captured = false;
 
-    //this is the elevation of the VTOL--with respect to the surface of the hex it's in.
-    //In other words, this may need to *change* as it moves from hex to hex--without it going up or down.
-    //I.e.--level 0 hex, elevation 5--it moves to a level 2 hex, without going up or down.
-    //elevation is now 3.
+    /**
+     * this is the elevation of the Entity--with respect to the surface of the hex it's in.
+     * In other words, this may need to *change* as it moves from hex to hex--without it going up or down.
+     * I.e.--level 0 hex, elevation 5--it moves to a level 2 hex, without going up or down.
+     * elevation is now 3.
+     */
     protected int elevation = 0;
     
     /** 
@@ -510,19 +515,19 @@ public abstract class Entity
      *          from a transport this turn.  <code>false</code> otherwise.
      */
     public boolean isActive() {
-      return this.isActive(-1);
+        return this.isActive(-1);
     }
 
     public boolean isActive(int turn) {
-      boolean isActive = !shutDown && !destroyed && getCrew().isActive() && !this.unloadedThisTurn;
+        boolean isActive = !shutDown && !destroyed && getCrew().isActive() && !this.unloadedThisTurn;
 
-      if ( (turn > -1) && isActive ) {
-        isActive = !deployed && shouldDeploy(turn);
-      } else {
-        isActive = isActive && deployed;
-      }
+        if ( (turn > -1) && isActive ) {
+            isActive = !deployed && shouldDeploy(turn);
+        } else {
+            isActive = isActive && deployed;
+        }
 
-      return isActive;
+        return isActive;
     }
 
     /**
@@ -632,17 +637,17 @@ public abstract class Entity
     /**
      * Set whether or not the mech's arms are flipped to the rear
      */
-      public void setArmsFlipped(boolean armsFlipped) {
+    public void setArmsFlipped(boolean armsFlipped) {
         this.armsFlipped = armsFlipped;
         game.processGameEvent(new GameEntityChangeEvent(this, this));        
-      }
+    }
 
     /**
      * Returns true if the mech's arms are flipped to the rear
      */
-      public boolean getArmsFlipped() {
+    public boolean getArmsFlipped() {
         return this.armsFlipped;
-      }
+    }
 
     /**
      * Returns the current position of this entity on
@@ -664,12 +669,20 @@ public abstract class Entity
         this.position = position;
     }
 
+    /**
+     * Sets the current elevation of this entity above the ground.
+     *
+     * @param elevation an <code>int</code> representing the new position.
+     */
     public void setElevation(int elevation) {
         this.elevation=elevation;
     }
 
-    //A helper function for fiddling with elevation.
-    //Takes the current hex, a hex being moved to, returns the elevation the VTOL will be considered to be at w/r/t it's new hex.
+    /**
+     * A helper function for fiddling with elevation.
+     * Takes the current hex, a hex being moved to, returns the elevation the 
+     * Entity will be considered to be at w/r/t it's new hex.
+     */
     public int calcElevation(IHex current, IHex next, int assumedElevation) {
         int retVal = assumedElevation;
         if ((getMovementMode() == IEntityMovementMode.SUBMARINE)
@@ -719,8 +732,10 @@ public abstract class Entity
         return canGoDown(elevation,getPosition());
     }
     
-    //is it possible to go down, or are we landed/just above the water/treeline?
-    //assuming passed elevation.
+    /**
+     * is it possible to go down, or are we landed/just above the water/treeline?
+     * assuming passed elevation.
+     */
     public boolean canGoDown(int assumedElevation,Coords assumedPos) {
         boolean inWaterOrWoods = false;
         IHex hex = getGame().getBoard().getHex(assumedPos);
@@ -884,37 +899,37 @@ public abstract class Entity
     /**
      * Returns true if the entity has an RAC
      */
-      public boolean hasRAC() {
-          for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-              Mounted mounted = (Mounted)i.nextElement();
-              WeaponType wtype = (WeaponType)mounted.getType();
-              if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                  return true;
-              }
-          }
-          return false;
-      }
+    public boolean hasRAC() {
+        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            WeaponType wtype = (WeaponType)mounted.getType();
+            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Returns true if the entity has an RAC which is jammed and not destroyed
      */
-      public boolean canUnjamRAC() {
-          for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-              Mounted mounted = (Mounted)i.nextElement();
-              WeaponType wtype = (WeaponType)mounted.getType();
-              if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY && mounted.isJammed() && !mounted.isDestroyed()) {
-                  return true;
-              }
-          }
-          return false;
-      }
+    public boolean canUnjamRAC() {
+        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            WeaponType wtype = (WeaponType)mounted.getType();
+            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY && mounted.isJammed() && !mounted.isDestroyed()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Returns true if the entity can flip its arms
      */
-      public boolean canFlipArms() {
+    public boolean canFlipArms() {
         return false;
-      }
+    }
 
     /**
      * Returns this entity's original walking movement points
@@ -1071,7 +1086,7 @@ public abstract class Entity
      * Returns the name of the location specified.
      */
     public String getLocationName(HitData hit) {
-      return getLocationName(hit.getLocation());
+        return getLocationName(hit.getLocation());
     }
 
     protected abstract String[] getLocationNames();
@@ -1080,12 +1095,12 @@ public abstract class Entity
      * Returns the name of the location specified.
      */
     public String getLocationName(int loc) {
-      String[] locationNames = getLocationNames();
+        String[] locationNames = getLocationNames();
 
-      if ( (null == locationNames) || (loc >= locationNames.length) )
-        return "";
+        if ( (null == locationNames) || (loc >= locationNames.length) )
+            return "";
 
-      return locationNames[loc];
+        return locationNames[loc];
     }
 
     protected abstract String[] getLocationAbbrs();
@@ -1094,19 +1109,18 @@ public abstract class Entity
      * Returns the abbreviated name of the location specified.
      */
     public String getLocationAbbr(HitData hit) {
-      return getLocationAbbr(hit.getLocation()) + (hit.isRear() && hasRearArmor(hit.getLocation()) ? "R" : "") + (hit.getEffect() == HitData.EFFECT_CRITICAL ? " (critical)" : "");
+        return getLocationAbbr(hit.getLocation()) + (hit.isRear() && hasRearArmor(hit.getLocation()) ? "R" : "") + (hit.getEffect() == HitData.EFFECT_CRITICAL ? " (critical)" : "");
     }
 
     /**
      * Returns the abbreviated name of the location specified.
      */
     public String getLocationAbbr(int loc) {
-      String[] locationAbbrs = getLocationAbbrs();
+        String[] locationAbbrs = getLocationAbbrs();
 
-      if ( (null == locationAbbrs) || (loc >= locationAbbrs.length) )
-        return "";
-
-      return locationAbbrs[loc];
+        if ( (null == locationAbbrs) || (loc >= locationAbbrs.length) )
+            return "";
+        return locationAbbrs[loc];
     }
 
     /**
@@ -1118,7 +1132,7 @@ public abstract class Entity
                 return i;
             }
         }
-      return Entity.LOC_NONE;
+        return Entity.LOC_NONE;
     }
 
     /**
@@ -1221,10 +1235,10 @@ public abstract class Entity
      * Initializes the armor on the unit. Sets the original and starting point
      * of the armor to the same number.
      */
-      public void initializeArmor(int val, int loc) {
+    public void initializeArmor(int val, int loc) {
         orig_armor[loc] = val;
         setArmor(val, loc);
-      }
+    }
 
     /**
     * Returns the total amount of armor on the entity.
@@ -1261,9 +1275,9 @@ public abstract class Entity
     /**
      * Returns the percent of the armor remaining
      */
-      public double getArmorRemainingPercent() {
+    public double getArmorRemainingPercent() {
         return ((double)getTotalArmor() / (double)getTotalOArmor());
-      }
+    }
 
     /**
      * Returns the amount of internal structure in the location hit.
@@ -1313,10 +1327,10 @@ public abstract class Entity
      * Initializes the internal structure on the unit. Sets the original and starting point
      * of the internal structure to the same number.
      */
-      public void initializeInternal(int val, int loc) {
+    public void initializeInternal(int val, int loc) {
         orig_internal[loc] = val;
         setInternal(val, loc);
-      }
+    }
 
     /**
      * Set the internal structure to the appropriate value for the mech's
@@ -1353,9 +1367,9 @@ public abstract class Entity
     /**
      * Returns the percent of the armor remaining
      */
-      public double getInternalRemainingPercent() {
+    public double getInternalRemainingPercent() {
         return ((double)getTotalInternal() / (double)getTotalOInternal());
-      }
+    }
 
     /**
     * Is this location destroyed or breached?
@@ -1386,7 +1400,7 @@ public abstract class Entity
      * Returns true is the location is a leg
      */
     public boolean locationIsLeg(int loc) {
-      return false;
+        return false;
     }
 
     /**
@@ -1538,8 +1552,10 @@ public abstract class Entity
         }
     }
 
-    // Returns an enumeration which contains the name of each
-    //  piece of equipment that failed to load.
+    /**
+     * Returns an enumeration which contains the name of each
+     * piece of equipment that failed to load. 
+     */
     public Enumeration getFailedEquipment() {
         return failedEquipmentList.elements();
     }
@@ -1680,8 +1696,7 @@ public abstract class Entity
      * Tries to load the specified weapon with the specified ammo.
      * Returns true if successful, false otherwise.
      */
-    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo)
-    {
+    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
         boolean success = false;
         WeaponType wtype = (WeaponType)mounted.getType();
         AmmoType atype = (AmmoType)mountedAmmo.getType();
@@ -1693,7 +1708,6 @@ public abstract class Entity
             mounted.setLinked(mountedAmmo);
             success = true;
         }
-
         return success;
     }
 
@@ -1701,12 +1715,11 @@ public abstract class Entity
      * Tries to load the specified weapon with the specified ammo.
      * Returns true if successful, false otherwise.
      */
-    public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo)
-    {
+    public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
         AmmoType atype = (AmmoType)mountedAmmo.getType();
         Mounted oldammo = mounted.getLinked();
 
-        if(oldammo != null && 
+        if (oldammo != null && 
         ((AmmoType)oldammo.getType()).getMunitionType() != atype.getMunitionType())
             return false;
         
@@ -1757,15 +1770,14 @@ public abstract class Entity
         }
     }
 
-
-    /**`
-     * Returns the about of heat that the entity can sink each
+    /**
+     * Returns the amount of heat that the entity can sink each
      * turn.
      */
     public abstract int getHeatCapacity();
 
     /**
-     * Returns the about of heat that the entity can sink each
+     * Returns the amount of heat that the entity can sink each
      * turn, factoring in whether the entity is standing in water.
      */
     public abstract int getHeatCapacityWithWater();
@@ -1811,7 +1823,6 @@ public abstract class Entity
                 empty++;
             }
         }
-
         return empty;
     }
 
@@ -1826,7 +1837,6 @@ public abstract class Entity
                 empty++;
             }
         }
-
         return empty;
     }
 
@@ -1868,9 +1878,7 @@ public abstract class Entity
                 && !ccs.isDestroyed() && !ccs.isBreached()) {
                 operational++;
             }
-
         }
-
         return operational;
     }
 
@@ -1888,9 +1896,7 @@ public abstract class Entity
                     hits++;
                 }
             }
-
         }
-
         return hits;
     }
 
@@ -1909,24 +1915,21 @@ public abstract class Entity
                     hits++;
                 }
             }
-
         }
-
         return hits;
     }
 
     protected abstract int[] getNoOfSlots();
-  /**
-   * Returns the number of total critical slots in a location
-   */
+    
+    /**
+     * Returns the number of total critical slots in a location
+     */
     public int getNumberOfCriticals(int loc) {
-      int[] noOfSlots = getNoOfSlots();
-
-      if ( (null == noOfSlots) || (loc >= noOfSlots.length) || loc == LOC_NONE ) {
-        return 0;
-      }
-
-      return noOfSlots[loc];
+        int[] noOfSlots = getNoOfSlots();
+        if ( (null == noOfSlots) || (loc >= noOfSlots.length) || loc == LOC_NONE ) {
+            return 0;
+        }
+        return noOfSlots[loc];
     }
 
     /**
@@ -1935,16 +1938,12 @@ public abstract class Entity
      */
     public int getNumberOfCriticals(int type, int index, int loc) {
         int num = 0;
-
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             CriticalSlot ccs = getCritical(loc, i);
-
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
                 num++;
             }
-
         }
-
         return num;
     }
 
@@ -1959,23 +1958,22 @@ public abstract class Entity
     /**
      * Returns true if the entity has a leg actuator crit
      */
-      public boolean hasLegActuatorCrit() {
+    public boolean hasLegActuatorCrit() {
         boolean hasCrit = false;
 
         for ( int i = 0; i < locations(); i++ ) {
-          if ( locationIsLeg(i) ) {
-            if ( (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, i) > 0) ||
-                  (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, i) > 0) ||
-                  (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, i) > 0) ||
-                  (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, i) > 0) ) {
-              hasCrit = true;
-              break;
+            if ( locationIsLeg(i) ) {
+                if ( (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, i) > 0) ||
+                     (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, i) > 0) ||
+                     (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, i) > 0) ||
+                     (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, i) > 0) ) {
+                    hasCrit = true;
+                    break;
+                }
             }
-          }
         }
-
         return hasCrit;
-      }
+    }
 
     /**
      * Returns true if there is at least 1 functional system of the type
@@ -2037,8 +2035,7 @@ public abstract class Entity
                 if ( BattleArmor.SINGLE_HEX_ECM
                      .equals(type.getInternalName()) ) {
                     return 0;
-                }
-                else {
+                } else {
                     return 6;
                 }
             }
@@ -2046,6 +2043,9 @@ public abstract class Entity
         return Entity.NONE;
     }
 
+    /**
+     * Returns wether or not this entity has a Targeting Computer.
+     */
     public boolean hasTargComp() {
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
@@ -2056,6 +2056,10 @@ public abstract class Entity
         return false;
     }
 
+    /**
+     * Returns wether or not this entity has a Targeting Computer that is in
+     * aimed shot mode.
+     */
     public boolean hasAimModeTargComp() {
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
@@ -2066,7 +2070,7 @@ public abstract class Entity
         return false;
     }
     /**
-     * Returns whether this 'mech is part of a C3 network.
+     * Returns whether this 'mech has a C3 Slave or not.
      */
 
     public boolean hasC3S() {
@@ -2198,8 +2202,7 @@ public abstract class Entity
                     }
                 }
             }
-        }
-        else if ( hasC3M() && this.C3MasterIs(this) )  {
+        } else if ( hasC3M() && this.C3MasterIs(this) )  {
             nodes = 3;
             if (game != null) {
                 for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
@@ -2237,8 +2240,7 @@ public abstract class Entity
                     }
                 }
             }
-        }
-        else if (hasC3M())  {
+        } else if (hasC3M())  {
             nodes = 3;
             if (game != null) {
                 for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
@@ -2252,7 +2254,7 @@ public abstract class Entity
                                  !this.hasC3MM() || e.hasC3S() )
                                 nodes--;
                         }
-                        if(nodes <= 0) return 0;
+                        if (nodes <= 0) return 0;
                     }
                 }
             }
@@ -2261,12 +2263,12 @@ public abstract class Entity
     }
 
     public Entity getC3Top() {
-      Entity m = this;
-      while(m.getC3Master() != null && !m.getC3Master().equals(m) && m.getC3Master().hasC3() &&
-            !(Compute.isAffectedByECM(m, m.getPosition(), m.getC3Master().getPosition()))) {
-        m = m.getC3Master();
-      }
-      return m;
+        Entity m = this;
+        while (m.getC3Master() != null && !m.getC3Master().equals(m) && m.getC3Master().hasC3() &&
+              !(Compute.isAffectedByECM(m, m.getPosition(), m.getC3Master().getPosition()))) {
+            m = m.getC3Master();
+        }
+        return m;
     }
 
     /**
@@ -2368,27 +2370,31 @@ public abstract class Entity
      *          the passed unit isn't this unit's commander, this routine
      *          returns <code>false</code>.
      */
-    public boolean C3MasterIs(Entity e)
-    {
-        if(e == null && C3Master == NONE) return true;
+    public boolean C3MasterIs(Entity e) {
+        if (e == null && C3Master == NONE) return true;
         return (e.id == C3Master);
     }
-
-    public void setC3Master(Entity e)
-    {
-        if(e == null) {
+    
+    /**
+     * Set another <code>Entity</code> as our C3 Master
+     * @param e - the <code>Entity</code> that should be set as our C3 Master.
+     */
+    public void setC3Master(Entity e) {
+        if (e == null) {
             setC3Master(NONE);
-        }
-        else {
+        } else {
             if (isEnemyOf(e)) return;
             setC3Master(e.id);
         }
     }
 
-    public void setC3Master(int entityId)
-    {
-        if((id == entityId) != (id == C3Master))
-        {   // this just changed from a company-level to lance-level (or vice versa); have to disconnect all slaved units to maintain integrity.
+    /**
+     * 
+     * @param entityId
+     */
+    public void setC3Master(int entityId) {
+        if ((id == entityId) != (id == C3Master)) {
+            // this just changed from a company-level to lance-level (or vice versa); have to disconnect all slaved units to maintain integrity.
             for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
                 final Entity e = (Entity)i.nextElement();
                 if(e.C3MasterIs(this) && !equals(e)) {
@@ -2396,51 +2402,52 @@ public abstract class Entity
                 }
             }
         }
-        if(hasC3()) C3Master = entityId;
-        if(hasC3() && entityId == NONE) {
+        if (hasC3()) C3Master = entityId;
+        if (hasC3() && entityId == NONE) {
             C3NetIdString = "C3." + id;
-
-        }
-        else if(hasC3i() && entityId == NONE) {
+        } else if (hasC3i() && entityId == NONE) {
             C3NetIdString = "C3i." + id;
-        }
-        else if ( hasC3() || hasC3i() ) {
+        } else if (hasC3() || hasC3i()) {
             C3NetIdString = game.getEntity(entityId).getC3NetId();
         }
-
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
-            if ( e.C3MasterIs(this) && !equals(e) ) {
+            if (e.C3MasterIs(this) && !equals(e)) {
                 e.C3NetIdString = C3NetIdString;
             }
-
         }
-
     }
 
+    /**
+     * Checks if another entity is on the same c3 network as this entity
+     * @param e The <code>Entity</code> to check against this entity
+     * @return a <code>boolean</code> that is <code>true</code> if the given 
+     *         entity is on the same network,
+     *         <code>false</code> if not. 
+     */
     public boolean onSameC3NetworkAs(Entity e) {
-      if ( isEnemyOf(e) || isShutDown() || e.isShutDown()
-           || isINarcedWith(INarcPod.ECM) ) {
-          return false; 
-      }
+        if ( isEnemyOf(e) || isShutDown() || e.isShutDown()
+             || isINarcedWith(INarcPod.ECM) ) {
+             return false; 
+        }
 
-      // Active Mek Stealth prevents entity from participating in C3.
-      // Turn off the stealth, and your back in the network.
-      if ( this instanceof Mech && this.isStealthActive() ) return false;
-      if ( e instanceof Mech && e.isStealthActive() ) return false;
+        // Active Mek Stealth prevents entity from participating in C3.
+        // Turn off the stealth, and your back in the network.
+        if ( this instanceof Mech && this.isStealthActive() ) return false;
+        if ( e instanceof Mech && e.isStealthActive() ) return false;
 
 
-      // C3i is easy - if they both have C3i, and their net ID's match, they're on the same network!
-      if(hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
-        // check for ECM interference
-        return !(Compute.isAffectedByECM(e, e.getPosition(), getPosition()));
-      }
+        // C3i is easy - if they both have C3i, and their net ID's match, they're on the same network!
+        if (hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
+            // check for ECM interference
+            return !(Compute.isAffectedByECM(e, e.getPosition(), getPosition()));
+        }
 
-      // simple sanity check - do they both have C3, and are they both on the same network?
-      if (!hasC3() || !e.hasC3()) return false;
-      if (getC3Top() == null || e.getC3Top() == null) return false;
-      // got the easy part out of the way, now we need to verify that the network isn't down
-      return (getC3Top().equals(e.getC3Top()));
+        // simple sanity check - do they both have C3, and are they both on the same network?
+        if (!hasC3() || !e.hasC3()) return false;
+        if (getC3Top() == null || e.getC3Top() == null) return false;
+        // got the easy part out of the way, now we need to verify that the network isn't down
+        return (getC3Top().equals(e.getC3Top()));
     }
 
     /**

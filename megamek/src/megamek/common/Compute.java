@@ -598,6 +598,12 @@ public class Compute {
         if (isIndirect) {
             c3spotter = ae; // no c3 when using indirect fire
         }
+        if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
+                !game.getOptions().booleanOption("indirect_always_possible") &&
+                LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire impossible with direct LOS");
+        }
+
         int c3dist = effectiveDistance(game, c3spotter, target);
         int c3range = RangeType.rangeBracket(c3dist, weaponRanges,
                 useExtremeRange);

@@ -6159,6 +6159,17 @@ implements Runnable, ConnectionHandler {
       boolean bSwarmI = (usesAmmo
                             && (atype.getAmmoType() == AmmoType.T_LRM)
                             && atype.getMunitionType() == AmmoType.M_SWARM_I);
+      boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
+                               && weapon.curMode().equals("Indirect");
+      if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
+          !game.getOptions().booleanOption("indirect_always_possible") &&
+          LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
+          r = new Report(3470);
+          r.subject = subjectId;
+          r.addDesc(ae);
+          vPhaseReport.addElement(r);
+          return false;
+      }
       boolean bGlancing = false; // For Glancing Hits Rule
       int swarmMissilesNowLeft = 0;
       int hits = 1, glancingMissileMod = 0;

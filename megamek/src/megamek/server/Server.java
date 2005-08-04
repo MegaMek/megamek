@@ -147,7 +147,6 @@ implements Runnable, ConnectionHandler {
         registerCommand(new VictoryCommand(this));
         registerCommand(new WhoCommand(this));
         registerCommand(new SeeAllCommand(this));
-        registerCommand(new HeatSinkCommand(this));
         registerCommand(new LocalSaveGameCommand(this));
     }
 

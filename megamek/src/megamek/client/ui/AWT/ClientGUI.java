@@ -1388,7 +1388,8 @@ public class ClientGUI
                 }
             } else {
                 //Continued movement after getting up
-                doAlertDialog("Movement Report",e.getReport());
+                if (!(client instanceof megamek.client.bot.TestBot))
+                    doAlertDialog("Movement Report",e.getReport());
             }
         }
 

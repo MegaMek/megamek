@@ -23,6 +23,7 @@ v0.29.87-dev (CVS) RELEASE CANDITATE 4 or STABLE RELEASE
 + Removed text-only heatsink activation/deactivation command.
 + PM says "no indirect LRM while attacker has direct LOS to target".
 + Updated german translation of server reports.
++ Bug 1247625: Don't show "fell down during movment" popup to bot client.
 
 v0.29.86 (2005-07-27 1:25pm) RELEASE CANDIDATE 3!
 + Unloaded units now should always get their elevation set correctly.

@@ -53,9 +53,11 @@ public class InitiativeRoll implements com.sun.java.util.collections.Comparable,
         wasRollReplaced.addElement(new Boolean(false));
     }
 
-    // Replace the previous init roll with a new one, and make a note
-    //  that it was replaced.  Used for Tactical Genius special
-    //  pilot ability (lvl 3).
+    /** 
+     * Replace the previous init roll with a new one, and make a note
+     * that it was replaced.  Used for Tactical Genius special
+     * pilot ability (lvl 3).
+     */
     public void replaceRoll() {
         Integer roll = new Integer(Compute.d6(2));
         rolls.setElementAt(roll, size() - 1);
@@ -108,8 +110,7 @@ public class InitiativeRoll implements com.sun.java.util.collections.Comparable,
         return compare;
     }
 
-    public String toString()
-    {
+    public String toString(){
         StringBuffer buff = new StringBuffer();
 
         boolean tacticalGenius = false;
@@ -132,5 +133,4 @@ public class InitiativeRoll implements com.sun.java.util.collections.Comparable,
         }
         return buff.toString();
     }
-
 }

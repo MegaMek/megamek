@@ -1320,7 +1320,7 @@ implements Runnable, ConnectionHandler {
                 rollInitiative();
 
                 if ( !game.shouldDeployThisRound() )
-                  incrementAndSendGameRound();
+                    incrementAndSendGameRound();
 
                 //setIneligible(phase);
                 determineTurnOrder(phase);
@@ -2244,10 +2244,12 @@ implements Runnable, ConnectionHandler {
             if (team.getSize() == 1) {
                 final Player player = (Player)team.getPlayers().nextElement();
 
-                r = new Report(1015, Report.PUBLIC);
-                r.add(player.getName());
-                r.add(team.getInitiative().toString());
-                vPhaseReport.addElement(r);
+                if (!player.isObserver()) {
+                    r = new Report(1015, Report.PUBLIC);
+                    r.add(player.getName());
+                    r.add(team.getInitiative().toString());
+                    vPhaseReport.addElement(r);
+                }
             } else {
                 // Multiple players.  List the team, then break it down.
                 r = new Report(1015, Report.PUBLIC);
@@ -2256,13 +2258,14 @@ implements Runnable, ConnectionHandler {
                 vPhaseReport.addElement(r);
                 for( Enumeration j = team.getPlayers(); j.hasMoreElements();) {
                     final Player player = (Player)j.nextElement();
-                    r = new Report(1015, Report.PUBLIC);
-                    r.indent();
-                    r.add(player.getName());
-                    r.add(player.getInitiative().toString());
-                    vPhaseReport.addElement(r);
+                    if (!player.isObserver()) {
+                        r = new Report(1015, Report.PUBLIC);
+                        r.indent();
+                        r.add(player.getName());
+                        r.add(player.getInitiative().toString());
+                        vPhaseReport.addElement(r);
+                    }
                 }
-
             }
         }
 

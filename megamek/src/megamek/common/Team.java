@@ -33,23 +33,19 @@ public final class Team extends TurnOrdered implements Serializable
         id = newID;
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return players.size();
     }
 
-    public Enumeration getPlayers()
-    {
+    public Enumeration getPlayers() {
         return players.elements();
     }
 
-    public void resetTeam()
-    {
+    public void resetTeam() {
         players.removeAllElements();
     }
 
-    public void addPlayer(Player p)
-    {
+    public void addPlayer(Player p) {
         players.addElement(p);
     }
 
@@ -61,8 +57,7 @@ public final class Team extends TurnOrdered implements Serializable
         TurnOrdered.rollInitiative( players );
     }
 
-    public TurnVectors determineTeamOrder(IGame game)
-    {
+    public TurnVectors determineTeamOrder(IGame game) {
         return TurnOrdered.generateTurnOrder( players , game);
     }
 

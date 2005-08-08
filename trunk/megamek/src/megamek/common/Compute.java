@@ -1234,10 +1234,14 @@ public class Compute {
      */
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t) {
         Entity entityTarget = null;
+        IHex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
             entityTarget = (Entity) t;
+            if (hex == null) {
+                entityTarget.setPosition(game.getEntity(entityTarget.getId()).getPosition());
+                hex = game.getBoard().getHex(game.getEntity(entityTarget.getId()).getPosition());
+            }
         }
-        final IHex hex = game.getBoard().getHex(t.getPosition());
 
         boolean isVTOL = ((entityTarget != null) && (hex != null)) ? (entityTarget
                 .getElevation() >= hex.ceiling())

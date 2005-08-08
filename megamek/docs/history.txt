@@ -24,6 +24,7 @@ v0.29.87 (2005-08-08 8:00am) RELEASE CANDITATE 4!
 + PM says "no indirect LRM while attacker has direct LOS to target".
 + Updated german translation of server reports.
 + Bug 1247625: Don't show "fell down during movment" popup to bot client.
++ Bug 1241319: Now checks for missing position when unloading infantry.
 
 v0.29.86 (2005-07-27 1:25pm) RELEASE CANDIDATE 3!
 + Unloaded units now should always get their elevation set correctly.

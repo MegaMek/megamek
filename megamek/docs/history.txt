@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.87-dev (CVS) RELEASE CANDITATE 4 or STABLE RELEASE
+v0.29.87 (2005-08-08 8:00am) RELEASE CANDITATE 4!
 + Bug 1246893: Swarm-LRM crashes MM
 + Fix some server report newline issues.
 + Possible double-blind exploit fixed.

@@ -132,12 +132,15 @@ public class GALance extends GA {
                             for (int e = 0; e < enemy_array.length; e++) {
                                 CEntity cen = tb.centities.get((Entity) this.enemy_array[e]);
                                 if (!cen.canMove()) {
-                                    if ((cen.current.getFinalCoords().distance(next.getFinalCoords()) == 1
-                                        && cen.current.getFinalCoords().distance(other.getFinalCoords()) == 1)
-                                        || (cen.current.getFinalCoords().distance(next.getFinalCoords()) <= 3
-                                            && cen.current.getFinalCoords().distance(other.getFinalCoords()) <= 3
-                                            && cen.current.getFinalProne())
-                                        && !(next.inDanger || next.getFinalProne())) {
+                                    if ((next.getFinalCoords() != null)
+                                            && (other.getFinalCoords() != null)
+                                            && (cen.current.getFinalCoords() != null)
+                                            && ((cen.current.getFinalCoords().distance(next.getFinalCoords()) == 1
+                                            && cen.current.getFinalCoords().distance(other.getFinalCoords()) == 1)
+                                            || (cen.current.getFinalCoords().distance(next.getFinalCoords()) <= 3
+                                                && cen.current.getFinalCoords().distance(other.getFinalCoords()) <= 3
+                                                && cen.current.getFinalProne())
+                                            && !(next.inDanger || next.getFinalProne()))) {
                                         swarm = true;
                                         target = cen;
                                     }

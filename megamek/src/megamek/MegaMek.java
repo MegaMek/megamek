@@ -461,12 +461,16 @@ public class MegaMek implements ActionListener {
 
         // host with the scenario.  essentially copied from host()
         HostDialog hd = new HostDialog(frame);
+        boolean hasSlot = false;
+        if (!(sd.localName.equals("")))
+            hasSlot = true;
         hd.yourNameF.setText(sd.localName);
         hd.show();
         // verify dialog data
         if (hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
+        sd.localName = hd.name;
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
@@ -524,6 +528,18 @@ public class MegaMek implements ActionListener {
                 c.retrieveServerInfo(); 
             }
         }
+
+        // If he didn't have a name when hasSlot was set, then the host should be
+        // an observer.
+        if (!hasSlot) {
+            Enumeration pE = server.getGame().getPlayers();
+            while (pE.hasMoreElements()) {
+                Player tmpP = (Player)pE.nextElement();
+                if (tmpP.getName().equals(sd.localName))
+                    tmpP.setObserver(true);
+            }
+        }
+
         launch(gui.getFrame());
     }
 

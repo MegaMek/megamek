@@ -11588,6 +11588,11 @@ implements Runnable, ConnectionHandler {
       if ( !game.getOptions().booleanOption("engine_explosions") || en.rolledForEngineExplosion )
         return false;
 
+      if ( !(en instanceof Mech) && !(en instanceof QuadMech) &&
+           !(en instanceof BipedMech) ) {
+          return false;
+      }
+      
       int explosionBTH = 12;
       int explosionRoll = Compute.d6(2);
 

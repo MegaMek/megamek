@@ -6,6 +6,7 @@ v0.29.88 (CVS) RC 5 or STABLE RELEASE
 + Bug 1254924: If a scenario is populated only by bots, the host is now added
     as an observer instead of not getting a client window.
 + New Mechs for Batchall.de, a little later than normal
++ Bug 1255373: protomechs roll for maxtech engine explosion
 
 v0.29.87 (2005-08-08 8:00am) RELEASE CANDITATE 4!
 + Bug 1246893: Swarm-LRM crashes MM

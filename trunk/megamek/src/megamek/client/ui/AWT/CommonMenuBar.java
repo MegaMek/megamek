@@ -585,15 +585,22 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         }
 
         // We can only view the LOS/Range tool setting and
-        // the mini map in certain phases.
-        if ( this.phase == IGame.PHASE_SET_ARTYAUTOHITHEXES ||
-             this.phase == IGame.PHASE_DEPLOY_MINEFIELDS ||
-             this.phase == IGame.PHASE_MOVEMENT ||
-             this.phase == IGame.PHASE_FIRING ||
-             this.phase == IGame.PHASE_PHYSICAL ||
-             this.phase == IGame.PHASE_OFFBOARD ||
-             this.phase == IGame.PHASE_TARGETING ||
-             this.phase == IGame.PHASE_DEPLOYMENT ) {
+        // the mini map in certain phases of the game.  Also
+        // the board editor has no LOS/Units/Player stuff
+        if ( this.client == null && this.hasBoard == true ) {
+            viewLOSSetting.setEnabled( false );
+            viewUnitOverview.setEnabled( false );
+            viewPlayerList.setEnabled( false );
+        }
+        // We're in-game.
+        else if ( this.phase == IGame.PHASE_SET_ARTYAUTOHITHEXES ||
+                  this.phase == IGame.PHASE_DEPLOY_MINEFIELDS ||
+                  this.phase == IGame.PHASE_MOVEMENT ||
+                  this.phase == IGame.PHASE_FIRING ||
+                  this.phase == IGame.PHASE_PHYSICAL ||
+                  this.phase == IGame.PHASE_OFFBOARD ||
+                  this.phase == IGame.PHASE_TARGETING ||
+                  this.phase == IGame.PHASE_DEPLOYMENT ) {
             viewLOSSetting.setEnabled( true );
             viewMiniMap.setEnabled( true );
             if ( isJ2RE == true ){
@@ -605,7 +612,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             }
             viewUnitOverview.setEnabled( true );
             viewPlayerList.setEnabled( true );
-        } else {
+        }
+        // We're in-game, but not in a phase with map functions.
+        else {
             viewLOSSetting.setEnabled( false );
             viewMiniMap.setEnabled( false );
             viewZoomIn.setEnabled( false );

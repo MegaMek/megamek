@@ -271,8 +271,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             tempPanel.add(butOffBoardDistance);
         }
 
-        if (!(entity.hasTargComp()) && (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_targsys")) && (entity instanceof Mech))
-        {
+        if (!(entity.hasTargComp()) && (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_targsys")) && (entity instanceof Mech)) {
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labTargSys, c);
@@ -347,6 +346,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         
         // Set up rapidfire mg
         if (clientgui.getClient().game.getOptions().booleanOption("maxtech_burst")) { //$NON-NLS-1$
+            c.gridwidth = 1;
             setupRapidfireMGs();
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(panRapidfireMGs, c);
@@ -435,20 +435,21 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     
     private void setupRapidfireMGs() {
         GridBagLayout gbl = new GridBagLayout();
-        panMunitions.setLayout(gbl);
+        panRapidfireMGs.setLayout(gbl);
         GridBagConstraints gbc = new GridBagConstraints();
         
         int row = 0;
         for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             WeaponType wtype = (WeaponType)m.getType();
-            if (wtype.hasFlag(WeaponType.F_MG)) {
-                gbc.gridy = row++;
-                RapidfireMGPanel rmp = new RapidfireMGPanel(m);                
-                gbl.setConstraints(rmp, gbc);
-                panRapidfireMGs.add(rmp);
-                m_vMGs.addElement(rmp);
-            }
+            if (!wtype.hasFlag(WeaponType.F_MG)) {
+                continue;
+            } 
+            gbc.gridy = row++;
+            RapidfireMGPanel rmp = new RapidfireMGPanel(m);
+            gbl.setConstraints(rmp, gbc);
+            panRapidfireMGs.add(rmp);
+            m_vMGs.addElement(rmp);
         }
     }
     
@@ -704,10 +705,21 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 
         public RapidfireMGPanel(Mounted m) {
             m_mounted = m;
-            int loc;
-            setLayout(new GridLayout(2, 2));
-            loc = m.getLocation();            
-            add(new Label(Messages.getString("CustomMechDialog.switchToRapidFire", new Object[]{entity.getLocationAbbr(loc)}))); //$NON-NLS-1$
+            int loc = m.getLocation();            
+            String sDesc = Messages.getString("CustomMechDialog.switchToRapidFire", new Object[]{entity.getLocationAbbr(loc)}); //$NON-NLS-1$
+            Label labRapid = new Label(sDesc);
+            GridBagLayout g = new GridBagLayout();
+            setLayout(g);
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.EAST;
+            g.setConstraints(labRapid, c);
+            add(labRapid);
+            c.gridx = 1;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.WEST;
+            g.setConstraints(chRapid, c);
             chRapid.setState(m.isRapidfire());
             add(chRapid);
         }
@@ -735,30 +747,24 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     }
 
     public void setOptions() {
-      IOption option;
-      
-      for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-        DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
-        
-        option = comp.getOption();
-        
-        if ( (comp.getValue() == Messages.getString("CustomMechDialog.None")) ) { //NON-NLS-$1
-            entity.getCrew().getOptions().getOption(option.getName()).setValue("None"); //NON-NLS-$1
-        } else entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
-      }
+        IOption option;
+        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
+            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+            option = comp.getOption();
+            if ( (comp.getValue() == Messages.getString("CustomMechDialog.None")) ) { //NON-NLS-$1
+                entity.getCrew().getOptions().getOption(option.getName()).setValue("None"); //NON-NLS-$1
+            } else entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
+        }
     }
     
     public void resetOptions() {
-      IOption option;
-      
-      for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-        DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
-        
-        option = comp.getOption();
-        option.setValue(false);
-                
-        entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
-      }
+        IOption option;
+        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
+            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+            option = comp.getOption();
+            option.setValue(false);
+            entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
+        }
     }
     
     public void refreshOptions() {
@@ -832,18 +838,18 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     }
 
     private void refreshDeployment() {
-      choDeployment.removeAll();
-      choDeployment.add(Messages.getString("CustomMechDialog.StartOfGame")); //$NON-NLS-1$
+        choDeployment.removeAll();
+        choDeployment.add(Messages.getString("CustomMechDialog.StartOfGame")); //$NON-NLS-1$
       
-      if ( entity.getDeployRound() < 1 )
-        choDeployment.select(0);
+        if ( entity.getDeployRound() < 1 )
+            choDeployment.select(0);
         
-      for ( int i = 1; i <= 15; i++ ) {
-        choDeployment.add(Messages.getString("CustomMechDialog.AfterRound") + i); //$NON-NLS-1$
+        for ( int i = 1; i <= 15; i++ ) {
+            choDeployment.add(Messages.getString("CustomMechDialog.AfterRound") + i); //$NON-NLS-1$
         
-        if ( entity.getDeployRound() == i )
-          choDeployment.select(i);
-      }
+            if ( entity.getDeployRound() == i )
+                choDeployment.select(i);
+        }
     }
     
     private void refreshC3() {

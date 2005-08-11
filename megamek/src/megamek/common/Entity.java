@@ -280,6 +280,7 @@ public abstract class Entity
     public void setId(int id) {
         this.id = id;
         displayName = null;
+        shortName = null;
     }
 
     public int getExternalId() {
@@ -790,8 +791,11 @@ public abstract class Entity
         if (model != null && model.length() > 0) {
             nbuf.append(" ").append(model);
         }
-        if (duplicateMarker > 1) {
-            //if a player has more than one unit with the same name,
+        // if show unit id is on, append the id
+        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+            nbuf.append(" ID:").append(this.getId());
+        } else if (duplicateMarker > 1) {
+            //if not, and a player has more than one unit with the same name,
             // append "#N" after the model to differentiate.
             nbuf.append(" #" + duplicateMarker);
         }
@@ -829,8 +833,11 @@ public abstract class Entity
         if (model != null && model.length() > 0) {
             nbuf.append(" ").append(model);
         }
-        if (duplicateMarker > 1) {
-            //if a player has more than one unit with the same name,
+        // if show unit id is on, append the id
+        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+            nbuf.append(" ID:").append(this.getId());
+        } else if (duplicateMarker > 1) {
+            // if not, and a player has more than one unit with the same name,
             // append "#N" after the model to differentiate.
             nbuf.append(" #" + duplicateMarker);
         }

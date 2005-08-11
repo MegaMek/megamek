@@ -55,7 +55,7 @@ public class MechView {
             .append("\r\n") //$NON-NLS-1$
             .append(getFailed());
 
-        sBasic.append( mech.getShortName() );
+        sBasic.append( mech.getShortNameRaw() );
         sBasic.append("\r\n"); //$NON-NLS-1$
         if ( !isInf ) {
             sBasic.append( Math.round(mech.getWeight()) )

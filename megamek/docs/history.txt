@@ -14,6 +14,7 @@ v0.29.88 (CVS) RC 5 or STABLE RELEASE
 + Patch 1253824: Cross-Platform MenuBar Accelerator bugfix
 + Patch 1253829: MechSelectorDialog: Disable List during Update
 + Patch 1256335: Added Zoom capability to BoardEditor
++ Bug 1246589: Missing Unique ID in logfile.
 
 v0.29.87 (2005-08-08 8:00am) RELEASE CANDITATE 4!
 + Bug 1246893: Swarm-LRM crashes MM

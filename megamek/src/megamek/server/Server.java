@@ -6554,9 +6554,9 @@ implements Runnable, ConnectionHandler {
 
           for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
               Entity entity = (Entity)impactHexHits.nextElement();
-              // only damage units that are lower than the target hex's ceiling
+              // only damage units that are on the ground
               // TODO: check with the PM
-              if (entity.getElevation() > game.getBoard().getHex(coords).ceiling()) {
+              if (entity.getElevation() > 0) {
                   continue;
               }
               hits = ratedDamage;
@@ -6605,9 +6605,9 @@ implements Runnable, ConnectionHandler {
               }
               for (;splashHexHits.hasMoreElements();) {
                   Entity entity = (Entity)splashHexHits.nextElement();
-                  // only damage units that are lower than the target hex's ceiling
+                  // only damage units that are on the ground
                   // TODO: check with the PM
-                  if (entity.getElevation() > game.getBoard().getHex(coords).ceiling()) {
+                  if (entity.getElevation() > 0) {
                       continue;
                   }
                   hits = ratedDamage;
@@ -6649,7 +6649,7 @@ implements Runnable, ConnectionHandler {
                   vPhaseReport.addElement(r);
                   return !bMissed;
               }
-          }//oscar should not close here?
+          }
 
           // Handle the thunder munitions.
           if ((atype.getAmmoType() == AmmoType.T_LRM)
@@ -10470,7 +10470,7 @@ implements Runnable, ConnectionHandler {
             // the burning terrain. TODO: Check for rules conformity (ATPM?)
             Coords c = entity.getPosition();
             IHex h = game.getBoard().getHex(c.x, c.y);
-            if (((VTOL)entity).getElevation()+h.getElevation() > h.ceiling()) {
+            if (entity.getElevation()+h.getElevation() > h.ceiling()) {
                 return;
             }
         }

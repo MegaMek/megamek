@@ -383,6 +383,13 @@ public abstract class BotClient extends Client {
             valid_array[valid_arr_index] = valid_array[arr_x_index];
             valid_array[arr_x_index] = test_hex;
         }
+        // copy valid hexes into a new array of the correct size,
+        // so we don't return an array that contains null Coords
+        Coords[] valid_new = new Coords[counter];
+        for (int i = 0; i < counter; i++) {
+            valid_new[i] = valid_array[i];
+        }
+        valid_array = valid_new;
 
         // Now get minimum and maximum elevation levels for these hexes
 
@@ -589,7 +596,7 @@ public abstract class BotClient extends Client {
             }
             //   ProtoMech
             //      -> 
-            //      -> Trees icrease fitness by +2 (minor)
+            //      -> Trees increase fitness by +2 (minor)
 
             if(deployed_ent instanceof Protomech){
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){

@@ -2421,7 +2421,7 @@ implements Runnable, ConnectionHandler {
             // non flying unit unloading units into a building
             // -> sit in the building at the same elevation
             unit.setElevation(elevation);
-        } else if (hex.containsTerrain(Terrains.WATER)) {
+        } else if (hex.terrainLevel(Terrains.WATER)>0) {
             if (unit.getMovementMode() == IEntityMovementMode.HOVER ||
                 unit.getMovementMode() == IEntityMovementMode.HYDROFOIL ||
                 unit.getMovementMode() == IEntityMovementMode.NAVAL ||
@@ -2436,7 +2436,7 @@ implements Runnable, ConnectionHandler {
             // unit elevation is relative to the surface 
             unit.setElevation(hex.floor() - hex.surface());
         }
-        doSetLocationsExposure(unit, hex, isBridge, false);
+        doSetLocationsExposure(unit, hex, false);
 
         // Update the unloaded unit.
         this.entityUpdate( unit.getId() );
@@ -3609,8 +3609,8 @@ implements Runnable, ConnectionHandler {
             // check during movement, for breach damage, and always
             // set dry if appropriate
             //TODO: possibly make the locations local and set later
-            doSetLocationsExposure(entity, curHex, isPavementStep,
-                                   step.getMovementType() == IEntityMovementType.MOVE_JUMP);
+            doSetLocationsExposure(entity, curHex, 
+                    step.getMovementType() == IEntityMovementType.MOVE_JUMP);
 
             // Handle loading units.
             if ( step.getType() == MovePath.STEP_LOAD ) {
@@ -3927,7 +3927,7 @@ implements Runnable, ConnectionHandler {
 
         } // End entity-is-jumping
         // update entity's locations' exposure
-        doSetLocationsExposure(entity, game.getBoard().getHex(curPos), game.getBoard().getHex(curPos).surface() <= entity.getElevation(), false);
+        doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false);
 
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP()
@@ -4580,12 +4580,10 @@ implements Runnable, ConnectionHandler {
      *
      * @param entity The <code>Entity</code> who's exposure is being set
      * @param hex The <code>IHex</code> the entity is in
-     * @param isPavementStep a <code>boolean</code> value wether
-     *                       the entity is moving on a road
      * @param isJump a <code>boolean</code> value wether the entity is jumping
      */
 
-    public void doSetLocationsExposure(Entity entity, IHex hex, boolean isPavementStep, boolean isJump) {
+    public void doSetLocationsExposure(Entity entity, IHex hex, boolean isJump) {
         if ( hex.terrainLevel(Terrains.WATER) > 0
                 && !isJump) {
             if (entity instanceof Mech
@@ -4995,7 +4993,7 @@ implements Runnable, ConnectionHandler {
 
                 entity.setPosition(dest);
                 doEntityDisplacementMinefieldCheck(entity, src, dest);
-                doSetLocationsExposure(entity, destHex, destHex.hasPavement(), false);
+                doSetLocationsExposure(entity, destHex, false);
                 if (roll != null) {
                     game.addPSR(roll);
                 }
@@ -12269,7 +12267,7 @@ implements Runnable, ConnectionHandler {
                     }
                     damage -= cluster;
                 }
-                if(exploded) {
+                if (exploded) {
                     r = new Report(6285);
                     r.subject = en.getId();
                     r.addDesc(en);
@@ -12278,7 +12276,7 @@ implements Runnable, ConnectionHandler {
                 }
 
                 //check for location exposure
-                doSetLocationsExposure(en, fallHex, fallHex.hasPavement(), false);
+                doSetLocationsExposure(en, fallHex, false);
                 en.setElevation(0);
             }
         } else {
@@ -13180,7 +13178,7 @@ implements Runnable, ConnectionHandler {
         }
 
         //check for location exposure
-        doSetLocationsExposure(entity, fallHex, fallHex.hasPavement(), false);
+        doSetLocationsExposure(entity, fallHex, false);
 
         // we want to be able to avoid pilot damage even when it was
         // an automatic fall, only unconsciousness should cause auto-damage

@@ -854,8 +854,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        // handle pseudo--menu-shortcuts
-        if (ev.isControlDown()) {
+        // handle pseudo--menu-shortcuts; the shortcut key changes by platform
+        if ((ev.getKeyCode() & ev.getComponent().getToolkit().getMenuShortcutKeyMask()) != 0) {
             // for every menu accelerator...
             for (Enumeration shortcuts = shortcuts(); shortcuts.hasMoreElements() ;) {
                 MenuShortcut shortcut = (MenuShortcut) shortcuts.nextElement();

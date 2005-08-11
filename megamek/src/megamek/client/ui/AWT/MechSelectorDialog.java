@@ -223,13 +223,13 @@ public class MechSelectorDialog
         for (int i=0; i<maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
-//        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAll")); //$NON-NLS-1$
-//        m_chType.addItem(Messages.getString("MechSelectorDialog.ISAndClan")); //$NON-NLS-1$
+        // m_chType.addItem(Messages.getString("MechSelectorDialog.ISAll")); //$NON-NLS-1$
+        // m_chType.addItem(Messages.getString("MechSelectorDialog.ISAndClan")); //$NON-NLS-1$
         // More than 8 items causes the drop down to sprout a vertical
         //  scroll bar.  I guess we'll sacrifice this next one to stay
         //  under the limit.  Stupid AWT Choice class!
-        //m_chType.addItem("Mixed All");
-//        m_chType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
+        // m_chType.addItem("Mixed All");
+        // m_chType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chType.select(0);
 
 
@@ -241,8 +241,7 @@ public class MechSelectorDialog
     }
     
     
-    private void filterMechs()
-    {
+    private void filterMechs() {
         Vector vMechs = new Vector();
         int nClass = m_chWeightClass.getSelectedIndex();
         int nType = m_chType.getSelectedIndex();
@@ -269,8 +268,7 @@ public class MechSelectorDialog
                 && /* Unit Type (Mek, Infantry, etc.) */
                 ( nUnitType == UnitType.SIZE ||
                   mechs[x].getUnitType().equals(UnitType.getTypeName(nUnitType)))
-                && /*canon required*/ (!m_client.game.getOptions().booleanOption("canon_only") || mechs[x].isCanon()))
-                {
+                && /*canon required*/ (!m_client.game.getOptions().booleanOption("canon_only") || mechs[x].isCanon())) {
                     vMechs.addElement(mechs[x]);
                 }
         }
@@ -279,12 +277,20 @@ public class MechSelectorDialog
         sortMechs();
     }
     
-    private void sortMechs()
-    {
+    private void sortMechs() {
         Arrays.sort(m_mechsCurrent, new MechSummaryComparator(m_chSort.getSelectedIndex()));
         m_mechList.removeAll();
-        for (int x = 0; x < m_mechsCurrent.length; x++) {
-            m_mechList.add(formatMech(m_mechsCurrent[x]));
+        try {
+            m_mechList.setEnabled(false);
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+            for (int x = 0; x < m_mechsCurrent.length; x++) {
+                m_mechList.add(formatMech(m_mechsCurrent[x]));
+            }
+        }
+        finally {
+            this.setCursor(Cursor.getDefaultCursor());
+            m_mechList.setEnabled(true);
         }
         updateWidgetEnablements();
         repaint();
@@ -318,8 +324,7 @@ public class MechSelectorDialog
         super.show();
     }
 
-    private String formatMech(MechSummary ms)
-    {
+    private String formatMech(MechSummary ms) {
         String val = "";
         String levelOrValid;
 
@@ -379,8 +384,7 @@ public class MechSelectorDialog
         }
     }
     
-    public void itemStateChanged(ItemEvent ie)
-    {
+    public void itemStateChanged(ItemEvent ie) {
         if (ie.getSource() == m_chSort) {
             clearMechPreview();
             sortMechs();
@@ -459,8 +463,7 @@ public class MechSelectorDialog
     }
 
     private static final String SPACES = "                        "; //$NON-NLS-1$
-    private String makeLength(String s, int nLength)
-    {
+    private String makeLength(String s, int nLength) {
         if (s.length() == nLength) {
             return s;
         }
@@ -516,5 +519,4 @@ public class MechSelectorDialog
         m_bPick.setEnabled(enable);
         m_bPickClose.setEnabled(enable);
     }
-
 }

@@ -6897,7 +6897,7 @@ implements Runnable, ConnectionHandler {
                   }
                   if (entity.getMovementMode()==IEntityMovementMode.VTOL) {
                       // VTOLs take no damage from normal artillery unless landed
-                      if (entity.getElevation()!=game.getBoard().getHex(entity.getPosition()).getElevation()) {
+                      if (entity.getElevation()!=0) {
                           break;
                       }
                   }
@@ -10465,12 +10465,12 @@ implements Runnable, ConnectionHandler {
         if ( Entity.NONE != entity.getSwarmTargetId() ) {
             return;
         }
-        if (entity instanceof VTOL) {
+        if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
             // VTOLs don't check as long as they are flying higher than
             // the burning terrain. TODO: Check for rules conformity (ATPM?)
             Coords c = entity.getPosition();
             IHex h = game.getBoard().getHex(c.x, c.y);
-            if (entity.getElevation()+h.getElevation() > h.ceiling()) {
+            if (entity.getElevation() > 0) {
                 return;
             }
         }

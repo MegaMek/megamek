@@ -21,8 +21,8 @@ Maps=battletech,battletech
 
 Factions=RedfieldsRenegades,LoneStar
 
-Location_RedfieldsRenegades=Any
-Location_LoneStar=Any
+Location_RedfieldsRenegades=S
+Location_LoneStar=N
 
 #XO Command Lance, Mustafa's Marauders
 Unit_RedfieldsRenegades_1=Cyclops CP-10-Z,Major Clyde Mustafa,3,3

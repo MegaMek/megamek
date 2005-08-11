@@ -10,6 +10,7 @@ v0.29.88 (CVS) RC 5 or STABLE RELEASE
 + Bug 1255323: Can't find AI readme.txt
 + Bug 1255967: Customize Mech dialog now scrolls horizontally when Rapid Fire MG is
     enabled.
++ Sylph microbombs should not damage flying units in the target hex.
 
 v0.29.87 (2005-08-08 8:00am) RELEASE CANDITATE 4!
 + Bug 1246893: Swarm-LRM crashes MM

@@ -749,6 +749,10 @@ public class BoardEditor extends Container implements ItemListener,
             addSetTerrain();
         } else if (ae.getActionCommand().equalsIgnoreCase("viewMiniMap")) { //$NON-NLS-1$
             toggleMap();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_IN)) {
+            bv.zoomIn();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_OUT)) {
+            bv.zoomOut();
         } else if (ae.getActionCommand().equalsIgnoreCase("helpAbout")) { //$NON-NLS-1$
             showAbout();
         } else if (ae.getActionCommand().equalsIgnoreCase("helpContents")) { //$NON-NLS-1$

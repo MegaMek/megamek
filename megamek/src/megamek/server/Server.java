@@ -6554,7 +6554,9 @@ implements Runnable, ConnectionHandler {
 
           for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
               Entity entity = (Entity)impactHexHits.nextElement();
-              if (entity.getId() == ae.getId()) {
+              // only damage units that are lower than the target hex's ceiling
+              // TODO: check with the PM
+              if (entity.getElevation() > game.getBoard().getHex(coords).ceiling()) {
                   continue;
               }
               hits = ratedDamage;
@@ -6570,10 +6572,10 @@ implements Runnable, ConnectionHandler {
           }
           for(int dir=0;dir<=5;dir++) {
               Coords tempcoords=coords.translated(dir);
-              if(!game.getBoard().contains(tempcoords)) {
+              if (!game.getBoard().contains(tempcoords)) {
                   continue;
               }
-              if(coords.equals(tempcoords)) {
+              if (coords.equals(tempcoords)) {
                   continue;
               }
               ratedDamage = ba.getShootingStrength();
@@ -6603,6 +6605,11 @@ implements Runnable, ConnectionHandler {
               }
               for (;splashHexHits.hasMoreElements();) {
                   Entity entity = (Entity)splashHexHits.nextElement();
+                  // only damage units that are lower than the target hex's ceiling
+                  // TODO: check with the PM
+                  if (entity.getElevation() > game.getBoard().getHex(coords).ceiling()) {
+                      continue;
+                  }
                   hits = ratedDamage;
                   while (hits>0) {
                       HitData hit = entity.rollHitLocation

@@ -136,99 +136,99 @@ public class GameOptions extends AbstractOptions implements Serializable {
     }
 
     public Vector loadOptions(String password) {
-      ParsedXML root = null;
-      InputStream is = null;
-      Vector changedOptions = new Vector();
+        ParsedXML root = null;
+        InputStream is = null;
+        Vector changedOptions = new Vector();
 
-      try {
-        is = new FileInputStream(new File(GAME_OPTIONS_FILE_NAME));
-      } catch (FileNotFoundException e) {
-        return changedOptions;
-      }
-
-      try {
-        root = TinyParser.parseXML(is);
-      } catch (ParseException e) {
-        System.out.println("Error parsing game options xml file.");  //$NON-NLS-1$
-        e.printStackTrace(System.out);
-      }
-    
-      Enumeration rootChildren = root.elements();
-      ParsedXML optionsNode = (ParsedXML)rootChildren.nextElement();
-      
-      if ( optionsNode.getName().equals("options") ) { //$NON-NLS-1$
-        Enumeration children = optionsNode.elements();
-        
-        while (children.hasMoreElements()) {
-          IOption option = parseOptionNode((ParsedXML)children.nextElement());
-          
-          if ( null != option )
-            changedOptions.addElement(option);
+        try {
+            is = new FileInputStream(new File(GAME_OPTIONS_FILE_NAME));
+        } catch (FileNotFoundException e) {
+            return changedOptions;
         }
+
+        try {
+            root = TinyParser.parseXML(is);
+        } catch (ParseException e) {
+            System.out.println("Error parsing game options xml file.");  //$NON-NLS-1$
+            e.printStackTrace(System.out);
+        }
+
+        Enumeration rootChildren = root.elements();
+        ParsedXML optionsNode = (ParsedXML)rootChildren.nextElement();
+      
+        if ( optionsNode.getName().equals("options") ) { //$NON-NLS-1$
+            Enumeration children = optionsNode.elements();
         
-        return changedOptions;
-      } else {
-        System.out.println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-        return changedOptions;
-      }
+            while (children.hasMoreElements()) {
+                IOption option = parseOptionNode((ParsedXML)children.nextElement());
+          
+                if ( null != option )
+                    changedOptions.addElement(option);
+            }
+        
+            return changedOptions;
+        } else {
+            System.out.println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+            return changedOptions;
+        }
     }
     
     private IOption parseOptionNode(ParsedXML node) {
-      IOption option = null;
+        IOption option = null;
       
-      if ( node.getName().equals("gameoption") ) { //$NON-NLS-1$
-        Enumeration children = node.elements();
-        String name = null;
-        Object value = null;
+        if ( node.getName().equals("gameoption") ) { //$NON-NLS-1$
+            Enumeration children = node.elements();
+            String name = null;
+            Object value = null;
         
-        while (children.hasMoreElements()) {
-          ParsedXML child = (ParsedXML)children.nextElement();
+            while (children.hasMoreElements()) {
+                ParsedXML child = (ParsedXML)children.nextElement();
           
-          if ( child.getName().equals("optionname") ) { //$NON-NLS-1$
-            name = ((ParsedXML)child.elements().nextElement()).getContent();
-          } else if ( child.getName().equals("optionvalue") ) { //$NON-NLS-1$
-            value = ((ParsedXML)child.elements().nextElement()).getContent();
-          }
-        }
-        
-        if ( (null != name) && (null != value) ) {
-          IOption tempOption = this.getOption(name);
-          
-          if ( null != tempOption ) {
-            if ( !tempOption.getValue().toString().equals(value.toString()) ) {
-              try {
-                switch ( tempOption.getType() ) {
-                  case IOption.STRING:
-                    tempOption.setValue((String)value);
-                    break;
-                    
-                  case IOption.BOOLEAN:
-                    tempOption.setValue(new Boolean(value.toString()));
-                    break;
-                    
-                  case IOption.INTEGER:
-                    tempOption.setValue(new Integer(value.toString()));
-                    break;
-                    
-                  case IOption.FLOAT:
-                    tempOption.setValue(new Float(value.toString()));
-                    break;
+                if ( child.getName().equals("optionname") ) { //$NON-NLS-1$
+                    name = ((ParsedXML)child.elements().nextElement()).getContent();
+                } else if ( child.getName().equals("optionvalue") ) { //$NON-NLS-1$
+                    value = ((ParsedXML)child.elements().nextElement()).getContent();
                 }
-                
-                System.out.println("Set option '" + name + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                
-                option = tempOption;
-              } catch ( IllegalArgumentException iaEx ) {
-                System.out.println("Error trying to load option '" + name + "' with a value of '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-              }
             }
-          } else {
-            System.out.println("Invalid option '" + name + "' when trying to load options file."); //$NON-NLS-1$ //$NON-NLS-2$
-          }
+        
+            if ( (null != name) && (null != value) ) {
+                IOption tempOption = this.getOption(name);
+          
+                if ( null != tempOption ) {
+                    if ( !tempOption.getValue().toString().equals(value.toString()) ) {
+                        try {
+                            switch ( tempOption.getType() ) {
+                            case IOption.STRING:
+                                tempOption.setValue((String)value);
+                                break;
+                    
+                            case IOption.BOOLEAN:
+                                tempOption.setValue(new Boolean(value.toString()));
+                                break;
+                    
+                            case IOption.INTEGER:
+                                tempOption.setValue(new Integer(value.toString()));
+                                break;
+                    
+                            case IOption.FLOAT:
+                                tempOption.setValue(new Float(value.toString()));
+                                break;
+                            }
+                
+                            System.out.println("Set option '" + name + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                
+                            option = tempOption;
+                        } catch ( IllegalArgumentException iaEx ) {
+                            System.out.println("Error trying to load option '" + name + "' with a value of '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        }
+                    }
+                } else {
+                    System.out.println("Invalid option '" + name + "' when trying to load options file."); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+            }
         }
-      }
       
-      return option;
+        return option;
     }
     
     /**
@@ -236,41 +236,41 @@ public class GameOptions extends AbstractOptions implements Serializable {
      * @param options <code>Vector</code> of <code>IBasicOption</code>
      */
     public static void saveOptions( Vector options ) {
-      try {
-        Writer output = new BufferedWriter( new OutputStreamWriter ( new FileOutputStream(new File(GAME_OPTIONS_FILE_NAME)) ) );
+        try {
+            Writer output = new BufferedWriter( new OutputStreamWriter ( new FileOutputStream(new File(GAME_OPTIONS_FILE_NAME)) ) );
 
-        // Output the doctype and header stuff.
-          output.write( "<?xml version=\"1.0\"?>" ); //$NON-NLS-1$
-          output.write( CommonConstants.NL );
-          output.write( "<options>" ); //$NON-NLS-1$
-          output.write( CommonConstants.NL );
+            // Output the doctype and header stuff.
+            output.write( "<?xml version=\"1.0\"?>" ); //$NON-NLS-1$
+            output.write( CommonConstants.NL );
+            output.write( "<options>" ); //$NON-NLS-1$
+            output.write( CommonConstants.NL );
   
-        // Now the options themselves
-          for ( int i = 0; i < options.size(); i++ ) {
-            final IBasicOption option = (IBasicOption) options.elementAt(i);
+            // Now the options themselves
+            for ( int i = 0; i < options.size(); i++ ) {
+                final IBasicOption option = (IBasicOption) options.elementAt(i);
   
-            output.write( "   <gameoption>" ); //$NON-NLS-1$
+                output.write( "   <gameoption>" ); //$NON-NLS-1$
 
-            output.write( CommonConstants.NL );
-            output.write( "      <optionname>" ); //$NON-NLS-1$
-            output.write( option.getName() );
-            output.write( "</optionname>" ); //$NON-NLS-1$
-            output.write( CommonConstants.NL );
-            output.write( "      <optionvalue>" ); //$NON-NLS-1$
-            output.write( option.getValue().toString() );
-            output.write( "</optionvalue>" ); //$NON-NLS-1$
-            output.write( CommonConstants.NL );
+                output.write( CommonConstants.NL );
+                output.write( "      <optionname>" ); //$NON-NLS-1$
+                output.write( option.getName() );
+                output.write( "</optionname>" ); //$NON-NLS-1$
+                output.write( CommonConstants.NL );
+                output.write( "      <optionvalue>" ); //$NON-NLS-1$
+                output.write( option.getValue().toString() );
+                output.write( "</optionvalue>" ); //$NON-NLS-1$
+                output.write( CommonConstants.NL );
   
-            output.write( "   </gameoption>" ); //$NON-NLS-1$
-            output.write( CommonConstants.NL );
-          }
+                output.write( "   </gameoption>" ); //$NON-NLS-1$
+                output.write( CommonConstants.NL );
+            }
   
-        // Finish writing.
-          output.write( "</options>" ); //$NON-NLS-1$
-          output.write( CommonConstants.NL );
-          output.flush();
-          output.close();
-      } catch (IOException e) {}
+            // Finish writing.
+            output.write( "</options>" ); //$NON-NLS-1$
+            output.write( CommonConstants.NL );
+            output.flush();
+            output.close();
+        } catch (IOException e) {}
     }
     
     

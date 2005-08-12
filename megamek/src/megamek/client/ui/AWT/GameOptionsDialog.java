@@ -159,17 +159,17 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
     
     public void doSave() {
-      Vector output = new Vector();
+        Vector output = new Vector();
       
-      for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-        DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();        
-        IBasicOption option = comp.changedOption();        
-        output.addElement(option);
-      }
+        for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();        
+            IBasicOption option = comp.changedOption();        
+            output.addElement(option);
+        }
       
-      GameOptions.saveOptions(output);
+        GameOptions.saveOptions(output);
       
-      savedAlert.show();
+        savedAlert.show();
     }
     
     private void refreshOptions() {
@@ -354,6 +354,15 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
                 }
                 if (comp_i.option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
+                }
+            }
+        }
+        if (option.getName().equals("vacuum")) { //$NON-NLS-1$
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getName().equals("fire")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setState(false);
                 }
             }
         }

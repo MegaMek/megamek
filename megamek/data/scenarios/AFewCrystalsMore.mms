@@ -10,20 +10,20 @@ Factions=Irregulars,WacosRangers
 Location_Irregulars=N
 Location_WacosRangers=S
 # Irregulars 1st Command Lance: 
-Unit_Irregulars_1=Archer ARC-2R,Col Cranston Snord,1,2,S,06,00 
-Unit_Irregulars_2=Thunderbolt TDR-5S,Lt Deb H'Chu,2,1,S,07,00 
-Unit_Irregulars_3=Marauder MAD-3R,David Rowsch,5,3,S,08,00 
-Unit_Irregulars_4=Wasp WSP-1A,John Malvinson,4,3,S,09,00 
+Unit_Irregulars_1=Archer ARC-2R,Col Cranston Snord,1,2,S,06,01 
+Unit_Irregulars_2=Thunderbolt TDR-5S,Lt Deb H'Chu,2,1,S,07,01 
+Unit_Irregulars_3=Marauder MAD-3R,David Rowsch,5,3,S,08,01
+Unit_Irregulars_4=Wasp WSP-1A,John Malvinson,4,3,S,09,01
 # Irregulars 2nd Company (Shorty's Scavengers) Command Lance: 
 Unit_Irregulars_5=Rifleman RFL-3N,Cpt Samual "Shorty" Sneede,1,1,N,14,33 
 Unit_Irregulars_6=Warhammer WHM-6R,Lt Jake Walmar,2,2,N,13,33 
 Unit_Irregulars_7=Clint CLNT-2-3T,Marleen Danules,5,5,N,05,33 
 Unit_Irregulars_8=Phoenix Hawk PXH-1,Carter Malvinson,6,5,N,06,33 
 # Irregulars 3rd Company (Rhonda Snords Irregulars) Command Lance: 
-Unit_Irregulars_9=Shadow Hawk SHD-2H,Cpt Rhonda Snord,2,2,W,00,14 
-Unit_Irregulars_10=Phoenix Hawk PXH-1,Lt Terry Malvinson,3,3,NE,00,16 
-Unit_Irregulars_11=Griffin GRF-1N,Walker Roche,4,6,W,00,13 
-Unit_Irregulars_12=Awesome AWS-8Q,Victoria Rose,4,4,NE,00,17 
+Unit_Irregulars_9=Shadow Hawk SHD-2H,Cpt Rhonda Snord,2,2,W,01,14 
+Unit_Irregulars_10=Phoenix Hawk PXH-1,Lt Terry Malvinson,3,3,NE,01,16 
+Unit_Irregulars_11=Griffin GRF-1N,Walker Roche,4,6,W,01,13 
+Unit_Irregulars_12=Awesome AWS-8Q,Victoria Rose,4,4,NE,01,17 
 # Irregulars 3rd Company, Fire Lance: 
 Unit_Irregulars_13=Rifleman RFL-3N,Lt Bright Thomlinson,2,1,NW,15,13 
 Unit_Irregulars_14=Wolverine WVR-6R,Solomon Storm,2,3,NW,15,14 

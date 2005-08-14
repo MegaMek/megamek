@@ -19,6 +19,7 @@ v0.29.88 (CVS) RC 5 or STABLE RELEASE
     all bridges are on lvl 0 water anyway.
 + Bug 1240408: NPE in bot's deployment when bot has corner deployment zones.
 + Bug 1257498: fire and vacuum options should be mutually exclusive.
++ Bug 1259068: Artemis IV bonus wrong when ECM present
 
 v0.29.87 (2005-08-08 8:00am) RELEASE CANDITATE 4!
 + Bug 1246893: Swarm-LRM crashes MM

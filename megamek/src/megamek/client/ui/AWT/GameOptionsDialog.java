@@ -409,9 +409,9 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         if (e.getSource() == butOkay) {
             send();
         } else if (e.getSource() == butSave) {
-          doSave();
+            doSave();
           
-          return;
+            return;
         }
         
         this.setVisible(false);

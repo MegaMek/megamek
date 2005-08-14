@@ -250,7 +250,16 @@ public class LosEffects {
         ai.targetOnLand = targetOnLand;
         ai.underWaterCombat = underWaterCombat;
         ai.attOffBoard = attOffBoard;
-        
+        // Handle minimum water depth.
+        // Applies to Torpedos.
+        if(ai.attOnLand || ai.targetOnLand)
+            ai.minimumWaterDepth = 0;
+        else if (ai.attInWater || ai.targetInWater)
+        	ai.minimumWaterDepth = 1;
+        else if (ai.attUnderWater || ai.targetUnderWater)
+            ai.minimumWaterDepth = Math.min(attHex.terrainLevel(Terrains.WATER),
+            		targetHex.terrainLevel(Terrains.WATER));
+
         return calculateLos(game, ai);
     }
 

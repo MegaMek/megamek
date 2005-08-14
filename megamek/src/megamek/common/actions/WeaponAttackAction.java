@@ -478,7 +478,7 @@ public class WeaponAttackAction
              null == los.getThruBldg() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attack on infantry crosses building exterior wall.");
         }
-    
+        
         // attacker partial cover means no leg weapons
         if (los.isAttackerCover() && ae.locationIsLeg(weapon.getLocation())) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
@@ -795,6 +795,19 @@ public class WeaponAttackAction
             losMods = los.losModifiers(game);
         }
 
+        // check for water surface in the way
+        if (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET
+                && (!targHex.containsTerrain(Terrains.WATER)
+                || targEl > 0
+                || (targEl == 0 && te.height() == 0))) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon is underwater, target is not");
+        }
+        else if (ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET
+                && (targHex.containsTerrain(Terrains.WATER)
+                && targEl < 0)) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Target is underwater, weapon is not");
+        }
+
         // add in LOS mods that we've been keeping
         toHit.append(losMods);
     
@@ -898,7 +911,7 @@ public class WeaponAttackAction
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
             if (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET
                     && (targHex.containsTerrain(Terrains.WATER)
-                    && targHex.surface() == targEl
+                    && targEl == 0
                     && te.height() > 0)) {
                 //weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_KICK);

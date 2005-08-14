@@ -7375,13 +7375,13 @@ implements Runnable, ConnectionHandler {
                     if (!bECMAffected && !bMekStealthActive
                         && (!weapon.getType().hasModes()
                             || !weapon.curMode().equals("Indirect"))
-                        && ( (atype.getAmmoType() == AmmoType.T_ATM) &&
+                        && ( (atype.getAmmoType() == AmmoType.T_ATM &&
                               (atype.getMunitionType() == AmmoType.M_STANDARD||
                                atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE ||
                                atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)) ||
                              ( (atype.getAmmoType() == AmmoType.T_LRM ||
                                 atype.getAmmoType() == AmmoType.T_SRM) &&
-                               atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+                               atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE))) {
                         nSalvoBonus += 2;
                     }
                 } else if (entityTarget != null && 

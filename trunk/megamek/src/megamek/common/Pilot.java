@@ -76,6 +76,14 @@ public class Pilot
     public int getHits() {
         return hits;
     }
+    
+    public void setGunnery(int gunnery) {
+        this.gunnery = gunnery;
+    }
+    
+    public void setPiloting(int piloting) {
+        this.piloting = piloting;
+    }
   
     public void setHits(int hits) {
         // Ejected pilots stop taking hits.

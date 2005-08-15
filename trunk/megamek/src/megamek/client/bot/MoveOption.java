@@ -220,7 +220,7 @@ public class MoveOption extends MovePath implements Cloneable {
                 move = 2;
                 break;
             case IEntityMovementType.MOVE_JUMP :
-                move = Math.max(3, last.getMpUsed());
+                move = Math.max(3, getEntity().getJumpHeat(last.getMpUsed()));
                 break;
             default :
                 move = 1000;

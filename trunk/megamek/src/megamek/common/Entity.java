@@ -1045,6 +1045,17 @@ public abstract class Entity
     }
 
     /**
+     * For non-'Mechs, this is really boring, but...
+     */
+    public int getJumpHeat(int movedMP) {
+        return movedMP;
+    }
+
+    public int getJumpHeat() {
+        return getJumpHeat(1);
+    }
+
+    /**
      * Returns this entity's current jumping MP, effected by terrain (like
      * water.)
      */

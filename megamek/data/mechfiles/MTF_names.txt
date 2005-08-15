@@ -290,6 +290,7 @@ Inner Sphere Level 3 Tech:
   IS2 Compact Heat Sinks
   ImprovedJump Jet
   IS Bloodhound Active Probe
+  IS THB Bloodhound Active Probe
 
 Clan Level 3 Tech:
  Weapons:
@@ -298,6 +299,10 @@ Clan Level 3 Tech:
   CLStreakLRM10
   CLStreakLRM15
   CLStreakLRM20
+  CLOSStreakLRM5
+  CLOSStreakLRM10
+  CLOSStreakLRM15
+  CLOSStreakLRM20
   CLRotaryAC2
   CLRotaryAC5
   CLRotaryAC10

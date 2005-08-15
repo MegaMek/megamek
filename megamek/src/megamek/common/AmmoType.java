@@ -17,9 +17,6 @@ package megamek.common;
 
 import java.util.Enumeration;
 import java.util.Vector;
-import megamek.common.equip.AmmoState;
-import megamek.common.equip.EquipmentState;
-import megamek.common.equip.UsesAmmoType;
 
 public class AmmoType extends EquipmentType {
     // ammo types
@@ -178,50 +175,6 @@ public class AmmoType extends EquipmentType {
     protected int heat;
     protected RangeType range;
     protected int tech;
-
-    public int getHeat() {
-        return heat;
-    }
-    
-    public int getShotDamage(Entity en, Targetable targ) {
-        return damagePerShot;
-    }
-
-    public RangeType getRange() {
-        return range;
-    }
-
-    // By default, all ballistic type weapons are 9.  If some are impossible
-    // (i.e. Gauss Rifle or SRM-2) they will override
-    public int getFireTN() {
-        return 9;
-    }
-    
-    public void resolveAttack(IGame game, WeaponResult wr, UsesAmmoType weap,
-                              EquipmentState weap_state) {}
-
-    // By default, adds no new modifiers (these are for ammo based modifiers)
-    public TargetRoll getModifiersFor(IGame game, Entity en, Targetable targ) {
-        return new TargetRoll();
-    }
-
-    // Created using the base type, using the default number of shots
-    public EquipmentState getNewState(Mounted location) {
-        return new AmmoState(location, this, shots);
-    }
-
-    // Be default, all ammo explodes, with shots remaining * damagePerShot
-    public void doCriticalDamage(EquipmentState state) {
-        if (isExplosive()) {
-            AmmoState as = (AmmoState)state;
-            // Get the amount of damage.
-            int damage = this.getDamagePerShot() * as.shotsLeft();
-/* TODO : implement me
-            super.doCriticalDamage(state); // Set it as destroyed
-*/
-            // Do weapon explosion damage
-        }
-    }
 
     public int getDamagePerShot() {
         return damagePerShot;

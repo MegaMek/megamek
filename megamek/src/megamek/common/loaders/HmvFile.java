@@ -350,12 +350,17 @@ public class HmvFile
                 tank.setChassis(name);
                 tank.setModel(model);
                 tank.setYear(year);
-                tank.setOmni( isOmni );
+                tank.setOmni(isOmni);
                 tank.setEngineType(engineType.getId());
-    
-                int techLevel = rulesLevel == 1 ? TechConstants.T_IS_LEVEL_1 :
-                    techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 :
-                    TechConstants.T_IS_LEVEL_2;
+                int techLevel = TechConstants.T_IS_LEVEL_3;
+                if (rulesLevel == 1) {
+                    techLevel = TechConstants.T_IS_LEVEL_1;
+                } else if (rulesLevel == 2) {
+                    techLevel = techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 : TechConstants.T_IS_LEVEL_2;
+                } else if (techType == HMVTechType.CLAN) {
+                     techLevel = TechConstants.T_CLAN_LEVEL_3;
+                }
+                    
                 tank.setTechLevel(techLevel);
     
                 int suspensionFactor = getSuspensionFactor(roundedInternalStructure, movementType);
@@ -639,6 +644,7 @@ public class HmvFile
     isEquipment.put(new Long(0x6B), "ISStreakSRM4");
     isEquipment.put(new Long(0x6C), "ISStreakSRM6");
     isEquipment.put(new Long(0x71), "ISArrowIVSystem");
+    isEquipment.put(new Long(0x72), "ISAngelECMSuite");
     isEquipment.put(new Long(0x73), "ISBeagleActiveProbe");
     isEquipment.put(new Long(0x75), "ISC3MasterComputer");
     isEquipment.put(new Long(0x76), "ISC3SlaveUnit");
@@ -797,7 +803,7 @@ public class HmvFile
     clanEquipment.put(new Long(0x3C), "CLLargePulseLaser");
     clanEquipment.put(new Long(0x3D), "CLMediumPulseLaser");
     clanEquipment.put(new Long(0x3E), "CLSmallPulseLaser");
-    clanEquipment.put(new Long(0x3F), "CLAC5");
+    clanEquipment.put(new Long(0x3F), "CLAngelECMSuite");
     clanEquipment.put(new Long(0x40), "CLAntiMissileSystem");
     clanEquipment.put(new Long(0x41), "CLGaussRifle");
     clanEquipment.put(new Long(0x42), "CLLBXAC2");
@@ -1159,7 +1165,6 @@ class HMVEngineType
 
   public static HMVEngineType getType(int i)
   {
-System.err.println("HMV Engine Type Index: "+i);
     return (HMVEngineType) types.get(new Integer(i));
   }
 }

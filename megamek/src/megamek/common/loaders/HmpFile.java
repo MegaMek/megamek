@@ -749,7 +749,7 @@ public class HmpFile
     isCriticals.put(new Long(0x71), "ISArrowIVSystem");
     isCriticals.put(new Long(0x72), "ISAngelECMSuite");
     isCriticals.put(new Long(0x73), "ISBeagleActiveProbe");
-
+    isCriticals.put(new Long(0x74), "ISBloodhoundActiveProbe");
     isCriticals.put(new Long(0x75), "ISC3MasterComputer");
     isCriticals.put(new Long(0x76), "ISC3SlaveUnit");
     isCriticals.put(new Long(0x77), "ISImprovedC3CPU");
@@ -852,6 +852,8 @@ public class HmpFile
     isCriticals.put(new Long(0xF4), "CLHeavyLargeLaser");
     isCriticals.put(new Long(0xF5), "CLHeavyMediumLaser");
     isCriticals.put(new Long(0xF6), "CLHeavySmallLaser");
+
+    isCriticals.put(new Long(0x11e), "ISTHBBloodhoundActiveProbe");
 
     isCriticals.put(new Long(0x121), "ISRotaryAC2");
     isCriticals.put(new Long(0x122), "ISRotaryAC5");

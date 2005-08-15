@@ -306,6 +306,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createFerroFibrous());
         EquipmentType.addType(createEndoSteel());
         EquipmentType.addType(createBeagleActiveProbe());
+        EquipmentType.addType(createBloodhoundActiveProbe());
+        EquipmentType.addType(createTHBBloodhoundActiveProbe());
         EquipmentType.addType(createCLActiveProbe());
         EquipmentType.addType(createCLLightActiveProbe());
         EquipmentType.addType(createISAPPod());
@@ -1183,7 +1185,8 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createBeagleActiveProbe() {
         MiscType misc = new MiscType();
-        
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_2;
         misc.name = "Beagle Active Probe";
         misc.setInternalName("BeagleActiveProbe");
         misc.addLookupName("Beagle Active Probe");
@@ -1196,13 +1199,54 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_BAP;
         misc.bv = 10;
-        
+
+        return misc;
+    }
+
+    public static MiscType createBloodhoundActiveProbe() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Bloodhound Active Probe";
+        misc.setInternalName("BloodhoundActiveProbe");
+        misc.addLookupName("Bloodhound Active Probe");
+        misc.addLookupName("ISBloodhoundActiveProbe");
+        misc.addLookupName("IS Bloodhound Active Probe");
+        misc.tonnage = 2;
+        misc.criticals = 3;
+        misc.hittable = true;
+        misc.cost = 500000;
+        misc.spreadable = false;
+        misc.flags |= F_BAP;
+        misc.bv = 25;
+
+        return misc;
+    }
+
+    public static MiscType createTHBBloodhoundActiveProbe() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Bloodhound Active Probe (THB)";
+        misc.setInternalName("THBBloodhoundActiveProbe");
+        misc.addLookupName("THB Bloodhound Active Probe");
+        misc.addLookupName("ISTHBBloodhoundActiveProbe");
+        misc.addLookupName("IS THB Bloodhound Active Probe");
+        misc.tonnage = 5;
+        misc.criticals = 2;
+        misc.hittable = true;
+        misc.cost = 750000;
+        misc.spreadable = false;
+        misc.flags |= F_BAP;
+        misc.bv = 25;
+
         return misc;
     }
 
     public static MiscType createCLActiveProbe() {
         MiscType misc = new MiscType();
-        
+
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
         misc.name = "Clan Active Probe";
         misc.setInternalName("CLActiveProbe");
         misc.addLookupName("Active Probe");
@@ -1214,7 +1258,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 200000;
         misc.flags |= F_BAP;
         misc.bv = 12;
-        
+
         return misc;
     }
 

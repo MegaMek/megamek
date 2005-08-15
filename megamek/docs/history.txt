@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.88 (CVS) RC 5 or STABLE RELEASE
+v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.
 + Bug 1234949: Checks for null positions on cluster/swarm logic.
 + Bug 1254924: If a scenario is populated only by bots, the host is now added

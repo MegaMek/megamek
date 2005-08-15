@@ -141,7 +141,7 @@
   </target>
 
   <target name="packageCode" description="Generates code package only" depends="cvsdev-get, cvsdev-build">
-    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-code-${DSTAMP}.zip" includes="${jarfile} history.txt license.txt MegaMek.bat MegaMek.sh"/>
+    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-update-${DSTAMP}.zip" includes="${jarfile} history.txt license.txt MegaMek.bat MegaMek.sh"/>
   </target>
 
   <target name="packageMedia" description="Generates media package only" depends="cvsdev-get">

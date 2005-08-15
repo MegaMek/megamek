@@ -13,6 +13,8 @@ v0.31.0 (CVS)
 + Added "available to all" as a tech level for things like single heat
     sinks and regular jump jets.
 + RFE 1242241: Doesn't move to an AMS during firing.
++ Added IJJs to MTF_names.txt.
++ Corrected Nova Cat Jorgensson to verify correctly.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

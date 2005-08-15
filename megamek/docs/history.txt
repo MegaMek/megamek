@@ -3,7 +3,15 @@ VERSION HISTORY:
 v0.31.0 (CVS)
 + RFE 1253215: Added Angel ECM.
 + setting an infantry or protomech unit's crew did not copy MexTech pilot
-    advantages over
+    advantages over.
++ Added Improved Jump Jets.
++ Fixed bug with verifying composite armor.
++ Corrected a couple of unit files.
++ Altered build.xml and build.bat to target and source 1.5 instead of
+    1.1 or 1.2.
++ Corrected tech level of several miscellaneous equipment items.
++ Added "available to all" as a tech level for things like single heat
+    sinks and regular jump jets.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

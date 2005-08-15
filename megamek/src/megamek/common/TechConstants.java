@@ -31,6 +31,7 @@ public class TechConstants {
     /*
      * These can apply to entities or individual pieces of equipment
      */
+    public static final int         T_ALLOWED_ALL       = -2;
     public static final int         T_TECH_UNKNOWN      = -1;
     public static final int         T_IS_LEVEL_1        = 0;
     public static final int         T_IS_LEVEL_2        = 1;
@@ -103,6 +104,10 @@ public class TechConstants {
      * Returns false if it is not.
      */
     public static boolean isLegal(int entityTechlevel, int equipmentTechlevel, boolean ignoreUnknown) {
+        // If it's allowed to all, ALWAYS return true.
+        if (equipmentTechlevel == T_ALLOWED_ALL)
+            return true;
+
         // If it's unknown, we're not gonna be able to check it one way or the other, so...
         if (equipmentTechlevel == T_TECH_UNKNOWN)
             if (ignoreUnknown)

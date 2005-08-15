@@ -92,12 +92,23 @@ public class MiscType extends EquipmentType {
         }
         // check for known formulas
         if (hasFlag(F_JUMP_JET)) {
-            if (entity.getWeight() <= 55.0) {
-                return 0.5f;
-            } else if (entity.getWeight() <= 85.0) {
-                return 1.0f;
+            if ((getTechLevel() == TechConstants.T_IS_LEVEL_3)
+                    || (getTechLevel() == TechConstants.T_CLAN_LEVEL_3)) {
+                if (entity.getWeight() <= 55.0) {
+                    return 1.0f;
+                } else if (entity.getWeight() <= 85.0) {
+                    return 2.0f;
+                } else {
+                    return 4.0f;
+                }
             } else {
-                return 2.0f;
+                if (entity.getWeight() <= 55.0) {
+                    return 0.5f;
+                } else if (entity.getWeight() <= 85.0) {
+                    return 1.0f;
+                } else {
+                    return 2.0f;
+                }
             }
         } else if (hasFlag(F_HATCHET)) {
             return (float)Math.ceil(entity.getWeight() / 15.0);
@@ -302,6 +313,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createSword());
 
         // Start of level 3 stuff
+        EquipmentType.addType(createImprovedJumpJet());
+        EquipmentType.addType(createCLImprovedJumpJet());
         EquipmentType.addType(createFerroFibrousPrototype());
         EquipmentType.addType(createLightFerroFibrous());
         EquipmentType.addType(createHeavyFerroFibrous());
@@ -332,7 +345,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createHeatSink() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_1;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Heat Sink";
         misc.setInternalName(misc.name);
         misc.tonnage = 1.0f;
@@ -342,11 +355,11 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    
+
     public static MiscType createJumpJet() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_1;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Jump Jet";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
@@ -356,7 +369,35 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    
+
+    public static MiscType createImprovedJumpJet() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "ImprovedJump Jet";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 2;
+        misc.flags |= F_JUMP_JET;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createCLImprovedJumpJet() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "CLImprovedJump Jet";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 2;
+        misc.flags |= F_JUMP_JET;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
     public static MiscType createTreeClub() {
         MiscType misc = new MiscType();
 

@@ -4570,7 +4570,7 @@ implements Runnable, ConnectionHandler {
                     || entity.moved == IEntityMovementType.MOVE_SKID) {
                 entity.heatBuildup += 2;
             } else if (entity.moved == IEntityMovementType.MOVE_JUMP) {
-                entity.heatBuildup += Math.max(3, entity.delta_distance);
+                entity.heatBuildup += Math.max(3, entity.getJumpHeat(entity.delta_distance));
             }
         }
     }

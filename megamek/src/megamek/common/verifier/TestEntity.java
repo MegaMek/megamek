@@ -274,14 +274,8 @@ public abstract class TestEntity implements TestEntityOption
         if (mt.hasFlag(MiscType.F_ENDO_STEEL))
             return 0f;
 
-        if (mt.hasFlag(MiscType.F_JUMP_JET))
-        {
-            if (getWeight() <= 55.0)
-                return 0.5f;
-            else if (getWeight() <= 85.0)
-                return 1.0f;
-            else
-                return 2.0f;
+        if (mt.hasFlag(MiscType.F_JUMP_JET)) {
+            return mt.getTonnage(getEntity());
         } else if (mt.hasFlag(MiscType.F_HATCHET))
             return ceil(getWeight() / 15.0f, getWeightCeilingWeapons());
         else if (mt.hasFlag(MiscType.F_SWORD))

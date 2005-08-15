@@ -915,7 +915,8 @@ public class Protomech
      * Protomechs have no piloting skill (set to 5 for BV purposes)
      */
     public void setCrew(Pilot p) {
-        super.setCrew(new Pilot(p.getName(), p.getGunnery(), 5));
+        super.setCrew(p);
+        this.getCrew().setPiloting(5);
     }
 
     public boolean canCharge() {

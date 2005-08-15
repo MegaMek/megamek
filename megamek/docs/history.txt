@@ -16,6 +16,8 @@ v0.31.0 (CVS)
 + Added IJJs to MTF_names.txt.
 + Corrected Nova Cat Jorgensson to verify correctly.
 + Remove old, abandoned weapons refactoring from codebase.
++ Added Bloodhound (MaxTech and THB) to MiscType.
++ Corrected one unit file which carried a THB Bloodhound.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

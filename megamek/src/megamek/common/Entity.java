@@ -1652,9 +1652,13 @@ public abstract class Entity
         boolean past = false;
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
+            //FIXME
+            // Logic must be inserted here to NOT always skip AMS once the
+            // MaxTech rule for firing AMSes is implemented.
             if (past
                     && (mounted != null)
                     && (mounted.isReady())
+                    && (!mounted.getType().hasFlag(WeaponType.F_AMS))
                     && ((mounted.getLinked() == null)
                     || (mounted.getLinked().getShotsLeft()>0))) {
                 return getEquipmentNum(mounted);

@@ -646,6 +646,7 @@ public class HmvFile
     isEquipment.put(new Long(0x71), "ISArrowIVSystem");
     isEquipment.put(new Long(0x72), "ISAngelECMSuite");
     isEquipment.put(new Long(0x73), "ISBeagleActiveProbe");
+    isEquipment.put(new Long(0x74), "ISBloodhoundActiveProbe");
     isEquipment.put(new Long(0x75), "ISC3MasterComputer");
     isEquipment.put(new Long(0x76), "ISC3SlaveUnit");
     isEquipment.put(new Long(0x77), "ISImprovedC3CPU");
@@ -680,6 +681,7 @@ public class HmvFile
     isEquipment.put(new Long(0x96), "ISSRTorpedo2");
     isEquipment.put(new Long(0x97), "ISSRTorpedo4");
     isEquipment.put(new Long(0x98), "ISSRTorpedo6");
+    isEquipment.put(new Long(0x11e), "ISTHBBloodhoundActiveProbe");
     isEquipment.put(new Long(0x121), "ISRotaryAC2");
     isEquipment.put(new Long(0x122), "ISRotaryAC5");
     isEquipment.put(new Long(0x123), "ISHeavyGaussRifle");

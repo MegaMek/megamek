@@ -288,6 +288,7 @@ Inner Sphere Level 3 Tech:
   Ferro-Fibrous Prototype
   IS1 Compact Heat Sink
   IS2 Compact Heat Sinks
+  ImprovedJump Jet
 
 Clan Level 3 Tech:
  Weapons:
@@ -311,5 +312,6 @@ Clan Level 3 Tech:
   CLRotaryAC20 Ammo
  Equipment:
   CLLaser Heat Sink
+  CLImprovedJump Jet
 
   

@@ -785,4 +785,9 @@ public class BattleArmor
         
         return 0;
     }
+
+    public boolean hasEiCockpit() {
+        return true;
+    }
+
 } // End public class BattleArmor extends Infantry implements Serializable

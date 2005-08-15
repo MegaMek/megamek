@@ -11011,6 +11011,7 @@ implements Runnable, ConnectionHandler {
             isFerroFibrousTarget = true;
         }
         boolean wasDamageIS = false;
+        boolean tookInternalDamage = damageIS;
         IHex te_hex = null;
         int te_n = te.getId();
 
@@ -11024,6 +11025,7 @@ implements Runnable, ConnectionHandler {
             r = new Report(6035);
             r.subject = te_n;
             r.indent(2);
+            r.newlines = 0;
             vDesc.addElement(r);
             return vDesc;
         }
@@ -11125,6 +11127,13 @@ implements Runnable, ConnectionHandler {
         default:
             // We can ignore this.
             break;
+        }
+
+        //save EI status, in case sensors crit destroys it
+        final boolean eiStatus = te.hasActiveEiCockpit();
+        // BA using EI implants receive +1 damage from attacks
+        if(!(te instanceof Mech) && !(te instanceof Protomech) && eiStatus) {
+            damage += 1;
         }
 
         // Allocate the damage
@@ -11260,6 +11269,7 @@ implements Runnable, ConnectionHandler {
             if (damage > 0) {
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
+                    tookInternalDamage = true;
                     // Triggers a critical hit on Vehicles and Mechs.
                     if ( !isPlatoon && !isBattleArmor ) {
                         crits++;
@@ -11573,6 +11583,15 @@ implements Runnable, ConnectionHandler {
                 damageIS = false;
             }
         }
+        //Mechs using EI implants take pilot damage each time a hit 
+        //inflicts IS damage
+        if(tookInternalDamage
+           && ((te instanceof Mech) || (te instanceof Protomech))
+           && te.hasActiveEiCockpit()) {
+            Report.addNewline(vDesc);
+            Server.combineVectors(vDesc, damageCrew(te, 1) );
+        }
+        //This flag indicates the hit was directly to IS
         if (wasDamageIS) {
             Report.addNewline(vDesc);
         }
@@ -14318,6 +14337,19 @@ implements Runnable, ConnectionHandler {
         }
     }
 
+    private void receiveEntitySystemModeChange(Packet c, int connIndex) {
+        int entityId = c.getIntValue(0);
+        int equipId = c.getIntValue(1);
+        int mode = c.getIntValue(2);
+        Entity e = game.getEntity(entityId);
+        if (e.getOwner() != getPlayer(connIndex)) {
+            return;
+        }
+        if(e instanceof Mech && equipId == Mech.SYSTEM_COCKPIT) {
+            ((Mech)e).setCockpitStatus(mode);
+        }
+    }
+
     private void receiveEntityAmmoChange(Packet c, int connIndex) {
         int entityId = c.getIntValue(0);
         int weaponId = c.getIntValue(1);
@@ -15110,6 +15142,9 @@ implements Runnable, ConnectionHandler {
                 break;
             case Packet.COMMAND_ENTITY_MODECHANGE :
                 receiveEntityModeChange(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_SYSTEMMODECHANGE :
+                receiveEntitySystemModeChange(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_AMMOCHANGE :
                 receiveEntityAmmoChange(packet, connId);

@@ -300,6 +300,7 @@ public class QuadMech extends Mech
         // FIXME
         // There should be an implementation here!
         double cost = 250000; // Cockpit + Life Support
+        if(hasEiCockpit()) cost += 200000;
         double musclesCost = this.hasTSM() ? 16000 : 2000;
         double structureCost = 400;
         if(hasEndo() || hasCompositeStructure()) {

@@ -261,7 +261,7 @@ public class PunchAttackAction
             toHit.addModifier(3, "target has partial cover");
         }
 
-        toHit.append(nightModifiers(game, target, null));
+        toHit.append(nightModifiers(game, target, null, ae));
         
         // target immobile
         toHit.append(Compute.getImmobileMod(te));

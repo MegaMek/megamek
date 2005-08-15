@@ -82,6 +82,7 @@ public abstract class Mech
     private int sinksOnNextRound;
     private boolean sinksChanged = false;
     private boolean autoEject = true;
+    private int improvedJJ = -1;
 
     /**
      * Construct a new, blank, mech.
@@ -628,7 +629,7 @@ public abstract class Mech
      */
     public int getJumpMP() {
         int jump = 0;
-        
+
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
@@ -638,7 +639,32 @@ public abstract class Mech
         
         return applyGravityEffectsOnMP(jump);
     }
-    
+
+    /**
+     * We need to override this here, because it's SLIGHTLY different for 'Mechs.
+     * Or at least level 3 ones.
+     */
+    public int getJumpHeat(int movedMP) {
+        // -1 means uninitialized
+        // 0 means standard
+        // 1 means improved
+        if (improvedJJ < 0) {
+            for (Object oMount : miscList) {
+                Mounted m = (Mounted)oMount;
+                if ((m.getType().hasFlag(MiscType.F_JUMP_JET))
+                        && ((getTechLevel() == TechConstants.T_IS_LEVEL_3)
+                            || (getTechLevel() == TechConstants.T_CLAN_LEVEL_3))) {
+                    improvedJJ = 1;
+                    break;
+                }
+            }
+        }
+        if (improvedJJ > 0) {
+            return movedMP/2 + movedMP%2;
+        }
+        return super.getJumpHeat(movedMP);
+    }
+
     /**
      * Returns this mech's jumping MP, modified for missing & underwater jets and gravity.
      */

@@ -268,7 +268,7 @@ public class GAAttack extends GA {
      */
     protected void doRandomMutation(int iChromIndex) {
         Chromosome c1 = this.chromosomes[iChromIndex];
-        // skip if it's an empty chomosome
+        // skip if it's an empty chromosome
         if (c1.genes.length < 1)
             return;
         int r1 = (c1.genes.length > 2) ? Compute.randomInt(c1.genes.length - 1) : 0;

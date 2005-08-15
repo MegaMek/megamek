@@ -1,0 +1,1661 @@
+Battle Cobra A|Blood Spirit,Cloud Cobra,Goliath Scorpion,Steel Viper|BattleMech|2950
+Battle Cobra B|Blood Spirit,Cloud Cobra,Goliath Scorpion,Steel Viper|BattleMech|2950
+Battle Cobra C|Blood Spirit,Cloud Cobra,Goliath Scorpion,Steel Viper|BattleMech|3060
+Battle Cobra H|Blood Spirit,Cloud Cobra,Goliath Scorpion,Steel Viper|BattleMech|3060
+Battle Cobra Prime|Blood Spirit,Cloud Cobra,Goliath Scorpion,Steel Viper|BattleMech|2950
+Blood Asp A|Blood Spirit,Cloud Cobra,Star Adder|BattleMech|3060
+Blood Asp B|Blood Spirit,Cloud Cobra,Star Adder|BattleMech|3060
+Blood Asp C|Blood Spirit,Cloud Cobra,Star Adder|BattleMech|3060
+Blood Asp D|Blood Spirit,Cloud Cobra,Star Adder|BattleMech|3060
+Blood Asp E|Blood Spirit,Cloud Cobra,Star Adder|BattleMech|3060
+Blood Asp Prime|Blood Spirit,Cloud Cobra,Star Adder|BattleMech|3060
+Blood Kite|Blood Spirit,Cloud Cobra,Fire Mandrill,Star Adder|BattleMech|2950
+Blood Kite 2|Blood Spirit,Star Adder|BattleMech|3067
+Clint IIC|Blood Spirit,Cloud Cobra,Coyote,Ghost Bear,Ice Hellion,Nova Cat,Outworlds Alliance,Snow Raven,Wolf,Wolf in Exile|BattleMech|2830
+Crimson Langur A|Blood Spirit,Cloud Cobra,Fire Mandrill,Snow Raven,Star Adder|BattleMech|3067
+Crimson Langur B|Blood Spirit,Cloud Cobra,Fire Mandrill,Snow Raven,Star Adder|BattleMech|3067
+Crimson Langur C|Blood Spirit,Cloud Cobra,Fire Mandrill,Snow Raven,Star Adder|BattleMech|3067
+Crimson Langur Prime|Blood Spirit,Cloud Cobra,Fire Mandrill,Snow Raven,Star Adder|BattleMech|3067
+Crossbow A|Blood Spirit,Coyote,Steel Viper|BattleMech|2950
+Crossbow B|Blood Spirit,Coyote,Steel Viper|BattleMech|2950
+Crossbow C|Blood Spirit,Coyote,Steel Viper|BattleMech|3060
+Crossbow H|Blood Spirit,Coyote,Steel Viper|BattleMech|3060
+Crossbow Prime|Blood Spirit,Coyote,Steel Viper|BattleMech|2950
+Griffin IIC 3|Blood Spirit,Cloud Cobra,Coyote,Diamond Shark,Nova Cat,Star Adder|BattleMech|3060
+Griffin IIC 4|Blood Spirit,Cloud Cobra,Coyote,Diamond Shark,Ice Hellion,Nova Cat,Star Adder|BattleMech|3060
+Grizzly|Blood Spirit,Cloud Cobra,Coyote,Ghost Bear,Hell's Horses,Ice Hellion,Snow Raven,Star Adder,Steel Viper|BattleMech|2950
+Ha Otoko|Blood Spirit,Diamond Shark,Fire Mandrill,Hell's Horses,Nova Cat|BattleMech|3060
+Hellfire 2|Blood Spirit,Cloud Cobra,Star Adder|BattleMech|3059
+Marauder IIC 2|Blood Spirit,Cloud Cobra,Diamond Shark,Goliath Scorpion,Snow Raven,Star Adder,Wolf in Exile|BattleMech|3060
+Phoenix Hawk IIC 3|Blood Spirit,Cloud Cobra,Coyote,Diamond Shark,Fire Mandrill,Ice Hellion,Snow Raven,Star Adder,Steel Viper|BattleMech|3067
+Piranha|Blood Spirit,Coyote,Diamond Shark,Fire Mandrill,Goliath Scorpion,Hell's Horses|BattleMech|2950
+Predator|Blood Spirit,Diamond Shark,Fire Mandrill,Ice Hellion,Star Adder|BattleMech|3059
+Rifleman IIC 3|Blood Spirit,Cloud Cobra,Diamond Shark,Star Adder|BattleMech|3062
+Rifleman IIC 4|Blood Spirit,Cloud Cobra,Star Adder|BattleMech|3062
+Stalking Spider|Blood Spirit,Cloud Cobra|BattleMech|3059
+Stooping Hawk A|Blood Spirit,Ghost Bear|BattleMech|2950
+Stooping Hawk B|Blood Spirit,Ghost Bear|BattleMech|2950
+Stooping Hawk C|Blood Spirit,Ghost Bear|BattleMech|2950
+Stooping Hawk D|Blood Spirit,Ghost Bear|BattleMech|2950
+Stooping Hawk E|Blood Spirit,Ghost Bear|BattleMech|3060
+Stooping Hawk Prime|Blood Spirit,Ghost Bear|BattleMech|2950
+Thresher|Blood Spirit,Cloud Cobra,Diamond Shark,Fire Mandrill,Ghost Bear,Hell's Horses,Ice Hellion,Nova Cat|BattleMech|2950
+Warhammer IIC 3|Blood Spirit,Cloud Cobra,Diamond Shark,Ghost Bear,Star Adder|BattleMech|3060
+Anubis ABS-3L|Capellan Confederation,Magistracy of Canopus,Taurian Concordat|BattleMech|3063
+Anubis ABS-3R|Capellan Confederation,Magistracy of Canopus,Taurian Concordat|BattleMech|3063
+Anubis ABS-3T|Capellan Confederation,Magistracy of Canopus,Taurian Concordat|BattleMech|3063
+Anvil ANV-3M|Capellan Confederation,Free Worlds League,Mercenary General,Word of Blake|BattleMech|3055
+Apollo APL-1M|Capellan Confederation,Free Worlds League,Mercenary General,Word of Blake|BattleMech|3055
+Archer ARC-7L|Capellan Confederation|BattleMech|3067
+Atlas AS7-K|Capellan Confederation,Comstar,Draconis Combine,Federated Suns,Free Rasalhague Republic,Mercenary General|BattleMech|3050
+Blackjack BJ-1|Capellan Confederation,Federated Suns,Mercenary General,Periphery General,SLDF 2750|BattleMech|2771
+Blackjack BJ-2|Capellan Confederation,Comstar,Federated Suns,Mercenary General,Taurian Concordat|BattleMech|3050
+Blackjack BJ-3|Capellan Confederation,Circinus Federation,Federated Suns,Magistracy of Canopus,Marian Hegemony,Taurian Concordat|BattleMech|3028
+Caesar CES-3R|Capellan Confederation,Circinus Federation,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3050
+Cataphract CTF-1X|Capellan Confederation,Federated Suns,Periphery General|BattleMech|3025
+Cataphract CTF-2X|Capellan Confederation,Magistracy of Canopus|BattleMech|3028
+Cataphract CTF-3D|Capellan Confederation,Circinus Federation,Federated Suns,Lyran Alliance,Magistracy of Canopus,Marian Hegemony,Taurian Concordat|BattleMech|3050
+Cataphract CTF-3L|Capellan Confederation,Federated Suns,Magistracy of Canopus,Taurian Concordat|BattleMech|3050
+Cataphract CTF-4L|Capellan Confederation|BattleMech|3062
+Catapult CPLT-A1|Capellan Confederation,SLDF 2750|BattleMech|2563
+Catapult CPLT-C1|Capellan Confederation,Draconis Combine,Federated Suns,Mercenary General,Periphery General,SLDF 2750|BattleMech|2561
+Catapult CPLT-C3|Capellan Confederation,Comstar,Magistracy of Canopus,Taurian Concordat|BattleMech|3050
+Catapult CPLT-C4|Capellan Confederation,Federated Suns,Periphery General,SLDF 2750|BattleMech|2565
+Catapult CPLT-C5|Capellan Confederation|BattleMech|3063
+Catapult CPLT-H2|Capellan Confederation,Marian Hegemony|BattleMech|3064
+Cerberus MR-5M|Capellan Confederation,Free Worlds League,Word of Blake|BattleMech|3055
+Charger CGR-1A5|Capellan Confederation,Circinus Federation,Magistracy of Canopus,Marian Hegemony,Mercenary General,Taurian Concordat|BattleMech|3028
+Charger CGR-1L|Capellan Confederation,Periphery General|BattleMech|2950
+Cicada CDA-3M|Capellan Confederation,Free Worlds League,Magistracy of Canopus,Mercenary General|BattleMech|3050
+Clint CLNT-2-3U|Capellan Confederation,Circinus Federation,Comstar,Lyran Alliance,Northwind Highlanders|BattleMech|3050
+Commando COM-2D|Capellan Confederation,Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General,Periphery General|BattleMech|2480
+Cossack C-SK1|Capellan Confederation,Comstar,Mercenary General|BattleMech|3060
+Cronus CNS-3M|Capellan Confederation,Free Worlds League,Mercenary General|BattleMech|3040
+Crusader CRD-3L|Capellan Confederation,Word of Blake|BattleMech|2950
+Crusader CRD-4D|Capellan Confederation,Federated Suns|BattleMech|3050
+Crusader CRD-7L|Capellan Confederation,Word of Blake|BattleMech|3067
+Dervish DV-7D|Capellan Confederation,Federated Suns,Taurian Concordat|BattleMech|3050
+Duan Gung D9-G9|Capellan Confederation,Magistracy of Canopus,SLDF 3061,Taurian Concordat|BattleMech|3058
+Eagle EGL-1M|Capellan Confederation,Free Worlds League|BattleMech|3060
+Eagle EGL-2M|Capellan Confederation,Free Worlds League,Magistracy of Canopus,Mercenary General,SLDF 3061,Word of Blake|BattleMech|3060
+Emperor EMP-6A|Capellan Confederation,Federated Suns,Lyran Alliance,Magistracy of Canopus,Mercenary General,SLDF 2750,Taurian Concordat|BattleMech|2502
+Firestarter FS9-S|Capellan Confederation,Comstar,Federated Suns,Free Rasalhague Republic,Lyran Alliance,Magistracy of Canopus,Marian Hegemony,Mercenary General,Taurian Concordat|BattleMech|3050
+Hatchetman HCT-5S|Capellan Confederation,Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General,Taurian Concordat|BattleMech|3050
+Helios HEL-3D|Capellan Confederation,Comstar,Federated Suns,Mercenary General,Taurian Concordat|BattleMech|3060
+Helios HEL-4A|Capellan Confederation,Comstar,Draconis Combine|BattleMech|3060
+Helios HEL-C|Capellan Confederation,Comstar,Draconis Combine,SLDF 3061|BattleMech|3060
+Highlander HGN-733|Capellan Confederation,Periphery General|BattleMech|2950
+Huron Warrior HUR-WO-R4L|Capellan Confederation,Free Worlds League,Magistracy of Canopus,Mercenary General,Word of Blake|BattleMech|3055
+Huron Warrior HUR-WO-R4M|Capellan Confederation,Free Worlds League|BattleMech|3055
+Hussar HSR-300-D|Capellan Confederation,Draconis Combine|BattleMech|2950
+Jackal JA-KL-1532|Capellan Confederation,Circinus Federation,Free Worlds League,Magistracy of Canopus,Marian Hegemony,Mercenary General,Word of Blake|BattleMech|3055
+JagerMech JM6-S|Capellan Confederation,Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General,Periphery General|BattleMech|2770
+Jenner JR7-D|Capellan Confederation,Draconis Combine,Federated Suns,Free Rasalhague Republic,Free Worlds League,Lyran Alliance,Mercenary General,Periphery General|BattleMech|2784
+Jenner JR7-F|Capellan Confederation,Circinus Federation,Draconis Combine,Free Rasalhague Republic|BattleMech|2784
+Jinggau JN-G8A|Capellan Confederation,Magistracy of Canopus,Taurian Concordat|BattleMech|3059
+Lao Hu LHU-2B|Capellan Confederation,Taurian Concordat|BattleMech|3063
+Lao Hu LHU-3B|Capellan Confederation,Taurian Concordat|BattleMech|3067
+Lao Hu LHU-3C|Capellan Confederation,Taurian Concordat|BattleMech|3067
+Locust LCT-1L|Capellan Confederation|BattleMech|3050
+Locust LCT-5V|Capellan Confederation,Magistracy of Canopus,Taurian Concordat|BattleMech|3067
+Longbow LGB-12C|Capellan Confederation,Federated Suns,Free Worlds League,Lyran Alliance,Marian Hegemony,Mercenary General|BattleMech|3061
+Marauder MAD-3L|Capellan Confederation|BattleMech|2950
+Marauder MAD-5L|Capellan Confederation,Circinus Federation,Word of Blake|BattleMech|3067
+Marshal MHL-2L|Capellan Confederation,Magistracy of Canopus,Taurian Concordat|BattleMech|3063
+Marshal MHL-X1|Capellan Confederation,Periphery General|BattleMech|3059
+Men Shen MS1-O|Capellan Confederation,Magistracy of Canopus|BattleMech|3060
+Men Shen MS1-OA|Capellan Confederation,Magistracy of Canopus|BattleMech|3060
+Men Shen MS1-OB|Capellan Confederation,Magistracy of Canopus|BattleMech|3060
+Men Shen MS1-OC|Capellan Confederation,Magistracy of Canopus|BattleMech|3060
+Men Shen MS1-OD|Capellan Confederation,Magistracy of Canopus|BattleMech|3060
+Orion ON1-VA|Capellan Confederation,Free Worlds League|BattleMech|2950
+Ostroc OSR-4L|Capellan Confederation,Magistracy of Canopus|BattleMech|3067
+Owens OW-1|Capellan Confederation,Comstar,Draconis Combine,Federated Suns,Free Worlds League,Mercenary General,SLDF 3061|BattleMech|3056
+Owens OW-1A|Capellan Confederation,Comstar,Draconis Combine,Federated Suns,Free Worlds League,Mercenary General,SLDF 3061|BattleMech|3056
+Owens OW-1B|Capellan Confederation,Comstar,Draconis Combine,Federated Suns,Free Worlds League,Mercenary General,SLDF 3061|BattleMech|3056
+Owens OW-1C|Capellan Confederation,Comstar,Draconis Combine,Federated Suns,Free Worlds League,Mercenary General,SLDF 3061|BattleMech|3056
+Owens OW-1D|Capellan Confederation,Comstar,Draconis Combine,Federated Suns,Free Worlds League,Mercenary General,SLDF 3061|BattleMech|3056
+Owens OW-1E|Capellan Confederation,Comstar,Draconis Combine,Federated Suns,Free Worlds League,Mercenary General,SLDF 3061|BattleMech|3060
+Phoenix Hawk PXH-4L|Capellan Confederation,Circinus Federation,Magistracy of Canopus,Marian Hegemony,Word of Blake|BattleMech|3066
+Pillager PLG-3Z|Capellan Confederation,Federated Suns,Magistracy of Canopus,Mercenary General,Nova Cat,SLDF 2750,Taurian Concordat|BattleMech|2590
+Pillager PLG-4Z|Capellan Confederation|BattleMech|3062
+Raven RVN-3L|Capellan Confederation,Federated Suns,Free Worlds League,Magistracy of Canopus,Mercenary General,Taurian Concordat|BattleMech|3050
+Raven RVN-4L|Capellan Confederation|BattleMech|3063
+Sha Yu SYU-2B|Capellan Confederation|BattleMech|3063
+Sha Yu SYU-4B|Capellan Confederation|BattleMech|3067
+Shadow Hawk SHD-7M|Capellan Confederation,Free Worlds League,Magistracy of Canopus,Taurian Concordat|BattleMech|3067
+Sirocco SRC-3C|Capellan Confederation,Free Worlds League,Mercenary General|BattleMech|3059
+Snake SNK-1V|Capellan Confederation,Free Worlds League,Magistracy of Canopus,Mercenary General|BattleMech|3055
+Spider SDR-5V|Capellan Confederation,Draconis Combine,Free Worlds League,Mercenary General,Periphery General,SLDF 2750|BattleMech|2650
+Stinger STG-5R|Capellan Confederation,Circinus Federation,Taurian Concordat,Word of Blake|BattleMech|3067
+Stinger STG-6L|Capellan Confederation,Magistracy of Canopus|BattleMech|3067
+Striker STC-2C|Capellan Confederation,Lyran Alliance|BattleMech|3058
+Striker STC-2D|Capellan Confederation|BattleMech|3058
+Sunder SD1-O|Capellan Confederation,Draconis Combine,Federated Suns,Mercenary General|BattleMech|3058
+Sunder SD1-OA|Capellan Confederation,Draconis Combine,Federated Suns,Mercenary General|BattleMech|3058
+Sunder SD1-OB|Capellan Confederation,Draconis Combine,Federated Suns,Mercenary General|BattleMech|3058
+Sunder SD1-OC|Capellan Confederation,Draconis Combine,Federated Suns,Mercenary General|BattleMech|3058
+Sunder SD1-OD|Capellan Confederation,Draconis Combine,Federated Suns,Mercenary General|BattleMech|3060
+Thug THG-11E|Capellan Confederation,Free Rasalhague Republic,SLDF 2750|BattleMech|2572
+Thunder THR-1L|Capellan Confederation,Magistracy of Canopus,Mercenary General|BattleMech|3055
+Ti Ts'ang TSG-9H|Capellan Confederation,Magistracy of Canopus,Taurian Concordat|BattleMech|3060
+Ti Ts'ang TSG-9J|Capellan Confederation|BattleMech|3060
+UrbanMech UM-R60L|Capellan Confederation,Periphery General|BattleMech|2950
+UrbanMech UM-R63|Capellan Confederation,Comstar,Mercenary General,Taurian Concordat|BattleMech|3050
+UrbanMech UM-R70|Capellan Confederation,Federated Suns|BattleMech|3062
+Victor VTR-10D|Capellan Confederation,Draconis Combine,Federated Suns,Mercenary General|BattleMech|3060
+Victor VTR-10L|Capellan Confederation|BattleMech|3067
+Victor VTR-9K|Capellan Confederation,Draconis Combine,Federated Suns,Free Rasalhague Republic,Free Worlds League,Lyran Alliance,Magistracy of Canopus,Marian Hegemony,Mercenary General,SLDF 3061,Taurian Concordat|BattleMech|3050
+Vindicator VND-1AA|Capellan Confederation,Taurian Concordat|BattleMech|2950
+Vindicator VND-1R|Capellan Confederation,Magistracy of Canopus,Marian Hegemony,Mercenary General|BattleMech|2826
+Vindicator VND-3L|Capellan Confederation,Magistracy of Canopus,Marian Hegemony,Mercenary General,Taurian Concordat|BattleMech|3050
+Vindicator VND-4L|Capellan Confederation,Magistracy of Canopus|BattleMech|3063
+Vindicator VND-5L|Capellan Confederation,Mercenary General|BattleMech|3060
+Warhammer WHM-4L|Capellan Confederation|BattleMech|3066
+Warhammer WHM-6L|Capellan Confederation|BattleMech|2950
+Wasp WSP-1L|Capellan Confederation|BattleMech|2950
+Wasp WSP-3L|Capellan Confederation,Circinus Federation,Magistracy of Canopus,Taurian Concordat,Word of Blake|BattleMech|3067
+Wraith TR1|Capellan Confederation,Comstar,Free Worlds League,Magistracy of Canopus,Mercenary General,Word of Blake|BattleMech|3055
+Yu Huang Y-H10G|Capellan Confederation,Taurian Concordat|BattleMech|3060
+Yu Huang Y-H9G|Capellan Confederation,Magistracy of Canopus,Taurian Concordat|BattleMech|3060
+Awesome AWS-8T|Circinus Federation,Inner Sphere General|BattleMech|2950
+Banshee BNC-3S|Circinus Federation,Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General,Taurian Concordat|BattleMech|2950
+Centurion CN9-D|Circinus Federation,Federated Suns,Lyran Alliance,Magistracy of Canopus,Mercenary General|BattleMech|3050
+Dart DRT-4S|Circinus Federation,Federated Suns,Lyran Alliance|BattleMech|3060
+Devastator DVS-2|Circinus Federation,Federated Suns,Lyran Alliance,Magistracy of Canopus,Mercenary General|BattleMech|3048
+Enforcer ENF-4R|Circinus Federation,Federated Suns,Lyran Alliance,Marian Hegemony,Mercenary General,Taurian Concordat|BattleMech|2777
+Excalibur EXC-C1|Circinus Federation,Comstar|BattleMech|3058
+Goliath GOL-2H|Circinus Federation,Marian Hegemony|BattleMech|3067
+Guillotine GLT-5M|Circinus Federation,Free Worlds League,Magistracy of Canopus|BattleMech|3050
+Highlander HGN-732|Circinus Federation,Free Rasalhague Republic,Lyran Alliance,Mercenary General,SLDF 2750,SLDF 3061|BattleMech|2592
+JagerMech JM6-DD|Circinus Federation,Draconis Combine,Federated Suns,Free Rasalhague Republic,Mercenary General|BattleMech|3050
+Javelin JVN-10F|Circinus Federation,Federated Suns,Magistracy of Canopus,Mercenary General,Taurian Concordat|BattleMech|2950
+Lineholder KW1-LH2|Circinus Federation,Inner Sphere General,Taurian Concordat|BattleMech|3057
+Locust LCT-5M|Circinus Federation,Federated Suns,Free Rasalhague Republic,Free Worlds League,Word of Blake|BattleMech|3067
+Nightsky NGS-4S|Circinus Federation,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3053
+Ostroc OSR-4C|Circinus Federation,Taurian Concordat|BattleMech|3067
+Ostsol OTL-7M|Circinus Federation,Free Worlds League,Word of Blake|BattleMech|3065
+Ostsol OTL-8M|Circinus Federation,Free Worlds League,Word of Blake|BattleMech|3065
+Spector SPR-5F|Circinus Federation,Federated Suns,Lyran Alliance,Mercenary General,SLDF 2750|BattleMech|2639
+Stalker STK-3H|Circinus Federation,Inner Sphere General|BattleMech|2950
+Stalker STK-5M|Circinus Federation,Inner Sphere General,Magistracy of Canopus,Taurian Concordat|BattleMech|3050
+Tempest TMP-3M|Circinus Federation,Free Worlds League,Magistracy of Canopus,Marian Hegemony,Mercenary General,Word of Blake|BattleMech|3055
+Thunderbolt TDR-9M|Circinus Federation,Free Worlds League,Marian Hegemony,Word of Blake|BattleMech|3067
+Victor VTR-9S|Circinus Federation,Lyran Alliance|BattleMech|2950
+Warhammer WHM-9S|Circinus Federation,Lyran Alliance,Word of Blake|BattleMech|3066
+Wolfhound WLF-1|Circinus Federation,Federated Suns,Lyran Alliance,Magistracy of Canopus,Marian Hegemony,Mercenary General|BattleMech|3028
+Zeus ZEU-9S|Circinus Federation,Federated Suns,Free Rasalhague Republic,Lyran Alliance,Marian Hegemony,Mercenary General,Taurian Concordat|BattleMech|3050
+Adder (Puma) A|Clan General,Wolf's Dragoons|BattleMech|2950
+Adder (Puma) B|Clan General,Wolf's Dragoons|BattleMech|2950
+Adder (Puma) C|Clan General,Wolf's Dragoons|BattleMech|2950
+Adder (Puma) D|Clan General,Wolf's Dragoons|BattleMech|2950
+Adder (Puma) E|Clan General|BattleMech|3060
+Adder (Puma) H|Clan General|BattleMech|3060
+Adder (Puma) Prime|Clan General,Wolf's Dragoons|BattleMech|2950
+Annihilator ANH-1A|Clan General,Wolf's Dragoons|BattleMech|2840
+Annihilator C|Clan General,Wolf's Dragoons|BattleMech|2950
+Bane (Kraken)|Clan General|BattleMech|2950
+Bane (Kraken) 2|Clan General|BattleMech|2950
+Bane (Kraken) 3|Clan General|BattleMech|2950
+Black Python (Viper)|Clan General|BattleMech|2950
+Clint CLNT-1-2R|Clan General|BattleMech|2507
+Conjurer (Hellhound)|Clan General|BattleMech|2950
+Dire Wolf (Daishi) A|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Dire Wolf (Daishi) B|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Dire Wolf (Daishi) C|Clan General|BattleMech|3060
+Dire Wolf (Daishi) H|Clan General|BattleMech|3060
+Dire Wolf (Daishi) Prime|Clan General,Draconis Combine,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Dire Wolf (Daishi) S|Clan General|BattleMech|3050
+Executioner (Gladiator) A|Clan General,Wolf's Dragoons|BattleMech|2950
+Executioner (Gladiator) B|Clan General,Wolf's Dragoons|BattleMech|2950
+Executioner (Gladiator) C|Clan General,Wolf's Dragoons|BattleMech|2950
+Executioner (Gladiator) D|Clan General,Wolf's Dragoons|BattleMech|2950
+Executioner (Gladiator) E|Clan General|BattleMech|3060
+Executioner (Gladiator) H|Clan General|BattleMech|3060
+Executioner (Gladiator) Prime|Clan General,Wolf's Dragoons|BattleMech|2950
+Fire Moth (Dasher) A|Clan General,Wolf's Dragoons|BattleMech|2950
+Fire Moth (Dasher) B|Clan General,Wolf's Dragoons|BattleMech|2950
+Fire Moth (Dasher) C|Clan General,Wolf's Dragoons|BattleMech|2950
+Fire Moth (Dasher) D|Clan General,Wolf's Dragoons|BattleMech|2950
+Fire Moth (Dasher) E|Clan General|BattleMech|3060
+Fire Moth (Dasher) H|Clan General|BattleMech|3060
+Fire Moth (Dasher) Prime|Clan General,Wolf's Dragoons|BattleMech|2950
+Firefly C|Clan General,Wolf's Dragoons|BattleMech|2950
+Gargoyle (Man O' War) A|Clan General,Wolf's Dragoons|BattleMech|2950
+Gargoyle (Man O' War) B|Clan General,Wolf's Dragoons|BattleMech|2950
+Gargoyle (Man O' War) C|Clan General,Wolf's Dragoons|BattleMech|2950
+Gargoyle (Man O' War) D|Clan General|BattleMech|3060
+Gargoyle (Man O' War) H|Clan General|BattleMech|3060
+Gargoyle (Man O' War) Prime|Clan General,Wolf's Dragoons|BattleMech|2950
+Glass Spider (Galahad)|Clan General|BattleMech|2950
+Great Wyrm|Clan General|BattleMech|2844
+Griffin IIC|Clan General|BattleMech|2950
+Guillotine IIC|Clan General|BattleMech|2950
+Hankyu A|Clan General|BattleMech|2950
+Hankyu B|Clan General|BattleMech|2950
+Hankyu C|Clan General|BattleMech|2950
+Hankyu D|Clan General|BattleMech|3055
+Hankyu H|Clan General|BattleMech|3060
+Hankyu Prime|Clan General|BattleMech|2950
+Hellbringer (Loki) A|Clan General,Wolf's Dragoons|BattleMech|2950
+Hellbringer (Loki) B|Clan General,Wolf's Dragoons|BattleMech|2950
+Hellbringer (Loki) C|Clan General|BattleMech|3061
+Hellbringer (Loki) H|Clan General|BattleMech|3060
+Hellbringer (Loki) Prime|Clan General,Wolf's Dragoons|BattleMech|2950
+Highlander IIC|Clan General,Wolf's Dragoons|BattleMech|2950
+Hoplite C|Clan General|BattleMech|2950
+Horned Owl (Peregrine)|Clan General|BattleMech|2950
+Horned Owl (Peregrine) 2|Clan General|BattleMech|2950
+Howler (Baboon)|Clan General|BattleMech|2950
+Hunchback IIC|Clan General|BattleMech|2950
+Ice Ferret (Fenris) A|Clan General,Wolf's Dragoons|BattleMech|2950
+Ice Ferret (Fenris) B|Clan General,Wolf's Dragoons|BattleMech|2950
+Ice Ferret (Fenris) C|Clan General,Wolf's Dragoons|BattleMech|2950
+Ice Ferret (Fenris) D|Clan General,Wolf's Dragoons|BattleMech|2950
+Ice Ferret (Fenris) E|Clan General|BattleMech|3060
+Ice Ferret (Fenris) H|Clan General|BattleMech|3060
+Ice Ferret (Fenris) Prime|Clan General,Wolf's Dragoons|BattleMech|2950
+Imp C|Clan General,Wolf's Dragoons|BattleMech|2950
+Incubus (Vixen)|Clan General|BattleMech|2950
+Incubus (Vixen) 2|Clan General|BattleMech|2950
+Incubus (Vixen) 3|Clan General|BattleMech|2950
+Jenner IIC|Clan General|BattleMech|2950
+Kingfisher A|Clan General|BattleMech|2950
+Kingfisher B|Clan General|BattleMech|2950
+Kingfisher C|Clan General|BattleMech|2950
+Kingfisher D|Clan General|BattleMech|2950
+Kingfisher E|Clan General|BattleMech|3060
+Kingfisher H|Clan General|BattleMech|3060
+Kingfisher Prime|Clan General|BattleMech|2950
+Kit Fox (Uller) A|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Kit Fox (Uller) B|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Kit Fox (Uller) C|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Kit Fox (Uller) D|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Kit Fox (Uller) E|Clan General|BattleMech|3060
+Kit Fox (Uller) H|Clan General|BattleMech|3060
+Kit Fox (Uller) Prime|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Kit Fox (Uller) S|Clan General|BattleMech|3050
+Linebacker A|Clan General|BattleMech|3055
+Linebacker B|Clan General|BattleMech|3055
+Linebacker C|Clan General|BattleMech|3055
+Linebacker D|Clan General|BattleMech|3055
+Linebacker E|Clan General|BattleMech|3060
+Linebacker H|Clan General|BattleMech|3062
+Linebacker Prime|Clan General|BattleMech|3055
+Locust IIC|Clan General,Draconis Combine|BattleMech|2950
+Locust IIC 3|Clan General|BattleMech|2950
+Mad Dog (Vulture) A|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Mad Dog (Vulture) B|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Mad Dog (Vulture) C|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Mad Dog (Vulture) D|Clan General|BattleMech|3060
+Mad Dog (Vulture) H|Clan General|BattleMech|3060
+Mad Dog (Vulture) Prime|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Marauder IIC|Clan General|BattleMech|2950
+Marauder IIC 3|Clan General|BattleMech|3060
+Mist Lynx (Koshi) A|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Mist Lynx (Koshi) B|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Mist Lynx (Koshi) C|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Mist Lynx (Koshi) D|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Mist Lynx (Koshi) E|Clan General|BattleMech|3060
+Mist Lynx (Koshi) H|Clan General|BattleMech|3060
+Mist Lynx (Koshi) P|Clan General|BattleMech|2950
+Mist Lynx (Koshi) Prime|Clan General,Draconis Combine,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Nova (Black Hawk) A|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Nova (Black Hawk) B|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Nova (Black Hawk) C|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Nova (Black Hawk) D|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Nova (Black Hawk) E|Clan General|BattleMech|3060
+Nova (Black Hawk) H|Clan General|BattleMech|3060
+Nova (Black Hawk) Prime|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Nova (Black Hawk) S|Clan General|BattleMech|3050
+Rifleman IIC|Clan General|BattleMech|2950
+Rifleman IIC 2|Clan General|BattleMech|2950
+Shadow Hawk IIC|Clan General|BattleMech|2950
+Shogun C|Clan General,Wolf's Dragoons|BattleMech|2950
+Stone Rhino (Behemoth)|Clan General|BattleMech|2950
+Stormcrow (Ryoken) A|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Stormcrow (Ryoken) B|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Stormcrow (Ryoken) C|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Stormcrow (Ryoken) D|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Stormcrow (Ryoken) E|Clan General|BattleMech|3061
+Stormcrow (Ryoken) H|Clan General|BattleMech|3060
+Stormcrow (Ryoken) Prime|Clan General,Draconis Combine,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Summoner (Thor) A|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Summoner (Thor) B|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Summoner (Thor) C|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Summoner (Thor) D|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Summoner (Thor) E|Clan General|BattleMech|3060
+Summoner (Thor) H|Clan General|BattleMech|3060
+Summoner (Thor) Prime|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Supernova|Clan General,SLDF 3061|BattleMech|2950
+Timberwolf (Mad Cat) A|Clan General,Wolf's Dragoons|BattleMech|2950
+Timberwolf (Mad Cat) B|Clan General,Wolf's Dragoons|BattleMech|2950
+Timberwolf (Mad Cat) C|Clan General,Wolf's Dragoons|BattleMech|2950
+Timberwolf (Mad Cat) D|Clan General,Wolf's Dragoons|BattleMech|2950
+Timberwolf (Mad Cat) E|Clan General|BattleMech|3060
+Timberwolf (Mad Cat) H|Clan General|BattleMech|3060
+Timberwolf (Mad Cat) Prime|Clan General,Wolf's Dragoons|BattleMech|2950
+Timberwolf (Mad Cat) S|Clan General|BattleMech|3050
+Vapor Eagle (Goshawk)|Clan General|BattleMech|2950
+Vapor Eagle (Goshawk) 2|Clan General|BattleMech|2950
+Viper (Dragonfly) A|Clan General,Wolf's Dragoons|BattleMech|2950
+Viper (Dragonfly) B|Clan General,Wolf's Dragoons|BattleMech|2950
+Viper (Dragonfly) C|Clan General,Wolf's Dragoons|BattleMech|2950
+Viper (Dragonfly) D|Clan General,Wolf's Dragoons|BattleMech|2950
+Viper (Dragonfly) E|Clan General|BattleMech|3060
+Viper (Dragonfly) H|Clan General|BattleMech|3060
+Viper (Dragonfly) Prime|Clan General,Wolf's Dragoons|BattleMech|2950
+Warhammer IIC|Clan General|BattleMech|2950
+Warhammer IIC 2|Clan General|BattleMech|2950
+Warhawk (Masakari) A|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Warhawk (Masakari) B|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Warhawk (Masakari) C|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Warhawk (Masakari) D|Clan General|BattleMech|3060
+Warhawk (Masakari) H|Clan General|BattleMech|3060
+Warhawk (Masakari) Prime|Clan General,Northwind Highlanders,Wolf's Dragoons|BattleMech|2950
+Wyvern IIC|Clan General|BattleMech|2950
+Black Lanner A|Cloud Cobra,Ice Hellion,Jade Falcon,Steel Viper|BattleMech|2950
+Black Lanner B|Cloud Cobra,Ice Hellion,Jade Falcon,Steel Viper|BattleMech|2950
+Black Lanner C|Cloud Cobra,Ice Hellion,Jade Falcon,Steel Viper|BattleMech|2950
+Black Lanner D|Cloud Cobra,Ice Hellion,Jade Falcon,Steel Viper|BattleMech|2950
+Black Lanner E|Cloud Cobra,Ice Hellion,Jade Falcon,Steel Viper|BattleMech|3060
+Black Lanner H|Cloud Cobra,Ice Hellion,Jade Falcon,Steel Viper|BattleMech|3060
+Black Lanner Prime|Cloud Cobra,Ice Hellion,Jade Falcon,Steel Viper|BattleMech|2950
+Cauldron-Born A|Cloud Cobra,Diamond Shark,Draconis Combine,Fire Mandrill,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Snow Raven,Star Adder|BattleMech|2950
+Cauldron-Born B|Cloud Cobra,Diamond Shark,Draconis Combine,Fire Mandrill,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Snow Raven,Star Adder|BattleMech|2950
+Cauldron-Born C|Cloud Cobra,Diamond Shark,Draconis Combine,Fire Mandrill,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Snow Raven,Star Adder|BattleMech|2950
+Cauldron-Born D|Cloud Cobra,Diamond Shark,Fire Mandrill,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Snow Raven,Star Adder|BattleMech|2950
+Cauldron-Born H|Cloud Cobra,Diamond Shark,Fire Mandrill,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Snow Raven,Star Adder|BattleMech|3060
+Cauldron-Born Prime|Cloud Cobra,Diamond Shark,Draconis Combine,Fire Mandrill,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Snow Raven,Star Adder|BattleMech|2950
+Fire Falcon A|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Northwind Highlanders,Nova Cat|BattleMech|3058
+Fire Falcon B|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Northwind Highlanders,Nova Cat|BattleMech|3058
+Fire Falcon C|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Northwind Highlanders,Nova Cat|BattleMech|3058
+Fire Falcon D|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Northwind Highlanders,Nova Cat|BattleMech|3058
+Fire Falcon E|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Nova Cat|BattleMech|3061
+Fire Falcon H|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Nova Cat|BattleMech|3060
+Fire Falcon Prime|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Northwind Highlanders,Nova Cat|BattleMech|3058
+Glass Spider (Galahad) 2|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Star Adder,Wolf,Wolf in Exile|BattleMech|2950
+Hellfire|Cloud Cobra,Star Adder,Steel Viper|BattleMech|3058
+Jenner IIC 2|Cloud Cobra,Coyote,Diamond Shark,Nova Cat,Star Adder,Steel Viper|BattleMech|2950
+Jenner IIC 3|Cloud Cobra,Nova Cat,Steel Viper|BattleMech|2950
+Kodiak|Cloud Cobra,Coyote,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Nova Cat,Snow Raven|BattleMech|2950
+Locust IIC 2|Cloud Cobra,Ice Hellion,Jade Falcon|BattleMech|2950
+Locust IIC 4|Cloud Cobra,Comstar,Jade Falcon,Lyran Alliance,Star Adder,Wolf|BattleMech|3067
+Naga A|Cloud Cobra,Coyote,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|2950
+Naga B|Cloud Cobra,Coyote,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|2950
+Naga C|Cloud Cobra,Coyote,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|2950
+Naga D|Cloud Cobra,Coyote,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|2950
+Naga Prime|Cloud Cobra,Coyote,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|2950
+Night Gyr A|Cloud Cobra,Goliath Scorpion,Jade Falcon,Northwind Highlanders,Star Adder|BattleMech|3058
+Night Gyr B|Cloud Cobra,Goliath Scorpion,Jade Falcon,Northwind Highlanders,Star Adder|BattleMech|3058
+Night Gyr C|Cloud Cobra,Goliath Scorpion,Jade Falcon,Northwind Highlanders,Star Adder|BattleMech|3058
+Night Gyr D|Cloud Cobra,Goliath Scorpion,Jade Falcon,Northwind Highlanders,Star Adder|BattleMech|3058
+Night Gyr E|Cloud Cobra,Goliath Scorpion,Jade Falcon,Star Adder|BattleMech|3060
+Night Gyr H|Cloud Cobra,Goliath Scorpion,Jade Falcon,Star Adder|BattleMech|3060
+Night Gyr Prime|Cloud Cobra,Goliath Scorpion,Jade Falcon,Northwind Highlanders,Star Adder|BattleMech|3058
+Pack Hunter|Cloud Cobra,Coyote,Diamond Shark,Ghost Bear,Nova Cat,SLDF 3061,Star Adder,Wolf in Exile|BattleMech|3059
+Phantom A|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Wolf,Wolf in Exile|BattleMech|2950
+Phantom B|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Wolf,Wolf in Exile|BattleMech|2950
+Phantom C|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Wolf,Wolf in Exile|BattleMech|2950
+Phantom D|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Wolf,Wolf in Exile|BattleMech|2950
+Phantom E|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Wolf,Wolf in Exile|BattleMech|3060
+Phantom H|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Wolf,Wolf in Exile|BattleMech|3062
+Phantom Prime|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Wolf,Wolf in Exile|BattleMech|2950
+Phoenix Hawk IIC|Cloud Cobra,Coyote,Diamond Shark,Fire Mandrill,Ghost Bear,Hell's Horses,Ice Hellion,Jade Falcon,Nova Cat,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|2950
+Phoenix Hawk IIC 2|Cloud Cobra,Coyote,Fire Mandrill,Snow Raven,Steel Viper|BattleMech|2950
+Phoenix Hawk IIC 4|Cloud Cobra,Coyote,Diamond Shark,Fire Mandrill,Snow Raven,Steel Viper|BattleMech|3067
+Pouncer A|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Nova Cat,Star Adder,Wolf,Wolf in Exile|BattleMech|3055
+Pouncer B|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Nova Cat,Star Adder,Wolf,Wolf in Exile|BattleMech|3055
+Pouncer C|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Nova Cat,Star Adder,Wolf,Wolf in Exile|BattleMech|3055
+Pouncer D|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Nova Cat,Star Adder,Wolf,Wolf in Exile|BattleMech|3055
+Pouncer E|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Nova Cat,Star Adder,Wolf,Wolf in Exile|BattleMech|3060
+Pouncer H|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Nova Cat,Star Adder,Wolf,Wolf in Exile|BattleMech|3060
+Pouncer Prime|Cloud Cobra,Coyote,Goliath Scorpion,Hell's Horses,Nova Cat,Star Adder,Wolf,Wolf in Exile|BattleMech|3055
+Rabid Coyote|Cloud Cobra,Coyote|BattleMech|3066
+Savage Coyote A|Cloud Cobra,Coyote,Star Adder|BattleMech|3061
+Savage Coyote B|Cloud Cobra,Coyote,Star Adder|BattleMech|3061
+Savage Coyote C|Cloud Cobra,Coyote,Star Adder|BattleMech|3067
+Savage Coyote Prime|Cloud Cobra,Coyote,Star Adder|BattleMech|3061
+Shadow Cat A|Cloud Cobra,Diamond Shark,Fire Mandrill,Northwind Highlanders,Nova Cat,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|2950
+Shadow Cat B|Cloud Cobra,Diamond Shark,Fire Mandrill,Northwind Highlanders,Nova Cat,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|2950
+Shadow Cat C|Cloud Cobra,Diamond Shark,Fire Mandrill,Nova Cat,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|3060
+Shadow Cat H|Cloud Cobra,Diamond Shark,Fire Mandrill,Nova Cat,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|3060
+Shadow Cat Prime|Cloud Cobra,Diamond Shark,Fire Mandrill,Northwind Highlanders,Nova Cat,Snow Raven,Steel Viper,Wolf,Wolf in Exile|BattleMech|2950
+Solitaire|Cloud Cobra,Diamond Shark,Ghost Bear,Ice Hellion|BattleMech|3067
+Stalking Spider 2|Cloud Cobra|BattleMech|3059
+Turkina A|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Jade Falcon,Northwind Highlanders,Nova Cat|BattleMech|2950
+Turkina B|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Jade Falcon,Northwind Highlanders,Nova Cat|BattleMech|2950
+Turkina C|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Jade Falcon,Northwind Highlanders,Nova Cat|BattleMech|2950
+Turkina D|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Jade Falcon,Nova Cat|BattleMech|3060
+Turkina H|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Jade Falcon,Nova Cat|BattleMech|3060
+Turkina Prime|Cloud Cobra,Coyote,Fire Mandrill,Goliath Scorpion,Jade Falcon,Northwind Highlanders,Nova Cat|BattleMech|2950
+Avatar AV1-OE|Comstar,Word of Blake|BattleMech|3062
+Beowulf BEO-12|Comstar,Free Rasalhague Republic,Ghost Bear,Nova Cat,SLDF 3061|BattleMech|3058
+Black Knight BL-7-KNT|Comstar,Periphery General,Word of Blake|BattleMech|2809
+Black Knight BL-9-KNT|Comstar,Word of Blake|BattleMech|3052
+Bombardier BMB-10D|Comstar,Word of Blake|BattleMech|3025
+Bombardier BMB-14C|Comstar,Word of Blake|BattleMech|3062
+Champion CHP-3N|Comstar,Word of Blake|BattleMech|3052
+Champion CHP-3P|Comstar,Word of Blake|BattleMech|3062
+Crab CRB-30|Comstar|BattleMech|3062
+Enfield END-6Q|Comstar,Lyran Alliance,Mercenary General|BattleMech|3055
+Exterminator EXT-5E|Comstar,Word of Blake|BattleMech|3062
+Flashman FLS-9C|Comstar|BattleMech|3062
+Griffin GRF-6CS|Comstar,Word of Blake|BattleMech|3067
+Grim Reaper GRM-R-PR29|Comstar,Draconis Combine,Word of Blake|BattleMech|3052
+Hermes HER-4S|Comstar,Free Rasalhague Republic,Free Worlds League,Word of Blake|BattleMech|3050
+Highlander HGN-736|Comstar,Word of Blake|BattleMech|3062
+Hitman HM-1|Comstar,Draconis Combine,Federated Suns,Free Rasalhague Republic,Mercenary General,SLDF 3061|BattleMech|3055
+Hunchback HBK-5M|Comstar,Free Rasalhague Republic,Free Worlds League,Mercenary General|BattleMech|3050
+Hussar HSR-400-D|Comstar,Word of Blake|BattleMech|3052
+Hussar HSR-500-D|Comstar,Word of Blake|BattleMech|3062
+JagerMech III JM6-D3|Comstar,Federated Suns|BattleMech|3060
+King Crab KGC-001|Comstar,Word of Blake|BattleMech|3052
+King Crab KGC-005|Comstar,Word of Blake|BattleMech|3062
+Kintaro KTO-21|Comstar,Word of Blake|BattleMech|3062
+Lancelot LNC25-04|Comstar|BattleMech|3062
+Marauder MAD-5M|Comstar,Free Worlds League,Mercenary General,Word of Blake|BattleMech|3050
+Mercury MCY-102|Comstar,Word of Blake|BattleMech|3062
+Mercury MCY-97|Comstar,Free Rasalhague Republic,Word of Blake|BattleMech|3050
+Merlin MLN-1A|Comstar,Mercenary General,Periphery General|BattleMech|3010
+Nexus NXS1-A|Comstar,Word of Blake|BattleMech|3055
+O-Bakemono OBK-M10|Comstar,Draconis Combine,SLDF 3061|BattleMech|3058
+Orion ON1-M|Comstar,Free Worlds League,Magistracy of Canopus,Mercenary General,Word of Blake|BattleMech|3050
+Ostscout OTT-9CS|Comstar,Word of Blake|BattleMech|3067
+Ostsol OTL-5M|Comstar,Free Worlds League,Mercenary General,Word of Blake|BattleMech|3050
+Phoenix Hawk PXH-7CS|Comstar|BattleMech|3067
+Raijin RJN101-A|Comstar,Word of Blake|BattleMech|3053
+Raijin RJN101-C|Comstar,Word of Blake|BattleMech|3062
+Raptor RTX1-O|Comstar,Draconis Combine,Federated Suns,Magistracy of Canopus,SLDF 3061|BattleMech|3052
+Raptor RTX1-OA|Comstar,Draconis Combine,Federated Suns,Magistracy of Canopus,SLDF 3061|BattleMech|3052
+Raptor RTX1-OB|Comstar,Draconis Combine,Federated Suns,Magistracy of Canopus,SLDF 3061|BattleMech|3052
+Raptor RTX1-OC|Comstar,Draconis Combine,Federated Suns,Magistracy of Canopus,SLDF 3061|BattleMech|3052
+Raptor RTX1-OD|Comstar,Draconis Combine,Federated Suns,Magistracy of Canopus,SLDF 3061|BattleMech|3052
+Raptor RTX1-OE|Comstar,Draconis Combine,Federated Suns,Magistracy of Canopus,SLDF 3061|BattleMech|3058
+Raptor RTX1-OF|Comstar,Draconis Combine,Federated Suns,Magistracy of Canopus,SLDF 3061|BattleMech|3060
+Salamander PPR-5S|Comstar,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3055
+Scarabus SCB-9A|Comstar,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3055
+Shadow Hawk SHD-7CS|Comstar,Word of Blake|BattleMech|3067
+Shugenja SJA-7D|Comstar,Draconis Combine,SLDF 3061|BattleMech|3060
+Stealth STH-1D|Comstar,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3055
+Strider SR1-O|Comstar,Draconis Combine,Federated Suns,Mercenary General,SLDF 3061|BattleMech|3058
+Strider SR1-OA|Comstar,Draconis Combine,Federated Suns,Mercenary General,SLDF 3061|BattleMech|3058
+Strider SR1-OB|Comstar,Draconis Combine,Federated Suns,Mercenary General,SLDF 3061|BattleMech|3058
+Strider SR1-OC|Comstar,Draconis Combine,Federated Suns,Mercenary General,SLDF 3061|BattleMech|3058
+Strider SR1-OD|Comstar,Draconis Combine,Federated Suns,Mercenary General,SLDF 3061|BattleMech|3058
+Strider SR1-OE|Comstar,Draconis Combine,Federated Suns,Mercenary General,SLDF 3061|BattleMech|3058
+Strider SR1-OF|Comstar,Draconis Combine,Federated Suns,Mercenary General,SLDF 3061|BattleMech|3060
+Tessen TSN-1C|Comstar,SLDF 3061|BattleMech|3062
+Thug THG-12E|Comstar,Word of Blake|BattleMech|3062
+Venom SDR-9K|Comstar,Draconis Combine,Federated Suns,Free Rasalhague Republic,Mercenary General|BattleMech|3055
+Viking VKG-2F|Comstar,Free Rasalhague Republic,Ghost Bear,SLDF 3061|BattleMech|3060
+Viking VKG-2G|Comstar,Free Rasalhague Republic,Nova Cat|BattleMech|3060
+Whitworth WTH-2|Comstar,Draconis Combine,Federated Suns,Free Rasalhague Republic|BattleMech|3050
+Wyvern WVE-10N|Comstar,Word of Blake|BattleMech|3062
+Wyvern WVE-6N|Comstar,Draconis Combine|BattleMech|2950
+Wyvern WVE-9N|Comstar,Word of Blake|BattleMech|3052
+Canis|Coyote|BattleMech|3058
+Grendel A|Coyote,Diamond Shark,Jade Falcon,Snow Raven,Star Adder,Steel Viper|BattleMech|2950
+Grendel B|Coyote,Diamond Shark,Jade Falcon,Snow Raven,Star Adder,Steel Viper|BattleMech|2950
+Grendel C|Coyote,Diamond Shark,Jade Falcon,Snow Raven,Star Adder,Steel Viper|BattleMech|2950
+Grendel D|Coyote,Diamond Shark,Jade Falcon,Snow Raven,Star Adder,Steel Viper|BattleMech|2950
+Grendel E|Coyote,Diamond Shark,Jade Falcon,Snow Raven,Star Adder,Steel Viper|BattleMech|3060
+Grendel H|Coyote,Diamond Shark,Jade Falcon,Snow Raven,Star Adder,Steel Viper|BattleMech|3060
+Grendel Prime|Coyote,Diamond Shark,Jade Falcon,Snow Raven,Star Adder,Steel Viper|BattleMech|2950
+Hellion A|Coyote,Diamond Shark,Hell's Horses,Ice Hellion,Jade Falcon,Nova Cat,Star Adder|BattleMech|3059
+Hellion B|Coyote,Diamond Shark,Hell's Horses,Ice Hellion,Jade Falcon,Nova Cat,Star Adder|BattleMech|3059
+Hellion C|Coyote,Diamond Shark,Hell's Horses,Ice Hellion,Jade Falcon,Nova Cat,Star Adder|BattleMech|3067
+Hellion Prime|Coyote,Diamond Shark,Hell's Horses,Ice Hellion,Jade Falcon,Nova Cat,Star Adder|BattleMech|3059
+Lobo|Coyote,Ghost Bear,Wolf|BattleMech|3067
+Locust IIC 5|Coyote,Ghost Bear,Wolf|BattleMech|3067
+UrbanMech IIC|Coyote,Goliath Scorpion,Hell's Horses,Ice Hellion,Snow Raven|BattleMech|2950
+Warhammer IIC 4|Coyote,Diamond Shark,Ghost Bear,Nova Cat,Star Adder,Wolf in Exile|BattleMech|3060
+Huntsman (Nobori-nin) A|Diamond Shark,Fire Mandrill,Nova Cat,Star Adder|BattleMech|2950
+Huntsman (Nobori-nin) B|Diamond Shark,Fire Mandrill,Nova Cat,Star Adder|BattleMech|2950
+Huntsman (Nobori-nin) C|Diamond Shark,Fire Mandrill,Nova Cat,Star Adder|BattleMech|2950
+Huntsman (Nobori-nin) D|Diamond Shark,Fire Mandrill,Nova Cat,Star Adder|BattleMech|3060
+Huntsman (Nobori-nin) H|Diamond Shark,Fire Mandrill,Nova Cat,Star Adder|BattleMech|3060
+Huntsman (Nobori-nin) Prime|Diamond Shark,Fire Mandrill,Nova Cat,Star Adder|BattleMech|2950
+Mad Cat Mk II|Diamond Shark,Draconis Combine,Federated Suns,Ghost Bear,Ice Hellion,Jade Falcon,Lyran Alliance,Nova Cat,SLDF 3061,Wolf in Exile|BattleMech|3062
+Nova Cat A|Diamond Shark,Fire Mandrill,Ghost Bear,Ice Hellion,Nova Cat,SLDF 3061,Star Adder,Wolf in Exile|BattleMech|3059
+Nova Cat B|Diamond Shark,Fire Mandrill,Ghost Bear,Ice Hellion,Nova Cat,SLDF 3061,Star Adder,Wolf in Exile|BattleMech|3059
+Nova Cat C|Diamond Shark,Fire Mandrill,Ghost Bear,Ice Hellion,Nova Cat,SLDF 3061,Star Adder,Wolf in Exile|BattleMech|3059
+Nova Cat D|Diamond Shark,Fire Mandrill,Ghost Bear,Ice Hellion,Nova Cat,SLDF 3061,Star Adder,Wolf in Exile|BattleMech|3059
+Nova Cat E|Diamond Shark,Fire Mandrill,Ghost Bear,Ice Hellion,Nova Cat,SLDF 3061,Star Adder,Wolf in Exile|BattleMech|3060
+Nova Cat Prime|Diamond Shark,Fire Mandrill,Ghost Bear,Ice Hellion,Nova Cat,SLDF 3061,Star Adder,Wolf in Exile|BattleMech|3059
+Shadow Hawk IIC 3|Diamond Shark,Nova Cat,Star Adder|BattleMech|3060
+Shadow Hawk IIC 4|Diamond Shark,Nova Cat|BattleMech|3060
+Akuma AKU-1X|Draconis Combine,SLDF 3061|BattleMech|3058
+Akuma AKU-1XJ|Draconis Combine,Nova Cat|BattleMech|3064
+Archer ARC-2K|Draconis Combine|BattleMech|2950
+Atlas AS7-C|Draconis Combine,SLDF 3061|BattleMech|3060
+Atlas AS7-CM|Draconis Combine|BattleMech|3060
+BattleMaster BLR-CM|Draconis Combine,SLDF 3061|BattleMech|3067
+BattleMaster BLR-K3|Draconis Combine|BattleMech|3067
+Bishamon BSN-3K|Draconis Combine,SLDF 3061|BattleMech|3060
+Bishamon BSN-4K|Draconis Combine|BattleMech|3060
+Black Hawk-KU BHKU-O|Draconis Combine,Federated Suns,Free Rasalhague Republic,Ghost Bear,Lyran Alliance,Mercenary General,SLDF 3061|BattleMech|3058
+Black Hawk-KU BHKU-OA|Draconis Combine,Federated Suns,Free Rasalhague Republic,Ghost Bear,Lyran Alliance,Mercenary General,SLDF 3061|BattleMech|3058
+Black Hawk-KU BHKU-OB|Draconis Combine,Federated Suns,Free Rasalhague Republic,Ghost Bear,Lyran Alliance,Mercenary General,SLDF 3061|BattleMech|3058
+Black Hawk-KU BHKU-OC|Draconis Combine,Federated Suns,Free Rasalhague Republic,Ghost Bear,Lyran Alliance,Mercenary General,SLDF 3061|BattleMech|3058
+Black Hawk-KU BHKU-OD|Draconis Combine,Federated Suns,Free Rasalhague Republic,Ghost Bear,Lyran Alliance,Mercenary General,SLDF 3061|BattleMech|3058
+Black Hawk-KU BHKU-OE|Draconis Combine,Federated Suns,Free Rasalhague Republic,Ghost Bear,Lyran Alliance,Mercenary General,SLDF 3061|BattleMech|3060
+Catapult CPLT-K2|Draconis Combine,Free Rasalhague Republic|BattleMech|2950
+Catapult CPLT-K5|Draconis Combine|BattleMech|3060
+Charger CGR-1A9|Draconis Combine|BattleMech|3039
+Charger CGR-3K|Draconis Combine,Free Rasalhague Republic|BattleMech|3050
+Charger CGR-C|Draconis Combine|BattleMech|3060
+Chimera CMA-1S|Draconis Combine,Federated Suns,Lyran Alliance|BattleMech|3063
+Chimera CMA-C|Draconis Combine,Federated Suns,Lyran Alliance|BattleMech|3063
+Clint CLNT-2-4T|Draconis Combine,Federated Suns|BattleMech|2950
+Crab CRB-20|Draconis Combine,Mercenary General|BattleMech|2950
+Crab CRB-27|Draconis Combine,Free Rasalhague Republic,Northwind Highlanders,SLDF 2750|BattleMech|2719
+Crab CRB-C|Draconis Combine|BattleMech|3060
+Crusader CRD-3K|Draconis Combine|BattleMech|2950
+Crusader CRD-4K|Draconis Combine,Free Rasalhague Republic|BattleMech|3050
+Crusader CRD-5K|Draconis Combine,Free Rasalhague Republic,SLDF 3061|BattleMech|3063
+Cyclops CP-12-K|Draconis Combine|BattleMech|3060
+Daikyu DAI-01|Draconis Combine,SLDF 3061|BattleMech|3055
+Daikyu DAI-02|Draconis Combine|BattleMech|3060
+Daimyo DMO-1K|Draconis Combine,Free Rasalhague Republic|BattleMech|3053
+Daimyo DMO-2K|Draconis Combine|BattleMech|3060
+Daimyo DMO-4K|Draconis Combine|BattleMech|3060
+Dragon DRG-1C|Draconis Combine,Free Rasalhague Republic|BattleMech|2754
+Dragon DRG-1N|Draconis Combine,Free Rasalhague Republic,Periphery General|BattleMech|2754
+Dragon DRG-5N|Draconis Combine,Free Rasalhague Republic|BattleMech|3050
+Dragon Fire DGR-3F|Draconis Combine,Free Rasalhague Republic,Lyran Alliance,Mercenary General,Nova Cat,SLDF 3061|BattleMech|3058
+Dragon Fire DGR-4F|Draconis Combine,Lyran Alliance,Mercenary General|BattleMech|3060
+Falcon Hawk FNHK-9K1A|Draconis Combine,Federated Suns,Free Worlds League,Lyran Alliance,Mercenary General|BattleMech|3058
+Gallowglas GAL-1GLS|Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance,Magistracy of Canopus,Mercenary General,Taurian Concordat|BattleMech|3055
+Gallowglas GAL-2GLS|Draconis Combine,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3055
+Grand Dragon DRG-1G|Draconis Combine,Free Rasalhague Republic|BattleMech|3024
+Grand Dragon DRG-5K|Draconis Combine,Free Rasalhague Republic|BattleMech|3050
+Grand Dragon DRG-7K|Draconis Combine,SLDF 3061|BattleMech|3060
+Grand Dragon DRG-C|Draconis Combine,SLDF 3061|BattleMech|3060
+Grasshopper GHR-6K|Draconis Combine,Federated Suns,Mercenary General|BattleMech|3060
+Grasshopper GHR-C|Draconis Combine|BattleMech|3060
+Griffin GRF-1DS|Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance|BattleMech|3050
+Griffin GRF-3M|Draconis Combine,Federated Suns,Free Worlds League,Lyran Alliance,Mercenary General|BattleMech|3050
+Griffin GRF-6S|Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance|BattleMech|3067
+Gunslinger GUN-1ERD|Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General|BattleMech|3055
+Ha Otoko HKO-1C|Draconis Combine|BattleMech|3060
+Hatamoto-Chi HTM-27T|Draconis Combine,Free Rasalhague Republic,Mercenary General|BattleMech|3050
+Hatamoto-Chi HTM-28T|Draconis Combine|BattleMech|3060
+Hatamoto-Hi HTM-27U|Draconis Combine|BattleMech|3050
+Hatamoto-Hi HTM-C|Draconis Combine|BattleMech|3060
+Hatamoto-Hi HTM-CM|Draconis Combine|BattleMech|3060
+Hatamoto-Kaze HTM-27V|Draconis Combine|BattleMech|3050
+Hatamoto-Ku HTM-27W|Draconis Combine|BattleMech|3050
+Hatamoto-Mizo HTM-27Y|Draconis Combine|BattleMech|3050
+Hermes III HER-4K|Draconis Combine|BattleMech|3025
+Javelin JVN-10P|Draconis Combine,Federated Suns,Magistracy of Canopus,Marian Hegemony,Taurian Concordat|BattleMech|3050
+Jenner JR7-C|Draconis Combine|BattleMech|3060
+Jenner JR7-K|Draconis Combine,Free Rasalhague Republic,Magistracy of Canopus,Mercenary General,Taurian Concordat|BattleMech|3050
+Kabuto KBO-7A|Draconis Combine,Ghost Bear,SLDF 3061|BattleMech|3059
+Katana CRK-5003-2|Draconis Combine,Free Rasalhague Republic|BattleMech|3039
+Katana CRK-5003-C|Draconis Combine|BattleMech|3060
+Katana CRK-5003-CM|Draconis Combine|BattleMech|3060
+Kintaro KTO-20|Draconis Combine,Free Rasalhague Republic|BattleMech|3039
+Kintaro KTO-C|Draconis Combine,SLDF 3061|BattleMech|3060
+Komodo KIM-2|Draconis Combine,Free Rasalhague Republic,Mercenary General,SLDF 3061|BattleMech|3055
+Komodo KIM-2A|Draconis Combine|BattleMech|3055
+Lancelot LNC25-02|Draconis Combine|BattleMech|2864
+Lynx LNX-9C|Draconis Combine,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3058
+Lynx LNX-9Q|Draconis Combine,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3058
+Lynx LNX-9R|Draconis Combine,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3058
+Maelstrom MTR-5K|Draconis Combine,Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3058
+Marauder II MAD-4S|Draconis Combine,Federated Suns,Free Worlds League,Lyran Alliance,Mercenary General,Nova Cat,SLDF 3061|BattleMech|3067
+Marauder MAD-5D|Draconis Combine,Federated Suns,Free Rasalhague Republic,Mercenary General|BattleMech|3050
+Mauler MAL-1R|Draconis Combine,Free Rasalhague Republic,Mercenary General|BattleMech|3039
+Mauler MAL-3R|Draconis Combine|BattleMech|3060
+Mauler MAL-C|Draconis Combine|BattleMech|3060
+Mongoose MON-67|Draconis Combine,Mercenary General,Periphery General|BattleMech|2950
+Naginata NG-C3A|Draconis Combine,SLDF 3061|BattleMech|3055
+Ninja-To NJT-2|Draconis Combine|BattleMech|3062
+Ninja-To NJT-3|Draconis Combine|BattleMech|3067
+No-Dachi NDA-1K|Draconis Combine,Free Rasalhague Republic|BattleMech|3058
+No-Dachi NDA-2K|Draconis Combine|BattleMech|3059
+No-Dachi NDA-2KO|Draconis Combine|BattleMech|3060
+Panther PNT-10K|Draconis Combine,Free Rasalhague Republic,Mercenary General,Taurian Concordat|BattleMech|3051
+Panther PNT-9R|Draconis Combine,Free Rasalhague Republic,Free Worlds League,Mercenary General,Periphery General,SLDF 2750|BattleMech|2759
+Panther PNT-C|Draconis Combine,SLDF 3061|BattleMech|3060
+Phoenix Hawk PXH-1K|Draconis Combine|BattleMech|2950
+Phoenix Hawk PXH-3K|Draconis Combine,Free Rasalhague Republic|BattleMech|3050
+Quickdraw QKD-5K|Draconis Combine,Free Rasalhague Republic|BattleMech|3050
+Quickdraw QKD-5M|Draconis Combine,Free Worlds League,Magistracy of Canopus,Marian Hegemony,Mercenary General,Taurian Concordat|BattleMech|3050
+Quickdraw QKD-8K|Draconis Combine,Mercenary General|BattleMech|3060
+Quickdraw QKD-C|Draconis Combine,SLDF 3061|BattleMech|3060
+Sentinel STN-3M|Draconis Combine,Free Rasalhague Republic|BattleMech|3039
+Sentinel STN-C|Draconis Combine|BattleMech|3060
+Shadow Hawk SHD-2K|Draconis Combine,Mercenary General|BattleMech|2950
+Spider SDR-5K|Draconis Combine|BattleMech|2950
+Spider SDR-7M|Draconis Combine,Free Rasalhague Republic,Free Worlds League,Magistracy of Canopus,Mercenary General,Taurian Concordat,Word of Blake|BattleMech|3050
+Spider SDR-C|Draconis Combine,SLDF 3061|BattleMech|3060
+Tai-sho TSH-7S|Draconis Combine,SLDF 3061|BattleMech|3060
+Tessen TSN-C3|Draconis Combine|BattleMech|3062
+Thug THG-10E|Draconis Combine,Free Worlds League,Periphery General|BattleMech|2835
+Trebuchet TBT-7K|Draconis Combine,Federated Suns,Free Rasalhague Republic|BattleMech|2950
+Trebuchet TBT-9K|Draconis Combine|BattleMech|3060
+Venom SDR-9KA|Draconis Combine|BattleMech|3060
+Venom SDR-9KB|Draconis Combine|BattleMech|3060
+Victor VTR-C|Draconis Combine|BattleMech|3060
+Warhammer WHM-6K|Draconis Combine,Federated Suns|BattleMech|2950
+Wasp WSP-1K|Draconis Combine|BattleMech|2950
+Whitworth WTH-2A|Draconis Combine,Federated Suns|BattleMech|3060
+Wolf Trap WFT-1|Draconis Combine,Free Rasalhague Republic|BattleMech|3050
+Wolf Trap WFT-C|Draconis Combine|BattleMech|3060
+Wolverine WVR-6K|Draconis Combine|BattleMech|2950
+Wolverine WVR-7K|Draconis Combine,Free Rasalhague Republic|BattleMech|3050
+Wolverine WVR-8C|Draconis Combine,SLDF 3061|BattleMech|3067
+Wolverine WVR-8K|Draconis Combine,Free Rasalhague Republic,Mercenary General,Nova Cat|BattleMech|3067
+Archer ARC-8M|Federated Suns,Free Worlds League,Marian Hegemony,Mercenary General,Word of Blake|BattleMech|3067
+Argus AGS-2D|Federated Suns|BattleMech|3062
+Argus AGS-4D|Federated Suns|BattleMech|3062
+Assassin ASN-101|Federated Suns|BattleMech|2950
+Atlas AS7-S|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3050
+Axman AXM-1N|Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General|BattleMech|3050
+Axman AXM-2N|Federated Suns,Lyran Alliance|BattleMech|3050
+Axman AXM-3S|Federated Suns,Lyran Alliance|BattleMech|3062
+Bandersnatch BNDR-01A|Federated Suns,Free Worlds League,Magistracy of Canopus,Mercenary General|BattleMech|3055
+Banshee BNC-5S|Federated Suns,Free Rasalhague Republic,Free Worlds League,Lyran Alliance,Mercenary General|BattleMech|3052
+Battle Hawk BH-K305|Federated Suns,Lyran Alliance,Mercenary General,SLDF 3061|BattleMech|3055
+BattleMaster BLR-1D|Federated Suns|BattleMech|2830
+BattleMaster BLR-3S|Federated Suns,Lyran Alliance|BattleMech|3050
+Berserker BRZ-A3|Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General|BattleMech|3055
+Black Knight BL-12-KNT|Federated Suns|BattleMech|3062
+Blackjack BJ-1DB|Federated Suns|BattleMech|3025
+Blackjack BJ-1DC|Federated Suns|BattleMech|3025
+Bushwacker BSW-S2|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3060
+Bushwacker BSW-X1|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3053
+Caesar CES-4S|Federated Suns,Lyran Alliance|BattleMech|3062
+Centurion CN9-D3|Federated Suns|BattleMech|3050
+Centurion CN9-D5|Federated Suns|BattleMech|3062
+Cestus CTS-6Y|Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General,SLDF 2750|BattleMech|2750
+Cestus CTS-6Z|Federated Suns,Lyran Alliance,Mercenary General,Nova Cat|BattleMech|3058
+Commando COM-5S|Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General|BattleMech|3050
+Crusader CRD-3D|Federated Suns|BattleMech|2950
+Crusader CRD-5S|Federated Suns,Lyran Alliance|BattleMech|3050
+Dart DRT-3S|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3055
+Dart DRT-6S|Federated Suns,Lyran Alliance|BattleMech|3060
+Dervish DV-8D|Federated Suns|BattleMech|3060
+Devastator DVS-3|Federated Suns,Lyran Alliance|BattleMech|3058
+Enforcer ENF-5D|Federated Suns,Lyran Alliance,Magistracy of Canopus,Mercenary General,Taurian Concordat|BattleMech|3050
+Enforcer III ENF-6M|Federated Suns|BattleMech|3060
+Enforcer III ENF-6T|Federated Suns|BattleMech|3062
+Exterminator EXT-4A|Federated Suns|BattleMech|3007
+Falcon FLC-4N|Federated Suns,SLDF 2750,Wolf's Dragoons|BattleMech|2590
+Falcon Hawk FNHK-9K|Federated Suns,Free Worlds League,Lyran Alliance,Word of Blake|BattleMech|3058
+Falconer FLC-8R|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3055
+Fireball ALM-7D|Federated Suns,Lyran Alliance|BattleMech|3055
+Fireball ALM-8D|Federated Suns,Lyran Alliance|BattleMech|3060
+Fireball ALM-9D|Federated Suns,Lyran Alliance|BattleMech|3060
+Firestarter FS9-OF|Federated Suns,Free Worlds League|BattleMech|3059
+Firestarter FS9-S1|Federated Suns,Lyran Alliance,Marian Hegemony|BattleMech|3050
+Garm GRM-01A|Federated Suns,Mercenary General,Taurian Concordat|BattleMech|3058
+Garm GRM-01B|Federated Suns,Mercenary General,Taurian Concordat|BattleMech|3060
+Garm GRM-01C|Federated Suns|BattleMech|3062
+Goliath GOL-3M|Federated Suns,Free Worlds League|BattleMech|3050
+Goliath GOL-5D|Federated Suns|BattleMech|3067
+Guillotine GLT-8D|Federated Suns|BattleMech|3062
+Hatchetman HCT-6D|Federated Suns|BattleMech|3062
+Hellspawn HSN-7D|Federated Suns|BattleMech|3060
+Hellspawn HSN-8E|Federated Suns|BattleMech|3062
+Hellspawn HSN-9F|Federated Suns|BattleMech|3067
+Hollander BZK-F3|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3055
+Hornet HNT-151|Federated Suns,Mercenary General|BattleMech|2990
+Hornet HNT-171|Federated Suns,Lyran Alliance|BattleMech|3050
+Hunchback HBK-5P|Federated Suns,Free Worlds League|BattleMech|3060
+Jackal JA-KL-55|Federated Suns|BattleMech|3062
+JagerMech JM6-A|Federated Suns|BattleMech|2950
+JagerMech JM7-D|Federated Suns|BattleMech|3060
+JagerMech JM7-F|Federated Suns|BattleMech|3062
+Javelin JVN-11D|Federated Suns,SLDF 3061|BattleMech|3062
+King Crab KGC-0000|Federated Suns|BattleMech|2950
+Lineholder KW1-LH8|Federated Suns|BattleMech|3062
+Locust LCT-1M|Federated Suns,Free Worlds League|BattleMech|2950
+Locust LCT-3D|Federated Suns|BattleMech|3050
+Longbow LGB-7V|Federated Suns,Free Worlds League,Lyran Alliance,Mercenary General|BattleMech|3058
+Marauder MAD-3D|Federated Suns,Marian Hegemony|BattleMech|2950
+Marauder MAD-5R|Federated Suns,SLDF 3061|BattleMech|3067
+Marauder MAD-5S|Federated Suns,Free Rasalhague Republic,Lyran Alliance|BattleMech|3050
+Marauder MAD-5T|Federated Suns|BattleMech|3067
+Marauder MAD-7D|Federated Suns|BattleMech|3067
+Night Hawk NTK-2Q|Federated Suns,Lyran Alliance,Mercenary General,Outworlds Alliance,SLDF 2750|BattleMech|2566
+Nightsky NGS-4T|Federated Suns,Lyran Alliance|BattleMech|3060
+Nightsky NGS-5S|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3060
+Nightsky NGS-5T|Federated Suns,Lyran Alliance|BattleMech|3060
+Nightstar NSR-9FC|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3058
+Nightstar NSR-9J|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3058
+Orion ON2-M|Federated Suns,Free Worlds League,Marian Hegemony,Mercenary General,Taurian Concordat|BattleMech|3050
+Osiris OSR-3D|Federated Suns,Lyran Alliance|BattleMech|3060
+Osiris OSR-4D|Federated Suns|BattleMech|3063
+Ostsol OTL-5D|Federated Suns|BattleMech|3067
+Ostsol OTL-6D|Federated Suns|BattleMech|3065
+Panther PNT-12A|Federated Suns|BattleMech|3062
+Penetrator PTR-4D|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3053
+Penetrator PTR-4F|Federated Suns,Lyran Alliance|BattleMech|3060
+Penetrator PTR-6M|Federated Suns,Lyran Alliance,SLDF 3061|BattleMech|3060
+Penetrator PTR-6S|Federated Suns,Lyran Alliance|BattleMech|3060
+Phoenix Hawk PXH-1D|Federated Suns|BattleMech|2950
+Phoenix Hawk PXH-3D|Federated Suns|BattleMech|3050
+Phoenix Hawk PXH-3PL|Federated Suns|BattleMech|3067
+Phoenix Hawk PXH-6D|Federated Suns|BattleMech|3067
+Rakshasa MDG-1A|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3055
+Rakshasa MDG-1B|Federated Suns,Lyran Alliance|BattleMech|3060
+Rakshasa MDG-2A|Federated Suns|BattleMech|3062
+Rifleman RFL-3C|Federated Suns|BattleMech|3025
+Rifleman RFL-4D|Federated Suns|BattleMech|3025
+Rifleman RFL-5D|Federated Suns,Lyran Alliance|BattleMech|3050
+Rifleman RFL-6X|Federated Suns,Mercenary General|BattleMech|3067
+Rifleman RFL-8D|Federated Suns,Lyran Alliance|BattleMech|3064
+Sagittaire SGT-8R|Federated Suns,Lyran Alliance|BattleMech|3063
+Scarabus SCB-9T|Federated Suns,Lyran Alliance|BattleMech|3060
+Sentinel STN-4D|Federated Suns|BattleMech|3062
+Sentry SNT-04|Federated Suns,Mercenary General|BattleMech|3060
+Shadow Hawk SHD-2D|Federated Suns|BattleMech|2950
+Shadow Hawk SHD-2D2|Federated Suns|BattleMech|3050
+Shadow Hawk SHD-5D|Federated Suns,Mercenary General|BattleMech|3067
+Spider SDR-5D|Federated Suns|BattleMech|2950
+Stalker STK-5S|Federated Suns,Lyran Alliance,Mercenary General,Taurian Concordat|BattleMech|3050
+Stalker STK-7D|Federated Suns|BattleMech|3062
+Starslayer STY-3C|Federated Suns,Lyran Alliance,Magistracy of Canopus,Northwind Highlanders|BattleMech|3058
+Templar TLR1-O|Federated Suns,SLDF 3061|BattleMech|3062
+Templar TLR1-OA|Federated Suns,SLDF 3061|BattleMech|3062
+Templar TLR1-OB|Federated Suns,SLDF 3061|BattleMech|3062
+Templar TLR1-OC|Federated Suns,SLDF 3061|BattleMech|3067
+Thanatos THS-4S|Federated Suns,Lyran Alliance,Mercenary General,SLDF 3061|BattleMech|3061
+Thunderbolt TDR-10SE|Federated Suns,Mercenary General,SLDF 3061|BattleMech|3067
+Thunderbolt TDR-7SE|Federated Suns,Lyran Alliance,Marian Hegemony,Mercenary General|BattleMech|3067
+Thunderbolt TDR-9NAIS|Federated Suns|BattleMech|3067
+Uziel UZL-2S|Federated Suns,Lyran Alliance|BattleMech|3060
+Uziel UZL-3S|Federated Suns,Lyran Alliance|BattleMech|3060
+Valkyrie VLK-QA|Federated Suns,Mercenary General|BattleMech|2787
+Valkyrie VLK-QD|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3050
+Valkyrie VLK-QD1|Federated Suns,SLDF 3061|BattleMech|3067
+Valkyrie VLK-QD3|Federated Suns|BattleMech|3067
+Valkyrie VLK-QF|Federated Suns|BattleMech|2950
+Vulcan VT-5M|Federated Suns,Free Worlds League,Mercenary General|BattleMech|3050
+Warhammer WHM-6D|Federated Suns|BattleMech|2950
+Warhammer WHM-7S|Federated Suns,Lyran Alliance|BattleMech|3050
+Warhammer WHM-8D|Federated Suns,Free Worlds League,Mercenary General,SLDF 3061|BattleMech|3066
+Warhammer WHM-9D|Federated Suns|BattleMech|3066
+Wasp WSP-1D|Federated Suns|BattleMech|2950
+Wasp WSP-1S|Federated Suns,Lyran Alliance,Mercenary General|BattleMech|3050
+Wasp WSP-3S|Federated Suns,Lyran Alliance|BattleMech|3067
+Watchman WTC-4M|Federated Suns,Magistracy of Canopus,Mercenary General|BattleMech|3055
+Wolfhound WLF-2|Federated Suns,Lyran Alliance,Mercenary General,Wolf in Exile|BattleMech|3050
+Wolfhound WLF-3S|Federated Suns,Lyran Alliance,Wolf in Exile|BattleMech|3062
+Wolverine WVR-7D|Federated Suns|BattleMech|3050
+Wolverine WVR-8D|Federated Suns|BattleMech|3067
+Wolverine WVR-9D|Federated Suns|BattleMech|3067
+Mandrill|Fire Mandrill|BattleMech|2950
+Archer ARC-5R|Free Rasalhague Republic|BattleMech|3050
+Archer ARC-6S|Free Rasalhague Republic,Lyran Alliance|BattleMech|3067
+Barghest BGS-1T|Free Rasalhague Republic,Lyran Alliance|BattleMech|3060
+BattleMaster BLR-4S|Free Rasalhague Republic,Jade Falcon,Lyran Alliance|BattleMech|3062
+Black Knight BL-6-KNT|Free Rasalhague Republic,SLDF 2750,Taurian Concordat|BattleMech|2578
+Bombardier BMB-12D|Free Rasalhague Republic,SLDF 2750|BattleMech|2735
+Champion CHP-1N|Free Rasalhague Republic,SLDF 2750|BattleMech|2602
+Cobra CBR-02|Free Rasalhague Republic,Lyran Alliance,Mercenary General|BattleMech|3060
+Flashman FLS-8K|Free Rasalhague Republic,SLDF 2750|BattleMech|2701
+Hatchetman HCT-3F|Free Rasalhague Republic,Lyran Alliance,Mercenary General,Periphery General|BattleMech|3023
+Hermes HER-1S|Free Rasalhague Republic,SLDF 2750|BattleMech|2632
+Hunchback HBK-5S|Free Rasalhague Republic,Lyran Alliance,Mercenary General|BattleMech|3062
+Hussar HSR-200-D|Free Rasalhague Republic,SLDF 2750|BattleMech|2601
+King Crab KGC-000|Free Rasalhague Republic,SLDF 2750|BattleMech|2741
+Locust LCT-3S|Free Rasalhague Republic,Lyran Alliance|BattleMech|3050
+Marauder MAD-9S|Free Rasalhague Republic,Lyran Alliance|BattleMech|3067
+Razorback RZK-9S|Free Rasalhague Republic,Lyran Alliance|BattleMech|3062
+Spider SDR-8M|Free Rasalhague Republic,Free Worlds League,Mercenary General|BattleMech|3050
+Thorn THE-N|Free Rasalhague Republic,SLDF 2750|BattleMech|2400
+Vulcan VT-5S|Free Rasalhague Republic,Lyran Alliance|BattleMech|3050
+Wyvern WVE-5N|Free Rasalhague Republic,SLDF 2750|BattleMech|2660
+Zeus ZEU-6S|Free Rasalhague Republic,Free Worlds League,Lyran Alliance,Mercenary General,Periphery General|BattleMech|2788
+Albatross ALB-3U|Free Worlds League,Mercenary General,Word of Blake|BattleMech|3053
+Anvil ANV-3R|Free Worlds League|BattleMech|3060
+Anvil ANV-5M|Free Worlds League|BattleMech|3060
+Anvil ANV-5Q|Free Worlds League|BattleMech|3060
+Anvil ANV-8M|Free Worlds League|BattleMech|3060
+Apollo APL-1R|Free Worlds League|BattleMech|3060
+Apollo APL-2S|Free Worlds League|BattleMech|3060
+Apollo APL-3T|Free Worlds League|BattleMech|3060
+Banshee BNC-3M|Free Worlds League,Magistracy of Canopus,Marian Hegemony,Taurian Concordat|BattleMech|2950
+Banshee BNC-3Q|Free Worlds League|BattleMech|2950
+BattleMaster BLR-5M|Free Worlds League,Word of Blake|BattleMech|3067
+Blackjack BJ2-OE|Free Worlds League|BattleMech|3059
+Blitzkrieg BTZ-3F|Free Worlds League,Lyran Alliance,SLDF 3061|BattleMech|3061
+Bloodhound B1-HND|Free Worlds League|BattleMech|3064
+Bloodhound B2-HND|Free Worlds League|BattleMech|3064
+Buccaneer BCN-3R|Free Worlds League,Word of Blake|BattleMech|3055
+Flea FLE-15|Free Worlds League,Wolf's Dragoons|BattleMech|2700
+Flea FLE-17|Free Worlds League,Mercenary General|BattleMech|3050
+Flea FLE-4|Free Worlds League,Wolf's Dragoons|BattleMech|2700
+Grand Crusader GRN-D-01|Free Worlds League,Word of Blake|BattleMech|3053
+Grand Crusader GRN-D-02|Free Worlds League,Word of Blake|BattleMech|3058
+Grand Titan T-IT-N11M|Free Worlds League,Mercenary General|BattleMech|3060
+Griffin GRF-5M|Free Worlds League|BattleMech|3067
+Hammer HMR-3M|Free Worlds League,Magistracy of Canopus,Marian Hegemony,Mercenary General,Word of Blake|BattleMech|3055
+Hammer HMR-3P|Free Worlds League|BattleMech|3060
+Hammer HMR-3S|Free Worlds League|BattleMech|3055
+Hermes HER-1A|Free Worlds League,Periphery General|BattleMech|2950
+Hermes HER-3S|Free Worlds League,Word of Blake|BattleMech|3050
+Hermes HER-3S1|Free Worlds League|BattleMech|3050
+Hermes HER-3S2|Free Worlds League|BattleMech|3050
+Hermes II HER-2M|Free Worlds League|BattleMech|2798
+Hermes II HER-2S|Free Worlds League|BattleMech|2798
+Hermes II HER-5S|Free Worlds League,Magistracy of Canopus|BattleMech|3050
+Locust LCT-3M|Free Worlds League|BattleMech|3050
+Marauder MAD-3M|Free Worlds League|BattleMech|2950
+Marauder MAD-9M|Free Worlds League,Mercenary General|BattleMech|3067
+Orion ON1-V|Free Worlds League,Marian Hegemony,Taurian Concordat|BattleMech|2950
+Ostroc OSR-2M|Free Worlds League|BattleMech|2950
+Perseus P1|Free Worlds League,Word of Blake|BattleMech|3059
+Perseus P1A|Free Worlds League,Word of Blake|BattleMech|3059
+Perseus P1B|Free Worlds League,Word of Blake|BattleMech|3059
+Perseus P1C|Free Worlds League,Word of Blake|BattleMech|3059
+Perseus P1D|Free Worlds League,Word of Blake|BattleMech|3067
+Phoenix Hawk PXH-3M|Free Worlds League,Mercenary General|BattleMech|3050
+Rifleman RFL-7M|Free Worlds League,Word of Blake|BattleMech|3067
+Sentinel STN-3K|Free Worlds League,Lyran Alliance|BattleMech|3014
+Shadow Hawk SHD-5M|Free Worlds League|BattleMech|3050
+Sirocco SRC-5C|Free Worlds League,SLDF 3061|BattleMech|3059
+Trebuchet TBT-5J|Free Worlds League|BattleMech|2850
+Wasp WSP-3M|Free Worlds League,Mercenary General|BattleMech|3050
+Wolverine WVR-6M|Free Worlds League,Marian Hegemony|BattleMech|2950
+Yeoman YMN-6Y|Free Worlds League,Mercenary General,SLDF 3061,Word of Blake|BattleMech|3060
+Arcas|Ghost Bear|BattleMech|3061
+Arcas 2|Ghost Bear|BattleMech|3061
+Arctic Wolf|Ghost Bear,Nova Cat,SLDF 3061,Wolf in Exile|BattleMech|3059
+Arctic Wolf 2|Ghost Bear,Nova Cat,Wolf in Exile|BattleMech|3059
+Griffin IIC 2|Ghost Bear,Ice Hellion,Jade Falcon,Nova Cat,Wolf,Wolf in Exile|BattleMech|2950
+Shadow Hawk IIC 2|Ghost Bear,Ice Hellion,Nova Cat,Star Adder|BattleMech|2950
+Ursus|Ghost Bear,Nova Cat|BattleMech|3059
+Bowman|Goliath Scorpion,Hell's Horses|BattleMech|2950
+Commando IIC|Goliath Scorpion,Hell's Horses,Ice Hellion|BattleMech|2872
+Fire Scorpion|Goliath Scorpion|BattleMech|2950
+Fire Scorpion 2|Goliath Scorpion|BattleMech|2950
+Pinion|Goliath Scorpion,Jade Falcon|BattleMech|3065
+Spirit|Goliath Scorpion,Jade Falcon|BattleMech|3063
+Thunder Stallion|Goliath Scorpion,Hell's Horses|BattleMech|2950
+Bowman 2|Hell's Horses|BattleMech|2950
+Corvis|Hell's Horses|BattleMech|2950
+Thunder Stallion 2|Hell's Horses|BattleMech|2950
+Icestorm|Ice Hellion,Wolf,Wolf in Exile|BattleMech|2950
+Snow Fox|Ice Hellion,Nova Cat|BattleMech|2950
+Snow Fox 2|Ice Hellion|BattleMech|2950
+Archer ARC-2R|Inner Sphere General,SLDF 2750,Taurian Concordat|BattleMech|2474
+Archer ARC-4M|Inner Sphere General|BattleMech|3050
+Assassin ASN-21|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2676
+Assassin ASN-23|Inner Sphere General|BattleMech|3050
+Atlas AS7-D|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2761
+Avatar AV1-O|Inner Sphere General|BattleMech|3058
+Avatar AV1-OA|Inner Sphere General|BattleMech|3058
+Avatar AV1-OB|Inner Sphere General|BattleMech|3058
+Avatar AV1-OC|Inner Sphere General|BattleMech|3058
+Avatar AV1-OD|Inner Sphere General|BattleMech|3060
+Avatar AV1-OF|Inner Sphere General|BattleMech|3062
+Awesome AWS-8Q|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2665
+Awesome AWS-8R|Inner Sphere General|BattleMech|2950
+Awesome AWS-8V|Inner Sphere General|BattleMech|2950
+Awesome AWS-9M|Inner Sphere General,Magistracy of Canopus,Taurian Concordat|BattleMech|3052
+Awesome AWS-9Q|Inner Sphere General,Magistracy of Canopus,Marian Hegemony,Taurian Concordat|BattleMech|3060
+Banshee BNC-3E|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2475
+BattleMaster BLR-1G|Inner Sphere General,SLDF 2750|BattleMech|2750
+BattleMaster BLR-3M|Inner Sphere General|BattleMech|3050
+Blackjack BJ2-O|Inner Sphere General,Magistracy of Canopus|BattleMech|3058
+Blackjack BJ2-OA|Inner Sphere General,Magistracy of Canopus|BattleMech|3058
+Blackjack BJ2-OB|Inner Sphere General,Magistracy of Canopus|BattleMech|3058
+Blackjack BJ2-OC|Inner Sphere General,Magistracy of Canopus|BattleMech|3058
+Blackjack BJ2-OD|Inner Sphere General,Magistracy of Canopus|BattleMech|3058
+Blackjack BJ2-OF|Inner Sphere General,Magistracy of Canopus|BattleMech|3060
+Centurion CN10-B|Inner Sphere General|BattleMech|3060
+Centurion CN9-A|Inner Sphere General,Periphery General|BattleMech|2801
+Centurion CN9-AH|Inner Sphere General|BattleMech|2950
+Cerberus MR-V2|Inner Sphere General|BattleMech|3055
+Chameleon CLN-7V|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2500
+Chameleon CLN-7W|Inner Sphere General|BattleMech|3058
+Chameleon CLN-7Z|Inner Sphere General|BattleMech|3058
+Champion CHP-2N|Inner Sphere General|BattleMech|2950
+Charger CGR-1A1|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2665
+Cicada CDA-2A|Inner Sphere General,Magistracy of Canopus,Marian Hegemony|BattleMech|2840
+Cicada CDA-2B|Inner Sphere General|BattleMech|2840
+Cicada CDA-3C|Inner Sphere General|BattleMech|2840
+Cicada CDA-3F|Inner Sphere General|BattleMech|3050
+Clint CLNT-2-3T|Inner Sphere General,Marian Hegemony,SLDF 2750|BattleMech|2507
+Crockett CRK-5003-0|Inner Sphere General|BattleMech|2950
+Crusader CRD-3R|Inner Sphere General,SLDF 2750|BattleMech|2676
+Crusader CRD-5M|Inner Sphere General|BattleMech|3050
+Cyclops CP-10-Q|Inner Sphere General|BattleMech|2950
+Cyclops CP-10-Z|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2710
+Cyclops CP-11-A|Inner Sphere General,Magistracy of Canopus,Taurian Concordat|BattleMech|3050
+Cyclops CP-11-C|Inner Sphere General|BattleMech|3050
+Cyclops CP-11-G|Inner Sphere General,Magistracy of Canopus,Taurian Concordat|BattleMech|3060
+Dervish DV-6M|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2520
+Firestarter FS9-H|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2550
+Firestarter FS9-O|Inner Sphere General|BattleMech|3058
+Firestarter FS9-OA|Inner Sphere General|BattleMech|3058
+Firestarter FS9-OB|Inner Sphere General|BattleMech|3058
+Firestarter FS9-OC|Inner Sphere General|BattleMech|3058
+Firestarter FS9-OD|Inner Sphere General|BattleMech|3058
+Firestarter FS9-OE|Inner Sphere General|BattleMech|3058
+Firestarter FS9-OG|Inner Sphere General|BattleMech|3060
+Goliath GOL-1H|Inner Sphere General|BattleMech|2686
+Grand Titan T-IT-N10M|Inner Sphere General,Magistracy of Canopus,Marian Hegemony|BattleMech|3055
+Grasshopper GHR-5H|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2780
+Grasshopper GHR-5J|Inner Sphere General,Magistracy of Canopus,Taurian Concordat|BattleMech|3050
+Grasshopper GHR-5N|Inner Sphere General,Periphery General|BattleMech|3028
+Griffin GRF-1N|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2492
+Guillotine GLT-4L|Inner Sphere General,Periphery General|BattleMech|2950
+Hercules HRC-LS-9000|Inner Sphere General,Magistracy of Canopus|BattleMech|3055
+Hunchback HBK-4G|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2572
+Hunchback HBK-4H|Inner Sphere General|BattleMech|2950
+Hunchback HBK-4J|Inner Sphere General|BattleMech|2950
+Hunchback HBK-4N|Inner Sphere General|BattleMech|2950
+Hunchback HBK-4P|Inner Sphere General,Periphery General|BattleMech|2950
+Hunchback HBK-4SP|Inner Sphere General|BattleMech|2950
+Hunchback HBK-5N|Inner Sphere General,Magistracy of Canopus,Taurian Concordat|BattleMech|3050
+Javelin JVN-10N|Inner Sphere General,Periphery General|BattleMech|2751
+Kintaro KTO-18|Inner Sphere General|BattleMech|2792
+Lineholder KW1-LH3|Inner Sphere General|BattleMech|3058
+Locust LCT-1E|Inner Sphere General|BattleMech|2750
+Locust LCT-1V|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2499
+Locust LCT-3V|Inner Sphere General|BattleMech|2950
+Longbow LGB-7Q|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2610
+Longbow LGB-OW|Inner Sphere General,SLDF 2750|BattleMech|2600
+Marauder MAD-3R|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2603
+Mercury MCY-98|Inner Sphere General|BattleMech|2950
+Orion ON1-K|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2525
+Ostroc OSR-2C|Inner Sphere General,SLDF 2750|BattleMech|2500
+Ostroc OSR-2D|Inner Sphere General|BattleMech|3050
+Ostroc OSR-2L|Inner Sphere General|BattleMech|2950
+Ostroc OSR-3C|Inner Sphere General|BattleMech|2950
+Ostscout OTT-7J|Inner Sphere General,SLDF 2750|BattleMech|2500
+Ostscout OTT-7K|Inner Sphere General|BattleMech|3050
+Ostsol OTL-4D|Inner Sphere General,SLDF 2750|BattleMech|2693
+Ostsol OTL-4F|Inner Sphere General|BattleMech|2950
+Phoenix Hawk PXH-1|Inner Sphere General,Marian Hegemony,SLDF 2750|BattleMech|2750
+Quickdraw QKD-4G|Inner Sphere General,Periphery General|BattleMech|2779
+Quickdraw QKD-4H|Inner Sphere General|BattleMech|2950
+Quickdraw QKD-5A|Inner Sphere General|BattleMech|2950
+Rifleman RFL-3N|Inner Sphere General|BattleMech|2770
+Rifleman RFL-5M|Inner Sphere General|BattleMech|3050
+Scorpion SCP-10|Inner Sphere General|BattleMech|3050
+Scorpion SCP-1N|Inner Sphere General|BattleMech|2750
+Shadow Hawk SHD-2H|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2550
+Stalker STK-3F|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2594
+Stalker STK-4N|Inner Sphere General|BattleMech|2950
+Stinger STG-3G|Inner Sphere General|BattleMech|2950
+Stinger STG-3R|Inner Sphere General,Magistracy of Canopus,Periphery General,SLDF 2750|BattleMech|2479
+Stinger STG-5M|Inner Sphere General|BattleMech|3050
+Tarantula ZPH-1A|Inner Sphere General,Magistracy of Canopus|BattleMech|3055
+Thunderbolt TDR-5S|Inner Sphere General,SLDF 2750,Taurian Concordat|BattleMech|2491
+Thunderbolt TDR-7M|Inner Sphere General|BattleMech|3050
+Thunderbolt TDR-9S|Inner Sphere General|BattleMech|3050
+Trebuchet TBT-5N|Inner Sphere General,Periphery General|BattleMech|2780
+Trebuchet TBT-7M|Inner Sphere General,Magistracy of Canopus,Taurian Concordat|BattleMech|3050
+UrbanMech UM-R60|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2750
+Victor VTR-9A|Inner Sphere General,SLDF 2750|BattleMech|2510
+Victor VTR-9A1|Inner Sphere General,SLDF 2750|BattleMech|2510
+Victor VTR-9B|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2510
+Vulcan VL-2T|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2777
+Vulcan VL-5T|Inner Sphere General|BattleMech|2950
+War Dog WR-DG-02FC|Inner Sphere General,Magistracy of Canopus|BattleMech|3052
+Warhammer WHM-6R|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2515
+Warhammer WHM-7M|Inner Sphere General,Marian Hegemony|BattleMech|3050
+Wasp WSP-1A|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2471
+Whitworth WTH-1|Inner Sphere General,Periphery General,SLDF 2750|BattleMech|2610
+Whitworth WTH-1S|Inner Sphere General,SLDF 2750|BattleMech|2610
+Wolverine WVR-6R|Inner Sphere General|BattleMech|2750
+Wolverine WVR-7M|Inner Sphere General|BattleMech|3050
+Cougar A|Jade Falcon|BattleMech|3058
+Cougar B|Jade Falcon|BattleMech|3058
+Cougar C|Jade Falcon|BattleMech|3058
+Cougar D|Jade Falcon|BattleMech|3058
+Cougar E|Jade Falcon|BattleMech|3060
+Cougar H|Jade Falcon|BattleMech|3060
+Cougar Prime|Jade Falcon|BattleMech|3058
+Pinion 2|Jade Falcon|BattleMech|3065
+Archer ARC-2S|Lyran Alliance|BattleMech|2950
+Archer ARC-5S|Lyran Alliance|BattleMech|3050
+Assassin ASN-30|Lyran Alliance|BattleMech|3062
+Atlas AS7-S2|Lyran Alliance|BattleMech|3062
+Banshee BNC-6S|Lyran Alliance|BattleMech|3062
+Banshee BNC-7S|Lyran Alliance|BattleMech|3062
+Barghest BGS-2T|Lyran Alliance|BattleMech|3060
+Barghest BGS-3T|Lyran Alliance|BattleMech|3062
+BattleMaster BLR-1S|Lyran Alliance|BattleMech|3025
+Berserker BRZ-B3|Lyran Alliance|BattleMech|3060
+Bushwacker BSW-L1|Lyran Alliance|BattleMech|3062
+Centurion CN9-AL|Lyran Alliance|BattleMech|2950
+Charger CGR-SA5|Lyran Alliance|BattleMech|3062
+Clint CLNT-5U|Lyran Alliance,SLDF 3061|BattleMech|3062
+Commando COM-3A|Lyran Alliance,Mercenary General|BattleMech|2950
+Commando COM-7S|Lyran Alliance|BattleMech|3062
+Crusader CRD-8S|Lyran Alliance|BattleMech|3067
+Enfield END-6J|Lyran Alliance|BattleMech|3060
+Fafnir FNR-5|Lyran Alliance|BattleMech|3062
+Fafnir FNR-5B|Lyran Alliance|BattleMech|3063
+Firestarter FS9-M|Lyran Alliance,Taurian Concordat|BattleMech|2950
+Flashman FLS-7K|Lyran Alliance|BattleMech|2796
+Goliath GOL-3S|Lyran Alliance|BattleMech|3067
+Goliath GOL-4S|Lyran Alliance|BattleMech|3067
+Griffin GRF-1S|Lyran Alliance|BattleMech|2950
+Hauptmann HA1-O|Lyran Alliance|BattleMech|3060
+Hauptmann HA1-OA|Lyran Alliance|BattleMech|3060
+Hauptmann HA1-OB|Lyran Alliance|BattleMech|3060
+Hauptmann HA1-OC|Lyran Alliance|BattleMech|3062
+Highlander HGN-734|Lyran Alliance|BattleMech|3062
+Hollander BZK-G1|Lyran Alliance|BattleMech|3055
+Hollander II BZK-F5|Lyran Alliance|BattleMech|3060
+Hollander II BZK-F7|Lyran Alliance|BattleMech|3062
+Locust LCT-1S|Lyran Alliance,Mercenary General|BattleMech|2950
+Marauder II MAD-5A|Lyran Alliance,Mercenary General|BattleMech|3050
+Ostscout OTT-9S|Lyran Alliance,SLDF 3061|BattleMech|3067
+Phoenix Hawk PXH-3S|Lyran Alliance|BattleMech|3050
+Phoenix Hawk PXH-7S|Lyran Alliance|BattleMech|3067
+Razorback RZK-9T|Lyran Alliance|BattleMech|3065
+Salamander PPR-5T|Lyran Alliance|BattleMech|3060
+Salamander PPR-6S|Lyran Alliance|BattleMech|3060
+Salamander PPR-6T|Lyran Alliance|BattleMech|3060
+Scorpion SCP-12S|Lyran Alliance,Mercenary General|BattleMech|3067
+Stalker STK-8S|Lyran Alliance|BattleMech|3062
+Starslayer STY-3D|Lyran Alliance,Magistracy of Canopus,Mercenary General|BattleMech|3058
+Stiletto STO-4A|Lyran Alliance|BattleMech|3061
+Stiletto STO-4B|Lyran Alliance|BattleMech|3063
+Talon TLN-5W|Lyran Alliance,Mercenary General,SLDF 2750|BattleMech|2670
+Thunder Hawk TDK-7KMA|Lyran Alliance|BattleMech|3058
+Thunder Hawk TDK-7X|Lyran Alliance,Mercenary General,SLDF 2750|BattleMech|2773
+Thunder Hawk TDK-7Y|Lyran Alliance|BattleMech|3058
+Thunderbolt TDR-5SS|Lyran Alliance,Mercenary General|BattleMech|2950
+Trebuchet TBT-5S|Lyran Alliance,Taurian Concordat|BattleMech|2950
+Zeus ZEU-6T|Lyran Alliance,Taurian Concordat|BattleMech|3025
+Zeus ZEU-9T|Lyran Alliance|BattleMech|3062
+Commando COM-4H|Marian Hegemony|BattleMech|3064
+Cyclops CP-11-H|Marian Hegemony|BattleMech|3064
+Hunchback HBK-5H|Marian Hegemony|BattleMech|3064
+JagerMech JM6-H|Marian Hegemony|BattleMech|3064
+Locust LCT-1V2|Marian Hegemony|BattleMech|3067
+Marauder II MAD-4H|Marian Hegemony|BattleMech|3067
+Mongoose MON-66|Marian Hegemony,SLDF 2750|BattleMech|2660
+Whitworth WTH-1H|Marian Hegemony|BattleMech|3064
+Annihilator ANH-2A|Mercenary General|BattleMech|3050
+Arctic Fox AF1|Mercenary General,Nova Cat,Wolf in Exile|BattleMech|3060
+Arctic Fox AF1A|Mercenary General,Nova Cat,Wolf in Exile|BattleMech|3060
+Arctic Fox AF1B|Mercenary General,Nova Cat,Wolf in Exile|BattleMech|3060
+Arctic Fox AF1C|Mercenary General,Nova Cat,Wolf in Exile|BattleMech|3060
+Arctic Fox AF1D|Mercenary General,Nova Cat,Wolf in Exile|BattleMech|3060
+Black Watch BKW-7R|Mercenary General,Northwind Highlanders,SLDF 3061|BattleMech|3060
+Charger CGR-SB|Mercenary General|BattleMech|2950
+Cronus CNS-5M|Mercenary General|BattleMech|3060
+Marauder II MAD-4A|Mercenary General|BattleMech|3012
+Merlin MLN-1B|Mercenary General,Periphery General|BattleMech|3053
+Shogun SHG-2F|Mercenary General|BattleMech|3050
+Thunderbolt TDR-5SE|Mercenary General|BattleMech|2950
+Thunderbolt TDR-9SE|Mercenary General|BattleMech|3050
+Verfolger VR5-R|Mercenary General,Wolf in Exile|BattleMech|3063
+Brigand LDT-1|Periphery General|BattleMech|3065
+Brigand LDT-X1|Periphery General|BattleMech|3065
+Brigand LDT-X2|Periphery General|BattleMech|3065
+Charger CGR-2A2|Periphery General|BattleMech|3064
+Firestarter FS9-C|Periphery General|BattleMech|3064
+Thorn THE-S|Periphery General|BattleMech|2950
+Crockett CRK-5003-1|SLDF 2750|BattleMech|2735
+Excalibur EXC-B2|SLDF 2750|BattleMech|2520
+Exterminator EXT-4D|SLDF 2750|BattleMech|2630
+Firefly FFL-4A|SLDF 2750,Wolf's Dragoons|BattleMech|2750
+Guillotine GLT-3N|SLDF 2750|BattleMech|2499
+Hoplite HOP-4B|SLDF 2750,Wolf's Dragoons|BattleMech|2750
+Hoplite HOP-4C|SLDF 2750,Wolf's Dragoons|BattleMech|2750
+Kintaro KTO-19|SLDF 2750|BattleMech|2587
+Lancelot LNC25-01|SLDF 2750|BattleMech|2581
+Lynx LNX-9Q|SLDF 2750|BattleMech|2750
+Mackie MSK-6S|SLDF 2750|BattleMech|2439
+Mercury MCY-99|SLDF 2750|BattleMech|2742
+Nightstar NSR-9J|SLDF 2750|BattleMech|2780
+Rifleman RFL-3N|SLDF 2750|BattleMech|2750
+Sentinel STN-3L|SLDF 2750|BattleMech|2651
+Shogun SHG-2E|SLDF 2750,Wolf's Dragoons|BattleMech|2750
+Shootist ST-8A|SLDF 2750,SLDF 3061|BattleMech|2750
+Spartan SPT-N2|SLDF 2750|BattleMech|2750
+Spartan SPT-NF|SLDF 2750|BattleMech|2750
+Striker STC-2C|SLDF 2750|BattleMech|2550
+Mongoose MON-66|SLDF 3061|BattleMech|2750
+Burrock|Star Adder|BattleMech|3067
+Black Python (Viper) 2|Steel Viper|BattleMech|2950
+Matador|Steel Viper|BattleMech|2950
+Scylla|Steel Viper|BattleMech|3062
+Archer ARC-6W|Taurian Concordat|BattleMech|3067
+Centurion CN9-YLW|Unique|BattleMech|3027
+Centurion CN9-YLW2|Unique|BattleMech|3051
+Dire Wolf (Daishi) Hohiro|Unique|BattleMech|3051
+Dire Wolf (Daishi) Prometheus|Unique|BattleMech|3051
+Dire Wolf (Daishi) Widowmaker|Unique|BattleMech|3051
+Summoner (Thor) M|Unique|BattleMech|2950
+Templar Grayson TLR1-O|Unique|BattleMech|3065
+Templar Tancred TLR1-O|Unique|BattleMech|3066
+Timberwolf (Mad Cat) Pryde|Unique|BattleMech|3052
+Wolfhound IIC|Unique|BattleMech|3051
+Orion IIC|Wolf,Wolf in Exile|BattleMech|2950
+Archer ARC-2W|Wolf's Dragoons|BattleMech|2950
+Archer ARC-5W|Wolf's Dragoons|BattleMech|3050
+Falcon FLC-4P|Wolf's Dragoons|BattleMech|3050
+Firefly FFL-4B|Wolf's Dragoons|BattleMech|3050
+Gallowglas WD|Wolf's Dragoons|BattleMech|3055
+Hoplite C|Wolf's Dragoons|BattleMech|3060
+Hoplite HOP-4D|Wolf's Dragoons|BattleMech|3050
+Imp IMP-2E|Wolf's Dragoons|BattleMech|2840
+Imp IMP-3E|Wolf's Dragoons|BattleMech|3050
+Imp IMP-4E|Wolf's Dragoons|BattleMech|3060
+Marauder II C|Wolf's Dragoons|BattleMech|3067
+Wasp WSP-1W|Wolf's Dragoons|BattleMech|2950
+Wasp WSP-3W|Wolf's Dragoons|BattleMech|3050
+Blue Flame BLF-21|Word of Blake|BattleMech|3067
+Gurkha GUR-2G|Word of Blake|BattleMech|3063
+Gurkha GUR-4G|Word of Blake|BattleMech|3063
+Hermes II HER-5C|Word of Blake|BattleMech|3062
+Initiate INI-02|Word of Blake|BattleMech|3058
+Legacy LGC-01|Word of Blake|BattleMech|3067
+Legacy LGC-02|Word of Blake|BattleMech|3067
+Lightray LGH-4W|Word of Blake|BattleMech|3065
+Lightray LGH-4Y|Word of Blake|BattleMech|3064
+Lightray LGH-5W|Word of Blake|BattleMech|3067
+Mongoose MON-76|Word of Blake|BattleMech|3050
+Nexus NXS1-B|Word of Blake|BattleMech|3062
+Red Shift RDS-2A|Word of Blake|BattleMech|3067
+Red Shift RDS-2B|Word of Blake|BattleMech|3067
+Scorpion SCP-12C|Word of Blake|BattleMech|3067
+Thorn THE-N1|Word of Blake|BattleMech|3050
+Toyama TYM-1A|Word of Blake|BattleMech|3057
+Vanquisher VQR-2A|Word of Blake|BattleMech|3062
+Vanquisher VQR-2B|Word of Blake|BattleMech|3067
+White Flame WHF-3B|Word of Blake|BattleMech|3067
+Fa Shih (Flamer)|Capellan Confederation|Infantry|3062
+Fa Shih (Laser)|Capellan Confederation|Infantry|3062
+Fa Shih (MG)|Capellan Confederation|Infantry|3062
+Fa Shih (TAG)|Capellan Confederation|Infantry|3062
+Clan Elemental (Flamer)|Clan General|Infantry|2868
+Clan Elemental (MG)|Clan General|Infantry|2868
+Clan Elemental (Laser)|Clan General|Infantry|2868
+Foot Infantry Point Flamer|Clan General|Infantry|2800
+Foot Infantry Point Laser|Clan General|Infantry|2800
+Foot Infantry Point Machine Gun|Clan General|Infantry|2800
+Foot Infantry Point Rifle|Clan General|Infantry|2800
+Foot Infantry Point SRM|Clan General|Infantry|2800
+Jump Infantry Point Flamer|Clan General|Infantry|2800
+Jump Infantry Point Laser|Clan General|Infantry|2800
+Jump Infantry Point Machine Gun|Clan General|Infantry|2800
+Jump Infantry Point Rifle|Clan General|Infantry|2800
+Jump Infantry Point SRM|Clan General|Infantry|2800
+Motorized Infantry Point Flamer|Clan General|Infantry|2800
+Motorized Infantry Point Laser|Clan General|Infantry|2800
+Motorized Infantry Point Machine Gun|Clan General|Infantry|2800
+Motorized Infantry Point Rifle|Clan General|Infantry|2800
+Motorized Infantry Point SRM|Clan General|Infantry|2800
+Sylph BA Point|Cloud Cobra,Diamond Shark,Snow Raven|Infantry|3060
+Kage (Flamer)|Draconis Combine|Infantry|3056
+Kage (Laser)|Draconis Combine|Infantry|3056
+Kage (MG)|Draconis Combine|Infantry|3056
+Kage (TAG)|Draconis Combine|Infantry|3056
+Kanazuchi BA Squad|Draconis Combine|Infantry|3058
+Raiden BA Squad (Standard) Flamer|Draconis Combine|Infantry|3055
+Raiden BA Squad (Standard) Machine Gun|Draconis Combine|Infantry|3055
+Raiden BA Squad (Standard) Small Laser  |Draconis Combine|Infantry|3055
+Raiden BA Squad (Standard) SRM |Draconis Combine|Infantry|3055
+Cavalier (Flamer)|Federated Suns|Infantry|3058
+Cavalier (Laser)|Federated Suns|Infantry|3060
+Cavalier (MG)|Federated Suns|Infantry|3060
+Cavalier (SRM)|Federated Suns|Infantry|3058
+Infiltrator Mk I|Federated Suns|Infantry|3057
+Infiltrator Mk II|Federated Suns|Infantry|3060
+Sloth BA Squad|Federated Suns,Lyran Alliance|Infantry|3057
+Clan Salamander|Fire Mandrill,Hell's Horses|Infantry|3058
+Achileus (Flamer)|Free Worlds League,Word of Blake|Infantry|3057
+Achileus (Laser)|Free Worlds League,Word of Blake|Infantry|3057
+Achileus (MG)|Free Worlds League,Word of Blake|Infantry|3057
+Longinus BA Squad Flamer|Free Worlds League|Infantry|3059
+Longinus BA Squad Machine Gun|Free Worlds League|Infantry|3059
+Longinus BA Squad Small Laser|Free Worlds League|Infantry|3059
+Undine BA Point|Goliath Scorpion|Infantry|3061
+Clan Gnome|Hell's Horses|Infantry|3056
+Foot Infantry Platoon Flamer|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Foot Infantry Platoon Laser|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Foot Infantry Platoon LRM|Inner Sphere General,Periphery General|Infantry|3057
+Foot Infantry Platoon Machine Gun|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Foot Infantry Platoon Rifle|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Foot Infantry Platoon SRM|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Inner Sphere BA Squad (Standard) Flamer|Inner Sphere General|Infantry|3052
+Inner Sphere BA Squad (Standard) Machine Gun|Inner Sphere General|Infantry|3052
+Inner Sphere BA Squad (Standard) Small Laser  |Inner Sphere General|Infantry|3052
+Inner Sphere BA Squad (Standard) SRM |Inner Sphere General|Infantry|3052
+Jump Infantry Platoon Flamer|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Jump Infantry Platoon Laser|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Jump Infantry Platoon LRM|Inner Sphere General,Periphery General|Infantry|3057
+Jump Infantry Platoon Machine Gun|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Jump Infantry Platoon Rifle|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Jump Infantry Platoon SRM|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Motorized Infantry Platoon Flamer|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Motorized Infantry Platoon Laser|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Motorized Infantry Platoon LRM|Inner Sphere General,Periphery General|Infantry|3057
+Motorized Infantry Platoon Machine Gun|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Motorized Infantry Platoon Rifle|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Motorized Infantry Platoon SRM|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Fenrir (MG)|Lyran Alliance|Infantry|3060
+Fenrir (MPLAS)|Lyran Alliance|Infantry|3060
+Fenrir (SLAS)|Lyran Alliance|Infantry|3060
+Fenrir (SPLAS)|Lyran Alliance|Infantry|3060
+Fenrir (SRM)|Lyran Alliance|Infantry|3060
+Gray Death Light Scout Armor Squad Laser/SRM|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
+Gray Death Light Scout Armor Squad Machine Gun|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
+Gray Death Light Scout Armor Squad Rifle/Flamer|Lyran Alliance,Mercenary General,SLDF 3061|Infantry|3051
+Gray Death Standard BA Flamer|Lyran Alliance,Mercenary General|Infantry|3051
+Gray Death Standard BA Laser|Lyran Alliance,Mercenary General|Infantry|3051
+Gray Death Standard BA MG|Lyran Alliance,Mercenary General|Infantry|3051
+Infiltrator Mk I|Lyran Alliance|Infantry|3060
+Inner Sphere BA Squad (Standard) Flamer|Magistracy of Canopus,Taurian Concordat|Infantry|3055
+Inner Sphere BA Squad (Standard) Machine Gun|Magistracy of Canopus,Taurian Concordat|Infantry|3055
+Inner Sphere BA Squad (Standard) Small Laser  |Magistracy of Canopus,Taurian Concordat|Infantry|3055
+Inner Sphere BA Squad (Standard) SRM |Magistracy of Canopus,Taurian Concordat|Infantry|3055
+Elemental BA Point Flamer|Wolf's Dragoons|Infantry|3050
+Elemental BA Point Machinegun|Wolf's Dragoons|Infantry|3050
+Elemental BA Point Small Laser|Wolf's Dragoons|Infantry|3050
+Longinus BA Squad Flamer|Word of Blake|Infantry|3057
+Longinus BA Squad Machine Gun|Word of Blake|Infantry|3057
+Longinus BA Squad Small Laser|Word of Blake|Infantry|3057
+Purifier Adaptive BA Squad ER small Laser|Word of Blake|Infantry|3062
+Purifier Adaptive BA Squad Narc|Word of Blake|Infantry|3062
+Purifier Adaptive BA Squad TAG|Word of Blake|Infantry|3062
+Neptune (LRM Variant)|Federated Suns|Naval|2950
+Neptune (SRM Variant)|Federated Suns|Naval|2950
+Neptune Submarine|Federated Suns|Naval|2950
+Monitor Naval Vessel|Inner Sphere General|Naval|2950
+Sea Skimmer (SRM 2 Variant)|Lyran Alliance|Naval|2950
+Sea Skimmer Hydrofoil|Lyran Alliance|Naval|2869
+Cecerops|Blood Spirit,Snow Raven|Protomech|3067
+Cecerops 2|Blood Spirit,Snow Raven|Protomech|3067
+Centaur|Blood Spirit,Fire Mandrill,Hell's Horses,Jade Falcon,Nova Cat,Snow Raven|Protomech|3060
+Centaur 2|Blood Spirit,Fire Mandrill,Hell's Horses,Jade Falcon,Snow Raven|Protomech|3062
+Centaur 3|Blood Spirit,Fire Mandrill,Jade Falcon,Snow Raven|Protomech|3067
+Chrysaor|Blood Spirit,Nova Cat,Snow Raven,Star Adder,Wolf in Exile|Protomech|3067
+Chrysaor 2|Blood Spirit,Snow Raven,Wolf in Exile|Protomech|3067
+Delphyne|Blood Spirit,Fire Mandrill|Protomech|3067
+Delphyne 2|Blood Spirit,Fire Mandrill|Protomech|3067
+Gorgon|Blood Spirit,Fire Mandrill,Jade Falcon,Nova Cat,Snow Raven,Star Adder|Protomech|3060
+Gorgon 2|Blood Spirit,Coyote,Fire Mandrill,Ice Hellion,Jade Falcon,Star Adder|Protomech|3062
+Gorgon 3|Blood Spirit,Snow Raven,Star Adder|Protomech|3067
+Harpy|Blood Spirit,Fire Mandrill,Hell's Horses,Jade Falcon,Star Adder|Protomech|3060
+Harpy 2|Blood Spirit,Fire Mandrill,Hell's Horses|Protomech|3062
+Hydra|Blood Spirit,Fire Mandrill,Hell's Horses|Protomech|3060
+Hydra 3|Blood Spirit,Fire Mandrill|Protomech|3067
+Minotaur|Blood Spirit,Cloud Cobra,Fire Mandrill,Goliath Scorpion,Hell's Horses,Ice Hellion,Snow Raven,Star Adder|Protomech|3060
+Minotaur 3|Blood Spirit,Fire Mandrill|Protomech|3067
+Roc|Blood Spirit,Coyote,Fire Mandrill,Goliath Scorpion,Hell's Horses,Nova Cat,Snow Raven,Wolf in Exile|Protomech|3060
+Roc 2|Blood Spirit,Coyote,Fire Mandrill,Goliath Scorpion,Snow Raven|Protomech|3062
+Roc 3|Blood Spirit,Fire Mandrill,Snow Raven,Wolf in Exile|Protomech|3067
+Satyr|Blood Spirit,Cloud Cobra,Coyote,Goliath Scorpion,Ice Hellion,Nova Cat,Snow Raven,Wolf in Exile|Protomech|3060
+Satyr 2|Blood Spirit,Cloud Cobra,Coyote,Goliath Scorpion,Ice Hellion,Nova Cat,Snow Raven,Wolf in Exile|Protomech|3062
+Basilisk|Cloud Cobra|Protomech|3067
+Basilisk 2|Cloud Cobra|Protomech|3067
+Minotaur 2|Cloud Cobra,Goliath Scorpion,Hell's Horses,Star Adder|Protomech|3062
+Siren|Cloud Cobra,Coyote,Ice Hellion,Star Adder|Protomech|3060
+Siren 2|Cloud Cobra,Ice Hellion,Star Adder|Protomech|3062
+Siren 3|Cloud Cobra,Ice Hellion,Star Adder|Protomech|3067
+Orc|Coyote,Goliath Scorpion,Hell's Horses|Protomech|3067
+Orc 2|Coyote,Goliath Scorpion,Hell's Horses|Protomech|3067
+Procyon|Coyote,Hell's Horses|Protomech|3067
+Procyon 2|Coyote,Hell's Horses|Protomech|3067
+Harpy 3|Fire Mandrill,Star Adder|Protomech|3067
+Triton|Goliath Scorpion|Protomech|3067
+Triton 2|Goliath Scorpion|Protomech|3067
+Hydra 2|Hell's Horses|Protomech|3062
+Satyr 3|Ice Hellion,Wolf in Exile|Protomech|3067
+Erinyes|Jade Falcon|Protomech|3067
+Erinyes 2|Jade Falcon|Protomech|3067
+Ares Medium Tank|Blood Spirit,Cloud Cobra,Coyote,Fire Mandrill,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Star Adder,Steel Viper,Wolf|Vehicle|2950
+Ku Wheeled Assault Tank|Blood Spirit,Fire Mandrill,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Jade Falcon,Snow Raven,Star Adder,Steel Viper|Vehicle|2950
+Morrigu (Laser Variant)|Blood Spirit,Cloud Cobra,Fire Mandrill,Star Adder|Vehicle|3067
+Morrigu Fire Support Vehicle|Blood Spirit,Fire Mandrill,Ghost Bear,Star Adder|Vehicle|3067
+Shamash Reconnaissance Vehicle|Blood Spirit,Cloud Cobra,Coyote,Diamond Shark,Fire Mandrill,Ghost Bear,Goliath Scorpion,Ice Hellion,Nova Cat,Star Adder,Wolf|Vehicle|2950
+Brutus Assault Tank|Capellan Confederation,Federated Suns,Free Worlds League,Lyran Alliance,Periphery General,Word of Blake|Vehicle|2998
+Condor (Liao Variant)|Capellan Confederation|Vehicle|2950
+Gladius Medium Hover Tank|Capellan Confederation,Periphery General|Vehicle|3042
+Harasser Missile Platform|Capellan Confederation,Free Worlds League,Periphery General|Vehicle|2829
+Heavy LRM Carrier|Capellan Confederation,Draconis Combine,Mercenary General,Periphery General|Vehicle|3060
+Hetzer (LB-X Variant)|Capellan Confederation|Vehicle|3060
+Light SRM Carrier|Capellan Confederation,Periphery General|Vehicle|3060
+Maultier Hover APC|Capellan Confederation,SLDF 2750,Taurian Concordat|Vehicle|3019
+Minion (TAG Variant)|Capellan Confederation|Vehicle|3067
+Minion Advanced Tactical Vehicle|Capellan Confederation,Federated Suns,Lyran Alliance,SLDF 3061|Vehicle|3063
+Morningstar (Company Command Variant)|Capellan Confederation,Federated Suns|Vehicle|3067
+Morningstar (Laser Variant)|Capellan Confederation,Federated Suns|Vehicle|3063
+Morningstar City Command Vehicle|Capellan Confederation,Federated Suns,SLDF 3061|Vehicle|3063
+Ontos (Light Gauss Variant)|Capellan Confederation,Free Worlds League|Vehicle|3060
+Ontos Heavy Tank (3058)|Capellan Confederation,Comstar,Free Worlds League,Lyran Alliance,Mercenary General,Nova Cat,Word of Blake|Vehicle|3053
+Padilla Heavy Artillery Tank|Capellan Confederation,SLDF 2750,SLDF 3061|Vehicle|2620
+Regulator Hovertank|Capellan Confederation,Comstar,Diamond Shark,Free Worlds League,Periphery General,SLDF 3061,Word of Blake|Vehicle|3055
+Vedette (Liao Variant)|Capellan Confederation|Vehicle|2950
+Vedette Medium Tank (3058)|Capellan Confederation,Word of Blake|Vehicle|3054
+Zhukov Heavy Tank|Capellan Confederation,Comstar,Draconis Combine,Free Worlds League,Mercenary General,Periphery General,Word of Blake|Vehicle|3030
+Asshur Artillery Spotter|Clan General|Vehicle|2950
+Badger (Clan 2)|Clan General,Wolf's Dragoons|Vehicle|3055
+Badger (Clan)|Clan General,Wolf's Dragoons|Vehicle|3055
+Bandit (Clan 2)|Clan General,Wolf's Dragoons|Vehicle|3055
+Bandit (Clan)|Clan General,Wolf's Dragoons|Vehicle|3055
+Demolisher (Clan)|Clan General,Wolf's Dragoons|Vehicle|3055
+Hachiman Fire Support Tank|Clan General|Vehicle|2950
+Huitzilopochtl Assault Tank|Clan General|Vehicle|2950
+Indra Infantry Transport|Clan General|Vehicle|2950
+Ishtar Heavy Fire Support Tank|Clan General|Vehicle|2950
+Mars (ATM Variant)|Clan General|Vehicle|3067
+Mars Assault Vehicle|Clan General|Vehicle|2950
+Maxim (Clan)|Clan General,Wolf's Dragoons|Vehicle|3055
+Mithras Light Tank|Clan General|Vehicle|2950
+Odin Scout Tank|Clan General|Vehicle|2950
+Oro Heavy Tank|Clan General|Vehicle|2950
+Pike (Clan)|Clan General,Wolf's Dragoons|Vehicle|3055
+Svantovit (Streak SRM Variant)|Clan General|Vehicle|2950
+Svantovit Infantry Fighting Vehicle|Clan General|Vehicle|2950
+Zorya Light Tank|Clan General|Vehicle|2950
+Athena Combat Vehicle|Cloud Cobra,Coyote,Diamond Shark,Fire Mandrill,Ghost Bear,Goliath Scorpion,Hell's Horses,Jade Falcon,Snow Raven,Star Adder,Steel Viper,Wolf|Vehicle|2950
+Epona A|Cloud Cobra,Diamond Shark,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Nova Cat,Star Adder,Wolf,Wolf in Exile|Vehicle|2950
+Epona B|Cloud Cobra,Diamond Shark,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Nova Cat,Star Adder,Wolf,Wolf in Exile|Vehicle|2950
+Epona C|Cloud Cobra,Diamond Shark,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Nova Cat,Star Adder,Wolf,Wolf in Exile|Vehicle|2950
+Epona Pursuit Tank|Cloud Cobra,Diamond Shark,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Nova Cat,Star Adder,Wolf,Wolf in Exile|Vehicle|2950
+Mars (XL Variant)|Cloud Cobra,Coyote,Ghost Bear,Goliath Scorpion,Hell's Horses,Ice Hellion,Star Adder|Vehicle|2950
+Goblin (LRM Variant)|Comstar,Draconis Combine,Federated Suns,Lyran Alliance,Word of Blake|Vehicle|2750
+Goblin (SRM Variant)|Comstar,Federated Suns,Lyran Alliance,Word of Blake|Vehicle|2750
+Goblin Infantry Support Vehicle|Comstar,Federated Suns,Lyran Alliance,Word of Blake|Vehicle|3053
+Goblin Medium Tank|Comstar,Draconis Combine,Federated Suns,Lyran Alliance,Periphery General,SLDF 3061,Word of Blake|Vehicle|2750
+SturmFeur Heavy Tank|Comstar,Diamond Shark,Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance,Mercenary General,Nova Cat,Periphery General,SLDF 3061,Wolf in Exile,Word of Blake|Vehicle|3018
+Shoden Assault Vehicle|Coyote,Diamond Shark,Ghost Bear,Jade Falcon,Nova Cat,Steel Viper|Vehicle|3067
+Behemoth Heavy Tank|Diamond Shark,Inner Sphere General,Periphery General|Vehicle|2947
+Heimdall A|Diamond Shark,Nova Cat,Snow Raven,Wolf in Exile|Vehicle|3063
+Heimdall Ground Monitor Tank|Diamond Shark,Nova Cat,Snow Raven,Wolf in Exile|Vehicle|3063
+Hetzer Wheeled Assault Gun|Diamond Shark,Ghost Bear,Inner Sphere General,Nova Cat,Periphery General,Wolf in Exile|Vehicle|2950
+Ontos Heavy Tank|Diamond Shark,Inner Sphere General,Periphery General|Vehicle|2950
+Partisan Heavy Tank|Diamond Shark,Inner Sphere General,Periphery General|Vehicle|2950
+Saracen Medium Hover Tank|Diamond Shark,Inner Sphere General,Periphery General,Wolf in Exile|Vehicle|3000
+Striker Light Tank|Diamond Shark,Inner Sphere General|Vehicle|3020
+Tokugawa Heavy Tank|Diamond Shark,Draconis Combine,Nova Cat,SLDF 3061,SLDF 3061|Vehicle|3053
+Tyr Infantry Support Tank|Diamond Shark,Ghost Bear,Hell's Horses|Vehicle|3063
+Alacorn Mk VI Heavy Tank|Draconis Combine,Federated Suns,Lyran Alliance,Mercenary General|Vehicle|3055
+Behemoth (Kurita Variant)|Draconis Combine|Vehicle|3060
+Challenger X MBT|Draconis Combine,Federated Suns,Mercenary General|Vehicle|3058
+Chevalier Light Tank|Draconis Combine,Federated Suns,SLDF 2750|Vehicle|2750
+Demolisher (MRM Variant)|Draconis Combine|Vehicle|3060
+Demolisher II Heavy Tank|Draconis Combine,Lyran Alliance,Wolf in Exile|Vehicle|3059
+J. Edgar (Kurita Variant)|Draconis Combine|Vehicle|3050
+Maxim Heavy Hover Transport (3058)|Draconis Combine,Free Rasalhague Republic,SLDF 3061|Vehicle|3050
+Myrmidon Medium Tank|Draconis Combine,Federated Suns,Lyran Alliance,Mercenary General,Periphery General,Word of Blake|Vehicle|3060
+Pegasus (C3 Variant)|Draconis Combine,Federated Suns,Lyran Alliance|Vehicle|3060
+Pegasus Scout Hovertank (3058)|Draconis Combine,Federated Suns,Lyran Alliance|Vehicle|3058
+Plainsman Medium Hovertank|Draconis Combine,Free Rasalhague Republic,Free Worlds League,Lyran Alliance,SLDF 3061,Taurian Concordat|Vehicle|3030
+Saracen (MRM Variant)|Draconis Combine|Vehicle|3060
+Schiltron|Draconis Combine,Federated Suns,Free Rasalhague Republic,Mercenary General,SLDF 3061|Vehicle|3058
+Schiltron A|Draconis Combine,Federated Suns,Free Rasalhague Republic,Mercenary General,SLDF 3061|Vehicle|3058
+Schiltron B|Draconis Combine,Federated Suns,Free Rasalhague Republic,Mercenary General,SLDF 3061|Vehicle|3058
+Schiltron C|Draconis Combine,Federated Suns,Free Rasalhague Republic,Mercenary General,SLDF 3061|Vehicle|3058
+Scorpion (MRM Variant)|Draconis Combine|Vehicle|3060
+Striker (Narc Variant)|Draconis Combine,Federated Suns|Vehicle|3058
+Striker Light Tank (3058)|Draconis Combine,Federated Suns,Nova Cat|Vehicle|3058
+Ajax A|Federated Suns,Lyran Alliance,SLDF 3061|Vehicle|3065
+Ajax Assault Tank|Federated Suns,Lyran Alliance,SLDF 3061|Vehicle|3065
+Ajax B|Federated Suns,Lyran Alliance,SLDF 3061|Vehicle|3065
+Alacorn Mk VII Heavy Tank|Federated Suns,Lyran Alliance,SLDF 3061,Wolf in Exile|Vehicle|3062
+Centipede Scout Car|Federated Suns,Lyran Alliance,Mercenary General|Vehicle|3053
+Condor (Davion Variant)|Federated Suns|Vehicle|2950
+Glory (Light Gauss Rifle Variant)|Federated Suns|Vehicle|3067
+Glory Heavy Fire Support Vehicle|Federated Suns|Vehicle|3067
+Manteuffel A|Federated Suns,SLDF 3061|Vehicle|3065
+Manteuffel Attack Tank|Federated Suns,SLDF 3061|Vehicle|3065
+Manteuffel B|Federated Suns,SLDF 3061|Vehicle|3065
+Minion (Targeting Computer Variant)|Federated Suns|Vehicle|3067
+Musketeer (Armor Variant)|Federated Suns|Vehicle|3067
+Musketeer Hover Tank|Federated Suns,SLDF 3061|Vehicle|3065
+Partisan (RAC Variant)|Federated Suns|Vehicle|3062
+Pike (RAC Variant)|Federated Suns|Vehicle|3062
+Pilum (Arrow IV Variant)|Federated Suns,Lyran Alliance|Vehicle|3060
+Pilum Heavy Tank|Federated Suns,Lyran Alliance,Periphery General|Vehicle|3058
+Schiltron D|Federated Suns|Vehicle|3062
+Typhoon (RAC Variant)|Federated Suns,Lyran Alliance|Vehicle|3062
+Typhoon Urban Assault Vehicle|Federated Suns,Lyran Alliance,Mercenary General|Vehicle|3057
+Vedette (RAC Variant)|Federated Suns|Vehicle|3062
+Demon|Free Rasalhague Republic,SLDF 2750|Vehicle|2716
+Gabriel|Free Rasalhague Republic,SLDF 2750|Vehicle|2712
+Magi|Free Rasalhague Republic,SLDF 2750|Vehicle|2727
+Puma|Free Rasalhague Republic,SLDF 2750|Vehicle|2650
+Rhino|Free Rasalhague Republic,SLDF 2750|Vehicle|2667
+Zephyr|Free Rasalhague Republic,SLDF 2750,SLDF 3061|Vehicle|2620
+Harasser (Laser Variant)|Free Worlds League|Vehicle|2950
+Harasser (LRM Variant)|Free Worlds League|Vehicle|2950
+Main Gauche (C3 Variant)|Free Worlds League,Word of Blake|Vehicle|3067
+Main Gauche (XL Variant)|Free Worlds League,Word of Blake|Vehicle|3067
+Main Gauche Light Support Tank|Free Worlds League,Word of Blake|Vehicle|3064
+Po (Light Gauss Rifle)|Free Worlds League|Vehicle|3060
+Stygian (Armor Variant)|Free Worlds League|Vehicle|3067
+Stygian Strike Tank|Free Worlds League|Vehicle|3062
+Enyo Strike Tank|Hell's Horses,Jade Falcon,Snow Raven,Star Adder,Steel Viper|Vehicle|3067
+Hephaestus A|Hell's Horses,Star Adder|Vehicle|3062
+Hephaestus B|Hell's Horses,Star Adder|Vehicle|3062
+Hephaestus C|Hell's Horses,Star Adder|Vehicle|3062
+Hephaestus Scout Tank|Hell's Horses,Star Adder|Vehicle|3062
+AC/2 Carrier|Inner Sphere General|Vehicle|2400
+AC/2 Carrier (LB-X Variant)|Inner Sphere General|Vehicle|3060
+APC (Hover)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+APC (Tracked)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+APC (Wheeled)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+BattleMech Recovery Vehicle|Inner Sphere General,Periphery General,SLDF 2750,SLDF 2750|Vehicle|2400
+Behemoth (Flamer Variant)|Inner Sphere General|Vehicle|2950
+Blizzard Hover Transport|Inner Sphere General|Vehicle|3054
+Bulldog (AC/2 Variant)|Inner Sphere General|Vehicle|2950
+Bulldog (LRM Variant)|Inner Sphere General|Vehicle|2950
+Bulldog Medium Tank|Inner Sphere General,Periphery General|Vehicle|2950
+Condor (Laser Variant)|Inner Sphere General|Vehicle|3060
+Condor Heavy Hover Tank|Inner Sphere General,Periphery General|Vehicle|2950
+Coolant Truck 135-K|Inner Sphere General,SLDF 2750|Vehicle|2588
+Demolisher (Arrow IV Variant)|Inner Sphere General|Vehicle|3050
+Demolisher (Gauss Variant)|Inner Sphere General|Vehicle|3050
+Demolisher Heavy Tank|Inner Sphere General,Periphery General|Vehicle|2800
+Drillson (SRM Variant)|Inner Sphere General|Vehicle|3025
+Drillson Heavy Hover Tank|Inner Sphere General,Periphery General|Vehicle|3025
+Engineering Vehicle|Inner Sphere General,SLDF 2750|Vehicle|2400
+Flatbed Truck|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Flatbed Truck (Armor Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Flatbed Truck (SRM Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Galleon Light Tank|Inner Sphere General|Vehicle|3048
+Galleon Light Tank GAL-100|Inner Sphere General,SLDF 2750|Vehicle|2750
+Galleon Light Tank GAL-200|Inner Sphere General|Vehicle|2950
+Heavy BattleMech Recovery Vehicle|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Hover APC|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Hover APC (LRM Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Hover APC (MG Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Hover APC (SRM Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Tracked APC|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Tracked APC (LRM Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Tracked APC (MG Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Tracked APC (SRM Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Wheeled APC|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Wheeled APC (LRM Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Wheeled APC (MG Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Heavy Wheeled APC (SRM Variant)|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+Hi-Scout Drone (Napfind)|Inner Sphere General|Vehicle|2950
+Hi-Scout Drone (Pathtrack)|Inner Sphere General|Vehicle|2950
+Hi-Scout Drone Carrier|Inner Sphere General|Vehicle|2950
+Hunter Light Support Tank|Inner Sphere General,Periphery General|Vehicle|2950
+Hunter Light Support Tank (3058)|Inner Sphere General|Vehicle|3055
+J-27 Ordnance Transport & Trailer|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+J. Edgar (Flamer Variant)|Inner Sphere General|Vehicle|2950
+J. Edgar (Machine Gun Variant)|Inner Sphere General|Vehicle|2950
+J. Edgar (TAG Variant)|Inner Sphere General|Vehicle|3050
+J. Edgar Light Hover Tank|Inner Sphere General,Periphery General|Vehicle|2950
+LRM Carrier|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+LRM Carrier (3058)|Inner Sphere General|Vehicle|3055
+Manticore Heavy Tank|Inner Sphere General,Periphery General|Vehicle|2950
+MASH Truck|Inner Sphere General,SLDF 2750|Vehicle|2400
+Maxim (Anti-Personnel)|Inner Sphere General|Vehicle|3058
+Maxim (Fire Support)|Inner Sphere General|Vehicle|3058
+Maxim (Infantry Variant)|Inner Sphere General|Vehicle|3060
+Maxim Heavy Hover Transport|Inner Sphere General,Periphery General|Vehicle|2950
+Mobile Headquarters|Inner Sphere General,SLDF 2750|Vehicle|2400
+Mobile Long Tom LT-MOB-25|Inner Sphere General,SLDF 2750|Vehicle|2750
+Ontos (LRM Variant)|Inner Sphere General|Vehicle|2950
+Packrat LRPV PKR-T5|Inner Sphere General,Periphery General|Vehicle|2750
+Partisan (AC/2 Variant)|Inner Sphere General|Vehicle|2950
+Partisan (Company Command)|Inner Sphere General|Vehicle|3058
+Partisan (Lance Command)|Inner Sphere General|Vehicle|3058
+Partisan (LRM Variant)|Inner Sphere General|Vehicle|2950
+Partisan (XL Variant)|Inner Sphere General|Vehicle|3060
+Partisan Air Defense Tank|Inner Sphere General,Nova Cat,Wolf in Exile|Vehicle|3058
+Patton Tank|Inner Sphere General,Periphery General|Vehicle|3024
+Pegasus Scout Hovertank|Inner Sphere General,Periphery General,Wolf in Exile|Vehicle|2800
+Pike Support Vehicle|Inner Sphere General,Periphery General|Vehicle|2987
+Po Heavy Tank|Inner Sphere General,Periphery General|Vehicle|3030
+Rommel Tank|Inner Sphere General,Taurian Concordat|Vehicle|3024
+Saladin (LB-X Variant)|Inner Sphere General|Vehicle|3060
+Saladin (Ultra Variant)|Inner Sphere General|Vehicle|3060
+Saladin Assault Hover Tank|Inner Sphere General,Periphery General|Vehicle|3006
+Savannah Master Hovercraft|Inner Sphere General,Periphery General|Vehicle|3023
+Schrek PPC Carrier|Inner Sphere General,Periphery General|Vehicle|2810
+Scimitar (TAG Variant)|Inner Sphere General|Vehicle|3050
+Scimitar Medium Hover Tank|Inner Sphere General|Vehicle|3005
+Scorpion (SRM Variant)|Inner Sphere General|Vehicle|2950
+Scorpion Light Tank|Inner Sphere General|Vehicle|2950
+Skulker Wheeled Scout Tank|Inner Sphere General,SLDF 2750|Vehicle|2400
+SRM Carrier|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2400
+SRM Carrier (3058)|Inner Sphere General|Vehicle|3054
+Striker (LRM Variant)|Inner Sphere General|Vehicle|3025
+Swift Wind (ICE Variant)|Inner Sphere General|Vehicle|2600
+Swift Wind Scout Car|Inner Sphere General|Vehicle|2600
+Vedette (AC/2 Variant)|Inner Sphere General|Vehicle|2950
+Vedette (NETC Variant)|Inner Sphere General|Vehicle|3054
+Vedette Medium Tank|Inner Sphere General,Periphery General|Vehicle|2950
+Von Luckner Heavy Tank VNL-K65N|Inner Sphere General,Periphery General,SLDF 2750|Vehicle|2600
+Von Luckner Heavy Tank VNL-K75N|Inner Sphere General|Vehicle|3060
+Drillson (Streak Variant)|Lyran Alliance|Vehicle|3050
+Fortune Wheeled Assault Vehicle|Lyran Alliance|Vehicle|3067
+Fulcrum Heavy Hovertank|Lyran Alliance,Mercenary General,Periphery General|Vehicle|3056
+Glaive Medium Tank|Lyran Alliance|Vehicle|3067
+Manteuffel A|Lyran Alliance|Vehicle|3067
+Manteuffel Attack Tank|Lyran Alliance|Vehicle|3067
+Manteuffel B|Lyran Alliance|Vehicle|3067
+Manticore Heavy Tank (3058)|Lyran Alliance|Vehicle|3058
+Patton (Ultra Variant)|Lyran Alliance,SLDF 3061,Wolf in Exile|Vehicle|3060
+Rommel (Gauss Variant)|Lyran Alliance,SLDF 3061,Wolf in Exile|Vehicle|3050
+SturmFeur (Heavy Gauss Variant)|Lyran Alliance,Wolf in Exile|Vehicle|3062
+Bandit A|Mercenary General|Vehicle|3008
+Bandit B|Mercenary General|Vehicle|3008
+Bandit C|Mercenary General|Vehicle|3008
+Bandit D|Mercenary General|Vehicle|3008
+Bandit E|Mercenary General|Vehicle|3008
+Bandit F|Mercenary General|Vehicle|3008
+Bandit G|Mercenary General|Vehicle|3008
+Bandit H|Mercenary General|Vehicle|3060
+Bandit Hovercraft|Mercenary General|Vehicle|3008
+Shoden (Streak SRM Variant)|Nova Cat,Wolf in Exile|Vehicle|3067
+Alacorn Mk VI Heavy Tank|SLDF 2750|Vehicle|2587
+Beagle|SLDF 2750|Vehicle|2666
+Burke|SLDF 2750|Vehicle|2580
+Chaparral|SLDF 2750,SLDF 3061|Vehicle|2611
+Chevalier (Active Probe Variant)|SLDF 2750|Vehicle|2750
+Chevalier (Speed Variant)|SLDF 2750|Vehicle|2750
+Fury|SLDF 2750,SLDF 3061|Vehicle|2637
+Kanga|SLDF 2750|Vehicle|2650
+Lightning|SLDF 2750|Vehicle|2696
+Marksman|SLDF 2750|Vehicle|2702
+Rotunda|SLDF 2750|Vehicle|2735
+Thor|SLDF 2750|Vehicle|2680
+Badger A|Wolf's Dragoons|Vehicle|3007
+Badger B|Wolf's Dragoons|Vehicle|3007
+Badger C|Wolf's Dragoons|Vehicle|3007
+Badger D|Wolf's Dragoons|Vehicle|3007
+Badger E|Wolf's Dragoons|Vehicle|3007
+Badger F|Wolf's Dragoons|Vehicle|3060
+Badger Tracked Transport|Wolf's Dragoons|Vehicle|3007
+Anhur Transport|Clan General|VTOL|2950
+Donar Assault|Clan General|VTOL|2950
+Donar (Reconnaissance Version)|Cloud Cobra,Ghost Bear,Goliath Scorpion,Ice Hellion,Star Adder|VTOL|2950
+Pinto Attack|Comstar,Word of Blake|VTOL|3055
+Sprint Scout|Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance|VTOL|3052
+Sprint Scout (C3 Variant)|Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance|VTOL|3052
+Sprint Scout (Infantry Variant)|Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance|VTOL|3052
+Sprint Scout (Laser Variant)|Draconis Combine,Federated Suns,Free Rasalhague Republic,Lyran Alliance|VTOL|3052
+Ferret Lt. Scout|Federated Suns,Free Worlds League,Lyran Alliance,Periphery General|VTOL|2904
+Ferret Lt. Scout (Armor)|Federated Suns,Free Worlds League,Lyran Alliance,Periphery General|VTOL|2904
+Ferret Lt. Scout (Cargo)|Federated Suns|VTOL|2904
+Warrior H-8|Federated Suns,Free Rasalhague Republic,Lyran Alliance|VTOL|3052
+Cavalry|Inner Sphere General|VTOL|3054
+Cavalry (Infantry)|Inner Sphere General|VTOL|3058
+Cavalry (SRM)|Inner Sphere General|VTOL|3054
+Hawk Moth Gunship|Inner Sphere General|VTOL|3060
+Hawk Moth Gunship (Armor)|Inner Sphere General|VTOL|3060
+Karnov UR Transport|Inner Sphere General|VTOL|2920
+Karnov UR Transport (3058)|Inner Sphere General|VTOL|3055
+Mantis Lt. Attack|Inner Sphere General|VTOL|3060
+Peregrine Attack|Inner Sphere General|VTOL|3020
+Warrior H-7|Inner Sphere General,Periphery General|VTOL|2950
+Warrior H-7A|Inner Sphere General,Periphery General|VTOL|2950
+Warrior H-7C|Inner Sphere General|VTOL|2950
+Yellow Jacket Gunship|Inner Sphere General|VTOL|3058
+Yellow Jacket Gunship (Ammo) |Inner Sphere General|VTOL|3058
+Karnov UR Transport|Periphery General,SLDF 2750|VTOL|2400
+Cyrano|SLDF 2750|VTOL|2622
+Nightshade|SLDF 2750|VTOL|2597
+Ripper|SLDF 2750|VTOL|2680
+Kestrel|Wolf's Dragoons|VTOL|3007
+Advanced Clan Armor|MWDA|Infantry|3132
+Advanced Clan Armor (IS)|MWDA|Infantry|3132
+Hauberk Assault Battle Armor|MWDA|Infantry|3132
+Hauberk Assault Battle Armor (Clan)|MWDA|Infantry|3132
+Behemoth II Tank|MWDA|Vehicle|3132
+Condor Multi-Purpose Tank|MWDA|Vehicle|3132
+Demon Medium Tank|MWDA|Vehicle|3132
+Fox Armored Car|MWDA|Vehicle|3132
+JES Tactical Missile Carrier|MWDA|Vehicle|3132
+Scimitar Mk II Hover Combat Vehicle|MWDA|Vehicle|3132
+JESII Strategic Missile Carrier|MWDA|Vehicle|3132
+Marksman Tank (M1)|MWDA|Vehicle|3132
+Joust Medium Tank (BE701)|MWDA|Vehicle|3132
+Ranger Infantry Fighting Vehicle (VV1)|MWDA|Vehicle|3132
+Shandra Advanced Scout Vehicle|MWDA|Vehicle|3132
+Tank Destroyer (SM1)|MWDA|Vehicle|3132
+DI Schmitt Tank|MWDA|Vehicle|3132
+Arbalest 2|MWDA|BattleMech|3132
+Arbalest|MWDA|BattleMech|3132
+Atlas AS7-K2|MWDA|BattleMech|3132
+Atlas AS7-K3|MWDA|BattleMech|3132
+Black Hawk 2|MWDA|BattleMech|3132
+Black Hawk|MWDA|BattleMech|3132
+Catapult CPLT-C2|MWDA|BattleMech|3132
+Catapult CPLT-K2K|MWDA|BattleMech|3132
+Centurion CN9-D3D|MWDA|BattleMech|3132
+Centurion CN9-D4D|MWDA|BattleMech|3132
+Cougar X|MWDA|BattleMech|3132
+Cougar X2|MWDA|BattleMech|3132
+Cougar X3|MWDA|BattleMech|3132
+Firestarter FS9-M2|MWDA|BattleMech|3132
+Firestarter FS9-M3|MWDA|BattleMech|3132
+Hatchetman HCT-5D|MWDA|BattleMech|3132
+Hatchetman HCT-5DD|MWDA|BattleMech|3132
+Jupiter|MWDA|BattleMech|3132
+Jupiter 2|MWDA|BattleMech|3132
+Koshi|MWDA|BattleMech|3132
+Koshi 2|MWDA|BattleMech|3132
+Legionnaire LGN-2D Raul|MWDA|BattleMech|3132
+Legionnaire LGN-2D|MWDA|BattleMech|3132
+Legionnaire LGN-2K|MWDA|BattleMech|3132
+Mad Cat III|MWDA|BattleMech|3132
+Mad Cat III 2|MWDA|BattleMech|3132
+Pack Hunter 2|MWDA|BattleMech|3132
+Pack Hunter 3|MWDA|BattleMech|3132
+Panther PNT-12K|MWDA|BattleMech|3132
+Panther PNT-10K2|MWDA|BattleMech|3132
+Ryoken II 2|MWDA|BattleMech|3132
+Ryoken II|MWDA|BattleMech|3132
+Ryoken II Tassa|MWDA|BattleMech|3132
+Spider SDR-7K2|MWDA|BattleMech|3132
+Spider SDR-7K|MWDA|BattleMech|3132
+Tundra Wolf|MWDA|BattleMech|3132
+Tundra Wolf 2|MWDA|BattleMech|3132
+Tundra Wolf 3|MWDA|BattleMech|3132
+Zeus ZEU-X|MWDA|BattleMech|3132
+Zeus ZEU-X2|MWDA|BattleMech|3132
+Zeus ZEU-X3|MWDA|BattleMech|3132

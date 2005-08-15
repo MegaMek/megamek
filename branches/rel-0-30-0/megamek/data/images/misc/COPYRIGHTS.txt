@@ -1,0 +1,185 @@
+                                                                                 
+        These files are a part of FreeCraft Media Project                           
+	                                                                             
+        FreeCraft Media is free graphics or animations or videos or 3d models
+		or sounds; you can redistribute it and/or modify it under the     
+        terms of the GNU General Public License as published by the Free     
+        Software Foundation; either version 2 of the License, or (at your    
+        option) any later version.                                           
+	                                                                             
+        FreeCraft Media Project is distributed in the hope that it will be 
+        useful, but WITHOUT ANY WARRANTY; without even the implied warranty  
+        of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     
+        GNU General Public License for more details.                         
+                     
+	Thanks to ALL these great media designers.
+
+	Each holds the copyright to their own work:
+
+
+    Nehal Mistry                                       
+    	barracks.png	(c) Copyright 2001 by Nehal Mistry 
+    	gateway-nehal_mistry-01.png	(c) Copyright 2002 by Nehal Mistry
+		barracks.png	(c) Copyright 2001 by Nehal Mistry 
+		blacksmith.png	(c) Copyright 2001 by Nehal Mistry 
+		cannon_tower.png	(c) Copyright 2001 by Nehal Mistry 
+		farm.png	(c) Copyright 2001 by Nehal Mistry 
+		foundry construction site.png	(c) Copyright 2001 by Nehal Mistry 
+		foundry.png	(c) Copyright 2001 by Nehal Mistry 
+		guard_tower.png	(c) Copyright 2001 by Nehal Mistry 
+		lumber_mill.png	(c) Copyright 2001 by Nehal Mistry 
+		refinery construction site.png	(c) Copyright 2001 by Nehal Mistry 
+		refinery.png	(c) Copyright 2001 by Nehal Mistry 
+		scout_tower.png	(c) Copyright 2001 by Nehal Mistry 
+		shipyard.png	(c) Copyright 2001 by Nehal Mistry 
+		stables.png	(c) Copyright 2001 by Nehal Mistry 
+		town_hall.png 	(c) Copyright 2001 by Nehal Mistry 
+
+
+	Paolo D'Incà <paolodinca@hotmail.com>
+		alchemist.png	(c) Copyright 2002 by Paolo D'Incà
+		barracks-02.png	(c) Copyright 2002 by Paolo D'Incà
+		barracks.png	(c) Copyright 2002 by Paolo D'Incà
+		blacksmith.png	(c) Copyright 2002 by Paolo D'Incà
+		blizzard-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		big_fire-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		buttonpanel-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		cannon_tower.png	(c) Copyright 2002 by Paolo D'Incà
+		church.png		(c) Copyright 2002 by Paolo D'Incà
+		corpses-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		destroyed_site-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		dragon-paolo_dinca-01.max	(c) Copyright 2002 by Paolo D'Incà
+		dragon.png	(c) Copyright 2002 by Paolo D'Incà
+		empty_tanker-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		eye-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		explosion-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		filler1-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		flying_machine-paolo_dinca_01.png	(c) Copyright 2002 by Paolo D'Incà
+		fortress.png	(c) Copyright 2002 by Paolo D'Incà
+		full_tanker-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		great_hall.png	(c) Copyright 2002 by Paolo D'Incà
+		green_cross-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		gryphon_hammer-paolo_dinca_01.png	(c) Copyright 2002 by Paolo D'Incà
+		guard_tower.png	(c) Copyright 2002 by Paolo D'Incà
+		infopanel-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		juggernaught-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		land_construction_site-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		lumber_mill-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		mage-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		mage_tower.png	(c) Copyright 2002 by Paolo D'Incà
+		menubutton-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		minimap-01.png	(c) Copyright 2002 by Paolo D'Incà
+		minimap-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		ogre-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		ogre-paolo_dinca-01.max	(c) Copyright 2002 by Paolo D'Incà
+		orcish_claw-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		panel_1-01.png	(c) Copyright 2002 by Paolo D'Incà
+		panel_1-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		panel_5-mythical_01.png	(c) Copyright 2002 by Paolo D'Incà
+		resource-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		scout_tower.png	(c) Copyright 2002 by Paolo D'Incà
+		shipyard_construction_site-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		shipyard_construction_site-paolo_dinca-01.png (orc)	(c) Copyright 2002 by Paolo D'Incà
+		shipyard.png	(c) Copyright 2002 by Paolo D'Incà
+		small_destroyed_site-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		small_fire-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incàa
+		small_green_cross-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		statusline-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		stronghold.png	(c) Copyright 2002 by Paolo D'Incà
+		submarine.png	(c) Copyright 2002 by Paolo D'Incà
+		submarine-paolo_dinca-01.png	(c) Copyright 2002 by Paolo D'Incà
+		temple_of_the_damned.png	(c) Copyright 2002 by Paolo D'Incà
+
+	José Plans <jose.plans@wanadoo.fr>
+		dark_portal-jose_plans-01.png (c) Copyright 2002 by José Plans
+		gryphon_aviary-jose_plans-01.png (c) Copyright 2002 by José Plans
+		dragon_roost-jose_plans-01.png (c) Copyright 2002 by José Plans
+		human_scout_tower-jose_plans-01.png (c) Copyright 2002 by José Plans
+		human_guard_tower-jose_plans-01.png (c) Copyright 2002 by José Plans
+		human_cannon_tower-jose_plans-01.png (c) Copyright 2002 by José Plans
+		orc_cannon_tower-jose_plans-01.png (c) Copyright 2002 by José Plans
+		orc_guard_tower-jose_plans-01.png (c) Copyright 2002 by José Plans
+		orc_scout_tower-jose_plans-01.png (c) Copyright 2002 by José Plans
+
+
+
+	Chris Hopp <fydo@shaw.ca>
+		barracks-chris_hopp-01.png	(c) Copyright 2002 by Chris Hopp
+		barracks-chris_hopp-01.png	(c) Copyright 2002 by Chris Hopp
+		barracks-chris_hopp-01.max	(c) Copyright 2002 by Chris Hopp
+		barracks-chris_hopp-01.txt	(c) Copyright 2002 by Chris Hopp
+		church-chris_hopp-01.png	(c) Copyright 2002 by Chris Hopp
+		demolition_squad-chris_hopp-01.png	(c) Copyright 2002 by Chris Hopp
+		menu_background_without_title-chris_hopp-01.png	(c) Copyright 2002 by Chris Hopp
+		cross-chris_hopp-01.png	(c) Copyright 2002 by Chris Hopp
+		blizzard-chris_hopp-01.png	(c) Copyright 2002 by Chris Hopp
+		small_fire-chris_hopp-01.png	(c) Copyright 2002 by Chris Hopp
+
+
+	Rick Elliot
+		cross-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		arrow_N-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		arrow_NE-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		arrow_S-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		arrow_SE-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		arrow_E-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		red_eagle-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		green_eagle-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		yellow_eagle-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		arrow_W-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		arrow_NW-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		arrow_SW-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		magnifying_glass-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+		arrows-rick_elliot-01.pal	(c) Copyright 2002 by Rick Elliot
+		menu_background_without_title-rick_elliot-01.png	(c) Copyright 2002 by Rick Elliot
+
+
+	Andreas Nilsson <nisses.mail@home.se>
+		archer_icon-andreas_nilsson-02.png	(c) Copyright 2002 by Andreas Nilsson
+		concept-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		dwarves_demo_squad_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		dwarves_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		faun_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		flying_machine_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		flying_machine_icon-andreas_nilsson-02.png	(c) Copyright 2002 by Andreas Nilsson
+		footman_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		footman_icon-andreas_nilsson-02.png	(c) Copyright 2002 by Andreas Nilsson
+		goblin_sappers_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		grunt_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		hourglass-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		knight_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		ogre_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		ranger_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+		zeppelin_icon-andreas_nilsson-01.png	(c) Copyright 2002 by Andreas Nilsson
+
+
+	Bastian Salmela <bastian.salmela@hel.fi>
+		dudes-bastian_salmela-01.png	(c) Copyright 2002 by Bastian Salmela
+		menu_background_without_title-bastian_salmela-01.png	(c) Copyright 2002 by Bastian Salmela
+
+
+	Anton Bondar <redteam@online.sinor.ru>
+		desert-anton_bodnar-01.bmp	(c) Copyright 2002 by Anton Bondar
+
+
+
+The following files were developed specifically for the MegaMek project.
+
+
+        These graphics can be redistributed and/or modify it under the     
+        terms of the GNU General Public License as published by the Free     
+        Software Foundation; either version 2 of the License, or (at your    
+        option) any later version.                                           
+
+        These graphics are distributed in the hope that it will be 
+        useful, but WITHOUT ANY WARRANTY; without even the implied warranty  
+        of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     
+        GNU General Public License for more details.                         
+                     
+	Thanks to ALL these great media designers.
+
+	Each holds the copyright to their own work:
+
+
+        Ian Hamilton <jabberwocky@planethalflife.com>
+                light_bldg.bmp          (c) Copyright 2003 by Ian Hamilton

@@ -126,7 +126,8 @@ public class EquipmentType {
 
     protected boolean   explosive = false;
     protected boolean   hittable = true; // if false, reroll critical hits
-    // can the crits for this be spread over locations?
+    
+    /** can the crits for this be spread over locations? */
     protected boolean   spreadable = false;
     protected int       toHitModifier = 0;
     protected int       techLevel = TechConstants.T_TECH_UNKNOWN;

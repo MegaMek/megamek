@@ -941,4 +941,8 @@ public class Protomech
     public boolean doomedInVacuum() {
         return false;
     }
+
+    public boolean hasActiveEiCockpit() {
+        return (super.hasActiveEiCockpit() && (getCritsHit(LOC_HEAD) == 0));
+    }
 }

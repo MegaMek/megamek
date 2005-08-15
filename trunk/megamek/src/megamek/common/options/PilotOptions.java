@@ -42,6 +42,7 @@ public class PilotOptions extends AbstractOptions implements Serializable {
         addOption(adv,"gunnery_missile", false); //$NON-NLS-1$
         addOption(adv,"gunnery_ballistic", false); //$NON-NLS-1$
         addOption(adv,"iron_man", false); //$NON-NLS-1$
+        addOption(adv,"ei_implant", false); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

@@ -15,6 +15,7 @@
 package megamek.common.actions;
 
 import java.util.Enumeration;
+import java.util.Vector;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Targetable;
@@ -77,7 +78,7 @@ public abstract class AbstractAttackAction
      * used by the toHit of derived classes
      * atype may be null if not using an ammo based weapon
     */
-    public static ToHitData nightModifiers(IGame game, Targetable target, AmmoType atype) {
+    public static ToHitData nightModifiers(IGame game, Targetable target, AmmoType atype, Entity attacker) {
         ToHitData toHit = null;
         if(game.getOptions().booleanOption("night_battle")) {
             Entity te = null;
@@ -120,6 +121,11 @@ public abstract class AbstractAttackAction
             }
             else if(illuminated) {
                 toHit.addModifier(-night_modifier, "target illuminated by searchlight");
+                night_modifier = 0;
+            }
+            //Ignored with EI system & implants
+            else if(attacker.hasActiveEiCockpit()) {
+                toHit.addModifier(-night_modifier, "EI system");
                 night_modifier = 0;
             }
             //So do flares

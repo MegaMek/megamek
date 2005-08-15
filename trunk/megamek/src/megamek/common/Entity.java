@@ -2083,6 +2083,15 @@ public abstract class Entity
      * aimed shot mode.
      */
     public boolean hasAimModeTargComp() {
+        if(hasActiveEiCockpit()) {
+            if(this instanceof Mech) {
+                if(((Mech)this).getCockpitStatus() == Mech.COCKPIT_AIMED_SHOT) {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP) && m.curMode().equals("Aimed shot")) {
@@ -4748,5 +4757,13 @@ public abstract class Entity
             }
         }
         return false;
+    }
+
+    public boolean hasEiCockpit() {
+        return (game != null && game.getOptions().booleanOption("all_have_ei_cockpit"));
+    }
+
+    public boolean hasActiveEiCockpit() {
+        return (hasEiCockpit() && getCrew().getOptions().booleanOption("ei_implant"));
     }
 }

@@ -238,6 +238,7 @@ public class BipedMech extends Mech {
     public double getCost() {
         double cost=0;
         cost+=200000;//cockpit
+        if(hasEiCockpit()) cost += 200000;
         cost+=50000;//life support
         cost+=weight*2000;//sensors
         int muscCost=this.hasTSM()? 16000 : 2000;

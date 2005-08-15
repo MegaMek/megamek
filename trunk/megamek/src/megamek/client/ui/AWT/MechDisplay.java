@@ -1135,12 +1135,16 @@ class SystemPanel
         return locList.getSelectedIndex();
     }
 
-    public Mounted getSelectedEquipment() {
+    public CriticalSlot getSelectedCritical() {
         int loc = locList.getSelectedIndex();
         int slot = slotList.getSelectedIndex();
         if (loc == -1 || slot == -1) {
             return null;
         }
+        return en.getCritical(loc, slot);
+    }
+
+    public Mounted getSelectedEquipment() {
         if (en instanceof Tank) {
             if (en.hasTargComp()) {
                 Enumeration equip = en.getEquipment();
@@ -1153,7 +1157,7 @@ class SystemPanel
                 }
             }
         }
-        final CriticalSlot cs = en.getCritical(loc, slot);
+        final CriticalSlot cs = getSelectedCritical();
         if (null == cs) {
             return null;
         }
@@ -1269,10 +1273,25 @@ class SystemPanel
                     m_chMode.add(em.getDisplayableName());
                 }
                 m_chMode.select(m.curMode().getDisplayableName());
+            } else {
+                CriticalSlot cs = getSelectedCritical();
+                if(cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM) {
+                    if(cs.getIndex() == Mech.SYSTEM_COCKPIT
+                       && en.hasEiCockpit()
+                       && en instanceof Mech) {
+                        m_chMode.removeAll();
+                        m_chMode.setEnabled(true);
+                        m_chMode.add("EI Off");
+                        m_chMode.add("EI On");
+                        m_chMode.add("Aimed shot");
+                        m_chMode.select(((Mech)en).getCockpitStatusNextRound());
+                    }
+                }
             }
         }
         else if (ev.getItemSelectable() == m_chMode) {
             Mounted m = getSelectedEquipment();
+            CriticalSlot cs = getSelectedCritical();
             if (m != null && m.getType().hasModes()) {
                 int nMode = m_chMode.getSelectedIndex();
                 if (nMode >= 0) {
@@ -1289,6 +1308,23 @@ class SystemPanel
                             clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart", new Object[]{m.getName(),m.pendingMode().getDisplayableName()}));//$NON-NLS-1$
                         } else{ 
                             clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[]{m.getName(),m.pendingMode().getDisplayableName()}));//$NON-NLS-1$
+                        }
+                    }
+                }
+            }
+            else if(cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM) {
+                int nMode = m_chMode.getSelectedIndex();
+                if (nMode >= 0) {
+                    if(cs.getIndex() == Mech.SYSTEM_COCKPIT
+                       && en.hasEiCockpit()
+                       && en instanceof Mech) {
+                        Mech mech = (Mech)en;
+                        mech.setCockpitStatus(nMode);
+                        clientgui.getClient().sendSystemModeChange(en.getId(), Mech.SYSTEM_COCKPIT, nMode);
+                        if(mech.getCockpitStatus() == mech.getCockpitStatusNextRound()) {
+                            clientgui.systemMessage(Messages.getString("MechDisplay.switched", new Object[]{"Cockpit",m_chMode.getSelectedItem()}));//$NON-NLS-1$
+                        } else {
+                            clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[]{"Cockpit",m_chMode.getSelectedItem()}));//$NON-NLS-1$
                         }
                     }
                 }

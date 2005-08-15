@@ -49,6 +49,7 @@ implements Serializable {
     public static final int        COMMAND_ENTITY_UPDATE        = 14;
     public static final int        COMMAND_ENTITY_MODECHANGE    = 26;  // reorder me
     public static final int        COMMAND_ENTITY_AMMOCHANGE    = 33;  // reorder me
+    public static final int        COMMAND_ENTITY_SYSTEMMODECHANGE = 50;
     
     public static final int        COMMAND_ENTITY_VISIBILITY_INDICATOR = 41;  // reorder me
     public static final int        COMMAND_CHANGE_HEX           = 25;  // reorder me

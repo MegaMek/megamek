@@ -1144,7 +1144,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.flags |= F_DOUBLE_HEAT_SINK | F_LASER_HEAT_SINK;
         misc.bv = 0;
-        misc.bv = TechConstants.T_CLAN_LEVEL_3;
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
         
         return misc;
     }

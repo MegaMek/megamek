@@ -353,6 +353,14 @@ public class Client implements Runnable {
     }
 
     /**
+     * Send system mode-change data to the server
+     */
+    public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
+        Object[] data = { new Integer(nEntity), new Integer(nSystem), new Integer(nMode)};
+        send(new Packet(Packet.COMMAND_ENTITY_SYSTEMMODECHANGE, data));
+    }
+
+    /**
      * Send mode-change data to the server
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo) {

@@ -289,6 +289,10 @@ public class LosEffects {
      * LOS effects data.
      */
     public ToHitData losModifiers(IGame game) {
+        return losModifiers(game, 0);
+    }
+
+    public ToHitData losModifiers(IGame game, int eistatus) {
         ToHitData modifiers = new ToHitData();
         if (blocked) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain.");
@@ -307,11 +311,19 @@ public class LosEffects {
         }
         
         if (lightWoods > 0) {
-            modifiers.addModifier(lightWoods, lightWoods + " intervening light woods");
+            if(eistatus > 0) {
+                modifiers.addModifier(1, "firing through light woods with EI system");
+            } else {
+                modifiers.addModifier(lightWoods, lightWoods + " intervening light woods");
+            }
         }
         
         if (heavyWoods > 0) {
-            modifiers.addModifier(heavyWoods * 2, heavyWoods + " intervening heavy woods");
+            if(eistatus > 0) {
+                modifiers.addModifier(heavyWoods, heavyWoods + " intervening heavy woods");
+            } else {
+                modifiers.addModifier(heavyWoods * 2, heavyWoods + " intervening heavy woods");
+            }
         }
      
         if (lightSmoke > 0) {
@@ -324,7 +336,11 @@ public class LosEffects {
             if (game.getOptions().booleanOption("maxtech_fire"))
                 text.append(" heavy");
             text.append(" smoke");
-            modifiers.addModifier(heavySmoke * 2, text.toString());
+            if(eistatus > 0) {
+                modifiers.addModifier(heavySmoke, text.toString());
+            } else {
+                modifiers.addModifier(heavySmoke * 2, text.toString());
+            }
         }
 
         if (targetCover != COVER_NONE) {

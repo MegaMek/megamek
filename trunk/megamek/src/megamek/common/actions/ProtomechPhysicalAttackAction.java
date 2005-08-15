@@ -194,7 +194,7 @@ public class ProtomechPhysicalAttackAction
         // target immobile
         toHit.append(Compute.getImmobileMod(te));
 
-        toHit.append(nightModifiers(game, target, null));
+        toHit.append(nightModifiers(game, target, null, ae));
         
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 

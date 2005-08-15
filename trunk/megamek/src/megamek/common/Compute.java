@@ -1233,6 +1233,9 @@ public class Compute {
      * modifiers for smoke, etc.
      */
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t) {
+        return getTargetTerrainModifier(game, t, 0);
+    }
+    public static ToHitData getTargetTerrainModifier(IGame game, Targetable t, int eistatus) {
         Entity entityTarget = null;
         IHex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -1252,7 +1255,11 @@ public class Compute {
         // Smoke and woods. With L3, the effects STACK.
         if (!game.getOptions().booleanOption("maxtech_fire")) { // L2
             if (hex.containsTerrain(Terrains.SMOKE)) {
-                toHit.addModifier(2, "target in smoke");
+                if(eistatus > 0) {
+                    toHit.addModifier(1, "target in smoke");
+                } else {
+                    toHit.addModifier(2, "target in smoke");
+                }
             }
             if (!isVTOL
                     && !(t.getTargetType() == Targetable.TYPE_HEX_CLEAR
@@ -1263,17 +1270,25 @@ public class Compute {
                             || t.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV
                             || t.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV || t
                             .getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
-                if (hex.terrainLevel(Terrains.WOODS) == 1) {
+                if (hex.terrainLevel(Terrains.WOODS) == 1 && eistatus != 2) {
                     toHit.addModifier(1, "target in light woods");
                 } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
-                    toHit.addModifier(2, "target in heavy woods");
+                    if(eistatus > 0) {
+                        toHit.addModifier(1, "target in heavy woods");
+                    } else {
+                        toHit.addModifier(2, "target in heavy woods");
+                    }
                 }
             }
         } else { // L3
             if (hex.terrainLevel(Terrains.SMOKE) == 1) {
                 toHit.addModifier(1, "target in light smoke");
             } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
-                toHit.addModifier(2, "target in heavy smoke");
+                if(eistatus > 0) {
+                    toHit.addModifier(1, "target in heavy smoke");
+                } else {
+                    toHit.addModifier(2, "target in heavy smoke");
+                }
             }
             if (!isVTOL
                     && !(t.getTargetType() == Targetable.TYPE_HEX_CLEAR
@@ -1284,10 +1299,14 @@ public class Compute {
                             || t.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV
                             || t.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV || t
                             .getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
-                if (hex.terrainLevel(Terrains.WOODS) == 1) {
+                if (hex.terrainLevel(Terrains.WOODS) == 1 && eistatus != 2) {
                     toHit.addModifier(1, "target in light woods");
                 } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
-                    toHit.addModifier(2, "target in heavy woods");
+                    if(eistatus > 0) {
+                        toHit.addModifier(1, "target in heavy woods");
+                    } else {
+                        toHit.addModifier(2, "target in heavy woods");
+                    }
                 }
             }
         }
@@ -2093,6 +2112,11 @@ public class Compute {
      */
     public static int targetSideTable(Coords src, Coords dest,
             int targetFacing, boolean targetIsTank) {
+        if(src.equals(dest)) {
+            //most places handle 0 range explicitly,
+            //this is a safe default (calculation gives SIDE_RIGHT)
+            return ToHitData.SIDE_FRONT;
+        }
         // calculate firing angle
         int fa = (dest.degree(src) + (6 - targetFacing) * 60) % 360;
 

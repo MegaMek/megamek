@@ -233,7 +233,7 @@ public class PushAttackAction
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-        toHit.append(nightModifiers(game, target, null));
+        toHit.append(nightModifiers(game, target, null, ae));
         // side and elevation shouldn't matter
 
         // done!

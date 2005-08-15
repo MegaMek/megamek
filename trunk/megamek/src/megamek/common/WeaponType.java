@@ -363,6 +363,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLStreakLRM10());
         EquipmentType.addType(createCLStreakLRM15());
         EquipmentType.addType(createCLStreakLRM20());
+        EquipmentType.addType(createCLStreakLRM5OS());
+        EquipmentType.addType(createCLStreakLRM10OS());
+        EquipmentType.addType(createCLStreakLRM15OS());
+        EquipmentType.addType(createCLStreakLRM20OS());
         EquipmentType.addType(createCLLaserAMS());
 
         //Protomech weapons
@@ -4991,6 +4995,114 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.bv = 346;
         weapon.flags |= F_MISSILE;
+        weapon.cost = 600000;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakLRM5OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Streak LRM 5 (OS)";
+        weapon.setInternalName("CLOSStreakLRM5");
+        weapon.addLookupName("Clan Streak LRM-5 (OS)");
+        weapon.addLookupName("Clan Streak LRM 5 (OS)");
+        weapon.addLookupName("CLStreakLRM5 (OS)");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.5f;
+        weapon.criticals = 1;
+        weapon.bv = 87;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 75000;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakLRM10OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Streak LRM 10 (OS)";
+        weapon.setInternalName("CLOSStreakLRM10");
+        weapon.addLookupName("Clan Streak LRM-10 (OS)");
+        weapon.addLookupName("Clan Streak LRM 10 (OS)");
+        weapon.addLookupName("CLStreakLRM10 (OS)");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_LRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 5.5f;
+        weapon.criticals = 2;
+        weapon.bv = 173;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 225000;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakLRM15OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Streak LRM 15 (OS)";
+        weapon.setInternalName("CLOSStreakLRM15");
+        weapon.addLookupName("Clan Streak LRM-15 (OS)");
+        weapon.addLookupName("Clan Streak LRM 15 (OS)");
+        weapon.addLookupName("CLStreakLRM15 (OS)");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_LRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 7.5f;
+        weapon.criticals = 3;
+        weapon.bv = 260;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.cost = 400000;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakLRM20OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Streak LRM 20 (OS)";
+        weapon.setInternalName("CLOSStreakLRM20");
+        weapon.addLookupName("Clan Streak LRM-20 (OS)");
+        weapon.addLookupName("Clan Streak LRM 20 (OS)");
+        weapon.addLookupName("CLStreakLRM20 (OS)");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 10.5f;
+        weapon.criticals = 5;
+        weapon.bv = 346;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
         weapon.cost = 600000;
 
         return weapon;

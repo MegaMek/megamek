@@ -63,6 +63,11 @@ public abstract class Mech
     public static final int        LOC_LARM             = 5;
     public static final int        LOC_RLEG             = 6;
     public static final int        LOC_LLEG             = 7;
+
+    // cockpit status
+    public static final int        COCKPIT_OFF          = 0;
+    public static final int        COCKPIT_ON           = 1;
+    public static final int        COCKPIT_AIMED_SHOT   = 2;
     
     /**
      * The internal name for Mek Stealth systems.
@@ -82,6 +87,8 @@ public abstract class Mech
     private int sinksOnNextRound;
     private boolean sinksChanged = false;
     private boolean autoEject = true;
+    private int cockpitStatus = COCKPIT_ON;
+    private int cockpitStatusNextRound = COCKPIT_ON;
     private int improvedJJ = -1;
 
     /**
@@ -350,6 +357,8 @@ public abstract class Mech
         // set heat sinks
         sinksOn = sinksOnNextRound;
 
+        // update cockpit status
+        cockpitStatus = cockpitStatusNextRound;
     } // End public void newRound()
 
     /**
@@ -1608,6 +1617,7 @@ public abstract class Mech
 
         // Try to find a Mek Stealth system.
         boolean bHasStealthArmor = hasStealth();
+        boolean bHasEiSystem = (hasEiCockpit() && getCrew().getOptions().booleanOption("ei_implant"));
 
         // total armor points
         dbv += getTotalArmor() * 2.0;
@@ -1644,6 +1654,10 @@ public abstract class Mech
             }
         }
         dbv += dEquipmentBV;
+
+        if(bHasEiSystem) {
+            dbv -= 25;
+        }
         
         // subtract for explosive ammo
         double ammoPenalty = 0;
@@ -1818,8 +1832,14 @@ public abstract class Mech
             } 
             
             // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
-                dBV *= 1.2;
+            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                if(bHasEiSystem && hasTargComp) {
+                    dBV *= 1.25;
+                } else if(hasTargComp) {
+                    dBV *= 1.2;
+                } else if(bHasEiSystem) {
+                    dBV *= 1.05;
+                }
             }
             
             if (mounted.isRearMounted()) {
@@ -1930,6 +1950,7 @@ public abstract class Mech
 
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
+        if(bHasEiSystem) pilotFactor += 0.05; //treat piloting as 1 level better
         
         return (int)Math.round((dbv + obv + xbv) * pilotFactor);
     }
@@ -1963,6 +1984,11 @@ public abstract class Mech
           if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) {
             roll.addModifier(3, "Gyro damaged");
           }
+
+        //EI bonus?
+        if(hasActiveEiCockpit()) {
+            roll.addModifier(-1, "Enhanced Imaging");
+        }
         
         return roll;
       }
@@ -2166,5 +2192,33 @@ public abstract class Mech
 
     public boolean doomedInVacuum() {
         return false;
+    }
+
+    public boolean hasEiCockpit() {
+        return isClan() || super.hasEiCockpit();
+    }
+
+    public boolean hasActiveEiCockpit() {
+        if(cockpitStatus == COCKPIT_OFF)
+            return false;
+        if(getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
+            return false;
+        return super.hasActiveEiCockpit();
+    }
+
+    public int getCockpitStatus() {
+        return cockpitStatus;
+    }
+
+    public int getCockpitStatusNextRound() {
+        return cockpitStatusNextRound;
+    }
+
+    public void setCockpitStatus(int state) {
+        cockpitStatusNextRound = state;
+        //on/off allowed only in end phase
+        if(state != COCKPIT_OFF && cockpitStatus != COCKPIT_OFF) {
+            cockpitStatus = state;
+        }
     }
 }

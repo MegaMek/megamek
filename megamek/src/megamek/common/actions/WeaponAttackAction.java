@@ -454,16 +454,38 @@ public class WeaponAttackAction
             }
         }
     
+        // EI system
+        // 0 if no EI (or switched off)
+        // 1 if no intervening light woods
+        // 2 if intervening light woods (because target in woods + intervening woods is only +1 total)
+        int eistatus=0;
+
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
         if (!isIndirect) {
             los = LosEffects.calculateLos(game, attackerId, target);
-            losMods = los.losModifiers(game);
+
+            if(ae.hasActiveEiCockpit()) {
+                if(los.getLightWoods() > 0)
+                    eistatus = 2;
+                else
+                    eistatus = 1;
+            }
+
+            losMods = los.losModifiers(game, eistatus);
         } else {
             los = LosEffects.calculateLos(game, spotter.getId(), target);
             // do not count attacker partial cover in indirect fire
             los.setAttackerCover(LosEffects.COVER_NONE);
+
+            if(spotter.hasActiveEiCockpit()) {
+                if(los.getLightWoods() > 0)
+                    eistatus = 2;
+                else
+                    eistatus = 1;
+            }
+
             losMods = los.losModifiers(game);
         }
     
@@ -604,7 +626,7 @@ public class WeaponAttackAction
         int tElev = target.getElevation();
         int distance = Compute.effectiveDistance(game, ae, target);
     
-        toHit.append(nightModifiers(game, target, atype));
+        toHit.append(nightModifiers(game, target, atype, ae));
     
         // Handle direct artillery attacks.
         if(isArtilleryDirect) {
@@ -780,8 +802,8 @@ public class WeaponAttackAction
     
         // target terrain, not applicable when delivering minefields
         if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
-            toHit.append(Compute.getTargetTerrainModifier(game, target));
-            toSubtract += Compute.getTargetTerrainModifier(game, target).getValue();
+            toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus));
+            toSubtract += Compute.getTargetTerrainModifier(game, target, eistatus).getValue();
         }
     
         // target in water?
@@ -792,7 +814,7 @@ public class WeaponAttackAction
                 && (targEl == 0)
                 && (te.height() > 0)) { //target in partial water
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-            losMods = los.losModifiers(game);
+            losMods = los.losModifiers(game, eistatus);
         }
 
         // check for water surface in the way
@@ -880,7 +902,15 @@ public class WeaponAttackAction
         // add targeting computer (except with LBX cluster ammo)
         if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP &&
             aimingAt != Mech.LOC_NONE) {
-            toHit.addModifier(3, "aiming with targeting computer");
+            if(ae.hasActiveEiCockpit()) {
+                if(ae.hasTargComp()) {
+                    toHit.addModifier(2, "aiming with targeting computer & EI system");
+                } else {
+                    toHit.addModifier(6, "aiming with EI system");
+                }
+            } else {
+                toHit.addModifier(3, "aiming with targeting computer");
+            }
         } else {
             if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
                (!usesAmmo || 

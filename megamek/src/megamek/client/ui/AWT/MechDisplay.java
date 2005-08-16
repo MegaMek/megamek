@@ -1640,7 +1640,6 @@ class ExtraPanel
      * updates fields for the specified mech
      */
     public void displayMech(Entity en) {
-
         // Clear the "Affected By" list.
         narcList.removeAll();
         sinks=0;
@@ -1702,8 +1701,10 @@ class ExtraPanel
 
         // Show ECM affect.
         Coords pos = en.getPosition();
-        if ( Compute.isAffectedByECM( en, pos, pos ) ) {
-            narcList.add( Messages.getString("MechDisplay.InEnemyECMField") ); //$NON-NLS-1$
+        if (Compute.isAffectedByECM(en, pos, pos)) {
+            narcList.add(Messages.getString("MechDisplay.InEnemyECMField")); //$NON-NLS-1$
+        } else if (Compute.isAffectedByAngelECM(en, pos, pos)) {
+            narcList.add(Messages.getString("MechDisplay.InEnemyAngelECMField")); //$NON-NLS-1$
         }
 
         // Show Turret Locked.

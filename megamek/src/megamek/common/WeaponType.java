@@ -8656,7 +8656,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8684,7 +8684,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8712,7 +8712,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 3;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8740,7 +8740,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8768,7 +8768,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8796,7 +8796,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_MRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8824,7 +8824,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_MRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8852,7 +8852,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 3;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_MRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8880,7 +8880,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_MRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8908,7 +8908,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
-      weapon.toHitModifier = +1;
+        weapon.toHitModifier = +1;
         weapon.ammoType = AmmoType.T_MRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;

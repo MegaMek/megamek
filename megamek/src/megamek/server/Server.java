@@ -486,8 +486,9 @@ implements Runnable, ConnectionHandler {
                 game.getPhase() == IGame.PHASE_OFFBOARD ||
                 game.getPhase() == IGame.PHASE_PHYSICAL) {
                 // can't go above, need board to have been sent
-                send(connId,createAttackPacket(game.getActionsVector(),false));
-                send(connId,createAttackPacket(game.getChargesVector(),true));
+                send(connId,createAttackPacket(game.getActionsVector(),0));
+                send(connId,createAttackPacket(game.getChargesVector(),1));
+                send(connId,createAttackPacket(game.getLayMinefieldActionsVector(),2));
             }
             if (game.phaseHasTurns(game.getPhase())) {
                 send(connId, createTurnVectorPacket());
@@ -2789,6 +2790,13 @@ implements Runnable, ConnectionHandler {
 
                 break;
             }
+            
+            if (step.getType() == MovePath.STEP_LAY_MINE) {
+                LayMinefieldAction lma = new LayMinefieldAction(entity.getId(), step.getMineToLay());
+                game.addLayMinefieldAction(lma);
+                entity.setLayingMines(true);
+                break;
+            }
 
             if (step.getType() == MovePath.STEP_SEARCHLIGHT && entity.hasSpotlight()) {
                 final boolean SearchOn = !entity.isUsingSpotlight();
@@ -3980,7 +3988,7 @@ implements Runnable, ConnectionHandler {
 
         // if we generated a charge attack, report it now
         if (charge != null) {
-            send(createAttackPacket(charge, true));
+            send(createAttackPacket(charge, 1));
         }
     }
 
@@ -5321,7 +5329,7 @@ implements Runnable, ConnectionHandler {
 
         // update all players on the attacks.  Don't worry about pushes being a
         // "charge" attack.  It doesn't matter to the client.
-        send(createAttackPacket(vector, false));
+        send(createAttackPacket(vector, 0));
     }
 
     /**
@@ -5363,13 +5371,31 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-    /** Called during the weapons fire phase.  Resolves anything other than
+    /** 
+     * Called during the weapons fire phase.  Resolves anything other than
      * weapons fire that happens.  Torso twists, for example.
      */
     private void resolveAllButWeaponAttacks() {
         if(game.getPhase()==IGame.PHASE_FIRING) {
             //Phase report header
             vPhaseReport.addElement(new Report(3000, Report.PUBLIC));
+            Report r;
+            for (Enumeration e = game.getLayMinefieldActions(); e.hasMoreElements();) {
+                LayMinefieldAction lma = (LayMinefieldAction)e.nextElement();
+                Entity ent = game.getEntity(lma.getEntityId());
+                Mounted mine = ent.getEquipment(lma.getMineId());
+                if (!mine.isMissing()) {
+                    //TODO: different mine types
+                    deliverThunderMinefield(ent.getPosition(), ent.getOwnerId(), 10);
+                    mine.setMissing(true);
+                    r = new Report(3500);
+                    r.subject = ent.getId();
+                    r.addDesc(ent);
+                    r.add(ent.getPosition().getBoardNum());
+                    vPhaseReport.addElement(r);
+                }
+            }
+            game.resetLayMinefieldActions();
         }
 
         Vector clearAttempts = new Vector();
@@ -14932,22 +14958,22 @@ implements Runnable, ConnectionHandler {
     /**
      * Creates a packet for an attack
      */
-    private Packet createAttackPacket(Vector vector, boolean charges) {
+    private Packet createAttackPacket(Vector vector, int charges) {
         final Object[] data = new Object[2];
         data[0] = vector;
-        data[1] = new Boolean(charges);
+        data[1] = new Integer(charges);
         return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
     }
 
     /**
      * Creates a packet for an attack
      */
-    private Packet createAttackPacket(EntityAction ea, boolean charge) {
+    private Packet createAttackPacket(EntityAction ea, int charge) {
         Vector vector = new Vector(1);
         vector.addElement(ea);
         Object[] data = new Object[2];
         data[0] = vector;
-        data[1] = new Boolean(charge);
+        data[1] = charge;
         return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
     }
 

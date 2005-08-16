@@ -208,6 +208,11 @@ public class WeaponAttackAction
 
         ToHitData toHit = null;
 
+        // If we're lying mines, we can't shoot.
+        if (ae.isLayingMines()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire weapons when laying mines");
+        }
+
         // make sure weapon can deliver minefield
         if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER &&
             !AmmoType.canDeliverMinefield(atype)) {

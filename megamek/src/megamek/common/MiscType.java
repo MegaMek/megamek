@@ -298,8 +298,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLArtemis());
         EquipmentType.addType(createGECM());
         EquipmentType.addType(createCLECM());
-        EquipmentType.addType(createISAngelECM());
-        EquipmentType.addType(createCLAngelECM());
         EquipmentType.addType(createISTargComp());
         EquipmentType.addType(createCLTargComp());
         EquipmentType.addType(createMekStealth());
@@ -326,6 +324,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createIS1CompactHeatSink());
         EquipmentType.addType(createIS2CompactHeatSinks());
         EquipmentType.addType(createCLLaserHeatSink());
+        EquipmentType.addType(createISAngelECM());
+        EquipmentType.addType(createCLAngelECM());
+        EquipmentType.addType(createWatchdogECM());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -723,6 +724,26 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 100;
+        
+        return misc;
+    }
+
+    public static MiscType createWatchdogECM() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Watchdog ECM Suite";
+        misc.setInternalName("WatchdogECMSuite");
+        misc.addLookupName("Watchdog ECM Suite");
+        misc.addLookupName("WatchdogECM");
+        misc.addLookupName("CLWatchdogECM");
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 500000;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_ECM | F_BAP;
+        misc.bv = 73;
         
         return misc;
     }

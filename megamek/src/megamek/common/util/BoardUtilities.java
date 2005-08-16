@@ -166,7 +166,7 @@ public class BoardUtilities {
                     reverseHex,
                     true);
         }
-        /* Add the pavements (ice) */
+        /* Add the pavements */
         count = mapSettings.getMinPavementSpots();
         if (mapSettings.getMaxPavementSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxPavementSpots());
@@ -176,6 +176,20 @@ public class BoardUtilities {
             placeSomeTerrain(result, Terrains.PAVEMENT, 0,
                     mapSettings.getMinPavementSize(), 
                     mapSettings.getMaxPavementSize(),
+                    reverseHex,
+                    true); 
+        }
+        
+        /* Add the ice */
+        count = mapSettings.getMinIceSpots();
+        if (mapSettings.getMaxIceSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxIceSpots());
+        }
+        count *= sizeScale;
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.ICE, 0,
+                    mapSettings.getMinIceSize(), 
+                    mapSettings.getMaxIceSize(),
                     reverseHex,
                     true); 
         }
@@ -599,7 +613,7 @@ public class BoardUtilities {
             field = hexSet[n];
             if(field.containsTerrain(Terrains.WATER)) {
                 field.removeTerrain(Terrains.WATER);
-                field.addTerrain(f.createTerrain(Terrains.PAVEMENT,1));
+                field.addTerrain(f.createTerrain(Terrains.ICE,1));
             } else if(field.containsTerrain(Terrains.SWAMP)) {
                 field.removeTerrain(Terrains.SWAMP);
                 if(field.terrainsPresent() == 0) {
@@ -607,7 +621,7 @@ public class BoardUtilities {
                         //if no other terrains present, 30% chance to change to rough
                         field.addTerrain(f.createTerrain(Terrains.ROUGH,1));
                     } else {
-                        field.addTerrain(f.createTerrain(Terrains.PAVEMENT,1));
+                        field.addTerrain(f.createTerrain(Terrains.ICE,1));
                     }
                 }
             }

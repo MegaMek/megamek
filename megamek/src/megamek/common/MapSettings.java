@@ -100,6 +100,15 @@ public class MapSettings implements Serializable {
     /** maximum Size of a pavement spot */
     private int maxPavementSize = 6;
     
+    /** how much ice spots at least */
+    private int minIceSpots = 0;
+    /** how much ice spots  at most */
+    private int maxIceSpots = 0;
+    /** minimum size of a ice spot */
+    private int minIceSize = 1;
+    /** maximum Size of a ice spot */
+    private int maxIceSize = 6;
+    
     /** probability for a road, range 0..100 */
     private int probRoad = 0;
     
@@ -187,6 +196,10 @@ public class MapSettings implements Serializable {
         this.maxPavementSpots = other.getMaxPavementSpots();
         this.minPavementSize = other.getMinPavementSize();
         this.maxPavementSize = other.getMaxPavementSize();
+        this.minIceSpots = other.getMinIceSpots();
+        this.maxIceSpots = other.getMaxIceSpots();
+        this.minIceSize = other.getMinIceSize();
+        this.maxIceSize = other.getMaxIceSize();
         this.probRoad = other.getProbRoad();
         this.probRiver = other.getProbRiver();
         this.probCrater = other.getProbCrater();
@@ -406,6 +419,18 @@ public class MapSettings implements Serializable {
     if (maxPavementSize < minPavementSize) {
         maxPavementSize = minPavementSize;
     }
+    if (minIceSpots < 0) {
+        minIceSpots = 0;
+    }
+    if (maxIceSpots < minIceSpots) {
+        maxIceSpots = minIceSpots;
+    }
+    if (minIceSize < 0) {
+        minIceSize = 0;
+    }
+    if (maxIceSize < minIceSize) {
+        maxIceSize = minIceSize;
+    }
     if (probRoad < 0) {
         probRoad = 0;
     }
@@ -485,6 +510,10 @@ public class MapSettings implements Serializable {
             (this.maxPavementSpots != other.getMaxPavementSpots()) ||
             (this.minPavementSize != other.getMinPavementSize()) ||
             (this.maxPavementSize != other.getMaxPavementSize()) ||
+            (this.minIceSpots != other.getMinIceSpots()) ||
+            (this.maxIceSpots != other.getMaxIceSpots()) ||
+            (this.minIceSize != other.getMinIceSize()) ||
+            (this.maxIceSize != other.getMaxIceSize()) ||
             (this.probRoad != other.getProbRoad()) ||
             (this.probInvert != other.getProbInvert()) ||
             (this.probRiver != other.getProbRiver()) ||
@@ -541,6 +570,11 @@ public class MapSettings implements Serializable {
     public int getMaxPavementSpots() { return maxPavementSpots; }
     public int getMinPavementSize() { return minPavementSize; }
     public int getMaxPavementSize() { return maxPavementSize; }
+    
+    public int getMinIceSpots() { return minIceSpots; }
+    public int getMaxIceSpots() { return maxIceSpots; }
+    public int getMinIceSize() { return minIceSize; }
+    public int getMaxIceSize() { return maxIceSize; }
     
     public int getProbRoad() { return probRoad; }
     
@@ -619,6 +653,16 @@ public class MapSettings implements Serializable {
          maxPavementSize = maxSize;
      }
     
+     /** set the Parameters for the Map Generator 
+      */
+      public void setIceParams(int minSpots, int maxSpots,
+                                  int minSize, int maxSize) {
+          minIceSpots = minSpots;
+          maxIceSpots = maxSpots;
+          minIceSize = minSize;
+          maxIceSize = maxSize;
+      }
+     
     /** set the Parameters for the Map Generator 
     */
     public void setRiverParam(int prob) { probRiver = prob; }

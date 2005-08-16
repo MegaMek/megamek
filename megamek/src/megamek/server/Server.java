@@ -2881,6 +2881,7 @@ implements Runnable, ConnectionHandler {
                     Entity target = null;
                     int    curElevation;
                     int    nextElevation;
+                    int skidDirection = prevFacing;
 
                     // All charge damage is based upon
                     // the pre-skid move distance.
@@ -2890,11 +2891,14 @@ implements Runnable, ConnectionHandler {
                     moveType = IEntityMovementType.MOVE_SKID;
 
                     // What is the first hex in the skid?
-                    nextPos = curPos.translated( prevFacing );
+                    if(step.isThisStepBackwards()) {
+                    	skidDirection = (skidDirection + 3) % 6;
+                    }
+                    nextPos = curPos.translated( skidDirection );
                     nextHex = game.getBoard().getHex( nextPos );
 
                     // Move the entity a number hexes from curPos in the
-                    // prevFacing direction equal to half the distance moved
+                    // skidDirection direction equal to half the distance moved
                     // this turn (rounded up), unless something intervenes.
                     for ( skidDistance = 0;
                           skidDistance < (int) Math.ceil(entity.delta_distance / 2.0);
@@ -3082,7 +3086,7 @@ implements Runnable, ConnectionHandler {
                                     } else {
                                         // Resolve the charge.
                                         resolveChargeDamage
-                                            (entity, target, toHit, prevFacing);
+                                            (entity, target, toHit, skidDirection);
                                         // HACK: set the entity's location
                                         // to the original hex again, for the other targets
                                         if (targets.hasMoreElements()) {
@@ -3169,7 +3173,7 @@ implements Runnable, ConnectionHandler {
                             if (!skidChargeHit) {
                                 Coords src = entity.getPosition();
                                 Coords dest = Compute.getMissedChargeDisplacement
-                                    (game, entity.getId(), src, prevFacing);
+                                    (game, entity.getId(), src, skidDirection);
                                 doEntityDisplacement(entity, src, dest, null);
                             } else {
                                 // HACK: otherwise, set the entities position to that
@@ -3279,7 +3283,7 @@ implements Runnable, ConnectionHandler {
                         vPhaseReport.addElement(r);
 
                         // Get the next hex in the skid?
-                        nextPos = nextPos.translated( prevFacing );
+                        nextPos = nextPos.translated( skidDirection );
                         nextHex = game.getBoard().getHex( nextPos );
 
                     } // Handle the next skid hex.
@@ -3292,7 +3296,7 @@ implements Runnable, ConnectionHandler {
                     while (target != null) {
                         nextPos = Compute.getValidDisplacement
                             (game, target.getId(),
-                             target.getPosition(), prevFacing);
+                             target.getPosition(), skidDirection);
                         // ASSUMPTION
                         // There should always be *somewhere* that
                         // the target can go... last skid hex if

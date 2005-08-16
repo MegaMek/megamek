@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -21,7 +21,7 @@ public class LayMinefieldAction
     int mineId;
 
     /**
-     * Lay the indicated mine on the entity with the given entity ID.
+     * Lay the indicated mine with the entity with the given entity ID.
      *
      * @param   entityId the <code>int</code> ID of the minelaying entity.
      * @param   equipId the <code>int</code> ID of the mine.

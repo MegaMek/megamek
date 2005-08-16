@@ -853,6 +853,7 @@ public class HmpFile
     isCriticals.put(new Long(0xF5), "CLHeavyMediumLaser");
     isCriticals.put(new Long(0xF6), "CLHeavySmallLaser");
 
+    isCriticals.put(new Long(0x11d), "ISTHBAngelECMSuite");
     isCriticals.put(new Long(0x11e), "ISTHBBloodhoundActiveProbe");
 
     isCriticals.put(new Long(0x121), "ISRotaryAC2");

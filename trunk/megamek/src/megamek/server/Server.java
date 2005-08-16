@@ -11158,14 +11158,30 @@ implements Runnable, ConnectionHandler {
 
             // Destroy searchlights on 7+ (torso hits on mechs)
             if(te.hasSpotlight()) {
+            	boolean spotlightHittable = true;
                 int loc = hit.getLocation();
-                if(!(te instanceof Mech) || loc == Mech.LOC_CT
-                        || loc == Mech.LOC_LT || loc == Mech.LOC_RT) {
+                if(te instanceof Mech) {
+                	if(loc != Mech.LOC_CT && loc != Mech.LOC_LT && loc != Mech.LOC_RT) {
+                		spotlightHittable = false;
+                	}
+                } else if(te instanceof Tank) {
+                	if(loc != Tank.LOC_FRONT && loc != Tank.LOC_RIGHT && loc != Tank.LOC_LEFT) {
+                		spotlightHittable = false;
+                	}
+                }
+                if(spotlightHittable) {
                     int spotroll = Compute.d6(2);
+	                r = new Report(6072);
+	                r.indent(2);
+	                r.subject = te_n;
+	                r.add(spotroll);
+	                r.newlines = 0;
+	                vDesc.addElement(r);
                     if (spotroll >= 7) {
                         r = new Report(6071);
                         r.subject = te_n;
                         r.indent(2);
+                        r.newlines = 0;
                         vDesc.addElement(r);
                         te.setSpotlightState(false);
                         te.setSpotlight(false);

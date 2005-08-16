@@ -16,6 +16,7 @@ package megamek.common.xml;
 
 import java.io.*;
 import megamek.common.*;
+import megamek.common.net.Packet;
 
 import com.Ostermiller.util.Base64;
 import gd.xml.ParseException;
@@ -135,7 +136,8 @@ public class PacketEncoder {
         out.write( "\" >" );
 
         // Is the packet zipped?
-        boolean zipped = packet.isZipped();
+        //boolean zipped = packet.isZipped();
+        boolean zipped = false;
 
         // Do we have any data in this packet?
         // N.B. this action will unzip the packet.

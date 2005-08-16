@@ -161,6 +161,7 @@ public class MiniMap extends Canvas  {
         m_terrainColors[Terrains.SWAMP]    = new Color(49,136,74);
         m_terrainColors[Terrains.BUILDING] = new Color(204,204,204);
         m_terrainColors[Terrains.BRIDGE]   = new Color(109,55,25);
+        m_terrainColors[Terrains.ICE]      = new Color(204,204,255);
 
         // now try to read in the config file
         int red;
@@ -824,6 +825,7 @@ public class MiniMap extends Canvas  {
         case Terrains.RUBBLE :
         case Terrains.WATER :
         case Terrains.PAVEMENT :
+        case Terrains.ICE :
             level = Math.abs(x.floor());
             // By experiment it is possible to make only 6 distinctive color steps
             if (level > 10) level = 10;

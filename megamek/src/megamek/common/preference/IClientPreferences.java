@@ -109,5 +109,9 @@ public interface IClientPreferences extends IPreferenceStore {
     void setShowUnitId(boolean state);
 
     void setUnitStartChar(char c);
+    
+    String getGUIName();
+
+    void setGUIName(String guiName);
 
 }

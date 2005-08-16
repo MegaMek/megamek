@@ -22,6 +22,7 @@ package megamek.server.commands;
 
 import java.util.*;
 
+import megamek.common.net.Connection;
 import megamek.server.*;
 
 /**
@@ -38,15 +39,16 @@ public class WhoCommand extends ServerCommand {
     
     public void run(int connId, String[] args) {
         server.sendServerChat(connId, "Listing all connections...");
-        server.sendServerChat(connId, "[id#] : [name], [address], [pending], [bytes]");
+        server.sendServerChat(connId, "[id#] : [name], [address], [pending], [bytes sent], [bytes received]");
         for (Enumeration i = server.getConnections(); i.hasMoreElements();) {
             Connection conn = (Connection)i.nextElement();
             StringBuffer cb = new StringBuffer();
             cb.append(conn.getId()).append(" : ");
             cb.append(server.getPlayer(conn.getId()).getName()).append(", ");
-            cb.append(conn.getSocket().getInetAddress());
+            cb.append(conn.getInetAddress());
             cb.append(", ").append(conn.hasPending()).append(", ");
             cb.append(conn.bytesSent());
+            cb.append(", ").append(conn.bytesReceived());
             server.sendServerChat(connId, cb.toString());
         }
         server.sendServerChat(connId, "end list");

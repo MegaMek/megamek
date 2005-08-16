@@ -294,7 +294,7 @@ public class ClientGUI
 
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
         if (!MechSummaryCache.getInstance().isInitialized()) {
-            unitLoadingDialog.show();
+            unitLoadingDialog.setVisible(true);
         }
 
         uo = new UnitOverview(this);
@@ -364,7 +364,7 @@ public class ClientGUI
         }
 
         // Show the about dialog.
-        this.about.show();
+        this.about.setVisible(true);
     }
 
     /**
@@ -394,7 +394,7 @@ public class ClientGUI
             this.help = new CommonHelpDialog(this.frame, new File(helpFileName));
         }
         // Show the help dialog.
-        this.help.show();
+        this.help.setVisible(true);
     }
 
     /**
@@ -407,7 +407,7 @@ public class ClientGUI
         }
 
         // Show the settings dialog.
-        this.setdlg.show();
+        this.setdlg.setVisible(true);
     }
 
     /**
@@ -421,7 +421,7 @@ public class ClientGUI
         }
         // Display the game options dialog.
         getGameOptionsDialog().update(client.game.getOptions());
-        getGameOptionsDialog().show();
+        getGameOptionsDialog().setVisible(true);
     }
 
     /**
@@ -431,14 +431,14 @@ public class ClientGUI
         if (playerListDialog == null) {
             playerListDialog = new PlayerListDialog(frame, client);
         }
-        playerListDialog.show();
+        playerListDialog.setVisible(true);
     }
 
     /**
      * Called when the user selects the "View->Round Report" menu item.
      */
     private void showRoundReport() {
-        new MiniReportDisplay(frame, client.roundReport).show();
+        new MiniReportDisplay(frame, client.roundReport).setVisible(true);
     }
 
     /**
@@ -460,7 +460,7 @@ public class ClientGUI
             // for details.  The hack below is better than nothing.
             fd.setFile("*.sav"); //$NON-NLS-1$
 
-            fd.show();
+            fd.setVisible(true);
 
             if (null!=fd.getFile()) {
                 client.sendChat("/save "+fd.getFile()); //$NON-NLS-1$
@@ -972,7 +972,7 @@ public class ClientGUI
      */
     public int[] doChoiceDialog(String title, String question, String[] choices) {
         ChoiceDialog choice = new ChoiceDialog(frame, title, question, choices);
-        choice.show();
+        choice.setVisible(true);
         return choice.getChoices();
     }
 
@@ -981,7 +981,7 @@ public class ClientGUI
      */
     public void doAlertDialog(String title, String message) {
         AlertDialog alert = new AlertDialog(frame, title, message);
-        alert.show();
+        alert.setVisible(true);
     }
 
     /**
@@ -995,7 +995,7 @@ public class ClientGUI
      */
     public boolean doYesNoDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question);
-        confirm.show();
+        confirm.setVisible(true);
         return confirm.getAnswer();
     }
 
@@ -1018,7 +1018,7 @@ public class ClientGUI
      */
     public ConfirmDialog doYesNoBotherDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
-        confirm.show();
+        confirm.setVisible(true);
         return confirm;
     }
 
@@ -1075,7 +1075,7 @@ public class ClientGUI
         }
 
         // Display the "load unit" dialog.
-        dlgLoadList.show();
+        dlgLoadList.setVisible(true);
 
         // Did the player select a file?
         String unitPath = dlgLoadList.getDirectory();
@@ -1136,7 +1136,7 @@ public class ClientGUI
         }
 
         // Display the "save unit" dialog.
-        dlgSaveList.show();
+        dlgSaveList.setVisible(true);
 
         // Did the player select a file?
         String unitPath = dlgSaveList.getDirectory();
@@ -1260,7 +1260,7 @@ public class ClientGUI
     public void showLOSSettingDialog() {
         GUIPreferences gp = GUIPreferences.getInstance(); 
         LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp.getMechInSecond());
-        ld.show();
+        ld.setVisible(true);
 
         gp.setMechInFirst(ld.getMechInFirst());
         gp.setMechInSecond(ld.getMechInSecond());
@@ -1304,7 +1304,7 @@ public class ClientGUI
 
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             AlertDialog alert = new AlertDialog(frame, Messages.getString("ClientGUI.Disconnected.title"), Messages.getString("ClientGUI.Disconnected.message")); //$NON-NLS-1$ //$NON-NLS-2$
-            alert.show();
+            alert.setVisible(true);
             frame.setVisible(false);
             die();
         }

@@ -19,11 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -43,23 +39,24 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.net.Connection;
+import megamek.common.net.ConnectionFactory;
+import megamek.common.net.ConnectionListenerAdapter;
+import megamek.common.net.DisconnectedEvent;
+import megamek.common.net.Packet;
+import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.CircularIntegerBuffer;
 
-public class Client implements Runnable {
+public class Client {
+
     // we need these to communicate with the server
     private String name;
-    Socket socket;
-    private ObjectInputStream in = null;
-    private ObjectOutputStream out = null;
-    private CircularIntegerBuffer debugLastFewCommandsSent =
-        new CircularIntegerBuffer(5);
+    
+    private Connection connection; 
     
     // some info about us and the server
     private boolean connected = false;
-    private int connFailures = 0;
-    private static final int MAX_CONN_FAILURES = 100;
     public int local_pn = -1;
     private String host;
     private int port;
@@ -72,8 +69,6 @@ public class Client implements Runnable {
     public String phaseReport;
     public String roundReport;
 
-    private Thread pump;
-    
     //And close client events!
     private Vector closeClientListeners = new Vector();
 
@@ -82,6 +77,21 @@ public class Client implements Runnable {
 
     private Hashtable duplicateNameHash = new Hashtable();
 
+    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
+
+        /**
+         * Called when it is sensed that a connection has terminated.
+         */
+        public void disconnected(DisconnectedEvent e) {
+            Client.this.disconnected();
+        }
+
+        public void packetReceived(PacketReceivedEvent e) {
+            handlePacket(e.getPacket());
+        }
+
+    };
+    
     /**
      * Construct a client which will try to connect.  If the connection
      * fails, it will alert the player, free resources and hide the frame.
@@ -100,10 +110,13 @@ public class Client implements Runnable {
     /**
      * Attempt to connect to the specified host
      */
-    public void connect() throws UnknownHostException, IOException {
-        socket = new Socket(host, port);
-        pump = new Thread(this, "Client Pump"); //$NON-NLS-1$
-        pump.start();
+    public boolean connect() {
+        connection = ConnectionFactory.getInstance().createClientConnection(host, port, 1);
+        connected = connection.open();
+        if (connected) {
+            connection.addConnectionListener(connectionListener);           
+        }
+        return connected;
     }
 
     /**
@@ -115,17 +128,10 @@ public class Client implements Runnable {
             send(new Packet(Packet.COMMAND_CLOSE_CONNECTION));
         }
         connected = false;
-        pump = null;
 
-        // shut down threads & sockets
-        try {
-            socket.close();
-            in.close();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            // not a big deal, just never connected
+        if (connection != null) {
+            connection.close();
+            connection = null;
         }
         
         for (int i = 0; i < closeClientListeners.size(); i++){
@@ -707,251 +713,187 @@ public class Client implements Runnable {
     }
 
     /**
-     * Reads a complete net command from the given input stream
-     */
-    private Packet readPacket() {
-        try {
-            if (in == null) {
-                in = new ObjectInputStream(socket.getInputStream());
-            }
-
-            Packet packet = (Packet)in.readObject();
-
-            /* Packet debug code
-            if (packet == null) {
-                System.out.println("c: received null packet");
-            } else if (packet.getData() == null) {
-                System.out.println("c: received empty packet");
-            } else {
-                System.out.println("c: received command #" + packet.getCommand() + " with " + packet.getData().length + " zipped entries totaling " + packet.byteLength + " bytes in size");
-            } */
-
-            // All went well.  Reset the failure count.
-            this.connFailures = 0;
-            return packet;
-        } catch (SocketException ex) {
-            // assume client is shutting down
-            System.err.println("client: Socket error (server closed?)"); //$NON-NLS-1$
-            if (this.connFailures > MAX_CONN_FAILURES) {
-                disconnected();
-            } else {
-                this.connFailures++;
-            }
-            return null;
-        } catch (IOException ex) {
-            System.err.println("client: IO error reading command:"); //$NON-NLS-1$
-            disconnected();
-            return null;
-        } catch (ClassNotFoundException ex) {
-            System.err.println("client: class not found error reading command:"); //$NON-NLS-1$
-            ex.printStackTrace();
-            disconnected();
-            return null;
-        }
-    }
-
-    /**
      * send the message to the server
      */
     protected void send(Packet packet) {
-        debugLastFewCommandsSent.push(packet.getCommand());
-        packet.zipData();
-        try {
-            if (out == null) {
-                out = new ObjectOutputStream(socket.getOutputStream());
-                out.flush();
-            }
-            out.reset(); // write each packet fresh; a lot changes
-            out.writeObject(packet);
-            out.flush();
-        } catch (IOException ex) {
-            System.err.println("c: error sending command #" + packet.getCommand() + ": " + ex.getMessage()); //$NON-NLS-1$
-            System.err.println("    Last five commands that were sent (oldest first): " + debugLastFewCommandsSent.print());
-        }
+        connection.send(packet);
     }
 
-    //
-    // Runnable
-    //
-    public void run() {
-        Thread currentThread = Thread.currentThread();
-        while(pump == currentThread) {
-            Packet c = readPacket();
-            if (c == null) {
-                System.out.println("client: got null packet"); //$NON-NLS-1$
-                continue;
-            }
-            switch (c.getCommand()) {
-                case Packet.COMMAND_CLOSE_CONNECTION :
-                    disconnected();
-                    break;
-                case Packet.COMMAND_SERVER_GREETING :
-                    connected = true;
-                    send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
-                    break;
-                case Packet.COMMAND_SERVER_CORRECT_NAME :
-                    correctName(c);
-                    break;
-                case Packet.COMMAND_LOCAL_PN :
-                    this.local_pn = c.getIntValue(0);
-                    break;
-                case Packet.COMMAND_PLAYER_UPDATE :
-                    receivePlayerInfo(c);
-                    break;
-                case Packet.COMMAND_PLAYER_READY :
-                    getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
-                    break;
-                case Packet.COMMAND_PLAYER_ADD :
-                    receivePlayerInfo(c);
-                    break;
-                case Packet.COMMAND_PLAYER_REMOVE :
-                    game.removePlayer(c.getIntValue(0));
-                    break;
-                case Packet.COMMAND_CHAT :
-                    if (log == null)
+    protected void handlePacket(Packet c) {
+        if (c == null) {
+            System.out.println("client: got null packet"); //$NON-NLS-1$
+            return;
+        }
+        switch (c.getCommand()) {
+            case Packet.COMMAND_CLOSE_CONNECTION :
+                disconnected();
+                break;
+            case Packet.COMMAND_SERVER_GREETING :
+                connected = true;
+                send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
+                break;
+            case Packet.COMMAND_SERVER_CORRECT_NAME :
+                correctName(c);
+                break;
+            case Packet.COMMAND_LOCAL_PN :
+                this.local_pn = c.getIntValue(0);
+                break;
+            case Packet.COMMAND_PLAYER_UPDATE :
+                receivePlayerInfo(c);
+                break;
+            case Packet.COMMAND_PLAYER_READY :
+                getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
+                break;
+            case Packet.COMMAND_PLAYER_ADD :
+                receivePlayerInfo(c);
+                break;
+            case Packet.COMMAND_PLAYER_REMOVE :
+                game.removePlayer(c.getIntValue(0));
+                break;
+            case Packet.COMMAND_CHAT :
+                if (log == null)
+                    initGameLog();
+                if (log != null && keepGameLog()) {
+                    log.append( (String) c.getObject(0) );
+                }
+                game.processGameEvent(new GamePlayerChatEvent(this,null, (String) c.getObject(0)));
+                break;
+            case Packet.COMMAND_ENTITY_ADD :
+                receiveEntityAdd(c);
+                break;
+            case Packet.COMMAND_ENTITY_UPDATE :
+                receiveEntityUpdate(c);
+                break;
+            case Packet.COMMAND_ENTITY_REMOVE :
+                receiveEntityRemove(c);
+                break;
+            case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR :
+                receiveEntityVisibilityIndicator(c);
+                break;
+            case Packet.COMMAND_SENDING_MINEFIELDS :
+                receiveSendingMinefields(c);
+                break;
+            case Packet.COMMAND_DEPLOY_MINEFIELDS :
+                receiveDeployMinefields(c);
+                break;
+            case Packet.COMMAND_REVEAL_MINEFIELD :
+                receiveRevealMinefield(c);
+                break;
+            case Packet.COMMAND_REMOVE_MINEFIELD :
+                receiveRemoveMinefield(c);
+                break;
+            case Packet.COMMAND_CHANGE_HEX :
+                game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
+                break;
+            case Packet.COMMAND_BLDG_UPDATE_CF :
+                receiveBuildingUpdateCF(c);
+                break;
+            case Packet.COMMAND_BLDG_COLLAPSE :
+                receiveBuildingCollapse(c);
+                break;
+            case Packet.COMMAND_PHASE_CHANGE :
+                changePhase(c.getIntValue(0));
+                break;
+            case Packet.COMMAND_TURN :
+                changeTurnIndex(c.getIntValue(0));
+                break;
+            case Packet.COMMAND_ROUND_UPDATE :
+                game.setRoundCount(c.getIntValue(0));
+                break;
+            case Packet.COMMAND_SENDING_TURNS :
+                receiveTurns(c);
+                break;
+            case Packet.COMMAND_SENDING_BOARD :
+                receiveBoard(c);
+                break;
+            case Packet.COMMAND_SENDING_ENTITIES :
+                receiveEntities(c);
+                break;
+            case Packet.COMMAND_SENDING_REPORTS :
+            case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS :
+                phaseReport = receiveReport((Vector) c.getObject(0));
+                if (keepGameLog()) {
+                    if (log == null && game.getRoundCount() == 1)
                         initGameLog();
-                    if (log != null && keepGameLog()) {
-                        log.append( (String) c.getObject(0) );
-                    }
-                    game.processGameEvent(new GamePlayerChatEvent(this,null, (String) c.getObject(0)));
-                    break;
-                case Packet.COMMAND_ENTITY_ADD :
-                    receiveEntityAdd(c);
-                    break;
-                case Packet.COMMAND_ENTITY_UPDATE :
-                    receiveEntityUpdate(c);
-                    break;
-                case Packet.COMMAND_ENTITY_REMOVE :
-                    receiveEntityRemove(c);
-                    break;
-                case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR :
-                    receiveEntityVisibilityIndicator(c);
-                    break;
-                case Packet.COMMAND_SENDING_MINEFIELDS :
-                    receiveSendingMinefields(c);
-                    break;
-                case Packet.COMMAND_DEPLOY_MINEFIELDS :
-                    receiveDeployMinefields(c);
-                    break;
-                case Packet.COMMAND_REVEAL_MINEFIELD :
-                    receiveRevealMinefield(c);
-                    break;
-                case Packet.COMMAND_REMOVE_MINEFIELD :
-                    receiveRemoveMinefield(c);
-                    break;
-                case Packet.COMMAND_CHANGE_HEX :
-                    game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
-                    break;
-                case Packet.COMMAND_BLDG_UPDATE_CF :
-                    receiveBuildingUpdateCF(c);
-                    break;
-                case Packet.COMMAND_BLDG_COLLAPSE :
-                    receiveBuildingCollapse(c);
-                    break;
-                case Packet.COMMAND_PHASE_CHANGE :
-                    changePhase(c.getIntValue(0));
-                    break;
-                case Packet.COMMAND_TURN :
-                    changeTurnIndex(c.getIntValue(0));
-                    break;
-                case Packet.COMMAND_ROUND_UPDATE :
-                    game.setRoundCount(c.getIntValue(0));
-                    break;
-                case Packet.COMMAND_SENDING_TURNS :
-                    receiveTurns(c);
-                    break;
-                case Packet.COMMAND_SENDING_BOARD :
-                    receiveBoard(c);
-                    break;
-                case Packet.COMMAND_SENDING_ENTITIES :
-                    receiveEntities(c);
-                    break;
-                case Packet.COMMAND_SENDING_REPORTS :
-                case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS :
-                    phaseReport = receiveReport((Vector) c.getObject(0));
-                    if (keepGameLog()) {
-                        if (log == null && game.getRoundCount() == 1)
-                            initGameLog();
-                        if (log != null)
-                            log.append(phaseReport);
-                    }
-                    game.addReports((Vector) c.getObject(0));
-                    roundReport = receiveReport(game.getReports(game.getRoundCount()));
-                    if (c.getCommand() ==
-                        Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
-                        game.processGameEvent(new GameReportEvent(this, null));
-                    }
-                    break;
-                case Packet.COMMAND_SENDING_REPORTS_SPECIAL :
-                    game.processGameEvent(new GameReportEvent(this, receiveReport((Vector) c.getObject(0))));
-                    break;
-                case Packet.COMMAND_SENDING_REPORTS_ALL :
-                    Vector allReports = (Vector) c.getObject(0);
-                    game.setAllReports(allReports);
-                    if (keepGameLog()) {
-                        //Re-write gamelog.txt from scratch
-                        initGameLog();
-                        if (log != null) {
-                            for (int i = 0; i < allReports.size(); i++) {
-                                log.append(receiveReport((Vector)allReports.elementAt(i)));
-                            }
+                    if (log != null)
+                        log.append(phaseReport);
+                }
+                game.addReports((Vector) c.getObject(0));
+                roundReport = receiveReport(game.getReports(game.getRoundCount()));
+                if (c.getCommand() ==
+                    Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
+                    game.processGameEvent(new GameReportEvent(this, null));
+                }
+                break;
+            case Packet.COMMAND_SENDING_REPORTS_SPECIAL :
+                game.processGameEvent(new GameReportEvent(this, receiveReport((Vector) c.getObject(0))));
+                break;
+            case Packet.COMMAND_SENDING_REPORTS_ALL :
+                Vector allReports = (Vector) c.getObject(0);
+                game.setAllReports(allReports);
+                if (keepGameLog()) {
+                    //Re-write gamelog.txt from scratch
+                    initGameLog();
+                    if (log != null) {
+                        for (int i = 0; i < allReports.size(); i++) {
+                            log.append(receiveReport((Vector)allReports.elementAt(i)));
                         }
                     }
-                    roundReport = receiveReport(game.getReports(game.getRoundCount()));
-                    //We don't really have a copy of the phase report at
-                    // this point, so I guess we'll just use the round report
-                    // until the next phase actually completes.
-                    phaseReport = roundReport;
-                    break;
-                case Packet.COMMAND_ENTITY_ATTACK :
-                    receiveAttack(c);
-                    break;
-                case Packet.COMMAND_SENDING_GAME_SETTINGS :
-                    game.setOptions((GameOptions) c.getObject(0));
-                    break;
-                case Packet.COMMAND_SENDING_MAP_SETTINGS :
-                    mapSettings = (MapSettings) c.getObject(0);
-                    game.processGameEvent(new GameSettingsChangeEvent(this));
-                    break;
-                case Packet.COMMAND_QUERY_MAP_SETTINGS :
-                    game.processGameEvent(new GameMapQueryEvent(this, (MapSettings)c.getObject(0)));
-                    break;
-                case Packet.COMMAND_END_OF_GAME :
-                    String sEntityStatus = (String) c.getObject(0);
-                    game.end(c.getIntValue(1), c.getIntValue(2));
-                    // save victory report
-                    saveEntityStatus(sEntityStatus);
-                    break;
-                case Packet.COMMAND_SENDING_ARTILLERYATTACKS :
-                    Vector v = (Vector)c.getObject(0);
-                    game.setArtilleryVector(v);
-                    break;
-                case Packet.COMMAND_SENDING_FLARES :
-                    Vector v2 = (Vector)c.getObject(0);
-                    game.setFlares(v2);
-                    break;
-                case Packet.COMMAND_SEND_SAVEGAME:
-                    String sFinalFile = (String)c.getObject(0);
-                    try {
-                        File sDir = new File("savegames");
-                        if (!sDir.exists()) {
-                            sDir.mkdir();
-                        }
-                    } catch (Exception e) {
-                        System.err.println("Unable to create savegames directory");
+                }
+                roundReport = receiveReport(game.getReports(game.getRoundCount()));
+                //We don't really have a copy of the phase report at
+                // this point, so I guess we'll just use the round report
+                // until the next phase actually completes.
+                phaseReport = roundReport;
+                break;
+            case Packet.COMMAND_ENTITY_ATTACK :
+                receiveAttack(c);
+                break;
+            case Packet.COMMAND_SENDING_GAME_SETTINGS :
+                game.setOptions((GameOptions) c.getObject(0));
+                break;
+            case Packet.COMMAND_SENDING_MAP_SETTINGS :
+                mapSettings = (MapSettings) c.getObject(0);
+                game.processGameEvent(new GameSettingsChangeEvent(this));
+                break;
+            case Packet.COMMAND_QUERY_MAP_SETTINGS :
+                game.processGameEvent(new GameMapQueryEvent(this, (MapSettings)c.getObject(0)));
+                break;
+            case Packet.COMMAND_END_OF_GAME :
+                String sEntityStatus = (String) c.getObject(0);
+                game.end(c.getIntValue(1), c.getIntValue(2));
+                // save victory report
+                saveEntityStatus(sEntityStatus);
+                break;
+            case Packet.COMMAND_SENDING_ARTILLERYATTACKS :
+                Vector v = (Vector)c.getObject(0);
+                game.setArtilleryVector(v);
+                break;
+            case Packet.COMMAND_SENDING_FLARES :
+                Vector v2 = (Vector)c.getObject(0);
+                game.setFlares(v2);
+                break;
+            case Packet.COMMAND_SEND_SAVEGAME:
+                String sFinalFile = (String)c.getObject(0);
+                try {
+                    File sDir = new File("savegames");
+                    if (!sDir.exists()) {
+                        sDir.mkdir();
                     }
-                    try {
-                        ObjectOutputStream oos = new ObjectOutputStream(
-                            new FileOutputStream(sFinalFile));
-                        oos.writeObject(c.getObject(1));
-                        oos.flush();
-                        oos.close();
-                    } catch (Exception e) {
-                        System.err.println("Unable to save file: " + sFinalFile);
-                        e.printStackTrace();
-                    }
-                    break;
-            }
+                } catch (Exception e) {
+                    System.err.println("Unable to create savegames directory");
+                }
+                try {
+                    ObjectOutputStream oos = new ObjectOutputStream(
+                        new FileOutputStream(sFinalFile));
+                    oos.writeObject(c.getObject(1));
+                    oos.flush();
+                    oos.close();
+                } catch (Exception e) {
+                    System.err.println("Unable to save file: " + sFinalFile);
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 

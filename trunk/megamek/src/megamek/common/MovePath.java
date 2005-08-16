@@ -54,6 +54,7 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_UP = 20;
     public static final int STEP_DOWN = 21;
     public static final int STEP_SEARCHLIGHT = 22;
+    public static final int STEP_LAY_MINE = 23;
 
     public static class Key {
         private Coords coords;
@@ -139,6 +140,10 @@ public class MovePath implements Cloneable, Serializable {
     public MovePath addStep(int type, Targetable target) {
         return addStep(new MoveStep(this, type, target));
     }
+    
+    public MovePath addStep(int type, int mineToLay) {
+        return addStep(new MoveStep(this, type, mineToLay));
+    }
 
     public boolean canShift() {
         return ((entity instanceof QuadMech) || entity.isUsingManAce()) && !isJumping();
@@ -203,6 +208,8 @@ public class MovePath implements Cloneable, Serializable {
             MoveStep step = (MoveStep) temp.elementAt(i);
             if (step.getTarget(game) != null) {
                 step = new MoveStep(this, step.getType(), step.getTarget(game));
+            } else if (step.getMineToLay() != -1){
+                step = new MoveStep(this, step.getType(), step.getMineToLay());
             } else {
                 step = new MoveStep(this, step.getType());
             }

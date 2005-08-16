@@ -35,6 +35,7 @@ import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.LayMinefieldAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameMapQueryEvent;
@@ -635,7 +636,7 @@ public class Client implements Runnable {
      */
     protected void receiveAttack(Packet c) {
         Vector vector = (Vector) c.getObject(0);
-        boolean charge = c.getBooleanValue(1);
+        int charge = c.getIntValue(1);
         boolean addAction = true;
         for (Enumeration i = vector.elements(); i.hasMoreElements();) {
             EntityAction ea = (EntityAction) i.nextElement();
@@ -662,10 +663,12 @@ public class Client implements Runnable {
 
             if (addAction) {
                 // track in the appropriate list
-                if (charge) {
-                    game.addCharge((AttackAction) ea);
-                } else {
+                if (charge == 0) {
                     game.addAction(ea);
+                } else if (charge == 1) {
+                    game.addCharge((AttackAction) ea);                    
+                } else {
+                    game.addLayMinefieldAction((LayMinefieldAction)ea);
                 }
             }
         }

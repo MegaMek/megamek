@@ -25,6 +25,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.common.*;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
+import megamek.common.actions.LayMinefieldAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -60,6 +61,7 @@ public class MovementDisplay
     public static final String    MOVE_RAISE_ELEVATION = "moveRaiseElevation"; //$NON-NLS-1$
     public static final String    MOVE_LOWER_ELEVATION = "moveLowerElevation"; //$NON-NLS-1$
     public static final String    MOVE_SEARCHLIGHT = "moveSearchlight"; //$NON-NLS-1$
+    public static final String    MOVE_LAY_MINE = "moveLayMine"; //$NON-NLS-1$    
 
     // parent game
     public Client client;
@@ -96,6 +98,8 @@ public class MovementDisplay
     private Button            butLower;
 
     private Button            butSearchlight;
+    
+    private Button            butLayMine;
 
     private int               buttonLayout;
 
@@ -244,19 +248,25 @@ public class MovementDisplay
         butUnload.setActionCommand(MOVE_UNLOAD);
         butUnload.addKeyListener(this);
         
-        butRaise = new Button(Messages.getString("MovementDisplay.butRaise"));
+        butRaise = new Button(Messages.getString("MovementDisplay.butRaise")); //$NON-NLS-1$
         butRaise.addActionListener(this);
         butRaise.setEnabled(false);
         butRaise.setActionCommand(MOVE_RAISE_ELEVATION);
         butRaise.addKeyListener(this);
         
-        butLower = new Button(Messages.getString("MovementDisplay.butLower"));
+        butLower = new Button(Messages.getString("MovementDisplay.butLower")); //$NON-NLS-1$
         butLower.addActionListener(this);
         butLower.setEnabled(false);
         butLower.setActionCommand(MOVE_LOWER_ELEVATION);
         butLower.addKeyListener(this);
         
-        butSpace = new Button("."); //$NON-NLS-1$
+        butLayMine = new Button(Messages.getString("MovementDisplay.butLayMine")); //$NON-NLS-1$
+        butLayMine.addActionListener(this);
+        butLayMine.setEnabled(false);
+        butLayMine.setActionCommand(MOVE_LAY_MINE);
+        butLayMine.addKeyListener(this);
+        
+        butSpace = new Button(".");
         butSpace.setEnabled(false);
         butSpace.addKeyListener(this);
 
@@ -319,7 +329,8 @@ public class MovementDisplay
             buttonLayout = 3;
         if ((buttonLayout == 3)
                 && !(butRaise.isEnabled()
-                || butLower.isEnabled()))
+                || butLower.isEnabled()
+                || butLayMine.isEnabled()))
             buttonLayout = 0;
         switch (buttonLayout) {
         case 0 :
@@ -355,7 +366,7 @@ public class MovementDisplay
         case 3:
             panButtons.add(butRaise);
             panButtons.add(butLower);
-            panButtons.add(butSpace);
+            panButtons.add(butLayMine);
             panButtons.add(butSpace);
             panButtons.add(butSpace);
             panButtons.add(butSpace);
@@ -442,12 +453,14 @@ public class MovementDisplay
         updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
+        
+        setLayMineEnabled(ce.canLayMine());
 
         setFleeEnabled(ce.canFlee());
         if (client.game.getOptions().booleanOption("vehicles_can_eject")) { //$NON-NLS-1$
-          setEjectEnabled ( (!isInfantry) && ce.isActive());
+            setEjectEnabled ( (!isInfantry) && ce.isActive());
         } else {
-          setEjectEnabled(isMech && ce.isActive());
+            setEjectEnabled(isMech && ce.isActive());
         }
         
     }
@@ -1249,6 +1262,16 @@ public class MovementDisplay
         return choice;
 
     } // End private Targetable chooseTarget( Coords )
+    
+    private int chooseMineToLay() {
+        MineLayingDialog mld = new MineLayingDialog(clientgui.frame,ce());
+        mld.show();
+        if (mld.getAnswer() == true) {
+            return mld.getMine();
+        } else {
+            return -1;
+        }
+    }
 
     //
     // GameListener
@@ -1311,7 +1334,7 @@ public class MovementDisplay
         }
 
         if ( statusBarActionPerformed(ev, client) )
-          return;
+            return;
           
         if (!client.isMyTurn()) {
             // odd...
@@ -1456,8 +1479,7 @@ public class MovementDisplay
                 clientgui.bv.repaint();
                 gear = MovementDisplay.GEAR_LAND;
             } //else - didn't find a unit to load
-        }
-        else if ( ev.getActionCommand().equals(MOVE_UNLOAD) ) {
+        } else if ( ev.getActionCommand().equals(MOVE_UNLOAD) ) {
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
 
@@ -1466,16 +1488,21 @@ public class MovementDisplay
                 clientgui.bv.drawMovementData(ce, cmd);
                 clientgui.bv.repaint();
             } //else - Player canceled the unload.
-        }
-        else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION) ) {
+        } else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION) ) {
             cmd.addStep(MovePath.STEP_UP);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
-        }
-        else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION) ) {
+        } else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION) ) {
             cmd.addStep(MovePath.STEP_DOWN);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
+        } else if (ev.getActionCommand().equals(MOVE_LAY_MINE)) {
+            clearAllMoves();
+            int i = chooseMineToLay();
+            if (i != -1) {
+                cmd.addStep(MovePath.STEP_LAY_MINE, i);
+                moveTo(cmd);
+            }
         }
 
         updateProneButtons();
@@ -1676,6 +1703,11 @@ public class MovementDisplay
         butNext.setEnabled(enabled);
         clientgui.getMenuBar().setMoveNextEnabled(enabled);
     }
+    private void setLayMineEnabled(boolean enabled) {
+        butLayMine.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveLayMineEnabled(enabled);
+    }
+
     private void setLoadEnabled(boolean enabled) {
         butLoad.setEnabled(enabled);
         clientgui.getMenuBar().setMoveLoadEnabled(enabled);

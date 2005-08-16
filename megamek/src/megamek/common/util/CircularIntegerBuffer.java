@@ -25,16 +25,36 @@ public class CircularIntegerBuffer {
     private int end;
     private int[] buffer;
 
+    /**
+     * Creates the new buffer 
+     * @param size required size 
+     */
     public CircularIntegerBuffer(int size) {
         buffer = new int[size];
         clear();
     }
 
+    /**
+     * Returns the length of this buffer
+     * @return length of this buffer
+     */
+    public int length() {
+        return buffer.length;
+    }
+    
+    /**
+     * Clears the buffer
+     *
+     */
     public void clear() {
         begin = buffer.length - 1;
         end = -1;
     }
 
+    /**
+     * Adds new value
+     * @param value value to add
+     */
     public void push(int value) {
         end++;
         if (end > begin) {
@@ -47,26 +67,25 @@ public class CircularIntegerBuffer {
         buffer[end] = value;
     }
 
-    public String print() {
-        String s = new String();
+    public String toString() {
+        StringBuffer result = new StringBuffer();
+
         int indexBegin = begin + 1;
         if (indexBegin == buffer.length)
             indexBegin = 0;
-        int indexEnd;
 
-        int i;
         if (indexBegin <= end) {
-            for (i = indexBegin; i <= end; i++) {
-                s += buffer[i] + " ";
+            for (int i = indexBegin; i <= end; i++) {
+                result.append(buffer[i]).append(" ");
             }
         } else {
-            for (i = indexBegin; i < buffer.length; i++) {
-                s += buffer[i] + " ";
+            for (int i = indexBegin; i < buffer.length; i++) {
+                result.append(buffer[i]).append(" ");
             }
-            for (i = 0; i <= end; i++) {
-                s += buffer[i] + " ";
+            for (int i = 0; i <= end; i++) {
+                result.append(buffer[i]).append(" ");
             }
         }
-        return s;
+        return result.toString();
     }
 }

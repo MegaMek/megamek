@@ -38,8 +38,7 @@ import megamek.common.preference.PreferenceManager;
 /**
  * @author Ben Mazur
  */
-public class Server
-implements Runnable, ConnectionHandler {
+public class Server implements Runnable {
     //    public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
     public final static String  DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
     private final static String VERIFIER_CONFIG_FILENAME =
@@ -90,6 +89,35 @@ implements Runnable, ConnectionHandler {
     //private HashSet             knownDeadEntities = new HashSet();
 
     private static EntityVerifier entityVerifier = null;
+
+    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
+
+        /**
+         * Called when it is sensed that a connection has terminated.
+         */
+        public void disconnected(DisconnectedEvent e) {
+            Connection conn = e.getConnection();
+            
+            // write something in the log
+            System.out.println("s: connection " + conn.getId()+ " disconnected");
+
+            connections.removeElement(conn);
+            connectionsPending.removeElement(conn);
+            connectionIds.remove(new Integer(conn.getId()));
+
+            // if there's a player for this connection, remove it too
+            Player player = getPlayer(conn.getId());
+            if (null != player) {
+                Server.this.disconnected( player );
+            }
+            
+        }
+
+        public void packetReceived(PacketReceivedEvent e) {
+            Server.this.handle(e.getConnection().getId(),e.getPacket());
+        }
+
+    };
     
     /**
      * Construct a new GameHost and begin listening for
@@ -240,7 +268,7 @@ implements Runnable, ConnectionHandler {
         // kill pending connnections
         for (Enumeration i=connectionsPending.elements();i.hasMoreElements();){
             final Connection conn = (Connection)i.nextElement();
-            conn.die();
+            conn.close();
         }
         connectionsPending.removeAllElements();
 
@@ -254,7 +282,7 @@ implements Runnable, ConnectionHandler {
         // kill active connnections
         for (Enumeration i = connections.elements(); i.hasMoreElements();) {
             final Connection conn = (Connection)i.nextElement();
-            conn.die();
+            conn.close();
         }
         connections.removeAllElements();
         connectionIds.clear();
@@ -425,7 +453,7 @@ implements Runnable, ConnectionHandler {
             StringBuffer buff = new StringBuffer();
             buff.append( player.getName() )
                 .append( " connected from " )
-                .append( getClient(connId).getSocket().getInetAddress() );
+                .append( getClient(connId).getInetAddress() );
             String who = buff.toString();
             System.out.print( "s: player #" );
             System.out.print( connId );
@@ -539,26 +567,6 @@ implements Runnable, ConnectionHandler {
             }
         }
 
-    }
-
-    /**
-     * Called when it is sensed that a connection has terminated.
-     */
-    public void disconnected(Connection conn) {
-        // write something in the log
-        System.out.println("s: connection " + conn.getId() + " disconnected");
-
-        // kill the connection and remove it from any lists it might be on
-        conn.die();
-        connections.removeElement(conn);
-        connectionsPending.removeElement(conn);
-        connectionIds.remove(new Integer(conn.getId()));
-
-        // if there's a player for this connection, remove it too
-        Player player = getPlayer(conn.getId());
-        if (null != player) {
-            disconnected( player );
-        }
     }
 
     /**
@@ -14299,7 +14307,7 @@ implements Runnable, ConnectionHandler {
     private Vector filterReportVector(Vector originalReportVector, Player p) {
         if (!doBlind()) {
             //don't bother filtering if double-blind rules aren't in effect
-            return originalReportVector;
+            return (Vector)originalReportVector.clone();
         }
         Vector filteredReportVector = new Vector();
         Report r;
@@ -14927,7 +14935,7 @@ implements Runnable, ConnectionHandler {
      * needs to be sent during a phase that is not a report phase.
      */
     private Packet createSpecialReportPacket() {
-        return new Packet(Packet.COMMAND_SENDING_REPORTS_SPECIAL, vPhaseReport);
+        return new Packet(Packet.COMMAND_SENDING_REPORTS_SPECIAL, vPhaseReport.clone());
     }
 
     /**
@@ -14936,7 +14944,7 @@ implements Runnable, ConnectionHandler {
      * current phase's report.
      */
     private Packet createTacticalGeniusReportPacket() {
-        return new Packet(Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS, vPhaseReport);
+        return new Packet(Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS, vPhaseReport.clone());
     }
 
     /**
@@ -15149,7 +15157,6 @@ implements Runnable, ConnectionHandler {
         if (connections == null) {
             return;
         }
-        packet.zipData();
         for (Enumeration i = connections.elements(); i.hasMoreElements();) {
             final Connection conn = (Connection)i.nextElement();
             conn.send(packet);
@@ -15176,7 +15183,6 @@ implements Runnable, ConnectionHandler {
                 packet = createTacticalGeniusReportPacket();
             else
                 packet = createReportPacket(p);
-            packet.zipData();
             conn.send(packet);
         }
     }
@@ -15185,7 +15191,6 @@ implements Runnable, ConnectionHandler {
      * Send a packet to a specific connection.
      */
     private void send(int connId, Packet packet) {
-        packet.zipData();
         if (getClient(connId) != null) {
             getClient(connId).send(packet);
         } else {
@@ -15244,7 +15249,7 @@ implements Runnable, ConnectionHandler {
      *          received the packet.
      * @param   packet - the <code>Packet</code> to be processed.
      */
-    public synchronized void handle(int connId, Packet packet) {
+    protected synchronized void handle(int connId, Packet packet) {
         Player player = game.getPlayer( connId );
         // Check player.  Please note, the connection may be pending.
         if ( null == player && null == getPendingConnection(connId) ) {
@@ -15263,7 +15268,10 @@ implements Runnable, ConnectionHandler {
         switch(packet.getCommand()) {
             case Packet.COMMAND_CLOSE_CONNECTION :
                 // We have a client going down!
-                this.disconnected( this.getConnection(connId) );
+                Connection c = getConnection(connId);
+                if ( c!= null) {
+                    c.close();
+                }
                 break;
             case Packet.COMMAND_CLIENT_NAME :
                 receivePlayerName(packet, connId);
@@ -15385,7 +15393,10 @@ implements Runnable, ConnectionHandler {
                 int id = getFreeConnectionId();
                 System.out.println("s: accepting player connection #" + id + " ...");
 
-                connectionsPending.addElement(new Connection(this, s, id));
+                Connection c =  ConnectionFactory.getInstance().createServerConnection(s, id);
+                c.addConnectionListener(connectionListener);
+                c.open();
+                connectionsPending.addElement(c);
 
                 greeting(id);
             } catch(IOException ex) {

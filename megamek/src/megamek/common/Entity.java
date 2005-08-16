@@ -89,6 +89,7 @@ public abstract class Entity
     protected boolean           usedSearchlight = false;
     protected boolean           stuckInSwamp = false;
     protected int               taggedBy = -1;
+    protected boolean           layingMines = false;
     
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -2561,8 +2562,7 @@ public abstract class Entity
         }
     }
 
-    public void newRound(int roundNumber)
-    {
+    public void newRound(int roundNumber) {
         unloadedThisTurn = false;
         done = false;
         delta_distance = 0;
@@ -2573,6 +2573,7 @@ public abstract class Entity
         hitBySwarmsEntity = new Vector();
         hitBySwarmsWeapon = new Vector();
         setTaggedBy(-1);
+        setLayingMines(false);
 
         setArmsFlipped(false);
         setDisplacementAttack(null);
@@ -4801,4 +4802,25 @@ public abstract class Entity
     public boolean hasActiveEiCockpit() {
         return (hasEiCockpit() && getCrew().getOptions().booleanOption("ei_implant"));
     }
+    
+    public boolean isLayingMines() {
+        return layingMines;
+    }
+    
+    public void setLayingMines(boolean laying) {
+        layingMines = laying;
+    }
+    
+    public boolean canLayMine() {
+        for (Object oMount: miscList) {
+            Mounted mount = (Mounted)oMount;
+            EquipmentType type = mount.getType();
+            if (!mount.isMissing() && type.hasFlag(MiscType.F_MINE) &&
+                !isLayingMines()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }

@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 13th July 2005.  MegaMek Version 0.22.84. Best viewed in 1024x768.
+The Great MegaMek Feature list. 16th August 2005.  MegaMek Version 0.31.0-dev. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -211,7 +211,7 @@ Clan Battle Armor Variants
 Innersphere Battle Armor Variants
 
 - Achileus			Yes		None
-- Fa Shih			Partial		Cannot lay minefields
+- Fa Shih			Partial		Can only lay conventional minefields.
 - Fenrir			Yes		None
 - Gray Death Light		Yes		None
 - Infiltrator			Yes		None

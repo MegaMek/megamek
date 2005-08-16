@@ -101,6 +101,7 @@ public class Game implements Serializable, IGame
     // phase state
     private Vector actions = new Vector();
     private Vector pendingCharges = new Vector();
+    private Vector pendingLayMinefieldActions = new Vector();
     private Vector pilotRolls = new Vector();
     private Vector extremeGravityRolls = new Vector();
     private Vector initiativeRerollRequests = new Vector();
@@ -613,11 +614,13 @@ public class Game implements Serializable, IGame
             case IGame.PHASE_INITIATIVE :
                 resetActions();
                 resetCharges();
+                resetLayMinefieldActions();
                 break;
             // TODO Is there better solution to handle charges?
             case IGame.PHASE_PHYSICAL_REPORT:
             case IGame.PHASE_END:
                 resetCharges();
+                resetLayMinefieldActions();
                 break;
 
         }
@@ -1161,6 +1164,7 @@ public class Game implements Serializable, IGame
         resetArtilleryAttacks();
         removeMinefields();
         removeArtyAutoHitHexes();
+        resetLayMinefieldActions();
         flares.removeAllElements();
         clearAllReports();
 
@@ -1864,6 +1868,32 @@ public class Game implements Serializable, IGame
      */
     public Vector getChargesVector() {
         return pendingCharges;
+    }
+    
+    /**
+     * Adds a pending lay minefield action to the list for this phase.
+     */
+    public void addLayMinefieldAction(LayMinefieldAction lma) {
+        pendingLayMinefieldActions.addElement(lma);
+        processGameEvent(new GameNewActionEvent(this,lma));
+    }
+    /**
+     * Returns an Enumeration of LayMinefieldActions
+     */
+    public Enumeration getLayMinefieldActions() {
+        return pendingLayMinefieldActions.elements();
+    }
+
+    /** Resets the pending LayMinefieldActions list. */
+    public void resetLayMinefieldActions() {
+        pendingLayMinefieldActions.removeAllElements();
+    }
+
+    /** Returns the LayMinefieldActions vector. 
+     *  Do not modify. >:[ Used for sending these actions to the client.
+     */
+    public Vector getLayMinefieldActionsVector() {
+        return pendingLayMinefieldActions;
     }
 
     /** Adds a pending PSR to the list for this phase. */

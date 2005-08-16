@@ -97,6 +97,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem moveWalk = null;
     private MenuItem moveNext = null;
     private MenuItem moveTurn = null;
+    private MenuItem moveLayMine = null;
     private MenuItem moveLoad = null;
     private MenuItem moveUnload = null;
     private MenuItem moveJump = null;
@@ -352,6 +353,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         moveUnjam = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveUnjam"), MovementDisplay.MOVE_UNJAM); //$NON-NLS-1$
         moveSearchlight = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveSearchlight"), MovementDisplay.MOVE_SEARCHLIGHT); //$NON-NLS-1$
         moveClear = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveClear"), MovementDisplay.MOVE_CLEAR); //$NON-NLS-1$
+        moveLayMine = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MOVE_LAY_MINE); //$NON-NLS-1$
 
         menu.addSeparator();
         menu.add( submenu );
@@ -728,6 +730,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     }
     public synchronized void setMoveJumpEnabled(boolean enabled) {
         moveJump.setEnabled(enabled);
+    }
+    public synchronized void setMoveLayMineEnabled(boolean enabled) {
+        moveLayMine.setEnabled(enabled);
     }
     public synchronized void setMoveBackUpEnabled(boolean enabled) {
         moveBackUp.setEnabled(enabled);

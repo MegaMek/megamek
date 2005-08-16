@@ -45,6 +45,8 @@ public class MoveStep implements Serializable {
     private int distance;
     
     private int elevation=-999;
+    
+    private int mineToLay = -1;
 
     /**
      * This step's static movement type.  Additional
@@ -121,6 +123,21 @@ public class MoveStep implements Serializable {
         } else {
             hasEverUnloaded=false;
         }
+    }
+    
+    /**
+     * Create a step with the given mine to lay.
+     * 
+     * @param type -
+     *            should match one of the MovePath constants, but this is not
+     *            currently checked.
+     * @param target -
+     *            the <code>int</code> that is the id of the mine
+     *            that should be laid in this step.
+     */    
+    public MoveStep(MovePath path, int type, int mineToLay) {
+        this (path, type);
+        this.mineToLay = mineToLay;
     }
 
     void setParent(MovePath path) {
@@ -841,6 +858,11 @@ public class MoveStep implements Serializable {
                 && entity.canFlee()) {
             movementType = IEntityMovementType.MOVE_LEGAL;
         }
+        
+        // anyone who can and does lay mines is legal
+        if (type == MovePath.STEP_LAY_MINE && entity.canLayMine()) {
+            movementType = IEntityMovementType.MOVE_LEGAL;
+        }
 
         // check for ejection (always legal?)
         if (type == MovePath.STEP_EJECT) {
@@ -1435,6 +1457,14 @@ public class MoveStep implements Serializable {
 
     public int getElevation() {
         return elevation;
+    }
+    
+    public int getMineToLay() {
+        return mineToLay;
+    }
+    
+    public void setMineToLay(int mineId) {
+        mineToLay = mineId;
     }
 
 }

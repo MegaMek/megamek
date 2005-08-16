@@ -22,11 +22,10 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.MiscType;
-import megamek.common.actions.LayMinefieldAction;
 
 /**
- * A dialog displayed to the player when they have an opportunity to
- * trigger an Anti-Personell Pod on one of their units.
+ * A dialog displayed to the player when they 
+ * want to lay mines with their BA unit.
  */
 public class MineLayingDialog
     extends Dialog implements ActionListener
@@ -42,11 +41,11 @@ public class MineLayingDialog
     private Vector vMines = new Vector();
 
     /**
-     * Display a dialog that shows the AP Pods on the entity, and allows
-     * the player to fire any active pods.
+     * Display a dialog that shows the mines on the entity, and allows
+     * the player to choose one.
      *
      * @param   parent the <code>Frame</code> parent of this dialog
-     * @param   entity the <code>Entity</code> that can fire AP Pods.
+     * @param   entity the <code>Entity</code> that carries the mines.
      */
     public MineLayingDialog( Frame parent, Entity entity ) {
         super(parent, Messages.getString("MineLayingDialog.title"), true); //$NON-NLS-1$
@@ -130,10 +129,9 @@ public class MineLayingDialog
     }
 
     /**
-     * Get the trigger actions that the user selected.
+     * Get the id of the mine the player wants to use.
      *
-     * @return  the <code>int</code> id of the mine to lay,
-     *  or <code>-1</code>, if no mine is selected
+     * @return  the <code>int</code> id of the mine to lay
      */
     public int getMine() {
         Integer equipnr = (Integer)vMines.elementAt(chMines.getSelectedIndex());

@@ -238,6 +238,14 @@ public class Compute {
                 && movementType != IEntityMovementType.MOVE_JUMP) {
             return true;
         }
+        
+        // check for thin ice
+        if(destHex.containsTerrain(Terrains.ICE)
+        		&& destHex.containsTerrain(Terrains.WATER)
+                && !(entity.getElevation() > destHex.getElevation())
+        		&& !isPavementStep) {
+        	return true;
+        }
 
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying.
@@ -260,9 +268,9 @@ public class Compute {
          * srcHex.contains(Terrain.PAVEMENT) || srcHex.contains(Terrain.ROAD) ||
          * srcHex.contains(Terrain.BRIDGE) )
          */
-        if (prevStepIsOnPavement
-        // && overallMoveType == IMoveType.MOVE_RUN
-                && movementType == IEntityMovementType.MOVE_RUN && isTurning
+        if (((prevStepIsOnPavement && movementType == IEntityMovementType.MOVE_RUN)
+        		   || srcHex.containsTerrain(Terrains.ICE))
+        		&& isTurning
                 && !isInfantry) {
             return true;
         }

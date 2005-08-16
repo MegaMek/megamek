@@ -3078,8 +3078,9 @@ public abstract class Entity
                prevHex.contains(Terrain.ROAD) ||
                prevHex.contains(Terrain.BRIDGE) )
             */
-            && prevStep.isPavementStep()
-            && overallMoveType == IEntityMovementType.MOVE_RUN
+            && ((prevStep.isPavementStep()
+                 && overallMoveType == IEntityMovementType.MOVE_RUN)
+               || prevHex.containsTerrain(Terrains.ICE))
             && prevFacing != curFacing
             && !lastPos.equals(curPos)
             && !isInfantry
@@ -3087,14 +3088,20 @@ public abstract class Entity
             // on pavement in that getting up does not skid.
             && !prevStep.isHasJustStood()) {
             // append the reason modifier
-            if ( this instanceof Mech ) {
-                roll.append(new PilotingRollData(getId(),
+        	if(prevStep.isPavementStep()) {
+        		if ( this instanceof Mech ) {
+        			roll.append(new PilotingRollData(getId(),
                                       getMovementBeforeSkidPSRModifier(distance),
                                       "running & turning on pavement"));
-            } else {
-                roll.append(new PilotingRollData(getId(),
+        		} else {
+        			roll.append(new PilotingRollData(getId(),
                                       getMovementBeforeSkidPSRModifier(distance),
                                       "reckless driving on pavement"));
+        		}
+            } else {
+    			roll.append(new PilotingRollData(getId(),
+                        getMovementBeforeSkidPSRModifier(distance),
+                        "turning on ice"));
             }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not apparently skidding");

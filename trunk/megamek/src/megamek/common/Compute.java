@@ -1363,7 +1363,6 @@ public class Compute {
      * sizes, etc.
      */
     public static float getExpectedDamage(IGame g, WeaponAttackAction waa) {
-
         boolean use_table = false;
 
         AmmoType loaded_ammo = new AmmoType();
@@ -1450,7 +1449,8 @@ public class Compute {
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
             }
             if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK)
-                    || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
+                    || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)
+                    && !Compute.isAffectedByAngelECM(attacker, attacker.getPosition(), waa.getTarget(g).getPosition())) {
                 fHits = wt.getRackSize();
             }
             if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA)
@@ -2327,32 +2327,29 @@ public class Compute {
             return false;
 
         // Only grab enemies with active Angel ECM
-        Vector vEnemyCoords = new Vector(16);
-        Vector vECMRanges = new Vector(16);
-        for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = (Entity) e.nextElement();
+        Vector<Coords> vEnemyCoords = new Vector(16);
+        Vector<Integer> vECMRanges = new Vector(16);
+        for (Object eEl : ae.game.getEntitiesVector()) {
+            Entity ent = (Entity)eEl;
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae)
                     && ent.hasActiveAngelECM()
                     && entPos != null) {
                 // TODO : only use the best ECM range in a given Coords.
                 vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(new Integer(ent.getAngelECMRange()));
+                vECMRanges.addElement(ent.getAngelECMRange());
             }
 
             // Check the ECM effects of the entity's passengers.
-            Vector passengers = ent.getLoadedUnits();
-            Enumeration iter = passengers.elements();
-            while (iter.hasMoreElements()) {
-                Entity other = (Entity) iter.nextElement();
+            Vector<Entity> passengers = ent.getLoadedUnits();
+            for (Entity other : passengers) {
                 if (other.isEnemyOf(ae) && other.hasActiveAngelECM()
                         && entPos != null) {
                     // TODO : only use the best ECM range in a given Coords.
                     vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(new Integer(other.getAngelECMRange()));
+                    vECMRanges.addElement(other.getAngelECMRange());
                 }
             }
-
         }
 
         // none? get out of here
@@ -2363,10 +2360,9 @@ public class Compute {
         // losDivided()
         Coords[] coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration ranges = vECMRanges.elements();
-        for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = (Coords) e.nextElement();
-            int range = ((Integer) ranges.nextElement()).intValue();
+        Enumeration<Integer> ranges = vECMRanges.elements();
+        for (Coords c : vEnemyCoords) {
+            int range = ranges.nextElement();
             int nLastDist = -1;
 
             // loop through intervening hexes and see if any of them are within

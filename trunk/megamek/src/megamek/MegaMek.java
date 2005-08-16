@@ -131,7 +131,7 @@ public class MegaMek {
     private static void startGUI(String guiName, String[] args) {
         megamek.debug.Assert.assertTrue(guiName != null, "guiName must be non-null"); //$NON-NLS-1$
         megamek.debug.Assert.assertTrue(args != null, "args must be non-null");
-        IMegaMekGUI mainGui =  getGui(guiName);
+        IMegaMekGUI mainGui = getGui(guiName);
         if (mainGui == null) {
             displayMessageAndExit(UNKNOWN_GUI_MESSAGE+guiName);
         } else {

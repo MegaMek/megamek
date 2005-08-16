@@ -5865,9 +5865,12 @@ implements Runnable, ConnectionHandler {
 
         // if the shot is possible and not a streak miss
         // and not a nemesis-confused shot, add heat and use ammo
-        streakMiss = (((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) && wr.roll < wr.toHit.getValue());
-        if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE && !streakMiss &&
-            !waa.isNemesisConfused()) {
+        streakMiss = (((wtype.getAmmoType() == AmmoType.T_SRM_STREAK)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK))
+                && wr.roll < wr.toHit.getValue());
+        if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE
+                && (!streakMiss || Compute.isAffectedByAngelECM(ae, ae.getPosition(), waa.getTarget(game).getPosition()))
+                && !waa.isNemesisConfused()) {
             wr = addHeatUseAmmoFor(waa, wr);
         }
 
@@ -6183,6 +6186,7 @@ implements Runnable, ConnectionHandler {
                             && atype.getMunitionType() == AmmoType.M_SWARM_I);
       boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
                                && weapon.curMode().equals("Indirect");
+      boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
       if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
           !game.getOptions().booleanOption("indirect_always_possible") &&
           LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
@@ -7015,7 +7019,9 @@ implements Runnable, ConnectionHandler {
                     hits = 0;
                 }
             }
-            if (( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) || ( wtype.getAmmoType() == AmmoType.T_LRM_STREAK )){
+            if ((( wtype.getAmmoType() == AmmoType.T_SRM_STREAK )
+                    || ( wtype.getAmmoType() == AmmoType.T_LRM_STREAK ))
+                    && !isAngelECMAffected) {
                 //no lock
                 r = new Report(3215);
                 r.subject = subjectId;
@@ -7066,10 +7072,11 @@ implements Runnable, ConnectionHandler {
             // the shot is an automatic failure, or if it's from
             // a Streak rack, then Infernos can't ignite the hex
             // and any building is safe from damage.
-            if ( (usesAmmo && wr.amsShotDownTotal >= maxMissiles) ||
-                 toHit.getValue() == TargetRoll.AUTOMATIC_FAIL ||
-                 wtype.getAmmoType() == AmmoType.T_SRM_STREAK  || 
-                 wtype.getAmmoType() == AmmoType.T_LRM_STREAK) {
+            if ( (usesAmmo && wr.amsShotDownTotal >= maxMissiles)
+                    || toHit.getValue() == TargetRoll.AUTOMATIC_FAIL
+                    || ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK 
+                    || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
+                    && !isAngelECMAffected)) {
                 return !bMissed;
             }
             // If we're using swarm munition, set the number of missiles that
@@ -7261,13 +7268,14 @@ implements Runnable, ConnectionHandler {
        }
         // All shots fired by a Streak SRM weapon, during
         // a Mech Swarm hit, or at an adjacent building.
-        if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ||
-             wtype.getAmmoType() == AmmoType.T_LRM_STREAK ||
-             wtype.getAmmoType() == AmmoType.T_NARC ||
-             ae.getSwarmTargetId() == wr.waa.getTargetId() ||
-             ( ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
-                 target.getTargetType() == Targetable.TYPE_BUILDING ) &&
-               ae.getPosition().distance( target.getPosition() ) <= 1 ) ) {
+        if (((wtype.getAmmoType() == AmmoType.T_SRM_STREAK
+                || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
+                && !isAngelECMAffected)
+                || wtype.getAmmoType() == AmmoType.T_NARC
+                || ae.getSwarmTargetId() == wr.waa.getTargetId()
+                || ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+                || target.getTargetType() == Targetable.TYPE_BUILDING)
+                && ae.getPosition().distance(target.getPosition()) <= 1)) {
             bAllShotsHit = true;
         }
 

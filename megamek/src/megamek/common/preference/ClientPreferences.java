@@ -51,6 +51,7 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
     public static final String DEFAULT_AUTOEJECT_DISABLED = "DefaultAutoejectDisabled";
     public static final String METASERVER_NAME = "MetaServerName";
     public static final String GOAL_PLAYERS = "GoalPlayers";
+    public static final String GUI_NAME = "GUIName";
     
     ClientPreferences(IPreferenceStore store) {
         this.store = store;
@@ -69,6 +70,7 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         //store.setDefault(GAMELOG_MAX_SIZE, 1);
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR,'A');
+        store.setDefault(GUI_NAME,"AWT");
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -245,6 +247,14 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setValue(UNIT_START_CHAR, c);        
     }
 
+    public String getGUIName() {
+        return store.getString(GUI_NAME);
+    }
+
+    public void setGUIName(String guiName) {
+        store.setValue(GUI_NAME, guiName);        
+    }
+    
     protected Locale locale = null;
     
     public void setLocale(String l) {
@@ -295,4 +305,5 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
             }
         }
     }
+
 }

@@ -291,6 +291,7 @@ Inner Sphere Level 3 Tech:
   ImprovedJump Jet
   IS Bloodhound Active Probe
   IS THB Bloodhound Active Probe
+  ISAngelECMSuite
 
 Clan Level 3 Tech:
  Weapons:
@@ -319,5 +320,5 @@ Clan Level 3 Tech:
  Equipment:
   CLLaser Heat Sink
   CLImprovedJump Jet
-
-  
+  CLWatchdogECM
+  CLAngelECMSuite

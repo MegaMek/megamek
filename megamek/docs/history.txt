@@ -21,6 +21,7 @@ v0.31.0 (CVS)
 + Added one-shot Streak LRMs.
 + Patch 1242292 EI implants
 + Added Watchdog Suite
++ RFE 1249703 show searchlight destroyed roll
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

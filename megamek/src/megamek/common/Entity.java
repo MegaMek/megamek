@@ -2042,6 +2042,39 @@ public abstract class Entity
     }
 
     /**
+     * Does the mech have a functioning ECM unit?
+     */
+    public boolean hasActiveAngelECM() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)) {
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+            }
+        }
+        return false;
+    }
+
+    /**
+     * What's the range of the ECM equipment?
+     *
+     * @return  the <code>int</code> range of this unit's ECM.  This value
+     *          will be <code>Entity.NONE</code> if no ECM is active.
+     */
+    public int getAngelECMRange() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType
+                    && type.hasFlag(MiscType.F_ECM)
+                    && !m.isDestroyed() && !m.isMissing()) {
+                return 6;
+            }
+        }
+        return Entity.NONE;
+    }
+
+    /**
      * What's the range of the ECM equipment?  Infantry can have ECM that
      * just covers their own hex.
      *
@@ -2295,8 +2328,10 @@ public abstract class Entity
 
     public Entity getC3Top() {
         Entity m = this;
-        while (m.getC3Master() != null && !m.getC3Master().equals(m) && m.getC3Master().hasC3() &&
-              !(Compute.isAffectedByECM(m, m.getPosition(), m.getC3Master().getPosition()))) {
+        while ((m.getC3Master() != null)
+                && !m.getC3Master().equals(m)
+                && m.getC3Master().hasC3()
+                && !(Compute.isAffectedByECM(m, m.getPosition(), m.getC3Master().getPosition()))) {
             m = m.getC3Master();
         }
         return m;

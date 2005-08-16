@@ -191,6 +191,7 @@ public class WeaponAttackAction
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
         boolean isECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
+        boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
         boolean isHoming = false;
         if (te != null) {
@@ -204,18 +205,18 @@ public class WeaponAttackAction
             }
         }
         int toSubtract = 0;
-        
+
         ToHitData toHit = null;
-    
+
         // make sure weapon can deliver minefield
         if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER &&
             !AmmoType.canDeliverMinefield(atype)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
         }
-        if (target.getTargetType() == Targetable.TYPE_FLARE_DELIVER &&
-            !(usesAmmo &&
-             atype.getAmmoType() == AmmoType.T_LRM && 
-             atype.getMunitionType() == AmmoType.M_FLARE)) {
+        if (target.getTargetType() == Targetable.TYPE_FLARE_DELIVER
+                && !(usesAmmo
+                && atype.getAmmoType() == AmmoType.T_LRM
+                && atype.getMunitionType() == AmmoType.M_FLARE)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver flares");
         }
         if ((game.getPhase() == IGame.PHASE_TARGETING) && !isArtilleryIndirect) {
@@ -618,9 +619,9 @@ public class WeaponAttackAction
                 && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
                 && atype.getMunitionType() == AmmoType.M_LISTEN_KILL
                 && !(te != null && te.isClan())) {
-            toHit.addModifier ( -1, "Listen-Kill ammo");            
+            toHit.addModifier(-1, "Listen-Kill ammo");            
         }
-    
+
         // determine some more variables
         int aElev = ae.getElevation();
         int tElev = target.getElevation();
@@ -666,7 +667,6 @@ public class WeaponAttackAction
               return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
           }
           return toHit;
-    
         }
         if(isArtilleryIndirect) {
             int boardRange=(int)Math.ceil((distance)/17f);
@@ -970,13 +970,14 @@ public class WeaponAttackAction
             toHit.addModifier(-toSubtract, "original target mods");
             toHit.append(Compute.getTargetMovementModifier(game, oldTarget.getId()));
             toHit.append(Compute.getTargetTerrainModifier(game, game.getEntity(oldTarget.getId())));
-            if (!isECMAffected && !oldTarget.isEnemyOf(ae) &&
-                !(oldTarget.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0) &&
-                atype.getMunitionType() == AmmoType.M_SWARM_I) {
-                   toHit.addModifier( +2, "Swarm-I at friendly unit with intact sensors");
+            if (!isECMAffected
+                    && !oldTarget.isEnemyOf(ae)
+                    && !(oldTarget.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
+                    && atype.getMunitionType() == AmmoType.M_SWARM_I) {
+                toHit.addModifier( +2, "Swarm-I at friendly unit with intact sensors");
             }
         }
-    
+
         // okay!
         return toHit;
     }

@@ -30,23 +30,25 @@ import java.util.Enumeration;
  */
 public class MiscType extends EquipmentType {
     // equipment flags (okay, like every type of equipment has its own flag)
-    public static final int     F_HEAT_SINK         = 0x0001;
-    public static final int     F_DOUBLE_HEAT_SINK  = 0x0002;
-    public static final int     F_JUMP_JET          = 0x0004;
-    public static final int     F_CLUB              = 0x0008;
-    public static final int     F_HATCHET           = 0x0010;
-    public static final int     F_TREE_CLUB         = 0x0020;
-    public static final int     F_CASE              = 0x0040;
-    public static final int     F_MASC              = 0x0080;
-    public static final int     F_TSM               = 0x0100;
-    public static final int     F_LASER_HEAT_SINK   = 0x0200;
-    public static final int     F_C3S               = 0x0400;
-    public static final int     F_C3I               = 0x0800;
-    public static final int     F_ARTEMIS           = 0x1000;
-    public static final int     F_ECM               = 0x2000;
-    public static final int     F_TARGCOMP          = 0x4000;
+    public static final int     F_HEAT_SINK         = 0x00000001;
+    public static final int     F_DOUBLE_HEAT_SINK  = 0x00000002;
+    public static final int     F_JUMP_JET          = 0x00000004;
+    public static final int     F_CLUB              = 0x00000008;
+    public static final int     F_HATCHET           = 0x00000010;
+    public static final int     F_TREE_CLUB         = 0x00000020;
+    public static final int     F_CASE              = 0x00000040;
+    public static final int     F_MASC              = 0x00000080;
+    public static final int     F_TSM               = 0x00000100;
+    public static final int     F_LASER_HEAT_SINK   = 0x00000200;
+    public static final int     F_C3S               = 0x00000400;
+    public static final int     F_C3I               = 0x00000800;
+    public static final int     F_ARTEMIS           = 0x00001000;
+    public static final int     F_ECM               = 0x00002000;
+    public static final int     F_TARGCOMP          = 0x00004000;
+    public static final int     F_ANGEL_ECM         = 0x00008000;
     public static final int     F_BAP               = 0x00010000;
     public static final int     F_BOARDING_CLAW     = 0x00040000;
+    public static final int     F_VACUUM_PROTECTION = 0x00020000;
     public static final int     F_ASSAULT_CLAW      = 0x00080000;
     public static final int     F_FIRE_RESISTANT    = 0x00100000;
     public static final int     F_STEALTH           = 0x00200000;
@@ -59,9 +61,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_AP_POD            = 0x10000000;
     public static final int     F_SEARCHLIGHT       = 0x20000000;
     public static final int     F_SWORD             = 0x40000000;
-    public static final int   F_FERRO_FIBROUS_PROTO = 0x80000000;
-    public static final int   F_ENDO_STEEL_PROTO    = 0x8000;
-    public static final int     F_VACUUM_PROTECTION = 0x0200;
+
     public static final int     T_TARGSYS_UNKNOWN           = -1;
     public static final int     T_TARGSYS_STANDARD          = 0;
     public static final int     T_TARGSYS_TARGCOMP          = 1;
@@ -325,6 +325,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createIS2CompactHeatSinks());
         EquipmentType.addType(createCLLaserHeatSink());
         EquipmentType.addType(createISAngelECM());
+        EquipmentType.addType(createISTHBAngelECM());
         EquipmentType.addType(createCLAngelECM());
         EquipmentType.addType(createWatchdogECM());
 
@@ -702,7 +703,27 @@ public class MiscType extends EquipmentType {
         misc.cost = 750000;
         misc.hittable = true;
         misc.spreadable = false;
-        misc.flags |= F_ECM;
+        misc.flags |= F_ECM | F_ANGEL_ECM;
+        misc.bv = 100;
+        
+        return misc;
+    }
+
+    public static MiscType createISTHBAngelECM() {
+        MiscType misc = new MiscType();
+
+        // Don't forget, this will eventually count double for ECCM.
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "THB Angel ECM Suite";
+        misc.setInternalName("ISTHBAngelECMSuite");
+        misc.addLookupName("IS THB Angel ECM Suite");
+        misc.addLookupName("ISTHBAngelECM");
+        misc.tonnage = 1.5f;
+        misc.criticals = 2;
+        misc.cost = 1000000;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
         
         return misc;
@@ -722,7 +743,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 750000;
         misc.hittable = true;
         misc.spreadable = false;
-        misc.flags |= F_ECM;
+        misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
         
         return misc;

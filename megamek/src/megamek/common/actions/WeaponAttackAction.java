@@ -187,6 +187,11 @@ public class WeaponAttackAction
               wtype.hasFlag(WeaponType.F_INFERNO) );
         boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == IGame.PHASE_FIRING;
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == IGame.PHASE_TARGETING || game.getPhase() == IGame.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
+        boolean isArtilleryFLAK = isArtilleryDirect &&
+                                  target.getTargetType() == Targetable.TYPE_ENTITY &&
+                                  te.getMovementMode() == IEntityMovementMode.VTOL &&
+                                  te.getElevation() > 0 &&
+                                  (usesAmmo && atype.getMunitionType() == AmmoType.M_STANDARD);
         boolean isPPCwithoutInhibitor = wtype.getInternalName()==("Particle Cannon") && game.getOptions().booleanOption("maxtech_ppc_inhibitors") && weapon.curMode().equals("Field Inhibitor OFF");
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
@@ -271,26 +276,26 @@ public class WeaponAttackAction
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
             //check artillery is targetted appropriately for its ammo
             long munition = AmmoType.M_STANDARD;
-            if(atype != null) {
+            if (atype != null) {
                 munition = atype.getMunitionType();
             }
             if (munition == AmmoType.M_FASCAM) {
-                if(ttype != Targetable.TYPE_HEX_FASCAM) {
+                if (ttype != Targetable.TYPE_HEX_FASCAM) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "FASCAM ammo must be used with target hex (FASCAM)");
                 }
             } else if (munition == AmmoType.M_INFERNO_IV) {
-                if(ttype != Targetable.TYPE_HEX_INFERNO_IV) {
+                if (ttype != Targetable.TYPE_HEX_INFERNO_IV) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Inferno IV ammo must be used with target hex (Inferno IV)");
                 }
             } else if (munition == AmmoType.M_VIBRABOMB_IV) {
-                if(ttype != Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                if (ttype != Targetable.TYPE_HEX_VIBRABOMB_IV) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Vibrabomb IV ammo must be used with target hex (Vibrabomb IV)");
                 }
             } else if (munition == AmmoType.M_HOMING) {
                 //target type checked later because its different for direct/indirect (BMRr p77 on board arrow IV)
                 isHoming = true;
             } else {
-                if(ttype != Targetable.TYPE_HEX_ARTILLERY) {
+                if (ttype != Targetable.TYPE_HEX_ARTILLERY && !isArtilleryFLAK) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
                 }
             }
@@ -596,7 +601,9 @@ public class WeaponAttackAction
             return new ToHitData( ToHitData.IMPOSSIBLE,
                                   "Must target the Mek being swarmed." );
         }
-        else {
+        else if (isArtilleryFLAK) {
+            toHit = new ToHitData(9, "artillery FLAK");
+        } else {
             toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
         }
     
@@ -634,68 +641,70 @@ public class WeaponAttackAction
         toHit.append(nightModifiers(game, target, atype, ae));
     
         // Handle direct artillery attacks.
-        if(isArtilleryDirect) {
-          toHit.addModifier(5, "direct artillery modifer");
-          toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
-          toHit.append(losMods);
-          toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
-          // actuator & sensor damage to attacker
-          toHit.append(Compute.getDamageWeaponMods(ae, weapon));
-          // heat
-          if (ae.getHeatFiringModifier() != 0) {
-            toHit.addModifier(ae.getHeatFiringModifier(), "heat");
-          }
-          // weapon to-hit modifier
-          if (wtype.getToHitModifier() != 0) {
-            toHit.addModifier(wtype.getToHitModifier(), "weapon to-hit modifier");
-          }
+        if (isArtilleryDirect) {
+            if (!isArtilleryFLAK) {
+                toHit.addModifier(5, "direct artillery modifer");
+            }
+            toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
+            toHit.append(losMods);
+            toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+            // actuator & sensor damage to attacker
+            toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+            // heat
+            if (ae.getHeatFiringModifier() != 0) {
+                toHit.addModifier(ae.getHeatFiringModifier(), "heat");
+            }
+            // weapon to-hit modifier
+            if (wtype.getToHitModifier() != 0) {
+                toHit.addModifier(wtype.getToHitModifier(), "weapon to-hit modifier");
+            }
     
-          // ammo to-hit modifier
-          if (usesAmmo && atype.getToHitModifier() != 0) {
-            toHit.addModifier(atype.getToHitModifier(),
+            // ammo to-hit modifier
+            if (usesAmmo && atype.getToHitModifier() != 0) {
+                 toHit.addModifier(atype.getToHitModifier(),
                               "ammunition to-hit modifier");
-          }
-          if (distance >17) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Direct artillery attack at range >17 hexes.");
-          }
+            }
+            if (distance >17) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Direct artillery attack at range >17 hexes.");
+            }
 
-          if(isHoming) {
-              if(te == null || te.getTaggedBy() == -1) {
-                  // see BMRr p77 on board arrow IV
-                  return new ToHitData(ToHitData.IMPOSSIBLE, "On board homing shot must target a unit tagged this turn");
-              }
-            return new ToHitData(4, "Homing shot");
-          }
+            if (isHoming) {
+                if (te == null || te.getTaggedBy() == -1) {
+                    // see BMRr p77 on board arrow IV
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "On board homing shot must target a unit tagged this turn");
+                }
+                return new ToHitData(4, "Homing shot");
+            }
 
-          if(game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
-              return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
-          }
-          return toHit;
+            if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition()) && !isArtilleryFLAK) {
+                return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
+            }
+            return toHit;
         }
-        if(isArtilleryIndirect) {
+        if (isArtilleryIndirect) {
             int boardRange=(int)Math.ceil((distance)/17f);
-            if(boardRange>wtype.getLongRange()) {
+            if (boardRange>wtype.getLongRange()) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect artillery attack out of range");
             }
-            if(distance<=17  && !(losMods.getValue()==ToHitData.IMPOSSIBLE)) {
+            if (distance<=17  && !(losMods.getValue()==ToHitData.IMPOSSIBLE)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Cannot fire indirectly at range <=17 hexes unless no LOS.");
             }
 
-            if(isHoming) {
+            if (isHoming) {
                 if(ttype != Targetable.TYPE_HEX_ARTILLERY) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Off board homing shot must target a map sheet");
                 }
                 return new ToHitData(4, "Homing shot (will miss if TAG misses)");
             }
 
-            if(game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
+            if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
                 return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
             }
             toHit.addModifier(7, "indirect artillery modifier");
             int adjust = ae.aTracker.getModifier(weapon,target.getPosition());
-            if(adjust==ToHitData.AUTOMATIC_SUCCESS) {
+            if (adjust==ToHitData.AUTOMATIC_SUCCESS) {
                 return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at target that's been hit before.");
-            } else if(adjust!=0) {
+            } else if (adjust!=0) {
                 toHit.addModifier(adjust, "adjusted fire");
             }
             return toHit;

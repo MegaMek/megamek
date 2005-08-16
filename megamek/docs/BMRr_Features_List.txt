@@ -263,7 +263,7 @@ Special Case Rules (Fire)
 
 Special Case Rules (Flak)
 
-- Artillery Flak		No		None
+- Artillery Flak		Yes		None
 - LB-X Cluster Flak		Yes		None
 
 Special Case Rules (Four Legged Battlemechs)

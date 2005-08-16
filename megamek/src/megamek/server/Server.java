@@ -6171,6 +6171,11 @@ implements Runnable, ConnectionHandler {
       boolean bFlechette = (usesAmmo && (atype.getAmmoType() == AmmoType.T_AC)
                             && atype.getMunitionType() == AmmoType.M_FLECHETTE);
       boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
+      boolean bArtilleryFLAK = target.getTargetType() == Targetable.TYPE_ENTITY
+                               && wtype.hasFlag(WeaponType.F_ARTILLERY) 
+                               && (usesAmmo && atype.getMunitionType() == AmmoType.M_STANDARD)
+                               && entityTarget.getMovementMode() == IEntityMovementMode.VTOL
+                               && entityTarget.getElevation() > 0;
       boolean bIncendiary = (usesAmmo && atype.getAmmoType() == AmmoType.T_AC &&
               (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC));
       boolean bTracer = (usesAmmo && atype.getAmmoType() == AmmoType.T_AC &&
@@ -6207,7 +6212,7 @@ implements Runnable, ConnectionHandler {
       }
       final boolean targetInBuilding =
           Compute.isInBuilding(game, entityTarget);
-      if(bArtillery && game.getPhase()==IGame.PHASE_FIRING) { //if direct artillery
+      if ((bArtillery||bArtilleryFLAK) && game.getPhase()==IGame.PHASE_FIRING) { //if direct artillery
           wr.artyAttackerCoords=ae.getPosition();
       }
       if ( (bSwarm || bSwarmI) && entityTarget != null) {
@@ -6492,51 +6497,172 @@ implements Runnable, ConnectionHandler {
               glancingMissileMod = 0;
               glancingCritMod = 0;
           }
-        } else {
-            bGlancing = false;
-            glancingMissileMod = 0;
-            glancingCritMod = 0;
-        }
+      } else {
+          bGlancing = false;
+          glancingMissileMod = 0;
+          glancingCritMod = 0;
+      }
 
-        // special case TAG.  No damage, but target is tagged until end of turn
-        if (wtype.hasFlag(WeaponType.F_TAG)) {
-            if (entityTarget == null) {
-                r = new Report(3187);
-                r.subject = ae.getId();
-                vPhaseReport.addElement(r);
-            } else {
-                int priority = 1;
-                EquipmentMode mode = (weapon.curMode());
-                if(mode != null) {
-                    if(mode.getName() == "1-shot") {
-                        priority=1;
-                    } else if(mode.getName() == "2-shot") {
-                        priority=2;
-                    } else if(mode.getName() == "3-shot") {
-                        priority=3;
-                    } else if(mode.getName() == "4-shot") {
-                        priority=4;
-                    }
-                }
-                if(priority < 1) priority = 1;
-                //add even misses, as they waste homing missiles.
-                //it is possible for 2 or more tags to hit the same entity, 
-                //but this only matters in the offboard phase
-                TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(), priority, bMissed);
-                game.addTagInfo(info);
-                if(!bMissed) {
-                    entityTarget.setTaggedBy(ae.getId());
-                    r = new Report(3188);
-                    r.subject = ae.getId();
-                    vPhaseReport.addElement(r);
-                } else {
-                    r = new Report(3220);
-                    r.subject = ae.getId();
-                    vPhaseReport.addElement(r);
-                }
-            }
-            return !bMissed;
-        }
+      // special case TAG.  No damage, but target is tagged until end of turn
+      if (wtype.hasFlag(WeaponType.F_TAG)) {
+          if (entityTarget == null) {
+              r = new Report(3187);
+              r.subject = ae.getId();
+              vPhaseReport.addElement(r);
+          } else {
+              int priority = 1;
+              EquipmentMode mode = (weapon.curMode());
+              if (mode != null) {
+                  if(mode.getName() == "1-shot") {
+                      priority=1;
+                  } else if(mode.getName() == "2-shot") {
+                      priority=2;
+                  } else if(mode.getName() == "3-shot") {
+                      priority=3;
+                  } else if(mode.getName() == "4-shot") {
+                      priority=4;
+                  }
+              }
+              if (priority < 1) priority = 1;
+              //add even misses, as they waste homing missiles.
+              //it is possible for 2 or more tags to hit the same entity, 
+              //but this only matters in the offboard phase
+              TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(), priority, bMissed);
+              game.addTagInfo(info);
+              if (!bMissed) {
+                  entityTarget.setTaggedBy(ae.getId());
+                  r = new Report(3188);
+                  r.subject = ae.getId();
+                  vPhaseReport.addElement(r);
+              } else {
+                  r = new Report(3220);
+                  r.subject = ae.getId();
+                  vPhaseReport.addElement(r);
+              }
+          }
+          return !bMissed;
+      }
+      // special case Artillery FLAK
+      if (bArtilleryFLAK) {
+          Coords coords = target.getPosition();
+          int targEl = target.getElevation();
+          // absolute height of target, so we can check units in adjacent hexes
+          int absEl = targEl + game.getBoard().getHex(coords).surface();
+          if (!bMissed) {
+              r = new Report(3191);
+              r.subject = subjectId;
+              r.add(coords.getBoardNum());
+              vPhaseReport.addElement(r);
+          } else {
+              coords = Compute.scatter(coords, game.getOptions().booleanOption("margin_scatter_distance")?toHit.getValue()-wr.roll:-1);
+              if (game.getBoard().contains(coords)) {
+                  r = new Report(3192);
+                  r.subject = subjectId;
+                  r.add(coords.getBoardNum());
+                  vPhaseReport.addElement(r);
+              }
+              else {
+                  r = new Report(3193);
+                  r.subject = subjectId;
+                  vPhaseReport.addElement(r);
+                  return !bMissed;
+              }
+          }
+          int nCluster = 5;
+
+          int ratedDamage = wtype.getRackSize();
+
+          for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+              Entity entity = (Entity)impactHexHits.nextElement();
+              hits = ratedDamage;
+
+              while(hits>0) {
+                  if (wr.artyAttackerCoords!=null) {
+                      toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
+                  }
+                  // entites at a different altitude don't get damage
+                  if (entity.getElevation() != targEl) {
+                      r = new Report(3194);
+                      r.subject = entity.getId();
+                      r.addDesc(entity);
+                      vPhaseReport.addElement(r);
+                      continue;
+                  }
+                  HitData hit = entity.rollHitLocation
+                      ( toHit.getHitTable(),
+                        toHit.getSideTable(),
+                        wr.waa.getAimedLocation(),
+                        wr.waa.getAimingMode() );
+
+                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true));
+                  Report.addNewline(vPhaseReport);
+                  hits -= Math.min(nCluster,hits);
+              }
+          }
+
+          for(int dir=0;dir<=5;dir++) {
+              Coords tempcoords=coords.translated(dir);
+              if (!game.getBoard().contains(tempcoords)) {
+                  continue;
+              }
+              if (coords.equals(tempcoords)) {
+                  continue;
+              }
+
+
+              ratedDamage = wtype.getRackSize()/2;
+              bldg = null;
+              bldg = game.getBoard().getBuildingAt(tempcoords);
+              // if building is lower than our flak rounds, don't damage it
+              if (bldg != null && game.getBoard().getHex(tempcoords).ceiling() < absEl) {
+                  bldg = null;
+              }
+              int bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
+              bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+              ratedDamage -= bldgAbsorbs;
+              if ((bldg != null) && (bldgAbsorbs > 0)) {
+                  //building absorbs some of the damage
+                  r = new Report(6425);
+                  r.subject = subjectId;
+                  r.add(bldgAbsorbs);
+                  vPhaseReport.addElement(r);
+                  Report buildingReport = damageBuilding( bldg, ratedDamage );
+                  buildingReport.subject = subjectId;
+                  vPhaseReport.addElement(buildingReport);
+              }
+
+              Enumeration splashHexHits = game.getEntities(tempcoords);
+              if (splashHexHits.hasMoreElements()) {
+                  r = new Report(3210);
+                  r.newlines = 0;
+                  r.subject = subjectId;
+                  r.add(tempcoords.getBoardNum());
+                  r.indent();
+                  vPhaseReport.addElement(r);
+              }
+              for (;splashHexHits.hasMoreElements();) {
+                  Entity entity = (Entity)splashHexHits.nextElement();
+                  hits = ratedDamage;
+                  if ((entity.getElevation() + game.getBoard().getHex(tempcoords).surface()) != absEl) {
+                      r = new Report(3194);
+                      r.subject = entity.getId();
+                      r.addDesc(entity);
+                      vPhaseReport.addElement(r);
+                      continue;
+                  }
+                  while (hits>0) {
+                      HitData hit = entity.rollHitLocation
+                          ( toHit.getHitTable(),
+                            toHit.getSideTable(),
+                            wr.waa.getAimedLocation(),
+                            wr.waa.getAimingMode() );
+                      Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits)));
+                      hits -= Math.min(nCluster,hits);
+                  }
+              }
+          }
+          return !bMissed;
+      } // End artillery FLAK
       // special case BA micro bombs
       if (target.getTargetType() == Targetable.TYPE_HEX_BOMB) {
           Coords coords = target.getPosition();
@@ -6545,8 +6671,7 @@ implements Runnable, ConnectionHandler {
               r.subject = subjectId;
               r.add(coords.getBoardNum());
               vPhaseReport.addElement(r);
-          }
-          else {
+          } else {
               coords = Compute.scatter(coords, 1);
               if (game.getBoard().contains(coords)) {
                   r = new Report(3195);

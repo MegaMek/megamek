@@ -35,6 +35,7 @@ v0.31.0 (CVS)
 + Reverting the wrong fix for the invalid bug 1260935: after MM launcher patch,
    client does not start
 + Patch 1237314: new connection refactoring
++ Rifleman RFL-8D was missing endo steel and 3 tons of armor.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

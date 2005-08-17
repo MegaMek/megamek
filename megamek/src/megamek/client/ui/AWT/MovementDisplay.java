@@ -25,7 +25,6 @@ import megamek.client.event.BoardViewListener;
 import megamek.common.*;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.LayMinefieldAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;

@@ -34,7 +34,7 @@ v0.31.0 (CVS)
    Map generator now generates this, and uses it in the "freeze" special effect
 + Reverting the wrong fix for the invalid bug 1260935: after MM launcher patch,
    client does not start
-
++ Patch 1237314: new connection refactoring
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

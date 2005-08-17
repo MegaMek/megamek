@@ -112,11 +112,11 @@ public class Client {
      */
     public boolean connect() {
         connection = ConnectionFactory.getInstance().createClientConnection(host, port, 1);
-        connected = connection.open();
-        if (connected) {
+        boolean result = connection.open();
+        if (result) {
             connection.addConnectionListener(connectionListener);           
         }
-        return connected;
+        return result;
     }
 
     /**
@@ -711,11 +711,12 @@ public class Client {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * send the message to the server
      */
     protected void send(Packet packet) {
+        
         connection.send(packet);
     }
 

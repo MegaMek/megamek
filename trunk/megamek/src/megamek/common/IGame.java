@@ -24,7 +24,6 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.LayMinefieldAction;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
-import megamek.common.event.GameNewActionEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.TagInfo;
 

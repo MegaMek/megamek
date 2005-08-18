@@ -1,4 +1,4 @@
-/*
+/**
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -13,7 +13,7 @@
  *  for more details.
  */
 
-/*
+/**
  * MiscType.java
  *
  * Created on April 2, 2002, 12:15 PM
@@ -128,7 +128,8 @@ public class MiscType extends EquipmentType {
                 }
             }
         } else if (hasFlag(F_CLUB)
-                && hasSubType(S_HATCHET)) {
+                && (hasSubType(S_HATCHET)
+                || hasSubType(S_MACE_THB))) {
             return (float)Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_SWORD)) {
@@ -203,7 +204,8 @@ public class MiscType extends EquipmentType {
         // check for known formulas
         if (hasFlag(F_CLUB)
                 && (hasSubType(S_HATCHET)
-                || hasSubType(S_SWORD))) {
+                || hasSubType(S_SWORD)
+                || hasSubType(S_MACE_THB))) {
             return (int)Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_MASC)) {
             if (entity.isClan()) {
@@ -264,6 +266,9 @@ public class MiscType extends EquipmentType {
         // check for known formulas
         if (hasFlag(F_CLUB)
                 && hasSubType(S_HATCHET)) {
+            return Math.ceil(entity.getWeight() / 5.0) * 1.5;
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_MACE_THB)) {
             return Math.ceil(entity.getWeight() / 5.0) * 1.5;
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_SWORD)) {
@@ -334,6 +339,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISAPPod());
         EquipmentType.addType(createCLAPPod());
         EquipmentType.addType(createSword());
+        EquipmentType.addType(createTHBMace());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -811,7 +817,24 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    
+
+    public static MiscType createTHBMace() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.name = "Mace (THB)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("THB Mace");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_MACE_THB;
+        misc.bv = BV_VARIABLE;
+        
+        return misc;
+    }
+
     /**
      * Targeting comps should NOT be spreadable.  However, I've set them such
      * as a temp measure to overcome the following bug:

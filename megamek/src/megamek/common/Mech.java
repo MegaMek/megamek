@@ -1868,7 +1868,8 @@ public abstract class Mech
            
             if ((mtype.hasFlag(MiscType.F_CLUB)
                     && (mtype.hasSubType(MiscType.S_HATCHET)
-                    || mtype.hasSubType(MiscType.S_SWORD)))
+                    || mtype.hasSubType(MiscType.S_SWORD)
+                    || mtype.hasSubType(MiscType.S_MACE_THB)))
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_AP_POD) ) {
                 oEquipmentBV += mtype.getBV(this);

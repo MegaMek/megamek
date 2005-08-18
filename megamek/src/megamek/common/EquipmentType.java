@@ -436,7 +436,8 @@ public class EquipmentType {
                 }
                 cost=tCompTons*10000;
             } else if (this.hasFlag(MiscType.F_CLUB)
-                    && ((MiscType)this).hasSubType(MiscType.S_HATCHET)) {
+                    && (((MiscType)this).hasSubType(MiscType.S_HATCHET)
+                    || ((MiscType)this).hasSubType(MiscType.S_MACE_THB))) {
                 int hatchetTons=(int) Math.ceil(entity.getWeight() / 15.0);
                 cost=hatchetTons*5000;
             } else if (this.hasFlag(MiscType.F_CLUB)

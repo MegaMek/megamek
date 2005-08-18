@@ -9428,6 +9428,9 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
+            if (((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_MACE_THB)) {
+                game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
+            }
             return;
         } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
             r = new Report(4080);
@@ -9458,6 +9461,9 @@ public class Server implements Runnable {
             r = new Report(4035);
             r.subject = ae.getId();
             vPhaseReport.addElement(r);
+            if (((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_MACE_THB)) {
+                game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
+            }
 
             // If the target is in a building, the building absorbs the damage.
             if ( targetInBuilding && bldg != null ) {

@@ -275,6 +275,31 @@ public abstract class Connection {
     }
 
     /**
+     * Send packet now; This is the blocking call.
+     */
+    public synchronized void sendNow(Packet packet) {
+        boolean zipped = false;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        OutputStream out;
+        try {
+            if (zipData && packet.getData() != null) {
+                out = new GZIPOutputStream(bos);
+                zipped = true;
+            } else {
+                out = bos;                            
+            }
+            marshaller.marshall(packet, out);
+            out.close();
+            byte[] data = bos.toByteArray();
+            sendNetworkPacket(data, zipped);
+            bytesSent += data.length;
+            debugLastFewCommandsSent.push(packet.getCommand());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
      * Returns <code>true</code> if there are pending packets
      * @return <code>true</code> if there are pending packets
      */
@@ -471,21 +496,7 @@ public abstract class Connection {
             }
 
             protected void processPacket(Packet packet) throws Exception {
-                boolean zipped = false;
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                OutputStream out;
-                if (zipData && packet.getData() != null) {
-                    out = new GZIPOutputStream(bos);
-                    zipped = true;
-                } else {
-                    out = bos;                            
-                }
-                marshaller.marshall(packet, out);
-                out.close();
-                byte[] data = bos.toByteArray();
-                sendNetworkPacket(data, zipped);
-                bytesSent += data.length;
-                debugLastFewCommandsSent.push(packet.getCommand());
+                sendNow(packet);
             }
         };        
         sender = new Thread(senderRunable, "Packet Sender (" + getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$

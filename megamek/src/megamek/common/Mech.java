@@ -1866,10 +1866,11 @@ public abstract class Mech
             if (mounted.isDestroyed())
                 continue;
            
-            if ( mtype.hasFlag(MiscType.F_HATCHET) ||
-                 mtype.hasFlag(MiscType.F_SWORD) ||
-                 mtype.hasFlag(MiscType.F_BAP) ||
-                 mtype.hasFlag(MiscType.F_AP_POD) ) {
+            if ((mtype.hasFlag(MiscType.F_CLUB)
+                    && (mtype.hasSubType(MiscType.S_HATCHET)
+                    || mtype.hasSubType(MiscType.S_SWORD)))
+                    || mtype.hasFlag(MiscType.F_BAP)
+                    || mtype.hasFlag(MiscType.F_AP_POD) ) {
                 oEquipmentBV += mtype.getBV(this);
             }
         }

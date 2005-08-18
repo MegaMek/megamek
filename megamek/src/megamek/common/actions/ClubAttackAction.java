@@ -50,7 +50,8 @@ public class ClubAttackAction extends AbstractAttackAction {
     public static int getDamageFor(Entity entity, Mounted club) {
 
         int nDamage = (int)Math.floor(entity.getWeight() / 5.0);
-        if (club.getType().hasFlag(MiscType.F_SWORD)) {
+        if (club.getType().hasFlag(MiscType.F_CLUB)
+                && ((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
             nDamage = (int)(Math.ceil(entity.getWeight() / 10.0) + 1.0);
         }
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
@@ -136,7 +137,8 @@ public class ClubAttackAction extends AbstractAttackAction {
         final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = target.getElevation() + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
-        final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
+        final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
+                && ((MiscType)club.getType()).hasSubType(MiscType.S_CLUB));
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         Building bldg = null;
         if ( targetInBuilding ) {
@@ -247,7 +249,8 @@ public class ClubAttackAction extends AbstractAttackAction {
             base = ae.getCrew().getPiloting() - 1;
         }
 
-        if (club.getType().hasFlag(MiscType.F_SWORD)) {
+        if (club.getType().hasFlag(MiscType.F_CLUB)
+                && ((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
             base--;
         }
 

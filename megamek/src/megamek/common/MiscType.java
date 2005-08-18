@@ -33,34 +33,39 @@ public class MiscType extends EquipmentType {
     public static final int     F_HEAT_SINK         = 0x00000001;
     public static final int     F_DOUBLE_HEAT_SINK  = 0x00000002;
     public static final int     F_JUMP_JET          = 0x00000004;
-    public static final int     F_CLUB              = 0x00000008;
-    public static final int     F_HATCHET           = 0x00000010;
-    public static final int     F_TREE_CLUB         = 0x00000020;
-    public static final int     F_CASE              = 0x00000040;
-    public static final int     F_MASC              = 0x00000080;
-    public static final int     F_TSM               = 0x00000100;
-    public static final int     F_LASER_HEAT_SINK   = 0x00000200;
-    public static final int     F_C3S               = 0x00000400;
-    public static final int     F_C3I               = 0x00000800;
-    public static final int     F_ARTEMIS           = 0x00001000;
-    public static final int     F_ECM               = 0x00002000;
-    public static final int     F_TARGCOMP          = 0x00004000;
-    public static final int     F_ANGEL_ECM         = 0x00008000;
-    public static final int     F_BAP               = 0x00010000;
-    public static final int     F_BOARDING_CLAW     = 0x00040000;
-    public static final int     F_VACUUM_PROTECTION = 0x00020000;
-    public static final int     F_ASSAULT_CLAW      = 0x00080000;
-    public static final int     F_FIRE_RESISTANT    = 0x00100000;
-    public static final int     F_STEALTH           = 0x00200000;
-    public static final int     F_MINE              = 0x00400000;
-    public static final int     F_MINESWEEPER       = 0x00800000;
-    public static final int     F_MAGNETIC_CLAMP    = 0x01000000;
-    public static final int     F_PARAFOIL          = 0x02000000;
-    public static final int     F_FERRO_FIBROUS     = 0x04000000;
-    public static final int     F_ENDO_STEEL        = 0x08000000;
-    public static final int     F_AP_POD            = 0x10000000;
-    public static final int     F_SEARCHLIGHT       = 0x20000000;
-    public static final int     F_SWORD             = 0x40000000;
+    public static final int     F_CASE              = 0x00000008;
+    public static final int     F_MASC              = 0x00000010;
+    public static final int     F_TSM               = 0x00000020;
+    public static final int     F_LASER_HEAT_SINK   = 0x00000040;
+    public static final int     F_C3S               = 0x00000080;
+    public static final int     F_C3I               = 0x00000100;
+    public static final int     F_ARTEMIS           = 0x00000200;
+    public static final int     F_ECM               = 0x00000400;
+    public static final int     F_TARGCOMP          = 0x00000800;
+    public static final int     F_ANGEL_ECM         = 0x00001000;
+    public static final int     F_BAP               = 0x00002000;
+    public static final int     F_BOARDING_CLAW     = 0x00004000;
+    public static final int     F_VACUUM_PROTECTION = 0x00008000;
+    public static final int     F_ASSAULT_CLAW      = 0x00010000;
+    public static final int     F_FIRE_RESISTANT    = 0x00020000;
+    public static final int     F_STEALTH           = 0x00040000;
+    public static final int     F_MINE              = 0x00080000;
+    public static final int     F_MINESWEEPER       = 0x00100000;
+    public static final int     F_MAGNETIC_CLAMP    = 0x00200000;
+    public static final int     F_PARAFOIL          = 0x00400000;
+    public static final int     F_FERRO_FIBROUS     = 0x00800000;
+    public static final int     F_ENDO_STEEL        = 0x01000000;
+    public static final int     F_AP_POD            = 0x02000000;
+    public static final int     F_SEARCHLIGHT       = 0x04000000;
+    public static final int     F_CLUB              = 0x08000000;
+
+    // Secondary Flags for Physical Weapons
+    public static final int     S_CLUB              = 0x00000001;
+    public static final int     S_TREE_CLUB         = 0x00000002;
+    public static final int     S_HATCHET           = 0x00000004;
+    public static final int     S_SWORD             = 0x00000008;
+    public static final int     S_MACE_THB          = 0x00000010;
+    public static final int     S_CLAW_THB          = 0x00000020;
 
     public static final int     T_TARGSYS_UNKNOWN           = -1;
     public static final int     T_TARGSYS_STANDARD          = 0;
@@ -79,13 +84,25 @@ public class MiscType extends EquipmentType {
                                                     "Anti-Air Targetting System",
                                                     "Multi-Trac Targetting System",
                                                     "Multi-Trac II Targetting System"};
-    
+
+    protected int subType = 0;
+
     /** Creates new MiscType */
     public MiscType() {
-
     }
-    
-    
+
+    public void setSubType(int newFlags) {
+        subType = newFlags;
+    }
+
+    public void addSubType(int newFlag) {
+        subType |= newFlag;
+    }
+
+    public boolean hasSubType(int testFlag) {
+        return (subType & testFlag) != 0;
+    }
+
     public float getTonnage(Entity entity) {
         if (tonnage != TONNAGE_VARIABLE) {
             return tonnage;
@@ -110,9 +127,11 @@ public class MiscType extends EquipmentType {
                     return 2.0f;
                 }
             }
-        } else if (hasFlag(F_HATCHET)) {
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_HATCHET)) {
             return (float)Math.ceil(entity.getWeight() / 15.0);
-        } else if (hasFlag(F_SWORD)) {
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_SWORD)) {
             return (float)(Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
         } else if (hasFlag(F_MASC)) {
             if (entity.isClan()) {
@@ -182,7 +201,9 @@ public class MiscType extends EquipmentType {
             return criticals;
         }
         // check for known formulas
-        if (hasFlag(F_HATCHET) || hasFlag(F_SWORD)) {
+        if (hasFlag(F_CLUB)
+                && (hasSubType(S_HATCHET)
+                || hasSubType(S_SWORD))) {
             return (int)Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_MASC)) {
             if (entity.isClan()) {
@@ -241,9 +262,11 @@ public class MiscType extends EquipmentType {
             return bv;
         }
         // check for known formulas
-        if (hasFlag(F_HATCHET)) {
+        if (hasFlag(F_CLUB)
+                && hasSubType(S_HATCHET)) {
             return Math.ceil(entity.getWeight() / 5.0) * 1.5;
-        } else if (hasFlag(F_SWORD)) {
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_SWORD)) {
             return (Math.ceil(entity.getWeight() / 10.0) + 1.0) * 1.725;
         } else if (hasFlag(F_TARGCOMP)) {
             // 20% of direct_fire weaponry BV (half for rear-facing)
@@ -411,7 +434,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.flags |= F_TREE_CLUB | F_CLUB;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_TREE_CLUB | S_CLUB;
         misc.bv = 0;
         
         return misc;
@@ -425,6 +449,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.flags |= F_CLUB;
+        misc.subType |= S_CLUB;
         misc.bv = 0;
         
         return misc;
@@ -438,6 +463,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.flags |= F_CLUB;
+        misc.subType |= S_CLUB;
         misc.bv = 0;
         
         return misc;
@@ -452,7 +478,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_HATCHET;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_HATCHET;
         misc.bv = BV_VARIABLE;
         
         return misc;
@@ -778,7 +805,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags |= F_SWORD;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_SWORD;
         misc.bv = BV_VARIABLE;
         
         return misc;

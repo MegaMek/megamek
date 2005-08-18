@@ -9531,7 +9531,7 @@ public class Server implements Runnable {
 
         Report.addNewline(vPhaseReport);
 
-        if (caa.getClub().getType().hasFlag(MiscType.F_TREE_CLUB)) {
+        if (((MiscType)caa.getClub().getType()).hasSubType(MiscType.S_TREE_CLUB)) {
             //the club breaks
             r = new Report(4150);
             r.subject = ae.getId();

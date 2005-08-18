@@ -53,6 +53,9 @@ public class ClubAttackAction extends AbstractAttackAction {
         if (club.getType().hasFlag(MiscType.F_CLUB)
                 && ((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
             nDamage = (int)(Math.ceil(entity.getWeight() / 10.0) + 1.0);
+        } else if (club.getType().hasFlag(MiscType.F_CLUB)
+                && ((MiscType)club.getType()).hasSubType(MiscType.S_MACE_THB)) {
+            nDamage *= 2;
         }
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
@@ -251,7 +254,10 @@ public class ClubAttackAction extends AbstractAttackAction {
 
         if (club.getType().hasFlag(MiscType.F_CLUB)
                 && ((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
-            base--;
+            base -= 1;
+        } else if (club.getType().hasFlag(MiscType.F_CLUB)
+                && ((MiscType)club.getType()).hasSubType(MiscType.S_MACE_THB)) {
+            base += 2;
         }
 
         toHit = new ToHitData(base, "base");
@@ -332,6 +338,7 @@ public class ClubAttackAction extends AbstractAttackAction {
         // done!
         return toHit;
     }
+
     public Mounted getClub() {
         return club;
     }

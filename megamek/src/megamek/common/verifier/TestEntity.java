@@ -276,7 +276,8 @@ public abstract class TestEntity implements TestEntityOption
         if (mt.hasFlag(MiscType.F_JUMP_JET)) {
             return mt.getTonnage(getEntity());
         } else if (mt.hasFlag(MiscType.F_CLUB)
-                && mt.hasSubType(MiscType.S_HATCHET)) {
+                && (mt.hasSubType(MiscType.S_HATCHET)
+                || mt.hasSubType(MiscType.S_MACE_THB))) {
             return ceil(getWeight() / 15.0f, getWeightCeilingWeapons());
         } else if (mt.hasFlag(MiscType.F_CLUB)
                 && mt.hasSubType(MiscType.S_SWORD)) {
@@ -485,7 +486,8 @@ public abstract class TestEntity implements TestEntityOption
     public int calcMiscCrits(MiscType mt) {
         if (mt.hasFlag(MiscType.F_CLUB)
                 && (mt.hasSubType(MiscType.S_HATCHET)
-                || mt.hasSubType(MiscType.S_SWORD))) {
+                || mt.hasSubType(MiscType.S_SWORD)
+                || mt.hasSubType(MiscType.S_MACE_THB))) {
             return (int) Math.ceil(getWeight() / 15.0);
         } else if (mt.hasFlag(MiscType.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC"))

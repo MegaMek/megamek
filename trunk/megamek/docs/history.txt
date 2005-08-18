@@ -38,6 +38,7 @@ v0.31.0 (CVS)
 + Rifleman RFL-8D was missing endo steel and 3 tons of armor.
 + Corrected several sheets in unnofficial.zip to fix errors and prepare
     for physical weapon refactor.
++ Refactored physical weapons (hatchets, swords, etc.)
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

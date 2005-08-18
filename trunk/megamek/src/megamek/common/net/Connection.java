@@ -298,7 +298,7 @@ public abstract class Connection {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Returns <code>true</code> if there are pending packets
      * @return <code>true</code> if there are pending packets

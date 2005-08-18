@@ -264,10 +264,9 @@ public abstract class TestEntity implements TestEntityOption
                 getWeightCeilingArmor());
     }
 
-    public float getWeightMiscEquip(MiscType mt)
-    {
-        if (mt.hasFlag(MiscType.F_HEAT_SINK) ||
-                mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
+    public float getWeightMiscEquip(MiscType mt) {
+        if (mt.hasFlag(MiscType.F_HEAT_SINK)
+                || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
             return 0f;
         if (mt.hasFlag(MiscType.F_FERRO_FIBROUS))
             return 0f;
@@ -276,22 +275,21 @@ public abstract class TestEntity implements TestEntityOption
 
         if (mt.hasFlag(MiscType.F_JUMP_JET)) {
             return mt.getTonnage(getEntity());
-        } else if (mt.hasFlag(MiscType.F_HATCHET))
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_HATCHET)) {
             return ceil(getWeight() / 15.0f, getWeightCeilingWeapons());
-        else if (mt.hasFlag(MiscType.F_SWORD))
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_SWORD)) {
             return ceilMaxHalf(getWeight() / 20.0f,
                     getWeightCeilingWeapons());
-        else if (mt.hasFlag(MiscType.F_MASC))
-        {
+        } else if (mt.hasFlag(MiscType.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC"))
                 return Math.round(getWeight() / 20.0f);
             else if (mt.getInternalName().equals("CLMASC"))
                 return Math.round(getWeight() / 25.0f);
-        } else if (mt.hasFlag(MiscType.F_TARGCOMP))
-        {
+        } else if (mt.hasFlag(MiscType.F_TARGCOMP)) {
             float fTons = 0.0f;
-            for (Enumeration i = getEntity().getWeapons(); i.hasMoreElements();)
-            {
+            for (Enumeration i = getEntity().getWeapons(); i.hasMoreElements();) {
                 Mounted mo = (Mounted)i.nextElement();
                 WeaponType wt = (WeaponType)mo.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE))
@@ -308,11 +306,9 @@ public abstract class TestEntity implements TestEntityOption
         return 0f;
     }
 
-    public float getWeightMiscEquip()
-    {
+    public float getWeightMiscEquip() {
         float weightSum = 0.0f;
-        for (Enumeration e = getEntity().getMisc(); e.hasMoreElements(); )
-        {
+        for (Enumeration e = getEntity().getMisc(); e.hasMoreElements();) {
             Mounted m = (Mounted) e.nextElement();
             MiscType mt = (MiscType) m.getType();
             weightSum += getWeightMiscEquip(mt);
@@ -486,12 +482,12 @@ public abstract class TestEntity implements TestEntityOption
         return buff.toString();
     }
 
-    public int calcMiscCrits(MiscType mt)
-    {
-        if (mt.hasFlag(MiscType.F_HATCHET) || mt.hasFlag(MiscType.F_SWORD))
+    public int calcMiscCrits(MiscType mt) {
+        if (mt.hasFlag(MiscType.F_CLUB)
+                && (mt.hasSubType(MiscType.S_HATCHET)
+                || mt.hasSubType(MiscType.S_SWORD))) {
             return (int) Math.ceil(getWeight() / 15.0);
-        else if (mt.hasFlag(MiscType.F_MASC))
-        {
+        } else if (mt.hasFlag(MiscType.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC"))
                 return Math.round(getWeight() / 20.0f);
             else if (mt.getInternalName().equals("CLMASC"))

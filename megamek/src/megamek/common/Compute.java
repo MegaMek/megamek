@@ -2155,9 +2155,7 @@ public class Compute {
     public static Mounted clubMechHas(Entity entity) {
         for (Enumeration i = entity.getMisc(); i.hasMoreElements();) {
             Mounted mounted = (Mounted) i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_CLUB)
-                    || mounted.getType().hasFlag(MiscType.F_HATCHET)
-                    || mounted.getType().hasFlag(MiscType.F_SWORD)) {
+            if (mounted.getType().hasFlag(MiscType.F_CLUB)) {
                 return mounted;
             }
         }

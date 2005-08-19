@@ -236,14 +236,13 @@ public class Tank
         }
     }
     
-    /*
+    /**
      * This is only used for the 'main weapon' vehicle critical result.
      * No standard for 'mainness' is given (although it's also described
      * as the 'largest', so maybe it's tonnage).  I'm going with the highest 
      * BV non-disabled weapon (even if it's out of ammo)
      */
-    public Mounted getMainWeapon()
-    {
+    public Mounted getMainWeapon() {
         double fBestBV = -1;
         Mounted mBest = null;
         for (Enumeration e = getWeapons(); e.hasMoreElements(); ) {

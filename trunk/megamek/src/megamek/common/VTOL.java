@@ -334,7 +334,9 @@ public class VTOL extends Tank {
                 if (bSide) {
                     //TODO:somehow report this to the gamelog
                     Mounted mWeap = getMainWeapon();
-                    mWeap.setHit(true);
+                    if (mWeap != null) {
+                        mWeap.setHit(true);
+                    }
                     return new HitData(nArmorLoc);
                 }
                 else {

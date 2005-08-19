@@ -9431,6 +9431,9 @@ public class Server implements Runnable {
             if (((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_MACE_THB)) {
                 game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
             }
+            if (((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_MACE)) {
+                game.addPSR(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
+            }
             return;
         } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
             r = new Report(4080);
@@ -9463,6 +9466,9 @@ public class Server implements Runnable {
             vPhaseReport.addElement(r);
             if (((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_MACE_THB)) {
                 game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
+            }
+            if (((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_MACE)) {
+                game.addPSR(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
             }
 
             // If the target is in a building, the building absorbs the damage.

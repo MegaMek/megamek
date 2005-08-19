@@ -292,6 +292,9 @@ Inner Sphere Level 3 Tech:
   IS Bloodhound Active Probe
   IS THB Bloodhound Active Probe
   ISAngelECMSuite
+  Mace (THB)
+  Mace
+  Dual Saw
 
 Clan Level 3 Tech:
  Weapons:

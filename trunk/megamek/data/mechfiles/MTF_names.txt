@@ -285,6 +285,9 @@ Inner Sphere Level 3 Tech:
   ISTHBLBXAC2
   ISTHBLBXAC5
   ISTHBLBXAC20
+  Ultra AC/2 (THB)
+  Ultra AC/10 (THB)
+  Ultra AC/20 (THB)
 
   ISLBXAC2 Ammo (THB)
   ISLBXAC5 Ammo (THB)
@@ -292,6 +295,9 @@ Inner Sphere Level 3 Tech:
   ISLBXAC2 CL Ammo (THB)
   ISLBXAC5 CL Ammo (THB)
   ISLBXAC20 CL Ammo (THB)
+  ISUltraAC2 Ammo (THB)
+  ISUltraAC10 Ammo (THB)
+  ISUltraAC20 Ammo (THB)
 
  Equipment:
   Endo-Steel Prototype

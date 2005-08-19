@@ -282,6 +282,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISTHBLBXAC5());
         EquipmentType.addType(createISTHBLBXAC20());
 
+        EquipmentType.addType(createISTHBUltraAC2());
+        EquipmentType.addType(createISTHBUltraAC10());
+        EquipmentType.addType(createISTHBUltraAC20());
+
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
         EquipmentType.addType(createCLERLargeLaser());
@@ -2208,6 +2212,87 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
         weapon.cost = 480000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISTHBUltraAC2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Ultra AC/2 (THB)";
+        weapon.setInternalName("ISUltraAC2 (THB)");
+        weapon.addLookupName("IS Ultra AC/2 (THB)");
+        weapon.heat = 1;
+        weapon.damage = 2;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_AC_ULTRA_THB;
+        weapon.minimumRange = 3;
+        weapon.shortRange = 9;
+        weapon.mediumRange = 20;
+        weapon.longRange = 32;
+        weapon.extremeRange = 40;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 3;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 67;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
+        weapon.cost = 150000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISTHBUltraAC10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Ultra AC/10 (THB)";
+        weapon.setInternalName("ISUltraAC10 (THB)");
+        weapon.addLookupName("IS Ultra AC/10 (THB)");
+        weapon.heat = 4;
+        weapon.damage = 10;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_AC_ULTRA_THB;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 13.0f;
+        weapon.criticals = 7;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 245;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
+        weapon.cost = 400000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISTHBUltraAC20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Ultra AC/20 (THB)";
+        weapon.setInternalName("ISUltraAC20 (THB)");
+        weapon.addLookupName("IS Ultra AC/20 (THB)");
+        weapon.heat = 10;
+        weapon.damage = 20;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_AC_ULTRA_THB;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 15.0f;
+        weapon.criticals = 11;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
+        weapon.bv = 335;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
+        weapon.cost = 600000;
 
         return weapon;
     }

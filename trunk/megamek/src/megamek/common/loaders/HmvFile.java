@@ -684,6 +684,9 @@ public class HmvFile
     isEquipment.put(new Long(0x108), "ISTHBLBXAC2");
     isEquipment.put(new Long(0x109), "ISTHBLBXAC5");
     isEquipment.put(new Long(0x10A), "ISTHBLBXAC20");
+    isEquipment.put(new Long(0x10B), "ISUltraAC2 (THB)");
+    isEquipment.put(new Long(0x10C), "ISUltraAC10 (THB)");
+    isEquipment.put(new Long(0x10D), "ISUltraAC20 (THB)");
     isEquipment.put(new Long(0x11e), "ISTHBBloodhoundActiveProbe");
     isEquipment.put(new Long(0x121), "ISRotaryAC2");
     isEquipment.put(new Long(0x122), "ISRotaryAC5");
@@ -740,6 +743,9 @@ public class HmvFile
     isEquipment.put(new Long(0x298), "ISLBXAC2 Ammo (THB)");
     isEquipment.put(new Long(0x299), "ISLBXAC5 Ammo (THB)");
     isEquipment.put(new Long(0x29A), "ISLBXAC20 Ammo (THB)");
+    isEquipment.put(new Long(0x29B), "IS Ultra AC/2 Ammo (THB)");
+    isEquipment.put(new Long(0x29C), "IS Ultra AC/10 Ammo (THB)");
+    isEquipment.put(new Long(0x29D), "IS Ultra AC/20 Ammo (THB)");
 
     Hashtable isAmmo = new Hashtable();
     AMMO.put(HMVTechType.INNER_SPHERE, isAmmo);

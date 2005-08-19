@@ -841,7 +841,9 @@ public class TestBot extends BotClient {
 
                 // If this is an Ultra or Rotary cannon, check for spin up
                 spinner = (WeaponType) mw.getType();
-                if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA) || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)){
+                if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA)
+                        || (spinner.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                        || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)){
                     spin_mode = Compute.spinUpCannon(game, wep_test);
                     super.sendModeChange(from, weaponID, spin_mode);
                 }
@@ -1261,7 +1263,9 @@ public class TestBot extends BotClient {
 
 // If this is an ultra-cannon or rotary cannon, try to spin it up
 
-                    if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA) || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)){
+                    if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA)
+                            || (spinner.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                            || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)) {
                         spin_mode = Compute.spinUpCannon(game, new_attack);
                         super.sendModeChange(en.getId(), en.getEquipmentNum(a.weapon), spin_mode);
                     }

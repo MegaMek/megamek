@@ -56,7 +56,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_INARC             = 31;
     public static final int     T_LRM_STREAK        = 32;
     public static final int     T_AC_LBX_THB        = 33;
-    public static final int     NUM_TYPES           = 34;
+    public static final int     T_AC_ULTRA_THB      = 34;
+    public static final int     NUM_TYPES           = 35;
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
@@ -279,6 +280,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISUltra5Ammo());
         EquipmentType.addType(createISUltra10Ammo());
         EquipmentType.addType(createISUltra20Ammo());
+        EquipmentType.addType(createISTHBUltra2Ammo());
+        EquipmentType.addType(createISTHBUltra10Ammo());
+        EquipmentType.addType(createISTHBUltra20Ammo());
         EquipmentType.addType(createISRotary2Ammo());
         EquipmentType.addType(createISRotary5Ammo());
         EquipmentType.addType(createISGaussAmmo());
@@ -1624,6 +1628,60 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 32;
         ammo.cost = 20000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISTHBUltra2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Ultra AC/2 Ammo (THB)";
+        ammo.setInternalName("IS Ultra AC/2 Ammo (THB)");
+        ammo.addLookupName("IS Ammo Ultra AC/2 (THB)");
+        ammo.addLookupName("ISUltraAC2 Ammo (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_AC_ULTRA_THB;
+        ammo.shots = 45;
+        ammo.bv = 8;
+        ammo.cost = 2000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISTHBUltra10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Ultra AC/10 Ammo (THB)";
+        ammo.setInternalName("IS Ultra AC/10 Ammo (THB)");
+        ammo.addLookupName("IS Ammo Ultra AC/10 (THB)");
+        ammo.addLookupName("ISUltraAC10 Ammo (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_AC_ULTRA_THB;
+        ammo.shots = 10;
+        ammo.bv = 31;
+        ammo.cost = 15000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISTHBUltra20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Ultra AC/20 Ammo (THB)";
+        ammo.setInternalName("IS Ultra AC/20 Ammo (THB)");
+        ammo.addLookupName("IS Ammo Ultra AC/20 (THB)");
+        ammo.addLookupName("ISUltraAC20 Ammo (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_AC_ULTRA_THB;
+        ammo.shots = 5;
+        ammo.bv = 42;
+        ammo.cost = 30000;
 
         return ammo;
     }

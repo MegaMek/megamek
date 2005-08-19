@@ -64,8 +64,11 @@ public class MiscType extends EquipmentType {
     public static final int     S_TREE_CLUB         = 0x00000002;
     public static final int     S_HATCHET           = 0x00000004;
     public static final int     S_SWORD             = 0x00000008;
-    public static final int     S_MACE_THB          = 0x00000010;
-    public static final int     S_CLAW_THB          = 0x00000020;
+    public static final int     S_MACE_THB          = 0x00000010; // Tac Handbook version
+    public static final int     S_CLAW_THB          = 0x00000020; // Not used yet, but...  Hey, it's all for fun.
+    public static final int     S_MACE              = 0x00000040; // Solaris 7 version
+    public static final int     S_CLAW              = 0x00000080;
+    public static final int     S_DUAL_SAW          = 0x00000100; // Solaris 7
 
     public static final int     T_TARGSYS_UNKNOWN           = -1;
     public static final int     T_TARGSYS_STANDARD          = 0;
@@ -134,6 +137,9 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_SWORD)) {
             return (float)(Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_MACE)) {
+            return (float)(Math.ceil(entity.getWeight() / 10.0));
         } else if (hasFlag(F_MASC)) {
             if (entity.isClan()) {
                 return Math.round(entity.getWeight() / 25.0f);
@@ -207,6 +213,9 @@ public class MiscType extends EquipmentType {
                 || hasSubType(S_SWORD)
                 || hasSubType(S_MACE_THB))) {
             return (int)Math.ceil(entity.getWeight() / 15.0);
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_MACE)) {
+            return (int)Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_MASC)) {
             if (entity.isClan()) {
                 return Math.round(entity.getWeight() / 25.0f);
@@ -215,7 +224,7 @@ public class MiscType extends EquipmentType {
                 return Math.round(entity.getWeight() / 20.0f);
             }
         } else if (hasFlag(F_TARGCOMP)) {
-           // based on tonnage of direct_fire weaponry
+            // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
             for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
                 Mounted m = (Mounted)e.nextElement();
@@ -270,6 +279,9 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_MACE_THB)) {
             return Math.ceil(entity.getWeight() / 5.0) * 1.5;
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_MACE)) {
+            return Math.ceil(entity.getWeight() / 4.0);
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_SWORD)) {
             return (Math.ceil(entity.getWeight() / 10.0) + 1.0) * 1.725;
@@ -340,6 +352,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLAPPod());
         EquipmentType.addType(createSword());
         EquipmentType.addType(createTHBMace());
+        EquipmentType.addType(createMace());
+        EquipmentType.addType(createDualSaw());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -821,7 +835,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createTHBMace() {
         MiscType misc = new MiscType();
         
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         misc.name = "Mace (THB)";
         misc.setInternalName(misc.name);
         misc.addLookupName("THB Mace");
@@ -831,6 +845,38 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_CLUB;
         misc.subType |= S_MACE_THB;
         misc.bv = BV_VARIABLE;
+        
+        return misc;
+    }
+
+    public static MiscType createMace() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Mace";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = 130000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_MACE;
+        misc.bv = BV_VARIABLE;
+        
+        return misc;
+    }
+
+    public static MiscType createDualSaw() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Dual Saw";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 7;
+        misc.criticals = 7;
+        misc.cost = 100000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_DUAL_SAW;
+        misc.bv = 9;
         
         return misc;
     }

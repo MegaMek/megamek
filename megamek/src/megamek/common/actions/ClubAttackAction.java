@@ -48,16 +48,22 @@ public class ClubAttackAction extends AbstractAttackAction {
      * Damage that the specified mech does with a club attack
      */
     public static int getDamageFor(Entity entity, Mounted club) {
-
+        MiscType mType = (MiscType)(club.getType());
         int nDamage = (int)Math.floor(entity.getWeight() / 5.0);
-        if (club.getType().hasFlag(MiscType.F_CLUB)
-                && ((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
+        if (mType.hasSubType(MiscType.S_SWORD)) {
             nDamage = (int)(Math.ceil(entity.getWeight() / 10.0) + 1.0);
-        } else if (club.getType().hasFlag(MiscType.F_CLUB)
-                && ((MiscType)club.getType()).hasSubType(MiscType.S_MACE_THB)) {
+        } else if (mType.hasSubType(MiscType.S_MACE_THB)) {
             nDamage *= 2;
+        } else if (mType.hasSubType(MiscType.S_MACE)) {
+            nDamage = (int)Math.floor(entity.getWeight() / 4.0);
+        } else if (mType.hasSubType(MiscType.S_DUAL_SAW)) {
+            // Saws have constant damage, not variable like must.
+            nDamage =7;
         }
-        if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
+        // TSM doesn't apply to some weapons, including Saws.
+        if (entity.heat >= 9
+                && !(mType.hasSubType(MiscType.S_DUAL_SAW))
+                && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
         }
         int clubLocation = club.getLocation();
@@ -71,7 +77,7 @@ public class ClubAttackAction extends AbstractAttackAction {
 
         return nDamage + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
     }
-    
+
     public ToHitData toHit(IGame game) {
         return toHit(game, getEntityId(),
                 game.getTarget(getTargetType(), getTargetId()), getClub());
@@ -252,12 +258,14 @@ public class ClubAttackAction extends AbstractAttackAction {
             base = ae.getCrew().getPiloting() - 1;
         }
 
-        if (club.getType().hasFlag(MiscType.F_CLUB)
-                && ((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
+        if (((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
             base -= 1;
-        } else if (club.getType().hasFlag(MiscType.F_CLUB)
-                && ((MiscType)club.getType()).hasSubType(MiscType.S_MACE_THB)) {
+        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_MACE_THB)) {
             base += 2;
+        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_MACE)) {
+            base += 2;
+        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_DUAL_SAW)) {
+            base += 1;
         }
 
         toHit = new ToHitData(base, "base");

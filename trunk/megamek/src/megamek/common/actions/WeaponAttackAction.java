@@ -895,7 +895,9 @@ public class WeaponAttackAction
 
         // ammo to-hit modifier
         if (( te != null && te.getMovementMode() == IEntityMovementMode.VTOL)
-                && ((atype != null) && (atype.getAmmoType() == AmmoType.T_AC_LBX)
+                && ((atype != null)
+                && ((atype.getAmmoType() == AmmoType.T_AC_LBX)
+                || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
                 && (atype.getMunitionType() == AmmoType.M_CLUSTER))
                 && (te.getElevation() > game.getBoard().getHex(te.getPosition()).ceiling())) {
             toHit.addModifier(-3, "flak to-hit modifier");
@@ -927,8 +929,9 @@ public class WeaponAttackAction
         } else {
             if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
                (!usesAmmo || 
-                !(atype.getAmmoType() == AmmoType.T_AC_LBX &&
-                  atype.getMunitionType() == AmmoType.M_CLUSTER))) {
+                !(((atype.getAmmoType() == AmmoType.T_AC_LBX)
+                || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
+                && atype.getMunitionType() == AmmoType.M_CLUSTER))) {
                 toHit.addModifier(-1, "targeting computer");
             }
         }

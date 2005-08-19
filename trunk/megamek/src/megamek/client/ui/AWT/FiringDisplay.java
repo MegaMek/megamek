@@ -1541,7 +1541,8 @@ public class FiringDisplay
               case (AmmoType.T_ATM) :
               return false;
             }
-            if ((atype.getAmmoType() == AmmoType.T_AC_LBX)
+            if (((atype.getAmmoType() == AmmoType.T_AC_LBX)
+                    || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
                     && (atype.getMunitionType() == AmmoType.M_CLUSTER))
                 return false;
           }
@@ -1551,7 +1552,8 @@ public class FiringDisplay
             return false;
           }
           if ((atype != null)
-                && (atype.getAmmoType() == AmmoType.T_AC_LBX)
+                && ((atype.getAmmoType() == AmmoType.T_AC_LBX)
+                || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
                 && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
             return false;
           }

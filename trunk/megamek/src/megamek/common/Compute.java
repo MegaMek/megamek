@@ -1412,9 +1412,11 @@ public class Compute {
         if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
             use_table = true;
         }
-        if (wt.getAmmoType() == AmmoType.T_AC_LBX) {
+        if ((wt.getAmmoType() == AmmoType.T_AC_LBX)
+                || (wt.getAmmoType() == AmmoType.T_AC_LBX_THB)) {
             loaded_ammo = (AmmoType) weapon.getLinked().getType();
-            if ((loaded_ammo.getAmmoType() == AmmoType.T_AC_LBX)
+            if (((loaded_ammo.getAmmoType() == AmmoType.T_AC_LBX)
+                    || (loaded_ammo.getAmmoType() == AmmoType.T_AC_LBX_THB))
                     && loaded_ammo.getMunitionType() == AmmoType.M_CLUSTER) {
                 use_table = true;
             }
@@ -1799,7 +1801,8 @@ public class Compute {
                                 // partial cover
                                 // Other ammo that deliver lots of small
                                 // submunitions should be tested for here too
-                                if ((abin_type.getAmmoType() == AmmoType.T_AC_LBX)
+                                if (((abin_type.getAmmoType() == AmmoType.T_AC_LBX)
+                                        || (abin_type.getAmmoType() == AmmoType.T_AC_LBX_THB))
                                         && abin_type.getMunitionType() == AmmoType.M_CLUSTER) {
                                     if (target.getArmorRemainingPercent() <= 0.25) {
                                         ammo_multiple = 1.0 + (wtype

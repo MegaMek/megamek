@@ -27,35 +27,35 @@ public class WeaponType extends EquipmentType {
     public static final int     WEAPON_NA = Integer.MIN_VALUE;
 
     // weapon flags (note: many weapons can be identified by their ammo type)
-    public static final int     F_DIRECT_FIRE   = 0x0001; // marks any weapon affected by a targetting computer
-    public static final int     F_FLAMER        = 0x0002;
-    public static final int     F_LASER         = 0x0004; // for eventual glazed armor purposes
-    public static final int     F_PPC           = 0x0008; //              "
-    public static final int     F_AUTO_TARGET   = 0x0010; // for weapons that target automatically (AMS)
-    public static final int     F_NO_FIRES      = 0x0020; // cannot start fires
-    public static final int     F_PROTOMECH     = 0x0040; //Protomech weapons, which need weird ammo stuff.
-    public static final int     F_SOLO_ATTACK   = 0x0080; // must be only weapon attacking
-    public static final int     F_SPLITABLE     = 0x0100; // Weapons that can be split between locations
-    public static final int     F_MG            = 0x0200; // MG; for rapid fire set up
-    public static final int     F_INFERNO       = 0x0400; // Inferno weapon
-    public static final int     F_INFANTRY      = 0x0800; // small calibre weapon, no ammo, damage based on # men shooting
-    public static final int     F_BATTLEARMOR   = 0x1000; // multiple shots resolved in one to-hit (kinda like RAC, only not)
-    public static final int     F_DOUBLE_HITS   = 0x2000; // two shots hit per one rolled
-    public static final int     F_MISSILE_HITS  = 0x4000; // use missile rules or # of hits
-    public static final int     F_ONESHOT       = 0x8000; //weapon is oneShot.
-    public static final int     F_ARTILLERY     = 0x10000;
-    public static final int     F_BALLISTIC     = 0x20000; // For Gunnery/Ballistic skill
-    public static final int     F_ENERGY        = 0x40000; // For Gunnery/Energy skill
-    public static final int     F_MISSILE       = 0x80000; // For Gunnery/Missile skill
-    public static final int     F_PLASMA        = 0x100000; // For fires
-    public static final int F_INCENDIARY_NEEDLES = 0x200000; // For fires
-    public static final int     F_PROTOTYPE     = 0x400000; // for war of 3039 prototype weapons
-    public static final int     F_HEATASDICE    = 0x00800000; // heat is listed in dice, not points
-    public static final int     F_AMS           = 0x01000000; // Weapon is an anti-missile system.
-    public static final int     F_BOOST_SWARM   = 0x02000000; // boost leg & swarm
-    public static final int     F_INFANTRY_ONLY = 0x04000000; // only target infantry
-    public static final int     F_TAG           = 0x08000000; // Target acquisition gear
-    public static final int     F_C3M           = 0x10000000; // C3 Master with Target acquisition gear
+    public static final int     F_DIRECT_FIRE        = 0x00000001; // marks any weapon affected by a targetting computer
+    public static final int     F_FLAMER             = 0x00000002;
+    public static final int     F_LASER              = 0x00000004; // for eventual glazed armor purposes
+    public static final int     F_PPC                = 0x00000008; //              "
+    public static final int     F_AUTO_TARGET        = 0x00000010; // for weapons that target automatically (AMS)
+    public static final int     F_NO_FIRES           = 0x00000020; // cannot start fires
+    public static final int     F_PROTOMECH          = 0x00000040; //Protomech weapons, which need weird ammo stuff.
+    public static final int     F_SOLO_ATTACK        = 0x00000080; // must be only weapon attacking
+    public static final int     F_SPLITABLE          = 0x00000100; // Weapons that can be split between locations
+    public static final int     F_MG                 = 0x00000200; // MG; for rapid fire set up
+    public static final int     F_INFERNO            = 0x00000400; // Inferno weapon
+    public static final int     F_INFANTRY           = 0x00000800; // small calibre weapon, no ammo, damage based on # men shooting
+    public static final int     F_BATTLEARMOR        = 0x00001000; // multiple shots resolved in one to-hit (kinda like RAC, only not)
+    public static final int     F_DOUBLE_HITS        = 0x00002000; // two shots hit per one rolled
+    public static final int     F_MISSILE_HITS       = 0x00004000; // use missile rules or # of hits
+    public static final int     F_ONESHOT            = 0x00008000; //weapon is oneShot.
+    public static final int     F_ARTILLERY          = 0x00010000;
+    public static final int     F_BALLISTIC          = 0x00020000; // For Gunnery/Ballistic skill
+    public static final int     F_ENERGY             = 0x00040000; // For Gunnery/Energy skill
+    public static final int     F_MISSILE            = 0x00080000; // For Gunnery/Missile skill
+    public static final int     F_PLASMA             = 0x00100000; // For fires
+    public static final int     F_INCENDIARY_NEEDLES = 0x00200000; // For fires
+    public static final int     F_PROTOTYPE          = 0x00400000; // for war of 3039 prototype weapons
+    public static final int     F_HEATASDICE         = 0x00800000; // heat is listed in dice, not points
+    public static final int     F_AMS                = 0x01000000; // Weapon is an anti-missile system.
+    public static final int     F_BOOST_SWARM        = 0x02000000; // boost leg & swarm
+    public static final int     F_INFANTRY_ONLY      = 0x04000000; // only target infantry
+    public static final int     F_TAG                = 0x08000000; // Target acquisition gear
+    public static final int     F_C3M                = 0x10000000; // C3 Master with Target acquisition gear
 
     protected RangeType range;
     protected int   heat;
@@ -272,11 +272,15 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLaserAMS());
         EquipmentType.addType(createISLaserAMSTHB());
         
-        EquipmentType.addType( createISGaussRiflePrototype() );
-        EquipmentType.addType( createISLBXAC10Prototype() );
-        EquipmentType.addType( createISUltraAC5Prototype() );
-        EquipmentType.addType( createISERLargeLaserPrototype() );
-        EquipmentType.addType( createISMediumPulseLaserPrototype() );
+        EquipmentType.addType(createISGaussRiflePrototype());
+        EquipmentType.addType(createISLBXAC10Prototype());
+        EquipmentType.addType(createISUltraAC5Prototype());
+        EquipmentType.addType(createISERLargeLaserPrototype());
+        EquipmentType.addType(createISMediumPulseLaserPrototype());
+
+        EquipmentType.addType(createISTHBLBXAC2());
+        EquipmentType.addType(createISTHBLBXAC5());
+        EquipmentType.addType(createISTHBLBXAC20());
 
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -1946,6 +1950,81 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 237;
         weapon.cost = 600000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISTHBLBXAC2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "LB 2-X AC (THB)";
+        weapon.setInternalName("ISTHBLBXAC2");
+        weapon.addLookupName("IS LB 2-X AC (THB)");
+        weapon.heat = 1;
+        weapon.damage = 2;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_AC_LBX_THB;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 10;
+        weapon.mediumRange = 18;
+        weapon.longRange = 27;
+        weapon.extremeRange = 36;
+        weapon.tonnage = 6.0f;
+        weapon.criticals = 4;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 40;
+        weapon.cost = 200000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISTHBLBXAC5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "LB 5-X AC (THB)";
+        weapon.setInternalName("ISTHBLBXAC5");
+        weapon.addLookupName("IS LB 5-X AC (THB)");
+        weapon.heat = 1;
+        weapon.damage = 5;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_AC_LBX_THB;
+        weapon.minimumRange = 3;
+        weapon.shortRange = 8;
+        weapon.mediumRange = 15;
+        weapon.longRange = 22;
+        weapon.extremeRange = 30;
+        weapon.tonnage = 8.0f;
+        weapon.criticals = 6;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 85;
+        weapon.cost = 300000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISTHBLBXAC20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "LB 20-X AC (THB)";
+        weapon.setInternalName("ISTHBLBXAC20");
+        weapon.addLookupName("IS LB 20-X AC (THB)");
+        weapon.heat = 6;
+        weapon.damage = 20;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_AC_LBX_THB;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 7;
+        weapon.longRange = 12;
+        weapon.extremeRange = 14;
+        weapon.tonnage = 14.0f;
+        weapon.criticals = 10;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
+        weapon.bv = 204;
+        weapon.cost = 700000;
 
         return weapon;
     }

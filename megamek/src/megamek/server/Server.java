@@ -6399,8 +6399,9 @@ public class Server implements Runnable {
           (wtype.hasFlag(WeaponType.F_PROTOTYPE) &&
            wtype.getAmmoType() != AmmoType.T_NA) ) {
           int jamCheck = 0;
-          if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA &&
-               weapon.curMode().equals("Ultra")) ||
+          if ((((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                && weapon.curMode().equals("Ultra")) ||
               wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
               jamCheck = 2;
               if (weapon.curMode().equals("Ultra") &&
@@ -6420,7 +6421,8 @@ public class Server implements Runnable {
           if (jamCheck > 0 && wr.roll <= jamCheck) {
               r = new Report();
               // ultras and prototypes are destroyed by jamming
-              if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+              if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                   r.messageId = 3160;
                   weapon.setJammed(true);
                   weapon.setHit(true);

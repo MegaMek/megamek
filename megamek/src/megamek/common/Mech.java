@@ -1734,7 +1734,8 @@ public abstract class Mech
             }
 
             // double heat for ultras
-            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                 weaponHeat *= 2;
             }
 

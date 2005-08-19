@@ -244,22 +244,19 @@ public abstract class TestEntity implements TestEntityOption
             makeWeightString(getWeightStructure())+"\n";
     }
 
-    public float getWeightStructure()
-    {
+    public float getWeightStructure() {
         return structure.getWeightStructure(getWeight(),
                 getWeightCeilingStructure());
     }
 
-    public String printWeightArmor()
-    {
+    public String printWeightArmor() {
         return StringUtil.makeLength("Armor: "+
                 Integer.toString(getTotalOArmor())+" "+
                 armor.getShortName(), getPrintSize()-5)+
             makeWeightString(getWeightArmor())+"\n";
     }
 
-    public float getWeightArmor()
-    {
+    public float getWeightArmor() {
         return armor.getWeightArmor(getTotalOArmor(),
                 getWeightCeilingArmor());
     }
@@ -282,6 +279,14 @@ public abstract class TestEntity implements TestEntityOption
         } else if (mt.hasFlag(MiscType.F_CLUB)
                 && mt.hasSubType(MiscType.S_SWORD)) {
             return ceilMaxHalf(getWeight() / 20.0f,
+                    getWeightCeilingWeapons());
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_MACE)) {
+            return ceilMaxHalf(getWeight() / 10.0f,
+                    getWeightCeilingWeapons());
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_DUAL_SAW)) {
+            return ceilMaxHalf(7,
                     getWeightCeilingWeapons());
         } else if (mt.hasFlag(MiscType.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC"))
@@ -489,6 +494,12 @@ public abstract class TestEntity implements TestEntityOption
                 || mt.hasSubType(MiscType.S_SWORD)
                 || mt.hasSubType(MiscType.S_MACE_THB))) {
             return (int) Math.ceil(getWeight() / 15.0);
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_MACE)) {
+            return (int) Math.ceil(getWeight() / 10.0);
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_DUAL_SAW)) {
+            return 7;
         } else if (mt.hasFlag(MiscType.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC"))
                 return Math.round(getWeight() / 20.0f);

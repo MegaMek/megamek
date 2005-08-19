@@ -1869,14 +1869,16 @@ public abstract class Mech
             if ((mtype.hasFlag(MiscType.F_CLUB)
                     && (mtype.hasSubType(MiscType.S_HATCHET)
                     || mtype.hasSubType(MiscType.S_SWORD)
-                    || mtype.hasSubType(MiscType.S_MACE_THB)))
+                    || mtype.hasSubType(MiscType.S_MACE_THB)
+                    || mtype.hasSubType(MiscType.S_MACE)
+                    || mtype.hasSubType(MiscType.S_DUAL_SAW)))
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_AP_POD) ) {
                 oEquipmentBV += mtype.getBV(this);
             }
         }
         weaponBV += oEquipmentBV;
-        
+
         // add ammo bv
         double ammoBV = 0;
         for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
@@ -1886,12 +1888,12 @@ public abstract class Mech
             // don't count depleted ammo
             if (mounted.getShotsLeft() == 0)
                 continue;
-            
+
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {
                 continue;
             }
-            
+
             // don't count oneshot ammo, it's considered part of the launcher.
             if (mounted.getLocation() == Entity.LOC_NONE) {
                 // assumption: ammo without a location is for a oneshot weapon

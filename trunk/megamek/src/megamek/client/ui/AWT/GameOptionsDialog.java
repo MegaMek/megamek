@@ -1,5 +1,5 @@
-/*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+/**
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -58,6 +58,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     private Button butSave = new Button(Messages.getString("GameOptionsDialog.Save")); //$NON-NLS-1$
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
+    
+    private Frame currentFrame = new Frame();
 
     /**
      * Initialize this dialog.
@@ -67,6 +69,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
      */
     private void init( Frame frame, GameOptions options ) {
         this.options = options;
+        this.currentFrame = frame;
         
         scrOptions.add(panOptions);
         scrOptions.getVAdjustable().setUnitIncrement(10);
@@ -199,7 +202,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
 
         // Make the width accomadate the longest game option label
         //  without needing to scroll horizontally.
-        setSize(Math.min(client.getSize().width, maxOptionWidth + 30), Math.max(getSize().height, 400));
+        setSize(Math.min(currentFrame.getSize().width, maxOptionWidth + 30), Math.max(getSize().height, 400));
 
         validate();
     }

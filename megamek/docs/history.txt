@@ -48,6 +48,7 @@ v0.31.0 (CVS)
 + Adapted new Java 1.5 code to be 1.4 compliant until final descision is made.
 + Added Tactical Handbook versions of Inner Sphere LB-Xs.
 + Added Tactical Handbook versions of Inner Sphere UACs.
++ Clarified Pain Resistance description.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

@@ -43,6 +43,7 @@ v0.31.0 (CVS)
 + Added Solaris 7 Mace and Dual Saw
 + Bug 1263895: Woods and Smoke (Level 2) cumulative
 + Bug 1263672: NPE when shooting at VTOL that has no undestroyed weapon.
++ Patch 1263668: Patch for GamesOptionsDialog to allow frames.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

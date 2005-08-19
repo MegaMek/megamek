@@ -295,8 +295,9 @@ public class Mounted implements Serializable, RoundUpdated {
         final WeaponType wtype = (WeaponType)this.getType();
         int nShots = 1;
         // figure out # of shots for variable-shot weapons
-        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA
-            && this.curMode().equals("Ultra")) {
+        if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                && this.curMode().equals("Ultra")) {
             nShots = 2;
         }
         else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||

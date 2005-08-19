@@ -1423,6 +1423,7 @@ public class Compute {
         }
 
         if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA)
+                || (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                 || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
             if ((weapon.curMode().getName() == "Ultra")
                     || (weapon.curMode().getName() == "2-shot")
@@ -1465,6 +1466,7 @@ public class Compute {
                 fHits = wt.getRackSize();
             }
             if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA)
+                    || (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                     || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
                 if ((weapon.curMode().getName() == "Ultra")
                         || (weapon.curMode().getName() == "2-shot")) {
@@ -1567,6 +1569,7 @@ public class Compute {
             fDamage *= fHits;
 
             if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA)
+                    || (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                     || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
                 fDamage = fHits * wt.getDamage();
             }
@@ -1989,8 +1992,9 @@ public class Compute {
         weapon = shooter.getEquipment(atk.getWeaponId());
         wtype = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
 
-        if (!((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                .getAmmoType() == AmmoType.T_AC_ROTARY))) {
+        if (!((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                || (wtype.getAmmoType() == AmmoType.T_AC_ROTARY))) {
             return 0;
         }
 
@@ -2014,7 +2018,8 @@ public class Compute {
         // If random roll is >= to-hit + 1, then set double-spin
         if (test >= threshold + 1) {
             final_spin = 1;
-            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                 weapon.setMode("Ultra");
             }
             if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {

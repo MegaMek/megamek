@@ -7678,7 +7678,8 @@ public class Server implements Runnable {
             }
 
         } else if (usesAmmo
-                && (atype.getAmmoType() == AmmoType.T_AC_LBX) 
+                && ((atype.getAmmoType() == AmmoType.T_AC_LBX) 
+                || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
                 && atype.getMunitionType() == AmmoType.M_CLUSTER) {
             // Cluster shots break into single point clusters.
             bSalvo = true;
@@ -7763,7 +7764,9 @@ public class Server implements Runnable {
         // only halve damage for non-missiles and non-cluster,
         // because cluster lbx gets handled above.
         if (bGlancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS)
-                && !(usesAmmo && (atype.getAmmoType() == AmmoType.T_AC_LBX) 
+                && !(usesAmmo
+                && ((atype.getAmmoType() == AmmoType.T_AC_LBX) 
+                || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
                 && atype.getMunitionType() == AmmoType.M_CLUSTER)) {
             nDamPerHit = (int)Math.floor(nDamPerHit/2.0);
         }

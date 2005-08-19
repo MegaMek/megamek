@@ -282,7 +282,17 @@ Inner Sphere Level 3 Tech:
   ISUltraAC5Prototype
   ISLaserAntiMissileSystem
   ISLaserAntiMissileSystemTHB
-  
+  ISTHBLBXAC2
+  ISTHBLBXAC5
+  ISTHBLBXAC20
+
+  ISLBXAC2 Ammo (THB)
+  ISLBXAC5 Ammo (THB)
+  ISLBXAC20 Ammo (THB)
+  ISLBXAC2 CL Ammo (THB)
+  ISLBXAC5 CL Ammo (THB)
+  ISLBXAC20 CL Ammo (THB)
+
  Equipment:
   Endo-Steel Prototype
   Ferro-Fibrous Prototype

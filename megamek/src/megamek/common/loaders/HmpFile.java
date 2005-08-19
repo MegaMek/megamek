@@ -853,8 +853,12 @@ public class HmpFile
     isCriticals.put(new Long(0xF5), "CLHeavyMediumLaser");
     isCriticals.put(new Long(0xF6), "CLHeavySmallLaser");
 
-    isCriticals.put(new Long(0x11d), "ISTHBAngelECMSuite");
-    isCriticals.put(new Long(0x11e), "ISTHBBloodhoundActiveProbe");
+    isCriticals.put(new Long(0x108), "ISTHBLBXAC2");
+    isCriticals.put(new Long(0x109), "ISTHBLBXAC5");
+    isCriticals.put(new Long(0x10A), "ISTHBLBXAC20");
+
+    isCriticals.put(new Long(0x11D), "ISTHBAngelECMSuite");
+    isCriticals.put(new Long(0x11E), "ISTHBBloodhoundActiveProbe");
 
     isCriticals.put(new Long(0x121), "ISRotaryAC2");
     isCriticals.put(new Long(0x122), "ISRotaryAC5");
@@ -864,9 +868,9 @@ public class HmpFile
     isCriticals.put(new Long(0x12A), "ISRocketLauncher15");
     isCriticals.put(new Long(0x12B), "ISRocketLauncher20");
 
-    isCriticals.put(new Long(0x01ce), "ISAC2 Ammo");
-    isCriticals.put(new Long(0x01cf), "ISAC5 Ammo");
-    isCriticals.put(new Long(0x01d0), "ISAC10 Ammo");
+    isCriticals.put(new Long(0x01CE), "ISAC2 Ammo");
+    isCriticals.put(new Long(0x01CF), "ISAC5 Ammo");
+    isCriticals.put(new Long(0x01D0), "ISAC10 Ammo");
     isCriticals.put(new Long(0x01d1), "ISAC20 Ammo");
     isCriticals.put(new Long(0x01d2), "ISAMS Ammo");
 
@@ -953,6 +957,10 @@ public class HmpFile
     isCriticals.put(new Long(0x0272), "CLSRTorpedo2 Ammo");
     isCriticals.put(new Long(0x0273), "CLSRTorpedo4 Ammo");
     isCriticals.put(new Long(0x0274), "CLSRTorpedo6 Ammo");
+
+    isCriticals.put(new Long(0x298), "ISLBXAC2 Ammo (THB)");
+    isCriticals.put(new Long(0x299), "ISLBXAC5 Ammo (THB)");
+    isCriticals.put(new Long(0x29A), "ISLBXAC20 Ammo (THB)");
 
     isCriticals.put(new Long(0x02b1), "ISRotaryAC2 Ammo");
     isCriticals.put(new Long(0x02b2), "ISRotaryAC5 Ammo");

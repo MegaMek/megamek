@@ -55,7 +55,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_ROCKET_LAUNCHER   = 30;
     public static final int     T_INARC             = 31;
     public static final int     T_LRM_STREAK        = 32;
-    public static final int     NUM_TYPES           = 33;
+    public static final int     T_AC_LBX_THB        = 33;
+    public static final int     NUM_TYPES           = 34;
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
@@ -268,6 +269,12 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISLB5XClusterAmmo());
         EquipmentType.addType(createISLB10XClusterAmmo());
         EquipmentType.addType(createISLB20XClusterAmmo());
+        EquipmentType.addType(createISTHBLB2XAmmo());
+        EquipmentType.addType(createISTHBLB5XAmmo());
+        EquipmentType.addType(createISTHBLB20XAmmo());
+        EquipmentType.addType(createISTHBLB2XClusterAmmo());
+        EquipmentType.addType(createISTHBLB5XClusterAmmo());
+        EquipmentType.addType(createISTHBLB20XClusterAmmo());
         EquipmentType.addType(createISUltra2Ammo());
         EquipmentType.addType(createISUltra5Ammo());
         EquipmentType.addType(createISUltra10Ammo());
@@ -1422,6 +1429,129 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 27;
         ammo.cost = 34000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISTHBLB2XAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LB 2-X AC Ammo (THB)";
+        ammo.setInternalName("IS LB 2-X AC Ammo (THB)");
+        ammo.addLookupName("IS Ammo 2-X (THB)");
+        ammo.addLookupName("ISLBXAC2 Ammo (THB)");
+        ammo.addLookupName("IS LB 2-X AC Ammo - Slug (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_AC_LBX_THB;
+        ammo.shots = 40;
+        ammo.bv = 5;
+        ammo.cost = 3000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISTHBLB5XAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LB 5-X AC Ammo (THB)";
+        ammo.setInternalName("IS LB 5-X AC Ammo (THB)");
+        ammo.addLookupName("IS Ammo 5-X (THB)");
+        ammo.addLookupName("ISLBXAC5 Ammo (THB)");
+        ammo.addLookupName("IS LB 5-X AC Ammo - Slug (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_AC_LBX_THB;
+        ammo.shots = 16;
+        ammo.bv = 11;
+        ammo.cost = 15000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISTHBLB20XAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LB 20-X AC Ammo (THB)";
+        ammo.setInternalName("IS LB 20-X AC Ammo (THB)");
+        ammo.addLookupName("IS Ammo 20-X (THB)");
+        ammo.addLookupName("ISLBXAC20 Ammo (THB)");
+        ammo.addLookupName("IS LB 20-X AC Ammo - Slug (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_AC_LBX_THB;
+        ammo.shots = 4;
+        ammo.bv = 26;
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISTHBLB2XClusterAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LB 2-X Cluster Ammo (THB)";
+        ammo.setInternalName("IS LB 2-X Cluster Ammo (THB)");
+        ammo.addLookupName("IS Ammo 2-X (CL) (THB)");
+        // this isn't a true mtf code
+        ammo.addLookupName("ISLBXAC2 CL Ammo (THB)");
+        ammo.addLookupName("IS LB 2-X AC Ammo - Cluster (THB)");
+        ammo.damagePerShot = 1;
+        ammo.toHitModifier = -1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_AC_LBX_THB;
+        ammo.munitionType = M_CLUSTER;
+        ammo.shots = 40;
+        ammo.bv = 5;
+        ammo.cost = 4950;
+
+        return ammo;
+    }
+
+    public static AmmoType createISTHBLB5XClusterAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LB 5-X Cluster Ammo (THB)";
+        ammo.setInternalName("IS LB 5-X Cluster Ammo (THB)");
+        ammo.addLookupName("IS Ammo 5-X (CL) (THB)");
+        // this isn't a true mtf code
+        ammo.addLookupName("ISLBXAC5 CL Ammo (THB)");
+        ammo.addLookupName("IS LB 5-X AC Ammo - Cluster (THB)");
+        ammo.damagePerShot = 1;
+        ammo.toHitModifier = -1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_AC_LBX_THB;
+        ammo.munitionType = M_CLUSTER;
+        ammo.shots = 16;
+        ammo.bv = 11;
+        ammo.cost = 25000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISTHBLB20XClusterAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LB 20-X Cluster Ammo (THB)";
+        ammo.setInternalName("IS LB 20-X Cluster Ammo (THB)");
+        ammo.addLookupName("IS Ammo 20-X (CL) (THB)");
+        // this isn't a true mtf code
+        ammo.addLookupName("ISLBXAC20 CL Ammo (THB)");
+        ammo.addLookupName("IS LB 20-X AC Ammo - Cluster (THB)");
+        ammo.damagePerShot = 1;
+        ammo.toHitModifier = -1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_AC_LBX_THB;
+        ammo.munitionType = M_CLUSTER;
+        ammo.shots = 4;
+        ammo.bv = 26;
+        ammo.cost = 51000;
 
         return ammo;
     }

@@ -88,22 +88,8 @@ public class MiscType extends EquipmentType {
                                                     "Multi-Trac Targetting System",
                                                     "Multi-Trac II Targetting System"};
 
-    protected int subType = 0;
-
     /** Creates new MiscType */
     public MiscType() {
-    }
-
-    public void setSubType(int newFlags) {
-        subType = newFlags;
-    }
-
-    public void addSubType(int newFlag) {
-        subType |= newFlag;
-    }
-
-    public boolean hasSubType(int testFlag) {
-        return (subType & testFlag) != 0;
     }
 
     public float getTonnage(Entity entity) {

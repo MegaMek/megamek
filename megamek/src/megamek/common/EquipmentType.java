@@ -30,7 +30,6 @@ import java.util.*;
  * @version 
  */
 public class EquipmentType {
-    
     public static final float TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
@@ -133,6 +132,8 @@ public class EquipmentType {
     protected int       techLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected int       flags = 0;
+    protected int       subType = 0;
+
 
     protected double     bv = 0; // battle value point system
     protected double    cost = 0; // The C-Bill cost of the item.
@@ -154,6 +155,18 @@ public class EquipmentType {
     /** Creates new EquipmentType */
     public EquipmentType() {
 
+    }
+
+    public void setSubType(int newFlags) {
+        subType = newFlags;
+    }
+
+    public void addSubType(int newFlag) {
+        subType |= newFlag;
+    }
+
+    public boolean hasSubType(int testFlag) {
+        return (subType & testFlag) != 0;
     }
 
     public String getName() {
@@ -436,12 +449,12 @@ public class EquipmentType {
                 }
                 cost=tCompTons*10000;
             } else if (this.hasFlag(MiscType.F_CLUB)
-                    && (((MiscType)this).hasSubType(MiscType.S_HATCHET)
-                    || ((MiscType)this).hasSubType(MiscType.S_MACE_THB))) {
+                    && (this.hasSubType(MiscType.S_HATCHET)
+                    || this.hasSubType(MiscType.S_MACE_THB))) {
                 int hatchetTons=(int) Math.ceil(entity.getWeight() / 15.0);
                 cost=hatchetTons*5000;
             } else if (this.hasFlag(MiscType.F_CLUB)
-                    && ((MiscType)this).hasSubType(MiscType.S_SWORD)) {
+                    && this.hasSubType(MiscType.S_SWORD)) {
                 int swordTons=(int) Math.ceil(entity.getWeight() / 15.0);
                 cost=swordTons*10000;
             }

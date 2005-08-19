@@ -66,7 +66,7 @@ public class MineLayingDialog
                     .append( " " ) //$NON-NLS-1$
                     .append( mount.getName() );
                 chMines.add(message.toString());
-                vMines.addElement(entity.getEquipmentNum(mount));
+                vMines.addElement(new Integer(entity.getEquipmentNum(mount)));
                 
             } // End found-mine
 
@@ -135,7 +135,7 @@ public class MineLayingDialog
      */
     public int getMine() {
         Integer equipnr = (Integer)vMines.elementAt(chMines.getSelectedIndex());
-        Mounted mine = entity.getEquipment(equipnr);
+        Mounted mine = entity.getEquipment(equipnr.intValue());
         return entity.getEquipmentNum(mine);
     }
 }

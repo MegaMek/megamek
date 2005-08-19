@@ -658,8 +658,9 @@ public abstract class Mech
         // 0 means standard
         // 1 means improved
         if (improvedJJ < 0) {
-            for (Object oMount : miscList) {
-                Mounted m = (Mounted)oMount;
+            //            for (Object oMount : miscList) {
+            for (int i = 0; i < miscList.size(); i++) {
+                Mounted m = (Mounted)miscList.elementAt(i);
                 if ((m.getType().hasFlag(MiscType.F_JUMP_JET))
                         && ((getTechLevel() == TechConstants.T_IS_LEVEL_3)
                             || (getTechLevel() == TechConstants.T_CLAN_LEVEL_3))) {

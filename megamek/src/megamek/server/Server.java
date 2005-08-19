@@ -15130,7 +15130,7 @@ public class Server implements Runnable {
         vector.addElement(ea);
         Object[] data = new Object[2];
         data[0] = vector;
-        data[1] = charge;
+        data[1] = new Integer(charge);
         return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
     }
 

@@ -4819,8 +4819,9 @@ public abstract class Entity
     }
     
     public boolean canLayMine() {
-        for (Object oMount: miscList) {
-            Mounted mount = (Mounted)oMount;
+        //        for (Object oMount: miscList) {
+        for (int i = 0; i < miscList.size(); i++) {
+            Mounted mount = (Mounted)miscList.elementAt(i);
             EquipmentType type = mount.getType();
             if (!mount.isMissing() && type.hasFlag(MiscType.F_MINE) &&
                 !isLayingMines()) {

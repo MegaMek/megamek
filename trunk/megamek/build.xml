@@ -66,7 +66,7 @@
   <target name="compile" depends="init" description="Compile java sources into class files">
     <!-- compile -->
     <javac debug="true" debuglevel="lines,source"
-         target="1.5" source="1.5"
+         target="1.4" source="1.4"
          destdir="${builddir}" srcdir="${srcdir}" >
         <classpath>
             <pathelement location="${basedir}"/>
@@ -74,19 +74,6 @@
          </classpath>
     </javac>
 
-    <!-- Ensure that the log directory exists. -->
-    <mkdir dir="${logdir}"/>
-    <touch file="${timestampfile}"/>
-  </target>
-
-  <target name="compile_ms" depends="init" description="Compile java sources into class files using MS Compiler">
-    <echo message="Compiling using Microsoft Java Compiler"/>
-    <javac debug="true" destdir="${builddir}" srcdir="${srcdir}" target="1.5" compiler="microsoft">
-        <classpath>
-            <pathelement location="${basedir}"/>
-            <fileset dir="${libdir}" includes="*.jar"/>
-         </classpath>
-    </javac>
     <!-- Ensure that the log directory exists. -->
     <mkdir dir="${logdir}"/>
     <touch file="${timestampfile}"/>
@@ -189,7 +176,7 @@
     <!-- compile -->
     <echo message="building MegaMek from CVS sources"/>
     <javac debug="true" debuglevel="lines,source"
-         target="1.5" source="1.5"
+         target="1.4" source="1.4"
          destdir="${cvsbuilddir}" srcdir="${srcdir}">
         <classpath> 
            <pathelement location="${cvsmaindir}"/>

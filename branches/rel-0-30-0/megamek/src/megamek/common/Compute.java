@@ -1253,8 +1253,8 @@ public class Compute {
         if (!game.getOptions().booleanOption("maxtech_fire")) { // L2
             if (hex.containsTerrain(Terrains.SMOKE)) {
                 toHit.addModifier(2, "target in smoke");
-            }
-            if (!isVTOL
+            } else {
+                if (!isVTOL
                     && !(t.getTargetType() == Targetable.TYPE_HEX_CLEAR
                             || t.getTargetType() == Targetable.TYPE_HEX_IGNITE
                             || t.getTargetType() == Targetable.TYPE_HEX_BOMB
@@ -1263,10 +1263,11 @@ public class Compute {
                             || t.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV
                             || t.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV || t
                             .getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
-                if (hex.terrainLevel(Terrains.WOODS) == 1) {
-                    toHit.addModifier(1, "target in light woods");
-                } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
-                    toHit.addModifier(2, "target in heavy woods");
+                    if (hex.terrainLevel(Terrains.WOODS) == 1) {
+                        toHit.addModifier(1, "target in light woods");
+                    } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
+                        toHit.addModifier(2, "target in heavy woods");
+                    }                    
                 }
             }
         } else { // L3

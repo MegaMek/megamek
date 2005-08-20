@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.30.1-dev (CVS)
 + Bug 1263672: NPE when shooting at VTOL that has no undestroyed weapon.
++ Bug 1263895: Woods and Smoke (Level 2) cumulative
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

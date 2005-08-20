@@ -49,6 +49,7 @@ v0.31.0 (CVS)
 + Added Tactical Handbook versions of Inner Sphere LB-Xs.
 + Added Tactical Handbook versions of Inner Sphere UACs.
 + Clarified Pain Resistance description.
++ Fixed build.bat.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

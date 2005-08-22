@@ -3435,7 +3435,6 @@ public class Server implements Runnable {
                             break;
                         }
                         int newElevation=(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
-//                        if(newElevation<=game.getBoard().getHex(newPos).ceiling()) {
                         if(newElevation<=0) {                            
                             r = new Report(2105);
                             r.subject = entity.getId();

@@ -199,25 +199,25 @@ public class MechFileParser {
         //Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);//Guilty until proven innocent
         try {
-            if(canonUnitNames==null) {
+            if (canonUnitNames==null) {
                 canonUnitNames=new Vector();
                 //init the list.
                 BufferedReader br = null;
                 try {
                     br = new BufferedReader(new FileReader(OFFICIALUNITS));
+                    String s;
+                    String name;
+                    while ((s = br.readLine()) != null) {
+                        int nIndex1 = s.indexOf('|');
+                        name=s.substring(0, nIndex1);
+                        canonUnitNames.addElement(name);
+                    }
                 } catch (FileNotFoundException e) {
-                }
-                String s;
-                String name;
-                while ((s = br.readLine()) != null) {
-                    int nIndex1 = s.indexOf('|');
-                    name=s.substring(0, nIndex1);
-                    canonUnitNames.addElement(name);
                 }
             }
         } catch (IOException e) {
-            }
-        for(Enumeration i = canonUnitNames.elements(); i.hasMoreElements();) {
+        }
+        for (Enumeration i = canonUnitNames.elements(); i.hasMoreElements();) {
             String s = (String)i.nextElement();
             if(s.equals(ent.getShortNameRaw())) {
                 ent.setCanon(true);

@@ -50,6 +50,7 @@ v0.31.0 (CVS)
 + Added Tactical Handbook versions of Inner Sphere UACs.
 + Clarified Pain Resistance description.
 + Fixed build.bat.
++ Bug 1265984: VTOLs crash into the ground when they shouldn't
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

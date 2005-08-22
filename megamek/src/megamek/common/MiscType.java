@@ -58,17 +58,38 @@ public class MiscType extends EquipmentType {
     public static final int     F_AP_POD            = 0x02000000;
     public static final int     F_SEARCHLIGHT       = 0x04000000;
     public static final int     F_CLUB              = 0x08000000;
+    public static final int     F_HAND_WEAPON       = 0x10000000;
 
     // Secondary Flags for Physical Weapons
-    public static final int     S_CLUB              = 0x00000001;
-    public static final int     S_TREE_CLUB         = 0x00000002;
-    public static final int     S_HATCHET           = 0x00000004;
-    public static final int     S_SWORD             = 0x00000008;
+    public static final int     S_CLUB              = 0x00000001; // BMR
+    public static final int     S_TREE_CLUB         = 0x00000002; // BMR
+    public static final int     S_HATCHET           = 0x00000004; // BMR
+    public static final int     S_SWORD             = 0x00000008; // BMR
     public static final int     S_MACE_THB          = 0x00000010; // Tac Handbook version
     public static final int     S_CLAW_THB          = 0x00000020; // Not used yet, but...  Hey, it's all for fun.
-    public static final int     S_MACE              = 0x00000040; // Solaris 7 version
-    public static final int     S_CLAW              = 0x00000080;
-    public static final int     S_DUAL_SAW          = 0x00000100; // Solaris 7
+    public static final int     S_MACE              = 0x00000040; // Solaris 7
+    public static final int     S_DUAL_SAW          = 0x00000080; // Solaris 7                
+    public static final int     S_FLAIL             = 0x00000100; // Solaris 7; TODO          
+    public static final int     S_PILE_DRIVER       = 0x00000200; // Solaris 7; TODO          
+    public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7; TODO          
+    public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7; TODO          
+    public static final int     S_SHIELD_LARGE      = 0x00001000; // Solaris 7; TODO          
+    public static final int     S_LANCE             = 0x00002000; // Solaris 7; TODO          
+    public static final int     S_VIBRO_SMALL       = 0x00004000; // Solaris 7; TODO          
+    public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7; TODO          
+    public static final int     S_VIBRO_LARGE       = 0x00010000; // Solaris 7; TODO          
+    public static final int     S_WRECKING_BALL     = 0x00020000; // Solaris 7; TODO          
+    public static final int     S_BACKHOE           = 0x00040000; // Miniatures Rulebook; TODO
+    public static final int     S_COMBINE           = 0x00080000; // Miniatures Rulebook; TODO
+    public static final int     S_CHAINSAW          = 0x00100000; // Miniatures Rulebook; TODO
+    public static final int     S_ROCK_CUTTER       = 0x00200000; // Miniatures Rulebook; TODO
+
+    // Secondary damage for hand weapons.
+    // These are differentiated from Physical Weapons using the F_CLUB flag
+    // because the following weapons are treated as a punch attack, while
+    // the above weapons are treated as club or hatchet attacks.
+    public static final int     S_CLAW              = 0x00000001; // Solaris 7; TODO
+    public static final int     S_MINING_DRILL      = 0x00000002; // Miniatures Rulebook; TODO
 
     public static final int     T_TARGSYS_UNKNOWN           = -1;
     public static final int     T_TARGSYS_STANDARD          = 0;

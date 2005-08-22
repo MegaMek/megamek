@@ -52,6 +52,7 @@ v0.31.0 (CVS)
 + Fixed build.bat.
 + Bug 1265984: VTOLs crash into the ground when they shouldn't
 + Bug 1266046: Sideslipping VTOLs change elevation
++ Added flags for more physical weapons for future implementation.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

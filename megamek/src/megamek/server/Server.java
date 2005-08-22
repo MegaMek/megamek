@@ -2607,6 +2607,8 @@ public class Server implements Runnable {
      */
     private void processMovement(Entity entity, MovePath md) {
         Report r;
+        boolean sideslipped = false; // for VTOL sideslipping
+        
         // check for fleeing
         if (md.contains(MovePath.STEP_FLEE)) {
             // Unit has fled the battlefield.
@@ -3403,6 +3405,7 @@ public class Server implements Runnable {
                 if(rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     if(!doSkillCheckWhileMoving(entity,lastPos,curPos,rollTarget, false)) {
                         //report sideslip
+                        sideslipped = true;
                         r = new Report(2100);
                         r.subject = entity.getId();
                         r.addDesc(entity);
@@ -3814,7 +3817,9 @@ public class Server implements Runnable {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        entity.setElevation(curVTOLElevation);
+        if (!sideslipped) {
+            entity.setElevation(curVTOLElevation);
+        }
         
         
 

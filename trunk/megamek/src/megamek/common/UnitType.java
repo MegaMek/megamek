@@ -31,19 +31,22 @@ public class UnitType {
     public static final int SIZE = names.length;
 
     public static String determineUnitType(Entity e) {
+    	return names[determineUnitTypeCode(e)];
+    }
+    public static int determineUnitTypeCode(Entity e) {
         int mm = e.getMovementMode();
         if (e instanceof Infantry) {
-            return names[INFANTRY];
+            return INFANTRY;
         } else if (e instanceof VTOL) {
-            return names[VTOL];
+            return VTOL;
         } else if ((mm == IEntityMovementMode.NAVAL) || (mm == IEntityMovementMode.HYDROFOIL) || (mm == IEntityMovementMode.SUBMARINE)) {
-            return names[NAVAL];
+            return NAVAL;
         } else if (e instanceof Tank) {
-            return names[TANK];
+            return TANK;
         } else if (e instanceof Mech) {
-            return names[MEK];
+            return MEK;
         } else if (e instanceof Protomech) {
-            return names[PROTOMEK];
+            return PROTOMEK;
         } else {
             throw new IllegalArgumentException("Unknown unit type");
         }

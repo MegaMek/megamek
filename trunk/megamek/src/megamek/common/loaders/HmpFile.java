@@ -512,7 +512,7 @@ public class HmpFile
     throws EntityLoadingException {
       // Use pass-by-value in case we need the original criticals
       //  later (getMtf for example).
-      long[] crits = criticals.clone();
+      long[] crits = (long[])criticals.clone();
 
       for (int i = 0; i < mech.getNumberOfCriticals(location); i++) {
      if (mech.getCritical(location, i) == null) {

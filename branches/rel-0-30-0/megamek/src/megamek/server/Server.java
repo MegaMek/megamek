@@ -2598,6 +2598,7 @@ implements Runnable, ConnectionHandler {
      */
     private void processMovement(Entity entity, MovePath md) {
         Report r;
+        boolean sideslipped = false;
         // check for fleeing
         if (md.contains(MovePath.STEP_FLEE)) {
             // Unit has fled the battlefield.
@@ -3387,6 +3388,7 @@ implements Runnable, ConnectionHandler {
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         vPhaseReport.addElement(r);
+                        sideslipped = true;
                         Coords newPos = lastPos.translated((prevFacing));//does this work for opposing hex?
                         // Is the next hex off the board?
                         if ( !game.getBoard().contains(newPos) ) {
@@ -3415,7 +3417,7 @@ implements Runnable, ConnectionHandler {
                             break;
                         }
                         int newElevation=(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
-                        if(newElevation<=game.getBoard().getHex(newPos).ceiling()) {
+                        if(newElevation<=0) {
                             r = new Report(2105);
                             r.subject = entity.getId();
                             r.add(newPos.getBoardNum(), true);
@@ -3794,7 +3796,9 @@ implements Runnable, ConnectionHandler {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        entity.setElevation(curVTOLElevation);
+        if (!sideslipped) {
+            entity.setElevation(curVTOLElevation);
+        }
         
         
 

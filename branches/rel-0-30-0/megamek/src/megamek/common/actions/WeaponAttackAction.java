@@ -480,7 +480,8 @@ public class WeaponAttackAction
         }
         
         // attacker partial cover means no leg weapons
-        if (los.isAttackerCover() && ae.locationIsLeg(weapon.getLocation())) {
+        if (los.isAttackerCover() && ae.locationIsLeg(weapon.getLocation()) &&
+        		ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Nearby terrain blocks leg weapons.");
         }
@@ -793,19 +794,6 @@ public class WeaponAttackAction
                 && (te.height() > 0)) { //target in partial water
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
             losMods = los.losModifiers(game);
-        }
-
-        // check for water surface in the way
-        if (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET
-                && (!targHex.containsTerrain(Terrains.WATER)
-                || targEl > 0
-                || (targEl == 0 && te.height() == 0))) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon is underwater, target is not");
-        }
-        else if (ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET
-                && (targHex.containsTerrain(Terrains.WATER)
-                && targEl < 0)) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "Target is underwater, weapon is not");
         }
 
         // add in LOS mods that we've been keeping

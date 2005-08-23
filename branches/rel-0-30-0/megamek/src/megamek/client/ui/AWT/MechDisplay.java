@@ -826,7 +826,8 @@ class WeaponPanel extends BufferedPanel
         int mediumR  = wtype.getMediumRange();
         int longR    = wtype.getLongRange();
         int extremeR = wtype.getExtremeRange();
-        if ( ILocationExposureStatus.WET == entity.getLocationStatus(mounted.getLocation()) ) {
+        if ( ILocationExposureStatus.WET == entity.getLocationStatus(mounted.getLocation()) 
+        		|| longR == 0) {
             shortR = wtype.getWShortRange();
             mediumR = wtype.getWMediumRange();
             longR = wtype.getWLongRange();

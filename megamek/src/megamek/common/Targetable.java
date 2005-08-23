@@ -34,10 +34,16 @@ public interface Targetable
 
     public int getTargetType();
     public int getTargetId();
+    /** @return the coordinates of the hex containing the target */
     public Coords getPosition();
+    /** @return elevation of the top (e.g. torso) of the target relative to surface */
     public int absHeight();
+    /** @return height of the target in elevation levels */
     public int getHeight();
+    /** @return elevation of the bottom (e.g. legs) of the target relative to surface */
     public int getElevation();
+    /** @return true if the target is immobile (-4 to hit) */
     public boolean isImmobile();
+    /** @return name of the target for ui purposes */
     public String getDisplayName();
 }

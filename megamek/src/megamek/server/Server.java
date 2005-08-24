@@ -3224,7 +3224,7 @@ public class Server implements Runnable {
                                 int toAttacker = ChargeAttackAction.getDamageTakenBy
                                     ( entity, bldg );
                                 HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
-                                                                      Compute.targetSideTable(curPos, nextPos, entity.getFacing(), false)
+                                                                      entity.sideTable(nextPos)
                                                                       );
                                 Server.combineVectors(vPhaseReport,
                                                       damageEntity( entity, hit, toAttacker ));
@@ -6597,7 +6597,7 @@ public class Server implements Runnable {
 
               while(hits>0) {
                   if (wr.artyAttackerCoords!=null) {
-                      toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
+                      toHit.setSideTable(entity.sideTable(wr.artyAttackerCoords));
                   }
                   // entites at a different altitude don't get damage
                   if (entity.getElevation() != targEl) {
@@ -7065,7 +7065,7 @@ public class Server implements Runnable {
 
               while(hits>0) {
                   if (wr.artyAttackerCoords!=null) {
-                      toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
+                      toHit.setSideTable(entity.sideTable(wr.artyAttackerCoords));
                   }
                   if (entity.getMovementMode()==IEntityMovementMode.VTOL) {
                       // VTOLs take no damage from normal artillery unless landed
@@ -7790,9 +7790,7 @@ public class Server implements Runnable {
             nDamPerHit = wtype.getRackSize();
             if (entityTarget!=null && entityTarget.getTaggedBy() != -1) {
                 if(wr.artyAttackerCoords != null) {
-                    toHit.setSideTable(Compute.targetSideTable
-                            (wr.artyAttackerCoords, entityTarget.getPosition(), 
-                             entityTarget.getFacing(), entityTarget instanceof Tank));
+                    toHit.setSideTable(entityTarget.sideTable(wr.artyAttackerCoords));
                 } else {
                     Entity tagger = game.getEntity(entityTarget.getTaggedBy());
                     if(tagger != null) { 
@@ -8521,9 +8519,7 @@ public class Server implements Runnable {
                     }
         
                     if (wr.artyAttackerCoords != null) {
-                        toHit.setSideTable(Compute.targetSideTable
-                                (wr.artyAttackerCoords, entity.getPosition(), 
-                                 entity.getFacing(), entity instanceof Tank));
+                        toHit.setSideTable(entity.sideTable(wr.artyAttackerCoords));
                     } 
                     else if(entityTarget.getTaggedBy() != -1) {
                         Entity tagger = game.getEntity(entityTarget.getTaggedBy());
@@ -9858,7 +9854,7 @@ public class Server implements Runnable {
             // Apply damage to the attacker.
             int toAttacker = ChargeAttackAction.getDamageTakenBy( ae, bldg );
             HitData hit = ae.rollHitLocation( ToHitData.HIT_NORMAL,
-                                              Compute.targetSideTable(target.getPosition(), ae.getPosition(), ae.getFacing(), false)
+                                              ae.sideTable(target.getPosition())
                                                   );
             Server.combineVectors(vPhaseReport,
                                   damageEntity( ae, hit, toAttacker ));

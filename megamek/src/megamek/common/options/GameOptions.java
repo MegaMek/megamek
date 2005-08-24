@@ -101,6 +101,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level3,"maxtech_mulekicks", false); //$NON-NLS-1$
         addOption(level3,"maxtech_partial_cover", false); //$NON-NLS-1$
         addOption(level3,"allow_level_3_targsys", false); //$NON-NLS-1$ 
+        addOption(level3,"quad_hit_location", false); //$NON-NLS-1$
 
         OptionGroup ruleBreakers = addGroup("ruleBreakers"); //$NON-NLS-1$
         addOption(ruleBreakers,"no_tac", false); //$NON-NLS-1$
@@ -134,6 +135,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"all_have_ei_cockpit", false); //$NON-NLS-1$
         addOption(ruleBreakers,"canon_only",false); //$NON-NLS-1$
         addOption(ruleBreakers,"indirect_always_possible",false); //$NON-NLS-1$
+        addOption(ruleBreakers,"quad_hit_location_plus", false); //$NON-NLS-1$
     }
 
     public Vector loadOptions(String password) {

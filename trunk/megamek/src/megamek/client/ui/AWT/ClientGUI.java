@@ -312,6 +312,7 @@ public class ClientGUI
         mechW.addWindowListener(this);
         mechW.addKeyListener(this);
         mechD = new MechDisplay(this);
+        mechD.addMechDisplayListener(bv);
         mechW.add(mechD);
 
         // added by kenn

@@ -20,6 +20,8 @@ import java.util.Vector;
 import java.util.Enumeration;
 
 import megamek.client.Client;
+import megamek.client.event.MechDisplayEvent;
+import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.AWT.widget.*;
 import megamek.common.*;
 
@@ -43,6 +45,7 @@ public class MechDisplay extends BufferedPanel {
     private Client              client;
 
     private Entity              currentlyDisplaying = null;
+    private Vector              eventListeners = new Vector();
 
     /**
      * Creates and lays out a new mech display.
@@ -60,7 +63,7 @@ public class MechDisplay extends BufferedPanel {
         displayP.add("movement", mPan); //$NON-NLS-1$
         aPan = new ArmorPanel();
         displayP.add("armor", aPan); //$NON-NLS-1$
-        wPan = new WeaponPanel(clientgui);
+        wPan = new WeaponPanel(clientgui, this);
         displayP.add("weapons", wPan); //$NON-NLS-1$
         sPan = new SystemPanel(clientgui);
         displayP.add("systems", sPan); //$NON-NLS-1$
@@ -134,7 +137,47 @@ public class MechDisplay extends BufferedPanel {
         }
     }
 
+    /**
+     * Adds the specified mech display listener to receive
+     * events from this view.
+     * 
+     * @see BoardViewListener
+     *
+     * @param listener the listener.
+     */
+    public void addMechDisplayListener(MechDisplayListener listener) {
+        eventListeners.addElement(listener);
+    }
+
+    /**
+     * Removes the specified board listener.
+     *
+     * @param listener the listener.
+     */
+    public void removeMechDisplayListener(MechDisplayListener listener) {
+        eventListeners.removeElement(listener);
+    }
+
+    /**
+     * Notifies attached listeners of the event.
+     *
+     * @param event the mech display event.
+     */
+    public void processMechDisplayEvent(MechDisplayEvent event) {
+        for(int i=0;i<eventListeners.size();i++) {
+            MechDisplayListener lis = (MechDisplayListener)(eventListeners.elementAt(i));
+            switch(event.getType()) {
+                case MechDisplayEvent.WEAPON_SELECTED:
+                    lis.WeaponSelected(event);
+                    break;
+                default:
+                    System.err.println("unknown event "+event.getType()+" in processMechDisplayEvent");
+                    break;
+            }
+        }
+    }
 }
+
 /**
  * The movement panel contains all the buttons, readouts
  * and gizmos relating to moving around on the
@@ -331,13 +374,15 @@ class WeaponPanel extends BufferedPanel
     private Vector vAmmo;
     private Entity entity;
     private ClientGUI client;
+    private MechDisplay owner;
 
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayMediumFontSize")); //$NON-NLS-1$
 
-    public WeaponPanel(ClientGUI client) {
+    public WeaponPanel(ClientGUI client, MechDisplay owner) {
         super(new GridBagLayout());
 
         this.client = client;
+        this.owner = owner;
 
         FontMetrics fm = getFontMetrics(FONT_VALUE);
 
@@ -910,6 +955,9 @@ class WeaponPanel extends BufferedPanel
                 m_chAmmo.select(nCur);
             }
         }
+        
+        //send event to other parts of the UI which care
+        owner.processMechDisplayEvent(new MechDisplayEvent(this, entity, mounted));
     }
 
     private String formatAmmo(Mounted m)

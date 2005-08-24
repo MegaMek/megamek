@@ -24,6 +24,8 @@ import java.util.Enumeration;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.event.MechDisplayEvent;
+import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.AWT.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
@@ -47,7 +49,7 @@ import java.util.Properties;
  */
 public class BoardView1
     extends Canvas
-    implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener
+    implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener, MechDisplayListener
 {
     private static final int        TRANSPARENT = 0xFFFF00FF;
 
@@ -196,6 +198,10 @@ public class BoardView1
     private ClientGUI clientgui; //TODO please eliminate the usage of the clientgui 
     
     private RedrawWorker redrawWorker = new RedrawWorker();
+
+    //selected entity and weapon for artillery display
+    private Entity selectedEntity = null;
+    private Mounted selectedWeapon = null;
 
     /**
      * Construct a new board view for the specified game
@@ -721,93 +727,91 @@ public class BoardView1
     /**
      * returns the weapon selected in the mech display,
      * or null if none selected or it is not artillery
+     * or null if the selected entity is not owned
      **/
     private Mounted getSelectedArtilleryWeapon() {
-        Mounted weapon = null;
-        //TODO please eliminate the usage of the clientgui
-        if (clientgui != null) {
-            Entity e = clientgui.mechD.getCurrentEntity();            
-            if(e != null) {
-                weapon = e.getEquipment(clientgui.mechD.wPan.getSelectedWeaponNum());
-            }
-            if (weapon != null) {
-                if(!(weapon.getType() instanceof WeaponType && weapon.getType().hasFlag(WeaponType.F_ARTILLERY))) {
-                    weapon = null;
-                }
-                //otherwise, a weapon is selected, and it is artillery
-            }
+        if (selectedEntity == null || selectedWeapon == null) {
+            return null;
         }
-        return weapon;
+
+        //TODO please eliminate the usage of the clientgui
+        if (clientgui != null &&
+            !selectedEntity.getOwner().equals(clientgui.getClient().getLocalPlayer())) {
+            return null; // Not my business to see this
+        }
+    
+        if(selectedEntity.getEquipmentNum(selectedWeapon) == -1) {
+            return null; //inconsistent state - weapon not on entity
+        }
+
+        if(!(selectedWeapon.getType() instanceof WeaponType && selectedWeapon.getType().hasFlag(WeaponType.F_ARTILLERY))) {
+            return null; //not artillery
+        }
+
+        //otherwise, a weapon is selected, and it is artillery
+        return selectedWeapon;
     }
     
     /** Display artillery modifier in pretargeted hexes
      */
     private void drawArtilleryHexes() {
-        //TODO please eliminate the usage of the clientgui
-        if (clientgui != null) {
-            Entity e = clientgui.mechD.getCurrentEntity();
-            Mounted weapon = getSelectedArtilleryWeapon();
-            
-            if(game.getArtillerySize()==0 && weapon==null) {
-                return; //nothing to do
-            }
-            
-            if (!e.getOwner().equals(clientgui.getClient().getLocalPlayer())) {
-                return; // Not my business to see this
-            }
-            
-            int drawX = view.x / (int)(HEX_WC*scale) - 1;
-            int drawY = view.y / (int)(HEX_H*scale) - 1;
-    
-            int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
-            int drawHeight = view.height / (int)(HEX_H*scale) + 3;
-    
-            IBoard board = game.getBoard();
-            Image scaledImage;
-    
-            // loop through the hexes
-            for (int i = 0; i < drawHeight; i++) {
-                for (int j = 0; j < drawWidth; j++) {
-                    Coords c = new Coords(j + drawX, i + drawY);
-                    Point p = getHexLocation(c);
-                    p.translate(-(view.x), -(view.y));
-    
-                    if (!board.contains(c)){ continue; }
-    
-                    if(weapon != null) {
-                        //process targetted hexes
-                        int amod = 0;
-                        //Check the predesignated hexes
-                        if(e.getOwner().getArtyAutoHitHexes().contains(c)) {
-                            amod = TargetRoll.AUTOMATIC_SUCCESS;
-                        }
-                        else {
-                            amod = e.aTracker.getModifier(weapon, c);
-                        }
-    
-                        if(amod!=0) {
-    
-                            //draw the crosshairs
-                            if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
-                                //predesignated or already hit
-                                scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT));
-                            } else {
-                                scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED));
-                            }
-    
-                            backGraph.drawImage(scaledImage, p.x, p.y, this);
-                        }
+        Mounted weapon = getSelectedArtilleryWeapon();
+        
+        if(game.getArtillerySize()==0 && weapon==null) {
+            return; //nothing to do
+        }
+        
+        int drawX = view.x / (int)(HEX_WC*scale) - 1;
+        int drawY = view.y / (int)(HEX_H*scale) - 1;
+
+        int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
+        int drawHeight = view.height / (int)(HEX_H*scale) + 3;
+
+        IBoard board = game.getBoard();
+        Image scaledImage;
+
+        // loop through the hexes
+        for (int i = 0; i < drawHeight; i++) {
+            for (int j = 0; j < drawWidth; j++) {
+                Coords c = new Coords(j + drawX, i + drawY);
+                Point p = getHexLocation(c);
+                p.translate(-(view.x), -(view.y));
+
+                if (!board.contains(c)){ continue; }
+
+                if(weapon != null) {
+                    //process targetted hexes
+                    int amod = 0;
+                    //Check the predesignated hexes
+                    if(selectedEntity.getOwner().getArtyAutoHitHexes().contains(c)) {
+                        amod = TargetRoll.AUTOMATIC_SUCCESS;
                     }
-                    //process incoming attacks - requires server to update client's view of game
-                    
-                    for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
-                        ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
-    
-                        if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
-                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING));
-                            backGraph.drawImage(scaledImage, p.x, p.y, this);
-                            break; //do not draw multiple times, tooltop will show all attacks
+                    else {
+                        amod = selectedEntity.aTracker.getModifier(weapon, c);
+                    }
+
+                    if(amod!=0) {
+
+                        //draw the crosshairs
+                        if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
+                            //predesignated or already hit
+                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT));
+                        } else {
+                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED));
                         }
+
+                        backGraph.drawImage(scaledImage, p.x, p.y, this);
+                    }
+                }
+                //process incoming attacks - requires server to update client's view of game
+                
+                for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
+                    ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
+
+                    if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
+                        scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING));
+                        backGraph.drawImage(scaledImage, p.x, p.y, this);
+                        break; //do not draw multiple times, tooltop will show all attacks
                     }
                 }
             }
@@ -1358,8 +1362,8 @@ public class BoardView1
         stringsSize += artilleryAttacks.size();
 
         // Artillery fire adjustment
-        final Mounted selectedWeapon = getSelectedArtilleryWeapon();
-        if(selectedWeapon != null)
+        final Mounted curWeapon = getSelectedArtilleryWeapon();
+        if(curWeapon != null)
             stringsSize++;
 
         // if the size is zip, you must a'quit
@@ -1475,26 +1479,22 @@ public class BoardView1
                     new Object[] { s, new Integer(aaa.turnsTilHit), wr.toHit.getValueAsString() } );
         }
 
-        //TODO please eliminate the usage of the clientgui
-        if (clientgui != null) {
-            //check artillery fire adjustment
-            final Entity selectedEntity = clientgui.mechD.getCurrentEntity();
-            if(selectedWeapon != null && selectedEntity != null) {
-                //process targetted hexes
-                int amod = 0;
-                //Check the predesignated hexes
-                if(selectedEntity.getOwner().getArtyAutoHitHexes().contains(mcoords)) {
-                    amod = TargetRoll.AUTOMATIC_SUCCESS;
-                }
-                else {
-                    amod = selectedEntity.aTracker.getModifier(selectedWeapon, mcoords);
-                }
-                
-                if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
-                    strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAutohit");
-                } else {
-                    strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAdjustment", new Object[] { new Integer(amod) } );
-                }
+        //check artillery fire adjustment
+        if(curWeapon != null && selectedEntity != null) {
+            //process targetted hexes
+            int amod = 0;
+            //Check the predesignated hexes
+            if(selectedEntity.getOwner().getArtyAutoHitHexes().contains(mcoords)) {
+                amod = TargetRoll.AUTOMATIC_SUCCESS;
+            }
+            else {
+                amod = selectedEntity.aTracker.getModifier(curWeapon, mcoords);
+            }
+            
+            if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
+                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAutohit");
+            } else {
+                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAdjustment", new Object[] { new Integer(amod) } );
             }
         }
         return strings;
@@ -4308,4 +4308,14 @@ public class BoardView1
             }
         }
     }
+
+    public synchronized void WeaponSelected(MechDisplayEvent b) {
+        System.err.println("WeaponSelected");
+        selectedEntity = b.getEntity();
+        selectedWeapon = b.getEquip();
+        System.err.println(selectedEntity.getDisplayName());
+        System.err.println(selectedWeapon.getName());
+        repaint(100);
+    }
+
 }

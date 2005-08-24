@@ -74,6 +74,8 @@ public class Client {
 
     // we might want to keep a game log...
     private GameLog log;
+    
+    private boolean disconnectFlag = false;
 
     private Hashtable duplicateNameHash = new Hashtable();
 
@@ -154,12 +156,15 @@ public class Client {
      * The client has become disconnected from the server
      */
     protected void disconnected() {
-        if (connected) {
-            connected = false;
-            die();
-        }
-        if (!host.equals("localhost")) { //$NON-NLS-1$
-            game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
+        if (!disconnectFlag) {
+            disconnectFlag = true;
+            if (connected) {
+                connected = false;
+                die();
+            }
+            if (!host.equals("localhost")) { //$NON-NLS-1$
+                game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
+            }
         }
     }
 

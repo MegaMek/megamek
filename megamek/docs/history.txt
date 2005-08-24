@@ -64,6 +64,7 @@ v0.31.0 (CVS)
 + Bug 1267368: Targetting System Choice Box Enabled in Opponent view
 + Task 117159: Fa-Shih mine-laying, now for Vibrabomb mines, too.
 + removed not-working fix from build.bat
++ Bug 1267328: endless Dialog Boxes when disconnecting Client from a Server
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

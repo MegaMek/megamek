@@ -7321,6 +7321,7 @@ implements Runnable, ConnectionHandler {
             nCluster = 5;
             nDamPerHit = 1;
             hits = platoon.getDamage(platoon.getShootingStrength());
+            sSalvoType = " damage inflicted by the shots that ";
 
             // Handle Inferno SRM infantry.
             if (bInferno) {

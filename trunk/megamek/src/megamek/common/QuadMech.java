@@ -16,6 +16,10 @@
  */
 package megamek.common;
 
+import java.io.PrintWriter;
+
+import megamek.common.preference.PreferenceManager;
+
 public class QuadMech extends Mech
 {
   public static final String[] LOCATION_NAMES = {"Head",
@@ -336,5 +340,257 @@ public class QuadMech extends Mech
         cost *= (1+(weight/100f));
 
         return Math.round(cost);
+    }
+    
+    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
+        int roll = -1;
+        
+        if ((aimedLocation != LOC_NONE) &&
+            (aimingMode == IAimingModes.AIM_MODE_TARG_COMP)) {
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);               
+        }
+        
+        if ((aimedLocation != LOC_NONE) &&
+            (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+            roll = Compute.d6(2);
+            
+            if ((5 < roll) && (roll < 9)) {
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
+            }
+        }
+
+        if(game.getOptions().booleanOption("quad_hit_location")) {
+	        if(table == ToHitData.HIT_NORMAL || table == ToHitData.HIT_PARTIAL_COVER) {
+	            roll = Compute.d6(2);
+	            try {
+	                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+	                if ( pw != null ) {
+	                    pw.print( table );
+	                    pw.print( "\t" );
+	                    pw.print( side );
+	                    pw.print( "\t" );
+	                    pw.println( roll );
+	                }
+	            } catch ( Throwable thrown ) {
+	                thrown.printStackTrace();
+	            }
+	            if(side == ToHitData.SIDE_FRONT) {
+	                // normal front hits
+	                switch( roll ) {
+	                case 2:
+	                    return tac(table, side, Mech.LOC_CT, false);
+	                case 3:
+	                    return new HitData(Mech.LOC_RLEG);
+	                case 4:
+	                case 5:
+	                    return new HitData(Mech.LOC_RARM);
+	                case 6:
+	                    return new HitData(Mech.LOC_RT);
+	                case 7:
+	                    return new HitData(Mech.LOC_CT);
+	                case 8:
+	                    return new HitData(Mech.LOC_LT);
+	                case 9:
+	                case 10:
+	                    return new HitData(Mech.LOC_LARM);
+	                case 11:
+	                    return new HitData(Mech.LOC_LLEG);
+	                case 12:
+	                    return new HitData(Mech.LOC_HEAD);
+	                }
+	            } else if(side==ToHitData.SIDE_REAR) {
+	                switch( roll ) {
+	                case 2:
+	                    return tac(table, side, Mech.LOC_CT, true);
+	                case 3:
+	                    return new HitData(Mech.LOC_RARM, true);
+	                case 4:
+	                case 5:
+	                    return new HitData(Mech.LOC_RLEG, true);
+	                case 6:
+	                    return new HitData(Mech.LOC_RT, true);
+	                case 7:
+	                    return new HitData(Mech.LOC_CT, true);
+	                case 8:
+	                    return new HitData(Mech.LOC_LT, true);
+	                case 9:
+	                case 10:
+	                    return new HitData(Mech.LOC_LLEG, true);
+	                case 11:
+	                    return new HitData(Mech.LOC_LARM, true);
+	                case 12:
+	                    return new HitData(Mech.LOC_HEAD, true);
+	                }
+
+	            }
+	        }
+        }
+        
+        if(game.getOptions().booleanOption("quad_hit_location_plus")) {
+        	if(table == ToHitData.HIT_PUNCH) {
+	            roll = Compute.d6(2);
+	            try {
+	                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+	                if ( pw != null ) {
+	                    pw.print( table );
+	                    pw.print( "\t" );
+	                    pw.print( side );
+	                    pw.print( "\t" );
+	                    pw.println( roll );
+	                }
+	            } catch ( Throwable thrown ) {
+	                thrown.printStackTrace();
+	            }
+        		if(side == ToHitData.SIDE_FRONT) {
+        			switch(roll) {
+        			case 2:
+        			case 3:
+        			case 4:
+        			case 5:
+        				return new HitData(Mech.LOC_LT);
+        			case 6:
+        			case 8:
+        				return new HitData(Mech.LOC_CT);
+        			case 7:
+        				return new HitData(Mech.LOC_HEAD);
+        			case 9:
+        			case 10:
+        			case 11:
+        			case 12:
+        				return new HitData(Mech.LOC_RT);
+        			}
+        		}
+        		else if(side == ToHitData.SIDE_REAR) {
+        			switch(roll) {
+        			case 2:
+        			case 3:
+        			case 4:
+        			case 5:
+        				return new HitData(Mech.LOC_LT, true);
+        			case 6:
+        			case 8:
+        				return new HitData(Mech.LOC_CT, true);
+        			case 7:
+        				return new HitData(Mech.LOC_HEAD, true);
+        			case 9:
+        			case 10:
+        			case 11:
+        			case 12:
+        				return new HitData(Mech.LOC_RT, true);
+        			}
+        		}
+        		else if(side == ToHitData.SIDE_LEFT) {
+        			switch(roll) {
+        			case 2:
+        			case 3:
+        			case 4:
+        			case 5:
+        				return new HitData(Mech.LOC_LT);
+        			case 6:
+        			case 8:
+        				return new HitData(Mech.LOC_CT);
+        			case 7:
+        				return new HitData(Mech.LOC_HEAD);
+        			case 9:
+        			case 10:
+        			case 11:
+        			case 12:
+        				return new HitData(Mech.LOC_LT);
+        			}
+        		}
+        		else if(side == ToHitData.SIDE_RIGHT) {
+        			switch(roll) {
+        			case 2:
+        			case 3:
+        			case 4:
+        			case 5:
+        				return new HitData(Mech.LOC_RT);
+        			case 6:
+        			case 8:
+        				return new HitData(Mech.LOC_CT);
+        			case 7:
+        				return new HitData(Mech.LOC_HEAD);
+        			case 9:
+        			case 10:
+        			case 11:
+        			case 12:
+        				return new HitData(Mech.LOC_RT);
+        			}
+        		}
+        	}
+        	else if(table==ToHitData.HIT_KICK) {
+        		roll = Compute.d6(1);
+	            try {
+	                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+	                if ( pw != null ) {
+	                    pw.print( table );
+	                    pw.print( "\t" );
+	                    pw.print( side );
+	                    pw.print( "\t" );
+	                    pw.println( roll );
+	                }
+	            } catch ( Throwable thrown ) {
+	                thrown.printStackTrace();
+	            }
+	            boolean left = (roll <=3);
+	            if(side == ToHitData.SIDE_FRONT) {
+	            	if(left)
+	            		return new HitData(Mech.LOC_LARM);
+	            	else
+	            		return new HitData(Mech.LOC_RARM);
+	            }
+	            else if(side == ToHitData.SIDE_REAR) {
+	            	if(left)
+	            		return new HitData(Mech.LOC_LLEG);
+	            	else
+	            		return new HitData(Mech.LOC_RLEG);
+	            }
+	            else if(side == ToHitData.SIDE_LEFT) {
+	            	if(left)
+	            		return new HitData(Mech.LOC_LLEG);
+	            	else
+	            		return new HitData(Mech.LOC_LARM);
+	            }
+	            else if(side == ToHitData.SIDE_RIGHT) {
+	            	if(left)
+	            		return new HitData(Mech.LOC_RARM);
+	            	else
+	            		return new HitData(Mech.LOC_RLEG);
+	            }
+        	}
+        
+        }
+        
+        return super.rollHitLocation(table,side,aimedLocation,aimingMode);
+    }
+
+    public boolean removePartialCoverHits(int location, int cover, int side) {
+    	//when using quad hit table, treat front legs like legs not arms.
+    	if(game.getOptions().booleanOption("quad_hit_location")) {
+	        System.out.println("remove PC ("+location+","+cover+")");
+	        //left and right cover are from attacker's POV.
+	        //if hitting front arc, need to swap them
+	        if (side == ToHitData.SIDE_FRONT) {
+	            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LLEG))
+	                return true;
+	            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RLEG))
+	                return true;
+	            if ((cover & LosEffects.COVER_RIGHT) != 0 && location == Mech.LOC_LT)
+	                return true;
+	            if ((cover & LosEffects.COVER_LEFT) != 0 && location == Mech.LOC_RT)
+	                return true;
+	        } else {
+	            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LLEG))
+	                return true;
+	            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RLEG))
+	                return true;
+	            if ((cover & LosEffects.COVER_LEFT) != 0 && location == Mech.LOC_LT)
+	                return true;
+	            if ((cover & LosEffects.COVER_RIGHT) != 0 && location == Mech.LOC_RT)
+	                return true;
+	        }
+	        return false;
+	    }
+    	return super.removePartialCoverHits(location,cover,side);
     }
 }

@@ -73,4 +73,8 @@ public class MinefieldTarget implements Targetable
         int y = id / 100000;
         return new Coords(id - (y * 100000), y);
     }    
+
+    public int sideTable(Coords src) {
+    	return ToHitData.SIDE_FRONT;
+    }
 }

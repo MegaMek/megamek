@@ -223,7 +223,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // determine hit direction
-        toHit.setSideTable(Compute.targetSideTable(src, te.getPosition(), te.getFacing(), te instanceof Tank));
+        toHit.setSideTable(te.sideTable(src));
 
         // all charges resolved against full-body table, except vehicles
         // and charges against mechs in water partial cover

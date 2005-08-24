@@ -2150,12 +2150,12 @@ public class Compute {
     }
 
     public static int targetSideTable(Entity attacker, Targetable target) {
-        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
-            return ToHitData.SIDE_FRONT;
-        }
-        Entity te = (Entity) target;
-        return targetSideTable(attacker.getPosition(), te.getPosition(), te
-                .getFacing(), te instanceof Tank);
+        return target.sideTable(attacker.getPosition());
+    }
+
+    public static int targetSideTable(Coords src, Targetable target) {
+
+        return target.sideTable(src);
     }
 
     /**

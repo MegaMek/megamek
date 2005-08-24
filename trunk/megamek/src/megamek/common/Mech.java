@@ -1095,30 +1095,56 @@ public abstract class Mech
             }
             if(side == ToHitData.SIDE_FRONT) {
                 // normal front hits
-                switch( roll ) {
-                case 2:
-                    return tac(table, side, Mech.LOC_CT, false);
-                case 3:
-                case 4:
-                    return new HitData(Mech.LOC_RARM);
-                case 5:
-                    return new HitData(Mech.LOC_RLEG);
-                case 6:
-                    return new HitData(Mech.LOC_RT);
-                case 7:
-                    return new HitData(Mech.LOC_CT);
-                case 8:
-                    return new HitData(Mech.LOC_LT);
-                case 9:
-                    return new HitData(Mech.LOC_LLEG);
-                case 10:
-                case 11:
-                    return new HitData(Mech.LOC_LARM);
-                case 12:
-                    return new HitData(Mech.LOC_HEAD);
+            	if(game.getOptions().booleanOption("quad_hit_location")
+            			&& isProne()) {
+	                switch( roll ) {
+	                case 2:
+	                    return tac(table, side, Mech.LOC_CT, false);
+	                case 3:
+	                    return new HitData(Mech.LOC_RLEG);
+	                case 4:
+	                case 5:
+	                    return new HitData(Mech.LOC_RARM);
+	                case 6:
+	                    return new HitData(Mech.LOC_RT);
+	                case 7:
+	                    return new HitData(Mech.LOC_CT);
+	                case 8:
+	                    return new HitData(Mech.LOC_LT);
+	                case 9:
+	                case 10:
+	                    return new HitData(Mech.LOC_LARM);
+	                case 11:
+	                    return new HitData(Mech.LOC_LLEG);
+	                case 12:
+	                    return new HitData(Mech.LOC_HEAD);
+	                }
+            	} else {
+	                switch( roll ) {
+	                case 2:
+	                    return tac(table, side, Mech.LOC_CT, false);
+	                case 3:
+	                case 4:
+	                    return new HitData(Mech.LOC_RARM);
+	                case 5:
+	                    return new HitData(Mech.LOC_RLEG);
+	                case 6:
+	                    return new HitData(Mech.LOC_RT);
+	                case 7:
+	                    return new HitData(Mech.LOC_CT);
+	                case 8:
+	                    return new HitData(Mech.LOC_LT);
+	                case 9:
+	                    return new HitData(Mech.LOC_LLEG);
+	                case 10:
+	                case 11:
+	                    return new HitData(Mech.LOC_LARM);
+	                case 12:
+	                    return new HitData(Mech.LOC_HEAD);
+	                }
                 }
             }
-            if(side == ToHitData.SIDE_LEFT) {
+            else if(side == ToHitData.SIDE_LEFT) {
                 // normal left side hits
                 switch( roll ) {
                 case 2:
@@ -1144,7 +1170,7 @@ public abstract class Mech
                     return new HitData(Mech.LOC_HEAD);
                 }
             }
-            if(side == ToHitData.SIDE_RIGHT) {
+            else if(side == ToHitData.SIDE_RIGHT) {
                 // normal right side hits
                 switch( roll ) {
                 case 2:
@@ -1170,30 +1196,56 @@ public abstract class Mech
                     return new HitData(Mech.LOC_HEAD);
                 }
             }
-            if(side == ToHitData.SIDE_REAR) {
+            else if(side == ToHitData.SIDE_REAR) {
                 // normal rear hits
-                switch( roll ) {
-                case 2:
-                    return tac(table, side, Mech.LOC_CT, true);
-                case 3:
-                case 4:
-                    return new HitData(Mech.LOC_RARM, true);
-                case 5:
-                    return new HitData(Mech.LOC_RLEG, true);
-                case 6:
-                    return new HitData(Mech.LOC_RT, true);
-                case 7:
-                    return new HitData(Mech.LOC_CT, true);
-                case 8:
-                    return new HitData(Mech.LOC_LT, true);
-                case 9:
-                    return new HitData(Mech.LOC_LLEG, true);
-                case 10:
-                case 11:
-                    return new HitData(Mech.LOC_LARM, true);
-                case 12:
-                    return new HitData(Mech.LOC_HEAD, true);
-                }
+            	if(game.getOptions().booleanOption("quad_hit_location")
+            			&& isProne()) {
+	                switch( roll ) {
+	                case 2:
+	                    return tac(table, side, Mech.LOC_CT, true);
+	                case 3:
+	                    return new HitData(Mech.LOC_RARM, true);
+	                case 4:
+	                case 5:
+	                    return new HitData(Mech.LOC_RLEG, true);
+	                case 6:
+	                    return new HitData(Mech.LOC_RT, true);
+	                case 7:
+	                    return new HitData(Mech.LOC_CT, true);
+	                case 8:
+	                    return new HitData(Mech.LOC_LT, true);
+	                case 9:
+	                case 10:
+	                    return new HitData(Mech.LOC_LLEG, true);
+	                case 11:
+	                    return new HitData(Mech.LOC_LARM, true);
+	                case 12:
+	                    return new HitData(Mech.LOC_HEAD, true);
+	                }
+            	} else {
+	                switch( roll ) {
+	                case 2:
+	                    return tac(table, side, Mech.LOC_CT, true);
+	                case 3:
+	                case 4:
+	                    return new HitData(Mech.LOC_RARM, true);
+	                case 5:
+	                    return new HitData(Mech.LOC_RLEG, true);
+	                case 6:
+	                    return new HitData(Mech.LOC_RT, true);
+	                case 7:
+	                    return new HitData(Mech.LOC_CT, true);
+	                case 8:
+	                    return new HitData(Mech.LOC_LT, true);
+	                case 9:
+	                    return new HitData(Mech.LOC_LLEG, true);
+	                case 10:
+	                case 11:
+	                    return new HitData(Mech.LOC_LARM, true);
+	                case 12:
+	                    return new HitData(Mech.LOC_HEAD, true);
+	                }
+            	}
             }
         }
         if(table == ToHitData.HIT_PUNCH) {
@@ -1444,7 +1496,7 @@ public abstract class Mech
      * either returns no critical hit, rolls a floating crit, or returns a TAC 
      * in the specified location.
      */
-    private HitData tac(int table, int side, int location, boolean rear) {
+    protected HitData tac(int table, int side, int location, boolean rear) {
         if (game.getOptions().booleanOption("no_tac")) {
             return new HitData(location, rear);
         } else if (game.getOptions().booleanOption("floating_crits")) {

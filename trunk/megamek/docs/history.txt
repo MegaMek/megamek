@@ -57,6 +57,7 @@ v0.31.0 (CVS)
 + Bug 1262741: Torpedoes and the surface navy
 + Bug 1244125: non-fatal exception in WeaponPanel.getSelectedWeaponNum
 + Bug 1265469: infantry damage report confusing
++ Quad hit location tables (level 3 option "quad_hit_location" and level 4 option "quad_hit_location_plus")
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

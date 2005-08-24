@@ -4862,6 +4862,5 @@ public abstract class Entity
                 return ToHitData.SIDE_FRONT;
             }
         }
-    	
     }
 }

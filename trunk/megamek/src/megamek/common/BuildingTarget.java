@@ -187,6 +187,6 @@ public class BuildingTarget implements Targetable {
     }    
 
     public int sideTable(Coords src) {
-    	return ToHitData.SIDE_FRONT;
+        return ToHitData.SIDE_FRONT;
     }
 }

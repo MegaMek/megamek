@@ -522,6 +522,12 @@ public class WeaponAttackAction
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Nearby terrain blocks leg weapons.");
         }
+        
+        // hull down vees can't fire front weapons
+        if(ae instanceof Tank && ae.isHullDown() && weapon.getLocation() == Tank.LOC_FRONT) {
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+            "Nearby terrain blocks front weapons.");
+        }
     
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)) {
@@ -838,6 +844,15 @@ public class WeaponAttackAction
 
         // add in LOS mods that we've been keeping
         toHit.append(losMods);
+        
+        if(te.isHullDown()
+        	&& ((te instanceof Mech 
+        			&& los.getTargetCover() > LosEffects.COVER_NONE)
+    			|| (te instanceof Tank 
+    					&& targHex.containsTerrain(Terrains.FORTIFIED) 
+    					&& te.sideTable(ae.getPosition())==ToHitData.SIDE_FRONT))) {
+        	toHit.addModifier(2, "Hull down target");
+        }
     
         // secondary targets modifier,
         // if this is not a iNarc Nemesis confused attack

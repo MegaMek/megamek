@@ -60,7 +60,8 @@ public class MovementDisplay
     public static final String    MOVE_RAISE_ELEVATION = "moveRaiseElevation"; //$NON-NLS-1$
     public static final String    MOVE_LOWER_ELEVATION = "moveLowerElevation"; //$NON-NLS-1$
     public static final String    MOVE_SEARCHLIGHT = "moveSearchlight"; //$NON-NLS-1$
-    public static final String    MOVE_LAY_MINE = "moveLayMine"; //$NON-NLS-1$    
+    public static final String    MOVE_LAY_MINE = "moveLayMine"; //$NON-NLS-1$
+    public static final String    MOVE_HULL_DOWN = "moveHullDown"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -99,6 +100,8 @@ public class MovementDisplay
     private Button            butSearchlight;
     
     private Button            butLayMine;
+    
+    private Button			  butHullDown;
 
     private int               buttonLayout;
 
@@ -265,6 +268,12 @@ public class MovementDisplay
         butLayMine.setActionCommand(MOVE_LAY_MINE);
         butLayMine.addKeyListener(this);
         
+        butHullDown = new Button(Messages.getString("MovementDisplay.butHullDown")); //$NON-NLS-1$
+        butHullDown.addActionListener(this);
+        butHullDown.setEnabled(false);
+        butHullDown.setActionCommand(MOVE_HULL_DOWN);
+        butHullDown.addKeyListener(this);
+        
         butSpace = new Button(".");
         butSpace.setEnabled(false);
         butSpace.addKeyListener(this);
@@ -329,7 +338,8 @@ public class MovementDisplay
         if ((buttonLayout == 3)
                 && !(butRaise.isEnabled()
                 || butLower.isEnabled()
-                || butLayMine.isEnabled()))
+                || butLayMine.isEnabled()
+                || butHullDown.isEnabled()))
             buttonLayout = 0;
         switch (buttonLayout) {
         case 0 :
@@ -366,7 +376,7 @@ public class MovementDisplay
             panButtons.add(butRaise);
             panButtons.add(butLower);
             panButtons.add(butLayMine);
-            panButtons.add(butSpace);
+            panButtons.add(butHullDown);
             panButtons.add(butSpace);
             panButtons.add(butSpace);
             panButtons.add(butMore);
@@ -442,9 +452,15 @@ public class MovementDisplay
         if (ce.isProne()) {
             setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
             setGoProneEnabled(false);
+            setHullDownEnabled(false);
+        } else if(ce.isHullDown()) {
+            setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
+            setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck());
+            setHullDownEnabled(false);
         } else {
             setGetUpEnabled(false);
             setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck());
+            setHullDownEnabled(ce.canGoHullDown());
         }
 
         updateProneButtons();
@@ -524,6 +540,7 @@ public class MovementDisplay
         setLoadEnabled(false);
         setUnloadEnabled(false);
         setClearEnabled(false);
+        setHullDownEnabled(false);
     }
     /**
      * Clears out the curently selected movement data and
@@ -1052,11 +1069,13 @@ public class MovementDisplay
         
         
         if (ce != null && !ce.isImmobile()) {
-            setGetUpEnabled(cmd.getFinalProne());
+            setGetUpEnabled(cmd.getFinalProne() || cmd.getFinalHullDown());
             setGoProneEnabled(!(butUp.isEnabled()) && ce instanceof Mech);
+            setHullDownEnabled(!(butUp.isEnabled())&& ce.canGoHullDown());
         } else {
             setGetUpEnabled(false);
             setGoProneEnabled(false);
+            setHullDownEnabled(false);
         }
     }
     
@@ -1426,7 +1445,7 @@ public class MovementDisplay
             }
         } else if (ev.getActionCommand().equals(MOVE_GET_UP)) {
             clearAllMoves();
-            if (cmd.getFinalProne()) {
+            if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                 cmd.addStep(MovePath.STEP_GET_UP);
             }
             clientgui.bv.drawMovementData(ce, cmd);
@@ -1436,6 +1455,14 @@ public class MovementDisplay
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalProne()) {
                 cmd.addStep(MovePath.STEP_GO_PRONE);
+            }
+            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.repaint();
+            butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
+        } else if (ev.getActionCommand().equals(MOVE_HULL_DOWN)) {
+            gear = MovementDisplay.GEAR_LAND;
+            if (!cmd.getFinalHullDown()) {
+                cmd.addStep(MovePath.STEP_HULL_DOWN);
             }
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
@@ -1760,6 +1787,10 @@ public class MovementDisplay
             butSearchlight.setLabel(Messages.getString("MovementDisplay.butSearchlightOn")); //$NON-NLS-1$
         butSearchlight.setEnabled(enabled);
         clientgui.getMenuBar().setMoveSearchlightEnabled(enabled);
+    }
+    private void setHullDownEnabled(boolean enabled) {
+        butHullDown.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveHullDownEnabled(enabled);
     }
     private void setClearEnabled(boolean enabled) {
         butClear.setEnabled(enabled);

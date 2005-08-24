@@ -2780,6 +2780,7 @@ public class Server implements Runnable {
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 entity.heatBuildup += 1;
                 entity.setProne(false);
+                entity.setHullDown(false);
                 wasProne = false;
                 game.resetPSRs(entity);
                 entityFellWhileAttemptingToStand = !doSkillCheckInPlace(entity, rollTarget);
@@ -3789,6 +3790,12 @@ public class Server implements Runnable {
                         break;
                     }
                 }
+            }
+            
+            //going hull down
+            if(step.getType() == MovePath.STEP_HULL_DOWN) {
+            	mpUsed = step.getMpUsed();
+            	entity.setHullDown(true);
             }
 
             // Track this step's location.
@@ -11243,7 +11250,8 @@ public class Server implements Runnable {
                  !te_hex.containsTerrain( Terrains.ROUGH ) &&
                  !te_hex.containsTerrain( Terrains.RUBBLE ) &&
                  !te_hex.containsTerrain( Terrains.SWAMP ) &&
-                 !te_hex.containsTerrain( Terrains.BUILDING ) ) {
+                 !te_hex.containsTerrain( Terrains.BUILDING ) &&
+                 !te_hex.containsTerrain(Terrains.FORTIFIED)) {
                 // PBI.  Damage is doubled.
                 damage = damage * 2;
                 r = new Report(6040);

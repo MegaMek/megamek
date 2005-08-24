@@ -7495,6 +7495,7 @@ public class Server implements Runnable {
             nCluster = 5;
             nDamPerHit = 1;
             hits = platoon.getDamage(platoon.getShootingStrength());
+            //TODO: Hmm, this should be localizable
             sSalvoType = " damage are inflicted by the shots that ";
 
             // Handle Inferno SRM infantry.

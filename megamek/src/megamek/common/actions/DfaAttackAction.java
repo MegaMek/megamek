@@ -273,8 +273,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
             toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
         else {
-            toHit.setSideTable(Compute.targetSideTable(src, te.getPosition(),
-                                            te.getFacing(), te instanceof Tank));
+            toHit.setSideTable(te.sideTable(src));
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
 

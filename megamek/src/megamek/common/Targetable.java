@@ -46,4 +46,6 @@ public interface Targetable
     public boolean isImmobile();
     /** @return name of the target for ui purposes */
     public String getDisplayName();
+    /** @return side hit from location */
+    public int sideTable(Coords src);
 }

@@ -4830,5 +4830,38 @@ public abstract class Entity
         }
         return false;
     }
-    
+
+    public int sideTable(Coords src) {
+        if(src.equals(position)) {
+            //most places handle 0 range explicitly,
+            //this is a safe default (calculation gives SIDE_RIGHT)
+            return ToHitData.SIDE_FRONT;
+        }
+        // calculate firing angle
+        int fa = (position.degree(src) + (6 - facing) * 60) % 360;
+
+        boolean targetIsTank = (this instanceof Tank) || (game.getOptions().booleanOption("quad_hit_location") && this instanceof QuadMech);
+        if (targetIsTank) {
+            if (fa > 30 && fa <= 150) {
+                return ToHitData.SIDE_RIGHT;
+            } else if (fa > 150 && fa < 210) {
+                return ToHitData.SIDE_REAR;
+            } else if (fa >= 210 && fa < 330) {
+                return ToHitData.SIDE_LEFT;
+            } else {
+                return ToHitData.SIDE_FRONT;
+            }
+        } else {
+            if (fa > 90 && fa <= 150) {
+                return ToHitData.SIDE_RIGHT;
+            } else if (fa > 150 && fa < 210) {
+                return ToHitData.SIDE_REAR;
+            } else if (fa >= 210 && fa < 270) {
+                return ToHitData.SIDE_LEFT;
+            } else {
+                return ToHitData.SIDE_FRONT;
+            }
+        }
+    	
+    }
 }

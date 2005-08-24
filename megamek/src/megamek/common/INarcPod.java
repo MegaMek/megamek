@@ -148,4 +148,7 @@ public class INarcPod implements Serializable, Targetable {
         return this.toString();
     }
 
+    public int sideTable(Coords src) {
+    	return ToHitData.SIDE_FRONT;
+    }
 }

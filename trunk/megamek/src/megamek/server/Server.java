@@ -7495,12 +7495,13 @@ public class Server implements Runnable {
             nCluster = 5;
             nDamPerHit = 1;
             hits = platoon.getDamage(platoon.getShootingStrength());
+            sSalvoType = " damage are inflicted by the shots that ";
 
             // Handle Inferno SRM infantry.
             if (bInferno) {
                 nCluster = hits;
                 nDamPerHit = 0;
-                sSalvoType = " Inferno missle(s) ";
+                sSalvoType = " Inferno missile(s) ";
                 bSalvo = false;
             }
         } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE ||

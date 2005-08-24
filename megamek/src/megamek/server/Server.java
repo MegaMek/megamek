@@ -5402,14 +5402,28 @@ public class Server implements Runnable {
                 Entity ent = game.getEntity(lma.getEntityId());
                 Mounted mine = ent.getEquipment(lma.getMineId());
                 if (!mine.isMissing()) {
-                    //TODO: different mine types
-                    deliverThunderMinefield(ent.getPosition(), ent.getOwnerId(), 10);
-                    mine.setMissing(true);
-                    r = new Report(3500);
-                    r.subject = ent.getId();
-                    r.addDesc(ent);
-                    r.add(ent.getPosition().getBoardNum());
-                    vPhaseReport.addElement(r);
+                    switch (mine.getMineType()) {
+                        case 0:
+                            deliverThunderMinefield(ent.getPosition(), ent.getOwnerId(), 10);
+                            mine.setMissing(true);
+                            r = new Report(3500);
+                            r.subject = ent.getId();
+                            r.addDesc(ent);
+                            r.add(ent.getPosition().getBoardNum());
+                            vPhaseReport.addElement(r);
+                            break;
+                        case 1:
+                            deliverThunderVibraMinefield(ent.getPosition(), ent.getOwnerId(), 10, mine.getVibraSetting());
+                            mine.setMissing(true);
+                            r = new Report(3505);
+                            r.subject = ent.getId();
+                            r.addDesc(ent);
+                            r.add(ent.getPosition().getBoardNum());
+                            vPhaseReport.addElement(r);
+                            break;
+                        //TODO: command-detonated mines
+                        // case 2:
+                    }
                 }
             }
             game.resetLayMinefieldActions();

@@ -1499,6 +1499,12 @@ public class MovementDisplay
             clearAllMoves();
             int i = chooseMineToLay();
             if (i != -1) {
+                Mounted m = ce().getEquipment(i);
+                if (m.getMineType() == Mounted.MINE_VIBRABOMB) {
+                    VibrabombSettingDialog vsd  = new VibrabombSettingDialog(clientgui.frame);
+                    vsd.show();
+                    m.setVibraSetting(vsd.getSetting());
+                }
                 cmd.addStep(MovePath.STEP_LAY_MINE, i);
                 moveTo(cmd);
             }

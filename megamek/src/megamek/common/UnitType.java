@@ -31,7 +31,7 @@ public class UnitType {
     public static final int SIZE = names.length;
 
     public static String determineUnitType(Entity e) {
-    	return names[determineUnitTypeCode(e)];
+        return names[determineUnitTypeCode(e)];
     }
     public static int determineUnitTypeCode(Entity e) {
         int mm = e.getMovementMode();

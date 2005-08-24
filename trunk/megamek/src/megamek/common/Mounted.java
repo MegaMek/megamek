@@ -62,6 +62,16 @@ public class Mounted implements Serializable, RoundUpdated {
     // handle split weapons
     private boolean bSplit = false;
     private int nFoundCrits = 0;
+    
+    // mine type
+    private int mineType = MINE_NONE;
+    // vibrabomb mine setting
+    private int vibraSetting = 20;
+    
+    public static final int MINE_NONE              = -1;
+    public static final int MINE_CONVENTIONAL      = 0;
+    public static final int MINE_VIBRABOMB         = 1;
+    public static final int MINE_COMMAND_DETONATED = 2;    
 
 
     /** Creates new Mounted */
@@ -72,6 +82,9 @@ public class Mounted implements Serializable, RoundUpdated {
 
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType)type).getShots();
+        }
+        if (type.hasFlag(MiscType.F_MINE)) {
+            this.mineType = MINE_CONVENTIONAL; 
         }
     }
 
@@ -203,7 +216,21 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public String getDesc() {
-        StringBuffer desc = new StringBuffer(type.getDesc());
+        StringBuffer desc;
+        switch (getMineType()) {
+            case 0:
+                desc = new StringBuffer(Messages.getString("Mounted.ConventionalMine"));
+                break;
+            case 1:
+                desc = new StringBuffer(Messages.getString("Mounted.VibraBombMine"));
+                break;
+            case 2:
+                desc = new StringBuffer(Messages.getString("Mounted.CommandDetonatedMine"));
+                break;
+            case -1:
+            default:
+                desc = new StringBuffer(type.getDesc());
+        }
         if (destroyed) {
             desc.insert(0, "*");
         } else if (useless) {
@@ -446,7 +473,7 @@ public class Mounted implements Serializable, RoundUpdated {
         return true;
     }
 
-    /*
+    /**
      * Returns false if this ammo should not be loaded.  Checks if the
      *    ammo is already destroyed, is being dumped, has been breached, is
      *   already used up, or is locationless (oneshot ammo).
@@ -459,6 +486,39 @@ public class Mounted implements Serializable, RoundUpdated {
         } else {
             return true;
         }
+    }
+    
+    /**
+     * @return the type of mine this mounted is, or
+     * <code>-1</code> if it isn't a mine
+     * 
+     */
+    public int getMineType() {
+        return this.mineType;
+    }
+    
+    /**
+     * set the type of mine this should be
+     * @param mineType
+     */
+    public void setMineType(int mineType) {
+        this.mineType = mineType;
+    }
+    
+    /**
+     * set the vibrabomb sensitivity
+     * @param vibraSetting the <code>int</code> sensitivity to set
+     */
+    public void setVibraSetting(int vibraSetting) {
+        this.vibraSetting = vibraSetting;
+    }
+    
+    /**
+     * get the vibrabomb sensitivity
+     * @return the <code>int</code> vibrabomb sensitity this mine is set to.
+     */
+    public int getVibraSetting() {
+        return vibraSetting;
     }
 
 }

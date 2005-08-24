@@ -64,7 +64,7 @@ public class MineLayingDialog
                 StringBuffer message = new StringBuffer();
                 message.append( entity.getLocationName(mount.getLocation()) )
                     .append( " " ) //$NON-NLS-1$
-                    .append( mount.getName() );
+                    .append( mount.getDesc() );
                 chMines.add(message.toString());
                 vMines.addElement(new Integer(entity.getEquipmentNum(mount)));
                 

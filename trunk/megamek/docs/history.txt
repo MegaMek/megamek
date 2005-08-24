@@ -61,6 +61,9 @@ v0.31.0 (CVS)
     option "quad_hit_location_plus")
 + Fix indentation for woods clearing in the server report.
 + Bug 1268206: possible to fire jammed RAC, results in client disconnect
++ Bug 1267368: Tagetting System Choice Box Enabled in Opponent view
++ Task 117159: Fa-Shih mine-laying, now for Vibrabomb mines, too.
++ removed not-working fix from build.bat
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

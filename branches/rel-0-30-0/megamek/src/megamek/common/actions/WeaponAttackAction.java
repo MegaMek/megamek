@@ -206,6 +206,11 @@ public class WeaponAttackAction
         int toSubtract = 0;
         
         ToHitData toHit = null;
+
+        // missing, breached or jammed weapons can't fire
+        if (!weapon.canFire()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon is not in a state where it can be fired");
+        }
     
         // make sure weapon can deliver minefield
         if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER &&

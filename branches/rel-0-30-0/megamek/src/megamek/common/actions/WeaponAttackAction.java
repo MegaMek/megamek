@@ -481,7 +481,7 @@ public class WeaponAttackAction
         
         // attacker partial cover means no leg weapons
         if (los.isAttackerCover() && ae.locationIsLeg(weapon.getLocation()) &&
-        		ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET) {
+                ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Nearby terrain blocks leg weapons.");
         }

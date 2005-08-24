@@ -548,37 +548,37 @@ public class Compute {
         int targTop = 0;
         int targBottom = 0;
         if (target != null) {
-        	targTop = target.absHeight();
-        	targBottom = target.getElevation();
+            targTop = target.absHeight();
+            targBottom = target.getElevation();
         }
 
         boolean targetInPartialWater = false;
         boolean targetUnderwater = false;
         boolean weaponUnderwater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET);
         if(targHex.containsTerrain(Terrains.WATER) && targBottom < 0) {
-        	if(targTop >= 0)
-        		targetInPartialWater = true;
-        	else
-        		targetUnderwater = true;
+            if(targTop >= 0)
+                targetInPartialWater = true;
+            else
+                targetUnderwater = true;
         }
         
         //allow naval units on surface to be attacked from above or below
         Entity te = null;
         if(target instanceof Entity) {
-        	te = (Entity)target;
-        	if(targBottom == 0 &&
-        			UnitType.determineUnitTypeCode(te)==UnitType.NAVAL) {
-        		targetInPartialWater = true;
-        	}
+            te = (Entity)target;
+            if(targBottom == 0 &&
+                    UnitType.determineUnitTypeCode(te)==UnitType.NAVAL) {
+                targetInPartialWater = true;
+            }
         }
         //allow naval units to target underwater units,
         //torpedo tubes are mounted underwater
         if((targetUnderwater
-        		|| wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO
+                || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO
                 || wtype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
                 && UnitType.determineUnitTypeCode(ae)==UnitType.NAVAL) {
-        	weaponUnderwater = true;
-        	weaponRanges = wtype.getWRanges();
+            weaponUnderwater = true;
+            weaponRanges = wtype.getWRanges();
         }
         
         if (weaponUnderwater) {
@@ -590,19 +590,19 @@ public class Compute {
                         "Weapon cannot fire underwater.");
             }
             if (!targetUnderwater &&
-            		!targetInPartialWater) {
+                    !targetInPartialWater) {
                 // target on land or over water
                 return new ToHitData(ToHitData.IMPOSSIBLE,
                         "Weapon underwater, but not target.");
             }
             //special case: mechs can only fire upper body weapons at surface naval
             if(te != null &&
-            		UnitType.determineUnitTypeCode(te)==UnitType.NAVAL &&
-            		ae instanceof Mech &&
-            		ae.height() > 0 &&
-            		ae.getElevation() == -1) {
+                    UnitType.determineUnitTypeCode(te)==UnitType.NAVAL &&
+                    ae instanceof Mech &&
+                    ae.height() > 0 &&
+                    ae.getElevation() == -1) {
                 return new ToHitData(ToHitData.IMPOSSIBLE,
-                "Partially submerged mech cannot fire leg weapons at surface naval vessels.");            	
+                "Partially submerged mech cannot fire leg weapons at surface naval vessels.");                
             }
         } else if (targetUnderwater) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
@@ -610,7 +610,7 @@ public class Compute {
         } else if (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO
                 || wtype.getAmmoType() == AmmoType.T_SRM_TORPEDO) {
             // Torpedos only fire underwater.
-           	return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(ToHitData.IMPOSSIBLE,
                     "Weapon can only fire underwater.");
         }
 

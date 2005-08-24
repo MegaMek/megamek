@@ -3212,6 +3212,15 @@ public class BoardView1
                     graph.drawString("H", 29, 70); //$NON-NLS-1$
                 }
             }
+            
+            // If hull down, show 
+            if (entity.isHullDown()) {
+                // draw "D"
+                graph.setColor(Color.darkGray);
+                graph.drawString("D", 40, 71); //$NON-NLS-1$
+                graph.setColor(Color.black);
+                graph.drawString("D", 39, 70); //$NON-NLS-1$            	
+            }
 
             //Lets draw our armor and internal status bars
             int baseBarLength = 23;
@@ -3408,6 +3417,7 @@ public class BoardView1
                 drawMovementCost(step, stepPos, graph, col, true);
                 break;
             case MovePath.STEP_GO_PRONE:
+            case MovePath.STEP_HULL_DOWN:
             case MovePath.STEP_DOWN:
                 // draw arrow indicating dropping prone
                 // also doubles as the descent indication

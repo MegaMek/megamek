@@ -65,6 +65,8 @@ v0.31.0 (CVS)
 + Task 117159: Fa-Shih mine-laying, now for Vibrabomb mines, too.
 + removed not-working fix from build.bat
 + Bug 1267328: endless Dialog Boxes when disconnecting Client from a Server
++ Hull down for quads and vehicles.  Fortified terrain can be added in map 
+    editor (no engineer platoons yet!).  Somebody please make some better artwork though.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

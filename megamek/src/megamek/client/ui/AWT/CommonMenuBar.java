@@ -110,6 +110,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem moveUnjam = null;
     private MenuItem moveSearchlight = null;
     private MenuItem moveClear = null;
+    private MenuItem moveHullDown = null;
     private MenuItem moveGetUp = null;
     private MenuItem moveRaise = null;
     private MenuItem moveLower = null;
@@ -353,6 +354,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         moveUnjam = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveUnjam"), MovementDisplay.MOVE_UNJAM); //$NON-NLS-1$
         moveSearchlight = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveSearchlight"), MovementDisplay.MOVE_SEARCHLIGHT); //$NON-NLS-1$
         moveClear = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveClear"), MovementDisplay.MOVE_CLEAR); //$NON-NLS-1$
+        moveHullDown = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveHullDown"), MovementDisplay.MOVE_CLEAR); //$NON-NLS-1$
         moveLayMine = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MOVE_LAY_MINE); //$NON-NLS-1$
 
         menu.addSeparator();
@@ -757,6 +759,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     }
     public synchronized void setMoveSearchlightEnabled(boolean enabled) {
         moveSearchlight.setEnabled(enabled);
+    }
+    public synchronized void setMoveHullDownEnabled(boolean enabled) {
+        moveHullDown.setEnabled(enabled);
     }
     public synchronized void setMoveClearEnabled(boolean enabled) {
         moveClear.setEnabled(enabled);

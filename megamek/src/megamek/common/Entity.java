@@ -80,6 +80,7 @@ public abstract class Entity
     protected boolean           done = false;
 
     protected boolean           prone = false;
+    protected boolean           hullDown = false;
     protected boolean           findingClub = false;
     protected boolean           armsFlipped = false;
     protected boolean           unjammingRAC = false;
@@ -564,6 +565,17 @@ public abstract class Entity
 
     public void setProne(boolean prone) {
         this.prone = prone;
+        if(prone) {
+        	hullDown = false;
+        }
+    }
+
+    public boolean isHullDown() {
+        return hullDown;
+    }
+
+    public void setHullDown(boolean down) {
+        hullDown = down;
     }
 
     /**
@@ -2983,6 +2995,11 @@ public abstract class Entity
             return roll;
         }
 
+        if(isHullDown()) {
+        	roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "getting up from hull down");
+        	return roll;
+        }
+        
         if (!needsRollToStand() && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
             roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS,"\n" + getDisplayName() + " does not need to make a piloting skill check to stand up because it has all four of its legs.");
             return roll;
@@ -4862,5 +4879,9 @@ public abstract class Entity
                 return ToHitData.SIDE_FRONT;
             }
         }
+    }
+    
+    public boolean canGoHullDown () {
+    	return false;
     }
 }

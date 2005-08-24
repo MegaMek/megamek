@@ -1287,7 +1287,6 @@ public class Compute {
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t) {
         return getTargetTerrainModifier(game, t, 0);
     }
-
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t,
             int eistatus) {
         Entity entityTarget = null;
@@ -1379,6 +1378,11 @@ public class Compute {
             return toHit;
         }
 
+        if(hex.containsTerrain(Terrains.FORTIFIED) &&
+        		entityTarget instanceof Infantry) {
+        	toHit.addModifier(2, "infantry dug in");
+        }
+        
         // -1 bonus only against BattleMechs in water!
         if (hex.terrainLevel(Terrains.WATER) > 0
                 && (entityTarget instanceof Mech)) {
@@ -2164,47 +2168,6 @@ public class Compute {
 
     public static int targetSideTable(Entity attacker, Targetable target) {
         return target.sideTable(attacker.getPosition());
-    }
-
-    public static int targetSideTable(Coords src, Targetable target) {
-
-        return target.sideTable(src);
-    }
-
-    /**
-     * Returns the side location table that you should be using
-     */
-    public static int targetSideTable(Coords src, Coords dest,
-            int targetFacing, boolean targetIsTank) {
-        if (src.equals(dest)) {
-            // most places handle 0 range explicitly,
-            // this is a safe default (calculation gives SIDE_RIGHT)
-            return ToHitData.SIDE_FRONT;
-        }
-        // calculate firing angle
-        int fa = (dest.degree(src) + (6 - targetFacing) * 60) % 360;
-
-        if (targetIsTank) {
-            if (fa > 30 && fa <= 150) {
-                return ToHitData.SIDE_RIGHT;
-            } else if (fa > 150 && fa < 210) {
-                return ToHitData.SIDE_REAR;
-            } else if (fa >= 210 && fa < 330) {
-                return ToHitData.SIDE_LEFT;
-            } else {
-                return ToHitData.SIDE_FRONT;
-            }
-        } else {
-            if (fa > 90 && fa <= 150) {
-                return ToHitData.SIDE_RIGHT;
-            } else if (fa > 150 && fa < 210) {
-                return ToHitData.SIDE_REAR;
-            } else if (fa >= 210 && fa < 270) {
-                return ToHitData.SIDE_LEFT;
-            } else {
-                return ToHitData.SIDE_FRONT;
-            }
-        }
     }
 
     /**

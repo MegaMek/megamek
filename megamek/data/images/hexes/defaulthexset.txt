@@ -515,6 +515,8 @@ super * "smoke:2" "" "boring/heavysmoke.gif"
 super * "fire:1" "" "boring/fire.gif"
 super * "fire:2" "" "boring/fire.gif"
 
+super * "fortified:1" "" "boring/sandbags.gif"
+
 super * "arms:1" "" "limbs/arm1.gif"
 super * "arms:2" "" "limbs/arm2.gif"
 super * "arms:3" "" "limbs/arm2.gif"

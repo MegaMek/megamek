@@ -55,6 +55,7 @@ public class MoveStep implements Serializable {
     private int movementType;
 
     private boolean isProne;
+    private boolean isHullDown;
 
     private boolean danger; // keep psr
     private boolean pastDanger;
@@ -186,6 +187,8 @@ public class MoveStep implements Serializable {
                 return "U";
             case MovePath.STEP_DOWN :
                 return "D";
+            case MovePath.STEP_HULL_DOWN :
+            	return "HullDown";
             default :
                 return "???";
         }
@@ -381,6 +384,9 @@ public class MoveStep implements Serializable {
                 setElevation(elevation-1);
                 setMp(1);
                 break;
+            case MovePath.STEP_HULL_DOWN :
+            	setMp(2);
+            	break;
             default :
                 setMp(0);
         }
@@ -446,6 +452,7 @@ public class MoveStep implements Serializable {
         this.onlyPavement = prev.onlyPavement;
         this.thisStepBackwards = prev.thisStepBackwards;
         this.isProne = prev.isProne;
+        this.isHullDown = prev.isHullDown;
         this.isRunProhibited = prev.isRunProhibited;
         this.hasEverUnloaded = prev.hasEverUnloaded;
         this.elevation = prev.elevation;
@@ -463,6 +470,7 @@ public class MoveStep implements Serializable {
         this.mpUsed = entity.mpUsed;
         this.distance = entity.delta_distance;
         this.isProne = entity.isProne();
+        isHullDown = entity.isHullDown();
         
         this.elevation = entity.getElevation();
 
@@ -560,6 +568,10 @@ public class MoveStep implements Serializable {
      */
     public boolean isProne() {
         return isProne;
+    }
+
+    public boolean isHullDown() {
+        return isHullDown;
     }
 
     /**
@@ -757,6 +769,10 @@ public class MoveStep implements Serializable {
         isProne = b;
     }
 
+    public void setHullDown(boolean b) {
+        isHullDown = b;
+    }
+
     /**
      * @param b
      */
@@ -876,6 +892,7 @@ public class MoveStep implements Serializable {
         if ( parent.isJumping()
              && getMpUsed() <= entity.getJumpMPWithTerrain()
              && !isProne()
+             && !isHullDown()
              && !( entity instanceof Protomech
                    && (entity.getInternal(Protomech.LOC_LEG)
                        == IArmorState.ARMOR_DESTROYED) )
@@ -915,7 +932,7 @@ public class MoveStep implements Serializable {
             && !entity.isStuck()
             && tmpWalkMP > 0
             && getMpUsed() > 0
-            && (!isProne()
+            && (!(isProne() || isHullDown())
                 || parent.contains(MovePath.STEP_GET_UP)
                 || stepType == MovePath.STEP_TURN_LEFT
                 || stepType == MovePath.STEP_TURN_RIGHT)) {
@@ -978,6 +995,7 @@ public class MoveStep implements Serializable {
                 && movementType == IEntityMovementType.MOVE_ILLEGAL
                 && entity.getWalkMP() > 0
                 && !entity.isProne()
+                && !entity.isHullDown()
                 && !entity.isStuck()
                 && stepType == MovePath.STEP_FORWARDS) {
             movementType = IEntityMovementType.MOVE_RUN;
@@ -996,7 +1014,7 @@ public class MoveStep implements Serializable {
 
             // Prone Meks are able to unload, if they have the MP.
             if (getMpUsed() <= entity.getRunMP()
-                    && entity.isProne()
+                    && (entity.isProne() || entity.isHullDown())
                     && movementType == IEntityMovementType.MOVE_ILLEGAL) {
                 movementType = IEntityMovementType.MOVE_RUN;
                 if (getMpUsed() <= entity.getWalkMP()) {
@@ -1031,6 +1049,16 @@ public class MoveStep implements Serializable {
         if (stepType == MovePath.STEP_GO_PRONE
             && (isProne() || !(entity instanceof Mech) || entity.isStuck())) {
             movementType = IEntityMovementType.MOVE_ILLEGAL;
+        }
+
+        // only standing quads may go hull down
+        if (stepType == MovePath.STEP_HULL_DOWN) {
+            if((isProne() || isHullDown()  || !(entity instanceof QuadMech || entity instanceof Tank) || entity.isStuck())) {
+            	movementType = IEntityMovementType.MOVE_ILLEGAL;
+            }
+            if(entity instanceof Tank && !(game.getBoard().getHex(curPos).containsTerrain(Terrains.FORTIFIED))) {
+            	movementType = IEntityMovementType.MOVE_ILLEGAL;
+            }
         }
 
         // check if this movement is illegal for reasons other than points
@@ -1091,8 +1119,13 @@ public class MoveStep implements Serializable {
         // update prone state
         if (stepType == MovePath.STEP_GO_PRONE) {
             setProne(true);
+            setHullDown(false);
         } else if (stepType == MovePath.STEP_GET_UP) {
             setProne(false);
+            setHullDown(false);
+        } else if (stepType == MovePath.STEP_HULL_DOWN) {
+        	setProne(false);
+        	setHullDown(true);
         }
     }
 
@@ -1443,6 +1476,7 @@ public class MoveStep implements Serializable {
             this.mpUsed == other.mpUsed &&
             this.movementType == other.movementType &&
             this.isProne == other.isProne &&
+            this.isHullDown == other.isHullDown &&
             this.danger == other.danger &&
             this.pastDanger == other.pastDanger &&
             this.isUsingMASC == other.isUsingMASC &&

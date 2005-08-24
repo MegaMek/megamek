@@ -55,6 +55,7 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_DOWN = 21;
     public static final int STEP_SEARCHLIGHT = 22;
     public static final int STEP_LAY_MINE = 23;
+    public static final int STEP_HULL_DOWN = 24;
 
     public static class Key {
         private Coords coords;
@@ -304,6 +305,18 @@ public class MovePath implements Cloneable, Serializable {
         if (entity == null)
             return false;
         return entity.isProne();
+    }
+    
+    /**
+     * Returns whether or not a unit would end up prone after all of the steps
+     */
+    public boolean getFinalHullDown() {
+        if (getLastStep() != null) {
+            return getLastStep().isHullDown();
+        }
+        if (entity == null)
+            return false;
+        return entity.isHullDown();
     }
     
     /**
@@ -643,7 +656,7 @@ public class MovePath implements Cloneable, Serializable {
             // We've got all our next steps.            
             return result;
         }
-        if (getFinalProne()) {
+        if (getFinalProne() || getFinalHullDown()) {
             if (last != null && last.getType() != STEP_TURN_RIGHT) {
                 result.add(((MovePath) this.clone()).addStep(MovePath.STEP_TURN_LEFT));
             }

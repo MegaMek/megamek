@@ -1008,39 +1008,39 @@ public class Game implements Serializable, IGame
      * Returns the appropriate target for this game given a type and id
      */
     public Targetable getTarget(int nType, int nID) {
-    	try {
-	        switch (nType) {
-	        case Targetable.TYPE_ENTITY :
-	            return getEntity(nID);
-	        case Targetable.TYPE_HEX_CLEAR :
-	        case Targetable.TYPE_HEX_IGNITE :
-	        case Targetable.TYPE_HEX_BOMB :
-	        case Targetable.TYPE_MINEFIELD_DELIVER :
-	        case Targetable.TYPE_FLARE_DELIVER :
-	            return new HexTarget(HexTarget.idToCoords(nID), board, nType);
-	        case Targetable.TYPE_BUILDING :
-	        case Targetable.TYPE_BLDG_IGNITE :
-	            return new BuildingTarget
-	                ( BuildingTarget.idToCoords(nID), board, nType );
-	        case Targetable.TYPE_MINEFIELD_CLEAR :
-	            return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
-	        case Targetable.TYPE_HEX_ARTILLERY:
-	            return new HexTarget(HexTarget.idToCoords(nID), board, nType);
-	        case Targetable.TYPE_HEX_FASCAM:
-	            return new HexTarget(HexTarget.idToCoords(nID), board, nType);
-	        case Targetable.TYPE_HEX_INFERNO_IV:
-	            return new HexTarget(HexTarget.idToCoords(nID), board, nType);
-	        case Targetable.TYPE_HEX_VIBRABOMB_IV:
-	            return new HexTarget(HexTarget.idToCoords(nID), board, nType);
-	        case Targetable.TYPE_INARC_POD:
-	            return INarcPod.idToInstance( nID );
-	        default :
-	            return null;
-	        }
-    	}
-    	catch (IllegalArgumentException t) {
-    		return null;
-    	}
+        try {
+            switch (nType) {
+            case Targetable.TYPE_ENTITY :
+                return getEntity(nID);
+            case Targetable.TYPE_HEX_CLEAR :
+            case Targetable.TYPE_HEX_IGNITE :
+            case Targetable.TYPE_HEX_BOMB :
+            case Targetable.TYPE_MINEFIELD_DELIVER :
+            case Targetable.TYPE_FLARE_DELIVER :
+                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
+            case Targetable.TYPE_BUILDING :
+            case Targetable.TYPE_BLDG_IGNITE :
+                return new BuildingTarget
+                    ( BuildingTarget.idToCoords(nID), board, nType );
+            case Targetable.TYPE_MINEFIELD_CLEAR :
+                return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
+            case Targetable.TYPE_HEX_ARTILLERY:
+                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
+            case Targetable.TYPE_HEX_FASCAM:
+                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
+            case Targetable.TYPE_HEX_INFERNO_IV:
+                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
+            case Targetable.TYPE_HEX_VIBRABOMB_IV:
+                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
+            case Targetable.TYPE_INARC_POD:
+                return INarcPod.idToInstance( nID );
+            default :
+                return null;
+            }
+        }
+        catch (IllegalArgumentException t) {
+            return null;
+        }
     }
 
     /**

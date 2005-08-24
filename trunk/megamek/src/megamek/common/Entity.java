@@ -3088,18 +3088,18 @@ public abstract class Entity
             // on pavement in that getting up does not skid.
             && !prevStep.isHasJustStood()) {
             // append the reason modifier
-        	if(prevStep.isPavementStep()) {
-        		if ( this instanceof Mech ) {
-        			roll.append(new PilotingRollData(getId(),
+            if(prevStep.isPavementStep()) {
+                if ( this instanceof Mech ) {
+                    roll.append(new PilotingRollData(getId(),
                                       getMovementBeforeSkidPSRModifier(distance),
                                       "running & turning on pavement"));
-        		} else {
-        			roll.append(new PilotingRollData(getId(),
+                } else {
+                    roll.append(new PilotingRollData(getId(),
                                       getMovementBeforeSkidPSRModifier(distance),
                                       "reckless driving on pavement"));
-        		}
+                }
             } else {
-    			roll.append(new PilotingRollData(getId(),
+                roll.append(new PilotingRollData(getId(),
                         getMovementBeforeSkidPSRModifier(distance),
                         "turning on ice"));
             }

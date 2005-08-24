@@ -593,4 +593,8 @@ public class QuadMech extends Mech
         }
         return super.removePartialCoverHits(location,cover,side);
     }
+
+    public boolean canGoHullDown () {
+    	return game.getOptions().booleanOption("hull_down");
+    }
 }

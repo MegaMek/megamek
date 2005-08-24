@@ -352,6 +352,10 @@ public class Tank
     public HitData rollHitLocation(int table, int side) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
+        if (side == ToHitData.SIDE_FRONT && isHullDown() && !m_bHasNoTurret) {
+        	//on a hull down vee, all front hits go to turret if one exists.
+        	nArmorLoc = LOC_TURRET;
+        }
         if (side == ToHitData.SIDE_LEFT) {
             nArmorLoc = LOC_LEFT;
             bSide = true;
@@ -871,5 +875,9 @@ public class Tank
             }
         }
         return false;
+    }
+
+    public boolean canGoHullDown () {
+    	return game.getOptions().booleanOption("hull_down");
     }
 }

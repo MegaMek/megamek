@@ -38,11 +38,12 @@ public class Terrains implements ITerrainFactory {
     public static final int ARMS = 18; //blown off arms for use as clubs, level = number of arms in that hex
     public static final int LEGS = 19; //blown off legs for use as clubs, level = number of legs in that hex
     public static final int ICE = 20;
+    public static final int FORTIFIED = 21;
 
     private static final String[] names = {"none", "woods", "rough", "rubble",
             "water", "pavement", "road", "fire", "smoke", "swamp",
             "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
-            "bridge_elev", "fluff", "arms", "legs", "ice"};
+            "bridge_elev", "fluff", "arms", "legs", "ice", "fortified"};
     
     public static final int SIZE = names.length;
 

@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 16th August 2005.  MegaMek Version 0.31.0-dev. Best viewed in 1024x768.
+The Great MegaMek Feature list. 24th August 2005.  MegaMek Version 0.31.0-dev. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -211,7 +211,7 @@ Clan Battle Armor Variants
 Innersphere Battle Armor Variants
 
 - Achileus			Yes		None
-- Fa Shih			Partial		Can only lay conventional minefields.
+- Fa Shih			Partial		Can't lay command-detonated minefields.
 - Fenrir			Yes		None
 - Gray Death Light		Yes		None
 - Infiltrator			Yes		None
@@ -280,7 +280,7 @@ Special Case Rules (Hidden Units)
 Special Case Rules (Hostile Environments)
 
 - Extreme Temperatures		Yes		Infantry can deploy in extreme temperatures, but dies at end of turn if not sheltered
-- Ice				Partial		Skiding on Ice has been simulated with pavement (*not* the same rules!!)
+- Ice				Partial		Not-solid ice not implemented.
 - High/Low Gravity		Yes		None
 - Swamp				Yes		None
 - Vacuum			Yes		Vehicles can deploy in vacuum, but die at the end of turn.

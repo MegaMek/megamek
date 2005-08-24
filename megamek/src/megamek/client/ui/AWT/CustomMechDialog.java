@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Hashtable;
+
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
@@ -89,6 +90,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private Panel panMunitions = new Panel();
     private Vector m_vMGs = new Vector();
     private Panel panRapidfireMGs = new Panel();
+    private Vector m_vMines = new Vector();
+    private Panel panMines = new Panel();
         
     private Entity entity;
     private boolean okay = false;
@@ -189,30 +192,30 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         refreshDeployment();
 
         if ( clientgui.getClient().game.getOptions().booleanOption("pilot_advantages") ) { //$NON-NLS-1$
-          scrOptions.add(panOptions);
-        
-          c.weightx = 1.0;    c.weighty = 1.0;
-          c.fill = GridBagConstraints.BOTH;
-          c.gridwidth = GridBagConstraints.REMAINDER;
-          gridbag.setConstraints(scrOptions, c);
-          tempPanel.add(scrOptions);
-  
-          c.weightx = 1.0;    c.weighty = 0.0;
-          gridbag.setConstraints(texDesc, c);
-          tempPanel.add(texDesc);
+            scrOptions.add(panOptions);
+
+            c.weightx = 1.0;    c.weighty = 1.0;
+            c.fill = GridBagConstraints.BOTH;
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            gridbag.setConstraints(scrOptions, c);
+            tempPanel.add(scrOptions);
+
+            c.weightx = 1.0;    c.weighty = 0.0;
+            gridbag.setConstraints(texDesc, c);
+            tempPanel.add(texDesc);
         }
-        
+
         if (entity.hasC3() || entity.hasC3i()) {        
-          c.gridwidth = 1;
-          c.anchor = GridBagConstraints.EAST;
-          gridbag.setConstraints(labC3, c);
-          tempPanel.add(labC3);
-        
-          c.gridwidth = GridBagConstraints.REMAINDER;
-          c.anchor = GridBagConstraints.WEST;
-          gridbag.setConstraints(choC3, c);
-          tempPanel.add(choC3);
-          refreshC3();
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labC3, c);
+            tempPanel.add(labC3);
+
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(choC3, c);
+            tempPanel.add(choC3);
+            refreshC3();
         }
         boolean eligibleForOffBoard = false;
         for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
@@ -261,9 +264,6 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
-            /*
-            gridbag.setConstraints(fldOffBoardDistance, c);
-            */
             
             butOffBoardDistance.addActionListener(this);
             gridbag.setConstraints(butOffBoardDistance, c);
@@ -366,6 +366,12 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             tempPanel.add(chSearchlight);
             chSearchlight.setState(entity.hasSpotlight());        
         }
+
+        // Set up mines
+        setupMines();
+        c.anchor = GridBagConstraints.CENTER;
+        gridbag.setConstraints(panMines, c);
+        tempPanel.add(panMines);
         
         setupButtons();
         
@@ -389,8 +395,10 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             choDeployment.setEnabled(false);
             chAutoEject.setEnabled(false);
             chSearchlight.setEnabled(false);
+            choTargSys.setEnabled(false);
             disableMunitionEditing();
             disableMGSetting();
+            disableMineSetting();
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
@@ -450,6 +458,26 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             gbl.setConstraints(rmp, gbc);
             panRapidfireMGs.add(rmp);
             m_vMGs.addElement(rmp);
+        }
+    }
+    
+    private void setupMines() {
+        GridBagLayout gbl = new GridBagLayout();
+        panMines.setLayout(gbl);
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        int row = 0;
+        for (Enumeration e = entity.getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (!m.getType().hasFlag((MiscType.F_MINE))) {
+                continue;
+            }
+            
+            gbc.gridy = row++;
+            MineChoicePanel mcp = new MineChoicePanel(m);
+            gbl.setConstraints(mcp, gbc);
+            panMines.add(mcp);
+            m_vMines.addElement(mcp);
         }
     }
     
@@ -574,6 +602,45 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             gbl.setConstraints(mcp, gbc);
             panMunitions.add(mcp);
             m_vMunitions.addElement(mcp);
+        }
+    }
+    
+    class MineChoicePanel extends Panel {
+        private Choice m_choice;
+        private Mounted m_mounted;
+                
+        public MineChoicePanel(Mounted m) {
+            m_mounted = m;
+            m_choice = new Choice();
+            m_choice.add(Messages.getString("CustomMechDialog.Conventional")); //$NON-NLS-1$
+            m_choice.add(Messages.getString("CustomMechDialog.Vibrabomb")); //$NON-NLS-1$
+            //m_choice.add("Messages.getString("CustomMechDialog.Command-detonated")); //$NON-NLS-1$
+            int loc;
+            loc = m.getLocation();
+            String sDesc = "(" + entity.getLocationAbbr(loc) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            Label lLoc = new Label(sDesc);
+            GridBagLayout g = new GridBagLayout();
+            setLayout(g);
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.EAST;
+            g.setConstraints(lLoc, c);
+            add(lLoc);
+            c.gridx = 1;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.WEST;
+            g.setConstraints(m_choice, c);
+            m_choice.select(m.getMineType());
+            add(m_choice);
+        }
+
+        public void applyChoice() {
+            m_mounted.setMineType(m_choice.getSelectedIndex());
+        }
+
+        public void setEnabled(boolean enabled) {
+            m_choice.setEnabled(enabled);
         }
     }
     
@@ -727,7 +794,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         public void applyChoice() {
             boolean b = chRapid.getState();
             m_mounted.setRapidfire(b);
-        }
+        }        
 
         public void setEnabled(boolean enabled) {
             chRapid.setEnabled(enabled);
@@ -743,6 +810,12 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     public void disableMGSetting() {
         for (int i = 0; i < m_vMGs.size(); i++) {
             ((RapidfireMGPanel)m_vMGs.elementAt(i)).setEnabled(false);
+        }
+    }
+    
+    public void disableMineSetting() {
+        for (int i = 0; i < m_vMines.size(); i++) {
+            ((MineChoicePanel)m_vMines.elementAt(i)).setEnabled(false);
         }
     }
 
@@ -1050,7 +1123,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 Mech mech = (Mech)entity;
                 mech.setAutoEject(!autoEject);
             }
-            if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
+            if (entity.hasC3() && choC3.getSelectedIndex() > -1) {
                 Entity chosen = client.getEntity
                     ( entityCorrespondance[choC3.getSelectedIndex()] );
                 int entC3nodeCount = 
@@ -1070,7 +1143,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                     refreshC3();
                 }
             }
-            else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
+            else if (entity.hasC3i() && choC3.getSelectedIndex() > -1) {
                 entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
 
@@ -1110,7 +1183,10 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             for (Enumeration e = m_vMGs.elements(); e.hasMoreElements(); ) {
                 ((RapidfireMGPanel)e.nextElement()).applyChoice();
             }
-            
+            // update mines setting
+            for (Enumeration e = m_vMines.elements(); e.hasMoreElements(); ) {
+                ((MineChoicePanel)e.nextElement()).applyChoice();
+            }
             // update searchlight setting
             entity.setSpotlight(chSearchlight.getState());
             entity.setSpotlightState(chSearchlight.getState());

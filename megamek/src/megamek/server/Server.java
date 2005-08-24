@@ -2902,7 +2902,7 @@ public class Server implements Runnable {
 
                     // What is the first hex in the skid?
                     if(step.isThisStepBackwards()) {
-                    	skidDirection = (skidDirection + 3) % 6;
+                        skidDirection = (skidDirection + 3) % 6;
                     }
                     nextPos = curPos.translated( skidDirection );
                     nextHex = game.getBoard().getHex( nextPos );
@@ -11348,26 +11348,26 @@ public class Server implements Runnable {
             }
 
             // Destroy searchlights on 7+ (torso hits on mechs)
-            if(te.hasSpotlight()) {
-            	boolean spotlightHittable = true;
+            if  (te.hasSpotlight()) {
+                boolean spotlightHittable = true;
                 int loc = hit.getLocation();
-                if(te instanceof Mech) {
-                	if(loc != Mech.LOC_CT && loc != Mech.LOC_LT && loc != Mech.LOC_RT) {
-                		spotlightHittable = false;
-                	}
-                } else if(te instanceof Tank) {
-                	if(loc != Tank.LOC_FRONT && loc != Tank.LOC_RIGHT && loc != Tank.LOC_LEFT) {
-                		spotlightHittable = false;
-                	}
+                if (te instanceof Mech) {
+                    if (loc != Mech.LOC_CT && loc != Mech.LOC_LT && loc != Mech.LOC_RT) {
+                        spotlightHittable = false;
+                    }
+                } else if (te instanceof Tank) {
+                    if (loc != Tank.LOC_FRONT && loc != Tank.LOC_RIGHT && loc != Tank.LOC_LEFT) {
+                        spotlightHittable = false;
+                    }
                 }
-                if(spotlightHittable) {
+                if (spotlightHittable) {
                     int spotroll = Compute.d6(2);
-	                r = new Report(6072);
-	                r.indent(2);
-	                r.subject = te_n;
-	                r.add(spotroll);
-	                r.newlines = 0;
-	                vDesc.addElement(r);
+                    r = new Report(6072);
+                    r.indent(2);
+                    r.subject = te_n;
+                    r.add(spotroll);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
                     if (spotroll >= 7) {
                         r = new Report(6071);
                         r.subject = te_n;
@@ -11385,9 +11385,8 @@ public class Server implements Runnable {
                 int nLoc = hit.getLocation();
                 Entity passenger = te.getExteriorUnitAt( nLoc, hit.isRear() );
                 // Does an exterior passenger absorb some of the damage?
-                if ( !ammoExplosion &&
-                     null != passenger && !passenger.isDoomed() ) {
-
+                if ( !ammoExplosion && null != passenger
+                        && !passenger.isDoomed() ) {
                     // Yup.  Roll up some hit data for that passenger.
                     r = new Report(6075);
                     r.subject = passenger.getId();

@@ -8,6 +8,7 @@ v0.30.1-dev (CVS)
 + Bug 1262741: Torpedoes and the surface navy
 + Bug 1265469: infantry damage report confusing
 + Bug 1268206: possible to fire jammed RAC, results in client disconnect
++ Bug 1267368: Tagetting System Choice Box Enabled in Opponent view
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

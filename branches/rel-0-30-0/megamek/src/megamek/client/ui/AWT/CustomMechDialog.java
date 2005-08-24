@@ -389,6 +389,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             choDeployment.setEnabled(false);
             chAutoEject.setEnabled(false);
             chSearchlight.setEnabled(false);
+            choTargSys.setEnabled(false);
             disableMunitionEditing();
             disableMGSetting();
             chOffBoard.setEnabled(false);

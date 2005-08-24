@@ -6077,13 +6077,13 @@ public class Server implements Runnable {
         if (woods == ITerrain.LEVEL_NONE) {
             //woods already cleared
             r = new Report(3075);
-            r.indent(2);
+            r.indent(3);
             r.subject = entityId;
             vPhaseReport.addElement(r);
         } else {
             int woodsRoll = Compute.d6(2);
             r = new Report(3080);
-            r.indent(2);
+            r.indent(3);
             r.subject = entityId;
             r.add(nTarget);
             r.add(woodsRoll);

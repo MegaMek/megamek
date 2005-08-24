@@ -211,6 +211,11 @@ public class WeaponAttackAction
         int toSubtract = 0;
 
         ToHitData toHit = null;
+        
+        // missing, breached or jammed weapons can't fire
+        if (!weapon.canFire()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon is not in a state where it can be fired");
+        }
 
         // If we're lying mines, we can't shoot.
         if (ae.isLayingMines()) {
@@ -231,10 +236,10 @@ public class WeaponAttackAction
         if ((game.getPhase() == IGame.PHASE_TARGETING) && !isArtilleryIndirect) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Only indirect artillery can be fired in the targeting phase");
         }
-        if((game.getPhase() == IGame.PHASE_OFFBOARD) && !isTAG) {
+        if ((game.getPhase() == IGame.PHASE_OFFBOARD) && !isTAG) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Only TAG can be fired in the offboard attack phase");
         }
-        if((game.getPhase() != IGame.PHASE_OFFBOARD) && isTAG) {
+        if ((game.getPhase() != IGame.PHASE_OFFBOARD) && isTAG) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "TAG can only be fired in the offboard attack phase");
         }
     

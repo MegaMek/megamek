@@ -300,18 +300,19 @@ Inner Sphere Level 3 Tech:
   ISUltraAC20 Ammo (THB)
 
  Equipment:
+  Backhoe
+  Chainsaw
+  Dual Saw
   Endo-Steel Prototype
   Ferro-Fibrous Prototype
-  IS1 Compact Heat Sink
-  IS2 Compact Heat Sinks
   ImprovedJump Jet
   IS Bloodhound Active Probe
+  IS1 Compact Heat Sink
+  IS2 Compact Heat Sinks
   IS THB Bloodhound Active Probe
   ISAngelECMSuite
-  Mace (THB)
   Mace
-  Dual Saw
-  Backhoe
+  Mace (THB)
 
 Clan Level 3 Tech:
  Weapons:

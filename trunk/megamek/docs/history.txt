@@ -68,6 +68,7 @@ v0.31.0 (CVS)
 + Hull down for quads and vehicles.  Fortified terrain can be added in map 
     editor (no engineer platoons yet!).  Somebody please make some better artwork though.
 + Added Backhoe (miniature rulebook).
++ Added Chainsaw (miniature rulebook).
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

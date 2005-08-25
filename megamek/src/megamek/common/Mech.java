@@ -1926,6 +1926,7 @@ public abstract class Mech
                     || mtype.hasSubType(MiscType.S_MACE_THB)
                     || mtype.hasSubType(MiscType.S_MACE)
                     || mtype.hasSubType(MiscType.S_BACKHOE)
+                    || mtype.hasSubType(MiscType.S_CHAINSAW)
                     || mtype.hasSubType(MiscType.S_DUAL_SAW)))
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_AP_POD) ) {

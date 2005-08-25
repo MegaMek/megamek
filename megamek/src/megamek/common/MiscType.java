@@ -79,9 +79,9 @@ public class MiscType extends EquipmentType {
     public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7; TODO          
     public static final int     S_VIBRO_LARGE       = 0x00010000; // Solaris 7; TODO          
     public static final int     S_WRECKING_BALL     = 0x00020000; // Solaris 7; TODO          
-    public static final int     S_BACKHOE           = 0x00040000; // Miniatures Rulebook; TODO
+    public static final int     S_BACKHOE           = 0x00040000; // Miniatures Rulebook
     public static final int     S_COMBINE           = 0x00080000; // Miniatures Rulebook; TODO
-    public static final int     S_CHAINSAW          = 0x00100000; // Miniatures Rulebook; TODO
+    public static final int     S_CHAINSAW          = 0x00100000; // Miniatures Rulebook
     public static final int     S_ROCK_CUTTER       = 0x00200000; // Miniatures Rulebook; TODO
 
     // Secondary damage for hand weapons.
@@ -361,6 +361,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createTHBMace());
         EquipmentType.addType(createMace());
         EquipmentType.addType(createDualSaw());
+        EquipmentType.addType(createChainsaw());
         EquipmentType.addType(createBackhoe());
 
         // Start of level 3 stuff
@@ -903,6 +904,22 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_CLUB;
         misc.subType |= S_DUAL_SAW;
         misc.bv = 9;
+        
+        return misc;
+    }
+
+    public static MiscType createChainsaw() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Chainsaw";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 5;
+        misc.criticals = 5;
+        misc.cost = 100000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_CHAINSAW;
+        misc.bv = 7;
         
         return misc;
     }

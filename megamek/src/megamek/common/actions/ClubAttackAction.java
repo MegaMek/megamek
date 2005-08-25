@@ -57,8 +57,11 @@ public class ClubAttackAction extends AbstractAttackAction {
         } else if (mType.hasSubType(MiscType.S_MACE)) {
             nDamage = (int)Math.floor(entity.getWeight() / 4.0);
         } else if (mType.hasSubType(MiscType.S_DUAL_SAW)) {
-            // Saws have constant damage, not variable like must.
-            nDamage =7;
+            // Saws have constant damage, not variable like most.
+            nDamage = 7;
+        } else if (mType.hasSubType(MiscType.S_BACKHOE)) {
+            // Backhoes have constant damage, not variable like most.
+            nDamage = 6;
         }
         // TSM doesn't apply to some weapons, including Saws.
         if (entity.heat >= 9
@@ -258,14 +261,15 @@ public class ClubAttackAction extends AbstractAttackAction {
             base = ae.getCrew().getPiloting() - 1;
         }
 
+        // Various versions of physical weapons have different base bonuses and penalties.
         if (((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
             base -= 1;
-        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_MACE_THB)) {
-            base += 2;
-        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_MACE)) {
-            base += 2;
         } else if (((MiscType)club.getType()).hasSubType(MiscType.S_DUAL_SAW)) {
             base += 1;
+        } else if ((((MiscType)club.getType()).hasSubType(MiscType.S_MACE_THB)) 
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_MACE))
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_BACKHOE))) {
+            base += 2;
         }
 
         toHit = new ToHitData(base, "base");

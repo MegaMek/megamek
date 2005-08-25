@@ -67,6 +67,7 @@ v0.31.0 (CVS)
 + Bug 1267328: endless Dialog Boxes when disconnecting Client from a Server
 + Hull down for quads and vehicles.  Fortified terrain can be added in map 
     editor (no engineer platoons yet!).  Somebody please make some better artwork though.
++ Added Backhoe (miniature rulebook).
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

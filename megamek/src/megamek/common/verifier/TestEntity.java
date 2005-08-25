@@ -288,6 +288,10 @@ public abstract class TestEntity implements TestEntityOption
                 && mt.hasSubType(MiscType.S_DUAL_SAW)) {
             return ceilMaxHalf(7,
                     getWeightCeilingWeapons());
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_BACKHOE)) {
+            return ceilMaxHalf(5,
+                    getWeightCeilingWeapons());
         } else if (mt.hasFlag(MiscType.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC"))
                 return Math.round(getWeight() / 20.0f);
@@ -500,6 +504,9 @@ public abstract class TestEntity implements TestEntityOption
         } else if (mt.hasFlag(MiscType.F_CLUB)
                 && mt.hasSubType(MiscType.S_DUAL_SAW)) {
             return 7;
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_BACKHOE)) {
+            return 6;
         } else if (mt.hasFlag(MiscType.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC"))
                 return Math.round(getWeight() / 20.0f);

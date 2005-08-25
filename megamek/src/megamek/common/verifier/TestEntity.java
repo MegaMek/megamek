@@ -285,6 +285,10 @@ public abstract class TestEntity implements TestEntityOption
             return ceilMaxHalf(getWeight() / 10.0f,
                     getWeightCeilingWeapons());
         } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_PILE_DRIVER)) {
+            return ceilMaxHalf(10,
+                    getWeightCeilingWeapons());
+        } else if (mt.hasFlag(MiscType.F_CLUB)
                 && mt.hasSubType(MiscType.S_CHAINSAW)) {
             return ceilMaxHalf(5,
                     getWeightCeilingWeapons());
@@ -505,6 +509,9 @@ public abstract class TestEntity implements TestEntityOption
         } else if (mt.hasFlag(MiscType.F_CLUB)
                 && mt.hasSubType(MiscType.S_MACE)) {
             return (int) Math.ceil(getWeight() / 10.0);
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_PILE_DRIVER)) {
+            return 8;
         } else if (mt.hasFlag(MiscType.F_CLUB)
                 && mt.hasSubType(MiscType.S_CHAINSAW)) {
             return 5;

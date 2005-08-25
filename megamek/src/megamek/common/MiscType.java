@@ -361,6 +361,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createTHBMace());
         EquipmentType.addType(createMace());
         EquipmentType.addType(createDualSaw());
+        EquipmentType.addType(createBackhoe());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -508,10 +509,10 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_CLUB;
         misc.subType |= S_HATCHET;
         misc.bv = BV_VARIABLE;
-        
+
         return misc;
     }
-    
+
     // Start of Level2 stuff
     
     public static MiscType createISDoubleHeatSink() {
@@ -676,7 +677,7 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    
+
     public static MiscType createISArtemis() {
         MiscType misc = new MiscType();
 
@@ -688,9 +689,10 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 100000;
         misc.flags |= F_ARTEMIS;
+
         return misc;
     }
-    
+
     public static MiscType createCLArtemis() {
         MiscType misc = new MiscType();
 
@@ -702,9 +704,10 @@ public class MiscType extends EquipmentType {
         misc.cost = 100000;
         misc.criticals = 1;
         misc.flags |= F_ARTEMIS;
+
         return misc;
     }
-        
+
     public static MiscType createGECM() {
         MiscType misc = new MiscType();
 
@@ -869,6 +872,22 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_MACE;
         misc.bv = BV_VARIABLE;
         
+        return misc;
+    }
+
+    public static MiscType createBackhoe() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Backhoe";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 5;
+        misc.criticals = 6;
+        misc.cost = 50000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_BACKHOE;
+        misc.bv = 8;
+
         return misc;
     }
 

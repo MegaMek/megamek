@@ -1919,12 +1919,13 @@ public abstract class Mech
             // don't count destroyed equipment
             if (mounted.isDestroyed())
                 continue;
-           
+
             if ((mtype.hasFlag(MiscType.F_CLUB)
                     && (mtype.hasSubType(MiscType.S_HATCHET)
                     || mtype.hasSubType(MiscType.S_SWORD)
                     || mtype.hasSubType(MiscType.S_MACE_THB)
                     || mtype.hasSubType(MiscType.S_MACE)
+                    || mtype.hasSubType(MiscType.S_BACKHOE)
                     || mtype.hasSubType(MiscType.S_DUAL_SAW)))
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_AP_POD) ) {

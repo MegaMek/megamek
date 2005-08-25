@@ -724,7 +724,7 @@ public class Client {
         connection.sendNow(packet);
     }
 
-    protected synchronized void handlePacket(Packet c) {
+    protected void handlePacket(Packet c) {
         if (c == null) {
             System.out.println("client: got null packet"); //$NON-NLS-1$
             return;
@@ -800,7 +800,6 @@ public class Client {
                 changePhase(c.getIntValue(0));
                 break;
             case Packet.COMMAND_TURN :
-                System.gc();
                 changeTurnIndex(c.getIntValue(0));
                 break;
             case Packet.COMMAND_ROUND_UPDATE :

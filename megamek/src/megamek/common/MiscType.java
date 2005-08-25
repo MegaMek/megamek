@@ -69,16 +69,16 @@ public class MiscType extends EquipmentType {
     public static final int     S_CLAW_THB          = 0x00000020; // Not used yet, but...  Hey, it's all for fun.
     public static final int     S_MACE              = 0x00000040; // Solaris 7
     public static final int     S_DUAL_SAW          = 0x00000080; // Solaris 7                
-    public static final int     S_FLAIL             = 0x00000100; // Solaris 7; TODO          
-    public static final int     S_PILE_DRIVER       = 0x00000200; // Solaris 7; TODO          
-    public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7; TODO          
-    public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7; TODO          
-    public static final int     S_SHIELD_LARGE      = 0x00001000; // Solaris 7; TODO          
-    public static final int     S_LANCE             = 0x00002000; // Solaris 7; TODO          
-    public static final int     S_VIBRO_SMALL       = 0x00004000; // Solaris 7; TODO          
-    public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7; TODO          
-    public static final int     S_VIBRO_LARGE       = 0x00010000; // Solaris 7; TODO          
-    public static final int     S_WRECKING_BALL     = 0x00020000; // Solaris 7; TODO          
+    public static final int     S_FLAIL             = 0x00000100; // Solaris 7; TODO
+    public static final int     S_PILE_DRIVER       = 0x00000200; // Solaris 7
+    public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7; TODO         
+    public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7; TODO
+    public static final int     S_SHIELD_LARGE      = 0x00001000; // Solaris 7; TODO
+    public static final int     S_LANCE             = 0x00002000; // Solaris 7; TODO
+    public static final int     S_VIBRO_SMALL       = 0x00004000; // Solaris 7; TODO
+    public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7; TODO
+    public static final int     S_VIBRO_LARGE       = 0x00010000; // Solaris 7; TODO
+    public static final int     S_WRECKING_BALL     = 0x00020000; // Solaris 7; TODO
     public static final int     S_BACKHOE           = 0x00040000; // Miniatures Rulebook
     public static final int     S_COMBINE           = 0x00080000; // Miniatures Rulebook; TODO
     public static final int     S_CHAINSAW          = 0x00100000; // Miniatures Rulebook
@@ -358,11 +358,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISAPPod());
         EquipmentType.addType(createCLAPPod());
         EquipmentType.addType(createSword());
-        EquipmentType.addType(createTHBMace());
-        EquipmentType.addType(createMace());
-        EquipmentType.addType(createDualSaw());
-        EquipmentType.addType(createChainsaw());
-        EquipmentType.addType(createBackhoe());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -380,6 +375,12 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISTHBAngelECM());
         EquipmentType.addType(createCLAngelECM());
         EquipmentType.addType(createWatchdogECM());
+        EquipmentType.addType(createTHBMace());
+        EquipmentType.addType(createMace());
+        EquipmentType.addType(createDualSaw());
+        EquipmentType.addType(createChainsaw());
+        EquipmentType.addType(createBackhoe());
+        EquipmentType.addType(createPileDriver());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -904,6 +905,23 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_CLUB;
         misc.subType |= S_DUAL_SAW;
         misc.bv = 9;
+        
+        return misc;
+    }
+
+    public static MiscType createPileDriver() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Pile Driver";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("PileDriver");
+        misc.tonnage = 10;
+        misc.criticals = 8;
+        misc.cost = 100000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_PILE_DRIVER;
+        misc.bv = 5;
         
         return misc;
     }

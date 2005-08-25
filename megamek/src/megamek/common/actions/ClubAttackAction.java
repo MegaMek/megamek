@@ -56,6 +56,9 @@ public class ClubAttackAction extends AbstractAttackAction {
             nDamage *= 2;
         } else if (mType.hasSubType(MiscType.S_MACE)) {
             nDamage = (int)Math.floor(entity.getWeight() / 4.0);
+        } else if (mType.hasSubType(MiscType.S_PILE_DRIVER)) {
+            // Pile Drivers have constant damage, not variable like most.
+            nDamage = 9;
         } else if (mType.hasSubType(MiscType.S_DUAL_SAW)) {
             // Saws have constant damage, not variable like most.
             nDamage = 7;
@@ -69,7 +72,8 @@ public class ClubAttackAction extends AbstractAttackAction {
         // TSM doesn't apply to some weapons, including Saws.
         if (entity.heat >= 9
                 && !(mType.hasSubType(MiscType.S_DUAL_SAW)
-                || mType.hasSubType(MiscType.S_CHAINSAW))
+                || mType.hasSubType(MiscType.S_CHAINSAW)
+                || mType.hasSubType(MiscType.S_PILE_DRIVER))
                 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
         }
@@ -275,6 +279,8 @@ public class ClubAttackAction extends AbstractAttackAction {
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_MACE))
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_BACKHOE))) {
             base += 2;
+        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_PILE_DRIVER)) {
+            base += 3;
         }
 
         toHit = new ToHitData(base, "base");

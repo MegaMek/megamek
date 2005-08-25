@@ -311,6 +311,7 @@ Inner Sphere Level 3 Tech:
   Mace (THB)
   Mace
   Dual Saw
+  Backhoe
 
 Clan Level 3 Tech:
  Weapons:

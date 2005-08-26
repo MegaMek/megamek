@@ -83,7 +83,7 @@ public class Mounted implements Serializable, RoundUpdated {
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType)type).getShots();
         }
-        if (type.hasFlag(MiscType.F_MINE)) {
+        if (type instanceof MiscType && type.hasFlag(MiscType.F_MINE)) {
             this.mineType = MINE_CONVENTIONAL; 
         }
     }

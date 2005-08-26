@@ -70,6 +70,7 @@ v0.31.0 (CVS)
 + Added Backhoe (miniature rulebook).
 + Added Chainsaw (miniature rulebook).
 + Added Pile Driver (Solaris VII).
++ Missile weapons show up as conventional mines in the mechdisplay.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

@@ -845,7 +845,7 @@ public class WeaponAttackAction
         // add in LOS mods that we've been keeping
         toHit.append(losMods);
         
-        if(te.isHullDown()
+        if (te != null && te.isHullDown()
         	&& ((te instanceof Mech 
         			&& los.getTargetCover() > LosEffects.COVER_NONE)
     			|| (te instanceof Tank 

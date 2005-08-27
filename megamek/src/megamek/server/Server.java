@@ -10621,6 +10621,7 @@ public class Server implements Runnable {
                     r.addDesc(entity);
                     r.add(damageNumber);
                     r.add(damageroll);
+                    r.newlines = 0;
                     if (damageroll >= damageNumber) {
                         r.choose(true);
                         vPhaseReport.addElement(r);
@@ -10629,6 +10630,9 @@ public class Server implements Runnable {
                         vPhaseReport.addElement(r);
                         Server.combineVectors(vPhaseReport,
                                               oneCriticalEntity(entity, Compute.d6(2)));
+                        //add an empty report, for linebreaking
+                        r = new Report(1210);
+                        vPhaseReport.add(r);
                     }
                 }
             }

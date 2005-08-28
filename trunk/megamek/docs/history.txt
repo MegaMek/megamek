@@ -73,6 +73,7 @@ v0.31.0 (CVS)
 + Missile weapons show up as conventional mines in the mechdisplay.
 + Fix NPE when targeting woods, caused by hull down option
 + Bug 1274311: Formating on crit message from level 3 heat
++ Bug 1268169: RAC unjamming does not work.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

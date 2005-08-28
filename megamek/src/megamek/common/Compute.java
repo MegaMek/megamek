@@ -1631,6 +1631,18 @@ public class Compute {
             // Direct fire weapons (and LBX slug rounds) just do a single shot
             // so they don't use the missile hits table
             fDamage = wt.getDamage();
+            if ((attacker.getPosition() != null) && (g.getEntity(waa.getTargetId()).getPosition() != null)){
+                if (wt.getAmmoType() == AmmoType.T_GAUSS_HEAVY){
+                    fDamage = 25.0f;
+                    int rtt = attacker.getPosition().distance(g.getEntity(waa.getTargetId()).getPosition());
+                    if (rtt > 6){
+                        fDamage = 20.0f;
+                    }
+                    if (rtt > 13){
+                        fDamage = 10.0f;
+                    }
+                }
+            }            
 
             // Infantry follow some special rules, but do fixed amounts of
             // damage

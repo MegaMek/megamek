@@ -330,7 +330,7 @@ Equipment
 - CASE				Yes		None
 - ECM				Yes		None
 - Flamers			Yes		Can switch between Heat and Damage by using mode button.
-- Gauss Rifles			Yes		Bot will not fire heavy Gauss Rifle.
+- Gauss Rifles			Yes		None
 - Hatchets			Yes		None
 - Light Engines			Yes		None
 - Machine Guns			Yes		None

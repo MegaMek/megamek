@@ -78,7 +78,9 @@ v0.31.0 (CVS)
 + Patch 1274963: Minor fix for the Bot and heavy gauss
 + Corrected patch 1241389: patch for bug 1236506. Removed incorrect call of
     TilesetManager.reset() from the gameBoardChanged().
-
++ Fixed vehicle data for Warrior H7C (Added missing ammo to bring up to correct
+  BV of 721).
+  
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.
 + Bug 1234949: Checks for null positions on cluster/swarm logic.

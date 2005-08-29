@@ -4211,7 +4211,7 @@ public class BoardView1
         }        
 
         public void gameBoardChanged(GameBoardChangeEvent e) {
-            updateBoard();
+            boardChanged();
         }
 
         public void gamePhaseChange(GamePhaseChangeEvent e) {
@@ -4231,6 +4231,12 @@ public class BoardView1
             }
         }
     };
+
+    private synchronized void boardChanged() {
+        boardImage = null;
+        boardGraph = null;
+        redrawAllEntities();        
+    }
 
     private void clearSprites() {
         pathSprites = new Vector();

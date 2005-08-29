@@ -66,7 +66,8 @@ v0.31.0 (CVS)
 + removed not-working fix from build.bat
 + Bug 1267328: endless Dialog Boxes when disconnecting Client from a Server
 + Hull down for quads and vehicles.  Fortified terrain can be added in map 
-    editor (no engineer platoons yet!).  Somebody please make some better artwork though.
+    editor (no engineer platoons yet!).  Somebody please make some better
+    artwork though.
 + Added Backhoe (miniature rulebook).
 + Added Chainsaw (miniature rulebook).
 + Added Pile Driver (Solaris VII).

@@ -196,7 +196,7 @@ public class TilesetManager {
     /**
      * @returns true if we're done loading images
      */
-    public boolean isLoaded() {
+    public synchronized boolean isLoaded() {
         if (!loaded) {
             loaded = tracker.checkAll(true);
         }
@@ -242,7 +242,7 @@ public class TilesetManager {
      * Loads the image(s) for this hex into the tracker.
      * @param hex the hex to load
      */
-    private void loadHexImage(IHex hex) {
+    private synchronized void loadHexImage(IHex hex) {
         hexTileset.assignMatch(hex, comp);
         hexTileset.trackHexImages(hex, tracker);
     }
@@ -258,7 +258,7 @@ public class TilesetManager {
      * Waits until a certain hex's images are done loading.
      * @param hex the hex to wait for
      */
-    public void waitForHex(IHex hex) {
+    public synchronized void waitForHex(IHex hex) {
         loadHexImage(hex);
         try {
             tracker.waitForID(1);
@@ -270,7 +270,7 @@ public class TilesetManager {
     /**
      * Loads all the hex tileset images
      */
-    public void loadAllHexes() {
+    public synchronized void loadAllHexes() {
         hexTileset.loadAllImages(comp, tracker);
     }
     
@@ -329,7 +329,7 @@ public class TilesetManager {
     /**
      * Load a single entity image
      */
-    public void loadImage(Entity entity)
+    public synchronized void loadImage(Entity entity)
     {
         Image base = mechTileset.imageFor(entity, comp);
         Image wreck = null;
@@ -369,9 +369,12 @@ public class TilesetManager {
     /**
      * Resets the started and loaded flags
      */
-    public void reset() {
+    public synchronized void reset() {
         loaded = false;
         started = false;
+
+        this.tracker = new MediaTracker(comp);
+        hexTileset.reset();    
     }
     
     

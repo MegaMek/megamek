@@ -57,7 +57,7 @@ public class HexTileset {
     public HexTileset() {
     }
     
-    public void clearHex(IHex hex) {
+    public synchronized void clearHex(IHex hex) {
         hexToImageCache.remove(hex);
     }
 
@@ -72,7 +72,7 @@ public class HexTileset {
      * Any terrain left is used to match a base image for the hex.  This time,
      * a match can be any value, and the first, best image is used.
      */
-    public Object[] assignMatch(IHex hex, Component comp) {
+    public synchronized Object[] assignMatch(IHex hex, Component comp) {
         IHex hexCopy = hex.duplicate();
         List supers = supersFor(hexCopy, comp);
         Image base = baseFor(hexCopy, comp);
@@ -81,7 +81,7 @@ public class HexTileset {
         return pair;
     }
     
-    public Image getBase(IHex hex, Component comp) {
+    public synchronized Image getBase(IHex hex, Component comp) {
         Object[] pair = (Object[])hexToImageCache.get(hex);
         if (pair == null) {
           pair = assignMatch(hex, comp);
@@ -89,7 +89,7 @@ public class HexTileset {
         return (Image) pair[0];
     }
     
-    public List getSupers(IHex hex, Component comp) {
+    public synchronized List getSupers(IHex hex, Component comp) {
         Object[] pair = (Object[])hexToImageCache.get(hex);
         if (pair == null) {
           pair = assignMatch(hex, comp);
@@ -224,7 +224,7 @@ public class HexTileset {
     /**
      * Adds all images associated with the hex to the specified tracker
      */
-    public void trackHexImages(IHex hex, MediaTracker tracker) {
+    public synchronized void trackHexImages(IHex hex, MediaTracker tracker) {
 
         Image base = (Image)((Object[])hexToImageCache.get(hex))[0];
         List superImgs = (List)((Object[])hexToImageCache.get(hex))[1];
@@ -246,6 +246,10 @@ public class HexTileset {
         
     }
     
+    public synchronized void reset() {
+        hexToImageCache = new ImageCache();
+    }
+
     /**
      * Match the two hexes using the "super" formula.  All matches must be
      * exact, however the match only depends on the original hex matching

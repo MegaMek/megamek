@@ -81,8 +81,6 @@ v0.31.0 (CVS)
 + Fixed vehicle data for Warrior H7C (Added missing ammo to bring up to correct
   BV of 721).
 + Patch 1275860: patch for bug 1275849
-+ Bug 1263895: Woods and Smoke (Level 2) cumulative - NOT a bug (Randall said 
-  so :()
   
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

@@ -286,6 +286,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISTHBUltraAC10());
         EquipmentType.addType(createISTHBUltraAC20());
 
+        EquipmentType.addType(createISLAC2());
+        EquipmentType.addType(createISLAC5());
+
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
         EquipmentType.addType(createCLERLargeLaser());
@@ -9221,6 +9224,57 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     
+    }
+
+    public static WeaponType createISLAC2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Light Auto Cannon/2";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS Light AutoCannon/2");
+        weapon.addLookupName("ISLAC2");
+        weapon.addLookupName("IS Light Autocannon/2");
+        weapon.heat = 1;
+        weapon.damage = 2;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_LAC;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.tonnage = 4.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 30;
+
+        return weapon;
+    }
+
+
+    public static WeaponType createISLAC5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Light Auto Cannon/5";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS Light Auto Cannon/5");
+        weapon.addLookupName("ISLAC5");
+        weapon.addLookupName("IS Light Autocannon/5");
+        weapon.heat = 1;
+        weapon.damage = 5;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LAC;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.extremeRange = 20;
+        weapon.tonnage = 5.0f;
+        weapon.criticals = 2;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 62;
+
+        return weapon;
     }
 
     public String toString() {

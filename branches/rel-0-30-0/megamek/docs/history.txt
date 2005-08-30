@@ -11,9 +11,7 @@ v0.30.1-dev (CVS)
 + Bug 1267368: Targetting System Choice Box Enabled in Opponent view
 + Corrected patch 1241389: patch for bug 1236506. Removed incorrect call of
     TilesetManager.reset() from the gameBoardChanged().
-+ Bug 1263895: Woods and Smoke (Level 2) cumulative - NOT a bug (Randall said 
-  so :()
-  
+
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.
 + Bug 1234949: Checks for null positions on cluster/swarm logic.

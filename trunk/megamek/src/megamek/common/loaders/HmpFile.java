@@ -722,6 +722,7 @@ public class HmpFile
 
     isCriticals.put(new Long(0x50), "ISLAC2");
     isCriticals.put(new Long(0x51), "ISLAC5");
+    isCriticals.put(new Long(0x52), "ISHeavyFlamer");
 
     isCriticals.put(new Long(0x54), "ISUltraAC2");
     isCriticals.put(new Long(0x55), "ISUltraAC5");
@@ -891,6 +892,7 @@ public class HmpFile
 
     isCriticals.put(new Long(0x1e0), "ISLAC2 Ammo");
     isCriticals.put(new Long(0x1e1), "ISLAC5 Ammo");
+    isCriticals.put(new Long(0x1e2), "ISHeavyFlamer Ammo");
 
     isCriticals.put(new Long(0x01e4), "ISUltraAC2 Ammo");
     isCriticals.put(new Long(0x01e5), "ISUltraAC5 Ammo");

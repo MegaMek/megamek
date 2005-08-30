@@ -289,6 +289,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLAC2());
         EquipmentType.addType(createISLAC5());
 
+        EquipmentType.addType(createISHeavyFlamer());
+
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
         EquipmentType.addType(createCLERLargeLaser());
@@ -9273,6 +9275,33 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 62;
+
+        return weapon;
+    }
+
+    public static WeaponType createISHeavyFlamer() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Heavy Flamer";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS Heavy Flamer");
+        weapon.addLookupName("ISHeavyFlamer");
+        weapon.heat = 5;
+        weapon.damage = 4;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_HEAVY_FLAMER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange =8;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_FLAMER | F_ENERGY;
+        weapon.bv = 20;
+        String[] modes = {"Damage", "Heat"};
+        weapon.setModes(modes);
 
         return weapon;
     }

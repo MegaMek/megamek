@@ -57,7 +57,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_LRM_STREAK        = 32;
     public static final int     T_AC_LBX_THB        = 33;
     public static final int     T_AC_ULTRA_THB      = 34;
-    public static final int     NUM_TYPES           = 35;
+    public static final int     T_LAC               = 35;
+    public static final int     NUM_TYPES           = 36;
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
@@ -260,6 +261,11 @@ public class AmmoType extends EquipmentType {
         base = createISSRM6Ammo();
         srmAmmos.addElement( base );
         EquipmentType.addType( base );
+
+        // Level 3 Ammo
+        // Note, some level 3 stuff is mixed into level 2.
+        EquipmentType.addType(createISLAC2Ammo());
+        EquipmentType.addType(createISLAC5Ammo());
 
         // Start of Level2 Ammo
         EquipmentType.addType(createISLB2XAmmo());
@@ -4817,6 +4823,40 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.hittable = false;
         ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createISLAC2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LAC/2 Ammo";
+        ammo.setInternalName("IS Ammo LAC/2");
+        ammo.addLookupName("ISLAC2 Ammo");
+        ammo.addLookupName("IS Light Autocannon/2 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_LAC;
+        ammo.shots = 45;
+        ammo.bv = 3;
+
+        return ammo;
+    }
+
+    public static AmmoType createISLAC5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LAC/5 Ammo";
+        ammo.setInternalName("IS Ammo LAC/5");
+        ammo.addLookupName("ISLAC5 Ammo");
+        ammo.addLookupName("IS Light Autocannon/5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LAC;
+        ammo.shots = 20;
+        ammo.bv = 5;
 
         return ammo;
     }

@@ -58,7 +58,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_AC_LBX_THB        = 33;
     public static final int     T_AC_ULTRA_THB      = 34;
     public static final int     T_LAC               = 35;
-    public static final int     NUM_TYPES           = 36;
+    public static final int     T_HEAVY_FLAMER      = 36;
+    public static final int     NUM_TYPES           = 37;
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
@@ -266,6 +267,7 @@ public class AmmoType extends EquipmentType {
         // Note, some level 3 stuff is mixed into level 2.
         EquipmentType.addType(createISLAC2Ammo());
         EquipmentType.addType(createISLAC5Ammo());
+        EquipmentType.addType(createISHeavyFlamerAmmo());
 
         // Start of Level2 Ammo
         EquipmentType.addType(createISLB2XAmmo());
@@ -4857,6 +4859,23 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LAC;
         ammo.shots = 20;
         ammo.bv = 5;
+
+        return ammo;
+    }
+
+    public static AmmoType createISHeavyFlamerAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Heavy Flamer Ammo";
+        ammo.setInternalName("IS Heavy Flamer Ammo");
+        ammo.addLookupName("IS Ammo Heavy Flamer");
+        ammo.addLookupName("ISHeavyFlamer Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_HEAVY_FLAMER;
+        ammo.shots = 10;
+        ammo.bv = 3;
 
         return ammo;
     }

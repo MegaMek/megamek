@@ -627,6 +627,7 @@ public class HmvFile
     isEquipment.put(new Long(0x4F), "ISMachine Gun");
     isEquipment.put(new Long(0x50), "ISLAC2");
     isEquipment.put(new Long(0x51), "ISLAC5");
+    isEquipment.put(new Long(0x52), "ISHeavyFlamer");
     isEquipment.put(new Long(0x54), "ISUltraAC2");
     isEquipment.put(new Long(0x55), "ISUltraAC5");
     isEquipment.put(new Long(0x56), "ISUltraAC10");
@@ -697,12 +698,14 @@ public class HmvFile
     isEquipment.put(new Long(0x12C), "ISRocketLauncher15");
     isEquipment.put(new Long(0x12D), "ISRocketLauncher20");
     isEquipment.put(new Long(0x01ce), "ISAC2 Ammo");
-    isEquipment.put(new Long(0x01d0), "ISAC10 Ammo");
-    isEquipment.put(new Long(0x01d2), "ISAMS Ammo");
     isEquipment.put(new Long(0x01cf), "ISAC5 Ammo");
+    isEquipment.put(new Long(0x01d0), "ISAC10 Ammo");
     isEquipment.put(new Long(0x01d1), "ISAC20 Ammo");
+    isEquipment.put(new Long(0x01d2), "ISAMS Ammo");
+
     isEquipment.put(new Long(0x01d6), "ISLightGauss Ammo");
     isEquipment.put(new Long(0x01d7), "ISGauss Ammo");
+
     isEquipment.put(new Long(0x01db), "ISLBXAC2 Ammo");
     isEquipment.put(new Long(0x01dc), "ISLBXAC5 Ammo");
     isEquipment.put(new Long(0x01dd), "ISLBXAC10 Ammo");
@@ -710,6 +713,8 @@ public class HmvFile
     isEquipment.put(new Long(0x01df), "ISMG Ammo (200)");
     isEquipment.put(new Long(0x01e0), "ISLAC2 Ammo");
     isEquipment.put(new Long(0x01e1), "ISLAC5 Ammo");
+    isEquipment.put(new Long(0x01e2), "ISHeavyFlamer Ammo");
+
     isEquipment.put(new Long(0x01e4), "ISUltraAC2 Ammo");
     isEquipment.put(new Long(0x01e5), "ISUltraAC5 Ammo");
     isEquipment.put(new Long(0x01e6), "ISUltraAC10 Ammo");

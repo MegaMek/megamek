@@ -121,9 +121,8 @@ public abstract class UnitStatusFormatter
                         sb.append("*");
                     }
                     if (e instanceof Mech) {
-                        sb.append( Mech.systemNames[cs.getIndex()] );
-                    }
-                    else if ( e instanceof Protomech ) {
+                        sb.append(((Mech)e).getSystemName(cs.getIndex()));
+                    } else if ( e instanceof Protomech ) {
                         sb.append( Protomech.systemNames[cs.getIndex()] );
                     }
                 }

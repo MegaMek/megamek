@@ -55,6 +55,8 @@ public class MtfFile implements IMechLoader {
     String engine;
     String internalType;
     String myomerType;
+    String gyroType;
+    String cockpitType;
 
     String heatSinks;
     String walkMP;
@@ -101,12 +103,27 @@ public class MtfFile implements IMechLoader {
 
             r.readLine();
 
-            tonnage = r.readLine();
-            engine = r.readLine();
-            internalType = r.readLine();
-            myomerType = r.readLine();
-
-            r.readLine();
+            // The next line might either be blank or a system type.
+            String tmp = r.readLine();
+            while ((tmp != null) && (tmp.length() > 0)) {
+                if (tmp.startsWith("Cockpit:")) {
+                    cockpitType = tmp;
+                } else if (tmp.startsWith("Gyro:")) {
+                    gyroType = tmp;
+                } else if (tmp.startsWith("Mass:")) {
+                    tonnage = tmp;
+                } else if (tmp.startsWith("Engine:")) {
+                    engine = tmp;
+                } else if (tmp.startsWith("Structure:")) {
+                    internalType = tmp;
+                } else if (tmp.startsWith("Myomer:")) {
+                    myomerType = tmp;
+                } else {
+                    // Do we WANT to do anything here?
+                    //FIXME
+                }
+                tmp = r.readLine();
+            }
 
             heatSinks = r.readLine();
             walkMP = r.readLine();
@@ -172,10 +189,26 @@ public class MtfFile implements IMechLoader {
         try {
             Mech mech;
 
+            int iGyroType = Mech.GYRO_STANDARD;
+            try {
+                iGyroType = Mech.getGyroTypeForString(gyroType.substring(5));
+                if (iGyroType == Mech.GYRO_UNKNOWN)
+                    iGyroType = Mech.GYRO_STANDARD;
+            } catch (Exception e) {
+                iGyroType = Mech.GYRO_STANDARD;
+            }
+            int iCockpitType = Mech.COCKPIT_STANDARD;
+            try {
+                iCockpitType = Mech.getCockpitTypeForString(cockpitType.substring(8));
+                if (iCockpitType == Mech.COCKPIT_UNKNOWN)
+                    iCockpitType = Mech.COCKPIT_STANDARD;
+            } catch (Exception e) {
+                iCockpitType = Mech.COCKPIT_STANDARD;
+            }
             if (chassisConfig.indexOf("Quad") != -1) {
-                mech = new QuadMech();
+                mech = new QuadMech(iGyroType, iCockpitType);
             } else {
-                mech = new BipedMech();
+                mech = new BipedMech(iGyroType, iCockpitType);
             }
 
             if (!version.trim().equalsIgnoreCase("Version:1.0")) {
@@ -288,6 +321,7 @@ public class MtfFile implements IMechLoader {
         } catch (NumberFormatException ex) {
             throw new EntityLoadingException("NumberFormatException parsing file");
         } catch (NullPointerException ex) {
+ex.printStackTrace();
             throw new EntityLoadingException("NullPointerException parsing file");
         } catch (StringIndexOutOfBoundsException ex) {
             throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");

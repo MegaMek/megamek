@@ -185,7 +185,7 @@ public class MoveOption extends MovePath implements Cloneable {
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
         if (current.getMovementType() == IEntityMovementType.MOVE_RUN
-            && (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0
+                && (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0
                 || entity.hasHipCrit())) {
             this.getStep(0).setDanger(true);
             current.setDanger(true);

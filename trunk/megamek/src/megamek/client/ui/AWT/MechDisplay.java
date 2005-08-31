@@ -1254,7 +1254,7 @@ class SystemPanel
                     if ( en instanceof Protomech ) {
                         sb.append(Protomech.systemNames[cs.getIndex()]);
                     } else {
-                        sb.append(Mech.systemNames[cs.getIndex()]);
+                        sb.append(((Mech)en).getSystemName(cs.getIndex()));
                     }
                     break;
                 case CriticalSlot.TYPE_EQUIPMENT :

@@ -131,6 +131,9 @@ public class HmpFile
   private Hashtable spreadEquipment = new Hashtable();
   private Vector vSplitWeapons = new Vector();
 
+  private int gyroType = Mech.GYRO_STANDARD;
+  private int cockpitType = Mech.COCKPIT_STANDARD;
+
   public HmpFile(InputStream is)
 /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
       throws EntityLoadingException
@@ -322,6 +325,12 @@ public class HmpFile
         ctCriticals[x] = readUnsignedInt(dis);
       }     
 
+      dis.skipBytes(36);
+
+      // Get cockpit and gyro type, if any.
+      gyroType = readUnsignedShort(dis);
+      cockpitType = readUnsignedShort(dis);
+
       dis.close();
     }
     catch (IOException ex)
@@ -375,8 +384,7 @@ public class HmpFile
     try
     {
       Mech mech =
-        chassisType == ChassisType.QUADRAPED ? (Mech) new QuadMech() :
-        (Mech) new BipedMech();
+        (chassisType == ChassisType.QUADRAPED) ? (Mech) new QuadMech(gyroType, cockpitType) : (Mech) new BipedMech(gyroType, cockpitType);
 
       mech.setChassis(name);
       mech.setModel(model);

@@ -241,7 +241,14 @@ public class BipedMech extends Mech {
      */
     public double getCost() {
         double cost=0;
-        cost+=200000;//cockpit
+        // For future reference, Enhanched-Imaging Cockpit is 400,000.
+        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            cost += 750000;
+        } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
+            cost += 175000;
+        } else {
+            cost += 200000;
+        }
         if(hasEiCockpit()) cost += 200000;
         cost+=50000;//life support
         cost+=weight*2000;//sensors
@@ -279,15 +286,23 @@ public class BipedMech extends Mech {
             engineCost=15000;
         }
         cost+=(weight*getOriginalWalkMP()*weight*engineCost)/75;//(weight*walk=rating; rating*weight*cost factor = cost of engine.
-        cost+=300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);//gyro;
-        cost+=getOriginalJumpMP()*getOriginalJumpMP()*weight*200;
-        int freeSinks= hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
-        int sinkCost= hasDoubleHeatSinks()? 6000: 2000;
-        cost+=sinkCost*(heatSinks()-freeSinks);//cost of sinks
-        cost+=getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
+        if (getGyroType() == Mech.GYRO_XL) {
+            cost += 750000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 0.5;
+        } else if (getGyroType() == Mech.GYRO_COMPACT) {
+            cost += 400000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 1.5;
+        } else if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+            cost += 500000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 2;
+        } else {
+            cost += 300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);
+        }
+        cost += getOriginalJumpMP()*getOriginalJumpMP()*weight*200;
+        int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
+        int sinkCost = hasDoubleHeatSinks()? 6000: 2000;
+        cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks
+        cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
         cost += getWeaponsAndEquipmentCost();
-        double omniCost=0.0;
-        if(isOmni()) {
+        double omniCost = 0.0;
+        if (isOmni()) {
             omniCost = cost*0.25f;
         }
         cost+=omniCost;

@@ -12270,7 +12270,7 @@ public class Server implements Runnable {
                 r = new Report(6225);
                 r.subject = en.getId();
                 r.indent(3);
-                r.add(Mech.systemNames[cs.getIndex()]);
+                r.add(((Mech)en).getSystemName(cs.getIndex()));
                 r.newlines = 0;
                 vDesc.addElement(r);
                 switch(cs.getIndex()) {

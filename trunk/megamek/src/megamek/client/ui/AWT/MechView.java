@@ -108,7 +108,17 @@ public class MechView {
                     .append( aMech.getHeatCapacity() )
                     .append( "]" ); //$NON-NLS-1$
             }
-            sBasic.append("\n"); //$NON-NLS-1$
+            if (aMech.getCockpitType() != Mech.COCKPIT_STANDARD) {
+                sBasic.append("\n"); //$NON-NLS-1$
+                sBasic.append(Messages.getString("MechView.Cockpit"));
+                sBasic.append(aMech.getCockpitTypeString());
+            }
+            if (aMech.getGyroType() != Mech.GYRO_STANDARD) {
+                sBasic.append("\n");
+                sBasic.append(Messages.getString("MechView.Gyro"));
+                sBasic.append(aMech.getGyroTypeString());
+            }
+            sBasic.append("\n");
         }
         sBasic.append("\n") //$NON-NLS-1$
             .append( getInternalAndArmor() );

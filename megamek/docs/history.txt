@@ -88,6 +88,7 @@ v0.31.0 (CVS)
     types.
 + Bug 1263380: Mek selection grayed out
 + Patch 1277130: patch for bug 1277125
++ Bug 1276522: Mek that used TAG can't physical attack
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

@@ -291,6 +291,8 @@ public class MechSelectorDialog
         finally {
             this.setCursor(Cursor.getDefaultCursor());
             m_mechList.setEnabled(true);
+            //workaround for bug 1263380
+            m_mechList.setFont(m_mechList.getFont());
         }
         updateWidgetEnablements();
         repaint();

@@ -117,10 +117,8 @@ public abstract class Mech
     private int[] orig_rearArmor;
     
     private static int[] MASC_FAILURE = {2, 4, 6, 10, 12, 12, 12};
-    // MASCLevel is the # of turns MASC has been used previously
-    private int nMASCLevel = 0;
-    // Has masc been used?
-    private boolean usedMASC = false;
+    private int nMASCLevel = 0; // MASCLevel is the # of turns MASC has been used previously
+    private boolean usedMASC = false; // Has masc been used?
     private int sinksOn;
     private int sinksOnNextRound;
     private boolean sinksChanged = false;
@@ -153,6 +151,7 @@ public abstract class Mech
             }
         }
 
+        // Standard Head crits
         if (cockpitType != COCKPIT_TORSO_MOUNTED)
             setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
@@ -173,6 +172,7 @@ public abstract class Mech
                 && (cockpitType != COCKPIT_TORSO_MOUNTED))
             setCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
 
+        // Standard CT Crits
         setCritical(LOC_CT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         setCritical(LOC_CT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         setCritical(LOC_CT, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
@@ -185,19 +185,21 @@ public abstract class Mech
         setCritical(LOC_CT, 7, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         setCritical(LOC_CT, 8, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         setCritical(LOC_CT, 9, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-
         if (cockpitType == COCKPIT_TORSO_MOUNTED) {
             setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
             setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-
-            setCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-
-            setCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         } else if (gyroType == GYRO_XL) {
             setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
             setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         }
 
+        // Possible side torso crits
+        if (cockpitType == COCKPIT_TORSO_MOUNTED) {
+            setCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            setCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        }
+
+        // Standard leg crits
         setCritical(LOC_RLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
         setCritical(LOC_RLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
         setCritical(LOC_RLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
@@ -213,8 +215,10 @@ public abstract class Mech
         this.autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
     }
 
-    public static int getInnerLocation(int location)
-    {
+    /**
+     * Returns the location that transferred damage or crits will go to from a given location.
+     */
+    public static int getInnerLocation(int location) {
         switch(location) {
             case Mech.LOC_RT :
             case Mech.LOC_LT :
@@ -229,22 +233,25 @@ public abstract class Mech
                 return location;
         }
     }
-    
-    public static int mostRestrictiveLoc(int location1, int location2)
-    {
+
+    /**
+     * Returns the location with the most restrictive firing arc for a weapon.
+     */
+    public static int mostRestrictiveLoc(int location1, int location2) {
         if (location1 == location2) {
             return location1;
-        }
-        else if (Mech.restrictScore(location1) >= Mech.restrictScore(location2)) {
+        } else if (Mech.restrictScore(location1) >= Mech.restrictScore(location2)) {
             return location1;
-        }
-        else {
+        } else {
             return location2;
         }
     }
-    
-    public static int restrictScore(int location)
-    {
+
+    /**
+     * Helper function designed to give relative restrictiveness of locations.
+     * Used for finding the most restrictive firing arc for a weapon.
+     */
+    public static int restrictScore(int location) {
         switch(location) {
             case Mech.LOC_RARM :
             case Mech.LOC_LARM :
@@ -346,8 +353,7 @@ public abstract class Mech
                             m.setMode("Off");
                         }
                     }
-                }
-                else {
+                } else {
                     r.choose(true);
                 }
                 vDesc.addElement(r);
@@ -378,14 +384,13 @@ public abstract class Mech
      * Returns the number of locations in the entity
      */
     public int locations() {
-      return NUM_MECH_LOCATIONS;
+        return NUM_MECH_LOCATIONS;
     }
     
     /**
      * Override Entity#newRound() method.
      */
     public void newRound(int roundNumber) {
-
         // Walk through the Mech's miscellaneous equipment before
         // we apply our parent class' newRound() functionality
         // because Mek Stealth is set by the Entity#newRound() method.
@@ -394,11 +399,11 @@ public abstract class Mech
             MiscType mtype = (MiscType) m.getType();
 
             // Stealth can not be turned on if it's ECM is destroyed.
-            if ( Mech.STEALTH.equals(mtype.getInternalName()) &&
-                 m.getLinked().isDestroyed() && m.getLinked().isBreached() ) {
+            if (Mech.STEALTH.equals(mtype.getInternalName())
+                    && m.getLinked().isDestroyed()
+                    && m.getLinked().isBreached()) {
                 m.setMode("Off");
             }
-
         } // Check the next piece of equipment.
 
         super.newRound(roundNumber);
@@ -414,7 +419,7 @@ public abstract class Mech
         usedMASC = false;
 
         setSecondaryFacing(getFacing());
-        
+
         // resolve ammo dumps 
         for (Enumeration e = getAmmo(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
@@ -422,13 +427,12 @@ public abstract class Mech
                 m.setPendingDump(false);
                 m.setDumping(true);
                 reloadEmptyWeapons();
-            }
-            else if (m.isDumping()) {
+            } else if (m.isDumping()) {
                 m.setDumping(false);
                 m.setShotsLeft(0);
             }
         }
-        
+
         // set heat sinks
         sinksOn = sinksOnNextRound;
 

@@ -87,7 +87,8 @@ v0.31.0 (CVS)
 + Added framework for future implementation of alternate gyro and cockpit
     types.
 + Bug 1263380: Mek selection grayed out
-  
++ Patch 1277130: patch for bug 1277125
+
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.
 + Bug 1234949: Checks for null positions on cluster/swarm logic.

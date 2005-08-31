@@ -527,7 +527,7 @@ public class BoardView1
 
         // draw the back buffer onto the screen
         // first clear the entire view if the map has been zoomed
-        if ( hasZoomed == true ){
+        if ( scale < 1.00f){
             Image tmpImage = createImage( size.width, size.height );
             Graphics tmpGraphics = tmpImage.getGraphics();
             tmpGraphics.drawImage(backImage, offset.x, offset.y, this);
@@ -2456,7 +2456,6 @@ public class BoardView1
      * 
      */
     public void zoomIn(){
-        int tmpZoomIndex = zoomIndex + 1;
         if ( isJ2RE == true ){
             zoomIndex++;
             zoom();

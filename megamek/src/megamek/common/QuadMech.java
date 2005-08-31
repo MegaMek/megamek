@@ -570,7 +570,6 @@ public class QuadMech extends Mech
     public boolean removePartialCoverHits(int location, int cover, int side) {
         //when using quad hit table, treat front legs like legs not arms.
         if(game.getOptions().booleanOption("quad_hit_location")) {
-            System.out.println("remove PC ("+location+","+cover+")");
             //left and right cover are from attacker's POV.
             //if hitting front arc, need to swap them
             if (side == ToHitData.SIDE_FRONT) {

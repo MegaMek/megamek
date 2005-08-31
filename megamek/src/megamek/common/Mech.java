@@ -2305,7 +2305,6 @@ public abstract class Mech
     }
     
     public boolean removePartialCoverHits(int location, int cover, int side) {
-        System.out.println("remove PC ("+location+","+cover+")");
         //left and right cover are from attacker's POV.
         //if hitting front arc, need to swap them
         if (side == ToHitData.SIDE_FRONT) {

@@ -283,8 +283,11 @@ Inner Sphere Level 3 Tech:
   ISLAC5
   ISLBXAC10Prototype
   ISUltraAC5Prototype
+  ISLargeXPulseLaser
   ISLaserAntiMissileSystem
   ISLaserAntiMissileSystemTHB
+  ISMediumXPulseLaser
+  ISSmallXPulseLaser
   ISTHBLBXAC2
   ISTHBLBXAC5
   ISTHBLBXAC20

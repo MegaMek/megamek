@@ -268,7 +268,7 @@ public class PhysicalDisplay
         }
 
         if ( (entity instanceof Mech) && !entity.isProne() && entity.getCrew().getOptions().booleanOption("dodge_maneuver") ) { //$NON-NLS-1$
-          setDodgeEnabled(true);
+            setDodgeEnabled(true);
         }
     }
     

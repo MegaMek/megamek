@@ -473,16 +473,13 @@ public abstract class TestEntity implements TestEntityOption
                 {
                     buff.append(Integer.toString(j)+". -Emtpy-");
                     buff.append("\n");
-                } else if (slot.getType()==CriticalSlot.TYPE_SYSTEM)
-                {
-                    if (isMech())
-                    {
-                        buff.append(Integer.toString(j)+". "+
-                                Mech.systemNames[slot.getIndex()]);
+                } else if (slot.getType()==CriticalSlot.TYPE_SYSTEM) {
+                    if (isMech()) {
+                        buff.append(Integer.toString(j));
+                        buff.append(". ");
+                        buff.append(((Mech)getEntity()).getSystemName(slot.getIndex()));
                         buff.append("\n");
-                    }
-                    else
-                    {
+                    } else {
                         buff.append(Integer.toString(j)+
                                 ". UNKNOWN SYSTEM NAME");
                         buff.append("\n");

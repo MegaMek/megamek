@@ -89,6 +89,10 @@ v0.31.0 (CVS)
 + Bug 1263380: Mek selection grayed out
 + Patch 1277130: patch for bug 1277125
 + Bug 1276522: Mek that used TAG can't physical attack
++ Compact Gyros Implemented (HMP and MTF files only)
++ XL Gyros Implemented (HMP and MTF files only)
++ Partial implementation of heavy duty gyro, small cockpit, torso-mounted
+    cockpit, command console, dual cockpit.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.
@@ -98,15 +102,15 @@ v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + New Mechs for Batchall.de, a little later than normal
 + Bug 1255373: protomechs roll for maxtech engine explosion
 + Bug 1255323: Can't find AI readme.txt
-+ Bug 1255967: Customize Mech dialog now scrolls horizontally when Rapid Fire MG is
-    enabled.
++ Bug 1255967: Customize Mech dialog now scrolls horizontally when Rapid Fire
+    MG is enabled.
 + Sylph microbombs should not damage flying units in the target hex.
 + Patch 1253824: Cross-Platform MenuBar Accelerator bugfix
 + Patch 1253829: MechSelectorDialog: Disable List during Update
 + Patch 1256335: Added Zoom capability to BoardEditor
 + Bug 1246589: Missing Unique ID in logfile.
-+ doSetLocationsExposure does not need to check for pavement, because currently,
-    all bridges are on lvl 0 water anyway.
++ doSetLocationsExposure does not need to check for pavement, because
+    currently, all bridges are on lvl 0 water anyway.
 + Bug 1240408: NPE in bot's deployment when bot has corner deployment zones.
 + Bug 1257498: fire and vacuum options should be mutually exclusive.
 + Bug 1259068: Artemis IV bonus wrong when ECM present
@@ -117,8 +121,10 @@ v0.29.87 (2005-08-08 8:00am) RELEASE CANDITATE 4!
 + Bug 1246893: Swarm-LRM crashes MM
 + Fix some server report newline issues.
 + Possible double-blind exploit fixed.
-+ Bug 1240895, Patch 1247970: Changing facing after standing in water while running.
-+ Bug 1244125, Patch 1247767: non-fatal exception in BoardView1#drawArtilleryHexes.
++ Bug 1240895, Patch 1247970: Changing facing after standing in water while
+    running.
++ Bug 1244125, Patch 1247767: non-fatal exception in
+    BoardView1#drawArtilleryHexes.
 + Bug 1247741: NPE during exit after hosting a savegame.
 + Newline issue when falling during movement.
 + If a player has more than one unit with the same name, a "#N" gets added

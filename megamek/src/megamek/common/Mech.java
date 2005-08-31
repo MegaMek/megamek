@@ -92,20 +92,29 @@ public abstract class Mech
                                                    "XL Gyro",
                                                    "Compact Gyro",
                                                    "Heavy Duty Gyro"};
+    public static final String[]    GYRO_SHORT_STRING = {"Standard",
+                                                         "XL",
+                                                         "Compact",
+                                                        "Heavy Duty"};
 
     // cockpit types
     public static final int         COCKPIT_UNKNOWN             = -1;
     public static final int         COCKPIT_STANDARD            = 0;
-    public static final int         COCKPIT_COMMAND_CONSOLE     = 1;
+    public static final int         COCKPIT_TORSO_MOUNTED       = 1;
     public static final int         COCKPIT_SMALL               = 2;
-    public static final int         COCKPIT_TORSO_MOUNTED       = 3;
+    public static final int         COCKPIT_COMMAND_CONSOLE     = 3;
     public static final int         COCKPIT_DUAL                = 4;
 
     public static final String[]    COCKPIT_STRING = {"Standard Cockpit",
-                                                      "Command Console",
-                                                      "Small Cockpit",
                                                       "Torso-Mounted Cockpit",
+                                                      "Small Cockpit",
+                                                      "Command Console",
                                                       "Dual Cockpit"};
+    public static final String[]    COCKPIT_SHORT_STRING = {"Standard",
+                                                            "Torso Mounted",
+                                                            "Small",
+                                                            "Command Console",
+                                                            "Dual"};
 
     /**
      * The internal name for Mek Stealth systems.
@@ -173,24 +182,26 @@ public abstract class Mech
             setCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
 
         // Standard CT Crits
-        setCritical(LOC_CT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        setCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        int myCount = 0;
+        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         if (gyroType != GYRO_COMPACT) {
-            setCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            setCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            if (gyroType == GYRO_XL) {
+                setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+                setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            }
         }
-        setCritical(LOC_CT, 7, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, 8, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, 9, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         if (cockpitType == COCKPIT_TORSO_MOUNTED) {
-            setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-            setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-        } else if (gyroType == GYRO_XL) {
-            setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+            setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
         }
 
         // Possible side torso crits
@@ -1753,7 +1764,7 @@ public abstract class Mech
 
         // total armor points
         dbv += getTotalArmor() * 2.0;
-        
+
         // total internal structure
         double internalMultiplier;
         if (hasXL()) {
@@ -1763,12 +1774,16 @@ public abstract class Mech
         } else {
             internalMultiplier = 1.5;
         }
-        
+
         dbv += getTotalInternal() * internalMultiplier;
-        
+
         // add weight
         dbv += getWeight();
-        
+
+        // Heavy-duty gyros add 30 DBV.
+        if (getGyroType() == GYRO_HEAVY_DUTY)
+            dbv += 30;
+
         // add defensive equipment
         double dEquipmentBV = 0;
         for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
@@ -1780,8 +1795,8 @@ public abstract class Mech
                 continue;
 
             if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
-            || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
-            || etype.hasFlag(MiscType.F_ECM)) {
+                    || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
+                    || etype.hasFlag(MiscType.F_ECM)) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
@@ -1790,14 +1805,14 @@ public abstract class Mech
         if(bHasEiSystem) {
             dbv -= 25;
         }
-        
+
         // subtract for explosive ammo
         double ammoPenalty = 0;
         for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             int loc = mounted.getLocation();
             EquipmentType etype = mounted.getType();
-            
+
             // only count explosive ammo
             if (!etype.isExplosive()) {
                 continue;
@@ -2090,8 +2105,9 @@ public abstract class Mech
 
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
-        if(bHasEiSystem) pilotFactor += 0.05; //treat piloting as 1 level better
-        
+        if (bHasEiSystem)
+            pilotFactor += 0.05; //treat piloting as 1 level better
+
         return (int)Math.round((dbv + obv + xbv) * pilotFactor);
     }
 
@@ -2369,12 +2385,20 @@ public abstract class Mech
         return cockpitType;
     }
 
+    public void setGyroType(int type) {
+        gyroType = type;
+    }
+
+    public void setCockpitType(int type) {
+        cockpitType = type;
+    }
+
     public String getGyroTypeString() {
-        return getGyroTypeString(gyroType);
+        return getGyroTypeString(getGyroType());
     }
 
     public String getCockpitTypeString() {
-        return getCockpitTypeString(cockpitType);
+        return getCockpitTypeString(getCockpitType());
     }
 
     public static String getGyroTypeString(int inGyroType) {
@@ -2384,10 +2408,47 @@ public abstract class Mech
         return GYRO_STRING[inGyroType];
     }
 
+    public static String getGyroTypeShortString(int inGyroType) {
+        if ((inGyroType < 0)
+                || (inGyroType >= GYRO_SHORT_STRING.length))
+            return "Unknown";
+        return GYRO_SHORT_STRING[inGyroType];
+    }
+
     public static String getCockpitTypeString(int inCockpitType) {
         if ((inCockpitType < 0)
                 || (inCockpitType >= COCKPIT_STRING.length))
             return "Unknown";
         return COCKPIT_STRING[inCockpitType];
+    }
+
+    public static int getGyroTypeForString(String inType) {
+        if ((inType == null)
+                || (inType.length() < 1))
+            return GYRO_UNKNOWN;
+        for (int x=0; x<GYRO_STRING.length; x++) {
+            if ((inType.equals(GYRO_STRING[x]))
+                    || (inType.equals(GYRO_SHORT_STRING[x])))
+                return x;
+        }
+        return GYRO_UNKNOWN;
+    }   
+
+    public static int getCockpitTypeForString(String inType) {
+        if ((inType == null)
+                || (inType.length() < 1))
+            return COCKPIT_UNKNOWN;
+        for (int x=0; x<COCKPIT_STRING.length; x++) {
+            if ((inType.equals(COCKPIT_STRING[x]))
+                    || (inType.equals(COCKPIT_SHORT_STRING[x])))
+                return x;
+        }
+        return COCKPIT_UNKNOWN;
+    }   
+
+    public String getSystemName(int index) {
+        if (index == SYSTEM_GYRO)
+            return getGyroTypeString(gyroType);
+        return systemNames[index];
     }
 }

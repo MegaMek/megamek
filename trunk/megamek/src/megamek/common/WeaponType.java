@@ -56,6 +56,7 @@ public class WeaponType extends EquipmentType {
     public static final int     F_INFANTRY_ONLY      = 0x04000000; // only target infantry
     public static final int     F_TAG                = 0x08000000; // Target acquisition gear
     public static final int     F_C3M                = 0x10000000; // C3 Master with Target acquisition gear
+    public static final int     F_PLASMA_MFUK        = 0x20000000; // Plasma Rifle
 
     protected RangeType range;
     protected int   heat;
@@ -88,6 +89,8 @@ public class WeaponType extends EquipmentType {
         } else if (hasFlag(F_FLAMER)) {
             return 4;
         } else if (hasFlag(F_PLASMA)) {
+            return 5;
+        } else if (hasFlag(F_PLASMA_MFUK)) {
             return 5;
         } else if (hasFlag(F_INCENDIARY_NEEDLES)) {
             return 6;
@@ -277,18 +280,14 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISUltraAC5Prototype());
         EquipmentType.addType(createISERLargeLaserPrototype());
         EquipmentType.addType(createISMediumPulseLaserPrototype());
-
         EquipmentType.addType(createISTHBLBXAC2());
         EquipmentType.addType(createISTHBLBXAC5());
         EquipmentType.addType(createISTHBLBXAC20());
-
         EquipmentType.addType(createISTHBUltraAC2());
         EquipmentType.addType(createISTHBUltraAC10());
         EquipmentType.addType(createISTHBUltraAC20());
-
         EquipmentType.addType(createISLAC2());
         EquipmentType.addType(createISLAC5());
-
         EquipmentType.addType(createISHeavyFlamer());
 
         // Start of Clan Level2 weapons
@@ -381,6 +380,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLStreakLRM15OS());
         EquipmentType.addType(createCLStreakLRM20OS());
         EquipmentType.addType(createCLLaserAMS());
+        EquipmentType.addType(createCLPlasmaRifle());
 
         //Protomech weapons
         EquipmentType.addType(createCLPROLRM1() );
@@ -9249,6 +9249,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 30;
+        weapon.cost = 100000;
 
         return weapon;
     }
@@ -9275,6 +9276,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 62;
+        weapon.cost = 150000;
 
         return weapon;
     }
@@ -9295,13 +9297,46 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
-        weapon.extremeRange =8;
+        weapon.extremeRange = 8;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER | F_ENERGY;
         weapon.bv = 20;
         String[] modes = {"Damage", "Heat"};
         weapon.setModes(modes);
+        weapon.cost = 20000;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLPlasmaRifle() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Plasma Rifle";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("Clan Plasma Rifle");
+        weapon.addLookupName("CL Plasma Rifle");
+        weapon.addLookupName("CLPlasmaRifle");
+        weapon.addLookupName("MFUKCLPlasmaRifle");
+        weapon.heat = 15;
+        weapon.damage = 10;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = 2;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 14;
+        weapon.longRange = 22;
+        weapon.extremeRange = 28;
+        weapon.waterShortRange = 4;
+        weapon.waterMediumRange = 10;
+        weapon.waterLongRange = 15;
+        weapon.waterExtremeRange = 20;
+        weapon.tonnage = 6.0f;
+        weapon.criticals = 2;
+        weapon.flags |= F_PLASMA_MFUK | F_ENERGY;
+        weapon.bv = 400;
+        weapon.cost = 300000;
 
         return weapon;
     }

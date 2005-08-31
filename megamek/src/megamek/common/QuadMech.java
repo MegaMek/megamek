@@ -30,28 +30,31 @@ public class QuadMech extends Mech
       "LT", "FRL", "FLL", "RRL", "RLL"};
   
   private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 6, 6, 6, 6};
-  
-  public QuadMech() {
-    super();
-    
-    movementMode = IEntityMovementMode.QUAD;
 
-    setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
-    setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
-    setCritical(LOC_RARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
-    setCritical(LOC_RARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
+    public QuadMech() {
+        this(Mech.GYRO_STANDARD, Mech.COCKPIT_STANDARD);
+    }
 
-    setCritical(LOC_LARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
-    setCritical(LOC_LARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
-    setCritical(LOC_LARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
-    setCritical(LOC_LARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
-  }
+    public QuadMech(int inGyroType, int inCockpitType) {
+        super(inGyroType, inCockpitType);
+
+        movementMode = IEntityMovementMode.QUAD;
+
+        setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
+        setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
+        setCritical(LOC_RARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
+        setCritical(LOC_RARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
+
+        setCritical(LOC_LARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
+        setCritical(LOC_LARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
+        setCritical(LOC_LARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
+        setCritical(LOC_LARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
+    }
   
-  /**
-   * Returns this entity's walking/cruising mp, factored
-   * for heat and leg damage.
-   */
-  
+    /**
+     * Returns this entity's walking/cruising mp, factored
+     * for heat and leg damage.
+     */
     public int getWalkMP() {
         return getWalkMP(true);
     }

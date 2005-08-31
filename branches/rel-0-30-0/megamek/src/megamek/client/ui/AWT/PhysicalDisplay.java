@@ -682,7 +682,7 @@ public class PhysicalDisplay
      */
     private void updateTarget() {
         // dis/enable physical attach buttons
-        if (cen != Entity.NONE && target != null && !ce().usedTag()) {
+        if (cen != Entity.NONE && target != null) {
             if (target.getTargetType() != Targetable.TYPE_INARC_POD) {
                 // punch?
                 final ToHitData leftArm = PunchAttackAction.toHit

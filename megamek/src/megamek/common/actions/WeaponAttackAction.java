@@ -46,9 +46,7 @@ import megamek.common.WeaponType;
 /**
  * Represents intention to fire a weapon at the target.
  */
-public class WeaponAttackAction
-    extends AbstractAttackAction
-{
+public class WeaponAttackAction extends AbstractAttackAction {
     private int weaponId;
     private int ammoId = -1;
     private int aimedLocation = Mech.LOC_NONE;

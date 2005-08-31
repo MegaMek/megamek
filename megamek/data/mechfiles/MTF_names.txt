@@ -324,18 +324,19 @@ Inner Sphere Level 3 Tech:
 Clan Level 3 Tech:
  Weapons:
   CLLaserAntiMissileSystem
-  CLStreakLRM5
-  CLStreakLRM10
-  CLStreakLRM15
-  CLStreakLRM20
   CLOSStreakLRM5
   CLOSStreakLRM10
   CLOSStreakLRM15
   CLOSStreakLRM20
+  CLPlasmaRifle
   CLRotaryAC2
   CLRotaryAC5
   CLRotaryAC10
   CLRotaryAC20
+  CLStreakLRM5
+  CLStreakLRM10
+  CLStreakLRM15
+  CLStreakLRM20
  Ammo:
   CLStreakLRM5 Ammo
   CLStreakLRM10 Ammo

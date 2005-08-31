@@ -83,6 +83,7 @@ v0.31.0 (CVS)
 + Patch 1275860: patch for bug 1275849
 + RFE 1274555: Hopalong's LAC patch.
 + RFE 1274554: Hopalong's Heavy Flamer patch.
++ RFE 1252860: Added MFUK Plasma Rifle.
   
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

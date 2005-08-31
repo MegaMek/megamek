@@ -8321,12 +8321,12 @@ public class Server implements Runnable {
 
             // Flamers do heat to mechs instead damage if the option is
             // available and the mode is set.
-            if ( entityTarget != null &&
-                 (entityTarget instanceof Mech) &&
-                 wtype.hasFlag(WeaponType.F_FLAMER) &&
-                 game.getOptions().booleanOption("flamer_heat") &&
-                 wtype.hasModes() &&
-                 weapon.curMode().equals("Heat") ) {
+            if (entityTarget != null
+                    && (entityTarget instanceof Mech)
+                    && wtype.hasFlag(WeaponType.F_FLAMER)
+                    && game.getOptions().booleanOption("flamer_heat")
+                    && wtype.hasModes()
+                    && weapon.curMode().equals("Heat")) {
                 nDamage = nDamPerHit * hits;
                 if ( !bSalvo ) {
                     //hits
@@ -8342,13 +8342,30 @@ public class Server implements Runnable {
                 vPhaseReport.addElement(r);
                 entityTarget.heatBuildup += nDamage;
                 hits = 0;
-            }
-            else if (entityTarget != null) {
+            } else if (entityTarget != null) {
                  HitData hit = entityTarget.rollHitLocation
                      ( toHit.getHitTable(),
                        toHit.getSideTable(),
                        wr.waa.getAimedLocation(),
                        wr.waa.getAimingMode() );
+
+                if (wtype.hasFlag(WeaponType.F_PLASMA_MFUK)
+                        && (entityTarget instanceof Mech)) {
+                    nDamage = nDamPerHit * hits;
+                    if (!bSalvo) {
+                        //hits
+                        r = new Report(3390);
+                        r.subject = subjectId;
+                        vPhaseReport.addElement(r);
+                    }
+                    r = new Report(3400);
+                    r.subject = subjectId;
+                    r.indent(2);
+                    r.add(5);
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                    entityTarget.heatBuildup += 5;
+                }
 
                 // If a leg attacks hit a leg that isn't
                 // there, then hit the other leg.

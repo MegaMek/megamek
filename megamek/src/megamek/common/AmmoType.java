@@ -4842,6 +4842,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LAC;
         ammo.shots = 45;
         ammo.bv = 3;
+        ammo.cost = 2000;
 
         return ammo;
     }
@@ -4859,6 +4860,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LAC;
         ammo.shots = 20;
         ammo.bv = 5;
+        ammo.cost = 5000;
 
         return ammo;
     }
@@ -4876,6 +4878,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_HEAVY_FLAMER;
         ammo.shots = 10;
         ammo.bv = 3;
+        ammo.cost = 2000;
 
         return ammo;
     }

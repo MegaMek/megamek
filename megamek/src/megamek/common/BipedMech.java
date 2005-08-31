@@ -27,8 +27,12 @@ public class BipedMech extends Mech {
     private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 12, 12, 6, 6};
     
     public BipedMech() {
-        super();
-        
+        this(Mech.GYRO_STANDARD, Mech.COCKPIT_STANDARD);
+    }
+
+    public BipedMech(int inGyroType, int inCockpitType) {
+        super(inGyroType, inCockpitType);
+
         movementMode = IEntityMovementMode.BIPED;
         
         setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));

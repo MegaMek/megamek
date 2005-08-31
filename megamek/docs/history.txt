@@ -84,6 +84,8 @@ v0.31.0 (CVS)
 + RFE 1274555: Hopalong's LAC patch.
 + RFE 1274554: Hopalong's Heavy Flamer patch.
 + RFE 1252860: Added MFUK Plasma Rifle.
++ Added framework for future implementation of alternate gyro and cockpit
+    types.
   
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

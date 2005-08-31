@@ -159,8 +159,6 @@ public class WeaponType extends EquipmentType {
         return waterExtremeRange;
     }
 
-
-
     /**
      * Add all the types of weapons we can create to the list
      */

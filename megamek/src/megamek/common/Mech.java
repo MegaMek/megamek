@@ -357,6 +357,10 @@ public abstract class Mech
                     // just do the hip crits
                     getCritical(LOC_RLEG, 0).setDestroyed(true);
                     getCritical(LOC_LLEG, 0).setDestroyed(true);
+                    if (this instanceof QuadMech) {
+                        getCritical(LOC_RARM, 0).setDestroyed(true);
+                        getCritical(LOC_LARM, 0).setDestroyed(true);
+                    }
                     for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
                         Mounted m = (Mounted)e.nextElement();
                         if (m.getType().hasFlag(MiscType.F_MASC)) {

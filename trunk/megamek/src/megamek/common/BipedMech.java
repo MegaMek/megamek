@@ -250,8 +250,8 @@ public class BipedMech extends Mech {
             cost += 200000;
         }
         if(hasEiCockpit()) cost += 200000;
-        cost+=50000;//life support
-        cost+=weight*2000;//sensors
+        cost += 50000;//life support
+        cost += weight*2000;//sensors
         int muscCost=this.hasTSM()? 16000 : 2000;
         cost+=muscCost*weight;//musculature
         int structureCost=400;

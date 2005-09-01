@@ -970,7 +970,7 @@ public class BoardView1
             // Handle resizes correctly.
             checkScrollBounds();
             boardRect = new Rectangle(view);
-            System.out.println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
+            //            System.out.println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
             drawHexes(view);
             
         }

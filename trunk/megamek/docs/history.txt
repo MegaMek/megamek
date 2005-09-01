@@ -99,6 +99,7 @@ v0.31.0 (CVS)
 + Bug 1277017: Made quads lose all four hips on a failed MASC check, pending
     an official ruling.
 + Fully implemented small cockpit.
++ Added kludge to build.bat to get it working again.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

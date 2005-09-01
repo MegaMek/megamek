@@ -7887,7 +7887,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 22;
         weapon.extremeRange = 30;
         weapon.tonnage = 15.0f;
-        weapon.criticals = 7;
+        weapon.criticals = 8;
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_PROTOTYPE;
         weapon.explosive = true;
         weapon.bv = 321;
@@ -7972,7 +7972,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 20;
         weapon.extremeRange = 26;
         weapon.tonnage = 9.0f;
-        weapon.criticals = 5;
+        weapon.criticals = 6;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_PROTOTYPE;
         weapon.bv = 113;
         String[] modes = { "Single", "Ultra" };

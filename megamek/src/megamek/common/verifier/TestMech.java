@@ -33,19 +33,16 @@ import java.util.Vector;
 import java.util.Enumeration;
 import java.lang.StringBuffer;
 
-public class TestMech extends TestEntity
-{
+public class TestMech extends TestEntity {
     private Mech mech = null;
 
-    public TestMech(Mech mech, TestEntityOption option, String fileString)
-    {
+    public TestMech(Mech mech, TestEntityOption option, String fileString) {
         super(option, getEngine(mech), getArmor(mech), getStructure(mech));
         this.mech = mech;
         this.fileString = fileString;
     }
 
-    private static Engine getEngine(Mech mech)
-    {
+    private static Engine getEngine(Mech mech) {
         int type, flag = 0;
         if (mech.hasXL())
             type = Engine.XL_ENGINE;
@@ -66,12 +63,10 @@ public class TestMech extends TestEntity
         return new Structure(type, flag);
     }
 
-    private static Armor getArmor(Mech mech)
-    {
+    private static Armor getArmor(Mech mech) {
         int type = EquipmentType.T_ARMOR_STANDARD;
         int flag = 0;
-        for (Enumeration e = mech.getMisc(); e.hasMoreElements(); )
-        {
+        for (Enumeration e = mech.getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             EquipmentType etype = m.getType();
             if (etype.getName()==EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS))
@@ -87,29 +82,30 @@ public class TestMech extends TestEntity
     }
 
 
-    public Entity getEntity()
-    {
+    public Entity getEntity() {
         return mech;
     }
 
-    public boolean isTank()
-    {
+    public boolean isTank() {
         return false;
     }
 
-    public boolean isMech()
-    {
+    public boolean isMech() {
         return true;
     }
 
-    public float getWeightMisc()
-    {
+    public float getWeightMisc() {
         return 0.0f;
     }
 
-    public float getWeightCockpit()
-    {
-        return 3.0f;
+    public float getWeightCockpit() {
+        if (mech.getCockpitType() == Mech.COCKPIT_SMALL) {
+            return 2.0f;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            return 4.0f;
+        } else {
+            return 3.0f;
+        }
     }
 
     public float getWeightGyro() {
@@ -127,24 +123,20 @@ public class TestMech extends TestEntity
         return getWeightCockpit()+getWeightGyro();
     }
 
-    public int getCountHeatSinks()
-    {
+    public int getCountHeatSinks() {
         return mech.heatSinks();
     }
 
-    public int getWeightHeatSinks()
-    {
+    public int getWeightHeatSinks() {
         return mech.heatSinks() - engine.getCountEngineHeatSinks();
     }
-    public boolean hasDoubleHeatSinks()
-    {
+    public boolean hasDoubleHeatSinks() {
         if (mech.heatSinks() != mech.getHeatCapacity())
             return true;
         return false;
     }
 
-    public String printWeightMisc()
-    {
+    public String printWeightMisc() {
         return "";
     }
 

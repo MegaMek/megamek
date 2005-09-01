@@ -11835,8 +11835,8 @@ public class Server implements Runnable {
         //Mechs using EI implants take pilot damage each time a hit 
         //inflicts IS damage
         if(tookInternalDamage
-           && ((te instanceof Mech) || (te instanceof Protomech))
-           && te.hasActiveEiCockpit()) {
+                && ((te instanceof Mech) || (te instanceof Protomech))
+                && te.hasActiveEiCockpit()) {
             Report.addNewline(vDesc);
             Server.combineVectors(vDesc, damageCrew(te, 1) );
         }

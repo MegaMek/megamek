@@ -96,6 +96,8 @@ v0.31.0 (CVS)
 + Added X-Pulses to MTF_names.
 + Tweak to Mech Verifier output for level 3 gyros/cockpits.
 + Corrected Cougar-X3 MTF in dark_age.zip.
++ Bug 1277017: Made quads lose all four hips on a failed MASC check, pending
+    an official ruling.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

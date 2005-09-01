@@ -148,12 +148,14 @@ public class TestMech extends TestEntity
         return "";
     }
 
-    public String printWeightControls()
-    {
-        return StringUtil.makeLength("Cockpit: ", getPrintSize()-5)+
-            makeWeightString(getWeightCockpit())+"\n"+
-            StringUtil.makeLength("Gyro: ", getPrintSize()-5)+
-            makeWeightString(getWeightGyro())+"\n";
+    public String printWeightControls() {
+        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(mech.getCockpitTypeString()+":", getPrintSize()-5));
+        retVal.append(makeWeightString(getWeightCockpit()));
+        retVal.append("\n");
+        retVal.append(StringUtil.makeLength(mech.getGyroTypeString()+":", getPrintSize()-5));
+        retVal.append(makeWeightString(getWeightGyro()));
+        retVal.append("\n");
+        return retVal.toString();
     }
 
     public Mech getMech()

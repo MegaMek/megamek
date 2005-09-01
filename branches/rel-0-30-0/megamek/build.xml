@@ -179,7 +179,7 @@
 
   <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
   <target name="cvsdev-get" depends="cvsdev-init">
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" command="-z3 export -D '1 second ago'"  package="megamek"/>
+    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" command="-z3 export -D '1 second ago'"  package="megamek" tag="rel-0-30-0"/>
   </target>
 
   <target name="cvsdev-build" depends="cvsdev-init">

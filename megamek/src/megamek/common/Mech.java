@@ -2109,8 +2109,12 @@ public abstract class Mech
 
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
-        if (bHasEiSystem)
+        if (bHasEiSystem) {
             pilotFactor += 0.05; //treat piloting as 1 level better
+        }
+        if (getCockpitType() == Mech.COCKPIT_SMALL) {
+            pilotFactor -= 0.05; // Small cockpits piloting treated as 1 level worse.
+        }
 
         return (int)Math.round((dbv + obv + xbv) * pilotFactor);
     }
@@ -2139,19 +2143,24 @@ public abstract class Mech
     /**
      * Add in any piloting skill mods
      */
-      public PilotingRollData addEntityBonuses(PilotingRollData roll) {
+    public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         // gyro hit?
-          if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) {
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) {
             roll.addModifier(3, "Gyro damaged");
-          }
+        }
 
-        //EI bonus?
+        // EI bonus?
         if(hasActiveEiCockpit()) {
             roll.addModifier(-1, "Enhanced Imaging");
         }
-        
+
+        // Small cockpit penalty?
+        if(getCockpitType() == Mech.COCKPIT_SMALL) {
+            roll.addModifier(1, "Small Cockpit");
+        }
+
         return roll;
-      }
+    }
       
     public int getMaxElevationChange() {
         return 2;

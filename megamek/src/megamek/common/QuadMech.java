@@ -306,7 +306,16 @@ public class QuadMech extends Mech
     public double getCost() {
         // FIXME
         // There should be an implementation here!
-        double cost = 250000; // Cockpit + Life Support
+        double cost = 0;
+        cost += 50000; // Life Support
+        // For future reference, Enhanched-Imaging Cockpit is 400,000.
+        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            cost += 750000;
+        } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
+            cost += 175000;
+        } else {
+            cost += 200000;
+        }
         if(hasEiCockpit()) cost += 200000;
         double musclesCost = this.hasTSM() ? 16000 : 2000;
         double structureCost = 400;

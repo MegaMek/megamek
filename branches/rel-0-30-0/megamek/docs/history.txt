@@ -2,7 +2,6 @@ VERSION HISTORY:
 ----------------
 v0.30.1 (2005-09-01 1800GMT)
 + Bug 1263672: NPE when shooting at VTOL that has no undestroyed weapon.
-+ Bug 1263895: Woods and Smoke (Level 2) cumulative
 + Bug 1266046: Sideslipping VTOLs change elevation
 + Bug 1265984: VTOLs crash into the ground when they shouldn't
 + Bug 1262741: Torpedoes and the surface navy

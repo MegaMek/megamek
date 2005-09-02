@@ -2461,9 +2461,62 @@ public abstract class Mech
 
     public String getSystemName(int index) {
         if (index == SYSTEM_GYRO)
-            return getGyroTypeString(gyroType);
+            return getGyroDisplayString(gyroType);
         if (index == SYSTEM_COCKPIT)
-            return getCockpitTypeString(cockpitType);
+            return getCockpitDisplayString(cockpitType);
         return systemNames[index];
+    }
+
+    public static String getGyroDisplayString(int inType) {
+        String inName = "";
+        switch (inType) {
+            case GYRO_XL:
+                inName = "GYRO_XL";
+                break;
+            case GYRO_COMPACT:
+                inName = "GYRO_COMPACT";
+                break;
+            case GYRO_HEAVY_DUTY:
+                inName = "GYRO_HEAVY_DUTY";
+                break;
+            case GYRO_STANDARD:
+                inName = "GYRO_STANDARD";
+                break;
+            default:
+                inName = "GYRO_UNKNOWN";
+        }
+        String result = EquipmentMessages.getString("SystemType.Gyro."+inName);
+        if (result != null)
+            return result;
+        else
+            return inName;
+    }
+
+    public static String getCockpitDisplayString(int inType) {
+        String inName = "";
+        switch (inType) {
+            case COCKPIT_COMMAND_CONSOLE:
+                inName = "COCKPIT_COMMAND_CONSOLE";
+                break;
+            case COCKPIT_SMALL:
+                inName = "COCKPIT_SMALL";
+                break;
+            case COCKPIT_TORSO_MOUNTED:
+                inName = "COCKPIT_TORSO_MOUNTED";
+                break;
+            case COCKPIT_DUAL:
+                inName = "COCKPIT_DUAL";
+                break;
+            case COCKPIT_STANDARD:
+                inName = "COCKPIT_STANDARD";
+                break;
+            default:
+                inName = "GYRO_UNKNOWN";
+        }
+        String result = EquipmentMessages.getString("SystemType.Cockpit."+inName);
+        if (result != null)
+            return result;
+        else
+            return inName;
     }
 }

@@ -101,6 +101,7 @@ v0.31.0 (CVS)
 + Fully implemented small cockpit.
 + Added kludge to build.bat to get it working again.
 + Bug 1279514: war of 3039 weapons too small  
++ Small cockpit, compact gyro, XL gyro now load from TDB XML files.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

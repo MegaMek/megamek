@@ -2462,6 +2462,8 @@ public abstract class Mech
     public String getSystemName(int index) {
         if (index == SYSTEM_GYRO)
             return getGyroTypeString(gyroType);
+        if (index == SYSTEM_COCKPIT)
+            return getCockpitTypeString(cockpitType);
         return systemNames[index];
     }
 }

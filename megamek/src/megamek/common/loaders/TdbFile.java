@@ -51,44 +51,46 @@ public class TdbFile implements IMechLoader {
     private static final String  MOUNTED_ITEMS_SECTION    = "mounteditems";
     private static final String  CRIT_DEFS_SECTION    = "critdefs";
 
-    private static final String  NAME    = "name";
-    private static final String  VERSION    = "version";
-    private static final String  MODEL    = "model";
-    private static final String  VARIANT    = "variant";
-    private static final String  TECHNOLOGY    = "technology";
-    private static final String  MOVEMECHMOD    = "movemechmod";
-    private static final String  TONNAGE    = "tonnage"; // also attribute
-    private static final String  TYPE    = "type";
-    private static final String  OMNI    = "isomni";
-    private static final String  WALK   = "walk";
-    private static final String  JUMP    = "jump";
-    private static final String  HEAT_SINKS    = "heatsinks";
-    private static final String  ARMOR    = "armor"; // also attribute
-    private static final String  STRUCTURE    = "internal"; // also attribute
-    private static final String  MOUNTED_ITEM    = "mounteditem";
-    private static final String  LOCATION= "location";
-    private static final String  TARGSYS = "targsys";
+    private static final String  NAME               = "name";
+    private static final String  VERSION            = "version";
+    private static final String  MODEL              = "model";
+    private static final String  VARIANT            = "variant";
+    private static final String  TECHNOLOGY         = "technology";
+    private static final String  MOVEMECHMOD        = "movemechmod";
+    private static final String  TONNAGE            = "tonnage"; // also attribute
+    private static final String  TYPE               = "type";
+    private static final String  OMNI               = "isomni";
+    private static final String  WALK               = "walk";
+    private static final String  JUMP               = "jump";
+    private static final String  HEAT_SINKS         = "heatsinks";
+    private static final String  ARMOR              = "armor"; // also attribute
+    private static final String  GYRO               = "gyro";
+    private static final String  COCKPIT            = "cockpit";
+    private static final String  STRUCTURE          = "internal"; // also attribute
+    private static final String  MOUNTED_ITEM       = "mounteditem";
+    private static final String  LOCATION           = "location";
+    private static final String  TARGSYS            = "targsys";
 
     /**
      * The names of the attributes recognized by this parser.
      */
-    private static final String  LEVEL    = "level";
-    private static final String  COUNT    = "count";
-    private static final String  POINTS    = "points";
-    private static final String  REAR_MOUNTED    = "rearmounted";
-    private static final String  IS_SPREAD    = "isspread";
-    private static final String  ITEM_INDEX    = "itemindex";
-    private static final String  REAR_ARMOR    = "reararmor";
+    private static final String  LEVEL              = "level";
+    private static final String  COUNT              = "count";
+    private static final String  POINTS             = "points";
+    private static final String  REAR_MOUNTED       = "rearmounted";
+    private static final String  IS_SPREAD          = "isspread";
+    private static final String  ITEM_INDEX         = "itemindex";
+    private static final String  REAR_ARMOR         = "reararmor";
 
     /**
      * Special values recognized by this parser.
      */
-    private static final String  TRUE    = "True";
-    private static final String  FALSE   = "False";
-    private static final String  DOUBLE  = "Double";
-    private static final String  LASER   = "Laser";
-    private static final String  COMPACT = "Compact (2)";
-    private static final String  TRUE_LOWER    = "true";
+    private static final String  TRUE               = "True";
+    private static final String  FALSE              = "False";
+    private static final String  DOUBLE             = "Double";
+    private static final String  LASER              = "Laser";
+    private static final String  COMPACT            = "Compact (2)";
+    private static final String  TRUE_LOWER         = "true";
 
     private String creatorName = "Unknown";
     private String creatorVersion = "Unknown";
@@ -129,6 +131,8 @@ public class TdbFile implements IMechLoader {
     private String armorType;
     private String structureType;
     private String targSysStr;
+    private String gyroType = "Standard";
+    private String cockpitType = "Standard";
     private boolean clanTC = false;
 
     private Hashtable hSharedEquip = new Hashtable();
@@ -245,6 +249,10 @@ public class TdbFile implements IMechLoader {
             armorType = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(STRUCTURE)) {
             structureType = ((ParsedXML)children.nextElement()).getContent();
+        } else if (node.getName().equals(GYRO)) {
+            gyroType = ((ParsedXML)children.nextElement()).getContent();
+        } else if (node.getName().equals(COCKPIT)) {
+            cockpitType = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(TARGSYS)) {
             targSysStr = ((ParsedXML)children.nextElement()).getContent().trim();
             if ((targSysStr.length() >= 3)
@@ -366,18 +374,24 @@ public class TdbFile implements IMechLoader {
             Mech mech;
 
             if (creatorName == "Unknown"
-                || !creatorName.equals("The Drawing Board")
-                || Integer.parseInt(creatorVersion) != 2) {
+                    || !creatorName.equals("The Drawing Board")
+                    || Integer.parseInt(creatorVersion) != 2) {
                 // MegaMek no longer supports older versions of The
                 //  Drawing Board (pre 2.0.23) due to incomplete xml
                 //  file information in those versions.
                 throw new EntityLoadingException("This xml file is not a valid Drawing Board mech.  Make sure you are using version 2.0.23 or later of The Drawing Board.");
             }
 
+            if (gyroType.equals("Extra-Light"))
+                gyroType = "XL";
+            else if (gyroType.equals("Heavy-Duty"))
+                gyroType = "Heavy Duty";
+            if (gyroType.equals("Torso-Mounted"))
+                cockpitType = "Torso Mounted";
             if (chassisConfig.equals("Quad")) {
-                mech = new QuadMech();
+                mech = new QuadMech(gyroType, cockpitType);
             } else {
-                mech = new BipedMech();
+                mech = new BipedMech(gyroType, cockpitType);
             }
 
             // aarg!  those stupid sub-names in parenthesis screw everything up

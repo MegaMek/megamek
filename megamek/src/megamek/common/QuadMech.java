@@ -31,6 +31,10 @@ public class QuadMech extends Mech
   
   private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 6, 6, 6, 6};
 
+    public QuadMech(String inGyroType, String inCockpitType) {
+        this(getGyroTypeForString(inGyroType), getCockpitTypeForString(inCockpitType));
+    }
+
     public QuadMech() {
         this(Mech.GYRO_STANDARD, Mech.COCKPIT_STANDARD);
     }

@@ -26,6 +26,10 @@ public class BipedMech extends Mech {
     
     private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 12, 12, 6, 6};
     
+    public BipedMech(String inGyroType, String inCockpitType) {
+        this(getGyroTypeForString(inGyroType), getCockpitTypeForString(inCockpitType));
+    }
+
     public BipedMech() {
         this(Mech.GYRO_STANDARD, Mech.COCKPIT_STANDARD);
     }

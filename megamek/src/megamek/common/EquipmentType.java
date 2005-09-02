@@ -172,7 +172,7 @@ public class EquipmentType {
     public String getName() {
         return name;
     }
-    
+
     public String getDesc() {
         String result = EquipmentMessages.getString("EquipmentType."+name);
         if (result != null)
@@ -180,7 +180,7 @@ public class EquipmentType {
         else
             return name;
     }
-    
+
     public String getInternalName() {
         return internalName;
     }

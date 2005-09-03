@@ -103,6 +103,7 @@ v0.31.0 (CVS)
 + Bug 1279514: war of 3039 weapons too small  
 + Small cockpit, compact gyro, XL gyro now load from TDB XML files.
 + Made cockpit and gyro display strings properties-driven for l10n.
++ MaxTech vehicle fires
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

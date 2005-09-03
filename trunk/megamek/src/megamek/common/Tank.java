@@ -33,6 +33,8 @@ public class Tank
     private Mounted m_jammedGun = null;
     private boolean m_bImmobile = false;
     private boolean m_bImmobileHit = false;
+    private int burningLocations = 0;
+    private int movementDamage = 0;
     
     // locations
     public static final int        LOC_BODY               = 0;
@@ -599,6 +601,9 @@ public class Tank
     
     public PilotingRollData addEntityBonuses(PilotingRollData prd)
     {
+        if(movementDamage > 0) {
+            prd.addModifier(movementDamage, "Steering Damage");
+        }
         return prd;
     }
 
@@ -879,5 +884,28 @@ public class Tank
 
     public boolean canGoHullDown () {
     	return game.getOptions().booleanOption("hull_down");
+    }
+    
+    public void setOnFire() {
+        burningLocations = (1<<locations()) - 1;
+        extinguishLocation(LOC_BODY);
+    }
+    
+    public boolean isOnFire() {
+        return (burningLocations != 0) || infernos.isStillBurning();
+    }
+    
+    public boolean isLocationBurning(int location) {
+        int flag = (1<<location);
+        return (burningLocations & flag) == flag;
+    }
+    
+    public void extinguishLocation(int location) {
+        int flag = ~(1<<location);
+        burningLocations &= flag;
+    }
+    
+    public void addMovementDamage(int level) {
+        movementDamage += level;
     }
 }

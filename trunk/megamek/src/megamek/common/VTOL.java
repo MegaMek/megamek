@@ -358,4 +358,9 @@ public class VTOL extends Tank {
     public boolean doomedInVacuum() {
         return true;
     }
+    
+    public void setOnFire() {
+        super.setOnFire();
+        extinguishLocation(LOC_ROTOR);
+    }
 }

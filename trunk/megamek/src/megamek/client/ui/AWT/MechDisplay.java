@@ -1747,6 +1747,9 @@ class ExtraPanel
             buff.append( en.infernos.getTurnsLeftToBurn() );
             narcList.add( buff.toString() );
         }
+        if( en instanceof Tank && ((Tank)en).isOnFire()) {
+            narcList.add( Messages.getString("MechDisplay.OnFire"));
+        }
 
         // Show ECM affect.
         Coords pos = en.getPosition();

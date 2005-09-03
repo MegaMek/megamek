@@ -3536,8 +3536,14 @@ public class Server implements Runnable {
             if (!(entity instanceof Mech)) {
                 if ( game.getBoard().getHex(curPos).containsTerrain(Terrains.FIRE)
                     && !lastPos.equals(curPos)
-                    && step.getMovementType() != IEntityMovementType.MOVE_JUMP ) {
+                    && step.getMovementType() != IEntityMovementType.MOVE_JUMP
+                    && step.getElevation() <= 1 ) {
+                    if(game.getOptions().booleanOption("vehicle_fires")
+                            && entity instanceof Tank) {
+                        checkForVehicleFire((Tank)entity, false);
+                    } else {
                         doFlamingDeath(entity);
+                    }
                 }
             }
             // check for extreme gravity movement
@@ -8152,19 +8158,24 @@ public class Server implements Runnable {
 
                 // Targeting an entity
                 if (entityTarget != null ) {
-                    entityTarget.infernos.add( InfernoTracker.STANDARD_ROUND,
-                                               hits );
                     r = new Report(3375);
                     r.subject = subjectId;
                     r.add(hits);
                     vPhaseReport.addElement(r);
 
-                    r = new Report(3205);
-                    r.indent(2);
-                    r.subject = subjectId;
-                    r.addDesc(entityTarget);
-                    r.add(entityTarget.infernos.getTurnsLeftToBurn());
-                    vPhaseReport.addElement(r);
+                    if(game.getOptions().booleanOption("vehicle_fires")
+                            && entityTarget instanceof Tank) {
+                        checkForVehicleFire((Tank)entityTarget, true);
+                    } else {
+                        entityTarget.infernos.add( InfernoTracker.STANDARD_ROUND,
+                                hits );
+                        r = new Report(3205);
+                        r.indent(2);
+                        r.subject = subjectId;
+                        r.addDesc(entityTarget);
+                        r.add(entityTarget.infernos.getTurnsLeftToBurn());
+                        vPhaseReport.addElement(r);
+                    }
 
                     // Start a fire in the targets hex, unless already on fire.
                     Coords c = target.getPosition();
@@ -10314,8 +10325,12 @@ public class Server implements Runnable {
             if (!(entity instanceof Mech)) {
                 entity.heatBuildup = 0;
 
+                if(game.getOptions().booleanOption("vehicle_fires")
+                        && entity instanceof Tank) {
+                    resolveVehicleFire((Tank)entity, true);
+                }
                 // If the unit is hit with an Inferno, do flaming death test.
-                if ( entity.infernos.isStillBurning() ) {
+                else if ( entity.infernos.isStillBurning()) {
                     doFlamingDeath(entity);
                 }
                 continue;
@@ -10696,12 +10711,15 @@ public class Server implements Runnable {
         if ( Entity.NONE != entity.getSwarmTargetId() ) {
             return;
         }
-        if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
+        if (entity.getMovementMode() == IEntityMovementMode.VTOL
+                && !(entity.infernos.isStillBurning())) {
             // VTOLs don't check as long as they are flying higher than
             // the burning terrain. TODO: Check for rules conformity (ATPM?)
+            // according to maxtech, elevation 0 or 1 should be affected,
+            // this makes sense for level 2 as well
             Coords c = entity.getPosition();
             IHex h = game.getBoard().getHex(c.x, c.y);
-            if (entity.getElevation() > 0) {
+            if (entity.getElevation() > 1) {
                 return;
             }
         }
@@ -10797,8 +10815,14 @@ public class Server implements Runnable {
                 continue;
             }
             final IHex curHex = game.getBoard().getHex(entity.getPosition());
-            if (curHex.containsTerrain(Terrains.FIRE)) {
-                doFlamingDeath(entity);
+            if (curHex.containsTerrain(Terrains.FIRE)
+                    && entity.getElevation() <= 1) {
+                if(game.getOptions().booleanOption("vehicle_fires")
+                        && entity instanceof Tank) {
+                    checkForVehicleFire((Tank)entity, false);
+                } else {
+                    doFlamingDeath(entity);
+                }
             }
         }
     }
@@ -17162,6 +17186,137 @@ public class Server implements Runnable {
             }           
         }
         */
+    }
+    
+    private void checkForVehicleFire(Tank tank, boolean inferno) {
+        int boomroll = Compute.d6(2);
+        int penalty = 0;
+        switch(tank.getMovementMode()) {
+        case IEntityMovementMode.HOVER:
+            penalty = 4;
+            break;
+        case IEntityMovementMode.VTOL:
+        case IEntityMovementMode.WHEELED:
+            penalty = 2;
+            break;
+        }
+        if(inferno) {
+            boomroll = 12;
+        }
+        Report r = new Report(5250);
+        r.subject = tank.getId();
+        r.addDesc(tank);
+        r.add(8-penalty);
+        r.add(boomroll);
+        if (boomroll + penalty < 8) {
+            //phew!
+            r.choose(true);
+            vPhaseReport.addElement(r);
+        } else {
+            //eek
+            if(!inferno) {
+                r.choose(false);
+                vPhaseReport.addElement(r);
+            }
+            if(boomroll + penalty < 10) {
+                vehicleMotiveDamage(tank, penalty - 1);
+            } else {
+                resolveVehicleFire(tank, false);
+                if(boomroll + penalty >= 12) {
+                    r = new Report(5255);
+                    r.subject = tank.getId();
+                    r.indent(3);
+                    vPhaseReport.add(r);
+                    tank.setOnFire();
+                }
+            }
+        }
+    }
+    
+    private void resolveVehicleFire(Tank tank, boolean existingStatus) {
+        if(existingStatus && !tank.isOnFire())
+            return;
+        for(int i=0;i<tank.locations();i++) {
+            if(i==Tank.LOC_BODY || (tank instanceof VTOL && i==VTOL.LOC_ROTOR))
+                continue;
+            if(existingStatus && !(tank.isLocationBurning(i)))
+                continue;
+            HitData hit = new HitData(i);
+            int damage =Compute.d6(1);
+            combineVectors(vPhaseReport, damageEntity(tank, hit, damage));
+            if(damage == 1 && existingStatus) {
+                tank.extinguishLocation(i);
+            }
+        }        
+       Report.addNewline(vPhaseReport);
+    }
+    
+    private void vehicleMotiveDamage(Tank te, int modifier) {
+        Vector vDesc = new Vector();
+        Report r;
+        int roll = Compute.d6(2) + modifier;
+        r = new Report(6305);
+        r.subject = te.getId();
+        r.add("movement system");
+        r.newlines = 0;
+        r.indent(3);
+        vDesc.addElement(r);
+        r = new Report(6310);
+        r.subject = te.getId();
+        r.add(roll);
+        r.newlines = 0;
+        vDesc.addElement(r);
+        if(roll <= 7) {
+            //no effect
+            r = new Report(6005);
+            r.subject = te.getId();
+            r.add(roll);
+            vDesc.addElement(r);
+        } else if (roll <=9) {
+            //minor damage
+            r = new Report(6470);
+            r.subject = te.getId();
+            r.add(roll);
+            vDesc.addElement(r);
+            te.addMovementDamage(1);
+        } else if (roll <12) {
+            //major damage
+            r = new Report(6135);
+            r.subject = te.getId();
+            vDesc.addElement(r);
+            te.addMovementDamage(2);
+            int nMP = te.getOriginalWalkMP();
+            if (nMP > 0) {
+                te.setOriginalWalkMP(nMP - 1);
+
+                if (te.getOriginalWalkMP()==0) {
+                    // Hovercraft reduced to 0MP over water sink
+                    if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
+                         game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 &&
+                         !(game.getBoard().getHex( te.getPosition() ).containsTerrain(Terrains.ICE))) {
+                        Server.combineVectors(vDesc, destroyEntity(te, "a watery grave", false) );
+                    }
+                }
+            }
+        } else  {
+            r = new Report(6140);
+            r.subject = te.getId();
+            vDesc.addElement(r);
+            te.immobilize();
+            // Does the hovercraft sink?
+            IHex te_hex = game.getBoard().getHex( te.getPosition() );
+            if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
+                 te_hex.terrainLevel(Terrains.WATER) > 0 &&
+                 !(te_hex.containsTerrain(Terrains.ICE))) {
+                Server.combineVectors(vDesc, destroyEntity(te, "a watery grave", false) );
+            }
+            if(te instanceof VTOL) {
+                Report.addNewline(vDesc);
+                //report problem: add tab
+                Server.combineVectors(vDesc, crashVTOL((VTOL)te));
+            }
+        }
+        combineVectors(vPhaseReport,vDesc);
     }
 }
 

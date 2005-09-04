@@ -31,6 +31,8 @@ public class HitData
     private boolean hitAimedLocation = false;
     private int specCritMod = 0;
     private int glancing = 0;
+    private boolean fromFront = true; // True if attack came in through hex in
+                                      // front of target
     
     public HitData(int location) {
         this(location, false, EFFECT_NONE, false, 0);
@@ -48,12 +50,27 @@ public class HitData
         this(location, rear, EFFECT_NONE, hitAimedLocation, 0);
     }
     
-    public HitData(int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit) {
+    public HitData(int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit) 
+    {
+        this(location, rear, effect, hitAimedLocation, specCrit, true);
+        
+    }
+    
+    public HitData (int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit, boolean fromWhere) {
         this.location = location;
         this.rear = rear;
         this.effect = effect;
         this.hitAimedLocation = hitAimedLocation;
         this.specCritMod = specCrit;
+        this.fromFront = fromWhere;
+    }
+    
+    public void setFromFront (boolean dir) {
+        fromFront = dir;
+    }
+    
+    public boolean isFromFront () {
+        return fromFront;
     }
     
     public void makeArmorPiercing(AmmoType inType)

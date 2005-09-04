@@ -245,7 +245,9 @@ public class MepFile implements IMechLoader {
                     rearMounted = true;
                     critName = critName.substring(3).trim();
                 }
-                
+                if (critName.equalsIgnoreCase("Armored Cowl")) {
+                    mech.setCowl(5);
+                }
                 // this is a bit a kludge, but MEP is stupid
                 if (critName.equals("Heat Sink") && dblSinks) {
                     critName = "Double Heat Sink";

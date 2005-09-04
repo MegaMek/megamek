@@ -536,7 +536,9 @@ public class TdbFile implements IMechLoader {
             if (critData[loc][i][1] == null || !isSplit[Integer.parseInt(critData[loc][i][1])]) {
                 split = false;
             }
-
+            if (critName.equalsIgnoreCase("Armored Cowl")) {
+                mech.setCowl(5);
+            }
             if (critName.indexOf("Engine") != -1) {
                 mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
                 if (critName.indexOf("(C)") != -1)

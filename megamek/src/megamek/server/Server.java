@@ -11390,7 +11390,7 @@ public class Server implements Runnable {
         //save EI status, in case sensors crit destroys it
         final boolean eiStatus = te.hasActiveEiCockpit();
         // BA using EI implants receive +1 damage from attacks
-        if(!(te instanceof Mech) && !(te instanceof Protomech) && eiStatus) {
+        if (!(te instanceof Mech) && !(te instanceof Protomech) && eiStatus) {
             damage += 1;
         }
 
@@ -11662,29 +11662,29 @@ public class Server implements Runnable {
                             boolean engineExploded = false;
 
                             if ( te.engineHitsThisRound >= 2 ) {
-                              engineExploded = checkEngineExplosion(te, vDesc);
+                                engineExploded = checkEngineExplosion(te, vDesc);
                             }
 
                             if ( !engineExploded ) {
-                              int numEngineHits = 0;
-                              numEngineHits +=
-                                  te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                     Mech.SYSTEM_ENGINE,
-                                                     Mech.LOC_CT);
-                              numEngineHits +=
-                                  te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                     Mech.SYSTEM_ENGINE,
-                                                     Mech.LOC_RT);
-                              numEngineHits +=
-                                  te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                     Mech.SYSTEM_ENGINE,
-                                                      Mech.LOC_LT);
+                                int numEngineHits = 0;
+                                numEngineHits +=
+                                    te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                       Mech.SYSTEM_ENGINE,
+                                                       Mech.LOC_CT);
+                                numEngineHits +=
+                                    te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                       Mech.SYSTEM_ENGINE,
+                                                       Mech.LOC_RT);
+                                numEngineHits +=
+                                    te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                       Mech.SYSTEM_ENGINE,
+                                                       Mech.LOC_LT);
 
-                              if ( numEngineHits > 2  ) {
-                                  // third engine hit
-                                  Server.combineVectors(vDesc, destroyEntity(te, "engine destruction"));
-                              }
-                           }
+                                if ( numEngineHits > 2  ) {
+                                    // third engine hit
+                                    Server.combineVectors(vDesc, destroyEntity(te, "engine destruction"));
+                                }
+                             }
                         }
                         
                         if (te instanceof VTOL && hit.getLocation() == VTOL.LOC_ROTOR) {
@@ -11713,19 +11713,19 @@ public class Server implements Runnable {
                         }
 
                         if ( !engineExploded && !((te instanceof VTOL) && hit.getLocation() == VTOL.LOC_ROTOR)) {
-                          // Entity destroyed.  Ammo explosions are
-                          // neither survivable nor salvagable.
-                          // Only ammo explosions in the CT are devastating.
+                            // Entity destroyed.  Ammo explosions are
+                            // neither survivable nor salvagable.
+                            // Only ammo explosions in the CT are devastating.
                             Server.combineVectors(vDesc, destroyEntity( te, "damage",
                                                       !ammoExplosion,
                                                       !( (ammoExplosion || areaSatArty) &&
                                                          hit.getLocation() ==
                                                          Mech.LOC_CT ) ) );
-                          // If the head is destroyed, kill the crew.
-                          if (hit.getLocation() == Mech.LOC_HEAD ||
-                              (hit.getLocation() == Mech.LOC_CT && ((ammoExplosion && !autoEject) || areaSatArty))) {
-                            te.getCrew().setDoomed(true);
-                          }
+                            // If the head is destroyed, kill the crew.
+                            if (hit.getLocation() == Mech.LOC_HEAD ||
+                                (hit.getLocation() == Mech.LOC_CT && ((ammoExplosion && !autoEject) || areaSatArty))) {
+                                te.getCrew().setDoomed(true);
+                            }
                         }
 
                         // nowhere for further damage to go
@@ -11801,8 +11801,7 @@ public class Server implements Runnable {
                         }
                     }
                 }
-            }
-            else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
+            } else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
                 r = new Report(6140);
                 r.subject = te_n;
                 r.indent(3);
@@ -11819,8 +11818,7 @@ public class Server implements Runnable {
                     //report problem: add tab
                     Server.combineVectors(vDesc, crashVTOL((VTOL)te));
                 }
-            }
-            else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
+            } else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
                 r = new Report(6145);
                 r.subject = te_n;
                 r.indent(3);
@@ -11858,7 +11856,7 @@ public class Server implements Runnable {
         }
         //Mechs using EI implants take pilot damage each time a hit 
         //inflicts IS damage
-        if(tookInternalDamage
+        if (tookInternalDamage
                 && ((te instanceof Mech) || (te instanceof Protomech))
                 && te.hasActiveEiCockpit()) {
             Report.addNewline(vDesc);
@@ -13106,6 +13104,7 @@ public class Server implements Runnable {
                 Entity mw = game.getEntity(mechWarriorId.intValue());
                 mw.setDestroyed(true);
                 game.removeEntity( mw.getId(), condition );
+                this.entityUpdate(mw.getId());
                 send( createRemoveEntityPacket(mw.getId(), condition) );
                 r = new Report(6370);
                 r.subject = mw.getId();
@@ -13129,6 +13128,7 @@ public class Server implements Runnable {
                         // Nope.
                         other.setDestroyed(true);
                         game.moveToGraveyard( other.getId() );
+                        this.entityUpdate(other.getId());
                         send( createRemoveEntityPacket(other.getId(),
                                                        condition) );
                         r = new Report(6370);
@@ -13144,6 +13144,7 @@ public class Server implements Runnable {
                         // Nope.
                         other.setDestroyed(true);
                         game.moveToGraveyard( other.getId() );
+                        this.entityUpdate(other.getId());
                         send( createRemoveEntityPacket(other.getId(),
                                                        condition) );
                         r = new Report(6375);
@@ -13202,6 +13203,10 @@ public class Server implements Runnable {
             }
 
         } // End entity-not-already-destroyed.
+        
+        // update our entity, so clients have correct data
+        // needed for MekWars stuff
+        this.entityUpdate(entity.getId());
 
         return vDesc;
     }

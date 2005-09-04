@@ -59,7 +59,8 @@ public class MiscType extends EquipmentType {
     public static final int     F_SEARCHLIGHT       = 0x04000000;
     public static final int     F_CLUB              = 0x08000000;
     public static final int     F_HAND_WEAPON       = 0x10000000;
-
+    public static final int     F_COWL              = 0x20000000;
+    
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
     public static final int     S_TREE_CLUB         = 0x00000002; // BMR
@@ -381,7 +382,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createChainsaw());
         EquipmentType.addType(createBackhoe());
         EquipmentType.addType(createPileDriver());
-
+        EquipmentType.addType(createArmoredCowl());
+        
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
         EquipmentType.addType( createBAAssaultClaws() );
@@ -942,6 +944,20 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createArmoredCowl() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name="Armored Cowl";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags |= F_COWL;
+        misc.bv = 10;
+        
+        return misc;
+    }
     /**
      * Targeting comps should NOT be spreadable.  However, I've set them such
      * as a temp measure to overcome the following bug:

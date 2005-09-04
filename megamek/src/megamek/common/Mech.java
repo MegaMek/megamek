@@ -137,6 +137,8 @@ public abstract class Mech
     private int improvedJJ = -1;
     private int gyroType = GYRO_STANDARD;
     private int cockpitType = COCKPIT_STANDARD;
+    private boolean hasCowl = false;
+    private int cowlArmor = 0;
 
     /**
      * Construct a new, blank, mech.
@@ -226,6 +228,35 @@ public abstract class Mech
         this.autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
     }
 
+    public void setCowl (int armor) {
+        hasCowl = true;
+        cowlArmor = armor;
+    }
+    
+    public int getCowlArmor () {
+        if (hasCowl) return cowlArmor;
+        return 0;
+    }
+    
+    public boolean hasCowl () {
+        return hasCowl;
+    }
+    
+    // Damage the cowl. Returns amount of excess damage
+    public int damageCowl (int amount) {
+        if (hasCowl) {
+            if (amount<cowlArmor) {
+                cowlArmor -= amount;
+                return 0;
+            } else {
+                amount -= cowlArmor;
+                cowlArmor = 0;
+                return amount;
+            }
+        } else {
+            return amount; // No cowl - return full damage
+        }
+    }
     /**
      * Returns the location that transferred damage or crits will go to from a given location.
      */

@@ -11415,6 +11415,25 @@ public class Server implements Runnable {
                 crits = 0;
             }
 
+            // Armored Cowl may absorb some damage from hit
+            if (te instanceof Mech) {
+                Mech me = (Mech)te;
+                if (me.hasCowl() && hit.getLocation()==Mech.LOC_HEAD &&
+                    hit.isRear() ) {
+                    // TODO: Hits from the side should go in here, too.
+                    int damageNew = me.damageCowl(damage);
+                    int damageDiff = damage-damageNew;
+                    damage = damageNew;
+                    
+                    r = new Report (3520);
+                    r.subject = te_n;
+                    r.indent(3);
+                    r.newlines=0;
+                    r.add(damageDiff);
+                    vDesc.addElement(r);
+                }
+            }
+            
             // Destroy searchlights on 7+ (torso hits on mechs)
             if  (te.hasSpotlight()) {
                 boolean spotlightHittable = true;

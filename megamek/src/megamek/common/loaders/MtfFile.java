@@ -365,7 +365,10 @@ ex.printStackTrace();
                 split = true;
                 critName = critName.substring(0, critName.length() - 7).trim();
             }
-
+            if (critName.equalsIgnoreCase("Armored Cowl")) {
+                mech.setCowl(5); // Cowl starts with 5 points of armor
+            }
+            
             try {
                 EquipmentType etype = EquipmentType.get(critName);
                 if (etype != null) {

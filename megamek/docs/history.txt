@@ -109,6 +109,7 @@ v0.31.0 (CVS)
 + Added recognition for Armored Cowl to HMP and BLK loaders; MEP and TDB remain
 + Armored Cowl should now work as intended
 + Missing loaders for Armored Cowl
++ Forgot to update MTF_names.txt
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

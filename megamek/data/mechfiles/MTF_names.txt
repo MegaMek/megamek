@@ -323,7 +323,8 @@ Inner Sphere Level 3 Tech:
   Mace
   Mace (THB)
   Pile Driver
-
+  Armored Cowl
+  
 Clan Level 3 Tech:
  Weapons:
   CLLaserAntiMissileSystem
@@ -354,3 +355,4 @@ Clan Level 3 Tech:
   CLImprovedJump Jet
   CLWatchdogECM
   CLAngelECMSuite
+  Armored Cowl

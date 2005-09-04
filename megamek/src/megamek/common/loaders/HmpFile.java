@@ -548,6 +548,10 @@ public class HmpFile
                                      mech.getEquipmentNum(m),
                                      equipment.isHittable());
                   mech.addCritical(location, criticalSlot);
+                  if (criticalName.equalsIgnoreCase("Armored Cowl")) {
+                      mech.setCowl(5); // Initialize armored cowl
+                  }
+
                 }
                 else {
                   m = mech.addEquipment(equipment, location, rearMounted);
@@ -681,7 +685,7 @@ public class HmpFile
 
     criticals.put(new Long(0x21), "Light Ferro-Fibrous");
     criticals.put(new Long(0x22), "Heavy Ferro-Fibrous");
-
+    criticals.put(new Long(0x2d), "Armored Cowl");
 
     // criticals for mechs with a base type of inner sphere
     //

@@ -16934,10 +16934,8 @@ public class Server implements Runnable {
                         Server.combineVectors(vDesc,
                             destroyEntity(pilot, "explosive decompression", false, false));
                     }
-                    // Update the entity, unless the pilot died.
-                    if (!pilot.isDoomed()) {
-                        this.entityUpdate(pilot.getId());
-                    }
+                    // Update the entity
+                    this.entityUpdate(pilot.getId());
                     // check if the pilot lands in a minefield
                     doEntityDisplacementMinefieldCheck( pilot,
                             entity.getPosition(),

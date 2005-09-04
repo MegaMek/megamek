@@ -882,6 +882,7 @@ public class Server implements Runnable {
                 condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
             }
 
+            this.entityUpdate(entity.getId());
             game.removeEntity(entity.getId(), condition);
             send( createRemoveEntityPacket(entity.getId(), condition) );
         }
@@ -903,9 +904,9 @@ public class Server implements Runnable {
             // reset done to false
 
             if ( phase == IGame.PHASE_DEPLOYMENT ) {
-              entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
+                entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
             } else {
-              entity.setDone(false);
+                entity.setDone(false);
             }
             
             // reset spotlights

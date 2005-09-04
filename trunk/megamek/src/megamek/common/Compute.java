@@ -2123,6 +2123,19 @@ public class Compute {
                 .getWeaponArc(weaponId));
     }
 
+    /*
+     * Returns true if the line between attacker and target goes through the hex
+     * in front of the attacker
+     */
+    public static boolean isThroughFrontHex (IGame game, int attackerId, Entity t) {
+        Entity ae = game.getEntity(attackerId);
+        Coords src = ae.getPosition();
+        Coords dest = t.getPosition();
+        int fa = dest.degree(src) - t.getFacing()*60;
+        if (fa<0) fa += 360;
+        return (fa>330) || (fa<30);
+    }
+    
     /**
      * Returns true if the target is in the specified arc.
      * 

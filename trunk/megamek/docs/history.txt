@@ -107,7 +107,8 @@ v0.31.0 (CVS)
 + Update client's copy of an Entity when it dies, so MekWars can autoreport.
 + Added Armored Cowl (MFUK); TODO: Hits from the side shouldn't ignore cowl.
 + Added recognition for Armored Cowl to HMP and BLK loaders; MEP and TDB remain
-
++ Armored Cowl should now work as intended
+    
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.
 + Bug 1234949: Checks for null positions on cluster/swarm logic.

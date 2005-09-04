@@ -6175,6 +6175,13 @@ public class Server implements Runnable {
       final Targetable target = game.getTarget(wr.waa.getTargetType(),
                                                wr.waa.getTargetId());
       Report r;
+      boolean throughFront;
+      if (target instanceof Mech) {
+          throughFront = Compute.isThroughFrontHex(game, wr.waa.getEntityId(), (Entity)target); 
+      } else {
+          throughFront = true;
+      }
+       
       int subjectId = Entity.NONE;
       Entity entityTarget = null;
       if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -6641,7 +6648,7 @@ public class Server implements Runnable {
                         wr.waa.getAimedLocation(),
                         wr.waa.getAimingMode() );
 
-                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true));
+                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
                   Report.addNewline(vPhaseReport);
                   hits -= Math.min(nCluster,hits);
               }
@@ -6765,7 +6772,7 @@ public class Server implements Runnable {
                   HitData hit = entity.rollHitLocation
                       ( toHit.getHitTable(),
                         toHit.getSideTable() );
-                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true));
+                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
                   Report.addNewline(vPhaseReport);
                   hits -= Math.min(nCluster,hits);
               }
@@ -7107,7 +7114,7 @@ public class Server implements Runnable {
                         wr.waa.getAimedLocation(),
                         wr.waa.getAimingMode() );
 
-                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true));
+                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
                   Report.addNewline(vPhaseReport);
                   hits -= Math.min(nCluster,hits);
               }
@@ -8433,7 +8440,7 @@ public class Server implements Runnable {
                             damage += ((BattleArmor)ae).getVibroClawDamage();
                         // ASSUMPTION: buildings CAN'T absorb *this* damage.
                         //specialDamage = damageEntity(entityTarget, hit, damage);
-                        specialDamageReport = damageEntity(entityTarget, hit, damage);
+                        specialDamageReport = damageEntity(entityTarget, hit, damage, false, 0, false, false, throughFront);
                     }
                     else {
                         //add newline _before_ last report
@@ -8487,28 +8494,28 @@ public class Server implements Runnable {
                             hit.makeGlancingBlow();
                         }
                         Server.combineVectors(vPhaseReport,
-                          damageEntity(entityTarget, hit, nDamage, false, 1));
+                          damageEntity(entityTarget, hit, nDamage, false, 1, false, false, throughFront));
                     } else if (bFlechette) {
                         // If it's a frag missile...
                         if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
                         Server.combineVectors(vPhaseReport,
-                          damageEntity(entityTarget, hit, nDamage, false, 2));
+                          damageEntity(entityTarget, hit, nDamage, false, 2, false, false, throughFront));
                     } else if (bAcidHead) {
                         // If it's an acid-head warhead...
                         if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
                         Server.combineVectors(vPhaseReport,
-                                              damageEntity(entityTarget, hit, nDamage, false, 3) );
+                                              damageEntity(entityTarget, hit, nDamage, false, 3, false, false, throughFront) );
                     } else if(bIncendiary && usesAmmo && atype.getAmmoType() == AmmoType.T_AC) {
                         //incendiary AC ammo
                         if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
                         Server.combineVectors(vPhaseReport,
-                                              damageEntity(entityTarget, hit, nDamage, false, 4));
+                                              damageEntity(entityTarget, hit, nDamage, false, 4, false, false, throughFront));
                     } else {
                         if (usesAmmo
                                 && (atype.getAmmoType() == AmmoType.T_AC)
@@ -8521,7 +8528,7 @@ public class Server implements Runnable {
                             entityTarget.hitThisRoundByAntiTSM = true;
                         }
                         Server.combineVectors(vPhaseReport,
-                            damageEntity(entityTarget, hit, nDamage));
+                            damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
                     }
                 }
                 hits -= nCluster;
@@ -8584,7 +8591,7 @@ public class Server implements Runnable {
                           wr.waa.getAimingMode() );
 
                     Server.combineVectors(vPhaseReport,
-                                          damageEntity(entity, hit, ratedDamage, false, 0, false, true));
+                                          damageEntity(entity, hit, ratedDamage, false, 0, false, true, throughFront));
                 }
             }
         }
@@ -8733,6 +8740,10 @@ public class Server implements Runnable {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
         }
+        boolean throughFront = true;
+        if (te!=null) {
+            throughFront = Compute.isThroughFrontHex(game, paa.getEntityId(), te);
+        }
         final String armName = paa.getArm() == PunchAttackAction.LEFT
         ? "Left Arm" : "Right Arm";
         // get damage, ToHitData and roll from the PhysicalResult
@@ -8867,7 +8878,7 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage));
+            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage, false, 0, false, false, throughFront));
         }
 
         Report.addNewline(vPhaseReport);
@@ -8883,6 +8894,10 @@ public class Server implements Runnable {
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
+        }
+        boolean throughFront = true;
+        if (te!=null) {
+            throughFront = Compute.isThroughFrontHex(game, kaa.getEntityId(), te);
         }
         String legName = ( (kaa.getLeg() == KickAttackAction.LEFT) ||
                                  (kaa.getLeg() == KickAttackAction.LEFTMULE) )
@@ -9029,7 +9044,7 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage));
+            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage, false, 0, false, false, throughFront));
         }
 
         if (te.getMovementMode() == IEntityMovementMode.BIPED || te.getMovementMode() == IEntityMovementMode.QUAD) {
@@ -9056,6 +9071,10 @@ public class Server implements Runnable {
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
+        }
+        boolean throughFront = true;
+        if (te!=null) {
+            throughFront = Compute.isThroughFrontHex(game, ppaa.getEntityId(), te);
         }
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
@@ -9455,6 +9474,10 @@ public class Server implements Runnable {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
         }
+        boolean throughFront = true;
+        if (te!=null) {
+            throughFront = Compute.isThroughFrontHex(game, caa.getEntityId(), te);
+        }
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
         Report r;
@@ -9596,7 +9619,7 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage));
+            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage, false, 0, false, false, throughFront));
         }
 
         Report.addNewline(vPhaseReport);
@@ -9762,6 +9785,10 @@ public class Server implements Runnable {
         if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
         }
+        boolean throughFront = true;
+        if (te!=null) {
+            throughFront = Compute.isThroughFrontHex(game, caa.getEntityId(), te);
+        }
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
         Report r;
 
@@ -9907,7 +9934,7 @@ public class Server implements Runnable {
                                               ae.sideTable(target.getPosition())
                                                   );
             Server.combineVectors(vPhaseReport,
-                                  damageEntity( ae, hit, toAttacker ));
+                                  damageEntity( ae, hit, toAttacker, false, 0, false, false, throughFront));
             Report.addNewline(vPhaseReport);
             entityUpdate( ae.getId() );
 
@@ -9916,7 +9943,7 @@ public class Server implements Runnable {
         }
         else {
             // Resolve the damage.
-            resolveChargeDamage( ae, te, toHit, direction, glancing );
+            resolveChargeDamage( ae, te, toHit, direction, glancing, throughFront );
         }
         return;
     }
@@ -9925,10 +9952,10 @@ public class Server implements Runnable {
      * Handle a charge's damage
      */
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction) {
-        resolveChargeDamage (ae, te, toHit, direction, false);
+        resolveChargeDamage (ae, te, toHit, direction, false, true);
     }
 
-    private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction, boolean glancing) {
+    private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction, boolean glancing, boolean throughFront) {
 
         // we hit...
         int damage = ChargeAttackAction.getDamageFor(ae);
@@ -9990,7 +10017,7 @@ public class Server implements Runnable {
             } else {
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                 Server.combineVectors(vPhaseReport,
-                                      damageEntity(te, hit, cluster));
+                                      damageEntity(te, hit, cluster, false, 0, false, false, throughFront));
             }
         }
 
@@ -10048,6 +10075,10 @@ public class Server implements Runnable {
                 if (te.absHeight() < hex.getElevation())
                     damage = (int)Math.ceil(damage * 0.5f);
             }
+        }
+        boolean throughFront = true;
+        if (te!=null) {
+            throughFront = Compute.isThroughFrontHex(game, daa.getEntityId(), te);
         }
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
         Report r;
@@ -10209,7 +10240,7 @@ public class Server implements Runnable {
                 int cluster = Math.min(5, damage);
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                 Server.combineVectors(vPhaseReport,
-                                      damageEntity(te, hit, cluster));
+                                      damageEntity(te, hit, cluster, false, 0, false, false, throughFront));
                 damage -= cluster;
             }
         }
@@ -11224,6 +11255,13 @@ public class Server implements Runnable {
                             damageIS, false);
     }
 
+    public Vector damageEntity(Entity te, HitData hit, int damage,
+                               boolean ammoExplosion, int bFrag,
+                               boolean damageIS, boolean areaSatArty) {
+        return damageEntity (te, hit, damage, ammoExplosion, bFrag, damageIS,
+                             false, true);
+    }
+    
     /**
      * Deals the listed damage to an entity.  Returns a vector of Reports
      * for the phase report
@@ -11239,11 +11277,14 @@ public class Server implements Runnable {
      *          damaged directly?
      * @param areaSatArty Is the damage from an area saturating artillery
      *          attack?
+     * @param throughFront Is the damage coming through the hex the unit
+     *          is facing?
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     private Vector damageEntity(Entity te, HitData hit, int damage,
                                 boolean ammoExplosion, int bFrag,
-                                boolean damageIS, boolean areaSatArty) {
+                                boolean damageIS, boolean areaSatArty,
+                                boolean throughFront) {
 
         Vector vDesc = new Vector();
         Report r;
@@ -11419,8 +11460,7 @@ public class Server implements Runnable {
             if (te instanceof Mech) {
                 Mech me = (Mech)te;
                 if (me.hasCowl() && hit.getLocation()==Mech.LOC_HEAD &&
-                    hit.isRear() ) {
-                    // TODO: Hits from the side should go in here, too.
+                    !throughFront ) {
                     int damageNew = me.damageCowl(damage);
                     int damageDiff = damage-damageNew;
                     damage = damageNew;

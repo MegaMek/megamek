@@ -53,6 +53,11 @@ public class SearchlightAttackAction
             return false;
         if(!Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD))
             return false;
+        for(Enumeration actions = game.getActions();actions.hasMoreElements();) {
+            Object action = actions.nextElement();
+            if(action instanceof SearchlightAttackAction)
+                return false; //can only declare searchlight once!
+        }
         LosEffects los = LosEffects.calculateLos(game,attackerId,target);
         return los.canSee();
     }

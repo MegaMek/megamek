@@ -288,7 +288,7 @@ public class TargetingPhaseDisplay
             // 2003-12-29, nemchenk -- only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
             setFlipArmsEnabled(ce().canFlipArms());
-            setSearchlightEnabled(ce().isUsingSpotlight() && ce().getCrew().isActive());
+            updateSearchlight();
 
             setFireModeEnabled(true);
         } else {
@@ -453,9 +453,6 @@ public class TargetingPhaseDisplay
         clientgui.bv.addAttack(saa);
         clientgui.bv.repaint(100);
         clientgui.minimap.drawMap();
-
-        //and prevent duplicates
-        setSearchlightEnabled(false);
 
         //refresh weapon panel, as bth will have changed
         updateTarget();
@@ -641,6 +638,7 @@ public class TargetingPhaseDisplay
             clientgui.mechD.wPan.wToHitR.setText("---"); //$NON-NLS-1$
             clientgui.mechD.wPan.toHitText.setText(""); //$NON-NLS-1$
         }
+        updateSearchlight();
     }
 
     /**
@@ -928,6 +926,14 @@ public class TargetingPhaseDisplay
       attacks.addElement(new FlipArmsAction(cen, armsFlipped));
       updateTarget();
       refreshAll();
+    }
+
+    private void updateSearchlight() {
+        setSearchlightEnabled(ce() != null
+                && target != null
+                && ce().isUsingSpotlight() 
+                && ce().getCrew().isActive()
+                && SearchlightAttackAction.isPossible(client.game, cen, target));
     }
 
         private void setFireEnabled(boolean enabled) {

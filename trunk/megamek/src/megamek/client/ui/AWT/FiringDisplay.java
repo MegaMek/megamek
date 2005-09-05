@@ -334,7 +334,7 @@ public class FiringDisplay
             setSpotEnabled(ce().canSpot()
               && client.game.getOptions().booleanOption("indirect_fire")); //$NON-NLS-1$
             setFlipArmsEnabled(ce().canFlipArms());
-            setSearchlightEnabled(ce().isUsingSpotlight() && ce().getCrew().isActive());
+            updateSearchlight();
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
@@ -637,9 +637,6 @@ public class FiringDisplay
         clientgui.bv.repaint(100);
         clientgui.minimap.drawMap();
 
-        //and prevent duplicates
-        setSearchlightEnabled(false);
-
         //refresh weapon panel, as bth will have changed
         updateTarget();
     }
@@ -921,6 +918,7 @@ public class FiringDisplay
             clientgui.mechD.wPan.wToHitR.setText("---"); //$NON-NLS-1$
             clientgui.mechD.wPan.toHitText.setText(""); //$NON-NLS-1$
         }
+        updateSearchlight();
     }
   
     /**
@@ -1137,6 +1135,14 @@ public class FiringDisplay
       attacks.addElement(new FlipArmsAction(cen, armsFlipped));
       updateTarget();
       refreshAll();
+    }
+    
+    private void updateSearchlight() {
+        setSearchlightEnabled(ce() != null
+                && target != null
+                && ce().isUsingSpotlight() 
+                && ce().getCrew().isActive()
+                && SearchlightAttackAction.isPossible(client.game, cen, target));
     }
 
     private void setFireEnabled(boolean enabled) {

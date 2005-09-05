@@ -4,6 +4,7 @@ v0.30.2-dev (CVS)
 + Bug 1268169: RAC unjamming does not work.
 + Bug 1279514: war of 3039 weapons too small  
 + Bug 1282452: searchlight button stays disabled after cancelling fire
++ possible fix for bug 1280958 (if a mech used searchlight and physical, nothing happened)
 
 v0.30.1 (2005-09-01 1800GMT)
 + Bug 1263672: NPE when shooting at VTOL that has no undestroyed weapon.

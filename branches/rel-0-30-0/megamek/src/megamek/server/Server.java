@@ -8423,7 +8423,14 @@ implements Runnable, ConnectionHandler {
                 continue;
             }
             AbstractAttackAction aaa = (AbstractAttackAction)o;
-            physicalResults.addElement(preTreatPhysicalAttack(aaa));
+            // do searchlights immediately
+            if (aaa instanceof SearchlightAttackAction) {
+                SearchlightAttackAction saa = (SearchlightAttackAction)aaa;
+                Server.combineVectors(vPhaseReport,
+                                      saa.resolveAction(game));
+            } else {
+                physicalResults.addElement(preTreatPhysicalAttack(aaa));
+            }
         }
         int cen = Entity.NONE;
         for (Enumeration i = physicalResults.elements(); i.hasMoreElements();) {
@@ -8461,7 +8468,9 @@ implements Runnable, ConnectionHandler {
                 toKeep.addElement(action);
             } else if (!attacked) {
                 toKeep.addElement(action);
-                attacked = true;
+                if(!(action instanceof SearchlightAttackAction)) {
+                    attacked = true;
+                }
             } else {
                 System.err.println("server: removing duplicate phys attack for id#" + entityId);
             }

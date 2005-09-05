@@ -35,6 +35,7 @@ public class CommonSettingsDialog extends ClientDialog
     
     private Checkbox    minimapEnabled;
     private Checkbox    autoEndFiring;
+    private Checkbox    autoDeclareSearchlight;
     private Checkbox    nagForMASC;
     private Checkbox    nagForPSR;
     private Checkbox    nagForNoAction;
@@ -137,6 +138,10 @@ public class CommonSettingsDialog extends ClientDialog
             = new Checkbox( Messages.getString("CommonSettingsDialog.autoEndFiring") ); //$NON-NLS-1$
         tempPanel.add( autoEndFiring );
         
+        autoDeclareSearchlight
+            = new Checkbox( Messages.getString("CommonSettingsDialog.autoDeclareSearchlight") ); //$NON-NLS-1$
+        tempPanel.add( autoDeclareSearchlight );
+    
         nagForMASC
             = new Checkbox( Messages.getString("CommonSettingsDialog.nagForMASC") ); //$NON-NLS-1$
         tempPanel.add( nagForMASC );
@@ -307,6 +312,7 @@ public class CommonSettingsDialog extends ClientDialog
         
         minimapEnabled.setState( gs.getMinimapEnabled() );
         autoEndFiring.setState( gs.getAutoEndFiring() );
+        autoDeclareSearchlight.setState( gs.getAutoDeclareSearchlight());
         nagForMASC.setState( gs.getNagForMASC() );
         nagForPSR.setState( gs.getNagForPSR() );
         nagForNoAction.setState( gs.getNagForNoAction() );
@@ -378,6 +384,7 @@ public class CommonSettingsDialog extends ClientDialog
         
         gs.setMinimapEnabled(minimapEnabled.getState());
         gs.setAutoEndFiring(autoEndFiring.getState());
+        gs.setAutoDeclareSearchlight(autoDeclareSearchlight.getState());
         gs.setNagForMASC(nagForMASC.getState());
         gs.setNagForPSR(nagForPSR.getState());
         gs.setNagForNoAction(nagForNoAction.getState());

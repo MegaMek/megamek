@@ -112,6 +112,8 @@ v0.31.0 (CVS)
 + Forgot to update MTF_names.txt
 + Refactoring of toHit() - pulled all checks for impossible into a single function
 + Bug 1282452: searchlight button stays disabled after cancelling fire  
++ RFE 1249701: Auto SearchLight Option in client.
++ possible fix for bug 1280958 (using searchlight in physical phase prevented the phys attack)
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

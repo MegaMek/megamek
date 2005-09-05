@@ -624,7 +624,7 @@ public class FiringDisplay
             throw new IllegalArgumentException("current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-        if(!SearchlightAttackAction.isPossible(client.game,cen,target))
+        if(!SearchlightAttackAction.isPossible(client.game,cen,target,null))
             return;
 
         //create and queue a searchlight action
@@ -1142,7 +1142,7 @@ public class FiringDisplay
                 && target != null
                 && ce().isUsingSpotlight() 
                 && ce().getCrew().isActive()
-                && SearchlightAttackAction.isPossible(client.game, cen, target));
+                && SearchlightAttackAction.isPossible(client.game, cen, target,null));
     }
 
     private void setFireEnabled(boolean enabled) {

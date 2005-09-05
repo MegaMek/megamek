@@ -388,7 +388,7 @@ public class PhysicalDisplay
             throw new IllegalArgumentException("current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-        if(!SearchlightAttackAction.isPossible(client.game,cen,target))
+        if(!SearchlightAttackAction.isPossible(client.game,cen,target,null))
             return;
 
         //create and queue a searchlight action

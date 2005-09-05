@@ -44,10 +44,10 @@ public class SearchlightAttackAction
     
     public boolean isPossible(IGame game) {
         return SearchlightAttackAction.isPossible(game, getEntityId(),
-                           game.getTarget(getTargetType(), getTargetId()));
+                           game.getTarget(getTargetType(), getTargetId()), this);
     }
 
-    public static boolean isPossible(IGame game, int attackerId, Targetable target) {
+    public static boolean isPossible(IGame game, int attackerId, Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
         if(attacker == null || !attacker.isUsingSpotlight()) 
             return false;
@@ -55,8 +55,13 @@ public class SearchlightAttackAction
             return false;
         for(Enumeration actions = game.getActions();actions.hasMoreElements();) {
             Object action = actions.nextElement();
-            if(action instanceof SearchlightAttackAction)
-                return false; //can only declare searchlight once!
+            if(action instanceof SearchlightAttackAction) {
+                SearchlightAttackAction act = (SearchlightAttackAction)action;
+                if(act == exempt)
+                    break; //1st in list is OK
+                if(act.getEntityId() == attackerId)
+                    return false; //can only declare searchlight once!
+            }
         }
         LosEffects los = LosEffects.calculateLos(game,attackerId,target);
         return los.canSee();

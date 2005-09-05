@@ -207,231 +207,30 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
         }
         int toSubtract = 0;
-
-        ToHitData toHit = null;
-        
-        // missing, breached or jammed weapons can't fire
-        if (!weapon.canFire()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon is not in a state where it can be fired");
-        }
-
-        // If we're lying mines, we can't shoot.
-        if (ae.isLayingMines()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire weapons when laying mines");
-        }
-
-        // make sure weapon can deliver minefield
-        if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER &&
-            !AmmoType.canDeliverMinefield(atype)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
-        }
-        if (target.getTargetType() == Targetable.TYPE_FLARE_DELIVER
-                && !(usesAmmo
-                && atype.getAmmoType() == AmmoType.T_LRM
-                && atype.getMunitionType() == AmmoType.M_FLARE)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver flares");
-        }
-        if ((game.getPhase() == IGame.PHASE_TARGETING) && !isArtilleryIndirect) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Only indirect artillery can be fired in the targeting phase");
-        }
-        if ((game.getPhase() == IGame.PHASE_OFFBOARD) && !isTAG) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Only TAG can be fired in the offboard attack phase");
-        }
-        if ((game.getPhase() != IGame.PHASE_OFFBOARD) && isTAG) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "TAG can only be fired in the offboard attack phase");
-        }
-    
-    
-        if ( atype != null &&
-             atype.getAmmoType() == AmmoType.T_LRM &&
-             ( atype.getMunitionType() == AmmoType.M_THUNDER ||
-               atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE ||
-               atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO ||
-               atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB||
-               atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED ) &&
-             target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
-            return new ToHitData( ToHitData.IMPOSSIBLE,
-                                  "Weapon can only deliver minefields" );
-        }
-        if ( atype != null &&
-             atype.getAmmoType() == AmmoType.T_LRM &&
-             atype.getMunitionType() == AmmoType.M_FLARE &&
-             target.getTargetType() != Targetable.TYPE_FLARE_DELIVER) {
-            return new ToHitData( ToHitData.IMPOSSIBLE,
-                                  "Weapon can only deliver flares" );
-        }
-        // some weapons can only target infantry
-        if ( wtype.hasFlag(WeaponType.F_INFANTRY_ONLY) ) {
-            if (te != null && !(te instanceof Infantry) ||
-                target.getTargetType() != Targetable.TYPE_ENTITY) {
-                return new ToHitData( ToHitData.IMPOSSIBLE,
-                "Weapon can only be used against infantry" );
-            }
-        }    
-        // make sure weapon can clear minefield
-        if (target instanceof MinefieldTarget &&
-            !AmmoType.canClearMinefield(atype)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't clear minefields");
-        }
-        
-        // Arty shots have to be with arty, non arty shots with non arty.
         final int ttype = target.getTargetType();
-        if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-            //check artillery is targetted appropriately for its ammo
-            long munition = AmmoType.M_STANDARD;
-            if (atype != null) {
-                munition = atype.getMunitionType();
-            }
-            if (munition == AmmoType.M_FASCAM) {
-                if (ttype != Targetable.TYPE_HEX_FASCAM) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "FASCAM ammo must be used with target hex (FASCAM)");
-                }
-            } else if (munition == AmmoType.M_INFERNO_IV) {
-                if (ttype != Targetable.TYPE_HEX_INFERNO_IV) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Inferno IV ammo must be used with target hex (Inferno IV)");
-                }
-            } else if (munition == AmmoType.M_VIBRABOMB_IV) {
-                if (ttype != Targetable.TYPE_HEX_VIBRABOMB_IV) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Vibrabomb IV ammo must be used with target hex (Vibrabomb IV)");
-                }
-            } else if (munition == AmmoType.M_HOMING) {
-                //target type checked later because its different for direct/indirect (BMRr p77 on board arrow IV)
-                isHoming = true;
-            } else {
-                if (ttype != Targetable.TYPE_HEX_ARTILLERY && !isArtilleryFLAK) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
-                }
-            }
-        } else {
-            //weapon is not artillery
-            if (ttype == Targetable.TYPE_HEX_ARTILLERY || 
-                ttype == Targetable.TYPE_HEX_FASCAM ||
-                ttype == Targetable.TYPE_HEX_INFERNO_IV ||
-                ttype == Targetable.TYPE_HEX_VIBRABOMB_IV) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
-            }
-        }
         
-        // can't target yourself, unless those are swarm missiles that
-        // continued to a new target
-        if (ae.equals(te) && !exchangeSwarmTarget) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
+        ToHitData toHit = null;
+        String reason=null;
+        
+        reason = toHitIsImpossible (game, ae, target, weapon, atype,
+                                    wtype, ttype, exchangeSwarmTarget,
+                                    usesAmmo, te, isTAG, isInferno, 
+                                    isAttackerInfantry, isIndirect,
+                                    attackerId, weaponId, isArtilleryIndirect,
+                                    ammo, isArtilleryFLAK, targetInBuilding,
+                                    isArtilleryDirect);
+        
+        if (reason!=null) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, reason);
         }
-    
-        // weapon operational?
-        if (weapon.isDestroyed() || weapon.isBreached()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon not operational.");
+        long munition = AmmoType.M_STANDARD;
+        if (atype != null) {
+            munition = atype.getMunitionType();
         }
-    
-        // got ammo?
-        // don't check if it's a swarm-missile-follow-on-attack, we used the ammo previously
-        if ( usesAmmo && !exchangeSwarmTarget && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isBreached()) ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon out of ammo.");
-        }
-    
-        // Are we dumping that ammo?
-        if ( usesAmmo && ammo.isDumping() ) {
-            ae.loadWeaponWithSameAmmo( weapon );
-            if ( ammo.getShotsLeft() == 0 || ammo.isDumping() ) {
-                return new ToHitData( ToHitData.IMPOSSIBLE,
-                                      "Dumping remaining ammo." );
-            }
-        }
-    
-        // is the attacker even active?
-        if (ae.isShutDown() || !ae.getCrew().isActive()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is in no condition to fire weapons.");
-        }
-    
-        // sensors operational?
-        final int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-        if (sensorHits > 1) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker sensors destroyed.");
-        }
-    
-        // Is the weapon blocked by a passenger?
-        if ( ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted()) ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon blocked by passenger.");
-        }
-    
-        // Can't target an entity conducting a swarm attack.
-        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
-        }
-    
-        // can't target non-wood hexes for clearing
-        if (Targetable.TYPE_HEX_CLEAR == target.getTargetType() &&
-             !game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.WOODS)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not woods.");
-        }
-        // Infantry can't clear woods.
-        if ( isAttackerInfantry &&
-             Targetable.TYPE_HEX_CLEAR == target.getTargetType() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can not clear woods.");
-        }
-    
-        // Some weapons can't cause fires, but Infernos always can.
-        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno &&
-             Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can not cause fires.");
-        }
-
-        // If it's not a building or fire hex, then it can only be ignited with Infernos.
-        if ( !isInferno
-                && (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
-                && !((game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.WOODS))
-                    || (game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.BUILDING)))) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Only Infernos can start fires except woods and building hexes.");
-        }
-    
-        // Can't target infantry with Inferno rounds (BMRr, pg. 141).
-        //  Also, enforce options for keeping vehicles and protos safe
-        //  if those options are checked.
-        if ( isInferno &&
-             (te instanceof Infantry
-              || (te instanceof Tank &&
-                  game.getOptions().booleanOption("vehicles_safe_from_infernos"))
-              || (te instanceof Protomech &&
-                  game.getOptions().booleanOption("protos_safe_from_infernos")))
-              ) {
-            return new ToHitData( ToHitData.IMPOSSIBLE,
-                                  "Can not target that unit type with Inferno rounds." );
-        }
-    
-        // The TAG system cannot target infantry.
-        if( isTAG && te instanceof Infantry ) {
-            return new ToHitData( ToHitData.IMPOSSIBLE,
-                                  "Can not target infantry with TAG." );
-        }
-
-        // Can't raise the heat of infantry or tanks.
-        if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
-             wtype.hasModes() &&
-             weapon.curMode().equals("Heat") &&
-             !(te instanceof Mech) ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Can only raise the heat level of Meks.");
-        }
-    
-        // Handle solo attack weapons.
-        if ( wtype.hasFlag(WeaponType.F_SOLO_ATTACK) ) {
-            for ( Enumeration i = game.getActions();
-                  i.hasMoreElements(); ) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-                if (prevAttack.getEntityId() == attackerId) {
-    
-                    // If the attacker fires another weapon, this attack fails.
-                    if ( weaponId != prevAttack.getWeaponId() ) {
-                        return new ToHitData(ToHitData.IMPOSSIBLE,
-                                             "Other weapon attacks declared.");
-                    }
-                }
-            }
-        } // End current-weapon-is-solo
-    
+        if (munition == AmmoType.M_HOMING) {
+            //target type checked later because its different for direct/indirect (BMRr p77 on board arrow IV)
+            isHoming = true;
+        } 
         int attEl = ae.absHeight();
         int targEl;
     
@@ -447,24 +246,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         //      the target hex or the elevation of the hex the attacker is
         //      in, whichever is higher."
     
-        // check if indirect fire is valid
-        if (isIndirect
-                && !game.getOptions().booleanOption("indirect_fire")) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire option not enabled");
-        }
-        if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
-            !game.getOptions().booleanOption("indirect_always_possible") &&
-            LosEffects.calculateLos(game, attackerId, target).canSee()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire impossible with direct LOS");
-        }
-            
         // if we're doing indirect fire, find a spotter
         Entity spotter = null;
         if (isIndirect) {
             spotter = Compute.findSpotter(game, ae, target);
-            if (spotter == null) {
-                return new ToHitData( ToHitData.IMPOSSIBLE, "No available spotter");
-            }
         }
     
         // EI system
@@ -501,46 +286,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             losMods = los.losModifiers(game);
         }
-    
-        // if LOS is blocked, block the shot
-        if (losMods.getValue() == ToHitData.IMPOSSIBLE && !isArtilleryIndirect) {
-            return losMods;
-        }
-    
-        // Must target infantry in buildings from the inside.
-        if ( targetInBuilding &&
-             te instanceof Infantry &&
-             null == los.getThruBldg() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attack on infantry crosses building exterior wall.");
-        }
-        
-        // attacker partial cover means no leg weapons
-        if (los.isAttackerCover() && ae.locationIsLeg(weapon.getLocation()) &&
-                ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
-                                 "Nearby terrain blocks leg weapons.");
-        }
-        
-        // hull down vees can't fire front weapons
-        if(ae instanceof Tank && ae.isHullDown() && weapon.getLocation() == Tank.LOC_FRONT) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
-            "Nearby terrain blocks front weapons.");
-        }
-    
-        // Weapon in arc?
-        if (!Compute.isInArc(game, attackerId, weaponId, target)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
-        }
-    
         // Leg attacks, Swarm attacks, and
         // Mine Launchers don't use gunnery.
         if ( Infantry.LEG_ATTACK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getLegAttackBaseToHit( ae, te );
-    
-            // Return if the attack is impossible.
-            if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
-                return toHit;
-            }
     
             // If the attacker has Assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
@@ -557,11 +306,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getSwarmMekBaseToHit( ae, te );
     
-            // Return if the attack is impossible.
-            if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
-                return toHit;
-            }
-    
             // If the attacker has Assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
             for ( Enumeration iter = ae.getMisc(); iter.hasMoreElements(); ) {
@@ -576,40 +320,21 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
         else if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
             // Can't stop if we're not swarming, otherwise automatic.
-            if ( Entity.NONE == ae.getSwarmTargetId() ) {
-                return new ToHitData( ToHitData.IMPOSSIBLE,
-                                      "Not swarming a Mek." );
-            } else {
-                return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
                                       "End swarm attack." );
-            }
         }
         else if ( BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName()) ) {
             // Mine launchers can not hit infantry.
-            if ( te instanceof Infantry ) {
-                return new ToHitData( ToHitData.IMPOSSIBLE,
-                                      "Can not attack infantry." );
-            } else {
-                toHit = new ToHitData(8, "magnetic mine attack");
-            }
+            toHit = new ToHitData(8, "magnetic mine attack");
         }
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.
         else if ( te != null && ae.getSwarmTargetId() == te.getId() ) {
             // Only certain weapons can be used in a swarm attack.
-            if ( wtype.getDamage() == 0 ) {
-                return new ToHitData( ToHitData.IMPOSSIBLE,
-                                      "Weapon causes no damage." );
-            } else {
-                return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
                                       "Attack during swarm.",
                                       ToHitData.HIT_SWARM,
                                       ToHitData.SIDE_FRONT );
-            }
-        }
-        else if ( Entity.NONE != ae.getSwarmTargetId() ) {
-            return new ToHitData( ToHitData.IMPOSSIBLE,
-                                  "Must target the Mek being swarmed." );
         }
         else if (isArtilleryFLAK) {
             toHit = new ToHitData(9, "artillery FLAK");
@@ -674,15 +399,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                  toHit.addModifier(atype.getToHitModifier(),
                               "ammunition to-hit modifier");
             }
-            if (distance >17) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Direct artillery attack at range >17 hexes.");
-            }
-
             if (isHoming) {
-                if (te == null || te.getTaggedBy() == -1) {
-                    // see BMRr p77 on board arrow IV
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "On board homing shot must target a unit tagged this turn");
-                }
                 return new ToHitData(4, "Homing shot");
             }
 
@@ -693,17 +410,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
         if (isArtilleryIndirect) {
             int boardRange=(int)Math.ceil((distance)/17f);
-            if (boardRange>wtype.getLongRange()) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect artillery attack out of range");
-            }
-            if (distance<=17  && !(losMods.getValue()==ToHitData.IMPOSSIBLE)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Cannot fire indirectly at range <=17 hexes unless no LOS.");
-            }
-
             if (isHoming) {
-                if(ttype != Targetable.TYPE_HEX_ARTILLERY) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Off board homing shot must target a map sheet");
-                }
                 return new ToHitData(4, "Homing shot (will miss if TAG misses)");
             }
 
@@ -799,20 +506,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
              && ((atype.getAmmoType() == AmmoType.T_AC)
              && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING)) ) {
             toHit.addModifier( 1, "Armor-Piercing Ammo" );
-        }
-        
-        // BA Micro bombs only when flying
-        if (atype != null && atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
-            if (ae.getElevation() == 0) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "attacker must be at least at elevation 1");
-            } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "must target hex with bombs");
-            }
-        }
-        if (target.getTargetType() == Targetable.TYPE_HEX_BOMB &&
-            !(usesAmmo &&
-              atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver bombs");
         }
     
         // spotter movement, if applicable
@@ -1003,6 +696,401 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // okay!
         return toHit;
     }
+
+    private static String toHitIsImpossible(IGame game, Entity ae, 
+                              Targetable target, Mounted weapon, AmmoType atype,
+                              WeaponType wtype, int ttype, 
+                              boolean exchangeSwarmTarget, boolean usesAmmo,
+                              Entity te, boolean isTAG, boolean isInferno, 
+                              boolean isAttackerInfantry, boolean isIndirect, 
+                              int attackerId, int weaponId, 
+                              boolean isArtilleryIndirect, Mounted ammo,
+                              boolean isArtilleryFLAK, boolean targetInBuilding,
+                              boolean isArtilleryDirect) {
+        boolean isHoming = false;
+        ToHitData toHit = null;
+        // missing, breached or jammed weapons can't fire
+        if (!weapon.canFire()) {
+            return new String("Weapon is not in a state where it can be fired");
+        }
+
+        // If we're lying mines, we can't shoot.
+        if (ae.isLayingMines()) {
+            return new String("Can't fire weapons when laying mines");
+        }
+
+        // make sure weapon can deliver minefield
+        if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER &&
+            !AmmoType.canDeliverMinefield(atype)) {
+            return new String("Weapon can't deliver minefields");
+        }
+        if (target.getTargetType() == Targetable.TYPE_FLARE_DELIVER
+                && !(usesAmmo
+                && atype.getAmmoType() == AmmoType.T_LRM
+                && atype.getMunitionType() == AmmoType.M_FLARE)) {
+            return new String("Weapon can't deliver flares");
+        }
+        if ((game.getPhase() == IGame.PHASE_TARGETING) && !isArtilleryIndirect) {
+            return new String("Only indirect artillery can be fired in the targeting phase");
+        }
+        if ((game.getPhase() == IGame.PHASE_OFFBOARD) && !isTAG) {
+            return new String("Only TAG can be fired in the offboard attack phase");
+        }
+        if ((game.getPhase() != IGame.PHASE_OFFBOARD) && isTAG) {
+            return new String("TAG can only be fired in the offboard attack phase");
+        }
+    
+    
+        if ( atype != null &&
+             atype.getAmmoType() == AmmoType.T_LRM &&
+             ( atype.getMunitionType() == AmmoType.M_THUNDER ||
+               atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE ||
+               atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO ||
+               atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB||
+               atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED ) &&
+             target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
+            return new String("Weapon can only deliver minefields" );
+        }
+        if ( atype != null &&
+             atype.getAmmoType() == AmmoType.T_LRM &&
+             atype.getMunitionType() == AmmoType.M_FLARE &&
+             target.getTargetType() != Targetable.TYPE_FLARE_DELIVER) {
+            return new String("Weapon can only deliver flares" );
+        }
+        // some weapons can only target infantry
+        if ( wtype.hasFlag(WeaponType.F_INFANTRY_ONLY) ) {
+            if (te != null && !(te instanceof Infantry) ||
+                target.getTargetType() != Targetable.TYPE_ENTITY) {
+                return new String("Weapon can only be used against infantry" );
+            }
+        }    
+        // make sure weapon can clear minefield
+        if (target instanceof MinefieldTarget &&
+            !AmmoType.canClearMinefield(atype)) {
+            return new String("Weapon can't clear minefields");
+        }
+        
+        // Arty shots have to be with arty, non arty shots with non arty.
+        if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+            //check artillery is targetted appropriately for its ammo
+            long munition = AmmoType.M_STANDARD;
+            if (atype != null) {
+                munition = atype.getMunitionType();
+            }
+            if (munition == AmmoType.M_FASCAM) {
+                if (ttype != Targetable.TYPE_HEX_FASCAM) {
+                    return new String("FASCAM ammo must be used with target hex (FASCAM)");
+                }
+            } else if (munition == AmmoType.M_INFERNO_IV) {
+                if (ttype != Targetable.TYPE_HEX_INFERNO_IV) {
+                    return new String("Inferno IV ammo must be used with target hex (Inferno IV)");
+                }
+            } else if (munition == AmmoType.M_VIBRABOMB_IV) {
+                if (ttype != Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                    return new String("Vibrabomb IV ammo must be used with target hex (Vibrabomb IV)");
+                }
+            } else if (munition == AmmoType.M_HOMING) {
+                //target type checked later because its different for direct/indirect (BMRr p77 on board arrow IV)
+                isHoming = true;
+            } else
+            {
+                if (ttype != Targetable.TYPE_HEX_ARTILLERY && !isArtilleryFLAK) {
+                    return new String("Weapon must make artillery attacks.");
+                }
+            }
+        } else {
+            //weapon is not artillery
+            if (ttype == Targetable.TYPE_HEX_ARTILLERY || 
+                ttype == Targetable.TYPE_HEX_FASCAM ||
+                ttype == Targetable.TYPE_HEX_INFERNO_IV ||
+                ttype == Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                return new String("Weapon can't make artillery attacks.");
+            }
+        }
+        
+        // can't target yourself, unless those are swarm missiles that
+        // continued to a new target
+        if (ae.equals(te) && !exchangeSwarmTarget) {
+            return new String("You can't target yourself");
+        }
+    
+        // weapon operational?
+        if (weapon.isDestroyed() || weapon.isBreached()) {
+            return new String("Weapon not operational.");
+        }
+    
+        // got ammo?
+        // don't check if it's a swarm-missile-follow-on-attack, we used the ammo previously
+        if ( usesAmmo && !exchangeSwarmTarget && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isBreached()) ) {
+            return new String("Weapon out of ammo.");
+        }
+    
+        // Are we dumping that ammo?
+        if ( usesAmmo && ammo.isDumping() ) {
+            ae.loadWeaponWithSameAmmo( weapon );
+            if ( ammo.getShotsLeft() == 0 || ammo.isDumping() ) {
+                return new String("Dumping remaining ammo." );
+            }
+        }
+    
+        // is the attacker even active?
+        if (ae.isShutDown() || !ae.getCrew().isActive()) {
+            return new String("Attacker is in no condition to fire weapons.");
+        }
+    
+        // sensors operational?
+        final int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+        if (sensorHits > 1) {
+            return new String("Attacker sensors destroyed.");
+        }
+    
+        // Is the weapon blocked by a passenger?
+        if ( ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted()) ) {
+            return new String("Weapon blocked by passenger.");
+        }
+    
+        // Can't target an entity conducting a swarm attack.
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
+            return new String("Target is swarming a Mek.");
+        }
+    
+        // can't target non-wood hexes for clearing
+        if (Targetable.TYPE_HEX_CLEAR == target.getTargetType() &&
+             !game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.WOODS)) {
+            return new String("Target is not woods.");
+        }
+        // Infantry can't clear woods.
+        if ( isAttackerInfantry &&
+             Targetable.TYPE_HEX_CLEAR == target.getTargetType() ) {
+            return new String("Infantry can not clear woods.");
+        }
+    
+        // Some weapons can't cause fires, but Infernos always can.
+        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno &&
+             Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
+            return new String("Weapon can not cause fires.");
+        }
+
+        // If it's not a building or fire hex, then it can only be ignited with Infernos.
+        if ( !isInferno
+                && (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                && !((game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.WOODS))
+                    || (game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.BUILDING)))) {
+            return new String("Only Infernos can start fires except woods and building hexes.");
+        }
+    
+        // Can't target infantry with Inferno rounds (BMRr, pg. 141).
+        //  Also, enforce options for keeping vehicles and protos safe
+        //  if those options are checked.
+        if ( isInferno &&
+             (te instanceof Infantry
+              || (te instanceof Tank &&
+                  game.getOptions().booleanOption("vehicles_safe_from_infernos"))
+              || (te instanceof Protomech &&
+                  game.getOptions().booleanOption("protos_safe_from_infernos")))
+              ) {
+            return new String("Can not target that unit type with Inferno rounds." );
+        }
+    
+        // The TAG system cannot target infantry.
+        if( isTAG && te instanceof Infantry ) {
+            return new String("Can not target infantry with TAG." );
+        }
+
+        // Can't raise the heat of infantry or tanks.
+        if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
+             wtype.hasModes() &&
+             weapon.curMode().equals("Heat") &&
+             !(te instanceof Mech) ) {
+            return new String("Can only raise the heat level of Meks.");
+        }
+    
+        // Handle solo attack weapons.
+        if ( wtype.hasFlag(WeaponType.F_SOLO_ATTACK) ) {
+            for ( Enumeration i = game.getActions();
+                  i.hasMoreElements(); ) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                if (prevAttack.getEntityId() == attackerId) {
+    
+                    // If the attacker fires another weapon, this attack fails.
+                    if ( weaponId != prevAttack.getWeaponId() ) {
+                        return new String("Other weapon attacks declared.");
+                    }
+                }
+            }
+        } // End current-weapon-is-solo
+
+        // check if indirect fire is valid
+        if (isIndirect
+                && !game.getOptions().booleanOption("indirect_fire")) {
+            return new String("Indirect fire option not enabled");
+        }
+        if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
+            !game.getOptions().booleanOption("indirect_always_possible") &&
+            LosEffects.calculateLos(game, attackerId, target).canSee()) {
+            return new String("Indirect fire impossible with direct LOS");
+        }
+        
+        // hull down vees can't fire front weapons
+        if(ae instanceof Tank && ae.isHullDown() && weapon.getLocation() == Tank.LOC_FRONT) {
+            return new String("Nearby terrain blocks front weapons.");
+        }
+    
+        // Weapon in arc?
+        if (!Compute.isInArc(game, attackerId, weaponId, target)) {
+            return new String("Target not in arc.");
+        }
+        
+        // BA Micro bombs only when flying
+        if (atype != null && atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
+            if (ae.getElevation() == 0) {
+                return new String("attacker must be at least at elevation 1");
+            } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
+                return new String("must target hex with bombs");
+            }
+        }
+        if (target.getTargetType() == Targetable.TYPE_HEX_BOMB &&
+            !(usesAmmo &&
+              atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
+            return new String("Weapon can't deliver bombs");
+        }
+        Entity spotter = null;
+        if (isIndirect) {
+            spotter = Compute.findSpotter(game, ae, target);
+            if (spotter == null) {
+                return new String("No available spotter");
+            }
+        }
+        
+        int eistatus=0;
+
+        // check LOS (indirect LOS is from the spotter)
+        LosEffects los;
+        ToHitData losMods;
+        if (!isIndirect) {
+            los = LosEffects.calculateLos(game, attackerId, target);
+
+            if(ae.hasActiveEiCockpit()) {
+                if(los.getLightWoods() > 0)
+                    eistatus = 2;
+                else
+                    eistatus = 1;
+            }
+
+            losMods = los.losModifiers(game, eistatus);
+        } else {
+            los = LosEffects.calculateLos(game, spotter.getId(), target);
+            // do not count attacker partial cover in indirect fire
+            los.setAttackerCover(LosEffects.COVER_NONE);
+
+            if(spotter.hasActiveEiCockpit()) {
+                if(los.getLightWoods() > 0)
+                    eistatus = 2;
+                else
+                    eistatus = 1;
+            }
+
+            losMods = los.losModifiers(game);
+        }
+    
+        // if LOS is blocked, block the shot
+        if (losMods.getValue() == ToHitData.IMPOSSIBLE && !isArtilleryIndirect) {
+            return losMods.getDesc();
+        }
+    
+        // Must target infantry in buildings from the inside.
+        if ( targetInBuilding &&
+             te instanceof Infantry &&
+             null == los.getThruBldg() ) {
+            return new String("Attack on infantry crosses building exterior wall.");
+        }
+        
+        // attacker partial cover means no leg weapons
+        if (los.isAttackerCover() && ae.locationIsLeg(weapon.getLocation()) &&
+                ae.getLocationStatus(weapon.getLocation()) != ILocationExposureStatus.WET) {
+            return new String("Nearby terrain blocks leg weapons.");
+        }
+
+        // Leg attacks, Swarm attacks, and
+        // Mine Launchers don't use gunnery.
+        if ( Infantry.LEG_ATTACK.equals( wtype.getInternalName() ) ) {
+            toHit = Compute.getLegAttackBaseToHit( ae, te );
+    
+            // Return if the attack is impossible.
+            if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
+                return toHit.getDesc();
+            }
+        }
+        else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
+            toHit = Compute.getSwarmMekBaseToHit( ae, te );
+    
+            // Return if the attack is impossible.
+            if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
+                return toHit.getDesc();
+            }
+        }
+        else if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
+            // Can't stop if we're not swarming, otherwise automatic.
+            if ( Entity.NONE == ae.getSwarmTargetId() ) {
+                return new String("Not swarming a Mek." );
+            }
+        }
+        else if ( BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName()) ) {
+            // Mine launchers can not hit infantry.
+            if ( te instanceof Infantry ) {
+                return new String("Can not attack infantry." );
+            }
+        }
+        // Swarming infantry always hit their target, but
+        // they can only target the Mek they're swarming.
+        else if ( te != null && ae.getSwarmTargetId() == te.getId() ) {
+            // Only certain weapons can be used in a swarm attack.
+            if ( wtype.getDamage() == 0 ) {
+                return new String("Weapon causes no damage." );
+            }
+        }
+        else if ( Entity.NONE != ae.getSwarmTargetId() ) {
+            return new String("Must target the Mek being swarmed." );
+        }
+        
+        int aElev = ae.getElevation();
+        int tElev = target.getElevation();
+        int distance = Compute.effectiveDistance(game, ae, target);
+    
+        // Handle direct artillery attacks.
+        if (isArtilleryDirect) {
+            if (distance >17) {
+                return new String("Direct artillery attack at range >17 hexes.");
+            }
+            if (isHoming) {
+                if (te == null || te.getTaggedBy() == -1) {
+                    // see BMRr p77 on board arrow IV
+                    return new String("On board homing shot must target a unit tagged this turn");
+                }
+            }
+        }
+        if (isArtilleryIndirect) {
+            int boardRange=(int)Math.ceil((distance)/17f);
+            if (boardRange>wtype.getLongRange()) {
+                return new String("Indirect artillery attack out of range");
+            }
+            if (distance<=17  && !(losMods.getValue()==ToHitData.IMPOSSIBLE)) {
+                return new String("Cannot fire indirectly at range <=17 hexes unless no LOS.");
+            }
+            if (isHoming) {
+                if(ttype != Targetable.TYPE_HEX_ARTILLERY) {
+                    return new String("Off board homing shot must target a map sheet");
+                }
+            }
+        }
+        
+        return null;
+    }
+
     /**
      * @return Returns the nemesisConfused.
      */

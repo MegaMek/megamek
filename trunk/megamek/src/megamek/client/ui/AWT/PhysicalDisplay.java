@@ -370,6 +370,11 @@ public class PhysicalDisplay
                 leftArm.getValueAsString(),  new Double(Compute.oddsAbove(leftArm.getValue())), leftArm.getDesc(), new Integer(PunchAttackAction.getDamageFor(ce(),PunchAttackAction.LEFT)), leftArm.getTableDesc()}); 
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
+            // declare searchlight, if possible
+            if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
+
             if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
                     && rightArm.getValue() != ToHitData.IMPOSSIBLE) {
                 attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.BOTH));
@@ -388,7 +393,7 @@ public class PhysicalDisplay
             throw new IllegalArgumentException("current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-        if(!SearchlightAttackAction.isPossible(client.game,cen,target))
+        if(!SearchlightAttackAction.isPossible(client.game,cen,target,null))
             return;
 
         //create and queue a searchlight action
@@ -450,6 +455,11 @@ public class PhysicalDisplay
                 ,KickAttackAction.getDamageFor(ce(),attackSide)+attackLeg.getTableDesc()});
         if (clientgui.doYesNoDialog(title, message)){
             disableButtons();
+            // declare searchlight, if possible
+            if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
+
             attacks.addElement(new KickAttackAction(cen, target.getTargetType(), target.getTargetId(), attackSide));
             ready();
         }
@@ -465,6 +475,11 @@ public class PhysicalDisplay
                 toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())),toHit.getDesc()});
         if (clientgui.doYesNoDialog( title, message)){
             disableButtons();
+            // declare searchlight, if possible
+            if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
+
             attacks.addElement(new PushAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()));
             ready();
         }
@@ -482,6 +497,11 @@ public class PhysicalDisplay
                 ClubAttackAction.getDamageFor(ce(),club)+toHit.getTableDesc()});
         if (clientgui.doYesNoDialog(title,message)){
             disableButtons();
+            // declare searchlight, if possible
+            if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
+
             attacks.addElement(new ClubAttackAction(cen, target.getTargetType(), target.getTargetId(), club));
             ready();
         }
@@ -497,6 +517,11 @@ public class PhysicalDisplay
                 proto.getValueAsString(), new Double(Compute.oddsAbove(proto.getValue())), proto.getDesc(), ProtomechPhysicalAttackAction.getDamageFor(ce())+proto.getTableDesc()});        
         if (clientgui.doYesNoDialog(title,message)){
             disableButtons();
+            // declare searchlight, if possible
+            if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
+
             attacks.addElement(new ProtomechPhysicalAttackAction(cen, target.getTargetType(), target.getTargetId()));
             ready();
           }

@@ -14,8 +14,13 @@
 
 package megamek.common.util;
 
+import java.util.Vector;
+import java.util.Enumeration;
+
 import megamek.common.Board;
+import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.common.IBoard;
 import megamek.common.IHex;
@@ -24,9 +29,12 @@ import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
 import megamek.common.Terrains;
 
+import megamek.common.util.BuildingTemplate;
+
 import com.sun.java.util.collections.HashMap;
 import com.sun.java.util.collections.HashSet;
 import com.sun.java.util.collections.Iterator;
+import com.sun.java.util.collections.Hashtable;
 
 public class BoardUtilities {
     
@@ -224,7 +232,43 @@ public class BoardUtilities {
         if (Compute.randomInt(100)<mapSettings.getProbRoad()) {
             addRoad(result, reverseHex);
         }
+
+        // add buildings 
+        for(int i=0; i<mapSettings.getBoardBuildings().size();i++){
+            placeBuilding(result, (BuildingTemplate)(mapSettings.getBoardBuildings().elementAt(i)));
+        }
         return result;
+    }
+    
+    private static void placeBuilding(IBoard board, BuildingTemplate building) {
+        int type = building.getType();
+        int cf = building.getCF();
+        int height = building.getHeight();
+        ITerrainFactory tf = Terrains.getTerrainFactory();
+        Vector hexes = new Vector();
+        int level=0;
+        for(Enumeration i=building.getCoords();i.hasMoreElements();) {
+            Coords c = (Coords)i.nextElement();
+            IHex hex = board.getHex(c);
+            //remove everything, except woods
+            int woods = hex.terrainLevel(Terrains.WOODS);
+            hex.removeAllTerrains();
+            if(woods > 0) {
+                hex.addTerrain(tf.createTerrain(Terrains.WOODS, woods));
+            } else {
+                hex.addTerrain(tf.createTerrain(Terrains.PAVEMENT, 1));
+            }
+            hex.addTerrain(tf.createTerrain(Terrains.BUILDING, type));
+            hex.addTerrain(tf.createTerrain(Terrains.BLDG_CF, cf));
+            hex.addTerrain(tf.createTerrain(Terrains.BLDG_ELEV, height));
+            //hex.addTerrain(tf.createTerrain(Terrains.BLDG_BASEMENT, building.getBasement()));
+            hexes.addElement(hex);
+            level += hex.getElevation();
+        }
+        //set everything to the same level
+        for(int j=0;j<hexes.size();j++) {
+            ((IHex)(hexes.elementAt(j))).setElevation(level / hexes.size());
+        }
     }
     
     /**

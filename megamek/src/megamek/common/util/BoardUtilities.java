@@ -159,6 +159,35 @@ public class BoardUtilities {
                     reverseHex,
                     false); // can stack with woods or roughs
         }
+
+        // Add the Fortified hexes
+        count = mapSettings.getMinFortifiedSpots();
+        if (mapSettings.getMaxFortifiedSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxFortifiedSpots());
+        }
+        count *= sizeScale;
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.FORTIFIED, 0,
+                    mapSettings.getMinFortifiedSize(), 
+                    mapSettings.getMaxFortifiedSize(),
+                    reverseHex,
+                    false); 
+        }
+
+        // Add the rubble
+        count = mapSettings.getMinRubbleSpots();
+        if (mapSettings.getMaxRubbleSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxRubbleSpots());
+        }
+        count *= sizeScale;
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.RUBBLE, 0,
+                    mapSettings.getMinRubbleSize(), 
+                    mapSettings.getMaxRubbleSize(),
+                    reverseHex,
+                    true);
+        }
+
         /* Add the water */
         count = mapSettings.getMinWaterSpots();
         if (mapSettings.getMaxWaterSpots() > 0) { 
@@ -645,7 +674,6 @@ public class BoardUtilities {
     /** 
      * Converts water hexes to ice hexes.
      * Works best with snow&ice theme.
-     * When megamek has multilevel support etc, should be frozen over water
      */
     protected static void PostProcessDeepFreeze(IHex[] hexSet, int modifier) {
         int n;
@@ -654,7 +682,14 @@ public class BoardUtilities {
         for (n=0;n<hexSet.length;n++) {
             field = hexSet[n];
             if(field.containsTerrain(Terrains.WATER)) {
-                field.removeTerrain(Terrains.WATER);
+                int level = field.terrainLevel(Terrains.WATER);
+                if(modifier != 0) {
+                    level -= modifier;                
+                    field.removeTerrain(Terrains.WATER);
+                    if(level > 0) {
+                        field.addTerrain(f.createTerrain(Terrains.WATER, level));
+                    }
+                }
                 field.addTerrain(f.createTerrain(Terrains.ICE,1));
             } else if(field.containsTerrain(Terrains.SWAMP)) {
                 field.removeTerrain(Terrains.SWAMP);

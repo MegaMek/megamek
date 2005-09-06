@@ -117,6 +117,7 @@ v0.31.0 (CVS)
 + RFE 1282579: Add and Track Buildings using mapsettings
 + Thin ice
 + Removed build dependency on collections.jar
++ Added rubble and fortified terrains to RMG, frozen water special effect makes thin ice
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

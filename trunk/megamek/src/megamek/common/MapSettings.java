@@ -103,6 +103,24 @@ public class MapSettings implements Serializable {
     /** maximum Size of a pavement spot */
     private int maxPavementSize = 6;
     
+    /** how much rubble spots at least */
+    private int minRubbleSpots = 0;
+    /** how much rubble spots  at most */
+    private int maxRubbleSpots = 0;
+    /** minimum size of a rubble spot */
+    private int minRubbleSize = 1;
+    /** maximum Size of a rubble spot */
+    private int maxRubbleSize = 6;
+    
+    /** how much fortified spots at least */
+    private int minFortifiedSpots = 0;
+    /** how much fortified spots  at most */
+    private int maxFortifiedSpots = 0;
+    /** minimum size of a fortified spot */
+    private int minFortifiedSize = 1;
+    /** maximum Size of a fortified spot */
+    private int maxFortifiedSize = 2;
+    
     /** how much ice spots at least */
     private int minIceSpots = 0;
     /** how much ice spots  at most */
@@ -199,6 +217,14 @@ public class MapSettings implements Serializable {
         this.maxPavementSpots = other.getMaxPavementSpots();
         this.minPavementSize = other.getMinPavementSize();
         this.maxPavementSize = other.getMaxPavementSize();
+        this.minRubbleSpots = other.getMinRubbleSpots();
+        this.maxRubbleSpots = other.getMaxRubbleSpots();
+        this.minRubbleSize = other.getMinRubbleSize();
+        this.maxRubbleSize = other.getMaxRubbleSize();
+        this.minFortifiedSpots = other.getMinFortifiedSpots();
+        this.maxFortifiedSpots = other.getMaxFortifiedSpots();
+        this.minFortifiedSize = other.getMinFortifiedSize();
+        this.maxFortifiedSize = other.getMaxFortifiedSize();
         this.minIceSpots = other.getMinIceSpots();
         this.maxIceSpots = other.getMaxIceSpots();
         this.minIceSize = other.getMinIceSize();
@@ -431,6 +457,30 @@ public class MapSettings implements Serializable {
     if (maxPavementSize < minPavementSize) {
         maxPavementSize = minPavementSize;
     }
+    if (minRubbleSpots < 0) {
+        minRubbleSpots = 0;
+    }
+    if (maxRubbleSpots < minRubbleSpots) {
+        maxRubbleSpots = minRubbleSpots;
+    }
+    if (minRubbleSize < 0) {
+        minRubbleSize = 0;
+    }
+    if (maxRubbleSize < minRubbleSize) {
+        maxRubbleSize = minRubbleSize;
+    }
+    if (minFortifiedSpots < 0) {
+        minFortifiedSpots = 0;
+    }
+    if (maxFortifiedSpots < minFortifiedSpots) {
+        maxFortifiedSpots = minFortifiedSpots;
+    }
+    if (minFortifiedSize < 0) {
+        minFortifiedSize = 0;
+    }
+    if (maxFortifiedSize < minFortifiedSize) {
+        maxFortifiedSize = minFortifiedSize;
+    }
     if (minIceSpots < 0) {
         minIceSpots = 0;
     }
@@ -522,6 +572,14 @@ public class MapSettings implements Serializable {
             (this.maxPavementSpots != other.getMaxPavementSpots()) ||
             (this.minPavementSize != other.getMinPavementSize()) ||
             (this.maxPavementSize != other.getMaxPavementSize()) ||
+            (this.minRubbleSpots != other.getMinRubbleSpots()) ||
+            (this.maxRubbleSpots != other.getMaxRubbleSpots()) ||
+            (this.minRubbleSize != other.getMinRubbleSize()) ||
+            (this.maxRubbleSize != other.getMaxRubbleSize()) ||
+            (this.minFortifiedSpots != other.getMinFortifiedSpots()) ||
+            (this.maxFortifiedSpots != other.getMaxFortifiedSpots()) ||
+            (this.minFortifiedSize != other.getMinFortifiedSize()) ||
+            (this.maxFortifiedSize != other.getMaxFortifiedSize()) ||
             (this.minIceSpots != other.getMinIceSpots()) ||
             (this.maxIceSpots != other.getMaxIceSpots()) ||
             (this.minIceSize != other.getMinIceSize()) ||
@@ -583,6 +641,16 @@ public class MapSettings implements Serializable {
     public int getMaxPavementSpots() { return maxPavementSpots; }
     public int getMinPavementSize() { return minPavementSize; }
     public int getMaxPavementSize() { return maxPavementSize; }
+    
+    public int getMinRubbleSpots() { return minRubbleSpots; }
+    public int getMaxRubbleSpots() { return maxRubbleSpots; }
+    public int getMinRubbleSize() { return minRubbleSize; }
+    public int getMaxRubbleSize() { return maxRubbleSize; }
+    
+    public int getMinFortifiedSpots() { return minFortifiedSpots; }
+    public int getMaxFortifiedSpots() { return maxFortifiedSpots; }
+    public int getMinFortifiedSize() { return minFortifiedSize; }
+    public int getMaxFortifiedSize() { return maxFortifiedSize; }
     
     public int getMinIceSpots() { return minIceSpots; }
     public int getMaxIceSpots() { return maxIceSpots; }
@@ -666,6 +734,26 @@ public class MapSettings implements Serializable {
          maxPavementSize = maxSize;
      }
     
+     /** set the Parameters for the Map Generator 
+      */
+      public void setRubbleParams(int minSpots, int maxSpots,
+                                  int minSize, int maxSize) {
+          minRubbleSpots = minSpots;
+          maxRubbleSpots = maxSpots;
+          minRubbleSize = minSize;
+          maxRubbleSize = maxSize;
+      }
+     
+      /** set the Parameters for the Map Generator 
+       */
+       public void setFortifiedParams(int minSpots, int maxSpots,
+                                   int minSize, int maxSize) {
+           minFortifiedSpots = minSpots;
+           maxFortifiedSpots = maxSpots;
+           minFortifiedSize = minSize;
+           maxFortifiedSize = maxSize;
+       }
+      
      /** set the Parameters for the Map Generator 
       */
       public void setIceParams(int minSpots, int maxSpots,

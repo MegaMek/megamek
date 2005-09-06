@@ -811,7 +811,7 @@ public abstract class Mech
         if (!isOffBoard()) {
             waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
         }        
-        if (waterLevel <= 0) {
+        if (waterLevel <= 0 || getElevation() >= 0) {
             return getJumpMP();
         } else if (waterLevel > 1) {
             return 0;
@@ -992,7 +992,7 @@ public abstract class Mech
         
         IHex curHex = game.getBoard().getHex(getPosition());
         // are we even in water?  is it depth 1+
-        if (curHex.terrainLevel(Terrains.WATER) <= 0) {
+        if (curHex.terrainLevel(Terrains.WATER) <= 0 || getElevation() >= 0) {
             return 0;
         }
         

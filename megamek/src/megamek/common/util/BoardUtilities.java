@@ -30,11 +30,9 @@ import megamek.common.MapSettings;
 import megamek.common.Terrains;
 
 import megamek.common.util.BuildingTemplate;
-
-import com.sun.java.util.collections.HashMap;
-import com.sun.java.util.collections.HashSet;
-import com.sun.java.util.collections.Iterator;
-import com.sun.java.util.collections.Hashtable;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public class BoardUtilities {
     

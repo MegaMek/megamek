@@ -19,8 +19,8 @@ import megamek.client.bot.ga.GA;
 import megamek.common.Compute;
 import megamek.common.Entity;
 
-import com.sun.java.util.collections.Iterator;
-import com.sun.java.util.collections.Vector;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class GALance extends GA {
 

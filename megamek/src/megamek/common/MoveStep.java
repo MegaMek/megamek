@@ -253,6 +253,7 @@ public class MoveStep implements Serializable {
             prev = new MoveStep(parent, MovePath.STEP_FORWARDS);
             prev.setFromEntity(entity, game);
         }
+        IHex destHex = game.getBoard().getHex(getPosition());
         switch (getType()) {
             case MovePath.STEP_UNLOAD :
                 // Infantry in immobilized transporters get
@@ -305,7 +306,8 @@ public class MoveStep implements Serializable {
 
                 // check for water
                 if (!isPavementStep()
-                        && game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0
+                        && destHex.terrainLevel(Terrains.WATER) > 0
+                        && !(destHex.containsTerrain(Terrains.ICE) && elevation >= 0)
                         && entity.getMovementMode() != IEntityMovementMode.HOVER
                         && entity.getMovementMode() != IEntityMovementMode.NAVAL
                         && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
@@ -356,8 +358,9 @@ public class MoveStep implements Serializable {
                 setMp(getMp() + 1);
                 // check for water
                 if (!isPavementStep() &&
-                    game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER) > 0 &&
-                    !(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+                    destHex.terrainLevel(Terrains.WATER) > 0
+                    && !(destHex.containsTerrain(Terrains.ICE) && elevation >= 0)
+                    && !(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
                     setRunProhibited(true);
                 }
                 setHasJustStood(false);
@@ -1148,6 +1151,9 @@ public class MoveStep implements Serializable {
         final IHex srcHex = game.getBoard().getHex(prev);
         final IHex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = parent.getEntity() instanceof Infantry;
+        int nSrcEl = parent.getEntity().elevationOccupied(srcHex);
+        int nDestEl = parent.getEntity().elevationOccupied(destHex);
+        int nMove = parent.getEntity().getMovementMode();
 
         mp = 1;
 
@@ -1182,10 +1188,13 @@ public class MoveStep implements Serializable {
                     && (moveType != IEntityMovementMode.HYDROFOIL)
                     && (moveType != IEntityMovementMode.SUBMARINE)
                     && (moveType != IEntityMovementMode.VTOL)) {
-                if (destHex.terrainLevel(Terrains.WATER) == 1) {
-                    mp++;
-                } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
-                    mp += 3;
+                //no additional cost when moving on surface of ice.
+                if (!destHex.containsTerrain(Terrains.ICE) || nDestEl < destHex.surface()) {
+                    if (destHex.terrainLevel(Terrains.WATER) == 1) {
+                        mp++;
+                    } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
+                        mp += 3;
+                    }
                 }
                 if (destHex.containsTerrain(Terrains.SWAMP)) {
                     mp++;
@@ -1195,9 +1204,6 @@ public class MoveStep implements Serializable {
 
         // account for elevation?
         // TODO: allow entities to occupy different levels of buildings.
-        int nSrcEl = parent.getEntity().elevationOccupied(srcHex);
-        int nDestEl = parent.getEntity().elevationOccupied(destHex);
-        int nMove = parent.getEntity().getMovementMode();
 
         if (nSrcEl != nDestEl) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
@@ -1373,6 +1379,7 @@ public class MoveStep implements Serializable {
                 && nMove != IEntityMovementMode.SUBMARINE
                 && nMove != IEntityMovementMode.VTOL
                 && destHex.terrainLevel(Terrains.WATER) > 0
+                && !(destHex.containsTerrain(Terrains.ICE) && nDestEl >= destHex.surface())
                 && !dest.equals(entity.getPosition())
                 && !firstStep
                 && !isPavementStep) {

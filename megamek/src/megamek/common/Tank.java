@@ -154,16 +154,17 @@ public class Tank
     public boolean isHexProhibited(IHex hex) {
         switch(movementMode) {
             case IEntityMovementMode.TRACKED :
-                return hex.terrainLevel(Terrains.WOODS) > 1 || hex.terrainLevel(Terrains.WATER) > 0;
+                return hex.terrainLevel(Terrains.WOODS) > 1 || 
+                (hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE));
             case IEntityMovementMode.WHEELED :
                 return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH) ||
-                    hex.terrainLevel(Terrains.WATER) > 0 || hex.containsTerrain(Terrains.RUBBLE);
+                (hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE)) || 
+                hex.containsTerrain(Terrains.RUBBLE);
             case IEntityMovementMode.HOVER :
                 return hex.containsTerrain(Terrains.WOODS);
             case IEntityMovementMode.NAVAL:
-                return (hex.terrainLevel(Terrains.WATER) <= 0);
             case IEntityMovementMode.HYDROFOIL:
-                return (hex.terrainLevel(Terrains.WATER) <= 0);
+                return (hex.terrainLevel(Terrains.WATER) <= 0) || hex.containsTerrain(Terrains.ICE);
             case IEntityMovementMode.SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             default :

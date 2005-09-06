@@ -457,7 +457,7 @@ public class FiringDisplay
         clearVisibleTargets();
         
         Vector vec = client.game.getValidTargets( ce() );
-        com.sun.java.util.collections.Comparator sortComp = new com.sun.java.util.collections.Comparator() {
+        Comparator sortComp = new Comparator() {
           public int compare(java.lang.Object x, java.lang.Object y) {
             Entity entX = (Entity)x;
             Entity entY = (Entity)y;
@@ -471,14 +471,14 @@ public class FiringDisplay
           }
         };
           
-        com.sun.java.util.collections.TreeSet tree = new com.sun.java.util.collections.TreeSet(sortComp);
+        TreeSet tree = new TreeSet(sortComp);
         visibleTargets = new Entity[vec.size()];
               
         for ( int i = 0; i < vec.size(); i++ ) {
           tree.add(vec.elementAt(i));
           }
         
-        com.sun.java.util.collections.Iterator it = tree.iterator();
+        Iterator it = tree.iterator();
         int count = 0;
         while ( it.hasNext() ) {
           visibleTargets[count++] = (Entity)it.next();

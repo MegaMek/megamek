@@ -20,7 +20,10 @@
 
 package megamek.client.ui.AWT;
 
-import com.sun.java.util.collections.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.awt.image.*;
 import megamek.common.*;
 

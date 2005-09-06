@@ -22,7 +22,8 @@ import megamek.common.Mech;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
-import com.sun.java.util.collections.Vector;
+import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * Need to test the function that moves all firing to a single target
@@ -173,7 +174,7 @@ public class GAAttack extends GA {
             }
         }
         double total_utility = 0;
-        com.sun.java.util.collections.Iterator j = targets.values().iterator();
+        Iterator j = targets.values().iterator();
         while (j.hasNext()) {
             CEntity enemy = (CEntity) j.next();
             total_utility+=getThreadUtility(enemy);

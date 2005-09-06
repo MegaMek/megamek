@@ -14,7 +14,7 @@
  
  package megamek.common;
  
- import com.sun.java.util.collections.Comparator;
+ import java.util.Comparator;
  
  public class MechSummaryComparator implements Comparator
  {

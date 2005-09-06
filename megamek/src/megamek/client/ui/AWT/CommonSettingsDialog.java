@@ -17,8 +17,8 @@ package megamek.client.ui.AWT;
 import java.awt.*;
 import java.awt.event.*;
 
-import com.sun.java.util.collections.Arrays;
-import com.sun.java.util.collections.Comparator;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import gov.nist.gui.TabPanel;
 

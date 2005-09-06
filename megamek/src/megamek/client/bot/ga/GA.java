@@ -1,6 +1,6 @@
 package megamek.client.bot.ga;
 
-import com.sun.java.util.collections.Arrays;
+import java.util.Arrays;
 
 public abstract class GA {
     final double mutationProb; //probability of a mutation occuring during genetic

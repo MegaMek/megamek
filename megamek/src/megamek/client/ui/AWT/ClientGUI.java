@@ -23,9 +23,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import com.sun.java.util.collections.Iterator;
-import com.sun.java.util.collections.Map;
-import com.sun.java.util.collections.TreeMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewListener;

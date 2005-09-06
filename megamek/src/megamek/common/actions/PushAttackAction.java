@@ -224,7 +224,9 @@ public class PushAttackAction
         }
 
         // water partial cover?
-        if (te.height() > 0 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
+        if (te.height() > 0
+                && te.getElevation() == -1
+                && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }
 

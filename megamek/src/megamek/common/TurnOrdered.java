@@ -15,7 +15,11 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 public abstract class TurnOrdered implements Serializable 
@@ -186,22 +190,22 @@ public abstract class TurnOrdered implements Serializable
         TurnOrdered[] order = new TurnOrdered[v.size()];
         int orderedItems = 0;
 
-        com.sun.java.util.collections.ArrayList plist = 
-        new com.sun.java.util.collections.ArrayList(v.size());
+        ArrayList plist = 
+        new ArrayList(v.size());
 
         for (Enumeration i = v.elements(); i.hasMoreElements();) {
             Object item = i.nextElement();
             plist.add(item);
         }
 
-        com.sun.java.util.collections.Collections.sort(plist, new com.sun.java.util.collections.Comparator() {
+        Collections.sort(plist, new Comparator() {
             public int compare(Object o1, Object o2) {
                 return ((TurnOrdered)o1).getInitiative().compareTo(((TurnOrdered)o2).getInitiative());
             }
         });
 
         // Walk through the ordered items.
-        for ( com.sun.java.util.collections.Iterator i = plist.iterator();
+        for ( Iterator i = plist.iterator();
               i.hasNext(); orderedItems++ ) {
             final TurnOrdered item = (TurnOrdered)i.next();
             order[orderedItems] = item;

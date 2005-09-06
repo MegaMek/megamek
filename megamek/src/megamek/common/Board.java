@@ -34,7 +34,7 @@ import java.util.Vector;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 
-import com.sun.java.util.collections.Hashtable;
+import java.util.Hashtable;
 
 public class Board implements Serializable, IBoard {
 

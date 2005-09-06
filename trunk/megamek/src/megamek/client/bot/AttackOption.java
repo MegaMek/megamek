@@ -1,6 +1,6 @@
 package megamek.client.bot;
 
-import com.sun.java.util.collections.Comparator;
+import java.util.Comparator;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;

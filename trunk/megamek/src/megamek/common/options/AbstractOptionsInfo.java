@@ -18,8 +18,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 
-import com.sun.java.util.collections.HashSet;
-import com.sun.java.util.collections.Hashtable;
+import java.util.HashSet;
+import java.util.Hashtable;
 
 
 /**

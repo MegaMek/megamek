@@ -15,12 +15,12 @@
 
 package megamek.common;
 
-import com.sun.java.util.collections.Comparator;
-import com.sun.java.util.collections.ArrayList;
-import com.sun.java.util.collections.Collections;
-import com.sun.java.util.collections.HashMap;
-import com.sun.java.util.collections.Iterator;
-import com.sun.java.util.collections.List;
+import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import java.io.Serializable;
 import java.util.Enumeration;

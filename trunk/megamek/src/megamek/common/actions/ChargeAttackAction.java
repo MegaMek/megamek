@@ -213,7 +213,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // water partial cover?
-        if (te.height() > 0 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
+        if (te.height() > 0
+                && te.getElevation() == -1
+                && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }
 
@@ -227,7 +229,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // all charges resolved against full-body table, except vehicles
         // and charges against mechs in water partial cover
-        if (targHex.terrainLevel(Terrains.WATER) == te.height() && te.height() > 0) {
+        if (targHex.terrainLevel(Terrains.WATER) == te.height()
+                && te.getElevation() == -1
+                && te.height() > 0) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else if (ae.getHeight() < target.getHeight()) {
             toHit.setHitTable(ToHitData.HIT_KICK);

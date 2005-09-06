@@ -14,7 +14,7 @@
 
 package megamek.common.util;
 
-import com.sun.java.util.collections.TreeMap;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.io.File;
 import java.util.Enumeration;

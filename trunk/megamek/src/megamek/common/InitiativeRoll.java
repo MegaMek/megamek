@@ -30,7 +30,7 @@ import java.io.*;
  * @author  Ben
  * @version 
  */
-public class InitiativeRoll implements com.sun.java.util.collections.Comparable, Serializable {
+public class InitiativeRoll implements Comparable, Serializable {
     
     private Vector rolls = new Vector();
     private Vector originalRolls = new Vector();

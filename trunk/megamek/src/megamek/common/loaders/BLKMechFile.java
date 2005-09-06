@@ -25,6 +25,8 @@
  */
 package megamek.common.loaders;
 
+import java.util.Vector;
+
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
@@ -194,7 +196,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             
             
             //load equipment stuff...
-            com.sun.java.util.collections.Vector [] criticals = new com.sun.java.util.collections.Vector[8];
+            Vector [] criticals = new Vector[8];
             
             criticals[Mech.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
             criticals[Mech.LOC_LARM] = dataFile.getDataAsVector("la criticals");

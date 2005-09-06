@@ -37,9 +37,9 @@ import megamek.common.Terrains;
 import megamek.common.util.StringUtil;
 import megamek.client.ui.AWT.util.ImageCache;
 
-import com.sun.java.util.collections.ArrayList;
-import com.sun.java.util.collections.Iterator;
-import com.sun.java.util.collections.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Matches each hex with an appropriate image.

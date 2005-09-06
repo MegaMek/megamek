@@ -18,7 +18,7 @@ import java.io.Writer;
 import java.io.IOException;
 import java.util.Enumeration;
 
-import com.sun.java.util.collections.Hashtable;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import gd.xml.tiny.ParsedXML;

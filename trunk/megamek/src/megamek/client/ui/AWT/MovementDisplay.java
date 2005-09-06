@@ -738,11 +738,28 @@ public class MovementDisplay
                 nagReport.append(addNag(rollTarget));
             }
             
+            // check for crossing ice
+            if(curHex.containsTerrain(Terrains.ICE) &&
+                    curHex.containsTerrain(Terrains.WATER) &&
+                    !(curPos.equals(lastPos)) &&
+                    step.getElevation() == 0 &&
+                    moveType != IEntityMovementType.MOVE_JUMP) {
+                nagReport.append(Messages.getString("MovementDisplay.IceMoving"));
+            }
+            
             // check if we've moved into water
             rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos,
                                                isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 nagReport.append(addNag(rollTarget));
+            }
+            
+            // check for non-mech entering a fire
+            if(curHex.containsTerrain(Terrains.FIRE)
+                    && !(entity instanceof Mech)
+                    && entity.getElevation() <= 1
+                    && !(curPos.equals(lastPos))) {
+                nagReport.append(Messages.getString("MovementDisplay.FireMoving", new Object[] {8}));
             }
             
             if(entity instanceof VTOL) {
@@ -877,7 +894,11 @@ public class MovementDisplay
                 nagReport.append(addNag(rollTarget));
             }
             // jumped into water?
-            int waterLevel = client.game.getBoard().getHex(curPos).terrainLevel(Terrains.WATER);
+            IHex hex = client.game.getBoard().getHex(curPos);
+            int waterLevel = hex.terrainLevel(Terrains.WATER);
+            if(hex.containsTerrain(Terrains.ICE) && waterLevel > 0) {
+                nagReport.append(Messages.getString("MovementDisplay.IceLanding"));
+            }
             rollTarget = entity.checkWaterMove(waterLevel);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 nagReport.append(addNag(rollTarget));

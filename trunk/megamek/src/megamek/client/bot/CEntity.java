@@ -30,11 +30,11 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 
-import com.sun.java.util.collections.ArrayList;
-import com.sun.java.util.collections.Arrays;
-import com.sun.java.util.collections.Collections;
-import com.sun.java.util.collections.Hashtable;
-import com.sun.java.util.collections.Iterator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 public class CEntity {
 

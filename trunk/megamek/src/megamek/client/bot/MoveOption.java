@@ -37,9 +37,9 @@ import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
-import com.sun.java.util.collections.ArrayList;
-import com.sun.java.util.collections.Comparator;
-import com.sun.java.util.collections.HashMap;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 
 /**
  * TODO: add the notion of a dependent state (at least a first pass estimate of

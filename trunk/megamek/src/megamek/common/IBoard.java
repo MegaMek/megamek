@@ -17,7 +17,7 @@ package megamek.common;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
-import com.sun.java.util.collections.Hashtable;
+import java.util.Hashtable;
 
 import java.util.Vector;
 

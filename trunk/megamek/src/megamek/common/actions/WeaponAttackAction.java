@@ -854,10 +854,17 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return new String("Target is swarming a Mek.");
         }
     
-        // can't target non-wood hexes for clearing
-        if (Targetable.TYPE_HEX_CLEAR == target.getTargetType() &&
-             !game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.WOODS)) {
-            return new String("Target is not woods.");
+        // can't target non-wood hexes for clearing (except thin ice)
+        if (Targetable.TYPE_HEX_CLEAR == target.getTargetType()) {
+            IHex hexTarget = game.getBoard().getHex(target.getPosition()); 
+            if(!hexTarget.containsTerrain(Terrains.WOODS) &&
+               !(hexTarget.containsTerrain(Terrains.ICE) && hexTarget.containsTerrain(Terrains.WATER))) {
+                return new String("Target terrain cannot be cleared.");
+            }
+            // Infantry can't clear woods.
+            if ( isAttackerInfantry ) {
+                return new String("Infantry can not clear terrain.");
+            }
         }
         // Infantry can't clear woods.
         if ( isAttackerInfantry &&

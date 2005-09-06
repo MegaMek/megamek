@@ -18,8 +18,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -29,8 +35,6 @@ import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
-
-import com.sun.java.util.collections.*;
 
 /**
  * Cache of the Mech summary information.

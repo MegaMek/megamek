@@ -39,6 +39,9 @@ public class MapSettings implements Serializable {
     private Vector boardsSelected = new Vector();
     private Vector boardsAvailable = new Vector();
 
+    //new vector to store all of the mapsetting buildings in.
+    private Vector boardBuildings = new Vector();
+    
      /** Parameters for the Map Generator 
          Parameters refer to a default map siz 16 x 17, with other size
          some of the parameters get linear transformed to give good
@@ -214,6 +217,7 @@ public class MapSettings implements Serializable {
         this.probFreeze = other.getProbFreeze();
         this.probDrought = other.getProbDrought();
         this.fxMod = other.getFxMod();
+        this.boardBuildings = other.getBoardBuildings();
     }
     
     public int getBoardWidth() {
@@ -288,6 +292,14 @@ public class MapSettings implements Serializable {
         }
     }
     
+    public Vector getBoardBuildings(){
+        return boardBuildings;
+    }
+    
+    public void setBoardBuildings(Vector buildings) {
+        this.boardBuildings = buildings;
+    }
+
     /**
      * Replaces the specified type of board with random boards
      */
@@ -528,7 +540,8 @@ public class MapSettings implements Serializable {
             (this.probForestFire != other.getProbForestFire()) ||
             (this.probFreeze != other.getProbFreeze()) ||
             (this.probDrought != other.getProbDrought()) ||
-            (this.algorithmToUse != other.getAlgorithmToUse())) {
+            (this.algorithmToUse != other.getAlgorithmToUse()) ||
+            (this.boardBuildings != other.getBoardBuildings())) {
             return false;
         } else { 
             return true;

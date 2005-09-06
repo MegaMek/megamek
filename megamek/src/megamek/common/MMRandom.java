@@ -20,6 +20,8 @@
 
 package megamek.common;
 
+import java.util.Random;
+
 /**
  * Used by Compute to generate random numbers, usually dice rolls.
  *
@@ -108,7 +110,7 @@ public abstract class MMRandom {
      * Uses com.sun.java.util.collections.Random
      */
     static class SunRandom extends MMRandom {
-        com.sun.java.util.collections.Random random = new com.sun.java.util.collections.Random();
+        Random random = new Random();
 
         public int randomInt(int maxValue) {
             return random.nextInt(maxValue);

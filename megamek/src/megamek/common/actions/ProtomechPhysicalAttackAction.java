@@ -187,7 +187,9 @@ public class ProtomechPhysicalAttackAction
 
         // water partial cover?
         IHex targHex = game.getBoard().getHex(te.getPosition());
-        if (te.height() > 0 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
+        if (te.height() > 0
+                && te.getElevation() == -1
+                && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }
 

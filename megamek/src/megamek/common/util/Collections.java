@@ -14,8 +14,9 @@
 
 package megamek.common.util;
 
-import com.sun.java.util.collections.*;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * This class consists exclusively of methods that operate on or return

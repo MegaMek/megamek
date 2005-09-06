@@ -14,8 +14,8 @@
 
 package megamek.client.ui.AWT.util;
 
-import com.sun.java.util.collections.Hashtable;
-import com.sun.java.util.collections.LinkedList;
+import java.util.Hashtable;
+import java.util.LinkedList;
 
 
 

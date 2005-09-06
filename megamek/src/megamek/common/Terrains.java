@@ -14,7 +14,7 @@
 
 package megamek.common;
 
-import com.sun.java.util.collections.Hashtable;
+import java.util.Hashtable;
 
 public class Terrains implements ITerrainFactory {
 

@@ -41,7 +41,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
-import com.sun.java.util.collections.ArrayList;
+import java.util.ArrayList;
 
 public abstract class BotClient extends Client {
     

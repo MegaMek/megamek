@@ -15,7 +15,7 @@
 package megamek.common.util;
 
 import java.util.Vector;
-import com.sun.java.util.collections.Comparator;
+import java.util.Comparator;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 

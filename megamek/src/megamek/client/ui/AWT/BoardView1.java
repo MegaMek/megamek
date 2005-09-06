@@ -16,11 +16,13 @@
 package megamek.client.ui.AWT;
 
 // Defines Iterator class for JDK v1.1
-import com.sun.java.util.collections.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;

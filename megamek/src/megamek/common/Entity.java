@@ -710,10 +710,23 @@ public abstract class Entity
                 && (getMovementMode() != IEntityMovementMode.SUBMARINE)
                 && (getMovementMode() != IEntityMovementMode.VTOL)) {
             if (current.containsTerrain(Terrains.WATER)) {
-                retVal += current.terrainLevel(Terrains.WATER);
+                if(!(current.containsTerrain(Terrains.ICE)) 
+                        || assumedElevation < 0) {
+                    //count water, only if the entity isn't on ice surface
+                    retVal += current.terrainLevel(Terrains.WATER);                    
+                }
             }
             if (next.containsTerrain(Terrains.WATER)) {
-                retVal -= next.terrainLevel(Terrains.WATER);
+                int waterLevel = next.terrainLevel(Terrains.WATER);
+                if(next.containsTerrain(Terrains.ICE)) {
+                    //a mech can only climb out onto ice in depth 2 or shallower water
+                    //mech on the surface will stay on the surface
+                    //TODO: for depth 2, there should be a choice
+                    if(waterLevel <= 2 || assumedElevation >= 0) {
+                        retVal += waterLevel;
+                    }
+                }
+                retVal -= waterLevel;
             }
         }
         return retVal;
@@ -1085,13 +1098,16 @@ public abstract class Entity
         if (hex == null) {
             return 0;
         }
-        if (((movementMode == IEntityMovementMode.HOVER)
-                ||  (movementMode == IEntityMovementMode.NAVAL)
-                ||  (movementMode == IEntityMovementMode.HYDROFOIL))
-                && hex.containsTerrain(Terrains.WATER)) {
+        if(movementMode == IEntityMovementMode.VTOL) {
             return hex.surface() + elevation;
+        } else if (((movementMode == IEntityMovementMode.HOVER)
+                ||  (movementMode == IEntityMovementMode.NAVAL)
+                ||  (movementMode == IEntityMovementMode.HYDROFOIL)
+                ||  hex.containsTerrain(Terrains.ICE))
+                && hex.containsTerrain(Terrains.WATER)) {
+            return hex.surface();
         } else {
-            return hex.floor() + elevation;
+            return hex.floor();
         }
     }
 
@@ -3181,6 +3197,7 @@ public abstract class Entity
                                            Coords lastPos, Coords curPos,
                                            boolean isPavementStep) {
         if (curHex.terrainLevel(Terrains.WATER) > 0
+            && !(curHex.containsTerrain(Terrains.ICE) && getElevation() >= 0)
             && !lastPos.equals(curPos)
             && step.getMovementType() != IEntityMovementType.MOVE_JUMP
             && getMovementMode() != IEntityMovementMode.HOVER

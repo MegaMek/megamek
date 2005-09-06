@@ -3,7 +3,7 @@ package megamek.client.bot;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 
-import com.sun.java.util.collections.Iterator;
+import java.util.Iterator;
 
 import megamek.common.Coords;
 import megamek.common.Entity;

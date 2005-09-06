@@ -19,10 +19,10 @@ import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import com.sun.java.util.collections.Iterator;
-import com.sun.java.util.collections.LinkedList;
-import com.sun.java.util.collections.Comparator;
-import com.sun.java.util.collections.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Comparator;
+import java.util.Collections;
 
 import gov.nist.gui.TabPanel;
 

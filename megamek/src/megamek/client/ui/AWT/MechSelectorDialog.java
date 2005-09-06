@@ -23,8 +23,8 @@ import megamek.client.Client;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
-import com.sun.java.util.collections.Arrays;
-import com.sun.java.util.collections.Iterator;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /* 
  * Allows a user to sort through a list of MechSummaries and select one

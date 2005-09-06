@@ -1273,7 +1273,9 @@ public class Compute {
         ToHitData toHit = new ToHitData();
 
         // Only BattleMechs in water get the terrain penalty for firing!
-        if (hex.terrainLevel(Terrains.WATER) > 0 && (attacker instanceof Mech)) {
+        if (hex.terrainLevel(Terrains.WATER) > 0
+                && attacker.getElevation() < 0
+                && (attacker instanceof Mech)) {
             toHit.addModifier(1, "attacker in water");
         }
 
@@ -1385,6 +1387,7 @@ public class Compute {
         
         // -1 bonus only against BattleMechs in water!
         if (hex.terrainLevel(Terrains.WATER) > 0
+                && entityTarget.getElevation() < 0
                 && (entityTarget instanceof Mech)) {
             toHit.addModifier(-1, "target in water");
         }

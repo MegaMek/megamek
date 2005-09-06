@@ -15,10 +15,24 @@
 
 package megamek.server;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import megamek.*;
 import megamek.common.*;
@@ -2436,6 +2450,7 @@ public class Server implements Runnable {
                 unit.getMovementMode() == IEntityMovementMode.HYDROFOIL ||
                 unit.getMovementMode() == IEntityMovementMode.NAVAL ||
                 unit.getMovementMode() == IEntityMovementMode.SUBMARINE ||
+                hex.containsTerrain(Terrains.ICE) ||
                 isBridge) {
                 // units that can float stay on the surface, or we go on the bridge
                 // this means elevation 0, because elevation is relative to the surface
@@ -2446,7 +2461,7 @@ public class Server implements Runnable {
             // unit elevation is relative to the surface 
             unit.setElevation(hex.floor() - hex.surface());
         }
-        doSetLocationsExposure(unit, hex, false);
+        doSetLocationsExposure(unit, hex, false, unit.getElevation());
 
         // Update the unloaded unit.
         this.entityUpdate( unit.getId() );
@@ -2968,6 +2983,7 @@ public class Server implements Runnable {
                         }
 
                         // Hovercraft can "skid" over water.
+                        // all units can skid over ice.
                         // TODO: allow entities to occupy different levels of
                         //       buildings.
                         curElevation = curHex.floor();
@@ -2975,14 +2991,18 @@ public class Server implements Runnable {
                         if ( entity instanceof Tank &&
                              entity.getMovementMode() ==
                              IEntityMovementMode.HOVER ) {
-                            ITerrain land = curHex.
-                                getTerrain(Terrains.WATER);
-                            if ( land != null ) {
-                                curElevation += land.getLevel();
+                            if ( curHex.containsTerrain(Terrains.WATER) ) {
+                                curElevation = curHex.surface();
                             }
-                            land = nextHex.getTerrain(Terrains.WATER);
-                            if ( land != null ) {
-                                nextElevation += land.getLevel();
+                            if ( nextHex.containsTerrain(Terrains.WATER) ) {
+                                nextElevation += nextHex.surface();
+                            }
+                        } else {
+                            if(curHex.containsTerrain(Terrains.ICE)) {
+                                curElevation = curHex.surface();
+                            }
+                            if(nextHex.containsTerrain(Terrains.ICE)) {
+                                nextElevation = nextHex.surface();
                             }
                         }
 
@@ -3035,7 +3055,8 @@ public class Server implements Runnable {
                                          && ((entity.getMovementMode() == IEntityMovementMode.HOVER)
                                          || (entity.getMovementMode() == IEntityMovementMode.NAVAL)
                                          || (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL))
-                                         && 0 < nextHex.terrainLevel(Terrains.WATER)) {
+                                         && 0 < nextHex.terrainLevel(Terrains.WATER)
+                                         && target.getElevation() < 0) {
                                         if ( 2 <= nextHex.terrainLevel(Terrains.WATER) ||
                                              target.isProne() ) {
                                             // Hovercraft/Naval Craft can't hit the Mek.
@@ -3470,7 +3491,8 @@ public class Server implements Runnable {
                             Server.combineVectors(vPhaseReport,
                                                   crashVTOL(((VTOL)entity),true,distance,curPos,curVTOLElevation,table));
                             curVTOLElevation=0;
-                            if(game.getBoard().getHex(newPos).containsTerrain(Terrains.WATER) || game.getBoard().getHex(newPos).containsTerrain(Terrains.WOODS)) {
+                            IHex hex = game.getBoard().getHex(newPos);
+                            if((hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)) || hex.containsTerrain(Terrains.WOODS)) {
                                 Server.combineVectors(vPhaseReport,
                                                       destroyEntity(entity,"could not land in crash site"));
                             } else {
@@ -3636,13 +3658,33 @@ public class Server implements Runnable {
                 // check for inferno wash-off
                 checkForWashedInfernos(entity, curPos);
             }
+            
             // In water, may or may not be a new hex, neccessary to
             // check during movement, for breach damage, and always
             // set dry if appropriate
             //TODO: possibly make the locations local and set later
             doSetLocationsExposure(entity, curHex, 
-                    step.getMovementType() == IEntityMovementType.MOVE_JUMP);
+                    step.getMovementType() == IEntityMovementType.MOVE_JUMP,
+                    step.getElevation());
 
+            //check for breaking ice
+            if(curHex.containsTerrain(Terrains.ICE)
+                    && curHex.containsTerrain(Terrains.WATER)
+                    && !(lastPos.equals(curPos))) {
+                if(entity.getElevation() == 0) {
+                    int roll = Compute.d6(1);
+                    r = new Report(2118);
+                    r.add(entity.getDisplayName(), true);
+                    r.add(roll);
+                    r.subject = entity.getId();
+                    vPhaseReport.addElement(r);
+                    if(roll == 6) {
+                        resolveIceBroken(curPos);
+                        doEntityFallsInto(entity, lastPos, curPos, entity.getBasePilotingRoll(), false);
+                    }
+                }
+            }
+            
             // Handle loading units.
             if ( step.getType() == MovePath.STEP_LOAD ) {
 
@@ -3831,7 +3873,7 @@ public class Server implements Runnable {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        if (!sideslipped) {
+        if (!sideslipped && !fellDuringMovement) {
             entity.setElevation(curVTOLElevation);
         }
         
@@ -3852,6 +3894,21 @@ public class Server implements Runnable {
             }
             // jumped into water?
             int waterLevel = game.getBoard().getHex(curPos).terrainLevel(Terrains.WATER);
+            if(game.getBoard().getHex(curPos).containsTerrain(Terrains.ICE) && waterLevel > 0) {
+                waterLevel = 0;
+                //check for breaking ice
+                int roll = Compute.d6(1);
+                r = new Report(2122);
+                r.add(entity.getDisplayName(), true);
+                r.add(roll);
+                r.subject = entity.getId();
+                vPhaseReport.addElement(r);
+                if(roll >= 4) {
+                    //oops!
+                    resolveIceBroken(curPos);
+                    doEntityFallsInto(entity, lastPos, curPos, entity.getBasePilotingRoll(), false);
+                }
+            }
             rollTarget = entity.checkWaterMove(waterLevel);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
@@ -3966,7 +4023,7 @@ public class Server implements Runnable {
 
         } // End entity-is-jumping
         // update entity's locations' exposure
-        doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false);
+        doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation());
 
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP()
@@ -4279,7 +4336,9 @@ public class Server implements Runnable {
     private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow, int hitMod) {
         Report r;
         // Bug 954272: Mines shouldn't work underwater
-        if (!game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER) || game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)) {
+        if (!game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER)
+                || game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)
+                || game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.ICE)) {
         switch (mf.getType()) {
             case (Minefield.TYPE_CONVENTIONAL) :
             case (Minefield.TYPE_THUNDER) :
@@ -4363,7 +4422,9 @@ public class Server implements Runnable {
             Minefield mf = (Minefield) e.nextElement();
 
             // Bug 954272: Mines shouldn't work underwater, and BMRr says Vibrabombs are mines
-            if (game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER) && !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)) {
+            if (game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER)
+                    && !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)
+                    && !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.ICE)) {
                 continue;
             }
 
@@ -4565,7 +4626,7 @@ public class Server implements Runnable {
             return;
         }
         // Check if entering depth 2 water or prone in depth 1.
-        if (waterLevel > entity.getHeight() ) {
+        if (waterLevel > 0 && entity.absHeight() < 0) {
             washInferno(entity, coords);
         }
     }
@@ -4620,14 +4681,16 @@ public class Server implements Runnable {
      * @param entity The <code>Entity</code> who's exposure is being set
      * @param hex The <code>IHex</code> the entity is in
      * @param isJump a <code>boolean</code> value wether the entity is jumping
+     * @param elevation the elevation the entity should be at.
      */
 
-    public void doSetLocationsExposure(Entity entity, IHex hex, boolean isJump) {
+    public void doSetLocationsExposure(Entity entity, IHex hex, boolean isJump, int elevation) {
         if ( hex.terrainLevel(Terrains.WATER) > 0
                 && !isJump) {
             if (entity instanceof Mech
                     && !entity.isProne()
-                    && hex.terrainLevel(Terrains.WATER) == 1) {
+                    && hex.terrainLevel(Terrains.WATER) == 1
+                    && elevation < 0) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getOptions().booleanOption("vacuum"))
                         entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
@@ -4647,7 +4710,7 @@ public class Server implements Runnable {
                     Server.combineVectors(vPhaseReport,
                                breachCheck(entity, Mech.LOC_LARM, hex));
                 }
-            } else if (entity.getElevation() < 0) {
+            } else if (elevation < 0) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     entity.setLocationStatus(loop, ILocationExposureStatus.WET);
                     Server.combineVectors(vPhaseReport, breachCheck(entity, loop, hex));
@@ -5032,7 +5095,7 @@ public class Server implements Runnable {
 
                 entity.setPosition(dest);
                 doEntityDisplacementMinefieldCheck(entity, src, dest);
-                doSetLocationsExposure(entity, destHex, false);
+                doSetLocationsExposure(entity, destHex, false, entity.getElevation());
                 if (roll != null) {
                     game.addPSR(roll);
                 }
@@ -5139,10 +5202,11 @@ public class Server implements Runnable {
         entity.setPosition(coords);
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
+        IHex hex = game.getBoard().getHex(coords);
         if (entity instanceof VTOL) {
             // We should let players pick, but this simplifies a lot.
             // Only do it for VTOLs, though; assume everything else is on the ground.
-            entity.setElevation(game.getBoard().getHex(coords).ceiling()-game.getBoard().getHex(coords).surface()+1);
+            entity.setElevation(hex.ceiling()-hex.surface()+1);
             while ((Compute.stackingViolation(game, entity, coords, null) != null) && (entity.getElevation() <= 50)) {
                 entity.setElevation(entity.getElevation() + 1);
             }
@@ -5159,10 +5223,13 @@ public class Server implements Runnable {
             // For now, assume they're on the surface.
             // entity elevation is relative to hex surface
             entity.setElevation(0);
+        } else if (hex.containsTerrain(Terrains.ICE)
+                || hex.containsTerrain(Terrains.BRIDGE)) {
+            entity.setElevation(0);
         } else {
             // For anything else, assume they're on the floor.
             // entity elevation is relative to hex surface
-            entity.setElevation(game.getBoard().getHex(coords).floor()-game.getBoard().getHex(coords).surface());
+            entity.setElevation(hex.floor()-hex.surface());
         }
         entity.setDone(true);
         entity.setDeployed(true);
@@ -6101,8 +6168,9 @@ public class Server implements Runnable {
     private void tryClearHex(Coords c, int nTarget, int entityId) {
         IHex h = game.getBoard().getHex(c);
         int woods = h.terrainLevel(Terrains.WOODS);
+        boolean ice = h.containsTerrain(Terrains.ICE);
         Report r;
-        if (woods == ITerrain.LEVEL_NONE) {
+        if (woods == ITerrain.LEVEL_NONE && !ice) {
             //woods already cleared
             r = new Report(3075);
             r.indent(3);
@@ -6133,6 +6201,13 @@ public class Server implements Runnable {
                     r = new Report(3090);
                     r.subject = entityId;
                     vPhaseReport.addElement(r);
+                }
+                else if(ice) {
+                    h.removeTerrain(Terrains.ICE);
+                    r = new Report(3092);
+                    r.subject = entityId;
+                    vPhaseReport.addElement(r);
+                    resolveIceBroken(c);
                 }
                 sendChangedHex(c);
             } else {
@@ -10903,7 +10978,7 @@ public class Server implements Runnable {
                 continue;
             }
             final IHex curHex = game.getBoard().getHex(entity.getPosition());
-            if ((curHex.terrainLevel(Terrains.WATER) > 1
+            if (entity.getElevation()<0 && (curHex.terrainLevel(Terrains.WATER) > 1
             || (curHex.terrainLevel(Terrains.WATER) == 1 && entity.isProne()))
             && entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0) {
                 Report r = new Report(6020);
@@ -11866,7 +11941,8 @@ public class Server implements Runnable {
 
                         // Hovercraft reduced to 0MP over water sink
                         if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
-                             game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 ) {
+                             game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 
+                             &&!(game.getBoard().getHex( te.getPosition() ).containsTerrain(Terrains.ICE))) {
                             Server.combineVectors(vDesc, destroyEntity(te, "a watery grave", false) );
                         }
                     }
@@ -11880,7 +11956,8 @@ public class Server implements Runnable {
                 // Does the hovercraft sink?
                 te_hex = game.getBoard().getHex( te.getPosition() );
                 if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
-                     te_hex.terrainLevel(Terrains.WATER) > 0 ) {
+                     te_hex.terrainLevel(Terrains.WATER) > 0 &&
+                     !(te_hex.containsTerrain(Terrains.ICE))) {
                     Server.combineVectors(vDesc, destroyEntity(te, "a watery grave", false) );
                 }
                 if(te instanceof VTOL) {
@@ -12175,7 +12252,8 @@ public class Server implements Runnable {
                         IHex te_hex = game.getBoard().getHex( en.getPosition() );
                         if (vtol == null) {
                             if ( en.getMovementMode() == IEntityMovementMode.HOVER
-                                 && te_hex.terrainLevel(Terrains.WATER) > 0 ) {
+                                 && te_hex.terrainLevel(Terrains.WATER) > 0
+                                 && !(te_hex.containsTerrain(Terrains.ICE))) {
                                 Server.combineVectors(vDesc,
                                                       destroyEntity(en,"a watery grave", false));
                             }
@@ -12581,6 +12659,20 @@ public class Server implements Runnable {
                 }
 
                 boolean waterFall= fallHex.containsTerrain(Terrains.WATER);
+                if(waterFall && fallHex.containsTerrain(Terrains.ICE)) {
+                    int roll = Compute.d6(1);
+                    r = new Report(2118);
+                    r.subject = en.getId();
+                    r.add(en.getDisplayName(), true);
+                    r.add(roll);
+                    r.subject = en.getId();
+                    vPhaseReport.addElement(r);
+                    if(roll == 6) {
+                        resolveIceBroken(crashPos);
+                    } else {
+                        waterFall = false; //saved by ice
+                    }
+                }
                 if(waterFall) {
                     //falls into water and is destroyed
                     r = new Report(6275);
@@ -12605,7 +12697,7 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
 
                 en.setFacing((en.getFacing() + (facing - 1)) % 6);
-                if (fallHex.terrainLevel(Terrains.WATER) > 0) {
+                if (fallHex.terrainLevel(Terrains.WATER) > 0 && !fallHex.containsTerrain(Terrains.ICE)) {
                     for (int loop=0; loop< en.locations();loop++){
                         en.setLocationStatus(loop, ILocationExposureStatus.WET);
                     }
@@ -12636,7 +12728,7 @@ public class Server implements Runnable {
                 }
 
                 //check for location exposure
-                doSetLocationsExposure(en, fallHex, false);
+                doSetLocationsExposure(en, fallHex, false, 0);
                 en.setElevation(0);
             }
         } else {
@@ -13466,6 +13558,9 @@ public class Server implements Runnable {
             damageHeight = height - waterDepth;
         }
 
+        if(fallHex.containsTerrain(Terrains.ICE)) {
+            waterDepth = 0;
+        }
         // calculate damage for hitting the surface
         int damage = (int)Math.round(entity.getWeight() / 10.0) * (damageHeight + 1);
         // calculate damage for hitting the ground, but only if we actually fell
@@ -13530,7 +13625,8 @@ public class Server implements Runnable {
         entity.setPosition(fallPos);
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
-        if (fallHex.terrainLevel(Terrains.WATER) > 0) {
+        entity.setElevation(-waterDepth);
+        if (waterDepth > 0) {
             for (int loop=0; loop< entity.locations();loop++){
                 entity.setLocationStatus(loop, ILocationExposureStatus.WET);
             }
@@ -13545,7 +13641,7 @@ public class Server implements Runnable {
         }
 
         //check for location exposure
-        doSetLocationsExposure(entity, fallHex, false);
+        doSetLocationsExposure(entity, fallHex, false, -waterDepth);
 
         // we want to be able to avoid pilot damage even when it was
         // an automatic fall, only unconsciousness should cause auto-damage
@@ -13589,7 +13685,7 @@ public class Server implements Runnable {
             entity.setSwarmAttackerId( Entity.NONE );
             swarmer.setSwarmTargetId( Entity.NONE );
             // Did the infantry fall into water?
-            if ( fallHex.terrainLevel(Terrains.WATER) > 0 ) {
+            if ( waterDepth > 0 ) {
                 // Swarming infantry die.
                 swarmer.setPosition( fallPos );
                 r = new Report(2330);
@@ -14241,10 +14337,10 @@ public class Server implements Runnable {
      * Scans the boards directory for map boards of the appropriate size
      * and returns them.
      */
-    private com.sun.java.util.collections.Vector scanForBoardsInDir (File dir, String addPath, int w, int h) {
+    private Vector scanForBoardsInDir (File dir, String addPath, int w, int h) {
         String fileList[] = dir.list();
-        com.sun.java.util.collections.Vector tempList = new com.sun.java.util.collections.Vector();
-        com.sun.java.util.collections.Comparator sortComp = StringUtil.stringComparator();
+        Vector tempList = new Vector();
+        Comparator sortComp = StringUtil.stringComparator();
         for (int i = 0; i < fileList.length; i++) {
             if (fileList[i].indexOf(".board") == -1) {
                 continue;
@@ -14272,8 +14368,8 @@ public class Server implements Runnable {
 
         // scan files
         String[] fileList = boardDir.list();
-        com.sun.java.util.collections.Vector tempList = new com.sun.java.util.collections.Vector();
-        com.sun.java.util.collections.Comparator sortComp = StringUtil.stringComparator();
+        Vector tempList = new Vector();
+        Comparator sortComp = StringUtil.stringComparator();
         for (int i = 0; i < fileList.length; i++) {
             File x = new File (new String("data/boards/").concat(fileList[i]));
             if (x.isDirectory() && subdirs) {
@@ -14292,7 +14388,7 @@ public class Server implements Runnable {
         if (tempList.size() > 0) {
             boards.addElement( MapSettings.BOARD_RANDOM );
             boards.addElement( MapSettings.BOARD_SURPRISE );
-            com.sun.java.util.collections.Collections.sort(tempList, sortComp);
+            Collections.sort(tempList, sortComp);
             for ( int loop = 0; loop < tempList.size(); loop++ ) {
                 boards.addElement( tempList.elementAt(loop) );
             }
@@ -16908,7 +17004,7 @@ public class Server implements Runnable {
             Coords targetCoords = entity.getPosition().translated((facing + 3)%6);
             IHex targetHex = game.getBoard().getHex(targetCoords);
             if (targetHex != null) {
-                if (targetHex.terrainLevel(Terrains.WATER) > 0) {
+                if (targetHex.terrainLevel(Terrains.WATER) > 0 && !(targetHex.containsTerrain(Terrains.ICE))) {
                     rollTarget.addModifier(-1, "landing in water");
                 } else if (targetHex.containsTerrain(Terrains.ROUGH)) {
                     rollTarget.addModifier(0, "landing in rough");
@@ -17154,7 +17250,8 @@ public class Server implements Runnable {
                         && (entity.getPosition() != null)
                         && (entity.getMovementMode() == IEntityMovementMode.TRACKED
                         || entity.getMovementMode() == IEntityMovementMode.WHEELED )
-                        && game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0) {
+                        && game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0
+                        &&!(game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.ICE))) {
                         return true;
                 }
                 return false;
@@ -17261,6 +17358,26 @@ public class Server implements Runnable {
         */
     }
     
+    private void resolveIceBroken(Coords c) {
+        game.getBoard().getHex(c).removeTerrain(Terrains.ICE);
+        sendChangedHex(c);
+        //drop entities on the surface into the water
+        for(Enumeration entities = game.getEntities(c);entities.hasMoreElements();) {
+            Entity e = (Entity)entities.nextElement();
+            if(e.getElevation() == 0) {
+                if(e instanceof Mech) {
+                    doEntityFall(e, new PilotingRollData(TargetRoll.AUTOMATIC_FAIL));
+                } else if((e.getRunMP() > 0 && e.getMovementMode() != IEntityMovementMode.HOVER)
+                        && e.getMovementMode() != IEntityMovementMode.HYDROFOIL
+                        && e.getMovementMode() != IEntityMovementMode.NAVAL
+                        && e.getMovementMode() != IEntityMovementMode.SUBMARINE) {
+                    Server.combineVectors(vPhaseReport,
+                            destroyEntity(e, "a watery grave", false));
+                }
+            }
+        }
+    }
+        
     private void checkForVehicleFire(Tank tank, boolean inferno) {
         int boomroll = Compute.d6(2);
         int penalty = 0;

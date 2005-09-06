@@ -24,13 +24,13 @@ import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GamePlayerChatEvent;
 
-import com.sun.java.util.collections.ArrayList;
-import com.sun.java.util.collections.Arrays;
-import com.sun.java.util.collections.Iterator;
-import com.sun.java.util.collections.LinkedList;
-import com.sun.java.util.collections.List;
-import com.sun.java.util.collections.TreeMap;
-import com.sun.java.util.collections.Vector;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.Vector;
 
 public class TestBot extends BotClient {
 

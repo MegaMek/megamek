@@ -24,13 +24,13 @@ public class BuildingTemplate implements Serializable {
     private int height = 2;
     private int basement = BASEMENT_RANDOM;
 
-    BuildingTemplate(int type, Vector coords) {
+    public BuildingTemplate(int type, Vector coords) {
         this.type = type;
         coordsList = coords;
         CF = Building.getDefaultCF(type);
     }
     
-    BuildingTemplate(int type, Vector coords, int CF, int height, int basement) {
+    public BuildingTemplate(int type, Vector coords, int CF, int height, int basement) {
         this.type = type;
         this.coordsList = coords;
         this.CF = CF;

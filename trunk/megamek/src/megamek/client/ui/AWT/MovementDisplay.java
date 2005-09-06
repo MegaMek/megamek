@@ -759,7 +759,7 @@ public class MovementDisplay
                     && !(entity instanceof Mech)
                     && entity.getElevation() <= 1
                     && !(curPos.equals(lastPos))) {
-                nagReport.append(Messages.getString("MovementDisplay.FireMoving", new Object[] {8}));
+                nagReport.append(Messages.getString("MovementDisplay.FireMoving", new Object[] {new Integer(8)}));
             }
             
             if(entity instanceof VTOL) {

@@ -49,6 +49,8 @@ public class RandomMapDialog
     private Choice choWoods = null;
     private Choice choLakes = null;
     private Choice choPavement = null;
+    private Choice choRubble = null;
+    private Choice choFortified = null;
     private Choice choIce = null;
     private Choice choRough = null;
     private Choice choRoads = null;
@@ -60,6 +62,8 @@ public class RandomMapDialog
     private Label labWoods = null;
     private Label labLakes = null;
     private Label labPavement = null;
+    private Label labRubble = null;
+    private Label labFortified = null;
     private Label labIce = null;
     private Label labRough = null;
     private Label labRoads = null;
@@ -72,6 +76,8 @@ public class RandomMapDialog
     private SimpleLine slWoods = null;
     private SimpleLine slLakes = null;
     private SimpleLine slPavement = null;
+    private SimpleLine slRubble = null;
+    private SimpleLine slFortified = null;
     private SimpleLine slIce = null;
     private SimpleLine slRough = null;
     private SimpleLine slRoads = null;
@@ -84,6 +90,8 @@ public class RandomMapDialog
     private SimpleLine slWoodsAd = null;
     private SimpleLine slLakesAd = null;
     private SimpleLine slPavementAd = null;
+    private SimpleLine slRubbleAd = null;
+    private SimpleLine slFortifiedAd = null;
     private SimpleLine slIceAd = null;
     private SimpleLine slRoughAd = null;
     private SimpleLine slRoadsAd = null;
@@ -160,6 +168,20 @@ public class RandomMapDialog
     private Label labIceSize;
     private TextField texMinIceSize;
     private TextField texMaxIceSize;
+    
+    /** rubble / fortified */
+    private Label labRubbleSpots;
+    private TextField texMinRubbleSpots;
+    private TextField texMaxRubbleSpots;
+    private Label labRubbleSize;
+    private TextField texMinRubbleSize;
+    private TextField texMaxRubbleSize;
+    private Label labFortifiedSpots;
+    private TextField texMinFortifiedSpots;
+    private TextField texMaxFortifiedSpots;
+    private Label labFortifiedSize;
+    private TextField texMinFortifiedSize;
+    private TextField texMaxFortifiedSize;
     
     /** probability for a road, range 0..100 */
     private Label labProbRoad;
@@ -269,6 +291,8 @@ public class RandomMapDialog
             addOption(labCraters, choCraters, slCraters);
             addOption(labPavement, choPavement, slPavement);
             addOption(labIce, choIce, slIce);
+            addOption(labRubble, choRubble, slRubble);
+            addOption(labFortified, choFortified, slFortified);
 
         } else {
 
@@ -323,6 +347,16 @@ public class RandomMapDialog
             addLabelTextField(labPavementSize, texMinPavementSize, texMaxPavementSize, "-"); 
 
             addSeparator(slPavementAd);
+
+            addLabelTextField(labRubbleSpots, texMinRubbleSpots, texMaxRubbleSpots, "-");
+            addLabelTextField(labRubbleSize, texMinRubbleSize, texMaxRubbleSize, "-"); 
+
+            addSeparator(slRubbleAd);
+
+            addLabelTextField(labFortifiedSpots, texMinFortifiedSpots, texMaxFortifiedSpots, "-");
+            addLabelTextField(labFortifiedSize, texMinFortifiedSize, texMaxFortifiedSize, "-"); 
+
+            addSeparator(slFortifiedAd);
 
             addLabelTextField(labIceSpots, texMinIceSpots, texMaxIceSpots, "-");
             addLabelTextField(labIceSize, texMinIceSize, texMaxIceSize, "-"); 
@@ -404,6 +438,16 @@ public class RandomMapDialog
         choPavement = new Choice();
         fillChoice(choPavement);
         slPavement = new SimpleLine(NORMAL_LINE_WIDTH);
+
+        labRubble = new Label(Messages.getString("RandomMapDialog.labRubble"), Label.LEFT); 
+        choRubble = new Choice();
+        fillChoice(choRubble);
+        slRubble = new SimpleLine(NORMAL_LINE_WIDTH);
+
+        labFortified = new Label(Messages.getString("RandomMapDialog.labFortified"), Label.LEFT); 
+        choFortified = new Choice();
+        fillChoice(choFortified);
+        slFortified = new SimpleLine(NORMAL_LINE_WIDTH);
 
         labIce = new Label(Messages.getString("RandomMapDialog.labIce"), Label.LEFT); 
         choIce = new Choice();
@@ -514,6 +558,30 @@ public class RandomMapDialog
         texMaxPavementSize= new TextField(2);
         texMaxPavementSize.addFocusListener(this);
 
+        /** Rubble */
+        labRubbleSpots= new Label(Messages.getString("RandomMapDialog.labRubbleSpots"), Label.LEFT); 
+        texMinRubbleSpots= new TextField(2);
+        texMinRubbleSpots.addFocusListener(this);
+        texMaxRubbleSpots= new TextField(2);
+        texMaxRubbleSpots.addFocusListener(this);
+        labRubbleSize= new Label(Messages.getString("RandomMapDialog.labRubbleSize"), Label.LEFT);
+        texMinRubbleSize= new TextField(2);
+        texMinRubbleSize.addFocusListener(this);
+        texMaxRubbleSize= new TextField(2);
+        texMaxRubbleSize.addFocusListener(this);
+
+        /** Fortified */
+        labFortifiedSpots= new Label(Messages.getString("RandomMapDialog.labFortifiedSpots"), Label.LEFT); 
+        texMinFortifiedSpots= new TextField(2);
+        texMinFortifiedSpots.addFocusListener(this);
+        texMaxFortifiedSpots= new TextField(2);
+        texMaxFortifiedSpots.addFocusListener(this);
+        labFortifiedSize= new Label(Messages.getString("RandomMapDialog.labFortifiedSize"), Label.LEFT);
+        texMinFortifiedSize= new TextField(2);
+        texMinFortifiedSize.addFocusListener(this);
+        texMaxFortifiedSize= new TextField(2);
+        texMaxFortifiedSize.addFocusListener(this);
+
         /** ice */
         labIceSpots= new Label(Messages.getString("RandomMapDialog.labIceSpots"), Label.LEFT); 
         texMinIceSpots= new TextField(2);
@@ -570,6 +638,8 @@ public class RandomMapDialog
         slWoodsAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slLakesAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slPavementAd = new SimpleLine(ADVANCED_LINE_WIDTH);
+        slRubbleAd = new SimpleLine(ADVANCED_LINE_WIDTH);
+        slFortifiedAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slIceAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slRoughAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slRoadsAd = new SimpleLine(ADVANCED_LINE_WIDTH);
@@ -695,6 +765,16 @@ public class RandomMapDialog
         texMinPavementSize.setText(new Integer(mapSettings.getMinPavementSize()).toString());
         texMaxPavementSize.setText(new Integer(mapSettings.getMaxPavementSize()).toString());
         
+        texMinRubbleSpots.setText(new Integer(mapSettings.getMinRubbleSpots()).toString());
+        texMaxRubbleSpots.setText(new Integer(mapSettings.getMaxRubbleSpots()).toString());
+        texMinRubbleSize.setText(new Integer(mapSettings.getMinRubbleSize()).toString());
+        texMaxRubbleSize.setText(new Integer(mapSettings.getMaxRubbleSize()).toString());
+        
+        texMinFortifiedSpots.setText(new Integer(mapSettings.getMinFortifiedSpots()).toString());
+        texMaxFortifiedSpots.setText(new Integer(mapSettings.getMaxFortifiedSpots()).toString());
+        texMinFortifiedSize.setText(new Integer(mapSettings.getMinFortifiedSize()).toString());
+        texMaxFortifiedSize.setText(new Integer(mapSettings.getMaxFortifiedSize()).toString());
+        
         texMinIceSpots.setText(new Integer(mapSettings.getMinIceSpots()).toString());
         texMaxIceSpots.setText(new Integer(mapSettings.getMaxIceSpots()).toString());
         texMinIceSize.setText(new Integer(mapSettings.getMinIceSize()).toString());
@@ -727,6 +807,8 @@ public class RandomMapDialog
         int minForestSpots, maxForestSpots, minForestSize, maxForestSize, probHeavy;
         int minRoughSpots, maxRoughSpots, minRoughSize, maxRoughSize;
         int minPavementSpots, maxPavementSpots, minPavementSize, maxPavementSize;
+        int minRubbleSpots, maxRubbleSpots, minRubbleSize, maxRubbleSize;
+        int minFortifiedSpots, maxFortifiedSpots, minFortifiedSize, maxFortifiedSize;
         int minIceSpots, maxIceSpots, minIceSize, maxIceSize;
         int minSwampSpots, maxSwampSpots, minSwampSize, maxSwampSize;
         int probRoad, probRiver, probInvert;
@@ -775,6 +857,14 @@ public class RandomMapDialog
                 maxPavementSpots = Integer.parseInt(texMaxPavementSpots.getText());
                 minPavementSize = Integer.parseInt(texMinPavementSize.getText());
                 maxPavementSize = Integer.parseInt(texMaxPavementSize.getText());
+                minRubbleSpots = Integer.parseInt(texMinRubbleSpots.getText());
+                maxRubbleSpots = Integer.parseInt(texMaxRubbleSpots.getText());
+                minRubbleSize = Integer.parseInt(texMinRubbleSize.getText());
+                maxRubbleSize = Integer.parseInt(texMaxRubbleSize.getText());
+                minFortifiedSpots = Integer.parseInt(texMinFortifiedSpots.getText());
+                maxFortifiedSpots = Integer.parseInt(texMaxFortifiedSpots.getText());
+                minFortifiedSize = Integer.parseInt(texMinFortifiedSize.getText());
+                maxFortifiedSize = Integer.parseInt(texMaxFortifiedSize.getText());
                 minIceSpots = Integer.parseInt(texMinIceSpots.getText());
                 maxIceSpots = Integer.parseInt(texMaxIceSpots.getText());
                 minIceSize = Integer.parseInt(texMinIceSize.getText());
@@ -937,6 +1027,54 @@ public class RandomMapDialog
             }
             if (maxPavementSize < minPavementSize) {
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxPavementSizeWarn1")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (minRubbleSpots < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinRubbleWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxRubbleSpots < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxRubbleWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxRubbleSpots < minRubbleSpots) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxRubbleWarn1")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (minRubbleSize < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinRubbleSizeWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxRubbleSize < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxRubbleSizeWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxRubbleSize < minRubbleSize) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxRubbleSizeWarn1")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (minFortifiedSpots < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinFortifiedWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxFortifiedSpots < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxFortifiedWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxFortifiedSpots < minFortifiedSpots) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxFortifiedWarn1")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (minFortifiedSize < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MinFortifiedSizeWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxFortifiedSize < 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxFortifiedSizeWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (maxFortifiedSize < minFortifiedSize) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MaxFortifiedSizeWarn1")).show(); //$NON-NLS-1$
                 return false;
             }
             if (minIceSpots < 0) {
@@ -1138,6 +1276,50 @@ public class RandomMapDialog
                 minPavementSpots = 5;
                 maxPavementSpots = 10;
             }
+            s = choRubble.getSelectedItem();
+            if (s.equals(NONE)) {
+                minRubbleSize = 0;
+                maxRubbleSize = 0;
+                minRubbleSpots = 0;
+                maxRubbleSpots = 0;
+            } else if (s.equals(LOW)) {
+                minRubbleSize = 1;
+                maxRubbleSize = 2;
+                minRubbleSpots = 2;
+                maxRubbleSpots = 6;
+            } else if (s.equals(MEDIUM)) {
+                minRubbleSize = 2;
+                maxRubbleSize = 5;
+                minRubbleSpots = 3;
+                maxRubbleSpots = 8;
+            } else {
+                minRubbleSize = 3;
+                maxRubbleSize = 7;
+                minRubbleSpots = 5;
+                maxRubbleSpots = 10;
+            }
+            s = choFortified.getSelectedItem();
+            if (s.equals(NONE)) {
+                minFortifiedSize = 0;
+                maxFortifiedSize = 0;
+                minFortifiedSpots = 0;
+                maxFortifiedSpots = 0;
+            } else if (s.equals(LOW)) {
+                minFortifiedSize = 1;
+                maxFortifiedSize = 2;
+                minFortifiedSpots = 1;
+                maxFortifiedSpots = 2;
+            } else if (s.equals(MEDIUM)) {
+                minFortifiedSize = 2;
+                maxFortifiedSize = 3;
+                minFortifiedSpots = 2;
+                maxFortifiedSpots = 4;
+            } else {
+                minFortifiedSize = 2;
+                maxFortifiedSize = 4;
+                minFortifiedSpots = 3;
+                maxFortifiedSpots = 6;
+            }
             s = choIce.getSelectedItem();
             if (s.equals(NONE)) {
                 minIceSize = 0;
@@ -1228,6 +1410,10 @@ public class RandomMapDialog
                                     minSwampSize, maxSwampSize);
         mapSettings.setPavementParams(minPavementSpots, maxPavementSpots,
                                     minPavementSize, maxPavementSize);
+        mapSettings.setRubbleParams(minRubbleSpots, maxRubbleSpots,
+                minRubbleSize, maxRubbleSize);
+        mapSettings.setFortifiedParams(minFortifiedSpots, maxFortifiedSpots,
+                minFortifiedSize, maxFortifiedSize);
         mapSettings.setIceParams(minIceSpots, maxIceSpots,
                 minIceSize, maxIceSize);
         mapSettings.setRiverParam(probRiver);

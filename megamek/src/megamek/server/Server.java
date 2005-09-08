@@ -13556,6 +13556,8 @@ public class Server implements Runnable {
         // to the floor of the hex, and modifiy it so that it's to the surface
         if (waterDepth > 0) {
             damageHeight = height - waterDepth;
+        } else {
+            waterDepth = 0; //because it will be used to set elevation
         }
 
         if(fallHex.containsTerrain(Terrains.ICE)) {

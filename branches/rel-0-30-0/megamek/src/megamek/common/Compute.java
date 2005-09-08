@@ -18,6 +18,7 @@ package megamek.common;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.RangeType;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
@@ -658,7 +659,7 @@ public class Compute {
         // add range modifier
         if (usingRange == range) {
             // no c3 adjustment
-            if ((range == RangeType.RANGE_SHORT)
+            if ((range == RangeType.RANGE_SHORT || range == RangeType.RANGE_MINIMUM)
                     && (ae.getShortRangeModifier() != 0)) {
                 mods.addModifier(ae.getShortRangeModifier(), "short range"
                         + targSysType);
@@ -693,7 +694,7 @@ public class Compute {
             }
         } else {
             // report c3 adjustment
-            if (c3range == RangeType.RANGE_SHORT) {
+            if (c3range == RangeType.RANGE_SHORT || range == RangeType.RANGE_MINIMUM) {
                 mods.addModifier(ae.getShortRangeModifier(),
                         "short range due to C3 spotter" + targSysType);
             } else if (c3range == RangeType.RANGE_MEDIUM) {

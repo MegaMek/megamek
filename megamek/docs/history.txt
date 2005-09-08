@@ -122,6 +122,7 @@ v0.31.0 (CVS)
 + Added rubble and fortified terrains to RMG, frozen water special effect makes
     thin ice
 + Removed collections.jar
++ Bug 1284368: Fallen mechs sent to the center of the earth.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

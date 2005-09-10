@@ -124,6 +124,7 @@ v0.31.0 (CVS)
 + Removed collections.jar
 + Bug 1284368: Fallen mechs sent to the center of the earth.
 + Bug 1284758: short range targeting not working under min range
++ Assault drop
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

@@ -400,9 +400,22 @@ public class Client {
      * @param   nFacing - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing) {
-        this.deploy(id, c, nFacing, new Vector());
+        this.deploy(id, c, nFacing, new Vector(),false);
     }
 
+    /**
+     * BC with old version
+     *
+     * @param   id - the <code>int</code> ID of the deployed entity
+     * @param   c - the <code>Coords</code> where the entity should be deployed
+     * @param   nFacing - the <code>int</code> direction the entity should face
+     * @param   loadedUnits - a <code>List</code> of units that start the game
+     *          being transported byt the deployed entity.
+     */
+    public void deploy(int id, Coords c, int nFacing, Vector loadedUnits) {
+        deploy(id,c,nFacing,loadedUnits,false);
+    }
+    
     /**
      * Deploy an entity at the given coordinates, with the given facing,
      * and starting with the given units already loaded.
@@ -412,15 +425,17 @@ public class Client {
      * @param   nFacing - the <code>int</code> direction the entity should face
      * @param   loadedUnits - a <code>List</code> of units that start the game
      *          being transported byt the deployed entity.
+     * @param   assaultDrop - true if deployment is an assault drop
      */
-    public void deploy(int id, Coords c, int nFacing, Vector loadedUnits) {
-        int packetCount = 4 + loadedUnits.size();
+    public void deploy(int id, Coords c, int nFacing, Vector loadedUnits, boolean assaultDrop) {
+        int packetCount = 5 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
         data[index++] = new Integer(id);
         data[index++] = c;
         data[index++] = new Integer(nFacing);
         data[index++] = new Integer(loadedUnits.size());
+        data[index++] = new Boolean(assaultDrop);
 
         Enumeration iter = loadedUnits.elements();
         while (iter.hasMoreElements()) {

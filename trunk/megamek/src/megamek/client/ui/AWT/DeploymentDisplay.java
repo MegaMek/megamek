@@ -42,6 +42,7 @@ public class DeploymentDisplay
     public static final String DEPLOY_LOAD        = "deployLoad"; //$NON-NLS-1$
     public static final String DEPLOY_UNLOAD      = "deployUnload"; //$NON-NLS-1$
     public static final String DEPLOY_REMOVE      = "deployRemove"; //$NON-NLS-1$
+    public static final String DEPLOY_ASSAULTDROP = "assaultDrop"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -58,12 +59,15 @@ public class DeploymentDisplay
     private Button            butLoad;
     private Button            butUnload;
     private Button            butRemove;
+    private Button            butAssaultDrop;
     private Button            butDone;
 
     private int               cen = Entity.NONE;    // current entity number
 
     // is the shift key held?
     private boolean            turnMode = false;
+    
+    private boolean            assaultDropPreference = false;
 
     /**
      * Creates and lays out a new deployment phase display 
@@ -112,6 +116,11 @@ public class DeploymentDisplay
         butRemove.setActionCommand(DEPLOY_REMOVE);
         butRemove.setEnabled(true);
 
+        butAssaultDrop = new Button(Messages.getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
+        butAssaultDrop.addActionListener(this);
+        butAssaultDrop.setActionCommand(DEPLOY_ASSAULTDROP);
+        butAssaultDrop.setEnabled(false);
+
         butDone = new Button(Messages.getString("DeploymentDisplay.Deploy")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
@@ -124,6 +133,7 @@ public class DeploymentDisplay
         panButtons.add(butLoad);
         panButtons.add(butUnload);
         panButtons.add(butRemove);
+        panButtons.add(butAssaultDrop);
 //         panButtons.add(butSpace);
 //         panButtons.add(butSpace2);
 //         panButtons.add(butSpace3);
@@ -225,6 +235,10 @@ public class DeploymentDisplay
                 ce().setSecondaryFacing(0);
                 break;
             }
+            
+            setAssaultDropEnabled(ce().canAssaultDrop() 
+                    && ce().getGame().getOptions().booleanOption("assault_drop"));
+            
             clientgui.mechD.displayEntity(ce());
             clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
         
@@ -285,7 +299,7 @@ public class DeploymentDisplay
         disableButtons();
         
         Entity en = ce();
-        client.deploy(cen, en.getPosition(), en.getFacing(), en.getLoadedUnits());
+        client.deploy(cen, en.getPosition(), en.getFacing(), en.getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);
     }
     
@@ -377,7 +391,8 @@ public class DeploymentDisplay
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.bv.redrawEntity(ce());
             turnMode = false;
-        } else if (!client.game.getBoard().isLegalDeployment(moveto, ce().getOwner())
+        } else if (!(client.game.getBoard().isLegalDeployment(moveto, ce().getOwner())
+                || assaultDropPreference)
                 || ce().isHexProhibited(client.game.getBoard().getHex(moveto))) {
             AlertDialog dlg = new AlertDialog( clientgui.frame,
                                                Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
@@ -519,6 +534,15 @@ public class DeploymentDisplay
         else if (ev.getActionCommand().equals(DEPLOY_REMOVE)) {
             remove();
         }
+        
+        else if (ev.getActionCommand().equals(DEPLOY_ASSAULTDROP)) {
+            assaultDropPreference = !assaultDropPreference;
+            if(assaultDropPreference) {
+                butAssaultDrop.setLabel(Messages.getString("DeploymentDisplay.AssaultDropOff"));
+            } else {
+                butAssaultDrop.setLabel(Messages.getString("DeploymentDisplay.AssaultDropOn"));
+            }
+        }
 
     } // End public void actionPerformed(ActionEvent ev)
     
@@ -602,6 +626,10 @@ public class DeploymentDisplay
     private void setRemoveEnabled(boolean enabled) {
         butRemove.setEnabled(enabled);
         clientgui.getMenuBar().setDeployNextEnabled(enabled);
+    }
+    private void setAssaultDropEnabled(boolean enabled) {
+        butAssaultDrop.setEnabled(enabled);
+        clientgui.getMenuBar().setDeployAssaultDropEnabled(enabled);
     }
 
     /**

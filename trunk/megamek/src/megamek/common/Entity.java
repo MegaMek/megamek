@@ -247,6 +247,8 @@ public abstract class Entity
     //Whether this unit is canon;
     private boolean canon;
     
+    private boolean assaultDropInProgress = false;
+    
     
     /**
      * Generates a new, blank, entity.
@@ -2602,7 +2604,6 @@ public abstract class Entity
         hitBySwarmsWeapon = new Vector();
         setTaggedBy(-1);
         setLayingMines(false);
-
         setArmsFlipped(false);
         setDisplacementAttack(null);
         setFindingClub(false);
@@ -4130,7 +4131,7 @@ public abstract class Entity
         }
 
         // if you're offboard, no shooting
-        if (isOffBoard()) {
+        if (isOffBoard() || isAssaultDropInProgress()) {
             return false;
         }
 
@@ -4166,7 +4167,7 @@ public abstract class Entity
      */
     public boolean isEligibleForMovement() {
         // check if entity is offboard
-        if (isOffBoard()) {
+        if (isOffBoard() || isAssaultDropInProgress()) {
             return false;
         }
         // check game options
@@ -4192,7 +4193,7 @@ public abstract class Entity
         }
 
         // if you're offboard, no shooting
-        if (isOffBoard()) {
+        if (isOffBoard() || isAssaultDropInProgress()) {
             return false;
         }
         for (Enumeration i = getWeapons(); i.hasMoreElements();) {
@@ -4223,7 +4224,8 @@ public abstract class Entity
             || isMakingDfa()
             || isFindingClub()
             || isSpotting()
-            || isOffBoard()) {
+            || isOffBoard()
+            || isAssaultDropInProgress()) {
             return false;
         }
 
@@ -4301,6 +4303,9 @@ public abstract class Entity
     }
     
     public boolean isEligibleForTargetingPhase() {
+        if(isAssaultDropInProgress()) {
+            return false;
+        }
         for (Enumeration i = getWeapons(); i.hasMoreElements();) {
               Mounted mounted = (Mounted)i.nextElement();
               WeaponType wtype = (WeaponType)mounted.getType();
@@ -4900,5 +4905,17 @@ public abstract class Entity
     
     public boolean canGoHullDown () {
     	return false;
+    }
+    
+    public boolean canAssaultDrop() {
+        return false;
+    }
+    
+    public void setAssaultDropInProgress(boolean flag) {
+        assaultDropInProgress = flag;
+    }
+    
+    public boolean isAssaultDropInProgress() {
+        return assaultDropInProgress;
     }
 }

@@ -790,4 +790,7 @@ public class BattleArmor
         return true;
     }
 
+    public boolean canAssaultDrop() {
+        return true;
+    }
 } // End public class BattleArmor extends Infantry implements Serializable

@@ -2550,4 +2550,8 @@ public abstract class Mech
         else
             return inName;
     }
+
+    public boolean canAssaultDrop() {
+        return true;
+    }
 }

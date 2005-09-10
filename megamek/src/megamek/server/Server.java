@@ -1585,6 +1585,7 @@ public class Server implements Runnable {
                 }
                 break;
             case IGame.PHASE_MOVEMENT :
+                doAllAssaultDrops();
                 addMovementHeat();
                 applyBuildingDamage();
                 checkFor20Damage();
@@ -5162,14 +5163,16 @@ public class Server implements Runnable {
         }
 
         // can this player/entity act right now?
+        final boolean assaultDrop = packet.getBooleanValue(4);
         if ( !game.getTurn().isValid(connId, entity, game)
-             || !game.getBoard().isLegalDeployment(coords, entity.getOwner()) ) {
+             || !(game.getBoard().isLegalDeployment(coords, entity.getOwner()) 
+                     ||(assaultDrop && game.getOptions().booleanOption("assault_drop") && entity.canAssaultDrop()))) {
             System.err.println("error: server got invalid deployment packet");
             return;
         }
 
         // looks like mostly everything's okay
-        processDeployment(entity, coords, nFacing, loadVector);
+        processDeployment(entity, coords, nFacing, loadVector, assaultDrop);
 
         // Update visibility indications if using double blind.
         if (doBlind()) {
@@ -5184,7 +5187,7 @@ public class Server implements Runnable {
      * other specified entities inside of it too.  Also, check that the
      * deployment is valid.
      */
-    private void processDeployment(Entity entity, Coords coords, int nFacing, Vector loadVector) {
+    private void processDeployment(Entity entity, Coords coords, int nFacing, Vector loadVector, boolean assaultDrop) {
         for (Enumeration i = loadVector.elements(); i.hasMoreElements();) {
             Entity loaded = (Entity)i.nextElement();
             if ( loaded == null || loaded.getPosition() != null ||
@@ -5203,7 +5206,10 @@ public class Server implements Runnable {
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
         IHex hex = game.getBoard().getHex(coords);
-        if (entity instanceof VTOL) {
+        if(assaultDrop) {
+            entity.setElevation(hex.ceiling() - hex.surface() + 100); //falling from the sky!
+            entity.setAssaultDropInProgress(true);
+        } else if (entity instanceof VTOL) {
             // We should let players pick, but this simplifies a lot.
             // Only do it for VTOLs, though; assume everything else is on the ground.
             entity.setElevation(hex.ceiling()-hex.surface()+1);
@@ -17509,6 +17515,87 @@ public class Server implements Runnable {
             }
         }
         combineVectors(vPhaseReport,vDesc);
+    }
+
+    public void doAssaultDrop(Entity entity) {
+        PilotingRollData psr;
+        if(entity instanceof Mech) {
+            psr=entity.getBasePilotingRoll();
+        } else {
+            psr=new PilotingRollData(entity.getId(),4,"landing assault drop");
+        }
+        int roll = Compute.d6(2);
+        //check for a safe landing
+        Report r = new Report(2380);
+        r.subject = entity.getId();
+        r.add(entity.getDisplayName(), true);
+        r.add(psr.getValueAsString());
+        r.add(roll);
+        r.choose(roll >= psr.getValue());
+        vPhaseReport.addElement(r);
+        if(roll < psr.getValue()) {
+            int fallHeight = psr.getValue() - roll;
+            //determine where we really land
+            int distance = Compute.d6(fallHeight);
+            Coords c = Compute.scatter(entity.getPosition(), distance);
+            r = new Report(2385);
+            r.subject = entity.getId();
+            r.add(distance);
+            r.indent(3);
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+            if(fallHeight >=5 || !game.getBoard().contains(c)) {
+                r = new Report(2386);
+                vPhaseReport.addElement(r);
+                game.removeEntity(entity.getId(),IEntityRemovalConditions.REMOVE_NEVER_JOINED);
+                return;
+            }
+            entity.setPosition(c);
+            
+            //do fall damage
+            if(entity instanceof Mech || entity instanceof Protomech) {
+                entity.setElevation(fallHeight);
+                doEntityFallsInto(entity, c, c, psr, true);
+            }
+            else if(entity instanceof BattleArmor) {
+                for(int i=1;i<entity.locations();i++) {
+                    HitData h = new HitData(i);
+                    combineVectors(vPhaseReport, damageEntity(entity,h,Compute.d6(fallHeight)));
+                    Report.addNewline(vPhaseReport);
+                }
+            }
+            else if(entity instanceof Infantry) {
+                HitData h = new HitData(Infantry.LOC_INFANTRY);
+                combineVectors(vPhaseReport, damageEntity(entity,h, 1));
+                Report.addNewline(vPhaseReport);
+            }
+        }
+        //set entity to expected elevation
+        IHex hex = game.getBoard().getHex(entity.getPosition());
+        entity.setElevation(entity.elevationOccupied(hex) - hex.floor());
+        //finally, check for any stacking violations
+        Entity violated = Compute.stackingViolation(game, entity, entity.getPosition(), null);
+        if(violated != null) {
+            //handle this as accidental fall from above
+            entity.setElevation(violated.getElevation() + 2);
+            r = new Report(2390);
+            r.subject = entity.getId();
+            r.add(entity.getDisplayName(), true);
+            r.add(violated.getDisplayName(), true);
+            vPhaseReport.addElement(r);
+            doEntityFallsInto(entity, entity.getPosition(), entity.getPosition(), psr);
+        }
+        return;
+    }
+    
+    void doAllAssaultDrops() {
+        for(Enumeration i = game.getEntities();i.hasMoreElements();) {
+            Entity e = (Entity)(i.nextElement());
+            if(e.isAssaultDropInProgress()) {
+                doAssaultDrop(e);
+                e.setAssaultDropInProgress(false);
+            }
+        }
     }
 }
 

@@ -945,4 +945,8 @@ public class Protomech
     public boolean hasActiveEiCockpit() {
         return (super.hasActiveEiCockpit() && (getCritsHit(LOC_HEAD) == 0));
     }
+
+    public boolean canAssaultDrop() {
+        return true;
+    }
 }

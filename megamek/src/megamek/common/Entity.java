@@ -247,7 +247,7 @@ public abstract class Entity
     //Whether this unit is canon;
     private boolean canon;
     
-    private boolean assaultDropInProgress = false;
+    private int assaultDropInProgress = 0;
     
     
     /**
@@ -2597,6 +2597,8 @@ public abstract class Entity
         done = false;
         delta_distance = 0;
         mpUsed = 0;
+        if(assaultDropInProgress == 2)
+            assaultDropInProgress = 0;
         moved = IEntityMovementType.MOVE_NONE;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
@@ -4912,10 +4914,14 @@ public abstract class Entity
     }
     
     public void setAssaultDropInProgress(boolean flag) {
-        assaultDropInProgress = flag;
+        assaultDropInProgress = flag?1:0;
     }
     
+    public void setLandedAssaultDrop() {
+        assaultDropInProgress = 2;
+        moved = IEntityMovementType.MOVE_JUMP;
+    }
     public boolean isAssaultDropInProgress() {
-        return assaultDropInProgress;
+        return assaultDropInProgress != 0;
     }
 }

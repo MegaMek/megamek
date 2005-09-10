@@ -937,4 +937,8 @@ public class Infantry
         // This isn't necessarily a true assumption.
         return false;
     }
+
+    public boolean canAssaultDrop() {
+        return game.getOptions().booleanOption("paratroopers");
+    }
 } // End class Infantry

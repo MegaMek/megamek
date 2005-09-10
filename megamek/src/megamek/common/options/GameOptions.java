@@ -72,6 +72,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level2,"gravity", (float)1.0); //$NON-NLS-1$
         addOption(level2,"vacuum", false); //$NON-NLS-1$
         addOption(level2,"night_battle", false); //$NON-NLS-1$
+        addOption(level2,"assault_drop", false); //$NON-NLS-1$
 
         OptionGroup level3 = addGroup("level3"); //$NON-NLS-1$
         addOption(level3,"allow_level_3_units", false);
@@ -104,6 +105,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level3,"quad_hit_location", false); //$NON-NLS-1$
         addOption(level3,"hull_down", false); //$NON-NLS-1$
         addOption(level3,"vehicle_fires", false); //$NON-NLS-1$
+        addOption(level3,"paratroopers", false); //$NON-NLS-1$
 
         OptionGroup ruleBreakers = addGroup("ruleBreakers"); //$NON-NLS-1$
         addOption(ruleBreakers,"no_tac", false); //$NON-NLS-1$

@@ -17593,7 +17593,7 @@ public class Server implements Runnable {
             Entity e = (Entity)(i.nextElement());
             if(e.isAssaultDropInProgress()) {
                 doAssaultDrop(e);
-                e.setAssaultDropInProgress(false);
+                e.setLandedAssaultDrop();
             }
         }
     }

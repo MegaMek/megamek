@@ -74,9 +74,42 @@ public class WeaponType extends EquipmentType {
     private int     waterLongRange;
     private int     waterExtremeRange;
 
+    public void setDamage(int inD) {
+        damage = inD;
+    }
 
-    protected WeaponType() {
+    public void setName (String inN) {
+        name = inN;
+        setInternalName(inN);
+    }
 
+    public void setMinimumRange(int inMR) {
+        minimumRange = inMR;
+    }
+
+    public void setRanges(int sho, int med, int lon, int ext) {
+        shortRange = sho;
+        mediumRange = med;
+        longRange = lon;
+        extremeRange = ext;
+    }
+
+    public void setWaterRanges(int sho, int med, int lon, int ext) {
+        waterShortRange = sho;
+        waterMediumRange = med;
+        waterLongRange = lon;
+        waterExtremeRange = ext;
+    }
+
+    public void setAmmoType(int inAT) {
+        ammoType = inAT;
+    }
+
+    public void setRackSize(int inRS) {
+        rackSize = inRS;
+    }
+
+    public WeaponType() {
     }
 
     public int getHeat() {

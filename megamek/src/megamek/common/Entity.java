@@ -1280,6 +1280,18 @@ public abstract class Entity
         armor[loc] = val;
     }
 
+    public void refreshLocations() {
+        this.armor = new int[locations()];
+        this.internal = new int[locations()];
+        this.orig_armor = new int[locations()];
+        this.orig_internal = new int[locations()];
+        this.crits = new CriticalSlot[locations()][];
+        this.exposure = new int[locations()];
+        for (int i = 0; i < locations(); i++) {
+            this.crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
+        }
+    }
+
     /**
      * Initializes the armor on the unit. Sets the original and starting point
      * of the armor to the same number.
@@ -1521,8 +1533,7 @@ public abstract class Entity
      * Creates a new mount for this equipment and adds it in.
      */
     public Mounted addEquipment(EquipmentType etype, int loc)
-        throws LocationFullException
-    {
+        throws LocationFullException {
         return addEquipment(etype, loc, false);
     }
 
@@ -1530,8 +1541,7 @@ public abstract class Entity
      * Creates a new mount for this equipment and adds it in.
      */
     public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted)
-        throws LocationFullException
-    {
+        throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted);
         return mounted;
@@ -2933,9 +2943,9 @@ public abstract class Entity
     /**
      * Set the movement type of the entity
      */
-      public void setMovementMode(int movementMode) {
+    public void setMovementMode(int movementMode) {
         this.movementMode = movementMode;
-      }
+    }
 
     /**
      * Helper function to determine if a entity is a biped
@@ -3712,26 +3722,26 @@ public abstract class Entity
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( int range ) {
+    public TargetRoll getStealthModifier(int range) {
         TargetRoll result = null;
 
         // Stealth must be active.
-        if ( !isStealthActive() ) {
-            result = new TargetRoll( 0, "stealth not active"  );
+        if (!isStealthActive()) {
+            result = new TargetRoll(0, "stealth not active");
         }
 
         // Get the range modifier.
-        switch ( range ) {
-        case RangeType.RANGE_MINIMUM:
-        case RangeType.RANGE_SHORT:
-        case RangeType.RANGE_MEDIUM:
-        case RangeType.RANGE_LONG:
-        case RangeType.RANGE_EXTREME:
-            result = new TargetRoll( 0, "stealth not installed" );
-            break;
-        default:
-            throw new IllegalArgumentException
-                ( "Unknown range constant: " + range );
+        switch (range) {
+            case RangeType.RANGE_MINIMUM:
+            case RangeType.RANGE_SHORT:
+            case RangeType.RANGE_MEDIUM:
+            case RangeType.RANGE_LONG:
+            case RangeType.RANGE_EXTREME:
+                result = new TargetRoll(0, "stealth not installed");
+                break;
+            default:
+                throw new IllegalArgumentException
+                    ( "Unknown range constant: " + range );
         }
 
         // Return the result.
@@ -4315,7 +4325,7 @@ public abstract class Entity
         for (Enumeration i = getWeapons(); i.hasMoreElements();) {
               Mounted mounted = (Mounted)i.nextElement();
               WeaponType wtype = (WeaponType)mounted.getType();
-              if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+              if ((wtype != null) && (wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                   return true;
               }
           }
@@ -4740,7 +4750,7 @@ public abstract class Entity
         for (Enumeration e = this.getWeapons(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             WeaponType equip = (WeaponType)(m.getType());
-            if (equip.hasFlag(WeaponType.F_TAG)) {
+            if ((equip != null) && (equip.hasFlag(WeaponType.F_TAG))) {
                 return true;
             }
         }

@@ -36,20 +36,22 @@ public class BattleArmor
 {
     /*
      * Infantry have no critical slot limitations.
-     * IS squads have 4 men, Clan points have 5.
+     * IS squads usually have 4 men, Clan points usually have 5.
      * Have a location that represents the entire squad.
      */
-    private static final int[]    IS_NUM_OF_SLOTS   = {7,1,1,1,1};
+    private static final int[]    IS_NUM_OF_SLOTS   = {7,1,1,1,1,1};
     private static final String[] IS_LOCATION_ABBRS = { "Squad",
                                                         "Trooper 1",
                                                         "Trooper 2",
                                                         "Trooper 3",
-                                                        "Trooper 4" };
+                                                        "Trooper 4",
+                                                        "Trooper 5"};
     private static final String[] IS_LOCATION_NAMES = { "Squad",
                                                         "Trooper 1",
                                                         "Trooper 2",
                                                         "Trooper 3",
-                                                        "Trooper 4" };
+                                                        "Trooper 4",
+                                                        "Trooper 5" };
     private static final int[]    CLAN_NUM_OF_SLOTS   = {10,1,1,1,1,1};
     private static final String[] CLAN_LOCATION_ABBRS = { "Point",
                                                           "Trooper 1",
@@ -64,6 +66,33 @@ public class BattleArmor
                                                           "Trooper 4",
                                                           "Trooper 5" };
 
+    public static final int MANIPULATOR_NONE = 0;
+    public static final int MANIPULATOR_ARMORED_GLOVE = 1;
+    public static final int MANIPULATOR_BASIC = 2;
+    public static final int MANIPULATOR_BASIC_MINE_CLEARANCE = 3;
+    public static final int MANIPULATOR_BATTLE = 4;
+    public static final int MANIPULATOR_BATTLE_MAGNET = 5;
+    public static final int MANIPULATOR_BATTLE_VIBRO = 6;
+    public static final int MANIPULATOR_HEAVY_BATTLE = 7;
+    public static final int MANIPULATOR_HEAVY_BATTLE_VIBRO = 8;
+    public static final int MANIPULATOR_SALVAGE_ARM = 9;
+    public static final int MANIPULATOR_CARGO_LIFTER = 10;
+    public static final int MANIPULATOR_INDUSTRIAL_DRILL = 11;
+
+    public static final String[] MANIPULATOR_TYPE_STRINGS = {"None",
+                                                              "Armored Glove",
+                                                              "Basic Manipulator",
+                                                              "Basic Manipulator (Mine Clearance)",
+                                                              "Battle Claw",
+                                                              "Battle Claw (Magnets)",
+                                                              "Battle Claw (Vibro-Claws)",
+                                                              "Heavy Battle Claw",
+                                                              "Heavy Battle Claw (Vibro-Claws)",
+                                                              "Salvage Arm",
+                                                              "Cargo Lifter",
+                                                              "Industrial Drill"};
+
+
     /**
      * The number of men alive in this unit at the beginning of the phase,
      * before it begins to take damage.
@@ -74,7 +103,10 @@ public class BattleArmor
      * The battle value of this unit.  This value should
      * be set when the unit's file is read.
      */
-    private int         myBV = 0;
+    private int myBV = 0;
+    private int myCost = -1;
+    private int weightClass = -1;
+    private int chassisType = -1;
 
     /**
      * Flag that is <code>true</code> when this
@@ -207,15 +239,21 @@ public class BattleArmor
      * The location for infantry equipment.
      */
     public static final int     LOC_SQUAD       = 0;
+
+    // The next few things are never referenced!
+    // Why do we even have them?...
     public static final int     LOC_IS_1        = 1;
     public static final int     LOC_IS_2        = 2;
     public static final int     LOC_IS_3        = 3;
     public static final int     LOC_IS_4        = 4;
+    public static final int     LOC_IS_5        = 5;
+    public static final int     LOC_IS_6        = 6;
     public static final int     LOC_CLAN_1      = 1;
     public static final int     LOC_CLAN_2      = 2;
     public static final int     LOC_CLAN_3      = 3;
     public static final int     LOC_CLAN_4      = 4;
     public static final int     LOC_CLAN_5      = 5;
+    public static final int     LOC_CLAN_6      = 6;
 
     public String[] getLocationAbbrs() {
         if ( !this.isInitialized || this.isClan() ) {
@@ -234,11 +272,17 @@ public class BattleArmor
      * Returns the number of locations in this unit.
      */
     public int locations() {
-        // Return one more than the maximum number of men in the unit.
-        if ( !this.isInitialized || this.isClan() ) {
-            return BA_CLAN_MAX_MEN + 1;
+        int retVal = Math.round(getWeight());
+        if (retVal == 0) {
+            // Return one more than the maximum number of men in the unit.
+            if ( !this.isInitialized || this.isClan() ) {
+                retVal =  BA_CLAN_MAX_MEN + 1;
+            }
+            retVal =  BA_MAX_MEN + 1;
+        } else {
+            retVal++;
         }
-        return BA_MAX_MEN + 1;
+        return retVal;
     }
 
     /**
@@ -307,8 +351,11 @@ public class BattleArmor
     /**
      * Most Infantry can not enter water.
      */
-    public boolean isHexProhibited( IHex hex ) {
-        if ( this.getModel().equals(CLAN_WATER_ELEMENTAL) ) {
+    public boolean isHexProhibited(IHex hex) {
+        // Oh, HELL no!
+        // This needs to be fixed.
+        // *grumbles*
+        if (this.getModel().equals(CLAN_WATER_ELEMENTAL)) {
             return false;
         }
         return (hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE));
@@ -462,13 +509,12 @@ public class BattleArmor
      * Set the troopers in the unit to the appropriate values.
      */
     public void autoSetInternal() {
-
         // No troopers in the squad location.
-        this.initializeInternal( IArmorState.ARMOR_NA, LOC_SQUAD );
+        this.initializeInternal(IArmorState.ARMOR_NA, LOC_SQUAD);
 
         // Initialize the troopers.
-        for ( int loop = 1; loop < this.locations(); loop++ ) {
-            this.initializeInternal( 1, loop );
+        for (int loop = 1; loop < this.locations(); loop++) {
+            this.initializeInternal(1, loop);
         }
 
         // Set the initial number of troopers that can shoot
@@ -480,44 +526,39 @@ public class BattleArmor
      * Mounts the specified equipment in the specified location.
      */
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
-        throws LocationFullException 
-    {
+        throws LocationFullException {
         // Implement parent's behavior.
-        super.addEquipment( mounted, loc, rearMounted );
+        super.addEquipment(mounted, loc, rearMounted);
 
         // Add the piece equipment to our slots.
-        addCritical( loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
+        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
                                            getEquipmentNum(mounted),
-                                           true) );
+                                           true));
 
         // Is the item a stealth equipment?
-        // TODO : what's the *real* extreme range modifier?
+        // TODO: what's the *real* extreme range modifier?
         String name = mounted.getType().getInternalName();
-        if ( BattleArmor.STEALTH.equals( name ) ) {
+        if (BattleArmor.STEALTH.equals(name)) {
             this.isStealthy = true;
             this.shortStealthMod  = 0;
             this.mediumStealthMod = 1;
             this.longStealthMod   = 2;
             this.stealthName = "basic stealth";
-        }
-        else if ( BattleArmor.ADVANCED_STEALTH.equals( name ) ) {
+        } else if (BattleArmor.ADVANCED_STEALTH.equals(name)) {
             this.isStealthy = true;
             this.shortStealthMod  = 1;
             this.mediumStealthMod = 1;
             this.longStealthMod   = 2;
             this.stealthName = "standard stealth";
-        }
-        else if ( BattleArmor.EXPERT_STEALTH.equals( name ) ) {
+        } else if (BattleArmor.EXPERT_STEALTH.equals(name)) {
             this.isStealthy = true;
             this.shortStealthMod  = 1;
             this.mediumStealthMod = 2;
             this.longStealthMod   = 3;
             this.stealthName = "improved stealth";
-        }
-        else if ( BattleArmor.MIMETIC_CAMO.equals( name ) ) {
+        } else if (BattleArmor.MIMETIC_CAMO.equals(name)) {
             this.isMimetic = true;
-        }
-        else if ( BattleArmor.SIMPLE_CAMO.equals( name ) ) {
+        } else if (BattleArmor.SIMPLE_CAMO.equals(name)) {
             this.isSimpleCamo = true;
         }
     }
@@ -607,6 +648,8 @@ public class BattleArmor
      */
     public void setBattleValue( int bv ) { myBV = bv; }
 
+    public void setCost( int inC ) { myCost = inC; }    
+
     /**
      * Determines if the battle armor unit is burdened with un-jettisoned
      * equipment.  This can prevent the unit from jumping or using their
@@ -679,69 +722,177 @@ public class BattleArmor
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( int range ) {
+    public TargetRoll getStealthModifier(int range) {
         TargetRoll result = null;
 
-        // Stealth must be active.
-        if ( !isStealthActive() ) {
-            result = new TargetRoll( 0, "stealth not active"  );
+        if (armorType != -1) {
+            /*
+            Here, in order, are the armor types used by custom Battle Armor at this point:
+            0: "Standard",
+            1: "Advanced",
+            2: "Prototype",
+            3: "Basic Stealth",
+            4: "Prototype Stealth",
+            5: "Standard Stealth",
+            6: "Improved Stealth",
+            7: "Fire Resistant",
+            8: "Mimetic"
+            */
+            if (armorType == 3) {
+                // Basic Stealth
+                switch (range) {
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        // At short range, basic stealth doesn't get a mod!
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(+1,
+                                                "Basic Stealth Armor");
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
+                        result = new TargetRoll(+2,
+                                                "Basic Stealth Armor");
+                        break;
+                    default:
+                        throw new IllegalArgumentException
+                            ("Unknown range constant: " + range);
+                }
+            } else if (armorType == 4) {
+                // Prototype Stealth
+                switch (range) {
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        // At short range, prototype stealth doesn't get a mod!
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(+1,
+                                                "Prototype Stealth Armor");
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
+                        result = new TargetRoll(+2,
+                                                "Prototype Stealth Armor");
+                        break;
+                    default:
+                        throw new IllegalArgumentException
+                            ("Unknown range constant: " + range);
+                }
+            } else if (armorType == 5) {
+                // Standard Stealth
+                switch (range) {
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        result = new TargetRoll(+1,
+                                                "Standard Stealth Armor");
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(+1,
+                                                "Standard Stealth Armor");
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
+                        result = new TargetRoll(+2,
+                                                "Standard Stealth Armor");
+                        break;
+                    default:
+                        throw new IllegalArgumentException
+                            ("Unknown range constant: " + range);
+                }
+            } else if (armorType == 6) {
+                // Improved Stealth
+                switch (range) {
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        result = new TargetRoll(+1,
+                                                "Improved Stealth Armor");
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(+2,
+                                                "Improved Stealth Armor");
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
+                        result = new TargetRoll(+3,
+                                                "Improved Stealth Armor");
+                        break;
+                    default:
+                        throw new IllegalArgumentException
+                            ("Unknown range constant: " + range);
+                }
+            } else if (armorType == 8) {
+                // Mimetic Armor
+                if (3 == this.delta_distance) {
+                    result = new TargetRoll(-1, "mimetic armor cancels movement bonus");
+                } else {
+                    result = new TargetRoll(3 - this.delta_distance, "mimetic armor");
+                }
+            }
+        } else {
+            // Mimetic armor modifier is based upon and replaces the movement
+            // bonus as listed below (BMRr, pg. 71):
+            //      0 hexes moved   +3 movement modifier
+            //      1 hex moved     +2 movement modifier
+            //      2 hexes moved   +1 movement modifier
+            //      3 hexes moved   +0 movement modifier
+            // N.B. Rather than mucking with Compute#getTargetMovementModifier,
+            // I decided to apply a -1 modifier here... the total works out.
+            if (isMimetic) {
+                if (3 == this.delta_distance) {
+                    result = new TargetRoll(-1,
+                                         "mimetic armor cancels movement bonus");
+                } else {
+                    result = new TargetRoll(3 - this.delta_distance,
+                                             "mimetic armor");
+                }
+            }
+    
+            // Stealthy units alreay have their to-hit mods defined.
+            if (isStealthy) {
+                switch (range) {
+                    case RangeType.RANGE_MINIMUM:
+                    case RangeType.RANGE_SHORT:
+                        result = new TargetRoll(this.shortStealthMod,
+                                                this.stealthName);
+                        break;
+                    case RangeType.RANGE_MEDIUM:
+                        result = new TargetRoll(this.mediumStealthMod,
+                                                this.stealthName);
+                        break;
+                    case RangeType.RANGE_LONG:
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
+                        result = new TargetRoll(this.longStealthMod,
+                                                this.stealthName);
+                        break;
+                    default:
+                        throw new IllegalArgumentException
+                            ("Unknown range constant: " + range);
+                }
+            }
         }
 
         // Simple camo modifier is on top of the movement modifier
         //      0 hexes moved   +2 movement modifier
         //      1+ hexes moved  +1 movement modifier
-        if ( isSimpleCamo ) {
-            if ( 0 == this.delta_distance ) {
-                result = new TargetRoll( 2, "camoflage" );
+        // This can also be in addition to any armor except Mimetic!
+        if (isSimpleCamo && delta_distance < 2) {
+            int mod = 0;
+            if (0 == this.delta_distance) {
+                mod = 2;
             } else {
-                result = new TargetRoll( 1, "camoflage" );
+                mod = 1;
             }
+            if (result == null)
+                result = new TargetRoll(mod, "camoflage");
+            else
+                result.append(new TargetRoll(mod, "camoflage"));
         }
-        
-        // Mimetic armor modifier is based upon and replaces the movement
-        // bonus as listed below (BMRr, pg. 71):
-        //      0 hexes moved   +3 movement modifier
-        //      1 hex moved     +2 movement modifier
-        //      2 hexes moved   +1 movement modifier
-        //      3 hexes moved   +0 movement modifier
-        // N.B. Rather than mucking with Compute#getTargetMovementModifier,
-        // I decided to apply a -1 modifier here... the total works out.
-        if ( isMimetic ) {
-            if ( 3 == this.delta_distance ) {
-            result = new TargetRoll( -1,
-                                     "mimetic armor cancels movement bonus" );
-            } else {
-                result = new TargetRoll( 3 - this.delta_distance,
-                                         "mimetic armor" );
-            }
-        }
-        
-        // Stealthy units alreay have their to-hit mods defined.
-        if ( isStealthy ) {
-            switch ( range ) {
-            case RangeType.RANGE_MINIMUM:
-            case RangeType.RANGE_SHORT:
-                result = new TargetRoll( this.shortStealthMod,
-                                         this.stealthName );
-                break;
-            case RangeType.RANGE_MEDIUM:
-                result = new TargetRoll( this.mediumStealthMod,
-                                         this.stealthName );
-                break;
-            case RangeType.RANGE_LONG:
-            case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
-                result = new TargetRoll( this.longStealthMod,
-                                         this.stealthName );
-                break;
-            default:
-                throw new IllegalArgumentException
-                    ( "Unknown range constant: " + range );
-            }
-        }
+
+        if (result == null)
+            result = new TargetRoll(0, "stealth not active");
 
         // Return the result.
         return result;
-
     } // End public TargetRoll getStealthModifier( char )
 
     public int getVibroClawDamage() {
@@ -760,6 +911,9 @@ public class BattleArmor
     }
     
     public double getCost() {
+        if (myCost > 0)
+            return myCost;
+
         if (chassis.equals("Clan Elemental")) return 3500000;
         if (chassis.equals("Clan Gnome")) return 5250000;
         if (chassis.equals("Clan Salamander")) return 3325000;
@@ -788,6 +942,22 @@ public class BattleArmor
 
     public boolean hasEiCockpit() {
         return true;
+    }
+
+    public void setWeightClass(int inWC) {
+        weightClass = inWC;
+    }
+
+    public int getWeightClass() {
+        return weightClass;
+    }
+
+    public void setChassisType(int inCT) {
+        chassisType = inCT;
+    }
+
+    public int getChassisType() {
+        return chassisType;
     }
 
     public boolean canAssaultDrop() {

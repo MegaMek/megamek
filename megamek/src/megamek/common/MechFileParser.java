@@ -43,6 +43,7 @@ public class MechFileParser {
             try {
                 parse(new FileInputStream(f), f.getName());
             } catch (Exception ex) {
+                ex.printStackTrace();
                 if (ex instanceof EntityLoadingException) {
                     throw new EntityLoadingException("While parsing file " + f.getName() + ", " + ex.getMessage());
                 } else {
@@ -56,6 +57,7 @@ public class MechFileParser {
                 zFile = new ZipFile(f);
                 parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
             } catch (Exception ex) {
+                ex.printStackTrace();
                 if (ex instanceof EntityLoadingException) {
                     throw new EntityLoadingException(ex.getMessage());
                 } else {
@@ -69,6 +71,7 @@ public class MechFileParser {
         try {
             parse(is, fileName);
         } catch (Exception ex) {
+            ex.printStackTrace();
             if (ex instanceof EntityLoadingException) {
                 throw new EntityLoadingException(ex.getMessage());
             } else {

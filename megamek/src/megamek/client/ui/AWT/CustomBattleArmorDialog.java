@@ -74,9 +74,24 @@ public class CustomBattleArmorDialog
     private Choice m_chLeftManipulator = new Choice();
     private Label m_labelRightManipulator = new Label(Messages.getString("CustomBattleArmorDialog.m_labelRightManipulator"), Label.RIGHT);
     private Choice m_chRightManipulator = new Choice();
-    private Label m_labelEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelEquipment"), Label.RIGHT);
-    private Choice m_chEquipment = new Choice();
-    private Button m_buttonAdd = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonAdd"));
+    private Label m_labelTorsoEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelTorsoEquipment"), Label.RIGHT);
+    private Choice m_chTorsoEquipment = new Choice();
+    private Button m_buttonAddTorso = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonAdd"));
+    private Label m_labelRightArmEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelRightArmEquipment"), Label.RIGHT);
+    private Choice m_chRightArmEquipment = new Choice();
+    private Button m_buttonAddRightArm = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonAdd"));
+    private Label m_labelLeftArmEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelLeftArmEquipment"), Label.RIGHT);
+    private Choice m_chLeftArmEquipment = new Choice();
+    private Button m_buttonAddLeftArm = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonAdd"));
+    private Label m_labelTorsoCurrentEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelTorsoEquipment"), Label.RIGHT);
+    private Choice m_chTorsoCurrentEquipment = new Choice();
+    private Button m_buttonRemoveTorso = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonRemove"));
+    private Label m_labelRightArmCurrentEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelRightArmEquipment"), Label.RIGHT);
+    private Choice m_chRightArmCurrentEquipment = new Choice();
+    private Button m_buttonRemoveRightArm = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonRemove"));
+    private Label m_labelLeftArmCurrentEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelLeftArmEquipment"), Label.RIGHT);
+    private Choice m_chLeftArmCurrentEquipment = new Choice();
+    private Button m_buttonRemoveLeftArm = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonRemove"));
 
     private Panel m_pButtons = new Panel();
     private Button m_bPick = new Button(Messages.getString("CustomBattleArmorDialog.m_bPick"));
@@ -215,6 +230,10 @@ public class CustomBattleArmorDialog
     public static final int[] TORSO_MAX_SLOTS = {2,4,4,6,8};
     public static final int[] QUAD_MAX_SLOTS = {0,5,7,9,11};
 
+    public static final int LOCATION_ALLOWED_ANY = 0;
+    public static final int LOCATION_ALLOWED_TORSO = 1;
+    public static final int LOCATION_ALLOWED_ARM = 2;
+
     private static final int F_CONFLICT_JUMP_GEAR = 0x00000001;
 
     public CustomBattleArmorDialog(ClientGUI cl, UnitLoadingDialog uld) {
@@ -325,10 +344,55 @@ public class CustomBattleArmorDialog
         tmpGL = new GridLayout(1,3);
         tmpP = new Panel();
         tmpP.setLayout(tmpGL);
-        tmpP.add(m_labelEquipment);
-        tmpP.add(m_chEquipment);
-        m_buttonAdd.addActionListener(this);
-        tmpP.add(m_buttonAdd);
+        tmpP.add(m_labelTorsoEquipment);
+        tmpP.add(m_chTorsoEquipment);
+        m_buttonAddTorso.addActionListener(this);
+        tmpP.add(m_buttonAddTorso);
+        m_pParams.add(tmpP);
+
+        tmpGL = new GridLayout(1,3);
+        tmpP = new Panel();
+        tmpP.setLayout(tmpGL);
+        tmpP.add(m_labelRightArmEquipment);
+        tmpP.add(m_chRightArmEquipment);
+        m_buttonAddRightArm.addActionListener(this);
+        tmpP.add(m_buttonAddRightArm);
+        m_pParams.add(tmpP);
+
+        tmpGL = new GridLayout(1,3);
+        tmpP = new Panel();
+        tmpP.setLayout(tmpGL);
+        tmpP.add(m_labelLeftArmEquipment);
+        tmpP.add(m_chLeftArmEquipment);
+        m_buttonAddLeftArm.addActionListener(this);
+        tmpP.add(m_buttonAddLeftArm);
+        m_pParams.add(tmpP);
+
+        tmpGL = new GridLayout(1,3);
+        tmpP = new Panel();
+        tmpP.setLayout(tmpGL);
+        tmpP.add(m_labelTorsoCurrentEquipment);
+        tmpP.add(m_chTorsoCurrentEquipment);
+        m_buttonRemoveTorso.addActionListener(this);
+        tmpP.add(m_buttonRemoveTorso);
+        m_pParams.add(tmpP);
+
+        tmpGL = new GridLayout(1,3);
+        tmpP = new Panel();
+        tmpP.setLayout(tmpGL);
+        tmpP.add(m_labelRightArmCurrentEquipment);
+        tmpP.add(m_chRightArmCurrentEquipment);
+        m_buttonRemoveRightArm.addActionListener(this);
+        tmpP.add(m_buttonRemoveRightArm);
+        m_pParams.add(tmpP);
+
+        tmpGL = new GridLayout(1,3);
+        tmpP = new Panel();
+        tmpP.setLayout(tmpGL);
+        tmpP.add(m_labelLeftArmCurrentEquipment);
+        tmpP.add(m_chLeftArmCurrentEquipment);
+        m_buttonRemoveLeftArm.addActionListener(this);
+        tmpP.add(m_buttonRemoveLeftArm);
         m_pParams.add(tmpP);
 
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -347,7 +411,7 @@ public class CustomBattleArmorDialog
         m_BAView.setFont(new Font("Monospaced", Font.PLAIN, 12));
         add(m_BAView, BorderLayout.CENTER);
 
-        setSize(770, 350);
+        setSize(770, 370);
         setLocation(computeDesiredLocation());
         new BattleArmorEquipment().initialize();
         populateChoices();
@@ -455,14 +519,71 @@ public class CustomBattleArmorDialog
     }
 
     private void updateEquipmentChoices() {
-        m_chEquipment.removeAll();
+        m_chTorsoEquipment.removeAll();
         Object[] tmpE = equipmentTypes.toArray();
         for (int x=0; x<tmpE.length; x++) {
             BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE[x]);
             if (((tmpBAE.techBase == TECH_BASE_BOTH)
                     || (tmpBAE.techBase == stateTechBase))
-                    && !(hasConflictFlag(tmpBAE.conflictFlag))) {
-                m_chEquipment.add(tmpBAE.name);
+                    && !(hasConflictFlag(tmpBAE.conflictFlag))
+                    && ((tmpBAE.allowedLocation == LOCATION_ALLOWED_ANY)
+                    || (tmpBAE.allowedLocation == LOCATION_ALLOWED_TORSO))) {
+                m_chTorsoEquipment.add(tmpBAE.name);
+            }
+        }
+
+        m_chRightArmEquipment.removeAll();
+        if (stateChassisType != CHASSIS_TYPE_QUAD) {
+            tmpE = equipmentTypes.toArray();
+            for (int x=0; x<tmpE.length; x++) {
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE[x]);
+                if (((tmpBAE.techBase == TECH_BASE_BOTH)
+                        || (tmpBAE.techBase == stateTechBase))
+                        && !(hasConflictFlag(tmpBAE.conflictFlag))
+                        && ((tmpBAE.allowedLocation == LOCATION_ALLOWED_ANY)
+                        || (tmpBAE.allowedLocation == LOCATION_ALLOWED_ARM))) {
+                    m_chRightArmEquipment.add(tmpBAE.name);
+                }
+            }
+        }
+
+        m_chLeftArmEquipment.removeAll();
+        if (stateChassisType != CHASSIS_TYPE_QUAD) {
+            tmpE = equipmentTypes.toArray();
+            for (int x=0; x<tmpE.length; x++) {
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE[x]);
+                if (((tmpBAE.techBase == TECH_BASE_BOTH)
+                        || (tmpBAE.techBase == stateTechBase))
+                        && !(hasConflictFlag(tmpBAE.conflictFlag))
+                        && ((tmpBAE.allowedLocation == LOCATION_ALLOWED_ANY)
+                        || (tmpBAE.allowedLocation == LOCATION_ALLOWED_ARM))) {
+                    m_chLeftArmEquipment.add(tmpBAE.name);
+                }
+            }
+        }
+
+        m_chLeftArmCurrentEquipment.removeAll();
+        if (leftArmEquipment != null) {
+            Enumeration tmpEE = leftArmEquipment.elements();
+            while (tmpEE.hasMoreElements()) {
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpEE.nextElement());
+                m_chLeftArmCurrentEquipment.add(tmpBAE.name);
+            }
+        }
+        m_chRightArmCurrentEquipment.removeAll();
+        if (rightArmEquipment != null) {
+            Enumeration tmpEE = rightArmEquipment.elements();
+            while (tmpEE.hasMoreElements()) {
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpEE.nextElement());
+                m_chRightArmCurrentEquipment.add(tmpBAE.name);
+            }
+        }
+        m_chTorsoCurrentEquipment.removeAll();
+        if (torsoEquipment != null) {
+            Enumeration tmpEE = torsoEquipment.elements();
+            while (tmpEE.hasMoreElements()) {
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpEE.nextElement());
+                m_chTorsoCurrentEquipment.add(tmpBAE.name);
             }
         }
     }
@@ -565,15 +686,8 @@ public class CustomBattleArmorDialog
     }
 
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() == m_buttonAdd) {
-            //FIXME
-            // This section is going to need some expanding!
-/*
-private Vector leftArmEquipment = null;
-private Vector rightArmEquipment = null;
-private Vector torsoEquipment = null;
-*/
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chEquipment.getSelectedItem())));
+        if (ae.getSource() == m_buttonAddTorso) {
+            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chTorsoEquipment.getSelectedItem())));
             if (torsoEquipment == null)
                 torsoEquipment = new Vector();
             torsoEquipment.add(tmpBAE);
@@ -587,8 +701,120 @@ private Vector torsoEquipment = null;
 
             // Nothing else in actionPerformed will matter, so lets move on!
             return;
-        }
-        if ((ae.getSource() == m_bPick) || (ae.getSource() == m_bPickClose)) {
+        } else if (ae.getSource() == m_buttonAddRightArm) {
+            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chRightArmEquipment.getSelectedItem())));
+            if (rightArmEquipment == null)
+                rightArmEquipment = new Vector();
+            rightArmEquipment.add(tmpBAE);
+            stateConflictFlags |= tmpBAE.conflictFlag;
+
+            // Make sure the BA preview is now correct...
+            previewBA();
+
+            // Make sure we update the equpment choices, since they may have now changed...
+            updateEquipmentChoices();
+
+            // Nothing else in actionPerformed will matter, so lets move on!
+            return;
+        } else if (ae.getSource() == m_buttonAddLeftArm) {
+            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chLeftArmEquipment.getSelectedItem())));
+            if (leftArmEquipment == null)
+                leftArmEquipment = new Vector();
+            leftArmEquipment.add(tmpBAE);
+            stateConflictFlags |= tmpBAE.conflictFlag;
+
+            // Make sure the BA preview is now correct...
+            previewBA();
+
+            // Make sure we update the equpment choices, since they may have now changed...
+            updateEquipmentChoices();
+
+            // Nothing else in actionPerformed will matter, so lets move on!
+            return;
+        } else if (ae.getSource() == m_buttonRemoveTorso) {
+            if (torsoEquipment != null) {
+                String removeItem = m_chTorsoCurrentEquipment.getSelectedItem();
+                Enumeration tmpE = torsoEquipment.elements();
+                while (tmpE.hasMoreElements()) {
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    if (tmpBAE.name.equals(removeItem)) {
+                        torsoEquipment.remove(tmpBAE);
+                        break;
+                    }
+                }
+                if (torsoEquipment.size() <= 0)
+                    torsoEquipment = null;
+    
+                // Make sure the BA preview is now correct...
+                previewBA();
+    
+                // Make sure we update the equpment choices, since they may have now changed...
+                updateEquipmentChoices();
+            }
+
+            // Nothing else in actionPerformed will matter, so lets move on!
+            return;
+        } else if (ae.getSource() == m_buttonRemoveRightArm) {
+            if (rightArmEquipment != null) {
+                String removeItem = m_chRightArmCurrentEquipment.getSelectedItem();
+                Enumeration tmpE = rightArmEquipment.elements();
+                while (tmpE.hasMoreElements()) {
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    if (tmpBAE.name.equals(removeItem)) {
+                        rightArmEquipment.remove(tmpBAE);
+                        break;
+                    }
+                }
+                if (rightArmEquipment.size() <= 0)
+                    rightArmEquipment = null;
+    
+                // Make sure the BA preview is now correct...
+                previewBA();
+    
+                // Make sure we update the equpment choices, since they may have now changed...
+                updateEquipmentChoices();
+            }
+
+            // Nothing else in actionPerformed will matter, so lets move on!
+            return;
+        } else if (ae.getSource() == m_buttonRemoveLeftArm) {
+/*
+    private Label m_labelTorsoCurrentEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelTorsoEquipment"), Label.RIGHT);
+    private Choice m_chTorsoCurrentEquipment = new Choice();
+    private Button m_buttonRemoveTorso = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonRemove"));
+    private Label m_labelRightArmCurrentEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelRightArmEquipment"), Label.RIGHT);
+    private Choice m_chRightArmCurrentEquipment = new Choice();
+    private Button m_buttonRemoveRightArm = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonRemove"));
+    private Label m_labelLeftArmCurrentEquipment = new Label(Messages.getString("CustomBattleArmorDialog.m_labelLeftArmEquipment"), Label.RIGHT);
+    private Choice m_chLeftArmCurrentEquipment = new Choice();
+    private Button m_buttonRemoveLeftArm = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonRemove"));
+    private Vector leftArmEquipment = null;
+    private Vector rightArmEquipment = null;
+    private Vector torsoEquipment = null;
+*/
+            if (leftArmEquipment != null) {
+                String removeItem = m_chLeftArmCurrentEquipment.getSelectedItem();
+                Enumeration tmpE = leftArmEquipment.elements();
+                while (tmpE.hasMoreElements()) {
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    if (tmpBAE.name.equals(removeItem)) {
+                        leftArmEquipment.remove(tmpBAE);
+                        break;
+                    }
+                }
+                if (leftArmEquipment.size() <= 0)
+                    leftArmEquipment = null;
+    
+                // Make sure the BA preview is now correct...
+                previewBA();
+    
+                // Make sure we update the equpment choices, since they may have now changed...
+                updateEquipmentChoices();
+            }
+
+            // Nothing else in actionPerformed will matter, so lets move on!
+            return;
+        } else if ((ae.getSource() == m_bPick) || (ae.getSource() == m_bPickClose)) {
             // Here, we need to add the current BA as a new entity, if it can legally do so...
             if (!isValid()) {
                 new megamek.client.ui.AWT.AlertDialog(m_clientgui.frame, "Can't do that!", "You can't add an invalid unit.").show();
@@ -612,6 +838,8 @@ private Vector torsoEquipment = null;
                 return;
             }
         }
+
+        // Specifically NOT an else/if, because this can happen at the same time as one option above.
         if ((ae.getSource() == m_bCancel) || (ae.getSource() == m_bPickClose)) {
             this.setVisible(false);
         }
@@ -667,6 +895,7 @@ private Vector torsoEquipment = null;
                 }
                 updateGroundMPChoices();
                 updateJumpMPChoices();
+                updateEquipmentChoices();
             }
         } else if (ie.getSource() == m_chWeightClass) {
             if (stateWeightClass != m_chWeightClass.getSelectedIndex()) {
@@ -1634,6 +1863,7 @@ private Vector torsoEquipment = null;
     protected class BattleArmorEquipment implements Comparable {
         // WeaponType/EquipmentType fields
         String name;
+/*
         int minimumRange = 0;
         int shortRange = 0;
         int mediumRange = 0;
@@ -1648,7 +1878,7 @@ private Vector torsoEquipment = null;
         int ammoType = 0;
         int flags = 0;
         int rackSize = 0;
-
+*/
         // Internal fields
         int weight = 0;
         int cost = 0;
@@ -1657,30 +1887,7 @@ private Vector torsoEquipment = null;
         int slots = 0;
         int techBase = -1;
         int conflictFlag = 0;
-/*
-    public static WeaponType createBAMG() {
-        WeaponType weapon = new WeaponType();
-
-        weapon.name = "Machine Gun";
-        weapon.setInternalName("BAMachineGun");
-        weapon.addLookupName("BA-Machine Gun");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_VARIABLE;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_BA_MG;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 1;
-        weapon.mediumRange = 2;
-        weapon.longRange = 3;
-        weapon.extremeRange = 4;
-        weapon.tonnage = 0.0f;
-        weapon.criticals = 0;
-        weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_BALLISTIC;
-
-        return weapon;
-    }
-*/
+        int allowedLocation = 0;
 
         void initialize() {
             CustomBattleArmorDialog.equipmentTypes = new ArrayList();
@@ -1689,20 +1896,12 @@ private Vector torsoEquipment = null;
             BattleArmorEquipment tmp = new BattleArmorEquipment();
             tmp.name = "BA-Machine Gun";
             tmp.weight = 100;
-            tmp.minimumRange = WeaponType.WEAPON_NA;
-            tmp.shortRange = 1;
-            tmp.mediumRange = 2;
-            tmp.longRange = 3;
-            tmp.extremeRange = 4;
-            tmp.damage = WeaponType.DAMAGE_VARIABLE;
-            tmp.rackSize = 2;
-            tmp.ammoType = AmmoType.T_BA_MG;
             tmp.cost = 5000;
             tmp.bv = 5;
-            tmp.flags |= WeaponType.F_DIRECT_FIRE | WeaponType.F_BATTLEARMOR | WeaponType.F_BALLISTIC;
             tmp.internalType = EQUIPMENT_TYPE_WEAPON;
             tmp.slots = 1;
             tmp.techBase = TECH_BASE_BOTH;
+            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
             CustomBattleArmorDialog.equipmentTypes.add(tmp);
             CustomBattleArmorDialog.equipmentNames.add(tmp.name);
 
@@ -1715,6 +1914,7 @@ private Vector torsoEquipment = null;
             tmp.internalType = EQUIPMENT_TYPE_PREPROCESS;
             tmp.techBase = TECH_BASE_BOTH;
             tmp.conflictFlag = F_CONFLICT_JUMP_GEAR;
+            tmp.allowedLocation = LOCATION_ALLOWED_TORSO;
             CustomBattleArmorDialog.equipmentTypes.add(tmp);
             CustomBattleArmorDialog.equipmentNames.add(tmp.name);
 
@@ -1727,6 +1927,7 @@ private Vector torsoEquipment = null;
             tmp.internalType = EQUIPMENT_TYPE_PREPROCESS;
             tmp.techBase = TECH_BASE_IS;
             tmp.conflictFlag = F_CONFLICT_JUMP_GEAR;
+            tmp.allowedLocation = LOCATION_ALLOWED_TORSO;
             CustomBattleArmorDialog.equipmentTypes.add(tmp);
             CustomBattleArmorDialog.equipmentNames.add(tmp.name);
         }

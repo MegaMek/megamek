@@ -1167,7 +1167,9 @@ implements Runnable, ConnectionHandler {
             Player.PLAYER_NONE : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
         boolean infMoveMulti =
-            game.getOptions().booleanOption("inf_move_multi");
+            game.getOptions().booleanOption("inf_move_multi") &&
+            (game.getPhase() == IGame.PHASE_INITIATIVE ||
+                    game.getPhase() == IGame.PHASE_MOVEMENT);
         boolean protosMoved = entityUsed instanceof Protomech;
         boolean protosMoveMulti =
             game.getOptions().booleanOption("protos_move_multi");

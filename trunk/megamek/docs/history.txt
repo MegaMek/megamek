@@ -128,6 +128,7 @@ v0.31.0 (CVS)
 + Bug 1278753: Artillery heat added twice in display
 + Bug 1287029: initiative bug with 5 protos/infantry per mech
 + RFE 1239960: auto-skip TAG and c3-m with tag
++ Streamlined check for RFE 1239960
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

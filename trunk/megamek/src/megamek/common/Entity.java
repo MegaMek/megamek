@@ -1692,8 +1692,7 @@ public abstract class Entity
                     && (!mounted.getType().hasFlag(WeaponType.F_AMS))
                     && ((mounted.getLinked() == null)
                     || (mounted.getLinked().getShotsLeft()>0))) {
-                if ( ((mounted.getType().hasFlag(WeaponType.F_C3M))
-                   || (mounted.getType().hasFlag(WeaponType.F_TAG)))
+                if (mounted.getType().hasFlag(WeaponType.F_TAG)
                    && game.getPhase()==IGame.PHASE_FIRING) {
                     continue;
                 }

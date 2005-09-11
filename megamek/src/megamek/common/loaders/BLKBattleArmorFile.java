@@ -111,6 +111,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         }
 
         // add the body to the armor array
+        t.refreshLocations();
         for (int x = 1; x < t.locations(); x++) {
             t.initializeArmor(armor[0], x);
         }

@@ -93,6 +93,7 @@ public class ChatLounge
     private Button butDeleteAll;
 
     private Button butLoad;
+    private Button butLoadCustomBA;
     private Button butDelete;
     private Button butCustom;
     private Button butMechReadout;
@@ -129,6 +130,7 @@ public class ChatLounge
     MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         public void doneLoading() {
             butLoad.setEnabled(true);
+            butLoadCustomBA.setEnabled(true);
         }
     };
     
@@ -592,9 +594,12 @@ public class ChatLounge
         butSaveList.setEnabled(false);
 
         butLoad = new Button(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
+//        butLoadCustomBA = new Button(Messages.getString("ChatLounge.butLoadCustomBA"));
+        butLoadCustomBA = new Button("Load Custom BA");
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
+        butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
 
         Font font = new Font("sanserif", Font.BOLD, 18); //$NON-NLS-1$
         if (null == font) {
@@ -604,6 +609,8 @@ public class ChatLounge
         }
         butLoad.setActionCommand("load_mech"); //$NON-NLS-1$
         butLoad.addActionListener(this);
+        butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
+        butLoadCustomBA.addActionListener(this);
 
         butCustom = new Button(Messages.getString("ChatLounge.butCustom")); //$NON-NLS-1$
         butCustom.setActionCommand("custom_mech"); //$NON-NLS-1$
@@ -640,10 +647,18 @@ public class ChatLounge
         gridbag.setConstraints(lisEntities, c);
         panEntities.add(lisEntities);
 
+/*
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = 1;
         c.gridheight = 2;
+        gridbag.setConstraints(butLoad, c);
+        panEntities.add(butLoad);
+*/
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
         gridbag.setConstraints(butLoad, c);
         panEntities.add(butLoad);
 
@@ -659,6 +674,13 @@ public class ChatLounge
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butDelete, c);
         panEntities.add(butDelete);
+
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        gridbag.setConstraints(butLoadCustomBA, c);
+        panEntities.add(butLoadCustomBA);
 
         c.gridwidth = 1;
         c.gridy = GridBagConstraints.RELATIVE;
@@ -1225,6 +1247,10 @@ public class ChatLounge
         clientgui.getMechSelectorDialog().show();
     }
 
+    public void loadCustomBA() {
+        clientgui.getCustomBADialog().show();
+    }
+
     //
     // GameListener
     //
@@ -1384,6 +1410,8 @@ public class ChatLounge
             }
         } else if (ev.getSource() == butLoad) {
             loadMech();
+        } else if (ev.getSource() == butLoadCustomBA) {
+            loadCustomBA();
         } else if (ev.getSource() == butCustom || ev.getSource() == lisEntities) {
             customizeMech();
         } else if (ev.getSource() == butDelete) {

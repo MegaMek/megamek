@@ -102,8 +102,20 @@ public class BattleArmorMapSet implements DisplayMapSet{
         BattleArmor ba = (BattleArmor) e;
         int armor = 0;
         int internal =0;
-        int men = 5;
-        
+        //int men = 5;
+        int men = Math.round(ba.getWeight());
+
+        for (int x=0; x<men; x++) {
+             armorAreas[x].setVisible(true);
+             armorLabels[x].setVisible(true);
+             unitAreas[x].setVisible(true);
+        }
+        for (int x=men; x<5; x++) {
+             armorAreas[x].setVisible(false);
+             armorLabels[x].setVisible(false);
+             unitAreas[x].setVisible(false);
+        }
+/*
         if (ba.isClan()){
              men = 5;
              armorAreas[4].setVisible(true);
@@ -115,18 +127,18 @@ public class BattleArmorMapSet implements DisplayMapSet{
              armorLabels[4].setVisible(false);
              unitAreas[4].setVisible(false);
         }
-        
-        for(int i = 0; i < men ; i++){
-                armor = (ba.getArmor(i+1, false) < 0) ? 0: ba.getArmor(i+1, false);
-                internal =  (ba.getInternal(i+1) < 0) ? 0: ba.getInternal(i+1);
-                if((armor+internal) == 0){
-                    armorAreas[i].setVisible(false);
-                    armorLabels[i].setValue(Messages.getString("BattleArmorMapSet.Killed")); //$NON-NLS-1$
-                } else {
-                    drawArmorImage(armorImage[i], armor+internal);
-                    armorLabels[i].setValue(Integer.toString(armor+internal));
+*/
+        for(int i = 0; i < men ; i++) {
+            armor = (ba.getArmor(i+1, false) < 0) ? 0: ba.getArmor(i+1, false);
+            internal =  (ba.getInternal(i+1) < 0) ? 0: ba.getInternal(i+1);
+            if((armor+internal) == 0){
+                armorAreas[i].setVisible(false);
+                armorLabels[i].setValue(Messages.getString("BattleArmorMapSet.Killed")); //$NON-NLS-1$
+            } else {
+                drawArmorImage(armorImage[i], armor+internal);
+                armorLabels[i].setValue(Integer.toString(armor+internal));
                 armorAreas[i].setVisible(true);
-                }
+            }
         }
     }
 

@@ -750,8 +750,10 @@ public class Compute {
         }
 
         // add any target stealth modifier
-        if ((target instanceof Entity) && ((Entity) target).isStealthActive()) {
-            mods.append(((Entity) target).getStealthModifier(usingRange));
+        if (target instanceof Entity) {
+            TargetRoll tmpTR = ((Entity)target).getStealthModifier(usingRange);
+            if (tmpTR.getValue() != 0)
+                mods.append(((Entity)target).getStealthModifier(usingRange));
         }
 
         return mods;
@@ -2510,10 +2512,8 @@ public class Compute {
                 reason.append(men);
                 reason.append(" trooper(s) active");
             }
-        }
-
-        // Non-BattleArmor infantry need many more men.
-        else if (attacker instanceof Infantry) {
+        } else if (attacker instanceof Infantry) {
+            // Non-BattleArmor infantry need many more men.
             Infantry inf = (Infantry) attacker;
             men = inf.getShootingStrength();
             if (men >= 22)
@@ -2526,16 +2526,14 @@ public class Compute {
                 base = 12;
             reason.append(men);
             reason.append(" men alive");
+        } else {
+        // No one else can conduct leg attacks.
+            reason.append("Attacker is not infantry.");
         }
 
         if (nightModifier > 0) {
             base += nightModifier;
             reason.append("Night Battle, no Spotlights");
-        }
-
-        // No one else can conduct leg attacks.
-        else {
-            reason.append("Attacker is not infantry.");
         }
 
         // Return the ToHitData for this attack.

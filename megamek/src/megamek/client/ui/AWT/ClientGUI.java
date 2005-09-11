@@ -86,6 +86,7 @@ public class ClientGUI
     private BoardSelectionDialog boardSelectionDialog;
     private GameOptionsDialog gameOptionsDialog;
     private MechSelectorDialog mechSelectorDialog;
+    private CustomBattleArmorDialog customBADialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
 
@@ -342,8 +343,9 @@ public class ClientGUI
         client.changePhase(IGame.PHASE_UNKNOWN);
 
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
+        customBADialog = new CustomBattleArmorDialog(this, unitLoadingDialog);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
-
+        new Thread(customBADialog, "Custom Battle Armor Dialog").start();
     }
 
     /**
@@ -601,6 +603,10 @@ public class ClientGUI
 
     public MechSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
+    }
+
+    public CustomBattleArmorDialog getCustomBADialog() {
+        return customBADialog;
     }
 
     public StartingPositionDialog getStartingPositionDialog() {

@@ -649,6 +649,9 @@ private Vector torsoEquipment = null;
             if (stateTechBase != m_chTechBase.getSelectedIndex()) {
                 // If the tech base actually changed, we might have to re-calculate things.
                 stateTechBase = m_chTechBase.getSelectedIndex();
+
+                // Because the tech base changed, available equipment may also have changed.
+                updateEquipmentChoices();
             }
         } else if (ie.getSource() == m_chChassisType) {
             if (stateChassisType != m_chChassisType.getSelectedIndex()) {
@@ -1722,7 +1725,7 @@ private Vector torsoEquipment = null;
             tmp.cost = 50000;
             tmp.bv = 0;
             tmp.internalType = EQUIPMENT_TYPE_PREPROCESS;
-            tmp.techBase = TECH_BASE_BOTH;
+            tmp.techBase = TECH_BASE_IS;
             tmp.conflictFlag = F_CONFLICT_JUMP_GEAR;
             CustomBattleArmorDialog.equipmentTypes.add(tmp);
             CustomBattleArmorDialog.equipmentNames.add(tmp.name);

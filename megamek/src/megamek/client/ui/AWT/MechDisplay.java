@@ -763,7 +763,7 @@ class WeaponPanel extends BufferedPanel
                 wn.append(" ");wn.append(mounted.curMode().getDisplayableName()); //$NON-NLS-1$
             }
             weaponList.add(wn.toString());
-            if (mounted.isUsedThisRound()
+            if (mounted.isUsedThisRound() && game.getPhase() == mounted.usedInPhase()
                 && game.getPhase() == IGame.PHASE_FIRING) {
                 // add heat from weapons fire to heat tracker
                 currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();

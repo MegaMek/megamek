@@ -131,6 +131,8 @@ v0.31.0 (CVS)
 + Streamlined check for RFE 1239960
 + Initial implementation of custom BA construction dialog.
 + Custom BA equipment list didn't update if tech base was changed.
++ Added ability to add items to custom BA locations separately.
++ Added ability to remove items from custom BA.
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

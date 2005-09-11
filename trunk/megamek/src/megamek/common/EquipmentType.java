@@ -157,6 +157,10 @@ public class EquipmentType {
 
     }
 
+    public void setFlags(int inF) {
+        flags = inF;
+    }
+
     public void setSubType(int newFlags) {
         subType = newFlags;
     }
@@ -320,9 +324,10 @@ public class EquipmentType {
     }
 
     public static EquipmentType get(String key) {
-        if ( null == EquipmentType.lookupHash ) {
+        if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }
+
         return (EquipmentType) EquipmentType.lookupHash.get(key);
     }
 

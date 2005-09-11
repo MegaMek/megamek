@@ -115,7 +115,10 @@ public class Mounted implements Serializable, RoundUpdated {
      * Restores the equipment from the name
      */
     public void restore() {
-        this.type = EquipmentType.get(typeName);
+        if (typeName == null)
+            typeName = type.getName();
+        else
+            this.type = EquipmentType.get(typeName);
 
         if (this.type == null) {
             System.err.println("Mounted.restore: could not restore equipment type \"" + typeName + "\"");
@@ -203,7 +206,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
-        if (type.hasModes() && pendingMode != -1) {
+        if ((type != null) && (type.hasModes() && pendingMode != -1)) {
             mode = pendingMode;
             pendingMode = -1;
         }

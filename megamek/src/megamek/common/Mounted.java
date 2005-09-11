@@ -68,6 +68,8 @@ public class Mounted implements Serializable, RoundUpdated {
     // vibrabomb mine setting
     private int vibraSetting = 20;
     
+    private int phase = IGame.PHASE_UNKNOWN;
+    
     public static final int MINE_NONE              = -1;
     public static final int MINE_CONVENTIONAL      = 0;
     public static final int MINE_VIBRABOMB         = 1;
@@ -265,8 +267,20 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void setUsedThisRound(boolean usedThisRound) {
         this.usedThisRound = usedThisRound;
+        if (usedThisRound) {
+            phase = entity.game.getPhase();
+        } else {
+            phase = IGame.PHASE_UNKNOWN;
+        }
     }
 
+    public int usedInPhase () {
+        if (usedThisRound) {
+            return phase;
+        } else {
+            return IGame.PHASE_UNKNOWN;
+        }
+    }
     public boolean isBreached() {
         return useless;
     }

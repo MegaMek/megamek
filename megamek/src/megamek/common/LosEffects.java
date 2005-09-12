@@ -285,6 +285,7 @@ public class LosEffects {
         final int probeRange = ae.getBAPRange();
         if ( !finalLoS.canSee()&& ae.hasBAP() 
                 &&  ai.targetEntity
+                && !(ai.targetInfantry && !(target instanceof BattleArmor) && probeRange!=8)
                 && !ai.underWaterCombat 
                 && ae.getPosition().distance(ai.targetPos) <= probeRange
                 && !Compute.isAffectedByECM(ae, ae.getPosition(), ai.targetPos)

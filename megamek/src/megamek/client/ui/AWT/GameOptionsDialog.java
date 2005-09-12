@@ -414,7 +414,10 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         } else if (e.getSource() == butSave) {
             doSave();
           
-            return;
+            //if the ok button is disabled then have the save button act 
+            //like a cancel button after saving.
+            if ( butOkay.isEnabled() )
+                return;
         }
         
         this.setVisible(false);

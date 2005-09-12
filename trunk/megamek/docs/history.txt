@@ -135,6 +135,7 @@ v0.31.0 (CVS)
 + Added ability to remove items from custom BA.
 + Torren's active probe patch
 + Bloodhound active probe can detect unarmoured infantry & stealth units, other probes can't
++ Torren's GameOptionsDialog patch
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

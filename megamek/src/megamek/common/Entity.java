@@ -2144,6 +2144,52 @@ public abstract class Entity
     }
 
     /**
+     * Does the mech have a functioning BAP?
+     * This is just for the basic BAP for Beagle BloodHound
+     * WatchDog Clan Active or Light.
+     */
+    public boolean hasBAP() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_BAP)) {
+                return !(m.isDestroyed()||m.isMissing() || m.isBreached() || isShutDown() 
+                        || Compute.isAffectedByECM(this, getPosition(), getPosition()) 
+                        || Compute.isAffectedByAngelECM(this,getPosition(),getPosition()));
+            }
+        }
+        return false;
+    }
+
+    /**
+     * What's the range of the BAP equipment?
+     *
+     * @return  the <code>int</code> range of this unit's BAP.  This value
+     *          will be <code>Entity.NONE</code> if no BAP is active.
+     */
+    public int getBAPRange() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType
+                    && type.hasFlag(MiscType.F_BAP)
+                    && !m.isDestroyed() && !m.isMissing()) {
+                //System.err.println("BAP type name: "+m.getName()+" internalName: "+((MiscType)m.getType()).internalName);
+                if ( m.getName().equals("Bloodhound Active Probe (THB)")
+                        || m.getName().equals("Bloodhound Active Probe"))
+                    return 8;
+                if ( ((MiscType)m.getType()).internalName.equals("CLActiveProbe") 
+                        ||  ((MiscType)m.getType()).internalName.equals("WatchdogECMSuite") )
+                    return 5;
+                if ( ((MiscType)m.getType()).internalName.equals("CLLightActiveProbe") )
+                    return 3;
+                return 4;//everthing else should be range 4
+            }
+        }
+        return Entity.NONE;
+    }
+
+    /**
      * Returns wether or not this entity has a Targeting Computer.
      */
     public boolean hasTargComp() {

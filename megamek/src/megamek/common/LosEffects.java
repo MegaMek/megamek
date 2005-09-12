@@ -60,6 +60,7 @@ public class LosEffects {
     public static final int COVER_75RIGHT =     0xB;    //75% cover         (blocked)
     
     boolean blocked = false;
+    boolean hasLoS = true;
     int lightWoods = 0;
     int heavyWoods = 0;
     int lightSmoke = 0;
@@ -160,7 +161,7 @@ public class LosEffects {
      * LOS check from ae to te.
      */
     public boolean canSee() {
-        return !blocked && (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) < 3;
+        return hasLoS;//!blocked && (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) < 3;
     }
 
     /**
@@ -191,7 +192,7 @@ public class LosEffects {
     
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targetHex = game.getBoard().getHex(target.getPosition());
-        
+
         int attEl = ae.absHeight() + attHex.getElevation();
         int targEl;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ||
@@ -260,7 +261,40 @@ public class LosEffects {
             ai.minimumWaterDepth = Math.min(attHex.terrainLevel(Terrains.WATER),
                     targetHex.terrainLevel(Terrains.WATER));
 
-        return calculateLos(game, ai);
+        LosEffects finalLoS = calculateLos(game, ai);
+        finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.lightWoods + finalLoS.lightSmoke) + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2) < 3;
+        
+        /*
+         * Torren (MekWars)
+         * If LOS is blocked
+         * And the Attacker has BAP that is working
+         * i.e. not effect by ECM or destoyed/damaged/breached/Shutdown
+         * And the target is a Non-Infantry Unit
+         * And the target is not under water
+         * And the target is in range of the Attackers BAP
+         * Then remove the Block.
+         * 
+         *  Note code was done with 2 version of BMR and maxtech rules from various user sources 
+         *  anything that is wrong please let me know for feature refence.
+         *  
+         *  This will not detect hidden units(not coded yet anyways)
+         *  This was designed for double blind.
+         *  
+         *  
+         */
+        final int probeRange = ae.getBAPRange();
+        if ( !finalLoS.canSee()&& ae.hasBAP() 
+                &&  ai.targetEntity
+                && !ai.underWaterCombat 
+                && ae.getPosition().distance(ai.targetPos) <= probeRange
+                && !Compute.isAffectedByECM(ae, ae.getPosition(), ai.targetPos)
+                && !Compute.isAffectedByAngelECM(ae, ae.getPosition(), ai.targetPos)) {
+            Entity te = (Entity)target;
+            if(probeRange==8 || !(te.isStealthActive()))
+                finalLoS.hasLoS = true;
+        }
+            
+        return finalLoS;
     }
 
     public static LosEffects calculateLos(IGame game, AttackInfo ai) {

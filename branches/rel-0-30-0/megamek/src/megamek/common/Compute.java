@@ -1280,9 +1280,7 @@ public class Compute {
             }
         }
 
-        boolean isVTOL = ((entityTarget != null) && (hex != null)) ? (entityTarget
-                .getElevation() >= hex.ceiling())
-                : false;
+        boolean isVTOL = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 2);
 
         ToHitData toHit = new ToHitData();
 

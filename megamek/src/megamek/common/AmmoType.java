@@ -3967,12 +3967,13 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 2;
+        ammo.shots = 1;
         ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
     }
+
     public static AmmoType createBAAdvancedSRM5Ammo() {
         AmmoType ammo = new AmmoType();
 

@@ -144,7 +144,8 @@ public class CustomBattleArmorDialog
 
     public static int EQUIPMENT_TYPE_WEAPON = 0;
     public static int EQUIPMENT_TYPE_PREPROCESS = 1;
-    public static int EQUIPMENT_TYPE_OTHER = 2;
+    public static int EQUIPMENT_TYPE_AMMO = 2;
+    public static int EQUIPMENT_TYPE_OTHER = 3;
 
     private static final int[][] ARMOR_TYPE_WEIGHT = {{50,
                                                        40,
@@ -1692,29 +1693,13 @@ public class CustomBattleArmorDialog
             }
 
             // Equipment and stuff needs to be set!
-/*
-    private Vector leftArmEquipment = null;
-    private Vector rightArmEquipment = null;
-    private Vector torsoEquipment = null;
-*/
             // Now all other equipment.
             if (leftArmEquipment != null) {
                 Enumeration tmpE = leftArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
-                    if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
-/*
-                        WeaponType tmpWT = new WeaponType();
-                        tmpWT.setDamage(tmpBAE.damage);
-                        tmpWT.setMinimumRange(tmpBAE.minimumRange);
-                        tmpWT.setRanges(tmpBAE.shortRange, tmpBAE.mediumRange, tmpBAE.longRange, tmpBAE.extremeRange);
-                        tmpWT.setWaterRanges(tmpBAE.waterShortRange, tmpBAE.waterMediumRange, tmpBAE.waterLongRange, tmpBAE.waterExtremeRange);
-                        tmpWT.setAmmoType(tmpBAE.ammoType);
-                        tmpWT.setFlags(tmpBAE.flags);
-                        tmpWT.setRackSize(tmpBAE.rackSize);
-                        retVal.addEquipment(tmpWT, BattleArmor.LOC_SQUAD);
-*/
-                        retVal.addEquipment(EquipmentType.get(tmpBAE.name), BattleArmor.LOC_SQUAD);
+                    if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) || (tmpBAE.internalType == EQUIPMENT_TYPE_AMMO)) {
+                        retVal.addEquipment(EquipmentType.get(tmpBAE.weaponTypeName), BattleArmor.LOC_SQUAD);
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_OTHER) {
                         //FIXME
                     }
@@ -1725,19 +1710,8 @@ public class CustomBattleArmorDialog
                 Enumeration tmpE = rightArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
-                    if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
-/*
-                        WeaponType tmpWT = new WeaponType();
-                        tmpWT.setDamage(tmpBAE.damage);
-                        tmpWT.setMinimumRange(tmpBAE.minimumRange);
-                        tmpWT.setRanges(tmpBAE.shortRange, tmpBAE.mediumRange, tmpBAE.longRange, tmpBAE.extremeRange);
-                        tmpWT.setWaterRanges(tmpBAE.waterShortRange, tmpBAE.waterMediumRange, tmpBAE.waterLongRange, tmpBAE.waterExtremeRange);
-                        tmpWT.setAmmoType(tmpBAE.ammoType);
-                        tmpWT.setFlags(tmpBAE.flags);
-                        tmpWT.setRackSize(tmpBAE.rackSize);
-                        retVal.addEquipment(tmpWT, BattleArmor.LOC_SQUAD);
-*/
-                        retVal.addEquipment(EquipmentType.get(tmpBAE.name), BattleArmor.LOC_SQUAD);
+                    if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) || (tmpBAE.internalType == EQUIPMENT_TYPE_AMMO)) {
+                        retVal.addEquipment(EquipmentType.get(tmpBAE.weaponTypeName), BattleArmor.LOC_SQUAD);
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_OTHER) {
                         //FIXME
                     }
@@ -1748,19 +1722,8 @@ public class CustomBattleArmorDialog
                 Enumeration tmpE = torsoEquipment.elements();
                 while (tmpE.hasMoreElements()) {
                     BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
-                    if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
-/*
-                        WeaponType tmpWT = new WeaponType();
-                        tmpWT.setDamage(tmpBAE.damage);
-                        tmpWT.setMinimumRange(tmpBAE.minimumRange);
-                        tmpWT.setRanges(tmpBAE.shortRange, tmpBAE.mediumRange, tmpBAE.longRange, tmpBAE.extremeRange);
-                        tmpWT.setWaterRanges(tmpBAE.waterShortRange, tmpBAE.waterMediumRange, tmpBAE.waterLongRange, tmpBAE.waterExtremeRange);
-                        tmpWT.setAmmoType(tmpBAE.ammoType);
-                        tmpWT.setFlags(tmpBAE.flags);
-                        tmpWT.setRackSize(tmpBAE.rackSize);
-                        retVal.addEquipment(tmpWT, BattleArmor.LOC_SQUAD);
-*/
-                        retVal.addEquipment(EquipmentType.get(tmpBAE.name), BattleArmor.LOC_SQUAD);
+                    if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) || (tmpBAE.internalType == EQUIPMENT_TYPE_AMMO)) {
+                        retVal.addEquipment(EquipmentType.get(tmpBAE.weaponTypeName), BattleArmor.LOC_SQUAD);
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_OTHER) {
                         //FIXME
                     }
@@ -1863,6 +1826,7 @@ public class CustomBattleArmorDialog
     protected class BattleArmorEquipment implements Comparable {
         // WeaponType/EquipmentType fields
         String name;
+        String weaponTypeName;
 /*
         int minimumRange = 0;
         int shortRange = 0;
@@ -1894,13 +1858,53 @@ public class CustomBattleArmorDialog
             CustomBattleArmorDialog.equipmentNames = new ArrayList();
 
             BattleArmorEquipment tmp = new BattleArmorEquipment();
-            tmp.name = "BA-Machine Gun";
+            tmp.name = "Support Machine Gun";
+            tmp.weaponTypeName = "BA-Machine Gun";
             tmp.weight = 100;
             tmp.cost = 5000;
             tmp.bv = 5;
             tmp.internalType = EQUIPMENT_TYPE_WEAPON;
             tmp.slots = 1;
             tmp.techBase = TECH_BASE_BOTH;
+            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
+            CustomBattleArmorDialog.equipmentTypes.add(tmp);
+            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
+
+            tmp = new BattleArmorEquipment();
+            tmp.name = "ER Support Laser";
+            tmp.weaponTypeName = "BA-Clan ER Small Laser";
+            tmp.weight = 250;
+            tmp.cost = 11250;
+            tmp.bv = 31;
+            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
+            tmp.slots = 2;
+            tmp.techBase = TECH_BASE_CLAN;
+            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
+            CustomBattleArmorDialog.equipmentTypes.add(tmp);
+            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
+
+            tmp = new BattleArmorEquipment();
+            tmp.name = "Advanced SRM 2 Launcher";
+            tmp.weaponTypeName = "Clan Advanced SRM-2";
+            tmp.weight = 90;
+            tmp.cost = 30000;
+            tmp.bv = 30;
+            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
+            tmp.slots = 2;
+            tmp.techBase = TECH_BASE_CLAN;
+            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
+            CustomBattleArmorDialog.equipmentTypes.add(tmp);
+            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
+
+            tmp = new BattleArmorEquipment();
+            tmp.name = "Advanced SRM 2 Ammo";
+            tmp.weaponTypeName = "BAAdvancedSRM2 Ammo";
+            tmp.weight = 20;
+            tmp.cost = 1000;
+            tmp.bv = 4;
+            tmp.internalType = EQUIPMENT_TYPE_AMMO;
+            tmp.slots = 1;
+            tmp.techBase = TECH_BASE_CLAN;
             tmp.allowedLocation = LOCATION_ALLOWED_ANY;
             CustomBattleArmorDialog.equipmentTypes.add(tmp);
             CustomBattleArmorDialog.equipmentNames.add(tmp.name);

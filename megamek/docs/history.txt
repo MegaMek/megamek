@@ -138,6 +138,7 @@ v0.31.0 (CVS)
 + Torren's GameOptionsDialog patch
 + Added a couple more pieces of equipment to Custom BA Dialog.
 + Bug 1288302: No woods to-hit modifier in sublevel woods
++ Indirect LRM fire using semiguided vs TAGged target has no penalty
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

@@ -708,11 +708,16 @@ class WeaponPanel extends BufferedPanel
             }
         }
         Coords position = entity.getPosition();
-        if (!en.isOffBoard()) {
-            if ( position != null
-                    && game.getBoard().getHex(position).terrainLevel(Terrains.FIRE) == 2 ) {
+        if (!en.isOffBoard() && position != null) {
+            IHex hex = game.getBoard().getHex(position);
+            if ( hex.terrainLevel(Terrains.FIRE) == 2 ) {
                    currentHeatBuildup += 5; // standing in fire
                }
+            if ( hex.terrainLevel(Terrains.MAGMA) == 1) {
+                currentHeatBuildup += 5;
+            } else if (hex.terrainLevel(Terrains.MAGMA) == 2) {
+                currentHeatBuildup += 10;
+            }
         }
         if ( en instanceof Mech && en.isStealthActive() ) {
             currentHeatBuildup += 10; // active stealth heat

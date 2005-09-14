@@ -865,6 +865,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (Targetable.TYPE_HEX_CLEAR == target.getTargetType()) {
             IHex hexTarget = game.getBoard().getHex(target.getPosition()); 
             if(!hexTarget.containsTerrain(Terrains.WOODS) &&
+               !hexTarget.containsTerrain(Terrains.JUNGLE) &&
                !(hexTarget.containsTerrain(Terrains.ICE) && hexTarget.containsTerrain(Terrains.WATER))) {
                 return new String("Target terrain cannot be cleared.");
             }
@@ -889,6 +890,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if ( !isInferno
                 && (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                 && !((game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.WOODS))
+                    || (game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.JUNGLE))
                     || (game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.BUILDING)))) {
             return new String("Only Infernos can start fires except woods and building hexes.");
         }

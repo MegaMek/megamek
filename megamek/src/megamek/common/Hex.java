@@ -163,7 +163,10 @@ public class Hex implements IHex, Serializable {
         // Account for woods.
         // N.B. VTOLs are allowed to enter smoke.
         if ( this.containsTerrain( Terrains.WOODS ) ) {
-            maxFeature = 2;
+            maxFeature = Math.min(2, terrainLevel(Terrains.WOODS));
+        }
+        if ( this.containsTerrain( Terrains.JUNGLE ) ) {
+            maxFeature = Math.min(2, terrainLevel(Terrains.JUNGLE));
         }
 
         // Account for buildings.
@@ -304,5 +307,23 @@ public class Hex implements IHex, Serializable {
             }
         }
         return new Hex(elevation, tcopy, theme);
+    }
+    
+    public int terrainPilotingModifier() {
+        int rv = 0;
+        for(int i=0; i<terrains.length; i++) {
+            if(terrains[i] != null)
+                rv += terrains[i].pilotingModifier();
+        }
+        return rv;
+    }
+    
+    public int movementCost(int moveType) {
+        int rv = 0;
+        for(int i=0; i<terrains.length; i++) {
+            if(terrains[i] != null)
+                rv += terrains[i].movementCost(moveType);
+        }
+        return rv;
     }
 }

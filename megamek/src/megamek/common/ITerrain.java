@@ -81,4 +81,14 @@ public interface ITerrain {
      */
     public abstract boolean exitsTo(ITerrain other);
 
+    /**
+     * 
+     * @return the modifier to PSRs made in this terrain
+     */
+    public abstract int pilotingModifier();
+    /**
+     * 
+     * @return the additional movement cost for this terrain
+     */
+    public abstract int movementCost(int moveType);
 }

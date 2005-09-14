@@ -139,6 +139,8 @@ v0.31.0 (CVS)
 + Added a couple more pieces of equipment to Custom BA Dialog.
 + Bug 1288302: No woods to-hit modifier in sublevel woods
 + Indirect LRM fire using semiguided vs TAGged target has no penalty
++ Level 3 terrain from maxtech (except geyser eruptions)
++ Carpe Mortis' mud & magma tiles
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

@@ -38,12 +38,23 @@ public class Terrains implements ITerrainFactory {
     public static final int ARMS = 18; //blown off arms for use as clubs, level = number of arms in that hex
     public static final int LEGS = 19; //blown off legs for use as clubs, level = number of legs in that hex
     public static final int ICE = 20;
+    //level 3 terrain types (MaxTech)
     public static final int FORTIFIED = 21;
+    public static final int GEYSER = 22; //1: dormant 2: active
+    public static final int JUNGLE = 23; //levels 1,2,3 
+    public static final int MAGMA = 24; //1: crust 2: liquid
+    public static final int MUD = 25; //1: can't bog down 2: can bog down
+    public static final int RAPIDS = 26;
+    public static final int SAND = 27;
+    public static final int SNOW = 28;
+    public static final int TUNDRA = 29;
+    
 
     private static final String[] names = {"none", "woods", "rough", "rubble",
             "water", "pavement", "road", "fire", "smoke", "swamp",
             "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
-            "bridge_elev", "fluff", "arms", "legs", "ice", "fortified"};
+            "bridge_elev", "fluff", "arms", "legs", "ice", "fortified", "geyser",
+            "jungle", "magma", "mud", "rapids", "sand", "snow", "tundra"};
     
     public static final int SIZE = names.length;
 

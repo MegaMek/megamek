@@ -2775,6 +2775,12 @@ public class Server implements Runnable {
 
         overallMoveType = md.getLastStepMovementType();
 
+        //check for starting in liquid magma
+        if(game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.MAGMA) == 2
+            && entity.getElevation() == 0) {
+            doMagmaDamage(entity);
+        }            
+
         // iterate through steps
         firstStep = true;
         fellDuringMovement = false;
@@ -2882,6 +2888,12 @@ public class Server implements Runnable {
             curFacing = step.getFacing();
             curVTOLElevation = step.getElevation();
             final IHex curHex = game.getBoard().getHex(curPos);
+
+            // check for automatic unstick
+            if(entity.canUnstickByJumping() && entity.isStuck() && moveType == IEntityMovementType.MOVE_JUMP) {
+                entity.setStuck(false);
+                entity.setCanUnstickByJumping(false);
+            }
 
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
@@ -3293,6 +3305,31 @@ public class Server implements Runnable {
                             }
                         }
                         
+                        //check for breaking magma crust
+                        if(curHex.terrainLevel(Terrains.MAGMA) == 1) {
+                            int roll = Compute.d6(1);
+                            r = new Report(2395);
+                            r.addDesc(entity);
+                            r.add(roll);
+                            r.subject = entity.getId();
+                            vPhaseReport.addElement(r);
+                            if(roll == 6) {
+                                curHex.removeTerrain(Terrains.MAGMA);
+                                curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
+                                sendChangedHex(curPos);
+                                for(Enumeration e=game.getEntities(curPos);e.hasMoreElements();) {
+                                    Entity en = (Entity)e.nextElement();
+                                    if(en != entity)
+                                        doMagmaDamage(en);
+                                }
+                            }
+                        }
+
+                        //check for entering liquid magma
+                        if(curHex.terrainLevel(Terrains.MAGMA) == 2) {
+                            doMagmaDamage(entity);
+                        }            
+
                         // is the next hex a swamp?
                         rollTarget = entity.checkSwampMove(step, nextHex, 
                                                               curPos, nextPos);
@@ -3495,7 +3532,9 @@ public class Server implements Runnable {
                                                   crashVTOL(((VTOL)entity),true,distance,curPos,curVTOLElevation,table));
                             curVTOLElevation=0;
                             IHex hex = game.getBoard().getHex(newPos);
-                            if((hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)) || hex.containsTerrain(Terrains.WOODS)) {
+                            if((hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE))
+                                || hex.containsTerrain(Terrains.WOODS)
+                                || hex.containsTerrain(Terrains.JUNGLE)) {
                                 Server.combineVectors(vPhaseReport,
                                                       destroyEntity(entity,"could not land in crash site"));
                             } else {
@@ -3524,12 +3563,42 @@ public class Server implements Runnable {
                                          true);
             }
 
+            //check for breaking magma crust
+            if(curHex.terrainLevel(Terrains.MAGMA) == 1
+                && step.getElevation() == 0
+                && step.getMovementType() != IEntityMovementType.MOVE_JUMP) {
+                int roll = Compute.d6(1);
+                r = new Report(2395);
+                r.addDesc(entity);
+                r.add(roll);
+                r.subject = entity.getId();
+                vPhaseReport.addElement(r);
+                if(roll == 6) {
+                    curHex.removeTerrain(Terrains.MAGMA);
+                    curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
+                    sendChangedHex(curPos);
+                    for(Enumeration e=game.getEntities(curPos);e.hasMoreElements();) {
+                        Entity en = (Entity)e.nextElement();
+                        if(en != entity)
+                            doMagmaDamage(en);
+                    }
+                }
+            }
+
+            //check for entering liquid magma
+            if(curHex.terrainLevel(Terrains.MAGMA) == 2
+                && step.getElevation() == 0
+                && step.getMovementType() != IEntityMovementType.MOVE_JUMP) {
+                doMagmaDamage(entity);
+            }            
+
             // check if we've moved into a swamp
             rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 if (!doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
                                          false)){
                     entity.setStuck(true);
+                    entity.setCanUnstickByJumping(true);
                     r = new Report(2081);
                     r.add(entity.getDisplayName());
                     r.subject = entity.getId();
@@ -3539,9 +3608,11 @@ public class Server implements Runnable {
             }
 
             // check to see if we are a mech and we've moved OUT of fire
+            IHex lastHex = game.getBoard().getHex(lastPos);
             if (entity instanceof Mech) {
                 if ( !lastPos.equals(curPos)
-                    && game.getBoard().getHex(lastPos).containsTerrain(Terrains.FIRE)
+                    && (lastHex.containsTerrain(Terrains.FIRE)
+                            || lastHex.containsTerrain(Terrains.MAGMA))
                     && ( step.getMovementType() != IEntityMovementType.MOVE_JUMP
                          // Bug #828741 -- jumping bypasses fire, but not on the first step
                          //   getMpUsed -- total MP used to this step
@@ -3550,10 +3621,20 @@ public class Server implements Runnable {
                          //   and >0 on a step in the midst of a jump
                          || ( 0 == step.getMpUsed() - step.getMp() ) ) )
                 {
-                    entity.heatBuildup+=2;
+                    int heat=0;
+                    if(lastHex.containsTerrain(Terrains.FIRE))
+                        heat+=2;
+                    if(lastHex.terrainLevel(Terrains.MAGMA) == 1) {
+                        heat+=2;
+                    }
+                    else if(lastHex.terrainLevel(Terrains.MAGMA) == 2) {
+                        heat+=5;
+                    }
+                    entity.heatBuildup+=heat;
                     r = new Report(2115);
                     r.subject = entity.getId();
                     r.addDesc(entity);
+                    r.add(heat);
                     vPhaseReport.addElement(r);
                 }
             }
@@ -3677,7 +3758,7 @@ public class Server implements Runnable {
                 if(entity.getElevation() == 0) {
                     int roll = Compute.d6(1);
                     r = new Report(2118);
-                    r.add(entity.getDisplayName(), true);
+                    r.addDesc(entity);
                     r.add(roll);
                     r.subject = entity.getId();
                     vPhaseReport.addElement(r);
@@ -3822,7 +3903,7 @@ public class Server implements Runnable {
             // dropping prone intentionally?
             if (step.getType() == MovePath.STEP_GO_PRONE) {
                 mpUsed = step.getMpUsed();
-                rollTarget = entity.checkDislodgeSwarmers();
+                rollTarget = entity.checkDislodgeSwarmers(step);
                 if (rollTarget.getValue() == TargetRoll.CHECK_FALSE) {
                     // Not being swarmed
                     entity.setProne(true);
@@ -3846,8 +3927,8 @@ public class Server implements Runnable {
             
             //going hull down
             if(step.getType() == MovePath.STEP_HULL_DOWN) {
-            	mpUsed = step.getMpUsed();
-            	entity.setHullDown(true);
+                mpUsed = step.getMpUsed();
+                entity.setHullDown(true);
             }
 
             // Track this step's location.
@@ -3890,14 +3971,15 @@ public class Server implements Runnable {
 
         // but the danger isn't over yet!  landing from a jump can be risky!
         if (overallMoveType == IEntityMovementType.MOVE_JUMP && !entity.isMakingDfa()) {
+            final IHex curHex = game.getBoard().getHex(curPos);
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage();
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
             }
             // jumped into water?
-            int waterLevel = game.getBoard().getHex(curPos).terrainLevel(Terrains.WATER);
-            if(game.getBoard().getHex(curPos).containsTerrain(Terrains.ICE) && waterLevel > 0) {
+            int waterLevel = curHex.terrainLevel(Terrains.WATER);
+            if(curHex.containsTerrain(Terrains.ICE) && waterLevel > 0) {
                 waterLevel = 0;
                 //check for breaking ice
                 int roll = Compute.d6(1);
@@ -3921,8 +4003,37 @@ public class Server implements Runnable {
                 drownSwarmer(entity, curPos);
             }
 
+            //check for breaking magma crust
+            if(curHex.terrainLevel(Terrains.MAGMA) == 1) {
+                int roll = Compute.d6(1);
+                r = new Report(2395);
+                r.addDesc(entity);
+                r.add(roll);
+                r.subject = entity.getId();
+                vPhaseReport.addElement(r);
+                if(roll == 6) {
+                    curHex.removeTerrain(Terrains.MAGMA);
+                    curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
+                    sendChangedHex(curPos);
+                    for(Enumeration e=game.getEntities(curPos);e.hasMoreElements();) {
+                        Entity en = (Entity)e.nextElement();
+                        if(en != entity)
+                            doMagmaDamage(en);
+                    }
+                }
+            }
+
+            //check for entering liquid magma
+            if(curHex.terrainLevel(Terrains.MAGMA) == 2) {
+                doMagmaDamage(entity);
+            }            
+
             // jumped into swamp? maybe stuck!
-            if (game.getBoard().getHex(curPos).containsTerrain(Terrains.SWAMP)) {
+            if (curHex.containsTerrain(Terrains.SWAMP)
+                || curHex.containsTerrain(Terrains.MAGMA)
+                || curHex.containsTerrain(Terrains.SNOW)
+                || curHex.containsTerrain(Terrains.MUD)
+                || curHex.containsTerrain(Terrains.TUNDRA)) {
                 if (entity instanceof Mech) {
                     entity.setStuck(true);
                     r = new Report(2121);
@@ -3948,6 +4059,8 @@ public class Server implements Runnable {
                 final Entity swarmer = game.getEntity( swarmerId );
                 final PilotingRollData roll =
                     entity.getBasePilotingRoll();
+
+                entity.addPilotingModifierForTerrain(roll);
 
                 // Add a +4 modifier.
                 roll.addModifier( 4, "dislodge swarming infantry" );
@@ -3993,7 +4106,6 @@ public class Server implements Runnable {
                     swarmer.setSwarmTargetId( Entity.NONE );
 
                     // Did the infantry fall into water?
-                    final IHex curHex = game.getBoard().getHex(curPos);
                     if ( curHex.terrainLevel(Terrains.WATER) > 0 ) {
                         // Swarming infantry die.
                         swarmer.setPosition( curPos );
@@ -4993,6 +5105,7 @@ public class Server implements Runnable {
                     // only given a modifier, so flesh out into a full piloting roll
                     PilotingRollData pilotRoll = entity.getBasePilotingRoll();
                     pilotRoll.append(roll);
+                    entity.addPilotingModifierForTerrain(pilotRoll, dest);
                     doEntityFall(entity, dest, fallElevation, 3, pilotRoll);
                     doEntityDisplacementMinefieldCheck(entity, src, dest);
 
@@ -5900,7 +6013,8 @@ public class Server implements Runnable {
         }
 
         // Are there woods in the hex?
-        else if ( 1 <= curHex.terrainLevel( Terrains.WOODS ) ) {
+        else if ( curHex.containsTerrain( Terrains.WOODS )
+                || curHex.containsTerrain( Terrains.JUNGLE ) ) {
             clubType = EquipmentType.get("Tree Club");
             r = new Report(3055);
             r.subject = entity.getId();
@@ -6176,9 +6290,10 @@ public class Server implements Runnable {
     private void tryClearHex(Coords c, int nTarget, int entityId) {
         IHex h = game.getBoard().getHex(c);
         int woods = h.terrainLevel(Terrains.WOODS);
+        int jungle = h.terrainLevel(Terrains.JUNGLE);
         boolean ice = h.containsTerrain(Terrains.ICE);
         Report r;
-        if (woods == ITerrain.LEVEL_NONE && !ice) {
+        if (woods == ITerrain.LEVEL_NONE && jungle == ITerrain.LEVEL_NONE && !ice) {
             //woods already cleared
             r = new Report(3075);
             r.indent(3);
@@ -6194,7 +6309,15 @@ public class Server implements Runnable {
             r.newlines = 0;
             vPhaseReport.addElement(r);
             if(woodsRoll >= nTarget) {
-                if(woods > 1) {
+                if(woods > 2) {
+                    h.removeTerrain(Terrains.WOODS);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, woods - 1));
+                    //ultra heavy converted to heavy
+                    r = new Report(3082);
+                    r.subject = entityId;
+                    vPhaseReport.addElement(r);
+                }
+                else if(woods == 2) {
                     h.removeTerrain(Terrains.WOODS);
                     h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, woods - 1));
                     //heavy converted to light
@@ -6207,6 +6330,30 @@ public class Server implements Runnable {
                     h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
                     //light converted to rough
                     r = new Report(3090);
+                    r.subject = entityId;
+                    vPhaseReport.addElement(r);
+                }
+                else if(jungle > 2) {
+                    h.removeTerrain(Terrains.JUNGLE);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, jungle - 1));
+                    //ultra heavy converted to heavy
+                    r = new Report(3083);
+                    r.subject = entityId;
+                    vPhaseReport.addElement(r);
+                }
+                else if(jungle == 2) {
+                    h.removeTerrain(Terrains.JUNGLE);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, jungle - 1));
+                    //heavy converted to light
+                    r = new Report(3086);
+                    r.subject = entityId;
+                    vPhaseReport.addElement(r);
+                }
+                else if(jungle == 1) {
+                    h.removeTerrain(Terrains.JUNGLE);
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                    //light converted to rough
+                    r = new Report(3091);
                     r.subject = entityId;
                     vPhaseReport.addElement(r);
                 }
@@ -9529,6 +9676,7 @@ public class Server implements Runnable {
         // Thrash attacks cause PSRs.  Failed PSRs cause falling damage.
         // This fall damage applies even though the Thrashing Mek is prone.
         PilotingRollData rollData = ae.getBasePilotingRoll();
+        ae.addPilotingModifierForTerrain(rollData);
         rollData.addModifier( 0, "thrashing at infantry" );
         r = new Report(4140);
         r.subject = ae.getId();
@@ -10519,6 +10667,14 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     vPhaseReport.addElement(r);
                 }
+                int magma = entityHex.terrainLevel(Terrains.MAGMA);
+                if(magma > 0) {
+                    entity.heatBuildup += 5 * magma;
+                    r = new Report(5032);
+                    r.subject = entity.getId();
+                    r.add(5 * magma);
+                    vPhaseReport.addElement(r);                    
+                }
             }
             
             // if heatbuildup is negative due to temperature, set it to 0
@@ -11117,6 +11273,7 @@ public class Server implements Runnable {
         Vector rolls = new Vector();
         StringBuffer reasons = new StringBuffer();
         PilotingRollData base = entity.getBasePilotingRoll();
+        entity.addPilotingModifierForTerrain(base);
         for (Enumeration i = game.getPSRs(); i.hasMoreElements();) {
             final PilotingRollData modifier = (PilotingRollData)i.nextElement();
             if (modifier.getEntityId() != entity.getId()) {
@@ -11427,6 +11584,7 @@ public class Server implements Runnable {
             te_hex = game.getBoard().getHex( te.getPosition() );
             if ( te_hex != null &&
                  !te_hex.containsTerrain( Terrains.WOODS ) &&
+                 !te_hex.containsTerrain( Terrains.JUNGLE ) &&
                  !te_hex.containsTerrain( Terrains.ROUGH ) &&
                  !te_hex.containsTerrain( Terrains.RUBBLE ) &&
                  !te_hex.containsTerrain( Terrains.SWAMP ) &&
@@ -12086,7 +12244,8 @@ public class Server implements Runnable {
         //Light our hex on fire
           final IHex curHex = game.getBoard().getHex(en.getPosition());
 
-          if ( (null != curHex) && !curHex.containsTerrain(Terrains.FIRE) && curHex.containsTerrain(Terrains.WOODS) ) {
+          if ( (null != curHex) && !curHex.containsTerrain(Terrains.FIRE) && 
+                (curHex.containsTerrain(Terrains.WOODS) || curHex.containsTerrain(Terrains.JUNGLE))) {
             curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
             r = new Report(6170, Report.PUBLIC);
             r.subject = en.getId();
@@ -12788,7 +12947,7 @@ public class Server implements Runnable {
         } else {
             Coords pos=en.getPosition();
             IHex hex = game.getBoard().getHex(pos);
-            if(hex.containsTerrain(Terrains.WOODS)) {
+            if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
             } else {
                 game.getBoard().addInfernoTo(pos, InfernoTracker.STANDARD_ROUND, 1);
@@ -13661,6 +13820,8 @@ public class Server implements Runnable {
             roll.addModifier(height, "height of fall");
         }
 
+        entity.addPilotingModifierForTerrain(roll, fallPos);
+
         if (roll.getValue() == PilotingRollData.IMPOSSIBLE) {
             r = new Report(2320);
             r.subject = entity.getId();
@@ -13865,7 +14026,8 @@ public class Server implements Runnable {
                 boolean infernoBurning = board.burnInferno( currentCoords );
 
                 // optional rule, woods burn down
-                if (currentHex.containsTerrain(Terrains.WOODS) && currentHex.terrainLevel(Terrains.FIRE) == 2 && game.getOptions().booleanOption("woods_burn_down")) {
+                if ((currentHex.containsTerrain(Terrains.WOODS) || currentHex.containsTerrain(Terrains.JUNGLE))
+                        && currentHex.terrainLevel(Terrains.FIRE) == 2 && game.getOptions().booleanOption("woods_burn_down")) {
                     burnDownWoods(currentCoords);
                 }
 
@@ -13873,6 +14035,7 @@ public class Server implements Runnable {
                 // has collapsed put non-inferno fires out.
                 if ( currentHex.containsTerrain(Terrains.FIRE) && !infernoBurning &&
                      !(currentHex.containsTerrain(Terrains.WOODS)) &&
+                     !(currentHex.containsTerrain(Terrains.JUNGLE)) &&
                      !(currentHex.containsTerrain(Terrains.BUILDING)) ) {
                     removeFire(currentXCoord, currentYCoord, currentHex);
                 }
@@ -13948,7 +14111,15 @@ public class Server implements Runnable {
         int roll = Compute.d6(2);
         Report r;
         if(roll >= 11) {
-            if(hex.terrainLevel(Terrains.WOODS) > 1) {
+            if(hex.terrainLevel(Terrains.WOODS) > 2) {
+                hex.removeTerrain(Terrains.WOODS);
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, 2));
+                //ultra heavy woods burned down to heavy woods
+                r = new Report(5141, Report.PUBLIC);
+                r.add(coords.getBoardNum());
+                vPhaseReport.addElement(r);
+            }
+            else if(hex.terrainLevel(Terrains.WOODS) == 2) {
                 hex.removeTerrain(Terrains.WOODS);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, 1));
                 //heavy woods burned down to light woods
@@ -13961,6 +14132,30 @@ public class Server implements Runnable {
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
                 //light woods burns down, fire goes out
                 r = new Report(5145, Report.PUBLIC);
+                r.add(coords.getBoardNum());
+                vPhaseReport.addElement(r);
+            }
+            if(hex.terrainLevel(Terrains.JUNGLE) > 2) {
+                hex.removeTerrain(Terrains.JUNGLE);
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, 2));
+                //ultra heavy jungle burned down to heavy jungle
+                r = new Report(5143, Report.PUBLIC);
+                r.add(coords.getBoardNum());
+                vPhaseReport.addElement(r);
+            }
+            else if(hex.terrainLevel(Terrains.JUNGLE) == 2) {
+                hex.removeTerrain(Terrains.JUNGLE);
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, 1));
+                //heavy jungle burned down to light jungle
+                r = new Report(5142, Report.PUBLIC);
+                r.add(coords.getBoardNum());
+                vPhaseReport.addElement(r);
+            }
+            else if(hex.terrainLevel(Terrains.JUNGLE) == 1) {
+                hex.removeTerrain(Terrains.JUNGLE);
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                //light jungle burns down, fire goes out
+                r = new Report(5146, Report.PUBLIC);
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
             }
@@ -14017,7 +14212,7 @@ public class Server implements Runnable {
      * @param   roll - the <code>int</code> target number for the ignition roll
      * @param   bAnyTerrain - <code>true</code> if the fire can be lit in any
      *          terrain.  If this value is <code>false</code> the hex will be
-     *          lit only if it contains Woods or a Building.
+     *          lit only if it contains Woods,jungle or a Building.
      * @param   entityId - the entityId responsible for the ignite attempt.
      *          If the value is Entity.NONE, then the roll attempt will not
      *          be included in the report.
@@ -14038,6 +14233,7 @@ public class Server implements Runnable {
 
         if ( !bAnyTerrain &&
              !(hex.containsTerrain(Terrains.WOODS)) &&
+             !(hex.containsTerrain(Terrains.JUNGLE)) &&
              !(hex.containsTerrain(Terrains.BUILDING)) ) {
             return false;
         }
@@ -14068,7 +14264,7 @@ public class Server implements Runnable {
      * @param   roll - the <code>int</code> target number for the ignition roll
      * @param   bAnyTerrain - <code>true</code> if the fire can be lit in any
      *          terrain.  If this value is <code>false</code> the hex will be
-     *          lit only if it contains Woods or a Building.
+     *          lit only if it contains Woods, jungle or a Building.
      */
     public boolean ignite(IHex hex, int roll, boolean bAnyTerrain)  {
        return ignite(hex, roll, bAnyTerrain, Entity.NONE);
@@ -16137,6 +16333,7 @@ public class Server implements Runnable {
                         // should use mods for entity damage and
                         // 20+ points of collapse damage (if any).
                         PilotingRollData psr = entity.getBasePilotingRoll();
+                        entity.addPilotingModifierForTerrain(psr, coords);
                         if ( damage >= 20 ) {
                             psr.addModifier( 1, "20+ damage" );
                         }
@@ -16930,6 +17127,7 @@ public class Server implements Runnable {
                     } else if (game.getOptions().floatOption("gravity") > 1) {
                         // jumping in high g is bad for your legs
                         rollTarget = entity.getBasePilotingRoll();
+                        entity.addPilotingModifierForTerrain(rollTarget, step);
                         rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
                         game.addExtremeGravityPSR(rollTarget);
                     }
@@ -17024,6 +17222,14 @@ public class Server implements Runnable {
                     rollTarget.addModifier(2, "landing in light woods");
                 } else if (targetHex.terrainLevel(Terrains.WOODS) == 2) {
                     rollTarget.addModifier(3, "landing in heavy woods");
+                } else if (targetHex.terrainLevel(Terrains.WOODS) == 3) {
+                    rollTarget.addModifier(4, "landing in ultra heavy woods");
+                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 1) {
+                    rollTarget.addModifier(3, "landing in light jungle");
+                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 2) {
+                    rollTarget.addModifier(5, "landing in heavy jungle");
+                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 3) {
+                    rollTarget.addModifier(7, "landing in ultra heavy jungle");
                 } else if (targetHex.terrainLevel(Terrains.BLDG_ELEV) > 0) {
                     rollTarget.addModifier(targetHex.terrainLevel(Terrains.BLDG_ELEV), "landing in a building");
                 } else rollTarget.addModifier(-2, "landing in clear terrain");
@@ -17296,6 +17502,13 @@ public class Server implements Runnable {
         while (stuckEntities.hasMoreElements()) {
             Entity entity = (Entity)stuckEntities.nextElement();
             rollTarget = entity.getBasePilotingRoll();
+            entity.addPilotingModifierForTerrain(rollTarget);
+            // apart from swamp & liquid magma, -1 modifier
+            IHex hex = game.getBoard().getHex(entity.getPosition());
+            if(!(hex.containsTerrain(Terrains.SWAMP))
+                && !(hex.terrainLevel(Terrains.MAGMA) == 2)) {
+                rollTarget.addModifier(-1, "bogged down");
+            }
             // okay, print the info
             r = new Report(2340);
             r.addDesc(entity);
@@ -17312,6 +17525,7 @@ public class Server implements Runnable {
             } else {
                 r.choose(true);
                 entity.setStuck(false);
+                entity.setCanUnstickByJumping(false);
             }
             vPhaseReport.addElement(r);
         }
@@ -17597,6 +17811,34 @@ public class Server implements Runnable {
                 doAssaultDrop(e);
                 e.setLandedAssaultDrop();
             }
+        }
+    }
+    
+    void doMagmaDamage(Entity en) {
+        if((en.getMovementMode() == IEntityMovementMode.VTOL ||
+           (en.getMovementMode() == IEntityMovementMode.HOVER && en.getOriginalWalkMP() > 0))
+           && !(en.isImmobile())) {
+           return;
+        }
+        Report r;
+        boolean isMech = en instanceof Mech;
+        if(isMech)
+            r = new Report(2405);
+        else
+            r = new Report(2400);
+        r.addDesc(en);
+        r.subject = en.getId();
+        vPhaseReport.add(r);
+        if(isMech) {
+            HitData h;
+            for(int i=0;i<en.locations();i++) {
+                if(en.locationIsLeg(i) || en.isProne()) {
+                    h = new HitData(i);
+                    combineVectors(vPhaseReport, damageEntity(en, h, Compute.d6(2)));
+                }
+            }
+        } else {
+            destroyEntity(en, "fell into magma", false, false);
         }
     }
 }

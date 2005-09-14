@@ -2554,4 +2554,8 @@ public abstract class Mech
     public boolean canAssaultDrop() {
         return true;
     }
+    
+    public boolean isHexProhibited(IHex hex) {
+        return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
+    }
 }

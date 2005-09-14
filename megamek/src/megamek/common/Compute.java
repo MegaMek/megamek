@@ -1310,6 +1310,20 @@ public class Compute {
         ToHitData toHit = new ToHitData();
 
         // Smoke and woods. With L3, the effects STACK.
+        int woodsLevel = hex.terrainLevel(Terrains.WOODS);
+        int jungleLevel = hex.terrainLevel(Terrains.JUNGLE);
+        String woodsText = "woods";
+        if(woodsLevel < jungleLevel) {
+            woodsLevel = jungleLevel;
+            woodsText = "jungle";
+        }
+        if(woodsLevel == 1) {
+            woodsText = "target in light " + woodsText;
+        } else if (woodsLevel == 2) {
+            woodsText = "target in heavy " + woodsText;
+        } else if (woodsLevel == 3) {
+            woodsText = "target in ultra heavy " + woodsText;
+        }
         if (!game.getOptions().booleanOption("maxtech_fire")) { // L2
             if (hex.containsTerrain(Terrains.SMOKE)) {
                 if (eistatus > 0) {
@@ -1317,6 +1331,12 @@ public class Compute {
                 } else {
                     toHit.addModifier(2, "target in smoke");
                 }
+            } else if (hex.terrainLevel(Terrains.GEYSER) == 2) {
+                if (eistatus > 0) {
+                    toHit.addModifier(1, "target in erupting geyser");
+                } else {
+                    toHit.addModifier(2, "target in erupting geyser");
+                }                
             } else {
                 if (!isVTOL
                         && !(t.getTargetType() == Targetable.TYPE_HEX_CLEAR
@@ -1327,13 +1347,13 @@ public class Compute {
                                 || t.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV
                                 || t.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV || t
                                 .getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
-                    if (hex.terrainLevel(Terrains.WOODS) == 1 && eistatus != 2) {
-                        toHit.addModifier(1, "target in light woods");
-                    } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
+                    if (woodsLevel == 1 && eistatus != 2) {
+                        toHit.addModifier(1, woodsText);
+                    } else if (woodsLevel > 1) {
                         if (eistatus > 0) {
-                            toHit.addModifier(1, "target in heavy woods");
+                            toHit.addModifier(woodsLevel - 1, woodsText);
                         } else {
-                            toHit.addModifier(2, "target in heavy woods");
+                            toHit.addModifier(woodsLevel, woodsText);
                         }
                     }
                 }
@@ -1348,6 +1368,13 @@ public class Compute {
                     toHit.addModifier(2, "target in heavy smoke");
                 }
             }
+            if (hex.terrainLevel(Terrains.GEYSER) == 2) {
+                if (eistatus > 0) {
+                    toHit.addModifier(1, "target in erupting geyser");
+                } else {
+                    toHit.addModifier(2, "target in erupting geyser");
+                }
+            }
             if (!isVTOL
                     && !(t.getTargetType() == Targetable.TYPE_HEX_CLEAR
                             || t.getTargetType() == Targetable.TYPE_HEX_IGNITE
@@ -1357,13 +1384,13 @@ public class Compute {
                             || t.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV
                             || t.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV || t
                             .getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
-                if (hex.terrainLevel(Terrains.WOODS) == 1 && eistatus != 2) {
-                    toHit.addModifier(1, "target in light woods");
-                } else if (hex.terrainLevel(Terrains.WOODS) > 1) {
+                if (woodsLevel == 1 && eistatus != 2) {
+                    toHit.addModifier(1, woodsText);
+                } else if (woodsLevel > 1) {
                     if (eistatus > 0) {
-                        toHit.addModifier(1, "target in heavy woods");
+                        toHit.addModifier(woodsLevel - 1, woodsText);
                     } else {
-                        toHit.addModifier(2, "target in heavy woods");
+                        toHit.addModifier(woodsLevel, woodsText);
                     }
                 }
             }
@@ -1712,6 +1739,7 @@ public class Compute {
                     g.getEntity(waa.getTargetId()).getPosition().x,
                     g.getEntity(waa.getTargetId()).getPosition().y);
             if (!e_hex.containsTerrain(Terrains.WOODS)
+                    && !e_hex.containsTerrain(Terrains.JUNGLE)
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
                 fDamage *= 2.0f;
             }

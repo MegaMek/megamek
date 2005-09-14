@@ -162,6 +162,9 @@ public class MiniMap extends Canvas  {
         m_terrainColors[Terrains.BUILDING] = new Color(204,204,204);
         m_terrainColors[Terrains.BRIDGE]   = new Color(109,55,25);
         m_terrainColors[Terrains.ICE]      = new Color(204,204,255);
+        m_terrainColors[Terrains.MAGMA]    = new Color(200,0,0);
+        m_terrainColors[Terrains.MUD]      = new Color(218, 160, 100);
+        m_terrainColors[Terrains.JUNGLE]   = new Color(180,230,130);
 
         // now try to read in the config file
         int red;
@@ -806,7 +809,7 @@ public class MiniMap extends Canvas  {
                 terrColor = m_terrainColors[j];
                 terrain = j;
                 // make heavy woods darker
-                if (j == Terrains.WOODS && x.getTerrain(j).getLevel() > 1) {
+                if ((j == Terrains.WOODS || j == Terrains.JUNGLE) && x.getTerrain(j).getLevel() > 1) {
                     terrColor = HEAVY_WOODS;
                 }
                 // contains both smoke and fire
@@ -821,6 +824,7 @@ public class MiniMap extends Canvas  {
         switch (terrain) {
         case 0 :
         case Terrains.WOODS :
+        case Terrains.JUNGLE :
         case Terrains.ROUGH :
         case Terrains.RUBBLE :
         case Terrains.WATER :

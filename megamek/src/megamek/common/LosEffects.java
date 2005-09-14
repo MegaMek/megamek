@@ -63,6 +63,7 @@ public class LosEffects {
     boolean hasLoS = true;
     int lightWoods = 0;
     int heavyWoods = 0;
+    int ultraWoods = 0;
     int lightSmoke = 0;
     int heavySmoke = 0; // heavySmoke is also standard for normal L2 smoke
     int targetCover = COVER_NONE;  // that means partial cover
@@ -78,6 +79,7 @@ public class LosEffects {
         this.blocked |= other.blocked;
         this.lightWoods += other.lightWoods;
         this.heavyWoods += other.heavyWoods;
+        this.ultraWoods += other.ultraWoods;
         this.lightSmoke += other.lightSmoke;
         this.heavySmoke += other.heavySmoke;
         this.targetCover |= other.targetCover;
@@ -94,6 +96,10 @@ public class LosEffects {
     
     public int getHeavyWoods() {
         return heavyWoods;
+    }
+    
+    public int getUltraWoods() {
+        return ultraWoods;
     }
 
     public int getLightSmoke() {
@@ -262,7 +268,7 @@ public class LosEffects {
                     targetHex.terrainLevel(Terrains.WATER));
 
         LosEffects finalLoS = calculateLos(game, ai);
-        finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.lightWoods + finalLoS.lightSmoke) + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2) < 3;
+        finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.lightWoods + finalLoS.lightSmoke) + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2) + (finalLoS.ultraWoods * 3) < 3;
         
         /*
          * Torren (MekWars)
@@ -333,7 +339,7 @@ public class LosEffects {
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain.");
         }
         
-        if (lightWoods + (heavyWoods * 2) > 2) {
+        if (ultraWoods >= 1 || lightWoods + (heavyWoods * 2) > 2) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods.");
         }
 
@@ -645,11 +651,17 @@ public class LosEffects {
                   if (hex.containsTerrain(Terrains.SMOKE)) {
                     los.heavySmoke++;
                   }
-                  else if (hex.terrainLevel(Terrains.WOODS) == 1) {
+                  else if (hex.terrainLevel(Terrains.WOODS) == 1
+                          || hex.terrainLevel(Terrains.JUNGLE) == 1) {
                     los.lightWoods++;
                   }
-                  else if (hex.terrainLevel(Terrains.WOODS) > 1) {
+                  else if (hex.terrainLevel(Terrains.WOODS) == 2
+                          || hex.terrainLevel(Terrains.JUNGLE) == 2) {
                     los.heavyWoods++;
+                  }
+                  else if (hex.terrainLevel(Terrains.WOODS) == 3
+                          || hex.terrainLevel(Terrains.JUNGLE) == 3) {
+                      los.ultraWoods++;
                   }
                 }
                 // if the L3 fire/smoke rule is on, smoke and woods stack for LOS
@@ -664,11 +676,17 @@ public class LosEffects {
                     }
                   }
 
-                  if (hex.terrainLevel(Terrains.WOODS) == 1) {
+                  if (hex.terrainLevel(Terrains.WOODS) == 1
+                          || hex.terrainLevel(Terrains.JUNGLE) == 1) {
                     los.lightWoods++;
                   }
-                  else if (hex.terrainLevel(Terrains.WOODS) > 1) {
+                  else if (hex.terrainLevel(Terrains.WOODS) == 2
+                          || hex.terrainLevel(Terrains.JUNGLE) == 2) {
                     los.heavyWoods++;
+                  }
+                  else if (hex.terrainLevel(Terrains.WOODS) == 3
+                          || hex.terrainLevel(Terrains.JUNGLE) == 3) {
+                    los.ultraWoods++;
                   }
                 }
             }

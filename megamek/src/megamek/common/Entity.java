@@ -89,6 +89,7 @@ public abstract class Entity
     protected boolean           spotlightIsActive = false;
     protected boolean           usedSearchlight = false;
     protected boolean           stuckInSwamp = false;
+    protected boolean           canUnstickByJumping = false;
     protected int               taggedBy = -1;
     protected boolean           layingMines = false;
     
@@ -769,7 +770,7 @@ public abstract class Entity
         boolean inWaterOrWoods = false;
         IHex hex = getGame().getBoard().getHex(assumedPos);
         int absoluteElevation = assumedElevation+hex.surface();
-        if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER)) {
+        if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.JUNGLE)) {
             inWaterOrWoods=true;
         }
         if(inWaterOrWoods) {
@@ -3086,7 +3087,7 @@ public abstract class Entity
 
         // append the reason modifier
         roll.append(new PilotingRollData(getId(), 0, "getting up"));
-
+        addPilotingModifierForTerrain(roll, step);
         return roll;
     }
 
@@ -3110,7 +3111,7 @@ public abstract class Entity
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not attempting to run with damage");
         }
-
+        addPilotingModifierForTerrain(roll);
         return roll;
     }
 
@@ -3127,6 +3128,7 @@ public abstract class Entity
             || hasLegActuatorCrit()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg actuator or gyro"));
+            addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,"Entity does not have gyro or leg accutator damage -- checking for purposes of determining PSR after jump.");
         }
@@ -3136,6 +3138,7 @@ public abstract class Entity
     
     public PilotingRollData checkMovedTooFast(MoveStep step) {
         PilotingRollData roll = getBasePilotingRoll();
+        addPilotingModifierForTerrain(roll, step);
         switch (step.getMovementType()) {
             case IEntityMovementType.MOVE_WALK:
             case IEntityMovementType.MOVE_RUN:
@@ -3164,6 +3167,7 @@ public abstract class Entity
                                       Coords lastPos, Coords curPos,
                                       boolean isInfantry, int distance) {
         PilotingRollData roll = getBasePilotingRoll();
+        addPilotingModifierForTerrain(roll, lastPos);
 
         // TODO: add check for elevation of pavement, road,
         //       or bridge matches entity elevation.
@@ -3213,6 +3217,7 @@ public abstract class Entity
     public PilotingRollData checkRubbleMove(MoveStep step, IHex curHex,
                                             Coords lastPos, Coords curPos) {
         PilotingRollData roll = getBasePilotingRoll();
+        addPilotingModifierForTerrain(roll, curPos);
 
         if (!lastPos.equals(curPos)
             && step.getMovementType() != IEntityMovementType.MOVE_JUMP
@@ -3230,24 +3235,33 @@ public abstract class Entity
     /** 
      * Checks if the entity is moving into a swamp. If so, returns
      *  the target roll for the piloting skill check.
+     *  now includes the level 3 terains which can bog down
      */
     public PilotingRollData checkSwampMove(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos) {
         PilotingRollData roll = getBasePilotingRoll();
+        //DO NOT add terrain modifier, or the example in maxtech would have the wrong target number
 
         if (!lastPos.equals(curPos)
             && step.getMovementType() != IEntityMovementType.MOVE_JUMP
-            && curHex.containsTerrain(Terrains.SWAMP)) {
+            && (this.getMovementMode() != IEntityMovementMode.HOVER) 
+            && (this.getMovementMode() != IEntityMovementMode.VTOL)) {
             // non-hovers need a simple PSR
-            if ((this.getMovementMode() != IEntityMovementMode.HOVER) && (this.getMovementMode() != IEntityMovementMode.VTOL)) {
+            if (curHex.containsTerrain(Terrains.SWAMP)) {
                 // append the reason modifier
                 roll.append(new PilotingRollData(getId(), 0, "entering Swamp"));
-            // hovers don't care about swamp    
+            } else if (curHex.terrainLevel(Terrains.MAGMA) == 2) {
+                roll.append(new PilotingRollData(getId(), 0, "entering Liquid Magma"));
+            } else if (curHex.containsTerrain(Terrains.MAGMA) ||
+                    curHex.containsTerrain(Terrains.MUD) ||
+                    curHex.containsTerrain(Terrains.SNOW) ||
+                    curHex.containsTerrain(Terrains.TUNDRA)) {
+                roll.append(new PilotingRollData(getId(), -1, "avoid bogging down"));
             } else {
-                roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Shouldn't have trouble entering swamp b/c movement type is hover");                
+                roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: no swamp-like terrain present");                
             }
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Not entering swamp, or jumping over the swamp");
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Not entering swamp, or jumping/hovering over the swamp");
         }
         return roll;
     }
@@ -3306,7 +3320,7 @@ public abstract class Entity
      * Checks if the entity is being swarmed.  If so, returns the
      *  target roll for the piloting skill check to dislodge them.
      */
-    public PilotingRollData checkDislodgeSwarmers() {
+    public PilotingRollData checkDislodgeSwarmers(MoveStep step) {
 
         // If we're not being swarmed, return CHECK_FALSE
         if (Entity.NONE == getSwarmAttackerId()) {
@@ -3316,6 +3330,7 @@ public abstract class Entity
         // append the reason modifier
         PilotingRollData roll = getBasePilotingRoll();
         roll.append(new PilotingRollData(getId(), 0, "attempting to dislodge swarmers by dropping prone"));
+        addPilotingModifierForTerrain(roll, step);
 
         return roll;
     }
@@ -4603,6 +4618,20 @@ public abstract class Entity
         stuckInSwamp = arg;
     }
     
+    /**
+     * Is the Entity stuck in a swamp?
+     */
+   public boolean canUnstickByJumping() {
+       return canUnstickByJumping;
+   }
+   /**
+    * Set wether this Enity is stuck in a swamp or not
+    * @param arg the <code>boolean</code> value to assign
+    */
+   public void setCanUnstickByJumping(boolean arg) {
+       canUnstickByJumping = arg;
+   }
+   
     /* The following methods support the eventual refactoring into the Entity class of a lot of the Server logic surrounding entity damage and death.  
      * They are not currently called in Server anywhere, and so may as well not exist. */
     
@@ -4983,5 +5012,38 @@ public abstract class Entity
     }
     public boolean isAssaultDropInProgress() {
         return assaultDropInProgress != 0;
+    }
+    
+    /**
+     *  Apply PSR modifier for difficult terrain at the specified coordinates
+     * @param roll the PSR to modify
+     * @param c the coordinates where the PSR happens
+     */
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c) {
+        if(c==null || roll==null) return;
+        IHex hex = game.getBoard().getHex(c);
+        int modifier = hex.terrainPilotingModifier();
+        if(modifier != 0) {
+            roll.addModifier(modifier, "difficult terrain");
+        }
+    }
+    
+    /**
+     * Apply PSR modifier for difficult terrain at the move step position
+     * @param roll the PSR to modify
+     * @param step the move step the PSR occurs at
+     */
+    public void addPilotingModifierForTerrain(PilotingRollData roll, MoveStep step) {
+        if(step.getElevation() > 0) return;
+        addPilotingModifierForTerrain(roll, step.getPosition());
+    }
+    
+    /**
+     * Apply PSR modifier for difficult terrain in the current position
+     * @param roll the PSR to modify
+     */
+    public void addPilotingModifierForTerrain(PilotingRollData roll) {
+        if(getElevation() > 0) return;
+        addPilotingModifierForTerrain(roll, getPosition());
     }
 }

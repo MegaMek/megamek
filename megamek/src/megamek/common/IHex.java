@@ -189,4 +189,14 @@ public interface IHex extends Cloneable{
      */
     public abstract IHex duplicate();
     
+    /**
+     * @return modifier to PSRs made in the hex
+     */
+    public abstract int terrainPilotingModifier();
+    
+    /**
+     * (Only if statically determinable)
+     * @return extra movement cost for entering the hex
+     */
+    public abstract int movementCost(int moveType);
 }

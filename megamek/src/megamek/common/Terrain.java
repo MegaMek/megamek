@@ -233,4 +233,54 @@ public class Terrain implements ITerrain, Serializable {
     public String toString() {
         return Terrains.getName(type) + ":" + level + (exitsSpecified ? ":" + exits : "");
     }
+    
+    public int pilotingModifier() {
+        switch(type) {
+        case Terrains.JUNGLE:
+            return level;
+        case Terrains.MAGMA:
+            return (level==2) ? 4 : 1;
+        case Terrains.TUNDRA:
+        case Terrains.SAND:
+        case Terrains.SNOW:
+        case Terrains.GEYSER:
+        case Terrains.MUD:
+            return 1;
+        case Terrains.RAPIDS:
+            return 2;
+        default:
+            return 0;
+        }
+    }
+    
+    public int movementCost(int moveType) {
+        switch(type) {
+        case Terrains.MAGMA:
+        case Terrains.GEYSER:
+            return level - 1;
+        case Terrains.WOODS:
+            return level;
+        case Terrains.JUNGLE:
+            return level + 1;
+        case Terrains.SNOW:
+        case Terrains.MUD:
+        case Terrains.ROUGH:
+        case Terrains.RAPIDS:
+        case Terrains.SWAMP:
+            if(moveType == IEntityMovementMode.HOVER)
+                return 0;
+            return 1;
+        case Terrains.RUBBLE:
+            return 1;
+        case Terrains.SAND:
+            if(moveType == IEntityMovementMode.WHEELED ||
+                    moveType == IEntityMovementMode.INF_JUMP ||
+                    moveType == IEntityMovementMode.INF_LEG ||
+                    moveType == IEntityMovementMode.INF_MOTORIZED)
+                return 1;
+            return 0;
+        default:
+            return 0;
+        }
+    }
 }

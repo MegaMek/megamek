@@ -77,6 +77,7 @@ public class FindClubAction extends AbstractEntityAction {
         // a medium, heavy, or hardened building,
         // or a blown off limb
         if ( hex.terrainLevel(Terrains.WOODS) < 1 &&
+             hex.terrainLevel(Terrains.JUNGLE) < 1 &&
              hex.terrainLevel(Terrains.RUBBLE) < Building.MEDIUM && 
              hex.terrainLevel(Terrains.ARMS) < 1 &&
              hex.terrainLevel(Terrains.LEGS) < 1) {

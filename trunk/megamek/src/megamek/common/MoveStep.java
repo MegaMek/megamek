@@ -397,10 +397,16 @@ public class MoveStep implements Serializable {
         // Update the entity's total MP used.
         addMpUsed(getMp());
 
-        // Check for fire in the new hex.
-        if (game.getBoard().getHex(getPosition()).containsTerrain(Terrains.FIRE)) {
+        int magmaLevel = destHex.terrainLevel(Terrains.MAGMA);
+        // Check for fire or magma crust in the new hex.
+        if (destHex.containsTerrain(Terrains.FIRE) || magmaLevel == 1) {
             heat = 2;
             totalHeat += 2;
+        }
+        // Check for liquid magma
+        else if(magmaLevel == 2) {
+            heat = 5;
+            totalHeat += 5;
         }
 
         // Check for a stacking violation.
@@ -902,7 +908,7 @@ public class MoveStep implements Serializable {
              && !( entity instanceof Protomech
                    && (entity.getInternal(Protomech.LOC_LEG)
                        == IArmorState.ARMOR_DESTROYED) )
-             && !entity.isStuck() ) {
+             && (!entity.isStuck() || entity.canUnstickByJumping()) ) {
             movementType = IEntityMovementType.MOVE_JUMP;
         }
         
@@ -1170,17 +1176,7 @@ public class MoveStep implements Serializable {
         // Account for terrain, unless we're moving along a road.
         if (!isPavementStep) {
 
-            if (destHex.containsTerrain(Terrains.ROUGH)) {
-                mp++;
-            }
-            if (destHex.containsTerrain(Terrains.RUBBLE)) {
-                mp++;
-            }
-            if (destHex.terrainLevel(Terrains.WOODS) == 1) {
-                mp++;
-            } else if (destHex.terrainLevel(Terrains.WOODS) > 1) {
-                mp += 2;
-            }
+            mp += destHex.movementCost(moveType);
 
             // non-hovers, non-navals and non-VTOLs check for water depth and are affected by swamp
             if ((moveType != IEntityMovementMode.HOVER)
@@ -1195,9 +1191,6 @@ public class MoveStep implements Serializable {
                     } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
                         mp += 3;
                     }
-                }
-                if (destHex.containsTerrain(Terrains.SWAMP)) {
-                    mp++;
                 }
             }
         } // End not-along-road

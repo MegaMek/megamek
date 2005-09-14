@@ -635,6 +635,12 @@ base 2 "woods:1;swamp:1" "" "swamp/swamp_light_forest_2.gif"
 base 0 "woods:2;swamp:1" "" "swamp/swamp_heavy_forest_0.gif"
 base 1 "woods:2;swamp:1" "" "swamp/swamp_heavy_forest_1.gif"
 
+base * "mud:1" "" "boring/mud_1.gif"
+base * "mud:2" "" "boring/mud_2.gif"
+
+base * "magma:1" "" "boring/crust.gif"
+base * "magma:2" "" "boring/magma.gif"
+
 #------------------- BEGIN snow theme
 
 base 0 "" "snow" "themes/snow_0.gif"

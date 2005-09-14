@@ -762,6 +762,20 @@ public class MovementDisplay
                 nagReport.append(Messages.getString("MovementDisplay.FireMoving", new Object[] {new Integer(8)}));
             }
             
+            // check for magma
+            int level = curHex.terrainLevel(Terrains.MAGMA);
+            if(level == 1
+                    && entity.getElevation() <= 1
+                    && !(curPos.equals(lastPos))) {
+                nagReport.append(Messages.getString("MovementDisplay.MagmaCrustMoving"));
+            }
+            else if(level == 2
+                    && entity.getElevation() <= 1
+                    && entity.getMovementMode() != IEntityMovementMode.HOVER
+                    && !(curPos.equals(lastPos))) {
+                nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
+            }
+            
             if(entity instanceof VTOL) {
                 rollTarget = ((VTOL)entity).checkSideSlip(moveType,prevHex,overallMoveType,
                                              prevStep,prevFacing,curFacing,
@@ -860,7 +874,7 @@ public class MovementDisplay
             }
 
             if (step.getType() == MovePath.STEP_GO_PRONE) {
-                rollTarget = entity.checkDislodgeSwarmers();
+                rollTarget = entity.checkDislodgeSwarmers(step);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     nagReport.append(addNag(rollTarget));
                 }

@@ -612,6 +612,13 @@ public class WeaponAttackAction
     
         toHit.append(nightModifiers(game, target, atype));
     
+        if(atype != null && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+            if (te == null || te.getTaggedBy() == -1) {
+                // from a rules clarification
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Semi-guided LRMs must target a unit tagged this turn");
+            }
+        }
+
         // Handle direct artillery attacks.
         if(isArtilleryDirect) {
           toHit.addModifier(5, "direct artillery modifer");
@@ -778,7 +785,14 @@ public class WeaponAttackAction
     
         // spotter movement, if applicable
         if (isIndirect) {
-            toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
+            // semiguided ammo negates this modifier, if TAG succeeded    
+            if (atype != null && atype.getAmmoType() == AmmoType.T_LRM &&
+                atype.getMunitionType() == AmmoType.M_SEMIGUIDED &&
+                te.getTaggedBy() != -1) {
+                toHit.addModifier(-1 , "semiguided ignores spotter movement & indirect fire penalties");
+            } else {
+                toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
+            }
         }
     
         // attacker terrain

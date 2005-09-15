@@ -143,6 +143,7 @@ v0.31.0 (CVS)
 + Carpe Mortis' mud & magma tiles
 + Carpe Mortis' sand & tundra tiles
 + Bug 1289255: semiguided lrm ammo can be used as normal ammo  
++ Bug 1286809: Falling In Water Doesn't Work Right
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

@@ -1076,7 +1076,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
         int aElev = ae.getElevation();
         int tElev = target.getElevation();
         int distance = Compute.effectiveDistance(game, ae, target);
-    
+
+        if(atype != null && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+            if (te == null || te.getTaggedBy() == -1) {
+                // from a rules clarification
+                return new String("Semi-guided LRMs must target a unit tagged this turn");
+            }
+        }
+        
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
             if (distance >17) {

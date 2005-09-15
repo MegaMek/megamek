@@ -4826,7 +4826,8 @@ implements Runnable, ConnectionHandler {
     private void doEntityFallsInto(Entity entity, Coords src, Coords dest, PilotingRollData roll, boolean causeAffa) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
-        final int fallElevation = Math.abs(srcHex.floor() + entity.getElevation() - destHex.floor());
+        final int srcHeightAboveFloor = entity.getElevation() + srcHex.depth(); 
+        final int fallElevation = Math.max(0, srcHex.floor() + srcHeightAboveFloor - destHex.floor());
         int direction = src.direction(dest);
         Report r;
         // check entity in target hex

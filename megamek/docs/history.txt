@@ -141,6 +141,7 @@ v0.31.0 (CVS)
 + Indirect LRM fire using semiguided vs TAGged target has no penalty
 + Level 3 terrain from maxtech (except geyser eruptions)
 + Carpe Mortis' mud & magma tiles
++ Carpe Mortis' sand & tundra tiles
 
 v0.30.0 (2005-08-15 8:00am) STABLE RELEASE!
 + Bug 1241319: Now checks for missing position when unloading infantry.

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.30.2-dev (CVS)
+v0.30.2 (2005-09-17, 00:35 GMT+2)
 + Bug 1268169: RAC unjamming does not work.
 + Bug 1279514: war of 3039 weapons too small  
 + Bug 1282452: searchlight button stays disabled after cancelling fire

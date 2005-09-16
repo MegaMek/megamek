@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.31.1-dev (CVS)
+
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.
 + setting an infantry or protomech unit's crew did not copy MexTech pilot

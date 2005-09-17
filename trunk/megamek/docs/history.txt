@@ -7,6 +7,8 @@ v0.31.1-dev (CVS)
   dump - always used (e.g. getting rid of pods in an open torso)
   The first pod found to meet its trigger condition is used, so turn off others if you
   want a specific one used.
++ Infantry can go up and go down when in a building
++ Some framework for valid elevations (useful for buildings, bridges, submarines...)
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

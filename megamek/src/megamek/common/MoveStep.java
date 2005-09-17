@@ -1438,14 +1438,11 @@ public class MoveStep implements Serializable {
             return false;
         }
         if( type == MovePath.STEP_UP) {
-            //only VTOLs have Z movement.
-            return (entity.getMovementMode() == IEntityMovementMode.VTOL)? true : false;
-        }
-        if( type == MovePath.STEP_DOWN) {
-            //only VTOLs have Z movement.
-            if(!(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
+            if(!(entity.canGoUp(elevation-1, getPosition()))) {
                 return false;
             }
+        }
+        if( type == MovePath.STEP_DOWN) {
             if(!(entity.canGoDown(elevation+1,getPosition()))) {
                 return false;//We can't intentionally crash.
             }
@@ -1465,6 +1462,11 @@ public class MoveStep implements Serializable {
             if (elevation<=(destHex.ceiling()-destHex.surface())) {
                 return false; //can't fly into woods or a cliff face
             }
+        }
+        
+        //check the elevation is valid for the type of entity and hex
+        if(!entity.isElevationValid(elevation, getPosition())) {
+            return false;
         }
 
         return true;

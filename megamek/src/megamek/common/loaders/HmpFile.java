@@ -685,6 +685,7 @@ public class HmpFile
 
     criticals.put(new Long(0x21), "Light Ferro-Fibrous");
     criticals.put(new Long(0x22), "Heavy Ferro-Fibrous");
+    criticals.put(new Long(0x28), "Coolant Pod");
     criticals.put(new Long(0x2d), "Armored Cowl");
 
     // criticals for mechs with a base type of inner sphere

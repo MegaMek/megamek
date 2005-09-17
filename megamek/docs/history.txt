@@ -1,6 +1,12 @@
 VERSION HISTORY:
 ----------------
 v0.31.1-dev (CVS)
++ coolant pod [without a playable heat/end phase, uses mode switch instead]
+  off - won't be used, safe - will be used to avoid a shutdown/ammo roll
+  efficient - used if the extra heat dissipation is fully used
+  dump - always used (e.g. getting rid of pods in an open torso)
+  The first pod found to meet its trigger condition is used, so turn off others if you
+  want a specific one used.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

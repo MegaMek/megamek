@@ -958,6 +958,7 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
+    
     /**
      * Targeting comps should NOT be spreadable.  However, I've set them such
      * as a temp measure to overcome the following bug:

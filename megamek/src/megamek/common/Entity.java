@@ -769,15 +769,96 @@ public abstract class Entity
     public boolean canGoDown(int assumedElevation,Coords assumedPos) {
         boolean inWaterOrWoods = false;
         IHex hex = getGame().getBoard().getHex(assumedPos);
-        int absoluteElevation = assumedElevation+hex.surface();
+        int altitude = assumedElevation+hex.surface();
+        int minAlt = hex.surface();
         if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.JUNGLE)) {
             inWaterOrWoods=true;
         }
-        if(inWaterOrWoods) {
-            return ((absoluteElevation-1)>hex.ceiling());
-        } else {
-            return ((absoluteElevation-1)>=hex.ceiling());
+        switch(getMovementMode()) {
+        case IEntityMovementMode.INF_JUMP:
+        case IEntityMovementMode.INF_LEG:
+        case IEntityMovementMode.INF_MOTORIZED:
+            minAlt -= Math.max(0, hex.terrainLevel(Terrains.BLDG_BASEMENT));
+            break;
+        case IEntityMovementMode.VTOL:
+            minAlt = hex.ceiling();
+            if(inWaterOrWoods) {
+                minAlt++; //can't land here
+            }
+            break;
+        case IEntityMovementMode.SUBMARINE:
+            minAlt = hex.floor();
+            break;
+        default:
+            return false;
         }
+        return (altitude > minAlt);
+    }
+
+    /**
+     * is it possible to go up, or are we at maximum altitude?
+     * assuming passed elevation.
+     */
+    public boolean canGoUp(int assumedElevation,Coords assumedPos) {
+        IHex hex = getGame().getBoard().getHex(assumedPos);
+        int altitude = assumedElevation + hex.surface();
+        int maxAlt = hex.surface();
+        switch(getMovementMode()) {
+        case IEntityMovementMode.INF_JUMP:
+        case IEntityMovementMode.INF_LEG:
+        case IEntityMovementMode.INF_MOTORIZED:
+            maxAlt += Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
+            break;
+        case IEntityMovementMode.VTOL:
+            maxAlt = hex.surface() + 50;
+            break;
+        case IEntityMovementMode.SUBMARINE:
+            maxAlt = hex.surface();
+            break;
+        default:
+            return false;
+        }
+        return (altitude < maxAlt);
+    }
+    
+    /**
+     * Check if this entity can legally occupy the requested elevation.
+     * Does not check stacking, only terrain limitations
+     */
+    public boolean isElevationValid(int assumedElevation, Coords assumedPos) {
+        IHex hex = getGame().getBoard().getHex(assumedPos);
+        int altitude = assumedElevation + hex.surface();
+        if(getMovementMode() == IEntityMovementMode.VTOL) {
+            if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.JUNGLE)) {
+                return (assumedElevation <=50 && altitude > hex.ceiling());
+            } else {
+                return (assumedElevation <=50 && altitude >= hex.ceiling());
+            }
+        } else if (getMovementMode() == IEntityMovementMode.SUBMARINE) {
+            return (altitude >= hex.floor() && altitude <= hex.surface());
+        } else if (getMovementMode() == IEntityMovementMode.HYDROFOIL
+                || getMovementMode() == IEntityMovementMode.NAVAL){
+            return altitude == hex.surface();
+        } else {
+            //regular ground units
+            if(altitude == hex.floor()) return true;
+            if(hex.containsTerrain(Terrains.ICE)
+                    || (getMovementMode() == IEntityMovementMode.HOVER && hex.containsTerrain(Terrains.WATER))) {
+                //surface of ice is OK, surface of water is OK for hovers
+                if(altitude == hex.surface()) return true;
+            }
+            if(hex.containsTerrain(Terrains.BRIDGE)) {
+                //can move on top of a bridge
+                if(assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV)) return true;
+            }
+            if(hex.containsTerrain(Terrains.BUILDING)) {
+                //Mechs, protos and infantry can occupy any floor in the building
+                if(this instanceof Mech || this instanceof Protomech || this instanceof Infantry) {
+                    if(altitude >= hex.floor() && altitude <= hex.ceiling()) return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

@@ -1139,13 +1139,8 @@ public class MovementDisplay
         if(null == ce) {
             return;
         }
-        if(ce.getMovementMode() == IEntityMovementMode.VTOL) {
-            setRaiseEnabled(true);
-            setLowerEnabled(ce.canGoDown(cmd.getFinalElevation(),cmd.getFinalCoords())? true : false);
-        } else {
-            setRaiseEnabled(false);
-            setLowerEnabled(false);
-        }
+        setRaiseEnabled(ce.canGoUp(cmd.getFinalElevation(),cmd.getFinalCoords()));
+        setLowerEnabled(ce.canGoDown(cmd.getFinalElevation(),cmd.getFinalCoords()));
     }
 
     private synchronized void updateLoadButtons() {

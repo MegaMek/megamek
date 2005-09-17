@@ -59,7 +59,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_AC_ULTRA_THB      = 34;
     public static final int     T_LAC               = 35;
     public static final int     T_HEAVY_FLAMER      = 36;
-    public static final int     NUM_TYPES           = 37;
+    public static final int     T_COOLANT_POD       = 37; // not really ammo, but explodes and is depleted
+    public static final int     NUM_TYPES           = 38;
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
@@ -268,6 +269,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISLAC2Ammo());
         EquipmentType.addType(createISLAC5Ammo());
         EquipmentType.addType(createISHeavyFlamerAmmo());
+        EquipmentType.addType(createCoolantPod());
 
         // Start of Level2 Ammo
         EquipmentType.addType(createISLB2XAmmo());
@@ -4884,6 +4886,27 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    public static AmmoType createCoolantPod() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Coolant Pod";
+        ammo.setInternalName(ammo.name);
+        ammo.damagePerShot = 10;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_COOLANT_POD;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 50000;
+        
+        //TODO: modes is a bodge because there is no proper end phase
+        String[] theModes= {"safe", "efficient", "off", "dump"};
+        ammo.setModes(theModes);
+        ammo.setInstantModeSwitch(true);
+
+        return ammo;
+    }
+    
     public String toString() {
         return "Ammo: " + name;
     }

@@ -10685,21 +10685,59 @@ public class Server implements Runnable {
             }
 
             // add the heat we've built up so far.
+            entity.heat += entity.heatBuildup;
+
+            // how much heat can we sink?
+            int tosink = entity.getHeatCapacityWithWater();
+
+            // should we use a coolant pod?
+            int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
+            int possibleSinkage = ((Mech)entity).getNumberOfSinks();
+            for(Enumeration equip=entity.getEquipment();equip.hasMoreElements();) {
+                Mounted m = (Mounted)equip.nextElement();
+                if(m.getType() instanceof AmmoType) {
+                    AmmoType at = (AmmoType)(m.getType());
+                    if(at.getAmmoType() == AmmoType.T_COOLANT_POD && m.isAmmoUsable()) {
+                        EquipmentMode mode = m.curMode();
+                        if(mode.equals("dump")) {
+                            r = new Report(5260);
+                            r.subject = entity.getId();
+                            vPhaseReport.addElement(r);
+                            m.setShotsLeft(0);
+                            tosink += possibleSinkage;
+                            break;
+                        }
+                        if(mode.equals("safe") && entity.heat - tosink > safeHeat) {
+                            r = new Report(5265);
+                            r.subject = entity.getId();
+                            vPhaseReport.addElement(r);
+                            m.setShotsLeft(0);
+                            tosink += possibleSinkage;
+                            break;
+                        }
+                        if(mode.equals("efficient") && entity.heat - tosink >= possibleSinkage) {
+                            r = new Report(5270);
+                            r.subject = entity.getId();
+                            vPhaseReport.addElement(r);
+                            m.setShotsLeft(0);
+                            tosink += possibleSinkage;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            tosink = Math.min( tosink, entity.heat );
+            entity.heat -= tosink;
             r = new Report(5035);
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(entity.heatBuildup);
-            entity.heat += entity.heatBuildup;
-            entity.heatBuildup = 0;
-
-            // how much heat can we sink?
-            int tosink = Math.min( entity.getHeatCapacityWithWater(),
-                                   entity.heat );
-
-            entity.heat -= tosink;
             r.add(tosink);
             r.add(entity.heat);
             vPhaseReport.addElement(r);
+            entity.heatBuildup = 0;
+
             // Does the unit have inferno ammo?
             if( entity.hasInfernoAmmo() ) {
 
@@ -14980,7 +15018,8 @@ public class Server implements Runnable {
         Mounted m = e.getEquipment(equipId);
 
         // a mode change for ammo means dumping
-        if (m.getType() instanceof AmmoType) {
+        if (m.getType() instanceof AmmoType
+            && !(m.getType().hasInstantModeSwitch())) {
             m.setPendingDump(mode == 1);
         }
         else {

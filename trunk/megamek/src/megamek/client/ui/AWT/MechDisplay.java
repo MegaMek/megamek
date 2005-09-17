@@ -1309,6 +1309,7 @@ class SystemPanel
 
             boolean bOwner = (clientgui.getClient().getLocalPlayer() == en.getOwner());
             if ( m != null && bOwner && m.getType() instanceof AmmoType
+                 && !(m.getType().hasInstantModeSwitch())
                  && IGame.PHASE_DEPLOYMENT != clientgui.getClient().game.getPhase()
                  && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive() ) {
                 m_bDumpAmmo.setEnabled(true);

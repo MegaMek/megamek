@@ -19,14 +19,12 @@ import megamek.common.*;
 import megamek.common.util.StringUtil;
 import java.util.*;
 
-public abstract class UnitStatusFormatter
-{
+public abstract class UnitStatusFormatter {
     /**
      * Much of the layout for the status string is heavily inspired by
      * the Battletech MUSE/MUX code
      */
-    public static String format(Entity e)
-    {
+    public static String format(Entity e) {
         StringBuffer sb = new StringBuffer(2048);
         sb.append("=============================================================")
             .append( CommonConstants.NL );
@@ -99,8 +97,7 @@ public abstract class UnitStatusFormatter
     }
       
 
-    private static String formatCrits(Entity e)
-    {
+    private static String formatCrits(Entity e) {
         StringBuffer sb = new StringBuffer();
         for (int x = 0; x < e.locations(); x++) {
             sb.append(StringUtil.makeLength(e.getLocationName(x), 12)).append(": ");
@@ -137,8 +134,7 @@ public abstract class UnitStatusFormatter
     }
 
 
-    private static String formatArmor(Entity e)
-    {
+    private static String formatArmor(Entity e) {
         if (e instanceof Mech) {
             return formatArmorMech((Mech)e);
         } else if (e instanceof Tank) {

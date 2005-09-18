@@ -684,6 +684,7 @@ public class CustomBattleArmorDialog
         updatePlayerChoice();
         setLocation(computeDesiredLocation());
         super.show();
+        m_BAView.setCaretPosition(0);
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -965,7 +966,6 @@ public class CustomBattleArmorDialog
         String preview = generateBattleArmorPreview();
         m_BAView.setEditable(false);
         m_BAView.setText(preview);
-        m_BAView.setCaretPosition(0);
     }
 
     private static final String SPACES = "                        ";

@@ -328,8 +328,13 @@ public class HmpFile
       dis.skipBytes(36);
 
       // Get cockpit and gyro type, if any.
-      gyroType = readUnsignedShort(dis);
-      cockpitType = readUnsignedShort(dis);
+        if (rulesLevel > 2) {
+            gyroType = readUnsignedShort(dis);
+            cockpitType = readUnsignedShort(dis);
+        } else {
+            gyroType = Mech.GYRO_STANDARD;
+            cockpitType = Mech.COCKPIT_STANDARD;
+        }
 
       dis.close();
     }

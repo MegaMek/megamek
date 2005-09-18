@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 public class BoardUtilities {
-    
     /**
      * Combines one or more boards into one huge megaboard!
      *
@@ -883,6 +882,7 @@ public class BoardUtilities {
             stopY = height/2;
         }
 
+System.err.println("@@@"+horiz+":"+vert+":"+width+":"+height+":"+stopX+":"+stopY);
         // Walk through the current data array and build a new one.
         int newX;
         int newY;
@@ -904,6 +904,7 @@ public class BoardUtilities {
                 } else {
                     newY = oldY;
                 }
+System.err.println("\t:"+oldX+":"+oldY+":"+newX+":"+newY);
 
                 // Swap the old hex for the new hex.
                 tempHex = board.getHex(oldX, oldY);
@@ -945,7 +946,7 @@ public class BoardUtilities {
             }
         }
     }
-    
+
     /**
      * one of the landscape generation algorithms
      */

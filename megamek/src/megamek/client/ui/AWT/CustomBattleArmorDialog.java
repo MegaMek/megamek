@@ -1949,7 +1949,7 @@ public class CustomBattleArmorDialog
         }
 
         public int compareTo(Object o) {
-            return name.compareTo((BattleArmorEquipment)o);
+            return name.compareTo(((BattleArmorEquipment)o).name);
         }
 
         public boolean hasConflictFlag(int testFlags) {

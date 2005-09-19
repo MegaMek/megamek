@@ -882,7 +882,6 @@ public class BoardUtilities {
             stopY = height/2;
         }
 
-System.err.println("@@@"+horiz+":"+vert+":"+width+":"+height+":"+stopX+":"+stopY);
         // Walk through the current data array and build a new one.
         int newX;
         int newY;
@@ -904,7 +903,6 @@ System.err.println("@@@"+horiz+":"+vert+":"+width+":"+height+":"+stopX+":"+stopY
                 } else {
                     newY = oldY;
                 }
-System.err.println("\t:"+oldX+":"+oldY+":"+newX+":"+newY);
 
                 // Swap the old hex for the new hex.
                 tempHex = board.getHex(oldX, oldY);

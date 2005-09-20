@@ -94,6 +94,7 @@ public class CustomBattleArmorDialog
     private Button m_bPick = new Button(Messages.getString("CustomBattleArmorDialog.m_bPick"));
     private Button m_bPickClose = new Button(Messages.getString("CustomBattleArmorDialog.m_bPickClose"));
     private Button m_bCancel = new Button(Messages.getString("CustomBattleArmorDialog.m_bClose"));
+    private Button m_buttonReset = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonReset"));
     private Label m_labelPlayer = new Label(Messages.getString("CustomBattleArmorDialog.m_labelPlayer"), Label.RIGHT);
     private Choice m_chPlayer = new Choice();
 
@@ -145,24 +146,8 @@ public class CustomBattleArmorDialog
     public static int EQUIPMENT_TYPE_AMMO = 3;
     public static int EQUIPMENT_TYPE_OTHER = 4;
 
-    private static final int[][] ARMOR_TYPE_WEIGHT = {{50,
-                                                       40,
-                                                       100,
-                                                       55,
-                                                       100,
-                                                       60,
-                                                       60,
-                                                       0,
-                                                       50},
-                                                      {25,
-                                                       0,
-                                                       0,
-                                                       30,
-                                                       0,
-                                                       35,
-                                                       35,
-                                                       30,
-                                                       0}};
+    private static final int[][] ARMOR_TYPE_WEIGHT = {{50, 40, 100, 55, 100, 60, 60, 0, 50},
+                                                      {25, 0, 0, 30, 0, 35, 35, 30, 0}};
 
     private static final int[] ARMOR_TYPE_SLOTS = {0,5,4,3,4,4,5,5,5};
 
@@ -397,6 +382,7 @@ public class CustomBattleArmorDialog
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         m_pButtons.add(m_bPick);
         m_pButtons.add(m_bPickClose);
+        m_pButtons.add(m_buttonReset);
         m_pButtons.add(m_bCancel);
         m_pButtons.add(m_labelPlayer);
         m_pButtons.add(m_chPlayer);
@@ -416,10 +402,40 @@ public class CustomBattleArmorDialog
         populateChoices();
         m_bPick.addActionListener(this);
         m_bPickClose.addActionListener(this);
+        m_buttonReset.addActionListener(this);
         m_bCancel.addActionListener(this);
         addWindowListener(this);
         updateWidgetEnablements();
         previewBA();
+    }
+
+    private void resetState() {
+        restoreDefaultStates();
+        populateChoices();
+        previewBA();
+    }
+
+    private void restoreDefaultStates() {
+        m_tfBAName.setText("");
+        invalidReason = null;
+        stateMenPerSquad = 1;
+        stateTechBase = 0;
+        stateChassisType = 0;
+        stateWeightClass = 0;
+        stateArmorType = 0;
+        stateArmorValue = 0;
+        stateJumpType = 0;
+        stateJumpMP = 0;
+        stateGroundMP = 1;
+        stateCurrentWeight = 0;
+        stateMinWeight = 0;
+        stateMaxWeight = 400;
+        stateManipulatorTypeLeft = 0;
+        stateManipulatorTypeRight = 0;
+        stateConflictFlags = 0;
+        leftArmEquipment = null;
+        rightArmEquipment = null;
+        torsoEquipment = null;
     }
 
     private void updatePlayerChoice() {
@@ -692,7 +708,10 @@ public class CustomBattleArmorDialog
     }
 
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() == m_buttonAddTorso) {
+        if (ae.getSource() == m_buttonReset) {
+            resetState();
+            return;
+        } else if (ae.getSource() == m_buttonAddTorso) {
             BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chTorsoEquipment.getSelectedItem())));
             if (torsoEquipment == null)
                 torsoEquipment = new Vector();
@@ -1305,13 +1324,14 @@ public class CustomBattleArmorDialog
                     BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
                     totalSlots += tmpBAE.slots;
                 }
-                if (totalSlots > QUAD_MAX_SLOTS[stateWeightClass]) {
+                if (totalSlots > (QUAD_MAX_SLOTS[stateWeightClass]-ARMOR_TYPE_SLOTS[stateArmorType])) {
                     invalidReason = "Unit is using more slots than are available.";
                     return false;
                 }
             }
         } else {
             // Here, we have to check all three locations individually.
+            int totalFreeSlots = (2*ARM_MAX_SLOTS[stateWeightClass])+TORSO_MAX_SLOTS[stateWeightClass];
             if (leftArmEquipment != null) {
                 int totalSlots = 0;
                 Enumeration tmpE = leftArmEquipment.elements();
@@ -1323,6 +1343,7 @@ public class CustomBattleArmorDialog
                     invalidReason = "Left Arm is using more slots than are available.";
                     return false;
                 }
+                totalFreeSlots -= totalSlots;
             }
             if (rightArmEquipment != null) {
                 int totalSlots = 0;
@@ -1335,6 +1356,7 @@ public class CustomBattleArmorDialog
                     invalidReason = "Right Arm is using more slots than are available.";
                     return false;
                 }
+                totalFreeSlots -= totalSlots;
             }
             if (torsoEquipment != null) {
                 int totalSlots = 0;
@@ -1347,6 +1369,12 @@ public class CustomBattleArmorDialog
                     invalidReason = "Torso is using more slots than are available.";
                     return false;
                 }
+                totalFreeSlots -= totalSlots;
+            }
+            // Don't forget to include armor...
+            if (totalFreeSlots < ARMOR_TYPE_SLOTS[stateArmorType]) {
+                invalidReason = "Unit is using more total slots than are available.";
+                return false;
             }
         }
 
@@ -1736,8 +1764,12 @@ public class CustomBattleArmorDialog
         // And set its cost.
         retVal.setCost(calcSquadCost());
 
-        // If it's capable of anti-'Mech attacks...
         try {
+            if (stateArmorType == 7) { // Fire-resistant Armor
+                retVal.addEquipment(EquipmentType.get(BattleArmor.FIRE_PROTECTION), BattleArmor.LOC_SQUAD);
+            }
+
+            // If it's capable of anti-'Mech attacks...
             if (canDoAntiMech()) {
                 retVal.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD);
                 retVal.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD);

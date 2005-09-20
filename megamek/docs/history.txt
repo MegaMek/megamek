@@ -2,25 +2,30 @@ VERSION HISTORY:
 ----------------
 v0.31.1-dev (CVS)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]
-  off - won't be used, safe - will be used to avoid a shutdown/ammo roll
-  efficient - used if the extra heat dissipation is fully used
-  dump - always used (e.g. getting rid of pods in an open torso)
-  The first pod found to meet its trigger condition is used, so turn off others if you
-  want a specific one used.
+    off - won't be used, safe - will be used to avoid a shutdown/ammo roll
+    efficient - used if the extra heat dissipation is fully used
+    dump - always used (e.g. getting rid of pods in an open torso)
+    The first pod found to meet its trigger condition is used, so turn off
+    others if you want a specific one used.
 + Infantry can go up and go down when in a building
-+ Some framework for valid elevations (useful for buildings, bridges, submarines...)
++ Some framework for valid elevations (useful for buildings, bridges,
+    submarines...)
 + Bug 1294150: Gyro and cockpit for level 1/2 HMP 'Mechs now Standard instead
     of Unknown.
 + Bug 1285089: THB Maces now load from HMP files.
 + Sylph movement bug fix, they couldnt fly over a high cliff
-+ Impassable terrain type (blocks deployment and movement, but not LOS - use elevation for that).
-  This can represent solid rock, or other hexes that are not part of the playing area.
++ Impassable terrain type (blocks deployment and movement, but not LOS - use
+    elevation for that).  This can represent solid rock, or other hexes that
+    are not part of the playing area.
 + Changed level 20 hexes on the ishiyama maps to impassable
 + Added several more weapons to custom BA dialog.
 + Added max # of weapons checks to custom BA dialog.
 + Added recoilless rifles and Clan Micro Pulse Lasers to custom BA dialog.
 + Fixed Custom BA dialog so it re-selects what you just added (if possible)
     instead of going to the first item after adding a piece of equipment.
++ Fire-resistant armor now loads correctly from Custom BA Dialog.
++ Added reset button to custom BA dialog.
++ Custom BA dialog now correctly validates armor slot usage.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.
@@ -156,7 +161,8 @@ v0.31.0 (2005-09-17, 00:35 GMT+2)
 + Added ability to add items to custom BA locations separately.
 + Added ability to remove items from custom BA.
 + Torren's active probe patch
-+ Bloodhound active probe can detect unarmoured infantry & stealth units, other probes can't
++ Bloodhound active probe can detect unarmoured infantry & stealth units, other
+    probes can't
 + Torren's GameOptionsDialog patch
 + Added a couple more pieces of equipment to Custom BA Dialog.
 + Bug 1288302: No woods to-hit modifier in sublevel woods
@@ -390,8 +396,8 @@ v0.29.83 (2005-07-10 11:00am)
 + Bug 1227724: too many missiles hitting in swarm attack. Also corrected to-Hit
     calculation for swarm missiles that try to target another unit.
 + Make VTOLs lose movement on a 12 on a crit roll, and make the main weapon
-    destroyed on a 9 on a crit roll on a side table. Note: These are not reported
-    to the serverlog.
+    destroyed on a 9 on a crit roll on a side table. Note: These are not
+    reported to the serverlog.
 + RFE 1231014: auto-skip out of ammo weapons
 + RFE 1161913: "back up" movement arrow in different color
 + Replaced hacked int for animated movement with a Java object.
@@ -408,7 +414,8 @@ v0.29.83 (2005-07-10 11:00am)
 + Fixed listings for a number of infantry types in the canon list.
 + Data 1223604: updated some lvl3 mechs.
 + Bug 1231990: Fixed exception from null entity position.
-+ Bug 1232097: TDB loader now correctly puts in Clan TCs and XLs on IS Mixed Chassis.
++ Bug 1232097: TDB loader now correctly puts in Clan TCs and XLs on IS Mixed
+    Chassis.
 + Bug 1115591: Bot now rotates the turret to shoot something behind them.
 + Created a *nix shell script to run MegaMek.  Creates $HOME/.megamek and adds
     a symbolic link to the data directory.  Defaults to looking for JAR files

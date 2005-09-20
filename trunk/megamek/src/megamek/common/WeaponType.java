@@ -485,7 +485,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createBAFlamer());
         EquipmentType.addType(createBASmallLaser());
         EquipmentType.addType(createBACLERSmallLaser());
-        EquipmentType.addType(createCLAdvancedSRM2());
         EquipmentType.addType(createBATwinFlamers());
         EquipmentType.addType(createBAInfernoSRM());
         EquipmentType.addType(createBACLMicroPulseLaser());
@@ -505,8 +504,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createSlothSmallLaser());
         EquipmentType.addType(createBAMineLauncher());
 
-        // Combat Operations Weapons
-        EquipmentType.addType(createBAAdvancedSRM5());
         EquipmentType.addType(createBABearhunterAC());
         EquipmentType.addType(createBACLMediumPulseLaser());
         EquipmentType.addType(createBAIncendiaryNeedler());
@@ -533,8 +530,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createBAGrandMaulerGauss());
         EquipmentType.addType(createBATsunamiGaussRifle());
         EquipmentType.addType(createCLAdvancedSRM1());
+        EquipmentType.addType(createCLAdvancedSRM2());
         EquipmentType.addType(createCLAdvancedSRM3());
         EquipmentType.addType(createCLAdvancedSRM4());
+        EquipmentType.addType(createBAAdvancedSRM5());
         EquipmentType.addType(createCLAdvancedSRM6());
         EquipmentType.addType(createISLAWLauncher());
         EquipmentType.addType(createISLAW2Launcher());

@@ -12,6 +12,9 @@ v0.31.1-dev (CVS)
 + Bug 1294150: Gyro and cockpit for level 1/2 HMP 'Mechs now Standard instead
     of Unknown.
 + Bug 1285089: THB Maces now load from HMP files.
++ Sylph movement bug fix, they couldnt fly over a high cliff
++ Impassable terrain type (blocks deployment and movement, but not LOS - use elevation for that).
+  This can represent solid rock, or other hexes that are not part of the playing area.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

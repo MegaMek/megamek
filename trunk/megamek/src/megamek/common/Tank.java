@@ -152,6 +152,7 @@ public class Tank
      * Tanks have all sorts of prohibited terrain.
      */
     public boolean isHexProhibited(IHex hex) {
+        if(hex.containsTerrain(Terrains.IMPASSABLE)) return true;
         switch(movementMode) {
             case IEntityMovementMode.TRACKED :
                 return hex.terrainLevel(Terrains.WOODS) > 1 || 

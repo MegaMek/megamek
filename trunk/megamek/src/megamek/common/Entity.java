@@ -1200,6 +1200,7 @@ public abstract class Entity
      * terrain.
      */
     public boolean isHexProhibited(IHex hex) {
+        if(hex.containsTerrain(Terrains.IMPASSABLE)) return true;
         return false;
     }
 

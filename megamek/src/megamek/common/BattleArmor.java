@@ -355,10 +355,10 @@ public class BattleArmor
         // Oh, HELL no!
         // This needs to be fixed.
         // *grumbles*
-        if (this.getModel().equals(CLAN_WATER_ELEMENTAL)) {
-            return false;
-        }
-        return (hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE));
+        if(hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE) 
+                && !this.getModel().equals(CLAN_WATER_ELEMENTAL))
+            return true;
+        return super.isHexProhibited(hex);
     }
 
     /**

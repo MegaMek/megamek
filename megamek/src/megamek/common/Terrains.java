@@ -48,13 +48,14 @@ public class Terrains implements ITerrainFactory {
     public static final int SAND = 27;
     public static final int SNOW = 28;
     public static final int TUNDRA = 29;
-    
+    //special types
+    public static final int IMPASSABLE = 30;
 
     private static final String[] names = {"none", "woods", "rough", "rubble",
             "water", "pavement", "road", "fire", "smoke", "swamp",
             "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
             "bridge_elev", "fluff", "arms", "legs", "ice", "fortified", "geyser",
-            "jungle", "magma", "mud", "rapids", "sand", "snow", "tundra"};
+            "jungle", "magma", "mud", "rapids", "sand", "snow", "tundra", "impassable"};
     
     public static final int SIZE = names.length;
 

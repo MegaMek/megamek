@@ -284,6 +284,7 @@ public class VTOL extends Tank {
     }
 
     public boolean isHexProhibited(IHex hex) {
+        if(hex.containsTerrain(Terrains.IMPASSABLE)) return true;
         return false;
     }
 

@@ -15,6 +15,7 @@ v0.31.1-dev (CVS)
 + Sylph movement bug fix, they couldnt fly over a high cliff
 + Impassable terrain type (blocks deployment and movement, but not LOS - use elevation for that).
   This can represent solid rock, or other hexes that are not part of the playing area.
++ Changed level 20 hexes on the ishiyama maps to impassable
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

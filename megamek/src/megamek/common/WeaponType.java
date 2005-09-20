@@ -474,83 +474,83 @@ public class WeaponType extends EquipmentType {
         //EquipmentType.addType(createCLPROSRT6() );
 
         // Anti-Mek attacks are weapon-like in nature.
-        EquipmentType.addType( createLegAttack() );
-        EquipmentType.addType( createSwarmMek() );
-        EquipmentType.addType( createStopSwarm() );
+        EquipmentType.addType(createLegAttack() );
+        EquipmentType.addType(createSwarmMek() );
+        EquipmentType.addType(createStopSwarm() );
 
         // Start BattleArmor weapons
-        EquipmentType.addType( createBAMG() );
-        EquipmentType.addType( createBASingleMG() );
-        EquipmentType.addType( createBASingleFlamer());
-        EquipmentType.addType( createBAFlamer() );
-        EquipmentType.addType( createBASmallLaser() );
-        EquipmentType.addType( createBACLERSmallLaser() );
-        EquipmentType.addType( createCLAdvancedSRM2() );
-        EquipmentType.addType( createBATwinFlamers() );
-        EquipmentType.addType( createBAInfernoSRM() );
-        EquipmentType.addType( createBACLMicroPulseLaser() );
-        EquipmentType.addType( createBAMicroBomb() );
-        EquipmentType.addType( createBACLERMicroLaser() );
-        EquipmentType.addType( createCLTorpedoLRM5() );
-        EquipmentType.addType( createBAISMediumPulseLaser() );
-        EquipmentType.addType( createTwinSmallPulseLaser() );
-        EquipmentType.addType( createTripleSmallLaser() );
-        EquipmentType.addType( createTripleMG() );
-        EquipmentType.addType( createFenrirSRM4() );
-        EquipmentType.addType( createBAAutoGL() );
-        EquipmentType.addType( createBAMagshotGR() );
-        EquipmentType.addType( createBAISMediumLaser() );
-        EquipmentType.addType( createBAISERSmallLaser() );
-        EquipmentType.addType( createBACompactNARC() );
-        EquipmentType.addType( createSlothSmallLaser() );
-        EquipmentType.addType( createBAMineLauncher() );
+        EquipmentType.addType(createBAMG());
+        EquipmentType.addType(createBASingleMG());
+        EquipmentType.addType(createBASingleFlamer());
+        EquipmentType.addType(createBAFlamer());
+        EquipmentType.addType(createBASmallLaser());
+        EquipmentType.addType(createBACLERSmallLaser());
+        EquipmentType.addType(createCLAdvancedSRM2());
+        EquipmentType.addType(createBATwinFlamers());
+        EquipmentType.addType(createBAInfernoSRM());
+        EquipmentType.addType(createBACLMicroPulseLaser());
+        EquipmentType.addType(createBAMicroBomb());
+        EquipmentType.addType(createBACLERMicroLaser());
+        EquipmentType.addType(createCLTorpedoLRM5());
+        EquipmentType.addType(createBAISMediumPulseLaser());
+        EquipmentType.addType(createTwinSmallPulseLaser());
+        EquipmentType.addType(createTripleSmallLaser());
+        EquipmentType.addType(createTripleMG());
+        EquipmentType.addType(createFenrirSRM4());
+        EquipmentType.addType(createBAAutoGL());
+        EquipmentType.addType(createBAMagshotGR());
+        EquipmentType.addType(createBAISMediumLaser());
+        EquipmentType.addType(createBAISERSmallLaser());
+        EquipmentType.addType(createBACompactNARC());
+        EquipmentType.addType(createSlothSmallLaser());
+        EquipmentType.addType(createBAMineLauncher());
 
         // Combat Operations Weapons
-        EquipmentType.addType( createBAAdvancedSRM5() );
-        EquipmentType.addType( createBABearhunterAC() );
-        EquipmentType.addType( createBACLMediumPulseLaser() );
-        EquipmentType.addType( createBAIncendiaryNeedler() );
-        EquipmentType.addType( createBALightRecRifle() );
-        EquipmentType.addType( createBAKingDavidLightGaussRifle() );
-        EquipmentType.addType( createBAMediumRecRifle() );
-        EquipmentType.addType( createBAPlasmaRifle() );
-        EquipmentType.addType( createBASingleSmallPulseLaser() );
-        EquipmentType.addType( createBASRM4() );
-        EquipmentType.addType( createBASupportPPC() );
-        EquipmentType.addType( createBAVibroClaws1() );
-        EquipmentType.addType( createBAVibroClaws2() );
-        EquipmentType.addType( createPhalanxSRM4() );
-        EquipmentType.addType( createBAHeavyMG() );
-        EquipmentType.addType( createBALightMG() );
-        EquipmentType.addType( createBACLHeavyMediumLaser() );
-        EquipmentType.addType( createBAHeavyRecRifle() );
-        EquipmentType.addType( createBACLHeavySmallLaser() );
-        EquipmentType.addType( createBACLERMediumLaser() );
-        EquipmentType.addType( createBACLSmallPulseLaser() );
-        EquipmentType.addType( createBAISLightMortar() );
-        EquipmentType.addType( createBAISHeavyMortar() );
-        EquipmentType.addType( createBAMicroGrenade() );
-        EquipmentType.addType( createBAGrandMaulerGauss() );
-        EquipmentType.addType( createBATsunamiGaussRifle() );
-        EquipmentType.addType( createCLAdvancedSRM1() );
-        EquipmentType.addType( createCLAdvancedSRM3() );
-        EquipmentType.addType( createCLAdvancedSRM4() );
-        EquipmentType.addType( createCLAdvancedSRM6() );
-        EquipmentType.addType( createISLAWLauncher() );
-        EquipmentType.addType( createISLAW2Launcher() );
-        EquipmentType.addType( createISLAW3Launcher() );
-        EquipmentType.addType( createISLAW4Launcher() );
-        EquipmentType.addType( createISLAW5Launcher() );
-        EquipmentType.addType( createISMRM1() );
-        EquipmentType.addType( createISMRM2() );
-        EquipmentType.addType( createISMRM3() );
-        EquipmentType.addType( createISMRM4() );
-        EquipmentType.addType( createISMRM5() );
-        EquipmentType.addType( createLRM1() );
-        EquipmentType.addType( createLRM2() );
-        EquipmentType.addType( createLRM3() );
-        EquipmentType.addType( createLRM4() );
-        EquipmentType.addType( createBADavidGaussRifle() );
+        EquipmentType.addType(createBAAdvancedSRM5());
+        EquipmentType.addType(createBABearhunterAC());
+        EquipmentType.addType(createBACLMediumPulseLaser());
+        EquipmentType.addType(createBAIncendiaryNeedler());
+        EquipmentType.addType(createBALightRecRifle());
+        EquipmentType.addType(createBAKingDavidLightGaussRifle());
+        EquipmentType.addType(createBAMediumRecRifle());
+        EquipmentType.addType(createBAPlasmaRifle());
+        EquipmentType.addType(createBASingleSmallPulseLaser());
+        EquipmentType.addType(createBASRM4());
+        EquipmentType.addType(createBASupportPPC());
+        EquipmentType.addType(createBAVibroClaws1());
+        EquipmentType.addType(createBAVibroClaws2());
+        EquipmentType.addType(createPhalanxSRM4());
+        EquipmentType.addType(createBAHeavyMG());
+        EquipmentType.addType(createBALightMG());
+        EquipmentType.addType(createBACLHeavyMediumLaser());
+        EquipmentType.addType(createBAHeavyRecRifle());
+        EquipmentType.addType(createBACLHeavySmallLaser());
+        EquipmentType.addType(createBACLERMediumLaser());
+        EquipmentType.addType(createBACLSmallPulseLaser());
+        EquipmentType.addType(createBAISLightMortar());
+        EquipmentType.addType(createBAISHeavyMortar());
+        EquipmentType.addType(createBAMicroGrenade());
+        EquipmentType.addType(createBAGrandMaulerGauss());
+        EquipmentType.addType(createBATsunamiGaussRifle());
+        EquipmentType.addType(createCLAdvancedSRM1());
+        EquipmentType.addType(createCLAdvancedSRM3());
+        EquipmentType.addType(createCLAdvancedSRM4());
+        EquipmentType.addType(createCLAdvancedSRM6());
+        EquipmentType.addType(createISLAWLauncher());
+        EquipmentType.addType(createISLAW2Launcher());
+        EquipmentType.addType(createISLAW3Launcher());
+        EquipmentType.addType(createISLAW4Launcher());
+        EquipmentType.addType(createISLAW5Launcher());
+        EquipmentType.addType(createISMRM1());
+        EquipmentType.addType(createISMRM2());
+        EquipmentType.addType(createISMRM3());
+        EquipmentType.addType(createISMRM4());
+        EquipmentType.addType(createISMRM5());
+        EquipmentType.addType(createLRM1());
+        EquipmentType.addType(createLRM2());
+        EquipmentType.addType(createLRM3());
+        EquipmentType.addType(createLRM4());
+        EquipmentType.addType(createBADavidGaussRifle());
         
         // hack for C3 Master TAG
         EquipmentType.addType( createC3M() );
@@ -5777,6 +5777,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+
     public static WeaponType createCLAdvancedSRM2() {
         WeaponType weapon = new WeaponType();
 
@@ -5803,6 +5804,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+
     public static WeaponType createBATwinFlamers() {
         WeaponType weapon = new WeaponType();
 
@@ -7814,6 +7816,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Advanced SRM 5";
         weapon.setInternalName("AdvancedSRM5");
         weapon.addLookupName("BA-Advanced SRM-5");
+        weapon.addLookupName("Clan Advanced SRM-5");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;

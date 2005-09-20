@@ -506,8 +506,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType( createBASRM2Ammo() );
         EquipmentType.addType( createBASRM2OSAmmo() );
         EquipmentType.addType( createBAInfernoSRMAmmo() );
-        EquipmentType.addType( createBAAdvancedSRM2Ammo() );
-        EquipmentType.addType( createBAAdvancedSRM5Ammo() );
         EquipmentType.addType( createBAMicroBombAmmo() );
         EquipmentType.addType( createCLTorpedoLRM5Ammo() );
         EquipmentType.addType( createFenrirSRM4Ammo() );
@@ -3958,41 +3956,7 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    public static AmmoType createBAAdvancedSRM2Ammo() {
-        AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "Advanced SRM 2 Ammo";
-        ammo.setInternalName("BA-Advanced SRM-2 Ammo");
-        ammo.addLookupName("BAAdvancedSRM2 Ammo");
-        ammo.damagePerShot = 2;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 1;
-        ammo.hittable = false;
-        ammo.bv = 0;
-
-        return ammo;
-    }
-
-    public static AmmoType createBAAdvancedSRM5Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "Advanced SRM 5 Ammo";
-        ammo.setInternalName("BA-Advanced SRM-5 Ammo");
-        ammo.addLookupName("BAAdvancedSRM5 Ammo");
-        ammo.damagePerShot = 2;
-        ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 2;
-        ammo.hittable = false;
-        ammo.bv = 0;
-
-        return ammo;
-    }
     public static AmmoType createBAMicroBombAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -4731,6 +4695,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Advanced SRM 1 Ammo";
         ammo.setInternalName("BA-Advanced SRM-1 Ammo");
         ammo.addLookupName("BAAdvanced SRM1 Ammo");
+        ammo.addLookupName("BAAdvancedSRM1 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
@@ -4741,14 +4706,15 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    
+
     public static AmmoType createAdvancedSRM5Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
         ammo.name = "Advanced SRM 5 Ammo";
-        ammo.setInternalName("BA-Advanced SRM-5 Ammo OS");
-        ammo.addLookupName("BAAdvancedSRM5 Ammo OS");
+        ammo.setInternalName("BA-Advanced SRM-5 Ammo");
+        ammo.addLookupName("BAAdvancedSRM5 Ammo");
+        ammo.addLookupName("BAAdvanced SRM5 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
@@ -4767,6 +4733,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Advanced SRM 3 Ammo";
         ammo.setInternalName("BA-Advanced SRM-3 Ammo");
         ammo.addLookupName("BAAdvanced SRM3 Ammo");
+        ammo.addLookupName("BAAdvancedSRM3 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
@@ -4783,8 +4750,10 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
         ammo.name = "Advanced SRM 2 Ammo";
-        ammo.setInternalName("BA-Advanced SRM-2 Ammo OS");
+        ammo.setInternalName("BA-Advanced SRM-2 Ammo");
+        ammo.addLookupName("BA-Advanced SRM-2 Ammo OS");
         ammo.addLookupName("BAAdvancedSRM2 Ammo");
+        ammo.addLookupName("BAAdvanced SRM2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
@@ -4795,7 +4764,7 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    
+
     public static AmmoType createAdvancedSRM4Ammo() {
         AmmoType ammo = new AmmoType();
 
@@ -4803,6 +4772,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Advanced SRM 4 Ammo";
         ammo.setInternalName("BA-Advanced SRM-4 Ammo");
         ammo.addLookupName("BAAdvanced SRM4 Ammo");
+        ammo.addLookupName("BAAdvancedSRM4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
@@ -4821,6 +4791,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Advanced SRM 6 Ammo";
         ammo.setInternalName("BA-Advanced SRM-6 Ammo");
         ammo.addLookupName("BAAdvanced SRM6 Ammo");
+        ammo.addLookupName("BAAdvancedSRM6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;

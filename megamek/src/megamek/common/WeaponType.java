@@ -551,7 +551,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createLRM3());
         EquipmentType.addType(createLRM4());
         EquipmentType.addType(createBADavidGaussRifle());
-        
+
         // hack for C3 Master TAG
         EquipmentType.addType( createC3M() );
 

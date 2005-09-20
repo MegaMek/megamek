@@ -18,6 +18,9 @@ v0.31.1-dev (CVS)
 + Changed level 20 hexes on the ishiyama maps to impassable
 + Added several more weapons to custom BA dialog.
 + Added max # of weapons checks to custom BA dialog.
++ Added recoilless rifles and Clan Micro Pulse Lasers to custom BA dialog.
++ Fixed Custom BA dialog so it re-selects what you just added (if possible)
+    instead of going to the first item after adding a piece of equipment.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

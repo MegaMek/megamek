@@ -518,6 +518,7 @@ public class CustomBattleArmorDialog
     }
 
     private void updateEquipmentChoices() {
+        String value = m_chTorsoEquipment.getSelectedItem();
         m_chTorsoEquipment.removeAll();
         Object[] tmpE = equipmentTypes.toArray();
         for (int x=0; x<tmpE.length; x++) {
@@ -530,7 +531,9 @@ public class CustomBattleArmorDialog
                 m_chTorsoEquipment.add(tmpBAE.name);
             }
         }
+        m_chTorsoEquipment.select(value);
 
+        value = m_chRightArmEquipment.getSelectedItem();
         m_chRightArmEquipment.removeAll();
         if (stateChassisType != CHASSIS_TYPE_QUAD) {
             tmpE = equipmentTypes.toArray();
@@ -545,7 +548,9 @@ public class CustomBattleArmorDialog
                 }
             }
         }
+        m_chRightArmEquipment.select(value);
 
+        value = m_chLeftArmEquipment.getSelectedItem();
         m_chLeftArmEquipment.removeAll();
         if (stateChassisType != CHASSIS_TYPE_QUAD) {
             tmpE = equipmentTypes.toArray();
@@ -560,6 +565,7 @@ public class CustomBattleArmorDialog
                 }
             }
         }
+        m_chLeftArmEquipment.select(value);
 
         m_chLeftArmCurrentEquipment.removeAll();
         if (leftArmEquipment != null) {
@@ -1925,245 +1931,163 @@ public class CustomBattleArmorDialog
         int conflictFlag = 0;
         int allowedLocation = 0;
 
+        BattleArmorEquipment() {
+            // Do nothing.
+            // The default values are acceptable.
+        }
+
+        BattleArmorEquipment(String inN, String inWTN, int inW, int inC, double inBV, int inIT, int inS, int inTB, int inAL) {
+            this(inN, inWTN, inW, inC, inBV, inIT, inS, inTB, inAL, 0);
+        }
+
+        BattleArmorEquipment(String inN, String inWTN, int inW, int inC, double inBV, int inIT, int inS, int inTB, int inAL, int inCF) {
+            name = inN;
+            weaponTypeName = inWTN;
+            weight = inW;
+            cost = inC;
+            bv = inBV;
+            internalType = inIT;
+            slots = inS;
+            techBase = inTB;
+            allowedLocation = inAL;
+            conflictFlag = inCF;
+            CustomBattleArmorDialog.equipmentTypes.add(this);
+            CustomBattleArmorDialog.equipmentNames.add(this.name);
+        }
+
         void initialize() {
-//createBASingleMG
-//createBASingleFlamer
             CustomBattleArmorDialog.equipmentTypes = new ArrayList();
             CustomBattleArmorDialog.equipmentNames = new ArrayList();
 
-            BattleArmorEquipment tmp = new BattleArmorEquipment();
-            tmp.name = "Support Machine Gun";
-            tmp.weaponTypeName = "BA-Machine Gun";
-            tmp.weight = 100;
-            tmp.cost = 5000;
-            tmp.bv = 5;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 1;
-            tmp.techBase = TECH_BASE_BOTH;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
+            // Weapons
+            new BattleArmorEquipment("Support Machine Gun", "BA-Machine Gun", 100, 5000, 5, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Light Recoilless Rifle", "BA-Light Recoilless Rifle", 175, 1000, 12, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Medium Recoilless Rifle", "BA-Medium Recoilless Rifle", 250, 3000, 19, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Heavy Recoilless Rifle", "BA-Heavy Recoilless Rifle", 325, 5000, 22, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Heavy Flamer", "BA-Flamer", 150, 7500, 6, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Semi-Portable Support Pulse Laser", "BA-Clan Micro Pulse Laser", 160, 12500, 12, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Support Laser", "BA-Small Laser", 200, 11250, 9, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("ER Support Laser", "BA-Clan ER Small Laser", 250, 11250, 31, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 1 Launcher", "Clan Advanced SRM-1", 60, 15000, 15, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 2 Launcher", "Clan Advanced SRM-2", 90, 30000, 30, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 3 Launcher", "Clan Advanced SRM-3", 120, 45000, 45, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 4 Launcher", "Clan Advanced SRM-4", 150, 60000, 60, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 5 Launcher", "Clan Advanced SRM-5", 180, 75000, 75, EQUIPMENT_TYPE_WEAPON, 4, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 6 Launcher", "Clan Advanced SRM-6", 210, 90000, 90, EQUIPMENT_TYPE_WEAPON, 4, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
 
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Heavy Flamer";
-            tmp.weaponTypeName = "BA-Flamer";
-            tmp.weight = 150;
-            tmp.cost = 7500;
-            tmp.bv = 6;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 1;
-            tmp.techBase = TECH_BASE_BOTH;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
+            // Ammunition
+            new BattleArmorEquipment("Advanced SRM 1 Ammo", "BAAdvancedSRM1 Ammo", 10, 500, 0.02, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 2 Ammo", "BAAdvancedSRM2 Ammo", 20, 1000, 0.08, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 3 Ammo", "BAAdvancedSRM3 Ammo", 30, 1500, 0.18, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 4 Ammo", "BAAdvancedSRM4 Ammo", 40, 2000, 0.32, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 5 Ammo", "BAAdvancedSRM5 Ammo", 50, 2500, 0.5, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 6 Ammo", "BAAdvancedSRM6 Ammo", 60, 3000, 0.72, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
 
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Support Laser";
-            tmp.weaponTypeName = "BA-Small Laser";
-            tmp.weight = 200;
-            tmp.cost = 11250;
-            tmp.bv = 9;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 1;
-            tmp.techBase = TECH_BASE_BOTH;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
+            // Equipment
+            new BattleArmorEquipment("Jump Booster", null, 125, 75000, 0, EQUIPMENT_TYPE_PREPROCESS, 2, TECH_BASE_BOTH, LOCATION_ALLOWED_TORSO, F_CONFLICT_JUMP_GEAR);
+            new BattleArmorEquipment("Partial Wing", null, 200, 50000, 0, EQUIPMENT_TYPE_PREPROCESS, 1, TECH_BASE_IS, LOCATION_ALLOWED_TORSO, F_CONFLICT_JUMP_GEAR);
 
-            tmp = new BattleArmorEquipment();
-            tmp.name = "ER Support Laser";
-            tmp.weaponTypeName = "BA-Clan ER Small Laser";
-            tmp.weight = 250;
-            tmp.cost = 11250;
-            tmp.bv = 31;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 2;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
+/* More stuff to add!
+// Weapons
+createBASingleMG()
+createBASingleFlamer()
+createBATwinFlamers()
+createBAInfernoSRM()
+createBAMicroBomb()
+createBACLERMicroLaser()
+createCLTorpedoLRM5()
+createBAISMediumPulseLaser()
+createTwinSmallPulseLaser()
+createTripleSmallLaser()
+createTripleMG()
+createFenrirSRM4()
+createBAAutoGL()
+createBAMagshotGR()
+createBAISMediumLaser()
+createBAISERSmallLaser()
+createBACompactNARC()
+createSlothSmallLaser()
+createBAMineLauncher()
+createBABearhunterAC()
+createBACLMediumPulseLaser()
+createBAIncendiaryNeedler()
+createBAKingDavidLightGaussRifle()
+createBAPlasmaRifle()
+createBASingleSmallPulseLaser()
+createBASRM4()
+createBASupportPPC()
+createBAVibroClaws1()
+createBAVibroClaws2()
+createPhalanxSRM4()
+createBAHeavyMG()
+createBALightMG()
+createBACLHeavyMediumLaser()
+createBACLHeavySmallLaser()
+createBACLERMediumLaser()
+createBACLSmallPulseLaser()
+createBAISLightMortar()
+createBAISHeavyMortar()
+createBAMicroGrenade()
+createBAGrandMaulerGauss()
+createBATsunamiGaussRifle()
+createISLAWLauncher()
+createISLAW2Launcher()
+createISLAW3Launcher()
+createISLAW4Launcher()
+createISLAW5Launcher()
+createISMRM1()
+createISMRM2()
+createISMRM3()
+createISMRM4()
+createISMRM5()
+createLRM1()
+createLRM2()
+createLRM3()
+createLRM4()
+createBADavidGaussRifle()
 
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 1 Launcher";
-            tmp.weaponTypeName = "Clan Advanced SRM-1";
-            tmp.weight = 60;
-            tmp.cost = 15000;
-            tmp.bv = 15;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 2;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
+//Ammo
+createBASRM2Ammo()
+createBASRM2OSAmmo()
+createBAInfernoSRMAmmo()
+createBAMicroBombAmmo()
+createCLTorpedoLRM5Ammo()
+createFenrirSRM4Ammo()
+createBACompactNarcAmmo()
+createBAMineLauncherAmmo()
+createBALRM5Ammo()
+createPhalanxSRM4Ammo()
+createGrenadierSRM4Ammo()
+createBAInfernoSRMAmmo()
+createISLAWLauncherAmmo()
+createISLAW2LauncherAmmo()
+createISLAW3LauncherAmmo()
+createISLAW4LauncherAmmo()
+createISLAW5LauncherAmmo()
+createISMRM1Ammo()
+createISMRM2Ammo()
+createISMRM3Ammo()
+createISMRM4Ammo()
+createISMRM5Ammo()
+createBAISLRM1Ammo()
+createBAISLRM2Ammo()
+createBAISLRM3Ammo()
+createBAISLRM4Ammo()
+createBAISLRM5Ammo()
+createBACLLRM1Ammo()
+createBACLLRM2Ammo()
+createBACLLRM3Ammo()
+createBACLLRM4Ammo()
+createBACLLRM5Ammo()
+createBASRM1Ammo()
+createBASRM2Ammo()
+createBASRM3Ammo()
+createBASRM4Ammo()
+createBASRM5Ammo()
+createBASRM6Ammo()
 
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 2 Launcher";
-            tmp.weaponTypeName = "Clan Advanced SRM-2";
-            tmp.weight = 90;
-            tmp.cost = 30000;
-            tmp.bv = 30;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 2;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 3 Launcher";
-            tmp.weaponTypeName = "Clan Advanced SRM-3";
-            tmp.weight = 120;
-            tmp.cost = 45000;
-            tmp.bv = 45;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 3;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 4 Launcher";
-            tmp.weaponTypeName = "Clan Advanced SRM-4";
-            tmp.weight = 150;
-            tmp.cost = 60000;
-            tmp.bv = 60;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 3;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 5 Launcher";
-            tmp.weaponTypeName = "Clan Advanced SRM-5";
-            tmp.weight = 180;
-            tmp.cost = 75000;
-            tmp.bv = 75;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 4;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 6 Launcher";
-            tmp.weaponTypeName = "Clan Advanced SRM-6";
-            tmp.weight = 210;
-            tmp.cost = 90000;
-            tmp.bv = 90;
-            tmp.internalType = EQUIPMENT_TYPE_WEAPON;
-            tmp.slots = 4;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 1 Ammo";
-            tmp.weaponTypeName = "BAAdvancedSRM1 Ammo";
-            tmp.weight = 10;
-            tmp.cost = 500;
-            tmp.bv = 0.02;
-            tmp.internalType = EQUIPMENT_TYPE_AMMO;
-            tmp.slots = 1;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 2 Ammo";
-            tmp.weaponTypeName = "BAAdvancedSRM2 Ammo";
-            tmp.weight = 20;
-            tmp.cost = 1000;
-            tmp.bv = 0.08;
-            tmp.internalType = EQUIPMENT_TYPE_AMMO;
-            tmp.slots = 1;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 3 Ammo";
-            tmp.weaponTypeName = "BAAdvancedSRM3 Ammo";
-            tmp.weight = 30;
-            tmp.cost = 1500;
-            tmp.bv = 0.18;
-            tmp.internalType = EQUIPMENT_TYPE_AMMO;
-            tmp.slots = 1;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 4 Ammo";
-            tmp.weaponTypeName = "BAAdvancedSRM4 Ammo";
-            tmp.weight = 40;
-            tmp.cost = 2000;
-            tmp.bv = 0.32;
-            tmp.internalType = EQUIPMENT_TYPE_AMMO;
-            tmp.slots = 1;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 5 Ammo";
-            tmp.weaponTypeName = "BAAdvancedSRM5 Ammo";
-            tmp.weight = 50;
-            tmp.cost = 2500;
-            tmp.bv = 0.5;
-            tmp.internalType = EQUIPMENT_TYPE_AMMO;
-            tmp.slots = 1;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Advanced SRM 6 Ammo";
-            tmp.weaponTypeName = "BAAdvancedSRM6 Ammo";
-            tmp.weight = 60;
-            tmp.cost = 3000;
-            tmp.bv = 0.72;
-            tmp.internalType = EQUIPMENT_TYPE_AMMO;
-            tmp.slots = 1;
-            tmp.techBase = TECH_BASE_CLAN;
-            tmp.allowedLocation = LOCATION_ALLOWED_ANY;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Jump Booster";
-            tmp.weight = 125;
-            tmp.slots = 2;
-            tmp.cost = 75000;
-            tmp.bv = 0;
-            tmp.internalType = EQUIPMENT_TYPE_PREPROCESS;
-            tmp.techBase = TECH_BASE_BOTH;
-            tmp.conflictFlag = F_CONFLICT_JUMP_GEAR;
-            tmp.allowedLocation = LOCATION_ALLOWED_TORSO;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
-
-            tmp = new BattleArmorEquipment();
-            tmp.name = "Partial Wing";
-            tmp.weight = 200;
-            tmp.slots = 1;
-            tmp.cost = 50000;
-            tmp.bv = 0;
-            tmp.internalType = EQUIPMENT_TYPE_PREPROCESS;
-            tmp.techBase = TECH_BASE_IS;
-            tmp.conflictFlag = F_CONFLICT_JUMP_GEAR;
-            tmp.allowedLocation = LOCATION_ALLOWED_TORSO;
-            CustomBattleArmorDialog.equipmentTypes.add(tmp);
-            CustomBattleArmorDialog.equipmentNames.add(tmp.name);
+// Other equipment
+*/
         }
 
         public String getDescription() {

@@ -2556,6 +2556,7 @@ public abstract class Mech
     }
     
     public boolean isHexProhibited(IHex hex) {
+        if(hex.containsTerrain(Terrains.IMPASSABLE)) return true;
         return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
     }
 }

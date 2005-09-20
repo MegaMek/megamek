@@ -1264,6 +1264,11 @@ public class MoveStep implements Serializable {
         if (!game.getBoard().contains(dest)) {
             return false;
         }
+        
+        // can't enter impassable hex
+        if(destHex.containsTerrain(Terrains.IMPASSABLE)) {
+            return false;
+        }
 
         // Can't back up across an elevation change.
         if ( !(entity instanceof VTOL) && isThisStepBackwards()
@@ -1349,6 +1354,7 @@ public class MoveStep implements Serializable {
         }
 
         if ( movementType != IEntityMovementType.MOVE_JUMP
+              && (nMove != IEntityMovementMode.VTOL)
              && ( Math.abs(nSrcEl - nDestEl)
                   > entity.getMaxElevationChange() ) ) {
             return false;

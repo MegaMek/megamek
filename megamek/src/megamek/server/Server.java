@@ -13955,6 +13955,9 @@ public class Server implements Runnable {
                     r.addDesc(entity);
                     r.add(m.getName());
                     vPhaseReport.addElement(r);
+                    //update status
+                    m.setPendingDump(false);
+                    m.setDumping(true);
                 }
                 else if (m.isDumping()) {
                     //report finished dumping
@@ -13963,8 +13966,12 @@ public class Server implements Runnable {
                     r.addDesc(entity);
                     r.add(m.getName());
                     vPhaseReport.addElement(r);
+                    //update status
+                    m.setDumping(false);
+                    m.setShotsLeft(0);
                 }
             }
+            entity.reloadEmptyWeapons();
         }
     }
 

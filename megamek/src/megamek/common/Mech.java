@@ -466,19 +466,6 @@ public abstract class Mech
 
         setSecondaryFacing(getFacing());
 
-        // resolve ammo dumps 
-        for (Enumeration e = getAmmo(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
-            if (m.isPendingDump()) {
-                m.setPendingDump(false);
-                m.setDumping(true);
-                reloadEmptyWeapons();
-            } else if (m.isDumping()) {
-                m.setDumping(false);
-                m.setShotsLeft(0);
-            }
-        }
-
         // set heat sinks
         sinksOn = sinksOnNextRound;
 

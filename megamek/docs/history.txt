@@ -28,6 +28,7 @@ v0.31.1-dev (CVS)
 + Custom BA dialog now correctly validates armor slot usage.
 + Added yet more custom BA equipment.
 + Fixed an ammo dumping bug that let people dump without their opponent knowing
++ Bug 1297348: TAG problems
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

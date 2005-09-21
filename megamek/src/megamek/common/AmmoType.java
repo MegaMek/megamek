@@ -152,6 +152,7 @@ public class AmmoType extends EquipmentType {
         criticals = 1;
         tonnage = 1.0f;
         explosive = true;
+        instantModeSwitch = false;
     }
 
     /**

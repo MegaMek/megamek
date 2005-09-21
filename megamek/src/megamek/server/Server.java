@@ -16780,6 +16780,7 @@ public class Server implements Runnable {
         } 
         else if(info.missed) {
             wr.waa.setTargetId(entityTarget.getId());
+            wr.waa.setTargetType(Targetable.TYPE_ENTITY);
             wr.toHit = new ToHitData(ToHitData.IMPOSSIBLE, "tag missed the target");
         } else {
             //update for hit table resolution

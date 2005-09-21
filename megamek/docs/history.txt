@@ -26,6 +26,7 @@ v0.31.1-dev (CVS)
 + Fire-resistant armor now loads correctly from Custom BA Dialog.
 + Added reset button to custom BA dialog.
 + Custom BA dialog now correctly validates armor slot usage.
++ Added yet more custom BA equipment.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

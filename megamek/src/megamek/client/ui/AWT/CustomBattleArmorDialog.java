@@ -2000,6 +2000,17 @@ public class CustomBattleArmorDialog
             new BattleArmorEquipment("Semi-Portable Support Pulse Laser", "BA-Clan Micro Pulse Laser", 160, 12500, 12, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
             new BattleArmorEquipment("Support Laser", "BA-Small Laser", 200, 11250, 9, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
             new BattleArmorEquipment("ER Support Laser", "BA-Clan ER Small Laser", 250, 11250, 31, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Bearhunter Superheavy AC", "BA-Bearhunter Superheavy AC", 150, 11250, 4, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("David Light Gauss Rifle", "BA-ISDavidLightGauss", 100, 22500, 7, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("King David Light Gauss Rifle", "BA-King David Light Gauss Rifle", 275, 30000, 7, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Firedrake Support Needler", "BA-Firedrake Incendiary Needler", 50, 1500, 2, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Man-Portable Plasma Rifle", "BA-Plasma Rifle", 300, 28000, 12, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Magshot Gauss Rifle", "BAMagshotGR", 175, 8500, 15, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Grand Mauler Gauss Cannonr", "BA-ISGrandMauler", 125, 5500, 6, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Tsunami Heavy Gauss Rifle", "BA-ISTsunamiHeavyGaussRifle", 125, 5000, 6, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Semi-Portable Autocannon", "BA-HeavyMG", 150, 7500, 6, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Semi-Portable Machine Gun", "BA-LightMG", 75, 5000, 5, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+
             new BattleArmorEquipment("Advanced SRM 1 Launcher", "Clan Advanced SRM-1", 60, 15000, 15, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
             new BattleArmorEquipment("Advanced SRM 2 Launcher", "Clan Advanced SRM-2", 90, 30000, 30, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
             new BattleArmorEquipment("Advanced SRM 3 Launcher", "Clan Advanced SRM-3", 120, 45000, 45, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
@@ -2024,6 +2035,7 @@ public class CustomBattleArmorDialog
 createBASingleMG()
 createBASingleFlamer()
 createBATwinFlamers()
+
 createBAInfernoSRM()
 createBAMicroBomb()
 createBACLERMicroLaser()
@@ -2034,25 +2046,16 @@ createTripleSmallLaser()
 createTripleMG()
 createFenrirSRM4()
 createBAAutoGL()
-createBAMagshotGR()
 createBAISMediumLaser()
 createBAISERSmallLaser()
 createBACompactNARC()
 createSlothSmallLaser()
 createBAMineLauncher()
-createBABearhunterAC()
 createBACLMediumPulseLaser()
-createBAIncendiaryNeedler()
-createBAKingDavidLightGaussRifle()
-createBAPlasmaRifle()
 createBASingleSmallPulseLaser()
 createBASRM4()
 createBASupportPPC()
-createBAVibroClaws1()
-createBAVibroClaws2()
 createPhalanxSRM4()
-createBAHeavyMG()
-createBALightMG()
 createBACLHeavyMediumLaser()
 createBACLHeavySmallLaser()
 createBACLERMediumLaser()
@@ -2060,8 +2063,6 @@ createBACLSmallPulseLaser()
 createBAISLightMortar()
 createBAISHeavyMortar()
 createBAMicroGrenade()
-createBAGrandMaulerGauss()
-createBATsunamiGaussRifle()
 createISLAWLauncher()
 createISLAW2Launcher()
 createISLAW3Launcher()
@@ -2076,7 +2077,6 @@ createLRM1()
 createLRM2()
 createLRM3()
 createLRM4()
-createBADavidGaussRifle()
 
 //Ammo
 createBASRM2Ammo()

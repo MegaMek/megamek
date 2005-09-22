@@ -30,6 +30,7 @@ v0.31.1-dev (CVS)
 + Fixed an ammo dumping bug that let people dump without their opponent knowing
 + Bug 1297348: TAG problems
 + Bug 1293264: mech pushed into water stays at elevation 0
++ Patch 1298823: Weaselfink's corrected OfficialUnitsList.txt.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

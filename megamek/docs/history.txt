@@ -31,6 +31,8 @@ v0.31.1-dev (CVS)
 + Bug 1297348: TAG problems
 + Bug 1293264: mech pushed into water stays at elevation 0
 + Patch 1298823: Weaselfink's corrected OfficialUnitsList.txt.
++ Bug 1293793: elevation bug: VTOL wont unload
++ Fixed a bug deploying transports with units already loaded
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

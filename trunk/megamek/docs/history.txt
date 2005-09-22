@@ -29,6 +29,7 @@ v0.31.1-dev (CVS)
 + Added yet more custom BA equipment.
 + Fixed an ammo dumping bug that let people dump without their opponent knowing
 + Bug 1297348: TAG problems
++ Bug 1293264: mech pushed into water stays at elevation 0
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

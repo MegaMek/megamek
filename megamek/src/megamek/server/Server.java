@@ -5266,7 +5266,7 @@ public class Server implements Runnable {
         int loadedCount = packet.getIntValue(3);
         Vector loadVector = new Vector();
         for ( int i = 0; i < loadedCount; i++ ){
-            int loadedId = packet.getIntValue( 4 + i );
+            int loadedId = packet.getIntValue( 5 + i );
             loadVector.addElement(game.getEntity( loadedId ));
         }
 

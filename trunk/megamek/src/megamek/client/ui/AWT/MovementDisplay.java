@@ -1162,7 +1162,7 @@ public class MovementDisplay
         if ( !legalGear
                 || loadedUnits.size() == 0 
                 || cen == Entity.NONE
-                || (getCeElevation() > 0
+                || (cmd.getFinalElevation() > 0
                     && !vtolLoaded)) {
             setUnloadEnabled( false );
         } else {
@@ -1879,16 +1879,4 @@ public class MovementDisplay
         clientgui.getBoardView().removeBoardViewListener(this);
     }
 
-    public int getCeElevation() {
-        Entity ce = ce();
-        int retVal = ce.getElevation();
-        for (Enumeration e = cmd.getSteps(); e.hasMoreElements(); ) {
-            MoveStep ms = (MoveStep)e.nextElement();
-            if (ms.getType() == MovePath.STEP_UP)
-                retVal++;
-            else if (ms.getType() == MovePath.STEP_DOWN)
-                retVal--;
-        }
-        return retVal;
-    }
 }

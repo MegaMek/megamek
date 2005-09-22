@@ -4988,6 +4988,9 @@ implements Runnable, ConnectionHandler {
             doEntityFallsInto(entity, src, dest, roll);
             return;
         } else {
+            //move the entity into the new location gently
+            entity.setPosition(dest);
+            entity.setElevation(entity.elevationOccupied(destHex));
             Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
             if (violation == null) {
                 // move and roll normally
@@ -4997,16 +5000,6 @@ implements Runnable, ConnectionHandler {
                 r.addDesc(entity);
                 r.add(dest.getBoardNum(), true);
                 vPhaseReport.addElement(r);
-
-                entity.setPosition(dest);
-                doEntityDisplacementMinefieldCheck(entity, src, dest);
-                doSetLocationsExposure(entity, destHex, false);
-                if (roll != null) {
-                    game.addPSR(roll);
-                }
-                // Update the entity's postion on the client.
-                entityUpdate( entity.getId() );
-                return;
             } else {
                 // domino effect: move & displace target
                 r = new Report(2240);
@@ -5016,18 +5009,23 @@ implements Runnable, ConnectionHandler {
                 r.add(dest.getBoardNum(), true);
                 r.addDesc(violation);
                 vPhaseReport.addElement(r);
-                entity.setPosition(dest);
-                doEntityDisplacementMinefieldCheck(entity, src, dest);
-                if (roll != null) {
-                    game.addPSR(roll);
-                }
+            }
+            // trigger any special things for moving to the new hex
+            doEntityDisplacementMinefieldCheck(entity, src, dest);
+            doSetLocationsExposure(entity, destHex, false);
+            if (roll != null) {
+                game.addPSR(roll);
+            }
+            // Update the entity's postion on the client.
+            entityUpdate( entity.getId() );
+            
+            if(violation != null) {
                 doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
                 // Update the violating entity's postion on the client,
                 // if it didn't get displaced off the board.
                 if ( !game.isOutOfGame(violation) ) {
                     entityUpdate( violation.getId() );
                 }
-                return;
             }
         }
     }

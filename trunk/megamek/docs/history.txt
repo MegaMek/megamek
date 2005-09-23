@@ -33,6 +33,7 @@ v0.31.1-dev (CVS)
 + Patch 1298823: Weaselfink's corrected OfficialUnitsList.txt.
 + Bug 1293793: elevation bug: VTOL wont unload
 + Fixed a bug deploying transports with units already loaded
++ Updated HACKING and docs/gcj.patch to show new directory structure.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

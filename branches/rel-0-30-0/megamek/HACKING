@@ -2,18 +2,18 @@ ATTENTION TO FREE/LIBRE/OPEN SOURCE SOFTWARE HACKERS
 
 This project started on a Windows system and as such, it has a few quirks that
 you may find disconcerting.  The first is a complete lack of a Makefile; the
-primary means of building this project is Apache Ant.  Also, there is a BAT
-file to run the game on a Windows system; there is no corresponding shell
-script.  The release file is a ZIP file, and it does not place everything into
-a directory with a version number; many files are deposited directly into the
-directory that you unzip into.  As is typical in a Windows-centric Java app,
-all third party libraries (i.e. JAR files) are supplied by the project iteslf.
-Finally, MegaMek has to be run in the main directory; even though the data
-files could be shared between multiple users and are unlikely to change from
-release to release, each installation must have its own copy of the files.
+primary means of building this project is Apache Ant.  Also, there is an EXE
+(which calls a BAT file) to run the game on a Windows system; the corresponding
+shell script is called "startup.sh").  The release file is a ZIP file, and it
+does not place everything into a directory with a version number; many files
+are deposited directly into the directory that you unzip into.  As is typical
+in a Windows-centric Java app, all third party libraries (i.e. JAR files) are
+supplied by the project iteslf.  Finally, MegaMek is very particular about the
+contents of the directory in which it runs; the startup.sh script attempt to
+solve this problem, but let me know if it doesn't work in your setup.
 
-Someday, I intend to address every single issue listed above; for now, however,
-one must simply accept the limitations and move on.
+Someday, I intend to address every single issue listed above.  For now,
+however, please accept the limitations and move on.
 
 MegaMek can be run on any Java v1.1 runtime.  We've kept compatible with this
 old version of the runtime in order to support players who want to use the
@@ -22,27 +22,27 @@ to MegaMek that are available if a more recent version of Java is installed.
 That means that MegaMek can not be *compiled* by a v1.1 JDK.  Still, I haven't
 found a "modern" Java compiler that won't build MegaMek.  Please report any
 problems that you run into on your environment.  One notable exception to this
-rule is the file "src/megamek/client/ClientGUI.java": due to popular demand,
-sounds have been added to MegaMek; sadly, the only v1.1 sound API is 
+rule is the file "src/megamek/client/ui/AWTClientGUI.java": due to popular
+demand, sounds have been added to MegaMek; sadly, the only v1.1 sound API is 
 java.applet.AudioClip, which does not always work.  As a "backup", a 
 Sun-specific API was used; it should be obvious that FLOSS Java environments 
-will not build this file.  Please apply the patch named "gcj.patch" to correct 
-this problem.
+will not build this file.  Please apply the patch named "docs/gcj.patch" to
+correct this problem.
 
 While there is no Makefile, it's very easy to build MegaMek with Jikes.  My
 computer is running Debian Sarge with GCC installed.  Therefore, I can build
 MegaMek with the following command; please modify the command to meet your
 environment (email me if you have any problems).
 
-jikes-gij -q -d classes --target 1.1 -classpath classes -extdirs lib -sourcepath src `find src -name '*.java' | sed -e 's/^src\///'`
+jikes-gij -q -d classes --target 1.1 -classpath classes -extdirs lib -sourcepath src `find src -name '*.java'`
 
 Once MegaMek is built, I can run it with GIJ with the following command.
 
-gij --classpath lib/Ostermiller.jar:lib/PngEncoder.jar:lib/TabPanel.jar:lib/TinyXML.jar:lib/collections.jar:classes megamek.MegaMek -log | tee MegaMek.log
+gij --classpath lib/Ostermiller.jar:lib/PngEncoder.jar:lib/TabPanel.jar:lib/TinyXML.jar:lib/collections.jar:l10n:classes megamek.MegaMek -log | tee MegaMek.log
 
 I can run it under Kaffe with a similar command.
 
-kaffe -classpath lib/Ostermiller.jar:lib/PngEncoder.jar:lib/TabPanel.jar:lib/TinyXML.jar:lib/collections.jar:classes megamek.MegaMek -log | tee MegaMek.log
+kaffe -classpath lib/Ostermiller.jar:lib/PngEncoder.jar:lib/TabPanel.jar:lib/TinyXML.jar:lib/collections.jar:l10n:classes megamek.MegaMek -log | tee MegaMek.log
 
 The following runtime flags are available:
         -testdice : Test the random number generator used by MegaMek, and exit.
@@ -71,4 +71,4 @@ TODO list:
 
 James Damour
 suvarov454@users.sourceforge.net
-last updated 2005-06-24
+last updated 2005-09-23

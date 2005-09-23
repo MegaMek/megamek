@@ -4,6 +4,7 @@ v0.30.3-dev (CVS)
 + Bug 1297348: TAG problems
 + Bug 1293264: mech pushed into water stays at elevation 0
 + Bug 1293793: elevation bug: VTOL wont unload
++ Updated HACKING and docs/gcj.patch to show new directory structure.
 
 v0.30.2 (2005-09-17, 00:35 GMT+2)
 + Bug 1268169: RAC unjamming does not work.

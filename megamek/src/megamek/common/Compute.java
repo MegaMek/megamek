@@ -593,6 +593,10 @@ public class Compute {
             weaponUnderwater = true;
             weaponRanges = wtype.getWRanges();
         }
+        // allow ice to be cleared from below
+        if(targHex.containsTerrain(Terrains.WATER) && target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+            targetInPartialWater = true;
+        }
 
         if (weaponUnderwater) {
             weaponRanges = wtype.getWRanges();

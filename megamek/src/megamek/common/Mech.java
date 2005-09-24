@@ -120,6 +120,7 @@ public abstract class Mech
      * The internal name for Mek Stealth systems.
      */
     public static final String STEALTH = "Mek Stealth";
+    public static final String NULLSIG = "Mek Null Signature System";
 
     // rear armor
     private int[] rearArmor;
@@ -718,8 +719,8 @@ public abstract class Mech
         for ( Enumeration equips = getMisc(); equips.hasMoreElements(); ) {
             Mounted mEquip = (Mounted) equips.nextElement();
             MiscType mtype = (MiscType) mEquip.getType();
-            if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {
-                // The Mek has Stealth Armor.
+            if ( mtype.hasFlag(MiscType.F_STEALTH) ) {
+                // The Mek has Stealth Armor or null signature system.
                 return true;
             }
         }
@@ -2220,6 +2221,11 @@ public abstract class Mech
                     // Return true if the mode is "On" and ECM is working
                     return true;
                 }
+            }
+            else if (Mech.NULLSIG.equals(mtype.getInternalName())
+                    && mEquip.curMode().equals( "On" )
+                    && mEquip.isReady()) {
+                return true;
             }
         }
 

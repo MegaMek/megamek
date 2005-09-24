@@ -43,6 +43,7 @@ v0.31.1-dev (CVS)
 + Bug 1293280: Another NPE using bot + off-board units (weaselflink's patch)
 + Bug 1293051: NPE during bot deployment (weaselflink's patch)
 + /fixelevation command, which recovers game from elevation problems.
++ Null Signature System
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

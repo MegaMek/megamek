@@ -206,7 +206,7 @@ public class LosEffects {
              target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
             targEl = target.absHeight() + targetHex.getElevation();
         } else {
-            targEl = game.getBoard().getHex(target.getPosition()).floor();
+            targEl = game.getBoard().getHex(target.getPosition()).surface();
         }
         
         ai.attackAbsHeight = attEl;

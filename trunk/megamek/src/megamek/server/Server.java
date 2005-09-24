@@ -12009,30 +12009,26 @@ public class Server implements Runnable {
 
                             boolean engineExploded = false;
 
-                            if ( te.engineHitsThisRound >= 2 ) {
-                                engineExploded = checkEngineExplosion(te, vDesc);
+
+                            int numEngineHits = 0;
+                            numEngineHits +=
+                                te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                   Mech.SYSTEM_ENGINE,
+                                                   Mech.LOC_CT);
+                            numEngineHits +=
+                                te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                   Mech.SYSTEM_ENGINE,
+                                                   Mech.LOC_RT);
+                            numEngineHits +=
+                                te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                   Mech.SYSTEM_ENGINE,
+                                                   Mech.LOC_LT);
+
+                            engineExploded = checkEngineExplosion(te, vDesc, numEngineHits);
+                            if ( !engineExploded && numEngineHits > 2  ) {
+                                // third engine hit
+                                Server.combineVectors(vDesc, destroyEntity(te, "engine destruction"));
                             }
-
-                            if ( !engineExploded ) {
-                                int numEngineHits = 0;
-                                numEngineHits +=
-                                    te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                       Mech.SYSTEM_ENGINE,
-                                                       Mech.LOC_CT);
-                                numEngineHits +=
-                                    te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                       Mech.SYSTEM_ENGINE,
-                                                       Mech.LOC_RT);
-                                numEngineHits +=
-                                    te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                       Mech.SYSTEM_ENGINE,
-                                                       Mech.LOC_LT);
-
-                                if ( numEngineHits > 2  ) {
-                                    // third engine hit
-                                    Server.combineVectors(vDesc, destroyEntity(te, "engine destruction"));
-                                }
-                             }
                         }
                         
                         if (te instanceof VTOL && hit.getLocation() == VTOL.LOC_ROTOR) {
@@ -12056,9 +12052,7 @@ public class Server implements Runnable {
 
                         boolean engineExploded = false;
 
-                        if ( te.engineHitsThisRound >= 2 ) {
-                          engineExploded = checkEngineExplosion(te, vDesc);
-                        }
+                        engineExploded = checkEngineExplosion(te, vDesc, te.engineHitsThisRound);
 
                         if ( !engineExploded && !((te instanceof VTOL) && hit.getLocation() == VTOL.LOC_ROTOR)) {
                             // Entity destroyed.  Ammo explosions are
@@ -12220,25 +12214,52 @@ public class Server implements Runnable {
     }
 
     /**
-     * Check to see if the entity's engine explodes
+     * Check to see if the entity's engine explodes.  
+     * Rules for ICE explosions are different to fusion engines.
      * @param   en - the <code>Entity</code> in question.
      *          This value must not be <code>null</code>.
      * @param   vDesc - the <code>Vector</code> that this function should
      *          add its <code>Report<code>s to.  It may be empty, but not
      *          <code>null</code>.
+     * @param   hits - the number of criticals on the engine
      * @return  <code>true</code> if the unit's engine exploded,
      *          <code>false</code> if not.
      */
-    private boolean checkEngineExplosion(Entity en, Vector vDesc) {
-      if ( !game.getOptions().booleanOption("engine_explosions") || en.rolledForEngineExplosion )
-        return false;
-
+    private boolean checkEngineExplosion(Entity en, Vector vDesc, int hits) {
       if ( !(en instanceof Mech) && !(en instanceof QuadMech) &&
            !(en instanceof BipedMech) ) {
           return false;
       }
       
+      if(en.isDoomed() || en.isDestroyed())
+          return false;
+      Mech mech = (Mech)en;
+      
+      //ICE can always explode and roll every time hit
+      if (!mech.hasICE() &&
+              (!game.getOptions().booleanOption("engine_explosions")
+                      || en.rolledForEngineExplosion
+                      || en.engineHitsThisRound < 2) )
+          return false;
+
       int explosionBTH = 12;
+      
+      if(mech.hasICE()) {
+          switch (hits) {
+          case 0: 
+              return false;
+          case 1:
+              explosionBTH = 10;
+              break;
+          case 2:
+              explosionBTH = 7;
+              break;
+          case 3:
+          default:
+              explosionBTH = 4;
+              break;
+          }
+      }
       int explosionRoll = Compute.d6(2);
 
       boolean didExplode = explosionRoll >= explosionBTH;
@@ -12291,64 +12312,68 @@ public class Server implements Runnable {
             vDesc.addElement(r);
             sendChangedHex(en.getPosition());
           }
-
-        //Nuke anyone that is in our hex
-          Enumeration entitesWithMe = game.getEntities(en.getPosition());
-          Hashtable entitesHit = new Hashtable();
-
-          entitesHit.put(en, en);
-
-          while ( entitesWithMe.hasMoreElements() ) {
-            Entity entity = (Entity)entitesWithMe.nextElement();
-
-            if ( entity.equals(en) )
-              continue;
-
-            Server.combineVectors(vDesc, destroyEntity(entity, "engine explosion proximity", false, false));
-            // Kill the crew
-            entity.getCrew().setDoomed(true);
-
-            entitesHit.put(entity, entity);
-          }
-
-        //Now we damage people near us
-          int engineRating = ((Mech)en).engineRating();
-          int[] damages = { 999, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
-
-          Vector entites = game.getEntitiesVector();
-
-          for ( int i = 0; i < entites.size(); i++ ) {
-            Entity entity = (Entity)entites.elementAt(i);
-
-            if ( entitesHit.containsKey(entity) )
-              continue;
-
-            if ( entity.isDoomed() || entity.isDestroyed() || !entity.isDeployed() )
-              continue;
-
-            int range = en.getPosition().distance(entity.getPosition());
-
-            if ( range > 3 )
-              continue;
-
-            int damage = damages[range];
-
-            r = new Report(6175);
-            r.subject = entity.getId();
-            r.indent(2);
-            r.addDesc(entity);
-            r.add(damage);
-            r.newlines = 0;
-            vDesc.addElement(r);
-
-            while (damage > 0) {
-                int cluster = Math.min(5, damage);
-                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(en, entity));
-                Server.combineVectors(vDesc, damageEntity(entity, hit, cluster));
-                damage -= cluster;
-            }
-
-            Report.addNewline(vDesc);
+          
+          //ICE explosions don't hurt anyone else
+          if(!mech.hasICE()) {
+    
+            //Nuke anyone that is in our hex
+              Enumeration entitesWithMe = game.getEntities(en.getPosition());
+              Hashtable entitesHit = new Hashtable();
+    
+              entitesHit.put(en, en);
+    
+              while ( entitesWithMe.hasMoreElements() ) {
+                Entity entity = (Entity)entitesWithMe.nextElement();
+    
+                if ( entity.equals(en) )
+                  continue;
+    
+                Server.combineVectors(vDesc, destroyEntity(entity, "engine explosion proximity", false, false));
+                // Kill the crew
+                entity.getCrew().setDoomed(true);
+    
+                entitesHit.put(entity, entity);
+              }
+    
+            //Now we damage people near us
+              int engineRating = ((Mech)en).engineRating();
+              int[] damages = { 999, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
+    
+              Vector entites = game.getEntitiesVector();
+    
+              for ( int i = 0; i < entites.size(); i++ ) {
+                Entity entity = (Entity)entites.elementAt(i);
+    
+                if ( entitesHit.containsKey(entity) )
+                  continue;
+    
+                if ( entity.isDoomed() || entity.isDestroyed() || !entity.isDeployed() )
+                  continue;
+    
+                int range = en.getPosition().distance(entity.getPosition());
+    
+                if ( range > 3 )
+                  continue;
+    
+                int damage = damages[range];
+    
+                r = new Report(6175);
+                r.subject = entity.getId();
+                r.indent(2);
+                r.addDesc(entity);
+                r.add(damage);
+                r.newlines = 0;
+                vDesc.addElement(r);
+    
+                while (damage > 0) {
+                    int cluster = Math.min(5, damage);
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(en, entity));
+                    Server.combineVectors(vDesc, damageEntity(entity, hit, cluster));
+                    damage -= cluster;
+                }
+    
+                Report.addNewline(vDesc);
+              }
           }
       }
 
@@ -12663,27 +12688,22 @@ public class Server implements Runnable {
 
                     boolean engineExploded = false;
 
-                    if ( en.engineHitsThisRound >= 2 ) {
-                        engineExploded = checkEngineExplosion(en, vDesc);
-                    }
+                    int numEngineHits = 0;
+                    numEngineHits += en.getHitCriticals
+                        (CriticalSlot.TYPE_SYSTEM,
+                         Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+                    numEngineHits += en.getHitCriticals
+                        (CriticalSlot.TYPE_SYSTEM,
+                         Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+                    numEngineHits += en.getHitCriticals
+                        (CriticalSlot.TYPE_SYSTEM,
+                         Mech.SYSTEM_ENGINE, Mech.LOC_LT);
 
-                    if ( !engineExploded ) {
-                        int numEngineHits = 0;
-                        numEngineHits += en.getHitCriticals
-                            (CriticalSlot.TYPE_SYSTEM,
-                             Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-                        numEngineHits += en.getHitCriticals
-                            (CriticalSlot.TYPE_SYSTEM,
-                             Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-                        numEngineHits += en.getHitCriticals
-                            (CriticalSlot.TYPE_SYSTEM,
-                             Mech.SYSTEM_ENGINE, Mech.LOC_LT);
-
-                        if ( numEngineHits > 2 ) {
-                            // third engine hit
-                            Server.combineVectors(vDesc,
-                                destroyEntity(en, "engine destruction"));
-                        }
+                    engineExploded = checkEngineExplosion(en, vDesc, numEngineHits);
+                    if ( !engineExploded && numEngineHits > 2 ) {
+                        // third engine hit
+                        Server.combineVectors(vDesc,
+                            destroyEntity(en, "engine destruction"));
                     }
                     break;
                 case Mech.SYSTEM_GYRO :

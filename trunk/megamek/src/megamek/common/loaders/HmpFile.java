@@ -391,6 +391,9 @@ public class HmpFile
       Mech mech =
         (chassisType == ChassisType.QUADRAPED) ? (Mech) new QuadMech(gyroType, cockpitType) : (Mech) new BipedMech(gyroType, cockpitType);
 
+      if(engineType == EngineType.ICE) {
+          mech.setICE(true);
+      }
       mech.setChassis(name);
       mech.setModel(model);
       mech.setYear(year);

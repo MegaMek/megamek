@@ -48,6 +48,8 @@ public class TestMech extends TestEntity {
             type = Engine.XL_ENGINE;
         else if (mech.hasLightEngine())
             type = Engine.LIGHT_ENGINE;
+        else if (mech.hasICE())
+            type = Engine.COMPUSTION_ENGINE;
         else
             type = Engine.NORMAL_ENGINE;
         if (mech.isClan())
@@ -264,8 +266,8 @@ public class TestMech extends TestEntity {
             {
             }
         }
-        if ((countInternalHeatSinks > (((Mech)entity).engineRating() / 25)) ||
-                (countInternalHeatSinks <(((Mech)entity).engineRating() / 25) &&
+        if ((countInternalHeatSinks > (((Mech)entity).integralSinkCapacity())) ||
+                (countInternalHeatSinks <(((Mech)entity).integralSinkCapacity()) &&
                  countInternalHeatSinks!=((Mech)entity).heatSinks() &&
                  !entity.isOmni()))
         {

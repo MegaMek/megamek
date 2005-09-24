@@ -3755,7 +3755,7 @@ public class Server implements Runnable {
             if(curHex.containsTerrain(Terrains.ICE)
                     && curHex.containsTerrain(Terrains.WATER)
                     && !(lastPos.equals(curPos))) {
-                if(entity.getElevation() == 0
+                if(step.getElevation() == 0
                         && step.getMovementType() != IEntityMovementType.MOVE_JUMP) {
                     int roll = Compute.d6(1);
                     r = new Report(2118);
@@ -4802,11 +4802,11 @@ public class Server implements Runnable {
 
     public void doSetLocationsExposure(Entity entity, IHex hex, boolean isJump, int elevation) {
         if ( hex.terrainLevel(Terrains.WATER) > 0
-                && !isJump) {
+                && !isJump
+                && elevation < 0) {
             if (entity instanceof Mech
                     && !entity.isProne()
-                    && hex.terrainLevel(Terrains.WATER) == 1
-                    && elevation < 0) {
+                    && hex.terrainLevel(Terrains.WATER) == 1) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getOptions().booleanOption("vacuum"))
                         entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
@@ -4826,7 +4826,7 @@ public class Server implements Runnable {
                     Server.combineVectors(vPhaseReport,
                                breachCheck(entity, Mech.LOC_LARM, hex));
                 }
-            } else if (elevation < 0) {
+            } else {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     entity.setLocationStatus(loop, ILocationExposureStatus.WET);
                     Server.combineVectors(vPhaseReport, breachCheck(entity, loop, hex));

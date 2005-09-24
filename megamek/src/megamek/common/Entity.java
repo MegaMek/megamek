@@ -3356,7 +3356,7 @@ public abstract class Entity
                                            Coords lastPos, Coords curPos,
                                            boolean isPavementStep) {
         if (curHex.terrainLevel(Terrains.WATER) > 0
-            && !(curHex.containsTerrain(Terrains.ICE) && getElevation() >= 0)
+            && !(curHex.containsTerrain(Terrains.ICE) && step.getElevation() >= 0)
             && !lastPos.equals(curPos)
             && step.getMovementType() != IEntityMovementType.MOVE_JUMP
             && getMovementMode() != IEntityMovementMode.HOVER
@@ -5127,5 +5127,21 @@ public abstract class Entity
     public void addPilotingModifierForTerrain(PilotingRollData roll) {
         if(getElevation() > 0) return;
         addPilotingModifierForTerrain(roll, getPosition());
+    }
+    
+    /**
+     * defensively check and correct elevation
+     *
+     */
+    public boolean fixElevation() {
+        if(!isDeployed() || isOffBoard() || !game.getBoard().contains(getPosition()))
+            return false;
+        if(!isElevationValid(getElevation(), getPosition())) {
+            System.err.println(getDisplayName()+" in hex "+HexTarget.coordsToId(getPosition())+" is at invalid elevation: "+getElevation());
+            setElevation(elevationOccupied(game.getBoard().getHex(getPosition())));
+            System.err.println("   moved to elevation "+getElevation());
+            return true;
+        }
+        return false;
     }
 }

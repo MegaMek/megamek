@@ -94,8 +94,8 @@ public class TestBot extends BotClient {
             while (e.hasMoreElements()) {
                 Entity entity = (Entity) e.nextElement();
                 
-                // ignore loaded units
-                if (entity.getPosition() == null) {
+                // ignore loaded and off-board units
+                if (entity.getPosition() == null || entity.isOffBoard()) {
                     continue;
                 }
                 

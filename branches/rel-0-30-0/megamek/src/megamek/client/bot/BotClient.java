@@ -88,7 +88,8 @@ public abstract class BotClient extends Client {
         ArrayList result = new ArrayList();
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity) i.nextElement();
-            if (entity.getOwner().equals(this.getLocalPlayer())) {
+            if (entity.getOwner().equals(this.getLocalPlayer()) 
+                && entity.getPosition() != null && !entity.isOffBoard()) {
                 result.add(entity);
             }
         }
@@ -99,7 +100,8 @@ public abstract class BotClient extends Client {
         ArrayList result = new ArrayList();
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity) i.nextElement();
-            if (entity.getOwner().isEnemyOf(this.getLocalPlayer())) {
+            if (entity.getOwner().isEnemyOf(this.getLocalPlayer()) 
+                && entity.getPosition() != null && !entity.isOffBoard()) {
                 result.add(entity);
             }
         }
@@ -491,7 +493,7 @@ public abstract class BotClient extends Client {
                 max_damage = 0.0;
                 for (Enumeration j = valid_attackers.elements(); j.hasMoreElements();){
                     test_ent = (Entity)j.nextElement();
-                    if (test_ent.isDeployed() == true){
+                    if (test_ent.isDeployed() == true && !test_ent.isOffBoard()){
                         test_attack = new WeaponAttackAction(deployed_ent.getId(), test_ent.getId(),
                                 deployed_ent.getEquipmentNum(mounted));
                         adjusted_damage = getDeployDamage(game, test_attack);

@@ -38,6 +38,8 @@ v0.31.1-dev (CVS)
   (Note: HMP is currently the only editor to support mech ICE correctly)
 + Bug 1301825: Jumping over Depth 1+ Ice forces PSR
 + Bug 1301882: Ice over water Blocks LOS
++ Bug 1301898: Unit in Ice covered depth 1 hex still treated as submerged
++ Ice covered water can be cleared with submerged weapons too.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

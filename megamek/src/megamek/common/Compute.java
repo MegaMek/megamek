@@ -249,7 +249,8 @@ public class Compute {
         if (destHex.containsTerrain(Terrains.ICE)
                 && destHex.containsTerrain(Terrains.WATER)
                 && !(entity.getElevation() > destHex.getElevation())
-                && !isPavementStep) {
+                && !isPavementStep
+                && movementType != IEntityMovementType.MOVE_JUMP) {
             return true;
         }
 
@@ -274,8 +275,8 @@ public class Compute {
          * srcHex.contains(Terrain.PAVEMENT) || srcHex.contains(Terrain.ROAD) ||
          * srcHex.contains(Terrain.BRIDGE) )
          */
-        if (((prevStepIsOnPavement && movementType == IEntityMovementType.MOVE_RUN) || srcHex
-                .containsTerrain(Terrains.ICE))
+        if (((prevStepIsOnPavement && movementType == IEntityMovementType.MOVE_RUN) 
+                || (srcHex.containsTerrain(Terrains.ICE)) && movementType != IEntityMovementType.MOVE_JUMP) 
                 && isTurning && !isInfantry) {
             return true;
         }

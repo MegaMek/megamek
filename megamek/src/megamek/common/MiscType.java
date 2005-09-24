@@ -383,6 +383,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createBackhoe());
         EquipmentType.addType(createPileDriver());
         EquipmentType.addType(createArmoredCowl());
+        EquipmentType.addType(createNullSignatureSystem());
         
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -1211,6 +1212,26 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.bv = 0;            //???
+        
+        return misc;
+    }
+
+    public static MiscType createNullSignatureSystem() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Null Signature System";
+        misc.setInternalName(Mech.NULLSIG);
+        misc.addLookupName("Null Signature System");
+        misc.tonnage = 0;
+        misc.criticals = 7;
+        misc.hittable = true;
+        misc.spreadable = true;
+        misc.flags |= F_STEALTH;
+        String[] saModes = { "Off", "On" };
+        misc.setModes(saModes);
+        misc.setInstantModeSwitch(false);
+        misc.bv = 0;            //???
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         
         return misc;
     }

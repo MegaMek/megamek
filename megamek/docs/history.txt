@@ -37,6 +37,7 @@ v0.31.1-dev (CVS)
 + Implemented ICE engines for mechs. Because noisy, smoky diesel engines are good.
   (Note: HMP is currently the only editor to support mech ICE correctly)
 + Bug 1301825: Jumping over Depth 1+ Ice forces PSR
++ Bug 1301882: Ice over water Blocks LOS
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

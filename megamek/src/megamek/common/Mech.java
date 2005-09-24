@@ -139,6 +139,7 @@ public abstract class Mech
     private int cockpitType = COCKPIT_STANDARD;
     private boolean hasCowl = false;
     private int cowlArmor = 0;
+    private boolean hasICE = false;
 
     /**
      * Construct a new, blank, mech.
@@ -582,6 +583,20 @@ public abstract class Mech
     }
     
     /**
+     * @return true if the mech has an ICE engine
+     */
+    public boolean hasICE() {
+        return hasICE;
+    }
+    
+    /**
+     * @param type true for ICE engine, false for fusion engine
+     */
+    public void setICE(boolean type) {
+        hasICE = type;
+    }
+
+    /**
      * Allocates torso engine crits for an XL engine.  Uses the mech's current
      * techlevel for the engine.
      */
@@ -873,7 +888,7 @@ public abstract class Mech
         
         int toAllocate = Math.min(totalSinks, integralSinkCapacity());
         
-        if (toAllocate == 0) {
+        if (toAllocate == 0 && !hasICE) {
             System.out.println("Mech: not putting any heat sinks in the engine?!?!");
         }
         
@@ -889,7 +904,9 @@ public abstract class Mech
     /**
      * Returns the number if heat sinks that can be added to the engine
      */
-    private int integralSinkCapacity() {
+    public int integralSinkCapacity() {
+        if(hasICE)
+            return 0;
         return engineRating() / 25;
     }
     
@@ -898,7 +915,7 @@ public abstract class Mech
      */
     public int getEngineCritHeat() {
         int engineCritHeat = 0;
-        if (!isShutDown()) {
+        if (!isShutDown() && !hasICE) {
             engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
             engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
             engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);

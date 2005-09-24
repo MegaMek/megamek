@@ -3755,7 +3755,8 @@ public class Server implements Runnable {
             if(curHex.containsTerrain(Terrains.ICE)
                     && curHex.containsTerrain(Terrains.WATER)
                     && !(lastPos.equals(curPos))) {
-                if(entity.getElevation() == 0) {
+                if(entity.getElevation() == 0
+                        && step.getMovementType() != IEntityMovementType.MOVE_JUMP) {
                     int roll = Compute.d6(1);
                     r = new Report(2118);
                     r.addDesc(entity);

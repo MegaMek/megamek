@@ -18,6 +18,8 @@
   <property name="docdir" value="docs"/>
   <property name="cvsdir" value="cvsdev"/>
 
+  <import file="local.xml" optional="true"/>
+
   <!-- same as maindir but under cvs -->
   <property name="cvsmaindir" value="${cvsdir}/${maindir}"/>
   
@@ -66,7 +68,7 @@
   <target name="compile" depends="init" description="Compile java sources into class files">
     <!-- compile -->
     <javac debug="true" debuglevel="lines,source"
-         target="1.4" source="1.4"
+         target="1.5" source="1.5"
          destdir="${builddir}" srcdir="${srcdir}" >
         <classpath>
             <pathelement location="${basedir}"/>
@@ -77,6 +79,28 @@
     <!-- Ensure that the log directory exists. -->
     <mkdir dir="${logdir}"/>
     <touch file="${timestampfile}"/>
+  </target>
+
+  <!-- This task converts java 1.5 class files to 1.4 class files. -->
+  <!-- Note that you should run the jar task after this task is done. -->
+  <!-- Requires the file local.xml to be present with a property called -->
+  <!-- tooldir defined set to the base directory where you unzipped -->
+  <!-- retroweaver-all.jar to.  An example local.xml is provided below -->
+  <!-- (note that all less than and greater than characters are shown as -->
+  <!-- square brackets) -->
+  <!-- Example local.xml file: -->
+  <!-- [project name="local"]                                    -->
+  <!--    [property name="tooldir" value="c:\Development"/]      -->
+  <!-- [/project]                                                -->
+  <target name="weave" depends="compile" >
+     <echo message="Applying Retroweaver to class files..."/>
+     <java classname="com.rc.retroweaver.Weaver">
+        <arg line="-source ${builddir}"/>
+        <classpath>
+           <pathelement location="${tooldir}/retroweaver/release/retroweaver.jar"/>
+           <fileset dir="${tooldir}/retroweaver/lib" includes="*.jar"/>
+        </classpath>
+     </java>
   </target>
 
   <target name="jar" depends="compile" description="Generates JAR File from compiled sources">
@@ -123,6 +147,7 @@
   </target>
 
   <target depends="clean, compile, jar" name="all"/>
+  <target depends="clean, compile, weave, jar" name="full"/>
 
   <!-- generates the updated code & media package and the regular package (containing both) -->
   <target name="packageAll" description="Generates 3 packages: code, media, code+media" depends="cvsdev-get, cvsdev-build, packageMedia, packageCode, cvsdev-package">
@@ -176,7 +201,7 @@
     <!-- compile -->
     <echo message="building MegaMek from CVS sources"/>
     <javac debug="true" debuglevel="lines,source"
-         target="1.4" source="1.4"
+         target="1.5" source="1.5"
          destdir="${cvsbuilddir}" srcdir="${srcdir}">
         <classpath> 
            <pathelement location="${cvsmaindir}"/>
@@ -184,6 +209,15 @@
         </classpath>
     </javac>
     
+    <!-- weave (maintain 1.4 compatability) -->
+     <java classname="com.rc.retroweaver.Weaver">
+        <arg line="-source ${cvsbuilddir}"/>
+        <classpath>
+           <pathelement location="${tooldir}/retroweaver/release/retroweaver.jar"/>
+           <fileset dir="${tooldir}/retroweaver/lib" includes="*.jar"/>
+        </classpath>
+     </java>
+
     <!-- jar -->
     <echo message="generating Jar in: ${basedir}/${cvsmaindir}"/>
     <jar basedir="${cvsbuilddir}" jarfile="${cvsmaindir}/${jarfile}">

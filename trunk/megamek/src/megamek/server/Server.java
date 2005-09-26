@@ -13660,10 +13660,11 @@ public class Server implements Runnable {
         r.indent(3);
         r.newlines = 0;
         vDesc.addElement(r);
-
+        mounted.setShotsLeft(0);
         Server.combineVectors(vDesc, damageEntity(en, new HitData(loc), damage, true));
         Report.addNewline(vDesc);
 
+        
         int pilotDamage = 2;
         if (en.getCrew().getOptions().booleanOption("pain_resistance")) pilotDamage = 1;
         if (en.getCrew().getOptions().booleanOption("iron_man")) pilotDamage = 1;

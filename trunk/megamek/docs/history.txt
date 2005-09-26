@@ -46,6 +46,7 @@ v0.31.1-dev (CVS)
 + Null Signature System
 + Added Retroweaver to the build process so we can use some Java 1.5 features
     but still retain Java 1.4 compatability.  See build.xml for details.
++ Bug 1304515: Ammo exploded twice
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

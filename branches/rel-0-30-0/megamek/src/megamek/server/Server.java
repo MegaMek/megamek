@@ -12991,7 +12991,7 @@ implements Runnable, ConnectionHandler {
         r.indent(3);
         r.newlines = 0;
         vDesc.addElement(r);
-
+        mounted.setShotsLeft(0);
         Server.combineVectors(vDesc, damageEntity(en, new HitData(loc), damage, true));
         Report.addNewline(vDesc);
 

@@ -14,7 +14,9 @@
 
 package megamek.common;
 
-public class TagInfo 
+import java.io.Serializable;
+
+public class TagInfo implements Serializable
 {
     public int attackerId; //who fired the TAG
     public int targetId; //entity the tag was fired at

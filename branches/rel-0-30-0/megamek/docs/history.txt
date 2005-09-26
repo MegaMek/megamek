@@ -8,7 +8,7 @@ v0.30.3-dev (CVS)
 + Bug 1293280: Another NPE using bot + off-board units (weaselflink's patch)
 + Bug 1293051: NPE during bot deployment (weaselflink's patch)
 + Bug: NotSerializableException when artillery shell is in flight.
-+ Bug: company-master description in Custom Unit dialog wrong for when a unit
++ Bug 1297233: company-master description in Custom Unit dialog wrong for when a unit
     with a single C3 Master is to be used as a company master.
 
 v0.30.2 (2005-09-17, 00:35 GMT+2)

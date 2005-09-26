@@ -52,6 +52,11 @@ v0.31.1-dev (CVS)
 + Bug: NotSerializableException when artillery shell is in flight.
 + Bug 1297233: company-master description in Custom Unit dialog wrong for when a unit
     with a single C3 Master is to be used as a company master.
++ Dynamic Terrain framework (DynamicTerrainProcessor.java)
++ Geysers and Magma vents (GeyserProcessor.java)
++ Moved fire&smoke end phase logic to dynamic terrain (FireProcessor.java), 
+  saving ~450 lines from the monolith that is Server.java
++ Images for Geyser terrain
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

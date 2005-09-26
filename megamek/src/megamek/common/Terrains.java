@@ -40,7 +40,7 @@ public class Terrains implements ITerrainFactory {
     public static final int ICE = 20;
     //level 3 terrain types (MaxTech)
     public static final int FORTIFIED = 21;
-    public static final int GEYSER = 22; //1: dormant 2: active
+    public static final int GEYSER = 22; //1: dormant 2: active 3: magma vent
     public static final int JUNGLE = 23; //levels 1,2,3 
     public static final int MAGMA = 24; //1: crust 2: liquid
     public static final int MUD = 25; //1: can't bog down 2: can bog down
@@ -50,12 +50,13 @@ public class Terrains implements ITerrainFactory {
     public static final int TUNDRA = 29;
     //special types
     public static final int IMPASSABLE = 30;
+    public static final int ELEVATOR = 31; //level=elevation it moves to, exits=d6 rolls it moves on
 
     private static final String[] names = {"none", "woods", "rough", "rubble",
             "water", "pavement", "road", "fire", "smoke", "swamp",
             "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
             "bridge_elev", "fluff", "arms", "legs", "ice", "fortified", "geyser",
-            "jungle", "magma", "mud", "rapids", "sand", "snow", "tundra", "impassable"};
+            "jungle", "magma", "mud", "rapids", "sand", "snow", "tundra", "impassable", "elevator"};
     
     public static final int SIZE = names.length;
 

@@ -243,9 +243,12 @@ public class Terrain implements ITerrain, Serializable {
         case Terrains.TUNDRA:
         case Terrains.SAND:
         case Terrains.SNOW:
-        case Terrains.GEYSER:
         case Terrains.MUD:
             return 1;
+        case Terrains.GEYSER:
+            if(level == 2)
+                return 1;
+            return 0;
         case Terrains.RAPIDS:
             return 2;
         default:
@@ -256,8 +259,11 @@ public class Terrain implements ITerrain, Serializable {
     public int movementCost(int moveType) {
         switch(type) {
         case Terrains.MAGMA:
-        case Terrains.GEYSER:
             return level - 1;
+        case Terrains.GEYSER:
+            if(level == 2)
+                return 1;
+            return 0;
         case Terrains.WOODS:
             return level;
         case Terrains.JUNGLE:

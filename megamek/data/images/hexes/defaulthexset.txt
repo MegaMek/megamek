@@ -69,6 +69,10 @@ super * "bridge:1:61" "" "bridge/bridge_61.gif"
 super * "bridge:1:62" "" "bridge/bridge_62.gif"
 super * "bridge:1:63" "" "bridge/bridge_63.gif"
 
+super * "geyser:1" "" "boring/geyservent.gif"
+super * "geyser:2" "" "boring/geysererupt.gif"
+super * "geyser:3" "" "boring/geyservent.gif"
+
 super * "road:1:00" "" "boring/road00.gif"
 super * "road:1:01" "" "boring/road01.gif"
 super * "road:1:02" "" "boring/road02.gif"

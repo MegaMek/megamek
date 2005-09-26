@@ -190,6 +190,7 @@ public class Server implements Runnable {
         registerCommand(new WhoCommand(this));
         registerCommand(new SeeAllCommand(this));
         registerCommand(new LocalSaveGameCommand(this));
+        registerCommand(new FixElevationCommand(this));
     }
 
     /**
@@ -5203,7 +5204,7 @@ public class Server implements Runnable {
         } else {
             //move the entity into the new location gently
             entity.setPosition(dest);
-            entity.setElevation(entity.elevationOccupied(destHex));
+            entity.setElevation(entity.elevationOccupied(destHex) - destHex.surface());
             Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
             if (violation == null) {
                 // move and roll normally

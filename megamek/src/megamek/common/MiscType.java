@@ -434,9 +434,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_LEVEL_3;
-        misc.name = "ImprovedJump Jet";
+        misc.name = "Improved Jump Jet";
         misc.setInternalName(misc.name);
-        misc.addLookupName("Improved Jump Jet");
+        misc.addLookupName("ImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
         misc.flags |= F_JUMP_JET;
@@ -449,9 +449,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        misc.name = "CLImprovedJump Jet";
+        misc.name = "Clan Improved Jump Jet";
         misc.setInternalName(misc.name);
-        misc.addLookupName("Clan Improved Jump Jet");
+        misc.addLookupName("CLImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
         misc.flags |= F_JUMP_JET;

@@ -12215,7 +12215,18 @@ public class Server implements Runnable {
                 && ((te instanceof Mech) || (te instanceof Protomech))
                 && te.hasActiveEiCockpit()) {
             Report.addNewline(vDesc);
-            Server.combineVectors(vDesc, damageCrew(te, 1) );
+            int roll = Compute.d6(2);
+            r = new Report(5075);
+            r.subject = te.getId();
+            r.addDesc(te);
+            r.add(7);
+            r.add(roll);
+            r.choose(roll>=7);
+            r.indent(2);
+            vDesc.add(r);
+            if(roll < 7) {
+                Server.combineVectors(vDesc, damageCrew(te, 1) );
+            }
         }
         //This flag indicates the hit was directly to IS
         if (wasDamageIS) {

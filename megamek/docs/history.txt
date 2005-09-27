@@ -58,6 +58,8 @@ v0.31.1-dev (CVS)
   saving ~450 lines from the monolith that is Server.java
 + Images for Geyser terrain
 + Bug 1305547: EI feedback damage
++ Bug 1305557: Level 3 mechs have wrong heat for standard jump jets
++ Swapped internal&lookup names for improved JJ so they look nicer in systems tab
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

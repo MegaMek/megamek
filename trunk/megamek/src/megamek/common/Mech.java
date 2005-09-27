@@ -790,8 +790,8 @@ public abstract class Mech
             for (int i = 0; i < miscList.size(); i++) {
                 Mounted m = (Mounted)miscList.elementAt(i);
                 if ((m.getType().hasFlag(MiscType.F_JUMP_JET))
-                        && ((getTechLevel() == TechConstants.T_IS_LEVEL_3)
-                            || (getTechLevel() == TechConstants.T_CLAN_LEVEL_3))) {
+                        && ((m.getType().getTechLevel() == TechConstants.T_IS_LEVEL_3)
+                            || (m.getType().getTechLevel() == TechConstants.T_CLAN_LEVEL_3))) {
                     improvedJJ = 1;
                     break;
                 }

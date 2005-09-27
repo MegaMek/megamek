@@ -57,6 +57,7 @@ v0.31.1-dev (CVS)
 + Moved fire&smoke end phase logic to dynamic terrain (FireProcessor.java), 
   saving ~450 lines from the monolith that is Server.java
 + Images for Geyser terrain
++ Bug 1305547: EI feedback damage
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

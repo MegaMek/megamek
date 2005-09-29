@@ -60,6 +60,7 @@ v0.31.1-dev (CVS)
 + Bug 1305547: EI feedback damage
 + Bug 1305557: Level 3 mechs have wrong heat for standard jump jets
 + Swapped internal&lookup names for improved JJ so they look nicer in systems tab
++ Elevator terrain, usable for the moving walls in Solaris VII colloseum
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

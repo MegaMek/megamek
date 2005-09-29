@@ -197,6 +197,7 @@ public class Server implements Runnable {
         //register terrain processors
         terrainProcessors.add(new FireProcessor(this));
         terrainProcessors.add(new GeyserProcessor(this));
+        terrainProcessors.add(new ElevatorProcessor(this));
     }
 
     /**

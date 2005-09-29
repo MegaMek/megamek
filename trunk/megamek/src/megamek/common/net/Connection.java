@@ -451,6 +451,7 @@ public abstract class Connection {
                             processPacket(np);
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                         reportReceiveException(e);
                         close();
                     }                   

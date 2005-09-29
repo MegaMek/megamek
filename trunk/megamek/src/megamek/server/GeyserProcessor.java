@@ -15,6 +15,7 @@
 package megamek.server;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.Compute;
@@ -44,9 +45,8 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
 
         Report r;
         ITerrainFactory tf = Terrains.getTerrainFactory();
-        Vector<GeyserInfo> toRemove = new Vector();
-        for(Enumeration<GeyserInfo> gs=geysers.elements(); gs.hasMoreElements();) {
-            GeyserInfo g = gs.nextElement();
+        for(Iterator<GeyserInfo> gs=geysers.iterator(); gs.hasNext();) {
+            GeyserInfo g = gs.next();
             if(g.turnsToGo > 0) {
                 g.turnsToGo--;
             } else {
@@ -66,7 +66,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                         hex.removeAllTerrains();
                         hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 2));
                         server.sendChangedHex(g.position);
-                        toRemove.add(g);
+                        gs.remove();
                         for(Enumeration<Entity>e=server.getGame().getEntities(g.position);e.hasMoreElements();) {
                             server.doMagmaDamage(e.nextElement(), true);
                         }
@@ -81,9 +81,6 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                     }
                 }
             }
-        }
-        for(Enumeration<GeyserInfo> gs=toRemove.elements();gs.hasMoreElements();) {
-            geysers.remove(gs.nextElement());
         }
     }
     

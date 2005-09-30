@@ -62,6 +62,7 @@ v0.31.1-dev (CVS)
 + Swapped internal&lookup names for improved JJ so they look nicer in systems tab
 + Elevator terrain, usable for the moving walls in Solaris VII colloseum
 + RFE 1307755: Vehicle CASE
++ Bug 1309054: double blind needs updating after terrain changes
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

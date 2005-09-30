@@ -1465,6 +1465,7 @@ public class Server implements Runnable {
                 resolveMechWarriorPickUp();
                 resolveVeeINarcPodRemoval();
                 checkForObservers();
+                entityAllUpdate();
                 break;
             case IGame.PHASE_INITIATIVE_REPORT :
                 autoSave();

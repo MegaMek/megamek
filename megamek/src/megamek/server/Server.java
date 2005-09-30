@@ -12554,15 +12554,16 @@ public class Server implements Runnable {
                     r.subject = en.getId();
                     r.newlines = 0;
                     vDesc.addElement(r);
+                    boolean hasCASE = en.locationHasCase(Tank.LOC_BODY);
                     if (vtol == null) {
                         Server.combineVectors(vDesc,
-                                              destroyEntity(en, "power plant destruction", false, false));
+                                              destroyEntity(en, "power plant destruction", hasCASE, hasCASE));
                     } else { //VTOL's explode and scatter burning fuel
                         Report.addNewline(vDesc);
                         //report problem: add 3 tabs
                         Server.combineVectors(vDesc, explodeVTOL(vtol));
                     }
-                    en.getCrew().setDoomed(true);
+                    en.getCrew().setDoomed(!hasCASE);
                     break;
             }
 

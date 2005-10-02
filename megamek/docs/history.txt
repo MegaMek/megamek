@@ -63,6 +63,7 @@ v0.31.1-dev (CVS)
 + Elevator terrain, usable for the moving walls in Solaris VII colloseum
 + RFE 1307755: Vehicle CASE
 + Bug 1309054: double blind needs updating after terrain changes
++ 4 new Batchall.de-Mechs
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

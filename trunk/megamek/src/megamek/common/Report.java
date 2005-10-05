@@ -420,7 +420,7 @@ public class Report implements Serializable {
     }
 
     private void handleIndentation(StringBuffer sb) {
-        if (this.indentation == 0)
+        if (this.indentation == 0 || sb.length() == 0)
             return;
         int i = 0;
         while (sb.charAt(i) == '\n') {

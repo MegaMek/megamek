@@ -64,6 +64,8 @@ v0.31.1-dev (CVS)
 + RFE 1307755: Vehicle CASE
 + Bug 1309054: double blind needs updating after terrain changes
 + 4 new Batchall.de-Mechs
++ Bugfix: elevation error preventing charge declaration
++ Bugfix: string index out of bounds exception receiving empty report with indent set
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

@@ -50,21 +50,13 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     
     public ToHitData toHit(IGame game, boolean skid) {
         final Entity entity = game.getEntity(getEntityId());
-        return toHit(game, game.getTarget(getTargetType(), getTargetId()), entity.getPosition(), entity.moved, skid);
+        return toHit(game, game.getTarget(getTargetType(), getTargetId()), entity.getPosition(), entity.getElevation(), entity.moved, skid, false);
     }
     
-    public ToHitData toHit(IGame game, Targetable target, Coords src, int movement) {
-        return toHit(game, target, src, movement, false);
-    }
-
-    public ToHitData toHit(IGame game, Targetable target, Coords src, int movement, boolean skid) {
-        return toHit(game, target, src, movement, skid, false);
-    }
-
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(IGame game, Targetable target, Coords src, int movement, boolean skid, boolean gotUp) {
+    public ToHitData toHit(IGame game, Targetable target, Coords src, int elevation, int movement, boolean skid, boolean gotUp) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
@@ -83,9 +75,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex attHex = game.getBoard().getHex(src);
         IHex targHex = game.getBoard().getHex(te.getPosition());
-        final int attackerElevation = ae.getElevation() + attHex.getElevation();
+        final int attackerElevation = elevation + attHex.getElevation();
         final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = target.getElevation() + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
@@ -246,6 +238,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         final Entity ae = game.getEntity(getEntityId());
         final Targetable target = getTarget(game);
         Coords chargeSrc = ae.getPosition();
+        int chargeEl = ae.getElevation();
         MoveStep chargeStep = null;
 
         // let's just check this
@@ -276,6 +269,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
                     chargeStep = step;
                 } else {
                     chargeSrc = step.getPosition();
+                    chargeEl = step.getElevation();
                 }
             }
         }
@@ -285,7 +279,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
         }
 
-        return toHit(game, target, chargeSrc, chargeStep.getMovementType(), false, md.contains(MovePath.STEP_GET_UP));
+        return toHit(game, target, chargeSrc, chargeEl, chargeStep.getMovementType(), false, md.contains(MovePath.STEP_GET_UP));
     }
 
     /**

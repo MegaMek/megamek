@@ -34,8 +34,8 @@ v0.31.1-dev (CVS)
 + Bug 1293793: elevation bug: VTOL wont unload
 + Fixed a bug deploying transports with units already loaded
 + Updated HACKING and docs/gcj.patch to show new directory structure.
-+ Implemented ICE engines for mechs. Because noisy, smoky diesel engines are good.
-  (Note: HMP is currently the only editor to support mech ICE correctly)
++ Implemented ICE engines for mechs. Because noisy, smoky diesel engines are
+    good (Note: HMP is currently the only editor to support mech ICE correctly)
 + Bug 1301825: Jumping over Depth 1+ Ice forces PSR
 + Bug 1301882: Ice over water Blocks LOS
 + Bug 1301898: Unit in Ice covered depth 1 hex still treated as submerged
@@ -50,8 +50,8 @@ v0.31.1-dev (CVS)
 + JARs should be binaries
 + Bug 1305134: wrong elevation after displacement
 + Bug: NotSerializableException when artillery shell is in flight.
-+ Bug 1297233: company-master description in Custom Unit dialog wrong for when a unit
-    with a single C3 Master is to be used as a company master.
++ Bug 1297233: company-master description in Custom Unit dialog wrong for when
+    a unit with a single C3 Master is to be used as a company master.
 + Dynamic Terrain framework (DynamicTerrainProcessor.java)
 + Geysers and Magma vents (GeyserProcessor.java)
 + Moved fire&smoke end phase logic to dynamic terrain (FireProcessor.java), 
@@ -65,7 +65,9 @@ v0.31.1-dev (CVS)
 + Bug 1309054: double blind needs updating after terrain changes
 + 4 new Batchall.de-Mechs
 + Bugfix: elevation error preventing charge declaration
-+ Bugfix: string index out of bounds exception receiving empty report with indent set
++ Bugfix: string index out of bounds exception receiving empty report with
+    indent set
++ Bug 1306423: Infantry stealth armor should be valid secondary target.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

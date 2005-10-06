@@ -1040,7 +1040,7 @@ public class Compute {
                 }
                 // When targeting a stealthed Mech, you can _only_ target it,
                 // not anything else (BMRr, pg. 147)
-                if (pte instanceof Entity && ((Entity) pte).isStealthActive()
+                if (pte instanceof Mech && ((Entity) pte).isStealthActive()
                         && pte != target && !isSwarm) {
                     return new ToHitData(ToHitData.IMPOSSIBLE,
                             "When targeting a stealthed Mech, can not attack secondary targets");

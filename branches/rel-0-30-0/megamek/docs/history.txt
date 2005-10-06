@@ -10,10 +10,12 @@ v0.30.3-dev (CVS)
 + Bug 1304515: Ammo exploded twice
 + Bug 1305134: wrong elevation after displacement  
 + Bug: NotSerializableException when artillery shell is in flight.
-+ Bug 1297233: company-master description in Custom Unit dialog wrong for when a unit
-    with a single C3 Master is to be used as a company master.
++ Bug 1297233: company-master description in Custom Unit dialog wrong for when
+    a unit with a single C3 Master is to be used as a company master.
 + Bugfix: elevation error preventing charge declaration
-+ Bugfix: string index out of bounds exception receiving empty report with indent set
++ Bugfix: string index out of bounds exception receiving empty report with
+    indent set
++ Bug 1306423: Infantry stealth armor should be valid secondary target.
 
 v0.30.2 (2005-09-17, 00:35 GMT+2)
 + Bug 1268169: RAC unjamming does not work.

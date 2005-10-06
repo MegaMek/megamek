@@ -5607,7 +5607,7 @@ public class Server implements Runnable {
      * weapons fire that happens.  Torso twists, for example.
      */
     private void resolveAllButWeaponAttacks() {
-        if(game.getPhase()==IGame.PHASE_FIRING) {
+        if (game.getPhase()==IGame.PHASE_FIRING) {
             //Phase report header
             vPhaseReport.addElement(new Report(3000, Report.PUBLIC));
             Report r;

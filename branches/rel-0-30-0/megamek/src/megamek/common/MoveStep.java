@@ -852,6 +852,10 @@ public class MoveStep implements Serializable {
         if (type == MovePath.STEP_UNJAM_RAC) {
             movementType = IEntityMovementType.MOVE_NONE;
         }
+        // infantry are allowed to clear mines
+        if (type == MovePath.STEP_CLEAR_MINEFIELD && entity instanceof Infantry) {
+            movementType = IEntityMovementType.MOVE_NONE;
+        }
 
         // check for valid jump mp
         if ( parent.isJumping()

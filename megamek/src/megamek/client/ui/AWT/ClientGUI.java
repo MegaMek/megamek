@@ -44,9 +44,6 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
-
 public class ClientGUI
     extends Panel
     implements MouseListener, WindowListener, ActionListener, KeyListener {
@@ -167,17 +164,6 @@ public class ClientGUI
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURL());
-        } catch (NoSuchMethodError e) {
-            //Ok, that didn't work.  We will fall back on our other
-            // sound class.
-            System.out.println("Failed to find AudioClip class, using AudioPlayer instead."); //$NON-NLS-1$
-            if (!GUIPreferences.getInstance().getSoundBingFilename().endsWith(".au")) { //$NON-NLS-1$
-                //The older sound class only understands .au files
-                GUIPreferences.getInstance().setSoundBingFilename(
-                    new String(
-                            GUIPreferences.getInstance().getSoundBingFilename().substring(0,
-                                    GUIPreferences.getInstance().getSoundBingFilename().lastIndexOf(".")) + ".au")); //$NON-NLS-1$ //$NON-NLS-2$
-            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1287,23 +1273,11 @@ public class ClientGUI
 
     /**
      * Make a "bing" sound.
-     * This tries to use the newer AudioClip class first, then falls
-     * back on a Java 1.1 friendly (but undocumented!) class.
      */
     public void bing() {
-        if (!GUIPreferences.getInstance().getSoundMute()) {
-            if (null != bingClip) {
-                bingClip.play();
-            } else {
-                try {
-                    File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
-                    InputStream in = new FileInputStream(file);
-                    AudioStream bing = new AudioStream(in);
-                    AudioPlayer.player.start(bing);
-                } catch (Exception err) {
-                    err.printStackTrace();
-                }
-            }
+        if (!GUIPreferences.getInstance().getSoundMute()
+            && null != bingClip) {
+            bingClip.play();
         }
     }
 

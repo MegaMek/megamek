@@ -18,14 +18,7 @@ however, please accept the limitations and move on.
 MegaMek can be run on any Java v1.4 or v1.5 runtime, but we've gotten some
 problem reports from specific OS/JVM combinations.  The code makes use of
 certain v1.5 language features, and we use the Retroweaver library to convert
-it.  That means that MegaMek can only be *compiled* by a v1.5 JDK.  One notable
-exception to this rule is the file "src/megamek/client/ui/AWTClientGUI.java":
-due to popular demand, sounds have been added to MegaMek; for historical
-reasons, java.applet.AudioClip is the sound API that was selected, which does
-not always work.  As a "backup", a Sun-specific API was used; it should be
-obvious that FLOSS Java environments will not build this file.  Until a more
-recent (and widely implemented) sound API is used, please apply the patch named
-"docs/gcj.patch" to correct this problem.
+it.  That means that MegaMek can only be *compiled* by a v1.5 JDK.
 
 While there is no Makefile, it's very easy to build MegaMek with Jikes.  My
 computer is running Debian Sarge with GCC installed.  Therefore, I can build

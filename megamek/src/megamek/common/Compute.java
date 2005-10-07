@@ -2415,33 +2415,25 @@ public class Compute {
             return false;
 
         // Only grab enemies with active Angel ECM
-        // Vector<Coords> vEnemyCoords = new Vector(16);
-        Vector vEnemyCoords = new Vector(16);
-        // Vector<Integer> vECMRanges = new Vector(16);
-        Vector vECMRanges = new Vector(16);
-        // for (Object eEl : ae.game.getEntitiesVector()) {
-        for (int i = 0; i < ae.game.getEntitiesVector().size(); i++) {
-            // Entity ent = (Entity) eEl;
-            Entity ent = (Entity) ae.game.getEntitiesVector().elementAt(i);
+        Vector<Coords> vEnemyCoords = new Vector(16);
+        Vector<Integer> vECMRanges = new Vector(16);
+        for (Object eEl : ae.game.getEntitiesVector()) {
+            Entity ent = (Entity) eEl;
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasActiveAngelECM() && entPos != null) {
                 // TODO : only use the best ECM range in a given Coords.
                 vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(new Integer(ent.getAngelECMRange()));
+                vECMRanges.addElement(ent.getAngelECMRange());
             }
 
             // Check the ECM effects of the entity's passengers.
-            // Vector<Entity> passengers = ent.getLoadedUnits();
-            Vector passengers = ent.getLoadedUnits();
-            // for (Entity other : passengers) {
-            for (int j = 0; j < passengers.size(); j++) {
-                Entity other = (Entity) passengers.elementAt(j);
+            Vector<Entity> passengers = ent.getLoadedUnits();
+            for (Entity other : passengers) {
                 if (other.isEnemyOf(ae) && other.hasActiveAngelECM()
                         && entPos != null) {
                     // TODO : only use the best ECM range in a given Coords.
                     vEnemyCoords.addElement(entPos);
-                    vECMRanges
-                            .addElement(new Integer(other.getAngelECMRange()));
+                    vECMRanges.addElement(other.getAngelECMRange());
                 }
             }
         }
@@ -2454,12 +2446,9 @@ public class Compute {
         // losDivided()
         Coords[] coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
-        // Enumeration<Integer> ranges = vECMRanges.elements();
-        Enumeration ranges = vECMRanges.elements();
-        // for (Coords c : vEnemyCoords) {
-        for (int i = 0; i < vEnemyCoords.size(); i++) {
-            Coords c = (Coords) vEnemyCoords.elementAt(i);
-            int range = ((Integer) ranges.nextElement()).intValue();
+        Enumeration<Integer> ranges = vECMRanges.elements();
+        for (Coords c : vEnemyCoords) {
+            int range = ranges.nextElement();
             int nLastDist = -1;
 
             // loop through intervening hexes and see if any of them are within

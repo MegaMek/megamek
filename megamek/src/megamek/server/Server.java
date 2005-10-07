@@ -488,7 +488,8 @@ public class Server implements Runnable {
     }
 
     /**
-     * Sends a player the info they need to look at the current phase
+     * Sends a player the info they need to look at the current phase.
+     * This is triggered when a player first connects to the server.
      */
     private void sendCurrentInfo(int connId) {
         //why are these two outside the player != null check below?

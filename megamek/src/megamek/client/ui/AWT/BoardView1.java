@@ -3031,7 +3031,8 @@ public class BoardView1
         
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             if (trackThisEntitiesVisibilityInfo(this.entity)
-                && !this.entity.isVisibleToEnemy()) {
+                && !this.entity.isVisibleToEnemy()
+                && GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
                 // create final image with translucency
                 drawOnto(g, x, y, observer, true);
             } else {
@@ -3204,7 +3205,7 @@ public class BoardView1
                     graph.drawString("U", 30, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
                     graph.drawString("U", 29, 70); //$NON-NLS-1$
-                } else if (!entity.isVisibleToEnemy() && !isJ2RE) {
+                } else if (!entity.isVisibleToEnemy() && !GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
                     // If this unit is currently hidden from the enemy, say so.
                     // draw "H"
                     graph.setColor(Color.darkGray);

@@ -69,6 +69,8 @@ v0.31.1-dev (CVS)
     indent set
 + Bug 1306423: Infantry stealth armor should be valid secondary target.
 + Bug 1305883: Clearing mines with infantry
++ Restore some Java 1.5 code that was removed a while ago now that we
+    have Retroweaver support in.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

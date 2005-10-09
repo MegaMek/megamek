@@ -14610,7 +14610,7 @@ public class Server implements Runnable {
 
     /**
      * Updates an entity with the info from the client.  Only valid to do this
-     * durring the lounge phase.
+     * during the lounge phase, except for heat sink changing.
      */
     private void receiveEntityUpdate(Packet c, int connIndex) {
         Entity entity = (Entity)c.getObject(0);
@@ -14618,6 +14618,14 @@ public class Server implements Runnable {
         if (oldEntity != null && oldEntity.getOwner() == getPlayer(connIndex)) {
             game.setEntity(entity.getId(), entity);
             send(createEntitiesPacket());
+            // In the chat lounge, notify players of customizing of unit
+            if (game.getPhase() == IGame.PHASE_LOUNGE) {
+                StringBuffer message = new StringBuffer();
+                message.append( "Unit " )
+                    .append( entity.getDisplayName() )
+                    .append( " has been customized." );
+                sendServerChat( message.toString() );
+            }
         } else {
             // hey!
         }

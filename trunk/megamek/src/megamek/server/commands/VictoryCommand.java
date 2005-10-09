@@ -40,6 +40,11 @@ public class VictoryCommand extends ServerCommand {
      * Run this command with the arguments supplied
      */
     public void run(int connId, String[] args) {
+        if (!canRunRestrictedCommand(connId)) {
+            server.sendServerChat(connId, "Observers are restricted from declaring victory.");
+            return;
+        }
+
         if (!server.isPassworded() || (args.length > 1 && server.isPassword(args[1]))) {
             reset(connId);
         } else {

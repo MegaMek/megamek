@@ -39,16 +39,21 @@ public class ResetCommand extends ServerCommand {
      * Run this command with the arguments supplied
      */
     public void run(int connId, String[] args) {
+        if (!canRunRestrictedCommand(connId)) {
+            server.sendServerChat(connId, "Observers are restricted from resetting.");
+            return;
+        }                                                                                           
+
         if (!server.isPassworded() || (args.length > 1 && server.isPassword(args[1]))) {
             reset(connId);
         } else {
             server.sendServerChat(connId, "The password is incorrect.  Usage: /reset <password>");
         }
     }
-    
+
     private void reset(int connId) {
         server.sendServerChat(server.getPlayer(connId).getName() + " reset the server.");
         server.resetGame();
     }
-    
+
 }

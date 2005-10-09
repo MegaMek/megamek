@@ -41,6 +41,11 @@ public class KickCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         int kickArg = server.isPassworded() ? 2 : 1;
         
+        if (!canRunRestrictedCommand(connId)) {
+            server.sendServerChat(connId, "Observers are restricted from kicking others.");
+            return;
+        }
+
         if (server.isPassworded() && (args.length < 3 || !server.isPassword(args[1]))) {
             server.sendServerChat(connId, "The password is incorrect.  Usage: /kick <password> [id#]");
         }

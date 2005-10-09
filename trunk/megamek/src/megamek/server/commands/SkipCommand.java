@@ -39,6 +39,11 @@ public class SkipCommand extends ServerCommand {
      * Run this command with the arguments supplied
      */
     public void run(int connId, String[] args) {
+        if (!canRunRestrictedCommand(connId)) {
+            server.sendServerChat(connId, "Observers are restricted from skipping turns.");
+            return;
+        }                                                                                           
+
         if (server.isTurnSkippable()) {
             server.sendServerChat(server.getPlayer(connId).getName() + " has issued the skip command...");
             server.skipCurrentTurn();
@@ -46,5 +51,5 @@ public class SkipCommand extends ServerCommand {
             server.sendServerChat("/skip : skip failed.");
         }
     }
-    
+
 }

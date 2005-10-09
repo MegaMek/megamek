@@ -29,6 +29,8 @@ public class CriticalSlot
     private boolean                destroyed;
     private boolean                hittable; // false = hits rerolled
     private boolean                useless; //true = breached
+    private boolean                repairing = false; //true = currently being repaired
+    
     
     public CriticalSlot(int type, int index) {
         this(type, index, true);
@@ -99,6 +101,16 @@ public class CriticalSlot
      */
     public boolean isEverHittable() {
         return hittable;
+    }
+    
+    /**
+    * is the slot being repaired?
+    */
+    public boolean isRepairing() {
+        return this.repairing;
+    }
+    public void setRepairing(boolean repairing) {
+        this.repairing = repairing;
     }
     
     /**

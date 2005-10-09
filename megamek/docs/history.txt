@@ -73,6 +73,7 @@ v0.31.1-dev (CVS)
     have Retroweaver support in.
 + Remove Java 1.1 audio support.
 + Advanced option to disable translucency for "hidden" double-blind units.
++ Patch 1316537: repair status for critical slots, used by MekWars.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

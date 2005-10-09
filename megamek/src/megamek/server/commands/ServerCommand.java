@@ -20,7 +20,10 @@
 
 package megamek.server.commands;
 
+import java.util.Enumeration;
+
 import megamek.server.*;
+import megamek.common.Player;
 
 /**
  *
@@ -60,5 +63,34 @@ public abstract class ServerCommand {
      * Run this command with the arguments supplied
      */
     public abstract void run(int connId, String[] args);
-    
+
+    /**
+     * Utility Function for "Restricted Commands."  Restricted commands are not
+     * password-protected, they are restricted to non-Observers.  In the case
+     * where there are only Ghosts and/or Observers, the Observers can run
+     * restricted commands.
+     */
+    public boolean canRunRestrictedCommand(int connId) {
+        if (!server.getGame().getOptions().booleanOption("restrict_game_commands")) {
+            return true;
+        }
+
+        if (server.getPlayer(connId).isGhost()) 
+            return false; // Just in case something funky happens
+
+        if (server.getPlayer(connId).isObserver()) {
+            for (Enumeration e = server.getGame().getPlayers(); e.hasMoreElements(); ) {
+                Player p = (Player)e.nextElement();
+
+                if (!p.isObserver() && !p.isGhost()) {
+                    // There are non-Observer, non-Ghosts in the game, so
+                    // Observers are locked out.
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
 }

@@ -886,13 +886,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return new String("Weapon can not cause fires.");
         }
 
-        // If it's not a building or fire hex, then it can only be ignited with Infernos.
-        if ( !isInferno
-                && (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+        // only woods and buildings can be set intentionally on fire
+        if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE
                 && !((game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.WOODS))
                     || (game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.JUNGLE))
                     || (game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.BUILDING)))) {
-            return new String("Only Infernos can start fires except woods and building hexes.");
+            return new String("Only woods and building hexes can be set on fire intentionally.");
         }
     
         // Can't target infantry with Inferno rounds (BMRr, pg. 141).

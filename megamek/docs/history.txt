@@ -79,6 +79,7 @@ v0.31.1-dev (CVS)
 + Bug: Infernos should not be able to ignite clear terrain intentionally.
 + Bug: BV calculation wrong for mixed-tech mech with XL engine from other
     tech type.
++ Bug 1291138, Patch 1320533: some ProtoMechs were wrong. 
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

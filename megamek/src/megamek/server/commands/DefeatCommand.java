@@ -40,6 +40,11 @@ public class DefeatCommand extends ServerCommand {
      * Run this command with the arguments supplied
      */
     public void run(int connId, String[] args) {
+        if (!canRunRestrictedCommand(connId)) {
+            server.sendServerChat(connId, "Observers are restricted from declaring defeat.");
+            return;
+        }                                                                                           
+
         Player player = server.getPlayer(connId);
         if (server.getGame().isForceVictory()) {
             server.sendServerChat(player.getName() + " admits defeat.");

@@ -64,35 +64,35 @@ public class QuadMech extends Mech
     }
   
     public int getWalkMP(boolean gravity) {
-      int wmp = getOriginalWalkMP();
-      int legsDestroyed = 0;
-      int hipHits = 0;
-      int actuatorHits = 0;
-          
-      for ( int i = 0; i < locations(); i++ ) {    
-          if ( locationIsLeg(i) ) {
-              if ( !isLocationBad(i) ) {
-                  if ( legHasHipCrit(i) ) {
-                      hipHits++;
-                      if (!game.getOptions().booleanOption("maxtech_leg_damage")) {
-                          continue;
-                      }
-                  }
-                  actuatorHits += countLegActuatorCrits(i);
-              } else {
-                  legsDestroyed++;
-              }
-          }
-      }
-      
-      // leg damage effects
+        int wmp = getOriginalWalkMP();
+        int legsDestroyed = 0;
+        int hipHits = 0;
+        int actuatorHits = 0;
+        
+        for ( int i = 0; i < locations(); i++ ) {    
+            if ( locationIsLeg(i) ) {
+                if ( !isLocationBad(i) ) {
+                    if ( legHasHipCrit(i) ) {
+                        hipHits++;
+                        if (!game.getOptions().booleanOption("maxtech_leg_damage")) {
+                            continue;
+                        }
+                    }
+                    actuatorHits += countLegActuatorCrits(i);
+                } else {
+                    legsDestroyed++;
+                }
+            }
+        }
+        
+        // leg damage effects
         if(legsDestroyed > 0) {
-          if ( legsDestroyed == 1 )
-            wmp--;
-          else if ( legsDestroyed == 2 )
-            wmp = 1;
-          else
-            wmp = 0;
+            if ( legsDestroyed == 1 )
+                wmp--;
+            else if ( legsDestroyed == 2 )
+                wmp = 1;
+            else
+                wmp = 0;
         } 
         
         if ( wmp > 0 ) {
@@ -109,7 +109,7 @@ public class QuadMech extends Mech
           wmp -= actuatorHits;
         }
       
-      // and we still need to factor in heat!
+        // and we still need to factor in heat!
         wmp -= (heat / 5);
       
         

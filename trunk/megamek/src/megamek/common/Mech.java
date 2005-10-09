@@ -575,8 +575,7 @@ public abstract class Mech
     public boolean hasLightEngine() {
         int count = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
                                          Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-        if ((!isClan()
-                || (getEngineTechLevel() == TechConstants.T_CLAN_LEVEL_2))
+        if ((!isClan() || getEngineTechLevel() == TechConstants.T_IS_LEVEL_2)
                 && count == 2) {
             return true;
         }
@@ -1807,7 +1806,11 @@ public abstract class Mech
         // total internal structure
         double internalMultiplier;
         if (hasXL()) {
-            internalMultiplier = isClan() ? 1.125 : 0.75;
+            if (getEngineTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+                internalMultiplier = 1.125;
+            } else {
+                internalMultiplier = 0.75;
+            }            
         } else if (hasLightEngine()) {
             internalMultiplier = 1.125;
         } else {

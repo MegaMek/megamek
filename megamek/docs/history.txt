@@ -76,6 +76,7 @@ v0.31.1-dev (CVS)
 + Patch 1316537: repair status for critical slots, used by MekWars.
 + Patch 1254626, RFE 1251249: Lock down "problem" commands to non-observers.
 + RFE 1313849: show in chat when a unit in the lobby gets customized.
++ Bug: Infernos should not be able to ignite clear terrain intentionally.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

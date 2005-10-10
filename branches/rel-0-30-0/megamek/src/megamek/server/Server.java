@@ -13375,10 +13375,10 @@ implements Runnable, ConnectionHandler {
         while ( buildings.hasMoreElements() ) {
             Building bldg = (Building) buildings.nextElement();
             if ( bldg.isBurning() ) {
-                int cf = bldg.getCurrentCF() - 2;
+                int cf = Math.max(bldg.getCurrentCF() - 2, 0);
                 bldg.setCurrentCF( cf );
 
-                // Does the building burned down?
+                // Has the building burned down?
                 if ( cf == 0 ) {
                     r = new Report(5120, Report.PUBLIC);
                     r.add(bldg.getName());

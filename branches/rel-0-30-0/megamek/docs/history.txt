@@ -21,6 +21,7 @@ v0.30.3-dev (CVS)
 + Bug: Infernos should not be able to ignite clear terrain intentionally.
 + Bug: When Building had CF of 1 and got damage from fire, we set it's CF
     to an illegal value.
++ Bug 1310336: VTOLs set off mines.
 
 v0.30.2 (2005-09-17, 00:35 GMT+2)
 + Bug 1268169: RAC unjamming does not work.

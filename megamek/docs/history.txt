@@ -82,6 +82,7 @@ v0.31.1-dev (CVS)
 + Bug 1291138, Patch 1320533: some ProtoMechs were wrong.
 + Bug: When Building had CF of 1 and got damage from fire, we set it's CF
     to an illegal value.
++ Bug 1310336: VTOLs set off mines.
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

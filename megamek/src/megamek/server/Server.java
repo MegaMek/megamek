@@ -3681,7 +3681,7 @@ public class Server implements Runnable {
 
                         boolean isOnGround = (!i.hasMoreElements());
                         isOnGround |= (step.getMovementType() != IEntityMovementType.MOVE_JUMP);
-                        isOnGround &= entity.getElevation() == 0;
+                        isOnGround &= step.getElevation() == 0;
                         if (isOnGround) {
                             enterMinefield(entity, mf, curPos, curPos, true);
                         } else if (mf.getType() == Minefield.TYPE_THUNDER_ACTIVE) {

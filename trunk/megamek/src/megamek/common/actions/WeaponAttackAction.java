@@ -131,15 +131,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId) {
-        return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE, false);
+        return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE, false, false, null);
       }
     
     public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
-        return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, false);
-    }
-    
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode, boolean isNemesisConfused) {
-        return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, isNemesisConfused, false, null);
+        return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, false, false, null);
     }
 
     /**

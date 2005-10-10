@@ -110,7 +110,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         while ( buildings.hasMoreElements() ) {
             Building bldg = (Building) buildings.nextElement();
             if ( bldg.isBurning() ) {
-                int cf = bldg.getCurrentCF() - 2;
+                int cf = Math.max(bldg.getCurrentCF() - 2, 0);
                 bldg.setCurrentCF( cf );
 
                 // Does the building burned down?

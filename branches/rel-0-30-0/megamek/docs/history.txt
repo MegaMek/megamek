@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.30.3-dev (CVS)
+v0.30.3 (2005-10-11, 17:15 GMT+2)
 + Bug 1297348: TAG problems
 + Bug 1293264: mech pushed into water stays at elevation 0
 + Bug 1293793: elevation bug: VTOL wont unload

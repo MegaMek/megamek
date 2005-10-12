@@ -222,6 +222,7 @@
     <echo message="generating Jar in: ${basedir}/${cvsmaindir}"/>
     <jar basedir="${cvsbuilddir}" jarfile="${cvsmaindir}/${jarfile}">
         <fileset dir="${propdir}" includes="**/*.properties"/>
+    	<fileset dir="${srcdir}" includes="**/*.properties"/>
         <manifest>
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Class-Path" value=". ${jarclasspath}"/>

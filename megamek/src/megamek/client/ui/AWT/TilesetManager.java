@@ -36,7 +36,10 @@ import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.util.RotateFilter;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.client.ui.AWT.widget.BackGroundDrawer;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.util.DirectoryItems;
 
 /**
@@ -46,7 +49,7 @@ import megamek.common.util.DirectoryItems;
  * @author  Ben
  * @version 
  */
-public class TilesetManager {
+public class TilesetManager implements IPreferenceChangeListener {
     // component to load images to
     private Component comp;
     
@@ -72,7 +75,7 @@ public class TilesetManager {
     private Image artilleryAutohit;
     private Image artilleryAdjusted;
     private Image artilleryIncoming;
-    private static final String NIGHT_IMAGE_FILE = "data/images/hexes/fog.gif";
+    private static final String NIGHT_IMAGE_FILE = "data/images/hexes/transparent/night.png";
     private static final String ARTILLERY_AUTOHIT_IMAGE_FILE = "data/images/hexes/artyauto.gif";
     private static final String ARTILLERY_ADJUSTED_IMAGE_FILE = "data/images/hexes/artyadj.gif";
     private static final String ARTILLERY_INCOMING_IMAGE_FILE = "data/images/hexes/artyinc.gif";
@@ -94,7 +97,19 @@ public class TilesetManager {
         mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
         wreckTileset.loadFromFile("wreckset.txt"); //$NON-NLS-1$
         hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
-
+        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
+    }
+    
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if(e.getName().equals(IClientPreferences.MAP_TILESET)) {
+            HexTileset hts = new HexTileset();
+            try {
+                hts.loadFromFile((String)e.getNewValue());
+                hexTileset = hts;
+            } catch (java.io.IOException ex) {
+                return;
+            }
+        }
     }
     
     public Image iconFor(Entity entity) {

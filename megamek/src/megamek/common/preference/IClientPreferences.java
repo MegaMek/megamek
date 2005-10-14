@@ -22,6 +22,34 @@ import java.util.Locale;
  */
 public interface IClientPreferences extends IPreferenceStore {
 
+    public static final String LAST_CONNECT_ADDR = "LastConnectAddr";
+    public static final String LAST_CONNECT_PORT = "LastConnectPort";
+    public static final String LAST_PLAYER_CAMO_NAME = "LastPlayerCamoName";    
+    public static final String LAST_PLAYER_CATEGORY = "LastPlayerCategory";
+    public static final String LAST_PLAYER_COLOR = "LastPlayerColor";
+    public static final String LAST_PLAYER_NAME = "LastPlayerName";
+    public static final String LAST_SERVER_PASS = "LastServerPass";
+    public static final String LAST_SERVER_PORT = "LastServerPort";
+    public static final String LOCALE = "Locale";
+    public static final String MAP_TILESET = "MapTileset";
+    public static final String MAX_PATHFINDER_TIME = "MaxPathfinderTime";
+    public static final String DATA_DIRECTORY = "DataDirectory";
+    public static final String LOG_DIRECTORY = "LogDirectory";
+    public static final String MECH_DIRECTORY = "MechDirectory";
+    public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
+    public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
+    public static final String GAMELOG_KEEP = "KeepGameLog";
+    public static final String GAMELOG_FILENAME = "GameLogFilename";
+    //public static final String GAMELOG_MAX_SIZE = "GameLogMaxSize";
+    public static final String STAMP_FILENAMES = "StampFilenames";
+    public static final String STAMP_FORMAT = "StampFormat";
+    public static final String SHOW_UNIT_ID = "ShowUnitId";
+    public static final String UNIT_START_CHAR = "UnitStartChar";
+    public static final String DEFAULT_AUTOEJECT_DISABLED = "DefaultAutoejectDisabled";
+    public static final String METASERVER_NAME = "MetaServerName";
+    public static final String GOAL_PLAYERS = "GoalPlayers";
+    public static final String GUI_NAME = "GUIName";
+    
     boolean defaultAutoejectDisabled();
 
     String getLastConnectAddr();
@@ -95,6 +123,8 @@ public interface IClientPreferences extends IPreferenceStore {
     void setLastServerPort(int port);
 
     void setLocale(String text);
+    
+    void setMapTileset(String filename);
 
     void setMaxPathfinderTime(int i);
 

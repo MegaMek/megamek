@@ -42,6 +42,9 @@ import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
 import java.util.Properties;
@@ -51,7 +54,7 @@ import java.util.Properties;
  */
 public class BoardView1
     extends Canvas
-    implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener, MechDisplayListener
+    implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener, MechDisplayListener, IPreferenceChangeListener
 {
     private static final int        TRANSPARENT = 0xFFFF00FF;
 
@@ -278,6 +281,13 @@ public class BoardView1
         scaledImageCaches = new ImageCache[ZOOM_FACTORS.length];
         for(int i = 0;i<scaledImageCaches.length;i++) {
             scaledImageCaches[i] = new ImageCache();
+        }
+        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
+    }
+    
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if(e.getName().equals(IClientPreferences.MAP_TILESET)) {
+            updateBoard();
         }
     }
 

@@ -16,6 +16,8 @@ package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FilenameFilter;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -70,6 +72,9 @@ public class CommonSettingsDialog extends ClientDialog
     private List        keys;
     private int         keysIndex = 0;
     private TextField   value;
+    
+    private Choice      tileSetChoice;
+    private File[]      tileSets;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
@@ -227,6 +232,12 @@ public class CommonSettingsDialog extends ClientDialog
         panSetting.add( gameLogFilename );
         tempPanel.add( panSetting );
 
+        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
+        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.tileset")) ); //$NON-NLS-1$
+        tileSetChoice = new Choice();
+        panSetting.add( tileSetChoice );
+        tempPanel.add( panSetting );
+
         /*
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
         panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileMaxSize")) ); //$NON-NLS-1$
@@ -364,6 +375,20 @@ public class CommonSettingsDialog extends ClientDialog
         
         showMapsheets.setState(gs.getShowMapsheets());
 
+        File dir = new File("data\\images\\hexes\\");
+        tileSets = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File direc, String name) { 
+                if(name.endsWith(".tileset")) return true;
+                return false;}
+        });
+        tileSetChoice.removeAll();
+        for(int i=0;i<tileSets.length;i++) {
+            String name = tileSets[i].getName();
+            tileSetChoice.add(name.substring(0,name.length() - 8));
+            if(name.equals(cs.getMapTileset()))
+                tileSetChoice.select(i);
+        }
+
         getFocus.setState( gs.getFocus() );
         super.show();
     }
@@ -420,6 +445,9 @@ public class CommonSettingsDialog extends ClientDialog
         
         gs.setChatloungeTabs(chatloungeTabs.getState());
         gs.setShowMapsheets(showMapsheets.getState());
+        
+        if(tileSetChoice.getSelectedIndex() >= 0)
+            cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()].getName());
 
         this.setVisible( false );
     }

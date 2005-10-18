@@ -14308,7 +14308,7 @@ implements Runnable, ConnectionHandler {
         Entity oldEntity = game.getEntity(entity.getId());
         if (oldEntity != null && oldEntity.getOwner() == getPlayer(connIndex)) {
             game.setEntity(entity.getId(), entity);
-            send(createEntitiesPacket());
+            entityUpdate(entity.getId());
         } else {
             // hey!
         }

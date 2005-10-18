@@ -1738,7 +1738,7 @@ class ExtraPanel
             Mech m = (Mech)en;
             
             sinks2B.setEnabled(!dontChange);
-            sinks = m.getActiveSinks();
+            sinks = m.getActiveSinksNextRound();
             if (m.hasDoubleHeatSinks()) {
                 sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble", new Object[]{new Integer(sinks), new Integer(sinks*2)}));
             } else {
@@ -1774,6 +1774,7 @@ class ExtraPanel
 
             ((Mech)clientgui.getClient().game.getEntity(myMechId)).setActiveSinksNextRound(helper);
             clientgui.getClient().sendUpdateEntity(clientgui.getClient().game.getEntity(myMechId));
+            displayMech(clientgui.getClient().game.getEntity(myMechId));
         }
     }
 } // End class ExtraPanel extends Panel

@@ -78,9 +78,8 @@ public abstract class Mech
     private int nMASCLevel = 0;
     // Has masc been used?
     private boolean usedMASC = false;
-    private int sinksOn;
-    private int sinksOnNextRound;
-    private boolean sinksChanged = false;
+    private int sinksOn = -1;
+    private int sinksOnNextRound = -1;
     private boolean autoEject = true;
 
     /**
@@ -802,9 +801,7 @@ public abstract class Mech
             }
         }
         //test for disabled sinks
-        if(sinksChanged) {
-            capacity-=(getNumberOfSinks() - sinksOn)*(doubleSinks? 2: 1);
-        }
+        capacity-=(getNumberOfSinks() - getActiveSinks())*(doubleSinks? 2: 1);
         
         return capacity;
     }
@@ -2085,20 +2082,23 @@ public abstract class Mech
     }
     
     public void setActiveSinksNextRound(int sinks) {
-        if(sinks!=getNumberOfSinks()) {
-            sinksChanged=true;
-        } else {
-            sinksChanged=false;
-        }
         sinksOnNextRound=sinks;
     }
     
     public int getActiveSinks() {
-        if (sinksChanged) {
-            return sinksOn;
+        if (sinksOn < 0) {
+            sinksOn = getNumberOfSinks();
+            sinksOnNextRound = sinksOn;
         }
-        return getNumberOfSinks();
+        return sinksOn;
     }
+
+    public int getActiveSinksNextRound() {
+        if(sinksOnNextRound < 0)
+            return getActiveSinks();
+        return sinksOnNextRound;
+    }
+    
     /**
      * @return Returns the autoEject.
      */

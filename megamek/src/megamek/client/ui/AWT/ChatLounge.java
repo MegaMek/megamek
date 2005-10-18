@@ -895,6 +895,8 @@ public class ChatLounge
                     unitClass = Messages.getString("ChatLounge.0"); //$NON-NLS-1$
                 } else if (entity instanceof Protomech) {
                     unitClass = Messages.getString("ChatLounge.1"); //$NON-NLS-1$
+                } else if (entity instanceof GunEmplacement) {
+                    unitClass = Messages.getString("ChatLounge.2"); //$NON-NLS-1$
                 } else {
                     unitClass = entity.getWeightClassName();
                     if (entity instanceof Tank) {

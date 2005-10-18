@@ -25,8 +25,9 @@ public class UnitType {
     public static final int PROTOMEK = 3;
     public static final int VTOL = 4;
     public static final int NAVAL = 5;
+    public static final int GUN_EMPLACEMENT = 6;
     
-    private static String[] names = {"Mek", "Tank", "Infantry", "ProtoMek", "VTOL", "Naval"};
+    private static String[] names = {"Mek", "Tank", "Infantry", "ProtoMek", "VTOL", "Naval", "Gun Emplacement"};
 
     public static final int SIZE = names.length;
 
@@ -47,6 +48,8 @@ public class UnitType {
             return MEK;
         } else if (e instanceof Protomech) {
             return PROTOMEK;
+        } else if (e instanceof GunEmplacement) {
+            return GUN_EMPLACEMENT;
         } else {
             throw new IllegalArgumentException("Unknown unit type");
         }

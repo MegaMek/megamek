@@ -20,6 +20,7 @@ import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -94,6 +95,18 @@ public class CEntity {
             1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36 }, {
             1.0 / 36, 6.0 / 36, 4.0 / 36, 7.0 / 36, 2.0 / 36, 6.0 / 36, 2.0 / 36, 8.0 / 36 }, {
             1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36, 8.0 / 36, 2.0 / 36 }
+    };
+    final static double GUN_EMPLACEMENT_ARMOR[][] = { {
+            1.0 / 4, 0, 0, 0 }, {
+            1.0 / 4, 0, 0, 0 }, {
+            1.0 / 4, 0, 0, 0 }, {
+            1.0 / 4, 0, 0, 0 }
+    };
+    final static double GUN_EMPLACEMENT_TURRET_ARMOR[][] = { {
+            1.0 / 3, 0, 0, 0, 5.0 / 36  }, {
+            1.0 / 3, 0, 0, 0, 5.0 / 36  }, {
+            1.0 / 3, 0, 0, 0, 5.0 / 36  }, {
+            1.0 / 3, 0, 0, 0, 5.0 / 36  }
     };
 
     public static final int MAX_RANGE = 24;
@@ -348,6 +361,9 @@ public class CEntity {
             } else {
                 armor = PROTOMECH_ARMOR;
             }
+        } else if (this.entity instanceof GunEmplacement) {
+            armor = ((GunEmplacement) entity).hasTurret()
+                ? GUN_EMPLACEMENT_TURRET_ARMOR : GUN_EMPLACEMENT_ARMOR;
         }
         for (int arc = FIRST_ARC; arc <= LAST_PRIMARY_ARC; arc++) {
             double total = 0;

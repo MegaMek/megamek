@@ -48,6 +48,9 @@ public class Compute {
     public static final int ARC_RIGHTSIDE = 6;
 
     public static final int ARC_MAINGUN = 7;
+    public static final int ARC_NORTH = 8;
+    public static final int ARC_EAST = 9;
+    public static final int ARC_WEST = 10;
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -498,15 +501,14 @@ public class Compute {
     public static ToHitData getImmobileMod(Targetable target, int aimingAt,
             int aimingMode) {
         if (target.isImmobile()) {
-            if ((aimingAt == Mech.LOC_HEAD)
-                    && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+            if (target instanceof Mech &&
+                aimingAt == Mech.LOC_HEAD &&
+                aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
                 return new ToHitData(3, "aiming at head");
-            } else {
-                return new ToHitData(-4, "target immobile");
             }
-        } else {
-            return null;
+            return new ToHitData(-4, "target immobile");
         }
+        return null;
     }
 
     /**
@@ -2208,6 +2210,12 @@ public class Compute {
                 return fa >= 240 || fa <= 120;
             case ARC_360:
                 return true;
+            case ARC_NORTH:
+                return fa >= 270 || fa <= 30;
+            case ARC_EAST:
+                return fa >= 30 && fa <= 150;
+            case ARC_WEST:
+                return fa >= 150 && fa <= 270;
             default:
                 return false;
         }

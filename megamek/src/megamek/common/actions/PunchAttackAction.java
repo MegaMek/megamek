@@ -18,6 +18,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -210,7 +211,8 @@ public class PunchAttackAction
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ||
+             target instanceof GunEmplacement ) {
             return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
                                   "Targeting adjacent building." );
         }

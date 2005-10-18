@@ -420,7 +420,9 @@ public class UnitOverview implements Displayable {
                 iconName = (String) v.elementAt(0);
             }
             return adjustString(iconName,fm);
-        }else if (e instanceof Infantry || e instanceof Mech) {
+        }else if (e instanceof Infantry ||
+                  e instanceof Mech ||
+                  e instanceof GunEmplacement) {
             String iconName = e.getModel();
             return adjustString(iconName,fm);
         }

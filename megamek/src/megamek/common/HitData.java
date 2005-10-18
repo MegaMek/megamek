@@ -24,6 +24,9 @@ public class HitData
     public static final int        EFFECT_VEHICLE_MOVE_DESTROYED = 2;
     public static final int        EFFECT_VEHICLE_MOVE_DAMAGED = 3;
     public static final int        EFFECT_VEHICLE_TURRETLOCK = 4;
+    public static final int        EFFECT_GUN_EMPLACEMENT_WEAPONS = 5;
+    public static final int        EFFECT_GUN_EMPLACEMENT_TURRET = 6;
+    public static final int        EFFECT_GUN_EMPLACEMENT_CREW = 7;
     
     private int location;
     private boolean rear;

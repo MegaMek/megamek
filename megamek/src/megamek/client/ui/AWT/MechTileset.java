@@ -52,6 +52,7 @@ public class MechTileset {
     private String INF_STRING = "default_infantry"; //$NON-NLS-1$
     private String BA_STRING = "default_ba"; //$NON-NLS-1$
     private String PROTO_STRING = "default_proto"; //$NON-NLS-1$
+    private String GUN_EMPLACEMENT_STRING = "default_gun_emplacement"; //$NON-NLS-1$
     
     private MechEntry default_light;
     private MechEntry default_medium;
@@ -70,6 +71,7 @@ public class MechTileset {
     private MechEntry default_inf;
     private MechEntry default_ba;
     private MechEntry default_proto;
+    private MechEntry default_gun_emplacement;
     
     private HashMap exact = new HashMap();
     private HashMap chassis = new HashMap();
@@ -157,7 +159,9 @@ public class MechTileset {
             if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
                 return default_vtol;
             }
-            
+        }            
+        if (entity instanceof GunEmplacement) {
+            return default_gun_emplacement;
         }
         
         //TODO: better exception?
@@ -231,6 +235,7 @@ public class MechTileset {
         default_inf = (MechEntry)exact.get(INF_STRING.toUpperCase());
         default_ba = (MechEntry)exact.get(BA_STRING.toUpperCase());
         default_proto = (MechEntry)exact.get(PROTO_STRING.toUpperCase());
+        default_gun_emplacement = (MechEntry)exact.get(GUN_EMPLACEMENT_STRING.toUpperCase());
     }
     
     /**

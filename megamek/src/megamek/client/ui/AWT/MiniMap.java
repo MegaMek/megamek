@@ -654,6 +654,26 @@ public class MiniMap extends Canvas  {
             yPoints[1] = baseY - unitSize / 2;
             xPoints[2] = baseX - unitSize;
             yPoints[2] = baseY - unitSize / 2;
+        } else if (entity instanceof GunEmplacement) {
+            int twip = unitSize * 2 / 3;
+            xPoints = new int[8];
+            yPoints = new int[8];
+            xPoints[0] = baseX - (twip / 2);
+            yPoints[0] = baseY - (twip * 3 / 2);
+            xPoints[1] = xPoints[0] - twip;
+            yPoints[1] = yPoints[0] + twip;
+            xPoints[2] = xPoints[1];
+            yPoints[2] = yPoints[1] + twip;
+            xPoints[3] = xPoints[2] + twip;
+            yPoints[3] = yPoints[2] + twip;
+            xPoints[4] = xPoints[3] + twip;
+            yPoints[4] = yPoints[3];
+            xPoints[5] = xPoints[4] + twip;
+            yPoints[5] = yPoints[4] - twip;
+            xPoints[6] = xPoints[5];
+            yPoints[6] = yPoints[5] - twip;
+            xPoints[7] = xPoints[6] - twip;
+            yPoints[7] = yPoints[6] - twip;
         } else {
             // entity instanceof Infantry
             xPoints = new int[4];

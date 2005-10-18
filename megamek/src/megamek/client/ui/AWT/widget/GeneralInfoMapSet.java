@@ -36,9 +36,10 @@ public class GeneralInfoMapSet implements DisplayMapSet{
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
         weightL, bvL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
-        movementTypeL, ejectL, elevationL, elevationR;
+        movementTypeL, ejectL, elevationL, buildingTypeL, buildingHeightL;
     private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, pilotR,
-        mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR;
+        mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
+        elevationR, buildingTypeR, buildingHeightR;
     private PMSimpleLabel[] advantagesR;
     private Vector    bgDrawers = new Vector();
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
@@ -167,6 +168,16 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         elevationR = createLabel(STAR3, fm, ejectL.getSize().width + 10, getYCoord());
         content.addArea( elevationR );
 
+        buildingTypeL = createLabel( Messages.getString("GeneralInfoMapSet.buildingTypeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea( buildingTypeL );
+        buildingTypeR = createLabel(STAR3, fm, buildingTypeL.getSize().width + 10, getYCoord());
+        content.addArea( buildingTypeR );
+
+        buildingHeightL = createLabel( Messages.getString("GeneralInfoMapSet.buildingHeightL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea( buildingHeightL );
+        buildingHeightR = createLabel(STAR3, fm, buildingHeightL.getSize().width + 10, getYCoord());
+        content.addArea( buildingHeightR );
+
         advantagesR = new PMSimpleLabel[24];
         for (int i=0; i < advantagesR.length; i++) {
             advantagesR[i] = createLabel(new Integer(i).toString(), fm, pilotL.getSize().width + 10, getNewYCoord());
@@ -283,6 +294,70 @@ public class GeneralInfoMapSet implements DisplayMapSet{
             movementTypeL.setVisible(false);
             movementTypeR.setVisible(false);
         }
+
+        if (en instanceof GunEmplacement) {
+            weightL.setVisible(false);
+            weightR.setVisible(false);
+            mpL0.setVisible(false);
+            mpR0.setVisible(false);
+            mpL1.setVisible(false);
+            mpR1.setVisible(false);
+            mpL2.setVisible(false);
+            mpR2.setVisible(false);
+            mpL3.setVisible(false);
+            mpR3.setVisible(false);
+            curMoveL.setVisible(false);
+            curMoveR.setVisible(false);
+            buildingTypeL.setVisible(true);
+            buildingTypeR.setVisible(true);
+            buildingHeightL.setVisible(true);
+            GunEmplacement ge = (GunEmplacement) en;
+            switch (ge.getConstructionType()) {
+            case Building.LIGHT:
+                buildingTypeR.setString
+                    (Messages.getString
+                     ("GeneralInfoMapSet.buildingTypeRLight"));
+                break;
+            case Building.MEDIUM:
+                buildingTypeR.setString
+                    (Messages.getString
+                     ("GeneralInfoMapSet.buildingTypeRMedium"));
+                break;
+            case Building.HEAVY:
+                buildingTypeR.setString
+                    (Messages.getString
+                     ("GeneralInfoMapSet.buildingTypeRHeavy"));
+                break;
+            case Building.HARDENED:
+                buildingTypeR.setString
+                    (Messages.getString
+                     ("GeneralInfoMapSet.buildingTypeRHardened"));
+                break;
+            default:
+                buildingTypeR.setString
+                    (Messages.getString
+                     ("GeneralInfoMapSet.buildingTypeRUnknown"));
+            }
+            buildingHeightR.setString(Integer.toString(ge.getHeight()));
+        } else {
+            weightL.setVisible(true);
+            weightR.setVisible(true);
+            mpL0.setVisible(true);
+            mpR0.setVisible(true);
+            mpL1.setVisible(true);
+            mpR1.setVisible(true);
+            mpL2.setVisible(true);
+            mpR2.setVisible(true);
+            mpL3.setVisible(true);
+            mpR3.setVisible(true);
+            curMoveL.setVisible(true);
+            curMoveR.setVisible(true);
+            buildingTypeL.setVisible(false);
+            buildingTypeR.setVisible(false);
+            buildingHeightL.setVisible(false);
+            buildingHeightR.setVisible(false);
+        }
+
         bvR.setString(new Integer(en.calculateBattleValue()).toString());
     }
         

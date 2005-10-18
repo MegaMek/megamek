@@ -23,6 +23,7 @@ import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
 import megamek.common.IEntityMovementMode;
@@ -428,7 +429,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Attacks against adjacent buildings automatically hit.
         if ( distance == 1 &&
              ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
+               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+               target instanceof GunEmplacement ) ) {
             return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
                                   "Targeting adjacent building." );
         }
@@ -436,7 +438,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Attacks against buildings from inside automatically hit.
         if ( null != los.getThruBldg() &&
              ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
+               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+               target instanceof GunEmplacement ) ) {
             return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
                                   "Targeting building from inside (are you SURE this is a good idea?)." );
         }
@@ -672,6 +675,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     toHit.setCover(LosEffects.COVER_HORIZONTAL);
                 }
             }
+            // XXX what to do about GunEmplacements with partial cover?
         }
     
         // factor in target side

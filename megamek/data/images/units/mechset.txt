@@ -42,7 +42,7 @@
 # As of v0.29.61, mechset files can include other mechset files.
 include localserver_mechset.txt
 
-# these 17 must be in here
+# these 18 must be in here
 exact "default_light" "default_light.gif"
 exact "default_medium" "default_medium.gif"
 exact "default_heavy" "default_heavy.gif"
@@ -60,6 +60,7 @@ exact "default_hydrofoil" "default_hydrofoil.gif"
 exact "default_infantry" "default_infantry.gif"
 exact "default_ba" "default_ba.gif"
 exact "default_proto" "default_proto.gif"
+exact "default_gun_emplacement" "default_gun_emplacement.gif"
 
 
 # Infantry

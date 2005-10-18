@@ -58,6 +58,8 @@
             return "Mek";
         } else if (e instanceof Protomech) {
             return "ProtoMek";
+        } else if (e instanceof GunEmplacement) {
+            return "Gun Emplacement";
         } else {
             //Hmm...this is not a good case, should throw excep. instead?
             return "Unknown";

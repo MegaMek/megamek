@@ -152,7 +152,7 @@ public class GameTurn implements Serializable {
     public static final int CLASS_MECH          = 8;
 
     /** The constant to represent Gun Emplacement entities. */
-    public static final int CLASS_EMPLACEMENT   = 16;
+    public static final int CLASS_GUN_EMPLACEMENT   = 16;
 
     /**
      * Get the class code for the given entity.
@@ -173,6 +173,9 @@ public class GameTurn implements Serializable {
         }
         else if ( entity instanceof Mech ) {
             classCode = GameTurn.CLASS_MECH;
+        }
+        else if ( entity instanceof GunEmplacement ) {
+            classCode = GameTurn.CLASS_GUN_EMPLACEMENT;
         }
         return classCode;
     }

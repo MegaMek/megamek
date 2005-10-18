@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import megamek.client.Client;
 import megamek.client.event.MechDisplayEvent;
@@ -1804,22 +1805,17 @@ class ExtraPanel
         this.unusedR.setText( unused );
         Enumeration iter = en.getLoadedUnits().elements();
         carrysR.setText( null );
-        boolean hasText = false;
+        //boolean hasText = false;
         while ( iter.hasMoreElements() ) {
             carrysR.append( ((Entity)iter.nextElement()).getShortName() );
-            hasText = true;
-            if ( iter.hasMoreElements() ) {
-                carrysR.append( "\n" ); //$NON-NLS-1$
-            }
+            carrysR.append( "\n" ); //$NON-NLS-1$
         }
 
-        // Show club.
-        Mounted club = Compute.clubMechHas( en );
-        if ( null != club ) {
-            if ( hasText ) {
-                carrysR.append( "\r\n" ); //$NON-NLS-1$
-            }
+        // Show club(s).
+        for(Iterator<Mounted> clubs=en.getClubs().iterator();clubs.hasNext();) {
+            Mounted club = clubs.next();
             carrysR.append( club.getName() );
+            carrysR.append( "\n" ); //$NON-NLS-1$
         }
 
         // Show searchlight

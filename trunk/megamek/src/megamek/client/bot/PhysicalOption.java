@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import megamek.common.Entity;
 import megamek.common.Compute;
+import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.INarcPod;
 import megamek.common.actions.AbstractAttackAction;
@@ -40,13 +41,14 @@ public class PhysicalOption {
     INarcPod i_target;
     double expectedDmg;
     int type;
+    Mounted club;
 
     public PhysicalOption(Entity attacker) {
         this.attacker = attacker;
         this.type = NONE;
     }
 
-    public PhysicalOption(Entity attacker, Targetable target, double dmg, int type) {
+    public PhysicalOption(Entity attacker, Targetable target, double dmg, int type, Mounted club) {
         this.attacker = attacker;
         if (target instanceof Entity){
             this.target = (Entity) target;
@@ -56,6 +58,7 @@ public class PhysicalOption {
         }
         this.expectedDmg = dmg;
         this.type = type;
+        this.club = club;
     }
 
     public AbstractAttackAction toAction() {
@@ -71,8 +74,8 @@ public class PhysicalOption {
             case KICK_RIGHT :
                 return new KickAttackAction(attacker.getId(), target.getId(), KickAttackAction.RIGHT);
             case USE_CLUB :
-                if (Compute.clubMechHas(attacker) != null){
-                    return new ClubAttackAction(attacker.getId(), target.getId(), Compute.clubMechHas(attacker));
+                if (club != null){
+                    return new ClubAttackAction(attacker.getId(), target.getId(), club);
                 } else {
                     return null;
                 }

@@ -15,6 +15,7 @@
 package megamek.client.bot;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -24,6 +25,7 @@ import megamek.common.IHex;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.Terrains;
@@ -141,7 +143,7 @@ public class PhysicalCalculator {
                 // Construct and return Physical option
                 if (best_brush != PhysicalOption.NONE){
                     return new PhysicalOption(entity, game.getEntity(entity.getSwarmAttackerId()), 
-                            final_dmg, best_brush);
+                            final_dmg, best_brush, null);
                 }
             }
         
@@ -235,7 +237,7 @@ public class PhysicalCalculator {
             
                     // Construct and return Physical option
                     if(best_brush != PhysicalOption.NONE){
-                        return new PhysicalOption(entity, best_pod, final_dmg, best_brush);
+                        return new PhysicalOption(entity, best_pod, final_dmg, best_brush, null);
                     }
                 }
             }
@@ -269,6 +271,7 @@ public class PhysicalCalculator {
         int damage;
         int target_arc, location_table;
         int bestType = PhysicalOption.PUNCH_LEFT;
+        Mounted bestClub = null;
 
         // Infantry and tanks can't conduct any of these attacks
         if ((from instanceof Infantry) || (from instanceof Tank)){
@@ -404,8 +407,8 @@ public class PhysicalCalculator {
         }
         
         // Check for mounted club-type weapon or carried improvised club
-        if (Compute.clubMechHas(from) != null) {
-            
+        for(Iterator<Mounted> clubs=from.getClubs().iterator();clubs.hasNext();) {
+            Mounted club = clubs.next();
         // If the target is a Mech, must determine if it hits full body, punch, or kick table
             if (to instanceof Mech){
                 location_table = ToHitData.HIT_NORMAL;
@@ -418,9 +421,9 @@ public class PhysicalCalculator {
             } else {
                 location_table = ToHitData.HIT_NORMAL;
             }
-            odds = ClubAttackAction.toHit(game, from.getId(), to, Compute.clubMechHas(from));
+            odds = ClubAttackAction.toHit(game, from.getId(), to, club);
             if (odds.getValue() != ToHitData.IMPOSSIBLE) {
-                damage = ClubAttackAction.getDamageFor(from, Compute.clubMechHas(from));
+                damage = ClubAttackAction.getDamageFor(from, club);
                 dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
                 // Adjust damage for targets armor
                 dmg *= punchThroughMod(to, game, location_table, target_arc, dmg, dmg);
@@ -429,6 +432,7 @@ public class PhysicalCalculator {
                 if (dmg > bestDmg) {
                     bestType = PhysicalOption.USE_CLUB;
                     bestDmg = dmg;
+                    bestClub = club;
                 }
             }
         }
@@ -522,7 +526,7 @@ public class PhysicalCalculator {
         }
 
         if (bestDmg > 0) {
-            return new PhysicalOption(from, to, bestDmg, bestType);
+            return new PhysicalOption(from, to, bestDmg, bestType, bestClub);
         }
         return null;
     }

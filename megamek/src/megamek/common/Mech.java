@@ -129,9 +129,8 @@ public abstract class Mech
     private static int[] MASC_FAILURE = {2, 4, 6, 10, 12, 12, 12};
     private int nMASCLevel = 0; // MASCLevel is the # of turns MASC has been used previously
     private boolean usedMASC = false; // Has masc been used?
-    private int sinksOn;
-    private int sinksOnNextRound;
-    private boolean sinksChanged = false;
+    private int sinksOn = -1;
+    private int sinksOnNextRound = -1;
     private boolean autoEject = true;
     private int cockpitStatus = COCKPIT_ON;
     private int cockpitStatusNextRound = COCKPIT_ON;
@@ -966,9 +965,7 @@ public abstract class Mech
             }
         }
         //test for disabled sinks
-        if(sinksChanged) {
-            capacity-=(getNumberOfSinks() - sinksOn)*(doubleSinks? 2: 1);
-        }
+        capacity-=(getNumberOfSinks() - getActiveSinks())*(doubleSinks? 2: 1);
         
         return capacity;
     }
@@ -2349,20 +2346,23 @@ public abstract class Mech
     }
     
     public void setActiveSinksNextRound(int sinks) {
-        if(sinks!=getNumberOfSinks()) {
-            sinksChanged=true;
-        } else {
-            sinksChanged=false;
-        }
         sinksOnNextRound=sinks;
     }
     
     public int getActiveSinks() {
-        if (sinksChanged) {
-            return sinksOn;
+        if (sinksOn < 0) {
+            sinksOn = getNumberOfSinks();
+            sinksOnNextRound = sinksOn;
         }
-        return getNumberOfSinks();
+        return sinksOn;
     }
+
+    public int getActiveSinksNextRound() {
+        if(sinksOnNextRound < 0)
+            return getActiveSinks();
+        return sinksOnNextRound;
+    }
+    
     /**
      * @return Returns the autoEject.
      */

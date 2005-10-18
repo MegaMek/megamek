@@ -264,6 +264,10 @@ public class EntityEncoder {
             out.write( "Protomech\">" );
             ProtomechEncoder.encode( entity, out );
         }
+        else if ( entity instanceof GunEmplacement ) {
+            out.write( "GunEmplacement\">" );
+            GunEmplacementEncoder.encode( entity, out );
+        }
         else {
             throw new IllegalStateException
                 ( "Unexpected entity type " + entity.getClass().getName() );
@@ -800,6 +804,9 @@ public class EntityEncoder {
                 }
                 else if ( attrStr.equals("Protomech") ) {
                     entity = ProtomechEncoder.decode( child, game );
+                }
+                else if ( attrStr.equals("GunEmplacement") ) {
+                    entity = GunEmplacementEncoder.decode( child, game );
                 }
                 else {
                     throw new IllegalStateException

@@ -238,6 +238,7 @@ class ArmorPanel  extends PicMap
     private ProtomechMapSet proto;
     private VTOLMapSet vtol;
     private QuadMapSet quad;
+    private GunEmplacementMapSet gunEmplacement;
     private int minTopMargin = 0;
     private int minLeftMargin = 0;
     private int minBottomMargin = 0;
@@ -263,6 +264,7 @@ class ArmorPanel  extends PicMap
         proto = new ProtomechMapSet(this);
         vtol = new VTOLMapSet(this);
         quad = new QuadMapSet(this);
+        gunEmplacement = new GunEmplacementMapSet(this);
     }
 
     public void onResize(){
@@ -315,16 +317,20 @@ class ArmorPanel  extends PicMap
             minTopMargin = minInfTopMargin;
             minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;
-
         } else if (en instanceof Infantry) {
             ams = infantry;
             minLeftMargin = minInfLeftMargin;
             minTopMargin = minInfTopMargin;
             minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;
-
         } else if (en instanceof Protomech) {
             ams = proto;
+            minLeftMargin = minTankLeftMargin;
+            minTopMargin = minTankTopMargin;
+            minBottomMargin = minTankTopMargin;
+            minRightMargin = minTankLeftMargin;
+        } else if (en instanceof GunEmplacement) {
+            ams = gunEmplacement;
             minLeftMargin = minTankLeftMargin;
             minTopMargin = minTankTopMargin;
             minBottomMargin = minTankTopMargin;
@@ -1273,7 +1279,7 @@ class SystemPanel
             }
             slotList.add(sb.toString());
         }
-        if (en instanceof Tank) {
+        if (en instanceof Tank || en instanceof GunEmplacement) {
             if (en.hasTargComp()) {
                 Enumeration equip = en.getEquipment();
                 while (equip.hasMoreElements()) {

@@ -3074,7 +3074,8 @@ public class Server implements Runnable {
 
                                 // Mechs and vehicles get charged,
                                 // but need to make a to-hit roll
-                                if ( !(target instanceof Infantry) ) {
+                                if ( target instanceof Mech ||
+                                     target instanceof Tank ) {
                                     ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                                     ToHitData toHit = caa.toHit(game, true);
 
@@ -3093,9 +3094,8 @@ public class Server implements Runnable {
                                         else {
                                             toHit.setHitTable(ToHitData.HIT_PUNCH);
                                         }
-                                    }
-                                    else if ( entity.getHeight() <
-                                              target.getHeight() ) {
+                                    } else if ( entity.getHeight() <
+                                                target.getHeight() ) {
                                         toHit.setHitTable(ToHitData.HIT_KICK);
                                     } else {
                                         toHit.setHitTable(ToHitData.HIT_NORMAL);
@@ -3181,7 +3181,8 @@ public class Server implements Runnable {
                                 // Infantry inside of a building don't get a
                                 // move-through, but suffer "bleed through"
                                 // from the building.
-                                else if ( bldg != null ) {
+                                else if ( target instanceof Infantry &&
+                                          bldg != null ) {
                                     // Update report.
                                     r = new Report(2075);
                                     r.subject = entity.getId();
@@ -3201,7 +3202,7 @@ public class Server implements Runnable {
                                       damageEntity(target, hit,
                                       Math.round(entity.getWeight()/5)));
                                     Report.addNewline(vPhaseReport);
-                                } // End handle-infantry
+                                }
 
                                 // Has the target been destroyed?
                                 if ( target.isDoomed() ) {
@@ -11897,6 +11898,24 @@ public class Server implements Runnable {
                     r.subject = te_n;
                     r.newlines = 0;
                     vDesc.addElement(r);
+                    if (te instanceof GunEmplacement) {
+                        // gun emplacements have no internal,
+                        // destroy the section
+                        destroyLocation(te, hit.getLocation());
+                        r = new Report();
+                        r.subject = te_n;
+                        r.newlines = 0;
+                        r.messageId = 6115;
+                        vDesc.addElement(r);
+
+                        if (te.getTransferLocation(hit).getLocation() ==
+                            Entity.LOC_DESTROYED) {
+                            Server.combineVectors(vDesc,
+                                                  destroyEntity(te,
+                                                                "damage",
+                                                                false));
+                        }
+                    }
                 }
             }
 
@@ -12183,7 +12202,31 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
                 ((Tank)te).lockTurret();
             }
-
+            else if (hit.getEffect() ==
+                     HitData.EFFECT_GUN_EMPLACEMENT_WEAPONS) {
+                r = new Report(6146);
+                r.subject = te_n;
+                r.indent(3);
+                vDesc.addElement(r);
+                Enumeration weapons = te.getWeapons();
+                while (weapons.hasMoreElements()) {
+                    ((Mounted) weapons.nextElement()).setDestroyed(true);
+                }
+            }
+            else if (hit.getEffect() == HitData.EFFECT_GUN_EMPLACEMENT_TURRET) {
+                r = new Report(6147);
+                r.subject = te_n;
+                r.indent(3);
+                vDesc.addElement(r);
+                ((GunEmplacement)te).setTurretLocked(true);
+            }
+            else if (hit.getEffect() == HitData.EFFECT_GUN_EMPLACEMENT_CREW) {
+                r = new Report(6148);
+                r.subject = te_n;
+                r.indent(3);
+                vDesc.addElement(r);
+                ((GunEmplacement)te).getCrew().setDoomed(true);
+            }
             // roll all critical hits against this location
             // unless the section destroyed in a previous phase?
             if (te.getInternal(hit) != IArmorState.ARMOR_DESTROYED) {
@@ -13431,7 +13474,7 @@ public class Server implements Runnable {
             game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
         // dependent locations destroyed
-        if (en.getDependentLocation(loc) != Mech.LOC_NONE) {
+        if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
             destroyLocation(en, en.getDependentLocation(loc));
         }
     }

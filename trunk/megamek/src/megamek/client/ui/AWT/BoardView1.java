@@ -3133,51 +3133,60 @@ public class BoardView1
                 graph.drawPolygon(facingPolys[secFacing]);
             }
 
-            // Determine if the entity is a tank with a locked turret.
+            // Determine if the entity has a locked turret,
+            // and if it is a gun emplacement
             boolean turretLocked = false;
-            if ( entity instanceof Tank &&
-                 !( (Tank) entity ).hasNoTurret() &&
-                 !entity.canChangeSecondaryFacing() ) {
-                turretLocked = true;
+            boolean ge = false;
+            if (entity instanceof Tank) {
+                turretLocked =
+                    !((Tank) entity).hasNoTurret() &&
+                    !entity.canChangeSecondaryFacing();
+            } else if (entity instanceof GunEmplacement) {
+                turretLocked = 
+                    ((GunEmplacement) entity).hasTurret() &&
+                    !entity.canChangeSecondaryFacing();
+                ge = true;
             }
 
             // draw condition strings
-            if ( entity.isImmobile() && !entity.isProne() && !turretLocked ) {
-                // draw "IMMOBILE"
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 39); //$NON-NLS-1$
-                graph.setColor(Color.red);
-                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 38); //$NON-NLS-1$
-            } else if (!entity.isImmobile() && entity.isProne()) {
+            if (!ge && entity.isImmobile()) {
+                if (entity.isProne()) {
+                    // draw "IMMOBILE" and "PRONE"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 48); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                    graph.setColor(Color.yellow);
+                    graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 47); //$NON-NLS-1$
+                } else if (turretLocked) {
+                    // draw "IMMOBILE" and "LOCKED"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 48); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                    graph.setColor(Color.yellow);
+                    graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 47); //$NON-NLS-1$
+                } else {
+                    // draw "IMMOBILE"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 39); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 38); //$NON-NLS-1$
+                }
+            } else if (entity.isProne()) {
                 // draw "PRONE"
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 39); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
                 graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 38); //$NON-NLS-1$
-            } else if ( !entity.isImmobile() && turretLocked ) {
+            } else if (turretLocked) {
                 // draw "LOCKED"
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 39); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
                 graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 38); //$NON-NLS-1$
-            } else if (entity.isImmobile() && entity.isProne()) {
-                // draw "IMMOBILE" and "PRONE"
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
-                graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 48); //$NON-NLS-1$
-                graph.setColor(Color.red);
-                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
-                graph.setColor(Color.yellow);
-                graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 47); //$NON-NLS-1$
-            } else if ( entity.isImmobile() && turretLocked ) {
-                // draw "IMMOBILE" and "LOCKED"
-                graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
-                graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 48); //$NON-NLS-1$
-                graph.setColor(Color.red);
-                graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
-                graph.setColor(Color.yellow);
-                graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 47); //$NON-NLS-1$
             }
 
             // If this unit is being swarmed or is swarming another, say so.
@@ -3249,15 +3258,18 @@ public class BoardView1
             graph.setColor(getStatusBarColor(percentRemaining));
             graph.fillRect(55, 6, barLength, 3);
 
-            percentRemaining = entity.getInternalRemainingPercent();
-            barLength = (int)(baseBarLength * percentRemaining);
-
-            graph.setColor(Color.darkGray);
-            graph.fillRect(56, 11, 23, 3);
-            graph.setColor(Color.lightGray);
-            graph.fillRect(55, 10, 23, 3);
-            graph.setColor(getStatusBarColor(percentRemaining));
-            graph.fillRect(55, 10, barLength, 3);
+            if (!ge) {
+                // Gun emplacements don't have internal structure
+                percentRemaining = entity.getInternalRemainingPercent();
+                barLength = (int)(baseBarLength * percentRemaining);
+                
+                graph.setColor(Color.darkGray);
+                graph.fillRect(56, 11, 23, 3);
+                graph.setColor(Color.lightGray);
+                graph.fillRect(55, 10, 23, 3);
+                graph.setColor(getStatusBarColor(percentRemaining));
+                graph.fillRect(55, 10, barLength, 3);
+            }
 
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),
@@ -3320,27 +3332,53 @@ public class BoardView1
                     .append( Messages.getString("BoardView1.advs") ); //$NON-NLS-1$
             }
             tipStrings[0] = buffer.toString();
+            
+            GunEmplacement ge = null;
+            if (entity instanceof GunEmplacement) {
+                ge = (GunEmplacement) entity;
+            }
 
             buffer = new StringBuffer();
-            buffer.append( Messages.getString("BoardView1.move") ) //$NON-NLS-1$
-                .append( entity.getMovementAbbr(entity.moved) )
-                .append( ":" ) //$NON-NLS-1$
-                .append( entity.delta_distance )
-                .append( " (+" ) //$NON-NLS-1$
-                .append( Compute.getTargetMovementModifier
-                         (game, entity.getId()).getValue() )
-                .append( ");" ) //$NON-NLS-1$
-                .append( Messages.getString("BoardView1.Heat") ) //$NON-NLS-1$
-                .append( entity.heat );
+            if (ge == null) {
+                buffer.append( Messages.getString("BoardView1.move") ) //$NON-NLS-1$
+                    .append( entity.getMovementAbbr(entity.moved) )
+                    .append( ":" ) //$NON-NLS-1$
+                    .append( entity.delta_distance )
+                    .append( " (+" ) //$NON-NLS-1$
+                    .append( Compute.getTargetMovementModifier
+                             (game, entity.getId()).getValue() )
+                    .append( ");" ) //$NON-NLS-1$
+                    .append( Messages.getString("BoardView1.Heat") ) //$NON-NLS-1$
+                    .append( entity.heat );
+            } else {
+                if (ge.hasTurret() && ge.isTurretLocked()) {
+                    buffer.append(Messages.getString("BoardView1.TurretLocked"));
+                    if (ge.getFirstWeapon() == -1) {
+                        buffer.append(",");
+                        buffer.append(Messages.getString("BoardView1.WeaponsDestroyed"));
+                    }
+                } else if (ge.getFirstWeapon() == -1) {
+                    buffer.append(Messages.getString("BoardView1.WeaponsDestroyed"));
+                } else {
+                    buffer.append(Messages.getString("BoardView1.Operational"));
+                }
+            }
             if (entity.isDone())
                 buffer.append(" (").append(Messages.getString("BoardView1.done")).append(")");
             tipStrings[1] = buffer.toString();
 
             buffer = new StringBuffer();
-            buffer.append( Messages.getString("BoardView1.Armor") ) //$NON-NLS-1$
-                .append( entity.getTotalArmor() )
-                .append( Messages.getString("BoardView1.internal") ) //$NON-NLS-1$
-                .append( entity.getTotalInternal() );
+            if (ge == null) {
+                buffer.append( Messages.getString("BoardView1.Armor") ) //$NON-NLS-1$
+                    .append( entity.getTotalArmor() )
+                    .append( Messages.getString("BoardView1.internal") ) //$NON-NLS-1$
+                    .append( entity.getTotalInternal() );
+            } else {
+                buffer.append( Messages.getString("BoardView1.cf") ) //$NON-NLS-1$
+                    .append( ge.getCurrentCF() )
+                    .append( Messages.getString("BoardView1.turretArmor") ) //$NON-NLS-1$
+                    .append( ge.getCurrentTurretArmor() );
+            }
             tipStrings[2] = buffer.toString();
 
             return tipStrings;

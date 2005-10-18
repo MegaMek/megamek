@@ -115,6 +115,8 @@ public class MechFileParser {
                     loader = new BLKMechFile(bb);
                 } else if (sType.equals("VTOL")) {
                     loader = new BLKVTOLFile(bb);
+                } else if (sType.equals("GunEmplacement")) {
+                    loader = new BLKGunEmplacementFile(bb);
                 } else {
                     throw new EntityLoadingException("Unknown UnitType: " + sType);
                 }

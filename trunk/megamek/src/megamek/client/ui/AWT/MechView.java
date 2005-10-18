@@ -36,6 +36,7 @@ public class MechView {
     private boolean isInf;
     private boolean isVehicle;
     private boolean isProto;
+    private boolean isGunEmplacement;
 
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
@@ -46,6 +47,7 @@ public class MechView {
         isInf = entity instanceof Infantry;
         isVehicle = entity instanceof Tank;
         isProto = entity instanceof Protomech;
+        isGunEmplacement = entity instanceof GunEmplacement;
 
         sLoadout.append( getWeapons() )
             .append("\r\n") //$NON-NLS-1$
@@ -75,14 +77,16 @@ public class MechView {
             sBasic.append( Messages.getString("MechView.Linkedc3bv")); //$NON-NLS-1$
             sBasic.append( mech.calculateBattleValue(true) );
         }
-        sBasic.append("\n"); //$NON-NLS-1$
-        sBasic.append( Messages.getString("MechView.Movement") ) //$NON-NLS-1$
-            .append( mech.getWalkMP() )
-            .append( "/" ) //$NON-NLS-1$
-            .append( mech.getRunMPasString() );
-        if (mech.getJumpMP() > 0) {
-            sBasic.append( "/" ) //$NON-NLS-1$
-                .append( mech.getJumpMP() );
+        if ( !isGunEmplacement ) {
+            sBasic.append("\n"); //$NON-NLS-1$
+            sBasic.append( Messages.getString("MechView.Movement") ) //$NON-NLS-1$
+                .append( mech.getWalkMP() )
+                .append( "/" ) //$NON-NLS-1$
+                .append( mech.getRunMPasString() );
+            if (mech.getJumpMP() > 0) {
+                sBasic.append( "/" ) //$NON-NLS-1$
+                    .append( mech.getJumpMP() );
+            }
         }
         if (isVehicle) {
             sBasic.append(" (") //$NON-NLS-1$
@@ -120,8 +124,21 @@ public class MechView {
             }
             sBasic.append("\n");
         }
-        sBasic.append("\n") //$NON-NLS-1$
-            .append( getInternalAndArmor() );
+        sBasic.append("\n"); //$NON-NLS-1$
+        if ( !isGunEmplacement ) {
+            sBasic.append( getInternalAndArmor() );
+        } else {
+            sBasic.append( Messages.getString("MechView.ConstructionFactor"))
+                .append(renderArmor
+                        (mech.getArmor(GunEmplacement.LOC_BUILDING)))
+                .append('\n'); //$NON-NLS-1$
+            if ( ((GunEmplacement) mech).hasTurret() ) {
+                sBasic.append(Messages.getString("MechView.TurretArmor"))
+                    .append(renderArmor
+                            (mech.getArmor(GunEmplacement.LOC_TURRET)))
+                    .append('\n'); //$NON-NLS-1$
+            }
+        }
     }
 
     public String getMechReadoutBasic() {

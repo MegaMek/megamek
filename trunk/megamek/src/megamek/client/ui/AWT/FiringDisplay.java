@@ -690,7 +690,7 @@ public class FiringDisplay
                 ash.lockLocation(true);
             }
         } else {
-            waa.setAimedLocation(Mech.LOC_NONE);
+            waa.setAimedLocation(Entity.LOC_NONE);
             waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
         }
 
@@ -882,20 +882,20 @@ public class FiringDisplay
             ToHitData toHit;
             if (ash.inAimingMode()) {
             Mounted weapon = ce().getEquipment(weaponId);
-              boolean aiming = ash.isAimingAtLocation() && 
-                      ash.allowAimedShotWith(weapon);
-              ash.setEnableAll(aiming);
-              if (aiming) {
+            boolean aiming = ash.isAimingAtLocation() &&
+                ash.allowAimedShotWith(weapon);
+            ash.setEnableAll(aiming);
+            if (aiming) {
                 toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, ash.getAimingAt(), ash.getAimingMode());
                 clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName() + " (" + ash.getAimingLocation() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-              } else {
-                toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
-                clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
-              }
-              ash.setPartialCover(toHit.getCover());
             } else {
-              toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
-              clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
+                toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+                clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
+            }
+            ash.setPartialCover(toHit.getCover());
+            } else {
+                toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+                clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
             }
             clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
             Mounted m = ce().getEquipment(weaponId);
@@ -1302,12 +1302,12 @@ public class FiringDisplay
     }
 
   private class AimedShotHandler implements ActionListener, ItemListener {  
-    private int aimingAt = Mech.LOC_NONE;
+    private int aimingAt = Entity.LOC_NONE;
     private int aimingMode = IAimingModes.AIM_MODE_NONE;
     private int partialCover = LosEffects.COVER_NONE;
 
     private boolean lockedLocation = false;
-    private int lockedLoc = Mech.LOC_NONE;
+    private int lockedLoc = Entity.LOC_NONE;
     private Targetable lockedTarget = null;
 
     private AimedShotDialog asd;
@@ -1324,19 +1324,30 @@ public class FiringDisplay
 
       if (inAimingMode()) {
         String[] options;
+        boolean[] enabled;
 
-        if (target instanceof BipedMech) {
-          options = BipedMech.LOCATION_NAMES;
+        if (target instanceof Mech) {
+            if (target instanceof BipedMech) {
+                options = BipedMech.LOCATION_NAMES;
+                enabled = createEnabledMask(options.length);
+            } else {
+                options = QuadMech.LOCATION_NAMES;
+                enabled = createEnabledMask(options.length);
+            }
+            if (aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
+                aimingAt = Mech.LOC_HEAD;
+            } else if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
+                aimingAt = Mech.LOC_CT;
+            }
+        } else if (target instanceof GunEmplacement) {
+            options = GunEmplacement.HIT_LOCATION_NAMES;
+            enabled = new boolean[] { true,
+                                      ((GunEmplacement) target).hasTurret() };
+            aimingAt = GunEmplacement.LOC_BUILDING;
         } else {
-          options = QuadMech.LOCATION_NAMES;
+            return;
         }
-        boolean[] enabled = createEnabledMask(options.length);
-
-        if (aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
-          aimingAt = Mech.LOC_HEAD;
-        } else if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
-          aimingAt = Mech.LOC_CT;
-        }
+        
         if (lockedLocation) {
           aimingAt = lockedLoc;
         }
@@ -1415,7 +1426,7 @@ public class FiringDisplay
 
     public void closeDialog() {
       if (asd != null) {
-        aimingAt = Mech.LOC_NONE;
+        aimingAt = Entity.LOC_NONE;
         aimingMode = IAimingModes.AIM_MODE_NONE;
         asd.hide();
         asd = null;
@@ -1440,7 +1451,7 @@ public class FiringDisplay
         lockedLocation = true;
       } else {
         lockedTarget = null;
-        lockedLoc = Mech.LOC_NONE;
+        lockedLoc = Entity.LOC_NONE;
         lockedLocation = false;
         setEnableAll(true);
       }
@@ -1460,11 +1471,15 @@ public class FiringDisplay
 
     // Returns the name of aimed location.
     public String getAimingLocation() {
-      if ((aimingAt != Mech.LOC_NONE) && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-        if (target != null && target instanceof BipedMech) {
+      if (target != null &&
+          (aimingAt != Entity.LOC_NONE) &&
+          (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+        if (target instanceof BipedMech) {
           return BipedMech.LOCATION_NAMES[aimingAt];
-        } else if (target != null && target instanceof BipedMech){
+        } else if (target instanceof BipedMech){
           return QuadMech.LOCATION_NAMES[aimingAt];
+        } else if (target instanceof GunEmplacement) {
+          return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
         }
       }
       return null;
@@ -1479,6 +1494,7 @@ public class FiringDisplay
     public void setAimingMode() {
       boolean allowAim;
       
+      // TC against a mech
       allowAim = ((target != null) && ce().hasAimModeTargComp() && target instanceof Mech);
       if (allowAim) {
         if (lockedLocation) {
@@ -1492,7 +1508,10 @@ public class FiringDisplay
           return;
         }
       }
-      allowAim = ((target != null) && target.isImmobile() && target instanceof Mech);
+      // immobile mech or gun emplacement
+      allowAim = (target != null &&
+                  ((target.isImmobile() && target instanceof Mech) ||
+                   target instanceof GunEmplacement));
       if (allowAim) {
         aimingMode = IAimingModes.AIM_MODE_IMMOBILE;
         return;
@@ -1507,7 +1526,7 @@ public class FiringDisplay
 
     // If a hit location is currently selected.
     public boolean isAimingAtLocation() {
-      return aimingAt != Mech.LOC_NONE;
+      return aimingAt != Entity.LOC_NONE;
     }
 
     // Determines if a certain weapon may aimed at a specific

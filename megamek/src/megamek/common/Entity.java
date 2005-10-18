@@ -1920,6 +1920,17 @@ public abstract class Entity
         }
     }
 
+    public List<Mounted> getClubs() {
+        List<Mounted> rv = new ArrayList();
+        for(Enumeration<Mounted> i=getMisc();i.hasMoreElements();) {
+            Mounted m = i.nextElement();
+            if(m.getType().hasFlag(MiscType.F_CLUB)) {
+                rv.add(m);
+            }
+        }
+        return rv;
+    }
+    
     /**
      * Returns the amount of heat that the entity can sink each
      * turn.

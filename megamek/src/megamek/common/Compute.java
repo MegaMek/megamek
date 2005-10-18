@@ -16,6 +16,7 @@
 package megamek.common;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.actions.BrushOffAttackAction;
@@ -2240,19 +2241,6 @@ public class Compute {
     }
 
     /**
-     * Returns the club a mech possesses, or null if none.
-     */
-    public static Mounted clubMechHas(Entity entity) {
-        for (Enumeration i = entity.getMisc(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted) i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_CLUB)) {
-                return mounted;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Maintain backwards compatability.
      * 
      * @param missiles -
@@ -2691,50 +2679,60 @@ public class Compute {
 
     public static boolean canPhysicalTarget(IGame game, int entityId,
             Targetable target) {
-        boolean canHit = false;
 
-        canHit |= PunchAttackAction.toHit(game, entityId, target,
-                PunchAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE;
+        if(PunchAttackAction.toHit(game, entityId, target,
+                PunchAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
 
-        canHit |= PunchAttackAction.toHit(game, entityId, target,
-                PunchAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE;
+        if(PunchAttackAction.toHit(game, entityId, target,
+                PunchAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
 
-        canHit |= KickAttackAction.toHit(game, entityId, target,
-                KickAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE;
+        if(KickAttackAction.toHit(game, entityId, target,
+                KickAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
 
-        canHit |= KickAttackAction.toHit(game, entityId, target,
-                KickAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE;
+        if(KickAttackAction.toHit(game, entityId, target,
+                KickAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
 
         if (game.getOptions().booleanOption("maxtech_mulekicks")
-                && game.getEntity(entityId) instanceof QuadMech) {
-            canHit |= KickAttackAction.toHit(game, entityId, target,
-                    KickAttackAction.LEFTMULE).getValue() != ToHitData.IMPOSSIBLE;
+                && game.getEntity(entityId) instanceof QuadMech
+                && (KickAttackAction.toHit(game, entityId, target,
+                    KickAttackAction.LEFTMULE).getValue() != ToHitData.IMPOSSIBLE
+                    || KickAttackAction.toHit(game, entityId, target,
+                       KickAttackAction.RIGHTMULE).getValue() != ToHitData.IMPOSSIBLE))
+                       return true;
 
-            canHit |= KickAttackAction.toHit(game, entityId, target,
-                    KickAttackAction.RIGHTMULE).getValue() != ToHitData.IMPOSSIBLE;
+        if(BrushOffAttackAction.toHit(game, entityId, target,
+                BrushOffAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+
+        if(BrushOffAttackAction.toHit(game, entityId, target,
+                BrushOffAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+
+        if(new ThrashAttackAction(entityId, target).toHit(game)
+                .getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+
+        if(ProtomechPhysicalAttackAction.toHit(game, entityId, target)
+                .getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+
+        if(PushAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+
+        for(Iterator<Mounted> clubs = game.getEntity(entityId).getClubs().iterator();clubs.hasNext();) {
+            Mounted club = clubs.next();
+            if (null != club) {
+                if(ClubAttackAction.toHit(game, entityId, target, club)
+                        .getValue() != ToHitData.IMPOSSIBLE)
+                    return true;
+            }
         }
 
-        canHit |= BrushOffAttackAction.toHit(game, entityId, target,
-                BrushOffAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE;
-
-        canHit |= BrushOffAttackAction.toHit(game, entityId, target,
-                BrushOffAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE;
-
-        canHit |= new ThrashAttackAction(entityId, target).toHit(game)
-                .getValue() != ToHitData.IMPOSSIBLE;
-
-        canHit |= ProtomechPhysicalAttackAction.toHit(game, entityId, target)
-                .getValue() != ToHitData.IMPOSSIBLE;
-
-        Mounted club = Compute.clubMechHas(game.getEntity(entityId));
-        if (null != club) {
-            canHit |= ClubAttackAction.toHit(game, entityId, target, club)
-                    .getValue() != ToHitData.IMPOSSIBLE;
-        }
-
-        canHit |= PushAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE;
-
-        return canHit;
+        return false;
     }
 
     /**

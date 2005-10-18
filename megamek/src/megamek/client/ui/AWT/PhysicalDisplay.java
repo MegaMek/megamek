@@ -260,12 +260,23 @@ public class PhysicalDisplay
         clientgui.getMenuBar().setEntity( ce() );
 
         // does it have a club?
-        Mounted club = Compute.clubMechHas(entity);
-        if (club == null || club.getName().endsWith("Club")) { //$NON-NLS-1$
-            butClub.setLabel(Messages.getString("PhysicalDisplay.Club")); //$NON-NLS-1$
-        } else {
-            butClub.setLabel(club.getName());
+        String clubLabel = null;
+        for(Iterator<Mounted> clubs = entity.getClubs().iterator();clubs.hasNext();) {
+            Mounted club = clubs.next();
+            String thisLab;
+            if (club.getName().endsWith("Club")) { //$NON-NLS-1$
+                thisLab = Messages.getString("PhysicalDisplay.Club"); //$NON-NLS-1$
+            } else {
+                thisLab = club.getName();
+            }
+            if(clubLabel == null)
+                clubLabel = thisLab;
+            else
+                clubLabel = clubLabel + "/" + thisLab;
         }
+        if(clubLabel == null)
+            clubLabel = Messages.getString("PhysicalDisplay.Club"); //$NON-NLS-1$
+        butClub.setLabel(clubLabel);
 
         if ( (entity instanceof Mech) && !entity.isProne() && entity.getCrew().getOptions().booleanOption("dodge_maneuver") ) { //$NON-NLS-1$
           setDodgeEnabled(true);
@@ -485,11 +496,40 @@ public class PhysicalDisplay
         }
     }
     
+    private Mounted chooseClub() {
+        java.util.List<Mounted> clubs = ce().getClubs();
+        if(clubs.size() == 1)
+            return clubs.get(0);
+        else if(clubs.size() > 1) {
+            String[] names = new String[ clubs.size() ];
+            for ( int loop = 0; loop < names.length; loop++ ) {
+                Mounted club = clubs.get(loop);
+                names[loop] = Messages.getString("PhysicalDisplay.ChooseClubDialog.line", new Object[] {
+                        club.getName(),
+                        ClubAttackAction.toHit(client.game, cen, target, club).getValueAsString(),
+                        ClubAttackAction.getDamageFor(ce(), club)
+                        });
+                }
+            
+            SingleChoiceDialog choiceDialog =
+                new SingleChoiceDialog( clientgui.frame,
+                        Messages.getString("PhysicalDisplay.ChooseClubDialog.title"), //$NON-NLS-1$
+                        Messages.getString("PhysicalDisplay.ChooseClubDialog.message"), //$NON-NLS-1$
+                        names );
+            choiceDialog.show();
+            if ( choiceDialog.getAnswer() == true ) {
+                return clubs.get( choiceDialog.getChoice() );
+            }
+        }
+        return null;
+    }
+    
     /**
      * Club that target!
      */
     private void club() {
-        Mounted club = Compute.clubMechHas(ce());
+        Mounted club = chooseClub();
+        if(null == club) return;
         ToHitData toHit = ClubAttackAction.toHit(client.game, cen, target, club);
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
         String message = Messages.getString("PhysicalDisplay.ClubDialog.message", new Object[]{ //$NON-NLS-1$
@@ -741,14 +781,17 @@ public class PhysicalDisplay
                 setPushEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
                 
                 // clubbing?
-                Mounted club = Compute.clubMechHas(ce());
-                if (club != null) {
-                    ToHitData clubToHit = ClubAttackAction.toHit
-                       (client.game, cen, target, club);
-                    setClubEnabled(clubToHit.getValue() != ToHitData.IMPOSSIBLE);
-                } else {
-                    setClubEnabled(false);
+                boolean canClub = false;
+                for(Iterator<Mounted> clubs = ce().getClubs().iterator();clubs.hasNext();) {
+                    Mounted club = clubs.next();
+                    if (club != null) {
+                        ToHitData clubToHit = ClubAttackAction.toHit
+                           (client.game, cen, target, club);
+                        canClub |= (clubToHit.getValue() != ToHitData.IMPOSSIBLE);
+                    } 
                 }
+                setClubEnabled(canClub);
+                
                 // Thrash at infantry?
                 ToHitData thrash = new ThrashAttackAction(cen, target).toHit
                    (client.game);

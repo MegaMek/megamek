@@ -680,10 +680,11 @@ public class Client {
                 entity.dodging = true;
                 addAction = false;
             } else if (ea instanceof AttackAction) {
+                // The equipment type of a club needs to be restored.
                 if (ea instanceof ClubAttackAction) {
-                    ClubAttackAction clubAct = (ClubAttackAction) ea;
-                    Entity entity = game.getEntity(clubAct.getEntityId());
-                    clubAct.setClub(Compute.clubMechHas(entity));
+                    ClubAttackAction caa = (ClubAttackAction) ea;
+                    Mounted club = caa.getClub();
+                    club.restore();
                 }
             }
 

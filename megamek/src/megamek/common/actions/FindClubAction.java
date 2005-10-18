@@ -93,7 +93,7 @@ public class FindClubAction extends AbstractEntityAction {
         }
 
         // and last, check if you already have a club, greedy
-        if (Compute.clubMechHas(entity) != null) {
+        if (entity.getClubs().size() > 0) {
             return false;
         }
 

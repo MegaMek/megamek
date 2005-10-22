@@ -43,7 +43,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
 
     private Panel panStartButtons = new Panel();
-    private Button[] butStartPos = new Button[9];
+    private Button[] butStartPos = new Button[11];
 
     private List lisStartList = new List(5);
 
@@ -93,20 +93,22 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
     }
 
     private void setupStartGrid() {
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 11; i++) {
             butStartPos[i] = new Button(IStartingPositions.START_LOCATION_NAMES[i]);
             butStartPos[i].addActionListener(this);
         }
-        panStartButtons.setLayout(new GridLayout(3, 3));
+        panStartButtons.setLayout(new GridLayout(4, 3));
         panStartButtons.add(butStartPos[1]);
         panStartButtons.add(butStartPos[2]);
         panStartButtons.add(butStartPos[3]);
         panStartButtons.add(butStartPos[8]);
-        panStartButtons.add(butStartPos[0]);
+        panStartButtons.add(butStartPos[10]);
         panStartButtons.add(butStartPos[4]);
         panStartButtons.add(butStartPos[7]);
         panStartButtons.add(butStartPos[6]);
         panStartButtons.add(butStartPos[5]);
+        panStartButtons.add(butStartPos[0]);
+        panStartButtons.add(butStartPos[9]);
     }
 
     private void setupButtons() {
@@ -147,7 +149,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
     }
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 11; i++) {
             if (ev.getSource() == butStartPos[i]) {
                 if (client.game.getOptions().booleanOption("double_blind") &&
                     client.game.getOptions().booleanOption("exclusive_db_deployment")) {
@@ -170,6 +172,8 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
                         }
                     }
                 }
+                if(client.game.getOptions().booleanOption("deep_deployment") && i > 0 && i <= 9)
+                    i += 10;
                 client.getLocalPlayer().setStartingPos(i);
                 client.sendPlayerInfo();
                 // If the gameoption set_arty_player_homeedge is set,

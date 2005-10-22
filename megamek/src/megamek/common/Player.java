@@ -245,6 +245,14 @@ public final class Player extends TurnOrdered
     public void setStartingPos(int startingPos) {
         this.startingPos = startingPos;
     }
+    
+    /** Set deployment zone to edge of board for reinforcements */
+    public void adjustStartingPosForReinforcements() {
+        if(startingPos > 10)
+            startingPos -= 10; //deep deploy change to standard
+        if(startingPos == 0 || startingPos == 10)
+            startingPos = 9; //any or centre change to edge
+    }
 
     public boolean isEnemyOf(Player other) {
         return (id != other.getId() && (team == TEAM_NONE || team != other.getTeam()));

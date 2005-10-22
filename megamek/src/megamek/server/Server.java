@@ -1585,6 +1585,12 @@ public class Server implements Runnable {
             case IGame.PHASE_DEPLOYMENT :
                 game.clearDeploymentThisRound();
                 game.checkForCompleteDeployment();
+                Enumeration pls = game.getPlayers();
+                while (pls.hasMoreElements()) {
+                    Player p = (Player) pls.nextElement();
+                    p.adjustStartingPosForReinforcements();
+                }
+
                 changePhase(IGame.PHASE_INITIATIVE);
                 break;
             case IGame.PHASE_INITIATIVE :

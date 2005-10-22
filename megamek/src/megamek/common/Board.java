@@ -405,29 +405,51 @@ public class Board implements Serializable, IBoard {
         
         int nLimit = 3;
         int nDir = p.getStartingPos();
+        int minx = 0;
+        int maxx = width;
+        int miny = 0;
+        int maxy = height;
+        if(nDir > 10) {
+            //Deep deployment, the board is effectively smaller
+            nDir -= 10;
+            minx = width / 5;
+            maxx -= width / 5;
+            miny = height / 5;
+            maxy -= height / 5;
+            if(c.x < minx || c.y < miny || c.x >=maxx || c.y >= maxy)
+                return false;
+        }
         switch (nDir) {
         case 0 : // Any
             return true;
         case 1 : // NW
-            return (c.x < nLimit && c.y < height / 2) || 
-                (c.y < nLimit && c.x < width / 2);
+            return (c.x < minx+nLimit && c.x >= minx && c.y < height / 2) || 
+                (c.y < miny+nLimit && c.y >= miny && c.x < width / 2);
         case 2 : // N
-            return c.y < nLimit;
+            return c.y < miny+nLimit && c.y >= miny;
         case 3 : // NE
-            return (c.x > (width - nLimit) && c.y < height / 2) ||
-                (c.y < nLimit && c.x > width / 2);
+            return (c.x > (maxx - nLimit) && c.x < maxx && c.y < height / 2) ||
+                (c.y < miny+nLimit && c.y >= miny && c.x > width / 2);
         case 4 : // E
-            return c.x >= (width - nLimit);
+            return c.x >= (maxx - nLimit) && c.x < maxx;
         case 5 : // SE
-            return (c.x >= (width - nLimit) && c.y > height / 2) ||
-                (c.y >= (height - nLimit) && c.x > width / 2);
+            return (c.x >= (maxx - nLimit) && c.x < maxx && c.y > height / 2) ||
+                (c.y >= (maxy - nLimit) && c.y < maxy && c.x > width / 2);
         case 6 : // S
-            return c.y >= (height - nLimit);
+            return c.y >= (maxy - nLimit) && c.y < maxy;
         case 7 : // SW
-            return (c.x < nLimit && c.y > height / 2) ||
-                (c.y >= (height - nLimit) && c.x < width / 2);
+            return (c.x < minx+nLimit && c.x >= minx && c.y > height / 2) ||
+                (c.y >= (maxy - nLimit) && c.y < maxy && c.x < width / 2);
         case 8 : // W
-            return c.x < nLimit;
+            return c.x < minx+nLimit && c.x >= minx;
+        case 9: // Edge
+            return (c.x < minx+nLimit && c.x >= minx)
+            || (c.y < miny+nLimit && c.y >= miny)
+            || (c.x >= (maxx - nLimit) && c.x < maxx) 
+            || (c.y >= (maxy - nLimit) && c.y < maxy);
+        case 10: // Centre
+            return c.x >= width / 3 && c.x <= 2 * width / 3 &&
+                   c.y >= height / 3 && c.y <= 2 * height / 3;
         default : // ummm. . 
             return false;
         }

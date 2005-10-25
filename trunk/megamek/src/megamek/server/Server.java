@@ -11927,9 +11927,9 @@ public class Server implements Runnable {
 
             // is there damage remaining?
             if (damage > 0) {
+                tookInternalDamage = true;
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
-                    tookInternalDamage = true;
                     // Triggers a critical hit on Vehicles and Mechs.
                     if ( !isPlatoon && !isBattleArmor ) {
                         crits++;

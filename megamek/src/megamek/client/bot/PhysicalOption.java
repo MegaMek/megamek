@@ -3,7 +3,6 @@ package megamek.client.bot;
 import java.util.Vector;
 
 import megamek.common.Entity;
-import megamek.common.Compute;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.INarcPod;

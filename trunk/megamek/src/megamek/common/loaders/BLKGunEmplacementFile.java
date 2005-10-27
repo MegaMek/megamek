@@ -27,10 +27,8 @@
 package megamek.common.loaders;
 
 import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
 import megamek.common.TechConstants;
-import megamek.common.TroopSpace;
 import megamek.common.util.*;
 
 public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {    

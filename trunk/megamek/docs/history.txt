@@ -10,6 +10,7 @@ v0.31.2 (CVS)
 + deep_deployment game option (initial deploys are 1/5 of board size from the edge)
 + reinforcements deploy on edge (CTR or ANY -> EDG, deep -> standard deploy)
 + Bug: Pilots with EI should take damage even when no IS remains in a location.
++ RFL-8D Rifleman had wrong amount of armor (8 instead of 9 points on head)
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]
@@ -94,7 +95,6 @@ v0.31.1 (2005-10-11, 17:15 GMT+2)
 + Bug: When Building had CF of 1 and got damage from fire, we set it's CF
     to an illegal value.
 + Bug 1310336: VTOLs set off mines.
-+ RFL-8D Rifleman had wrong amount of armor (8 instead of 9 points on head)
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

@@ -94,6 +94,7 @@ v0.31.1 (2005-10-11, 17:15 GMT+2)
 + Bug: When Building had CF of 1 and got damage from fire, we set it's CF
     to an illegal value.
 + Bug 1310336: VTOLs set off mines.
++ RFL-8D Rifleman had wrong amount of armor (8 instead of 9 points on head)
 
 v0.31.0 (2005-09-17, 00:35 GMT+2)
 + RFE 1253215: Added Angel ECM.

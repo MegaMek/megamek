@@ -2232,6 +2232,14 @@ public class Compute {
                 return false;
             }
         }
+        if (game.getOptions().intOption("visibility") < 999) {
+            if (ae.getPosition() != null &&
+                target.getPosition() != null &&
+                ae.getPosition().distance(target.getPosition())
+                > game.getOptions().intOption("visibility")) {
+                return false;
+            }
+        }
         return LosEffects.calculateLos(game, ae.getId(), target).canSee()
                 && ae.getCrew().isActive();
     }

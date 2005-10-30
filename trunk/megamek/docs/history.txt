@@ -11,6 +11,8 @@ v0.31.2 (CVS)
 + reinforcements deploy on edge (CTR or ANY -> EDG, deep -> standard deploy)
 + Bug: Pilots with EI should take damage even when no IS remains in a location.
 + RFL-8D Rifleman had wrong amount of armor (8 instead of 9 points on head)
++ New double-blind "visibility" game option added which determines the
+    distance a unit can be seen at.
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

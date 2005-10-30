@@ -124,6 +124,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"inf_proto_move_multi", 3); //$NON-NLS-1$
         addOption(ruleBreakers,"blind_drop", false); //$NON-NLS-1$
         addOption(ruleBreakers,"real_blind_drop", false); //$NON-NLS-1$
+        addOption(ruleBreakers,"visibility", 999); //$NON-NLS-1$
         addOption(ruleBreakers,"clan_ignore_eq_limits", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_clan_physical", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_hover_charge", false); //$NON-NLS-1$

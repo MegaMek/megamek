@@ -271,6 +271,11 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
                  || !editable ) {
                 optionComp.setEditable(false);
             }
+        } else if (option.getName().equals("visibility")) { //$NON-NLS-1$
+            if ( !(options.getOption("double_blind")).booleanValue() //$NON-NLS-1$
+                 || !editable ) {
+                optionComp.setEditable(false);
+            }
         } else {
             optionComp.setEditable( editable );
         }
@@ -366,6 +371,14 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
                 if (comp_i.option.getName().equals("fire")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                     comp_i.setState(false);
+                }
+            }
+        }
+        if (option.getName().equals("double_blind")) { //$NON-NLS-1$
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getName().equals("visibility")) { //$NON-NLS-1$
+                    comp_i.setEditable(state);
                 }
             }
         }

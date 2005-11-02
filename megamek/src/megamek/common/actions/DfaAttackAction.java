@@ -77,6 +77,10 @@ public class DfaAttackAction extends DisplacementAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't D.F.A.");
         }
 
+        if ( ae.getJumpType() == Mech.JUMP_BOOSTER) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Can't D.F.A. using mechanical jump boosters.");
+        }
+
         // let's just check this
         if (!md.contains(MovePath.STEP_DFA)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "D.F.A. action not found in movment path");

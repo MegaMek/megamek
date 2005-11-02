@@ -1,7 +1,8 @@
-VERSION HISTORY:
+﻿VERSION HISTORY:
 ----------------
 v0.30.4-dev (CVS)
 + Bug 1296592: Bugs with Heat Sink adjustment
++ Bug 1285121: DFA cause problems
 
 v0.30.3 (2005-10-11, 17:15 GMT+2)
 + Bug 1297348: TAG problems

@@ -4985,6 +4985,8 @@ implements Runnable, ConnectionHandler {
         }
         int fallElevation = entity.elevationOccupied(srcHex) - entity.elevationOccupied(destHex);
         if (fallElevation > 1) {
+            if(roll == null)
+                roll = entity.getBasePilotingRoll();
             doEntityFallsInto(entity, src, dest, roll);
             return;
         } else {

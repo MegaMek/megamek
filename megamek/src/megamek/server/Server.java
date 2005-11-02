@@ -2904,7 +2904,8 @@ public class Server implements Runnable {
 
             // set last step parameters
             curPos = step.getPosition();
-            curFacing = step.getFacing();
+            if(moveType != IEntityMovementType.MOVE_JUMP || entity.getJumpType() != Mech.JUMP_BOOSTER)
+                curFacing = step.getFacing();
             curVTOLElevation = step.getElevation();
             final IHex curHex = game.getBoard().getHex(curPos);
 
@@ -4806,7 +4807,7 @@ public class Server implements Runnable {
                     || entity.moved == IEntityMovementType.MOVE_SKID) {
                 entity.heatBuildup += 2;
             } else if (entity.moved == IEntityMovementType.MOVE_JUMP) {
-                entity.heatBuildup += Math.max(3, entity.getJumpHeat(entity.delta_distance));
+                entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
             }
         }
     }
@@ -5218,6 +5219,8 @@ public class Server implements Runnable {
         }
         int fallElevation = entity.elevationOccupied(srcHex) - entity.elevationOccupied(destHex);
         if (fallElevation > 1) {
+            if(roll == null)
+                roll = entity.getBasePilotingRoll();
             doEntityFallsInto(entity, src, dest, roll);
             return;
         } else {

@@ -122,6 +122,12 @@ public abstract class Mech
     public static final String STEALTH = "Mek Stealth";
     public static final String NULLSIG = "Mek Null Signature System";
 
+    //jump types
+    public static final int         JUMP_STANDARD = 0;
+    public static final int         JUMP_IMPROVED = 1;
+    public static final int         JUMP_BOOSTER = 2;
+    public static final int         JUMP_DISPOSABLE = 3;
+
     // rear armor
     private int[] rearArmor;
     private int[] orig_rearArmor;
@@ -769,17 +775,16 @@ public abstract class Mech
             Mounted mounted = (Mounted)i.nextElement();
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
                 jump++;
+            } else if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER) && !mounted.isDestroyed() && !mounted.isBreached()) {
+                jump = getOriginalJumpMP();
+                break;
             }
         }
         
         return applyGravityEffectsOnMP(jump);
     }
 
-    /**
-     * We need to override this here, because it's SLIGHTLY different for 'Mechs.
-     * Or at least level 3 ones.
-     */
-    public int getJumpHeat(int movedMP) {
+    public int getJumpType() {
         // -1 means uninitialized
         // 0 means standard
         // 1 means improved
@@ -789,22 +794,38 @@ public abstract class Mech
                 if ((m.getType().hasFlag(MiscType.F_JUMP_JET))
                         && ((m.getType().getTechLevel() == TechConstants.T_IS_LEVEL_3)
                             || (m.getType().getTechLevel() == TechConstants.T_CLAN_LEVEL_3))) {
-                    improvedJJ = 1;
+                    improvedJJ = JUMP_IMPROVED;
+                    break;
+                } else if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
+                    improvedJJ = JUMP_BOOSTER;
                     break;
                 }
             }
         }
-        if (improvedJJ > 0) {
-            return movedMP/2 + movedMP%2;
+        return improvedJJ;
+    }
+
+    /**
+     * We need to override this here, because it's SLIGHTLY different for 'Mechs.
+     * Or at least level 3 ones.
+     */
+    public int getJumpHeat(int movedMP) {
+        switch (getJumpType()) {
+            case JUMP_IMPROVED:
+                return Math.max(3, movedMP/2 + movedMP%2);
+            case JUMP_BOOSTER:
+            case JUMP_DISPOSABLE:
+                return 0;
+            default:
+                return super.getJumpHeat(movedMP);
         }
-        return super.getJumpHeat(movedMP);
     }
 
     /**
      * Returns this mech's jumping MP, modified for missing & underwater jets and gravity.
      */
     public int getJumpMPWithTerrain() {
-        if (getPosition() == null) {
+        if (getPosition() == null || getJumpType() == JUMP_BOOSTER) {
             return getJumpMP();
         }
         int waterLevel = 0;

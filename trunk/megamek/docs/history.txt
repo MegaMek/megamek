@@ -15,6 +15,7 @@ v0.31.2 (CVS)
     distance a unit can be seen at.
 + Bug 1285121: DFA cause problems
 + mechanical jump boosters (maxtech equipment)
++ Bug 1339448: Unit customisation message in blind drop
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

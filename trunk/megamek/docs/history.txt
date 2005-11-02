@@ -1,4 +1,4 @@
-VERSION HISTORY:
+﻿VERSION HISTORY:
 ----------------
 v0.31.2 (CVS)
 + Switchable map tilesets
@@ -13,6 +13,8 @@ v0.31.2 (CVS)
 + RFL-8D Rifleman had wrong amount of armor (8 instead of 9 points on head)
 + New double-blind "visibility" game option added which determines the
     distance a unit can be seen at.
++ Bug 1285121: DFA cause problems
++ mechanical jump boosters (maxtech equipment)
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

@@ -60,6 +60,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_CLUB              = 0x08000000;
     public static final int     F_HAND_WEAPON       = 0x10000000;
     public static final int     F_COWL              = 0x20000000;
+    public static final int     F_JUMP_BOOSTER      = 0x40000000;
     
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
@@ -206,6 +207,8 @@ public class MiscType extends EquipmentType {
             return (float) tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float)Math.ceil(entity.getWeight() / 10.0);
+        } else if (hasFlag(F_JUMP_BOOSTER)) {
+            return (float)Math.ceil(entity.getWeight() * entity.getOriginalJumpMP() / 5.0);
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -271,6 +274,8 @@ public class MiscType extends EquipmentType {
             return 0;
         } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE).equals(internalName) ) {
             return 0;
+        } else if (hasFlag(F_JUMP_BOOSTER)) {
+            return (entity instanceof QuadMech) ? 8 : 4; // all slots in all legs
         }
         // right, well I'll just guess then
         return 1;
@@ -363,6 +368,7 @@ public class MiscType extends EquipmentType {
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
         EquipmentType.addType(createCLImprovedJumpJet());
+        EquipmentType.addType(createJumpBooster());
         EquipmentType.addType(createFerroFibrousPrototype());
         EquipmentType.addType(createLightFerroFibrous());
         EquipmentType.addType(createHeavyFerroFibrous());
@@ -1579,6 +1585,23 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_VACUUM_PROTECTION;
         misc.bv = 0;
         
+        return misc;
+    }
+
+    public static MiscType createJumpBooster() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Jump Booster";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.bv = 0;
+        misc.flags |= F_JUMP_BOOSTER;
+        // see note above
+        misc.spreadable = true;
+
         return misc;
     }
 

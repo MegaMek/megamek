@@ -1154,15 +1154,15 @@ public abstract class Entity
         return applyGravityEffectsOnMP(jumpMP);
     }
 
+    public int getJumpType() {
+        return 0;
+    }
+
     /**
      * For non-'Mechs, this is really boring, but...
      */
     public int getJumpHeat(int movedMP) {
-        return movedMP;
-    }
-
-    public int getJumpHeat() {
-        return getJumpHeat(1);
+        return Math.max(3,movedMP);
     }
 
     /**

@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.io.Serializable;
@@ -65,6 +66,18 @@ public class Building implements Serializable {
      * Flag that indicates whether this building is burning
      */
     private boolean     burning         = false;
+
+    public class DemolitionCharge implements Serializable {
+        public int damage;
+        public int playerId;
+
+        public DemolitionCharge(int playerId, int damage) {
+            this.damage = damage;
+            this.playerId = playerId;
+        }
+    }
+
+    private ArrayList demolitionCharges = new ArrayList();
 
     // Public and Protected constants, constructors, and methods.
 
@@ -441,4 +454,8 @@ public class Building implements Serializable {
         this.burning = onFire;
     }
 
+    public void addDemolitionCharge( int playerId, int damage ) {
+        DemolitionCharge charge = new DemolitionCharge(playerId, damage);
+        demolitionCharges.add(charge);
+    }
 } // End public class Building implements Serializable

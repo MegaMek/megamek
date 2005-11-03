@@ -48,6 +48,7 @@ public class PhysicalDisplay
     public static final String PHYSICAL_NEXT = "next"; //$NON-NLS-1$
     public static final String PHYSICAL_PROTO = "protoPhysical"; //$NON-NLS-1$
     public static final String PHYSICAL_SEARCHLIGHT= "fireSearchlight"; //$NON-NLS-1$
+    public static final String PHYSICAL_EXPLOSIVES= "explosives"; //$NON-NLS-1$
 
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
@@ -65,6 +66,7 @@ public class PhysicalDisplay
     private Button            butThrash;
     private Button            butDodge;
     private Button            butProto;
+    private Button            butExplosives;
     
     private Button            butNext;
     private Button            butDone;
@@ -143,6 +145,11 @@ public class PhysicalDisplay
         butProto.addActionListener(this);
         butProto.setEnabled(false);
         butProto.setActionCommand(PHYSICAL_PROTO);
+
+        butExplosives = new Button(Messages.getString("PhysicalDisplay.Explosives")); //$NON-NLS-1$
+        butExplosives.addActionListener(this);
+        butExplosives.setEnabled(false);
+        butExplosives.setActionCommand(PHYSICAL_EXPLOSIVES);
 
         butDone = new Button(Messages.getString("PhysicalDisplay.Done")); //$NON-NLS-1$
         butDone.addActionListener(this);
@@ -223,7 +230,7 @@ public class PhysicalDisplay
             panButtons.add(butDodge);
             panButtons.add(butProto);
             panButtons.add(butSearchlight);
-            panButtons.add(butSpace2);
+            panButtons.add(butExplosives);
             panButtons.add(butMore);
 //             panButtons.add(butDone);
             break;
@@ -329,6 +336,7 @@ public class PhysicalDisplay
         setThrashEnabled(false);
         setDodgeEnabled(false);
         setProtoEnabled(false);
+        setExplosivesEnabled(false);
         butDone.setEnabled(false);
         setNextEnabled(false);
     }
@@ -567,6 +575,18 @@ public class PhysicalDisplay
           }
     }
     
+    private void explosives() {
+        ToHitData explo = LayExplosivesAttackAction.toHit(client.game, cen, target);
+        String title = Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.message", new Object[]{ //$NON-NLS-1$
+                explo.getValueAsString(), new Double(Compute.oddsAbove(explo.getValue())), explo.getDesc()});        
+        if (clientgui.doYesNoDialog(title,message)){
+            disableButtons();
+            attacks.addElement(new LayExplosivesAttackAction(cen, target.getTargetType(), target.getTargetId()));
+            ready();
+          }
+    }
+    
     /**
      * Sweep off the target with the arms that the player selects.
      */
@@ -801,6 +821,10 @@ public class PhysicalDisplay
                 ToHitData proto = ProtomechPhysicalAttackAction.toHit
                    ( client.game, cen, target);
                 setProtoEnabled(proto.getValue() != ToHitData.IMPOSSIBLE);
+
+                ToHitData explo = LayExplosivesAttackAction.toHit
+                   ( client.game, cen, target);
+                setExplosivesEnabled(explo.getValue() != ToHitData.IMPOSSIBLE);
             }
             // Brush off swarming infantry or iNarcPods?
             ToHitData brushRight = BrushOffAttackAction.toHit
@@ -1014,6 +1038,8 @@ public class PhysicalDisplay
             dodge();
         } else if (ev.getActionCommand().equals(PHYSICAL_PROTO)) {
             proto();
+        } else if (ev.getActionCommand().equals(PHYSICAL_EXPLOSIVES)) {
+            explosives();
         } else if (ev.getActionCommand().equals(PHYSICAL_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(PHYSICAL_SEARCHLIGHT)) {
@@ -1112,6 +1138,10 @@ public class PhysicalDisplay
     public void setProtoEnabled(boolean enabled) {
         butProto.setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalProtoEnabled(enabled);
+    }
+    public void setExplosivesEnabled(boolean enabled) {
+        butExplosives.setEnabled(enabled);
+        //clientgui.getMenuBar().setExplosivesEnabled(enabled);
     }
     public void setNextEnabled(boolean enabled) {
         butNext.setEnabled(enabled);

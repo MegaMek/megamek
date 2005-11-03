@@ -50,7 +50,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_FIRE_RESISTANT    = 0x00020000;
     public static final int     F_STEALTH           = 0x00040000;
     public static final int     F_MINE              = 0x00080000;
-    public static final int     F_MINESWEEPER       = 0x00100000;
+    public static final int     F_TOOLS             = 0x00100000;
     public static final int     F_MAGNETIC_CLAMP    = 0x00200000;
     public static final int     F_PARAFOIL          = 0x00400000;
     public static final int     F_FERRO_FIBROUS     = 0x00800000;
@@ -92,6 +92,15 @@ public class MiscType extends EquipmentType {
     // the above weapons are treated as club or hatchet attacks.
     public static final int     S_CLAW              = 0x00000001; // Solaris 7; TODO
     public static final int     S_MINING_DRILL      = 0x00000002; // Miniatures Rulebook; TODO
+
+    // Secondary flags for tools
+    public static final int     S_VIBROSHOVEL       = 0x00000001; // can fortify hexes
+    public static final int     S_DEMOLITION_CHARGE = 0x00000002; // can demolish buildings
+    public static final int     S_BRIDGE_KIT        = 0x00000004; // can build a bridge
+    public static final int     S_MINESWEEPER       = 0x00000008; // can clear mines
+
+    // Secondary flags for MASC
+    public static final int     S_SUPERCHARGER      = 0x00000001;
 
     public static final int     T_TARGSYS_UNKNOWN           = -1;
     public static final int     T_TARGSYS_STANDARD          = 0;
@@ -150,11 +159,15 @@ public class MiscType extends EquipmentType {
                 && hasSubType(S_MACE)) {
             return (float)(Math.ceil(entity.getWeight() / 10.0));
         } else if (hasFlag(F_MASC)) {
-            if (entity.isClan()) {
-                return Math.round(entity.getWeight() / 25.0f);
-            }
-            else {
-                return Math.round(entity.getWeight() / 20.0f);
+            if (hasSubType(S_SUPERCHARGER)) {
+                return 0.5f; //fixme
+            } else {
+                if (entity.isClan()) {
+                    return Math.round(entity.getWeight() / 25.0f);
+                }
+                else {
+                    return Math.round(entity.getWeight() / 20.0f);
+                }
             }
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
@@ -228,7 +241,10 @@ public class MiscType extends EquipmentType {
                 && hasSubType(S_MACE)) {
             return (int)Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_MASC)) {
-            if (entity.isClan()) {
+            if(hasSubType(S_SUPERCHARGER)) {
+                return 1;
+            }
+            else if (entity.isClan()) {
                 return Math.round(entity.getWeight() / 25.0f);
             }
             else {
@@ -390,6 +406,11 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createPileDriver());
         EquipmentType.addType(createArmoredCowl());
         EquipmentType.addType(createNullSignatureSystem());
+        EquipmentType.addType( createLightMinesweeper() );
+        EquipmentType.addType( createBridgeKit() );
+        EquipmentType.addType( createVibroShovel() );
+        EquipmentType.addType( createDemolitionCharge() );
+        EquipmentType.addType( createSuperCharger() );
         
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -626,6 +647,28 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.spreadable = true;
         misc.flags |= F_MASC;
+        misc.bv = 0;
+        
+        String[] saModes = { "Armed", "Off" };
+        misc.setModes(saModes);
+        
+        return misc;
+    }
+    
+    public static MiscType createSuperCharger() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Supercharger";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("IS Super Charger");
+        misc.addLookupName("SuperCharger");
+        misc.addLookupName("Supercharger");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_MASC;
+        misc.subType |= S_SUPERCHARGER;
         misc.bv = 0;
         
         String[] saModes = { "Armed", "Off" };
@@ -1124,7 +1167,25 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_MINESWEEPER;
+        misc.flags |= F_TOOLS;
+        misc.subType |= S_MINESWEEPER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createLightMinesweeper() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Light Minesweeper";
+        misc.setInternalName("Light Minesweeper");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_TOOLS;
+        misc.subType |= S_MINESWEEPER;
+        misc.toHitModifier = 1;
         misc.bv = 0;
         
         return misc;
@@ -1602,6 +1663,60 @@ public class MiscType extends EquipmentType {
         // see note above
         misc.spreadable = true;
 
+        return misc;
+    }
+
+    public static MiscType createDemolitionCharge() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Demolition Charge";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_TOOLS;
+        misc.subType |= S_DEMOLITION_CHARGE;
+        misc.toHitModifier = 1;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createVibroShovel() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Vibro-Shovel";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_TOOLS;
+        misc.subType |= S_VIBROSHOVEL;
+        misc.toHitModifier = 1;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createBridgeKit() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Bridge Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_TOOLS;
+        misc.subType |= S_BRIDGE_KIT;
+        misc.toHitModifier = 1;
+        misc.bv = 0;
+        
         return misc;
     }
 

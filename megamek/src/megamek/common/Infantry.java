@@ -78,6 +78,8 @@ public class Infantry
     
     protected int       runMP = 1;
 
+    public int turnsLayingExplosives = -1;    
+    
     /**
      * Set up the damage array for this platoon for the given weapon type.
      *
@@ -536,12 +538,12 @@ public class Infantry
             }
 
         }
-        // Infantry platoons can't carry big equipment.
+/*        // Infantry platoons can't carry big equipment.
         else if ( this.isPlatoon() ) {
             throw new LocationFullException
                 ( "Infantry platoons can not be equiped with a " +
                   mounted.getName() );
-        }
+        }*/
 
         // Update our superclass.
         super.addEquipment( mounted, loc, rearMounted );
@@ -944,4 +946,20 @@ public class Infantry
     public boolean canAssaultDrop() {
         return game.getOptions().booleanOption("paratroopers");
     }
+
+    public boolean isEligibleFor(int phase) {
+        if(turnsLayingExplosives > 0 && phase != IGame.PHASE_PHYSICAL)
+            return false;
+        return super.isEligibleFor(phase);
+    }
+
+    public void newRound(int roundNumber) {
+        if(turnsLayingExplosives >= 0) {
+            turnsLayingExplosives++;
+            if(!(Compute.isInBuilding(game, this)))
+                turnsLayingExplosives = -1; //give up if no longer in a building
+        }
+        super.newRound(roundNumber);
+    }
+        
 } // End class Infantry

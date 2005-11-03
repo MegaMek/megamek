@@ -31,8 +31,8 @@ public class Minefield implements Serializable, Cloneable {
     public static final int CLEAR_NUMBER_WEAPON = 5;
     public static final int CLEAR_NUMBER_INFANTRY = 10;
     public static final int CLEAR_NUMBER_INFANTRY_ACCIDENT = 5;
-    public static final int CLEAR_NUMBER_SWEEPER = 6;
-    public static final int CLEAR_NUMBER_SWEEPER_ACCIDENT = 2;
+    public static final int CLEAR_NUMBER_SWEEPER[] = {6,9};
+    public static final int CLEAR_NUMBER_SWEEPER_ACCIDENT[] = {2,3};
 
     public static final int TO_HIT_SIDE = ToHitData.SIDE_FRONT;
     public static final int TO_HIT_TABLE = ToHitData.HIT_KICK;

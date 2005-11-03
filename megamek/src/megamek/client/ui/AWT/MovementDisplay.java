@@ -1445,10 +1445,11 @@ public class MovementDisplay
             Enumeration equip = ce.getMisc();
             while ( equip.hasMoreElements() ) {
                 Mounted mounted = (Mounted) equip.nextElement();
-                if ( mounted.getType()
-                     .hasFlag(MiscType.F_MINESWEEPER) ) {
-                    clear = Minefield.CLEAR_NUMBER_SWEEPER;
-                    boom = Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT;
+                if ( mounted.getType().hasFlag(MiscType.F_TOOLS)
+                     && mounted.getType().hasSubType(MiscType.S_MINESWEEPER) ) {
+                    int sweeperType = mounted.getType().getToHitModifier();
+                    clear = Minefield.CLEAR_NUMBER_SWEEPER[sweeperType];
+                    boom = Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT[sweeperType];
                     break;
                 }
             }

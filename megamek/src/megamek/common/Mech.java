@@ -24,6 +24,8 @@ import megamek.common.LosEffects;
 import megamek.common.ToHitData;
 import megamek.common.preference.PreferenceManager;
 
+import megamek.server.Server;
+
 /**
  * You know what mechs are, silly.
  */
@@ -363,7 +365,7 @@ public abstract class Mech
         return MASC_FAILURE[nMASCLevel] + 1;
     }
 
-    public boolean checkForMASCFailure(MovePath md, Vector vDesc) {
+    public boolean checkForMASCFailure(MovePath md, Vector vDesc, Server server) {
         if (md.hasActiveMASC()) {
             Report r;
             boolean bFailure = false;
@@ -373,12 +375,14 @@ public abstract class Mech
             // If we failed before, the MASC was destroyed, and we wouldn't
             // have gotten here (hasActiveMASC would return false)
             if (!usedMASC) {
+                Mounted equip = getMASC();
                 int nRoll = Compute.d6(2);
 
                 usedMASC = true;
                 r = new Report(2365);
                 r.subject = this.getId();
                 r.addDesc(this);
+                r.add(equip.getName());
                 vDesc.addElement(r);
                 r = new Report(2370);
                 r.subject = this.getId();
@@ -390,26 +394,67 @@ public abstract class Mech
                     // uh oh
                     bFailure = true;
                     r.choose(false);
+                    vDesc.addElement(r);
 
-                    // do the damage.  Rules say 'as if you took 2 hip crits'. We'll
-                    // just do the hip crits
-                    getCritical(LOC_RLEG, 0).setDestroyed(true);
-                    getCritical(LOC_LLEG, 0).setDestroyed(true);
-                    if (this instanceof QuadMech) {
-                        getCritical(LOC_RARM, 0).setDestroyed(true);
-                        getCritical(LOC_LARM, 0).setDestroyed(true);
-                    }
-                    for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-                        Mounted m = (Mounted)e.nextElement();
-                        if (m.getType().hasFlag(MiscType.F_MASC)) {
-                            m.setDestroyed(true);
-                            m.setMode("Off");
+                    if(((MiscType)(equip.getType())).hasSubType(MiscType.S_SUPERCHARGER)) {
+                        // do the damage - engine crits
+                        int hits = 0;
+                        int roll = Compute.d6(2);
+                        r = new Report(6310);
+                        r.subject = getId();
+                        r.add(roll);
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                        if (roll <= 7) {
+                            //no effect
+                            r = new Report(6005);
+                            r.subject = getId();
+                            r.newlines = 0;
+                            vDesc.addElement(r);
+                        } else if (roll >= 8 && roll <= 9) {
+                            hits = 1;
+                            r = new Report(6315);
+                            r.subject = getId();
+                            r.newlines = 0;
+                            vDesc.addElement(r);
+                        } else if (roll >= 10 && roll <= 11) {
+                            hits = 2;
+                            r = new Report(6320);
+                            r.subject = getId();
+                            r.newlines = 0;
+                            vDesc.addElement(r);
+                        } else if (roll == 12) {
+                            hits = 3;
+                            r = new Report(6325);
+                            r.subject = getId();
+                            r.newlines = 0;
+                            vDesc.addElement(r);
                         }
+                        for(int i=0;i<12 && hits > 0;i++) {
+                            CriticalSlot cs = getCritical(LOC_CT, i);
+                            if(cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == SYSTEM_ENGINE) {
+                                server.combineVectors(vDesc, server.applyCriticalHit(this, LOC_CT, cs, true));
+                                hits--;
+                            }
+                        }
+                    } else {
+                        // do the damage.  Rules say 'as if you took 2 hip crits'. We'll
+                        // just do the hip crits
+                        getCritical(LOC_RLEG, 0).setDestroyed(true);
+                        getCritical(LOC_LLEG, 0).setDestroyed(true);
+                        if (this instanceof QuadMech) {
+                            getCritical(LOC_RARM, 0).setDestroyed(true);
+                            getCritical(LOC_LARM, 0).setDestroyed(true);
+                        }
+                    }
+                    if (equip.getType().hasFlag(MiscType.F_MASC)) {
+                        equip.setDestroyed(true);
+                        equip.setMode("Off");
                     }
                 } else {
                     r.choose(true);
+                    vDesc.addElement(r);
                 }
-                vDesc.addElement(r);
             }
             return bFailure;
         }
@@ -687,6 +732,17 @@ public abstract class Mech
             }
         }
         return false;
+    }
+
+    public Mounted getMASC() {
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted m = (Mounted)i.nextElement();
+            MiscType mtype = (MiscType)m.getType();
+            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady()) {
+                return m;
+            }
+        }
+        return null;
     }
 
     /**

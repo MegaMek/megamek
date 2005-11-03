@@ -4384,7 +4384,7 @@ public abstract class Entity
         boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
 
         // only mechs and protos have physical attacks (except tank charges)
-        if (!(this instanceof Mech || this instanceof Protomech)) {
+        if (!(this instanceof Mech || this instanceof Protomech || this instanceof Infantry)) {
             return false;
         }
 
@@ -4462,7 +4462,6 @@ public abstract class Entity
                 final BuildingTarget target = new BuildingTarget( coords,
                                                                   game.getBoard(),
                                                                   false );
-
                 canHit |= Compute.canPhysicalTarget(game, getId(), target);
 
             } // Check the next hex of the building

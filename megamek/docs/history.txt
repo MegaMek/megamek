@@ -1,4 +1,4 @@
-﻿VERSION HISTORY:
+VERSION HISTORY:
 ----------------
 v0.31.2 (CVS)
 + Switchable map tilesets
@@ -16,6 +16,10 @@ v0.31.2 (CVS)
 + Bug 1285121: DFA cause problems
 + mechanical jump boosters (maxtech equipment)
 + Bug 1339448: Unit customisation message in blind drop
++ Engineer platoon's tools
++ Engineer platoon improved minesweeping ability (Light Minesweeper)
++ Engineer platoon lay explosives ability (Demolition Charge) - but can't set them off yet!
++ Supercharger, except for using MASC and supercharger on the same mech is not supported yet.
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

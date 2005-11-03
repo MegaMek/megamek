@@ -1745,7 +1745,7 @@ public class Server implements Runnable {
      *             added to 
      *@param second The <code>Vector</code> that will be added to the first
      */
-    private static void combineVectors(Vector first, Vector second) {
+    public static void combineVectors(Vector first, Vector second) {
         if (second == null || second.size() == 0) {
             //Hmm...no second vector, no work to do then.
             return;
@@ -2786,7 +2786,7 @@ public class Server implements Runnable {
 
         // check for MASC failure
         if (entity instanceof Mech) {
-            if (((Mech)entity).checkForMASCFailure(md, vPhaseReport)) {
+            if (((Mech)entity).checkForMASCFailure(md, vPhaseReport, this)) {
                 // no movement after that
                 md.clear();
             }
@@ -5732,9 +5732,11 @@ public class Server implements Runnable {
                 Enumeration equip = ent.getMisc();
                 while ( equip.hasMoreElements() ) {
                     Mounted mounted = (Mounted) equip.nextElement();
-                    if ( mounted.getType().hasFlag(MiscType.F_MINESWEEPER) ) {
-                        clear = Minefield.CLEAR_NUMBER_SWEEPER;
-                        boom = Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT;
+                    if ( mounted.getType().hasFlag(MiscType.F_TOOLS)
+                     && mounted.getType().hasSubType(MiscType.S_MINESWEEPER) ) {
+                        int sweeperType = mounted.getType().getToHitModifier();
+                        clear = Minefield.CLEAR_NUMBER_SWEEPER[sweeperType];
+                        boom = Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT[sweeperType];
                         break;
                     }
                 }
@@ -10311,6 +10313,33 @@ public class Server implements Runnable {
         Report.addNewline(vPhaseReport);
 
     } // End private void resolveChargeDamage( Entity, Entity, ToHitData )
+
+    private void resolveLayExplosivesAttack(PhysicalResult pr, int lastEntityId) {
+        final LayExplosivesAttackAction laa = (LayExplosivesAttackAction)pr.aaa;
+        final Entity ae = game.getEntity(laa.getEntityId());
+        final Targetable target = game.getTarget(laa.getTargetType(), laa.getTargetId());
+        if(ae instanceof Infantry) {
+            Infantry inf = (Infantry) ae;
+            if(inf.turnsLayingExplosives < 0) {
+                inf.turnsLayingExplosives = 0;
+                Report r = new Report(4270);
+                r.subject = inf.getId();
+                r.addDesc(inf);
+                vPhaseReport.add(r);
+            } else {
+                Building building = game.getBoard().getBuildingAt(ae.getPosition());
+                if(building != null) {
+                    building.addDemolitionCharge(ae.getOwner().getId(), pr.damage);
+                    Report r = new Report(4275);
+                    r.subject = inf.getId();
+                    r.addDesc(inf);
+                    r.add(pr.damage);
+                    vPhaseReport.add(r);
+                }
+                inf.turnsLayingExplosives = -1;
+            }
+        }
+    }
 
     /**
      * Handle a death from above attack
@@ -16753,6 +16782,10 @@ public class Server implements Runnable {
         } else if (aaa instanceof PushAttackAction) {
             PushAttackAction paa = (PushAttackAction)aaa;
             toHit = paa.toHit(game);
+        } else if (aaa instanceof LayExplosivesAttackAction) {
+            LayExplosivesAttackAction leaa = (LayExplosivesAttackAction)aaa;
+            toHit = leaa.toHit(game);
+            damage = leaa.getDamageFor(ae);
         } else if (aaa instanceof ThrashAttackAction) {
             ThrashAttackAction taa = (ThrashAttackAction)aaa;
             toHit = taa.toHit(game);
@@ -16820,6 +16853,9 @@ public class Server implements Runnable {
             cen = aaa.getEntityId();
         }  else if (aaa instanceof DfaAttackAction) {
             resolveDfaAttack(pr, cen);
+            cen = aaa.getEntityId();
+        }  else if (aaa instanceof LayExplosivesAttackAction) {
+            resolveLayExplosivesAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
             // hmm, error.

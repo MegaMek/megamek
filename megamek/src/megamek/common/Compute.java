@@ -22,6 +22,7 @@ import java.util.Vector;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.LayExplosivesAttackAction;
 import megamek.common.actions.ProtomechPhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
@@ -2729,6 +2730,9 @@ public class Compute {
             return true;
 
         if(PushAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+
+        if(LayExplosivesAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
             return true;
 
         for(Iterator<Mounted> clubs = game.getEntity(entityId).getClubs().iterator();clubs.hasNext();) {

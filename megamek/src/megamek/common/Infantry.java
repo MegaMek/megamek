@@ -778,7 +778,7 @@ public class Infantry
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);
-        Entity.combineVectors(vDesc, crew.getDescVector(true));
+        vDesc.addAll(crew.getDescVector(true));
         r = new Report(7070, Report.PUBLIC);
         r.newlines = 2;
         r.add(getKillNumber());

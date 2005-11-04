@@ -4681,7 +4681,7 @@ public class Server implements Runnable {
             // check for the "no_premove_vibra" option
             // If it's set, and the target has not yet moved,
             // it doesn't get damaged.
-            if (!(entity.isDone() && game.getOptions().booleanOption("no_premove_vibra"))) {
+            if (!entity.isDone() && game.getOptions().booleanOption("no_premove_vibra")) {
                 r = new Report(2157);
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
@@ -16785,7 +16785,7 @@ public class Server implements Runnable {
         } else if (aaa instanceof LayExplosivesAttackAction) {
             LayExplosivesAttackAction leaa = (LayExplosivesAttackAction)aaa;
             toHit = leaa.toHit(game);
-            damage = leaa.getDamageFor(ae);
+            damage = LayExplosivesAttackAction.getDamageFor(ae);
         } else if (aaa instanceof ThrashAttackAction) {
             ThrashAttackAction taa = (ThrashAttackAction)aaa;
             toHit = taa.toHit(game);

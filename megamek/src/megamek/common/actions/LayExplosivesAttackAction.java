@@ -16,25 +16,15 @@ package megamek.common.actions;
 
 import java.util.Enumeration;
 
-import megamek.common.BattleArmor;
 import megamek.common.Building;
-import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.GunEmplacement;
 import megamek.common.IGame;
-import megamek.common.IHex;
 import megamek.common.MiscType;
 import megamek.common.Infantry;
-import megamek.common.Mech;
 import megamek.common.Mounted;
-import megamek.common.Tank;
 import megamek.common.Targetable;
-import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
-/**
- * The attacker kicks the target.
- */
 public class LayExplosivesAttackAction extends AbstractAttackAction
 {    
    

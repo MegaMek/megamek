@@ -3015,18 +3015,6 @@ public abstract class Entity
      */
     public abstract Vector victoryReport();
 
-    public static void combineVectors(Vector first, Vector second) {
-        if (second == null || second.size() == 0) {
-            //Hmm...no second vector, no work to do then.
-            return;
-        }
-
-        for (int i = 0; i < second.size(); i++) {
-            first.addElement(second.elementAt(i));
-        }
-        //Java pass-by-reference means no return value needed.
-    }
-
     /**
      * Two entities are equal if their ids are equal
      */

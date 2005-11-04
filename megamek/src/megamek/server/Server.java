@@ -999,7 +999,7 @@ public class Server implements Runnable {
                 if ( !entity.isDeployed() )
                   continue;
 
-                Server.combineVectors(vPhaseReport, entity.victoryReport());
+                vPhaseReport.addAll( entity.victoryReport());
             }
         }
         //List units that never deployed
@@ -1018,7 +1018,7 @@ public class Server implements Runnable {
                   wroteHeader = true;
                 }
 
-                Server.combineVectors(vPhaseReport, entity.victoryReport());
+                vPhaseReport.addAll( entity.victoryReport());
             }
         }
         //List units that retreated
@@ -1027,7 +1027,7 @@ public class Server implements Runnable {
             vPhaseReport.addElement(new Report(7080, Report.PUBLIC));
             while ( retreat.hasMoreElements() ) {
                 Entity entity = (Entity) retreat.nextElement();
-                Server.combineVectors(vPhaseReport, entity.victoryReport());
+                vPhaseReport.addAll( entity.victoryReport());
             }
         }
         //List destroyed units
@@ -1036,7 +1036,7 @@ public class Server implements Runnable {
             vPhaseReport.addElement(new Report(7085, Report.PUBLIC));
             while ( graveyard.hasMoreElements() ) {
                 Entity entity = (Entity) graveyard.nextElement();
-                Server.combineVectors(vPhaseReport, entity.victoryReport());
+                vPhaseReport.addAll( entity.victoryReport());
             }
         }
         //List devastated units (not salvagable)
@@ -1046,7 +1046,7 @@ public class Server implements Runnable {
 
             while ( devastated.hasMoreElements() ) {
                 Entity entity = (Entity) devastated.nextElement();
-                Server.combineVectors(vPhaseReport, entity.victoryReport());
+                vPhaseReport.addAll( entity.victoryReport());
             }
         }
         //Let player know about entitystatus.txt file
@@ -1457,7 +1457,7 @@ public class Server implements Runnable {
                     DynamicTerrainProcessor tp = tps.nextElement();
                     tp.DoEndPhaseChanges(vPhaseReport);
                 }
-                Server.combineVectors(vPhaseReport, game.ageFlares());
+                vPhaseReport.addAll( game.ageFlares());
                 send(createFlarePacket());
                 resolveExtremeTempInfantryDeath();
                 resolveAmmoDumps();
@@ -1737,24 +1737,6 @@ public class Server implements Runnable {
                 resetGame();
                 break;
         }
-    }
-
-    /**
-     *combines two vectors into one, primarily used by the server reporting
-     *@param first The <code>Vector</code> that the second Vector will be
-     *             added to 
-     *@param second The <code>Vector</code> that will be added to the first
-     */
-    public static void combineVectors(Vector first, Vector second) {
-        if (second == null || second.size() == 0) {
-            //Hmm...no second vector, no work to do then.
-            return;
-        }
-
-        for (int i = 0; i < second.size(); i++) {
-            first.addElement(second.elementAt(i));
-        }
-        //Java pass-by-reference means no return value needed.
     }
 
     /**
@@ -2736,7 +2718,7 @@ public class Server implements Runnable {
                 r.addDesc(entity);
                 vPhaseReport.addElement(r);
             }
-            Server.combineVectors(vPhaseReport, ejectEntity(entity, false));
+            vPhaseReport.addAll( ejectEntity(entity, false));
 
             return;
         }
@@ -3205,7 +3187,7 @@ public class Server implements Runnable {
 
                                     // Damage equals tonnage, divided by 5.
                                     // ASSUMPTION: damage is applied in one hit.
-                                    Server.combineVectors(vPhaseReport,
+                                    vPhaseReport.addAll(
                                       damageEntity(target, hit,
                                       Math.round(entity.getWeight()/5)));
                                     Report.addNewline(vPhaseReport);
@@ -3285,7 +3267,7 @@ public class Server implements Runnable {
                                 HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
                                                                       entity.sideTable(nextPos)
                                                                       );
-                                Server.combineVectors(vPhaseReport,
+                                vPhaseReport.addAll(
                                                       damageEntity( entity, hit, toAttacker ));
                                 Report.addNewline(vPhaseReport);
 
@@ -3438,7 +3420,7 @@ public class Server implements Runnable {
                         while (damage > 0) {
                             int cluster = Math.min(5, damage);
                             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                            Server.combineVectors(vPhaseReport,
+                            vPhaseReport.addAll(
                                 damageEntity(entity, hit, cluster));
                             damage -= cluster;
                         }
@@ -3549,14 +3531,14 @@ public class Server implements Runnable {
                             }
                             curPos=newPos;
                             curVTOLElevation=newElevation;
-                            Server.combineVectors(vPhaseReport,
+                            vPhaseReport.addAll(
                                                   crashVTOL(((VTOL)entity),true,distance,curPos,curVTOLElevation,table));
                             curVTOLElevation=0;
                             IHex hex = game.getBoard().getHex(newPos);
                             if((hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE))
                                 || hex.containsTerrain(Terrains.WOODS)
                                 || hex.containsTerrain(Terrains.JUNGLE)) {
-                                Server.combineVectors(vPhaseReport,
+                                vPhaseReport.addAll(
                                                       destroyEntity(entity,"could not land in crash site"));
                             } else {
                             }
@@ -4136,7 +4118,7 @@ public class Server implements Runnable {
                         r.indent();
                         r.addDesc(swarmer);
                         vPhaseReport.addElement(r);
-                        Server.combineVectors(vPhaseReport,
+                        vPhaseReport.addAll(
                             destroyEntity(swarmer, "a watery grave", false));
                     } else {
                         // Swarming infantry take an 11 point hit.
@@ -4146,7 +4128,7 @@ public class Server implements Runnable {
                         r.indent();
                         r.addDesc(swarmer);
                         vPhaseReport.addElement(r);
-                        Server.combineVectors(vPhaseReport,damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 11));
+                        vPhaseReport.addAll(damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 11));
                         Report.addNewline(vPhaseReport);
                         swarmer.setPosition( curPos );
                     }
@@ -4491,7 +4473,7 @@ public class Server implements Runnable {
                 r.add(mf.getCoords().getBoardNum(), true);
                 vPhaseReport.addElement(r);
                 HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, mf.getDamage()));
+                vPhaseReport.addAll( damageEntity(entity, hit, mf.getDamage()));
                 Report.addNewline(vPhaseReport);
 
                 if (resolvePSRNow) {
@@ -4591,7 +4573,7 @@ public class Server implements Runnable {
                 r.add(entity.getShortName(), true);
                 vPhaseReport.addElement(r);
                 HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, mf.getDamage()));
+                vPhaseReport.addAll( damageEntity(entity, hit, mf.getDamage()));
                 Report.addNewline(vPhaseReport);
                 resolvePilotingRolls(entity, true, lastPos, curPos);
                 // we need to apply Damage now, in case the entity lost a leg,
@@ -4697,12 +4679,12 @@ public class Server implements Runnable {
             if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
                 // normal vibrabombs do all damage in one pack
                 HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, mf.getDamage()));
+                vPhaseReport.addAll( damageEntity(entity, hit, mf.getDamage()));
                 Report.addNewline(vPhaseReport);
             } else if (mf.getType() == Minefield.TYPE_THUNDER_VIBRABOMB) {
                 int damage = mf.getDamage();
                 HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, damage));
+                vPhaseReport.addAll( damageEntity(entity, hit, damage));
             }
 
             resolvePilotingRolls(entity, true, entity.getPosition(), entity.getPosition());
@@ -4742,7 +4724,7 @@ public class Server implements Runnable {
                 r.indent();
                 r.add(entity.getShortName(), true);
                 vPhaseReport.addElement(r);
-                Server.combineVectors(vPhaseReport, destroyEntity(swarmer, "a watery grave", false));
+                vPhaseReport.addAll( destroyEntity(swarmer, "a watery grave", false));
                 entityUpdate( swarmerId );
             }
         }
@@ -4835,22 +4817,22 @@ public class Server implements Runnable {
                 }
                 entity.setLocationStatus(Mech.LOC_RLEG, ILocationExposureStatus.WET);
                 entity.setLocationStatus(Mech.LOC_LLEG, ILocationExposureStatus.WET);
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       breachCheck(entity, Mech.LOC_RLEG, hex));
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       breachCheck(entity, Mech.LOC_LLEG, hex));
                 if (entity instanceof QuadMech) {
                     entity.setLocationStatus(Mech.LOC_RARM, ILocationExposureStatus.WET);
                     entity.setLocationStatus(Mech.LOC_LARM, ILocationExposureStatus.WET);
-                    Server.combineVectors(vPhaseReport,
+                    vPhaseReport.addAll(
                                breachCheck(entity, Mech.LOC_RARM, hex));
-                    Server.combineVectors(vPhaseReport,
+                    vPhaseReport.addAll(
                                breachCheck(entity, Mech.LOC_LARM, hex));
                 }
             } else {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     entity.setLocationStatus(loop, ILocationExposureStatus.WET);
-                    Server.combineVectors(vPhaseReport, breachCheck(entity, loop, hex));
+                    vPhaseReport.addAll( breachCheck(entity, loop, hex));
                 }
             }
         } else {
@@ -5118,7 +5100,7 @@ public class Server implements Runnable {
                     while (damage > 0) {
                         int cluster = Math.min(5, damage);
                         HitData hit = affaTarget.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
-                        Server.combineVectors(vPhaseReport,
+                        vPhaseReport.addAll(
                                               damageEntity(affaTarget, hit, cluster));
                         damage -= cluster;
                     }
@@ -5143,7 +5125,7 @@ public class Server implements Runnable {
                             // ack!  automatic death!  Tanks
                             // suffer an ammo/power plant hit.
                             // TODO : a Mech suffers a Head Blown Off crit.
-                            Server.combineVectors(vPhaseReport,
+                            vPhaseReport.addAll(
                                                   destroyEntity(affaTarget, "impossible displacement", (violation instanceof Mech), (violation instanceof Mech)));
                         }
                     }
@@ -5167,7 +5149,7 @@ public class Server implements Runnable {
                 // ack!  automatic death!  Tanks
                 // suffer an ammo/power plant hit.
                 // TODO : a Mech suffers a Head Blown Off crit.
-                Server.combineVectors(vPhaseReport, destroyEntity(entity, "impossible displacement", (entity instanceof Mech), (entity instanceof Mech)));
+                vPhaseReport.addAll( destroyEntity(entity, "impossible displacement", (entity instanceof Mech), (entity instanceof Mech)));
             }
         } else {
             // damage as normal
@@ -5696,7 +5678,7 @@ public class Server implements Runnable {
             }
             else if (ea instanceof SearchlightAttackAction) {
                 SearchlightAttackAction saa = (SearchlightAttackAction)ea;
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       saa.resolveAction(game));
             }
         }
@@ -5783,7 +5765,7 @@ public class Server implements Runnable {
                                 r.add(entity.getShortName(), true);
                                 vPhaseReport.addElement(r);
                                 HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-                                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, mf.getDamage()));
+                                vPhaseReport.addAll( damageEntity(entity, hit, mf.getDamage()));
                                 Report.addNewline(vPhaseReport);
                             }
                             break;
@@ -5906,7 +5888,7 @@ public class Server implements Runnable {
                 }
                 else {
                     // Damage the platoon.
-                    Server.combineVectors(vPhaseReport, damageEntity( target, new HitData(Infantry.LOC_INFANTRY),damage ));
+                    vPhaseReport.addAll( damageEntity( target, new HitData(Infantry.LOC_INFANTRY),damage ));
 
                     // Damage from AP Pods is applied immediately.
                     target.applyDamage();
@@ -6780,7 +6762,7 @@ public class Server implements Runnable {
               //        but it *does* get applied directly to the IS.
               r.choose(false);
               vPhaseReport.addElement(r);
-              Server.combineVectors(vPhaseReport, damageEntity(ae, new HitData(wlocation), 10, false, 0, true));
+              vPhaseReport.addAll( damageEntity(ae, new HitData(wlocation), 10, false, 0, true));
               r = new Report(3185);
               r.subject = ae.getId();
               vPhaseReport.addElement(r);
@@ -6903,7 +6885,7 @@ public class Server implements Runnable {
                         wr.waa.getAimedLocation(),
                         wr.waa.getAimingMode() );
 
-                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
+                  vPhaseReport.addAll( damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
                   Report.addNewline(vPhaseReport);
                   hits -= Math.min(nCluster,hits);
               }
@@ -6965,7 +6947,7 @@ public class Server implements Runnable {
                             toHit.getSideTable(),
                             wr.waa.getAimedLocation(),
                             wr.waa.getAimingMode() );
-                      Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits)));
+                      vPhaseReport.addAll( damageEntity(entity, hit, Math.min(nCluster, hits)));
                       hits -= Math.min(nCluster,hits);
                   }
               }
@@ -7027,7 +7009,7 @@ public class Server implements Runnable {
                   HitData hit = entity.rollHitLocation
                       ( toHit.getHitTable(),
                         toHit.getSideTable() );
-                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
+                  vPhaseReport.addAll( damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
                   Report.addNewline(vPhaseReport);
                   hits -= Math.min(nCluster,hits);
               }
@@ -7077,7 +7059,7 @@ public class Server implements Runnable {
                       HitData hit = entity.rollHitLocation
                           ( toHit.getHitTable(),
                             toHit.getSideTable());
-                      Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits)));
+                      vPhaseReport.addAll( damageEntity(entity, hit, Math.min(nCluster, hits)));
                       hits -= Math.min(nCluster,hits);
                   }
               }
@@ -7369,7 +7351,7 @@ public class Server implements Runnable {
                         wr.waa.getAimedLocation(),
                         wr.waa.getAimingMode() );
 
-                  Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
+                  vPhaseReport.addAll( damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
                   Report.addNewline(vPhaseReport);
                   hits -= Math.min(nCluster,hits);
               }
@@ -7419,7 +7401,7 @@ public class Server implements Runnable {
                             toHit.getSideTable(),
                             wr.waa.getAimedLocation(),
                             wr.waa.getAimingMode() );
-                      Server.combineVectors(vPhaseReport, damageEntity(entity, hit, Math.min(nCluster, hits)));
+                      vPhaseReport.addAll( damageEntity(entity, hit, Math.min(nCluster, hits)));
                       hits -= Math.min(nCluster,hits);
                   }
               }
@@ -8707,7 +8689,7 @@ public class Server implements Runnable {
                     }
 
                     // Report the result
-                    Server.combineVectors(vPhaseReport, specialDamageReport);
+                    vPhaseReport.addAll( specialDamageReport);
                 }
                 else if(game.getOptions().booleanOption("maxtech_partial_cover") &&
                   toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
@@ -8748,28 +8730,28 @@ public class Server implements Runnable {
                         if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
-                        Server.combineVectors(vPhaseReport,
+                        vPhaseReport.addAll(
                           damageEntity(entityTarget, hit, nDamage, false, 1, false, false, throughFront));
                     } else if (bFlechette) {
                         // If it's a frag missile...
                         if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
-                        Server.combineVectors(vPhaseReport,
+                        vPhaseReport.addAll(
                           damageEntity(entityTarget, hit, nDamage, false, 2, false, false, throughFront));
                     } else if (bAcidHead) {
                         // If it's an acid-head warhead...
                         if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
-                        Server.combineVectors(vPhaseReport,
+                        vPhaseReport.addAll(
                                               damageEntity(entityTarget, hit, nDamage, false, 3, false, false, throughFront) );
                     } else if(bIncendiary && usesAmmo && atype.getAmmoType() == AmmoType.T_AC) {
                         //incendiary AC ammo
                         if (bGlancing) {
                             hit.makeGlancingBlow();
                         }
-                        Server.combineVectors(vPhaseReport,
+                        vPhaseReport.addAll(
                                               damageEntity(entityTarget, hit, nDamage, false, 4, false, false, throughFront));
                     } else {
                         if (usesAmmo
@@ -8782,7 +8764,7 @@ public class Server implements Runnable {
                         if (bAntiTSM) {
                             entityTarget.hitThisRoundByAntiTSM = true;
                         }
-                        Server.combineVectors(vPhaseReport,
+                        vPhaseReport.addAll(
                             damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
                     }
                 }
@@ -8845,7 +8827,7 @@ public class Server implements Runnable {
                           wr.waa.getAimedLocation(),
                           wr.waa.getAimingMode() );
 
-                    Server.combineVectors(vPhaseReport,
+                    vPhaseReport.addAll(
                                           damageEntity(entity, hit, ratedDamage, false, 0, false, true, throughFront));
                 }
             }
@@ -8912,7 +8894,7 @@ public class Server implements Runnable {
             // do searchlights immediately
             if (aaa instanceof SearchlightAttackAction) {
                 SearchlightAttackAction saa = (SearchlightAttackAction)aaa;
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       saa.resolveAction(game));
             } else {
                 physicalResults.addElement(preTreatPhysicalAttack(aaa));
@@ -9143,7 +9125,7 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage, false, 0, false, false, throughFront));
+            vPhaseReport.addAll(damageEntity(te, hit, damage, false, 0, false, false, throughFront));
         }
 
         Report.addNewline(vPhaseReport);
@@ -9309,7 +9291,7 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage, false, 0, false, false, throughFront));
+            vPhaseReport.addAll(damageEntity(te, hit, damage, false, 0, false, false, throughFront));
         }
 
         if (te.getMovementMode() == IEntityMovementMode.BIPED || te.getMovementMode() == IEntityMovementMode.QUAD) {
@@ -9466,7 +9448,7 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage));
+            vPhaseReport.addAll(damageEntity(te, hit, damage));
         }
 
         Report.addNewline(vPhaseReport);
@@ -9551,7 +9533,7 @@ public class Server implements Runnable {
             r.add(ae.getLocationAbbr(hit));
             r.newlines = 0;
             vPhaseReport.addElement(r);
-            Server.combineVectors(vPhaseReport,
+            vPhaseReport.addAll(
                                   damageEntity(ae, hit, damage));
             Report.addNewline(vPhaseReport);
             return;
@@ -9569,7 +9551,7 @@ public class Server implements Runnable {
             r.add(te.getLocationAbbr(hit));
             r.newlines = 0;
             vPhaseReport.addElement(r);
-            Server.combineVectors(vPhaseReport,
+            vPhaseReport.addAll(
                                   damageEntity(te, hit, damage));
             Report.addNewline(vPhaseReport);
 
@@ -9692,7 +9674,7 @@ public class Server implements Runnable {
             r.add(te.getLocationAbbr(hit));
             r.newlines = 0;
             vPhaseReport.addElement(r);
-            Server.combineVectors(vPhaseReport,
+            vPhaseReport.addAll(
                                   damageEntity(te, hit, damage));
         }
 
@@ -9885,7 +9867,7 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            Server.combineVectors(vPhaseReport,damageEntity(te, hit, damage, false, 0, false, false, throughFront));
+            vPhaseReport.addAll(damageEntity(te, hit, damage, false, 0, false, false, throughFront));
         }
 
         Report.addNewline(vPhaseReport);
@@ -10199,7 +10181,7 @@ public class Server implements Runnable {
             HitData hit = ae.rollHitLocation( ToHitData.HIT_NORMAL,
                                               ae.sideTable(target.getPosition())
                                                   );
-            Server.combineVectors(vPhaseReport,
+            vPhaseReport.addAll(
                                   damageEntity( ae, hit, toAttacker, false, 0, false, false, throughFront));
             Report.addNewline(vPhaseReport);
             entityUpdate( ae.getId() );
@@ -10282,7 +10264,7 @@ public class Server implements Runnable {
                 vPhaseReport.addElement(r);
             } else {
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       damageEntity(te, hit, cluster, false, 0, false, false, throughFront));
             }
         }
@@ -10296,7 +10278,7 @@ public class Server implements Runnable {
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            Server.combineVectors(vPhaseReport,
+            vPhaseReport.addAll(
                                       damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }
@@ -10489,7 +10471,7 @@ public class Server implements Runnable {
                 // attacker destroyed  Tanks
                 // suffer an ammo/power plant hit.
                 // TODO : a Mech suffers a Head Blown Off crit.
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       destroyEntity(ae, "impossible displacement", (ae instanceof Mech), (ae instanceof Mech)));
             }
             return;
@@ -10532,7 +10514,7 @@ public class Server implements Runnable {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       damageEntity(te, hit, cluster, false, 0, false, false, throughFront));
                 damage -= cluster;
             }
@@ -10553,7 +10535,7 @@ public class Server implements Runnable {
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
-            Server.combineVectors(vPhaseReport,
+            vPhaseReport.addAll(
                                       damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }
@@ -10575,7 +10557,7 @@ public class Server implements Runnable {
             // ack!  automatic death!  Tanks
             // suffer an ammo/power plant hit.
             // TODO : a Mech suffers a Head Blown Off crit.
-            Server.combineVectors(vPhaseReport,
+            vPhaseReport.addAll(
                                   destroyEntity(te, "impossible displacement", (te instanceof Mech), (te instanceof Mech)));
         }
         // HACK: to avoid automatic falls, displace from dest to dest
@@ -10812,7 +10794,7 @@ public class Server implements Runnable {
                     } else {
                         r.choose(false);
                         vPhaseReport.addElement(r);
-                        Server.combineVectors(vPhaseReport, explodeInfernoAmmoFromHeat(entity));
+                        vPhaseReport.addAll( explodeInfernoAmmoFromHeat(entity));
                     }
                 }
             } // End avoid-inferno-explosion
@@ -10929,7 +10911,7 @@ public class Server implements Runnable {
                     //boom!
                     r.choose(false);
                     vPhaseReport.addElement(r);
-                    Server.combineVectors(vPhaseReport, explodeAmmoFromHeat(entity));
+                    vPhaseReport.addAll( explodeAmmoFromHeat(entity));
                 }
             }
 
@@ -11006,7 +10988,7 @@ public class Server implements Runnable {
                 r.addDesc(entity);
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
-                Server.combineVectors(vPhaseReport, destroyEntity(entity, "crew death", true));
+                vPhaseReport.addAll( destroyEntity(entity, "crew death", true));
             }
 
             // With MaxTech Heat Scale, there may occur critical damage
@@ -11031,7 +11013,7 @@ public class Server implements Runnable {
                     } else {
                         r.choose(false);
                         vPhaseReport.addElement(r);
-                        Server.combineVectors(vPhaseReport,
+                        vPhaseReport.addAll(
                                               oneCriticalEntity(entity, Compute.d6(2)));
                         //add an empty report, for linebreaking
                         r = new Report(1210);
@@ -11069,7 +11051,7 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 vPhaseReport.addElement(r);
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       destroyEntity(entity, "heat/cold", false, false));
             }
         }
@@ -11121,7 +11103,7 @@ public class Server implements Runnable {
             //eek
             r.choose(false);
             vPhaseReport.addElement(r);
-            Server.combineVectors(vPhaseReport, destroyEntity(entity, "fire", false, false));
+            vPhaseReport.addAll( destroyEntity(entity, "fire", false, false));
         }
     }
 
@@ -11214,7 +11196,7 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 vPhaseReport.addElement(r);
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       destroyEntity(entity, "being in a vacuum where it can't survive", true, true));
             }
         }
@@ -11239,7 +11221,7 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 vPhaseReport.addElement(r);
-                Server.combineVectors(vPhaseReport,
+                vPhaseReport.addAll(
                                       damageCrew(entity, 1));
 
             }
@@ -11477,7 +11459,7 @@ public class Server implements Runnable {
                 crew.setRollsNeeded( crew.getRollsNeeded() + damage );
             } else if ( !crew.isDoomed() ) {
                 crew.setDoomed(true);
-                Server.combineVectors(vDesc, destroyEntity(en, "pilot death", true));
+                vDesc.addAll( destroyEntity(en, "pilot death", true));
             }
         }
 
@@ -11634,7 +11616,7 @@ public class Server implements Runnable {
                 Mech mech = (Mech)te;
                 if (mech.isAutoEject()) {
                     autoEject = true;
-                    Server.combineVectors(vDesc,
+                    vDesc.addAll(
                                           ejectEntity(te, true));
                 }
             }
@@ -11879,7 +11861,7 @@ public class Server implements Runnable {
                     } while ( damage > absorb && nextPassHit.getLocation() >= 0 );
 
                     // Damage the passenger.
-                    Server.combineVectors(vDesc, damageEntity(passenger, passHit, damage));
+                    vDesc.addAll( damageEntity(passenger, passHit, damage));
 
                     // Did some damage pass on?
                     if ( damage > absorb ) {
@@ -11907,7 +11889,7 @@ public class Server implements Runnable {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed() &&
                             !mAmmo.isHit()) {
                             // doh.  explode it
-                            Server.combineVectors(vDesc, explodeEquipment(te, mAmmo.getLocation(), mAmmo) );
+                            vDesc.addAll( explodeEquipment(te, mAmmo.getLocation(), mAmmo) );
                             mAmmo.setHit(true);
                         }
                     }
@@ -11948,7 +11930,7 @@ public class Server implements Runnable {
 
                         if (te.getTransferLocation(hit).getLocation() ==
                             Entity.LOC_DESTROYED) {
-                            Server.combineVectors(vDesc,
+                            vDesc.addAll(
                                                   destroyEntity(te,
                                                                 "damage",
                                                                 false));
@@ -12005,7 +11987,7 @@ public class Server implements Runnable {
                             int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()] -
                                 ((Protomech)te).getPilotDamageTaken(hit.getLocation());
                             if ( hits > 0 ) {
-                                Server.combineVectors(vDesc, damageCrew( te, hits ));
+                                vDesc.addAll( damageCrew( te, hits ));
                                 ((Protomech)te).setPilotDamageTaken
                                      (hit.getLocation(),
                                       Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
@@ -12098,7 +12080,7 @@ public class Server implements Runnable {
                             engineExploded = checkEngineExplosion(te, vDesc, numEngineHits);
                             if ( !engineExploded && numEngineHits > 2  ) {
                                 // third engine hit
-                                Server.combineVectors(vDesc, destroyEntity(te, "engine destruction"));
+                                vDesc.addAll( destroyEntity(te, "engine destruction"));
                             }
                         }
                         
@@ -12129,7 +12111,7 @@ public class Server implements Runnable {
                             // Entity destroyed.  Ammo explosions are
                             // neither survivable nor salvagable.
                             // Only ammo explosions in the CT are devastating.
-                            Server.combineVectors(vDesc, destroyEntity( te, "damage",
+                            vDesc.addAll( destroyEntity( te, "damage",
                                                       !ammoExplosion,
                                                       !( (ammoExplosion || areaSatArty) &&
                                                          hit.getLocation() ==
@@ -12190,7 +12172,7 @@ public class Server implements Runnable {
                 specCrits++;
             }
             // check for breaching
-            Server.combineVectors(vDesc, breachCheck(te, hit.getLocation(), null));
+            vDesc.addAll( breachCheck(te, hit.getLocation(), null));
 
             // resolve special results
             if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
@@ -12211,7 +12193,7 @@ public class Server implements Runnable {
                         if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
                              game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 
                              &&!(game.getBoard().getHex( te.getPosition() ).containsTerrain(Terrains.ICE))) {
-                            Server.combineVectors(vDesc, destroyEntity(te, "a watery grave", false) );
+                            vDesc.addAll( destroyEntity(te, "a watery grave", false) );
                         }
                     }
                 }
@@ -12226,12 +12208,12 @@ public class Server implements Runnable {
                 if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
                      te_hex.terrainLevel(Terrains.WATER) > 0 &&
                      !(te_hex.containsTerrain(Terrains.ICE))) {
-                    Server.combineVectors(vDesc, destroyEntity(te, "a watery grave", false) );
+                    vDesc.addAll( destroyEntity(te, "a watery grave", false) );
                 }
                 if(te instanceof VTOL) {
                     Report.addNewline(vDesc);
                     //report problem: add tab
-                    Server.combineVectors(vDesc, crashVTOL((VTOL)te));
+                    vDesc.addAll( crashVTOL((VTOL)te));
                 }
             } else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
                 r = new Report(6145);
@@ -12270,20 +12252,20 @@ public class Server implements Runnable {
             if (te.getInternal(hit) != IArmorState.ARMOR_DESTROYED) {
                 for (int i = 0; i < crits; i++) {
                     ((Report) vDesc.elementAt(vDesc.size() - 1)).newlines++;
-                    Server.combineVectors(vDesc, criticalEntity(te, hit.getLocation(), hit.glancingMod()) );
+                    vDesc.addAll( criticalEntity(te, hit.getLocation(), hit.glancingMod()) );
                 }
                 crits = 0;
 
                 for (int i = 0; i < specCrits; i++) {
                     ((Report) vDesc.elementAt(vDesc.size() - 1)).newlines++;
-                    Server.combineVectors(vDesc, criticalEntity(te, hit.getLocation(), hit.getSpecCritMod()+hit.glancingMod()) );
+                    vDesc.addAll( criticalEntity(te, hit.getLocation(), hit.getSpecCritMod()+hit.glancingMod()) );
                 }
                 specCrits = 0;
             }
 
             if (te instanceof Mech && hit.getLocation() == Mech.LOC_HEAD) {
                 Report.addNewline(vDesc);
-                Server.combineVectors(vDesc, damageCrew(te, 1) );
+                vDesc.addAll( damageCrew(te, 1) );
             }
 
             // loop to next location
@@ -12309,7 +12291,7 @@ public class Server implements Runnable {
             r.indent(2);
             vDesc.add(r);
             if(roll < 7) {
-                Server.combineVectors(vDesc, damageCrew(te, 1) );
+                vDesc.addAll( damageCrew(te, 1) );
             }
         }
         //This flag indicates the hit was directly to IS
@@ -12397,7 +12379,7 @@ public class Server implements Runnable {
         r.subject = en.getId();
         r.indent(2);
         vDesc.addElement(r);
-        Server.combineVectors(vDesc, destroyEntity(en, "engine explosion", false, false));
+        vDesc.addAll( destroyEntity(en, "engine explosion", false, false));
         //kill the crew
         en.getCrew().setDoomed(true);
 
@@ -12434,7 +12416,7 @@ public class Server implements Runnable {
                 if ( entity.equals(en) )
                   continue;
     
-                Server.combineVectors(vDesc, destroyEntity(entity, "engine explosion proximity", false, false));
+                vDesc.addAll( destroyEntity(entity, "engine explosion proximity", false, false));
                 // Kill the crew
                 entity.getCrew().setDoomed(true);
     
@@ -12474,7 +12456,7 @@ public class Server implements Runnable {
                 while (damage > 0) {
                     int cluster = Math.min(5, damage);
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(en, entity));
-                    Server.combineVectors(vDesc, damageEntity(entity, hit, cluster));
+                    vDesc.addAll( damageEntity(entity, hit, cluster));
                     damage -= cluster;
                 }
     
@@ -12546,10 +12528,10 @@ public class Server implements Runnable {
                         r.subject = en.getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                        Server.combineVectors(vDesc,
+                        vDesc.addAll(
                                               destroyEntity(vtol, "crew death", true));
                         en.getCrew().setDoomed(true);
-                        Server.combineVectors(vDesc, crashVTOL(vtol));
+                        vDesc.addAll( crashVTOL(vtol));
                     }
                     break;
                 case 2 : //this one's ridiculous.  the 'main weapon' jams.
@@ -12589,7 +12571,7 @@ public class Server implements Runnable {
                             if ( en.getMovementMode() == IEntityMovementMode.HOVER
                                  && te_hex.terrainLevel(Terrains.WATER) > 0
                                  && !(te_hex.containsTerrain(Terrains.ICE))) {
-                                Server.combineVectors(vDesc,
+                                vDesc.addAll(
                                                       destroyEntity(en,"a watery grave", false));
                             }
                         } else { //VTOLs may land or crash
@@ -12599,7 +12581,7 @@ public class Server implements Runnable {
                             // crash.
                             Report.addNewline(vDesc);
                             //report problem: add 3 tabs
-                            Server.combineVectors(vDesc, crashVTOL(vtol));
+                            vDesc.addAll( crashVTOL(vtol));
                         }
                     }
                     break;
@@ -12608,13 +12590,13 @@ public class Server implements Runnable {
                     r.subject = en.getId();
                     r.newlines = 0;
                     vDesc.addElement(r);
-                    Server.combineVectors(vDesc,
+                    vDesc.addAll(
                         destroyEntity(en, "crew death", true));
                     en.getCrew().setDoomed(true);
                     if (vtol != null) { //VTOL's crash too
                         Report.addNewline(vDesc);
                         //report problem: add 3 tabs
-                        Server.combineVectors(vDesc, crashVTOL(vtol));
+                        vDesc.addAll( crashVTOL(vtol));
                     }
                     break;
                 case 5 : //fuel tank/engine shielding, vehicle explodes
@@ -12623,12 +12605,12 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     vDesc.addElement(r);
                     if (vtol == null) {
-                        Server.combineVectors(vDesc,
+                        vDesc.addAll(
                                               destroyEntity(en, "fuel tank explosion", false, false));
                     } else { //VTOL's explode and scatter burning fuel
                         Report.addNewline(vDesc);
                         //report problem: add 3 tabs
-                        Server.combineVectors(vDesc, explodeVTOL(vtol));
+                        vDesc.addAll( explodeVTOL(vtol));
                     }
                     en.getCrew().setDoomed(true);
                     break;
@@ -12639,12 +12621,12 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                     boolean hasCASE = en.locationHasCase(Tank.LOC_BODY);
                     if (vtol == null) {
-                        Server.combineVectors(vDesc,
+                        vDesc.addAll(
                                               destroyEntity(en, "power plant destruction", hasCASE, hasCASE));
                     } else { //VTOL's explode and scatter burning fuel
                         Report.addNewline(vDesc);
                         //report problem: add 3 tabs
-                        Server.combineVectors(vDesc, explodeVTOL(vtol));
+                        vDesc.addAll( explodeVTOL(vtol));
                     }
                     en.getCrew().setDoomed(!hasCASE);
                     break;
@@ -12696,7 +12678,7 @@ public class Server implements Runnable {
                     break;
                 case Protomech.SYSTEM_TORSOCRIT:
                     if (3==numHit) {
-                        Server.combineVectors(vDesc,
+                        vDesc.addAll(
                             destroyEntity(en, "torso destruction"));
                     }
                     // Torso weapon hits are secondary effects and
@@ -12710,7 +12692,7 @@ public class Server implements Runnable {
                             newSlot = new CriticalSlot
                                 ( CriticalSlot.TYPE_SYSTEM,
                                   Protomech.SYSTEM_TORSO_WEAPON_A );
-                            Server.combineVectors(vDesc,
+                            vDesc.addAll(
                                 applyCriticalHit(en, Entity.NONE,
                                                   newSlot, secondaryEffects));
                             break;
@@ -12719,7 +12701,7 @@ public class Server implements Runnable {
                             newSlot = new CriticalSlot
                                 ( CriticalSlot.TYPE_SYSTEM,
                                   Protomech.SYSTEM_TORSO_WEAPON_B );
-                            Server.combineVectors(vDesc,
+                            vDesc.addAll(
                                 applyCriticalHit(en, Entity.NONE,
                                                   newSlot, secondaryEffects));
                             break;
@@ -12762,7 +12744,7 @@ public class Server implements Runnable {
                         ((Protomech)en).getPilotDamageTaken( loc );
                     if (  Math.min(1, pHits) > 0 ) {
                         Report.addNewline(vDesc);
-                        Server.combineVectors(vDesc,
+                        vDesc.addAll(
                                               damageCrew(en, 1));
                         pHits = 1 + ((Protomech)en)
                             .getPilotDamageTaken( loc );
@@ -12786,7 +12768,7 @@ public class Server implements Runnable {
                         // boink!
                         en.getCrew().setDoomed(true);
                         Report.addNewline(vDesc);
-                        Server.combineVectors(vDesc,
+                        vDesc.addAll(
                             destroyEntity(en, "pilot death", true));
                     }
                     break;
@@ -12809,7 +12791,7 @@ public class Server implements Runnable {
                     engineExploded = checkEngineExplosion(en, vDesc, numEngineHits);
                     if ( !engineExploded && numEngineHits > 2 ) {
                         // third engine hit
-                        Server.combineVectors(vDesc,
+                        vDesc.addAll(
                             destroyEntity(en, "engine destruction"));
                     }
                     break;
@@ -12878,7 +12860,7 @@ public class Server implements Runnable {
             // Equipment explosions are secondary effects and
             // do not occur when loading from a scenario.
             if ( secondaryEffects && eqType.isExplosive() && !hitBefore ) {
-                Server.combineVectors(vDesc,
+                vDesc.addAll(
                                       explodeEquipment(en, loc, mounted));
             }
 
@@ -12898,7 +12880,7 @@ public class Server implements Runnable {
                 r.addDesc(en);
                 r.newlines = 0;
                 vDesc.addElement(r);
-                Server.combineVectors(vDesc,
+                vDesc.addAll(
                                       oneCriticalEntity(en, Compute.d6(2)));
             }
             en.hitThisRoundByAntiTSM = false;
@@ -13040,7 +13022,7 @@ public class Server implements Runnable {
                     int cluster = Math.min(5, damage);
                     HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
                     int ISBefore[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};//hack?
-                    Server.combineVectors(vDesc,
+                    vDesc.addAll(
                                           damageEntity(en, hit, cluster));
                     int ISAfter[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};
                     for(int x=0;x<=3;x++) {
@@ -13055,7 +13037,7 @@ public class Server implements Runnable {
                     r.subject = en.getId();
                     r.addDesc(en);
                     vDesc.addElement(r);
-                    Server.combineVectors(vDesc, explodeVTOL(en));
+                    vDesc.addAll( explodeVTOL(en));
                 }
 
                 //check for location exposure
@@ -13077,7 +13059,7 @@ public class Server implements Runnable {
                 int cluster = Math.min(5, damage);
                 HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, impactSide);
                 int ISBefore[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};//hack?
-                Server.combineVectors(vDesc, damageEntity(en, hit, cluster));
+                vDesc.addAll( damageEntity(en, hit, cluster));
                 int ISAfter[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};
                 for(int x=0;x<=3;x++) {
                     if(ISBefore[x]!=ISAfter[x]) {
@@ -13091,7 +13073,7 @@ public class Server implements Runnable {
                 r.subject = en.getId();
                 r.addDesc(en);
                 vDesc.addElement(r);
-                Server.combineVectors(vDesc, explodeVTOL(en));
+                vDesc.addAll( explodeVTOL(en));
             }
 
         }
@@ -13239,7 +13221,7 @@ public class Server implements Runnable {
                     if ( Pilot.DEATH > en.getCrew().getHits() ) {
                         en.crew.setDoomed(true);
                         Report.addNewline(vDesc);
-                        Server.combineVectors(vDesc, destroyEntity(en, "pilot death", true));
+                        vDesc.addAll( destroyEntity(en, "pilot death", true));
                     }
                     return vDesc;
                 } else {
@@ -13261,7 +13243,7 @@ public class Server implements Runnable {
             for (int x = 0; x < hits; x++) {
                 slot = new CriticalSlot( CriticalSlot.TYPE_SYSTEM,
                                          Compute.d6(1) );
-                Server.combineVectors(vDesc, applyCriticalHit(en, Entity.NONE, slot, true));
+                vDesc.addAll( applyCriticalHit(en, Entity.NONE, slot, true));
             }
         }
         else {
@@ -13298,7 +13280,7 @@ public class Server implements Runnable {
                 // Ignore empty or unhitable slots (this
                 // includes all previously hit slots).
                 if (slot != null && slot.isHittable()) {
-                    Server.combineVectors(vDesc, applyCriticalHit(en, loc, slot, true));
+                    vDesc.addAll( applyCriticalHit(en, loc, slot, true));
                     hits--;
                 }
 
@@ -13355,7 +13337,7 @@ public class Server implements Runnable {
                  || !(entity.getArmor(loc) > 0)
                  || !(entity instanceof Mech ? (entity.getArmor(loc,true)>0) :
                       true) ) {
-                Server.combineVectors(vDesc, breachLocation(entity, loc, hex));
+                vDesc.addAll( breachLocation(entity, loc, hex));
             }
         }
         return vDesc;
@@ -13389,7 +13371,7 @@ public class Server implements Runnable {
         vDesc.addElement(r);
 
         if (entity instanceof Tank) {
-            Server.combineVectors(vDesc,
+            vDesc.addAll(
                 destroyEntity(entity, "hull breach", true, true));
             return vDesc;
         }
@@ -13435,11 +13417,11 @@ public class Server implements Runnable {
 
         //Check location for engine/cockpit breach and report accordingly
         if (loc == Mech.LOC_CT) {
-            Server.combineVectors(vDesc, destroyEntity(entity, "hull breach"));
+            vDesc.addAll( destroyEntity(entity, "hull breach"));
         }
         if (loc == Mech.LOC_HEAD) {
             entity.crew.setDoomed(true);
-            Server.combineVectors(vDesc, destroyEntity(entity, "hull breach"));
+            vDesc.addAll( destroyEntity(entity, "hull breach"));
             if (entity.getLocationStatus(loc) == ILocationExposureStatus.WET) {
                 r = new Report(6355);
                 r.subject = entity.getId();
@@ -13467,7 +13449,7 @@ public class Server implements Runnable {
             entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
                                Mech.LOC_RT)
             >= 3) {
-            Server.combineVectors(vDesc, destroyEntity(entity, "engine destruction"));
+            vDesc.addAll( destroyEntity(entity, "engine destruction"));
         }
 
         return vDesc;
@@ -13767,16 +13749,16 @@ public class Server implements Runnable {
         r.newlines = 0;
         vDesc.addElement(r);
         mounted.setShotsLeft(0);
-        Server.combineVectors(vDesc, damageEntity(en, new HitData(loc), damage, true));
+        vDesc.addAll( damageEntity(en, new HitData(loc), damage, true));
         Report.addNewline(vDesc);
 
         
         int pilotDamage = 2;
         if (en.getCrew().getOptions().booleanOption("pain_resistance")) pilotDamage = 1;
         if (en.getCrew().getOptions().booleanOption("iron_man")) pilotDamage = 1;
-        Server.combineVectors(vDesc, damageCrew(en, pilotDamage));
+        vDesc.addAll( damageCrew(en, pilotDamage));
         if ( en.crew.isDoomed() || en.crew.isDead() ) {
-            Server.combineVectors(vDesc, destroyEntity(en, "crew death", true) );
+            vDesc.addAll( destroyEntity(en, "crew death", true) );
         } else {
             Report.addNewline(vDesc);
         }
@@ -13970,7 +13952,7 @@ public class Server implements Runnable {
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, table);
-            Server.combineVectors(vPhaseReport, damageEntity(entity, hit, cluster));
+            vPhaseReport.addAll( damageEntity(entity, hit, cluster));
             damage -= cluster;
         }
 
@@ -13994,7 +13976,7 @@ public class Server implements Runnable {
             r.add(entity.crew.getName());
             r.indent();
             vPhaseReport.addElement(r);
-            Server.combineVectors(vPhaseReport, damageCrew(entity, 1));
+            vPhaseReport.addAll( damageCrew(entity, 1));
             ((Report) vPhaseReport.elementAt(vPhaseReport.size() - 1)).newlines++;
         } else {
             int diceRoll = Compute.d6(2);
@@ -14010,7 +13992,7 @@ public class Server implements Runnable {
             } else {
                 r.choose(false);
                 vPhaseReport.addElement(r);
-                Server.combineVectors(vPhaseReport, damageCrew(entity, 1));
+                vPhaseReport.addAll( damageCrew(entity, 1));
                 ((Report) vPhaseReport.elementAt(vPhaseReport.size() - 1)).newlines++;
             }
         }
@@ -14029,7 +14011,7 @@ public class Server implements Runnable {
                 r.subject = swarmer.getId();
                 r.addDesc(swarmer);
                 vPhaseReport.addElement(r);
-                Server.combineVectors(vPhaseReport, destroyEntity(swarmer, "a watery grave", false));
+                vPhaseReport.addAll( destroyEntity(swarmer, "a watery grave", false));
             } else {
                 // Swarming infantry take an 11 point hit.
                 // ASSUMPTION : damage should not be doubled.
@@ -14038,7 +14020,7 @@ public class Server implements Runnable {
                 r.subject = swarmer.getId();
                 r.addDesc(swarmer);
                 vPhaseReport.addElement(r);
-                Server.combineVectors(vPhaseReport, damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 11));
+                vPhaseReport.addAll( damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 11));
                 ((Report) vPhaseReport.elementAt(vPhaseReport.size() - 1)).newlines++;
             }
             swarmer.setPosition( fallPos );
@@ -15681,7 +15663,7 @@ public class Server implements Runnable {
             entity.getEquipment(slot.getIndex()).setHit(true);
             // We've allocated heatBuildup to heat in resolveHeat(),
             // so need to add to the entity's heat instead.
-            Server.combineVectors(vDesc, explodeEquipment(entity, boomloc, boomslot));
+            vDesc.addAll( explodeEquipment(entity, boomloc, boomslot));
             entity.heat += 30;
             r = new Report(5155);
             r.indent();
@@ -15752,7 +15734,7 @@ public class Server implements Runnable {
                 // BMRr, pg. 50: The attack direction for this damage is the front.
                 HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
                                                       ToHitData.SIDE_FRONT );
-                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, damage));
+                vPhaseReport.addAll( damageEntity(entity, hit, damage));
             }
         }
 
@@ -15850,7 +15832,7 @@ public class Server implements Runnable {
                         int next = Math.min( cluster, remaining );
                         HitData hit = entity.rollHitLocation
                             ( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
-                        Server.combineVectors(vPhaseReport, damageEntity(entity, hit, next) );
+                        vPhaseReport.addAll( damageEntity(entity, hit, next) );
                         remaining -= next;
                     }
                     vPhaseReport.addElement(new Report(1210));
@@ -16070,7 +16052,7 @@ public class Server implements Runnable {
 
                         HitData hit = entity.rollHitLocation
                             (ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
-                        Server.combineVectors(vPhaseReport, damageEntity(entity, hit, next) );
+                        vPhaseReport.addAll( damageEntity(entity, hit, next) );
                         remaining -= next;
                     }
                     vPhaseReport.addElement(new Report(1210));
@@ -16932,16 +16914,16 @@ public class Server implements Runnable {
         if (entity instanceof BipedMech) {
             for (int i = 6; i<=7; i++) {
                 hit = new HitData (i);
-                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, damage, false, 0, true));
+                vPhaseReport.addAll( damageEntity(entity, hit, damage, false, 0, true));
             }
         } if (entity instanceof QuadMech) {
             for (int i = 4; i<=7; i++) {
                 hit = new HitData (i);
-                Server.combineVectors(vPhaseReport, damageEntity(entity, hit, damage, false, 0, true));
+                vPhaseReport.addAll( damageEntity(entity, hit, damage, false, 0, true));
             }
         } else if (entity instanceof Tank) {
             hit = new HitData (Tank.LOC_FRONT);
-            Server.combineVectors(vPhaseReport, damageEntity(entity, hit, damage, false, 0, true));
+            vPhaseReport.addAll( damageEntity(entity, hit, damage, false, 0, true));
         }
     }
 
@@ -17049,7 +17031,7 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
             }
             if (entity.getCrew().isDoomed()) {
-                Server.combineVectors(vDesc,
+                vDesc.addAll(
                                       destroyEntity(pilot, "deadly ejection", false, false));
             }
             else {
@@ -17081,7 +17063,7 @@ public class Server implements Runnable {
                         r.subject = entity.getId();
                         r.indent(3);
                         vDesc.addElement(r);
-                        Server.combineVectors(vDesc,
+                        vDesc.addAll(
                             destroyEntity(pilot, "explosive decompression", false, false));
                     }
                     // Update the entity
@@ -17102,7 +17084,7 @@ public class Server implements Runnable {
                         r.subject = entity.getId();
                         r.indent(3);
                         vDesc.addElement(r);
-                        Server.combineVectors(vDesc,
+                        vDesc.addAll(
                             destroyEntity(pilot, "explosive decompression", false, false));
                     } else {
                         game.removeEntity( pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT );
@@ -17119,7 +17101,7 @@ public class Server implements Runnable {
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected( true );
-        Server.combineVectors(vDesc,
+        vDesc.addAll(
             destroyEntity(entity, "ejection", true, true));
 
         // only remove the unit that ejected in the movement phase
@@ -17243,7 +17225,7 @@ public class Server implements Runnable {
         });
         while (sinkableTanks.hasMoreElements()) {
             Entity e = (Entity)sinkableTanks.nextElement();
-            Server.combineVectors(vPhaseReport,
+            vPhaseReport.addAll(
                                   destroyEntity(e, "a watery grave", false));
         }
     }
@@ -17363,7 +17345,7 @@ public class Server implements Runnable {
                         && e.getMovementMode() != IEntityMovementMode.HYDROFOIL
                         && e.getMovementMode() != IEntityMovementMode.NAVAL
                         && e.getMovementMode() != IEntityMovementMode.SUBMARINE) {
-                    Server.combineVectors(vPhaseReport,
+                    vPhaseReport.addAll(
                             destroyEntity(e, "a watery grave", false));
                 }
             }
@@ -17425,7 +17407,7 @@ public class Server implements Runnable {
                 continue;
             HitData hit = new HitData(i);
             int damage =Compute.d6(1);
-            combineVectors(vPhaseReport, damageEntity(tank, hit, damage));
+            vPhaseReport.addAll(damageEntity(tank, hit, damage));
             if(damage == 1 && existingStatus) {
                 tank.extinguishLocation(i);
             }
@@ -17476,7 +17458,7 @@ public class Server implements Runnable {
                     if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
                          game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 &&
                          !(game.getBoard().getHex( te.getPosition() ).containsTerrain(Terrains.ICE))) {
-                        Server.combineVectors(vDesc, destroyEntity(te, "a watery grave", false) );
+                        vDesc.addAll( destroyEntity(te, "a watery grave", false) );
                     }
                 }
             }
@@ -17490,15 +17472,15 @@ public class Server implements Runnable {
             if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
                  te_hex.terrainLevel(Terrains.WATER) > 0 &&
                  !(te_hex.containsTerrain(Terrains.ICE))) {
-                Server.combineVectors(vDesc, destroyEntity(te, "a watery grave", false) );
+                vDesc.addAll( destroyEntity(te, "a watery grave", false) );
             }
             if(te instanceof VTOL) {
                 Report.addNewline(vDesc);
                 //report problem: add tab
-                Server.combineVectors(vDesc, crashVTOL((VTOL)te));
+                vDesc.addAll( crashVTOL((VTOL)te));
             }
         }
-        combineVectors(vPhaseReport,vDesc);
+        vPhaseReport.addAll(vDesc);
     }
 
     public void doAssaultDrop(Entity entity) {
@@ -17544,13 +17526,13 @@ public class Server implements Runnable {
             else if(entity instanceof BattleArmor) {
                 for(int i=1;i<entity.locations();i++) {
                     HitData h = new HitData(i);
-                    combineVectors(vPhaseReport, damageEntity(entity,h,Compute.d6(fallHeight)));
+                    vPhaseReport.addAll(damageEntity(entity,h,Compute.d6(fallHeight)));
                     Report.addNewline(vPhaseReport);
                 }
             }
             else if(entity instanceof Infantry) {
                 HitData h = new HitData(Infantry.LOC_INFANTRY);
-                combineVectors(vPhaseReport, damageEntity(entity,h, 1));
+                vPhaseReport.addAll(damageEntity(entity,h, 1));
                 Report.addNewline(vPhaseReport);
             }
         }
@@ -17602,11 +17584,11 @@ public class Server implements Runnable {
             for(int i=0;i<en.locations();i++) {
                 if(eruption || en.locationIsLeg(i) || en.isProne()) {
                     h = new HitData(i);
-                    combineVectors(vPhaseReport, damageEntity(en, h, Compute.d6(2)));
+                    vPhaseReport.addAll(damageEntity(en, h, Compute.d6(2)));
                 }
             }
         } else {
-            combineVectors(vPhaseReport, destroyEntity(en, "fell into magma", false, false));
+            vPhaseReport.addAll(destroyEntity(en, "fell into magma", false, false));
         }
         Report.addNewline(vPhaseReport);
     }

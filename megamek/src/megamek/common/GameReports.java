@@ -44,7 +44,7 @@ public class GameReports implements Serializable {
         } else {
             //Already have some reports for this round, so we'll append these
             // new ones.
-            GameReports.combineVectors((Vector)reports.elementAt(round - 1), (Vector)v.clone());
+            ((Vector)reports.elementAt(round - 1)).addAll((Vector)v.clone());
         }
     }
 
@@ -76,16 +76,4 @@ public class GameReports implements Serializable {
         reports = new Vector();
     }
 
-    private static void combineVectors(Vector first, Vector second) {
-        if (second == null || second.size() == 0) {
-            //Hmm...no second vector, no work to do then.
-            return;
-        }
-
-        for (int i = 0; i < second.size(); i++) {
-            first.addElement(second.elementAt(i));
-        }
-
-        //Java pass-by-reference means no return value needed.
-    }
 }

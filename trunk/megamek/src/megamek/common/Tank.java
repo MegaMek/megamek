@@ -625,7 +625,7 @@ public class Tank
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);
-        Entity.combineVectors(vDesc, crew.getDescVector(false));
+        vDesc.addAll(crew.getDescVector(false));
         r = new Report(7070, Report.PUBLIC);
         r.newlines = 2;
         r.add(getKillNumber());

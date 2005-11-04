@@ -433,7 +433,7 @@ public abstract class Mech
                         for(int i=0;i<12 && hits > 0;i++) {
                             CriticalSlot cs = getCritical(LOC_CT, i);
                             if(cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == SYSTEM_ENGINE) {
-                                server.combineVectors(vDesc, server.applyCriticalHit(this, LOC_CT, cs, true));
+                                Server.combineVectors(vDesc, server.applyCriticalHit(this, LOC_CT, cs, true));
                                 hits--;
                             }
                         }

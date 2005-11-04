@@ -20,6 +20,7 @@ v0.31.2 (CVS)
 + Engineer platoon improved minesweeping ability (Light Minesweeper)
 + Engineer platoon lay explosives ability (Demolition Charge) - but can't set them off yet!
 + Supercharger, except for using MASC and supercharger on the same mech is not supported yet.
++ Bug: Vibrabomb evading unofficial option always in effect.
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

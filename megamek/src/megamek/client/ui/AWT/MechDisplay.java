@@ -935,7 +935,11 @@ class WeaponPanel extends BufferedPanel
                 m_chAmmo.setEnabled(false);
             }
         } else {
-            m_chAmmo.setEnabled(true);
+            if(!(entity instanceof Infantry)) {
+                m_chAmmo.setEnabled(true);
+            } else {
+                m_chAmmo.setEnabled(false);
+            }
             vAmmo = new Vector();
             int nCur = -1;
             int i = 0;

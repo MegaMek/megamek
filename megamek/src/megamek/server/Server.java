@@ -12294,6 +12294,22 @@ public class Server implements Runnable {
                 vDesc.addAll( damageCrew(te, 1) );
             }
         }
+
+        //damage field guns on infantry platoons if there arent enough men left to man it
+        if(isPlatoon) {
+            float tons = 0.0f;
+            for(Enumeration<Mounted> weapons = te.getWeapons();weapons.hasMoreElements();) {
+                Mounted weap = weapons.nextElement();
+                WeaponType wtype = (WeaponType)weap.getType();
+                if(!wtype.hasFlag(WeaponType.F_INFANTRY)) {
+                    tons += wtype.getTonnage(te);
+                    if(tons > te.getInternal(Infantry.LOC_INFANTRY)) {
+                        weap.setDestroyed(true);
+                    }
+                }
+            }
+        }
+
         //This flag indicates the hit was directly to IS
         if (wasDamageIS) {
             Report.addNewline(vDesc);

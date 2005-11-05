@@ -5141,4 +5141,8 @@ public abstract class Entity
         }
         return false;
     }
+
+    public Engine getEngine() {
+        return null;
+    }
 }

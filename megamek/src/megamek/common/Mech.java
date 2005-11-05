@@ -2648,4 +2648,19 @@ public abstract class Mech
         if(hex.containsTerrain(Terrains.IMPASSABLE)) return true;
         return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
     }
+
+    public Engine getEngine() {
+        int type, flag = 0;
+        if (hasXL())
+            type = Engine.XL_ENGINE;
+        else if (hasLightEngine())
+            type = Engine.LIGHT_ENGINE;
+        else if (hasICE())
+            type = Engine.COMPUSTION_ENGINE;
+        else
+            type = Engine.NORMAL_ENGINE;
+        if (isClan())
+            flag |= Engine.CLAN_ENGINE;
+        return new Engine(engineRating(), type, flag);
+    }
 }

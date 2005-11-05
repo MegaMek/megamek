@@ -160,7 +160,9 @@ public class MiscType extends EquipmentType {
             return (float)(Math.ceil(entity.getWeight() / 10.0));
         } else if (hasFlag(F_MASC)) {
             if (hasSubType(S_SUPERCHARGER)) {
-                return 0.5f; //fixme
+                Engine e = entity.getEngine();
+                if(e == null) return 0.0f;
+                return (float)(e.getWeightEngine() / 10.0);
             } else {
                 if (entity.isClan()) {
                     return Math.round(entity.getWeight() / 25.0f);
@@ -221,7 +223,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float)Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_JUMP_BOOSTER)) {
-            return (float)Math.ceil(entity.getWeight() * entity.getOriginalJumpMP() / 5.0);
+            return (float)(Math.ceil(entity.getWeight() * entity.getOriginalJumpMP() / 10.0) / 2.0);
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -451,6 +453,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
+        misc.cost = COST_VARIABLE;
         misc.flags |= F_JUMP_JET;
         misc.bv = 0;
         
@@ -466,6 +469,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
+        misc.cost = COST_VARIABLE;
         misc.flags |= F_JUMP_JET;
         misc.bv = 0;
         
@@ -481,6 +485,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
+        misc.cost = COST_VARIABLE;
         misc.flags |= F_JUMP_JET;
         misc.bv = 0;
         

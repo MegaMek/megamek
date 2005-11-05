@@ -914,4 +914,77 @@ public class Tank
     public void addMovementDamage(int level) {
         movementDamage += level;
     }
+
+    public int engineRating() {
+        int sf = 0;
+        switch(getMovementMode())
+        {
+            case IEntityMovementMode.TRACKED:
+                return Math.round(getOriginalWalkMP() * getWeight());
+            case IEntityMovementMode.WHEELED:
+                return Math.round(getOriginalWalkMP() *
+                        getWeight())-20;
+            case IEntityMovementMode.HOVER:
+                sf = 0;
+                if (getWeight()<=10)
+                    sf = 40;
+                else if (getWeight()<=20)
+                    sf = 85;
+                else if (getWeight()<=30)
+                    sf = 130;
+                else if (getWeight()<=40)
+                    sf = 175;
+                else if (getWeight()<=50)
+                    sf = 235;
+                return Math.round(getOriginalWalkMP()*
+                        getWeight())-sf;
+            case IEntityMovementMode.HYDROFOIL:
+                sf = 0;
+                if (getWeight()<=10)
+                    sf = 60;
+                else if (getWeight()<=20)
+                    sf = 105;
+                else if (getWeight()<=30)
+                    sf = 150;
+                else if (getWeight()<=40)
+                    sf = 195;
+                else if (getWeight()<=50)
+                    sf = 255;
+                else if (getWeight()<=60)
+                    sf = 300;
+                else if (getWeight()<=70)
+                    sf = 345;
+                else if (getWeight()<=80)
+                    sf = 390;
+                else if (getWeight()<=90)
+                    sf = 435;
+                else if (getWeight()<=100)
+                    sf = 480;
+                return Math.round(getOriginalWalkMP()*
+                        getWeight())-sf;
+            case IEntityMovementMode.NAVAL:
+            case IEntityMovementMode.SUBMARINE:
+                return Math.round(getOriginalWalkMP()*
+                        getWeight())-30;
+        }
+        return 0;
+    }
+
+    public Engine getEngine() {
+        int type = 0;
+        int flag = Engine.TANK_ENGINE;
+        if (getEngineType()==EquipmentType.T_ENGINE_ICE) {
+            type = Engine.COMPUSTION_ENGINE;
+            flag = 0;
+        } else if (getEngineType()==EquipmentType.T_ENGINE_FUSION) {
+            type = Engine.NORMAL_ENGINE;
+        } else if (getEngineType()==EquipmentType.T_ENGINE_XL) {
+            type = Engine.XL_ENGINE;
+        } else if (getEngineType() == EquipmentType.T_ENGINE_LIGHT) {
+            type = Engine.LIGHT_ENGINE;
+        }
+        if (isClan())
+            flag |= Engine.CLAN_ENGINE;
+        return new Engine(engineRating(), type, flag);
+    }
 }

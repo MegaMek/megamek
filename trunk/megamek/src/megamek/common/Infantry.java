@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.*;
+import java.util.Enumeration;
 import java.util.Vector;
 
 /**
@@ -219,24 +220,19 @@ public class Infantry
     }
 
     /**
-     * Infantry have no secondary facing.
+     * Infantry can face freely
      */
-    public int getSecondaryFacing() { return -1; }
+    public boolean canChangeSecondaryFacing() { return true; }
 
     /**
-     * Infantry have no secondary facing.
+     * Infantry can face freely
      */
-    public boolean canChangeSecondaryFacing() { return false; }
+    public boolean isValidSecondaryFacing( int dir ) { return true; }
 
     /**
-     * Infantry have no secondary facing.
+     * Infantry can face freely
      */
-    public boolean isValidSecondaryFacing( int dir ) { return false; }
-
-    /**
-     * Infantry have no secondary facing.
-     */
-    public int clipSecondaryFacing( int dir ) { return -1; }
+    public int clipSecondaryFacing( int dir ) { return dir; }
     
     /**
      * Infantry have no piloting skill (set to 5 for BV purposes)
@@ -551,13 +547,33 @@ public class Infantry
 
     /**
      * Infantry can fire all around themselves.
+     * But field guns are set up to a facing
      */
-    public int getWeaponArc(int wn) { return Compute.ARC_360; }
+    public int getWeaponArc(int wn) { 
+        if(this instanceof BattleArmor)
+            return Compute.ARC_360; 
+        Mounted mounted = getEquipment(wn);
+        WeaponType wtype = (WeaponType)mounted.getType();
+        if(wtype.hasFlag(WeaponType.F_INFANTRY))
+            return Compute.ARC_360; 
+        else
+            return Compute.ARC_FORWARD;
+    }
 
     /**
-     * Infantry have no secondary facing.
+     * Infantry can fire all around themselves.
+     * But field guns act like turret mounted on a tank
      */
-    public boolean isSecondaryArcWeapon(int weaponId) { return false; }
+    public boolean isSecondaryArcWeapon(int wn) { 
+        if(this instanceof BattleArmor)
+            return false; 
+        Mounted mounted = getEquipment(wn);
+        WeaponType wtype = (WeaponType)mounted.getType();
+        if(wtype.hasFlag(WeaponType.F_INFANTRY))
+            return false; 
+        else
+            return true;
+    }
 
     /**
      * Infantry build no heat.
@@ -746,6 +762,14 @@ public class Infantry
             }
 
         } // End not-anti-Mek
+
+        // add BV of field guns
+        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            WeaponType wtype = (WeaponType)mounted.getType();
+            if(!wtype.hasFlag(WeaponType.F_INFANTRY))
+                dBV += wtype.getBV(this);
+        }
 
         // Adjust for missing troopers
         dBV = dBV * getInternalRemainingPercent();
@@ -962,4 +986,22 @@ public class Infantry
         super.newRound(roundNumber);
     }
         
+    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
+        if(!(this instanceof BattleArmor)) {
+            //field guns don't share ammo, and infantry weapons dont have ammo
+            if(mounted.getLinked() != null || mountedAmmo.getLinkedBy() != null)
+                return false;
+        }
+        return super.loadWeapon(mounted, mountedAmmo);
+    }
+
+    public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
+        if(!(this instanceof BattleArmor)) {
+            //field guns don't share ammo, and infantry weapons dont have ammo
+            if(mounted.getLinked() != null || mountedAmmo.getLinkedBy() != null)
+                return false;
+        }
+        return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
+    }
+
 } // End class Infantry

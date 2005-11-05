@@ -27,6 +27,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
 import megamek.common.IEntityMovementMode;
+import megamek.common.IEntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -937,7 +938,27 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     }
                 }
             }
-        } // End current-weapon-is-solo
+        } else if(isAttackerInfantry && !(ae instanceof BattleArmor)) {
+            // check for trying to fire field gun after moving
+            if(!wtype.hasFlag(WeaponType.F_INFANTRY) && ae.moved != IEntityMovementType.MOVE_NONE) {
+                    return new String("Can't fire field guns in same turn as moving");
+            }
+            //check for mixing infantry and field gun attacks
+            for ( Enumeration i = game.getActions();
+                  i.hasMoreElements(); ) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                if (prevAttack.getEntityId() == attackerId) {
+                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                    if( ((WeaponType)(prevWeapon.getType())).hasFlag(WeaponType.F_INFANTRY) != wtype.hasFlag(WeaponType.F_INFANTRY) ) {
+                        return new String("Can't fire field guns and small arms at the same time.");
+                    }
+                }
+            }
+        }
 
         // check if indirect fire is valid
         if (isIndirect

@@ -37,24 +37,9 @@ public class TestMech extends TestEntity {
     private Mech mech = null;
 
     public TestMech(Mech mech, TestEntityOption option, String fileString) {
-        super(option, getEngine(mech), getArmor(mech), getStructure(mech));
+        super(option, mech.getEngine(), getArmor(mech), getStructure(mech));
         this.mech = mech;
         this.fileString = fileString;
-    }
-
-    private static Engine getEngine(Mech mech) {
-        int type, flag = 0;
-        if (mech.hasXL())
-            type = Engine.XL_ENGINE;
-        else if (mech.hasLightEngine())
-            type = Engine.LIGHT_ENGINE;
-        else if (mech.hasICE())
-            type = Engine.COMPUSTION_ENGINE;
-        else
-            type = Engine.NORMAL_ENGINE;
-        if (mech.isClan())
-            flag |= Engine.CLAN_ENGINE;
-        return new Engine(mech.engineRating(), type, flag);
     }
 
     private static Structure getStructure(Mech mech) {

@@ -429,14 +429,26 @@ public class EquipmentType {
         int cost=0;
         if(this instanceof MiscType) {
             if(this.hasFlag(MiscType.F_MASC)) {
-                //masc=engine rating*masc tonnage*1000
-                int mascTonnage=0;
-                if (this.getInternalName().equals("ISMASC")) {
-                    mascTonnage = Math.round(entity.getWeight() / 20.0f);
-                } else if (this.getInternalName().equals("CLMASC")) {
-                    mascTonnage = Math.round(entity.getWeight() / 25.0f);
+                if (hasSubType(MiscType.S_SUPERCHARGER)) {
+                    Engine e = entity.getEngine();
+                    if(e == null) cost = 0;
+                    cost = e.getRating() * 10000;
+                } else {
+                    //masc=engine rating*masc tonnage*1000
+                    int mascTonnage=0;
+                    if (this.getInternalName().equals("ISMASC")) {
+                        mascTonnage = Math.round(entity.getWeight() / 20.0f);
+                    } else if (this.getInternalName().equals("CLMASC")) {
+                        mascTonnage = Math.round(entity.getWeight() / 25.0f);
+                    }
+                    cost=mascTonnage*entity.getOriginalWalkMP()*(int)entity.getWeight()*1000;
                 }
-                cost=mascTonnage*entity.getOriginalWalkMP()*(int)entity.getWeight()*1000;
+            } else if(this.hasFlag(MiscType.F_JUMP_BOOSTER)) {
+                cost = (int)(entity.getWeight() * entity.getOriginalJumpMP() * entity.getOriginalJumpMP() * 150);
+            } else if(this.hasFlag(MiscType.F_JUMP_JET)) {
+                int multi = 200;
+                if(this.name=="Improved Jump Jet") multi = 500;
+                cost = (int)(entity.getWeight() * entity.getOriginalJumpMP() * multi);
             } else if(this.hasFlag(MiscType.F_TARGCOMP)) {
                 int tCompTons=0;
                 float fTons = 0.0f;

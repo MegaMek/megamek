@@ -344,7 +344,6 @@ public class QuadMech extends Mech
         cost += (musclesCost+structureCost+legCost)*weight;
         cost += rating*weight*engineCost/75.0;
         cost += 300000 * Math.ceil(rating/100.0);
-        cost += getOriginalJumpMP()*getOriginalJumpMP()*weight*200;
         cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks
         cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
         cost += getWeaponsAndEquipmentCost();

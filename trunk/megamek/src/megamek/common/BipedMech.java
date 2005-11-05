@@ -299,7 +299,6 @@ public class BipedMech extends Mech {
         } else {
             cost += 300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);
         }
-        cost += getOriginalJumpMP()*getOriginalJumpMP()*weight*200;
         int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
         int sinkCost = hasDoubleHeatSinks()? 6000: 2000;
         cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks

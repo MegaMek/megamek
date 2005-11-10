@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 17th September 2005.  MegaMek Version 0.31.1-dev. Best viewed in 1024x768.
+The Great MegaMek Feature list. 10th November 2005.  MegaMek Version 0.31.3-dev. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -19,7 +19,7 @@ Components (Mapsheets)
 - Pavement			Yes		None
 - Roads				Yes		None
 - Bridges			No		Cannot be collapsed; at same level as water.
-- Buildings			Partial		See Buildings Section below for more information.
+- Buildings			Yes		None
 - Rubble			Yes		None
 - Fire				Yes		None
 - Smoke				Yes		None
@@ -146,18 +146,18 @@ Buildings
 
 - Building Types		Yes		None
 - Construction Factor		Yes		BMRr, page 50: every hex of a buildings shares a single CF
-- Building Elevations		Partial		Units may only occupy the ground floor of a building
+- Building Elevations		Partial		Basements not implemented.
 
 Buildings (Movement Effects)
 
-- Entering Buildings		Partial		Units may only enter a building on the ground floor. Units may not climb buildings.
+- Entering Buildings		Partial		Units may only enter a building on the ground floor.
 
 Buildings (Combat Effects)
 
 - Attacking Buildings		Yes		None
 - Attacking Units inside Bldgs	Yes		None
 - Combat Within Buildings	Partial		Needs to be debugged.
-- Collapse			Partial		Units may not climb buildings.
+- Collapse			Yes		None
 
 Buildings (Basements)
 

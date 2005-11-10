@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.31.2 (CVS)
+v0.31.2-dev (CVS)
 + Switchable map tilesets
 + Michael Gratton's Gun Emplacement patch. Thanks!
 + Bug 1296592: Bugs with Heat Sink adjustment
@@ -33,6 +33,7 @@ v0.31.2 (CVS)
   at any time (either climb onto top of things or try to go under/through them)
 + can break through ice from below if you go under ice and enter a depth 1 hex or change to
   climb out midway through movement.
++ updated BMRr feature list.
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

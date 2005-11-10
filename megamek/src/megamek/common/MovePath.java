@@ -56,6 +56,8 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_SEARCHLIGHT = 22;
     public static final int STEP_LAY_MINE = 23;
     public static final int STEP_HULL_DOWN = 24;
+    public static final int STEP_CLIMB_MODE_ON = 25;
+    public static final int STEP_CLIMB_MODE_OFF = 26;
 
     public static class Key {
         private Coords coords;
@@ -320,6 +322,18 @@ public class MovePath implements Cloneable, Serializable {
     }
     
     /**
+     * Returns whether or not a unit would be in climb mode after all the steps
+     */
+    public boolean getFinalClimbMode() {
+        if (getLastStep() != null) {
+            return getLastStep().climbMode();
+        }
+        if (entity == null)
+            return false;
+        return entity.climbMode();
+    }
+
+    /**
      * get final elevation relative to the hex.
      */
     public int getFinalElevation() {
@@ -547,6 +561,7 @@ public class MovePath implements Cloneable, Serializable {
         while (candidates.size() > 0 && keepLooping) {
             MovePath candidatePath = (MovePath) candidates.remove(0);
             Coords startingPos = candidatePath.getFinalCoords();
+            int startingElev = candidatePath.getFinalElevation();
             
             if (candidatePath.getFinalCoords().distance(dest) == 1) {
                 bestPath = candidatePath;
@@ -558,7 +573,7 @@ public class MovePath implements Cloneable, Serializable {
             while (adjacent.hasNext()) {
                 MovePath expandedPath = (MovePath) adjacent.next();
 
-                if (expandedPath.getLastStep().isMovementPossible(this.game, startingPos)) {
+                if (expandedPath.getLastStep().isMovementPossible(this.game, startingPos, startingElev)) {
                     MovePath found = (MovePath) discovered.get(expandedPath.getKey());
                     if (found != null && mpc.compare(found, expandedPath) <= 0) {
                         continue;

@@ -249,6 +249,7 @@ public abstract class Entity
     private boolean canon;
     
     private int assaultDropInProgress = 0;
+    private boolean climbMode = true; //save climb mode from turn to turn for convenience 
     
     
     /**
@@ -700,7 +701,7 @@ public abstract class Entity
      * Takes the current hex, a hex being moved to, returns the elevation the 
      * Entity will be considered to be at w/r/t it's new hex.
      */
-    public int calcElevation(IHex current, IHex next, int assumedElevation) {
+    public int calcElevation(IHex current, IHex next, int assumedElevation, boolean climb) {
         int retVal = assumedElevation;
         if ((getMovementMode() == IEntityMovementMode.SUBMARINE)
                 || (getMovementMode() == IEntityMovementMode.VTOL)) {
@@ -712,7 +713,9 @@ public abstract class Entity
                 && (getMovementMode() != IEntityMovementMode.HYDROFOIL)
                 && (getMovementMode() != IEntityMovementMode.SUBMARINE)
                 && (getMovementMode() != IEntityMovementMode.VTOL)) {
+            int prevWaterLevel = 0;
             if (current.containsTerrain(Terrains.WATER)) {
+                prevWaterLevel = current.terrainLevel(Terrains.WATER);
                 if(!(current.containsTerrain(Terrains.ICE)) 
                         || assumedElevation < 0) {
                     //count water, only if the entity isn't on ice surface
@@ -724,19 +727,31 @@ public abstract class Entity
                 if(next.containsTerrain(Terrains.ICE)) {
                     //a mech can only climb out onto ice in depth 2 or shallower water
                     //mech on the surface will stay on the surface
-                    //TODO: for depth 2, there should be a choice
-                    if(waterLevel <= 2 || assumedElevation >= 0) {
+                    
+                    if((waterLevel == 1 && prevWaterLevel == 1)
+                        || (prevWaterLevel <= 2 && climb)
+                        || assumedElevation >= 0) {
                         retVal += waterLevel;
                     }
                 }
                 retVal -= waterLevel;
             }
         }
+        if(getMovementMode() != IEntityMovementMode.VTOL
+           && (next.containsTerrain(Terrains.BUILDING)
+               || current.containsTerrain(Terrains.BUILDING))) {
+            int bldcur = Math.max(0, current.terrainLevel(Terrains.BLDG_ELEV));
+            int bldnex = Math.max(0, next.terrainLevel(Terrains.BLDG_ELEV));
+            if((assumedElevation == bldcur && climb)
+                || retVal > bldnex) {
+                retVal = bldnex;
+            }
+        }
         return retVal;
     }
 
     public int calcElevation(IHex current, IHex next) {
-        return calcElevation(current,next,elevation);
+        return calcElevation(current,next,elevation, false);
     }
 
     /**
@@ -3424,10 +3439,8 @@ public abstract class Entity
     public boolean checkMovementInBuilding(Coords lastPos, Coords curPos,
                                            MoveStep step, IHex curHex,
                                            IHex prevHex) {
-        if (this instanceof VTOL) {
-            if (step.getElevation()>getGame().getBoard().getHex(curPos).ceiling()) {
-                return false;
-            }
+        if (step.getElevation()>=getGame().getBoard().getHex(curPos).ceiling()) {
+            return false;
         }
         
         if ( !lastPos.equals(curPos) &&
@@ -4991,6 +5004,14 @@ public abstract class Entity
     
     public void setCanon(boolean canon) {
         this.canon=canon;
+    }
+
+    public boolean climbMode() {
+        return climbMode;
+    }
+    
+    public void setClimbMode(boolean state) {
+        climbMode = state;
     }
 
     public int getEngineTechLevel() {

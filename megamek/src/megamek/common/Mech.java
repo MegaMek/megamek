@@ -24,8 +24,6 @@ import megamek.common.LosEffects;
 import megamek.common.ToHitData;
 import megamek.common.preference.PreferenceManager;
 
-import megamek.server.Server;
-
 /**
  * You know what mechs are, silly.
  */
@@ -365,7 +363,7 @@ public abstract class Mech
         return MASC_FAILURE[nMASCLevel] + 1;
     }
 
-    public boolean checkForMASCFailure(MovePath md, Vector vDesc, Server server) {
+    public boolean checkForMASCFailure(MovePath md, Vector vDesc, Vector vCriticals) {
         if (md.hasActiveMASC()) {
             Report r;
             boolean bFailure = false;
@@ -433,18 +431,28 @@ public abstract class Mech
                         for(int i=0;i<12 && hits > 0;i++) {
                             CriticalSlot cs = getCritical(LOC_CT, i);
                             if(cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == SYSTEM_ENGINE) {
-                                vDesc.addAll(server.applyCriticalHit(this, LOC_CT, cs, true));
+                                vCriticals.add(new Integer(LOC_CT));
+                                vCriticals.add(cs);
+                                //vDesc.addAll(server.applyCriticalHit(this, LOC_CT, cs, true));
                                 hits--;
                             }
                         }
                     } else {
-                        // do the damage.  Rules say 'as if you took 2 hip crits'. We'll
-                        // just do the hip crits
-                        getCritical(LOC_RLEG, 0).setDestroyed(true);
-                        getCritical(LOC_LLEG, 0).setDestroyed(true);
+                        // do the damage.  Rules say 'effects identical as if you took 2 hip crits'. 
+                        // We'll just do the hip crits
+                        vCriticals.add(new Integer(LOC_RLEG));
+                        vCriticals.add(getCritical(LOC_RLEG, 0));
+                        vCriticals.add(new Integer(LOC_LLEG));
+                        vCriticals.add(getCritical(LOC_LLEG, 0));
+                        //getCritical(LOC_RLEG, 0).setDestroyed(true);
+                        //getCritical(LOC_LLEG, 0).setDestroyed(true);
                         if (this instanceof QuadMech) {
-                            getCritical(LOC_RARM, 0).setDestroyed(true);
-                            getCritical(LOC_LARM, 0).setDestroyed(true);
+                            //getCritical(LOC_RARM, 0).setDestroyed(true);
+                            //getCritical(LOC_LARM, 0).setDestroyed(true);
+                        vCriticals.add(new Integer(LOC_RARM));
+                        vCriticals.add(getCritical(LOC_RARM, 0));
+                        vCriticals.add(new Integer(LOC_LARM));
+                        vCriticals.add(getCritical(LOC_LARM, 0));
                         }
                     }
                     if (equip.getType().hasFlag(MiscType.F_MASC)) {

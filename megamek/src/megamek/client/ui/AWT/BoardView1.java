@@ -3497,6 +3497,32 @@ public class BoardView1
                 offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 break;
+            case MovePath.STEP_CLIMB_MODE_ON:
+                // draw climb mode indicator
+                String climb = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    climb = "(" + climb + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int climbX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(climb) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(climb, climbX, stepPos.y + 39);
+                graph.setColor(col);
+                graph.drawString(climb, climbX - 1, stepPos.y + 38);
+                break;
+            case MovePath.STEP_CLIMB_MODE_OFF:
+                // cancel climb mode indicator
+                String climboff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    climboff = "(" + climboff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int climboffX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(climboff) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(climboff, climboffX, stepPos.y + 39);
+                graph.setColor(col);
+                graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
+                break;
             case MovePath.STEP_TURN_LEFT:
             case MovePath.STEP_TURN_RIGHT:
                 // draw arrows showing the facing
@@ -3585,7 +3611,8 @@ public class BoardView1
             if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK
                     || step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN
                     || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK
-                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN) {
+                    || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN
+                    || step.getElevation() != 0) {
                 costStringBuf.append("{")
                     .append(step.getElevation())
                     .append("}");

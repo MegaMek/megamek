@@ -2768,7 +2768,19 @@ public class Server implements Runnable {
 
         // check for MASC failure
         if (entity instanceof Mech) {
-            if (((Mech)entity).checkForMASCFailure(md, vPhaseReport, this)) {
+            Vector crits = new Vector();
+            if (((Mech)entity).checkForMASCFailure(md, vPhaseReport, crits)) {
+                CriticalSlot cs = null;
+                int loc = Entity.LOC_NONE;
+                for(Enumeration e = crits.elements();e.hasMoreElements();) {
+                    Object o = e.nextElement();
+                    if(o instanceof Integer)
+                        loc = (Integer) o;
+                    else if (o instanceof CriticalSlot) {
+                        cs = (CriticalSlot) o;
+                        applyCriticalHit(entity, loc, cs, true);
+                    }
+                }
                 // no movement after that
                 md.clear();
             }
@@ -3503,7 +3515,7 @@ public class Server implements Runnable {
                             // Stay in the current hex and stop skidding.
                             break;
                         }
-                        int newElevation=(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
+                        int newElevation=(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation,step.climbMode()));
                         if(newElevation<=0) {                            
                             r = new Report(2105);
                             r.subject = entity.getId();
@@ -3547,7 +3559,7 @@ public class Server implements Runnable {
                             r.subject = entity.getId();
                             r.add(newPos.getBoardNum(), true);
                             vPhaseReport.addElement(r);
-                            entity.setElevation(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation));
+                            entity.setElevation(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation,step.climbMode()));
                             curPos=newPos;
                         }
 
@@ -3754,12 +3766,26 @@ public class Server implements Runnable {
                     step.getMovementType() == IEntityMovementType.MOVE_JUMP,
                     step.getElevation());
 
-            //check for breaking ice
+            //check for breaking ice by breaking through from below
+            if(prevHex != null && prevStep != null
+                    && prevStep.getElevation() < 0
+                    && step.getElevation() == 0
+                    && prevHex.containsTerrain(Terrains.ICE)
+                    && prevHex.containsTerrain(Terrains.WATER)
+                    && step.getMovementType() != IEntityMovementType.MOVE_JUMP
+                    && !(lastPos.equals(curPos))) {
+                r = new Report(2410);
+                r.addDesc(entity);
+                vPhaseReport.add(r);
+                resolveIceBroken(lastPos);
+            }
+            //check for breaking ice by stepping on it
             if(curHex.containsTerrain(Terrains.ICE)
                     && curHex.containsTerrain(Terrains.WATER)
+                    && step.getMovementType() != IEntityMovementType.MOVE_JUMP
                     && !(lastPos.equals(curPos))) {
                 if(step.getElevation() == 0
-                        && step.getMovementType() != IEntityMovementType.MOVE_JUMP) {
+                        ) {
                     int roll = Compute.d6(1);
                     r = new Report(2118);
                     r.addDesc(entity);
@@ -3770,6 +3796,13 @@ public class Server implements Runnable {
                         resolveIceBroken(curPos);
                         doEntityFallsInto(entity, lastPos, curPos, entity.getBasePilotingRoll(), false);
                     }
+                }
+                //or intersecting it
+                else if(step.getElevation() + entity.height() == 0) {
+                    r = new Report(2410);
+                    r.addDesc(entity);
+                    vPhaseReport.add(r);
+                    resolveIceBroken(curPos);
                 }
             }
             
@@ -3964,6 +3997,7 @@ public class Server implements Runnable {
         if (!sideslipped && !fellDuringMovement) {
             entity.setElevation(curVTOLElevation);
         }
+        entity.setClimbMode(md.getFinalClimbMode());
         
         
 
@@ -4005,6 +4039,12 @@ public class Server implements Runnable {
             if (waterLevel > 1) {
                 // Any swarming infantry will be destroyed.
                 drownSwarmer(entity, curPos);
+            }
+
+            //check for building collapse
+            Building bldg = game.getBoard().getBuildingAt(curPos);
+            if(bldg != null) {
+                checkForCollapse( bldg, game.getPositionMap() );
             }
 
             //check for breaking magma crust
@@ -15722,11 +15762,9 @@ public class Server implements Runnable {
                                       String why ) {
 
         Report r;
-        if (entity instanceof VTOL) {
-            // VTOLs can fly over buildings
-            if (entity.getElevation()>game.getBoard().getHex(curPos).ceiling()) {
-                return false;
-            }
+        // VTOLs can fly over buildings - also mechs can walk on the roof
+        if (entity.getElevation()>=game.getBoard().getHex(curPos).terrainLevel(Terrains.BLDG_ELEV)) {
+            return false;
         }
 
         // Need to roll based on building type.
@@ -16022,8 +16060,8 @@ public class Server implements Runnable {
                 Enumeration entities = vector.elements();
                 while ( entities.hasMoreElements() ) {
                     final Entity entity = (Entity) entities.nextElement();
-                    final int entityElev = entity.elevationOccupied( curHex );
-                    int floor = entityElev - hexElev;
+                    //final int entityElev = entity.elevationOccupied( curHex );
+                    int floor = entity.getElevation();
 
                     // Ignore units not *inside* the building.
                     if ( !Compute.isInBuilding( game, entity, coords ) ) {
@@ -16081,7 +16119,7 @@ public class Server implements Runnable {
                     // TODO: implement basements, then fall into it.
                     // ASSUMPTION: we'll let the Mech fall twice: once
                     // during damageEntity() above and once here.
-                    floor = entityElev - hexElev;
+                    floor = entity.getElevation();
                     if ( floor > 0 && entity instanceof Mech ) {
                         // ASSUMPTION: PSR to avoid pilot damage
                         // should use mods for entity damage and

@@ -62,6 +62,7 @@ public class MovementDisplay
     public static final String    MOVE_SEARCHLIGHT = "moveSearchlight"; //$NON-NLS-1$
     public static final String    MOVE_LAY_MINE = "moveLayMine"; //$NON-NLS-1$
     public static final String    MOVE_HULL_DOWN = "moveHullDown"; //$NON-NLS-1$
+    public static final String    MOVE_CLIMB_MODE = "moveClimbMode"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -102,6 +103,8 @@ public class MovementDisplay
     private Button            butLayMine;
     
     private Button			  butHullDown;
+
+    private Button            butClimbMode;
 
     private int               buttonLayout;
 
@@ -274,6 +277,12 @@ public class MovementDisplay
         butHullDown.setActionCommand(MOVE_HULL_DOWN);
         butHullDown.addKeyListener(this);
         
+        butClimbMode = new Button(Messages.getString("MovementDisplay.butClimbMode")); //$NON-NLS-1$
+        butClimbMode.addActionListener(this);
+        butClimbMode.setEnabled(false);
+        butClimbMode.setActionCommand(MOVE_CLIMB_MODE);
+        butClimbMode.addKeyListener(this);
+        
         butSpace = new Button(".");
         butSpace.setEnabled(false);
         butSpace.addKeyListener(this);
@@ -339,7 +348,8 @@ public class MovementDisplay
                 && !(butRaise.isEnabled()
                 || butLower.isEnabled()
                 || butLayMine.isEnabled()
-                || butHullDown.isEnabled()))
+                || butHullDown.isEnabled()
+                || butClimbMode.isEnabled()))
             buttonLayout = 0;
         switch (buttonLayout) {
         case 0 :
@@ -377,7 +387,7 @@ public class MovementDisplay
             panButtons.add(butLower);
             panButtons.add(butLayMine);
             panButtons.add(butHullDown);
-            panButtons.add(butSpace);
+            panButtons.add(butClimbMode);
             panButtons.add(butSpace);
             panButtons.add(butMore);
             
@@ -445,6 +455,12 @@ public class MovementDisplay
             setClearEnabled(false);
         }
         
+        if(isMech) {
+            butClimbMode.setEnabled(true);
+        } else {
+            butClimbMode.setEnabled(false);
+        }
+
         setTurnEnabled(!ce.isImmobile() && 
                 !ce.isStuck() &&
                 (ce.getWalkMP() > 0 || ce.getJumpMP() > 0));
@@ -1551,6 +1567,16 @@ public class MovementDisplay
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION) ) {
             cmd.addStep(MovePath.STEP_DOWN);
+            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.repaint();
+        } else if (ev.getActionCommand().equals(MOVE_CLIMB_MODE) ) {
+            MoveStep ms = cmd.getLastStep();
+            if(ms != null && (ms.getType() == MovePath.STEP_CLIMB_MODE_ON || ms.getType() == MovePath.STEP_CLIMB_MODE_OFF))
+                cmd.removeLastStep();
+            else if(cmd.getFinalClimbMode())
+                cmd.addStep(MovePath.STEP_CLIMB_MODE_OFF);
+            else
+                cmd.addStep(MovePath.STEP_CLIMB_MODE_ON);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_LAY_MINE)) {

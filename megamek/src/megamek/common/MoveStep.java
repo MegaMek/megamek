@@ -56,6 +56,7 @@ public class MoveStep implements Serializable {
 
     private boolean isProne;
     private boolean isHullDown;
+    private boolean climbMode;
 
     private boolean danger; // keep psr
     private boolean pastDanger;
@@ -189,6 +190,10 @@ public class MoveStep implements Serializable {
                 return "D";
             case MovePath.STEP_HULL_DOWN :
             	return "HullDown";
+            case MovePath.STEP_CLIMB_MODE_ON:
+                return "CM+";
+            case MovePath.STEP_CLIMB_MODE_OFF:
+                return "CM-";
             default :
                 return "???";
         }
@@ -302,8 +307,6 @@ public class MoveStep implements Serializable {
                     setOnlyPavement(false);
                 }
 
-                calcMovementCostFor(game, prev.getPosition());
-
                 // check for water
                 if (!isPavementStep()
                         && destHex.terrainLevel(Terrains.WATER) > 0
@@ -320,7 +323,16 @@ public class MoveStep implements Serializable {
                     setDistance(0); //start over after shifting gears
                 }
                 addDistance(1);
-                setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation));
+                if(getType() == MovePath.STEP_DFA) {
+                    setElevation(1 + Math.max(entity.elevationOccupied(game.getBoard().getHex(prev.getPosition())), entity.elevationOccupied(game.getBoard().getHex(getPosition()))));
+                } else if (parent.isJumping()) {
+                    setElevation(Math.max(0, game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BLDG_ELEV)));
+                } else {
+                    setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation, climbMode()));
+                }
+
+                calcMovementCostFor(game, prev.getPosition(), prev.getElevation());
+
                 break;
             case MovePath.STEP_LATERAL_LEFT :
             case MovePath.STEP_LATERAL_RIGHT :
@@ -354,7 +366,7 @@ public class MoveStep implements Serializable {
                     setOnlyPavement(false);
                 }
 
-                calcMovementCostFor(game, prev.getPosition());
+                calcMovementCostFor(game, prev.getPosition(), prev.getElevation());
                 setMp(getMp() + 1);
                 // check for water
                 if (!isPavementStep() &&
@@ -390,6 +402,12 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_HULL_DOWN :
             	setMp(2);
             	break;
+            case MovePath.STEP_CLIMB_MODE_ON:
+                setClimbMode(true);
+                break;
+            case MovePath.STEP_CLIMB_MODE_OFF:
+                setClimbMode(false);
+                break;
             default :
                 setMp(0);
         }
@@ -462,6 +480,7 @@ public class MoveStep implements Serializable {
         this.thisStepBackwards = prev.thisStepBackwards;
         this.isProne = prev.isProne;
         this.isHullDown = prev.isHullDown;
+        this.climbMode = prev.climbMode;
         this.isRunProhibited = prev.isRunProhibited;
         this.hasEverUnloaded = prev.hasEverUnloaded;
         this.elevation = prev.elevation;
@@ -480,6 +499,7 @@ public class MoveStep implements Serializable {
         this.distance = entity.delta_distance;
         this.isProne = entity.isProne();
         isHullDown = entity.isHullDown();
+        climbMode = entity.climbMode();
         
         this.elevation = entity.getElevation();
 
@@ -581,6 +601,10 @@ public class MoveStep implements Serializable {
 
     public boolean isHullDown() {
         return isHullDown;
+    }
+
+    public boolean climbMode() {
+        return climbMode;
     }
 
     /**
@@ -782,6 +806,10 @@ public class MoveStep implements Serializable {
         isHullDown = b;
     }
 
+    public void setClimbMode(boolean b) {
+        climbMode = b;
+    }
+
     /**
      * @param b
      */
@@ -889,12 +917,16 @@ public class MoveStep implements Serializable {
             movementType = IEntityMovementType.MOVE_LEGAL;
         }
 
+        if (type == MovePath.STEP_CLIMB_MODE_ON ||
+            type == MovePath.STEP_CLIMB_MODE_OFF) {
+            movementType = IEntityMovementType.MOVE_LEGAL;
+        }
         // check for ejection (always legal?)
         if (type == MovePath.STEP_EJECT) {
             movementType = IEntityMovementType.MOVE_NONE;
         }
         if (type == MovePath.STEP_SEARCHLIGHT) {
-            movementType = IEntityMovementType.MOVE_NONE;
+            movementType = IEntityMovementType.MOVE_LEGAL;
         }
         if (type == MovePath.STEP_UNJAM_RAC) {
             movementType = IEntityMovementType.MOVE_NONE;
@@ -1078,7 +1110,7 @@ public class MoveStep implements Serializable {
         }
 
         // check if this movement is illegal for reasons other than points
-        if (!isMovementPossible(game, lastPos) || isUnloaded) {
+        if (!isMovementPossible(game, lastPos, prev.getElevation()) || isUnloaded) {
             movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
@@ -1156,24 +1188,22 @@ public class MoveStep implements Serializable {
     /**
      * Amount of movement points required to move from start to dest
      */
-    protected void calcMovementCostFor(IGame game, Coords prev) {
+    protected void calcMovementCostFor(IGame game, Coords prev, int prevEl) {
         final int moveType = parent.getEntity().getMovementMode();
         final IHex srcHex = game.getBoard().getHex(prev);
         final IHex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = parent.getEntity() instanceof Infantry;
-        int nSrcEl = parent.getEntity().elevationOccupied(srcHex);
-        int nDestEl = parent.getEntity().elevationOccupied(destHex);
-        int nMove = parent.getEntity().getMovementMode();
+        int nSrcEl = srcHex.getElevation() + prevEl;
+        int nDestEl = destHex.getElevation() + elevation;
 
         mp = 1;
-
         // jumping always costs 1
         if (parent.isJumping()) {
             return;
         }
         
         // VTOLs pay 1 for everything
-        if (parent.getEntity().getMovementMode() == IEntityMovementMode.VTOL) {
+        if (moveType == IEntityMovementMode.VTOL) {
             return;
         }
 
@@ -1204,13 +1234,12 @@ public class MoveStep implements Serializable {
 
         if (nSrcEl != nDestEl) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
-
             // non-flying Infantry and ground vehicles are charged double.
-            if ((isInfantry && !(movementType == IEntityMovementType.MOVE_VTOL_WALK ||
-                                 movementType == IEntityMovementType.MOVE_VTOL_RUN))
-                || (nMove == IEntityMovementMode.TRACKED
-                    || nMove == IEntityMovementMode.WHEELED
-                    || nMove == IEntityMovementMode.HOVER)) {
+            if ((isInfantry && !(moveType == IEntityMovementType.MOVE_VTOL_WALK ||
+                                 moveType == IEntityMovementType.MOVE_VTOL_RUN))
+                || (moveType == IEntityMovementMode.TRACKED
+                    || moveType == IEntityMovementMode.WHEELED
+                    || moveType == IEntityMovementMode.HOVER)) {
                 delta_e *= 2;
             }
             mp += delta_e;
@@ -1230,7 +1259,7 @@ public class MoveStep implements Serializable {
      * This function does not comment on whether an overall movement path
      * is possible, just whether the <em>current</em> step is possible.
      */
-    public boolean isMovementPossible(IGame game, Coords src) {
+    public boolean isMovementPossible(IGame game, Coords src, int srcEl) {
         final IHex srcHex = game.getBoard().getHex(src);
         final Coords dest = this.getPosition();
         final IHex destHex = game.getBoard().getHex(dest);
@@ -1274,10 +1303,13 @@ public class MoveStep implements Serializable {
             return false;
         }
 
+        final int srcAlt = srcEl + srcHex.getElevation();
+        final int destAlt = elevation + destHex.getElevation();
+
         // Can't back up across an elevation change.
         if ( !(entity instanceof VTOL) && isThisStepBackwards()
-             && ( entity.elevationOccupied(destHex)
-                  != entity.elevationOccupied(srcHex) ) ) {
+             && ( destAlt
+                  != srcAlt ) ) {
             return false;
         }
 
@@ -1346,8 +1378,6 @@ public class MoveStep implements Serializable {
         }
 
         // check elevation difference > max
-        int nSrcEl = entity.elevationOccupied(srcHex);
-        int nDestEl = entity.elevationOccupied(destHex);
         int nMove = entity.getMovementMode();
 
         // Make sure that if it's a VTOL unit with the VTOL MP listed as jump MP...
@@ -1359,7 +1389,7 @@ public class MoveStep implements Serializable {
 
         if ( movementType != IEntityMovementType.MOVE_JUMP
               && (nMove != IEntityMovementMode.VTOL)
-             && ( Math.abs(nSrcEl - nDestEl)
+             && ( Math.abs(srcAlt - destAlt)
                   > entity.getMaxElevationChange() ) ) {
             return false;
         }
@@ -1369,7 +1399,7 @@ public class MoveStep implements Serializable {
         if ((type == MovePath.STEP_BACKWARDS
             || type == MovePath.STEP_LATERAL_LEFT_BACKWARDS
             || type == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)
-            && nSrcEl != nDestEl && !(entity instanceof VTOL)) {
+            && destAlt != srcAlt && !(entity instanceof VTOL)) {
             return false;
         }
 
@@ -1382,7 +1412,7 @@ public class MoveStep implements Serializable {
                 && nMove != IEntityMovementMode.SUBMARINE
                 && nMove != IEntityMovementMode.VTOL
                 && destHex.terrainLevel(Terrains.WATER) > 0
-                && !(destHex.containsTerrain(Terrains.ICE) && nDestEl >= destHex.surface())
+                && !(destHex.containsTerrain(Terrains.ICE) && elevation >= 0)
                 && !dest.equals(entity.getPosition())
                 && !firstStep
                 && !isPavementStep) {
@@ -1414,7 +1444,7 @@ public class MoveStep implements Serializable {
 
         // can't jump over too-high terrain
         if ( movementType == IEntityMovementType.MOVE_JUMP
-             && ( destHex.getElevation()
+             && ( destAlt
                   > (entity.getElevation()
                      + entity.game.getBoard().getHex(entity.getPosition()).getElevation()
                      + entity.getJumpMPWithTerrain()) ) ) {

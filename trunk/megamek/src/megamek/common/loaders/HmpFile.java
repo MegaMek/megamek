@@ -690,7 +690,8 @@ public class HmpFile
 
     criticals.put(new Long(0x1c), "Reactive Armor");
     criticals.put(new Long(0x1d), "Laser-Reflective Armor");
-
+    criticals.put(new Long(0x1e), "Jump Booster");
+    criticals.put(new Long(0x20), "Supercharger");
     criticals.put(new Long(0x21), "Light Ferro-Fibrous");
     criticals.put(new Long(0x22), "Heavy Ferro-Fibrous");
     criticals.put(new Long(0x28), "Coolant Pod");

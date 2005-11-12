@@ -6,8 +6,10 @@ v0.31.2-dev (CVS)
 + Bug 1296592: Bugs with Heat Sink adjustment
 + Bug 1323062: 2 clubs on one mech not working correctly 
   (now you, and the bot, can choose which to use)
-+ New deployment zones: CTR (centre 1/9 of map) and EDG (3 hexes from any edge).
-+ deep_deployment game option (initial deploys are 1/5 of board size from the edge)
++ New deployment zones: CTR (centre 1/9 of map) and EDG (3 hexes from any
+    edge).
++ deep_deployment game option (initial deploys are 1/5 of board size from the 
+    edge)
 + reinforcements deploy on edge (CTR or ANY -> EDG, deep -> standard deploy)
 + Bug: Pilots with EI should take damage even when no IS remains in a location.
 + RFL-8D Rifleman had wrong amount of armor (8 instead of 9 points on head)
@@ -18,24 +20,28 @@ v0.31.2-dev (CVS)
 + Bug 1339448: Unit customisation message in blind drop
 + Engineer platoon's tools
 + Engineer platoon improved minesweeping ability (Light Minesweeper)
-+ Engineer platoon lay explosives ability (Demolition Charge) - but can't set them off yet!
-+ Supercharger, except for using MASC and supercharger on the same mech is not supported yet.
++ Engineer platoon lay explosives ability (Demolition Charge) - but can't set
+    them off yet!
++ Supercharger, except for using MASC and supercharger on the same mech is not
+    supported yet.
 + Bug: Vibrabomb evading unofficial option always in effect.
 + Code update, no real change: Replace combineVectors with Java 1.2 addAll.
 + Bugfixes to jump booster/supercharger/improved JJ
-+ Towed field guns for infantry
-  Add mech scale weapons and ammo to the <Platoon Equipment> section of your blk file
-+ unit files for all standard autocannon and gauss I.S. field gunners 
-  (based on motorised rifle platoon - I figure the infantry weapons are secondary)
++ Towed field guns for infantry. Add mech scale weapons and ammo to the
+    <Platoon Equipment> section of your blk file
++ unit files for all standard autocannon and gauss I.S. field gunners (based 
+    on motorised rifle platoon - I figure the infantry weapons are secondary)
 + remove bad dependency on server code
 + buildings: can jump onto roof and climb onto/off buildings.
   this also works for thin ice.  The climb mode can be switched during movement
   at any time (either climb onto top of things or try to go under/through them)
-+ can break through ice from below if you go under ice and enter a depth 1 hex or change to
-  climb out midway through movement.
++ can break through ice from below if you go under ice and enter a depth 1 hex
+    or change to climb out midway through movement.
 + updated BMRr feature list.
 + HMP loader critical definitions for supercharger and jump boosters.
 + Bug 1351026: launcher offers incompatible JRE
++ New pics for Brigand, Chimera, Colossus, Cudgel, Hellspawn, Juggernaught, 
+    Osiris, Red Shift, Ronin, Sasquatch, Sirocco, and Stiletto
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

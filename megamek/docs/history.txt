@@ -35,6 +35,7 @@ v0.31.2-dev (CVS)
   climb out midway through movement.
 + updated BMRr feature list.
 + HMP loader critical definitions for supercharger and jump boosters.
++ Bug 1351026: launcher offers incompatible JRE
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

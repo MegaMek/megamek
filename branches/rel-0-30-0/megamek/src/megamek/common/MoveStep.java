@@ -238,6 +238,7 @@ public class MoveStep implements Serializable {
                 // Infantry in immobilized transporters get
                 // a special "unload stranded" game turn.
                 hasEverUnloaded=true;
+                setMp(1);
                 break;
             case MovePath.STEP_LOAD :
                 setMp(1);

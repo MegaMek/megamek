@@ -43,6 +43,7 @@ v0.31.2-dev (CVS)
 + New pics for Brigand, Chimera, Colossus, Cudgel, Hellspawn, Juggernaught, 
     Osiris, Red Shift, Ronin, Sasquatch, Sirocco, and Stiletto
 + Bug 1323242: Unloading infantry does not cost 1 MP.
++ Added "Advanced Search" feature to the Mek Selection screen.
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

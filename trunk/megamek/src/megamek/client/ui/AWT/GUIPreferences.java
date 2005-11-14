@@ -85,6 +85,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_INCLUDE_YEAR = "MechSelectorIncludeYear";
     public static final String MECH_SELECTOR_INCLUDE_LEVEL = "MechSelectorIncludeLevel";
     public static final String MECH_SELECTOR_INCLUDE_COST = "MechSelectorIncludeCost";
+    public static final String MECH_SELECTOR_SHOW_ADVANCED = "MechSelectorShowAdvanced";
     //public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
     //public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
@@ -169,6 +170,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_INCLUDE_YEAR, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_LEVEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
+        store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
         store.setDefault(MINIMAP_COLOURS,"defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
@@ -291,6 +293,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getMechSelectorIncludeCost() {
         return store.getBoolean(MECH_SELECTOR_INCLUDE_COST);
+    }
+
+    public boolean getMechSelectorShowAdvanced() {
+        return store.getBoolean(MECH_SELECTOR_SHOW_ADVANCED);
     }
     /*
     public int getMechSelectorSizeHeight() {
@@ -531,6 +537,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMechSelectorIncludeCost(boolean includeCost) {
         store.setValue(MECH_SELECTOR_INCLUDE_COST, includeCost);
+    }
+
+    public void setMechSelectorShowAdvanced(boolean showAdvanced) {
+        store.setValue(MECH_SELECTOR_SHOW_ADVANCED, showAdvanced);
     }
     /*
     public void setMechSelectorSizeHeight(int i) {

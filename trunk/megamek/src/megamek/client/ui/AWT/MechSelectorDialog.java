@@ -25,6 +25,7 @@ import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Enumeration;
 
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
@@ -66,14 +67,37 @@ public class MechSelectorDialog
     private Checkbox m_cYear = new Checkbox(Messages.getString("MechSelectorDialog.m_cYear"), GUIPreferences.getInstance().getMechSelectorIncludeYear());
     private Checkbox m_cLevel = new Checkbox(Messages.getString("MechSelectorDialog.m_cLevel"), GUIPreferences.getInstance().getMechSelectorIncludeLevel());
     private Checkbox m_cCost = new Checkbox(Messages.getString("MechSelectorDialog.m_cCost"), GUIPreferences.getInstance().getMechSelectorIncludeCost());
+
+    private Panel m_pOpenAdvanced = new Panel();
+    private Button m_bToggleAdvanced = new Button("< Advanced Search >");
+    private Panel m_pSouthParams = new Panel();
+
     List m_mechList = new List(10);
     private Button m_bPick = new Button(Messages.getString("MechSelectorDialog.m_bPick")); //$NON-NLS-1$
     private Button m_bPickClose = new Button(Messages.getString("MechSelectorDialog.m_bPickClose")); //$NON-NLS-1$    
     private Button m_bCancel = new Button(Messages.getString("Close")); //$NON-NLS-1$
     private Panel m_pButtons = new Panel();
-    private TextArea m_mechViewLeft = new TextArea("",18,25,TextArea.SCROLLBARS_HORIZONTAL_ONLY); //$NON-NLS-1$
-    private TextArea m_mechViewRight = new TextArea(18,28);
+
+    private TextArea m_mechView = new TextArea("",36,35);
     private Panel m_pLeft = new Panel();
+
+    private Panel m_pSearch = new Panel();
+    private Choice m_cWalk = new Choice();
+    private TextField m_tWalk = new TextField(2);
+    private Choice m_cJump = new Choice();
+    private TextField m_tJump = new TextField(2);
+    private Choice m_cArmor = new Choice();
+    private TextField m_tWeapons1 = new TextField(2);
+    private Choice m_cWeapons1 = new Choice();
+    private TextField m_tWeapons2 = new TextField(2);
+    private Choice m_cWeapons2 = new Choice();
+    private Checkbox m_chkEquipment = new Checkbox();
+    private Choice m_cEquipment = new Choice();
+    private Button m_bSearch = new Button(Messages.getString("MechSelectorDialog.Search.Search"));
+    private Button m_bReset = new Button(Messages.getString("MechSelectorDialog.Search.Reset"));
+    private Label m_lCount = new Label();
+
+    private int m_count;
 
     private Panel m_pUpper = new Panel();
     BufferedPanel m_pPreview = new BufferedPanel();
@@ -121,18 +145,24 @@ public class MechSelectorDialog
         m_cCost.addItemListener(this);
         m_pListOptions.add(m_cCost);
 
+        if (GUIPreferences.getInstance().getMechSelectorShowAdvanced()) {
+            buildSouthParams(true);
+        } else {
+            buildSouthParams(false);
+        }
+
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         m_pButtons.add(m_bPick);
         m_pButtons.add(m_bPickClose);
         m_pButtons.add(m_bCancel);
         m_pButtons.add(m_labelPlayer);
         m_pButtons.add(m_chPlayer);
-        
+
         m_pUpper.setLayout(new BorderLayout());
         m_pPreview.setPreferredSize(84, 72);
         m_pUpper.add(m_pParams, BorderLayout.WEST);
         m_pUpper.add(m_pPreview, BorderLayout.CENTER);
-        m_pUpper.add(m_pListOptions, BorderLayout.SOUTH);
+        m_pUpper.add(m_pSouthParams, BorderLayout.SOUTH);
 
         m_pLeft.setLayout(new BorderLayout());
         m_pLeft.add(m_pUpper, BorderLayout.NORTH);
@@ -143,11 +173,9 @@ public class MechSelectorDialog
 
         setLayout(new BorderLayout());
         add(m_pLeft, BorderLayout.WEST);
-        m_mechViewLeft.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
-        add(m_mechViewLeft, BorderLayout.CENTER);
-        m_mechViewRight.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
-        add(m_mechViewRight, BorderLayout.EAST);
-        
+        m_mechView.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
+        add(m_mechView, BorderLayout.CENTER);
+
         //clearMechPreview();
         
         m_chWeightClass.addItemListener(this);
@@ -158,11 +186,103 @@ public class MechSelectorDialog
         m_bPick.addActionListener(this);
         m_bPickClose.addActionListener(this);
         m_bCancel.addActionListener(this);
-        setSize(770, 350);
+        m_bSearch.addActionListener(this);
+        m_bReset.addActionListener(this);
+        m_bToggleAdvanced.addActionListener(this);
+        setSize(700, 350);
         setLocation(computeDesiredLocation());
         populateChoices();
         addWindowListener(this);
         updateWidgetEnablements();
+    }
+
+    private void buildSouthParams(boolean showAdvanced) {
+        if (showAdvanced) {
+            m_bToggleAdvanced.setLabel(Messages.getString("MechSelectorDialog.Search.Hide"));
+            m_pOpenAdvanced.add(m_bToggleAdvanced);
+
+            m_pSouthParams.setLayout(new GridLayout(11,1));
+            m_pSouthParams.add(m_pListOptions);
+            m_pSouthParams.add(m_pOpenAdvanced);
+
+            Panel row1 = new Panel();
+            row1.setLayout(new FlowLayout(FlowLayout.LEFT));
+            row1.add(new Label(Messages.getString("MechSelectorDialog.Search.Walk")));
+            row1.add(m_cWalk);
+            row1.add(m_tWalk);
+            m_pSouthParams.add(row1);
+
+            Panel row2 = new Panel();
+            row2.setLayout(new FlowLayout(FlowLayout.LEFT));
+            row2.add(new Label(Messages.getString("MechSelectorDialog.Search.Jump")));
+            row2.add(m_cJump);
+            row2.add(m_tJump);
+            m_pSouthParams.add(row2);
+
+            Panel row3 = new Panel();
+            row3.setLayout(new FlowLayout(FlowLayout.LEFT));
+            row3.add(new Label(Messages.getString("MechSelectorDialog.Search.Armor")));
+            row3.add(m_cArmor);
+            m_pSouthParams.add(row3);
+
+            Panel row4 = new Panel();
+            row4.setLayout(new FlowLayout(FlowLayout.LEFT));
+            row4.add(new Label(Messages.getString("MechSelectorDialog.Search.Weapons")));
+            m_pSouthParams.add(row4);
+
+            Panel row5 = new Panel();
+            row5.setLayout(new FlowLayout(FlowLayout.LEFT));
+            row5.add(new Label(Messages.getString("MechSelectorDialog.Search.WeaponsAtLeast")));
+            row5.add(m_tWeapons1);
+            row5.add(m_cWeapons1);
+            m_pSouthParams.add(row5);
+
+            Panel row6 = new Panel();
+            row6.setLayout(new FlowLayout(FlowLayout.LEFT));
+            row6.add(new Label(Messages.getString("MechSelectorDialog.Search.WeaponsAtLeast")));
+            row6.add(m_tWeapons2);
+            row6.add(m_cWeapons2);
+            m_pSouthParams.add(row6);
+
+            Panel row7 = new Panel();
+            row7.setLayout(new FlowLayout(FlowLayout.LEFT));
+            row7.add(new Label(Messages.getString("MechSelectorDialog.Search.Equipment")));
+            m_pSouthParams.add(row7);
+
+            Panel row8 = new Panel();
+            row8.setLayout(new FlowLayout(FlowLayout.LEFT));
+            row8.add(m_chkEquipment);
+            row8.add(m_cEquipment);
+            m_pSouthParams.add(row8);
+
+            Panel row9 = new Panel();
+            row9.add(m_bSearch);
+            row9.add(m_bReset);
+            row9.add(m_lCount);
+            m_pSouthParams.add(row9);
+        } else {
+            m_bToggleAdvanced.setLabel(Messages.getString("MechSelectorDialog.Search.Show"));
+            m_pOpenAdvanced.add(m_bToggleAdvanced);
+
+            m_pSouthParams.setLayout(new GridLayout(2,1));
+            m_pSouthParams.add(m_pListOptions);
+            m_pSouthParams.add(m_pOpenAdvanced);
+        }
+    }
+
+    private void toggleAdvanced() {
+        m_pUpper.remove(m_pSouthParams);
+        m_pSouthParams = new Panel();
+        if (GUIPreferences.getInstance().getMechSelectorShowAdvanced()) {
+            buildSouthParams(false);
+            GUIPreferences.getInstance().setMechSelectorShowAdvanced(false);
+        } else {
+            buildSouthParams(true);
+            GUIPreferences.getInstance().setMechSelectorShowAdvanced(true);
+        }
+        m_pUpper.add(m_pSouthParams, BorderLayout.SOUTH);
+        this.invalidate();
+        this.pack();
     }
 
     private void updateTechChoice() {
@@ -238,9 +358,33 @@ public class MechSelectorDialog
         }
         m_chUnitType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chUnitType.select(0);
+
+        m_cWalk.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        m_cWalk.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        m_cWalk.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
+        m_cJump.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        m_cJump.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        m_cJump.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
+        m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
+        m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25"));
+        m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50"));
+        m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
+        m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
+        for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements() ;) {
+            EquipmentType et = (EquipmentType)e.nextElement();
+            if (et instanceof WeaponType) {
+                m_cWeapons1.add(et.getInternalName());
+                m_cWeapons2.add(et.getInternalName());
+            }
+        }
+        for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements() ;) {
+            EquipmentType et = (EquipmentType)e.nextElement();
+            if (et instanceof MiscType) {
+                    m_cEquipment.add(et.getInternalName());
+            }
+        }
     }
-    
-    
+
     private void filterMechs() {
         Vector vMechs = new Vector();
         int nClass = m_chWeightClass.getSelectedIndex();
@@ -274,6 +418,7 @@ public class MechSelectorDialog
         }
         m_mechsCurrent = new MechSummary[vMechs.size()];
         vMechs.copyInto(m_mechsCurrent);
+        m_count = vMechs.size();
         sortMechs();
     }
     
@@ -295,6 +440,7 @@ public class MechSelectorDialog
             m_mechList.setFont(m_mechList.getFont());
         }
         updateWidgetEnablements();
+        m_lCount.setText(m_mechsCurrent.length + "/" + m_count);
         repaint();
     }
     
@@ -307,6 +453,150 @@ public class MechSelectorDialog
                 break;
             }
         }
+    }
+
+    private void advancedSearch() {
+        String s = m_lCount.getText();
+        int first = Integer.parseInt(s.substring(0,s.indexOf('/')));
+        int second = Integer.parseInt(s.substring(s.indexOf('/') + 1));
+        if (first != second) {
+            //Search already active, reset list before starting new one.
+            filterMechs();
+        }
+
+        Vector vMatches = new Vector();
+        for (int i = 0; i < m_mechsCurrent.length; i++) {
+            MechSummary ms = m_mechsCurrent[i];
+            try {
+                Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                if (isMatch(entity)) {
+                    vMatches.addElement(ms);
+                }
+            } catch (EntityLoadingException ex) {
+                //do nothing, I guess
+            }
+        }
+        m_mechsCurrent = new MechSummary[vMatches.size()];
+        vMatches.copyInto(m_mechsCurrent);
+        clearMechPreview();
+        sortMechs();
+    }
+
+    private boolean isMatch(Entity entity) {
+        int walk = -1;
+        try {
+            walk = Integer.parseInt(m_tWalk.getText());
+        } catch (NumberFormatException ne) { }
+        if (walk > -1) {
+            if (m_cWalk.getSelectedIndex() == 0) { //at least
+                if (entity.getWalkMP() < walk)
+                    return false;
+            } else if (m_cWalk.getSelectedIndex() == 1) { //equal to
+                if (walk != entity.getWalkMP())
+                    return false;
+            } else if (m_cWalk.getSelectedIndex() == 2) { //not more than
+                if (entity.getWalkMP() > walk)
+                    return false;
+            }
+        }
+
+        int jump = -1;
+        try {
+            jump = Integer.parseInt(m_tJump.getText());
+        } catch (NumberFormatException ne) { }
+        if (jump > -1) {
+            if (m_cJump.getSelectedIndex() == 0) { //at least
+                if (entity.getJumpMP() < jump)
+                    return false;
+            } else if (m_cJump.getSelectedIndex() == 1) { //equal to
+                if (jump != entity.getJumpMP())
+                    return false;
+            } else if (m_cJump.getSelectedIndex() == 2) { //not more than
+                if (entity.getJumpMP() > jump)
+                    return false;
+            }
+        }
+
+        int sel = m_cArmor.getSelectedIndex();
+        if (sel > 0) {
+            int armor = entity.getTotalArmor();
+            int maxArmor = entity.getTotalInternal() * 2 + 3;
+            if (sel == 1) {
+                if (armor < (maxArmor * .25))
+                    return false;
+            } else if (sel == 2) {
+                if (armor < (maxArmor * .5))
+                    return false;
+            } else if (sel == 3) {
+                if (armor < (maxArmor * .75))
+                    return false;
+            } else if (sel == 4) {
+                if (armor < (maxArmor * .9))
+                    return false;
+            }
+        }
+
+        int count = 0;
+        int weapon1 = -1;
+        try {
+            weapon1 = Integer.parseInt(m_tWeapons1.getText());
+        } catch (NumberFormatException ne) { }
+        if (weapon1 > -1) {
+            for (int i = 0; i < entity.getWeaponList().size(); i++) {
+                WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().elementAt(i)).getType();
+                if (wt.getInternalName().equals(m_cWeapons1.getSelectedItem())) {
+                    count++;
+                }
+            }
+            if (count < weapon1)
+                return false;
+        }
+
+        count = 0;
+        int weapon2 = -1;
+        try {
+            weapon2 = Integer.parseInt(m_tWeapons2.getText());
+        } catch (NumberFormatException ne) { }
+        if (weapon2 > -1) {
+            for (int i = 0; i < entity.getWeaponList().size(); i++) {
+                WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().elementAt(i)).getType();
+                if (wt.getInternalName().equals(m_cWeapons2.getSelectedItem())) {
+                    count++;
+                }
+            }
+            if (count < weapon2)
+                return false;
+        }
+
+        count = 0;
+        if (m_chkEquipment.getState()) {
+            for (Enumeration e = entity.getMisc(); e.hasMoreElements(); ) {
+                MiscType mt = (MiscType)((Mounted)e.nextElement()).getType();
+                if (mt.getInternalName().equals(m_cEquipment.getSelectedItem())) {
+                    count++;
+                }
+            }
+            if (count < 1)
+                return false;
+        }
+
+        return true;
+    }
+
+    private void resetSearch() {
+        m_cWalk.select(0);
+        m_tWalk.setText("");
+        m_cJump.select(0);
+        m_tJump.setText("");
+        m_cArmor.select(0);
+        m_tWeapons1.setText("");
+        m_cWeapons1.select(0);
+        m_tWeapons2.setText("");
+        m_cWeapons2.select(0);
+        m_chkEquipment.setState(false);
+        m_cEquipment.select(0);
+
+        filterMechs();
     }
 
     private Point computeDesiredLocation() {
@@ -383,6 +673,12 @@ public class MechSelectorDialog
             if (ae.getSource() == m_bPickClose) {
                 this.setVisible(false);
             }
+        } else if (ae.getSource() == m_bSearch) {
+            advancedSearch();
+        } else if (ae.getSource() == m_bReset) {
+            resetSearch();
+        } else if (ae.getSource() == m_bToggleAdvanced) {
+            toggleAdvanced();
         }
     }
     
@@ -438,10 +734,8 @@ public class MechSelectorDialog
     }
     
     void clearMechPreview() {
-        m_mechViewLeft.setEditable(false);
-        m_mechViewRight.setEditable(false);
-        m_mechViewLeft.setText(""); //$NON-NLS-1$
-        m_mechViewRight.setText(""); //$NON-NLS-1$
+        m_mechView.setEditable(false);
+        m_mechView.setText(""); //$NON-NLS-1$
 
         // Remove preview image.        
         if (MechSummaryCache.getInstance().isInitialized()) {
@@ -452,12 +746,9 @@ public class MechSelectorDialog
     
     void previewMech(Entity entity) {
         MechView mechView = new MechView(entity);
-        m_mechViewLeft.setEditable(false);
-        m_mechViewRight.setEditable(false);
-        m_mechViewLeft.setText(mechView.getMechReadoutBasic());
-        m_mechViewRight.setText(mechView.getMechReadoutLoadout());
-        m_mechViewLeft.setCaretPosition(0);
-        m_mechViewRight.setCaretPosition(0);
+        m_mechView.setEditable(false);
+        m_mechView.setText(mechView.getMechReadoutBasic() + "\n" + mechView.getMechReadoutLoadout());
+        m_mechView.setCaretPosition(0);
 
         // Preview image of the unit...
         m_clientgui.loadPreviewImage(m_pPreview, entity, m_client.getLocalPlayer());

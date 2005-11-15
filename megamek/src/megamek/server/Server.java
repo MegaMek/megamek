@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -3866,53 +3867,71 @@ public class Server implements Runnable {
             }
 
             // Handle non-infantry moving into a building.
-            if (entity.checkMovementInBuilding(lastPos, curPos, step,
-                                               curHex, prevHex)) {
+            int buildingMove = entity.checkMovementInBuilding(step, prevStep, curHex, prevHex);
+            //set elevation in case of collapses
+            entity.setElevation(step.getElevation());
+            if (buildingMove > 0) {
 
                 // Get the building being exited.
-                // TODO: allow units to climb on top of buildings.
-                Building bldgExited = game.getBoard().getBuildingAt( lastPos );
+                Building bldgExited = null;
+                if((buildingMove & 1) == 1)
+                    bldgExited = game.getBoard().getBuildingAt( lastPos );
 
                 // Get the building being entered.
-                // TODO: allow units to climb on top of buildings.
-                Building bldgEntered = game.getBoard().getBuildingAt( curPos );
+                Building bldgEntered = null;
+                if((buildingMove & 2) == 2)
+                    bldgEntered = game.getBoard().getBuildingAt( curPos );
+                
+                // Get the building being stepped on.
+                Building bldgStepped = null;
+                if((buildingMove & 4) == 4)
+                    bldgStepped = game.getBoard().getBuildingAt( curPos );
 
-                // If we're not leaving a building, just handle the "entered".
                 boolean collapsed = false;
-                if ( bldgExited == null ) {
-                    collapsed = passBuildingWall( entity, bldgEntered,
-                                                  lastPos, curPos,
-                                                  distance, "entering" );
-                    this.addAffectedBldg( bldgEntered, collapsed );
+                //are we passing through a building wall?
+                if(bldgEntered != null || bldgExited != null) {
+                    // If we're not leaving a building, just handle the "entered".
+                    if ( bldgExited == null) {
+                        collapsed = passBuildingWall( entity, bldgEntered,
+                                                      lastPos, curPos,
+                                                      distance, "entering" );
+                        this.addAffectedBldg( bldgEntered, collapsed );
+                    }
+    
+                    // If we're moving withing the same building, just handle
+                    // the "within".
+                    else if ( bldgExited.equals( bldgEntered ) ) {
+                        collapsed = passBuildingWall( entity, bldgEntered,
+                                                      lastPos, curPos,
+                                                      distance, "moving in" );
+                        this.addAffectedBldg( bldgEntered, collapsed );
+                    }
+    
+                    // If we have different buildings, roll for each.
+                    else if ( bldgExited != null && bldgEntered != null ) {
+                        collapsed = passBuildingWall( entity, bldgExited,
+                                                      lastPos, curPos,
+                                                      distance, "exiting" );
+                        this.addAffectedBldg( bldgExited, collapsed );
+                        collapsed = passBuildingWall( entity, bldgEntered,
+                                                      lastPos, curPos,
+                                                      distance, "entering" );
+                        this.addAffectedBldg( bldgEntered, collapsed );
+                    }
+    
+                    // Otherwise, just handle the "exited".
+                    else if (bldgExited != null){
+                        collapsed = passBuildingWall( entity, bldgExited,
+                                                      lastPos, curPos,
+                                                      distance, "exiting" );
+                        this.addAffectedBldg( bldgExited, collapsed );
+                    }
                 }
-
-                // If we're moving withing the same building, just handle
-                // the "within".
-                else if ( bldgExited.equals( bldgEntered ) ) {
-                    collapsed = passBuildingWall( entity, bldgEntered,
-                                                  lastPos, curPos,
-                                                  distance, "moving in" );
-                    this.addAffectedBldg( bldgEntered, collapsed );
-                }
-
-                // If we have different buildings, roll for each.
-                else if ( bldgExited != null && bldgEntered != null ) {
-                    collapsed = passBuildingWall( entity, bldgExited,
-                                                  lastPos, curPos,
-                                                  distance, "exiting" );
-                    this.addAffectedBldg( bldgExited, collapsed );
-                    collapsed = passBuildingWall( entity, bldgEntered,
-                                                  lastPos, curPos,
-                                                  distance, "entering" );
-                    this.addAffectedBldg( bldgEntered, collapsed );
-                }
-
-                // Otherwise, just handle the "exited".
-                else {
-                    collapsed = passBuildingWall( entity, bldgExited,
-                                                  lastPos, curPos,
-                                                  distance, "exiting" );
-                    this.addAffectedBldg( bldgExited, collapsed );
+                
+                //stepping on roof, no PSR just check for over weight
+                if(bldgStepped != null) {
+                    collapsed = checkBuildingCollapseWhileMoving(bldgStepped, entity, curPos);
+                    this.addAffectedBldg( bldgStepped, collapsed );
                 }
 
                 // Clean up the entity if it has been destroyed.
@@ -15762,10 +15781,6 @@ public class Server implements Runnable {
                                       String why ) {
 
         Report r;
-        // VTOLs can fly over buildings - also mechs can walk on the roof
-        if (entity.getElevation()>=game.getBoard().getHex(curPos).terrainLevel(Terrains.BLDG_ELEV)) {
-            return false;
-        }
 
         // Need to roll based on building type.
         PilotingRollData psr = entity.rollMovementInBuilding(bldg, distance, why);
@@ -15803,6 +15818,10 @@ public class Server implements Runnable {
         //             not the amount to bring building to 0 CF.
         this.damageInfantryIn( bldg, toBldg );
 
+        return checkBuildingCollapseWhileMoving(bldg, entity, curPos);
+    }
+    
+    private boolean checkBuildingCollapseWhileMoving(Building bldg, Entity entity, Coords curPos) {
         // Get the position map of all entities in the game.
         Hashtable positionMap = game.getPositionMap();
 
@@ -15966,17 +15985,17 @@ public class Server implements Runnable {
                 Enumeration entities = vector.elements();
                 while ( !collapse && entities.hasMoreElements() ) {
                     final Entity entity = (Entity) entities.nextElement();
-                    final int entityElev = entity.elevationOccupied( curHex );
+                    final int entityElev = entity.getElevation();
 
                     // Ignore entities not *inside* the building
-                    if ( !Compute.isInBuilding( game, entity, coords ) ) {
+                    if ( !Compute.isInBuilding( game, entity, coords ) || entityElev > numFloors) {
                         continue;
                     }
 
                     // Add the weight of a Mek or tank to the correct floor.
                     if ( entity instanceof Mech || entity instanceof Tank ) {
                         int load = (int) entity.getWeight();
-                        int floor = entityElev - hexElev;
+                        int floor = entityElev;
 
                         // Entities on the ground floor may fall into the
                         // basement, but they won't collapse the building.
@@ -16229,6 +16248,15 @@ public class Server implements Runnable {
                 this.collapseBuilding( bldg, positionMap );
             }
 
+        }
+
+        //check for buildings which should collapse due to being overloaded now CF is reduced
+        if(!update.isEmpty()) {
+            Hashtable positionMap = game.getPositionMap();
+            for(Iterator i=update.iterator();i.hasNext();) {
+                Building bldg = (Building) i.next();
+                if(checkForCollapse(bldg, positionMap)) i.remove();
+            }
         }
 
         // If we have any buildings to update, send the message.

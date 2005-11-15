@@ -856,16 +856,18 @@ public class MovementDisplay
             }
 
             // Handle non-infantry moving into a building.
-            if (entity.checkMovementInBuilding(lastPos, curPos, step,
-                                               curHex, prevHex)) {
-                
+            int buildingMove = entity.checkMovementInBuilding(step, prevStep, curHex, prevHex);
+            if (buildingMove > 0) {
+
                 // Get the building being exited.
-                // TODO: allow units to climb on top of buildings.
-                Building bldgExited = client.game.getBoard().getBuildingAt( lastPos );
+                Building bldgExited = null;
+                if((buildingMove & 1) == 1)
+                    bldgExited = client.game.getBoard().getBuildingAt( lastPos );
 
                 // Get the building being entered.
-                // TODO: allow units to climb on top of buildings.
-                Building bldgEntered = client.game.getBoard().getBuildingAt( curPos );
+                Building bldgEntered = null;
+                if((buildingMove & 2) == 2)
+                    bldgEntered = client.game.getBoard().getBuildingAt( curPos );
 
                 if ( bldgExited != null && bldgEntered != null && 
                      !bldgExited.equals(bldgEntered) ) {
@@ -884,8 +886,10 @@ public class MovementDisplay
                         // Entering or moving within a building.
                         bldg = bldgEntered;
                     }
-                    rollTarget = entity.rollMovementInBuilding(bldg, distance, "");
-                    nagReport.append(addNag(rollTarget));
+                    if(bldg != null) {
+                        rollTarget = entity.rollMovementInBuilding(bldg, distance, "");
+                        nagReport.append(addNag(rollTarget));
+                    }
                 }
             }
 

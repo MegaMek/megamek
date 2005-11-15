@@ -3432,26 +3432,38 @@ public abstract class Entity
     }
 
     /**
-     * Checks to see if an entity is moving through buildings.
+     * Checks to see if an entity is moving through building walls.
      *  Note: this method returns true/false, unlike the other
      *  checkStuff() methods above.
+     *  @return 0, no eligable building; 1, exiting; 2, entering; 3, both; 4, stepping on roof
      */
-    public boolean checkMovementInBuilding(Coords lastPos, Coords curPos,
-                                           MoveStep step, IHex curHex,
-                                           IHex prevHex) {
-        if (step.getElevation()>=getGame().getBoard().getHex(curPos).ceiling()) {
-            return false;
+    public int checkMovementInBuilding(MoveStep step, MoveStep prevStep,
+                                           IHex curHex, IHex prevHex) {
+        if(prevHex == curHex)
+            return 0;
+        // ineligable because of movement type or unit type
+        if(this instanceof Infantry || this instanceof Protomech || step.getMovementType() == IEntityMovementType.MOVE_JUMP)
+            return 0;
+        
+        int rv = 0;
+        //check current hex for building
+        if (step.getElevation()<curHex.terrainLevel(Terrains.BLDG_ELEV)) {
+            rv += 2;
+        } else if (step.getElevation()==curHex.terrainLevel(Terrains.BLDG_ELEV)) {
+            rv += 4;
+        }
+        //check previous hex for building
+        if(prevHex != null) {
+            int prevEl = getElevation();
+            if(prevStep != null) {
+                prevEl = prevStep.getElevation();
+            }
+            if (prevEl<prevHex.terrainLevel(Terrains.BLDG_ELEV)) {
+                rv += 1;
+            }
         }
         
-        if ( !lastPos.equals(curPos) &&
-             step.getMovementType() != IEntityMovementType.MOVE_JUMP &&
-             ( curHex.containsTerrain(Terrains.BUILDING) ||
-               (prevHex != null && prevHex.containsTerrain(Terrains.BUILDING)) ) &&
-             !(this instanceof Infantry) ) {
-            return true;
-        } else {
-            return false;
-        }
+        return rv;
     }
 
     /**

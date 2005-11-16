@@ -25,6 +25,7 @@
 # Cyric anvil3a@hotmail.com
 # Carpe Mortis (Alan Bell)
 # victor23
+# hopalong
 
 # The format goes as follows:
 # {chassis/exact} [model] [image filename]
@@ -85,6 +86,7 @@ chassis "Clan Sylph" "sylph.gif"
 chassis "Corona" "corona.gif"
 chassis "Fa Shih" "isbattlearmor-b.gif"
 chassis "Fenrir" "quadbattlearmor.gif"
+chassis "Field Gunners" "Field Gun.gif"
 chassis "Golem" "golem.gif"
 chassis "Gray Death Light Scout" "gdlscout.gif"
 chassis "Gray Death Standard" "isbattlearmor-b.gif"

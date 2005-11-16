@@ -28,6 +28,7 @@ package megamek.common.loaders;
 
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.IEntityMovementMode;
 import megamek.common.LocationFullException;
 import megamek.common.Protomech;
 import megamek.common.TechConstants;
@@ -95,6 +96,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         if (nMotion == -1) throw new EntityLoadingException("Invalid movment type: " + sMotion);
         t.setMovementType(nMotion);
         ** 'Protos have only one motion type. */
+        t.setMovementMode(IEntityMovementMode.INF_JUMP);
 
         if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);

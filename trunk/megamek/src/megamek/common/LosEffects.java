@@ -60,6 +60,7 @@ public class LosEffects {
     public static final int COVER_75RIGHT =     0xB;    //75% cover         (blocked)
     
     boolean blocked = false;
+    boolean infProtected = false;
     boolean hasLoS = true;
     int lightWoods = 0;
     int heavyWoods = 0;
@@ -77,6 +78,7 @@ public class LosEffects {
     
     public void add(LosEffects other) {
         this.blocked |= other.blocked;
+        this.infProtected |= other.infProtected;
         this.lightWoods += other.lightWoods;
         this.heavyWoods += other.heavyWoods;
         this.ultraWoods += other.ultraWoods;
@@ -339,6 +341,10 @@ public class LosEffects {
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain.");
         }
         
+        if (infProtected) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry protected by building.");
+        }
+        
         if (ultraWoods >= 1 || lightWoods + (heavyWoods * 2) > 2) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods.");
         }
@@ -432,7 +438,7 @@ public class LosEffects {
         // targeted by units in the same building.
         if ( ai.targetInfantry && targetInBuilding &&
              null == los.getThruBldg() ) {
-            los.blocked = true;
+            los.infProtected = true;
         }
     
         // If a target Entity is at a different elevation as its
@@ -532,10 +538,10 @@ public class LosEffects {
             // targeted by units in the same building.
             if ( ai.targetInfantry && targetInBuilding ) {
                 if ( null == left.getThruBldg() ) {
-                    left.blocked = true;
+                    left.infProtected = true;
                 }
                 else if ( null == right.getThruBldg() ) {
-                    right.blocked = true;
+                    right.infProtected = true;
                 }
             }
     

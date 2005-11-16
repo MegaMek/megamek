@@ -1194,6 +1194,7 @@ public class MoveStep implements Serializable {
         final IHex srcHex = game.getBoard().getHex(prev);
         final IHex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = parent.getEntity() instanceof Infantry;
+        final boolean isProto = parent.getEntity() instanceof Protomech;
         int nSrcEl = srcHex.getElevation() + prevEl;
         int nDestEl = destHex.getElevation() + elevation;
 
@@ -1248,7 +1249,7 @@ public class MoveStep implements Serializable {
 
         // If we entering a building, all non-infantry pay additional MP.
         if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)
-            && !(isInfantry)) {
+            && !(isInfantry) && !(isProto)) {
             Building bldg = game.getBoard().getBuildingAt(getPosition());
             mp += bldg.getType();
         }

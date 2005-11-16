@@ -28,13 +28,11 @@ package megamek.common.loaders;
 
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
+import megamek.common.IEntityMovementMode;
 import megamek.common.TechConstants;
 import megamek.common.util.*;
 
 public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
-
-    // HACK!!!  BattleArmor movement reuses Mech and Vehicle movement.
-    private static final String[] MOVES = { "", "Leg", "", "", "", "Jump", "VTOL" };
 
     public BLKBattleArmorFile(BuildingBlock bb) {
         dataFile = bb;
@@ -86,12 +84,12 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("motion_type")) throw new EntityLoadingException("Could not find movement block.");
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = -1;
-        for (int x = 0; x < MOVES.length; x++) {
-            if (sMotion.equals(MOVES[x])) {
-                nMotion = x;
-                break;
-            }
-        }
+        if(sMotion.equalsIgnoreCase("leg"))
+            nMotion = IEntityMovementMode.INF_LEG;
+        else if(sMotion.equalsIgnoreCase("jump"))
+            nMotion = IEntityMovementMode.INF_JUMP;
+        else if(sMotion.equalsIgnoreCase("vtol"))
+            nMotion = IEntityMovementMode.VTOL;
         if (nMotion == -1) throw new EntityLoadingException("Invalid movement type: " + sMotion);
         t.setMovementMode(nMotion);
 

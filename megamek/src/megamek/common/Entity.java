@@ -249,7 +249,7 @@ public abstract class Entity
     private boolean canon;
     
     private int assaultDropInProgress = 0;
-    private boolean climbMode = true; //save climb mode from turn to turn for convenience 
+    private boolean climbMode = false; //save climb mode from turn to turn for convenience 
     
     
     /**

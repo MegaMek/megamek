@@ -44,7 +44,6 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
 
     private int maxOptionWidth = 0;
     
-    private AlertDialog savedAlert = null;
     private Panel panOptions = new Panel();
     private ScrollPane scrOptions = new ScrollPane();
     
@@ -55,7 +54,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     private TextField texPass = new TextField(15);
     
     private Panel panButtons = new Panel();
-    private Button butSave = new Button(Messages.getString("GameOptionsDialog.Save")); //$NON-NLS-1$
+    private Button butDefaults = new Button(Messages.getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     
@@ -112,8 +111,6 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
                     frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
 
-        savedAlert = new AlertDialog(frame, Messages.getString("GameOptionsDialog.OptionSavedDialog.title"), Messages.getString("GameOptionsDialog.OptionSavedDialog.message")); //$NON-NLS-1$ //$NON-NLS-2$
-
     }
 
     /**
@@ -160,7 +157,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             client.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
-    
+
     public void doSave() {
         Vector output = new Vector();
       
@@ -171,10 +168,15 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         }
       
         GameOptions.saveOptions(output);
-      
-        savedAlert.show();
     }
-    
+
+    public void resetToDefaults() {
+        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
+            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+            comp.resetToDefault();
+        }
+    }
+
     private void refreshOptions() {
         panOptions.removeAll();
         optionComps = new Vector();
@@ -385,10 +387,10 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
 
     private void setupButtons() {
-        butSave.addActionListener(this);
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
-        
+        butDefaults.addActionListener(this);
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -404,13 +406,13 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         panButtons.add(butOkay);
             
         c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(butSave, c);
-        panButtons.add(butSave);
+        gridbag.setConstraints(butCancel, c);
+        panButtons.add(butCancel);
             
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.CENTER;
-        gridbag.setConstraints(butCancel, c);
-        panButtons.add(butCancel);
+        gridbag.setConstraints(butDefaults, c);
+        panButtons.add(butDefaults);
     }
     
     private void setupPassword() {
@@ -424,15 +426,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOkay) {
             send();
-        } else if (e.getSource() == butSave) {
             doSave();
-          
-            //if the ok button is disabled then have the save button act 
-            //like a cancel button after saving.
-            if ( butOkay.isEnabled() )
-                return;
+        } else if (e.getSource() == butDefaults) {
+            resetToDefaults();
+            return;
         }
-        
+
         this.setVisible(false);
     }
 
@@ -451,10 +450,10 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             comp.setEditable( editable );
         }
 
-        // If the panel is editable, the player can commit and save.
+        // If the panel is editable, the player can commit or reset.
         texPass.setEnabled( editable );
         butOkay.setEnabled( editable && client != null );
-        butSave.setEnabled( editable );
+        butDefaults.setEnabled( editable );
 
         // Update our data element.
         this.editable = editable;

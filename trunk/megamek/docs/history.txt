@@ -48,6 +48,8 @@ v0.31.2-dev (CVS)
 + More field gunners and a field gunner image contributed by hopalong (thanks)
 + buildings: BA and protomechs move through buildings like infantry
 + Bug 1233539: Buildings/Double Blind LOS error
++ Add "Defaults" button to Game Options window.  Note that pressing "Ok" now
+    saves your choices automatically.
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

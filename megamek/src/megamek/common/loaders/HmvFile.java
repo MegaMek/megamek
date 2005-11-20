@@ -959,7 +959,7 @@ public class HmvFile
     AMMO.put(HMVTechType.CLAN, clAmmo);
     clAmmo.put(new Long(0x40), "CLAMS Ammo");
     clAmmo.put(new Long(0x41), "CLGauss Ammo");
-    clAmmo.put(new Long(0x42), "CLLBXAC2 Ammo Ammo");
+    clAmmo.put(new Long(0x42), "CLLBXAC2 Ammo");
     clAmmo.put(new Long(0x43), "CLLBXAC5 Ammo");
     clAmmo.put(new Long(0x44), "CLLBXAC10 Ammo");
     clAmmo.put(new Long(0x45), "CLLBXAC20 Ammo");
@@ -978,7 +978,7 @@ public class HmvFile
     clAmmo.put(new Long(0x52), "CLStreakSRM2 Ammo");
     clAmmo.put(new Long(0x53), "CLStreakSRM4 Ammo");
     clAmmo.put(new Long(0x54), "CLStreakSRM6 Ammo");
-    clAmmo.put(new Long(0x55), "CLArrowIVSystem Ammo");
+    clAmmo.put(new Long(0x55), "CLArrowIV Ammo");
     clAmmo.put(new Long(0x66), "CLVehicleFlamer Ammo");
     clAmmo.put(new Long(0x67), "CLSRM2 Ammo");
     clAmmo.put(new Long(0x68), "CLSniperArtillery Ammo");

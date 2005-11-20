@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.30.6-dev (cvs)
+
 v0.30.5 (2005-11-20, 20:15 GMT)
 + Bug 1296592: Bugs with Heat Sink adjustment
 + Bug 1285121: DFA cause problems

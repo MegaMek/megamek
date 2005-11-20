@@ -7,6 +7,7 @@ v0.30.4-dev (CVS)
 + Bug 1323242: Unloading infantry does not cost 1 MP.
 + Bug 1350820: Anhur Transport had incorrect weapon loadout.  Thanks to
     Hopalong for the fixed file.
++ Bug 1342988: Clan LB2XAC ammo and ArrowIV ammo not loading from HMV files.
 
 v0.30.3 (2005-10-11, 17:15 GMT+2)
 + Bug 1297348: TAG problems

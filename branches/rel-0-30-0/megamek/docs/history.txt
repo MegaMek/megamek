@@ -5,6 +5,8 @@ v0.30.4-dev (CVS)
 + Bug 1285121: DFA cause problems
 + Bug: Vibrabomb evading unofficial option always in effect.
 + Bug 1323242: Unloading infantry does not cost 1 MP.
++ Bug 1350820: Anhur Transport had incorrect weapon loadout.  Thanks to
+    Hopalong for the fixed file.
 
 v0.30.3 (2005-10-11, 17:15 GMT+2)
 + Bug 1297348: TAG problems

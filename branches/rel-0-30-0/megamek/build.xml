@@ -141,11 +141,11 @@
   </target>
 
   <target name="packageCode" description="Generates code package only" depends="cvsdev-get, cvsdev-build">
-    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-upgrade-${DSTAMP}.zip" includes="${jarfile} docs/history.txt license.txt MegaMek.exe startup.sh mmconf/MegaMek.bat"/>
+    <zip basedir="${cvsmaindir}" zipfile="${basedir}/MegaMek-v${input_version}-upgrade.zip" includes="${jarfile} docs/history.txt license.txt"/>
   </target>
 
   <target name="packageMedia" description="Generates media package only" depends="cvsdev-get">
-    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-media-${DSTAMP}.zip" includes="${datadir}/ ${confdir}/ ${docdir}/ *.txt stats.pl" excludes="*.jar"/>
+    <zip basedir="${cvsmaindir}" zipfile="${basedir}/MegaMek-v${input_version}-media.zip" includes="${datadir}/ ${docdir}/ license.txt" excludes="*.jar"/>
   </target>
 
   <target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from cvs." depends="cvsdev-init"> 
@@ -180,6 +180,7 @@
   <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
   <target name="cvsdev-get" depends="cvsdev-init">
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" command="-z3 export -D '1 second ago'"  package="megamek" tag="rel-0-30-0"/>
+    <input message="Please enter version number (eg. 0.30.0):" addproperty="input_version"/>
   </target>
 
   <target name="cvsdev-build" depends="cvsdev-init">
@@ -218,7 +219,7 @@
     <!-- keep in mind that directory references for 'excludes' are -->
     <!-- relative to the zip-tasks basedir but 'zipfile' uses the -->
     <!-- absolute (project) ${basedir} -->
-    <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsmaindir}" excludes="${builddir}/"/>
+    <zip zipfile="${basedir}/MegaMek-v${input_version}.zip" basedir="${cvsmaindir}" excludes="${builddir}/"/>
   </target>
   
   <target name="cvsdev-clean">

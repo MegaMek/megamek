@@ -52,6 +52,7 @@ v0.31.2-dev (CVS)
     saves your choices automatically.
 + Bug 1350820: Anhur Transport had incorrect weapon loadout.  Thanks to
     Hopalong for the fixed file.
++ Bug 1342988: Clan LB2XAC ammo and ArrowIV ammo not loading from HMV files.
 
 v0.31.1 (2005-10-11, 17:15 GMT+2)
 + coolant pod [without a playable heat/end phase, uses mode switch instead]

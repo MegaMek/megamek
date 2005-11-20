@@ -155,6 +155,20 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
         choice.add(value);
     }
 
+    public void resetToDefault() {
+        switch(option.getType()) {
+            case IOption.BOOLEAN :
+                checkbox.setState(((Boolean)option.getDefault()).booleanValue());
+                break;
+            case IOption.CHOICE :
+                choice.select(0); //Assume first choice is always default
+                break;
+            default :
+                textField.setText(String.valueOf(option.getDefault()));
+                break;
+        }
+    }
+
     /**
      * Returns a new option, representing the option in it's changed state.
      */

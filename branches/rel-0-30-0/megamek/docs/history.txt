@@ -8,6 +8,7 @@ v0.30.4-dev (CVS)
 + Bug 1350820: Anhur Transport had incorrect weapon loadout.  Thanks to
     Hopalong for the fixed file.
 + Bug 1342988: Clan LB2XAC ammo and ArrowIV ammo not loading from HMV files.
++ Bug 1342982: Long Tom not recognized in hmp/hmv files.
 
 v0.30.3 (2005-10-11, 17:15 GMT+2)
 + Bug 1297348: TAG problems

@@ -656,6 +656,7 @@ public class HmvFile
     isEquipment.put(new Long(0x83), "ISStreakSRM4 (OS)");
     isEquipment.put(new Long(0x84), "ISStreakSRM6 (OS)");
     isEquipment.put(new Long(0x85), "ISFlamer (Vehicle)");
+    isEquipment.put(new Long(0x86), "ISLongTomArtillery");
     isEquipment.put(new Long(0x87), "ISSniperArtillery");
     isEquipment.put(new Long(0x88), "ISThumperArtillery");
     isEquipment.put(new Long(0x89), "ISMRM10");
@@ -706,6 +707,7 @@ public class HmvFile
     isEquipment.put(new Long(0x0201), "ISArrowIV Ammo");
     isEquipment.put(new Long(0x0209), "ISNarc Pods");
     isEquipment.put(new Long(0x0215), "ISVehicleFlamer Ammo");
+    isEquipment.put(new Long(0x0216), "ISLongTom Ammo");
     isEquipment.put(new Long(0x0217), "ISSniper Ammo");
     isEquipment.put(new Long(0x0218), "ISThumper Ammo");
     isEquipment.put(new Long(0x0219), "ISMRM10 Ammo");
@@ -756,6 +758,7 @@ public class HmvFile
     isAmmo.put(new Long(0x71), "ISArrowIV Ammo");
     isAmmo.put(new Long(0x79), "ISNarc Pods");
     isAmmo.put(new Long(0x35), "ISVehicleFlamer Ammo");
+    isAmmo.put(new Long(0x86), "ISLongTom Ammo");
     isAmmo.put(new Long(0x87), "ISSniper Ammo");
     isAmmo.put(new Long(0x88), "ISThumper Ammo");
     isAmmo.put(new Long(0x89), "ISMRM10 Ammo");
@@ -836,7 +839,7 @@ public class HmvFile
     clanEquipment.put(new Long(0x64), "CLStreakSRM4 (OS)");
     clanEquipment.put(new Long(0x65), "CLStreakSRM6 (OS)");
     clanEquipment.put(new Long(0x66), "CLVehicleFlamer");
-    clanEquipment.put(new Long(0x67), "CLSRM2");
+    clanEquipment.put(new Long(0x67), "CLLongTomArtillery");
     clanEquipment.put(new Long(0x68), "CLSniperArtillery");
     clanEquipment.put(new Long(0x69), "CLThumperArtillery");
     clanEquipment.put(new Long(0x6A), "CLLRTorpedo5");
@@ -904,7 +907,7 @@ public class HmvFile
     clanEquipment.put(new Long(0x023d), "CLLightMG Ammo (200)");
     clanEquipment.put(new Long(0x023e), "CLHeavyMG Ammo (100)");
     clanEquipment.put(new Long(0x01f6), "CLFlamer (Vehicle) Ammo");
-    clanEquipment.put(new Long(0x01f7), "CLSRM2 Ammo");
+    clanEquipment.put(new Long(0x01f7), "CLLongTom Ammo");
     clanEquipment.put(new Long(0x01f8), "CLSniper Ammo");
     clanEquipment.put(new Long(0x01f9), "CLThumper Ammo");
     clanEquipment.put(new Long(0x01fa), "CLLRTorpedo5 Ammo");
@@ -951,7 +954,7 @@ public class HmvFile
     clAmmo.put(new Long(0x54), "CLStreakSRM6 Ammo");
     clAmmo.put(new Long(0x55), "CLArrowIV Ammo");
     clAmmo.put(new Long(0x66), "CLVehicleFlamer Ammo");
-    clAmmo.put(new Long(0x67), "CLSRM2 Ammo");
+    clAmmo.put(new Long(0x67), "CLLongTomArtillery Ammo");
     clAmmo.put(new Long(0x68), "CLSniperArtillery Ammo");
     clAmmo.put(new Long(0x69), "CLThumperArtillery Ammo");
     clAmmo.put(new Long(0x6A), "CLTorpedoLRM5 Ammo");

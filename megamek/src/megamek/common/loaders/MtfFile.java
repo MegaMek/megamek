@@ -269,7 +269,7 @@ public class MtfFile implements IMechLoader {
 
             mech.setWeight(Integer.parseInt(tonnage.substring(5)));
 
-            if(engine.contains("ICE"))
+            if(engine.indexOf("ICE") != -1)
                 mech.setICE(true);
 
             mech.setOriginalWalkMP(Integer.parseInt(walkMP.substring(8)));

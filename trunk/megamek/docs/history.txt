@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.31.2-dev (CVS)
+v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets
 + Michael Gratton's Gun Emplacement patch. Thanks!
 + Bug 1296592: Bugs with Heat Sink adjustment

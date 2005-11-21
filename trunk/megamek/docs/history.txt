@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.31.3-dev (CVS)
++ Bug 1357018: Added trim() to port string for parsing port number.
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

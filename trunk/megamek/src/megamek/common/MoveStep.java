@@ -327,7 +327,8 @@ public class MoveStep implements Serializable {
                 if(getType() == MovePath.STEP_DFA) {
                     setElevation(1 + Math.max(entity.elevationOccupied(game.getBoard().getHex(prev.getPosition())), entity.elevationOccupied(game.getBoard().getHex(getPosition()))));
                 } else if (parent.isJumping()) {
-                    setElevation(Math.max(0, game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BLDG_ELEV)));
+                    IHex hex = game.getBoard().getHex(getPosition());
+                    setElevation(Math.max(-hex.depth(), hex.terrainLevel(Terrains.BLDG_ELEV)));
                 } else {
                     setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation, climbMode()));
                 }
@@ -1507,7 +1508,8 @@ public class MoveStep implements Serializable {
         }
         
         //check the elevation is valid for the type of entity and hex
-        if(!entity.isElevationValid(elevation, getPosition())) {
+        if(type != MovePath.STEP_DFA &&
+                !entity.isElevationValid(elevation, getPosition())) {
             return false;
         }
 

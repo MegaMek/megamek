@@ -1048,7 +1048,7 @@ class ConnectDialog extends Dialog implements ActionListener {
             try {
                 name = yourNameF.getText();
                 serverAddr = serverAddrF.getText();
-                port = Integer.decode(portF.getText()).intValue();
+                port = Integer.decode(portF.getText().trim()).intValue();
 
             } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage());

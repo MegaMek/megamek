@@ -12389,158 +12389,150 @@ public class Server implements Runnable {
      *          <code>false</code> if not.
      */
     private boolean checkEngineExplosion(Entity en, Vector vDesc, int hits) {
-      if ( !(en instanceof Mech) && !(en instanceof QuadMech) &&
-           !(en instanceof BipedMech) ) {
-          return false;
-      }
-      
-      if(en.isDoomed() || en.isDestroyed())
-          return false;
-      Mech mech = (Mech)en;
-      
-      //ICE can always explode and roll every time hit
-      if (!mech.hasICE() &&
-              (!game.getOptions().booleanOption("engine_explosions")
-                      || en.rolledForEngineExplosion
-                      || en.engineHitsThisRound < 2) )
-          return false;
+        if (!(en instanceof Mech)
+                && !(en instanceof QuadMech)
+                && !(en instanceof BipedMech)) {
+            return false;
+        }
+        if(en.isDoomed() || en.isDestroyed())
+            return false;
+        Mech mech = (Mech)en;
 
-      int explosionBTH = 12;
-      
-      if(mech.hasICE()) {
-          switch (hits) {
-          case 0: 
-              return false;
-          case 1:
-              explosionBTH = 10;
-              break;
-          case 2:
-              explosionBTH = 7;
-              break;
-          case 3:
-          default:
-              explosionBTH = 4;
-              break;
-          }
-      }
-      int explosionRoll = Compute.d6(2);
+        //ICE can always explode and roll every time hit
+        if (!mech.hasICE()
+                && (!game.getOptions().booleanOption("engine_explosions")
+                    || en.rolledForEngineExplosion
+                    || en.engineHitsThisRound < 2) )
+            return false;
+        int explosionBTH = 12;
+        if(mech.hasICE()) {
+            switch (hits) {
+                case 0: 
+                    return false;
+                case 1:
+                    explosionBTH = 10;
+                    break;
+                case 2:
+                    explosionBTH = 7;
+                    break;
+                case 3:
+                default:
+                    explosionBTH = 4;
+                    break;
+            }
+        }
+        int explosionRoll = Compute.d6(2);
+        boolean didExplode = explosionRoll >= explosionBTH;
 
-      boolean didExplode = explosionRoll >= explosionBTH;
-
-      Report r;
-      r = new Report(6150);
-      r.subject = en.getId();
-      r.indent(2);
-      r.addDesc(en);
-      r.add(en.engineHitsThisRound);
-      vDesc.addElement(r);
-      r = new Report(6155);
-      r.subject = en.getId();
-      r.indent(2);
-      r.add(explosionBTH);
-      r.add(explosionRoll);
-      vDesc.addElement(r);
-
-      en.rolledForEngineExplosion = true;
-
-      if ( !didExplode ) {
-        //whew!
-        r = new Report(6160);
+        Report r;
+        r = new Report(6150);
         r.subject = en.getId();
         r.indent(2);
+        r.addDesc(en);
+        r.add(en.engineHitsThisRound);
         vDesc.addElement(r);
-      } else {
-        r = new Report(6165, Report.PUBLIC);
+        r = new Report(6155);
         r.subject = en.getId();
         r.indent(2);
+        r.add(explosionBTH);
+        r.add(explosionRoll);
         vDesc.addElement(r);
-        vDesc.addAll( destroyEntity(en, "engine explosion", false, false));
-        //kill the crew
-        en.getCrew().setDoomed(true);
+        en.rolledForEngineExplosion = true;
 
-        //This is a hack so MM.NET marks the mech as not salvageable
-          if ( en instanceof Mech )
-            destroyLocation(en, Mech.LOC_CT);
-
-        //Light our hex on fire
-          final IHex curHex = game.getBoard().getHex(en.getPosition());
-
-          if ( (null != curHex) && !curHex.containsTerrain(Terrains.FIRE) && 
-                (curHex.containsTerrain(Terrains.WOODS) || curHex.containsTerrain(Terrains.JUNGLE))) {
-            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-            r = new Report(6170, Report.PUBLIC);
+        if ( !didExplode ) {
+            //whew!
+            r = new Report(6160);
             r.subject = en.getId();
             r.indent(2);
-            r.add(en.getPosition().getBoardNum());
             vDesc.addElement(r);
-            sendChangedHex(en.getPosition());
-          }
-          
-          //ICE explosions don't hurt anyone else
-          if(!mech.hasICE()) {
-    
-            //Nuke anyone that is in our hex
-              Enumeration entitesWithMe = game.getEntities(en.getPosition());
-              Hashtable entitesHit = new Hashtable();
-    
-              entitesHit.put(en, en);
-    
-              while ( entitesWithMe.hasMoreElements() ) {
-                Entity entity = (Entity)entitesWithMe.nextElement();
-    
-                if ( entity.equals(en) )
-                  continue;
-    
-                vDesc.addAll( destroyEntity(entity, "engine explosion proximity", false, false));
-                // Kill the crew
-                entity.getCrew().setDoomed(true);
-    
-                entitesHit.put(entity, entity);
-              }
-    
-            //Now we damage people near us
-              int engineRating = ((Mech)en).engineRating();
-              int[] damages = { 999, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
-    
-              Vector entites = game.getEntitiesVector();
-    
-              for ( int i = 0; i < entites.size(); i++ ) {
-                Entity entity = (Entity)entites.elementAt(i);
-    
-                if ( entitesHit.containsKey(entity) )
-                  continue;
-    
-                if ( entity.isDoomed() || entity.isDestroyed() || !entity.isDeployed() )
-                  continue;
-    
-                int range = en.getPosition().distance(entity.getPosition());
-    
-                if ( range > 3 )
-                  continue;
-    
-                int damage = damages[range];
-    
-                r = new Report(6175);
-                r.subject = entity.getId();
+        } else {
+            r = new Report(6165, Report.PUBLIC);
+            r.subject = en.getId();
+            r.indent(2);
+            vDesc.addElement(r);
+            vDesc.addAll( destroyEntity(en, "engine explosion", false, false));
+            //kill the crew
+            en.getCrew().setDoomed(true);
+
+            //This is a hack so MM.NET marks the mech as not salvageable
+            if ( en instanceof Mech )
+                destroyLocation(en, Mech.LOC_CT);
+
+            //Light our hex on fire
+            final IHex curHex = game.getBoard().getHex(en.getPosition());
+
+            if ((null != curHex)
+                    && !curHex.containsTerrain(Terrains.FIRE)
+                    && (curHex.containsTerrain(Terrains.WOODS)
+                    || curHex.containsTerrain(Terrains.JUNGLE))) {
+                curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+                r = new Report(6170, Report.PUBLIC);
+                r.subject = en.getId();
                 r.indent(2);
-                r.addDesc(entity);
-                r.add(damage);
-                r.newlines = 0;
+                r.add(en.getPosition().getBoardNum());
                 vDesc.addElement(r);
+                sendChangedHex(en.getPosition());
+            }
+          
+            //ICE explosions don't hurt anyone else
+            if (!mech.hasICE()) {
+                //Nuke anyone that is in our hex
+                Enumeration entitesWithMe = game.getEntities(en.getPosition());
+                Hashtable entitesHit = new Hashtable();
+
+                entitesHit.put(en, en);
     
-                while (damage > 0) {
-                    int cluster = Math.min(5, damage);
-                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(en, entity));
-                    vDesc.addAll( damageEntity(entity, hit, cluster));
-                    damage -= cluster;
+                while (entitesWithMe.hasMoreElements()) {
+                    Entity entity = (Entity)entitesWithMe.nextElement();
+                    if ( entity.equals(en) )
+                        continue;
+                    vDesc.addAll( destroyEntity(entity, "engine explosion proximity", false, false));
+                    // Kill the crew
+                    entity.getCrew().setDoomed(true);
+                    entitesHit.put(entity, entity);
                 }
     
-                Report.addNewline(vDesc);
-              }
-          }
-      }
+                //Now we damage people near us
+                int engineRating = ((Mech)en).engineRating();
+                int[] damages = { 999, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
+                Vector entites = game.getEntitiesVector();
+                for (int i = 0; i < entites.size(); i++) {
+                    Entity entity = (Entity)entites.elementAt(i);
+    
+                    if (entitesHit.containsKey(entity))
+                        continue;
+    
+                    if ( entity.isDoomed() || entity.isDestroyed() || !entity.isDeployed() )
+                        continue;
 
-      return didExplode;
+                    int range = en.getPosition().distance(entity.getPosition());
+
+                    if ( range > 3 )
+                        continue;
+
+                    int damage = damages[range];
+
+                    r = new Report(6175);
+                    r.subject = entity.getId();
+                    r.indent(2);
+                    r.addDesc(entity);
+                    r.add(damage);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
+
+                    while (damage > 0) {
+                        int cluster = Math.min(5, damage);
+                        entity.damageThisPhase += cluster;
+                        HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(en, entity));
+                        vDesc.addAll( damageEntity(entity, hit, cluster));
+                        damage -= cluster;
+                    }
+                    Report.addNewline(vDesc);
+                }
+            }
+        }
+
+        return didExplode;
     }
 
     /**

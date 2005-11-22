@@ -299,7 +299,11 @@ public class MoveStep implements Serializable {
                     setDistance(0); //start over after shifting gears
                 }
                 addDistance(1);
-                setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation));
+                if(getType() == MovePath.STEP_DFA) {
+                    setElevation(1 + Math.max(entity.elevationOccupied(game.getBoard().getHex(prev.getPosition())), entity.elevationOccupied(game.getBoard().getHex(getPosition()))));
+                } else {
+                    setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation));
+                }
                 break;
             case MovePath.STEP_LATERAL_LEFT :
             case MovePath.STEP_LATERAL_RIGHT :

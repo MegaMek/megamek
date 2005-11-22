@@ -2438,7 +2438,7 @@ implements Runnable, ConnectionHandler {
             // unit elevation is relative to the surface 
             unit.setElevation(hex.floor() - hex.surface());
         }
-        doSetLocationsExposure(unit, hex, false);
+        doSetLocationsExposure(unit, hex, false, unit.getElevation());
 
         // Update the unloaded unit.
         this.entityUpdate( unit.getId() );
@@ -3614,7 +3614,8 @@ implements Runnable, ConnectionHandler {
             // set dry if appropriate
             //TODO: possibly make the locations local and set later
             doSetLocationsExposure(entity, curHex, 
-                    step.getMovementType() == IEntityMovementType.MOVE_JUMP);
+                    step.getMovementType() == IEntityMovementType.MOVE_JUMP,
+                    step.getElevation());
 
             // Handle loading units.
             if ( step.getType() == MovePath.STEP_LOAD ) {
@@ -3933,7 +3934,7 @@ implements Runnable, ConnectionHandler {
 
         } // End entity-is-jumping
         // update entity's locations' exposure
-        doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false);
+        doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation());
 
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP()
@@ -4589,9 +4590,10 @@ implements Runnable, ConnectionHandler {
      * @param isJump a <code>boolean</code> value wether the entity is jumping
      */
 
-    public void doSetLocationsExposure(Entity entity, IHex hex, boolean isJump) {
+    public void doSetLocationsExposure(Entity entity, IHex hex, boolean isJump, int elevation) {
         if ( hex.terrainLevel(Terrains.WATER) > 0
-                && !isJump) {
+                && !isJump
+                && elevation < 0) {
             if (entity instanceof Mech
                     && !entity.isProne()
                     && hex.terrainLevel(Terrains.WATER) == 1) {
@@ -5014,7 +5016,7 @@ implements Runnable, ConnectionHandler {
             }
             // trigger any special things for moving to the new hex
             doEntityDisplacementMinefieldCheck(entity, src, dest);
-            doSetLocationsExposure(entity, destHex, false);
+            doSetLocationsExposure(entity, destHex, false, entity.getElevation());
             if (roll != null) {
                 game.addPSR(roll);
             }
@@ -12293,7 +12295,7 @@ implements Runnable, ConnectionHandler {
                 }
 
                 //check for location exposure
-                doSetLocationsExposure(en, fallHex, false);
+                doSetLocationsExposure(en, fallHex, false, 0);
                 en.setElevation(0);
             }
         } else {
@@ -13195,7 +13197,7 @@ implements Runnable, ConnectionHandler {
         }
 
         //check for location exposure
-        doSetLocationsExposure(entity, fallHex, false);
+        doSetLocationsExposure(entity, fallHex, false, -waterDepth);
 
         // we want to be able to avoid pilot damage even when it was
         // an automatic fall, only unconsciousness should cause auto-damage

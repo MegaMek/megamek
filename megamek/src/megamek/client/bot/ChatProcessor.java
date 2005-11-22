@@ -18,6 +18,11 @@ public class ChatProcessor {
             return;
         if (tb.getLocalPlayer() == null)
             return;
+        if (ge.getMessage().indexOf("declares individual victory at the end of the turn.") > -1 ||
+                ge.getMessage().indexOf("declares team victory at the end of the turn.") > -1) {
+            tb.sendChat("/defeat");
+            return;
+        }
         StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
         if (!st.hasMoreTokens()) {
             return;

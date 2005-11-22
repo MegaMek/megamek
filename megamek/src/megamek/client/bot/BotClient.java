@@ -13,6 +13,9 @@
  */
 package megamek.client.bot;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -128,6 +131,10 @@ public abstract class BotClient extends Client {
             if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
                     && game.getEntitiesOwnedBy(this.getLocalPlayer()) - game.getNoOfEntities() == 0) {
                 this.die();
+            }
+            
+            if ( Compute.randomInt(4) == 1 ){
+                sendChat(getRandomBotMessage());
             }
             initMovement();
             break;
@@ -805,6 +812,25 @@ public abstract class BotClient extends Client {
     }
     
     
+    public String getRandomBotMessage(){
+        String message = "";
+        
+        try { 
+            String scrapFile = "./mmconf/botmessages.txt";
+            FileInputStream fis = new FileInputStream(scrapFile);
+            BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
+            while ( dis.ready() ){
+                message = dis.readLine();
+                if ( Compute.randomInt(10) == 1)
+                    break;
+            }
+        }
+        catch(Exception ex){
+            System.err.println("Unable to load message file.");
+            ex.printStackTrace();
+        }
+        return message;
+    }
     public void retrieveServerInfo() {
         super.retrieveServerInfo();
         initialize();

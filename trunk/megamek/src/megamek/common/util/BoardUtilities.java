@@ -275,6 +275,13 @@ public class BoardUtilities {
         for(Enumeration i=building.getCoords();i.hasMoreElements();) {
             Coords c = (Coords)i.nextElement();
             IHex hex = board.getHex(c);
+            //work out exits...
+            int exits = 0;
+            for(int dir=0;dir<6;dir++) {
+                if(building.containsCoords(c.translated(dir))) {
+                    exits |= (1<<dir);
+                }
+            }
             //remove everything, except woods
             int woods = hex.terrainLevel(Terrains.WOODS);
             hex.removeAllTerrains();
@@ -283,7 +290,7 @@ public class BoardUtilities {
             } else {
                 hex.addTerrain(tf.createTerrain(Terrains.PAVEMENT, 1));
             }
-            hex.addTerrain(tf.createTerrain(Terrains.BUILDING, type));
+            hex.addTerrain(tf.createTerrain(Terrains.BUILDING, type, true, exits));
             hex.addTerrain(tf.createTerrain(Terrains.BLDG_CF, cf));
             hex.addTerrain(tf.createTerrain(Terrains.BLDG_ELEV, height));
             //hex.addTerrain(tf.createTerrain(Terrains.BLDG_BASEMENT, building.getBasement()));

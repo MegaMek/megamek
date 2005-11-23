@@ -7,6 +7,9 @@ v0.31.3-dev (CVS)
 + Bug 1326177: Leg Breached during DFA
 + Patch 1364222: Bot uses /defeat when humans use /victory
 + Patch 1364223: Chatty Bot
++ set the exits when placing a building using BuildingTemplate, hopefully 
+  should stop adjacent single hex buildings displaying as multi-hex but
+  following the rules for single hex (2 PSRs for moving)
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

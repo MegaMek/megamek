@@ -5,6 +5,7 @@ import java.util.Vector;
 import java.util.Enumeration;
 
 import megamek.common.Building;
+import megamek.common.Coords;
 
 /**
  * 
@@ -76,5 +77,9 @@ public class BuildingTemplate implements Serializable {
      */
     public int getBasement() {
         return basement;
+    }
+    
+    public boolean containsCoords(Coords c) {
+        return coordsList.contains(c);
     }
 }

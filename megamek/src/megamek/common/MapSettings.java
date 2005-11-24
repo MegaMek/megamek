@@ -49,6 +49,8 @@ public class MapSettings implements Serializable {
     
     /** how much hills there should be, Range 0..99 */
     private int hilliness = 40;
+    /** how much cliffs should there be, range 0-100 (% chance for each cliff candidate)*/
+    private int cliffs = 0;
     /** Maximum difference between highest elevation and lowest sink */
     private int range = 5;
     /** Probabiltity for invertion of the map, Range 0..100 */
@@ -193,6 +195,7 @@ public class MapSettings implements Serializable {
         this.boardsAvailable = (Vector)other.getBoardsAvailableVector().clone();
 
         this.hilliness = other.getHilliness();
+        this.cliffs = other.getCliffs();
         this.range = other.getRange();
         this.probInvert = other.getProbInvert();
         this.minWaterSpots = other.getMinWaterSpots();
@@ -382,6 +385,12 @@ public class MapSettings implements Serializable {
     if (hilliness > 99) {
         hilliness = 99;
     }
+    if (cliffs < 0) {
+        cliffs = 0;
+    }
+    if (cliffs > 100) {
+        cliffs = 100;
+    }
     if (range < 0 ) {
         range = 0;
     }   
@@ -549,6 +558,7 @@ public class MapSettings implements Serializable {
             (this.mapWidth != other.getMapWidth()) ||
             (this.mapHeight != other.getMapHeight()) ||
             (this.hilliness != other.getHilliness()) ||
+            (this.cliffs != other.getCliffs()) ||
             (this.range != other.getRange()) ||
             (this.minWaterSpots != other.getMinWaterSpots()) ||
             (this.maxWaterSpots != other.getMaxWaterSpots()) ||
@@ -612,6 +622,7 @@ public class MapSettings implements Serializable {
     }
 
     public int getHilliness() { return hilliness; }
+    public int getCliffs() { return cliffs; }
     public int getRange() { return range; }
     public int getProbInvert() { return probInvert; }
     
@@ -772,6 +783,10 @@ public class MapSettings implements Serializable {
     */
     public void setRoadParam(int prob) { probRoad = prob; }
     
+    /** set the Parameters for the Map Generator 
+     */
+     public void setCliffParam(int prob) { cliffs = prob; }
+     
     /** set the Parameters for the Map Generator 
     */
     public void setCraterParam(int prob, int minCrat,

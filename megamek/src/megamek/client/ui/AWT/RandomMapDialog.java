@@ -46,6 +46,7 @@ public class RandomMapDialog
     private TextField texBoardHeight = null;
 
     private Choice choElevation = null;
+    private Choice choCliffs = null;
     private Choice choWoods = null;
     private Choice choLakes = null;
     private Choice choPavement = null;
@@ -59,6 +60,7 @@ public class RandomMapDialog
     private Choice choCraters = null;
 
     private Label labElevation = null;
+    private Label labCliffs = null;
     private Label labWoods = null;
     private Label labLakes = null;
     private Label labPavement = null;
@@ -73,6 +75,7 @@ public class RandomMapDialog
     private Label labCraters = null;
     
     private SimpleLine slElevation = null;
+    private SimpleLine slCliffs = null;
     private SimpleLine slWoods = null;
     private SimpleLine slLakes = null;
     private SimpleLine slPavement = null;
@@ -110,6 +113,8 @@ public class RandomMapDialog
     private TextField texRange;
     private Label labProbInvert;
     private TextField texProbInvert;
+    private Label labCliffsAd;
+    private TextField texCliffs;
     
     /** how much Lakes at least */
     private Label labWaterSpots;
@@ -282,6 +287,7 @@ public class RandomMapDialog
             addLabelTextField(labTheme, texTheme);
 
             addOption(labElevation, choElevation, slElevation);
+            addOption(labCliffs, choCliffs, slCliffs);
             addOption(labWoods, choWoods, slWoods);
             addOption(labRough, choRough, slRough);
             addOption(labSwamp, choSwamp, slSwamp);
@@ -304,6 +310,7 @@ public class RandomMapDialog
             addLabelTextField(labRange, texRange);
             addLabelTextField(labProbInvert, texProbInvert);
             addLabelTextField(labAlgorithmToUse, texAlgorithmToUse);
+            addLabelTextField(labCliffsAd, texCliffs);
 
             addSeparator(slElevationAd);
             
@@ -414,6 +421,11 @@ public class RandomMapDialog
         fillChoice(choElevation);
         slElevation = new SimpleLine(NORMAL_LINE_WIDTH);
 
+        labCliffs = new Label(Messages.getString("RandomMapDialog.labCliffs"), Label.LEFT); //$NON-NLS-1$
+        choCliffs = new Choice();
+        fillChoice(choCliffs);
+        slCliffs = new SimpleLine(NORMAL_LINE_WIDTH);
+
         labWoods = new Label(Messages.getString("RandomMapDialog.labWoods"), Label.LEFT); //$NON-NLS-1$
         choWoods = new Choice();
         fillChoice(choWoods);
@@ -483,6 +495,9 @@ public class RandomMapDialog
         labProbInvert = new Label(Messages.getString("RandomMapDialog.labProbInvert"), Label.LEFT); //$NON-NLS-1$
         texProbInvert = new TextField(2);
         texProbInvert.addFocusListener(this);
+        labCliffsAd = new Label(Messages.getString("RandomMapDialog.labCliffs"), Label.LEFT); //$NON-NLS-1$
+        texCliffs = new TextField(2);
+        texCliffs.addFocusListener(this);
         
         /** how much Lakes at least */
         labWaterSpots= new Label(Messages.getString("RandomMapDialog.labWaterSpots"), Label.LEFT); //$NON-NLS-1$
@@ -740,6 +755,7 @@ public class RandomMapDialog
         texHilliness.setText(new Integer(mapSettings.getHilliness()).toString());
         texRange.setText(new Integer(mapSettings.getRange()).toString());
         texProbInvert.setText(new Integer(mapSettings.getProbInvert()).toString());
+        texCliffs.setText(new Integer(mapSettings.getCliffs()).toString());
         texMinWaterSpots.setText(new Integer(mapSettings.getMinWaterSpots()).toString());
         texMaxWaterSpots.setText(new Integer(mapSettings.getMaxWaterSpots()).toString());
         texMinWaterSize.setText(new Integer(mapSettings.getMinWaterSize()).toString());
@@ -802,7 +818,7 @@ public class RandomMapDialog
     private boolean applyValues() {
         int boardWidth;
         int boardHeight;
-        int hilliness, range;
+        int hilliness, range, cliffs;
         int minWaterSpots, maxWaterSpots, minWaterSize, maxWaterSize, probDeep;
         int minForestSpots, maxForestSpots, minForestSize, maxForestSize, probHeavy;
         int minRoughSpots, maxRoughSpots, minRoughSize, maxRoughSize;
@@ -836,6 +852,7 @@ public class RandomMapDialog
             try {
                 hilliness = Integer.parseInt(texHilliness.getText());
                 range = Integer.parseInt(texRange.getText());
+                cliffs = Integer.parseInt(texCliffs.getText());
                 probInvert = Integer.parseInt(texProbInvert.getText());
                 minWaterSpots = Integer.parseInt(texMinWaterSpots.getText());
                 maxWaterSpots = Integer.parseInt(texMaxWaterSpots.getText());
@@ -891,6 +908,10 @@ public class RandomMapDialog
             
             if (hilliness < 0 || hilliness > 99) {
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.AmmountOfElevationWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            if (cliffs < 0 || cliffs > 100) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.CliffsWarn")).show(); //$NON-NLS-1$
                 return false;
             }
             if (range < 0) {
@@ -1158,6 +1179,16 @@ public class RandomMapDialog
                 hilliness = 75;
                 range = 8;
             }
+            s = choCliffs.getSelectedItem();
+            if (s.equals(NONE)) {
+                cliffs = 0;
+            } else if (s.equals(LOW)) {
+                cliffs = 25;
+            } else if (s.equals(MEDIUM)) {
+                cliffs = 50;
+            } else {
+                cliffs = 75;
+            }
             s = choWoods.getSelectedItem();
             if (s.equals(NONE)) {
                 minForestSize = 0;
@@ -1400,6 +1431,7 @@ public class RandomMapDialog
         
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setElevationParams(hilliness, range, probInvert);
+        mapSettings.setCliffParam(cliffs);
         mapSettings.setWaterParams(minWaterSpots, maxWaterSpots, 
                                     minWaterSize, maxWaterSize, probDeep);
         mapSettings.setForestParams(minForestSpots, maxForestSpots,
@@ -1457,8 +1489,9 @@ public class RandomMapDialog
         pack();
         Dimension dopt = panOptions.getPreferredSize();
         Dimension dbt = panButtons.getPreferredSize();
-        int width = Math.min(dopt.width+dbt.width+50, 640);
-        int height = Math.min(dopt.height+dbt.height+50, 480);
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = Math.min(dopt.width+dbt.width+50, screen.width);
+        int height = Math.min(dopt.height+dbt.height+50, screen.height);
         setSize(width, height);
     }
     

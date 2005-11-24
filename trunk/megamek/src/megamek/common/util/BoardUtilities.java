@@ -118,6 +118,10 @@ public class BoardUtilities {
             }
         }
         
+        if(mapSettings.getCliffs() > 0) {
+            addCliffs(result, mapSettings.getCliffs());
+        }
+        
         /* Add the woods */
         int count = mapSettings.getMinForestSpots();
         if (mapSettings.getMaxForestSpots() > 0) {
@@ -440,7 +444,6 @@ public class BoardUtilities {
                 for (int w = 0; w < width; w++) {
                     int distance = (int)distance(center, new Point(w,h));
                     if (distance < radius) {
-                        double fac = (double)distance / (double)radius;
                         IHex field = board.getHex(w, h);
                         field.setElevation(//field.getElevation() +
                                 cratHeight[distance]);
@@ -780,6 +783,80 @@ public class BoardUtilities {
         }
     }
     
+    private static boolean hexCouldBeCliff(IBoard board, Coords c) {
+        int elevation = board.getHex(c).getElevation();
+        boolean higher = false;
+        boolean lower = false;
+        int count = 0;
+        for(int dir=0;dir < 6;dir++) {
+            Coords t = c.translated(dir);
+            if(board.contains(t)) {
+                IHex hex = board.getHex(t);
+                int el = hex.getElevation(); 
+                if(el > elevation) {
+                    lower = true;
+                }
+                else if(el < elevation) {
+                    higher = true;
+                }
+                else {
+                    count++;
+                }
+            }
+        }
+        return higher && lower && count <= 3 && count > 0;
+    }
+    
+    private static void findCliffNeighbours(IBoard board, Coords c, Vector<Coords> candidate, HashSet<Coords> ignore) {
+        candidate.add(c);
+        ignore.add(c);
+        int elevation = board.getHex(c).getElevation();
+        for(int dir=0;dir < 6;dir++) {
+            Coords t = c.translated(dir);
+            if(board.contains(t) && !ignore.contains(t)) {
+                if(hexCouldBeCliff(board, t)) {
+                    IHex hex = board.getHex(t);
+                    int el = hex.getElevation(); 
+                    if(el == elevation) {
+                        findCliffNeighbours(board, t, candidate, ignore);
+                    }
+                }
+                else ignore.add(t);
+            }
+        }
+    }
+    
+    protected static void addCliffs(IBoard board, int modifier) {
+        HashSet<Coords> ignore = new HashSet(); //previously considered hexes
+        Vector<Coords> candidate = new Vector();
+        for(int x=0;x<board.getWidth();x++) {
+            for(int y=0;y<board.getHeight();y++) {
+                Coords c = new Coords(x,y);
+                int elevation = board.getHex(c).getElevation();
+                if(ignore.contains(c))continue;
+                if(!hexCouldBeCliff(board,c)) {
+                    ignore.add(c);
+                    continue;
+                }
+
+                findCliffNeighbours(board,c, candidate,ignore);
+                //is the candidate interesting (at least 3 hexes)?
+                if(candidate.size() >= 3 && Compute.randomInt(100) < modifier) {
+                    if(elevation > 0)
+                        elevation --;
+                    else
+                        elevation ++;
+                    for(Enumeration<Coords> e=candidate.elements();e.hasMoreElements();) {
+                        c = e.nextElement();
+                        IHex hex = board.getHex(c);
+                        hex.setElevation(elevation);
+                    }
+                }
+                candidate.removeAllElements();
+            }
+        }
+    }
+    
     /** 
      * Generates the elevations 
      * @param hilliness The Hilliness
@@ -855,6 +932,7 @@ public class BoardUtilities {
                 }
             }
         }
+        
     }
 
     /**
@@ -892,8 +970,6 @@ public class BoardUtilities {
         // Walk through the current data array and build a new one.
         int newX;
         int newY;
-        int newIndex;
-        int oldIndex;
         IHex tempHex;
         ITerrain terr;
         for ( int oldX = 0; oldX < stopX; oldX++ ) {
@@ -962,7 +1038,7 @@ public class BoardUtilities {
         
         p1 = new Point(0,0);
         p2 = new Point(0,0);
-        for (int step = 0; step < 20 * hilliness; step++) {
+        for (int step = 0; step < hilliness * 20; step++) {
             /* select which side should be decremented, and which
              increemented */
             sideA = (Compute.randomInt(2) == 0)? -1 : 1;
@@ -975,7 +1051,7 @@ public class BoardUtilities {
                 p1.setLocation(0, Compute.randomInt(height));
                 p2.setLocation(Compute.randomInt(width), height-1);
                 markSides(p1, p2, sideB, sideA, elevationMap, height);
-                markRect(p2.x, width-1, sideA, elevationMap, height);
+                markRect(p2.x, width, sideA, elevationMap, height);
                 break;
             case 1: /* upper to lower border */
                 p1.setLocation(Compute.randomInt(width), 0);
@@ -996,14 +1072,14 @@ public class BoardUtilities {
                 break;
             case 3: /* left to right border */
                 p1.setLocation(0, Compute.randomInt(height));
-                p2.setLocation(width-1, Compute.randomInt(height));
+                p2.setLocation(width, Compute.randomInt(height));
                 markSides(p1, p2, sideA, sideB, elevationMap, height);
                 break;
             case 4: /* left to lower border */
                 p1.setLocation(0, Compute.randomInt(height));
                 p2.setLocation(Compute.randomInt(width), 0);
                 markSides(p1, p2, sideB, sideA, elevationMap, height);
-                markRect(p2.x, width-1, sideB, elevationMap, height);
+                markRect(p2.x, width, sideB, elevationMap, height);
                 break;
             case 5: /* lower to right border */
                 p1.setLocation(Compute.randomInt(width), 0);

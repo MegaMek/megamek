@@ -118,6 +118,10 @@ public class HmvFile
 
       // ??
       dis.skipBytes(4);
+      
+      if(techType.equals(HMVTechType.MIXED)) {
+          dis.skipBytes(8); //some extra guff in mixed tech
+      }
 
       engineRating = readUnsignedShort(dis);
       engineType = HMVEngineType.getType(readUnsignedShort(dis));
@@ -1007,6 +1011,117 @@ public class HmvFile
     clAmmo.put(new Long(0xFD), "CLATM6 Ammo");
     clAmmo.put(new Long(0xFE), "CLATM9 Ammo");
     clAmmo.put(new Long(0xFF), "CLATM12 Ammo");
+
+    //mixed *seems* to be the same as IS-base for HMP files
+    Hashtable mixedEquipment = new Hashtable(isEquipment);
+    EQUIPMENT.put(HMVTechType.MIXED, mixedEquipment);
+    mixedEquipment.put(new Long(0x58), "CLERMicroLaser");
+    mixedEquipment.put(new Long(0x64), "CLLightActiveProbe");
+    mixedEquipment.put(new Long(0x65), "CLLightTAG");
+    mixedEquipment.put(new Long(0xA7), "CLERLargeLaser");
+    mixedEquipment.put(new Long(0xA8), "CLERMediumLaser");
+    mixedEquipment.put(new Long(0xA9), "CLERSmallLaser");
+
+    mixedEquipment.put(new Long(0xAA), "CLERPPC");
+    mixedEquipment.put(new Long(0xAB), "CLFlamer");
+
+    mixedEquipment.put(new Long(0xB0), "CLLargePulseLaser");
+    mixedEquipment.put(new Long(0xB1), "CLMediumPulseLaser");
+    mixedEquipment.put(new Long(0xB2), "CLSmallPulseLaser");
+
+    mixedEquipment.put(new Long(0xB4), "CLAntiMissileSystem");
+    mixedEquipment.put(new Long(0xB5), "CLGaussRifle");
+    mixedEquipment.put(new Long(0xB6), "CLLBXAC2");
+    mixedEquipment.put(new Long(0xB7), "CLLBXAC5");
+    mixedEquipment.put(new Long(0xB8), "CLLBXAC10");
+    mixedEquipment.put(new Long(0xB9), "CLLBXAC20");
+
+    mixedEquipment.put(new Long(0xBA), "CLMG");
+    mixedEquipment.put(new Long(0xBB), "CLUltraAC2");
+    mixedEquipment.put(new Long(0xBC), "CLUltraAC5");
+    mixedEquipment.put(new Long(0xBD), "CLUltraAC10");
+    mixedEquipment.put(new Long(0xBE), "CLUltraAC20");
+    mixedEquipment.put(new Long(0xBF), "CLLRM5");
+    mixedEquipment.put(new Long(0xC0), "CLLRM10");
+    mixedEquipment.put(new Long(0xC1), "CLLRM15");
+    mixedEquipment.put(new Long(0xC2), "CLLRM20");
+    mixedEquipment.put(new Long(0xC3), "CLSRM2");
+    mixedEquipment.put(new Long(0xC4), "CLSRM4");
+    mixedEquipment.put(new Long(0xC5), "CLSRM6");
+    mixedEquipment.put(new Long(0xC6), "CLStreakSRM2");
+    mixedEquipment.put(new Long(0xC7), "CLStreakSRM4");
+    mixedEquipment.put(new Long(0xC8), "CLStreakSRM6");
+    mixedEquipment.put(new Long(0xC9), "CLArrowIVSystem");
+    mixedEquipment.put(new Long(0xCA), "CLAntiPersonnelPod");
+    mixedEquipment.put(new Long(0xCB), "CLActiveProbe");
+    mixedEquipment.put(new Long(0xCC), "CLECMSuite");
+    mixedEquipment.put(new Long(0xCD), "CLNarcBeacon");
+    mixedEquipment.put(new Long(0xCE), "CLTAG");
+
+    mixedEquipment.put(new Long(0xD0), "CLLRM5 (OS)");
+    mixedEquipment.put(new Long(0xD1), "CLLRM10 (OS)");
+    mixedEquipment.put(new Long(0xD2), "CLLRM15 (OS)");
+    mixedEquipment.put(new Long(0xD3), "CLLRM20 (OS)");
+    mixedEquipment.put(new Long(0xD4), "CLSRM2 (OS)");
+    mixedEquipment.put(new Long(0xD5), "CLSRM2 (OS)");
+    mixedEquipment.put(new Long(0xD6), "CLSRM2 (OS)");
+    mixedEquipment.put(new Long(0xD7), "CLStreakSRM2 (OS)");
+    mixedEquipment.put(new Long(0xD8), "CLStreakSRM4 (OS)");
+    mixedEquipment.put(new Long(0xD9), "CLStreakSRM6 (OS)");
+    mixedEquipment.put(new Long(0xDA), "CLVehicleFlamer");
+    mixedEquipment.put(new Long(0xDB), "CLLongTomArtillery");
+    mixedEquipment.put(new Long(0xDC), "CLSniperArtillery");
+    mixedEquipment.put(new Long(0xDD), "CLThumperArtillery");
+    mixedEquipment.put(new Long(0xDE), "CLLRTorpedo5");
+    mixedEquipment.put(new Long(0xDF), "CLLRTorpedo10");
+    mixedEquipment.put(new Long(0xE0), "CLLRTorpedo15");
+    mixedEquipment.put(new Long(0xE1), "CLLRTorpedo20");
+    mixedEquipment.put(new Long(0xE2), "CLSRTorpedo2");
+    mixedEquipment.put(new Long(0xE3), "CLSRTorpedo4");
+    mixedEquipment.put(new Long(0xE4), "CLSRTorpedo6");
+
+    mixedEquipment.put(new Long(0xF4), "CLHeavyLargeLaser");
+    mixedEquipment.put(new Long(0xF5), "CLHeavyMediumLaser");
+    mixedEquipment.put(new Long(0xF6), "CLHeavySmallLaser");
+
+    //but ammo *seems* to use the same numbers as the weapon it goes with
+    Hashtable mixedAmmo = new Hashtable(isAmmo);
+    AMMO.put(HMVTechType.MIXED, mixedAmmo);
+    mixedAmmo.put(new Long(0xB4), "CLAntiMissileSystem Ammo");
+    mixedAmmo.put(new Long(0xB5), "CLGaussRifle Ammo");
+    mixedAmmo.put(new Long(0xB6), "CLLBXAC2 Ammo");
+    mixedAmmo.put(new Long(0xB7), "CLLBXAC5 Ammo");
+    mixedAmmo.put(new Long(0xB8), "CLLBXAC10 Ammo");
+    mixedAmmo.put(new Long(0xB9), "CLLBXAC20 Ammo");
+    mixedAmmo.put(new Long(0xBA), "CLMG Ammo");
+    mixedAmmo.put(new Long(0xBB), "CLUltraAC2 Ammo");
+    mixedAmmo.put(new Long(0xBC), "CLUltraAC5 Ammo");
+    mixedAmmo.put(new Long(0xBD), "CLUltraAC10 Ammo");
+    mixedAmmo.put(new Long(0xBE), "CLUltraAC20 Ammo");
+    mixedAmmo.put(new Long(0xBF), "CLLRM5 Ammo");
+    mixedAmmo.put(new Long(0xC0), "CLLRM10 Ammo");
+    mixedAmmo.put(new Long(0xC1), "CLLRM15 Ammo");
+    mixedAmmo.put(new Long(0xC2), "CLLRM20 Ammo");
+    mixedAmmo.put(new Long(0xC3), "CLSRM2 Ammo");
+    mixedAmmo.put(new Long(0xC4), "CLSRM4 Ammo");
+    mixedAmmo.put(new Long(0xC5), "CLSRM6 Ammo");
+    mixedAmmo.put(new Long(0xC6), "CLStreakSRM2 Ammo");
+    mixedAmmo.put(new Long(0xC7), "CLStreakSRM4 Ammo");
+    mixedAmmo.put(new Long(0xC8), "CLStreakSRM6 Ammo");
+    mixedAmmo.put(new Long(0xC9), "CLArrowIVSystem Ammo");
+    mixedAmmo.put(new Long(0xCD), "CLNarcBeacon Ammo");
+    mixedAmmo.put(new Long(0xDA), "CLVehicleFlamer Ammo");
+    mixedAmmo.put(new Long(0xDB), "CLLongTomArtillery Ammo");
+    mixedAmmo.put(new Long(0xDC), "CLSniperArtillery Ammo");
+    mixedAmmo.put(new Long(0xDD), "CLThumperArtillery Ammo");
+    mixedAmmo.put(new Long(0xDE), "CLLRTorpedo5 Ammo");
+    mixedAmmo.put(new Long(0xDF), "CLLRTorpedo10 Ammo");
+    mixedAmmo.put(new Long(0xE0), "CLLRTorpedo15 Ammo");
+    mixedAmmo.put(new Long(0xE1), "CLLRTorpedo20 Ammo");
+    mixedAmmo.put(new Long(0xE2), "CLSRTorpedo2 Ammo");
+    mixedAmmo.put(new Long(0xE3), "CLSRTorpedo4 Ammo");
+    mixedAmmo.put(new Long(0xE4), "CLSRTorpedo6 Ammo");
+    
   }
 
   private String getEquipmentName(long equipment, HMVTechType techType)

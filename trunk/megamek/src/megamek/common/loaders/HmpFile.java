@@ -684,6 +684,7 @@ public class HmpFile
     criticals.put(new Long(0x0F), "Fusion Engine");
     criticals.put(new Long(0x10), "Gyro");
 
+    criticals.put(new Long(0x13), "Turret");
     criticals.put(new Long(0x14), "Endo Steel");
     criticals.put(new Long(0x15), "Ferro-Fibrous");
     criticals.put(new Long(0x16), "Triple Strength Myomer");
@@ -694,8 +695,123 @@ public class HmpFile
     criticals.put(new Long(0x20), "Supercharger");
     criticals.put(new Long(0x21), "Light Ferro-Fibrous");
     criticals.put(new Long(0x22), "Heavy Ferro-Fibrous");
+    criticals.put(new Long(0x26), "CASE II");
+    criticals.put(new Long(0x27), "Null Signature System");
     criticals.put(new Long(0x28), "Coolant Pod");
+    criticals.put(new Long(0x2B), "Claw (THB)");
+    criticals.put(new Long(0x2C), "Mace (THB)");
     criticals.put(new Long(0x2d), "Armored Cowl");
+    criticals.put(new Long(0x2e), "Buzzsaw (UB)");
+    
+    criticals.put(new Long(0xF8), "Combine");
+    criticals.put(new Long(0xF9), "Lift Hoist");
+    criticals.put(new Long(0xFA), "Chainsaw");
+    
+    criticals.put(new Long(0x100), "SB Gauss Rifle (UB)");
+    criticals.put(new Long(0x101), "Caseless AC/2 (THB)");
+    criticals.put(new Long(0x102), "Caseless AC/5 (THB)");
+    criticals.put(new Long(0x103), "Caseless AC/10 (THB)");
+    criticals.put(new Long(0x104), "Caseless AC/20 (THB)");
+    criticals.put(new Long(0x105), "Heavy AC/2 (THB)");
+    criticals.put(new Long(0x106), "Heavy AC/5 (THB)");
+    criticals.put(new Long(0x107), "Heavy AC/10 (THB)");
+    criticals.put(new Long(0x10E), "ELRM-5 (THB)");
+    criticals.put(new Long(0x10F), "ELRM-10 (THB)");
+    criticals.put(new Long(0x110), "ELRM-15 (THB)");
+    criticals.put(new Long(0x111), "ELRM-20 (THB)");
+    criticals.put(new Long(0x112), "LR DFM-5 (THB)");
+    criticals.put(new Long(0x113), "LR DFM-10 (THB)");
+    criticals.put(new Long(0x114), "LR DFM-15 (THB)");
+    criticals.put(new Long(0x115), "LR DFM-20 (THB)");
+    criticals.put(new Long(0x116), "SR DFM-2 (THB)");
+    criticals.put(new Long(0x117), "SR DFM-4 (THB)");
+    criticals.put(new Long(0x118), "SR DFM-6 (THB)");
+    criticals.put(new Long(0x119), "Thunderbolt-5 (THB)");
+    criticals.put(new Long(0x11A), "Thunderbolt-10 (THB)");
+    criticals.put(new Long(0x11B), "Thunderbolt-15 (THB)");
+    criticals.put(new Long(0x11C), "Thunderbolt-20 (THB)");
+    criticals.put(new Long(0x120), "ISLaserAMS (THB)");
+    criticals.put(new Long(0x12C), "Mortar/1 (THB)");
+    criticals.put(new Long(0x12D), "Mortar/2 (THB)");
+    criticals.put(new Long(0x12E), "Mortar/4 (THB)");
+    criticals.put(new Long(0x12F), "Mortar/8 (THB)");
+    criticals.put(new Long(0x130), "Backhoe");
+    criticals.put(new Long(0x131), "Drill");
+    criticals.put(new Long(0x132), "Rock Cutter");
+    criticals.put(new Long(0x71), "CLStreakLRM5 (OS)");
+    criticals.put(new Long(0x72), "CLStreakLRM10 (OS)");
+    criticals.put(new Long(0x73), "CLStreakLRM15 (OS)");
+    criticals.put(new Long(0x74), "CLStreakLRM20 (OS)");
+    
+    criticals.put(new Long(0xFC), "CLATM3");
+    criticals.put(new Long(0xFD), "CLATM6");
+    criticals.put(new Long(0xFE), "CLATM9");
+    criticals.put(new Long(0xFF), "CLATM12");
+
+    criticals.put(new Long(0x108), "ISTHBLBXAC2");
+    criticals.put(new Long(0x109), "ISTHBLBXAC5");
+    criticals.put(new Long(0x10A), "ISTHBLBXAC20");
+    criticals.put(new Long(0x10B), "ISUltraAC2 (THB)");
+    criticals.put(new Long(0x10C), "ISUltraAC10 (THB)");
+    criticals.put(new Long(0x10D), "ISUltraAC20 (THB)");
+
+    criticals.put(new Long(0x11F), "Watchdog ECM (THB)");
+
+    criticals.put(new Long(0x121), "ISRotaryAC2");
+    criticals.put(new Long(0x122), "ISRotaryAC5");
+
+    criticals.put(new Long(0x124), "CLRotaryAC2");
+    criticals.put(new Long(0x125), "CLRotaryAC5");
+    criticals.put(new Long(0x126), "CLRotaryAC10");
+    criticals.put(new Long(0x127), "CLRotaryAC20");
+    criticals.put(new Long(0x128), "CLPlasmaRifle");
+
+    criticals.put(new Long(0x28c), "CLATM3 Ammo");
+    criticals.put(new Long(0x28d), "CLATM6 Ammo");
+    criticals.put(new Long(0x28e), "CLATM9 Ammo");
+    criticals.put(new Long(0x28f), "CLATM12 Ammo");
+    criticals.put(new Long(0x290), "SB Gauss Rifle Ammo (UB)");
+    criticals.put(new Long(0x291), "Caseless AC/2 Ammo (THB)");
+    criticals.put(new Long(0x292), "Caseless AC/5 Ammo (THB)");
+    criticals.put(new Long(0x293), "Caseless AC/10 Ammo (THB)");
+    criticals.put(new Long(0x294), "Caseless AC/20 Ammo (THB)");
+    criticals.put(new Long(0x295), "Heavy AC/2 Ammo (THB)");
+    criticals.put(new Long(0x296), "Heavy AC/5 Ammo (THB)");
+    criticals.put(new Long(0x297), "Heavy AC/10 Ammo (THB)");
+    criticals.put(new Long(0x298), "ISLBXAC2 Ammo (THB)");
+    criticals.put(new Long(0x299), "ISLBXAC5 Ammo (THB)");
+    criticals.put(new Long(0x29A), "ISLBXAC20 Ammo (THB)");
+    criticals.put(new Long(0x29B), "IS Ultra AC/2 Ammo (THB)");
+    criticals.put(new Long(0x29C), "IS Ultra AC/10 Ammo (THB)");
+    criticals.put(new Long(0x29D), "IS Ultra AC/20 Ammo (THB)");
+
+    criticals.put(new Long(0x2B1), "ISRotaryAC2 Ammo");
+    criticals.put(new Long(0x2B2), "ISRotaryAC5 Ammo");
+
+    criticals.put(new Long(0x2b4), "CLRotaryAC2 Ammo");
+    criticals.put(new Long(0x2b5), "CLRotaryAC5 Ammo");
+    criticals.put(new Long(0x2b6), "CLRotaryAC10 Ammo");
+    criticals.put(new Long(0x2b7), "CLRotaryAC20 Ammo");
+    
+    criticals.put(new Long(0x2BC), "Mortar/1 Ammo (THB)");
+    criticals.put(new Long(0x2BD), "Mortar/2 Ammo (THB)");
+    criticals.put(new Long(0x2BE), "Mortar/4 Ammo (THB)");
+    criticals.put(new Long(0x2BF), "Mortar/8 Ammo (THB)");
+    criticals.put(new Long(0x29E), "ELRM-5 Ammo (THB)");
+    criticals.put(new Long(0x29F), "ELRM-10 Ammo (THB)");
+    criticals.put(new Long(0x2A0), "ELRM-15 Ammo (THB)");
+    criticals.put(new Long(0x2A1), "ELRM-20 Ammo (THB)");
+    criticals.put(new Long(0x2A2), "LR DFM-5 Ammo (THB)");
+    criticals.put(new Long(0x2A3), "LR DFM-10 Ammo (THB)");
+    criticals.put(new Long(0x2A4), "LR DFM-15 Ammo (THB)");
+    criticals.put(new Long(0x2A5), "LR DFM-20 Ammo (THB)");
+    criticals.put(new Long(0x2A6), "SR DFM-2 Ammo (THB)");
+    criticals.put(new Long(0x2A7), "SR DFM-4 Ammo (THB)");
+    criticals.put(new Long(0x2A8), "SR DFM-6 Ammo (THB)");
+    criticals.put(new Long(0x2A9), "Thunderbolt-5 Ammo (THB)");
+    criticals.put(new Long(0x2AA), "Thunderbolt-10 Ammo (THB)");
+    criticals.put(new Long(0x2AB), "Thunderbolt-15 Ammo (THB)");
+    criticals.put(new Long(0x2AC), "Thunderbolt-20 Ammo (THB)");
 
     // criticals for mechs with a base type of inner sphere
     //
@@ -713,16 +829,12 @@ public class HmpFile
     isCriticals.put(new Long(0x1F), "Sword");
 
     isCriticals.put(new Long(0x23), "Stealth Armor");
+    isCriticals.put(new Long(0x24), "Blue Shield (UB)");
     
-    isCriticals.put(new Long(0x27), "Null Signature System");
-
-    isCriticals.put(new Long(0x2B), "Claw (THB)");
-    isCriticals.put(new Long(0x2C), "Mace (THB)");
-
     isCriticals.put(new Long(0x33), "ISERLargeLaser");
     isCriticals.put(new Long(0x34), "ISERPPC");
     isCriticals.put(new Long(0x35), "ISFlamer");
-
+    isCriticals.put(new Long(0x86), "ISLaserAMS");
     isCriticals.put(new Long(0x37), "ISLargeLaser");
     isCriticals.put(new Long(0x38), "ISMediumLaser");
     isCriticals.put(new Long(0x39), "ISSmallLaser");
@@ -735,7 +847,9 @@ public class HmpFile
     isCriticals.put(new Long(0x40), "ISAC10");
     isCriticals.put(new Long(0x41), "ISAC20");
     isCriticals.put(new Long(0x42), "ISAntiMissileSystem");
-
+    isCriticals.put(new Long(0x43), "Long Tom Cannon");
+    isCriticals.put(new Long(0x44), "Sniper Cannon");
+    isCriticals.put(new Long(0x45), "Thumper Cannon");
     isCriticals.put(new Long(0x46), "ISLightGaussRifle");
     isCriticals.put(new Long(0x47), "ISGaussRifle");
     isCriticals.put(new Long(0x48), "ISLargeXPulseLaser");
@@ -750,17 +864,19 @@ public class HmpFile
     isCriticals.put(new Long(0x50), "ISLAC2");
     isCriticals.put(new Long(0x51), "ISLAC5");
     isCriticals.put(new Long(0x52), "ISHeavyFlamer");
-
+    isCriticals.put(new Long(0x53), "ERPPC Capacitor");
     isCriticals.put(new Long(0x54), "ISUltraAC2");
     isCriticals.put(new Long(0x55), "ISUltraAC5");
     isCriticals.put(new Long(0x56), "ISUltraAC10");
     isCriticals.put(new Long(0x57), "ISUltraAC20");
     isCriticals.put(new Long(0x58), "CLERMicroLaser");
-
+    isCriticals.put(new Long(0x59), "PPC Capacitor");
     isCriticals.put(new Long(0x5A), "ISERMediumLaser");
     isCriticals.put(new Long(0x5B), "ISERSmallLaser");
     isCriticals.put(new Long(0x5C), "ISAntiPersonnelPod");
 
+    isCriticals.put(new Long(0x5E), "CLLightMG");
+    isCriticals.put(new Long(0x5F), "CLHeavyMG");
     isCriticals.put(new Long(0x60), "ISLRM5");
     isCriticals.put(new Long(0x61), "ISLRM10");
     isCriticals.put(new Long(0x62), "ISLRM15");
@@ -776,7 +892,10 @@ public class HmpFile
     isCriticals.put(new Long(0x6A), "ISStreakSRM2");
     isCriticals.put(new Long(0x6B), "ISStreakSRM4");
     isCriticals.put(new Long(0x6C), "ISStreakSRM6");
-
+    isCriticals.put(new Long(0x6D), "Thunderbolt-5");
+    isCriticals.put(new Long(0x6E), "Thunderbolt-10");
+    isCriticals.put(new Long(0x6F), "Thunderbolt-15");
+    isCriticals.put(new Long(0x70), "Thunderbolt-20");
     isCriticals.put(new Long(0x71), "ISArrowIVSystem");
     isCriticals.put(new Long(0x72), "ISAngelECMSuite");
     isCriticals.put(new Long(0x73), "ISBeagleActiveProbe");
@@ -805,7 +924,7 @@ public class HmpFile
     isCriticals.put(new Long(0x8A), "ISMRM20");
     isCriticals.put(new Long(0x8B), "ISMRM30");
     isCriticals.put(new Long(0x8C), "ISMRM40");
-
+    isCriticals.put(new Long(0x8D), "Grenade Launcher");
     isCriticals.put(new Long(0x8E), "ISMRM10 (OS)");
     isCriticals.put(new Long(0x8F), "ISMRM20 (OS)");
     isCriticals.put(new Long(0x90), "ISMRM30 (OS)");
@@ -817,7 +936,20 @@ public class HmpFile
     isCriticals.put(new Long(0x96), "ISSRTorpedo2");
     isCriticals.put(new Long(0x97), "ISSRTorpedo4");
     isCriticals.put(new Long(0x98), "ISSRTorpedo6");
-
+    isCriticals.put(new Long(0x99), "ISLRM5 (I-OS)");
+    isCriticals.put(new Long(0x9A), "ISLRM10 (I-OS)");
+    isCriticals.put(new Long(0x9B), "ISLRM15 (I-OS)");
+    isCriticals.put(new Long(0x9C), "ISLRM20 (I-OS)");
+    isCriticals.put(new Long(0x9D), "ISSRM2 (I-OS)");
+    isCriticals.put(new Long(0x9E), "ISSRM4 (I-OS)");
+    isCriticals.put(new Long(0x9f), "ISSRM6 (I-OS)");
+    isCriticals.put(new Long(0xA0), "ISStreakSRM2 (I-OS)");
+    isCriticals.put(new Long(0xA1), "ISStreakSRM4 (I-OS)");
+    isCriticals.put(new Long(0xA2), "ISStreakSRM6 (I-OS)");
+    isCriticals.put(new Long(0xA3), "ISMRM10 (I-OS)");
+    isCriticals.put(new Long(0xA4), "ISMRM20 (I-OS)");
+    isCriticals.put(new Long(0xA5), "ISMRM30 (I-OS)");
+    isCriticals.put(new Long(0xA6), "ISMRM40 (I-OS)");
     isCriticals.put(new Long(0xA7), "CLERLargeLaser");
     isCriticals.put(new Long(0xA8), "CLERMediumLaser");
     isCriticals.put(new Long(0xA9), "CLERSmallLaser");
@@ -825,10 +957,11 @@ public class HmpFile
     isCriticals.put(new Long(0xAA), "CLERPPC");
     isCriticals.put(new Long(0xAB), "CLFlamer");
 
+    isCriticals.put(new Long(0xAF), "CLLaserAMS");
     isCriticals.put(new Long(0xB0), "CLLargePulseLaser");
     isCriticals.put(new Long(0xB1), "CLMediumPulseLaser");
     isCriticals.put(new Long(0xB2), "CLSmallPulseLaser");
-
+    isCriticals.put(new Long(0xB3), "CLAngelECMSuite");
     isCriticals.put(new Long(0xB4), "CLAntiMissileSystem");
     isCriticals.put(new Long(0xB5), "CLGaussRifle");
     isCriticals.put(new Long(0xB6), "CLLBXAC2");
@@ -857,7 +990,7 @@ public class HmpFile
     isCriticals.put(new Long(0xCC), "CLECMSuite");
     isCriticals.put(new Long(0xCD), "CLNarcBeacon");
     isCriticals.put(new Long(0xCE), "CLTAG");
-
+    isCriticals.put(new Long(0xCF), "Thunderbolt (OS)");
     isCriticals.put(new Long(0xD0), "CLLRM5 (OS)");
     isCriticals.put(new Long(0xD1), "CLLRM10 (OS)");
     isCriticals.put(new Long(0xD2), "CLLRM15 (OS)");
@@ -879,23 +1012,28 @@ public class HmpFile
     isCriticals.put(new Long(0xE2), "CLSRTorpedo2");
     isCriticals.put(new Long(0xE3), "CLSRTorpedo4");
     isCriticals.put(new Long(0xE4), "CLSRTorpedo6");
-
+    isCriticals.put(new Long(0xE5), "CLStreakLRM5");
+    isCriticals.put(new Long(0xE6), "CLStreakLRM10");
+    isCriticals.put(new Long(0xE7), "CLStreakLRM15");
+    isCriticals.put(new Long(0xE8), "CLStreakLRM20");
+    isCriticals.put(new Long(0xE9), "CLGrenadeLauncher");
+    isCriticals.put(new Long(0xEA), "CLLRM5 (I-OS)");
+    isCriticals.put(new Long(0xEB), "CLLRM10 (I-OS)");
+    isCriticals.put(new Long(0xEC), "CLLRM15 (I-OS)");
+    isCriticals.put(new Long(0xED), "CLLRM20 (I-OS)");
+    isCriticals.put(new Long(0xEE), "CLSRM2 (I-OS)");
+    isCriticals.put(new Long(0xEF), "CLSRM4 (I-OS)");
+    isCriticals.put(new Long(0xF0), "CLSRM6 (I=OS)");
+    isCriticals.put(new Long(0xF1), "CLStreakSRM2 (I-OS)");
+    isCriticals.put(new Long(0xF2), "CLStreakSRM4 (I-OS)");
+    isCriticals.put(new Long(0xF3), "CLStreakSRM6 (I=OS)");
     isCriticals.put(new Long(0xF4), "CLHeavyLargeLaser");
     isCriticals.put(new Long(0xF5), "CLHeavyMediumLaser");
     isCriticals.put(new Long(0xF6), "CLHeavySmallLaser");
 
-    isCriticals.put(new Long(0x108), "ISTHBLBXAC2");
-    isCriticals.put(new Long(0x109), "ISTHBLBXAC5");
-    isCriticals.put(new Long(0x10A), "ISTHBLBXAC20");
-    isCriticals.put(new Long(0x10B), "ISUltraAC2 (THB)");
-    isCriticals.put(new Long(0x10C), "ISUltraAC10 (THB)");
-    isCriticals.put(new Long(0x10D), "ISUltraAC20 (THB)");
-
     isCriticals.put(new Long(0x11D), "ISTHBAngelECMSuite");
     isCriticals.put(new Long(0x11E), "ISTHBBloodhoundActiveProbe");
 
-    isCriticals.put(new Long(0x121), "ISRotaryAC2");
-    isCriticals.put(new Long(0x122), "ISRotaryAC5");
     isCriticals.put(new Long(0x123), "ISHeavyGaussRifle");
 
     isCriticals.put(new Long(0x129), "ISRocketLauncher10");
@@ -907,7 +1045,9 @@ public class HmpFile
     isCriticals.put(new Long(0x01D0), "ISAC10 Ammo");
     isCriticals.put(new Long(0x01d1), "ISAC20 Ammo");
     isCriticals.put(new Long(0x01d2), "ISAMS Ammo");
-
+    isCriticals.put(new Long(0x01d3), "Long Tom Cannon Ammo");
+    isCriticals.put(new Long(0x01d4), "Sniper Cannon Ammo");
+    isCriticals.put(new Long(0x01d5), "Thumper Cannon Ammo");
     isCriticals.put(new Long(0x01d6), "ISLightGauss Ammo");
     isCriticals.put(new Long(0x01d7), "ISGauss Ammo");
 
@@ -926,6 +1066,8 @@ public class HmpFile
     isCriticals.put(new Long(0x01e6), "ISUltraAC10 Ammo");
     isCriticals.put(new Long(0x01e7), "ISUltraAC20 Ammo");
 
+    isCriticals.put(new Long(0x01EE), "CLLightMG Ammo");
+    isCriticals.put(new Long(0x01EF), "CLHeavyMG Ammo");
     isCriticals.put(new Long(0x01f0), "ISLRM5 Ammo");
     isCriticals.put(new Long(0x01f1), "ISLRM10 Ammo");
     isCriticals.put(new Long(0x01f2), "ISLRM15 Ammo");
@@ -937,8 +1079,11 @@ public class HmpFile
     isCriticals.put(new Long(0x01f9), "ISSRM6 Ammo");
     isCriticals.put(new Long(0x01fa), "ISStreakSRM2 Ammo");
     isCriticals.put(new Long(0x01fb), "ISStreakSRM4 Ammo");
-    isCriticals.put(new Long(0x01fc), "ISStreakSRM6 Ammo");
-
+    isCriticals.put(new Long(0x01FC), "ISStreakSRM6 Ammo");
+    isCriticals.put(new Long(0x01FD), "Thunderbolt-5 Ammo");
+    isCriticals.put(new Long(0x01FE), "Thunderbolt-10 Ammo");
+    isCriticals.put(new Long(0x01FF), "Thunderbolt-15 Ammo");
+    isCriticals.put(new Long(0x0200), "Thunderbolt-20 Ammo");
     isCriticals.put(new Long(0x0201), "ISArrowIV Ammo");
 
     isCriticals.put(new Long(0x0209), "ISNarc Pods");
@@ -996,16 +1141,11 @@ public class HmpFile
     isCriticals.put(new Long(0x0272), "CLSRTorpedo2 Ammo");
     isCriticals.put(new Long(0x0273), "CLSRTorpedo4 Ammo");
     isCriticals.put(new Long(0x0274), "CLSRTorpedo6 Ammo");
+    isCriticals.put(new Long(0x0275), "CLStreakLRM5 Ammo");
+    isCriticals.put(new Long(0x0276), "CLStreakLRM10 Ammo");
+    isCriticals.put(new Long(0x0277), "CLStreakLRM15 Ammo");
+    isCriticals.put(new Long(0x0278), "CLStreakLRM20 Ammo");
 
-    isCriticals.put(new Long(0x298), "ISLBXAC2 Ammo (THB)");
-    isCriticals.put(new Long(0x299), "ISLBXAC5 Ammo (THB)");
-    isCriticals.put(new Long(0x29A), "ISLBXAC20 Ammo (THB)");
-    isCriticals.put(new Long(0x29B), "IS Ultra AC/2 Ammo (THB)");
-    isCriticals.put(new Long(0x29C), "IS Ultra AC/10 Ammo (THB)");
-    isCriticals.put(new Long(0x29D), "IS Ultra AC/20 Ammo (THB)");
-
-    isCriticals.put(new Long(0x02b1), "ISRotaryAC2 Ammo");
-    isCriticals.put(new Long(0x02b2), "ISRotaryAC5 Ammo");
     isCriticals.put(new Long(0x02b3), "ISHeavyGauss Ammo");
 
     // criticals for mechs with a base type of clan
@@ -1030,7 +1170,7 @@ public class HmpFile
     clanCriticals.put(new Long(0x38), "CLERLargePulseLaser");
     clanCriticals.put(new Long(0x39), "CLERMediumPulseLaser");
     clanCriticals.put(new Long(0x3A), "CLERSmallPulseLaser");
-
+    clanCriticals.put(new Long(0x3B), "CLLaserAMS");
     clanCriticals.put(new Long(0x3C), "CLLargePulseLaser");
     clanCriticals.put(new Long(0x3D), "CLMediumPulseLaser");
     clanCriticals.put(new Long(0x3E), "CLSmallPulseLaser");
@@ -1089,19 +1229,24 @@ public class HmpFile
     clanCriticals.put(new Long(0x72), "CLStreakLRM10");
     clanCriticals.put(new Long(0x73), "CLStreakLRM15");
     clanCriticals.put(new Long(0x74), "CLStreakLRM20");
-
-    clanCriticals.put(new Long(0x7B), "CLLRM5 (OS)");
-    clanCriticals.put(new Long(0x7C), "CLLRM10 (OS)");
-    clanCriticals.put(new Long(0x7D), "CLLRM15 (OS)");
-    clanCriticals.put(new Long(0x7E), "CLLRM20 (OS)");
-    clanCriticals.put(new Long(0x7F), "CLSRM2 (OS)");
+    clanCriticals.put(new Long(0x75), "CLGrenadeLauncher");
+    clanCriticals.put(new Long(0x76), "CLLRM5 (I-OS)");
+    clanCriticals.put(new Long(0x77), "CLLRM10 (I-OS)");
+    clanCriticals.put(new Long(0x78), "CLLRM15 (I-OS)");
+    clanCriticals.put(new Long(0x79), "CLLRM20 (I-OS)");
+    clanCriticals.put(new Long(0x7a), "CLSRM2 (I-OS)");
+    clanCriticals.put(new Long(0x7b), "CLSRM4 (I-OS)");
+    clanCriticals.put(new Long(0x7c), "CLSRM6 (I=OS)");
+    clanCriticals.put(new Long(0x7d), "CLStreakSRM2 (I-OS)");
+    clanCriticals.put(new Long(0x7e), "CLStreakSRM4 (I-OS)");
+    clanCriticals.put(new Long(0x7f), "CLStreakSRM6 (I=OS)");
     clanCriticals.put(new Long(0x80), "CLHeavyLargeLaser");
     clanCriticals.put(new Long(0x81), "CLHeavyMediumLaser");
     clanCriticals.put(new Long(0x82), "CLHeavySmallLaser");
     clanCriticals.put(new Long(0x83), "ISERLargeLaser");
     clanCriticals.put(new Long(0x84), "ISERPPC");
     clanCriticals.put(new Long(0x85), "ISFlamer");
-
+    clanCriticals.put(new Long(0x86), "ISLaserAMS");
     clanCriticals.put(new Long(0x87), "ISLargeLaser");
     clanCriticals.put(new Long(0x88), "ISMediumLaser");
     clanCriticals.put(new Long(0x89), "ISSmallLaser");
@@ -1114,24 +1259,29 @@ public class HmpFile
     clanCriticals.put(new Long(0x90), "ISAC10");
     clanCriticals.put(new Long(0x91), "ISAC20");
     clanCriticals.put(new Long(0x92), "ISAntiMissileSystem");
-    //    clanCriticals.put(new Long(0x93), "CLLRTorpedo10");
-    //    clanCriticals.put(new Long(0x94), "CLLRTorpedo15");
-    //    clanCriticals.put(new Long(0x95), "CLLRTorpedo20");
+    clanCriticals.put(new Long(0x93), "Long Tom Cannon");
+    clanCriticals.put(new Long(0x94), "Sniper Cannon");
+    clanCriticals.put(new Long(0x95), "Thumper Cannon");
     clanCriticals.put(new Long(0x96), "ISLightGaussRifle");
     clanCriticals.put(new Long(0x97), "ISGaussRifle");
-    //    clanCriticals.put(new Long(0x98), "CLSRTorpedo6");
-
+    clanCriticals.put(new Long(0x98), "ISLargeXPulseLaser");
+    clanCriticals.put(new Long(0x99), "ISMediumXPulseLaser");
+    clanCriticals.put(new Long(0x9A), "ISSmallXPulseLaser");
     clanCriticals.put(new Long(0x9B), "ISLBXAC2");
     clanCriticals.put(new Long(0x9C), "ISLBXAC5");
     clanCriticals.put(new Long(0x9D), "ISLBXAC10");
     clanCriticals.put(new Long(0x9E), "ISLBXAC20");
     clanCriticals.put(new Long(0x9F), "ISMachine Gun");
+    clanCriticals.put(new Long(0xA0), "ISLAC2");
+    clanCriticals.put(new Long(0xA1), "ISLAC5");
 
+    clanCriticals.put(new Long(0xA3), "ERPPC Capacitor");
     clanCriticals.put(new Long(0xA4), "ISUltraAC2");
     clanCriticals.put(new Long(0xA5), "ISUltraAC5");
     clanCriticals.put(new Long(0xA6), "ISUltraAC10");
     clanCriticals.put(new Long(0xA7), "ISUltraAC20");
     clanCriticals.put(new Long(0xA8), "CLMicroPulseLaser");
+    clanCriticals.put(new Long(0xA9), "PPC Capacitor");
 
     clanCriticals.put(new Long(0xAA), "ISERMediumLaser");
     clanCriticals.put(new Long(0xAB), "ISERSmallLaser");
@@ -1146,7 +1296,7 @@ public class HmpFile
     clanCriticals.put(new Long(0xB2), "ISLRM15");
     clanCriticals.put(new Long(0xB3), "ISLRM20");
     clanCriticals.put(new Long(0xB4), "CLLightTAG");
-
+    clanCriticals.put(new Long(0xCF), "Thunderbolt (OS)");
     clanCriticals.put(new Long(0xB6), "ISImprovedNarc");
     clanCriticals.put(new Long(0xB7), "ISSRM2");
     clanCriticals.put(new Long(0xB8), "ISSRM4");
@@ -1154,8 +1304,14 @@ public class HmpFile
     clanCriticals.put(new Long(0xBA), "ISStreakSRM2");
     clanCriticals.put(new Long(0xBB), "ISStreakSRM4");
     clanCriticals.put(new Long(0xBC), "ISStreakSRM6");
+    clanCriticals.put(new Long(0xBD), "Thunderbolt-5");
+    clanCriticals.put(new Long(0xBE), "Thunderbolt-10");
+    clanCriticals.put(new Long(0xBF), "Thunderbolt-15");
+    clanCriticals.put(new Long(0xC0), "Thunderbolt-20");
 
+    clanCriticals.put(new Long(0xC2), "ISAngelECMSuite");
     clanCriticals.put(new Long(0xC3), "ISBeagleActiveProbe");
+    clanCriticals.put(new Long(0xC4), "ISBloodhoundActiveProbe");
     clanCriticals.put(new Long(0xC5), "ISC3MasterComputer");
     clanCriticals.put(new Long(0xC6), "ISC3SlaveUnit");
     clanCriticals.put(new Long(0xC7), "ISImprovedC3CPU");
@@ -1174,7 +1330,15 @@ public class HmpFile
     clanCriticals.put(new Long(0xD3), "ISStreakSRM4 (OS)");
     clanCriticals.put(new Long(0xD4), "ISStreakSRM6 (OS)");
     clanCriticals.put(new Long(0xD5), "ISVehicleFlamer");
+    clanCriticals.put(new Long(0xD6), "ISLongTomArtillery");
+    clanCriticals.put(new Long(0xD7), "ISSniperArtillery");
+    clanCriticals.put(new Long(0xD8), "ISThumperArtillery");
 
+    clanCriticals.put(new Long(0xDD), "Grenade Launcher");
+    clanCriticals.put(new Long(0xDE), "ISMRM10 (OS)");
+    clanCriticals.put(new Long(0xDF), "ISMRM20 (OS)");
+    clanCriticals.put(new Long(0xE0), "ISMRM30 (OS)");
+    clanCriticals.put(new Long(0xE1), "ISMRM40 (OS)");
     clanCriticals.put(new Long(0xE2), "ISLRTorpedo5");
     clanCriticals.put(new Long(0xE3), "ISLRTorpedo10");
     clanCriticals.put(new Long(0xE4), "ISLRTorpedo15");
@@ -1182,20 +1346,20 @@ public class HmpFile
     clanCriticals.put(new Long(0xE6), "ISSRTorpedo2");
     clanCriticals.put(new Long(0xE7), "ISSRTorpedo4");
     clanCriticals.put(new Long(0xE8), "ISSRTorpedo6");
-
-    clanCriticals.put(new Long(0xFC), "CLATM3");
-    clanCriticals.put(new Long(0xFD), "CLATM6");
-    clanCriticals.put(new Long(0xFE), "CLATM9");
-    clanCriticals.put(new Long(0xFF), "CLATM12");
-
-
-    clanCriticals.put(new Long(0x0121), "ISRotaryAC2");
-    clanCriticals.put(new Long(0x0122), "ISRotaryAC5");
-
-    clanCriticals.put(new Long(0x0124), "CLRotaryAC2");
-    clanCriticals.put(new Long(0x0125), "CLRotaryAC5");
-    clanCriticals.put(new Long(0x0126), "CLRotaryAC10");
-    clanCriticals.put(new Long(0x0127), "CLRotaryAC20");
+    clanCriticals.put(new Long(0xE9), "ISLRM5 (I-OS)");
+    clanCriticals.put(new Long(0xEA), "ISLRM10 (I-OS)");
+    clanCriticals.put(new Long(0xEB), "ISLRM15 (I-OS)");
+    clanCriticals.put(new Long(0xEC), "ISLRM20 (I-OS)");
+    clanCriticals.put(new Long(0xED), "ISSRM2 (I-OS)");
+    clanCriticals.put(new Long(0xEE), "ISSRM4 (I-OS)");
+    clanCriticals.put(new Long(0xEf), "ISSRM6 (I-OS)");
+    clanCriticals.put(new Long(0xF0), "ISStreakSRM2 (I-OS)");
+    clanCriticals.put(new Long(0xF1), "ISStreakSRM4 (I-OS)");
+    clanCriticals.put(new Long(0xF2), "ISStreakSRM6 (I-OS)");
+    clanCriticals.put(new Long(0xF3), "ISMRM10 (I-OS)");
+    clanCriticals.put(new Long(0xF4), "ISMRM20 (I-OS)");
+    clanCriticals.put(new Long(0xF5), "ISMRM30 (I-OS)");
+    clanCriticals.put(new Long(0xF6), "ISMRM40 (I-OS)");
 
     //    clanCriticals.put(new Long(0x01ce), "CLAC2 Ammo");
     clanCriticals.put(new Long(0x01d0), "CLAMS Ammo");
@@ -1245,22 +1409,14 @@ public class HmpFile
     clanCriticals.put(new Long(0x0203), "CLStreakLRM15 Ammo");
     clanCriticals.put(new Long(0x0204), "CLStreakLRM20 Ammo");
 
-    clanCriticals.put(new Long(0x02B1), "ISRotaryAC2 Ammo");
-    clanCriticals.put(new Long(0x02B2), "ISRotaryAC5 Ammo");
-
-    clanCriticals.put(new Long(0x2b4), "CLRotaryAC2 Ammo");
-    clanCriticals.put(new Long(0x2b5), "CLRotaryAC5 Ammo");
-    clanCriticals.put(new Long(0x2b6), "CLRotaryAC10 Ammo");
-    clanCriticals.put(new Long(0x2b7), "CLRotaryAC20 Ammo");
-
     clanCriticals.put(new Long(0x021E), "ISAC2 Ammo");
     clanCriticals.put(new Long(0x021F), "ISAC5 Ammo");
     clanCriticals.put(new Long(0x0220), "ISAC10 Ammo");
     clanCriticals.put(new Long(0x0221), "ISAC20 Ammo");
     clanCriticals.put(new Long(0x0222), "ISAMS Ammo");
-    //    clanCriticals.put(new Long(0x0223), "CLLRTorpedo10 Ammo");
-    //    clanCriticals.put(new Long(0x0224), "CLLRTorpedo15 Ammo");
-    //    clanCriticals.put(new Long(0x0225), "CLLRTorpedo20 Ammo");
+    clanCriticals.put(new Long(0x0223), "Long Tom Cannon Ammo");
+    clanCriticals.put(new Long(0x0224), "Sniper Cannon Ammo");
+    clanCriticals.put(new Long(0x0225), "Thumper Cannon Ammo");
     clanCriticals.put(new Long(0x0226), "ISLightGauss Ammo");
     clanCriticals.put(new Long(0x0227), "ISGauss Ammo");
     //    clanCriticals.put(new Long(0x0228), "CLSRTorpedo6 Ammo");
@@ -1270,6 +1426,8 @@ public class HmpFile
     clanCriticals.put(new Long(0x022D), "ISLBXAC10 Ammo");
     clanCriticals.put(new Long(0x022E), "ISLBXAC20 Ammo");
     clanCriticals.put(new Long(0x022F), "ISMG Ammo");
+    clanCriticals.put(new Long(0x0230), "ISLAC2 Ammo");
+    clanCriticals.put(new Long(0x0231), "ISLAC5 Ammo");
 
     clanCriticals.put(new Long(0x0234), "ISUltraAC2 Ammo");
     clanCriticals.put(new Long(0x0235), "ISUltraAC5 Ammo");
@@ -1291,10 +1449,17 @@ public class HmpFile
     clanCriticals.put(new Long(0x024A), "ISStreakSRM2 Ammo");
     clanCriticals.put(new Long(0x024B), "ISStreakSRM4 Ammo");
     clanCriticals.put(new Long(0x024C), "ISStreakSRM6 Ammo");
+    clanCriticals.put(new Long(0x024D), "Thunderbolt-5 Ammo");
+    clanCriticals.put(new Long(0x024E), "Thunderbolt-10 Ammo");
+    clanCriticals.put(new Long(0x024F), "Thunderbolt-15 Ammo");
+    clanCriticals.put(new Long(0x0250), "Thunderbolt-20 Ammo");
 
     clanCriticals.put(new Long(0x0259), "ISNarc Pods");
 
     clanCriticals.put(new Long(0x0265), "ISVehicleFlamer Ammo");
+    clanCriticals.put(new Long(0x0266), "ISLongTomArtillery Ammo");
+    clanCriticals.put(new Long(0x0267), "ISSniperArtillery Ammo");
+    clanCriticals.put(new Long(0x0268), "ISThumperArtillery Ammo");
 
     clanCriticals.put(new Long(0x0272), "ISLRTorpedo15 Ammo");
     clanCriticals.put(new Long(0x0273), "ISLRTorpedo20 Ammo");
@@ -1303,11 +1468,6 @@ public class HmpFile
     clanCriticals.put(new Long(0x0276), "ISSRTorpedo4 Ammo");
     clanCriticals.put(new Long(0x0277), "ISSRTorpedo2 Ammo");
     clanCriticals.put(new Long(0x0278), "ISSRTorpedo6 Ammo");
-
-    clanCriticals.put(new Long(0x028c), "CLATM3 Ammo");
-    clanCriticals.put(new Long(0x028d), "CLATM6 Ammo");
-    clanCriticals.put(new Long(0x028e), "CLATM9 Ammo");
-    clanCriticals.put(new Long(0x028f), "CLATM12 Ammo");
   }
 
   private String getCriticalName(long critical)

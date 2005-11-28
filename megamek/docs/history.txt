@@ -16,6 +16,7 @@ v0.31.3-dev (CVS)
   each suitable run that is found.
 + Bug 1365754: HMV: Mixed Tech vehicles failed to load, 2nd
 + Added optional MapHeight and MapWidth parameters to Scenario files.
++ HMP loader now understands all standard criticals, thank you jabberwockyphl for the info. 
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

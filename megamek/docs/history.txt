@@ -15,6 +15,7 @@ v0.31.3-dev (CVS)
   a cliff a mech can hide behind. 0-100 setting, being % chance to convert
   each suitable run that is found.
 + Bug 1365754: HMV: Mixed Tech vehicles failed to load, 2nd
++ Added optional MapHeight and MapWidth parameters to Scenario files.
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

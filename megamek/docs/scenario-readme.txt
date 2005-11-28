@@ -4,19 +4,20 @@ Modified by James "suvarov454" Damour
 Format of a Scenario file: 
 This document is to layout the file format of the .mms files. (Megamek Scenario Files). 
 
-Any line begining with the "#" is a comment and is not read by MegaMek when loading a Scenario. There are 9 sections to a .mms (MegaMek Scenario) file. Comprising of the following: 
+Any line begining with the "#" is a comment and is not read by MegaMek when loading a Scenario. There are 13 sections to a .mms (MegaMek Scenario) file. Comprising of the following: 
 1. The MegaMek Version 
 2. Name of the Scenario 
 3. Scenario description 
-4. Map width, Map height 
-5. Map(s) placement 
-6. Faction list 
-7. Faction location 
-8. Faction minefields
-9. Faction (A) Unit list 
-10. Faction (B) Unit list 
-11 Advantages
-12 Initial Damage to Units
+4. Board width, Board height
+5. Map width, Map height 
+6. Map(s) placement 
+7. Faction list 
+8. Faction location 
+9. Faction minefields
+10. Faction (A) Unit list 
+11. Faction (B) Unit list 
+12. Advantages
+13. Initial Damage to Units
 
 Here is a breakdown of each section: 
 1. The MegaMek Version 
@@ -30,41 +31,52 @@ MMSVersion=1
 3. Scenario description 
 # This is a description of the Scenario you are creating 
 # Scenario description Description=Rhonda's Irregulars Scenario Pack, A Few Crystals More. Page 44. 
-4. Map width, Map height 
-# Size of the map in mapboards BoardWidth=1 BoardHeight=2 This specifies how many STANDARD sized BattleTech maps that will be used. BoardWidth Specifies how many maps will be laid out East and West (Width). BoardHeight specifies how many maps will be laid out North and South (Height). 
 
-5. Map(s) placement 
+4. Board width, Board height (optional)
+# Size of the whole map board in mapsheets.
+# This specifies how many BattleTech mapsheets that will be used. BoardWidth Specifies how many maps will be laid out East and West (Width). BoardHeight specifies how many maps will be laid out North and South (Height). 
+# If no BoardWidth or BoardHeight is specified, 1x1 is assumed.
+BoardWidth=1
+BoardHeight=2
+
+5. Map width, Map height (optional)
+# Size of each mapsheet in hexes.
+# This specifies the size of each map that will be used. Default MegaMek maps are 16x17.
+# If no MapWidth or MapHeight is specified, 16x17 is assumed.
+MapWidth=16
+MapHeight=17
+
+6. Map(s) placement 
 # Maps can be specified by name. The order is left-to-right, top-to-bottom 
 # Any unspecified boards will be set to RANDOM Maps=deserthills,mountainlake 
 # If the map is in a subdirectory, the syntax is subdirectory/mapname:
 # buildings/militarybase1, for example.
 #
 # Alternate Layout
-# This laysout the specific maps for your scenario. Left to Right. If you use
+# This lays out the specific maps for your scenario. Left to Right. If you use
 # the "rotate:"  keyword, the board will appear rotated 180 degrees (North
 # becomes South, East becomes West).
 Maps=rotate:deserthills,rotate:mountainlake
 
-
-6. Faction list 
+7. Faction list 
 # The player name used to log into the server MUST match this name to play as that faction 
 # Factions=Irregulars,WacosRangers Faction List specifies the 2 Factions that will be battling in the scenario. NOTE: When you connect, you MUST login as one of the Factions listed in this section. (Case is sensitive). ALSO NOTE: you can **NOT** have spaces in these names.
 Factions=Irregulars,WacosRangers
 
-7. Faction location 
+8. Faction location 
 # Only used if the faction contains a unit without specified starting coordinates (not used in this scenario) 
 # Valid values are N,NE,E,SE,S,SW,W,NW,C (center), and R (random) 
 # Example: Location_Kurita=C This is currently the only working way of a "specified" placement. It will place all the Units in this location on the map randomly. It also determains facing randomly. 
 Location_Irregulars=W
 Location_WacosRangers=E
 
-8. Faction minefields
+9. Faction minefields
 # Gives the player minefields to deploy, the first number is conventional, the second
 # command-detonated and the last is vibrabombs.
 Minefields_Irregulars=2,0,2
 Minefields_WacosRangers=1,0,3
 
-9. Faction (A) Unit list 
+10. Faction (A) Unit list 
 # The format is: MechRef,PilotName,PilotGunnery,PilotPiloting,facing,x,y 
 # Facing and coordinates are optional. Facing is one of NW, N, NE, SE, S, SW 
 # Example: Unit_Irregulars_1=HGN-732,Col Rhonda Snord,2,1,N,01,32 
@@ -100,7 +112,7 @@ Mech Type with variant Pilot Name Pilot,Gunnery skills Facing.
 Here are the availible options: N,NE,E,SE,S,SW,W,NW,C (center), and R (random) 
 Hex Placement. The first set of numbers specifies the Hex the unit is in, second set of numbers is the Hex it is facing. (NOTE: The Hex Placement option is NOT used in the current version). 
 
-10. Faction (B) Unit list 
+11. Faction (B) Unit list 
 # The format is: MechRef,PilotName,PilotGunnery,PilotPiloting,facing,x,y 
 # Facing and coordinates are optional. Facing is one of NW, N, NE, SE, S, SW 
 # Example: Unit_Irregulars_1=HGN-732,Col Rhonda Snord,2,1,N,01,32 
@@ -130,7 +142,7 @@ Mech Type with variant Pilot Name Pilot,Gunnery skills Facing.
 Here are the availible options: N,NE,E,SE,S,SW,W,NW,C (center), and R (random) 
 Hex Placement. The first set of numbers specifies the Hex the unit is in, second set of numbers is the Hex it is facing. (NOTE: The Hex Placement option is NOT used in the current version). 
 
-11 Advantages:
+12. Advantages:
 # Additional advantages to add to pilots. Most of these require the 'MaxTech Level3 Pilot Advantages' game
 # option to be turned on. The possible values are:
 # dodge_maneuver, maneuvering_ace, melee_specialist, pain_resistance
@@ -138,7 +150,7 @@ Hex Placement. The first set of numbers specifies the Hex the unit is in, second
 Unit_Irregulars_2_Advantages=melee_specialist pain_resistance
 Unit_WacosRangers_2_Advantages=dodge_maneuver
 
-12 Initial Damage to Units:
+13. Initial Damage to Units:
 # To initially damage units, you can use a unit armor property, which specifies
 # armor and internal values.  Values above the unit's nominal value for that location
 # will be ignored.  

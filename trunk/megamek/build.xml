@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- This is an ant build file. See: "http://jakarta.apache.org/ant" -->
-<!-- To see userlevel commands and their descpription 'type ant -projecthelp' -->
+<!-- To see userlevel commands and their descpription type 'ant -projecthelp' -->
 <!-- from a command prompt where this file is located -->
 
 <project default="all" name="MegaMek" basedir=".">

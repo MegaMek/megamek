@@ -524,28 +524,41 @@ public class ScenarioLoader
     
     /**
      * Load board files and create the megaboard.
-     * For now I have to make the huge assumption that all boards are the default
-     * size (16x17), because there's currently no way to specify the desired boardheight
-     * in the scenario file
      */
     private IBoard createBoard(Properties p)
         throws Exception
     {
+        int mapWidth = 16, mapHeight = 17;
+        if (p.getProperty("MapWidth") == null) {
+            System.out.println("No map width specified.  Using "+mapWidth);
+        }
+        else {
+            mapWidth = Integer.parseInt(p.getProperty("MapWidth"));
+        }
+        
+        if (p.getProperty("MapHeight") == null) {
+            System.out.println("No map height specified.  Using "+mapHeight);
+        }
+        else {
+            mapHeight = Integer.parseInt(p.getProperty("MapHeight"));
+        }
+
         int nWidth = 1, nHeight = 1;
         if (p.getProperty("BoardWidth") == null) {
-            System.out.println("No board width specified.  Using 1");
+            System.out.println("No board width specified.  Using "+nWidth);
         }
         else {
             nWidth = Integer.parseInt(p.getProperty("BoardWidth"));
         }
         
         if (p.getProperty("BoardHeight") == null) {
-            System.out.println("No board height specified.  Using 1");
+            System.out.println("No board height specified.  Using "+nHeight);
         }
         else {
             nHeight = Integer.parseInt(p.getProperty("BoardHeight"));
         }
         
+        System.out.println("Mapsheets are "+mapWidth+ " by " + mapHeight +" hexes.");
         System.out.println("Constructing " + nWidth + " by " + nHeight + " board.");
         
         // load available boards
@@ -596,7 +609,7 @@ public class ScenarioLoader
         }
         
         // construct the big board
-        return BoardUtilities.combine(16, 17, nWidth, nHeight, ba);
+        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba);
     }
     
     private Properties loadProperties()

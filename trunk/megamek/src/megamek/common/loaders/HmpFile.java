@@ -706,7 +706,11 @@ public class HmpFile
     criticals.put(new Long(0xF8), "Combine");
     criticals.put(new Long(0xF9), "Lift Hoist");
     criticals.put(new Long(0xFA), "Chainsaw");
-    
+
+    criticals.put(new Long(0xFC), "CLATM3");
+    criticals.put(new Long(0xFD), "CLATM6");
+    criticals.put(new Long(0xFE), "CLATM9");
+    criticals.put(new Long(0xFF), "CLATM12");    
     criticals.put(new Long(0x100), "SB Gauss Rifle (UB)");
     criticals.put(new Long(0x101), "Caseless AC/2 (THB)");
     criticals.put(new Long(0x102), "Caseless AC/5 (THB)");
@@ -715,6 +719,12 @@ public class HmpFile
     criticals.put(new Long(0x105), "Heavy AC/2 (THB)");
     criticals.put(new Long(0x106), "Heavy AC/5 (THB)");
     criticals.put(new Long(0x107), "Heavy AC/10 (THB)");
+    criticals.put(new Long(0x108), "ISTHBLBXAC2");
+    criticals.put(new Long(0x109), "ISTHBLBXAC5");
+    criticals.put(new Long(0x10A), "ISTHBLBXAC20");
+    criticals.put(new Long(0x10B), "ISUltraAC2 (THB)");
+    criticals.put(new Long(0x10C), "ISUltraAC10 (THB)");
+    criticals.put(new Long(0x10D), "ISUltraAC20 (THB)");
     criticals.put(new Long(0x10E), "ELRM-5 (THB)");
     criticals.put(new Long(0x10F), "ELRM-10 (THB)");
     criticals.put(new Long(0x110), "ELRM-15 (THB)");
@@ -730,33 +740,8 @@ public class HmpFile
     criticals.put(new Long(0x11A), "Thunderbolt-10 (THB)");
     criticals.put(new Long(0x11B), "Thunderbolt-15 (THB)");
     criticals.put(new Long(0x11C), "Thunderbolt-20 (THB)");
-    criticals.put(new Long(0x120), "ISLaserAMS (THB)");
-    criticals.put(new Long(0x12C), "Mortar/1 (THB)");
-    criticals.put(new Long(0x12D), "Mortar/2 (THB)");
-    criticals.put(new Long(0x12E), "Mortar/4 (THB)");
-    criticals.put(new Long(0x12F), "Mortar/8 (THB)");
-    criticals.put(new Long(0x130), "Backhoe");
-    criticals.put(new Long(0x131), "Drill");
-    criticals.put(new Long(0x132), "Rock Cutter");
-    criticals.put(new Long(0x71), "CLStreakLRM5 (OS)");
-    criticals.put(new Long(0x72), "CLStreakLRM10 (OS)");
-    criticals.put(new Long(0x73), "CLStreakLRM15 (OS)");
-    criticals.put(new Long(0x74), "CLStreakLRM20 (OS)");
-    
-    criticals.put(new Long(0xFC), "CLATM3");
-    criticals.put(new Long(0xFD), "CLATM6");
-    criticals.put(new Long(0xFE), "CLATM9");
-    criticals.put(new Long(0xFF), "CLATM12");
-
-    criticals.put(new Long(0x108), "ISTHBLBXAC2");
-    criticals.put(new Long(0x109), "ISTHBLBXAC5");
-    criticals.put(new Long(0x10A), "ISTHBLBXAC20");
-    criticals.put(new Long(0x10B), "ISUltraAC2 (THB)");
-    criticals.put(new Long(0x10C), "ISUltraAC10 (THB)");
-    criticals.put(new Long(0x10D), "ISUltraAC20 (THB)");
-
     criticals.put(new Long(0x11F), "Watchdog ECM (THB)");
-
+    criticals.put(new Long(0x120), "ISLaserAMS (THB)");
     criticals.put(new Long(0x121), "ISRotaryAC2");
     criticals.put(new Long(0x122), "ISRotaryAC5");
 
@@ -766,6 +751,18 @@ public class HmpFile
     criticals.put(new Long(0x127), "CLRotaryAC20");
     criticals.put(new Long(0x128), "CLPlasmaRifle");
 
+    criticals.put(new Long(0x12C), "Mortar/1 (THB)");
+    criticals.put(new Long(0x12D), "Mortar/2 (THB)");
+    criticals.put(new Long(0x12E), "Mortar/4 (THB)");
+    criticals.put(new Long(0x12F), "Mortar/8 (THB)");
+    criticals.put(new Long(0x130), "Backhoe");
+    criticals.put(new Long(0x131), "Drill");
+    criticals.put(new Long(0x132), "Rock Cutter");
+    criticals.put(new Long(0x133), "CLStreakLRM5 (OS)"); //?
+    criticals.put(new Long(0x134), "CLStreakLRM10 (OS)"); //?
+    criticals.put(new Long(0x135), "CLStreakLRM15 (OS)");//?
+    criticals.put(new Long(0x136), "CLStreakLRM20 (OS)");//?
+    
     criticals.put(new Long(0x28c), "CLATM3 Ammo");
     criticals.put(new Long(0x28d), "CLATM6 Ammo");
     criticals.put(new Long(0x28e), "CLATM9 Ammo");
@@ -1403,7 +1400,6 @@ public class HmpFile
     clanCriticals.put(new Long(0x01fe), "CLSRTorpedo2 Ammo");
     clanCriticals.put(new Long(0x01ff), "CLSRTorpedo4 Ammo");
     clanCriticals.put(new Long(0x0200), "CLSRTorpedo6 Ammo");
-
     clanCriticals.put(new Long(0x0201), "CLStreakLRM5 Ammo");
     clanCriticals.put(new Long(0x0202), "CLStreakLRM10 Ammo");
     clanCriticals.put(new Long(0x0203), "CLStreakLRM15 Ammo");

@@ -425,7 +425,9 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOkay) {
-            send();
+            if(client != null) {
+                send();
+            }
             doSave();
         } else if (e.getSource() == butDefaults) {
             resetToDefaults();
@@ -452,7 +454,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
 
         // If the panel is editable, the player can commit or reset.
         texPass.setEnabled( editable );
-        butOkay.setEnabled( editable && client != null );
+        butOkay.setEnabled( editable );
         butDefaults.setEnabled( editable );
 
         // Update our data element.

@@ -171,6 +171,15 @@ public class MapSettings implements Serializable {
     /** special FX modifier */
     private int fxMod = 0;
 
+    /** Parameters for the city generator */
+    private int cityBlocks = 8;
+    private String cityType = "NONE";
+    private String cityBuildingType = "1,2,3,4";
+    private int cityMinCF = 30;
+    private int cityMaxCF = 60;
+    private int cityMinFloors = 1;
+    private int cityMaxFloors = 6;
+    
     /** end Map Generator Parameters */
 
     /** Creates new MapSettings */
@@ -246,6 +255,13 @@ public class MapSettings implements Serializable {
         this.probFreeze = other.getProbFreeze();
         this.probDrought = other.getProbDrought();
         this.fxMod = other.getFxMod();
+        this.cityBlocks = other.getCityBlocks();
+        this.cityType = other.getCityType();
+        this.cityBuildingType = other.getCityBuildingType();
+        this.cityMinCF = other.getCityMinCF();
+        this.cityMaxCF = other.getCityMaxCF();
+        this.cityMinFloors = other.getCityMinFloors();
+        this.cityMaxFloors = other.getCityMaxFloors();
         this.boardBuildings = other.getBoardBuildings();
     }
     
@@ -604,6 +620,13 @@ public class MapSettings implements Serializable {
             (this.maxCraters != other.getMaxCraters()) ||
             (this.theme != other.getTheme()) ||
             (this.fxMod != other.getFxMod()) ||
+            (this.cityBlocks != other.getCityBlocks()) ||
+            (this.cityType != other.getCityType()) ||
+            (this.cityBuildingType != other.getCityBuildingType()) ||
+            (this.cityMinCF != other.getCityMinCF()) ||
+            (this.cityMaxCF != other.getCityMaxCF()) ||
+            (this.cityMinFloors != other.getCityMinFloors()) ||
+            (this.cityMaxFloors != other.getCityMaxFloors()) ||
             (this.probFlood != other.getProbFlood()) ||
             (this.probForestFire != other.getProbForestFire()) ||
             (this.probFreeze != other.getProbFreeze()) ||
@@ -684,7 +707,14 @@ public class MapSettings implements Serializable {
     public int getProbFreeze() {return probFreeze;}
     public int getProbDrought() {return probDrought;}
     public int getFxMod() {return fxMod;}
- 
+    public int getCityBlocks() {return cityBlocks;}
+    public String getCityType() {return cityType;}
+    public String getCityBuildingType() {return cityBuildingType;}
+    public int getCityMinCF() {return cityMinCF;}
+    public int getCityMaxCF() {return cityMaxCF;}
+    public int getCityMinFloors() {return cityMinFloors;}
+    public int getCityMaxFloors() {return cityMaxFloors;}
+
     /** set the Parameters for the Map Generator 
     */
     public void setElevationParams(int hill, int newRange, int prob) {
@@ -811,5 +841,21 @@ public class MapSettings implements Serializable {
     }
     public void setAlgorithmToUse(int alg) {
         algorithmToUse = alg;
-    }    
+    }
+    
+    public void setCityParams( int cityBlocks,
+            String cityType,
+            String cityBuildingType,
+            int cityMinCF,
+            int cityMaxCF,
+            int cityMinFloors,
+            int cityMaxFloors) {
+        this.cityBlocks = cityBlocks;
+        this.cityType = cityType;
+        this.cityBuildingType = cityBuildingType;
+        this.cityMinCF = cityMinCF;
+        this.cityMaxCF = cityMaxCF;
+        this.cityMinFloors = cityMinFloors;
+        this.cityMaxFloors = cityMaxFloors;
+    }
 }

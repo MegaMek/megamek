@@ -263,8 +263,12 @@ public class BoardUtilities {
         }
 
         // add buildings 
-        for(int i=0; i<mapSettings.getBoardBuildings().size();i++){
-            placeBuilding(result, (BuildingTemplate)(mapSettings.getBoardBuildings().elementAt(i)));
+        Vector buildings = mapSettings.getBoardBuildings();
+        if(buildings.size() == 0) {
+            buildings = CityBuilder.generateCity(mapSettings);
+        }
+        for(int i=0; i<buildings.size();i++){
+            placeBuilding(result, (BuildingTemplate)(buildings.elementAt(i)));
         }
         return result;
     }

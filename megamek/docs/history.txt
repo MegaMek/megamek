@@ -19,6 +19,7 @@ v0.31.3-dev (CVS)
 + HMP loader now understands all standard criticals, thank you jabberwockyphl for the info. 
 + Bug HMP loader regression with bloodhound active probe
 + Bug GameOptionsDialog can't save when used from mekwars
++ Torren's city builder (in progress)
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

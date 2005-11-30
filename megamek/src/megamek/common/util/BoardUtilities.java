@@ -265,7 +265,7 @@ public class BoardUtilities {
         // add buildings 
         Vector buildings = mapSettings.getBoardBuildings();
         if(buildings.size() == 0) {
-            buildings = CityBuilder.generateCity(mapSettings);
+            buildings = CityBuilder.generateCity(mapSettings, result);
         }
         for(int i=0; i<buildings.size();i++){
             placeBuilding(result, (BuildingTemplate)(buildings.elementAt(i)));
@@ -296,7 +296,7 @@ public class BoardUtilities {
             if(woods > 0) {
                 hex.addTerrain(tf.createTerrain(Terrains.WOODS, woods));
             } else {
-                hex.addTerrain(tf.createTerrain(Terrains.PAVEMENT, 1));
+                //hex.addTerrain(tf.createTerrain(Terrains.PAVEMENT, 1));
             }
             hex.addTerrain(tf.createTerrain(Terrains.BUILDING, type, true, exits));
             hex.addTerrain(tf.createTerrain(Terrains.BLDG_CF, cf));

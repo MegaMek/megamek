@@ -16,11 +16,15 @@ package megamek.common.util;
 
 import java.util.Random;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
+import java.util.HashSet;
 import java.util.Vector;
 
 import megamek.common.Coords;
+import megamek.common.IBoard;
+import megamek.common.ITerrain;
+import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
+import megamek.common.Terrains;
 
 /**
  * 
@@ -53,18 +57,19 @@ public class CityBuilder {
      * @param buildingTemplate
      * @return
      */
-    public static Vector generateCity(MapSettings mapSettings){
+    public static Vector generateCity(MapSettings mapSettings, IBoard board){
         
         
         Vector<BuildingTemplate> buildingList = new Vector<BuildingTemplate>();
-        Vector<String> buildingTypes = new Vector<String>();
+        Vector<Integer> buildingTypes = new Vector<Integer>();
         
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
         int roads = mapSettings.getCityBlocks();
         String cityType = mapSettings.getCityType();
         
-        TreeSet<String> cityPlan = new TreeSet<String>();
+        HashSet<Coords> cityPlan = new HashSet<Coords>();
+        HashSet<Coords> buildingUsed = new HashSet<Coords>();
         
         if ( cityType.equalsIgnoreCase("HUB") )
             cityPlan = buildHubCity(width,height,roads);
@@ -77,26 +82,48 @@ public class CityBuilder {
         
         StringTokenizer types = new StringTokenizer(mapSettings.getCityBuildingType(),",");
         
-        while ( types.hasMoreTokens() )
-            buildingTypes.add(types.nextToken());
+        while ( types.hasMoreTokens() ) {
+            try {
+                buildingTypes.add(Integer.parseInt(types.nextToken()));
+            }catch(Exception ex) {
+                ex.printStackTrace();
+            } //someone entered a bad building type.
+        }
         
         int typeSize = buildingTypes.size();
 
         Random r = new Random(System.currentTimeMillis());
 
-        Coords coord = new Coords();
-        String stringCoord = "";
         Vector coordList = new Vector();
+        
+        ITerrainFactory tf = Terrains.getTerrainFactory();
         
         for ( int x = 0; x < width; x++){
             for ( int y = 0; y < height; y++ ){
-                stringCoord = Integer.toString(x)+","+Integer.toString(y);
+                Coords coord = new Coords(x,y);
                 
-                if ( cityPlan.contains(stringCoord) )
+                if ( cityPlan.contains(coord) && board.contains(coord)) {
+                    board.getHex(coord).addTerrain(tf.createTerrain(Terrains.ROAD, 2));
                     continue;
+                }
                 
+                if(r.nextInt(100) > mapSettings.getCityDensity()) {
+                    continue; //empty lot
+                }
                 coordList = new Vector();
-                coordList.add(new Coords(x,y));
+                coordList.add(coord);
+                buildingUsed.add(coord);
+                while(r.nextInt(100) < mapSettings.getCityDensity()) {
+                    //try to make a bigger building!
+                    int dir = r.nextInt(6);
+                    Coords next = coord.translated(dir);
+                    if(cityPlan.contains(next) || buildingUsed.contains(next) || !board.contains(next)) {
+                        break; //oh well, cant expand here
+                    }
+                    coordList.add(next);
+                    buildingUsed.add(next);                    
+                }
+
     
                 int floors = mapSettings.getCityMaxFloors()-mapSettings.getCityMinFloors();
                 
@@ -115,10 +142,12 @@ public class CityBuilder {
                 int type = 1;
                 try{
                     if (typeSize == 1 )
-                        type = Integer.parseInt(buildingTypes.elementAt(0));
+                        type = buildingTypes.elementAt(0);
                     else 
-                        type = Integer.parseInt(buildingTypes.elementAt(r.nextInt(typeSize)));
-                }catch(Exception ex){} //someone entered a bad building type.
+                        type = buildingTypes.elementAt(r.nextInt(typeSize));
+                }catch(Exception ex) {
+                    ex.printStackTrace();
+                } //someone entered a bad building type.
                 
                 buildingList.add(new BuildingTemplate(type,coordList,totalCF,floors,-1));
             }
@@ -136,15 +165,15 @@ public class CityBuilder {
         return buildingList;
     }
 
-    private static TreeSet<String> buildGridCity(int maxX, int maxY,int roads){
-        TreeSet<String> grid = new TreeSet<String>();
+    private static HashSet<Coords> buildGridCity(int maxX, int maxY,int roads){
+        HashSet<Coords> grid = new HashSet<Coords>();
         
         Random r = new Random(System.currentTimeMillis());
         //north south lanes first
         for( int y = 0; y < roads; y++){
             int startY = r.nextInt(maxY/roads)+(y*(maxY/roads));
             for ( int x = 0; x < maxX; x++){
-                grid.add(Integer.toString(x)+","+Integer.toString(startY));
+                grid.add(new Coords(x,startY));
             }
                 
         }
@@ -152,15 +181,15 @@ public class CityBuilder {
         for ( int x = 0; x < roads; x++){
             int startX = r.nextInt(maxX/roads)+(x*(maxX/roads));
             for ( int y = 0; y < maxY; y++ ){
-                grid.add(Integer.toString(startX)+","+Integer.toString(y));
+                grid.add(new Coords(startX,y));
             }
         }
         
         return grid;
     }
     
-    private static TreeSet<String> buildHubCity(int maxX, int maxY,int roads){
-        TreeSet<String> grid = new TreeSet<String>();
+    private static HashSet<Coords> buildHubCity(int maxX, int maxY,int roads){
+        HashSet<Coords> grid = new HashSet<Coords>();
         int midX = maxX/2;
         int midY = maxY/2;
         
@@ -175,28 +204,32 @@ public class CityBuilder {
         directions.add(E);
         directions.add(W);
         
-        roads = Math.min(roads,8);
+        roads = Math.max(roads,8);
         Random r = new Random(System.currentTimeMillis());
-        grid.add(Integer.toString(midX)+","+Integer.toString(midY));
+        grid.add(new Coords(midX,midY));
  
         //have the city hub be the mid point with all the hexes around it cleared out
-        for ( int hex=0; hex < 6; hex++ )
-            grid.add(Integer.toString(Coords.xInDir(midX,midY,hex))+","+Integer.toString(Coords.yInDir(midX,midY,hex)));
+        /*for ( int hex=0; hex < 6; hex++ )
+            grid.add(new Coords(Coords.xInDir(midX,midY,hex),Coords.yInDir(midX,midY,hex)));*/
         
+        int x=0;
+        int y=0;
         for ( int dir = 0; dir < roads; dir++){
-            String coords = Integer.toString(midX)+","+Integer.toString(midY);
-            int x = midX;
-            int y = midY;
+            if(dir < 8) {
+                x = midX;
+                y = midY;
+            } else {
+                x = r.nextInt(maxX);
+                y = r.nextInt(maxY);
+            }
+            Coords coords = new Coords(x,y);
             
             int baseDirection = -1;
             
-            if ( directions.size() > 1)
-                baseDirection = directions.remove(r.nextInt(directions.size()));
-            else
-                baseDirection = directions.remove(0);
+            baseDirection = directions.elementAt(dir % directions.size());
 
             while (x >= 0 && x <= maxX && y >= 0 && y <= maxY ){
-                int choice = r.nextInt(10);
+                int choice = r.nextInt(8);
                 
                 switch ( baseDirection ){
                 case N:
@@ -278,53 +311,74 @@ public class CityBuilder {
                     }
                     break;
                 case E:
-                    coords = selectNextGrid(baseDirection,coords);
+                    if ( choice < 4 )
+                        coords = selectNextGrid(baseDirection,coords);
+                    else if ( choice < 6 ){//SE
+                        coords = selectNextGrid(SE,coords);
+                    }else if ( choice < 8){//SW
+                        coords = selectNextGrid(SW,coords);
+                    }else if ( choice < 9 ){//S
+                        coords = selectNextGrid(S,coords);
+                    }else{//N
+                        coords = selectNextGrid(N,coords);
+                    }
                     break;
                 case W:
-                    coords = selectNextGrid(baseDirection,coords);
+                    if ( choice < 4 )
+                        coords = selectNextGrid(baseDirection,coords);
+                    else if ( choice < 6 ){//SE
+                        coords = selectNextGrid(SE,coords);
+                    }else if ( choice < 8){//NE
+                        coords = selectNextGrid(NE,coords);
+                    }else if ( choice < 9 ){//S
+                        coords = selectNextGrid(S,coords);
+                    }else{//N
+                        coords = selectNextGrid(N,coords);
+                    }
+                    break;
+                }
+                if(/*dir >= 8 && */grid.contains(coords) && x!=midX && y!=midY) {
                     break;
                 }
                 grid.add(coords);
-                //System.err.println(coords);
-                StringTokenizer coord = new StringTokenizer(coords,",");
                 
-                x = Integer.parseInt(coord.nextToken());
-                y = Integer.parseInt(coord.nextToken());
+                x = coords.x;
+                y = coords.y;
             }
             
         }
         return grid;
     }
     
-    private static TreeSet<String> buildMetroCity(int maxX, int maxY){
-        TreeSet<String> grid = new TreeSet<String>();
+    private static HashSet<Coords> buildMetroCity(int maxX, int maxY){
+        HashSet<Coords> grid = new HashSet<Coords>();
         int midX = maxX/2;
         int midY = maxY/2;
         
-        grid.add(Integer.toString(midX)+","+Integer.toString(midY));
+        grid.add(new Coords(midX,midY));
  
         //have the city hub be the mid point with all the hexes around it cleared out
         for ( int hex=0; hex < 6; hex++ )
-            grid.add(Integer.toString(Coords.xInDir(midX,midY,hex))+","+Integer.toString(Coords.yInDir(midX,midY,hex)));
+            grid.add(new Coords(Coords.xInDir(midX,midY,hex),Coords.yInDir(midX,midY,hex)));
 
         //first east west road 
         for ( int x=0; x < maxX; x++)
-            grid.add(Integer.toString(x)+","+Integer.toString(midY/2));
+            grid.add(new Coords(x,midY/2));
         
         //second east west road 
         for ( int x=0; x < maxX; x++)
-            grid.add(Integer.toString(x)+","+Integer.toString(midY+(midY/2)));
+            grid.add(new Coords(x,midY+(midY/2)));
         
         //First North South Road
         for ( int y=0; y < maxY; y++)
-            grid.add(Integer.toString(midX/2)+","+Integer.toString(y));
+            grid.add(new Coords(midX/2,y));
 
         //second North South Road
         for ( int y=0; y < maxY; y++)
-            grid.add(Integer.toString(midX+(midX/2))+","+Integer.toString(y));
+            grid.add(new Coords(midX+(midX/2),y));
 
         for ( int dir = 0; dir < 8; dir++){
-            String coords = Integer.toString(midX)+","+Integer.toString(midY);
+            Coords coords = new Coords(midX,midY);
             int x = midX;
             int y = midY;
             
@@ -333,30 +387,24 @@ public class CityBuilder {
                 coords = selectNextGrid(dir,coords);
                 grid.add(coords);
                 //System.err.println(coords);
-                StringTokenizer coord = new StringTokenizer(coords,",");
                 
-                x = Integer.parseInt(coord.nextToken());
-                y = Integer.parseInt(coord.nextToken());
+                x = coords.x;
+                y = coords.y;
             }
             
         }
         return grid;
     }
 
-    public static String selectNextGrid(int dir, String coords){
-        StringTokenizer coord = new StringTokenizer(coords,",");
-        
-        //System.err.println("Dir: "+dir);
-        
-        int x = Integer.parseInt(coord.nextToken());
-        int y = Integer.parseInt(coord.nextToken());
+    public static Coords selectNextGrid(int dir, Coords coords){
+        Coords result = coords.translated(dir);
         
         if ( dir == E )
-            return Integer.toString(++x)+","+Integer.toString(y); 
+            result.x++; 
         
         if ( dir == W )
-            return Integer.toString(--x)+","+Integer.toString(y); 
+            result.x--; 
 
-        return Integer.toString(Coords.xInDir(x,y,dir))+","+Integer.toString(Coords.yInDir(x,y,dir)); 
+        return result; 
     }
 }

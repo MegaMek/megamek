@@ -172,13 +172,14 @@ public class MapSettings implements Serializable {
     private int fxMod = 0;
 
     /** Parameters for the city generator */
-    private int cityBlocks = 8;
+    private int cityBlocks = 32;
     private String cityType = "NONE";
     private String cityBuildingType = "1,2,3,4";
     private int cityMinCF = 30;
     private int cityMaxCF = 60;
     private int cityMinFloors = 1;
     private int cityMaxFloors = 6;
+    private int cityDensity = 75;
     
     /** end Map Generator Parameters */
 
@@ -262,6 +263,7 @@ public class MapSettings implements Serializable {
         this.cityMaxCF = other.getCityMaxCF();
         this.cityMinFloors = other.getCityMinFloors();
         this.cityMaxFloors = other.getCityMaxFloors();
+        this.cityDensity = other.getCityDensity();
         this.boardBuildings = other.getBoardBuildings();
     }
     
@@ -627,6 +629,7 @@ public class MapSettings implements Serializable {
             (this.cityMaxCF != other.getCityMaxCF()) ||
             (this.cityMinFloors != other.getCityMinFloors()) ||
             (this.cityMaxFloors != other.getCityMaxFloors()) ||
+            (this.cityDensity != other.getCityDensity()) ||
             (this.probFlood != other.getProbFlood()) ||
             (this.probForestFire != other.getProbForestFire()) ||
             (this.probFreeze != other.getProbFreeze()) ||
@@ -714,6 +717,7 @@ public class MapSettings implements Serializable {
     public int getCityMaxCF() {return cityMaxCF;}
     public int getCityMinFloors() {return cityMinFloors;}
     public int getCityMaxFloors() {return cityMaxFloors;}
+    public int getCityDensity() {return cityDensity;}
 
     /** set the Parameters for the Map Generator 
     */
@@ -849,7 +853,8 @@ public class MapSettings implements Serializable {
             int cityMinCF,
             int cityMaxCF,
             int cityMinFloors,
-            int cityMaxFloors) {
+            int cityMaxFloors,
+            int cityDensity) {
         this.cityBlocks = cityBlocks;
         this.cityType = cityType;
         this.cityBuildingType = cityBuildingType;
@@ -857,5 +862,6 @@ public class MapSettings implements Serializable {
         this.cityMaxCF = cityMaxCF;
         this.cityMinFloors = cityMinFloors;
         this.cityMaxFloors = cityMaxFloors;
+        this.cityDensity = cityDensity;
     }
 }

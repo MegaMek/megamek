@@ -98,6 +98,8 @@ public class MechSelectorDialog
     private Label m_lCount = new Label();
 
     private int m_count;
+    private int m_old_nType;
+    private int m_old_nUnitType;
 
     private Panel m_pUpper = new Panel();
     BufferedPanel m_pPreview = new BufferedPanel();
@@ -317,7 +319,7 @@ public class MechSelectorDialog
         // Loading mechs can take a while, so it will have its own thread.
         // This prevents the UI from freezing, and allows the
         // "Please wait..." dialog to behave properly on various Java VMs.
-        filterMechs();
+        filterMechs(false);
         m_mechList.invalidate();  // force re-layout of window
         pack();
         setLocation(computeDesiredLocation());
@@ -370,22 +372,60 @@ public class MechSelectorDialog
         m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50"));
         m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
         m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
-        for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements() ;) {
-            EquipmentType et = (EquipmentType)e.nextElement();
-            if (et instanceof WeaponType) {
-                m_cWeapons1.add(et.getInternalName());
-                m_cWeapons2.add(et.getInternalName());
-            }
-        }
-        for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements() ;) {
-            EquipmentType et = (EquipmentType)e.nextElement();
-            if (et instanceof MiscType) {
-                    m_cEquipment.add(et.getInternalName());
-            }
-        }
+        populateWeaponsAndEquipmentChoices();
     }
 
-    private void filterMechs() {
+    private void populateWeaponsAndEquipmentChoices() {
+        m_cWeapons1.removeAll();
+        m_cWeapons2.removeAll();
+        m_cEquipment.removeAll();
+        m_tWeapons1.setText("");
+        m_tWeapons2.setText("");
+        m_chkEquipment.setState(false);
+        int nType = m_chType.getSelectedIndex();
+        int nUnitType = m_chUnitType.getSelectedIndex();
+        for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements() ;) {
+            EquipmentType et = (EquipmentType)e.nextElement();
+            if (et instanceof WeaponType
+                && (et.getTechLevel() == nType
+                    || ((nType == TechConstants.T_LEVEL_2_ALL)
+                        && ((et.getTechLevel() == TechConstants.T_IS_LEVEL_1)
+                            || (et.getTechLevel() == TechConstants.T_IS_LEVEL_2)
+                            || (et.getTechLevel() == TechConstants.T_CLAN_LEVEL_2)))
+                    || ((nType == TechConstants.T_IS_LEVEL_2_ALL
+                         || nType == TechConstants.T_IS_LEVEL_2)
+                        && ((et.getTechLevel() == TechConstants.T_IS_LEVEL_1)
+                            || (et.getTechLevel() == TechConstants.T_IS_LEVEL_2))))) {
+                if ((UnitType.getTypeName(nUnitType).equals("Mek")
+                     || UnitType.getTypeName(nUnitType).equals("Tank"))
+                    && (et.hasFlag(WeaponType.F_PROTOMECH)
+                        || et.hasFlag(WeaponType.F_INFANTRY)
+                        || et.hasFlag(WeaponType.F_BATTLEARMOR))) {
+                    continue;
+                }
+                m_cWeapons1.add(et.getName());
+                m_cWeapons2.add(et.getName());
+            }
+            if (et instanceof MiscType
+                && (et.getTechLevel() == nType
+                    || ((nType == TechConstants.T_LEVEL_2_ALL)
+                        && ((et.getTechLevel() == TechConstants.T_IS_LEVEL_1)
+                            || (et.getTechLevel() == TechConstants.T_IS_LEVEL_2)
+                            || (et.getTechLevel() == TechConstants.T_CLAN_LEVEL_2)))
+                    || ((nType == TechConstants.T_IS_LEVEL_2_ALL
+                         || nType == TechConstants.T_IS_LEVEL_2)
+                        && ((et.getTechLevel() == TechConstants.T_IS_LEVEL_1)
+                            || (et.getTechLevel() == TechConstants.T_IS_LEVEL_2))))) {
+                m_cEquipment.add(et.getName());
+            }
+        }
+        m_cWeapons1.invalidate();
+        m_cWeapons2.invalidate();
+        m_cEquipment.invalidate();
+        this.pack();
+    }
+
+    private void filterMechs(boolean calledByAdvancedSearch) {
         Vector vMechs = new Vector();
         int nClass = m_chWeightClass.getSelectedIndex();
         int nType = m_chType.getSelectedIndex();
@@ -419,6 +459,12 @@ public class MechSelectorDialog
         m_mechsCurrent = new MechSummary[vMechs.size()];
         vMechs.copyInto(m_mechsCurrent);
         m_count = vMechs.size();
+        if (!calledByAdvancedSearch
+            && (m_old_nType != nType || m_old_nUnitType != nUnitType)) {
+            populateWeaponsAndEquipmentChoices();
+        }
+        m_old_nType = nType;
+        m_old_nUnitType = nUnitType;
         sortMechs();
     }
     
@@ -461,7 +507,7 @@ public class MechSelectorDialog
         int second = Integer.parseInt(s.substring(s.indexOf('/') + 1));
         if (first != second) {
             //Search already active, reset list before starting new one.
-            filterMechs();
+            filterMechs(true);
         }
 
         Vector vMatches = new Vector();
@@ -544,7 +590,7 @@ public class MechSelectorDialog
         if (weapon1 > -1) {
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().elementAt(i)).getType();
-                if (wt.getInternalName().equals(m_cWeapons1.getSelectedItem())) {
+                if (wt.getName().equals(m_cWeapons1.getSelectedItem())) {
                     count++;
                 }
             }
@@ -560,7 +606,7 @@ public class MechSelectorDialog
         if (weapon2 > -1) {
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().elementAt(i)).getType();
-                if (wt.getInternalName().equals(m_cWeapons2.getSelectedItem())) {
+                if (wt.getName().equals(m_cWeapons2.getSelectedItem())) {
                     count++;
                 }
             }
@@ -572,7 +618,7 @@ public class MechSelectorDialog
         if (m_chkEquipment.getState()) {
             for (Enumeration e = entity.getMisc(); e.hasMoreElements(); ) {
                 MiscType mt = (MiscType)((Mounted)e.nextElement()).getType();
-                if (mt.getInternalName().equals(m_cEquipment.getSelectedItem())) {
+                if (mt.getName().equals(m_cEquipment.getSelectedItem())) {
                     count++;
                 }
             }
@@ -596,7 +642,7 @@ public class MechSelectorDialog
         m_chkEquipment.setState(false);
         m_cEquipment.select(0);
 
-        filterMechs();
+        filterMechs(false);
     }
 
     private Point computeDesiredLocation() {
@@ -691,7 +737,7 @@ public class MechSelectorDialog
                  || ie.getSource() == m_chType
                  || ie.getSource() == m_chUnitType) {
             clearMechPreview();
-            filterMechs();
+            filterMechs(false);
         } else if (ie.getSource() == m_mechList) {
             updateWidgetEnablements();
             int selected = m_mechList.getSelectedIndex();

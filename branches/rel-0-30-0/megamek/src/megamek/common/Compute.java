@@ -455,23 +455,24 @@ public class Compute {
     public static Entity findSpotter(IGame game, Entity attacker,
             Targetable target) {
         Entity spotter = null;
+        int taggedBy = ((Entity)target).getTaggedBy();
         ToHitData bestMods = new ToHitData(ToHitData.IMPOSSIBLE, "");
 
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity other = (Entity) i.nextElement();
-            if (!other.isSpotting() || attacker.isEnemyOf(other)) {
-                continue; // useless to us...
-            }
-            // what are this guy's mods to the attack?
-            LosEffects los = LosEffects.calculateLos(game, other.getId(),
-                    target);
-            ToHitData mods = los.losModifiers(game);
-            los.setTargetCover(LosEffects.COVER_NONE);
-            mods.append(getAttackerMovementModifier(game, other.getId()));
-            // is this guy a better spotter?
-            if (spotter == null || mods.getValue() < bestMods.getValue()) {
-                spotter = other;
-                bestMods = mods;
+            if ( (other.isSpotting() || taggedBy == other.getId() )
+                 && !attacker.isEnemyOf(other)) {
+                // what are this guy's mods to the attack?
+                LosEffects los = LosEffects.calculateLos(game, other.getId(),
+                                                         target);
+                ToHitData mods = los.losModifiers(game);
+                los.setTargetCover(LosEffects.COVER_NONE);
+                mods.append(getAttackerMovementModifier(game, other.getId()));
+                // is this guy a better spotter?
+                if (spotter == null || mods.getValue() < bestMods.getValue()) {
+                    spotter = other;
+                    bestMods = mods;
+                }
             }
         }
 

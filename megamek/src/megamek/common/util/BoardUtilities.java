@@ -290,14 +290,9 @@ public class BoardUtilities {
                     exits |= (1<<dir);
                 }
             }
-            //remove everything, except woods
-            int woods = hex.terrainLevel(Terrains.WOODS);
+            //remove everything
             hex.removeAllTerrains();
-            if(woods > 0) {
-                hex.addTerrain(tf.createTerrain(Terrains.WOODS, woods));
-            } else {
-                //hex.addTerrain(tf.createTerrain(Terrains.PAVEMENT, 1));
-            }
+            hex.addTerrain(tf.createTerrain(Terrains.PAVEMENT, 1));
             hex.addTerrain(tf.createTerrain(Terrains.BUILDING, type, true, exits));
             hex.addTerrain(tf.createTerrain(Terrains.BLDG_CF, cf));
             hex.addTerrain(tf.createTerrain(Terrains.BLDG_ELEV, height));

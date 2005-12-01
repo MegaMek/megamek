@@ -22,6 +22,11 @@ v0.31.3-dev (CVS)
 + Torren's city builder (in progress)
 + Some work on city generator
 + Refined advanced mek search
++ City builder: improve HUB algorithm to work better on large maps (e.g. 32x34, =4 mapsheets)
++ City builder: don't build over water, swamps or on mountain tops (just looks nicer)
++ City builder: put roads in (HUB type only so far)
++ City builder: build "bridges" in straight lines where a road crosses water
++ City builder: density parameter (1-100) controls number of empty lots and multihex buildings
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

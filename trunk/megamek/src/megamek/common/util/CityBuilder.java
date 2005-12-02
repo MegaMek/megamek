@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import megamek.common.Building;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.IHex;
@@ -59,7 +60,7 @@ public class CityBuilder {
      * @param buildingTemplate
      * @return
      */
-    public static Vector generateCity(MapSettings mapSettings, IBoard board){
+    public static Vector generateCity(MapSettings mapSettings, IBoard board, boolean genericRoad){
         
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
@@ -68,13 +69,16 @@ public class CityBuilder {
         String cityType = mapSettings.getCityType();
         
         HashSet<Coords> cityPlan = new HashSet<Coords>();
+        if(genericRoad) {
+            addGenericRoad(board, cityPlan);
+        }
         
         if ( cityType.equalsIgnoreCase("HUB") )
-            cityPlan = buildHubCity(width,height,roads, board);
+            cityPlan.addAll(buildHubCity(width,height,roads, board));
         else if ( cityType.equalsIgnoreCase("METRO") )
-            cityPlan = buildMetroCity(width,height, board);
+            cityPlan.addAll(buildMetroCity(width,height, board));
         else if ( cityType.equalsIgnoreCase("GRID"))
-            cityPlan = buildGridCity(width,height,roads / 4, board);
+            cityPlan.addAll(buildGridCity(width,height,roads / 4, board));
         else
             return new Vector();
         
@@ -129,14 +133,14 @@ public class CityBuilder {
                 if ( floors <= 0 )
                     floors = mapSettings.getCityMinFloors();
                 else
-                    floors = r.nextInt(floors)+mapSettings.getCityMinFloors();
+                    floors = r.nextInt(floors + 1)+mapSettings.getCityMinFloors();
                 
                 int totalCF = mapSettings.getCityMaxCF()-mapSettings.getCityMinCF();
                 
                 if ( totalCF <= 0)
                     totalCF = mapSettings.getCityMinCF();
                 else
-                    totalCF = r.nextInt(totalCF)+mapSettings.getCityMinCF();
+                    totalCF = r.nextInt(totalCF + 1)+mapSettings.getCityMinCF();
                 
                 int type = getBuildingTypeByCF(totalCF);
                 
@@ -474,5 +478,20 @@ public class CityBuilder {
         if(cf <= 40) return Building.MEDIUM;
         if(cf <= 90) return Building.HEAVY;
         return Building.HARDENED;
+    }
+    
+    /** 
+     * Adds an Road to the map. Goes from one border to another, and
+     * has one turn in it. Map must be at least 3x3.
+     */
+    public static void addGenericRoad(IBoard board, HashSet grid) {
+        Coords c = new Coords(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
+        int side0 = Compute.randomInt(6);
+        int side1 = Compute.randomInt(5);
+        if (side1 >= side0) {
+            side1++;
+        }
+        buildStraightRoad(board, c, side0, 1, grid);
+        buildStraightRoad(board, c, side1, 1, grid);
     }
 }

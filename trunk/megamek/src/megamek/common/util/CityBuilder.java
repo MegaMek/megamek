@@ -16,10 +16,10 @@ package megamek.common.util;
 
 import java.util.Enumeration;
 import java.util.Random;
-import java.util.StringTokenizer;
 import java.util.HashSet;
 import java.util.Vector;
 
+import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.IHex;
@@ -45,11 +45,11 @@ public class CityBuilder {
     static final int W  = 6;
     static final int E  = 7;
 
-    public CityBuilder() {
+/*    public CityBuilder() {
         super();
-        // TODO Auto-generated constructor stub
+        //  Auto-generated constructor stub
     }
-
+*/
     /**
      * This function will generate a city with a grid lay out.
      * 4 rounds running North and South and 4 roads running east west
@@ -61,44 +61,36 @@ public class CityBuilder {
      */
     public static Vector generateCity(MapSettings mapSettings, IBoard board){
         
-        
-        Vector<BuildingTemplate> buildingList = new Vector<BuildingTemplate>();
-        Vector<Integer> buildingTypes = new Vector<Integer>();
-        
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
         int roads = mapSettings.getCityBlocks();
+        roads = (roads * Math.min(width, height)) / 16; //scale for bigger maps
         String cityType = mapSettings.getCityType();
         
         HashSet<Coords> cityPlan = new HashSet<Coords>();
-        HashSet<Coords> buildingUsed = new HashSet<Coords>();
         
         if ( cityType.equalsIgnoreCase("HUB") )
             cityPlan = buildHubCity(width,height,roads, board);
         else if ( cityType.equalsIgnoreCase("METRO") )
-            cityPlan = buildMetroCity(width,height);
+            cityPlan = buildMetroCity(width,height, board);
         else if ( cityType.equalsIgnoreCase("GRID"))
-            cityPlan = buildGridCity(width,height,roads);
+            cityPlan = buildGridCity(width,height,roads / 4, board);
         else
-            return buildingList;
+            return new Vector();
         
-        StringTokenizer types = new StringTokenizer(mapSettings.getCityBuildingType(),",");
-        
-        while ( types.hasMoreTokens() ) {
-            try {
-                buildingTypes.add(Integer.parseInt(types.nextToken()));
-            }catch(Exception ex) {
-                ex.printStackTrace();
-            } //someone entered a bad building type.
-        }
-        
-        int typeSize = buildingTypes.size();
+        return placeBuildings(mapSettings, board, cityPlan);
+    }
 
+    public static Vector placeBuildings(MapSettings mapSettings, IBoard board, HashSet<Coords> cityPlan) {
+            
+        int width = mapSettings.getBoardWidth();
+        int height = mapSettings.getBoardHeight();
+        Vector<BuildingTemplate> buildingList = new Vector<BuildingTemplate>();
+        HashSet<Coords> buildingUsed = new HashSet<Coords>();
+        
         Random r = new Random(System.currentTimeMillis());
 
         Vector coordList = new Vector();
-        
-        ITerrainFactory tf = Terrains.getTerrainFactory();
         
         for ( int x = 0; x < width; x++){
             for ( int y = 0; y < height; y++ ){
@@ -146,50 +138,32 @@ public class CityBuilder {
                 else
                     totalCF = r.nextInt(totalCF)+mapSettings.getCityMinCF();
                 
-                int type = 1;
-                try{
-                    if (typeSize == 1 )
-                        type = buildingTypes.elementAt(0);
-                    else 
-                        type = buildingTypes.elementAt(r.nextInt(typeSize));
-                }catch(Exception ex) {
-                    ex.printStackTrace();
-                } //someone entered a bad building type.
+                int type = getBuildingTypeByCF(totalCF);
                 
                 buildingList.add(new BuildingTemplate(type,coordList,totalCF,floors,-1));
             }
         }        
         
-        /*System.err.println("BuildingList size: "+buildingList.size());
-        
-        for ( BuildingTemplate template : buildingList){
-            Enumeration coords = template.getCoords();
-            while ( coords.hasMoreElements() ){
-                Coords tempcoord = (Coords)coords.nextElement();
-                System.err.println("Template Coords: "+tempcoord.x+","+tempcoord.y);
-            }
-        }*/
         return buildingList;
     }
 
-    private static HashSet<Coords> buildGridCity(int maxX, int maxY,int roads){
+    private static HashSet<Coords> buildGridCity(int maxX, int maxY,int roads,IBoard board){
         HashSet<Coords> grid = new HashSet<Coords>();
         
         Random r = new Random(System.currentTimeMillis());
-        //north south lanes first
+
         for( int y = 0; y < roads; y++){
             int startY = r.nextInt(maxY/roads)+(y*(maxY/roads));
-            for ( int x = 0; x < maxX; x++){
-                grid.add(new Coords(x,startY));
-            }
-                
+            Coords coords = new Coords(-1,startY);
+            int roadStyle = r.nextInt(2) + 1;
+            buildStraightRoad(board, coords, E, roadStyle, grid);
         }
         
         for ( int x = 0; x < roads; x++){
             int startX = r.nextInt(maxX/roads)+(x*(maxX/roads));
-            for ( int y = 0; y < maxY; y++ ){
-                grid.add(new Coords(startX,y));
-            }
+            Coords coords = new Coords(startX,-1);
+            int roadStyle = r.nextInt(2) + 1;
+            buildStraightRoad(board, coords, S, roadStyle, grid);
         }
         
         return grid;
@@ -250,7 +224,6 @@ public class CityBuilder {
                 }
             }
             Coords coords = new Coords(x,y);
-            Coords next = null;
             
             int nextDirection = baseDirection;
             while (coords.x >= -1 && coords.x <= maxX && coords.y >= -1 && coords.y <= maxY ){
@@ -271,17 +244,9 @@ public class CityBuilder {
                         nextDirection = baseDirection;
                     }
                 }
-                next = selectNextGrid(nextDirection,coords);
-                if(board.contains(next) && hexNeedsBridge(board.getHex(next))) {
-                    Coords end = tryToBuildBridge(board, coords, nextDirection); 
-                    if(null == end) break;
-                    coords = end;
-                } else {
-                    connectHexes(board, coords, next, roadStyle);
-                    connectHexes(board, next, coords, roadStyle);
-                    coords = next;
-                }
-                if(/*dir >= 8 &&*/ grid.contains(coords) && x!=midX && y!=midY) {
+                
+                coords = extendRoad(board, coords, nextDirection, roadStyle);
+                if(coords == null || (grid.contains(coords) && x!=midX && y!=midY)) {
                     break;
                 }
                 grid.add(coords);
@@ -294,7 +259,7 @@ public class CityBuilder {
         return grid;
     }
     
-    private static HashSet<Coords> buildMetroCity(int maxX, int maxY){
+    private static HashSet<Coords> buildMetroCity(int maxX, int maxY, IBoard board){
         HashSet<Coords> grid = new HashSet<Coords>();
         int midX = maxX/2;
         int midY = maxY/2;
@@ -306,35 +271,24 @@ public class CityBuilder {
             grid.add(new Coords(Coords.xInDir(midX,midY,hex),Coords.yInDir(midX,midY,hex)));
 
         //first east west road 
-        for ( int x=0; x < maxX; x++)
-            grid.add(new Coords(x,midY/2));
-        
+        Coords coords = new Coords(-1, midY/2);
+        buildStraightRoad(board, coords, E, 1, grid);
+
         //second east west road 
-        for ( int x=0; x < maxX; x++)
-            grid.add(new Coords(x,midY+(midY/2)));
+        coords = new Coords(-1, midY+(midY/2));
+        buildStraightRoad(board, coords, E, 1, grid);
         
         //First North South Road
-        for ( int y=0; y < maxY; y++)
-            grid.add(new Coords(midX/2,y));
+        coords = new Coords(midX/2, -1);
+        buildStraightRoad(board, coords, S, 1, grid);
 
         //second North South Road
-        for ( int y=0; y < maxY; y++)
-            grid.add(new Coords(midX+(midX/2),y));
+        coords = new Coords(midX+(midX/2), -1);
+        buildStraightRoad(board, coords, S, 1, grid);
 
         for ( int dir = 0; dir < 8; dir++){
-            Coords coords = new Coords(midX,midY);
-            int x = midX;
-            int y = midY;
-            
-            while (x >= 0 && x <= maxX && y >= 0 && y <= maxY ){
-                
-                coords = selectNextGrid(dir,coords);
-                grid.add(coords);
-                //System.err.println(coords);
-                
-                x = coords.x;
-                y = coords.y;
-            }
+            coords = new Coords(midX,midY);
+            buildStraightRoad(board, coords, dir, 2, grid);
             
         }
         return grid;
@@ -446,6 +400,7 @@ public class CityBuilder {
         }
         if(end != null) {
             //got start and end, can we make a bridge?
+            if(hexes.size() == 0) return null;
             int elev1 = board.getHex(start).getElevation();
             int elev2 = board.getHex(end).getElevation();
             int elevBridge = board.getHex(end).terrainLevel(Terrains.BRIDGE);
@@ -470,5 +425,54 @@ public class CityBuilder {
             connectHexes(board, end, hexes.lastElement(), 1);
         }
         return end;
+    }
+    
+    private static Coords extendRoad(IBoard board, Coords coords, int nextDirection, int roadStyle) {
+        Coords next = selectNextGrid(nextDirection,coords);
+        if(board.contains(next) && hexNeedsBridge(board.getHex(next))) {
+            if(nextDirection==E || nextDirection==W) {
+                nextDirection = coords.direction(next);
+            }
+            Coords end = tryToBuildBridge(board, coords, nextDirection); 
+            return end;
+        } else {
+            connectHexes(board, coords, next, roadStyle);
+            connectHexes(board, next, coords, roadStyle);
+            return next;
+        }
+    }
+    
+    private static Coords resumeAfterObstacle(IBoard board, Coords coords, int nextDirection) {
+        Coords next = selectNextGrid(nextDirection, coords);
+        while(board.contains(next) && !isHexBuildable(board.getHex(next))) {
+            next = selectNextGrid(nextDirection, next);
+        }
+        return next;
+    }
+    
+    private static void buildStraightRoad(IBoard board, Coords start, int direction, int roadStyle, HashSet grid) {
+        Coords coords = start;
+        
+        while ( coords != null && coords.x <= board.getWidth() && coords.x >= -1 && coords.y <= board.getHeight() && coords.y >= -1){
+            grid.add(coords);
+            Coords next = extendRoad(board, coords, direction, roadStyle);
+            if(next == null) {
+                coords = resumeAfterObstacle(board, coords, direction);
+            }
+            else coords = next;
+        }
+
+    }
+    
+    /**
+     * Utility function for setting building type from CF table
+     * @param cf
+     * @return building type 
+     */
+    public static int getBuildingTypeByCF(int cf) {
+        if(cf <= 15) return Building.LIGHT;
+        if(cf <= 40) return Building.MEDIUM;
+        if(cf <= 90) return Building.HEAVY;
+        return Building.HARDENED;
     }
 }

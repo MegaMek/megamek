@@ -151,6 +151,35 @@ in the middle column.
 it has picked until the game starts.  [RANDOM] means that the Server will pick
 a map as soon as you hit "Okay".
 
+[GENERATED] means that the server will create random terrain for you to play on.
+You need to use the "generated map settings" button to select what kind of terrain
+you want.
+There is a set of settings with drop down list of choices.  For most settings, you
+can pick "none", "low", "medium" or "high". Except for cities, where you pick a 
+type of city instead.
+Theme - leave blank for the default theme, or enter a theme supported by your tileset.
+        grass, lunar, mars, snow are supported by the standard tileset
+Elevation - how hilly you want the map
+Cliffs - chance of 2+ level elevation changes, if you have enough elevation already
+Woods - higher settings have more and larger tree patchs and more heavy woods
+Roughs - higher settings have more and larger rough patches
+Lakes - works the same as woods, but deep water instead of heavy woods
+Swamps/Pavement/Ice/Rubble/Fortified all work like roughs. 
+Fortified hexes are described in the MaxTech rulebook.
+River - chance to have a river running across the map
+Road - chance to have a single road running across the map
+Craters - chance for craters, also the size and number.  Good for a "moonscape" map
+City:
+HUB - roads wander out from the centre with plenty of twists and turns. A common pattern for older european cities. 
+GRID - vertical and horizontal roads divide the city into rectangular blocks. A pattern common in newer cities, especially in north america and asia. 
+METRO - a grid with roads forming a diagonal X from the centre as well. 
+
+Water and swamp will affect the city plan, as the builders will have to make bridges to cross it or just give up and stop the road at the edge. 
+Mountain tops (4+ height) are expensive to build on, so they will only build in the valleys. 
+Other terrain will just be bulldozed in the name of progress, though you may find a few hexes left between buildings.  
+
+There is also a "advanced" button, which lets you fine-tune the map to your liking.
+See the "advanced map settings" section near the end of this file
 
 Initiative Report:
 
@@ -376,6 +405,70 @@ contain mixed tech units.  In addition, some equipment cannot differ
 in technology type from the base chassis.  Units with an Inner Sphere
 chassis must mount Inner Sphere engines, internal structure, armor,
 and CASE.  Clan units have the same restricted equipment list.
+
+
+ADVANCED MAP SETTINGS
+---------------------
+Tip: use the basic settings, press OK, then go into map settings again, select
+advanced, and the boxes are filled in with the values from the basic settings
+
+Board Size - set the size of the map sheet generated.  When using generated
+maps, it is better to generate one large play area than to try and combine
+multiple mapsheets.
+Theme - leave blank, or enter a theme supported by the tileset.
+        grass, lunar, mars, snow are themes supported by the standard tileset.
+Elevation settings:
+	Amount of elevation: changes the "roughness" of the map, a low number
+	will have less elevation changes than a high number
+	Elevation range: height difference between the lowest and highest hex 
+	on the map.  Level 0 is set to the most common height.
+	Probability of inverting: % chance to make a sinkhole instead of a mountain.
+	Algorithm: 0 generates rolling hills, 1 generates spiky terrain, 2 combines
+	both generators.  0 is likely to have less LOS blocking terrain.
+	Cliffs: % chance to change a steep slope into a cliff.  For example, if
+	a group of level 1 hexes have level 0 and level 2 hexes adjacent, they will all
+	be moved to level 0, giving a cliff for mechs to hide behind.  The effect is
+	quite subtle unless you have quite a high elevation range to begin with.
+Patch terrain settings (woods, roughs, swamps, lakes, pavements, rubble, fortified, ice):
+	Each of these work the same way, but place a different type of terrain.
+	Number of XXX: the number of patches which would be present on a 16x17 map.
+	scales up if you have a bigger map.
+	XXX size in hexes: the size of each patch of terrain
+	probability for heavy woods/deep water: % chance to place instead of light.
+River/road settings:
+	Probability is a % chance to have one on the map.  If a road crosses water,
+	you'll get a bridge.
+Crater settings:
+	Probability for craters: % chance that craters are present
+	Number of craters: as for number of woods, the number that would be present on
+	a 16x17 map, scaled up for larger maps.
+	Crater radius: size range for each crater.
+Special effects settings:
+	Each probability is a % chance.
+	FX modifier changes the amount of effect each one has. Values should be small,
+	e.g -3 to +3
+	fires: woods hexes will be set on fire or already burned down to rough at the
+	start of the game. + modifier increases number of burned down hexes, - modifier
+	increases number of unscathed woods.
+	frozen water: water hexes are ice-covered. +modifier decreases the water depth,
+	so for example with a modifier of 1, shallow water hexes are frozen solid and
+	deep water hexes are converted to ice covered shallow water.
+	flooded map: hexes with negative elevations are converted to water hexes, while
+	level 0 hexes are converted to swamps.  Ideal for hovercraft and naval units.
+	modifier changes the "sea level"
+	drought: water hexes are dried up, to shallower water, swamp or rough.  Modifier
+	changes the severity of the drought.
+	special effects can be combined - e.g. flood + drought = rocky shore, 
+	flood + frozen + high modifier = glacier
+City Settings:
+	City type is the same as for the basic settings.
+	City Blocks (0-) [16 default]: higher numbers mean more roads on the map. 
+	Scales with map size.
+	CF min/max (1-150) [10-100 default]: CF range for generated buildings. 
+	The CF determines the building type from the table in BMR. 
+	Floors min/max (1-50) [1-6 default]: height range for generated buildings 
+	Density (1-100) [75 default]: % chance of a building in each hex where a 
+	building is possible. Also chance to try and build multi-hex buildings. 
 
 DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK
 ----------------------------------------------

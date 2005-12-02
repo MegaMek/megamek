@@ -4426,6 +4426,10 @@ public abstract class Entity
             return false;
         }
         
+        if(getPosition() == null) {
+            return false; //not on board?
+        }
+        
         // check if we have iNarc pods attached that can be brushed off
         if (hasINarcPodsAttached() && this instanceof Mech) {
             return true;

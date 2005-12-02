@@ -34,6 +34,10 @@ v0.31.3-dev (CVS)
 + Bug: NPE occurred determining if an ejected Mechwarrior was eligable for physicals (position was null)
 + Further refinements to advanced mek search
 + Random map dialog documented in readme.txt
++ Randomly generated road uses the city builder method (avoids duplication and doesn't mess up a city)
++ atmospheric.tileset added depth 0 water image (it was displaying as open ground)
++ classic.tileset removed ice-skinned pavement from the snow theme 
+  (obsolete now ice is supported, and caused some pavements to display as ice in the grass theme)
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

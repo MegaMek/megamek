@@ -258,14 +258,15 @@ public class BoardUtilities {
         }
         
         /* Add the road */
+        boolean roadNeeded = false;
         if (Compute.randomInt(100)<mapSettings.getProbRoad()) {
-            addRoad(result, reverseHex);
+            roadNeeded = true;
         }
 
         // add buildings 
         Vector buildings = mapSettings.getBoardBuildings();
         if(buildings.size() == 0) {
-            buildings = CityBuilder.generateCity(mapSettings, result);
+            buildings = CityBuilder.generateCity(mapSettings, result, roadNeeded);
         }
         for(int i=0; i<buildings.size();i++){
             placeBuilding(result, (BuildingTemplate)(buildings.elementAt(i)));
@@ -610,50 +611,7 @@ public class BoardUtilities {
         }        
         return result;
     }
-    
-    
-    /** 
-     * Adds an Road to the map. Goes from one border to another, and
-     * has one turn in it. Map must be at least 3x3.
-     */
-    public static void addRoad(IBoard board, HashMap reverseHex) {
-        int width = board.getWidth();
-        int height = board.getHeight();
         
-        if ((width < 3) || (height < 3)) {
-            return;
-        }
-        /* first determine the turning hex, and then the direction
-         of the doglegs */
-        Point start = new Point(Compute.randomInt(width - 2) + 1, 
-                Compute.randomInt(height - 2) + 1);
-        Point p = null;
-        int[] side = new int[2];
-        IHex field = null;
-        int lastLandElevation = 0;
-        
-        side[0] = Compute.randomInt(6);
-        side[1] = Compute.randomInt(5);
-        if (side[1] >= side[0]) {
-            side[1]++;
-        }
-        ITerrainFactory f = Terrains.getTerrainFactory();
-        for (int i = 0; i < 2; i++) {
-            field = board.getHex(start.x, start.y);
-            do {
-                if (field.containsTerrain(Terrains.WATER)) {
-                    field.addTerrain(f.createTerrain(Terrains.WATER, 0));
-                    field.setElevation(lastLandElevation);
-                } else {
-                    lastLandElevation = field.getElevation();
-                }
-                field.addTerrain(f.createTerrain(Terrains.ROAD, 1));
-                p = (Point)reverseHex.get(field);
-                field = board.getHexInDir(p.x, p.y, side[i]);
-            } while (field != null); 
-        } 
-    }
-    
     /** Flood negative hex levels 
      *  Shoreline / salt marshes effect
      *  Works best with more elevation

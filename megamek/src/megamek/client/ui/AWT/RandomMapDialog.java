@@ -58,6 +58,7 @@ public class RandomMapDialog
     private Choice choRivers = null;
     private Choice choSwamp = null;
     private Choice choCraters = null;
+    private Choice choCity = null;
 
     private Label labElevation = null;
     private Label labCliffs = null;
@@ -73,6 +74,7 @@ public class RandomMapDialog
     private Label labSwamp = null;
     private Label labTheme = null;
     private Label labCraters = null;
+    private Label labCity = null;
     
     private SimpleLine slElevation = null;
     private SimpleLine slCliffs = null;
@@ -88,6 +90,7 @@ public class RandomMapDialog
     private SimpleLine slSwamp = null;
     private SimpleLine slBoardSize = null;
     private SimpleLine slCraters = null;
+    private SimpleLine slCity = null;
 
     private SimpleLine slElevationAd = null;
     private SimpleLine slWoodsAd = null;
@@ -102,6 +105,7 @@ public class RandomMapDialog
     private SimpleLine slSwampAd = null;
     private SimpleLine slBoardSizeAd = null;
     private SimpleLine slCratersAd = null;
+    private SimpleLine slCityAd = null;
     
     private TextField texTheme;
 
@@ -216,7 +220,19 @@ public class RandomMapDialog
     private TextField texProbFreeze;
     private Label labFxMod;
     private TextField texFxMod;
-    
+
+    /*City*/
+    private Label labCityBlocks;
+    private Label labCityCF;
+    private Label labCityFloors;
+    private Label labCityDensity;
+    private TextField texCityBlocks;
+    private TextField texCityMinCF;
+    private TextField texCityMaxCF;
+    private TextField texCityMinFloors;
+    private TextField texCityMaxFloors;
+    private TextField texCityDensity;
+
     /** Algorithm */
     private Label labAlgorithmToUse;
     private TextField texAlgorithmToUse;
@@ -299,6 +315,7 @@ public class RandomMapDialog
             addOption(labIce, choIce, slIce);
             addOption(labRubble, choRubble, slRubble);
             addOption(labFortified, choFortified, slFortified);
+            addOption(labCity, choCity, slCity);
 
         } else {
 
@@ -375,6 +392,14 @@ public class RandomMapDialog
             addLabelTextField(labProbFreeze, texProbFreeze);
             addLabelTextField(labProbFlood, texProbFlood);
             addLabelTextField(labFxMod, texFxMod);
+            
+            addSeparator(slCityAd);
+
+            addOption(labCity, choCity, slCity);
+            addLabelTextField(labCityBlocks, texCityBlocks);
+            addLabelTextField(labCityCF, texCityMinCF, texCityMaxCF, "-");
+            addLabelTextField(labCityFloors, texCityMinFloors, texCityMaxFloors, "-");
+            addLabelTextField(labCityDensity, texCityDensity);
         }
         scrAll.add(panOptions);
         
@@ -480,6 +505,14 @@ public class RandomMapDialog
         choRoads = new Choice();
         fillChoice(choRoads);
         slRoads = new SimpleLine(NORMAL_LINE_WIDTH);
+        
+        labCity = new Label(Messages.getString("RandomMapDialog.labCity"), Label.LEFT); //$NON-NLS-1$
+        choCity = new Choice();
+        choCity.add(NONE);
+        choCity.add("HUB");
+        choCity.add("GRID");
+        choCity.add("METRO");
+        slCity = new SimpleLine(NORMAL_LINE_WIDTH);
 
         // Advanced setting components...
         labTheme = new Label(Messages.getString("RandomMapDialog.labTheme"), Label.LEFT);
@@ -645,6 +678,18 @@ public class RandomMapDialog
         texProbFlood = new TextField(2);
         texFxMod = new TextField(2);
         
+        /* Buildings */
+        labCityBlocks = new Label(Messages.getString("RandomMapDialog.labCityBlocks"), Label.LEFT);
+        labCityCF = new Label(Messages.getString("RandomMapDialog.labCityCF"), Label.LEFT);
+        labCityFloors = new Label(Messages.getString("RandomMapDialog.labCityFloors"), Label.LEFT);
+        labCityDensity = new Label(Messages.getString("RandomMapDialog.labCityDensity"), Label.LEFT);
+        texCityBlocks = new TextField(2);
+        texCityMinCF = new TextField(2);
+        texCityMaxCF = new TextField(2);
+        texCityMinFloors = new TextField(2);
+        texCityMaxFloors = new TextField(2);
+        texCityDensity = new TextField(2);
+        
         /** Algorithm */
         labAlgorithmToUse = new Label(Messages.getString("RandomMapDialog.labAlgorithmToUse"), Label.LEFT); //$NON-NLS-1$
         texAlgorithmToUse = new TextField(2);
@@ -662,6 +707,7 @@ public class RandomMapDialog
         slSwampAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slBoardSizeAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slCratersAd = new SimpleLine(ADVANCED_LINE_WIDTH);
+        slCityAd = new SimpleLine(ADVANCED_LINE_WIDTH);
 
     }
     
@@ -751,6 +797,7 @@ public class RandomMapDialog
     private void loadValues() {
         texBoardWidth.setText(new Integer(mapSettings.getBoardWidth()).toString());
         texBoardHeight.setText(new Integer(mapSettings.getBoardHeight()).toString());
+        texTheme.setText(mapSettings.getTheme());
 
         texHilliness.setText(new Integer(mapSettings.getHilliness()).toString());
         texRange.setText(new Integer(mapSettings.getRange()).toString());
@@ -812,6 +859,14 @@ public class RandomMapDialog
         texProbFlood.setText(new Integer(mapSettings.getProbFlood()).toString());
         texFxMod.setText(new Integer(mapSettings.getFxMod()).toString());
         
+        choCity.select(mapSettings.getCityType());
+        texCityBlocks.setText(new Integer(mapSettings.getCityBlocks()).toString());
+        texCityMinCF.setText(new Integer(mapSettings.getCityMinCF()).toString());
+        texCityMaxCF.setText(new Integer(mapSettings.getCityMaxCF()).toString());
+        texCityMinFloors.setText(new Integer(mapSettings.getCityMinFloors()).toString());
+        texCityMaxFloors.setText(new Integer(mapSettings.getCityMaxFloors()).toString());
+        texCityDensity.setText(new Integer(mapSettings.getCityDensity()).toString());
+
         texAlgorithmToUse.setText(new Integer(mapSettings.getAlgorithmToUse()).toString());
     }
     
@@ -832,6 +887,13 @@ public class RandomMapDialog
         int drought,fire,freeze,flood,fxmod;
         int algorithmToUse;
         String theme="";
+        String cityType;
+        int cityBlocks = 4;
+        int cityMinCF = 10;
+        int cityMaxCF = 100;
+        int cityMinFloors = 1;
+        int cityMaxFloors = 6;
+        int cityDensity = 75;
 
         try {
             boardWidth = Integer.parseInt(texBoardWidth.getText());
@@ -901,7 +963,13 @@ public class RandomMapDialog
                 freeze = Integer.parseInt(texProbFreeze.getText());
                 flood = Integer.parseInt(texProbFlood.getText());
                 fxmod = Integer.parseInt(texFxMod.getText());
-            } catch (NumberFormatException ex) {
+                cityBlocks = Integer.parseInt(texCityBlocks.getText());
+                cityMinCF = Integer.parseInt(texCityMinCF.getText());
+                cityMaxCF = Integer.parseInt(texCityMaxCF.getText());
+                cityMinFloors = Integer.parseInt(texCityMinFloors.getText());
+                cityMaxFloors = Integer.parseInt(texCityMaxFloors.getText());
+                cityDensity = Integer.parseInt(texCityDensity.getText());
+                } catch (NumberFormatException ex) {
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.OnlyIntegersWarn")).show(); //$NON-NLS-1$
                 return false;
             }
@@ -1163,6 +1231,20 @@ public class RandomMapDialog
                 return false;
             }
             
+            if (cityMinCF < 1 || cityMaxCF > 150) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.CFOutOfRangeWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            
+            if (cityMinFloors < 1 || cityMaxFloors > 100) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.FloorsOutOfRangeWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
+            
+            if (cityDensity < 1 || cityDensity > 100) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.DensityOutOfRangeWarn")).show(); //$NON-NLS-1$
+                return false;
+            }
             
         } else {
             String s = choElevation.getSelectedItem();
@@ -1420,6 +1502,12 @@ public class RandomMapDialog
                 minCraters = 6;
                 maxCraters = 14;
             }
+            cityBlocks = 16;
+            cityMinCF = 10;
+            cityMaxCF = 100;
+            cityMinFloors = 1;
+            cityMaxFloors = 6;
+            cityDensity = 75;
             algorithmToUse = 0;
             probInvert = 0;
             fxmod = 0;
@@ -1429,6 +1517,8 @@ public class RandomMapDialog
             drought = 0;
         }
         
+        cityType = choCity.getSelectedItem();
+
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setElevationParams(hilliness, range, probInvert);
         mapSettings.setCliffParam(cliffs);
@@ -1453,6 +1543,13 @@ public class RandomMapDialog
         mapSettings.setCraterParam(probCrater, minCraters, maxCraters, minRadius, maxRadius);
         mapSettings.setSpecialFX(fxmod, fire, freeze, flood, drought);
         mapSettings.setAlgorithmToUse(algorithmToUse);
+        mapSettings.setCityParams(cityBlocks,
+                cityType,
+                cityMinCF,
+                cityMaxCF,
+                cityMinFloors,
+                cityMaxFloors,
+                cityDensity);
         
         mapSettings.setTheme(theme);
         

@@ -32,6 +32,7 @@ v0.31.3-dev (CVS)
 + City parameters added to random map dialog
 + Bug: random map dialog wasn't initialising theme from map settings
 + Bug: NPE occurred determining if an ejected Mechwarrior was eligable for physicals (position was null)
++ Further refinements to advanced mek search
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

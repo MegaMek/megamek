@@ -89,6 +89,7 @@ public class MechSelectorDialog
     private Choice m_cArmor = new Choice();
     private TextField m_tWeapons1 = new TextField(2);
     private Choice m_cWeapons1 = new Choice();
+    private Choice m_cOrAnd = new Choice();
     private TextField m_tWeapons2 = new TextField(2);
     private Choice m_cWeapons2 = new Choice();
     private Checkbox m_chkEquipment = new Checkbox();
@@ -241,6 +242,7 @@ public class MechSelectorDialog
 
             Panel row6 = new Panel();
             row6.setLayout(new FlowLayout(FlowLayout.LEFT));
+            row6.add(m_cOrAnd);
             row6.add(new Label(Messages.getString("MechSelectorDialog.Search.WeaponsAtLeast")));
             row6.add(m_tWeapons2);
             row6.add(m_cWeapons2);
@@ -372,6 +374,8 @@ public class MechSelectorDialog
         m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50"));
         m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
         m_cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
+        m_cOrAnd.addItem(Messages.getString("MechSelectorDialog.Search.or"));
+        m_cOrAnd.addItem(Messages.getString("MechSelectorDialog.Search.and"));
         populateWeaponsAndEquipmentChoices();
     }
 
@@ -582,20 +586,26 @@ public class MechSelectorDialog
             }
         }
 
+        boolean weaponLine1Active = false;
+        boolean weaponLine2Active = false;
+        boolean foundWeapon1 = false;
+        boolean foundWeapon2 = false;
+
         int count = 0;
         int weapon1 = -1;
         try {
             weapon1 = Integer.parseInt(m_tWeapons1.getText());
         } catch (NumberFormatException ne) { }
         if (weapon1 > -1) {
+            weaponLine1Active = true;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().elementAt(i)).getType();
                 if (wt.getName().equals(m_cWeapons1.getSelectedItem())) {
                     count++;
                 }
             }
-            if (count < weapon1)
-                return false;
+            if (count >= weapon1)
+                foundWeapon1 = true;
         }
 
         count = 0;
@@ -604,14 +614,29 @@ public class MechSelectorDialog
             weapon2 = Integer.parseInt(m_tWeapons2.getText());
         } catch (NumberFormatException ne) { }
         if (weapon2 > -1) {
+            weaponLine2Active = true;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().elementAt(i)).getType();
                 if (wt.getName().equals(m_cWeapons2.getSelectedItem())) {
                     count++;
                 }
             }
-            if (count < weapon2)
-                return false;
+            if (count >= weapon2)
+                foundWeapon2 = true;
+        }
+
+        if (weaponLine1Active && !weaponLine2Active && !foundWeapon1)
+            return false;
+        if (weaponLine2Active && !weaponLine1Active && !foundWeapon2)
+            return false;
+        if (weaponLine1Active && weaponLine2Active) {
+            if (m_cOrAnd.getSelectedIndex() == 0 /* 0 is "or" choice */) {
+                if (!foundWeapon1 && !foundWeapon2)
+                    return false;
+            } else { //"and" choice in effect
+                if (!foundWeapon1 || !foundWeapon2)
+                    return false;
+            }
         }
 
         count = 0;
@@ -637,6 +662,7 @@ public class MechSelectorDialog
         m_cArmor.select(0);
         m_tWeapons1.setText("");
         m_cWeapons1.select(0);
+        m_cOrAnd.select(0);
         m_tWeapons2.setText("");
         m_cWeapons2.select(0);
         m_chkEquipment.setState(false);

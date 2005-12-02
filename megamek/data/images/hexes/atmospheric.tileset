@@ -44,6 +44,7 @@ super * "geyser:1" "" "boring/geyservent.gif"
 # geyser 2 is rendered with smoke
 super * "geyser:3" "" "boring/geyservent.gif"
 
+super * "water:0" "" "transparent/blue_water_1.png"
 super * "water:1" "" "transparent/blue_water_1.png"
 super * "water:2" "" "transparent/blue_water_2.png"
 super * "water:3" "" "transparent/blue_water_3.png"

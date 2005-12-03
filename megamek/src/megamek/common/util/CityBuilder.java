@@ -78,7 +78,7 @@ public class CityBuilder {
         else if ( cityType.equalsIgnoreCase("METRO") )
             cityPlan.addAll(buildMetroCity(width,height, board));
         else if ( cityType.equalsIgnoreCase("GRID"))
-            cityPlan.addAll(buildGridCity(width,height,roads / 4, board));
+            cityPlan.addAll(buildGridCity(width,height,(roads+5) / 6, board));
         else
             return new Vector();
         
@@ -157,10 +157,16 @@ public class CityBuilder {
         Random r = new Random(System.currentTimeMillis());
 
         for( int y = 0; y < roads; y++){
-            int startY = r.nextInt(maxY/roads)+(y*(maxY/roads));
+            int startY = r.nextInt(maxY/roads)+((y*maxY)/roads);
+            //int start = r.nextInt(2);
             Coords coords = new Coords(-1,startY);
             int roadStyle = r.nextInt(2) + 1;
-            buildStraightRoad(board, coords, E, roadStyle, grid);
+            int dir = r.nextInt(2) + NE; 
+            buildStraightRoad(board, coords, dir, roadStyle, grid);
+            startY = r.nextInt(maxY/roads)+((y*maxY)/roads);
+            coords = new Coords(maxX,startY);
+            dir = r.nextInt(2) + SW;
+            buildStraightRoad(board, coords, dir, roadStyle, grid);
         }
         
         for ( int x = 0; x < roads; x++){

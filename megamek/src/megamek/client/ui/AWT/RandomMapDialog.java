@@ -1586,9 +1586,8 @@ public class RandomMapDialog
         pack();
         Dimension dopt = panOptions.getPreferredSize();
         Dimension dbt = panButtons.getPreferredSize();
-        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = Math.min(dopt.width+dbt.width+50, screen.width);
-        int height = Math.min(dopt.height+dbt.height+50, screen.height);
+        int width = Math.min(dopt.width+dbt.width+50, getParent().getSize().width);
+        int height = Math.min(dopt.height+dbt.height+50, getParent().getSize().height);
         setSize(width, height);
     }
     

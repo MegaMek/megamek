@@ -34,6 +34,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.IEntityMovementMode;
 import megamek.common.QuadMech;
@@ -133,6 +134,7 @@ public class HmpFile
 
   private int gyroType = Mech.GYRO_STANDARD;
   private int cockpitType = Mech.COCKPIT_STANDARD;
+  private int targSys = 0;
 
   public HmpFile(InputStream is)
 /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
@@ -331,6 +333,8 @@ public class HmpFile
         if (rulesLevel > 2) {
             gyroType = readUnsignedShort(dis);
             cockpitType = readUnsignedShort(dis);
+            dis.skipBytes(16);
+            targSys = readUnsignedShort(dis);
         } else {
             gyroType = Mech.GYRO_STANDARD;
             cockpitType = Mech.COCKPIT_STANDARD;
@@ -465,6 +469,10 @@ public class HmpFile
       if (mech.isClan())
       {
         mech.addClanCase();
+      }
+      
+      if(rulesLevel > 2) {
+          mech.setTargSysType(getTargSys());
       }
             
       // add any heat sinks not allocated
@@ -689,6 +697,8 @@ public class HmpFile
     criticals.put(new Long(0x15), "Ferro-Fibrous");
     criticals.put(new Long(0x16), "Triple Strength Myomer");
 
+    criticals.put(new Long(0x1a), "Variable Range TargSys");
+    criticals.put(new Long(0x1b), "Multi-Trac II");
     criticals.put(new Long(0x1c), "Reactive Armor");
     criticals.put(new Long(0x1d), "Laser-Reflective Armor");
     criticals.put(new Long(0x1e), "Jump Booster");
@@ -1771,6 +1781,31 @@ public class HmpFile
                     }
                 }
             }
+        }
+    }
+    
+    private int getTargSys() {
+        switch(targSys) {
+        case 0:
+            return MiscType.T_TARGSYS_STANDARD;
+        case 1:
+            return MiscType.T_TARGSYS_TARGCOMP;
+        case 2:
+            return MiscType.T_TARGSYS_VARIABLE_RANGE;
+        case 3:
+            return MiscType.T_TARGSYS_MULTI_TRAC_II;
+        case 4:
+            return MiscType.T_TARGSYS_LONGRANGE;
+        case 5:
+            return MiscType.T_TARGSYS_SHORTRANGE;
+        case 6:
+            return MiscType.T_TARGSYS_ANTI_AIR;
+        case 7:
+            return MiscType.T_TARGSYS_MULTI_TRAC;
+        case 8:
+            return MiscType.T_TARGSYS_HEAT_SEEKING_THB;
+        default:
+            return MiscType.T_TARGSYS_UNKNOWN;
         }
     }
 }

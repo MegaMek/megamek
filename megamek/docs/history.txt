@@ -38,6 +38,7 @@ v0.31.3-dev (CVS)
 + atmospheric.tileset added depth 0 water image (it was displaying as open ground)
 + classic.tileset removed ice-skinned pavement from the snow theme 
   (obsolete now ice is supported, and caused some pavements to display as ice in the grass theme)
++ level 3 targeting systems load from HMP and TDB files for level 3 mechs
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

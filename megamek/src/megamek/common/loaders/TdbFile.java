@@ -31,6 +31,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
@@ -494,6 +495,23 @@ public class TdbFile implements IMechLoader {
 
             // add any heat sinks not allocated
             mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
+            
+            // set targetting system
+            if(targSysStr.startsWith("Long-Range")) {
+                mech.setTargSysType(MiscType.T_TARGSYS_LONGRANGE);
+            } else if(targSysStr.startsWith("Short-Range")) {
+                mech.setTargSysType(MiscType.T_TARGSYS_SHORTRANGE);
+            } else if(targSysStr.startsWith("Variable-Range")) {
+                mech.setTargSysType(MiscType.T_TARGSYS_VARIABLE_RANGE);
+            } else if(targSysStr.startsWith("Anti-Aircraft")) {
+                mech.setTargSysType(MiscType.T_TARGSYS_ANTI_AIR);
+            } else if(targSysStr.startsWith("Multi-Trac")) {
+                mech.setTargSysType(MiscType.T_TARGSYS_MULTI_TRAC);
+            } else if(targSysStr.startsWith("Multi-Trac II")) {
+                mech.setTargSysType(MiscType.T_TARGSYS_MULTI_TRAC_II);
+            } else if(targSysStr.startsWith("Targeting Computer")) {
+                mech.setTargSysType(MiscType.T_TARGSYS_TARGCOMP);
+            }
 
             return mech;
         } catch (NumberFormatException ex) {

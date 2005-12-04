@@ -13768,14 +13768,14 @@ public class Server implements Runnable {
         if (mounted.isDestroyed()) {
             System.err.println("server: explodeEquipment called on destroyed"
             + " equipment (" + mounted.getName() + ")");
-            return null;
+            return vDesc;
         }
 
         // special-case.  RACs only explode when jammed
         if (mounted.getType() instanceof WeaponType &&
                 ((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_AC_ROTARY) {
             if (!mounted.isJammed()) {
-                return null;
+                return vDesc;
             }
         }
 
@@ -13783,12 +13783,12 @@ public class Server implements Runnable {
         if (mounted.getType() instanceof WeaponType &&
                 ((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_AC) {
             if (!mounted.isUsedThisRound()) {
-                return null;
+                return vDesc;
             }
             Mounted ammo = mounted.getLinked();
             if(ammo == null || !(ammo.getType() instanceof AmmoType) || 
             ((AmmoType)ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC ) {
-                return null;
+                return vDesc;
             }
         }
 
@@ -13805,7 +13805,7 @@ public class Server implements Runnable {
         int damage = mounted.getExplosionDamage();
 
         if (damage <= 0) {
-            return null;
+            return vDesc;
         }
 
         Report r = new Report(6390);

@@ -1193,6 +1193,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             setOptions();
             
             okay = true;
+            clientgui.chatlounge.refreshEntities();
         }
         this.setVisible(false);
         Entity nextOne = null;
@@ -1202,7 +1203,6 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             nextOne = getNextEntity(true);
         }
         if (nextOne!=null) {
-            clientgui.chatlounge.refreshEntities();
             clientgui.chatlounge.customizeMech(nextOne);
         }
     }

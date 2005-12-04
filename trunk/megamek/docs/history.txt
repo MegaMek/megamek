@@ -42,6 +42,7 @@ v0.31.3-dev (CVS)
 + level 3 targeting systems load from HMP and TDB files for level 3 mechs
 + modified GRID city for playability
 + prevent random map dialog being placed off the top of the screen
++ Bug 1373068:  Configuring unit does not update mek list.
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

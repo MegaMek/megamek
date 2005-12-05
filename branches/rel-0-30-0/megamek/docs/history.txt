@@ -4,6 +4,8 @@ v0.30.6-dev (cvs)
 + Bug 1326177: Leg Breached during DFA
 + Bug: Semi-guided LRMs could not be fired
 + Bug 1373068:  Configuring unit does not update mek list.
++ Bug: NPE occurred determining if an ejected Mechwarrior was eligable for
+    physicals (position was null).
 
 v0.30.5 (2005-11-20, 20:15 GMT)
 + Bug 1296592: Bugs with Heat Sink adjustment

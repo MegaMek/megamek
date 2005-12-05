@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.31.3-dev (CVS)
++ Fixed Dragon Fire's hands (shouldn't have any) at beerockxs request.
 + Bug 1372046: disconnection after firephase
 + Bug 1357018: Added trim() to port string for parsing port number.
 + Bug 1328640: Damage from engine explosions now can cause PSRs.

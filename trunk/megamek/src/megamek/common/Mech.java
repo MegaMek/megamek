@@ -1887,16 +1887,28 @@ public abstract class Mech
 
         // total internal structure
         double internalMultiplier;
-        if (hasXL()) {
-            if (getEngineTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
-                internalMultiplier = 1.125;
-            } else {
-                internalMultiplier = 0.75;
-            }            
-        } else if (hasLightEngine()) {
-            internalMultiplier = 1.125;
+        int CTengine = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE, LOC_CT);
+        int RTengine = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE, LOC_RT);
+        if(CTengine > 6) {
+            //large engine of some kind
+            if(RTengine >=6)
+                internalMultiplier = 0.375; // IS large XXL
+            else if (RTengine >=4)
+                internalMultiplier = 0.5; // clan large XXL
+            else if (RTengine >=2)
+                internalMultiplier = 0.75; // large XL
+            else
+                internalMultiplier = 1.125; // large
         } else {
-            internalMultiplier = 1.5;
+            //normal sized or compact engine
+            if(RTengine >=6)
+                internalMultiplier = 0.5; // IS XXL
+            else if (RTengine >=3)
+                internalMultiplier = 0.75; // IS XL, clan XXL
+            else if (RTengine >0)
+                internalMultiplier = 1.125; // IS L, clan XL
+            else
+                internalMultiplier = 1.5; //standard or compact
         }
 
         dbv += getTotalInternal() * internalMultiplier;
@@ -1920,7 +1932,8 @@ public abstract class Mech
 
             if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
                     || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
-                    || etype.hasFlag(MiscType.F_ECM)) {
+                    || (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM)
+                                            || etype.hasFlag(MiscType.F_AP_POD)))) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
@@ -2128,7 +2141,7 @@ public abstract class Mech
             weaponBV += (weaponsBVFront * 0.5);
         }
         
-        // add offensive misc. equipment BV (hatchets, swords, BAP, AP pods, TAG)
+        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
         double oEquipmentBV = 0;
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
@@ -2138,19 +2151,11 @@ public abstract class Mech
             if (mounted.isDestroyed())
                 continue;
 
-            if ((mtype.hasFlag(MiscType.F_CLUB)
-                    && (mtype.hasSubType(MiscType.S_HATCHET)
-                    || mtype.hasSubType(MiscType.S_SWORD)
-                    || mtype.hasSubType(MiscType.S_MACE_THB)
-                    || mtype.hasSubType(MiscType.S_MACE)
-                    || mtype.hasSubType(MiscType.S_BACKHOE)
-                    || mtype.hasSubType(MiscType.S_PILE_DRIVER)
-                    || mtype.hasSubType(MiscType.S_CHAINSAW)
-                    || mtype.hasSubType(MiscType.S_DUAL_SAW)))
-                    || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_AP_POD) ) {
-                oEquipmentBV += mtype.getBV(this);
-            }
+            if (mtype.hasFlag(MiscType.F_ECM)
+                    || mtype.hasFlag(MiscType.F_AP_POD) 
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)) //targ counted with weapons 
+                continue;
+            oEquipmentBV += mtype.getBV(this);
         }
         weaponBV += oEquipmentBV;
 

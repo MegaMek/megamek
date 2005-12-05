@@ -47,6 +47,7 @@ v0.31.3-dev (CVS)
 + Fixed Dragon Fire's hands (shouldn't have any) at beerockxs request.
 + Random map dialog can save and load settings from an XML file, which uses the same tags as 
   mekwars for easy cut'n'paste.
++ Bug 1373918: Possible fix for ArrayIndexOutOfBounds exception in TabPanel.
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

@@ -1,8 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.31.3-dev (CVS)
-+ Fixed Dragon Fire's hands (shouldn't have any) at beerockxs request.
-+ Bug 1372046: disconnection after firephase
 + Bug 1357018: Added trim() to port string for parsing port number.
 + Bug 1328640: Damage from engine explosions now can cause PSRs.
 + Bug 1362909: jumping over/into water impossible  
@@ -45,6 +43,10 @@ v0.31.3-dev (CVS)
 + prevent random map dialog being placed off the top of the screen
 + Bug 1373068: Configuring unit does not update mek list.
 + Bug 1369217: Clan mechs with XL engine have too low BV
++ Bug 1372046: disconnection after firephase
++ Fixed Dragon Fire's hands (shouldn't have any) at beerockxs request.
++ Random map dialog can save and load settings from an XML file, which uses the same tags as 
+  mekwars for easy cut'n'paste.
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

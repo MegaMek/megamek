@@ -14,8 +14,14 @@
 
 package megamek.common;
 
+import gd.xml.ParseException;
+import gd.xml.tiny.ParsedXML;
+import gd.xml.tiny.TinyParser;
+
 import java.util.*;
 import java.io.*;
+
+import megamek.common.options.IOption;
 
 /**
  *
@@ -859,4 +865,268 @@ public class MapSettings implements Serializable {
         this.cityDensity = cityDensity;
     }
     
+    //note the format is intended to be interoperable with mekwars' existing terrain.xml format
+    public void save(OutputStream os) {
+        try {
+            Writer output = new BufferedWriter( new OutputStreamWriter ( os ) );
+            // Output the doctype and header stuff.
+            output.write( "<?xml version=\"1.0\"?>" ); //$NON-NLS-1$
+            output.write( CommonConstants.NL );
+            output.write( "<ENVIRONMENT>" ); //$NON-NLS-1$
+            output.write( CommonConstants.NL );
+
+            // theme
+            saveParameter( output, "THEME", theme);
+            
+            // elevation params
+            saveParameter( output, "HILLYNESS", hilliness);
+            saveParameter( output, "HILLELEVATIONRANGE", range);
+            saveParameter( output, "HILLINVERTPROB", probInvert);
+            
+            saveParameter( output, "ALGORITHM", algorithmToUse);
+            saveParameter( output, "CLIFFS", cliffs);
+            
+            // forest params
+            saveParameter( output, "FORESTMINSPOTS", minForestSpots);
+            saveParameter( output, "FORESTMAXSPOTS", maxForestSpots);
+            saveParameter( output, "FORESTMINHEXES", minForestSize);
+            saveParameter( output, "FORESTMAXHEXES", maxForestSize);
+            saveParameter( output, "FORESTHEAVYPROB", probHeavy);
+            
+            // rough params
+            saveParameter( output, "ROUGHMINSPOTS", minRoughSpots);
+            saveParameter( output, "ROUGHMAXSPOTS", maxRoughSpots);
+            saveParameter( output, "ROUGHMINHEXES", minRoughSize);
+            saveParameter( output, "ROUGHMAXHEXES", maxRoughSize);
+            
+            // Swamp params
+            saveParameter( output, "SWAMPMINSPOTS", minSwampSpots);
+            saveParameter( output, "SWAMPMAXSPOTS", maxSwampSpots);
+            saveParameter( output, "SWAMPMINHEXES", minSwampSize);
+            saveParameter( output, "SWAMPMAXHEXES", maxSwampSize);
+            
+            // Road params
+            saveParameter( output, "ROADPROB", probRoad);
+            
+            // water params
+            saveParameter( output, "WATERMINSPOTS", minWaterSpots);
+            saveParameter( output, "WATERMAXSPOTS", maxWaterSpots);
+            saveParameter( output, "WATERMINHEXES", minWaterSize);
+            saveParameter( output, "WATERMAXHEXES", maxWaterSize);
+            saveParameter( output, "WATERDEEPPROB", probDeep);
+
+            // River params
+            saveParameter( output, "RIVERPROB", probRiver);
+            
+            // Crater params
+            saveParameter( output, "CRATERMINNUM", minCraters);
+            saveParameter( output, "CRATERMAXNUM", maxCraters);
+            saveParameter( output, "CRATERMINRADIUS", minRadius);
+            saveParameter( output, "CRATERMAXRADIUS", maxRadius);
+            saveParameter( output, "CRATEPROB", probCrater);
+            
+            // Pavement params
+            saveParameter( output, "PAVEMENTMINSPOTS", minPavementSpots);
+            saveParameter( output, "PAVEMENTMAXSPOTS", maxPavementSpots);
+            saveParameter( output, "PAVEMENTMINHEXES", minPavementSize);
+            saveParameter( output, "PAVEMENTMAXHEXES", maxPavementSize);
+            
+            // Rubble params
+            saveParameter( output, "RUBBLEMINSPOTS", minRubbleSpots);
+            saveParameter( output, "RUBBLEMAXSPOTS", maxRubbleSpots);
+            saveParameter( output, "RUBBLEMINHEXES", minRubbleSize);
+            saveParameter( output, "RUBBLEMAXHEXES", maxRubbleSize);
+
+            // Fortified params
+            saveParameter( output, "FORTIFIEDMINSPOTS", minFortifiedSpots);
+            saveParameter( output, "FORTIFIEDMAXSPOTS", maxFortifiedSpots);
+            saveParameter( output, "FORTIFIEDMINHEXES", minFortifiedSize);
+            saveParameter( output, "FORTIFIEDMAXHEXES", maxFortifiedSize);
+
+            // Ice params
+            saveParameter( output, "ICEMINSPOTS", minIceSpots);
+            saveParameter( output, "ICEMAXSPOTS", maxIceSpots);
+            saveParameter( output, "ICEMINHEXES", minIceSize);
+            saveParameter( output, "ICEMAXHEXES", maxIceSize);
+            
+            // Special FX
+            saveParameter( output, "FXMOD", fxMod);
+            saveParameter( output, "PROBFREEZE", probFreeze);
+            saveParameter( output, "PROBFLOOD", probFlood);
+            saveParameter( output, "PROBFORESTFIRE", probForestFire);
+            saveParameter( output, "PROBDROUGHT", probDrought);
+            
+            // City
+            saveParameter( output, "CITYTYPE", cityType);
+            saveParameter( output, "CITYBLOCKS", cityBlocks);
+            saveParameter( output, "DENSITY", cityDensity);
+            saveParameter( output, "MINCF", cityMinCF);
+            saveParameter( output, "MAXCF", cityMaxCF);
+            saveParameter( output, "MINFLOORS", cityMinFloors);
+            saveParameter( output, "MAXFLOORS", cityMaxFloors);
+
+            // Finish writing.
+            output.write( "</ENVIRONMENT>" ); //$NON-NLS-1$
+            output.write( CommonConstants.NL );
+            output.flush();
+            output.close();
+        }
+        catch(IOException e) {
+            
+        }
+    }
+    
+    private void saveParameter(Writer output, String name, Object value) throws IOException {
+        output.write("    <");
+        output.write(name);
+        output.write(">");
+        output.write(value.toString());
+        output.write("</");
+        output.write(name);
+        output.write(">");
+        output.write( CommonConstants.NL );
+    }
+    
+    public void load(InputStream is) {
+        ParsedXML root = null;
+        try {
+            root = TinyParser.parseXML(is);
+        } catch (ParseException e) {
+            System.err.println("Error parsing map settings xml file.");  //$NON-NLS-1$
+            e.printStackTrace();
+            return;
+        }
+        Enumeration rootChildren = root.elements();
+        ParsedXML enivoronmentNode = (ParsedXML)rootChildren.nextElement();
+        
+        if ( enivoronmentNode.getName().equals("ENVIRONMENT") ) { //$NON-NLS-1$
+            Enumeration children = enivoronmentNode.elements();
+        
+            while (children.hasMoreElements()) {
+                try {
+                    parseEnvironmentNode((ParsedXML)children.nextElement());
+                } catch (Exception ex) {
+                    System.err.println("error in map settings file:");
+                    ex.printStackTrace();
+                }
+            }
+        
+        } else {
+            System.out.println("Root node of map settings file is incorrectly named. Name should be 'ENVIRONMENT' but name is '" + enivoronmentNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
+    
+    private void parseEnvironmentNode(ParsedXML node) {
+        Enumeration values = node.elements();
+        if(!(values.hasMoreElements())) {
+            return;
+        }
+        ParsedXML value = (ParsedXML)values.nextElement();
+        String param = value.getContent();
+        if(null==param)
+            return;
+        String key = node.getName();
+        
+        // theme
+        if(key.equals("THEME")) theme = param;
+        
+        // elevation params
+        else if(key.equals("HILLYNESS")) hilliness = Integer.valueOf(param);
+        else if(key.equals("HILLELEVATIONRANGE")) range = Integer.valueOf(param);
+        else if(key.equals("HILLINVERTPROB")) probInvert = Integer.valueOf(param);
+        
+        else if(key.equals("ALGORITHM")) algorithmToUse = Integer.valueOf(param);
+        else if(key.equals("CLIFFS")) cliffs = Integer.valueOf(param);
+        
+        // forest params
+        else if(key.equals("FORESTMINSPOTS")) minForestSpots = Integer.valueOf(param);
+        else if(key.equals("FORESTMAXSPOTS")) maxForestSpots = Integer.valueOf(param);
+        else if(key.equals("FORESTMINHEXES")) minForestSize = Integer.valueOf(param);
+        else if(key.equals("FORESTMAXHEXES")) maxForestSize = Integer.valueOf(param);
+        else if(key.equals("FORESTHEAVYPROB")) probHeavy = Integer.valueOf(param);
+        
+        // rough params
+        else if(key.equals("ROUGHMINSPOTS")) minRoughSpots = Integer.valueOf(param);
+        else if(key.equals("ROUGHMAXSPOTS")) maxRoughSpots = Integer.valueOf(param);
+        else if(key.equals("ROUGHMINHEXES")) minRoughSize = Integer.valueOf(param);
+        else if(key.equals("ROUGHMAXHEXES")) maxRoughSize = Integer.valueOf(param);
+        
+        // Swamp params
+        else if(key.equals("SWAMPMINSPOTS")) minSwampSpots = Integer.valueOf(param);
+        else if(key.equals("SWAMPMAXSPOTS")) maxSwampSpots = Integer.valueOf(param);
+        else if(key.equals("SWAMPMINHEXES")) minSwampSize = Integer.valueOf(param);
+        else if(key.equals("SWAMPMAXHEXES")) maxSwampSize = Integer.valueOf(param);
+        
+        // Road params
+        else if(key.equals("ROADPROB")) probRoad = Integer.valueOf(param);
+        
+        // water params
+        else if(key.equals("WATERMINSPOTS")) minWaterSpots = Integer.valueOf(param);
+        else if(key.equals("WATERMAXSPOTS")) maxWaterSpots = Integer.valueOf(param);
+        else if(key.equals("WATERMINHEXES")) minWaterSize = Integer.valueOf(param);
+        else if(key.equals("WATERMAXHEXES")) maxWaterSize = Integer.valueOf(param);
+        else if(key.equals("WATERDEEPPROB")) probDeep = Integer.valueOf(param);
+
+        // River params
+        else if(key.equals("RIVERPROB")) probRiver = Integer.valueOf(param);
+        
+        // Crater params
+        else if(key.equals("CRATERMINNUM")) minCraters = Integer.valueOf(param);
+        else if(key.equals("CRATERMAXNUM")) maxCraters = Integer.valueOf(param);
+        else if(key.equals("CRATERMINRADIUS")) minRadius = Integer.valueOf(param);
+        else if(key.equals("CRATERMAXRADIUS")) maxRadius = Integer.valueOf(param);
+        else if(key.equals("CRATEPROB")) probCrater = Integer.valueOf(param);
+        
+        // Pavement params
+        else if(key.equals("PAVEMENTMINSPOTS")) minPavementSpots = Integer.valueOf(param);
+        else if(key.equals("PAVEMENTMAXSPOTS")) maxPavementSpots = Integer.valueOf(param);
+        else if(key.equals("PAVEMENTMINHEXES")) minPavementSize = Integer.valueOf(param);
+        else if(key.equals("PAVEMENTMAXHEXES")) maxPavementSize = Integer.valueOf(param);
+        
+        // Rubble params
+        else if(key.equals("RUBBLEMINSPOTS")) minRubbleSpots = Integer.valueOf(param);
+        else if(key.equals("RUBBLEMAXSPOTS")) maxRubbleSpots = Integer.valueOf(param);
+        else if(key.equals("RUBBLEMINHEXES")) minRubbleSize = Integer.valueOf(param);
+        else if(key.equals("RUBBLEMAXHEXES")) maxRubbleSize = Integer.valueOf(param);
+
+        // Fortified params
+        else if(key.equals("FORTIFIEDMINSPOTS")) minFortifiedSpots = Integer.valueOf(param);
+        else if(key.equals("FORTIFIEDMAXSPOTS")) maxFortifiedSpots = Integer.valueOf(param);
+        else if(key.equals("FORTIFIEDMINHEXES")) minFortifiedSize = Integer.valueOf(param);
+        else if(key.equals("FORTIFIEDMAXHEXES")) maxFortifiedSize = Integer.valueOf(param);
+
+        // Ice params
+        else if(key.equals("ICEMINSPOTS")) minIceSpots = Integer.valueOf(param);
+        else if(key.equals("ICEMAXSPOTS")) maxIceSpots = Integer.valueOf(param);
+        else if(key.equals("ICEMINHEXES")) minIceSize = Integer.valueOf(param);
+        else if(key.equals("ICEMAXHEXES")) maxIceSize = Integer.valueOf(param);
+        
+        // Special FX
+        else if(key.equals("FXMOD")) fxMod = Integer.valueOf(param);
+        else if(key.equals("PROBFREEZE")) probFreeze = Integer.valueOf(param);
+        else if(key.equals("PROBFLOOD")) probFlood = Integer.valueOf(param);
+        else if(key.equals("PROBFORESTFIRE")) probForestFire = Integer.valueOf(param);
+        else if(key.equals("PROBDROUGHT")) probDrought = Integer.valueOf(param);
+        
+        // City
+        else if(key.equals("CITYTYPE")) cityType = param;
+        else if(key.equals("CITYBLOCKS")) cityBlocks = Integer.valueOf(param);
+        else if(key.equals("DENSITY")) cityDensity = Integer.valueOf(param);
+        else if(key.equals("MINCF")) cityMinCF = Integer.valueOf(param);
+        else if(key.equals("MAXCF")) cityMaxCF = Integer.valueOf(param);
+        else if(key.equals("MINFLOORS")) cityMinFloors = Integer.valueOf(param);
+        else if(key.equals("MAXFLOORS")) cityMaxFloors = Integer.valueOf(param);
+    }
+    
+    void loadStringParameter( ParsedXML node, String param, String value) {
+        if(node.getName().equals(param)) {
+            value = node.getContent();
+        }
+    }
+    
+    void loadIntParameter( ParsedXML node, String param, Integer value) {
+        if(node.getName().equals(param)) {
+            value = Integer.valueOf(node.getContent());
+        }
+    }
 }

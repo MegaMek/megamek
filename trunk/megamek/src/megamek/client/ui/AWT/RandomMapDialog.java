@@ -18,6 +18,7 @@ import megamek.client.ui.AWT.widget.SimpleLine;
 import megamek.common.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 
 public class RandomMapDialog
     extends Dialog implements ActionListener, FocusListener
@@ -36,6 +37,8 @@ public class RandomMapDialog
 
     private Button butOK = null;
     private Button butAdvanced = null;
+    private Button butSave = null;
+    private Button butLoad = null;
     
     private Panel panButtons = null;
     private Panel panOptions = null;
@@ -278,6 +281,37 @@ public class RandomMapDialog
             if (applyValues()) {
                 this.setVisible(false);
             }
+        } else if (e.getSource().equals(butSave)) {
+            FileDialog fd = new FileDialog(this, Messages.getString("RandomMapDialog.FileSaveDialog"), FileDialog.SAVE); //$NON-NLS-1$
+            fd.setDirectory("./data/boards/");
+            fd.setFilenameFilter(new FilenameFilter() { public boolean accept(File f, String s) {return s.endsWith(".xml"); } });
+            fd.setModal(true);
+            fd.setVisible(true);
+            File f = new File(fd.getFile());
+            try {
+                mapSettings.save(new FileOutputStream(f));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else if (e.getSource().equals(butLoad)) {
+            FileDialog fd = new FileDialog(this, Messages.getString("RandomMapDialog.FileLoadDialog"), FileDialog.LOAD); //$NON-NLS-1$
+            fd.setDirectory("./data/boards/");
+            fd.setFilenameFilter(new FilenameFilter() { public boolean accept(File f, String s) {return s.endsWith(".xml"); } });
+            fd.setModal(true);
+            fd.setVisible(true);
+            File f = new File(fd.getFile());
+            try {
+                mapSettings.load(new FileInputStream(f));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            loadValues();
+            if(!advanced) {
+                advanced = true;
+                butAdvanced.setLabel(Messages.getString("RandomMapDialog.Normal")); //$NON-NLS-1$
+                setupOptions();
+                setProperSize();
+            }
         } else {
             advanced = !advanced;
             if (advanced) {
@@ -414,6 +448,8 @@ public class RandomMapDialog
 
         panButtons.add(butOK);
         panButtons.add(butAdvanced);
+        panButtons.add(butSave);
+        panButtons.add(butLoad);
         
     }
     
@@ -424,6 +460,12 @@ public class RandomMapDialog
         
         butAdvanced = new Button(Messages.getString("RandomMapDialog.Advanced")); //$NON-NLS-1$
         butAdvanced.addActionListener(this);
+
+        butSave = new Button(Messages.getString("RandomMapDialog.Save")); //$NON-NLS-1$
+        butSave.addActionListener(this);
+
+        butLoad = new Button(Messages.getString("RandomMapDialog.Load")); //$NON-NLS-1$
+        butLoad.addActionListener(this);
 
         panButtons = new Panel();       
         panButtons.setLayout(new FlowLayout());

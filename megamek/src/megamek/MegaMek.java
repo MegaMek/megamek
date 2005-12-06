@@ -198,7 +198,8 @@ public class MegaMek {
     private static void showInfo() {
         // echo some useful stuff
         System.out.println("Starting MegaMek v" + VERSION + " ..."); //$NON-NLS-1$ //$NON-NLS-2$
-        System.out.println("Timestamp " + new Date(TIMESTAMP).toString()); //$NON-NLS-1$
+        System.out.println("Compiled on " + new Date(TIMESTAMP).toString()); //$NON-NLS-1$
+        System.out.println("Today is " + new Date().toString());
         System.out.println("Java vendor " + System.getProperty("java.vendor")); //$NON-NLS-1$ //$NON-NLS-2$
         System.out.println("Java version " + System.getProperty("java.version")); //$NON-NLS-1$ //$NON-NLS-2$
         System.out.println(
@@ -209,16 +210,10 @@ public class MegaMek {
                            + " (" //$NON-NLS-1$
                            + System.getProperty("os.arch") //$NON-NLS-1$
                            + ")"); //$NON-NLS-1$
-        /*/ BEGIN DEBUG memory
-        if ( System.getProperties().getProperty( "java.version" ).charAt(2)
-             >= '4' ) {
-            long maxMemory = Runtime.getRuntime().maxMemory() / 1024;
-            System.out.println("Total memory available to MegaMek: " 
-                               + MegaMek.commafy.format(maxMemory) + " kB");
-        }
-        //  END  DEBUG memory */
+        long maxMemory = Runtime.getRuntime().maxMemory() / 1024;
+        System.out.println("Total memory available to MegaMek: "
+                           + MegaMek.commafy.format(maxMemory) + " kB");
         System.out.println();
-        
     }
 
     private static class CommandLineParser extends AbstractCommandLineParser {

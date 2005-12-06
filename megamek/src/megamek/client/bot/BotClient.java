@@ -15,6 +15,7 @@ package megamek.client.bot;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -134,7 +135,9 @@ public abstract class BotClient extends Client {
             }
             
             if ( Compute.randomInt(4) == 1 ){
-                sendChat(getRandomBotMessage());
+                String message = getRandomBotMessage(); 
+                if ( message != null)
+                    sendChat(message);
             }
             initMovement();
             break;
@@ -824,10 +827,15 @@ public abstract class BotClient extends Client {
                 if ( Compute.randomInt(10) == 1)
                     break;
             }
-        }
+        }//File not found don't do anything just return a null and allow the bot to remain silent
+        catch ( FileNotFoundException fnfe){
+            //no chat message found continue on.
+            return null;
+        }//CYA exception
         catch(Exception ex){
-            System.err.println("Unable to load message file.");
+            System.err.println("Error while reading ./mmconf/botmessages.txt.");
             ex.printStackTrace();
+            return null;
         }
         return message;
     }

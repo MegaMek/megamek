@@ -8411,6 +8411,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createC3M() {
         WeaponType weapon = new WeaponType();
         
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "C3 Master with TAG";
         weapon.setInternalName("ISC3MasterUnit");
         weapon.addLookupName("IS C3 Computer");

@@ -819,7 +819,7 @@ public class MechSelectorDialog
     void previewMech(Entity entity) {
         MechView mechView = new MechView(entity);
         m_mechView.setEditable(false);
-        m_mechView.setText(mechView.getMechReadoutBasic() + "\n" + mechView.getMechReadoutLoadout());
+        m_mechView.setText(mechView.getMechReadout());
         m_mechView.setCaretPosition(0);
 
         // Preview image of the unit...

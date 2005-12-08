@@ -60,6 +60,7 @@ the same tags as mekwars for easy cut'n'paste.
 + Update to chatty bot patch.
 + Add date of game and memory info to log file.
 + Added "Group View" button to chat lounge.
++ Patch 1371084 / RFE 1360461, support for HMP fluff text (thanks Torren)
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

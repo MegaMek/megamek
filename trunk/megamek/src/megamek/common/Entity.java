@@ -48,6 +48,7 @@ public abstract class Entity
     protected boolean           omni = false;
     protected String            chassis;
     protected String            model;
+    protected String            fluff = null;
     protected int               year;
     protected int               techLevel;
     protected int               engineTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -349,6 +350,19 @@ public abstract class Entity
         this.chassis = chassis;
     }
 
+    
+    /**
+     * Returns the fluff for this entity.
+     */
+    public String getFluff() {
+        return fluff;
+    }
+
+    public void setFluff(String fluff) {
+        this.fluff = fluff;
+    }
+
+    
     /**
      * Returns the unit tech for this entity.
      */

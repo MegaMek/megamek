@@ -40,6 +40,7 @@ public class MechView {
 
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
+    StringBuffer sFluff = new StringBuffer("");
 
     public MechView(Entity entity) {
         mech = entity;
@@ -139,6 +140,9 @@ public class MechView {
                     .append('\n'); //$NON-NLS-1$
             }
         }
+        
+        if(mech.getFluff() != null)
+            sFluff.append(mech.getFluff());
     }
 
     public String getMechReadoutBasic() {
@@ -148,9 +152,13 @@ public class MechView {
     public String getMechReadoutLoadout() {
         return sLoadout.toString();
     }
+    
+    public String getMechReadoutFluff() {
+        return sFluff.toString();
+    }
 
     public String getMechReadout() {
-        return getMechReadoutBasic() + "\n" + getMechReadoutLoadout(); //$NON-NLS-1$
+        return getMechReadoutBasic() + "\n" + getMechReadoutLoadout() + "\n" + getMechReadoutFluff(); //$NON-NLS-1$
     }
     
     private String getInternalAndArmor() {

@@ -8573,23 +8573,51 @@ public class Server implements Runnable {
             // Targeting a building.
             if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
 
-                // The building takes the full brunt of the attack.
-                nDamage = nDamPerHit * hits;
-                if ( !bSalvo ) {
-                    //hits!
-                    r = new Report(3390);
-                    r.subject = subjectId;
-                    vPhaseReport.addElement(r);
-                }
-                Report.addNewline(vPhaseReport);
-                Report buildingReport = damageBuilding( bldg, nDamage );
-                buildingReport.indent(2);
-                buildingReport.newlines = 1;
-                buildingReport.subject = subjectId;
-                vPhaseReport.addElement(buildingReport);
+                // Is the building hit by Inferno rounds?
+                if ( bInferno ) {
 
-                // Damage any infantry in the hex.
-                this.damageInfantryIn( bldg, nDamage );
+                    // start a fire in the targets hex
+                    Coords c = target.getPosition();
+                    IHex h = game.getBoard().getHex(c);
+
+                    // Is there a fire in the hex already?
+                    if ( h.containsTerrain( Terrains.FIRE ) ) {
+                        r = new Report(3285);
+                        r.subject = subjectId;
+                        r.add(hits);
+                        r.add(c.getBoardNum());
+                        vPhaseReport.addElement(r);
+                    } else {
+                        r = new Report(3290);
+                        r.subject = subjectId;
+                        r.add(hits);
+                        r.add(c.getBoardNum());
+                        vPhaseReport.addElement(r);
+                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+                    }
+                    game.getBoard().addInfernoTo
+                        ( c, InfernoTracker.STANDARD_ROUND, hits );
+                    sendChangedHex(c);
+
+                } else {
+                    // The building takes the full brunt of the attack.
+                    nDamage = nDamPerHit * hits;
+                    if ( !bSalvo ) {
+                        //hits!
+                        r = new Report(3390);
+                        r.subject = subjectId;
+                        vPhaseReport.addElement(r);
+                    }
+                    Report.addNewline(vPhaseReport);
+                    Report buildingReport = damageBuilding( bldg, nDamage );
+                    buildingReport.indent(2);
+                    buildingReport.newlines = 1;
+                    buildingReport.subject = subjectId;
+                    vPhaseReport.addElement(buildingReport);
+    
+                    // Damage any infantry in the hex.
+                    this.damageInfantryIn( bldg, nDamage );
+                }
 
                 // And we're done!
                 return !bMissed;

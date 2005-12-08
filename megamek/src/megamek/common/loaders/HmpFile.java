@@ -58,7 +58,8 @@ public class HmpFile
 {
   private String name;
   private String model;
-
+  private String fluff = null;
+  
   private ChassisType chassisType;
 
   private TechType techType;
@@ -327,8 +328,59 @@ public class HmpFile
         ctCriticals[x] = readUnsignedInt(dis);
       }     
 
-      dis.skipBytes(36);
+      dis.skipBytes(4);
 
+      int fluffSize = 0;
+      fluff = "Overview:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+      
+      fluff += "\n\rCapability:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      fluff += "\n\rBattle History:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      fluff += "\n\rVariants:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      fluff += "\n\rFamous Mechs and Warriors:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      fluff += "\n\rDeployment:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      //just a catch all for small Fluffs anything well less then 10 characters, per section, isn't worth printing.
+      if ( fluffSize <= 60 )
+          fluff = null;
+
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      //fluff = new String(buffer);
+
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      //fluff = new String(buffer);
+
+      dis.skipBytes(4);
+      
       // Get cockpit and gyro type, if any.
         if (rulesLevel > 2) {
             gyroType = readUnsignedShort(dis);
@@ -344,6 +396,7 @@ public class HmpFile
     }
     catch (IOException ex)
     {
+        ex.printStackTrace();
 /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
         throw new EntityLoadingException("I/O Error reading file");
 /* BLOCK_END */
@@ -402,6 +455,8 @@ public class HmpFile
       mech.setModel(model);
       mech.setYear(year);
 
+      mech.setFluff(fluff);
+      
       mech.setOmni(chassisType == ChassisType.BIPED_OMNI ||
                    chassisType == ChassisType.QUADRAPED_OMNI);
 

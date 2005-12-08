@@ -97,6 +97,7 @@ public class ChatLounge
     private Button butDelete;
     private Button butCustom;
     private Button butMechReadout;
+    private Button butViewGroup;
     private List lisEntities;
     private int[] entityCorrespondance;
     private Panel panEntities;
@@ -594,8 +595,8 @@ public class ChatLounge
         butSaveList.setEnabled(false);
 
         butLoad = new Button(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
-//        butLoadCustomBA = new Button(Messages.getString("ChatLounge.butLoadCustomBA"));
-        butLoadCustomBA = new Button("Load Custom BA");
+        butLoadCustomBA = new Button(Messages.getString("ChatLounge.butLoadCustomBA"));
+
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
@@ -622,6 +623,11 @@ public class ChatLounge
         butMechReadout.addActionListener(this);
         butMechReadout.setEnabled(false);
 
+        butViewGroup = new Button(Messages.getString("ChatLounge.butViewGroup")); //$NON-NLS-1$
+        butViewGroup.setActionCommand("view_group"); //$NON-NLS-1$
+        butViewGroup.addActionListener(this);
+        butViewGroup.setEnabled(false);
+
         butDelete = new Button(Messages.getString("ChatLounge.butDelete")); //$NON-NLS-1$
         butDelete.setActionCommand("delete_mech"); //$NON-NLS-1$
         butDelete.addActionListener(this);
@@ -647,24 +653,19 @@ public class ChatLounge
         gridbag.setConstraints(lisEntities, c);
         panEntities.add(lisEntities);
 
-/*
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = 1;
         c.gridheight = 2;
         gridbag.setConstraints(butLoad, c);
         panEntities.add(butLoad);
-*/
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        gridbag.setConstraints(butLoad, c);
-        panEntities.add(butLoad);
 
         c.gridheight = 1;
         gridbag.setConstraints(butCustom, c);
         panEntities.add(butCustom);
+
+        gridbag.setConstraints(butLoadList, c);
+        panEntities.add(butLoadList);
 
         gridbag.setConstraints(butMechReadout, c);
         panEntities.add(butMechReadout);
@@ -675,17 +676,10 @@ public class ChatLounge
         gridbag.setConstraints(butDelete, c);
         panEntities.add(butDelete);
 
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        gridbag.setConstraints(butLoadCustomBA, c);
-        panEntities.add(butLoadCustomBA);
-
         c.gridwidth = 1;
         c.gridy = GridBagConstraints.RELATIVE;
-        gridbag.setConstraints(butLoadList, c);
-        panEntities.add(butLoadList);
+        gridbag.setConstraints(butLoadCustomBA, c);
+        panEntities.add(butLoadCustomBA);
 
         //          c.gridwidth = 1;
         //          gridbag.setConstraints( lblPlaceholder, c );
@@ -694,6 +688,10 @@ public class ChatLounge
         c.gridwidth = 1;
         gridbag.setConstraints(butSaveList, c);
         panEntities.add(butSaveList);
+
+        c.gridwidth = 1;
+        gridbag.setConstraints(butViewGroup, c);
+        panEntities.add(butViewGroup);
 
         c.gridwidth = 1;
         gridbag.setConstraints(butDeleteAll, c);
@@ -802,8 +800,6 @@ public class ChatLounge
     public void refreshEntities() {
         lisEntities.removeAll();
         int listIndex = 0;
-        String strTreeSet = ""; //$NON-NLS-1$
-        String strTreeView = ""; //$NON-NLS-1$
         boolean localUnits = false;
         entityCorrespondance = new int[client.game.getNoOfEntities()];
 
@@ -856,78 +852,21 @@ public class ChatLounge
                 localUnits = true;
             }
 
-            // Reset the tree strings.
-            strTreeSet = ""; //$NON-NLS-1$
-            strTreeView = ""; //$NON-NLS-1$
-
-            // Set the tree strings based on C3 settings for the unit.
-            if (entity.hasC3i()) {
-                if (entity.calculateFreeC3Nodes() == 5)
-                    strTreeSet = "**"; //$NON-NLS-1$
-                strTreeView = " (" + entity.getC3NetId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-            } else if (entity.hasC3()) {
-                if (entity.getC3Master() == null) {
-                    if (entity.hasC3S())
-                        strTreeSet = "***"; //$NON-NLS-1$
-                    else
-                        strTreeSet = "*"; //$NON-NLS-1$
-                } else if (!entity.C3MasterIs(entity)) {
-                    strTreeSet = ">"; //$NON-NLS-1$
-                    if (entity.getC3Master().getC3Master() != null
-                        && !entity.getC3Master().C3MasterIs(entity.getC3Master()))
-                        strTreeSet = ">>"; //$NON-NLS-1$
-                    strTreeView = " -> " + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
-                }
-            }
-
             if (!client.game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
                 entity.getCrew().clearAdvantages();
             }
-
-            int crewAdvCount = entity.getCrew().countAdvantages();
 
             // Handle the "Blind Drop" option.
             if (!entity.getOwner().equals(client.getLocalPlayer())
                 && client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                 && !client.game.getOptions().booleanOption("real_blind_drop")) { //$NON-NLS-1$
-                String unitClass = ""; //$NON-NLS-1$
-                if (entity instanceof Infantry) {
-                    unitClass = Messages.getString("ChatLounge.0"); //$NON-NLS-1$
-                } else if (entity instanceof Protomech) {
-                    unitClass = Messages.getString("ChatLounge.1"); //$NON-NLS-1$
-                } else if (entity instanceof GunEmplacement) {
-                    unitClass = Messages.getString("ChatLounge.2"); //$NON-NLS-1$
-                } else {
-                    unitClass = entity.getWeightClassName();
-                    if (entity instanceof Tank) {
-                        unitClass += Messages.getString("ChatLounge.6"); //$NON-NLS-1$
-                    }
-                }
-                lisEntities.add(
-                        Messages.getString("ChatLounge.EntityListEntry1", new Object[]{ //$NON-NLS-1$
-                                entity.getOwner().getName(),
-                                new Integer(entity.getCrew().getGunnery()),
-                                new Integer(entity.getCrew().getPiloting()),
-                                (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                unitClass,
-                                ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
-                                ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : "")})); //$NON-NLS-1$ //$NON-NLS-2$
+
+                lisEntities.add(ChatLounge.formatUnit(entity, true));
                 entityCorrespondance[listIndex++] = entity.getId();
             } else if (entity.getOwner().equals(client.getLocalPlayer())
                        || (!client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                        && !client.game.getOptions().booleanOption("real_blind_drop"))) { //$NON-NLS-1$
-                lisEntities.add(
-                    strTreeSet
-                    + Messages.getString("ChatLounge.EntityListEntry2", new Object[]{ //$NON-NLS-1$
-                            entity.getDisplayName(),
-                            new Integer(entity.getCrew().getGunnery()),
-                            new Integer(entity.getCrew().getPiloting()),
-                            (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                            new Integer(entity.calculateBattleValue()),
-                            strTreeView,
-                            ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
-                            ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : ""), //$NON-NLS-1$ //$NON-NLS-2$
-                            (entity.isDesignValid() ? "" : Messages.getString("ChatLounge.invalidDesign"))})); //$NON-NLS-1$ //$NON-NLS-2$
+                lisEntities.add(ChatLounge.formatUnit(entity, false));
                 entityCorrespondance[listIndex++] = entity.getId();
             }
         }
@@ -937,10 +876,79 @@ public class ChatLounge
         butSaveList.setEnabled(localUnits);
         butDeleteAll.setEnabled(localUnits);
 
+        butViewGroup.setEnabled(lisEntities.getItemCount() != 0);
+
         // Disable the "must select" buttons.
         butCustom.setEnabled(false);
         butMechReadout.setEnabled(false);
         butDelete.setEnabled(false);
+    }
+
+    public static String formatUnit(Entity entity, boolean blindDrop) {
+        String value = new String();
+
+        // Reset the tree strings.
+        String strTreeSet = ""; //$NON-NLS-1$
+        String strTreeView = ""; //$NON-NLS-1$
+
+        // Set the tree strings based on C3 settings for the unit.
+        if (entity.hasC3i()) {
+            if (entity.calculateFreeC3Nodes() == 5)
+                strTreeSet = "**"; //$NON-NLS-1$
+            strTreeView = " (" + entity.getC3NetId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        } else if (entity.hasC3()) {
+            if (entity.getC3Master() == null) {
+                if (entity.hasC3S())
+                    strTreeSet = "***"; //$NON-NLS-1$
+                else
+                    strTreeSet = "*"; //$NON-NLS-1$
+            } else if (!entity.C3MasterIs(entity)) {
+                strTreeSet = ">"; //$NON-NLS-1$
+                if (entity.getC3Master().getC3Master() != null
+                    && !entity.getC3Master().C3MasterIs(entity.getC3Master()))
+                    strTreeSet = ">>"; //$NON-NLS-1$
+                strTreeView = " -> " + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
+            }
+        }
+
+        int crewAdvCount = entity.getCrew().countAdvantages();
+
+        if (blindDrop) {
+            String unitClass = ""; //$NON-NLS-1$
+            if (entity instanceof Infantry) {
+                unitClass = Messages.getString("ChatLounge.0"); //$NON-NLS-1$
+            } else if (entity instanceof Protomech) {
+                unitClass = Messages.getString("ChatLounge.1"); //$NON-NLS-1$
+            } else if (entity instanceof GunEmplacement) {
+                unitClass = Messages.getString("ChatLounge.2"); //$NON-NLS-1$
+            } else {
+                unitClass = entity.getWeightClassName();
+                if (entity instanceof Tank) {
+                    unitClass += Messages.getString("ChatLounge.6"); //$NON-NLS-1$
+                }
+            }
+            value = Messages.getString("ChatLounge.EntityListEntry1", new Object[]{ //$NON-NLS-1$
+                entity.getOwner().getName(),
+                new Integer(entity.getCrew().getGunnery()),
+                new Integer(entity.getCrew().getPiloting()),
+                (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                unitClass,
+                ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
+                ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : "")}); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+            value = strTreeSet
+                + Messages.getString("ChatLounge.EntityListEntry2", new Object[]{ //$NON-NLS-1$
+                    entity.getDisplayName(),
+                    new Integer(entity.getCrew().getGunnery()),
+                    new Integer(entity.getCrew().getPiloting()),
+                    (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    new Integer(entity.calculateBattleValue()),
+                    strTreeView,
+                    ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
+                    ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : ""), //$NON-NLS-1$ //$NON-NLS-2$
+                    (entity.isDesignValid() ? "" : Messages.getString("ChatLounge.invalidDesign"))}); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return value;
     }
 
     /**
@@ -1253,6 +1261,10 @@ public class ChatLounge
         clientgui.getCustomBADialog().show();
     }
 
+    public void viewGroup() {
+        new MechGroupView(clientgui.getFrame(), client, entityCorrespondance).show();
+    }
+
     //
     // GameListener
     //
@@ -1459,6 +1471,8 @@ public class ChatLounge
             clientgui.getStartingPositionDialog().show();
         } else if (ev.getSource() == butMechReadout) {
             mechReadout();
+        } else if (ev.getSource() == butViewGroup) {
+            viewGroup();
         } else if (ev.getSource() == butLoadList) {
             // Allow the player to replace their current
             // list of entities with a list from a file.

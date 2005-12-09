@@ -11711,13 +11711,6 @@ public class Server implements Runnable {
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
         boolean isFerroFibrousTarget = false;
-        if ((te != null) &&
-            (te.getArmor(hit) > 0) &&
-            ((te.getArmorType() == EquipmentType.T_ARMOR_FERRO_FIBROUS) ||
-             (te.getArmorType() == EquipmentType.T_ARMOR_LIGHT_FERRO) ||
-             (te.getArmorType() == EquipmentType.T_ARMOR_HEAVY_FERRO))) {
-            isFerroFibrousTarget = true;
-        }
         boolean wasDamageIS = false;
         boolean tookInternalDamage = damageIS;
         IHex te_hex = null;
@@ -11736,6 +11729,41 @@ public class Server implements Runnable {
             r.newlines = 0;
             vDesc.addElement(r);
             return vDesc;
+        }
+
+        // check for critical hit/miss vs. a BA
+        if( crits > 0 && te instanceof BattleArmor) {
+            //possible critical miss if the rerolled location isn't alive
+            if(hit.getLocation() >= te.locations()
+            || te.getInternal(hit.getLocation()) <= 0) {
+                r = new Report(6037);
+                r.add(hit.getLocation());
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                vDesc.addElement(r);
+                return vDesc;
+            }
+            //otherwise critical hit
+            r = new Report(6225);
+            r.add(te.getLocationAbbr(hit));
+            r.subject = te_n;
+            r.indent(2);
+            r.newlines = 0;
+            vDesc.addElement(r);
+
+            crits = 0;
+            damage = Math.max(te.getInternal(hit.getLocation()) + 
+                              te.getArmor(hit.getLocation()),
+                              damage);
+        }
+
+        if ((te != null) &&
+            (te.getArmor(hit) > 0) &&
+            ((te.getArmorType() == EquipmentType.T_ARMOR_FERRO_FIBROUS) ||
+             (te.getArmorType() == EquipmentType.T_ARMOR_LIGHT_FERRO) ||
+             (te.getArmorType() == EquipmentType.T_ARMOR_HEAVY_FERRO))) {
+            isFerroFibrousTarget = true;
         }
 
         // Is the infantry in the open?

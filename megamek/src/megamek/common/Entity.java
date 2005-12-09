@@ -3850,6 +3850,10 @@ public abstract class Entity
         return null;
     }
 
+    public HitData getTrooperAtLocation(HitData hit, Entity transport) {
+        return rollHitLocation( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
+    }
+
     /**
      * Record the ID of the <code>Entity</code> that has loaded this unit.
      * A unit that is unloaded can neither move nor attack for the rest of

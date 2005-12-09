@@ -11959,8 +11959,8 @@ public class Server implements Runnable {
                     r.addDesc(passenger);
                     vDesc.addElement(r);
 
-                    HitData passHit = passenger.rollHitLocation
-                        ( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
+                    HitData passHit = passenger.getTrooperAtLocation
+                        ( hit, te);
 
                     // How much damage will the passenger absorb?
                     int absorb = 0;
@@ -12153,6 +12153,26 @@ public class Server implements Runnable {
                                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, 1));
                             } else h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.LEGS, h.terrainLevel(Terrains.LEGS)+1));
                             sendChangedHex(te.getPosition());
+                        }
+
+                        // Level 3 mechanized BA, troopers riding on a location 
+                        // all die when the location is destroyed.
+                        if(game.getOptions().booleanOption("maxtech_mechanized_ba") &&
+                           te instanceof Mech) {
+                            Entity passenger = te.getExteriorUnitAt( hit.getLocation(), hit.isRear() );
+                            if(null != passenger && !passenger.isDoomed()) {
+                                HitData passHit = passenger.getTrooperAtLocation( hit, te);
+                                passHit.setEffect(HitData.EFFECT_CRITICAL); //ensures a kill
+                                if(passenger.getInternal(passHit) > 0) {
+                                    vDesc.addAll(damageEntity(passenger, passHit, damage));
+                                }
+                                passHit = new HitData(hit.getLocation(), !(hit.isRear()));
+                                passHit = passenger.getTrooperAtLocation( passHit, te);
+                                passHit.setEffect(HitData.EFFECT_CRITICAL); //ensures a kill
+                                if(passenger.getInternal(passHit) > 0) {
+                                    vDesc.addAll(damageEntity(passenger, passHit, damage));
+                                }
+                            }
                         }
 
                         // Destroy the location.

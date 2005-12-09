@@ -371,15 +371,11 @@ public class HmpFile
       if ( fluffSize <= 60 )
           fluff = null;
 
-      buffer = new byte[readUnsignedShort(dis)];
-      dis.read(buffer);
-      //fluff = new String(buffer);
+      //non printing notes
+      dis.skipBytes(readUnsignedShort(dis));
+      dis.skipBytes(readUnsignedShort(dis));
 
-      buffer = new byte[readUnsignedShort(dis)];
-      dis.read(buffer);
-      //fluff = new String(buffer);
-
-      dis.skipBytes(4);
+      dis.skipBytes(8); // mechs with supercharger have an 01 in here, but we can identify from the criticals
       
       // Get cockpit and gyro type, if any.
         if (rulesLevel > 2) {

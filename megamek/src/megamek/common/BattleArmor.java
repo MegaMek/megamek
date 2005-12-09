@@ -419,6 +419,11 @@ public class BattleArmor
         // Pick a random number between 1 and 6.
         int loc = Compute.d6();
 
+        if(game.getOptions().booleanOption("ba_criticals")
+           && loc == 6) {
+           return new HitData( Compute.d6(), false, HitData.EFFECT_CRITICAL );
+        }
+
         // Pick a new random number if that trooper is dead or never existed.
         // Remember that there's one more location than the number of troopers.
         // In www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,

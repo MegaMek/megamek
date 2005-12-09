@@ -440,6 +440,38 @@ public class BattleArmor
     }
 
     /**
+     * For level 3 rules, each trooper occupies a specific location
+     * precondition: hit is a location covered by BA
+     */
+    public HitData getTrooperAtLocation(HitData hit, Entity transport) {
+        if(game.getOptions().booleanOption("maxtech_mechanized_ba") &&
+           transport instanceof Mech) {
+            int loc = 99;
+            switch(hit.getLocation()) {
+                case Mech.LOC_RT:
+                    if(hit.isRear())
+                        loc = 3;
+                    else
+                        loc = 1;
+                    break;
+                case Mech.LOC_LT:
+                    if(hit.isRear())
+                        loc = 4;
+                    else
+                        loc = 2;
+                    break;
+                case Mech.LOC_CT:
+                    loc = 5;
+                    break;
+            }
+            if(loc < locations())
+                return new HitData(loc);
+        }
+        //otherwise roll a random location
+        return rollHitLocation( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
+    }
+
+    /**
      * Battle Armor units don't transfer damage.
      */
     public HitData getTransferLocation(HitData hit) {

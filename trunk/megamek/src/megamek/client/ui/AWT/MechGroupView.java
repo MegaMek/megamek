@@ -75,6 +75,9 @@ public class MechGroupView
         this.setLocation(
             frame.getLocation().x + frame.getSize().width / 2 - this.getSize().width / 2,
             frame.getLocation().y + frame.getSize().height / 10);
+        this.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    e.getWindow().setVisible(false);}});
     }
 
     public void actionPerformed(ActionEvent ae) {

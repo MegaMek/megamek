@@ -67,6 +67,7 @@ the same tags as mekwars for easy cut'n'paste.
 + RFE 1374969: BA critical hits (MaxTech rule)
 + Maxtech mechanized BA rule
 + Bug 1377368: Group View window now closable via native controls.
++ Bug 1378762: target not in arc error for leg attack
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

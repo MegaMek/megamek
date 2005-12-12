@@ -554,7 +554,10 @@ public class Infantry
             return Compute.ARC_360; 
         Mounted mounted = getEquipment(wn);
         WeaponType wtype = (WeaponType)mounted.getType();
-        if(wtype.hasFlag(WeaponType.F_INFANTRY))
+        if(wtype.hasFlag(WeaponType.F_INFANTRY)
+             || wtype.getInternalName() == LEG_ATTACK
+             || wtype.getInternalName() == SWARM_MEK
+             || wtype.getInternalName() == STOP_SWARM)
             return Compute.ARC_360; 
         else
             return Compute.ARC_FORWARD;

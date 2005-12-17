@@ -145,6 +145,7 @@ public class EntityVerifier implements MechSummaryCache.Listener
         System.out.println("\nTank Options:");
         System.out.println(tankOption.printOptions());
 
+        int failures = 0;
         for (int i = 0; i < ms.length; i++)
         {
             if (ms[i].getUnitType().equals("Mek") ||
@@ -154,9 +155,11 @@ public class EntityVerifier implements MechSummaryCache.Listener
                         ms[i].getEntryName());
                 if (entity==null)
                     continue;
-                checkEntity(entity, ms[i].getSourceFile().toString(), false);
+                if (!checkEntity(entity, ms[i].getSourceFile().toString(), false))
+                    failures++;
             }
         }
+        System.out.println("Total Failures: " + failures);
     }
 
     private void readOptions(ParsedXML node)

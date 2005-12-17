@@ -940,19 +940,20 @@ class Armor
     public static float getWeightArmor(int armorType, int armorFlags, 
             int totalOArmor, float roundWeight)
     {
-        float totalOArmorWeight = totalOArmor / 16.0f;
+        float points = totalOArmor;
         if (armorType==EquipmentType.T_ARMOR_FERRO_FIBROUS)
         {
             if ((armorFlags & CLAN_ARMOR) != 0)
-                totalOArmorWeight /= 1.2f;
+                points /= 1.2f;
             else
-                totalOArmorWeight /= 1.12f;
+                points /= 1.12f;
         } else if (armorType == EquipmentType.T_ARMOR_LIGHT_FERRO) {
-                totalOArmorWeight /= 1.06f;
+                points /= 1.06f;
         } else if (armorType == EquipmentType.T_ARMOR_HEAVY_FERRO) {
-                totalOArmorWeight /= 1.24f;
+                points /= 1.24f;
         }
-        return TestEntity.ceilMaxHalf(totalOArmorWeight, roundWeight);
+        float armorWeight = Math.round(points) / 16.0f;
+        return TestEntity.ceilMaxHalf(armorWeight, roundWeight);
     }
 
     public String getShortName()

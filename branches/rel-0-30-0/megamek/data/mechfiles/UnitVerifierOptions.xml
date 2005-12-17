@@ -14,7 +14,7 @@
     true
     </showOverweighted>
     <maxOverweight>
-    0.25
+    0
     </maxOverweight>
     <showUnderweighted>
     false

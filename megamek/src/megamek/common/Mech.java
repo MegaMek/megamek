@@ -801,9 +801,9 @@ public abstract class Mech
     
     public int getRunMP(boolean gravity) {
         if (hasArmedMASC()) {
-            return getWalkMP(gravity) * 2;
+            return (getWalkMP(gravity) * 2)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
         }
-        return super.getRunMP(gravity);
+        return super.getRunMP(gravity)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
     }
 
     /**
@@ -811,10 +811,10 @@ public abstract class Mech
      */
     
     public int getRunMPwithoutMASC(boolean gravity) {
-        return super.getRunMP(gravity);
+        return super.getRunMP(gravity)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
     }
     public int getOriginalRunMPwithoutMASC() {
-        return super.getRunMP(false);
+        return super.getRunMP(false)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
     }
 
     /**
@@ -2275,13 +2275,17 @@ public abstract class Mech
         }
 
         // EI bonus?
-        if(hasActiveEiCockpit()) {
+        if (hasActiveEiCockpit()) {
             roll.addModifier(-1, "Enhanced Imaging");
         }
 
         // Small cockpit penalty?
-        if(getCockpitType() == Mech.COCKPIT_SMALL) {
+        if (getCockpitType() == Mech.COCKPIT_SMALL) {
             roll.addModifier(1, "Small Cockpit");
+        }
+
+        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+            roll.addModifier(1, "Hardened Armor");
         }
 
         return roll;

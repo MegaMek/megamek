@@ -8843,7 +8843,8 @@ public class Server implements Runnable {
                     } else {
                         if (usesAmmo
                                 && (atype.getAmmoType() == AmmoType.T_AC)
-                                && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
+                                && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING)
+                                && !(entityTarget.getArmorType() == EquipmentType.T_ARMOR_HARDENED))
                             hit.makeArmorPiercing(atype);
                         if (bGlancing) {
                             hit.makeGlancingBlow();
@@ -12013,6 +12014,15 @@ public class Server implements Runnable {
 
             // is there armor in the location hit?
             if (!ammoExplosion && te.getArmor(hit) > 0 && !damageIS) {
+                int tmpDamageHold = -1;
+
+                // If the target has hardened armor, we need to adjust damage.
+                if (te.getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+                    tmpDamageHold = damage;
+                    damage /= 2;
+                    damage += (tmpDamageHold%2);
+                }
+                
                 if (te.getArmor(hit) > damage) {
                     // armor absorbs all damage
                     te.setArmor(te.getArmor(hit) - damage, hit);
@@ -12050,6 +12060,14 @@ public class Server implements Runnable {
                                                                 "damage",
                                                                 false));
                         }
+                    }
+                }
+                
+                // If it has hardened armor, now we need to "correct" any remaining damage.
+                if (tmpDamageHold > 0) {
+                    if (te.getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+                        damage *= 2;
+                        damage -= (tmpDamageHold%2);
                     }
                 }
             }

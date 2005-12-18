@@ -69,6 +69,7 @@ the same tags as mekwars for easy cut'n'paste.
 + Bug 1377368: Group View window now closable via native controls.
 + Bug 1378762: target not in arc error for leg attack
 + Bug 1383851: Verifier calculates Ferro-Fibrous weight incorrectly
++ MaxTech Hardened Armor implementation.
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

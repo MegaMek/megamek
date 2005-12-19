@@ -225,7 +225,7 @@ public class TestTank extends TestEntity
         if (hasIllegalTechLevels(buff, ignoreAmmo))
             correct = false;
         // only tanks with fusion engine can be vacuum protected
-        if (tank.getEngineType() == 1 && tank.doomedInVacuum())
+        if (tank.getEngineType() == 1 && !tank.doomedInVacuum())
             correct = false;
         return correct;
     }

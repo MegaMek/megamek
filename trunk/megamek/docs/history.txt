@@ -71,6 +71,10 @@ the same tags as mekwars for easy cut'n'paste.
 + Bug 1383851: Verifier calculates Ferro-Fibrous weight incorrectly
 + MaxTech Hardened Armor implementation.
 + Bug 1384772: Vehicle vacuum protection not working properly.
++ Verifier xml file: ceilWeight section was not being read.
++ Verifier: Vehicle control tonnage not calculated correctly.
++ Verifier: Most system weights were being rounded to quarter-ton values,
+    instead of proper half-ton values.
 
 v0.31.2 (2005-11-20, 21:00 GMT)
 + Switchable map tilesets

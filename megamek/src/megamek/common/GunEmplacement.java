@@ -570,9 +570,9 @@ public class GunEmplacement extends Entity
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }

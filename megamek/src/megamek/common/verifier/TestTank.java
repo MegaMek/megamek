@@ -133,7 +133,7 @@ public class TestTank extends TestEntity
 
     public float getWeightControls()
     {   
-        return tank.getWeight() / 20.0f;
+        return TestEntity.ceilMaxHalf(tank.getWeight() / 20.0f, getWeightCeilingControls());
     }
 
     private int getTankCountHeatLaserWeapons()

@@ -1,15 +1,15 @@
 <!-- Sample Entity Test options file -->
 <entityverifier>
   <mech>
-    <ceilweight>
-      <engine>0.25</engine>
-      <structure>0.25</structure>
-      <armor>0.25</armor>
-      <controls>0.25</controls>
+    <ceilWeight>
+      <engine>0.5</engine>
+      <structure>0.5</structure>
+      <armor>0.5</armor>
+      <controls>0.5</controls>
       <weapons>1.0</weapons>
       <targcomp>1.0</targcomp>
       <gyro>1.0</gyro>
-    </ceilweight>
+    </ceilWeight>
     <showOverweighted>
     true
     </showOverweighted>
@@ -45,16 +45,16 @@
     </showFailedEquip>
   </mech>
   <tank>
-    <ceilweight>
-      <engine>0.25</engine>
-      <structure>0.25</structure>
-      <armor>0.25</armor>
-      <controls>0.25</controls>
+    <ceilWeight>
+      <engine>0.5</engine>
+      <structure>0.5</structure>
+      <armor>0.5</armor>
+      <controls>0.5</controls>
       <weapons>1.0</weapons>
       <targcomp>1.0</targcomp>
-      <turret>0.25</turret>
-      <poweramp>0.5</poweramp>
-    </ceilweight>
+      <turret>0.5</turret>
+      <poweramp>0.1</poweramp>
+    </ceilWeight>
     <showOverweighted>
     true
     </showOverweighted>

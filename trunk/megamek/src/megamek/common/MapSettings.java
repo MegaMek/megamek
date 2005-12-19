@@ -21,8 +21,6 @@ import gd.xml.tiny.TinyParser;
 import java.util.*;
 import java.io.*;
 
-import megamek.common.options.IOption;
-
 /**
  *
  * MapSettings.java

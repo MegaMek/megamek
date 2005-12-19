@@ -161,27 +161,25 @@ public class TestXMLOption implements TestEntityOption
             ParsedXML child = (ParsedXML) e.nextElement();
             String name = child.getName();
             if (name.equals(ENGINE))
-                ceilEngine = getContentAsFloat(child);
+                ceilEngine = 1 / getContentAsFloat(child);
             else if (name.equals(STRUCTURE))
-                ceilStructure = getContentAsFloat(child);
+                ceilStructure = 1 / getContentAsFloat(child);
             else if (name.equals(ARMOR))
-                ceilArmor = getContentAsFloat(child);
+                ceilArmor = 1 / getContentAsFloat(child);
             else if (name.equals(CONTROLS))
-                ceilControls = getContentAsFloat(child);
+                ceilControls = 1 / getContentAsFloat(child);
             else if (name.equals(WEAPONS))
-                ceilWeapons = getContentAsFloat(child);
+                ceilWeapons = 1 / getContentAsFloat(child);
             else if (name.equals(TARGCOMP))
-                ceilTargComp = getContentAsFloat(child);
+                ceilTargComp = 1 / getContentAsFloat(child);
             else if (name.equals(TURRET))
-                ceilTurret = getContentAsFloat(child);
+                ceilTurret = 1 / getContentAsFloat(child);
             else if (name.equals(POWERAMP))
-                ceilPowerAmp = getContentAsFloat(child);
+                ceilPowerAmp = 1 / getContentAsFloat(child);
             else if (name.equals(GYRO))
-                ceilGyro = getContentAsFloat(child);
+                ceilGyro = 1 / getContentAsFloat(child);
         }
     }
-
-
 
     public float getWeightCeilingEngine()
     {

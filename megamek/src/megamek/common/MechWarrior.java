@@ -43,7 +43,8 @@ public class MechWarrior extends Infantry {
         initializeInternal(1, Infantry.LOC_INFANTRY);
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalId());
-        if(game.getOptions().booleanOption("armed_mechwarriors")) {
+        IGame tmpGame = originalRide.getGame();
+        if(tmpGame != null && tmpGame.getOptions().booleanOption("armed_mechwarriors")) {
             try {
                 addEquipment(EquipmentType.get("InfantryRifle"), Infantry.LOC_INFANTRY);
             } 

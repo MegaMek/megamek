@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.30.7-dev (cvs)
+
 v0.30.6 (2005-12-20, 16:30 GMT)
 + Bug 1326177: Leg Breached during DFA
 + Bug: Semi-guided LRMs could not be fired

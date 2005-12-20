@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.31.4-dev (CVS)
++ Bug 1385381: incorrect code in MapSettings.java
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

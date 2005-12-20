@@ -95,17 +95,13 @@ public class MechView {
                 .append(")"); //$NON-NLS-1$
         }
         sBasic.append( "\n" ); //$NON-NLS-1$
-        if ( isMech ) {
-            Mech aMech = (Mech) mech;
-            sBasic.append( Messages.getString("MechView.Engine") ) //$NON-NLS-1$
-                .append( aMech.engineRating() );
-            if (aMech.hasXL()) {
-                sBasic.append( Messages.getString("MechView.XL") ); //$NON-NLS-1$
-            }
-            if (aMech.hasLightEngine()) {
-                sBasic.append( Messages.getString("MechView.Light") ); //$NON-NLS-1$
-            }
+        if ( isMech || isVehicle ) {
+            sBasic.append( Messages.getString("MechView.Engine") ); //$NON-NLS-1$
+            sBasic.append(mech.getEngine().getEngineName());
             sBasic.append("\n"); //$NON-NLS-1$
+        }
+        if ( isMech ) {
+            Mech aMech = (Mech)mech;
             sBasic.append( Messages.getString("MechView.HeatSinks") ) //$NON-NLS-1$
                 .append( aMech.heatSinks() );
             if (aMech.getHeatCapacity() > aMech.heatSinks()) {

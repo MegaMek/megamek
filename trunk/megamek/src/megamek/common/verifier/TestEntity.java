@@ -228,7 +228,7 @@ public abstract class TestEntity implements TestEntityOption
 
     public String printWeightEngine()
     {
-        return StringUtil.makeLength("Engine: "+engine.getShortEngineName(), getPrintSize()-5)+
+        return StringUtil.makeLength("Engine: "+engine.getEngineName(), getPrintSize()-5)+
                 makeWeightString(getWeightEngine())+"\n";
     }
 
@@ -671,8 +671,7 @@ public abstract class TestEntity implements TestEntityOption
                 hasFailedEquipment = true;
             }
         }
-        if (hasFailedEquipment)
-            buff.append("\n");
+
         return hasFailedEquipment;
     }
 

@@ -30,6 +30,7 @@ import java.util.Vector;
 /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
@@ -444,9 +445,6 @@ public class HmpFile
       Mech mech =
         (chassisType == ChassisType.QUADRAPED) ? (Mech) new QuadMech(gyroType, cockpitType) : (Mech) new BipedMech(gyroType, cockpitType);
 
-      if(engineType == EngineType.ICE) {
-          mech.setICE(true);
-      }
       mech.setChassis(name);
       mech.setModel(model);
       mech.setYear(year);
@@ -493,7 +491,13 @@ public class HmpFile
 
       mech.setWeight(tonnage);
 
-      mech.setOriginalWalkMP(walkMP);
+      int engineFlags = 0;
+      if (techType == TechType.CLAN || engineTechType == TechType.CLAN)
+          engineFlags = Engine.CLAN_ENGINE;
+      mech.setEngine(new Engine(engineRating,
+                                Engine.getEngineTypeByString(engineType.toString()),
+                                engineFlags));
+
       mech.setOriginalJumpMP(jumpMP);
 
       mech.setStructureType(internalStructureType.toString());
@@ -595,7 +599,6 @@ public class HmpFile
         String criticalName = getCriticalName(critical);
 
         if (isFusionEngine(critical)) {
-
           mech.setCritical(location, i,
                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                                             Mech.SYSTEM_ENGINE));
@@ -1963,7 +1966,7 @@ class EngineType
   public static final EngineType XL = new EngineType("XL", 1);
   public static final EngineType XXL = new EngineType("XXL", 2);
   public static final EngineType COMPACT = new EngineType("Compact", 3);
-  public static final EngineType ICE = new EngineType("I.C.E", 4);
+  public static final EngineType ICE = new EngineType("I.C.E.", 4);
   public static final EngineType LIGHT = new EngineType("Light", 5);
 
   private EngineType(String name, int id)

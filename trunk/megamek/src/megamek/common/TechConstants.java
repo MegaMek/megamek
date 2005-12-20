@@ -151,5 +151,14 @@ public class TechConstants {
             return true;
         return false;
     }
+
+    public static String getTechName(int level) {
+        if (level == T_IS_LEVEL_1 || level == T_IS_LEVEL_2 || level == T_IS_LEVEL_3)
+            return "Inner Sphere";
+        else if (level == T_CLAN_LEVEL_2 || level == T_CLAN_LEVEL_3)
+            return "Clan";
+        else
+            return "(Unknown Technology Base)";
+    }
 }
 

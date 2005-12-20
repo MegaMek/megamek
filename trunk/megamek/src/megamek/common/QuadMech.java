@@ -330,20 +330,13 @@ public class QuadMech extends Mech
             structureCost = 6400;
         }
         double legCost = 1400;
-        double engineCost = 5000;
-        if(hasXL()) {
-            engineCost = 20000;
-        }
-        if(hasLightEngine()) {
-            engineCost = 15000;
-        }
-        double rating = weight*getOriginalWalkMP();
+        Engine engine = getEngine();
         int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
         double sinkCost = hasDoubleHeatSinks()? 6000: 2000;
         double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
         cost += (musclesCost+structureCost+legCost)*weight;
-        cost += rating*weight*engineCost/75.0;
-        cost += 300000 * Math.ceil(rating/100.0);
+        cost += engine.getBaseCost() * engine.getRating() * weight / 75.0;
+        cost += 300000 * Math.ceil(engine.getRating()/100.0);
         cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks
         cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
         cost += getWeaponsAndEquipmentCost();

@@ -27,6 +27,7 @@ import java.util.Enumeration;
 
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
@@ -65,6 +66,7 @@ public class TdbFile implements IMechLoader {
     private static final String  JUMP               = "jump";
     private static final String  HEAT_SINKS         = "heatsinks";
     private static final String  ARMOR              = "armor"; // also attribute
+    private static final String  ENGINE             = "engine";
     private static final String  GYRO               = "gyro";
     private static final String  COCKPIT            = "cockpit";
     private static final String  STRUCTURE          = "internal"; // also attribute
@@ -82,6 +84,7 @@ public class TdbFile implements IMechLoader {
     private static final String  IS_SPREAD          = "isspread";
     private static final String  ITEM_INDEX         = "itemindex";
     private static final String  REAR_ARMOR         = "reararmor";
+    private static final String  RATING             = "rating";
 
     /**
      * Special values recognized by this parser.
@@ -130,6 +133,8 @@ public class TdbFile implements IMechLoader {
     private boolean isSplit[];
 
     private String armorType;
+    private String engineType;
+    private int engineRating;
     private String structureType;
     private String targSysStr;
     private String gyroType = "Standard";
@@ -248,6 +253,9 @@ public class TdbFile implements IMechLoader {
             heatSinks = node.getAttribute(COUNT);
         } else if (node.getName().equals(ARMOR)) {
             armorType = ((ParsedXML)children.nextElement()).getContent();
+        } else if (node.getName().equals(ENGINE)) {
+            engineType = ((ParsedXML)children.nextElement()).getContent();
+            engineRating = Integer.parseInt(node.getAttribute(RATING));
         } else if (node.getName().equals(STRUCTURE)) {
             structureType = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(GYRO)) {
@@ -462,9 +470,16 @@ public class TdbFile implements IMechLoader {
                 throw new EntityLoadingException("Unsupported tech base: " + techBase);
             }
             mech.setWeight(Integer.parseInt(tonnage));
-            mech.setOriginalWalkMP(Integer.parseInt(walkMP));
             if (jumpMP != null)
                 mech.setOriginalJumpMP(Integer.parseInt(jumpMP));
+            int engineFlags = 0;
+            if ((mech.isClan() && !mech.isMixedTech())
+                || (mech.isMixedTech() && mech.isClan() && !mech.itemOppositeTech(engineType))) {
+                engineFlags = Engine.CLAN_ENGINE;
+            }
+            mech.setEngine(new Engine(engineRating,
+                                      Engine.getEngineTypeByString(engineType),
+                                      engineFlags));
             int expectedSinks = Integer.parseInt(heatSinks);
 
             mech.autoSetInternal();
@@ -559,8 +574,6 @@ public class TdbFile implements IMechLoader {
             }
             if (critName.indexOf("Engine") != -1) {
                 mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
-                if (critName.indexOf("(C)") != -1)
-                    mech.setEngineTechLevel(TechConstants.T_CLAN_LEVEL_2);
                 continue;
             }
             if (critName.endsWith("[LRM]") || critName.endsWith("[SRM]")) {

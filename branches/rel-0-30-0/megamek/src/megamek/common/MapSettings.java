@@ -493,7 +493,7 @@ public class MapSettings implements Serializable {
             (this.maxRadius != other.getMaxRadius()) ||
             (this.minCraters != other.getMinCraters()) ||
             (this.maxCraters != other.getMaxCraters()) ||
-            (this.theme != other.getTheme()) ||
+            (!this.theme.equals(other.getTheme())) ||
             (this.fxMod != other.getFxMod()) ||
             (this.probFlood != other.getProbFlood()) ||
             (this.probForestFire != other.getProbForestFire()) ||

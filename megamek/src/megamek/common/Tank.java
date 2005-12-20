@@ -53,7 +53,6 @@ public class Tank
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     public String[] getLocationNames() { return LOCATION_NAMES; }
     
-    private int engineType = 0;
     private int armorType = 0;
     private int structureType = 0;
 
@@ -719,16 +718,6 @@ public class Tank
         return false;
     }
 
-    public int getEngineType()
-    {
-        return engineType;
-    }
-
-    public void setEngineType(int type)
-    {
-        engineType = type;
-    }
-
     public int getArmorType()
     {
         return armorType;
@@ -750,9 +739,9 @@ public class Tank
     }
 
     /**
-     * @return The cost in C-Bills of the 'Mech in question.
+     * @return suspension factor of vehicle
      */
-    private double getSuspensionFactor () {
+    public int getSuspensionFactor () {
         switch (movementMode) {
             case IEntityMovementMode.HOVER:
                 if (weight<=10) return 40;
@@ -787,32 +776,13 @@ public class Tank
     }
     
     public double getCost() {
-//         System.out.println(getDisplayName()); // killme
         double cost = 0;
-        double rating = weight*getOriginalWalkMP() - getSuspensionFactor();
-        double engineCost = 0;
-        switch (engineType) {
-            case 0: // Fusion Engine
-                engineCost = 5000;
-                break;
-            case 1: // I.C.E. Engine
-                engineCost = 1250;
-                break;
-            case 2: // XL Fusion Engine
-                engineCost = 20000;
-                break;
-            case 3: // Light Fusion?
-                engineCost = 15000;
-                break;
-            default: // Oops
-                engineCost = 0;
-        }
-        cost += rating*weight*engineCost/75.0;
+        Engine engine = getEngine();
+        cost += engine.getBaseCost() * engine.getRating() * weight / 75.0;
         double controlWeight = Math.ceil(weight*0.05*2.0)/2.0; //? should be rounded up to nearest half-ton
         cost += 10000*controlWeight;
         cost += weight/10.0*10000; // IS has no variations, no Endo etc.
-        double freeHeatSinks=10;
-        if (engineType==1) freeHeatSinks=0;
+        double freeHeatSinks = engine.getCountEngineHeatSinks();
         int sinks=0;
         double turretWeight=0;
         double paWeight=0;
@@ -827,10 +797,10 @@ public class Tank
                 turretWeight+=wt.getTonnage(this)/10.0;
             }
         }
-        if(engineType!=1) {
+        paWeight=Math.ceil(paWeight*10.0)/10;
+        if (engine.isFusion()) {
             paWeight=0;
         }
-        paWeight=Math.ceil(paWeight*10.0)/10;
         turretWeight=Math.ceil(turretWeight*2)/2;
         cost+=20000*paWeight;
         cost+=2000*Math.max(0,sinks-freeHeatSinks);
@@ -915,76 +885,15 @@ public class Tank
         movementDamage += level;
     }
 
-    public int engineRating() {
-        int sf = 0;
-        switch(getMovementMode())
-        {
-            case IEntityMovementMode.TRACKED:
-                return Math.round(getOriginalWalkMP() * getWeight());
-            case IEntityMovementMode.WHEELED:
-                return Math.round(getOriginalWalkMP() *
-                        getWeight())-20;
-            case IEntityMovementMode.HOVER:
-                sf = 0;
-                if (getWeight()<=10)
-                    sf = 40;
-                else if (getWeight()<=20)
-                    sf = 85;
-                else if (getWeight()<=30)
-                    sf = 130;
-                else if (getWeight()<=40)
-                    sf = 175;
-                else if (getWeight()<=50)
-                    sf = 235;
-                return Math.round(getOriginalWalkMP()*
-                        getWeight())-sf;
-            case IEntityMovementMode.HYDROFOIL:
-                sf = 0;
-                if (getWeight()<=10)
-                    sf = 60;
-                else if (getWeight()<=20)
-                    sf = 105;
-                else if (getWeight()<=30)
-                    sf = 150;
-                else if (getWeight()<=40)
-                    sf = 195;
-                else if (getWeight()<=50)
-                    sf = 255;
-                else if (getWeight()<=60)
-                    sf = 300;
-                else if (getWeight()<=70)
-                    sf = 345;
-                else if (getWeight()<=80)
-                    sf = 390;
-                else if (getWeight()<=90)
-                    sf = 435;
-                else if (getWeight()<=100)
-                    sf = 480;
-                return Math.round(getOriginalWalkMP()*
-                        getWeight())-sf;
-            case IEntityMovementMode.NAVAL:
-            case IEntityMovementMode.SUBMARINE:
-                return Math.round(getOriginalWalkMP()*
-                        getWeight())-30;
+    public void setEngine(Engine e) {
+        engine = e;
+        if (e.engineValid) {
+            setOriginalWalkMP(calculateWalk());
         }
-        return 0;
     }
 
-    public Engine getEngine() {
-        int type = 0;
-        int flag = Engine.TANK_ENGINE;
-        if (getEngineType()==EquipmentType.T_ENGINE_ICE) {
-            type = Engine.COMPUSTION_ENGINE;
-            flag = 0;
-        } else if (getEngineType()==EquipmentType.T_ENGINE_FUSION) {
-            type = Engine.NORMAL_ENGINE;
-        } else if (getEngineType()==EquipmentType.T_ENGINE_XL) {
-            type = Engine.XL_ENGINE;
-        } else if (getEngineType() == EquipmentType.T_ENGINE_LIGHT) {
-            type = Engine.LIGHT_ENGINE;
-        }
-        if (isClan())
-            flag |= Engine.CLAN_ENGINE;
-        return new Engine(engineRating(), type, flag);
+    protected int calculateWalk() {
+        return (getEngine().getRating() + getSuspensionFactor()) / (int)this.weight;
     }
+
 }

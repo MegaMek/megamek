@@ -4840,13 +4840,15 @@ public class Server implements Runnable {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             // build up heat from movement
-            if (entity.moved == IEntityMovementType.MOVE_WALK
-                    || entity.moved == IEntityMovementType.MOVE_VTOL_WALK) {
-                entity.heatBuildup += 1;
+            if (entity.moved == IEntityMovementType.MOVE_NONE) {
+                entity.heatBuildup += entity.getStandingHeat();
+            } else if (entity.moved == IEntityMovementType.MOVE_WALK
+                       || entity.moved == IEntityMovementType.MOVE_VTOL_WALK) {
+                entity.heatBuildup += entity.getWalkHeat();
             } else if (entity.moved == IEntityMovementType.MOVE_RUN
-                    || entity.moved == IEntityMovementType.MOVE_VTOL_RUN
-                    || entity.moved == IEntityMovementType.MOVE_SKID) {
-                entity.heatBuildup += 2;
+                       || entity.moved == IEntityMovementType.MOVE_VTOL_RUN
+                       || entity.moved == IEntityMovementType.MOVE_SKID) {
+                entity.heatBuildup += entity.getRunHeat();
             } else if (entity.moved == IEntityMovementType.MOVE_JUMP) {
                 entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
             }
@@ -12493,13 +12495,13 @@ public class Server implements Runnable {
         Mech mech = (Mech)en;
 
         //ICE can always explode and roll every time hit
-        if (!mech.hasICE()
+        if (mech.getEngine().isFusion()
                 && (!game.getOptions().booleanOption("engine_explosions")
                     || en.rolledForEngineExplosion
                     || en.engineHitsThisRound < 2) )
             return false;
         int explosionBTH = 12;
-        if(mech.hasICE()) {
+        if(!mech.getEngine().isFusion()) {
             switch (hits) {
                 case 0: 
                     return false;
@@ -12568,8 +12570,8 @@ public class Server implements Runnable {
                 sendChangedHex(en.getPosition());
             }
           
-            //ICE explosions don't hurt anyone else
-            if (!mech.hasICE()) {
+            //ICE explosions don't hurt anyone else, but fusion do
+            if (mech.getEngine().isFusion()) {
                 //Nuke anyone that is in our hex
                 Enumeration entitesWithMe = game.getEntities(en.getPosition());
                 Hashtable entitesHit = new Hashtable();
@@ -12587,7 +12589,7 @@ public class Server implements Runnable {
                 }
     
                 //Now we damage people near us
-                int engineRating = ((Mech)en).engineRating();
+                int engineRating = en.getEngine().getRating();
                 int[] damages = { 999, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
                 Vector entites = game.getEntitiesVector();
                 for (int i = 0; i < entites.size(); i++) {
@@ -13246,7 +13248,7 @@ public class Server implements Runnable {
         Vector vDesc = new Vector();
         Report r;
 
-        if(en.getEngineType()!=1) {
+        if(en.getEngine().isFusion()) {
             //fusion engine, no effect
             r = new Report(6300);
             r.subject = en.getId();

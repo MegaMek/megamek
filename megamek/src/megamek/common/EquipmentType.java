@@ -35,13 +35,6 @@ public class EquipmentType {
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
 
-    public static final int     T_ENGINE_UNKNOWN            = -1;
-    public static final int     T_ENGINE_ICE                = 0;
-    public static final int     T_ENGINE_FUSION             = 1;
-    public static final int     T_ENGINE_XL                 = 2;
-    public static final int     T_ENGINE_LIGHT              = 4; // don't ask
-    public static final int     T_ENGINE_XXL                = 3; // don't ask
-
     public static final int     T_ARMOR_UNKNOWN             = -1;
     public static final int     T_ARMOR_STANDARD            = 0;
     public static final int     T_ARMOR_FERRO_FIBROUS       = 1;
@@ -434,14 +427,13 @@ public class EquipmentType {
                     if(e == null) cost = 0;
                     cost = e.getRating() * 10000;
                 } else {
-                    //masc=engine rating*masc tonnage*1000
                     int mascTonnage=0;
                     if (this.getInternalName().equals("ISMASC")) {
                         mascTonnage = Math.round(entity.getWeight() / 20.0f);
                     } else if (this.getInternalName().equals("CLMASC")) {
                         mascTonnage = Math.round(entity.getWeight() / 25.0f);
                     }
-                    cost=mascTonnage*entity.getOriginalWalkMP()*(int)entity.getWeight()*1000;
+                    cost=entity.getEngine().getRating() * mascTonnage * 1000;
                 }
             } else if(this.hasFlag(MiscType.F_JUMP_BOOSTER)) {
                 cost = (int)(entity.getWeight() * entity.getOriginalJumpMP() * entity.getOriginalJumpMP() * 150);

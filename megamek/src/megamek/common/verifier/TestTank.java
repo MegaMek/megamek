@@ -110,7 +110,7 @@ public class TestTank extends TestEntity
     }
     public float getTankPowerAmplifier()
     {
-        if (!engine.isFusionEngine())
+        if (!engine.isFusion())
         {
             int weight = 0;
             for (Enumeration e = tank.getWeapons(); e.hasMoreElements(); )
@@ -151,7 +151,7 @@ public class TestTank extends TestEntity
 
     public boolean hasDoubleHeatSinks()
     {
-        if (!engine.isFusionEngine())
+        if (!engine.isFusion())
             return false;
         if (getTankCountHeatLaserWeapons() <= 10)
             return false;
@@ -225,7 +225,7 @@ public class TestTank extends TestEntity
         if (hasIllegalTechLevels(buff, ignoreAmmo))
             correct = false;
         // only tanks with fusion engine can be vacuum protected
-        if (tank.getEngineType() == 1 && !tank.doomedInVacuum())
+        if (!tank.getEngine().isFusion() && !tank.doomedInVacuum())
             correct = false;
         return correct;
     }

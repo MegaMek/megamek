@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
@@ -269,10 +270,16 @@ public class MtfFile implements IMechLoader {
 
             mech.setWeight(Integer.parseInt(tonnage.substring(5)));
 
-            if(engine.indexOf("ICE") != -1)
-                mech.setICE(true);
+            int engineFlags = 0;
+            if ((mech.isClan() && !mech.isMixedTech())
+                || (mech.isMixedTech() && mech.isClan() && !mech.itemOppositeTech(engine))) {
+                engineFlags = Engine.CLAN_ENGINE;
+            }
+            int engineRating = Integer.parseInt(engine.substring(engine.indexOf(":")+1,engine.indexOf(" ")));
+            mech.setEngine(new Engine(engineRating,
+                                      Engine.getEngineTypeByString(engine),
+                                      engineFlags));
 
-            mech.setOriginalWalkMP(Integer.parseInt(walkMP.substring(8)));
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
 
             boolean dblSinks = (heatSinks.substring(14).equalsIgnoreCase("Double") ||
@@ -356,8 +363,9 @@ ex.printStackTrace();
             boolean rearMounted = false;
             boolean split = false;
 
-            if (critName.equalsIgnoreCase("Fusion Engine")) {
-                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 3));
+            if (critName.equalsIgnoreCase("Fusion Engine")
+                || critName.equalsIgnoreCase("Engine")) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
                 continue;
             }
             if (critName.endsWith("(R)")) {

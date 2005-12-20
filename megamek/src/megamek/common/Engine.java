@@ -18,9 +18,12 @@
  */
 
 package megamek.common;
+
+import java.io.Serializable;
+
 import megamek.common.verifier.TestEntity;
 
-public class Engine
+public class Engine implements Serializable
 {
     public final static float[] ENGINE_RATINGS = { 0.0f, 0.25f,
         0.5f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f, 1.5f, 1.5f,
@@ -34,20 +37,22 @@ public class Engine
         28.5f, 29.5f, 31.5f, 33.0f, 34.5f, 36.5f, 38.5f, 41.0f, 43.5f,
         46.0f, 49.0f, 52.5f,
 
-        56.5f, 61.0f, -1f, 72.5f, 79.5f, 87.5f, 97.0f, 107.5f, -1f,
-        133.5f, -1f, 168.5f, -1f, 214.5f, -1f, 275.5f, -1f, 356.0f, 
-        405.5f, 462.5f };
+        56.5f, 61.0f, 66.5f, 72.5f, 79.5f, 87.5f, 97.0f, 107.5f, 119.5f,
+        133.5f, 150.0f, 168.5f, 190.0f, 214.5f, 243.0f, 275.5f, 313.0f,
+        356.0f, 405.5f, 462.5f };
 
+    //flags
+    public final static int CLAN_ENGINE =  0x1;
+    public final static int TANK_ENGINE =  0x2;
+    public final static int LARGE_ENGINE = 0x4;
 
-
-    public final static int TANK_ENGINE =  0x10;
-    public final static int CLAN_ENGINE =  0x01;
-
-
-    public final static int COMPUSTION_ENGINE = 0;
-    public final static int NORMAL_ENGINE = 1;
-    public final static int XL_ENGINE =    2;
-    public final static int LIGHT_ENGINE = 3;
+    //types
+    public final static int COMBUSTION_ENGINE = 0;
+    public final static int NORMAL_ENGINE =     1;
+    public final static int XL_ENGINE =         2;
+    public final static int LIGHT_ENGINE =      3;
+    public final static int XXL_ENGINE =        4;
+    public final static int COMPACT_ENGINE =    5;
 
     public boolean engineValid;
     private int engineRating;
@@ -57,83 +62,111 @@ public class Engine
 
     public Engine(int engineRating, int engineType, int engineFlags)
     {
-        if (!isValidEngine(engineRating, engineType, engineFlags))
+        this.engineValid = true;
+        this.engineRating = engineRating;
+        this.engineType = engineType;
+        this.engineFlags = engineFlags;
+
+        if (!isValidEngine())
         {
             this.engineValid = false;
             this.engineRating = 0;
             this.engineType = -1;
             this.engineFlags = -1;
         }
-        else
-        {
-            this.engineValid = true;
-            this.engineRating = engineRating;
-            this.engineType = engineType;
-            this.engineFlags = engineFlags;
-        }
     }
 
-    private static boolean hasFlag(int x, int flag)
+    private boolean hasFlag(int flag)
     {
-        if ((x & flag) !=0)
+        if ((this.engineFlags & flag) !=0)
             return true;
         return false;
     }
 
-    public boolean isValidEngine(int rating, int type, int flags)
+    private boolean isValidEngine()
     {
-        if (hasFlag(flags, ~(CLAN_ENGINE|TANK_ENGINE)))
+        if (hasFlag(~(CLAN_ENGINE|TANK_ENGINE|LARGE_ENGINE)))
         {
-            this.problem.append("Flags:" + flags);
+            this.problem.append("Flags:" + this.engineFlags);
             return false;
         }
-        switch (type)
+
+        if ((int)Math.ceil(this.engineRating/5)>ENGINE_RATINGS.length ||
+                this.engineRating<0)
         {
-            case COMPUSTION_ENGINE:
+            this.problem.append("Rating:" + this.engineRating);
+            return false;
+        }
+        if (this.engineRating > 400)
+            this.engineFlags |= LARGE_ENGINE;
+
+        switch (this.engineType)
+        {
+            case COMBUSTION_ENGINE:
             case NORMAL_ENGINE:
             case XL_ENGINE:
+            case XXL_ENGINE:
+                break;
+            case COMPACT_ENGINE:
+                if (hasFlag(TANK_ENGINE)) {
+                    this.problem.append(Messages.getString("Engine.invalidMechOnly"));
+                    return false;
+                }
+                if (hasFlag(LARGE_ENGINE)) {
+                    this.problem.append(Messages.getString("Engine.invalidCompactLarge"));
+                    return false;
+                }
+                break;
             case LIGHT_ENGINE:
+                if (hasFlag(CLAN_ENGINE)) {
+                    this.problem.append(Messages.getString("Engine.invalidSphereOnly"));
+                    return false;
+                }
                 break;
             default:
-                this.problem.append("Type:" + type);
+                this.problem.append("Type:" + this.engineType);
                 return false;
         }
-        if ((int)Math.ceil(rating/5)>ENGINE_RATINGS.length ||
-                rating<0)
-        {
-            this.problem.append("Rating:" + rating);
-            return false;
-        }
+
+
         return true;
     }
-    public boolean isFusionEngine()
-    {
-        return isFusionEngine(engineType);
+
+    public static int getEngineTypeByString(String type) {
+        if (type.toLowerCase().indexOf("xxl") != -1)
+            return XXL_ENGINE;
+        else if (type.toLowerCase().indexOf("xl") != -1)
+            return XL_ENGINE;
+        else if (type.toLowerCase().indexOf("light") != -1)
+            return LIGHT_ENGINE;
+        else if (type.toLowerCase().indexOf("compact") != -1)
+            return COMPACT_ENGINE;
+        else if (type.toLowerCase().indexOf("ice") != -1)
+            return COMBUSTION_ENGINE;
+        else if (type.toLowerCase().indexOf("i.c.e.") != -1)
+            return COMBUSTION_ENGINE;
+        else
+            return NORMAL_ENGINE;
     }
-    public static boolean isFusionEngine(int engineType)
+
+    public boolean isFusion()
     {
-        if (engineType==COMPUSTION_ENGINE)
+        if (engineType==COMBUSTION_ENGINE)
             return false;
         return true;
     }
 
     public float getWeightEngine()
     {
-        return getWeightEngine(engineRating, engineType, engineFlags,
-                TestEntity.CEIL_HALFTON);
+        return getWeightEngine(TestEntity.CEIL_HALFTON);
     }
+
     public float getWeightEngine(float roundWeight)
-    {
-        return getWeightEngine(engineRating, engineType, engineFlags,
-                roundWeight);
-    }
-    public static float getWeightEngine(int engineRating, int engineType,
-            int engineFlags, float roundWeight)
     {
         float weight = ENGINE_RATINGS[(int)Math.ceil(engineRating/5)];
         switch (engineType)
         {
-            case COMPUSTION_ENGINE:
+            case COMBUSTION_ENGINE:
                 weight *= 2.0f;
                 break;
             case NORMAL_ENGINE:
@@ -144,85 +177,220 @@ public class Engine
             case LIGHT_ENGINE:
                 weight *= 0.75f;
                 break;
+            case XXL_ENGINE:
+                weight *= 0.33f;
+                break;
+            case COMPACT_ENGINE:
+                weight *= 1.5f;
+                break;
         }
 
-        if (hasFlag(engineFlags, TANK_ENGINE))
+        if (hasFlag(TANK_ENGINE) && engineType != COMBUSTION_ENGINE)
             weight *= 1.5f;
 
         return TestEntity.ceilMaxHalf(weight, roundWeight);
-        //        getWeightOption(CEIL_ENGINE));
     }
+
     public int getCountEngineHeatSinks()
     {
-        return getCountEngineHeatSinks(engineType);
-    }
-    public static int getCountEngineHeatSinks(int engineType)
-    {
-        if (!isFusionEngine(engineType))
+        if (!isFusion())
             return 0;
         return 10;
     }
 
     public int integralHeatSinkCapacity()
     {
-        return integralHeatSinkCapacity(engineRating, engineType);
-    }
-
-    public static int integralHeatSinkCapacity(int engineRating,
-            int engineType)
-    {
-        if (!isFusionEngine(engineType))
+        if (!isFusion())
             return 0;
         return engineRating / 25;
     }
 
     public String getShortEngineName()
     {
-        return getShortEngineName(engineRating, engineType, engineFlags);
-    }
-    public static String getShortEngineName(int engineRating, int engineType,
-            int engineFlags)
-    {
         switch (engineType)
         {
-            case COMPUSTION_ENGINE:
-                return Integer.toString(engineRating)+" Comp";
+            case COMBUSTION_ENGINE:
+                return Integer.toString(engineRating)+
+                    Messages.getString("Engine.ICE");
             case NORMAL_ENGINE:
                 return Integer.toString(engineRating);
             case XL_ENGINE:
-                return Integer.toString(engineRating)+ " XL"+
-                    (hasFlag(engineFlags, CLAN_ENGINE)?" (Clan)":"");
+                return Integer.toString(engineRating)+
+                    Messages.getString("Engine.XL");
             case LIGHT_ENGINE:
-                return Integer.toString(engineRating)+ " Light"+
-                    (hasFlag(engineFlags, CLAN_ENGINE)?" (Clan)":"");
+                return Integer.toString(engineRating)+
+                    Messages.getString("Engine.Light");
+            case XXL_ENGINE:
+                return Integer.toString(engineRating)+
+                    Messages.getString("Engine.XXL");
+            case COMPACT_ENGINE:
+                return Integer.toString(engineRating)+
+                    Messages.getString("Engine.Compact");
             default:
-                return "Invalid Engine!";
+                return Messages.getString("Engine.invalid");
         }
     }
-    public static String getEngineName(int engineRating, int engineType,
-            int engineFlags)
+
+    public String getEngineName()
     {
+        StringBuffer sb = new StringBuffer();
+        sb.append(Integer.toString(engineRating));
+        if (hasFlag(LARGE_ENGINE))
+            sb.append(Messages.getString("Engine.Large"));
         switch (engineType)
         {
-            case COMPUSTION_ENGINE:
-                return Integer.toString(engineRating)+" Compustion";
+            case COMBUSTION_ENGINE:
+                sb.append(Messages.getString("Engine.ICE"));
+                break;
             case NORMAL_ENGINE:
-                return (hasFlag(engineFlags, TANK_ENGINE)?"Tank ":"")+
-                    Integer.toString(engineRating);
+                break;
             case XL_ENGINE:
-                return (hasFlag(engineFlags, TANK_ENGINE)?"Tank ":"")+
-                    Integer.toString(engineRating)+ " XL"+
-                    (hasFlag(engineFlags, CLAN_ENGINE)?" (Clan)":"");
+                sb.append(Messages.getString("Engine.XL"));
+                break;
             case LIGHT_ENGINE:
-                return (hasFlag(engineFlags, TANK_ENGINE)?"Tank ":"")+
-                    Integer.toString(engineRating)+ " Light"+
-                    (hasFlag(engineFlags, CLAN_ENGINE)?" (Clan)":"");
+                sb.append(Messages.getString("Engine.Light"));
+                break;
+            case XXL_ENGINE:
+                sb.append(Messages.getString("Engine.XXL"));
+                break;
+            case COMPACT_ENGINE:
+                sb.append(Messages.getString("Engine.Compact"));
+                break;
+            default:
+                return this.problem.toString();
         }
-        return null;
+        if (hasFlag(CLAN_ENGINE))
+            sb.append(Messages.getString("Engine.Clan"));
+        if (hasFlag(TANK_ENGINE))
+            sb.append(Messages.getString("Engine.Vehicle"));
+        return sb.toString();
     }
 
     public int getRating()
     {
         return engineRating;
     }
+
+    public int[] getCenterTorsoCriticalSlots() {
+        if (this.engineType == COMPACT_ENGINE) {
+            int[] slots = {0, 1, 2};
+            return slots;
+        } else if (hasFlag(LARGE_ENGINE)) {
+            int[] slots = {0, 1, 2, 7, 8, 9, 10, 11};
+            return slots;
+        } else {
+            int[] slots = {0, 1, 2, 7, 8, 9};
+            return slots;
+        }
+    }
+
+    public int[] getSideTorsoCriticalSlots() {
+        if (this.engineType == LIGHT_ENGINE
+            || (this.engineType == XL_ENGINE
+                && hasFlag(CLAN_ENGINE))) {
+            int[] slots = {0, 1};
+            return slots;
+        } else if (this.engineType == XL_ENGINE) {
+            int[] slots = {0, 1, 2};
+            return slots;
+        } else if (this.engineType == XXL_ENGINE
+                   && hasFlag(CLAN_ENGINE)) {
+            int[] slots = {0, 1, 2, 3};
+            return slots;
+        } else if (this.engineType == XXL_ENGINE) {
+            int[] slots = {0, 1, 2, 3, 4, 5};
+            return slots;
+        } else {
+            int[] slots = {};
+            return slots;
+        }
+    }
+
+    public int getStandingHeat() {
+        switch (engineType) {
+            case XXL_ENGINE:
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
+    public int getWalkHeat() {
+        switch (engineType) {
+            case XXL_ENGINE:
+                return 4;
+            default:
+                return 1;
+        }
+    }
+
+    public int getRunHeat() {
+        switch (engineType) {
+            case XXL_ENGINE:
+                return 6;
+            default:
+                return 2;
+        }
+    }
+
+    public int getJumpHeat(int movedMP) {
+        switch (engineType) {
+            case XXL_ENGINE:
+                return Math.max(6,movedMP*2);
+            default:
+                return Math.max(3,movedMP);
+        }
+
+    }
+
+    public int getBaseCost() {
+        int cost = 0;
+        switch (this.engineType) {
+            case COMBUSTION_ENGINE:
+                cost = 1250;
+            case NORMAL_ENGINE:
+                cost = 5000;
+            case XL_ENGINE:
+                cost = 20000;
+            case XXL_ENGINE:
+                cost = 100000;
+            case COMPACT_ENGINE:
+                cost = 10000;
+            case LIGHT_ENGINE:
+                cost = 15000;
+        }
+        if (hasFlag(LARGE_ENGINE))
+            cost *= 2;
+        return cost;
+    }
+
+    public int getTechType() {
+        int level = 1;
+        switch (this.engineType) {
+            case XL_ENGINE:
+            case LIGHT_ENGINE:
+                level = 2;
+                break;
+            case XXL_ENGINE:
+            case COMPACT_ENGINE:
+                level = 3;
+                break;
+        }
+        if (hasFlag(LARGE_ENGINE))
+            level = 3;
+        if (level == 3) {
+            if (hasFlag(CLAN_ENGINE))
+                return TechConstants.T_CLAN_LEVEL_3;
+            else
+                return TechConstants.T_IS_LEVEL_3;
+        } else if (level == 2) {
+            if (hasFlag(CLAN_ENGINE))
+                return TechConstants.T_CLAN_LEVEL_2;
+            else
+                return TechConstants.T_IS_LEVEL_2;
+        } else {
+            return TechConstants.T_IS_LEVEL_1;
+        }
+    }
+
 } // End class Engine

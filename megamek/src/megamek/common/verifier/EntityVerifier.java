@@ -97,6 +97,13 @@ public class EntityVerifier implements MechSummaryCache.Listener
         if (verbose)
         {
             System.out.print(testEntity.printEntity());
+            StringBuffer buff = new StringBuffer();
+            System.out.println("BV: " + entity.calculateBattleValue()
+                               + "    Cost: " + entity.getCost());
+            if (testEntity.correctEntity(buff, ignoreAmmo))
+                System.out.println("---Entity is valid---");
+            else
+                System.out.println("---Entity INVALID---");
         }
         else
         {
@@ -109,7 +116,7 @@ public class EntityVerifier implements MechSummaryCache.Listener
             {
                 System.out.println(testEntity.getName());
                 System.out.println("Found in: "+testEntity.fileString);
-                System.out.print(buff);
+                System.out.println(buff);
             }
         }
 

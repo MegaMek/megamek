@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import megamek.common.AmmoType;
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IEntityMovementMode;
@@ -47,6 +48,11 @@ public class HmvFile
   private int year;
   private boolean isOmni = false;
   private HMVTechType techType;
+
+  private HMVTechType engineTechType;
+  private HMVTechType heatSinkTechType;
+  private HMVTechType targetingComputerTechType;
+  private HMVTechType armorTechType;
 
   private int engineRating;
   private HMVEngineType engineType;
@@ -101,6 +107,7 @@ public class HmvFile
       dis.read(buffer);
       model = new String(buffer);
 
+      //This next one appears to be wrong.  FIXME
       rulesLevel = readUnsignedShort(dis);
 
       year = readUnsignedShort(dis);
@@ -120,7 +127,11 @@ public class HmvFile
       dis.skipBytes(4);
       
       if(techType.equals(HMVTechType.MIXED)) {
-          dis.skipBytes(8); //some extra guff in mixed tech
+          //THESE ARE GUESSES.  Need example hmv files to verify.
+          engineTechType = HMVTechType.getType(readUnsignedShort(dis));
+          heatSinkTechType = HMVTechType.getType(readUnsignedShort(dis));
+          targetingComputerTechType = HMVTechType.getType(readUnsignedShort(dis));
+          armorTechType = HMVTechType.getType(readUnsignedShort(dis));
       }
 
       engineRating = readUnsignedShort(dis);
@@ -340,127 +351,98 @@ public class HmvFile
 
     public Entity getEntity() throws EntityLoadingException {
         try  {
-            Entity entity = null;
-            
+            Tank vehicle = null;
+
             if (movementType == HMVMovementType.TRACKED ||
                     movementType == HMVMovementType.WHEELED ||
                     movementType == HMVMovementType.HOVER ||
                     movementType == HMVMovementType.DISPLACEMENT_HULL ||
                     movementType == HMVMovementType.HYDROFOIL) {
-                Tank tank = new Tank();
-                entity = tank;
-    
-                tank.setChassis(name);
-                tank.setModel(model);
-                tank.setYear(year);
-                tank.setOmni(isOmni);
-                tank.setEngineType(engineType.getId());
-                int techLevel = TechConstants.T_IS_LEVEL_3;
-                if (rulesLevel == 1) {
-                    techLevel = TechConstants.T_IS_LEVEL_1;
-                } else if (rulesLevel == 2) {
-                    techLevel = techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 : TechConstants.T_IS_LEVEL_2;
-                } else if (techType == HMVTechType.CLAN) {
-                     techLevel = TechConstants.T_CLAN_LEVEL_3;
-                }
-                    
-                tank.setTechLevel(techLevel);
-    
-                int suspensionFactor = getSuspensionFactor(roundedInternalStructure, movementType);
-                tank.setWeight((engineRating + suspensionFactor) / cruiseMP);
-    
-                tank.setMovementMode(
-                    movementType == HMVMovementType.DISPLACEMENT_HULL ? IEntityMovementMode.NAVAL :
-                    movementType == HMVMovementType.HYDROFOIL ? IEntityMovementMode.HYDROFOIL :
-                    movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER :
-                    movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED :
-                    IEntityMovementMode.TRACKED);
-    
-                tank.setOriginalWalkMP(cruiseMP);
-                tank.setOriginalJumpMP(jumpMP);
-    
-                // hmmm...
-                tank.setHasNoTurret(turretArmor == 0);
-    
-                tank.autoSetInternal();
-                tank.setArmorType(armorType.getId());
-
-                tank.initializeArmor(frontArmor, Tank.LOC_FRONT);
-                tank.initializeArmor(leftArmor, Tank.LOC_LEFT);
-                tank.initializeArmor(rightArmor, Tank.LOC_RIGHT);
-                tank.initializeArmor(rearArmor, Tank.LOC_REAR);
-                if (!tank.hasNoTurret()) {
-                    tank.initializeArmor(turretArmor, Tank.LOC_TURRET);
-                }
-
-                addEquipment(tank, HMVWeaponLocation.FRONT, Tank.LOC_FRONT);
-                addEquipment(tank, HMVWeaponLocation.LEFT, Tank.LOC_LEFT);
-                addEquipment(tank, HMVWeaponLocation.RIGHT, Tank.LOC_RIGHT);
-                addEquipment(tank, HMVWeaponLocation.REAR, Tank.LOC_REAR);
-                if (!tank.hasNoTurret()) {
-                    addEquipment(tank, HMVWeaponLocation.TURRET, Tank.LOC_TURRET);
-                }
-
-                addEquipment(tank, HMVWeaponLocation.BODY, Tank.LOC_BODY);
-
-                // Do we have any infantry/cargo bays?
-                if ( troopSpace > 0 ) {
-                    entity.addTransporter( new TroopSpace( troopSpace ) );
-                }
+                vehicle = new Tank();
             } else if (movementType == HMVMovementType.VTOL) {
-                VTOL vtol = new VTOL();
-                entity = vtol;
-    
-                entity.setChassis(name);
-                entity.setModel(model);
-                entity.setYear(year);
-                entity.setOmni( isOmni );
-    
-                int techLevel = rulesLevel == 1 ? TechConstants.T_IS_LEVEL_1 :
-                    techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 :
-                    TechConstants.T_IS_LEVEL_2;
-                entity.setTechLevel(techLevel);
-    
-                int suspensionFactor = getSuspensionFactor(roundedInternalStructure, movementType);
-                entity.setWeight((engineRating + suspensionFactor) / cruiseMP);
-    
-                entity.setMovementMode(IEntityMovementMode.VTOL);
-    
-                entity.setOriginalWalkMP(cruiseMP);
-                entity.setOriginalJumpMP(jumpMP);
-    
-                // hmmm...
-                vtol.setHasNoTurret(turretArmor == 0);
-    
-                entity.autoSetInternal();
-    
-                entity.initializeArmor(frontArmor, Tank.LOC_FRONT);
-                entity.initializeArmor(leftArmor, Tank.LOC_LEFT);
-                entity.initializeArmor(rightArmor, Tank.LOC_RIGHT);
-                entity.initializeArmor(rearArmor, Tank.LOC_REAR);
-                entity.initializeArmor(turretArmor, VTOL.LOC_ROTOR);
-
-                addEquipment(vtol, HMVWeaponLocation.FRONT, Tank.LOC_FRONT);
-                addEquipment(vtol, HMVWeaponLocation.LEFT, Tank.LOC_LEFT);
-                addEquipment(vtol, HMVWeaponLocation.RIGHT, Tank.LOC_RIGHT);
-                addEquipment(vtol, HMVWeaponLocation.REAR, Tank.LOC_REAR);
-                if (!vtol.hasNoTurret()) {
-                    addEquipment(vtol, HMVWeaponLocation.TURRET, Tank.LOC_TURRET);
-                }
-
-                addEquipment(vtol, HMVWeaponLocation.BODY, Tank.LOC_BODY);
-
-                // Do we have any infantry/cargo bays?
-                if ( troopSpace > 0 ) {
-                    entity.addTransporter( new TroopSpace( troopSpace ) );
-                }
+                vehicle = new VTOL();
             } else {
                 throw new EntityLoadingException
                     ( "Unsupported vehicle movement type:" + movementType );
             }
-            return entity;
-        }
-            catch (Exception e) {
+
+            vehicle.setChassis(name);
+            vehicle.setModel(model);
+            vehicle.setYear(year);
+            vehicle.setOmni(isOmni);
+
+            int techLevel = TechConstants.T_IS_LEVEL_3;
+            if (rulesLevel == 1) {
+                techLevel = TechConstants.T_IS_LEVEL_1;
+            } else if (rulesLevel == 2) {
+                techLevel = techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 : TechConstants.T_IS_LEVEL_2;
+            } else if (techType == HMVTechType.CLAN) {
+                techLevel = TechConstants.T_CLAN_LEVEL_3;
+            }
+
+            vehicle.setTechLevel(techLevel);
+
+            if (vehicle instanceof VTOL) {
+                vehicle.setMovementMode(IEntityMovementMode.VTOL);
+            } else {
+                vehicle.setMovementMode(
+                                       movementType == HMVMovementType.DISPLACEMENT_HULL ? IEntityMovementMode.NAVAL :
+                                       movementType == HMVMovementType.HYDROFOIL ? IEntityMovementMode.HYDROFOIL :
+                                       movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER :
+                                       movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED :
+                                       IEntityMovementMode.TRACKED);
+            }
+
+            //This next line sets the weight to a rounded value
+            //so that the suspension factor can be retrieved.  The
+            //real weight is set below that.  Why is tonnage not directly
+            //stated in the HMV file?!
+            vehicle.setWeight(roundedInternalStructure * 10); //temporary
+            int suspensionFactor = vehicle.getSuspensionFactor();
+            vehicle.setWeight((engineRating + suspensionFactor) / cruiseMP);
+
+            int engineFlags = Engine.TANK_ENGINE;
+            if (techType == HMVTechType.CLAN || engineTechType == HMVTechType.CLAN)
+                engineFlags |= Engine.CLAN_ENGINE;
+            vehicle.setEngine(new Engine(engineRating,
+                                        Engine.getEngineTypeByString(engineType.toString()),
+                                        engineFlags));
+
+            vehicle.setOriginalJumpMP(jumpMP);
+
+            // hmmm...
+            vehicle.setHasNoTurret(turretArmor == 0);
+
+            vehicle.autoSetInternal();
+            vehicle.setArmorType(armorType.getId());
+
+            vehicle.initializeArmor(frontArmor, Tank.LOC_FRONT);
+            vehicle.initializeArmor(leftArmor, Tank.LOC_LEFT);
+            vehicle.initializeArmor(rightArmor, Tank.LOC_RIGHT);
+            vehicle.initializeArmor(rearArmor, Tank.LOC_REAR);
+            if (vehicle instanceof VTOL) {
+                vehicle.initializeArmor(turretArmor, VTOL.LOC_ROTOR);
+            } else if (!vehicle.hasNoTurret()) {
+                vehicle.initializeArmor(turretArmor, Tank.LOC_TURRET);
+            }
+
+            addEquipment(vehicle, HMVWeaponLocation.FRONT, Tank.LOC_FRONT);
+            addEquipment(vehicle, HMVWeaponLocation.LEFT, Tank.LOC_LEFT);
+            addEquipment(vehicle, HMVWeaponLocation.RIGHT, Tank.LOC_RIGHT);
+            addEquipment(vehicle, HMVWeaponLocation.REAR, Tank.LOC_REAR);
+            if (!vehicle.hasNoTurret()) {
+                addEquipment(vehicle, HMVWeaponLocation.TURRET, Tank.LOC_TURRET);
+            }
+
+            addEquipment(vehicle, HMVWeaponLocation.BODY, Tank.LOC_BODY);
+
+            // Do we have any infantry/cargo bays?
+            if ( troopSpace > 0 ) {
+                vehicle.addTransporter( new TroopSpace( troopSpace ) );
+            }
+
+            return vehicle;
+        } catch (Exception e) {
                 e.printStackTrace();
                 throw new EntityLoadingException(e.getMessage());
         }
@@ -502,95 +484,6 @@ public class HmvFile
     }
   }
 
-  private static int getSuspensionFactor(int roundedInternalStructure,
-                                         HMVMovementType movementType)
-  {
-    int suspensionFactor = 0;
-    if (movementType == HMVMovementType.WHEELED)
-    {
-      suspensionFactor = 20;
-    }
-    else if (movementType == HMVMovementType.DISPLACEMENT_HULL ||
-             movementType == HMVMovementType.SUBMARINE)
-    {
-      suspensionFactor = 30;
-    }
-    else if (movementType == HMVMovementType.VTOL)
-    {
-      switch (roundedInternalStructure)
-      {
-        case 1:
-          suspensionFactor = 50;
-          break;
-        case 2:
-          suspensionFactor = 95;
-          break;
-        case 3:
-          suspensionFactor = 140;
-          break;
-      }
-    }
-    else if (movementType == HMVMovementType.HOVER)
-    {
-      switch (roundedInternalStructure)
-      {
-        case 1:
-          suspensionFactor = 40;
-          break;
-        case 2:
-          suspensionFactor = 85;
-          break;
-        case 3:
-          suspensionFactor = 130;
-          break;
-        case 4:
-          suspensionFactor = 175;
-          break;
-        case 5:
-          suspensionFactor = 235;
-          break;
-      }
-    }
-    else if (movementType == HMVMovementType.HYDROFOIL)
-    {
-      switch (roundedInternalStructure)
-      {
-        case 1:
-          suspensionFactor = 60;
-          break;
-        case 2:
-          suspensionFactor = 105;
-          break;
-        case 3:
-          suspensionFactor = 150;
-          break;
-        case 4:
-          suspensionFactor = 195;
-          break;
-        case 5:
-          suspensionFactor = 255;
-          break;
-        case 6:
-          suspensionFactor = 300;
-          break;
-        case 7:
-          suspensionFactor = 345;
-          break;
-        case 8:
-          suspensionFactor = 390;
-          break;
-        case 9:
-          suspensionFactor = 435;
-          break;
-        case 10:
-          suspensionFactor = 480;
-          break;
-      }
-    }
-
-    return suspensionFactor;
-  }
-
   private static final Hashtable EQUIPMENT = new Hashtable();
   private static final Hashtable AMMO = new Hashtable();
   static
@@ -600,6 +493,7 @@ public class HmvFile
     Hashtable isEquipment = new Hashtable();
     EQUIPMENT.put(HMVTechType.INNER_SPHERE, isEquipment);
     isEquipment.put(new Long(0x0A), "ISDouble Heat Sink");
+    isEquipment.put(new Long(0x0B), "Jump Jet");
     isEquipment.put(new Long(0x12), "ISTargeting Computer");
     isEquipment.put(new Long(0x14), "Endo Steel");
     isEquipment.put(new Long(0x15), "Ferro-Fibrous");
@@ -816,6 +710,7 @@ public class HmvFile
     Hashtable clanEquipment = new Hashtable();
     EQUIPMENT.put(HMVTechType.CLAN, clanEquipment);
     clanEquipment.put(new Long(0x0A), "CLDouble Heat Sink");
+    clanEquipment.put(new Long(0x0B), "Jump Jet");
     clanEquipment.put(new Long(0x12), "CLTargeting Computer");
     clanEquipment.put(new Long(0x14), "Endo Steel");
     clanEquipment.put(new Long(0x15), "Ferro-Fibrous");
@@ -1291,11 +1186,11 @@ class HMVEngineType
 {
   public static final Hashtable types = new Hashtable();
 
-  public static final HMVEngineType ICE = new HMVEngineType("I.C.E", EquipmentType.T_ENGINE_ICE);
-  public static final HMVEngineType FUSION = new HMVEngineType("Fusion", EquipmentType.T_ENGINE_FUSION);
-  public static final HMVEngineType XLFUSION = new HMVEngineType("XL Fusion", EquipmentType.T_ENGINE_XL);
-  public static final HMVEngineType XXLFUSION = new HMVEngineType("XXL Fusion", EquipmentType.T_ENGINE_XXL);
-  public static final HMVEngineType LIGHTFUSION = new HMVEngineType("Light Fusion", EquipmentType.T_ENGINE_LIGHT);
+  public static final HMVEngineType ICE = new HMVEngineType("I.C.E.", 0);
+  public static final HMVEngineType FUSION = new HMVEngineType("Fusion", 1);
+  public static final HMVEngineType XLFUSION = new HMVEngineType("XL Fusion", 2);
+  public static final HMVEngineType XXLFUSION = new HMVEngineType("XXL Fusion", 3);
+  public static final HMVEngineType LIGHTFUSION = new HMVEngineType("Light Fusion", 4);
 
   private HMVEngineType(String name, int id)
   {

@@ -282,14 +282,8 @@ public class BipedMech extends Mech {
             numOfLowerArmActuators++;
         }
         cost+=(2*100+numOfLowerArmActuators*50+numOfHands*80)*weight;//arm actuators
-        int engineCost=5000;
-        if(hasXL()) {
-            engineCost=20000;
-        }
-        if(hasLightEngine()) {
-            engineCost=15000;
-        }
-        cost+=(weight*getOriginalWalkMP()*weight*engineCost)/75;//(weight*walk=rating; rating*weight*cost factor = cost of engine.
+        Engine engine = getEngine();
+        cost += engine.getBaseCost() * engine.getRating() * weight / 75.0;
         if (getGyroType() == Mech.GYRO_XL) {
             cost += 750000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 0.5;
         } else if (getGyroType() == Mech.GYRO_COMPACT) {

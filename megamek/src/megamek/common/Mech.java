@@ -131,7 +131,7 @@ public abstract class Mech
     // rear armor
     private int[] rearArmor;
     private int[] orig_rearArmor;
-    
+
     private static int[] MASC_FAILURE = {2, 4, 6, 10, 12, 12, 12};
     private int nMASCLevel = 0; // MASCLevel is the # of turns MASC has been used previously
     private boolean usedMASC = false; // Has masc been used?
@@ -145,7 +145,87 @@ public abstract class Mech
     private int cockpitType = COCKPIT_STANDARD;
     private boolean hasCowl = false;
     private int cowlArmor = 0;
-    private boolean hasICE = false;
+
+    public void addCockpit() {
+        setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        setCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        //slot index 3 is empty
+        setCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        setCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+    }
+
+    public void addSmallCockpit() {
+        setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        setCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        //slot index 3 is empty
+        setCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        //slot index 5 is empty
+    }
+
+    public void addCommandConsole() {
+        // This needs to be implemented.
+        // FIXME
+    }
+
+    public void addDualCockpit() {
+        // This needs to be implemented.
+        // FIXME
+    }
+
+    public void addTorsoMountedCockpit() {
+        //slot index 0 is empty
+        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        //slot index 2 is empty
+        //slot index 3 is empty
+        setCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        //slot index 5 is empty
+
+        setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+
+        setCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        setCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+    }
+
+    public void addGyro() {
+        addCompactGyro();
+        setCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        setCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        setGyroType(GYRO_STANDARD);
+    }
+
+    public void addCompactGyro() {
+        setCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        setCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        setGyroType(GYRO_COMPACT);
+    }
+
+    public void addXLGyro() {
+        addGyro();
+        setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        setGyroType(GYRO_XL);
+    }
+
+    public void addHeavyDutyGyro() {
+        addGyro();
+        setGyroType(GYRO_HEAVY_DUTY);
+    }
+
+    public void addEngineCrits() {
+        int centerSlots[] = getEngine().getCenterTorsoCriticalSlots();
+        for (int i = 0; i < centerSlots.length; i++) {
+            setCritical(LOC_CT, centerSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        }
+
+        int sideSlots[] = getEngine().getSideTorsoCriticalSlots();
+        for (int i = 0; i < sideSlots.length; i++) {
+            setCritical(LOC_LT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            setCritical(LOC_RT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        }
+    }
 
     /**
      * Construct a new, blank, mech.
@@ -162,61 +242,29 @@ public abstract class Mech
 
         rearArmor = new int[locations()];
         orig_rearArmor = new int[locations()];
-        
+
         for (int i = 0; i < locations(); i++) {
             if (!hasRearArmor(i)) {
               initializeRearArmor(IArmorState.ARMOR_NA, i);
             }
         }
 
-        // Standard Head crits
-        if (cockpitType != COCKPIT_TORSO_MOUNTED)
-            setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-        setCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-        if (cockpitType == COCKPIT_COMMAND_CONSOLE) {
-            // Do nothing for now.
-            // This needs to be implemented.
-            // FIXME
-            //setCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_???));
-        } else if (cockpitType == COCKPIT_DUAL) {
-            // Again, do nothing for now.
-            // This needs to be implemented.
-            // FIXME
-            //setCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_???));
-        }
-        setCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-        if ((cockpitType != COCKPIT_SMALL)
-                && (cockpitType != COCKPIT_TORSO_MOUNTED))
-            setCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-
-        // Standard CT Crits
-        int myCount = 0;
-        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        if (gyroType != GYRO_COMPACT) {
-            setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            if (gyroType == GYRO_XL) {
-                setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-                setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            }
-        }
-        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         if (cockpitType == COCKPIT_TORSO_MOUNTED) {
-            setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-            setCritical(LOC_CT, myCount++, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            addTorsoMountedCockpit();
+        } else if (cockpitType == COCKPIT_SMALL) {
+            addSmallCockpit();
+        } else {
+            addCockpit();
         }
 
-        // Possible side torso crits
-        if (cockpitType == COCKPIT_TORSO_MOUNTED) {
-            setCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-            setCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        if (gyroType == GYRO_COMPACT) {
+            addCompactGyro();
+        } else if (gyroType == GYRO_XL) {
+            addXLGyro();
+        } else if (gyroType == GYRO_HEAVY_DUTY) {
+            addHeavyDutyGyro();
+        } else {
+            addGyro();
         }
 
         // Standard leg crits
@@ -481,7 +529,7 @@ public abstract class Mech
         super.setOmni( omni );
 
         // Add BattleArmorHandles to OmniMechs.
-        if ( omni ) {
+        if ( omni && !hasBattleArmorHandles()) {
             this.addTransporter( new BattleArmorHandles() );
         }
     }
@@ -612,67 +660,6 @@ public abstract class Mech
 
         return legCrits;
     }
-    
-    /**
-     * Returns true if this mech has an XL engine.
-     */
-    public boolean hasXL() {
-        int count = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
-                                         Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-        if ((isClan() && count == 2)
-                || (getEngineTechLevel() == TechConstants.T_CLAN_LEVEL_2 && count == 2)
-                || (!isClan() && count == 3)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Returns true if this mech has a light engine.
-     */
-    public boolean hasLightEngine() {
-        int count = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
-                                         Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-        if ((!isClan() || getEngineTechLevel() == TechConstants.T_IS_LEVEL_2)
-                && count == 2) {
-            return true;
-        }
-        return false;
-    }
-    
-    /**
-     * @return true if the mech has an ICE engine
-     */
-    public boolean hasICE() {
-        return hasICE;
-    }
-    
-    /**
-     * @param type true for ICE engine, false for fusion engine
-     */
-    public void setICE(boolean type) {
-        hasICE = type;
-    }
-
-    /**
-     * Allocates torso engine crits for an XL engine.  Uses the mech's current
-     * techlevel for the engine.
-     */
-    public void giveXL() {
-        giveXL(isClan());
-    }
-    
-    /**
-     * Allocates torso engine crits for an XL engine.
-     */
-    public void giveXL(boolean clan) {
-        int slots = clan ? 2 : 3;
-        
-        for (int i = 0; i < slots; i++) {
-            setCritical(LOC_RT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
-            setCritical(LOC_LT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
-        }
-    }
 
     public boolean hasEndo() {
         if (getStructureType() == EquipmentType.T_STRUCTURE_UNKNOWN) {
@@ -796,6 +783,31 @@ public abstract class Mech
     }
 
     /**
+     * Depends on engine type
+     */
+    public int getStandingHeat() {
+        return engine.getStandingHeat();
+    }
+
+    public void setEngine(Engine e) {
+        engine = e;
+        if (e.engineValid) {
+            setOriginalWalkMP(calculateWalk());
+        }
+    }
+
+    protected int calculateWalk() {
+        return getEngine().getRating() / (int)this.weight;
+    }
+
+    /**
+     * Depends on engine type
+     */
+    public int getWalkHeat() {
+        return engine.getWalkHeat();
+    }
+
+    /**
      * Potentially adjust runMP for MASC
      */
     
@@ -828,7 +840,14 @@ public abstract class Mech
         }
 
     }
-    
+
+    /**
+     * Depends on engine type
+     */
+    public int getRunHeat() {
+        return engine.getRunHeat();
+    }
+
     /**
      * This mech's jumping MP modified for missing jump jets
      */
@@ -870,18 +889,17 @@ public abstract class Mech
     }
 
     /**
-     * We need to override this here, because it's SLIGHTLY different for 'Mechs.
-     * Or at least level 3 ones.
+     * We need to override this here, because mechs generate heat when jumping.
      */
     public int getJumpHeat(int movedMP) {
         switch (getJumpType()) {
             case JUMP_IMPROVED:
-                return Math.max(3, movedMP/2 + movedMP%2);
+                return engine.getJumpHeat(movedMP/2 + movedMP%2);
             case JUMP_BOOSTER:
             case JUMP_DISPOSABLE:
                 return 0;
             default:
-                return super.getJumpHeat(movedMP);
+                return engine.getJumpHeat(movedMP);
         }
     }
 
@@ -969,9 +987,9 @@ public abstract class Mech
             System.out.println("Mech: can't find heat sink to add to engine");
         }
         
-        int toAllocate = Math.min(totalSinks, integralSinkCapacity());
+        int toAllocate = Math.min(totalSinks, getEngine().integralHeatSinkCapacity());
         
-        if (toAllocate == 0 && !hasICE) {
+        if (toAllocate == 0 && getEngine().isFusion()) {
             System.out.println("Mech: not putting any heat sinks in the engine?!?!");
         }
         
@@ -985,32 +1003,16 @@ public abstract class Mech
     }
     
     /**
-     * Returns the number if heat sinks that can be added to the engine
-     */
-    public int integralSinkCapacity() {
-        if(hasICE)
-            return 0;
-        return engineRating() / 25;
-    }
-    
-    /**
      * Returns extra heat generated by engine crits
      */
     public int getEngineCritHeat() {
         int engineCritHeat = 0;
-        if (!isShutDown() && !hasICE) {
+        if (!isShutDown() && getEngine().isFusion()) {
             engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
             engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
             engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
         }
         return engineCritHeat;
-    }
-    
-    /**
-     * Returns the engine rating
-     */
-    public int engineRating() {
-        return Math.round(walkMP * weight);
     }
     
     /**
@@ -1961,16 +1963,20 @@ public abstract class Mech
             }
 
             if (isClan()) {
-                // clan mechs only count ammo in ct, legs or head
-                if (loc != LOC_CT && loc != LOC_RLEG && loc != LOC_LLEG
-                && loc != LOC_HEAD) {
+                // Clan mechs only count ammo in ct, legs or head (per BMRr).
+                // Also count ammo in side torsos if mech has xxl engine
+                // (extrapolated from rule intent - not covered in rules)
+                if ((loc != LOC_CT && loc != LOC_RLEG && loc != LOC_LLEG
+                     && loc != LOC_HEAD) &&
+                    ((loc == LOC_RT || loc == LOC_LT) &&
+                     getEngine().getSideTorsoCriticalSlots().length < 3)) {
                     continue;
                 }
-            } else {
-                // inner sphere with XL counts everywhere
-                if (!hasXL()) {
-                    // without XL, only count torsos if not CASEed, and arms
-                    // if arm & torso not CASEed
+             } else {
+                // inner sphere with XL or XXL counts everywhere
+                if (getEngine().getSideTorsoCriticalSlots().length == 0) {
+                    // without XL or XXL, only count torsos if not CASEed,
+                    // and arms if arm & torso not CASEed
                     if ((loc == LOC_RT || loc == LOC_LT) && locationHasCase(loc)) {
                         continue;
                     } else if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT))) {
@@ -2666,18 +2672,4 @@ public abstract class Mech
         return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
     }
 
-    public Engine getEngine() {
-        int type, flag = 0;
-        if (hasXL())
-            type = Engine.XL_ENGINE;
-        else if (hasLightEngine())
-            type = Engine.LIGHT_ENGINE;
-        else if (hasICE())
-            type = Engine.COMPUSTION_ENGINE;
-        else
-            type = Engine.NORMAL_ENGINE;
-        if (isClan())
-            flag |= Engine.CLAN_ENGINE;
-        return new Engine(engineRating(), type, flag);
-    }
 }

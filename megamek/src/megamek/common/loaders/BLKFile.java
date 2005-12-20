@@ -14,6 +14,7 @@
 
 package megamek.common.loaders;
 
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
@@ -23,6 +24,13 @@ import megamek.common.util.BuildingBlock;
 public class BLKFile {
 
     BuildingBlock dataFile;
+
+    public static final int     FUSION             = 0;
+    public static final int     ICE                = 1;
+    public static final int     XL                 = 2;
+    public static final int     XXL                = 3; // don't ask
+    public static final int     LIGHT              = 4; // don't ask
+    public static final int     COMPACT            = 5; // don't ask
 
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
@@ -62,5 +70,22 @@ public class BLKFile {
         
         return false;
         
+    }
+
+    static int translateEngineCode(int code) {
+        if (code == BLKFile.FUSION)
+            return Engine.NORMAL_ENGINE;
+        else if (code == BLKFile.ICE)
+            return Engine.COMBUSTION_ENGINE;
+        else if (code == BLKFile.XL)
+            return Engine.XL_ENGINE;
+        else if (code == BLKFile.LIGHT)
+            return Engine.LIGHT_ENGINE;
+        else if (code == BLKFile.XXL)
+            return Engine.XXL_ENGINE;
+        else if (code == BLKFile.COMPACT)
+            return Engine.COMPACT_ENGINE;
+        else
+            return -1;
     }
 }

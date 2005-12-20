@@ -251,10 +251,10 @@ public class TestMech extends TestEntity {
             {
             }
         }
-        if ((countInternalHeatSinks > (((Mech)entity).integralSinkCapacity())) ||
-                (countInternalHeatSinks <(((Mech)entity).integralSinkCapacity()) &&
-                 countInternalHeatSinks!=((Mech)entity).heatSinks() &&
-                 !entity.isOmni()))
+        if ((countInternalHeatSinks > engine.integralHeatSinkCapacity()) ||
+             (countInternalHeatSinks < engine.integralHeatSinkCapacity() &&
+              countInternalHeatSinks != ((Mech)entity).heatSinks() &&
+              !entity.isOmni()))
         {
             heatSinks.addElement(new Integer(countInternalHeatSinks));
         }
@@ -314,9 +314,35 @@ public class TestMech extends TestEntity {
                 .append(" possible Internal Heat Sinks!").append("\n");
             correct = false;
         }
-        if (!correct)
-            buff.append("\n");
+        if (!checkSystemCriticals(buff)) {
+            correct = false;
+        }
+
         return correct;
+    }
+
+    private boolean checkSystemCriticals(StringBuffer buff) {
+        //Engine criticals
+        boolean engineCorrect = true;
+        int requiredSideCrits = engine.getSideTorsoCriticalSlots().length;
+        if ((requiredSideCrits !=
+             mech.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
+                                       Mech.SYSTEM_ENGINE, Mech.LOC_LT)) ||
+            (requiredSideCrits !=
+             mech.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
+                                       Mech.SYSTEM_ENGINE, Mech.LOC_RT)))
+            engineCorrect = false;
+        if (engine.getCenterTorsoCriticalSlots().length !=
+            mech.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
+                                      Mech.SYSTEM_ENGINE, Mech.LOC_CT))
+            engineCorrect = false;
+        if (!engineCorrect)
+            buff.append("Engine: Incorrect number of criticals allocated.\n");
+
+        if (!engineCorrect)
+            return false;
+
+        return true;
     }
 
     public String printArmorLocProp(int loc, int wert)
@@ -349,8 +375,7 @@ public class TestMech extends TestEntity {
                  correct = false;
             }
         }
-        if (!correct)
-            buff.append("\n");
+
         return correct;
     }
 
@@ -366,7 +391,7 @@ public class TestMech extends TestEntity {
         if (!correctWeight(buff))
         {
             buff.insert(0, printTechLevel()+printShortMovement());
-            buff.append(printWeightCalculation()).append("\n");
+            buff.append(printWeightCalculation());
             correct = false;
         }
         if (!engine.engineValid)

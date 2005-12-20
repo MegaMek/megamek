@@ -18,6 +18,7 @@ import java.io.*;
 
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
@@ -179,11 +180,18 @@ public class MepFile implements IMechLoader {
                 mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
             }
             
-            if ("XL".equals(this.engineType.trim())) {
-                mech.giveXL();
-            }
-            
-            mech.setOriginalWalkMP(Integer.parseInt(this.walkMP.trim()));
+            int engineFlags = 0;
+            if (mech.isClan())
+                engineFlags = Engine.CLAN_ENGINE;
+            int engineRating = Integer.parseInt(this.walkMP.trim()) * (int)mech.getWeight();
+            mech.setEngine(new Engine(engineRating,
+                                      Engine.getEngineTypeByString(engineType),
+                                      engineFlags));
+            //No support for moveable engine crits due to goofy critical
+            // format.  Could be fixed, but I don't think anyone uses
+            // MEP for level 3 designs.
+            mech.addEngineCrits();
+
             mech.setOriginalJumpMP(Integer.parseInt(this.jumpMP.trim()));
             
             boolean dblSinks = "Double".equals(this.heatSinkType.trim());

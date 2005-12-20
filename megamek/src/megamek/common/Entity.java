@@ -18,6 +18,7 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.*;
 
+import megamek.common.Engine;
 import megamek.common.actions.*;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.preference.PreferenceManager;
@@ -51,7 +52,7 @@ public abstract class Entity
     protected String            fluff = null;
     protected int               year;
     protected int               techLevel;
-    protected int               engineTechLevel = TechConstants.T_TECH_UNKNOWN;
+    protected Engine            engine;
     protected boolean           mixedTech = false;
     protected boolean           designValid = true;
 
@@ -1131,6 +1132,20 @@ public abstract class Entity
     }
 
     /**
+     * For non-'Mechs, this is really boring, but...
+     */
+    public int getStandingHeat() {
+        return 0;
+    }
+
+    /**
+     * For non-'Mechs, this is really boring, but...
+     */
+    public int getWalkHeat() {
+        return 0;
+    }
+
+    /**
      * Returns this entity's unmodified running/flank mp.
      */
     protected int getOriginalRunMP() {
@@ -1159,6 +1174,13 @@ public abstract class Entity
      */
     public String getRunMPasString() {
         return Integer.toString(getRunMP());
+    }
+
+    /**
+     * For non-'Mechs, this is really boring, but...
+     */
+    public int getRunHeat() {
+        return 0;
     }
 
     /**
@@ -1191,7 +1213,7 @@ public abstract class Entity
      * For non-'Mechs, this is really boring, but...
      */
     public int getJumpHeat(int movedMP) {
-        return Math.max(3,movedMP);
+        return 0;
     }
 
     /**
@@ -2020,14 +2042,14 @@ public abstract class Entity
      * Returns the number of operational critical slots remaining in a location
      */
     public int getHittableCriticals(int loc) {
-        int empty = 0;
+        int hittable = 0;
 
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             if (getCritical(loc, i) != null && getCritical(loc, i).isHittable()) {
-                empty++;
+                hittable++;
             }
         }
-        return empty;
+        return hittable;
     }
 
     /**
@@ -3656,6 +3678,14 @@ public abstract class Entity
     }
 
     /**
+     * Remove all transportation components from this Entity.  Should
+     * probably only be called during construction.
+     */
+    public void removeAllTransporters() {
+        transports = new Vector();
+    }
+
+    /**
      * Determines if this object can accept the given unit.  The unit may
      * not be of the appropriate type or there may be no room for the unit.
      *
@@ -4531,7 +4561,16 @@ public abstract class Entity
             }
         return space;
     }
-    
+
+    public boolean hasBattleArmorHandles() {
+        for(Enumeration e = transports.elements(); e.hasMoreElements(); ) {
+            Transporter t = (Transporter) e.nextElement();
+            if (t instanceof BattleArmorHandles)
+                return true;
+        }
+        return false;
+    }
+
     /**
      * @return Returns whether the unit is offboard.
      */
@@ -5048,14 +5087,6 @@ public abstract class Entity
         climbMode = state;
     }
 
-    public int getEngineTechLevel() {
-        return engineTechLevel;
-    }
-
-    public void setEngineTechLevel(int etl) {
-        engineTechLevel = etl;
-    }
-
     public boolean usedTag() {
         for(int i=0;i<weaponList.size();i++) {
             Mounted weapon = (Mounted)weaponList.elementAt(i);
@@ -5198,6 +5229,22 @@ public abstract class Entity
     }
 
     public Engine getEngine() {
-        return null;
+        return engine;
+    }
+
+    public boolean itemOppositeTech(String s) {
+        if (isClan()) { //Clan base
+            if (s.toLowerCase().indexOf("(IS)") != -1
+                || s.toLowerCase().indexOf("Inner Sphere") != -1)
+                return true;
+            else
+                return false;
+        } else { //Inner Sphere base
+            if (s.toLowerCase().indexOf("(C)") != -1
+                || s.toLowerCase().indexOf("Clan") != -1)
+                return true;
+            else
+                return false;
+        }
     }
 }

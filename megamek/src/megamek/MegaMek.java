@@ -216,6 +216,10 @@ public class MegaMek {
         System.out.println();
     }
 
+    public static String getVersion() {
+        return VERSION;
+    }
+
     private static class CommandLineParser extends AbstractCommandLineParser {
 
         private String logFilename;

@@ -17,6 +17,7 @@
  */
 package megamek.common.loaders;
 
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.Tank;
 import megamek.common.VTOL;
@@ -114,15 +115,23 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
 
     } // End has-transporters
 
-        if (dataFile.exists("engine_type"))
-            t.setEngineType(dataFile.getDataAsInt("engine_type")[0]);
+        int engineCode = BLKFile.FUSION;
+        if (dataFile.exists("engine_type")) {
+            engineCode = dataFile.getDataAsInt("engine_type")[0];
+        }
+        int engineFlags = Engine.TANK_ENGINE;
+        if (t.isClan())
+            engineFlags |= Engine.CLAN_ENGINE;
+        if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
+        int engineRating = dataFile.getDataAsInt("cruiseMP")[0] * (int)t.getWeight() - t.getSuspensionFactor();
+        t.setEngine(new Engine(engineRating,
+                               BLKFile.translateEngineCode(engineCode),
+                               engineFlags));
+
         if (dataFile.exists("armor_type"))
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
         if (dataFile.exists("internal_type"))
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
-        if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
-        t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
-            
     
         if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find armor block.");
         

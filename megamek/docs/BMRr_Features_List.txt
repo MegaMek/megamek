@@ -18,7 +18,7 @@ Components (Mapsheets)
 - Water				Yes		None
 - Pavement			Yes		None
 - Roads				Yes		None
-- Bridges			No		Cannot be collapsed; at same level as water.
+- Bridges			Yes		None
 - Buildings			Yes		None
 - Rubble			Yes		None
 - Fire				Yes		None
@@ -66,7 +66,7 @@ Movement (Stacking)
 Movement (Pavement)
 
 - Roads 			Yes		None
-- Bridge Movement		Partial		No CF for bridges. Cannot be attacked. No maximum capacity. Same level as water.
+- Bridge Movement	Yes		None
 - Skidding			Yes		Units may not step out of the way of a skidding unit.
 
 Movement (Piloting Skill Roles)
@@ -165,7 +165,7 @@ Buildings (Basements)
 
 Building (Emplacements)
 
-- Gun Emplacements		No		None
+- Gun Emplacements		Partial		Don't act as buildings
 
 ProtoMechs
 

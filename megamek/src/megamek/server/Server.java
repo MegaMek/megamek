@@ -2814,6 +2814,11 @@ public class Server implements Runnable {
                 break;
             }
             
+            //stop if the entity already killed itself
+            if(entity.isDestroyed() || entity.isDoomed()) {
+                break;
+            }
+            
             // check piloting skill for getting up
             rollTarget = entity.checkGetUp(step);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -14043,6 +14048,19 @@ public class Server implements Runnable {
         if(fallHex.containsTerrain(Terrains.ICE)) {
             waterDepth = 0;
         }
+        
+        //Falling into water instantly destroys most non-mechs
+        if(waterDepth > 0
+                && !(entity instanceof Mech)
+                && (entity.getRunMP() > 0 && entity.getMovementMode() != IEntityMovementMode.HOVER)
+                && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
+                && entity.getMovementMode() != IEntityMovementMode.NAVAL
+                && entity.getMovementMode() != IEntityMovementMode.SUBMARINE) {
+            vPhaseReport.addAll(
+                    destroyEntity(entity, "a watery grave", false));
+            return;
+        }
+
         // calculate damage for hitting the surface
         int damage = (int)Math.round(entity.getWeight() / 10.0) * (damageHeight + 1);
         // calculate damage for hitting the ground, but only if we actually fell
@@ -16256,7 +16274,7 @@ public class Server implements Runnable {
                     // ASSUMPTION: we'll let the Mech fall twice: once
                     // during damageEntity() above and once here.
                     floor = entity.getElevation();
-                    if ( floor > 0 && entity instanceof Mech ) {
+                    if ( floor > 0 ) {
                         // ASSUMPTION: PSR to avoid pilot damage
                         // should use mods for entity damage and
                         // 20+ points of collapse damage (if any).
@@ -17538,15 +17556,7 @@ public class Server implements Runnable {
         for(Enumeration entities = game.getEntities(c);entities.hasMoreElements();) {
             Entity e = (Entity)entities.nextElement();
             if(e.getElevation() == 0) {
-                if(e instanceof Mech) {
-                    doEntityFall(e, new PilotingRollData(TargetRoll.AUTOMATIC_FAIL));
-                } else if((e.getRunMP() > 0 && e.getMovementMode() != IEntityMovementMode.HOVER)
-                        && e.getMovementMode() != IEntityMovementMode.HYDROFOIL
-                        && e.getMovementMode() != IEntityMovementMode.NAVAL
-                        && e.getMovementMode() != IEntityMovementMode.SUBMARINE) {
-                    vPhaseReport.addAll(
-                            destroyEntity(e, "a watery grave", false));
-                }
+                doEntityFall(e, new PilotingRollData(TargetRoll.AUTOMATIC_FAIL));
             }
         }
     }

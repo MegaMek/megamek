@@ -5,6 +5,10 @@ v0.31.4-dev (CVS)
 + Bug 1385829: Firing Phase player disconnected from server
 + Implemented bridges.
 + Bug bridge/affa collapse problem
++ Bug tanks reluctant to use bridges
++ Bug collapsing structure left non mechs hanging in the air
++ Bug falling into water now destroys most non mechs. (collapse)
++ Updated BMRr_Features_List.txt wrt bridges and gun emplacements
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

@@ -1509,7 +1509,7 @@ public class MoveStep implements Serializable {
         
         //check the elevation is valid for the type of entity and hex
         if(type != MovePath.STEP_DFA &&
-                !entity.isElevationValid(elevation, getPosition())) {
+                !entity.isElevationValid(elevation, destHex)) {
             return false;
         }
 

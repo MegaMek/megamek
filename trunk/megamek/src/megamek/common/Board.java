@@ -222,7 +222,7 @@ public class Board implements Serializable, IBoard {
             for (int x = 0; x < width; x++) {
                 // Does this hex contain a building?
                 IHex curHex = getHex( x, y );
-                if ( curHex != null && curHex.containsTerrain( Terrains.BUILDING ) ) {
+                if ( curHex != null && curHex.containsTerrain(Terrains.BUILDING)) {
 
                     // Yup, but is it a repeat?
                     Coords coords = new Coords(x,y);
@@ -230,7 +230,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope.  Try to create an object for the new building.
                         try {
-                            Building bldg = new Building( coords, this );
+                            Building bldg = new Building( coords, this, Terrains.BUILDING );
                             buildings.addElement( bldg );
 
                             // Each building will identify the hexes it covers.
@@ -250,6 +250,34 @@ public class Board implements Serializable, IBoard {
                     } // End building-is-new
 
                 } // End hex-has-building                    
+                if ( curHex != null && curHex.containsTerrain(Terrains.BRIDGE)) {
+
+                    // Yup, but is it a repeat?
+                    Coords coords = new Coords(x,y);
+                    if ( !bldgByCoords.containsKey(coords) ) {
+
+                        // Nope.  Try to create an object for the new building.
+                        try {
+                            Building bldg = new Building( coords, this, Terrains.BRIDGE );
+                            buildings.addElement( bldg );
+
+                            // Each building will identify the hexes it covers.
+                            Enumeration iter = bldg.getCoords();
+                            while ( iter.hasMoreElements() ) {
+                                bldgByCoords.put( iter.nextElement(), bldg );
+                            }
+                        }
+                        catch ( IllegalArgumentException excep ) {
+                            // Log the error and remove the
+                            // building from the board.
+                            System.err.println( "Unable to create bridge." );
+                            excep.printStackTrace();
+                            curHex.removeTerrain( Terrains.BRIDGE );
+                        }
+
+                    } // End bridge-is-new
+
+                } // End hex-has-bridge                    
             }
         }
 
@@ -898,6 +926,9 @@ public class Board implements Serializable, IBoard {
             curHex.removeTerrain( Terrains.BUILDING );
             curHex.removeTerrain( Terrains.BLDG_CF );
             curHex.removeTerrain( Terrains.BLDG_ELEV );
+            curHex.removeTerrain( Terrains.BRIDGE );
+            curHex.removeTerrain( Terrains.BRIDGE_CF );
+            curHex.removeTerrain( Terrains.BRIDGE_ELEV );
 
             // Add rubble terrain that matches the building type.
             curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.RUBBLE, bldg.getType()));

@@ -1271,15 +1271,16 @@ public class Game implements Serializable, IGame
      * possible target is there
      * @param c The <code>Coords</code> of the hex in which the accidental fall
      *          from above happens
+     * @param ignore The entity who is falling
      * @return  The <code>Entity</code> that should be an AFFA target.
      */
-    public Entity getAffaTarget(Coords c) {
+    public Entity getAffaTarget(Coords c, Entity ignore) {
         Vector vector = new Vector();
         if ( this.board.contains(c) ) {
             for (Enumeration i = entities.elements(); i.hasMoreElements();) {
                 final Entity entity = (Entity)i.nextElement();
                 if (c.equals(entity.getPosition()) && entity.isTargetable() &&
-                    !(entity instanceof Infantry)) {
+                    !(entity instanceof Infantry) && entity != ignore) {
                     vector.addElement(entity);
                 }
             }

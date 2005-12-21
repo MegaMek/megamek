@@ -455,10 +455,13 @@ public class MovementDisplay
             setClearEnabled(false);
         }
         
-        if(isMech) {
-            butClimbMode.setEnabled(true);
-        } else {
+        if(ce.getMovementMode() == IEntityMovementMode.HYDROFOIL
+                || ce.getMovementMode() == IEntityMovementMode.NAVAL
+                || ce.getMovementMode() == IEntityMovementMode.SUBMARINE
+                || ce.getMovementMode() == IEntityMovementMode.VTOL) {
             butClimbMode.setEnabled(false);
+        } else {
+            butClimbMode.setEnabled(true);
         }
 
         setTurnEnabled(!ce.isImmobile() && 

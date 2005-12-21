@@ -722,44 +722,57 @@ public abstract class Entity
                 || (getMovementMode() == IEntityMovementMode.VTOL)) {
             retVal += current.surface();
             retVal -= next.surface();
-        }
-        if ((getMovementMode() != IEntityMovementMode.HOVER)
-                && (getMovementMode() != IEntityMovementMode.NAVAL)
-                && (getMovementMode() != IEntityMovementMode.HYDROFOIL)
-                && (getMovementMode() != IEntityMovementMode.SUBMARINE)
-                && (getMovementMode() != IEntityMovementMode.VTOL)) {
-            int prevWaterLevel = 0;
-            if (current.containsTerrain(Terrains.WATER)) {
-                prevWaterLevel = current.terrainLevel(Terrains.WATER);
-                if(!(current.containsTerrain(Terrains.ICE)) 
-                        || assumedElevation < 0) {
-                    //count water, only if the entity isn't on ice surface
-                    retVal += current.terrainLevel(Terrains.WATER);                    
-                }
-            }
-            if (next.containsTerrain(Terrains.WATER)) {
-                int waterLevel = next.terrainLevel(Terrains.WATER);
-                if(next.containsTerrain(Terrains.ICE)) {
-                    //a mech can only climb out onto ice in depth 2 or shallower water
-                    //mech on the surface will stay on the surface
-                    
-                    if((waterLevel == 1 && prevWaterLevel == 1)
-                        || (prevWaterLevel <= 2 && climb)
-                        || assumedElevation >= 0) {
-                        retVal += waterLevel;
+        } else {
+            if ((getMovementMode() != IEntityMovementMode.HOVER)
+                    && (getMovementMode() != IEntityMovementMode.NAVAL)
+                    && (getMovementMode() != IEntityMovementMode.HYDROFOIL)) {
+                int prevWaterLevel = 0;
+                if (current.containsTerrain(Terrains.WATER)) {
+                    prevWaterLevel = current.terrainLevel(Terrains.WATER);
+                    if(!(current.containsTerrain(Terrains.ICE)) 
+                            || assumedElevation < 0) {
+                        //count water, only if the entity isn't on ice surface
+                        retVal += current.terrainLevel(Terrains.WATER);                    
                     }
                 }
-                retVal -= waterLevel;
+                if (next.containsTerrain(Terrains.WATER)) {
+                    int waterLevel = next.terrainLevel(Terrains.WATER);
+                    if(next.containsTerrain(Terrains.ICE)) {
+                        //a mech can only climb out onto ice in depth 2 or shallower water
+                        //mech on the surface will stay on the surface
+                        
+                        if((waterLevel == 1 && prevWaterLevel == 1)
+                            || (prevWaterLevel <= 2 && climb)
+                            || assumedElevation >= 0) {
+                            retVal += waterLevel;
+                        }
+                    }
+                    retVal -= waterLevel;
+                }
             }
-        }
-        if(getMovementMode() != IEntityMovementMode.VTOL
-           && (next.containsTerrain(Terrains.BUILDING)
-               || current.containsTerrain(Terrains.BUILDING))) {
-            int bldcur = Math.max(0, current.terrainLevel(Terrains.BLDG_ELEV));
-            int bldnex = Math.max(0, next.terrainLevel(Terrains.BLDG_ELEV));
-            if((assumedElevation == bldcur && climb)
-                || retVal > bldnex) {
-                retVal = bldnex;
+            if(next.containsTerrain(Terrains.BUILDING)
+                   || current.containsTerrain(Terrains.BUILDING)) {
+                int bldcur = Math.max(0, current.terrainLevel(Terrains.BLDG_ELEV));
+                int bldnex = Math.max(0, next.terrainLevel(Terrains.BLDG_ELEV));
+                if((assumedElevation == bldcur && climb)
+                    || retVal > bldnex) {
+                    retVal = bldnex;
+                }
+            }
+            if((getMovementMode() != IEntityMovementMode.NAVAL)
+                    && (getMovementMode() != IEntityMovementMode.HYDROFOIL)
+                    && (next.containsTerrain(Terrains.BRIDGE)
+                            || current.containsTerrain(Terrains.BRIDGE))) {
+                int brdnex = Math.max(-(next.depth()), next.terrainLevel(Terrains.BRIDGE_ELEV));
+                if(Math.abs((next.surface() + brdnex) - (current.surface() + assumedElevation))<= getMaxElevationChange()) {
+                    //bridge is reachable at least
+                    if(climb
+                            || Math.abs((next.surface() + retVal) - (current.surface() + assumedElevation)) > getMaxElevationChange()
+                            || !isElevationValid(retVal, next)) {
+                        //use bridge if you can't use the base terrain or if you prefer to by climb mode
+                        retVal = brdnex;
+                    }
+                }
             }
         }
         return retVal;
@@ -855,8 +868,7 @@ public abstract class Entity
      * Check if this entity can legally occupy the requested elevation.
      * Does not check stacking, only terrain limitations
      */
-    public boolean isElevationValid(int assumedElevation, Coords assumedPos) {
-        IHex hex = getGame().getBoard().getHex(assumedPos);
+    public boolean isElevationValid(int assumedElevation, IHex hex) {
         int altitude = assumedElevation + hex.surface();
         if(getMovementMode() == IEntityMovementMode.VTOL) {
             if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.JUNGLE)) {
@@ -3406,7 +3418,7 @@ public abstract class Entity
                                            Coords lastPos, Coords curPos,
                                            boolean isPavementStep) {
         if (curHex.terrainLevel(Terrains.WATER) > 0
-            && !(curHex.containsTerrain(Terrains.ICE) && step.getElevation() >= 0)
+            && step.getElevation() < 0
             && !lastPos.equals(curPos)
             && step.getMovementType() != IEntityMovementType.MOVE_JUMP
             && getMovementMode() != IEntityMovementMode.HOVER
@@ -3485,7 +3497,8 @@ public abstract class Entity
         //check current hex for building
         if (step.getElevation()<curHex.terrainLevel(Terrains.BLDG_ELEV)) {
             rv += 2;
-        } else if (step.getElevation()==curHex.terrainLevel(Terrains.BLDG_ELEV)) {
+        } else if (step.getElevation()==curHex.terrainLevel(Terrains.BLDG_ELEV)
+                || step.getElevation()==curHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
             rv += 4;
         }
         //check previous hex for building
@@ -5219,7 +5232,7 @@ public abstract class Entity
     public boolean fixElevation() {
         if(!isDeployed() || isOffBoard() || !game.getBoard().contains(getPosition()))
             return false;
-        if(!isElevationValid(getElevation(), getPosition())) {
+        if(!isElevationValid(getElevation(), game.getBoard().getHex(getPosition()))) {
             System.err.println(getDisplayName()+" in hex "+HexTarget.coordsToId(getPosition())+" is at invalid elevation: "+getElevation());
             setElevation(elevationOccupied(game.getBoard().getHex(getPosition())));
             System.err.println("   moved to elevation "+getElevation());

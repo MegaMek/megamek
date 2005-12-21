@@ -91,7 +91,7 @@ public class Building implements Serializable {
      *          the given coordinates do not contain a building, or if the
      *          building covers multiple hexes with different CF.
      */
-    protected void include( Coords coords, IBoard board ) {
+    protected void include( Coords coords, IBoard board, int structureType ) {
 
         // If the hex is already in the building, we've covered it before.
         if ( this.isIn( coords ) ) {
@@ -100,27 +100,30 @@ public class Building implements Serializable {
 
         // Get the nextHex hex.
         IHex nextHex = board.getHex( coords );
+        if(null == nextHex || !(nextHex.containsTerrain(structureType)))
+            return;
 
-        // Error off if the building type or CF is off.
-        if ( this.type != nextHex.terrainLevel( Terrains.BUILDING ) ) {
-            throw new IllegalArgumentException
-                ( "The coordinates, " +
-                  coords.getBoardNum() +
-                  ", should contain the same type of building as " +
-                  ( (Coords) this.coordinates.elementAt(0)).getBoardNum() );
+        if(structureType == Terrains.BUILDING) {
+            // Error off if the building type or CF is off.
+            if ( this.type != nextHex.terrainLevel( Terrains.BUILDING ) ) {
+                throw new IllegalArgumentException
+                    ( "The coordinates, " +
+                      coords.getBoardNum() +
+                      ", should contain the same type of building as " +
+                      ( (Coords) this.coordinates.elementAt(0)).getBoardNum() );
+            }
+            boolean hexHasCF = nextHex.containsTerrain( Terrains.BLDG_CF );
+            if ( (hexHasCF && 
+                  this.currentCF != nextHex.terrainLevel( Terrains.BLDG_CF )) ||
+                 (!hexHasCF &&
+                  this.currentCF != getDefaultCF( this.type )) ) {
+                throw new IllegalArgumentException
+                    ( "The coordinates, " +
+                      coords.getBoardNum() +
+                      ", should contain a building with the same CF as " +
+                      ( (Coords) this.coordinates.elementAt(0)).getBoardNum() );
+            }
         }
-        boolean hexHasCF = nextHex.containsTerrain( Terrains.BLDG_CF );
-        if ( (hexHasCF && 
-              this.currentCF != nextHex.terrainLevel( Terrains.BLDG_CF )) ||
-             (!hexHasCF &&
-              this.currentCF != getDefaultCF( this.type )) ) {
-            throw new IllegalArgumentException
-                ( "The coordinates, " +
-                  coords.getBoardNum() +
-                  ", should contain a building with the same CF as " +
-                  ( (Coords) this.coordinates.elementAt(0)).getBoardNum() );
-        }
-
         // We passed our tests, add the next hex to this building.
         this.coordinates.addElement( coords );
 
@@ -129,8 +132,8 @@ public class Building implements Serializable {
         for ( int dir = 0; dir < 6; dir++ ) {
 
             // Does the building exit in this direction?
-            if ( nextHex.containsTerrainExit( Terrains.BUILDING, dir ) ) {
-                this.include( coords.translated(dir), board );
+            if ( nextHex.containsTerrainExit( structureType, dir ) ) {
+                this.include( coords.translated(dir), board, structureType );
             }
 
         }
@@ -163,7 +166,7 @@ public class Building implements Serializable {
      *          the given coordinates do not contain a building, or if the
      *          building covers multiple hexes with different CFs.
      */
-    public Building( Coords coords, IBoard board ) {
+    public Building( Coords coords, IBoard board, int structureType ) {
 
         // The ID of the building will be the hashcode of the coords.
         // ASSUMPTION: this will be unique ID across ALL the building's
@@ -177,13 +180,13 @@ public class Building implements Serializable {
         IHex startHex = board.getHex( coords );
 
         // Read our construction type from the hex.
-        if ( !startHex.containsTerrain( Terrains.BUILDING ) ) {
+        if ( !startHex.containsTerrain( structureType ) ) {
             throw new IllegalArgumentException( "The coordinates, " +
                                                 coords.getBoardNum() +
                                                 ", do not contain a building."
                                                 );
         }
-        this.type = startHex.terrainLevel( Terrains.BUILDING );
+        this.type = startHex.terrainLevel( structureType );
 
         // Insure that we've got a good type (and initialize our CF).
         this.currentCF = getDefaultCF( this.type );
@@ -194,8 +197,11 @@ public class Building implements Serializable {
         }
 
         // Now read the *real* CF, if the board specifies one.
-        if ( startHex.containsTerrain( Terrains.BLDG_CF ) ) {
+        if ( structureType == Terrains.BUILDING && startHex.containsTerrain( Terrains.BLDG_CF ) ) {
             this.currentCF = startHex.terrainLevel( Terrains.BLDG_CF );
+        }
+        if ( structureType == Terrains.BRIDGE && startHex.containsTerrain( Terrains.BRIDGE_CF ) ) {
+            this.currentCF = startHex.terrainLevel( Terrains.BRIDGE_CF );
         }
         this.phaseCF = this.currentCF;
 
@@ -204,15 +210,21 @@ public class Building implements Serializable {
         for ( int dir = 0; dir < 6; dir++ ) {
 
             // Does the building exit in this direction?
-            if ( startHex.containsTerrainExit( Terrains.BUILDING, dir ) ) {
-                this.include( coords.translated(dir), board );
+            if ( startHex.containsTerrainExit( structureType, dir ) ) {
+                this.include( coords.translated(dir), board, structureType );
             }
 
         }
 
         // Set the building's name.
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "Building #" );
+        if(structureType == Terrains.BUILDING) {
+            buffer.append("Building #");
+        } else if(structureType == Terrains.BRIDGE) {
+            buffer.append("Bridge #");
+        } else {
+            buffer.append("Structure #");
+        }
         buffer.append( this.id );
         this.name = buffer.toString();
 

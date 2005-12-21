@@ -1361,10 +1361,13 @@ public class BoardView1
         }
 
         // If the hex contains a building or rubble, make more space.
-        if ( mhex != null &&
-             (mhex.containsTerrain(Terrains.RUBBLE) ||
-              mhex.containsTerrain(Terrains.BUILDING)) ) {
-            stringsSize += 1;
+        if ( mhex != null ) {
+            if(mhex.containsTerrain(Terrains.RUBBLE))
+                stringsSize ++;
+            if(mhex.containsTerrain(Terrains.BUILDING))
+                stringsSize ++;
+            if(mhex.containsTerrain(Terrains.BRIDGE)) 
+                stringsSize ++;
         }
 
         stringsSize += game.getNbrMinefields(mcoords);
@@ -1400,12 +1403,27 @@ public class BoardView1
             }
 
             // Do we have a building?
-            else if ( mhex.containsTerrain(Terrains.BUILDING) ) {
+            if ( mhex.containsTerrain(Terrains.BUILDING) ) {
                 // Get the building.
                 Building bldg = game.getBoard().getBuildingAt( mcoords );
                 StringBuffer buf = new StringBuffer( Messages.getString("BoardView1.Height") ); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
                 buf.append( mhex.terrainLevel(Terrains.BLDG_ELEV) );
+                buf.append( " " ); //$NON-NLS-1$
+                buf.append( bldg.toString() );
+                buf.append( Messages.getString("BoardView1.CF") ); //$NON-NLS-1$
+                buf.append( bldg.getCurrentCF() );
+                strings[stringsIndex] = buf.toString();
+                stringsIndex += 1;
+            }
+
+            // Do we have a bridge?
+            if ( mhex.containsTerrain(Terrains.BRIDGE) ) {
+                // Get the building.
+                Building bldg = game.getBoard().getBuildingAt( mcoords );
+                StringBuffer buf = new StringBuffer( Messages.getString("BoardView1.Height") ); //$NON-NLS-1$
+                // Each hex of a building has its own elevation.
+                buf.append( mhex.terrainLevel(Terrains.BRIDGE_ELEV) );
                 buf.append( " " ); //$NON-NLS-1$
                 buf.append( bldg.toString() );
                 buf.append( Messages.getString("BoardView1.CF") ); //$NON-NLS-1$

@@ -569,9 +569,10 @@ public interface IGame {
      * possible target is there
      * @param c The <code>Coords</code> of the hex in which the accidental fall
      *          from above happens
+     * @param ignore The entity who is falling, so shouldn't be returned
      * @return  The <code>Entity</code> that should be an AFFA target.
      */
-    public abstract Entity getAffaTarget(Coords c);
+    public abstract Entity getAffaTarget(Coords c, Entity ignore);
     
     /**
      * Returns an <code>Enumeration</code> of the enemy's active

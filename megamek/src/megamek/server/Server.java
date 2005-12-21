@@ -5107,7 +5107,7 @@ public class Server implements Runnable {
         int direction = src.direction(dest);
         Report r;
         // check entity in target hex
-        Entity affaTarget = game.getAffaTarget(dest);
+        Entity affaTarget = game.getAffaTarget(dest, entity);
         // falling mech falls
         r = new Report(2205);
         r.subject = entity.getId();

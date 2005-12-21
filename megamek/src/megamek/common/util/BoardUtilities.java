@@ -265,8 +265,9 @@ public class BoardUtilities {
 
         // add buildings 
         Vector buildings = mapSettings.getBoardBuildings();
+        CityBuilder cityBuilder = new CityBuilder(mapSettings, result);
         if(buildings.size() == 0) {
-            buildings = CityBuilder.generateCity(mapSettings, result, roadNeeded);
+            buildings = cityBuilder.generateCity(roadNeeded);
         }
         for(int i=0; i<buildings.size();i++){
             placeBuilding(result, (BuildingTemplate)(buildings.elementAt(i)));

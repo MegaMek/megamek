@@ -5107,8 +5107,6 @@ public class Server implements Runnable {
         int direction = src.direction(dest);
         Report r;
         // check entity in target hex
-        Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
-
         Entity affaTarget = game.getAffaTarget(dest);
         // falling mech falls
         r = new Report(2205);
@@ -5119,7 +5117,7 @@ public class Server implements Runnable {
         vPhaseReport.addElement(r);
 
         // if hex was empty, deal damage and we're done
-        if (violation == null || affaTarget == null) {
+        if (affaTarget == null) {
             doEntityFall(entity, dest, fallElevation, roll);
             return;
         }
@@ -5176,7 +5174,8 @@ public class Server implements Runnable {
                     doEntityDisplacementMinefieldCheck(entity, src, dest);
 
                     // defender pushed away, or destroyed, if there is a stacking violation
-                    if (Compute.stackingViolation(game, entity.getId(), dest) != null) {
+                    Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
+                    if (violation != null) {
                         Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
                         if (targetDest != null) {
                             doEntityDisplacement(affaTarget, dest, targetDest, new PilotingRollData(violation.getId(), 2, "fallen on"));
@@ -5190,6 +5189,7 @@ public class Server implements Runnable {
                                                   destroyEntity(affaTarget, "impossible displacement", (violation instanceof Mech), (violation instanceof Mech)));
                         }
                     }
+                    return;
                 } else {
                     r.choose(false);
                     vPhaseReport.addElement(r);
@@ -5215,11 +5215,14 @@ public class Server implements Runnable {
         } else {
             // damage as normal
             doEntityFall(entity, dest, fallElevation, roll);
-            // target gets displaced, because of low elevation
-            Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
-            doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation.getId(), 0, "domino effect"));
-            // Update the violating entity's postion on the client.
-            entityUpdate( violation.getId() );
+            Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
+            if(violation != null) {
+                // target gets displaced, because of low elevation
+                Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
+                doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation.getId(), 0, "domino effect"));
+                // Update the violating entity's postion on the client.
+                entityUpdate( violation.getId() );
+            }
         }
     }
 
@@ -16056,16 +16059,26 @@ public class Server implements Runnable {
                 // How many levels does this building have in this hex?
                 final IHex curHex = game.getBoard().getHex( coords );
                 final int hexElev = curHex.surface();
-                final int numFloors = curHex.terrainLevel( Terrains.BLDG_ELEV );
+                final int numFloors = Math.max(0,curHex.terrainLevel( Terrains.BLDG_ELEV )); 
+                final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
+                int numLoads = numFloors;
+                if(bridgeEl != ITerrain.LEVEL_NONE) {
+                    numLoads ++;
+                }
+                if(numLoads < 1) {
+                    System.err.println("Check for collapse: hex "+coords.toString()+" has no bridge or building");
+                    continue;
+                }
 
                 // Track the load of each floor (and of the roof) separately.
                 // Track all units that fall into the basement in this hex.
                 // N.B. don't track the ground floor, the first floor is at
                 // index 0, the second is at index 1, etc., and the roof is
                 // at index (numFloors-1).
-                int[] loads = new int[numFloors];
+                // if bridge is present, bridge will be numFloors
+                int[] loads = new int[numLoads];
                 Vector basement = new Vector();
-                for ( int loop = 0; loop < numFloors; loop++ ) {
+                for ( int loop = 0; loop < numLoads; loop++ ) {
                     loads[loop] = 0;
                 }
 
@@ -16075,19 +16088,24 @@ public class Server implements Runnable {
                     final Entity entity = (Entity) entities.nextElement();
                     final int entityElev = entity.getElevation();
 
-                    // Ignore entities not *inside* the building
-                    if ( !Compute.isInBuilding( game, entity, coords ) || entityElev > numFloors) {
-                        continue;
+                    if(entityElev != bridgeEl) {
+                          // Ignore entities not *inside* the building
+                          if ( entityElev > numFloors) {
+                              continue;
+                          }
                     }
 
                     // Add the weight of a Mek or tank to the correct floor.
                     if ( entity instanceof Mech || entity instanceof Tank ) {
                         int load = (int) entity.getWeight();
                         int floor = entityElev;
+                        if(floor == bridgeEl) {
+                            floor = numLoads;
+                        }
 
                         // Entities on the ground floor may fall into the
                         // basement, but they won't collapse the building.
-                        if ( floor == 0 && load > currentCF ) {
+                        if ( numFloors > 0 && floor == 0 && load > currentCF ) {
                             basement.addElement( entity );
                         } else if ( floor > 0 ) {
 
@@ -16161,8 +16179,19 @@ public class Server implements Runnable {
                 // How many levels does this building have in this hex?
                 final IHex curHex = game.getBoard().getHex( coords );
                 final int hexElev = curHex.surface();
-                final int numFloors = curHex.terrainLevel( Terrains.BLDG_ELEV );
+                final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
+                final int numFloors = Math.max(bridgeEl, curHex.terrainLevel( Terrains.BLDG_ELEV ));
 
+                // Sort in elevation order
+                Collections.sort(vector, new Comparator<Entity>() {
+                    public int compare(Entity a, Entity b) {
+                        if(a.getElevation() > b.getElevation())
+                            return -1;
+                        else if(a.getElevation() > b.getElevation())
+                            return 1;
+                        return 0;
+                    }
+                });
                 // Walk through the entities in this position.
                 Enumeration entities = vector.elements();
                 while ( entities.hasMoreElements() ) {
@@ -16170,8 +16199,8 @@ public class Server implements Runnable {
                     //final int entityElev = entity.elevationOccupied( curHex );
                     int floor = entity.getElevation();
 
-                    // Ignore units not *inside* the building.
-                    if ( !Compute.isInBuilding( game, entity, coords ) ) {
+                    // Ignore units above the building / bridge.
+                    if ( floor > numFloors) {
                         continue;
                     }
 
@@ -16236,7 +16265,7 @@ public class Server implements Runnable {
                         if ( damage >= 20 ) {
                             psr.addModifier( 1, "20+ damage" );
                         }
-                        this.doEntityFall( entity, coords, floor, psr );
+                        this.doEntityFallsInto( entity, coords, coords, psr );
                     }
 
                     // Update this entity.

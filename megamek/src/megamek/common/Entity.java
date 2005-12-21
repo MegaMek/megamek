@@ -883,12 +883,18 @@ public abstract class Entity
             return altitude == hex.surface();
         } else {
             //regular ground units
-            if(altitude == hex.floor()) return true;
             if(hex.containsTerrain(Terrains.ICE)
                     || (getMovementMode() == IEntityMovementMode.HOVER && hex.containsTerrain(Terrains.WATER))) {
                 //surface of ice is OK, surface of water is OK for hovers
                 if(altitude == hex.surface()) return true;
             }
+            //only mechs can move underwater
+            if(hex.containsTerrain(Terrains.WATER) 
+                    && altitude < hex.surface()
+                    && !(this instanceof Mech)) 
+                return false;
+            // can move on the ground unless its underwater
+            if(altitude == hex.floor()) return true;
             if(hex.containsTerrain(Terrains.BRIDGE)) {
                 //can move on top of a bridge
                 if(assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV)) return true;

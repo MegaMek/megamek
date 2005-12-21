@@ -329,6 +329,9 @@ public class MoveStep implements Serializable {
                 } else if (parent.isJumping()) {
                     IHex hex = game.getBoard().getHex(getPosition());
                     setElevation(Math.max(-hex.depth(), hex.terrainLevel(Terrains.BLDG_ELEV)));
+                    if(climbMode()) {
+                        setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BRIDGE_ELEV)));
+                    }
                 } else {
                     setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation, climbMode()));
                 }
@@ -1456,8 +1459,13 @@ public class MoveStep implements Serializable {
 
         // Certain movement types have terrain restrictions; terrain
         // restrictions are lifted when moving along a road or bridge,
-        // or when flying        
-        if (entity.isHexProhibited(destHex) && !isPavementStep() &&
+        // or when flying.  Naval movement does not have the pavement
+        // exemption.
+        if (entity.isHexProhibited(destHex) && 
+                (!isPavementStep() 
+                        || nMove == IEntityMovementMode.NAVAL 
+                        || nMove == IEntityMovementMode.HYDROFOIL
+                        || nMove == IEntityMovementMode.SUBMARINE) &&
             movementType != IEntityMovementType.MOVE_VTOL_WALK &&
             movementType != IEntityMovementType.MOVE_VTOL_RUN) {
 
@@ -1510,7 +1518,11 @@ public class MoveStep implements Serializable {
         //check the elevation is valid for the type of entity and hex
         if(type != MovePath.STEP_DFA &&
                 !entity.isElevationValid(elevation, destHex)) {
-            return false;
+            if(parent.isJumping()) {
+                terrainInvalid = true;
+            } else {
+                return false;
+            }
         }
 
         return true;

@@ -754,7 +754,7 @@ public abstract class Entity
                    || current.containsTerrain(Terrains.BUILDING)) {
                 int bldcur = Math.max(0, current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(0, next.terrainLevel(Terrains.BLDG_ELEV));
-                if((assumedElevation == bldcur && climb)
+                if((assumedElevation == bldcur && climb && (this instanceof Mech))
                     || retVal > bldnex) {
                     retVal = bldnex;
                 }
@@ -891,7 +891,8 @@ public abstract class Entity
             //only mechs can move underwater
             if(hex.containsTerrain(Terrains.WATER) 
                     && altitude < hex.surface()
-                    && !(this instanceof Mech)) 
+                    && !(this instanceof Mech)
+                    && !(this instanceof Protomech)) 
                 return false;
             // can move on the ground unless its underwater
             if(altitude == hex.floor()) return true;

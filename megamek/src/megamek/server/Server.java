@@ -14052,6 +14052,7 @@ public class Server implements Runnable {
         //Falling into water instantly destroys most non-mechs
         if(waterDepth > 0
                 && !(entity instanceof Mech)
+                && !(entity instanceof Protomech)
                 && (entity.getRunMP() > 0 && entity.getMovementMode() != IEntityMovementMode.HOVER)
                 && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
                 && entity.getMovementMode() != IEntityMovementMode.NAVAL
@@ -16112,6 +16113,12 @@ public class Server implements Runnable {
                               continue;
                           }
                     }
+                    
+                    if(entity.getMovementMode() == IEntityMovementMode.HYDROFOIL
+                            || entity.getMovementMode() == IEntityMovementMode.NAVAL
+                            || entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
+                        continue; //under the bridge even at same level
+                    }
 
                     // Add the weight of a Mek or tank to the correct floor.
                     if ( entity instanceof Mech || entity instanceof Tank ) {
@@ -16274,7 +16281,7 @@ public class Server implements Runnable {
                     // ASSUMPTION: we'll let the Mech fall twice: once
                     // during damageEntity() above and once here.
                     floor = entity.getElevation();
-                    if ( floor > 0 ) {
+                    if ( floor > 0 || floor == bridgeEl) {
                         // ASSUMPTION: PSR to avoid pilot damage
                         // should use mods for entity damage and
                         // 20+ points of collapse damage (if any).

@@ -847,8 +847,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
     
         // sensors operational?
-        final int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-        if (sensorHits > 1) {
+        int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+        if ((ae instanceof Mech)
+                && ((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            sensorHits += ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+            if (sensorHits > 2)
+                return new String("Attacker sensors destroyed.");
+        } else if (sensorHits > 1) {
             return new String("Attacker sensors destroyed.");
         }
     

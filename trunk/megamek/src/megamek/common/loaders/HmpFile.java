@@ -603,6 +603,24 @@ public class HmpFile
                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                                             Mech.SYSTEM_ENGINE));
         }
+        else if (isCockpit(critical))
+        {
+          mech.setCritical(location, i,
+                           new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                            Mech.SYSTEM_COCKPIT));
+        }
+        else if (isLifeSupport(critical))
+        {
+          mech.setCritical(location, i,
+                           new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                            Mech.SYSTEM_LIFE_SUPPORT));
+        }
+        else if (isSensor(critical))
+        {
+          mech.setCritical(location, i,
+                           new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                            Mech.SYSTEM_SENSORS));
+        }
         else if (criticalName != null) {
             EquipmentType equipment = null;
           try {
@@ -711,6 +729,21 @@ public class HmpFile
   private static boolean isFootActuator(long critical)
   {
     return critical == 0x08;
+  }
+
+  private static boolean isCockpit(long critical)
+  {
+    return critical == 0x0E;
+  }
+  
+  private static boolean isLifeSupport(long critical)
+  {
+    return critical == 0x0C;
+  }
+
+  private static boolean isSensor(long critical)
+  {
+    return critical == 0x0D;
   }
 
   private static boolean isFusionEngine(long critical)

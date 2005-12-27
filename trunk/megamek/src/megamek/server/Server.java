@@ -11015,14 +11015,29 @@ public class Server implements Runnable {
 
             // heat effects: mechwarrior damage
             // N.B. The pilot may already be dead.
-            if ( entity.getHitCriticals( CriticalSlot.TYPE_SYSTEM,
-                                         Mech.SYSTEM_LIFE_SUPPORT,
-                                         Mech.LOC_HEAD ) > 0
-                 && entity.heat >= 15
-                 && !entity.crew.isDead() && !entity.crew.isDoomed()
-                 && !entity.crew.isEjected()) {
-                int heatLimitDesc;
-                int damageToCrew;
+            int lifeSupportCritCount = 0;
+            boolean torsoMountedCockpit = ((Mech)entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED;
+            if ((entity instanceof Mech)
+                    && torsoMountedCockpit) {
+System.out.println("In here!");
+                lifeSupportCritCount = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_LIFE_SUPPORT,
+                    Mech.LOC_RT);
+                lifeSupportCritCount += entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_LIFE_SUPPORT,
+                    Mech.LOC_LT);
+            } else {
+                lifeSupportCritCount = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                        Mech.SYSTEM_LIFE_SUPPORT,
+                        Mech.LOC_HEAD);
+            }
+System.out.println("Crit count: "+lifeSupportCritCount);
+            if (lifeSupportCritCount > 0
+                    && ((entity.heat >= 15) || (torsoMountedCockpit && (entity.heat >= 0)))
+                    && !entity.crew.isDead() && !entity.crew.isDoomed()
+                    && !entity.crew.isEjected()) {
+                int heatLimitDesc = 1;
+                int damageToCrew = 0;
                 if (entity.heat >= 47 && mtHeat) {
                     // mechwarrior takes 5 damage
                     heatLimitDesc = 47;
@@ -11039,11 +11054,15 @@ public class Server implements Runnable {
                     // mechwarrior takes 2 damage
                     heatLimitDesc = 25;
                     damageToCrew = 2;
-                } else {
+                } else if (entity.heat >= 15) {
                     // mechwarrior takes 1 damage
                     heatLimitDesc = 15;
                     damageToCrew = 1;
                 }
+                if (entity.heat > 0
+                        && (entity instanceof Mech)
+                        && ((Mech)entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
+                    damageToCrew += 1;
                 r = new Report(5070);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -11727,8 +11746,12 @@ public class Server implements Runnable {
         IHex te_hex = null;
         int te_n = te.getId();
 
-        int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
-        int specCrits = 0;
+        boolean hardenedArmor = false;
+        if ((te instanceof Mech)
+                && (te.getArmorType() == EquipmentType.T_ARMOR_HARDENED))
+            hardenedArmor = true;
+        int crits = ((hit.getEffect() == HitData.EFFECT_CRITICAL) && (!hardenedArmor)) ? 1 : 0;
+        int specCrits = ((hit.getEffect() == HitData.EFFECT_CRITICAL) && (hardenedArmor)) ? 1 : 0;
         HitData nextHit = null;
 
         // Some "hits" on a Protomech are actually misses.
@@ -12027,7 +12050,7 @@ public class Server implements Runnable {
                 int tmpDamageHold = -1;
 
                 // If the target has hardened armor, we need to adjust damage.
-                if (te.getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+                if (hardenedArmor) {
                     tmpDamageHold = damage;
                     damage /= 2;
                     damage += (tmpDamageHold%2);
@@ -12036,7 +12059,10 @@ public class Server implements Runnable {
                 if (te.getArmor(hit) > damage) {
                     // armor absorbs all damage
                     te.setArmor(te.getArmor(hit) - damage, hit);
-                    te.damageThisPhase += damage;
+                    if (tmpDamageHold >= 0)
+                        te.damageThisPhase += tmpDamageHold;
+                    else
+                        te.damageThisPhase += damage;
                     damage = 0;
                     r = new Report(6085);
                     r.subject = te_n;
@@ -12047,7 +12073,10 @@ public class Server implements Runnable {
                     // damage goes on to internal
                     int absorbed = Math.max(te.getArmor(hit), 0);
                     te.setArmor(IArmorState.ARMOR_DESTROYED, hit);
-                    te.damageThisPhase += absorbed;
+                    if (tmpDamageHold >= 0)
+                        te.damageThisPhase += 2*absorbed;
+                    else
+                        te.damageThisPhase += absorbed;
                     damage -= absorbed;
                     r = new Report(6090);
                     r.subject = te_n;
@@ -12075,7 +12104,7 @@ public class Server implements Runnable {
                 
                 // If it has hardened armor, now we need to "correct" any remaining damage.
                 if (tmpDamageHold > 0) {
-                    if (te.getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+                    if (hardenedArmor) {
                         damage *= 2;
                         damage -= (tmpDamageHold%2);
                     }
@@ -12421,12 +12450,14 @@ public class Server implements Runnable {
 
                 for (int i = 0; i < specCrits; i++) {
                     ((Report) vDesc.elementAt(vDesc.size() - 1)).newlines++;
-                    vDesc.addAll( criticalEntity(te, hit.getLocation(), hit.getSpecCritMod()+hit.glancingMod()) );
+                    vDesc.addAll( criticalEntity(te, hit.getLocation(), (hardenedArmor?-2:hit.getSpecCritMod())+hit.glancingMod()) );
                 }
                 specCrits = 0;
             }
 
-            if (te instanceof Mech && hit.getLocation() == Mech.LOC_HEAD) {
+            if (te instanceof Mech
+                    && ((Mech)te).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED
+                    && hit.getLocation() == Mech.LOC_HEAD) {
                 Report.addNewline(vDesc);
                 vDesc.addAll( damageCrew(te, 1) );
             }

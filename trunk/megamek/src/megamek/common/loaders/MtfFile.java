@@ -126,6 +126,7 @@ public class MtfFile implements IMechLoader {
                 tmp = r.readLine();
             }
 
+
             heatSinks = r.readLine();
             walkMP = r.readLine();
             jumpMP = r.readLine();
@@ -331,7 +332,7 @@ public class MtfFile implements IMechLoader {
         } catch (NumberFormatException ex) {
             throw new EntityLoadingException("NumberFormatException parsing file");
         } catch (NullPointerException ex) {
-ex.printStackTrace();
+            ex.printStackTrace();
             throw new EntityLoadingException("NullPointerException parsing file");
         } catch (StringIndexOutOfBoundsException ex) {
             throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");
@@ -364,10 +365,20 @@ ex.printStackTrace();
             boolean split = false;
 
             if (critName.equalsIgnoreCase("Fusion Engine")
-                || critName.equalsIgnoreCase("Engine")) {
+                    || critName.equalsIgnoreCase("Engine")) {
                 mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
                 continue;
+            } else if (critName.equalsIgnoreCase("Life Support")) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
+                continue;
+            } else if (critName.equalsIgnoreCase("Sensors")) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
+                continue;
+            } else if (critName.equalsIgnoreCase("Cockpit")) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
+                continue;
             }
+                
             if (critName.endsWith("(R)")) {
                 rearMounted = true;
                 critName = critName.substring(0, critName.length() - 3).trim();

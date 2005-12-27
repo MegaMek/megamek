@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.CriticalSlot;
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
 import megamek.common.preference.PreferenceManager;
@@ -175,6 +176,9 @@ public abstract class Mech
     }
 
     public void addTorsoMountedCockpit() {
+        // These indexes should NOT be hard-coded!!!
+        // This causes problems with strange equipment mixes, like compact gyro + compact engine + torso-mounted cockpit.
+
         //slot index 0 is empty
         setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
         //slot index 2 is empty
@@ -182,11 +186,13 @@ public abstract class Mech
         setCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
         //slot index 5 is empty
 
-        setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-        setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        // The following lines were commented out to allow file readers to parse these out of the unit files.
+        // Otherwise, hard-coded indexes screw up placement of these, since these crits can move based on the unit configuration.
+        //setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        //setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
 
-        setCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-        setCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        //setCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        //setCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
     }
 
     public void addGyro() {
@@ -2285,9 +2291,18 @@ public abstract class Mech
             roll.addModifier(-1, "Enhanced Imaging");
         }
 
-        // Small cockpit penalty?
+        // Small/torso-mounted cockpit penalty?
         if (getCockpitType() == Mech.COCKPIT_SMALL) {
             roll.addModifier(1, "Small Cockpit");
+        } else if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            roll.addModifier(1, "Torso-Mounted Cockpit");
+            int sensorHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+            int sensorHits2 = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+            if ((sensorHits + sensorHits2) == 3) {
+                roll.addModifier(4, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+            } else if (sensorHits == 2) {
+                roll.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
+            }
         }
 
         if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
@@ -2467,6 +2482,8 @@ public abstract class Mech
      * @return Returns the autoEject.
      */
     public boolean isAutoEject() {
+        if (getCockpitType() == COCKPIT_TORSO_MOUNTED)
+            return false;
         return autoEject;
     }
     /**

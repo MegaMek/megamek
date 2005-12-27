@@ -492,9 +492,13 @@ public class MovementDisplay
 
         setFleeEnabled(ce.canFlee());
         if (client.game.getOptions().booleanOption("vehicles_can_eject")) { //$NON-NLS-1$
-            setEjectEnabled ( (!isInfantry) && ce.isActive());
+            setEjectEnabled ( (!isInfantry)
+                    && !(isMech && ((Mech)ce).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
+                    && ce.isActive());
         } else {
-            setEjectEnabled(isMech && ce.isActive());
+            setEjectEnabled(isMech
+                    && ((Mech)ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED
+                    && ce.isActive());
         }
         
     }

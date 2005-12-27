@@ -1021,7 +1021,16 @@ public class Compute {
         // sensors critical hit to attacker
         int sensorHits = attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                 Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-        if (sensorHits > 0) {
+        if ((attacker instanceof Mech)
+                && ((Mech)attacker).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            sensorHits += attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+            if (sensorHits > 1) {
+                mods.addModifier(4, "attacker sensors badly damaged");
+            } else if (sensorHits > 0) {
+                mods.addModifier(2, "attacker sensors damaged");
+            }
+        } else if (sensorHits > 0) {
             mods.addModifier(2, "attacker sensors damaged");
         }
 

@@ -11,6 +11,10 @@ v0.31.4-dev (CVS)
 + Updated BMRr_Features_List.txt wrt bridges and gun emplacements
 + Various bridge related fixes
 + Bug naval units were able to cross land by moving along roads.
++ Implemented torso-mounted cockpits for HMP files.
++ Corrected Torso-mounted cockpit loading from MTF files.
++ Added Great Turtle GTF-1 (3055U) to mechs.zip.
++ Fixed several torso-mounted cockpit and hardened armor bugs.
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

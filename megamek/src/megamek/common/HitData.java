@@ -115,6 +115,10 @@ public class HitData
     public void setEffect(int effect) {
         this.effect= effect;
     }
+    
+    public void setSpecCritmod(int val) {
+        specCritMod = val;
+    }
 
     public boolean hitAimedLocation() {
         return hitAimedLocation;

@@ -166,18 +166,22 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         gridbag.setConstraints(fldPiloting, c);
         tempPanel.add(fldPiloting);
         
+        // Auto-eject checkbox.
         if (entity instanceof Mech) {
             Mech mech = (Mech)entity;
-            c.gridwidth = 1;
-            c.anchor = GridBagConstraints.EAST;
-            gridbag.setConstraints(labAutoEject, c);
-            tempPanel.add(labAutoEject);
+            // Torso-mounted cockpits can't eject, so lets not bother showing this.
+            if (mech.getCockpitType() != mech.COCKPIT_TORSO_MOUNTED) {
+                c.gridwidth = 1;
+                c.anchor = GridBagConstraints.EAST;
+                gridbag.setConstraints(labAutoEject, c);
+                tempPanel.add(labAutoEject);
             
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            c.anchor = GridBagConstraints.WEST;
-            gridbag.setConstraints(chAutoEject, c);
-            tempPanel.add(chAutoEject);
-            chAutoEject.setState(!mech.isAutoEject());
+                c.gridwidth = GridBagConstraints.REMAINDER;
+                c.anchor = GridBagConstraints.WEST;
+                gridbag.setConstraints(chAutoEject, c);
+                tempPanel.add(chAutoEject);
+                chAutoEject.setState(!mech.isAutoEject());
+            }
         }
         
         c.gridwidth = 1;

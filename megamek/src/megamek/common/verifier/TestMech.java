@@ -150,11 +150,17 @@ public class TestMech extends TestEntity {
         {
             CriticalSlot slot = entity.getCritical(location, slots);
             if (slot==null || slot.getType()==CriticalSlot.TYPE_SYSTEM)
+            {
                 continue;
-            if (slot.getType()==CriticalSlot.TYPE_EQUIPMENT)
+            }
+            else if (slot.getType()==CriticalSlot.TYPE_EQUIPMENT)
             {
                 if (slot.getIndex()==eNum)
                     count++;
+            }
+            else
+            {
+                // Ignore this?
             }
         }
         return count;

@@ -15,6 +15,7 @@ v0.31.4-dev (CVS)
 + Corrected Torso-mounted cockpit loading from MTF files.
 + Added Great Turtle GTF-1 (3055U) to mechs.zip.
 + Fixed several torso-mounted cockpit and hardened armor bugs.
++ Bug 1388465: blk lvl 1 mechs load without engines.
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

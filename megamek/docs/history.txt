@@ -16,6 +16,8 @@ v0.31.4-dev (CVS)
 + Added Great Turtle GTF-1 (3055U) to mechs.zip.
 + Fixed several torso-mounted cockpit and hardened armor bugs.
 + Bug 1388465: blk lvl 1 mechs load without engines.
++ Bug 1374005: mech with small cockpit has error if sensors crit is moved.
++ Continue system criticals refactoring (gyro, cockpit).
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

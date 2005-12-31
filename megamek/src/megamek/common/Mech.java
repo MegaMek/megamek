@@ -147,92 +147,6 @@ public abstract class Mech
     private boolean hasCowl = false;
     private int cowlArmor = 0;
 
-    public void addCockpit() {
-        setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-        setCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-        //slot index 3 is empty
-        setCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-        setCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-    }
-
-    public void addSmallCockpit() {
-        setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-        setCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-        //slot index 3 is empty
-        setCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-        //slot index 5 is empty
-    }
-
-    public void addCommandConsole() {
-        // This needs to be implemented.
-        // FIXME
-    }
-
-    public void addDualCockpit() {
-        // This needs to be implemented.
-        // FIXME
-    }
-
-    public void addTorsoMountedCockpit() {
-        // These indexes should NOT be hard-coded!!!
-        // This causes problems with strange equipment mixes, like compact gyro + compact engine + torso-mounted cockpit.
-
-        //slot index 0 is empty
-        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-        //slot index 2 is empty
-        //slot index 3 is empty
-        setCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-        //slot index 5 is empty
-
-        // The following lines were commented out to allow file readers to parse these out of the unit files.
-        // Otherwise, hard-coded indexes screw up placement of these, since these crits can move based on the unit configuration.
-        //setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-        //setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-
-        //setCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-        //setCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-    }
-
-    public void addGyro() {
-        addCompactGyro();
-        setCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        setCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        setGyroType(GYRO_STANDARD);
-    }
-
-    public void addCompactGyro() {
-        setCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        setCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        setGyroType(GYRO_COMPACT);
-    }
-
-    public void addXLGyro() {
-        addGyro();
-        setCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        setCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-        setGyroType(GYRO_XL);
-    }
-
-    public void addHeavyDutyGyro() {
-        addGyro();
-        setGyroType(GYRO_HEAVY_DUTY);
-    }
-
-    public void addEngineCrits() {
-        int centerSlots[] = getEngine().getCenterTorsoCriticalSlots();
-        for (int i = 0; i < centerSlots.length; i++) {
-            setCritical(LOC_CT, centerSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        }
-
-        int sideSlots[] = getEngine().getSideTorsoCriticalSlots();
-        for (int i = 0; i < sideSlots.length; i++) {
-            setCritical(LOC_LT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-            setCritical(LOC_RT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-        }
-    }
-
     /**
      * Construct a new, blank, mech.
      */
@@ -253,24 +167,6 @@ public abstract class Mech
             if (!hasRearArmor(i)) {
               initializeRearArmor(IArmorState.ARMOR_NA, i);
             }
-        }
-
-        if (cockpitType == COCKPIT_TORSO_MOUNTED) {
-            addTorsoMountedCockpit();
-        } else if (cockpitType == COCKPIT_SMALL) {
-            addSmallCockpit();
-        } else {
-            addCockpit();
-        }
-
-        if (gyroType == GYRO_COMPACT) {
-            addCompactGyro();
-        } else if (gyroType == GYRO_XL) {
-            addXLGyro();
-        } else if (gyroType == GYRO_HEAVY_DUTY) {
-            addHeavyDutyGyro();
-        } else {
-            addGyro();
         }
 
         // Standard leg crits
@@ -2683,10 +2579,226 @@ public abstract class Mech
     public boolean canAssaultDrop() {
         return true;
     }
-    
+
     public boolean isHexProhibited(IHex hex) {
         if(hex.containsTerrain(Terrains.IMPASSABLE)) return true;
         return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
+    }
+
+    /**
+     * Add the critical slots necessary for a standard cockpit.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addCockpit() {
+        if (getEmptyCriticals(LOC_HEAD) < 5) {
+            return false;
+        } else {
+            addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+            addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            setCockpitType(COCKPIT_STANDARD);
+            return true;
+        }
+    }
+
+    /**
+     * Add the critical slots necessary for a small cockpit.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addSmallCockpit() {
+        if (getEmptyCriticals(LOC_HEAD) < 4) {
+            return false;
+        } else {
+            addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+            addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            setCockpitType(COCKPIT_SMALL);
+            return true;
+        }
+    }
+
+    /*
+    public boolean addCommandConsole() {
+        // This needs to be implemented.
+        // FIXME
+    }
+
+    public boolean addDualCockpit() {
+        // This needs to be implemented.
+        // FIXME
+    }
+    */
+
+    /**
+     * Add the critical slots necessary for a torso-mounted cockpit.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addTorsoMountedCockpit() {
+        boolean success = true;
+        if (getEmptyCriticals(LOC_HEAD) < 2) {
+            success = false;
+        } else {
+            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        }
+
+        if (getEmptyCriticals(LOC_CT) < 2
+            || !success) {
+            success = false;
+        } else {
+            addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+            addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+        }
+
+        if (getEmptyCriticals(LOC_LT) < 1
+            || getEmptyCriticals(LOC_RT) < 1
+            || !success) {
+            success = false;
+        } else {
+            addCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            addCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+        }
+
+        if (success)
+            setCockpitType(COCKPIT_TORSO_MOUNTED);
+        return success;
+    }
+
+    /**
+     * Add the critical slots necessary for a standard gyro.  Also
+     * set the gyro type variable.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addGyro() {
+        if (getEmptyCriticals(LOC_CT) < 4) {
+            return false;
+        } else {
+            addCompactGyro();
+            addCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            setGyroType(GYRO_STANDARD);
+            return true;
+        }
+    }
+
+    /**
+     * Add the critical slots necessary for a compact gyro.  Also
+     * set the gyro type variable.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addCompactGyro() {
+        if (getEmptyCriticals(LOC_CT) < 2) {
+            return false;
+        } else {
+            addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            setGyroType(GYRO_COMPACT);
+            return true;
+        }
+    }
+
+    /**
+     * Add the critical slots necessary for an extra-light gyro.  Also
+     * set the gyro type variable.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addXLGyro() {
+        if (getEmptyCriticals(LOC_CT) < 6) {
+            return false;
+        } else {
+            addGyro();
+            addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            setGyroType(GYRO_XL);
+            return true;
+        }
+    }
+
+    /**
+     * Add the critical slots necessary for a heavy-duty gyro.  Also
+     * set the gyro type variable.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addHeavyDutyGyro() {
+        if (addGyro()) {
+            setGyroType(GYRO_HEAVY_DUTY);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Add the critical slots necessary for the mek's engine.  Calling
+     * this method before setting a mek's engine object will result
+     * in a NPE.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addEngineCrits() {
+        boolean success = true;
+
+        int centerSlots[] = getEngine().getCenterTorsoCriticalSlots();
+        if (getEmptyCriticals(LOC_CT) < centerSlots.length) {
+            success = false;
+        } else {
+            for (int i = 0; i < centerSlots.length; i++) {
+                addCritical(LOC_CT, centerSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            }
+        }
+
+        int sideSlots[] = getEngine().getSideTorsoCriticalSlots();
+        if (getEmptyCriticals(LOC_LT) < sideSlots.length
+            || getEmptyCriticals(LOC_RT) < sideSlots.length
+            || !success) {
+            success = false;
+        } else {
+            for (int i = 0; i < sideSlots.length; i++) {
+                addCritical(LOC_LT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_RT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            }
+        }
+
+        return success;
+    }
+
+    /**
+     * Remove all engine critical slots from the mek.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public void clearEngineCrits() {
+        for (int i = 0; i < locations(); i++) {
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        }
     }
 
 }

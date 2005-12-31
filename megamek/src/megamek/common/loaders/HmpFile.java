@@ -603,6 +603,12 @@ public class HmpFile
                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                                             Mech.SYSTEM_ENGINE));
         }
+        else if (isGyro(critical))
+        {
+          mech.setCritical(location, i,
+                           new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                            Mech.SYSTEM_GYRO));
+        }
         else if (isCockpit(critical))
         {
           mech.setCritical(location, i,
@@ -749,6 +755,11 @@ public class HmpFile
   private static boolean isFusionEngine(long critical)
   {
     return critical == 0x0F;
+  }
+
+  private static boolean isGyro(long critical)
+  {
+    return critical == 0x10;
   }
 
   private static boolean isRearMounted(long critical)

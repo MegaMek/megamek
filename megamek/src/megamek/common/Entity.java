@@ -2033,6 +2033,36 @@ public abstract class Entity
     }
 
     /**
+     * Adds a critical to the first available slot in the location.
+     *
+     * @return true if there was room for the critical
+     */
+    public boolean addCritical(int loc, CriticalSlot cs) {
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            if (getCritical(loc, i) == null) {
+                crits[loc][i] = cs;
+                return true;
+            }
+        }
+        return false;  //no slot available :(
+    }
+
+    /**
+     * Attempts to set the given slot to the given critical.  If the desired
+     * slot is full, adds the critical to the first available slot.
+     *
+     * @return true if the crit was succesfully added to any slot
+     */
+    public boolean addCritical(int loc, int slot, CriticalSlot cs) {
+        if (getCritical(loc, slot) == null) {
+            setCritical(loc, slot, cs);
+            return true;
+        } else {
+            return addCritical(loc, cs);
+        }
+    }
+
+    /**
      * Removes all matching critical slots from the location
      */
     public void removeCriticals(int loc, CriticalSlot cs) {
@@ -2784,20 +2814,6 @@ public abstract class Entity
             }
         }
         return false;
-    }
-
-    /**
-     * Adds a CriticalSlot into the first empty slot
-     *
-     * TODO: throw exception if full, maybe?
-     */
-    public void addCritical(int loc, CriticalSlot cs) {
-        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            if (getCritical(loc, i) == null) {
-                setCritical(loc, i, cs);
-                return;
-            }
-        }
     }
 
     /**

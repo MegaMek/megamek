@@ -576,6 +576,22 @@ public class TdbFile implements IMechLoader {
                 mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
                 continue;
             }
+            if (critName.indexOf("Gyro") != -1) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
+                continue;
+            }
+            if (critName.indexOf("Life Support") != -1) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
+                continue;
+            }
+            if (critName.indexOf("Sensors") != -1) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
+                continue;
+            }
+            if (critName.indexOf("Cockpit") != -1) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
+                continue;
+            }
             if (critName.endsWith("[LRM]") || critName.endsWith("[SRM]")) {
                 // This is a lame kludge for The Drawing Board, which
                 //  identifies which type of missle weapon an

@@ -377,8 +377,11 @@ public class MtfFile implements IMechLoader {
             } else if (critName.equalsIgnoreCase("Cockpit")) {
                 mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
                 continue;
+            } else if (critName.equalsIgnoreCase("Gyro")) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
+                continue;
             }
-                
+
             if (critName.endsWith("(R)")) {
                 rearMounted = true;
                 critName = critName.substring(0, critName.length() - 3).trim();

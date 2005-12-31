@@ -235,6 +235,18 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                 if (critName.indexOf("Engine") != -1) {
                     mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
                     continue;
+                } else if (critName.equalsIgnoreCase("Life Support")) {
+                    mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
+                    continue;
+                } else if (critName.equalsIgnoreCase("Sensors")) {
+                    mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
+                    continue;
+                } else if (critName.equalsIgnoreCase("Cockpit")) {
+                    mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
+                    continue;
+                } else if (critName.equalsIgnoreCase("Gyro")) {
+                    mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
+                    continue;
                 }
 
                 EquipmentType etype = EquipmentType.get(critName);

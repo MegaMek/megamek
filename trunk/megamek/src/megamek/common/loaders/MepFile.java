@@ -187,10 +187,12 @@ public class MepFile implements IMechLoader {
             mech.setEngine(new Engine(engineRating,
                                       Engine.getEngineTypeByString(engineType),
                                       engineFlags));
-            //No support for moveable engine crits due to goofy critical
+            //No support for moveable system crits due to goofy critical
             // format.  Could be fixed, but I don't think anyone uses
             // MEP for level 3 designs.
             mech.addEngineCrits();
+            mech.addCockpit();
+            mech.addGyro();
 
             mech.setOriginalJumpMP(Integer.parseInt(this.jumpMP.trim()));
             

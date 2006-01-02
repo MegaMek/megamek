@@ -973,7 +973,7 @@ public class Server implements Runnable {
         vPhaseReport.addElement(new Report(7000, Report.PUBLIC));
 
         //Declare the victor
-        r = new Report();
+        r = new Report(1210);
         r.type = Report.PUBLIC;
         if (game.getVictoryTeam() == Player.TEAM_NONE) {
             Player player = getPlayer( game.getVictoryPlayerId() );
@@ -2243,7 +2243,7 @@ public class Server implements Runnable {
         Report r;
         boolean deployment = false;
         if (!abbreviatedReport) {
-            r = new Report();
+            r = new Report(1210);
             r.type = Report.PUBLIC;
             if ((game.getLastPhase() == IGame.PHASE_DEPLOYMENT) || game.isDeploymentComplete() || !game.shouldDeployThisRound()) {
                 r.messageId = 1000;
@@ -5027,7 +5027,7 @@ public class Server implements Runnable {
         boolean fallsInPlace;
 
         // Start the info for this roll.
-        Report r = new Report();
+        Report r = new Report(1210);
         r.subject = entity.getId();
         r.addDesc(entity);
 
@@ -6765,7 +6765,7 @@ public class Server implements Runnable {
           }
 
           if (jamCheck > 0 && wr.roll <= jamCheck) {
-              r = new Report();
+              r = new Report(1210);
               // ultras and prototypes are destroyed by jamming
               if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                     || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
@@ -12086,10 +12086,9 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                         // gun emplacements have no internal,
                         // destroy the section
                         destroyLocation(te, hit.getLocation());
-                        r = new Report();
+                        r = new Report(6115);
                         r.subject = te_n;
                         r.newlines = 0;
-                        r.messageId = 6115;
                         vDesc.addElement(r);
 
                         if (te.getTransferLocation(hit).getLocation() ==
@@ -12138,7 +12137,7 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                         te.setInternal(te.getInternal(hit) - damage, hit);
                         te.damageThisPhase += damage;
                         damage = 0;
-                        r = new Report();
+                        r = new Report(1210);
                         r.subject = te_n;
                         r.newlines = 0;
                         // Infantry platoons have men not "Internals".
@@ -12167,7 +12166,7 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                         }
 
                         // Platoon, Trooper, or Section destroyed message
-                        r = new Report();
+                        r = new Report(1210);
                         r.subject = te_n;
                         r.newlines = 0;
                         if ( isPlatoon ) {
@@ -12273,6 +12272,9 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                             if ( !engineExploded && numEngineHits > 2  ) {
                                 // third engine hit
                                 vDesc.addAll( destroyEntity(te, "engine destruction"));
+                                if ( game.getOptions().booleanOption("auto_abandon_unit") )
+                                    vDesc.addAll(abandonEntity(te));
+
                             }
                         }
                         
@@ -12312,6 +12314,9 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                             if (hit.getLocation() == Mech.LOC_HEAD ||
                                 (hit.getLocation() == Mech.LOC_CT && ((ammoExplosion && !autoEject) || areaSatArty))) {
                                 te.getCrew().setDoomed(true);
+                            }
+                            if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                                vDesc.addAll(abandonEntity(te));
                             }
                         }
 
@@ -12995,6 +13000,10 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                         // third engine hit
                         vDesc.addAll(
                             destroyEntity(en, "engine destruction"));
+                        //TODO Add auto abandon code here also.
+                        if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                            vDesc.addAll(abandonEntity(en));
+                        }
                     }
                     break;
                 case Mech.SYSTEM_GYRO :
@@ -13620,6 +13629,9 @@ System.out.println("Crit count: "+lifeSupportCritCount);
         //Check location for engine/cockpit breach and report accordingly
         if (loc == Mech.LOC_CT) {
             vDesc.addAll( destroyEntity(entity, "hull breach"));
+            if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                vDesc.addAll(abandonEntity(entity));
+            }
         }
         if (loc == Mech.LOC_HEAD) {
             entity.crew.setDoomed(true);
@@ -13652,6 +13664,9 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                                Mech.LOC_RT)
             >= 3) {
             vDesc.addAll( destroyEntity(entity, "engine destruction"));
+            if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                vDesc.addAll(abandonEntity(entity));
+            }
         }
 
         return vDesc;
@@ -14743,6 +14758,9 @@ System.out.println("Crit count: "+lifeSupportCritCount);
             System.err.println("Error: Attempting to filter a Report object that is not public but has a subject (" + entity + ") with owner (" + owner + ").\n\tmessageId: " + r.messageId);
             return r;
         }
+        //off board (Artillery) units get treated as public messages
+        if ( entity.isOffBoard() )
+            return r;
         Report copy = new Report(r);
         for (int j = 0; j < copy.dataCount(); j++) {
             if (omitCheck || !canSee(p, entity)) {
@@ -16415,7 +16433,7 @@ System.out.println("Crit count: "+lifeSupportCritCount);
             buildings = collapse.elements();
             while ( buildings.hasMoreElements() ) {
                 Building bldg = (Building) buildings.nextElement();
-                Report r = new Report(6460);
+                Report r = new Report(6460,Report.PUBLIC);
                 r.add(bldg.getName());
                 vPhaseReport.addElement(r);
                 this.collapseBuilding( bldg, positionMap );
@@ -16471,7 +16489,7 @@ System.out.println("Crit count: "+lifeSupportCritCount);
      * @return  a <code>Report</code> to be shown to the players.
      */
     private Report damageBuilding( Building bldg, int damage, String why ) {
-        Report r = new Report();
+        Report r = new Report(1210);
         r.newlines = 0;
 
         // Do nothing if no building or no damage was passed.
@@ -17358,6 +17376,73 @@ System.out.println("Crit count: "+lifeSupportCritCount);
         entity.getCrew().setEjected( true );
         vDesc.addAll(
             destroyEntity(entity, "ejection", true, true));
+
+        // only remove the unit that ejected in the movement phase
+        if (game.getPhase() == IGame.PHASE_MOVEMENT) {
+            game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED );
+            send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED));
+        }
+        return vDesc;
+    }
+
+    /**
+     * Abandon an Entity.
+     * @param entity    The <code>Entity</code> to abandon.
+     *
+     * @return a <code>Vector</code> of report objects for the gamelog.
+     */
+    public Vector abandonEntity(Entity entity) {
+        Vector vDesc = new Vector();
+        Report r;
+
+        // An entity can only eject it's crew once.
+        if (entity.getCrew().isEjected())
+            return vDesc;
+
+        if (entity.getCrew().isDoomed()) 
+            return vDesc;
+        
+        //Don't make them abandon into vacuum
+        if (game.getOptions().booleanOption("vacuum")) 
+            return vDesc;
+        
+        Coords targetCoords = entity.getPosition();
+        
+        if (entity instanceof Mech) {
+            // okay, print the info
+            r = new Report(2027);
+            r.subject = entity.getId();
+            r.add(entity.getCrew().getName());
+            r.addDesc(entity);
+            r.indent(3);
+            vDesc.addElement(r);
+
+            // create the MechWarrior in any case, for campaign tracking
+            MechWarrior pilot = new MechWarrior(entity);
+            pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
+            pilot.setDeployed(true);
+            pilot.setId(getFreeEntityId());
+            game.addEntity(pilot.getId(), pilot);
+            send(createAddEntityPacket(pilot.getId()));
+            // make him not get a move this turn
+            pilot.setDone(true);
+            // Add the pilot as an infantry unit on the battlefield.
+            if (game.getBoard().contains(targetCoords))
+                    pilot.setPosition(targetCoords);
+            // Update the entity
+            this.entityUpdate(pilot.getId());
+            // check if the pilot lands in a minefield
+            doEntityDisplacementMinefieldCheck( pilot,
+                    entity.getPosition(),
+                    targetCoords );
+            if (game.getOptions().booleanOption("ejected_pilots_flee")) {
+                game.removeEntity(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+            }
+        } // End entity-is-Mek
+
+        // Mark the entity's crew as "ejected".
+        entity.getCrew().setEjected( true );
 
         // only remove the unit that ejected in the movement phase
         if (game.getPhase() == IGame.PHASE_MOVEMENT) {

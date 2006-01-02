@@ -200,7 +200,49 @@ public class TestBot extends BotClient {
                     (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
                     // Cycle through all available weapons, only unjam if the jam(med)
                     // RACs count for a significant portion of possible damage
-                    min.addStep(MovePath.STEP_UNJAM_RAC);
+                	int rac_damage = 0;
+                	int other_damage = 0;
+                    int clearance_range = 0;
+                    for (Enumeration mounted_weapons = min.getCEntity().entity.getWeapons();
+                        mounted_weapons.hasMoreElements();){
+                        WeaponType test_weapon = new WeaponType();
+                        Mounted equip = (Mounted) mounted_weapons.nextElement();
+                            
+                            test_weapon = (WeaponType) equip.getType();
+                            if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY) && 
+                                    (equip.isJammed() == true)){
+                                rac_damage = rac_damage + 4 *(test_weapon.getDamage());
+                            } else {
+                                if (equip.canFire()){
+                                    other_damage += test_weapon.getDamage();
+                                    if (test_weapon.getMediumRange() > clearance_range){
+                                        clearance_range = test_weapon.getMediumRange();
+                                    }
+                                }
+                            }
+                    }
+                    // Even if the jammed RAC doesn't make up a significant portion
+                    // of the units damage, its still better to have it functional
+                    // If nothing is "close" then unjam anyways
+                    int check_range = 100;
+                    for (Enumeration unit_selection = game.getEntities(); 
+                        unit_selection.hasMoreElements();){
+                        Entity enemy = (Entity) unit_selection.nextElement();
+                        if ((min.getCEntity().entity.getPosition() != null) && 
+                                (enemy.getPosition() != null) && 
+                                (enemy.isEnemyOf(min.getCEntity().entity))){
+                            if (enemy.isVisibleToEnemy()){
+                                if (min.getCEntity().entity.getPosition().distance
+                                        (enemy.getPosition()) < check_range){
+                                    check_range = min.getCEntity().entity.getPosition().
+                                    distance(enemy.getPosition());
+                                }
+                            }
+                        }
+                    }
+                	if ((rac_damage >= other_damage) || (check_range < clearance_range)){
+                	    min.addStep(MovePath.STEP_UNJAM_RAC);
+                	}
                 }
             }
             }

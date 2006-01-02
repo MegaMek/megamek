@@ -19,6 +19,9 @@ v0.31.4-dev (CVS)
 + Bug 1374005: mech with small cockpit has error if sensors crit is moved.
 + Continue system criticals refactoring (gyro, cockpit).
 + Clarified "default autoeject off" client setting.
++ Patch 1376849: Bot equipment usage: RAC unjam, part 2.
++ Patch 1380002: Smaller NPE error message for MechFileParser.java.
++ Patch 1391035, RFE 1169259: Auto "abandon"
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

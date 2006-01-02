@@ -56,13 +56,14 @@ public class MechFileParser {
             try {
                 zFile = new ZipFile(f);
                 parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
-            } catch (Exception ex) {
+            } catch(EntityLoadingException ele ){
+                throw new EntityLoadingException(ele.getMessage());
+            }catch ( NullPointerException npe){
+                System.err.println("Unable to load unit "+entryName+" from file "+f.getName());
+            }
+            catch (Exception ex) {
                 ex.printStackTrace();
-                if (ex instanceof EntityLoadingException) {
-                    throw new EntityLoadingException(ex.getMessage());
-                } else {
-                    throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
-                }
+                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
             }
         }
     }

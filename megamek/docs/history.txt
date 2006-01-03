@@ -22,6 +22,7 @@ v0.31.4-dev (CVS)
 + Patch 1376849: Bot equipment usage: RAC unjam, part 2.
 + Patch 1380002: Smaller NPE error message for MechFileParser.java.
 + Patch 1391035, RFE 1169259: Auto "abandon"
++ Bug 1395708: MM locks up when using the Prototype weapons
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

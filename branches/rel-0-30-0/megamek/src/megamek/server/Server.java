@@ -6365,8 +6365,9 @@ implements Runnable, ConnectionHandler {
                weapon.curMode().equals("Ultra")) ||
               wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
               jamCheck = 2;
-              if (weapon.curMode().equals("Ultra") &&
-                  wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
+              if (weapon.getType().hasModes() &&
+                      weapon.curMode().equals("Ultra") &&
+                      wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
                   jamCheck = 4;
               }
           } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {

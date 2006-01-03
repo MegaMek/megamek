@@ -2,6 +2,7 @@
 ----------------
 v0.30.7-dev (cvs)
 + Bug 1385381: incorrect code in MapSettings.java
++ Bug 1395708: MM locks up when using the Prototype weapons
 
 v0.30.6 (2005-12-20, 16:30 GMT)
 + Bug 1326177: Leg Breached during DFA

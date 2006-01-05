@@ -47,6 +47,7 @@ import megamek.common.net.Packet;
 import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
 
 public class Client {
 
@@ -724,7 +725,11 @@ public class Client {
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
-            FileWriter fw = new FileWriter(sLogDir + File.separator + "entitystatus.txt"); //$NON-NLS-1$
+            String fileName = "entitystatus.txt";
+            if (PreferenceManager.getClientPreferences().stampFilenames()) {
+                fileName = StringUtil.addDateTimeStamp(fileName);
+            }
+            FileWriter fw = new FileWriter(sLogDir + File.separator + fileName); //$NON-NLS-1$
             fw.write(sStatus);
             fw.flush();
             fw.close();

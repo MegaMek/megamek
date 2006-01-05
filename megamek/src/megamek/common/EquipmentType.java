@@ -353,30 +353,36 @@ public class EquipmentType {
     }
 
     public static int getArmorType(String inType) {
-        for (int x=0; x<armorNames.length; x++) {
-            if ((armorNames[x].indexOf(inType) >= 0) || (inType.indexOf(armorNames[x]) >= 0))
-                return x;
+        EquipmentType et = EquipmentType.get(inType);
+        if (et != null) {
+            for (int x=0; x<armorNames.length; x++) {
+                if (armorNames[x].equals(et.getInternalName()))
+                    return x;
+            }
         }
         return T_ARMOR_UNKNOWN;
     }
 
     public static  String getArmorTypeName(int armorType) {
         if ((armorType < 0) || (armorType >= armorNames.length))
-            return null;
+            return "UNKNOWN";
         return armorNames[armorType];
     }
 
     public static int getStructureType(String inType) {
-        for (int x=0; x<structureNames.length; x++) {
-            if ((structureNames[x].indexOf(inType) >= 0) || (inType.indexOf(structureNames[x]) >= 0))
-                return x;
+        EquipmentType et = EquipmentType.get(inType);
+        if (et != null) {
+            for (int x=0; x<structureNames.length; x++) {
+                if (structureNames[x].equals(et.getInternalName()))
+                    return x;
+            }
         }
         return T_STRUCTURE_UNKNOWN;
     }
 
     public static  String getStructureTypeName(int structureType) {
         if ((structureType < 0) || (structureType >= structureNames.length))
-            return null;
+            return "UNKNOWN";
         return structureNames[structureType];
     }
 

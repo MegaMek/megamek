@@ -414,7 +414,7 @@ public class HmvFile
             vehicle.setHasNoTurret(turretArmor == 0);
 
             vehicle.autoSetInternal();
-            vehicle.setArmorType(armorType.getId());
+            vehicle.setArmorType(armorType.toString());
 
             vehicle.initializeArmor(frontArmor, Tank.LOC_FRONT);
             vehicle.initializeArmor(leftArmor, Tank.LOC_LEFT);
@@ -1209,8 +1209,8 @@ class HMVArmorType
 {
   public static final Hashtable types = new Hashtable();
 
-  public static final HMVArmorType STANDARD = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD), EquipmentType.T_ARMOR_STANDARD);
-  public static final HMVArmorType FERRO = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS), EquipmentType.T_ARMOR_FERRO_FIBROUS);
+  public static final HMVArmorType STANDARD = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD), 0);
+  public static final HMVArmorType FERRO = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS), 1);
 //  public static final HMVArmorType COMPACT = new HMVArmorType("Compact", 2);
 //  public static final HMVArmorType LASER = new HMVArmorType("Laser", 3);
 

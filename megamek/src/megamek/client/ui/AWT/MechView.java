@@ -97,7 +97,7 @@ public class MechView {
         sBasic.append( "\n" ); //$NON-NLS-1$
         if ( isMech || isVehicle ) {
             sBasic.append( Messages.getString("MechView.Engine") ); //$NON-NLS-1$
-            sBasic.append(mech.getEngine().getEngineName());
+            sBasic.append(mech.getEngine().getShortEngineName());
             sBasic.append("\n"); //$NON-NLS-1$
         }
         if ( isMech ) {
@@ -163,29 +163,21 @@ public class MechView {
         int maxArmor = mech.getTotalInternal() * 2 + 3;
         sIntArm.append( Messages.getString("MechView.Internal") ) //$NON-NLS-1$
             .append( mech.getTotalInternal() );
-        if (isMech && ((Mech)mech).hasEndo()) {
-            sIntArm.append(Messages.getString("MechView.EndoSteel")); //$NON-NLS-1$
-        } else if (isMech && ((Mech)mech).hasReinforcedStructure()) {
-            sIntArm.append(Messages.getString("MechView.Reinforced")); //$NON-NLS-1$
-        } else if (isMech && ((Mech)mech).hasCompositeStructure()) {
-            sIntArm.append(Messages.getString("MechView.Composite")); //$NON-NLS-1$
+        if (isMech) {
+            sIntArm.append(Messages.getString("MechView."
+               + EquipmentType.getStructureTypeName(mech.getStructureType())));
         }
         sIntArm.append( "\n" ); //$NON-NLS-1$
+
         sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
             .append( mech.getTotalArmor() );
         if ( isMech ) {
             sIntArm.append( "/" ) //$NON-NLS-1$
                 .append( maxArmor );
         }
-        if (mech.getArmorType() != EquipmentType.T_ARMOR_STANDARD &&
-            !isInf) {
-            if (mech.getArmorType() != EquipmentType.T_ARMOR_UNKNOWN) {
-                sIntArm.append(" (");
-                sIntArm.append(EquipmentType.getArmorTypeName(mech.getArmorType()));
-                sIntArm.append(")");
-            } else {
-                sIntArm.append(" (unknown)");
-            }
+        if (!isInf && !isProto) {
+            sIntArm.append(Messages.getString("MechView."
+               + EquipmentType.getArmorTypeName(mech.getArmorType())));
         }
         sIntArm.append( "\n" ); //$NON-NLS-1$
         // Walk through the entity's locations.

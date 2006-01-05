@@ -2958,6 +2958,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("ISAntiMissileSystem");
         weapon.addLookupName("IS Anti-Missile System");
         weapon.addLookupName("IS AMS");
+        weapon.addLookupName("IS Anti-Missile Syst");
         weapon.heat = 1;
         weapon.rackSize = 2;
         weapon.damage = 1;  // # of d6 of missiles affected
@@ -5479,6 +5480,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLAntiMissileSystem");
         weapon.addLookupName("Clan Anti-Missile Sys");
         weapon.addLookupName("Clan AMS");
+        weapon.addLookupName("Clan Anti-Missile Syst");
         weapon.heat = 1;
         weapon.rackSize = 2;
         weapon.damage = 2; // # of d6 of missiles affected

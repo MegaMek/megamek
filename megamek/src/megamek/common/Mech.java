@@ -120,7 +120,7 @@ public abstract class Mech
     /**
      * The internal name for Mek Stealth systems.
      */
-    public static final String STEALTH = "Mek Stealth";
+    public static final String STEALTH = "Stealth";
     public static final String NULLSIG = "Mek Null Signature System";
 
     //jump types
@@ -563,62 +563,12 @@ public abstract class Mech
         return legCrits;
     }
 
-    public boolean hasEndo() {
-        if (getStructureType() == EquipmentType.T_STRUCTURE_UNKNOWN) {
-            Enumeration eMisc = getMisc();
-            while (eMisc.hasMoreElements()) {
-                Mounted mounted = (Mounted)eMisc.nextElement();
-                if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL)) != -1) {
-                    setStructureType(EquipmentType.T_STRUCTURE_ENDO_STEEL);
-                    break;
-                }
-                if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE)) != -1) {
-                    setStructureType(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE);
-                    break;
-                }
-            }
-        }
-        return ((getStructureType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) || (getStructureType() == EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE));
-    }
-
     public boolean hasCompositeStructure() {
-        if (getStructureType() == EquipmentType.T_STRUCTURE_UNKNOWN) {
-            Enumeration eMisc = getMisc();
-            while (eMisc.hasMoreElements()) {
-                Mounted mounted = (Mounted)eMisc.nextElement();
-                if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_COMPOSITE)) != -1) {
-                    setStructureType(EquipmentType.T_STRUCTURE_COMPOSITE);
-                    break;
-                }
-            }
-        }
         return (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE);
     }
 
     public boolean hasReinforcedStructure() {
-        if (getStructureType() == EquipmentType.T_STRUCTURE_UNKNOWN) {
-            Enumeration eMisc = getMisc();
-            while (eMisc.hasMoreElements()) {
-                Mounted mounted = (Mounted)eMisc.nextElement();
-                if (mounted.getDesc().indexOf(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_REINFORCED)) != -1) {
-                    setStructureType(EquipmentType.T_STRUCTURE_REINFORCED);
-                    break;
-                }
-            }
-        }
         return (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED);
-    }
-
-    public boolean hasFerro() {
-        Enumeration eMisc = getMisc();
-        while (eMisc.hasMoreElements()) {
-            Mounted mounted = (Mounted)eMisc.nextElement();
-            if (mounted.getDesc().indexOf(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS)) != -1 ||
-                mounted.getDesc().indexOf(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO)) != -1) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean hasMASC() {
@@ -1787,35 +1737,21 @@ public abstract class Mech
         boolean bHasEiSystem = (hasEiCockpit() && getCrew().getOptions().booleanOption("ei_implant"));
 
         // total armor points
-        dbv += getTotalArmor() * 2.0;
+        double armorMultiplier = 2.0;
+        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+            armorMultiplier = 4.0;
+        }
+        dbv += getTotalArmor() * armorMultiplier;
 
         // total internal structure
-        double internalMultiplier;
-        int CTengine = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE, LOC_CT);
-        int RTengine = getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE, LOC_RT);
-        if(CTengine > 6) {
-            //large engine of some kind
-            if(RTengine >=6)
-                internalMultiplier = 0.375; // IS large XXL
-            else if (RTengine >=4)
-                internalMultiplier = 0.5; // clan large XXL
-            else if (RTengine >=2)
-                internalMultiplier = 0.75; // large XL
-            else
-                internalMultiplier = 1.125; // large
-        } else {
-            //normal sized or compact engine
-            if(RTengine >=6)
-                internalMultiplier = 0.5; // IS XXL
-            else if (RTengine >=3)
-                internalMultiplier = 0.75; // IS XL, clan XXL
-            else if (RTengine >0)
-                internalMultiplier = 1.125; // IS L, clan XL
-            else
-                internalMultiplier = 1.5; //standard or compact
-        }
+        double internalMultiplier = 1.0;
+        if (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED)
+            internalMultiplier = 2.0;
+        if (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE)
+            internalMultiplier = 0.5;
 
-        dbv += getTotalInternal() * internalMultiplier;
+        dbv += getTotalInternal() * internalMultiplier
+            * getEngine().getBVMultiplier();
 
         // add weight
         dbv += getWeight();
@@ -2151,6 +2087,82 @@ public abstract class Mech
 
         return (int)Math.round((dbv + obv + xbv) * pilotFactor);
     }
+
+    public double getCost() {
+        return getCost(false, new StringBuffer());
+    }
+
+    /**
+     * Calculate the C-bill cost of the mech.
+     *
+     * @param showDetail whether to add a detailed report
+     * @param detail buffer to append the detailed cost report to
+     * @return The cost in C-Bills of the 'Mech in question.
+     */
+    public double getCost(boolean showDetail, StringBuffer detail) {
+        double cost=0; //remove me
+        double[] costs = new double[3];
+        int i = 0;
+
+        double cockpitCost = 0;
+        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            cockpitCost = 750000;
+        } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
+            cockpitCost = 175000;
+        } else {
+            cockpitCost = 200000;
+        }
+        if(hasEiCockpit()) cockpitCost = 400000;
+        costs[i++] = cockpitCost;
+        cost += cockpitCost;
+        costs[i++] = 50000;//life support
+        cost += 50000;//life support
+        costs[i++] = weight*2000;//sensors
+        cost += weight*2000;//sensors
+        int muscCost=this.hasTSM()? 16000 : 2000;
+        cost+=muscCost*weight;//musculature
+        cost+=EquipmentType.getStructureCost(structureType)*weight;//IS
+        cost+=getActuatorCost();//arm and/or leg actuators
+        Engine engine = getEngine();
+        cost += engine.getBaseCost() * engine.getRating() * weight / 75.0;
+        if (getGyroType() == Mech.GYRO_XL) {
+            cost += 750000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 0.5;
+        } else if (getGyroType() == Mech.GYRO_COMPACT) {
+            cost += 400000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 1.5;
+        } else if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+            cost += 500000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 2;
+        } else {
+            cost += 300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);
+        }
+        int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
+        int sinkCost = hasDoubleHeatSinks()? 6000: 2000;
+        cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks
+        cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
+        cost += getWeaponsAndEquipmentCost();
+        double omniCost = 0.0;
+        if (isOmni()) {
+            omniCost = cost*0.25f;
+        }
+        cost+=omniCost;
+        cost*=(1+(weight/100f));
+        if (showDetail)
+            addCostDetails(detail);
+        return Math.round(cost);
+    }
+
+    private void addCostDetails(StringBuffer detail) {
+        //need array of strings with trailing spaces
+        //use MakeLength to right justify costs array (find largest value)
+        //combine for each line
+    }
+
+    protected double getActuatorCost() {
+        return getArmActuatorCost() + getLegActuatorCost();
+    }
+
+    protected abstract double getArmActuatorCost();
+
+    protected abstract double getLegActuatorCost();
 
     public Vector victoryReport() {
         Vector vDesc = new Vector();
@@ -2798,6 +2810,53 @@ public abstract class Mech
     public void clearEngineCrits() {
         for (int i = 0; i < locations(); i++) {
             removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+        }
+    }
+
+    /**
+     * Remove all cockpit critical slots from the mek.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     */
+    public void clearCockpitCrits() {
+        for (int i = 0; i < locations(); i++) {
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+        }
+    }
+
+    /**
+     * Remove all gyro critical slots from the mek.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     */
+    public void clearGyroCrits() {
+        for (int i = 0; i < locations(); i++) {
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+        }
+    }
+
+    /**
+     * Removes all instances of the given equipment from the mech.
+     * Note: This is part of the mek creation public API, and might not
+     * be referenced by any MegaMek code.
+     */
+    public void removeMisc(String toRemove) {
+        for (Enumeration i = equipmentList.elements();i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getName().equals(toRemove)) {
+
+                int num = getEquipmentNum(mounted);
+                for (int j = 0; j < locations(); j++) {
+                    removeCriticals(j, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num));
+                }
+
+                weaponList.removeElement(mounted);
+                ammoList.removeElement(mounted);
+                miscList.removeElement(mounted);
+                equipmentList.removeElement(mounted);
+            }
         }
     }
 

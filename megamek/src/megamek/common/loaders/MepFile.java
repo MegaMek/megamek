@@ -15,6 +15,7 @@
 package megamek.common.loaders;
 
 import java.io.*;
+import java.util.Hashtable;
 
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
@@ -23,6 +24,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
+import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 
@@ -71,6 +73,8 @@ public class MepFile implements IMechLoader {
     
     String[] critData;
 
+    Hashtable hSharedEquip = new Hashtable();
+
     public MepFile(InputStream is) throws EntityLoadingException {
         try {
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
@@ -92,8 +96,8 @@ public class MepFile implements IMechLoader {
             
             engineType = r.readLine();
             heatSinkType = r.readLine();
-            armorType = r.readLine();
             internalType = r.readLine();
+            armorType = r.readLine();
             
             walkMP = r.readLine();
             jumpMP = r.readLine();
@@ -198,7 +202,11 @@ public class MepFile implements IMechLoader {
             
             boolean dblSinks = "Double".equals(this.heatSinkType.trim());
             mech.addEngineSinks(Integer.parseInt(this.heatSinks.trim()), dblSinks);
-            
+
+            mech.setStructureType(internalType);
+
+            mech.setArmorType(armorType);
+
             decodeArmorAndInternals(mech, Mech.LOC_HEAD, headArmor);
             decodeArmorAndInternals(mech, Mech.LOC_LARM, larmArmor);
             decodeArmorAndInternals(mech, Mech.LOC_LT, ltArmor);
@@ -270,7 +278,21 @@ public class MepFile implements IMechLoader {
                 }
                 if (etype != null) {
                     try {
-                        mech.addEquipment(etype, loc, rearMounted);
+                        if (etype.isSpreadable()) {
+                            // do we already have one of these?  Key on Type
+                            Mounted m = (Mounted)hSharedEquip.get(etype);
+                            if (m != null) {
+                                // use the existing one
+                                mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, mech.getEquipmentNum(m), etype.isHittable()));
+                                continue;
+                            }
+                            else {
+                                m = mech.addEquipment(etype, loc, rearMounted);
+                                hSharedEquip.put(etype, m);
+                            }
+                        } else {
+                            mech.addEquipment(etype, loc, rearMounted);
+                        }
                     } catch (LocationFullException ex) {
                        throw new EntityLoadingException(ex.getMessage());
                     }

@@ -240,33 +240,9 @@ public class BipedMech extends Mech {
         return LOCATION_ABBRS;
     }
 
-    /**
-     * @return The cost in C-Bills of the 'Mech in question.
-     */
-    public double getCost() {
-        double cost=0;
-        // For future reference, Enhanched-Imaging Cockpit is 400,000.
-        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            cost += 750000;
-        } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
-            cost += 175000;
-        } else {
-            cost += 200000;
-        }
-        if(hasEiCockpit()) cost += 200000;
-        cost += 50000;//life support
-        cost += weight*2000;//sensors
-        int muscCost=this.hasTSM()? 16000 : 2000;
-        cost+=muscCost*weight;//musculature
-        int structureCost=400;
-        if(hasEndo() || hasCompositeStructure()) {
-            structureCost=1600;
-        }
-        if(hasReinforcedStructure()) {
-            structureCost=6400;
-        }
-        cost+=structureCost*weight;//IS
-        cost+=2*(150+80+120)*weight;//leg actuators;
+    protected double getArmActuatorCost() {
+        double cost = 0;
+        int numOfUpperArmActuators=0;
         int numOfLowerArmActuators=0;
         int numOfHands=0;
         if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ) {
@@ -275,38 +251,28 @@ public class BipedMech extends Mech {
         if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ) {
             numOfLowerArmActuators++;
         }
+        if ( hasSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM) ) {
+            numOfUpperArmActuators++;
+        }
         if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ) {
             numOfHands++;
         }
         if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ) {
             numOfLowerArmActuators++;
         }
-        cost+=(2*100+numOfLowerArmActuators*50+numOfHands*80)*weight;//arm actuators
-        Engine engine = getEngine();
-        cost += engine.getBaseCost() * engine.getRating() * weight / 75.0;
-        if (getGyroType() == Mech.GYRO_XL) {
-            cost += 750000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 0.5;
-        } else if (getGyroType() == Mech.GYRO_COMPACT) {
-            cost += 400000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 1.5;
-        } else if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-            cost += 500000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 2;
-        } else {
-            cost += 300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);
+        if ( hasSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM) ) {
+            numOfUpperArmActuators++;
         }
-        int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
-        int sinkCost = hasDoubleHeatSinks()? 6000: 2000;
-        cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks
-        cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
-        cost += getWeaponsAndEquipmentCost();
-        double omniCost = 0.0;
-        if (isOmni()) {
-            omniCost = cost*0.25f;
-        }
-        cost+=omniCost;
-        cost*=(1+(weight/100f));
-        return Math.round(cost);
+        cost += numOfUpperArmActuators * weight * 100;
+        cost += numOfLowerArmActuators * weight * 50;
+        cost += numOfHands * weight * 80;
+        return cost;
     }
-    
+
+    protected double getLegActuatorCost() {
+        return weight * 150 * 2 + weight * 80 * 2 + weight * 120 * 2;
+    }
+
     public double getArmorWeight() {
         //this roundabout method is actually necessary to avoid rounding weirdness.  Yeah, it's dumb.
         double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);

@@ -771,20 +771,7 @@ class Armor
 
     public String getShortName()
     {
-        return getShortName(armorType);
-    }   
-     
-    public static String getShortName(int armorType)
-    {
-        switch(armorType)
-        {
-            case EquipmentType.T_ARMOR_STANDARD:
-                return "";
-            case EquipmentType.T_ARMOR_FERRO_FIBROUS:
-                return "(ferrous)";
-            default:
-                return null;
-        }
+        return "(" + EquipmentType.getArmorTypeName(armorType) + ")";
     }
 
 } // end class Armor
@@ -823,26 +810,8 @@ class Structure
 
     public String getShortName()
     {
-        return getShortName(structureType);
+        return "(" + EquipmentType.getStructureTypeName(structureType) + ")";
     }
 
-    public static String getShortName(int structureType)
-    {
-        switch(structureType)
-        {
-            case EquipmentType.T_STRUCTURE_STANDARD:
-                return "";
-            case EquipmentType.T_STRUCTURE_ENDO_STEEL:
-                return "(Endo Steel)";
-            case EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE:
-                return "(Endo Steel Prototype)";
-            case EquipmentType.T_STRUCTURE_REINFORCED:
-                return "(Reinforced)";
-            case EquipmentType.T_STRUCTURE_COMPOSITE:
-                return "(Composite)";
-            default:
-                return null;
-        }
-    }
 } // End class Structure
 

@@ -304,52 +304,14 @@ public class QuadMech extends Mech
         }
     }
 
-    /**
-     * @return The cost in C-Bills of the 'Mech in question.
-     */
-    public double getCost() {
-        // FIXME
-        // There should be an implementation here!
-        double cost = 0;
-        cost += 50000; // Life Support
-        // For future reference, Enhanched-Imaging Cockpit is 400,000.
-        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            cost += 750000;
-        } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
-            cost += 175000;
-        } else {
-            cost += 200000;
-        }
-        if(hasEiCockpit()) cost += 200000;
-        double musclesCost = this.hasTSM() ? 16000 : 2000;
-        double structureCost = 400;
-        if(hasEndo() || hasCompositeStructure()) {
-            structureCost = 1600;
-        }
-        if(hasReinforcedStructure()) {
-            structureCost = 6400;
-        }
-        double legCost = 1400;
-        Engine engine = getEngine();
-        int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
-        double sinkCost = hasDoubleHeatSinks()? 6000: 2000;
-        double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
-        cost += (musclesCost+structureCost+legCost)*weight;
-        cost += engine.getBaseCost() * engine.getRating() * weight / 75.0;
-        cost += 300000 * Math.ceil(engine.getRating()/100.0);
-        cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks
-        cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
-        cost += getWeaponsAndEquipmentCost();
-        double omniCost=0.0;
-        if(isOmni()) {
-            omniCost = cost*0.25f;
-        }
-        cost += omniCost;
-        cost *= (1+(weight/100f));
-
-        return Math.round(cost);
+    protected double getArmActuatorCost() {
+        return 0;
     }
-    
+
+    protected double getLegActuatorCost() {
+        return weight * 150 * 4 + weight * 80 * 4 + weight * 120 * 4;
+    }
+
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
         

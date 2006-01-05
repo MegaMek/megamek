@@ -144,6 +144,12 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("heatsinks")) throw new EntityLoadingException("Could not find block.");
         mech.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], false);
 
+        if (dataFile.exists("internal_type"))
+            mech.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
+
+        if (dataFile.exists("armor_type"))
+            mech.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+
         if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find block.");
 
         int [] armor = new int[11]; //only 11 locations...

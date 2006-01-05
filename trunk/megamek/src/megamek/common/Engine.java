@@ -343,21 +343,53 @@ public class Engine implements Serializable
 
     }
 
+    public double getBVMultiplier() {
+        int centerCrits = getCenterTorsoCriticalSlots().length;
+        int sideCrits = getSideTorsoCriticalSlots().length;
+        if(centerCrits > 6) {
+            //large engine of some kind
+            if(sideCrits >=6)
+                return 0.375; // IS large XXL
+            else if (sideCrits >=4)
+                return 0.5; // clan large XXL
+            else if (sideCrits >=2)
+                return 0.75; // large XL
+            else
+                return 1.125; // large
+        } else {
+            //normal sized or compact engine
+            if(sideCrits >=6)
+                return 0.5; // IS XXL
+            else if (sideCrits >=3)
+                return 0.75; // IS XL, clan XXL
+            else if (sideCrits >0)
+                return 1.125; // IS L, clan XL
+            else
+                return 1.5; //standard, compact, ice
+        }
+    }
+
     public int getBaseCost() {
         int cost = 0;
         switch (this.engineType) {
             case COMBUSTION_ENGINE:
                 cost = 1250;
+                break;
             case NORMAL_ENGINE:
                 cost = 5000;
+                break;
             case XL_ENGINE:
                 cost = 20000;
+                break;
             case XXL_ENGINE:
                 cost = 100000;
+                break;
             case COMPACT_ENGINE:
                 cost = 10000;
+                break;
             case LIGHT_ENGINE:
                 cost = 15000;
+                break;
         }
         if (hasFlag(LARGE_ENGINE))
             cost *= 2;

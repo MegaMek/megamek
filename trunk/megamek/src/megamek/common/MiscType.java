@@ -354,6 +354,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createLimbClub());
         EquipmentType.addType(createHatchet());
         EquipmentType.addType(createVacuumProtection());
+        EquipmentType.addType(createStandard());
         
         // Start of Level2 stuff
         EquipmentType.addType(createISDoubleHeatSink());
@@ -1315,6 +1316,7 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS);
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS));
         misc.addLookupName("Ferro-Fibrous Armor");
+        misc.addLookupName("Ferro Fibre");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
@@ -1723,6 +1725,19 @@ public class MiscType extends EquipmentType {
         misc.toHitModifier = 1;
         misc.bv = 0;
         
+        return misc;
+    }
+
+    public static MiscType createStandard() {
+        //This is not really a single piece of equipment, it is used to
+        // identify "standard" internal structure, armor, whatever.
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD);
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD));
+        misc.addLookupName("Regular");
+        misc.addLookupName("Standard Armor");
+
         return misc;
     }
 

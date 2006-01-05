@@ -24,6 +24,9 @@ v0.31.4-dev (CVS)
 + Patch 1391035, RFE 1169259: Auto "abandon"
 + Bug 1395708: MM locks up when using the Prototype weapons
 + Expand log file date/time stamping to also affect entitystatus.txt.
++ Better level 3 internal structure/armor parsing support.
++ Bug 1398100:BV doesn't account for reinforced/composite IS or hardened armor.
++ Bug 1398101: Cost wrong for most meks.
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

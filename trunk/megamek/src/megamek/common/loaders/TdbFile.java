@@ -424,12 +424,9 @@ public class TdbFile implements IMechLoader {
             mech.setYear(Integer.parseInt(techYear));
             mech.setOmni(isOmni);
 
-            mech.setArmorType(armorType);
+            mech.setStructureType(structureType);
 
-            if (structureType.equals("EndoSteel"))
-                mech.setStructureType(EquipmentType.T_STRUCTURE_ENDO_STEEL);
-            else
-                mech.setStructureType(structureType);
+            mech.setArmorType(armorType);
 
             if (LAMTonnage != null) {
                 throw new EntityLoadingException("Unsupported tech: LAM?");

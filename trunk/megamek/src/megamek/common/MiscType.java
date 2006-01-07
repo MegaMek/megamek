@@ -455,7 +455,6 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.cost = COST_VARIABLE;
         misc.flags |= F_JUMP_JET;
         misc.bv = 0;
         
@@ -471,7 +470,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
-        misc.cost = COST_VARIABLE;
         misc.flags |= F_JUMP_JET;
         misc.bv = 0;
         
@@ -487,7 +485,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
-        misc.cost = COST_VARIABLE;
         misc.flags |= F_JUMP_JET;
         misc.bv = 0;
         
@@ -1665,7 +1662,6 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
         misc.bv = 0;
         misc.flags |= F_JUMP_BOOSTER;
         // see note above

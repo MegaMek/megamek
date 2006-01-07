@@ -17,6 +17,7 @@ package megamek.common;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -24,6 +25,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
 
 /**
  * You know what mechs are, silly.
@@ -124,10 +126,12 @@ public abstract class Mech
     public static final String NULLSIG = "Mek Null Signature System";
 
     //jump types
-    public static final int         JUMP_STANDARD = 0;
-    public static final int         JUMP_IMPROVED = 1;
-    public static final int         JUMP_BOOSTER = 2;
-    public static final int         JUMP_DISPOSABLE = 3;
+    public static final int         JUMP_UNKNOWN = -1;
+    public static final int         JUMP_NONE = 0;
+    public static final int         JUMP_STANDARD = 1;
+    public static final int         JUMP_IMPROVED = 2;
+    public static final int         JUMP_BOOSTER = 3;
+    public static final int         JUMP_DISPOSABLE = 4;
 
     // rear armor
     private int[] rearArmor;
@@ -141,11 +145,13 @@ public abstract class Mech
     private boolean autoEject = true;
     private int cockpitStatus = COCKPIT_ON;
     private int cockpitStatusNextRound = COCKPIT_ON;
-    private int improvedJJ = -1;
+    private int jumpType = JUMP_UNKNOWN;
     private int gyroType = GYRO_STANDARD;
     private int cockpitType = COCKPIT_STANDARD;
     private boolean hasCowl = false;
     private int cowlArmor = 0;
+
+    private static final NumberFormat commafy = NumberFormat.getInstance();
 
     /**
      * Construct a new, blank, mech.
@@ -719,25 +725,29 @@ public abstract class Mech
         return applyGravityEffectsOnMP(jump);
     }
 
+    /**
+     * Returns the type of jump jet system the mech has.
+     */
     public int getJumpType() {
-        // -1 means uninitialized
-        // 0 means standard
-        // 1 means improved
-        if (improvedJJ < 0) {
+        if (jumpType == JUMP_UNKNOWN) {
             for (Object oMount : miscList) {
                 Mounted m = (Mounted)oMount;
-                if ((m.getType().hasFlag(MiscType.F_JUMP_JET))
-                        && ((m.getType().getTechLevel() == TechConstants.T_IS_LEVEL_3)
-                            || (m.getType().getTechLevel() == TechConstants.T_CLAN_LEVEL_3))) {
-                    improvedJJ = JUMP_IMPROVED;
+                if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                    if ((m.getType().getTechLevel() == TechConstants.T_IS_LEVEL_3)
+                        || (m.getType().getTechLevel() == TechConstants.T_CLAN_LEVEL_3)) {
+                        jumpType = JUMP_IMPROVED;
+                    } else {
+                        jumpType = JUMP_STANDARD;
+                    }
                     break;
                 } else if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
-                    improvedJJ = JUMP_BOOSTER;
+                    jumpType = JUMP_BOOSTER;
                     break;
                 }
             }
+            jumpType = JUMP_NONE;
         }
-        return improvedJJ;
+        return jumpType;
     }
 
     /**
@@ -749,6 +759,7 @@ public abstract class Mech
                 return engine.getJumpHeat(movedMP/2 + movedMP%2);
             case JUMP_BOOSTER:
             case JUMP_DISPOSABLE:
+            case JUMP_NONE:
                 return 0;
             default:
                 return engine.getJumpHeat(movedMP);
@@ -2089,19 +2100,18 @@ public abstract class Mech
     }
 
     public double getCost() {
-        return getCost(false, new StringBuffer());
+        return getCost(null);
     }
 
     /**
-     * Calculate the C-bill cost of the mech.
+     * Calculate the C-bill cost of the mech.  Passing null as the
+     * argument will skip the detailed report processing.
      *
-     * @param showDetail whether to add a detailed report
      * @param detail buffer to append the detailed cost report to
      * @return The cost in C-Bills of the 'Mech in question.
      */
-    public double getCost(boolean showDetail, StringBuffer detail) {
-        double cost=0; //remove me
-        double[] costs = new double[3];
+    public double getCost(StringBuffer detail) {
+        double[] costs = new double[14];
         int i = 0;
 
         double cockpitCost = 0;
@@ -2112,48 +2122,89 @@ public abstract class Mech
         } else {
             cockpitCost = 200000;
         }
-        if(hasEiCockpit()) cockpitCost = 400000;
+        if (hasEiCockpit()&&getCrew().getOptions().booleanOption("ei_implant"))
+            cockpitCost = 400000;
         costs[i++] = cockpitCost;
-        cost += cockpitCost;
         costs[i++] = 50000;//life support
-        cost += 50000;//life support
         costs[i++] = weight*2000;//sensors
-        cost += weight*2000;//sensors
         int muscCost=this.hasTSM()? 16000 : 2000;
-        cost+=muscCost*weight;//musculature
-        cost+=EquipmentType.getStructureCost(structureType)*weight;//IS
-        cost+=getActuatorCost();//arm and/or leg actuators
+        costs[i++] = muscCost*weight;//musculature
+        costs[i++] = EquipmentType.getStructureCost(structureType)*weight;//IS
+        costs[i++] = getActuatorCost();//arm and/or leg actuators
         Engine engine = getEngine();
-        cost += engine.getBaseCost() * engine.getRating() * weight / 75.0;
+        costs[i++] = engine.getBaseCost() * engine.getRating() * weight / 75.0;
         if (getGyroType() == Mech.GYRO_XL) {
-            cost += 750000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 0.5;
+            costs[i++] = 750000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 0.5;
         } else if (getGyroType() == Mech.GYRO_COMPACT) {
-            cost += 400000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 1.5;
+            costs[i++] = 400000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 1.5;
         } else if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-            cost += 500000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 2;
+            costs[i++] = 500000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 2;
         } else {
-            cost += 300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);
+            costs[i++] = 300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);
         }
+        double jumpBaseCost = 200;
+        if (getJumpType() == Mech.JUMP_BOOSTER)
+            jumpBaseCost = 150;
+        else if (getJumpType() == Mech.JUMP_IMPROVED)
+            jumpBaseCost = 500;
+        costs[i++] = Math.pow(getOriginalJumpMP(),2.0)*weight*jumpBaseCost;
         int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
         int sinkCost = hasDoubleHeatSinks()? 6000: 2000;
-        cost += sinkCost*(heatSinks()-freeSinks);//cost of sinks
-        cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);//armor
-        cost += getWeaponsAndEquipmentCost();
-        double omniCost = 0.0;
+        costs[i++] = sinkCost*(heatSinks()-freeSinks);//cost of sinks
+        costs[i++] = getArmorWeight()*EquipmentType.getArmorCost(armorType);
+        costs[i++] = getWeaponsAndEquipmentCost();
+
+        double cost = 0; //calculate the total
+        for (int x = 0; x < i; x++) { cost += costs[x]; }
+
+        double omniMultiplier = 0;
         if (isOmni()) {
-            omniCost = cost*0.25f;
+            omniMultiplier = 1.25f;
+            cost*=omniMultiplier;
         }
-        cost+=omniCost;
-        cost*=(1+(weight/100f));
-        if (showDetail)
-            addCostDetails(detail);
-        return Math.round(cost);
+        costs[i++] = - omniMultiplier; //negative just marks it as multiplier
+
+        double weightMultiplier = 1 + (weight / 100f);
+        costs[i++] = - weightMultiplier; //negative just marks it as multiplier
+        cost = Math.round(cost * weightMultiplier);
+        if (detail != null)
+            addCostDetails(cost, detail, costs);
+        return cost;
     }
 
-    private void addCostDetails(StringBuffer detail) {
-        //need array of strings with trailing spaces
-        //use MakeLength to right justify costs array (find largest value)
-        //combine for each line
+    private void addCostDetails(double cost, StringBuffer detail, double[] costs) {
+        String[] left = {"Cockpit", "Life Support", "Sensors", "Myomer",
+                         "Structure", "Actuators", "Engine", "Gyro",
+                         "Jump Jets", "Heatsinks", "Armor", "Equipment",
+                         "Omni Multiplier", "Weight Multiplier"};
+        int maxLeft = 0;
+        int maxRight = 0;
+        int totalLineLength = 0;
+        //find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+            maxLeft = Math.max(maxLeft, left[l].length());
+            maxRight = (int)Math.max(maxRight, commafy.format(costs[l]).length());
+        }
+        maxLeft += 5; //leave some padding in the middle
+        maxRight = (int)Math.max(maxRight, commafy.format(cost).length());
+        for (int i = 0; i < left.length; i++) {
+            String both;
+            if (costs[i] < 0) { //negative marks it as a multiplier
+                both = StringUtil.makeLength(left[i], maxLeft) +
+                    StringUtil.makeLength("x" + commafy.format(costs[i]*-1), maxRight, true);
+            } else if (costs[i] == 0) {
+                both = StringUtil.makeLength(left[i], maxLeft) +
+                    StringUtil.makeLength("N/A", maxRight, true);
+            } else {
+                both = StringUtil.makeLength(left[i], maxLeft) +
+                    StringUtil.makeLength(commafy.format(costs[i]), maxRight, true);
+            }
+            detail.append(both + "\n");
+            totalLineLength = both.length();
+        }
+        for (int x = 0; x < totalLineLength; x++) { detail.append("-"); }
+        detail.append("\n" + StringUtil.makeLength("Total Cost:", maxLeft) +
+                      StringUtil.makeLength(commafy.format(cost), maxRight, true));
     }
 
     protected double getActuatorCost() {

@@ -538,4 +538,8 @@ public class Mounted implements Serializable, RoundUpdated {
         return vibraSetting;
     }
 
+    public String toString() {
+        return "megamek.common.Mounted (" + typeName + ")";
+    }
+
 }

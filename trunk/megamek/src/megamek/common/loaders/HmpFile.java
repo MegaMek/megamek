@@ -50,6 +50,7 @@ import megamek.common.WeaponType;
  * and a HMP to MTF file converter (when the "main" method is used).
  *
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
+ * @version $Revision$
  * Modified by Ryan McConnell (oscarmm) with lots of help from Ian Hamilton.
  */
 public class HmpFile
@@ -1713,6 +1714,10 @@ public class HmpFile
         sb.append(nl);
         sb.append( "Structure:" ).append( internalStructureType ).append(nl);
         sb.append( "Myomer:" ).append( myomerType ).append( nl );
+        if (gyroType != Mech.GYRO_STANDARD)
+            sb.append( "Gyro:" ).append( Mech.getGyroTypeString(gyroType) ).append( nl );
+        if (cockpitType != Mech.COCKPIT_STANDARD)
+            sb.append( "Cockpit:" ).append( Mech.getCockpitTypeString(cockpitType) ).append( nl );
         sb.append( nl );
 
         sb.append( "Heat Sinks:" ).append( heatSinks ).append( " " )
@@ -1829,7 +1834,7 @@ public class HmpFile
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Hmpread (Java Edition) version 0.9");
+            System.out.println("Hmpread (Java Edition) version 1.3");
             System.out.println("--------------------------------------");
             System.out.println();
             System.out.println("Drag and drop \".hmp\" files onto this exe to convert them to \".mtf\" files.\nMultiple files may be processed at once.  Files may also be specified on\nthe command line.");

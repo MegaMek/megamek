@@ -27,6 +27,7 @@ v0.31.4-dev (CVS)
 + Better level 3 internal structure/armor parsing support.
 + Bug 1398100:BV doesn't account for reinforced/composite IS or hardened armor.
 + Bug 1398101: Cost wrong for most meks.
++ Bug 1275383: searchlight destruction line break missing
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

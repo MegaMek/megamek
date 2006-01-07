@@ -28,6 +28,7 @@ v0.31.4-dev (CVS)
 + Bug 1398100:BV doesn't account for reinforced/composite IS or hardened armor.
 + Bug 1398101: Cost wrong for most meks.
 + Bug 1275383: searchlight destruction line break missing
++ Bug 1398266: Offboard artillery error
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

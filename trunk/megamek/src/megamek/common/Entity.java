@@ -5222,6 +5222,9 @@ public abstract class Entity
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c) {
         if(c==null || roll==null) return;
+        if (isOffBoard() || !(isDeployed())) {
+            return;
+        }
         IHex hex = game.getBoard().getHex(c);
         int modifier = hex.terrainPilotingModifier();
         if(modifier != 0) {

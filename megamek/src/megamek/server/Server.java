@@ -11948,8 +11948,9 @@ System.out.println("Crit count: "+lifeSupportCritCount);
             }
             
             // Destroy searchlights on 7+ (torso hits on mechs)
+            boolean spotlightHittable = false;
             if  (te.hasSpotlight()) {
-                boolean spotlightHittable = true;
+                spotlightHittable = true;
                 int loc = hit.getLocation();
                 if (te instanceof Mech) {
                     if (loc != Mech.LOC_CT && loc != Mech.LOC_LT && loc != Mech.LOC_RT) {
@@ -11966,13 +11967,11 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                     r.indent(2);
                     r.subject = te_n;
                     r.add(spotroll);
-                    r.newlines = 0;
                     vDesc.addElement(r);
                     if (spotroll >= 7) {
                         r = new Report(6071);
                         r.subject = te_n;
                         r.indent(2);
-                        r.newlines = 0;
                         vDesc.addElement(r);
                         te.setSpotlightState(false);
                         te.setSpotlight(false);
@@ -12068,6 +12067,7 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                     r = new Report(6085);
                     r.subject = te_n;
                     r.newlines = 0;
+                    if(spotlightHittable)r.indent(3);
                     r.add(te.getArmor(hit));
                     vDesc.addElement(r);
                 } else {
@@ -12082,6 +12082,7 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                     r = new Report(6090);
                     r.subject = te_n;
                     r.newlines = 0;
+                    if(spotlightHittable)r.indent(3);
                     vDesc.addElement(r);
                     if (te instanceof GunEmplacement) {
                         // gun emplacements have no internal,

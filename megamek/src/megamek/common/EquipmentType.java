@@ -424,7 +424,6 @@ public class EquipmentType {
     //stuff like hatchets, which depend on an unknown quality (usually tonnage of the unit.)
     //entity is whatever has this item
     public int resolveVariableCost(Entity entity) {
-        //TODO implement this!
         int cost=0;
         if(this instanceof MiscType) {
             if(this.hasFlag(MiscType.F_MASC)) {
@@ -441,12 +440,6 @@ public class EquipmentType {
                     }
                     cost=entity.getEngine().getRating() * mascTonnage * 1000;
                 }
-            } else if(this.hasFlag(MiscType.F_JUMP_BOOSTER)) {
-                cost = (int)(entity.getWeight() * entity.getOriginalJumpMP() * entity.getOriginalJumpMP() * 150);
-            } else if(this.hasFlag(MiscType.F_JUMP_JET)) {
-                int multi = 200;
-                if(this.name=="Improved Jump Jet") multi = 500;
-                cost = (int)(entity.getWeight() * entity.getOriginalJumpMP() * multi);
             } else if(this.hasFlag(MiscType.F_TARGCOMP)) {
                 int tCompTons=0;
                 float fTons = 0.0f;

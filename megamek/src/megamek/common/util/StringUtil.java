@@ -90,6 +90,13 @@ public class StringUtil {
         return makeLength(Integer.toString(s), n, true);
     }
 
+    /**
+     * A utility for padding out a string with spaces.
+     *
+     * @param s the string to pad
+     * @param n the desired length of the resultant string
+     * @param bRightJustify true if the string should be right justified
+     */
     public static String makeLength(String s, int n, boolean bRightJustify)
     {
         int l = s.length();

@@ -17216,6 +17216,10 @@ System.out.println("Crit count: "+lifeSupportCritCount);
         // An entity can only eject it's crew once.
         if (entity.getCrew().isEjected())
             return vDesc;
+        
+        // If the crew are already dead, don't bother
+        if(entity.getCrew().isDead() || entity.getCrew().isDoomed())
+            return vDesc;
 
         // Mek pilots may get hurt during ejection,
         // and run around the board afterwards.
@@ -17298,9 +17302,11 @@ System.out.println("Crit count: "+lifeSupportCritCount);
                 vDesc.addElement(r);
                 Report.addNewline(vDesc);
                 Vector v = damageCrew(pilot, 1);
-                r = (Report)v.firstElement();
-                r.indent(3);
-                vDesc.addElement(r);
+                if(v.size() > 0) {
+                    r = (Report)v.firstElement();
+                    r.indent(3);
+                    vDesc.addElement(r);
+                }
             } else {
                 r.choose(true);
                 vDesc.addElement(r);
@@ -17379,8 +17385,8 @@ System.out.println("Crit count: "+lifeSupportCritCount);
         vDesc.addAll(
             destroyEntity(entity, "ejection", true, true));
 
-        // only remove the unit that ejected in the movement phase
-        if (game.getPhase() == IGame.PHASE_MOVEMENT) {
+        // only remove the unit that ejected manually
+        if (!autoEject) {
             game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED );
             send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED));
         }
@@ -17446,11 +17452,6 @@ System.out.println("Crit count: "+lifeSupportCritCount);
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected( true );
 
-        // only remove the unit that ejected in the movement phase
-        if (game.getPhase() == IGame.PHASE_MOVEMENT) {
-            game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED );
-            send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED));
-        }
         return vDesc;
     }
 

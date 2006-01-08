@@ -31,6 +31,7 @@ v0.31.4-dev (CVS)
 + Bug 1398266: Offboard artillery error
 + More cost bugs fixed.
 + Bug 1396149: VTOLs with maneuvering ace make all lateral moves for 2 mp
++ Bug 1399841: NPE when autoejecting a dead pilot
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

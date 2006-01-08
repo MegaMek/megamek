@@ -241,6 +241,73 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * Helper for compile(), to deal with steps that move to a new hex.
+     * @param game
+     * @param entity
+     * @param prev
+     */
+    private void compileMove(final IGame game, final Entity entity, MoveStep prev) {
+
+        IHex destHex = game.getBoard().getHex(getPosition());
+
+        // Check for pavement movement.
+        if (Compute.canMoveOnPavement(game, prev.getPosition(),
+                                      getPosition())) {
+            setPavementStep(true);
+        } else {
+            setPavementStep(false);
+            setOnlyPavement(false);
+        }
+
+        setHasJustStood(false);
+        if (prev.isThisStepBackwards() != isThisStepBackwards()) {
+            setDistance(0); //start over after shifting gears
+        }
+        addDistance(1);
+        if(getType() == MovePath.STEP_DFA) {
+            setElevation(1 + Math.max(entity.elevationOccupied(game.getBoard().getHex(prev.getPosition())), entity.elevationOccupied(game.getBoard().getHex(getPosition()))));
+        } else if (parent.isJumping()) {
+            IHex hex = game.getBoard().getHex(getPosition());
+            setElevation(Math.max(-hex.depth(), hex.terrainLevel(Terrains.BLDG_ELEV)));
+            if(climbMode()) {
+                setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BRIDGE_ELEV)));
+            }
+        } else {
+            setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation, climbMode()));
+        }
+
+        calcMovementCostFor(game, prev.getPosition(), prev.getElevation());
+
+        // check for water
+        if (!isPavementStep()
+                && destHex.terrainLevel(Terrains.WATER) > 0
+                && !(destHex.containsTerrain(Terrains.ICE) && elevation >= 0)
+                && entity.getMovementMode() != IEntityMovementMode.HOVER
+                && entity.getMovementMode() != IEntityMovementMode.NAVAL
+                && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
+                && entity.getMovementMode() != IEntityMovementMode.SUBMARINE
+                && entity.getMovementMode() != IEntityMovementMode.VTOL) {
+            setRunProhibited(true);
+        }
+
+        int magmaLevel = destHex.terrainLevel(Terrains.MAGMA);
+        if(elevation > 0) {
+            magmaLevel = 0;
+        }
+        // Check for fire or magma crust in the new hex.
+        if (destHex.containsTerrain(Terrains.FIRE) || magmaLevel == 1) {
+            heat = 2;
+            totalHeat += 2;
+        }
+        // Check for liquid magma
+        else if(magmaLevel == 2) {
+            heat = 5;
+            totalHeat += 5;
+        }
+
+    }
+    
+    /**
      * Compile the static move data for this step.
      *
      * @param   game the <code>Game</code> being played.
@@ -258,7 +325,6 @@ public class MoveStep implements Serializable {
             prev = new MoveStep(parent, MovePath.STEP_FORWARDS);
             prev.setFromEntity(entity, game);
         }
-        IHex destHex = game.getBoard().getHex(getPosition());
         switch (getType()) {
             case MovePath.STEP_UNLOAD :
                 // Infantry in immobilized transporters get
@@ -285,106 +351,43 @@ public class MoveStep implements Serializable {
                          || isInfantry ) ? 0 : 1 );
                 adjustFacing(getType());
                 break;
-            case MovePath.STEP_FORWARDS :
             case MovePath.STEP_BACKWARDS :
+                moveInDir((getFacing() + 3) % 6);
+                setThisStepBackwards(true);
+                setRunProhibited(true);
+                compileMove(game, entity, prev);
+                break;
+            case MovePath.STEP_FORWARDS :
             case MovePath.STEP_CHARGE :
             case MovePath.STEP_DFA :
                 // step forwards or backwards
-                if (getType() == MovePath.STEP_BACKWARDS) {
-                    moveInDir((getFacing() + 3) % 6);
-                    setThisStepBackwards(true);
-                    setRunProhibited(true);
-                } else {
-                    moveInDir(getFacing());
-                    setThisStepBackwards(false);
-                }
-
-                // Check for pavement movement.
-                if (Compute.canMoveOnPavement(game, prev.getPosition(),
-                                              getPosition())) {
-                    setPavementStep(true);
-                } else {
-                    setPavementStep(false);
-                    setOnlyPavement(false);
-                }
-
-                // check for water
-                if (!isPavementStep()
-                        && destHex.terrainLevel(Terrains.WATER) > 0
-                        && !(destHex.containsTerrain(Terrains.ICE) && elevation >= 0)
-                        && entity.getMovementMode() != IEntityMovementMode.HOVER
-                        && entity.getMovementMode() != IEntityMovementMode.NAVAL
-                        && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
-                        && entity.getMovementMode() != IEntityMovementMode.SUBMARINE
-                        && entity.getMovementMode() != IEntityMovementMode.VTOL) {
-                    setRunProhibited(true);
-                }
-                setHasJustStood(false);
-                if (prev.isThisStepBackwards() != isThisStepBackwards()) {
-                    setDistance(0); //start over after shifting gears
-                }
-                addDistance(1);
-                if(getType() == MovePath.STEP_DFA) {
-                    setElevation(1 + Math.max(entity.elevationOccupied(game.getBoard().getHex(prev.getPosition())), entity.elevationOccupied(game.getBoard().getHex(getPosition()))));
-                } else if (parent.isJumping()) {
-                    IHex hex = game.getBoard().getHex(getPosition());
-                    setElevation(Math.max(-hex.depth(), hex.terrainLevel(Terrains.BLDG_ELEV)));
-                    if(climbMode()) {
-                        setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BRIDGE_ELEV)));
-                    }
-                } else {
-                    setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation, climbMode()));
-                }
-
-                calcMovementCostFor(game, prev.getPosition(), prev.getElevation());
-
+                moveInDir(getFacing());
+                setThisStepBackwards(false);
+                compileMove(game, entity, prev);
+                break;
+            case MovePath.STEP_LATERAL_LEFT_BACKWARDS :
+            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS :
+                moveInDir(
+                    (MovePath
+                        .getAdjustedFacing(
+                            getFacing(),
+                            MovePath.turnForLateralShift(getType()))
+                        + 3)
+                        % 6);
+                setThisStepBackwards(true);
+                setRunProhibited(true);
+                compileMove(game, entity, prev);
+                setMp(getMp() + 1); //+1 for side step
                 break;
             case MovePath.STEP_LATERAL_LEFT :
             case MovePath.STEP_LATERAL_RIGHT :
-            case MovePath.STEP_LATERAL_LEFT_BACKWARDS :
-            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS :
-                if (getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS
-                    || getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS) {
-                    moveInDir(
-                        (MovePath
-                            .getAdjustedFacing(
-                                getFacing(),
-                                MovePath.turnForLateralShift(getType()))
-                            + 3)
-                            % 6);
-                    setThisStepBackwards(true);
-                    setRunProhibited(true);
-                } else {
-                    moveInDir(
-                        MovePath.getAdjustedFacing(
-                            getFacing(),
-                            MovePath.turnForLateralShift(getType())));
-                    setThisStepBackwards(false);
-                }
-
-                // Check for pavement movement.
-                if (Compute.canMoveOnPavement(game, prev.getPosition(),
-                                              getPosition())) {
-                    setPavementStep(true);
-                } else {
-                    setPavementStep(false);
-                    setOnlyPavement(false);
-                }
-
-                calcMovementCostFor(game, prev.getPosition(), prev.getElevation());
-                setMp(getMp() + 1);
-                // check for water
-                if (!isPavementStep() &&
-                    destHex.terrainLevel(Terrains.WATER) > 0
-                    && !(destHex.containsTerrain(Terrains.ICE) && elevation >= 0)
-                    && !(entity.getMovementMode() == IEntityMovementMode.VTOL)) {
-                    setRunProhibited(true);
-                }
-                setHasJustStood(false);
-                if (prev.isThisStepBackwards() != isThisStepBackwards()) {
-                    setDistance(0); //start over after shifting gears
-                }
-                addDistance(1);
+                moveInDir(
+                    MovePath.getAdjustedFacing(
+                        getFacing(),
+                        MovePath.turnForLateralShift(getType())));
+                setThisStepBackwards(false);
+                compileMove(game, entity, prev);
+                setMp(getMp() + 1); //+1 for side step
                 break;
             case MovePath.STEP_GET_UP :
                 // mechs with 1 MP are allowed to get up
@@ -419,18 +422,6 @@ public class MoveStep implements Serializable {
 
         // Update the entity's total MP used.
         addMpUsed(getMp());
-
-        int magmaLevel = destHex.terrainLevel(Terrains.MAGMA);
-        // Check for fire or magma crust in the new hex.
-        if (destHex.containsTerrain(Terrains.FIRE) || magmaLevel == 1) {
-            heat = 2;
-            totalHeat += 2;
-        }
-        // Check for liquid magma
-        else if(magmaLevel == 2) {
-            heat = 5;
-            totalHeat += 5;
-        }
 
         // Check for a stacking violation.
         final Entity violation =
@@ -1235,9 +1226,6 @@ public class MoveStep implements Serializable {
             }
         } // End not-along-road
 
-        // account for elevation?
-        // TODO: allow entities to occupy different levels of buildings.
-
         if (nSrcEl != nDestEl) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
             // non-flying Infantry and ground vehicles are charged double.
@@ -1501,6 +1489,10 @@ public class MoveStep implements Serializable {
         if (entity instanceof VTOL) {
             if((type == MovePath.STEP_BACKWARDS) 
                     || (type == MovePath.STEP_FORWARDS) 
+                    || (type == MovePath.STEP_LATERAL_LEFT)
+                    || (type == MovePath.STEP_LATERAL_LEFT_BACKWARDS)
+                    || (type == MovePath.STEP_LATERAL_RIGHT)
+                    || (type == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)
                     || (type == MovePath.STEP_TURN_LEFT) 
                     || (type == MovePath.STEP_TURN_RIGHT)) {
                 if(elevation==0) {//can't move on the ground.

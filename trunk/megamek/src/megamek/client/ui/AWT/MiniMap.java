@@ -821,7 +821,7 @@ public class MiniMap extends Canvas  {
         int terrain = 0;
         for (int j = m_terrainColors.length - 1; j >= 0; j--) {
             if (x.getTerrain(j) != null && m_terrainColors[j] != null) {
-                if (j == Terrains.ROAD){
+                if (j == Terrains.ROAD || j == Terrains.BRIDGE){
                     int [] roadHex = {boardX, boardY, x.getTerrain(j).getExits()};
                     roadHexIndexes.addElement(roadHex);
                     continue;

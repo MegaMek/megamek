@@ -730,6 +730,7 @@ public abstract class Mech
      */
     public int getJumpType() {
         if (jumpType == JUMP_UNKNOWN) {
+            jumpType = JUMP_NONE;
             for (Object oMount : miscList) {
                 Mounted m = (Mounted)oMount;
                 if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
@@ -745,7 +746,6 @@ public abstract class Mech
                     break;
                 }
             }
-            jumpType = JUMP_NONE;
         }
         return jumpType;
     }

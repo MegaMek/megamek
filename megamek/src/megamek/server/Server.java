@@ -2907,6 +2907,9 @@ public class Server implements Runnable {
             if(moveType != IEntityMovementType.MOVE_JUMP || entity.getJumpType() != Mech.JUMP_BOOSTER)
                 curFacing = step.getFacing();
             curVTOLElevation = step.getElevation();
+            //set elevation in case of collapses
+            entity.setElevation(step.getElevation());
+
             final IHex curHex = game.getBoard().getHex(curPos);
 
             // check for automatic unstick
@@ -3873,8 +3876,6 @@ public class Server implements Runnable {
 
             // Handle non-infantry moving into a building.
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curHex, prevHex);
-            //set elevation in case of collapses
-            entity.setElevation(step.getElevation());
             if (buildingMove > 0) {
 
                 // Get the building being exited.

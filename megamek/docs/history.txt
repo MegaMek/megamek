@@ -35,6 +35,7 @@ v0.31.4-dev (CVS)
 + Improved display of bridges on minimap
 + Bug 1405463: mechanical jump boosters should not allow facing change
 + Bug 1400099: Breaking Ice while walking backwards causes a problem
++ Changed DENSITY to CITYDENSITY in xml terrain for mekwars compatibility.
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

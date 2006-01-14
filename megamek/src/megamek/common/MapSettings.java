@@ -957,7 +957,7 @@ public class MapSettings implements Serializable {
             // City
             saveParameter( output, "CITYTYPE", cityType);
             saveParameter( output, "CITYBLOCKS", cityBlocks);
-            saveParameter( output, "DENSITY", cityDensity);
+            saveParameter( output, "CITYDENSITY", cityDensity);
             saveParameter( output, "MINCF", cityMinCF);
             saveParameter( output, "MAXCF", cityMaxCF);
             saveParameter( output, "MINFLOORS", cityMinFloors);
@@ -1109,7 +1109,7 @@ public class MapSettings implements Serializable {
         // City
         else if(key.equals("CITYTYPE")) cityType = param;
         else if(key.equals("CITYBLOCKS")) cityBlocks = Integer.valueOf(param);
-        else if(key.equals("DENSITY")) cityDensity = Integer.valueOf(param);
+        else if(key.equals("CITYDENSITY")) cityDensity = Integer.valueOf(param);
         else if(key.equals("MINCF")) cityMinCF = Integer.valueOf(param);
         else if(key.equals("MAXCF")) cityMaxCF = Integer.valueOf(param);
         else if(key.equals("MINFLOORS")) cityMinFloors = Integer.valueOf(param);

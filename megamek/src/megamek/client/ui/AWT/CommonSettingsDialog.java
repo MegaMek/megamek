@@ -375,7 +375,9 @@ public class CommonSettingsDialog extends ClientDialog
         
         showMapsheets.setState(gs.getShowMapsheets());
 
-        File dir = new File("data\\images\\hexes\\");
+        File dir = new File("data" + File.separator +
+                "images" + 
+                File.separator + "hexes" + File.separator);
         tileSets = dir.listFiles(new FilenameFilter() {
             public boolean accept(File direc, String name) { 
                 if(name.endsWith(".tileset")) return true;

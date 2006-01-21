@@ -305,9 +305,24 @@ public class ClientGUI
 
         bv.add(popup);
 
+        Dimension screenSize = frame.getToolkit().getScreenSize();
+        int x,y,h,w;
+
         mechW = new Dialog(frame, Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
-        mechW.setLocation(GUIPreferences.getInstance().getDisplayPosX(), GUIPreferences.getInstance().getDisplayPosY());
-        mechW.setSize(GUIPreferences.getInstance().getDisplaySizeWidth(), GUIPreferences.getInstance().getDisplaySizeHeight());
+        x = GUIPreferences.getInstance().getDisplayPosX();
+        y = GUIPreferences.getInstance().getDisplayPosY();
+        h = GUIPreferences.getInstance().getDisplaySizeHeight();
+        w = GUIPreferences.getInstance().getDisplaySizeWidth();
+        if(x + w > screenSize.width) {
+            x = 0;
+            w = Math.min(w, screenSize.width);
+        }
+        if(y + h > screenSize.height) {
+            y = 0;
+            h = Math.min(h, screenSize.height);
+        }
+        mechW.setLocation(x, y);
+        mechW.setSize(w, h);
         mechW.setResizable(true);
         mechW.addWindowListener(this);
         mechW.addKeyListener(this);
@@ -318,13 +333,33 @@ public class ClientGUI
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
         ruler = new Ruler(frame, this.client, bv);
-        ruler.setLocation(GUIPreferences.getInstance().getRulerPosX(), GUIPreferences.getInstance().getRulerPosY());
-        ruler.setSize(GUIPreferences.getInstance().getRulerSizeWidth(), GUIPreferences.getInstance().getRulerSizeHeight());
+        x = GUIPreferences.getInstance().getRulerPosX();
+        y = GUIPreferences.getInstance().getRulerPosY();
+        h = GUIPreferences.getInstance().getRulerSizeHeight();
+        w = GUIPreferences.getInstance().getRulerSizeWidth();
+        if(x + w > screenSize.width) {
+            x = 0;
+            w = Math.min(w, screenSize.width);
+        }
+        if(y + h > screenSize.height) {
+            y = 0;
+            h = Math.min(h, screenSize.height);
+        }
+        ruler.setLocation(x,y);
+        ruler.setSize(w,h);
         // end kenn
 
         // minimap
         minimapW = new Dialog(frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
-        minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY());
+        x = GUIPreferences.getInstance().getRulerPosX();
+        y = GUIPreferences.getInstance().getRulerPosY();
+        if(x+20 > screenSize.width) {
+            x = 0;
+        }
+        if(y+20 > screenSize.height) {
+            y = 0;
+        }
+        minimapW.setLocation(x,y);
         try {
             minimap = new MiniMap(minimapW, this, bv);
         } catch (IOException e) {

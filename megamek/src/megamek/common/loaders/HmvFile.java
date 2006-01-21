@@ -74,6 +74,8 @@ public class HmvFile
   private Hashtable equipment = new Hashtable();
 
   private int troopSpace = 0;
+  
+  private String fluff;
 
   public HmvFile(InputStream is)
     throws EntityLoadingException
@@ -295,6 +297,54 @@ public class HmvFile
           }
 
       } // Handle the next bay.
+      
+      dis.skipBytes(28);
+
+      int fluffSize = 0;
+      fluff = "Overview:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+      
+      fluff += "\n\rCapability:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      fluff += "\n\rBattle History:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      fluff += "\n\rVariants:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      fluff += "\n\rFamous Mechs and Warriors:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      fluff += "\n\rDeployment:\n\r";
+      buffer = new byte[readUnsignedShort(dis)];
+      dis.read(buffer);
+      fluff += new String(buffer);
+      fluffSize += new String(buffer).length();
+
+      //just a catch all for small Fluffs anything well less then 10 characters, per section, isn't worth printing.
+      if ( fluffSize <= 60 )
+          fluff = null;
+      
+      int supercharger = readUnsignedShort(dis);
+      if(supercharger > 0) {
+          addEquipmentType(EquipmentType.get("Supercharger"), 1, HMVWeaponLocation.BODY);
+      }
 
       dis.close();
     }
@@ -370,6 +420,7 @@ public class HmvFile
             vehicle.setModel(model);
             vehicle.setYear(year);
             vehicle.setOmni(isOmni);
+            vehicle.setFluff(fluff);
 
             int techLevel = TechConstants.T_IS_LEVEL_3;
             if (rulesLevel == 1) {

@@ -37,6 +37,10 @@ v0.31.4-dev (CVS)
 + Bug 1400099: Breaking Ice while walking backwards causes a problem
 + Changed DENSITY to CITYDENSITY in xml terrain for mekwars compatibility.
 + Bug 1406703: Clientsettings window doesn't show up.
++ Bug 1389742: Destroyed Heatsinks still working
++ Bug 1291856: mech display and minimap windows can be placed offscreen
++ Bug 1306264: improved jump jets dont load from HMP files
++ HMV loader support for fluff text
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

@@ -138,6 +138,7 @@ public class HmpFile
   private int gyroType = Mech.GYRO_STANDARD;
   private int cockpitType = Mech.COCKPIT_STANDARD;
   private int targSys = 0;
+  private int jjType;
 
   public HmpFile(InputStream is)
 /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
@@ -253,7 +254,8 @@ public class HmpFile
       raArmor = readUnsignedShort(dis);
       dis.skipBytes(4); // ??
       rtArmor = readUnsignedShort(dis);
-      dis.skipBytes(4); // ??
+      dis.skipBytes(2); // ??
+      jjType = readUnsignedShort(dis);
       rlArmor = readUnsignedShort(dis);
       dis.skipBytes(4); // ??
       headArmor = readUnsignedShort(dis);
@@ -628,6 +630,22 @@ public class HmpFile
                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                                             Mech.SYSTEM_SENSORS));
         }
+        else if(isJumpJet(critical)) {
+          try {
+            if(jjType == 0)
+              mech.addEquipment(EquipmentType.get("Jump Jet"), location, false);
+            else if(jjType == 1)
+              mech.addEquipment(EquipmentType.get("Improved Jump Jet"), location, false);
+          } catch (LocationFullException ex) {
+              System.err.print( "Location was full when adding jump jets to slot #" );
+              System.err.print( i );
+              System.err.print( " of location " );
+              System.err.println( location );
+              ex.printStackTrace( System.err );
+              System.err.println( "... aborting entity loading." );
+            throw new EntityLoadingException(ex.getMessage());
+          }
+        }
         else if (criticalName != null) {
             EquipmentType equipment = null;
           try {
@@ -741,6 +759,11 @@ public class HmpFile
   private static boolean isCockpit(long critical)
   {
     return critical == 0x0E;
+  }
+
+  private static boolean isJumpJet(long critical)
+  {
+    return critical == 0x0B;
   }
   
   private static boolean isLifeSupport(long critical)

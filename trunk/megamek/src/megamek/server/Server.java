@@ -11033,7 +11033,6 @@ System.out.println("In here!");
                         Mech.SYSTEM_LIFE_SUPPORT,
                         Mech.LOC_HEAD);
             }
-System.out.println("Crit count: "+lifeSupportCritCount);
             if (lifeSupportCritCount > 0
                     && ((entity.heat >= 15) || (torsoMountedCockpit && (entity.heat >= 0)))
                     && !entity.crew.isDead() && !entity.crew.isDoomed()

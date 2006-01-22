@@ -325,7 +325,7 @@ public class HmvFile
       fluff += new String(buffer);
       fluffSize += new String(buffer).length();
 
-      fluff += "\n\rFamous Mechs and Warriors:\n\r";
+      fluff += "\n\rFamous Vehicles and Pilots:\n\r";
       buffer = new byte[readUnsignedShort(dis)];
       dis.read(buffer);
       fluff += new String(buffer);
@@ -336,6 +336,8 @@ public class HmvFile
       dis.read(buffer);
       fluff += new String(buffer);
       fluffSize += new String(buffer).length();
+      
+      dis.skipBytes(readUnsignedShort(dis)); //notes
 
       //just a catch all for small Fluffs anything well less then 10 characters, per section, isn't worth printing.
       if ( fluffSize <= 60 )
@@ -614,7 +616,7 @@ public class HmvFile
     isEquipment.put(new Long(0x82), "ISStreakSRM2 (OS)");
     isEquipment.put(new Long(0x83), "ISStreakSRM4 (OS)");
     isEquipment.put(new Long(0x84), "ISStreakSRM6 (OS)");
-    isEquipment.put(new Long(0x85), "ISFlamer (Vehicle)");
+    isEquipment.put(new Long(0x85), "ISVehicleFlamer");
     isEquipment.put(new Long(0x86), "ISLongTomArtillery");
     isEquipment.put(new Long(0x87), "ISSniperArtillery");
     isEquipment.put(new Long(0x88), "ISThumperArtillery");
@@ -836,7 +838,7 @@ public class HmvFile
     clanEquipment.put(new Long(0x80), "CLHeavyLargeLaser");
     clanEquipment.put(new Long(0x81), "CLHeavyMediumLaser");
     clanEquipment.put(new Long(0x82), "CLHeavySmallLaser");
-    clanEquipment.put(new Long(0x85), "CLFlamer (Vehicle)"); //?
+    clanEquipment.put(new Long(0x85), "CLVehicleFlamer"); //?
     clanEquipment.put(new Long(0x92), "CLLRTorpedo5");
     clanEquipment.put(new Long(0x93), "CLLRTorpedo10");
     clanEquipment.put(new Long(0x94), "CLLRTorpedo15");
@@ -885,7 +887,7 @@ public class HmvFile
     clanEquipment.put(new Long(0x0215), "CLFlamer Ammo");
     clanEquipment.put(new Long(0x023d), "CLLightMG Ammo (200)");
     clanEquipment.put(new Long(0x023e), "CLHeavyMG Ammo (100)");
-    clanEquipment.put(new Long(0x01f6), "CLFlamer (Vehicle) Ammo");
+    clanEquipment.put(new Long(0x01f6), "CLVehicleFlamer Ammo");
     clanEquipment.put(new Long(0x01f7), "CLLongTom Ammo");
     clanEquipment.put(new Long(0x01f8), "CLSniper Ammo");
     clanEquipment.put(new Long(0x01f9), "CLThumper Ammo");

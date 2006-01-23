@@ -42,6 +42,7 @@ v0.31.4-dev (CVS)
 + Bug 1306264: improved jump jets dont load from HMP files
 + HMV loader support for fluff text
 + Bug HMV loader had wrong name for vehicle flamer so it didnt load
++ Bug LRM infantry have 3MP according to MaxTech but unitfile had 2MP
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

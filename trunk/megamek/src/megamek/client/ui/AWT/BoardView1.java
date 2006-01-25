@@ -3134,7 +3134,7 @@ public class BoardView1
 
             // draw facing
             graph.setColor(Color.white);
-            if (entity.getFacing() != -1) {
+            if (entity.getFacing() != -1 && !(entity instanceof Infantry)) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 

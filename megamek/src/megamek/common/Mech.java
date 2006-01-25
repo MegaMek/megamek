@@ -1597,6 +1597,10 @@ public abstract class Mech
         case LOC_RARM :
             return new HitData(LOC_RT, hit.isRear());
         case LOC_HEAD :
+            if(getCockpitType() == COCKPIT_TORSO_MOUNTED)
+                return new HitData(LOC_NONE); //not destroyed by head loss
+            else
+                return new HitData(LOC_DESTROYED);
         case LOC_CT :
         default:
             return new HitData(LOC_DESTROYED);

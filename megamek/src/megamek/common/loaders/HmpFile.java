@@ -1217,7 +1217,7 @@ public class HmpFile
 
     isCriticals.put(new Long(0x0209), "ISNarc Pods");
 
-    isCriticals.put(new Long(0x0215), "ISFlamer Ammo");
+    isCriticals.put(new Long(0x0215), "ISVehicleFlamer Ammo");
     isCriticals.put(new Long(0x0216), "ISLongTom Ammo");
     isCriticals.put(new Long(0x0217), "ISSniper Ammo");
     isCriticals.put(new Long(0x0218), "ISThumper Ammo");

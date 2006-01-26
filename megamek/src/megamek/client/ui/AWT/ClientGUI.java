@@ -339,15 +339,8 @@ public class ClientGUI
 
         // minimap
         minimapW = new Dialog(frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
-        x = GUIPreferences.getInstance().getRulerPosX();
-        y = GUIPreferences.getInstance().getRulerPosY();
-        if(x+20 > screenSize.width) {
-            x = 0;
-        }
-        if(y+20 > screenSize.height) {
-            y = 0;
-        }
-        minimapW.setLocation(x,y);
+        x = GUIPreferences.getInstance().getMinimapPosX();
+        y = GUIPreferences.getInstance().getMinimapPosY();
         try {
             minimap = new MiniMap(minimapW, this, bv);
         } catch (IOException e) {
@@ -355,6 +348,15 @@ public class ClientGUI
             die();
         }
         minimap.addKeyListener(this);
+        h = minimap.getSize().height;
+        w = minimap.getSize().width;
+        if(x+w > screenSize.width) {
+            x = 0;
+        }
+        if(y+h > screenSize.height) {
+            y = 0;
+        }
+        minimapW.setLocation(x,y);
         minimapW.addWindowListener(this);
         minimapW.addKeyListener(this);
         minimapW.add(minimap);

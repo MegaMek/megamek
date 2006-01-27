@@ -232,4 +232,44 @@ public class MechFileParser {
             }
         }
     } // End private void postLoadInit(Entity) throws EntityLoadingException
+
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Files in a supported MegaMek file format can be specified on\nthe command line.  Multiple files may be processed at once.\nThe supported formats are:\n\t.mtf    The native MegaMek format that your file will be converted into\n\n\t.blk    Another native MegaMek format\n\t.hmp    Heavy Metal Pro (c)RCW Enterprises\n\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks\n\t.xml    The Drawing Board (c)Blackstone Interactive\n\nNote: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.\n");
+            MechFileParser.pause();
+            return;
+        }
+        for (int i = 0; i < args.length; i++) {
+            String filename = args[i];
+            File file = new File(filename);
+            String outFilename = filename.substring(0, filename.lastIndexOf("."));
+            outFilename += ".mtf";
+            BufferedWriter out = null;
+            try {
+                MechFileParser mfp = new MechFileParser(file);
+                out = new BufferedWriter(new FileWriter(new File(outFilename)));
+                out.write(((Mech)mfp.getEntity()).getMtf());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                MechFileParser.pause();
+            } finally {
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException ex) {
+                        //ignore
+                    }
+                }
+            }
+        }
+    }
+
+    private static void pause() {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("Press <enter> to exit...");
+        try {
+            br.readLine();
+        } catch (IOException ioe) {
+        }
+    }
 }

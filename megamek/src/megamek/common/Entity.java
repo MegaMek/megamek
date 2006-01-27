@@ -1764,6 +1764,13 @@ public abstract class Entity
         }
     }
 
+    public EquipmentType getEquipmentType(CriticalSlot cs) {
+        if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            return null;
+        Mounted m = (Mounted)equipmentList.elementAt(cs.getIndex());
+        return m.getType();
+    }
+
     /**
      * Returns an enumeration which contains the name of each
      * piece of equipment that failed to load. 
@@ -2206,6 +2213,48 @@ public abstract class Entity
             }
         }
         return num;
+    }
+
+    /**
+     * Returns the number of critical slots present in the section, destroyed
+     * or not.
+     */
+    public int getNumberOfCriticals(EquipmentType etype, int loc) {
+        int num = 0;
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            CriticalSlot ccs = getCritical(loc, i);
+            if (ccs != null && getEquipmentType(ccs) != null &&
+                getEquipmentType(ccs).equals(etype)) {
+                num++;
+            }
+        }
+        return num;
+    }
+
+    /**
+     * Returns the number of critical slots present in the mech, destroyed
+     * or not.
+     */
+    public int getNumberOfCriticals(EquipmentType etype) {
+        int num = 0;
+        for (int l = 0; l < locations(); l++) {
+            num += getNumberOfCriticals(etype, l);
+        }
+        return num;
+    }
+
+    /**
+     * Returns how many of the given equipment are present in the mech,
+     * destroyed or not.
+     */
+    public int getNumberOf(EquipmentType etype) {
+        int total = 0;
+        for (int i = 0; i < equipmentList.size(); i++) {
+            Mounted m = (Mounted)(equipmentList.elementAt(i));
+            if (m.getType().equals(etype))
+                total++;
+        }
+        return total;
     }
 
     /**

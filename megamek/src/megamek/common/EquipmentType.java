@@ -474,4 +474,11 @@ public class EquipmentType {
         }
         return cost;
     }
+
+    public boolean equals(EquipmentType e) {
+        if (e != null && this.internalName.equals(e.internalName))
+            return true;
+        else
+            return false;
+    }
 }

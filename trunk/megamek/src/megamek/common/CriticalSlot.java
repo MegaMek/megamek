@@ -49,6 +49,10 @@ public class CriticalSlot
     public int getIndex() {
         return index;
     }
+
+    public void setIndex(int i) {
+        index = i;
+    }
     
     public boolean isHit() {
         return hit;

@@ -24,6 +24,7 @@ import java.util.Vector;
 import megamek.common.CriticalSlot;
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
+import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
@@ -2652,6 +2653,142 @@ public abstract class Mech
     }
 
     /**
+     * Get an '.mtf' file representation of the mech.  This string can
+     * be directly written to disk as a file and later loaded by the
+     * MtfFile class.
+     * Known missing level 3 features: mixed tech, laser heatsinks
+     */
+    public String getMtf() {
+        StringBuffer sb = new StringBuffer();
+        String nl = "\r\n";  // DOS friendly
+
+        boolean standard = getCockpitType() == Mech.COCKPIT_STANDARD &&
+            getGyroType() == Mech.GYRO_STANDARD;
+        if (standard) {
+            sb.append( "Version:1.0" ).append( nl );
+        } else {
+            sb.append( "Version:1.1" ).append( nl );
+        }
+        sb.append( chassis ).append( nl );
+        sb.append( model ).append( nl );
+        sb.append( nl );
+
+        sb.append( "Config:" );
+        if (this instanceof BipedMech)
+            sb.append( "Biped" );
+        else if (this instanceof QuadMech)
+            sb.append( "Quad" );
+        sb.append( nl );
+        sb.append( "TechBase:" ).append(TechConstants.getTechName(techLevel));
+        sb.append( nl );
+        sb.append( "Era:" ).append( year ).append( nl );
+        sb.append( "Rules Level:" ).append(TechConstants.T_SIMPLE_LEVEL[techLevel] );
+        sb.append( nl );
+        sb.append( nl );
+
+        Float tonnage = new Float(weight);
+        sb.append( "Mass:" ).append( tonnage.intValue()).append( nl );
+        sb.append( "Engine:" ).append(getEngine().getShortEngineName() );
+        sb.append(nl);
+        sb.append( "Structure:" );
+        sb.append( EquipmentType.getStructureTypeName(getStructureType()) );
+        sb.append(nl);
+
+        sb.append( "Myomer:" );
+        if (hasTSM())
+            sb.append( "Triple-Strength" );
+        else
+            sb.append( "Standard" );
+        sb.append( nl );
+
+        if (!standard) {
+            sb.append( "Cockpit:" );
+            sb.append( getCockpitTypeString() );
+            sb.append( nl );
+
+            sb.append( "Gyro:" );
+            sb.append( getGyroTypeString() );
+            sb.append( nl );
+        }
+        sb.append( nl );
+
+        sb.append( "Heat Sinks:" ).append( heatSinks()).append( " " );
+        if (hasDoubleHeatSinks())
+            sb.append( "Double" );
+        else
+            sb.append( "Single" );
+        sb.append( nl );
+        sb.append( "Walk MP:" ).append( walkMP ).append(nl );
+        sb.append( "Jump MP:" ).append( jumpMP ).append(nl );
+        sb.append( nl );
+
+        sb.append( "Armor:" )
+            .append( EquipmentType.getArmorTypeName(getArmorType()) );
+        sb.append(nl);
+
+        for (int x = 0; x < MtfFile.locationOrder.length; x++) {
+            sb.append( getLocationAbbr(MtfFile.locationOrder[x]) )
+                .append( " Armor:" );
+            sb.append( getOArmor(MtfFile.locationOrder[x], false) )
+                .append( nl );
+        }
+        for (int x = 0; x < MtfFile.rearLocationOrder.length; x++) {
+            sb.append( "RT" )
+                .append( getLocationAbbr(MtfFile.rearLocationOrder[x]).charAt(0) )
+                .append( " Armor:" );
+            sb.append( getOArmor(MtfFile.rearLocationOrder[x], true) ).append( nl );
+        }
+        sb.append( nl );
+
+        sb.append( "Weapons:" ).append( weaponList.size() ).append( nl );
+        for (int i = 0; i < weaponList.size(); i++) {
+            Mounted m = (Mounted)weaponList.get(i);
+            sb.append( m.getName() ).append( ", " )
+                .append( getLocationName(m.getLocation()) ).append( nl );
+        }
+        sb.append( nl );
+
+        for (int x = 0; x < MtfFile.locationOrder.length; x++) {
+            int l = MtfFile.locationOrder[x];
+            String locationName = getLocationName(l);
+            sb.append(locationName+":");
+            sb.append( nl );
+            for (int y = 0; y < 12; y++) {
+                if (y < getNumberOfCriticals(l))
+                    sb.append(decodeCritical(getCritical(l,y))).append(nl);
+                else
+                    sb.append("-Empty-").append(nl);
+            }
+            sb.append(nl);
+        }
+
+        return sb.toString();
+    }
+
+    private String decodeCritical(CriticalSlot cs) {
+        if (cs == null)
+            return "---";
+        int type = cs.getType();
+        int index = cs.getIndex();
+        if (type == CriticalSlot.TYPE_SYSTEM) {
+            if (systemNames[index].indexOf("Upper") != -1 ||
+                systemNames[index].indexOf("Lower") != -1 ||
+                systemNames[index].indexOf("Hand") != -1 ||
+                systemNames[index].indexOf("Foot") != -1)
+                return systemNames[index] + " Actuator";
+            else if (systemNames[index].indexOf("Engine") != -1)
+                return "Fusion " + systemNames[index];
+            else
+                return systemNames[index];
+        } else if (type == CriticalSlot.TYPE_EQUIPMENT) {
+            Mounted m = getEquipment(cs.getIndex());
+            return m.getType().getInternalName();
+        } else {
+            return "?" + index;
+        }
+    }
+
+    /**
      * Add the critical slots necessary for a standard cockpit.
      * Note: This is part of the mek creation public API, and might not
      * be referenced by any MegaMek code.
@@ -2891,27 +3028,7 @@ public abstract class Mech
         }
     }
 
-    /**
-     * Removes all instances of the given equipment from the mech.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
-     */
-    public void removeMisc(String toRemove) {
-        for (Enumeration i = equipmentList.elements();i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getName().equals(toRemove)) {
-
-                int num = getEquipmentNum(mounted);
-                for (int j = 0; j < locations(); j++) {
-                    removeCriticals(j, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num));
-                }
-
-                weaponList.removeElement(mounted);
-                ammoList.removeElement(mounted);
-                miscList.removeElement(mounted);
-                equipmentList.removeElement(mounted);
-            }
-        }
-    }
-
 }
+
+
+

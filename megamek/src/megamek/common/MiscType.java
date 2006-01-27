@@ -163,7 +163,7 @@ public class MiscType extends EquipmentType {
             if (hasSubType(S_SUPERCHARGER)) {
                 Engine e = entity.getEngine();
                 if(e == null) return 0.0f;
-                return (float)(e.getWeightEngine() / 10.0);
+                return (float)(Math.ceil(e.getWeightEngine() / 10.0 * 2.0) / 2.0);
             } else {
                 if (entity.isClan()) {
                     return Math.round(entity.getWeight() / 25.0f);
@@ -244,10 +244,7 @@ public class MiscType extends EquipmentType {
                 && hasSubType(S_MACE)) {
             return (int)Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_MASC)) {
-            if(hasSubType(S_SUPERCHARGER)) {
-                return 1;
-            }
-            else if (entity.isClan()) {
+            if (entity.isClan()) {
                 return Math.round(entity.getWeight() / 25.0f);
             }
             else {
@@ -275,24 +272,12 @@ public class MiscType extends EquipmentType {
             } else {
                 return 14;
             }
-        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO).equals(internalName) ) {
-            return 16;
-        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO).equals(internalName) ) {
-            return 7;
-        } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO).equals(internalName) ) {
-            return 21;
         } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName) ) {
             if ( entity.isClan() ) {
                 return 7;
             } else {
                 return 14;
             }
-        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE).equals(internalName) ) {
-            return 16;
-        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED).equals(internalName) ) {
-            return 0;
-        } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE).equals(internalName) ) {
-            return 0;
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (entity instanceof QuadMech) ? 8 : 4; // all slots in all legs
         }
@@ -1331,7 +1316,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO));
         misc.addLookupName("Ferro-Fibrous Armor Prototype");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
+        misc.criticals = 16;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags |= F_FERRO_FIBROUS;
@@ -1402,7 +1387,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("EndoSteelPrototype");
         misc.addLookupName("Endosteelprototype");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
+        misc.criticals = 16;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags |= F_ENDO_STEEL;

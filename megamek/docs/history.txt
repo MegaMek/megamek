@@ -46,6 +46,8 @@ v0.31.4-dev (CVS)
 + Bug 1410113: CT cockpit mechs are still destroyed when head is destroyed
 + Stop drawing white facing arrows for infantry.
 + Bug IS Vehicle flamer ammo didnt load from HMP files
++ Bug: Supercharger weight was rounded incorrectly.
++ Mech objects can now be output as mtf files.
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

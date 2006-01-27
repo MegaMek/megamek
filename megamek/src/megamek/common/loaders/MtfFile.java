@@ -64,17 +64,7 @@ public class MtfFile implements IMechLoader {
     String jumpMP;
 
     String armorType;
-    String larmArmor;
-    String rarmArmor;
-    String ltArmor;
-    String rtArmor;
-    String ctArmor;
-    String headArmor;
-    String llegArmor;
-    String rlegArmor;
-    String ltrArmor;
-    String rtrArmor;
-    String ctrArmor;
+    String[] armorValues = new String[11];
 
     String weaponCount;
     String[] weaponData;
@@ -84,6 +74,12 @@ public class MtfFile implements IMechLoader {
     Hashtable hSharedEquip = new Hashtable();
     Vector vSplitWeapons = new Vector();
 
+    public static final int locationOrder[] = { Mech.LOC_LARM, Mech.LOC_RARM,
+                                                Mech.LOC_LT, Mech.LOC_RT,
+                                                Mech.LOC_CT, Mech.LOC_HEAD,
+                                                Mech.LOC_LLEG, Mech.LOC_RLEG };
+    public static final int rearLocationOrder[] = { Mech.LOC_LT, Mech.LOC_RT,
+                                                    Mech.LOC_CT };
 
     /** Creates new MtfFile */
     public MtfFile(InputStream is) throws EntityLoadingException {
@@ -91,6 +87,12 @@ public class MtfFile implements IMechLoader {
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
 
             version = r.readLine();
+            //Version 1.0: Initial version.
+            //Version 1.1: Added level 3 cockpit and gyro options.
+            if (!version.trim().equalsIgnoreCase("Version:1.0")
+                && !version.trim().equalsIgnoreCase("Version:1.1")) {
+                throw new EntityLoadingException("Wrong MTF file version.");
+            }
 
             name = r.readLine();
             model = r.readLine();
@@ -134,17 +136,9 @@ public class MtfFile implements IMechLoader {
             r.readLine();
 
             armorType = r.readLine();
-            larmArmor = r.readLine();
-            rarmArmor = r.readLine();
-            ltArmor = r.readLine();
-            rtArmor = r.readLine();
-            ctArmor = r.readLine();
-            headArmor = r.readLine();
-            llegArmor = r.readLine();
-            rlegArmor = r.readLine();
-            ltrArmor = r.readLine();
-            rtrArmor = r.readLine();
-            ctrArmor = r.readLine();
+            for (int x = 0; x < armorValues.length; x++) {
+                armorValues[x] = r.readLine();
+            }
 
             r.readLine();
 
@@ -158,20 +152,15 @@ public class MtfFile implements IMechLoader {
 
             critData = new String[8][12];
 
-            readCrits(r, Mech.LOC_LARM);
-            readCrits(r, Mech.LOC_RARM);
-            readCrits(r, Mech.LOC_LT);
-            readCrits(r, Mech.LOC_RT);
-            readCrits(r, Mech.LOC_CT);
-            readCrits(r, Mech.LOC_HEAD);
-            readCrits(r, Mech.LOC_LLEG);
-            readCrits(r, Mech.LOC_RLEG);
+            for (int x = 0; x < locationOrder.length; x++) {
+                readCrits(r, locationOrder[x]);
+            }
 
             r.close();
         } catch (IOException ex) {
             throw new EntityLoadingException("I/O Error reading file");
         } catch (StringIndexOutOfBoundsException ex) {
-        ex.printStackTrace();
+            ex.printStackTrace();
             throw new EntityLoadingException("StringIndexOutOfBoundsException reading file (format error)");
         } catch (NumberFormatException ex) {
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
@@ -211,10 +200,6 @@ public class MtfFile implements IMechLoader {
                 mech = new QuadMech(iGyroType, iCockpitType);
             } else {
                 mech = new BipedMech(iGyroType, iCockpitType);
-            }
-
-            if (!version.trim().equalsIgnoreCase("Version:1.0")) {
-                throw new EntityLoadingException("Wrong MTF file version.");
             }
 
             // aarg!  those stupid sub-names in parenthesis screw everything up
@@ -301,17 +286,12 @@ public class MtfFile implements IMechLoader {
             } else {
                 mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
             }
-            mech.initializeArmor(Integer.parseInt(larmArmor.substring(9)), Mech.LOC_LARM);
-            mech.initializeArmor(Integer.parseInt(rarmArmor.substring(9)), Mech.LOC_RARM);
-            mech.initializeArmor(Integer.parseInt(ltArmor.substring(9)), Mech.LOC_LT);
-            mech.initializeArmor(Integer.parseInt(rtArmor.substring(9)), Mech.LOC_RT);
-            mech.initializeArmor(Integer.parseInt(ctArmor.substring(9)), Mech.LOC_CT);
-            mech.initializeArmor(Integer.parseInt(headArmor.substring(9)), Mech.LOC_HEAD);
-            mech.initializeArmor(Integer.parseInt(llegArmor.substring(9)), Mech.LOC_LLEG);
-            mech.initializeArmor(Integer.parseInt(rlegArmor.substring(9)), Mech.LOC_RLEG);
-            mech.initializeRearArmor(Integer.parseInt(ltrArmor.substring(10)), Mech.LOC_LT);
-            mech.initializeRearArmor(Integer.parseInt(rtrArmor.substring(10)), Mech.LOC_RT);
-            mech.initializeRearArmor(Integer.parseInt(ctrArmor.substring(10)), Mech.LOC_CT);
+            for (int x = 0; x < locationOrder.length; x++) {
+                mech.initializeArmor(Integer.parseInt(armorValues[x].substring(9)), locationOrder[x]);
+            }
+            for (int x = 0; x < rearLocationOrder.length; x++) {
+                mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);
+            }
 
             // oog, crits.
             compactCriticals(mech);

@@ -236,7 +236,7 @@ public class MechFileParser {
     public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("Files in a supported MegaMek file format can be specified on\nthe command line.  Multiple files may be processed at once.\nThe supported formats are:\n\t.mtf    The native MegaMek format that your file will be converted into\n\n\t.blk    Another native MegaMek format\n\t.hmp    Heavy Metal Pro (c)RCW Enterprises\n\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks\n\t.xml    The Drawing Board (c)Blackstone Interactive\n\nNote: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.\n");
-            MechFileParser.pause();
+            MechFileParser.getResponse("Press <enter> to exit...");
             return;
         }
         for (int i = 0; i < args.length; i++) {
@@ -244,14 +244,19 @@ public class MechFileParser {
             File file = new File(filename);
             String outFilename = filename.substring(0, filename.lastIndexOf("."));
             outFilename += ".mtf";
+            File outFile = new File(outFilename);
+            if (outFile.exists()) {
+                if (!MechFileParser.getResponse("File already exists, overwrite? "))
+                    return;
+            }
             BufferedWriter out = null;
             try {
                 MechFileParser mfp = new MechFileParser(file);
-                out = new BufferedWriter(new FileWriter(new File(outFilename)));
+                out = new BufferedWriter(new FileWriter(outFile));
                 out.write(((Mech)mfp.getEntity()).getMtf());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                MechFileParser.pause();
+                MechFileParser.getResponse("Press <enter> to exit...");
             } finally {
                 if (out != null) {
                     try {
@@ -264,12 +269,18 @@ public class MechFileParser {
         }
     }
 
-    private static void pause() {
+    private static boolean getResponse(String prompt) {
+        DataInputStream in = new DataInputStream(System.in);
+        String response = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("Press <enter> to exit...");
+        System.out.print(prompt);
         try {
-            br.readLine();
+            response = in.readLine();
         } catch (IOException ioe) {
         }
+        if (response != null && response.toLowerCase().indexOf("y") == 0)
+            return true;
+        else
+            return false;
     }
 }

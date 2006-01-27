@@ -963,7 +963,7 @@ public class HmpFile
     isCriticals.put(new Long(0x33), "ISERLargeLaser");
     isCriticals.put(new Long(0x34), "ISERPPC");
     isCriticals.put(new Long(0x35), "ISFlamer");
-    isCriticals.put(new Long(0x86), "ISLaserAMS");
+    isCriticals.put(new Long(0x36), "ISLaserAMS");
     isCriticals.put(new Long(0x37), "ISLargeLaser");
     isCriticals.put(new Long(0x38), "ISMediumLaser");
     isCriticals.put(new Long(0x39), "ISSmallLaser");
@@ -1010,10 +1010,8 @@ public class HmpFile
     isCriticals.put(new Long(0x61), "ISLRM10");
     isCriticals.put(new Long(0x62), "ISLRM15");
     isCriticals.put(new Long(0x63), "ISLRM20");
-
     isCriticals.put(new Long(0x64), "CLLightActiveProbe");
     isCriticals.put(new Long(0x65), "CLLightTAG");
-
     isCriticals.put(new Long(0x66), "ISImprovedNarc");
     isCriticals.put(new Long(0x67), "ISSRM2");
     isCriticals.put(new Long(0x68), "ISSRM4");

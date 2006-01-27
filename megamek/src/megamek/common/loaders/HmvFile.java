@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.ArrayList;
 
 import megamek.common.AmmoType;
 import megamek.common.Engine;
@@ -76,6 +78,8 @@ public class HmvFile
   private int troopSpace = 0;
   
   private String fluff;
+  
+  private List<String> failedEquipment = new ArrayList();
 
   public HmvFile(InputStream is)
     throws EntityLoadingException
@@ -493,6 +497,8 @@ public class HmvFile
             if ( troopSpace > 0 ) {
                 vehicle.addTransporter( new TroopSpace( troopSpace ) );
             }
+            
+            addFailedEquipment(vehicle);
 
             return vehicle;
         } catch (Exception e) {
@@ -536,12 +542,19 @@ public class HmvFile
       }
     }
   }
+  
+  private void addFailedEquipment(Tank tank) {
+      for(String s : failedEquipment) {
+          tank.addFailedEquipment(s);
+      }
+  }
 
   private static final Hashtable EQUIPMENT = new Hashtable();
   private static final Hashtable AMMO = new Hashtable();
   static
   {
     // inner sphere equipment
+    // note all weapons should be matched by an ammo entry with the same index
     //
     Hashtable isEquipment = new Hashtable();
     EQUIPMENT.put(HMVTechType.INNER_SPHERE, isEquipment);
@@ -556,9 +569,10 @@ public class HmvFile
     isEquipment.put(new Long(0x33), "ISERLargeLaser");
     isEquipment.put(new Long(0x34), "ISERPPC");
     isEquipment.put(new Long(0x35), "ISFlamer");
-    isEquipment.put(new Long(0x39), "ISSmallLaser");
+    isEquipment.put(new Long(0x36), "ISLaserAMS");
     isEquipment.put(new Long(0x37), "ISLargeLaser");
     isEquipment.put(new Long(0x38), "ISMediumLaser");
+    isEquipment.put(new Long(0x39), "ISSmallLaser");
     isEquipment.put(new Long(0x3A), "ISPPC");
     isEquipment.put(new Long(0x3B), "ISLargePulseLaser");
     isEquipment.put(new Long(0x3C), "ISMediumPulseLaser");
@@ -568,8 +582,14 @@ public class HmvFile
     isEquipment.put(new Long(0x40), "ISAC10");
     isEquipment.put(new Long(0x41), "ISAC20");
     isEquipment.put(new Long(0x42), "ISAntiMissileSystem");
+    isEquipment.put(new Long(0x43), "Long Tom Cannon");
+    isEquipment.put(new Long(0x44), "Sniper Cannon");
+    isEquipment.put(new Long(0x45), "Thumper Cannon");
     isEquipment.put(new Long(0x46), "ISLightGaussRifle");
     isEquipment.put(new Long(0x47), "ISGaussRifle");
+    isEquipment.put(new Long(0x48), "ISLargeXPulseLaser");
+    isEquipment.put(new Long(0x49), "ISMediumXPulseLaser");
+    isEquipment.put(new Long(0x4A), "ISSmallXPulseLaser");
     isEquipment.put(new Long(0x4B), "ISLBXAC2");
     isEquipment.put(new Long(0x4C), "ISLBXAC5");
     isEquipment.put(new Long(0x4D), "ISLBXAC10");
@@ -582,9 +602,11 @@ public class HmvFile
     isEquipment.put(new Long(0x55), "ISUltraAC5");
     isEquipment.put(new Long(0x56), "ISUltraAC10");
     isEquipment.put(new Long(0x57), "ISUltraAC20");
+    isEquipment.put(new Long(0x59), "PPC Capacitor");
     isEquipment.put(new Long(0x5A), "ISERMediumLaser");
     isEquipment.put(new Long(0x5B), "ISERSmallLaser");
     isEquipment.put(new Long(0x5C), "ISAntiPersonnelPod");
+
     isEquipment.put(new Long(0x60), "ISLRM5");
     isEquipment.put(new Long(0x61), "ISLRM10");
     isEquipment.put(new Long(0x62), "ISLRM15");
@@ -596,6 +618,10 @@ public class HmvFile
     isEquipment.put(new Long(0x6A), "ISStreakSRM2");
     isEquipment.put(new Long(0x6B), "ISStreakSRM4");
     isEquipment.put(new Long(0x6C), "ISStreakSRM6");
+    isEquipment.put(new Long(0x6D), "Thunderbolt-5");
+    isEquipment.put(new Long(0x6E), "Thunderbolt-10");
+    isEquipment.put(new Long(0x6F), "Thunderbolt-15");
+    isEquipment.put(new Long(0x70), "Thunderbolt-20");
     isEquipment.put(new Long(0x71), "ISArrowIVSystem");
     isEquipment.put(new Long(0x72), "ISAngelECMSuite");
     isEquipment.put(new Long(0x73), "ISBeagleActiveProbe");
@@ -635,12 +661,27 @@ public class HmvFile
     isEquipment.put(new Long(0x96), "ISSRTorpedo2");
     isEquipment.put(new Long(0x97), "ISSRTorpedo4");
     isEquipment.put(new Long(0x98), "ISSRTorpedo6");
+    isEquipment.put(new Long(0x99), "ISLRM5 (I-OS)");
+    isEquipment.put(new Long(0x9A), "ISLRM10 (I-OS)");
+    isEquipment.put(new Long(0x9B), "ISLRM15 (I-OS)");
+    isEquipment.put(new Long(0x9C), "ISLRM20 (I-OS)");
+    isEquipment.put(new Long(0x9D), "ISSRM2 (I-OS)");
+    isEquipment.put(new Long(0x9E), "ISSRM4 (I-OS)");
+    isEquipment.put(new Long(0x9f), "ISSRM6 (I-OS)");
+    isEquipment.put(new Long(0xA0), "ISStreakSRM2 (I-OS)");
+    isEquipment.put(new Long(0xA1), "ISStreakSRM4 (I-OS)");
+    isEquipment.put(new Long(0xA2), "ISStreakSRM6 (I-OS)");
+    isEquipment.put(new Long(0xA3), "ISMRM10 (I-OS)");
+    isEquipment.put(new Long(0xA4), "ISMRM20 (I-OS)");
+    isEquipment.put(new Long(0xA5), "ISMRM30 (I-OS)");
+    isEquipment.put(new Long(0xA6), "ISMRM40 (I-OS)");
     isEquipment.put(new Long(0x108), "ISTHBLBXAC2");
     isEquipment.put(new Long(0x109), "ISTHBLBXAC5");
     isEquipment.put(new Long(0x10A), "ISTHBLBXAC20");
     isEquipment.put(new Long(0x10B), "ISUltraAC2 (THB)");
     isEquipment.put(new Long(0x10C), "ISUltraAC10 (THB)");
     isEquipment.put(new Long(0x10D), "ISUltraAC20 (THB)");
+    isEquipment.put(new Long(0x11D), "ISTHBAngelECMSuite");
     isEquipment.put(new Long(0x11e), "ISTHBBloodhoundActiveProbe");
     isEquipment.put(new Long(0x121), "ISRotaryAC2");
     isEquipment.put(new Long(0x122), "ISRotaryAC5");
@@ -648,96 +689,50 @@ public class HmvFile
     isEquipment.put(new Long(0x12B), "ISRocketLauncher10");
     isEquipment.put(new Long(0x12C), "ISRocketLauncher15");
     isEquipment.put(new Long(0x12D), "ISRocketLauncher20");
-    isEquipment.put(new Long(0x01ce), "ISAC2 Ammo");
-    isEquipment.put(new Long(0x01cf), "ISAC5 Ammo");
-    isEquipment.put(new Long(0x01d0), "ISAC10 Ammo");
-    isEquipment.put(new Long(0x01d1), "ISAC20 Ammo");
-    isEquipment.put(new Long(0x01d2), "ISAMS Ammo");
-
-    isEquipment.put(new Long(0x01d6), "ISLightGauss Ammo");
-    isEquipment.put(new Long(0x01d7), "ISGauss Ammo");
-
-    isEquipment.put(new Long(0x01db), "ISLBXAC2 Ammo");
-    isEquipment.put(new Long(0x01dc), "ISLBXAC5 Ammo");
-    isEquipment.put(new Long(0x01dd), "ISLBXAC10 Ammo");
-    isEquipment.put(new Long(0x01de), "ISLBXAC20 Ammo");
-    isEquipment.put(new Long(0x01df), "ISMG Ammo (200)");
-    isEquipment.put(new Long(0x01e0), "ISLAC2 Ammo");
-    isEquipment.put(new Long(0x01e1), "ISLAC5 Ammo");
-    isEquipment.put(new Long(0x01e2), "ISHeavyFlamer Ammo");
-
-    isEquipment.put(new Long(0x01e4), "ISUltraAC2 Ammo");
-    isEquipment.put(new Long(0x01e5), "ISUltraAC5 Ammo");
-    isEquipment.put(new Long(0x01e6), "ISUltraAC10 Ammo");
-    isEquipment.put(new Long(0x01e7), "ISUltraAC20 Ammo");
-    isEquipment.put(new Long(0x01f0), "ISLRM5 Ammo");
-    isEquipment.put(new Long(0x01f1), "ISLRM10 Ammo");
-    isEquipment.put(new Long(0x01f2), "ISLRM15 Ammo");
-    isEquipment.put(new Long(0x01f3), "ISLRM20 Ammo");
-    isEquipment.put(new Long(0x01f6), "ISiNarc Pods");
-    isEquipment.put(new Long(0x01fa), "ISStreakSRM2 Ammo");
-    isEquipment.put(new Long(0x01fb), "ISStreakSRM4 Ammo");
-    isEquipment.put(new Long(0x01fc), "ISStreakSRM6 Ammo");
-    isEquipment.put(new Long(0x0201), "ISArrowIV Ammo");
-    isEquipment.put(new Long(0x0209), "ISNarc Pods");
-    isEquipment.put(new Long(0x0215), "ISVehicleFlamer Ammo");
-    isEquipment.put(new Long(0x0216), "ISLongTom Ammo");
-    isEquipment.put(new Long(0x0217), "ISSniper Ammo");
-    isEquipment.put(new Long(0x0218), "ISThumper Ammo");
-    isEquipment.put(new Long(0x0219), "ISMRM10 Ammo");
-    isEquipment.put(new Long(0x021a), "ISMRM20 Ammo");
-    isEquipment.put(new Long(0x021b), "ISMRM30 Ammo");
-    isEquipment.put(new Long(0x021c), "ISMRM40 Ammo");
-    isEquipment.put(new Long(0x02b1), "ISRotaryAC2 Ammo");
-    isEquipment.put(new Long(0x02b2), "ISRotaryAC5 Ammo");
-    isEquipment.put(new Long(0x02b3), "ISHeavyGauss Ammo");
-    isEquipment.put(new Long(0x01f7), "ISSRM2 Ammo");
-    isEquipment.put(new Long(0x01f8), "ISSRM4 Ammo");
-    isEquipment.put(new Long(0x01f9), "ISSRM6 Ammo");
-    isEquipment.put(new Long(0x0224), "ISLRTorpedo15 Ammo");
-    isEquipment.put(new Long(0x0225), "ISLRTorpedo20 Ammo");
-    isEquipment.put(new Long(0x0222), "ISLRTorpedo5 Ammo");
-    isEquipment.put(new Long(0x0223), "ISLRTorpedo10 Ammo");
-    isEquipment.put(new Long(0x0227), "ISSRTorpedo4 Ammo");
-    isEquipment.put(new Long(0x0226), "ISSRTorpedo2 Ammo");
-    isEquipment.put(new Long(0x0228), "ISSRTorpedo6 Ammo");
-    isEquipment.put(new Long(0x298), "ISLBXAC2 Ammo (THB)");
-    isEquipment.put(new Long(0x299), "ISLBXAC5 Ammo (THB)");
-    isEquipment.put(new Long(0x29A), "ISLBXAC20 Ammo (THB)");
-    isEquipment.put(new Long(0x29B), "IS Ultra AC/2 Ammo (THB)");
-    isEquipment.put(new Long(0x29C), "IS Ultra AC/10 Ammo (THB)");
-    isEquipment.put(new Long(0x29D), "IS Ultra AC/20 Ammo (THB)");
 
     Hashtable isAmmo = new Hashtable();
     AMMO.put(HMVTechType.INNER_SPHERE, isAmmo);
-    isAmmo.put(new Long(0x60), "ISLRM5 Ammo");
-    isAmmo.put(new Long(0x61), "ISLRM10 Ammo");
-    isAmmo.put(new Long(0x62), "ISLRM15 Ammo");
-    isAmmo.put(new Long(0x63), "ISLRM20 Ammo");
     isAmmo.put(new Long(0x3E), "ISAC2 Ammo");
     isAmmo.put(new Long(0x3F), "ISAC5 Ammo");
     isAmmo.put(new Long(0x40), "ISAC10 Ammo");
     isAmmo.put(new Long(0x41), "ISAC20 Ammo");
     isAmmo.put(new Long(0x42), "ISAMS Ammo");
+    isAmmo.put(new Long(0x43), "Long Tom Cannon Ammo");
+    isAmmo.put(new Long(0x44), "Sniper Cannon Ammo");
+    isAmmo.put(new Long(0x45), "Thumper Cannon Ammo");
     isAmmo.put(new Long(0x46), "ISLightGauss Ammo");
     isAmmo.put(new Long(0x47), "ISGauss Ammo");
-    isAmmo.put(new Long(0x123), "ISHeavyGauss Ammo");
     isAmmo.put(new Long(0x4B), "ISLBXAC2 Ammo");
     isAmmo.put(new Long(0x4C), "ISLBXAC5 Ammo");
     isAmmo.put(new Long(0x4D), "ISLBXAC10 Ammo");
     isAmmo.put(new Long(0x4E), "ISLBXAC20 Ammo");
     isAmmo.put(new Long(0x4F), "ISMG Ammo (200)");
+    isAmmo.put(new Long(0x50), "ISLAC2 Ammo");
+    isAmmo.put(new Long(0x51), "ISLAC5 Ammo");
+    isAmmo.put(new Long(0x52), "ISHeavyFlamer Ammo");
     isAmmo.put(new Long(0x54), "ISUltraAC2 Ammo");
     isAmmo.put(new Long(0x55), "ISUltraAC5 Ammo");
     isAmmo.put(new Long(0x56), "ISUltraAC10 Ammo");
     isAmmo.put(new Long(0x57), "ISUltraAC20 Ammo");
+
+    isAmmo.put(new Long(0x60), "ISLRM5 Ammo");
+    isAmmo.put(new Long(0x61), "ISLRM10 Ammo");
+    isAmmo.put(new Long(0x62), "ISLRM15 Ammo");
+    isAmmo.put(new Long(0x63), "ISLRM20 Ammo");
     isAmmo.put(new Long(0x66), "ISiNarc Pods");
+    isAmmo.put(new Long(0x67), "ISSRM2 Ammo");
+    isAmmo.put(new Long(0x68), "ISSRM4 Ammo");
+    isAmmo.put(new Long(0x69), "ISSRM6 Ammo");
     isAmmo.put(new Long(0x6A), "ISStreakSRM2 Ammo");
     isAmmo.put(new Long(0x6B), "ISStreakSRM4 Ammo");
     isAmmo.put(new Long(0x6C), "ISStreakSRM6 Ammo");
+    isAmmo.put(new Long(0x6D), "Thunderbolt-5 Ammo");
+    isAmmo.put(new Long(0x6E), "Thunderbolt-10 Ammo");
+    isAmmo.put(new Long(0x6F), "Thunderbolt-15 Ammo");
+    isAmmo.put(new Long(0x70), "Thunderbolt-20 Ammo");
     isAmmo.put(new Long(0x71), "ISArrowIV Ammo");
     isAmmo.put(new Long(0x79), "ISNarc Pods");
-    isAmmo.put(new Long(0x35), "ISVehicleFlamer Ammo");
+    isAmmo.put(new Long(0x85), "ISVehicleFlamer Ammo");
     isAmmo.put(new Long(0x86), "ISLongTom Ammo");
     isAmmo.put(new Long(0x87), "ISSniper Ammo");
     isAmmo.put(new Long(0x88), "ISThumper Ammo");
@@ -745,11 +740,6 @@ public class HmvFile
     isAmmo.put(new Long(0x8A), "ISMRM20 Ammo");
     isAmmo.put(new Long(0x8B), "ISMRM30 Ammo");
     isAmmo.put(new Long(0x8C), "ISMRM40 Ammo");
-    isAmmo.put(new Long(0x121), "ISRotaryAC2 Ammo");
-    isAmmo.put(new Long(0x122), "ISRotaryAC5 Ammo");
-    isAmmo.put(new Long(0x67), "ISSRM2 Ammo");
-    isAmmo.put(new Long(0x68), "ISSRM4 Ammo");
-    isAmmo.put(new Long(0x69), "ISSRM6 Ammo");
     isAmmo.put(new Long(0x92), "ISLRTorpedo5 Ammo");
     isAmmo.put(new Long(0x93), "ISLRTorpedo10 Ammo");
     isAmmo.put(new Long(0x94), "ISLRTorpedo15 Ammo");
@@ -757,6 +747,15 @@ public class HmvFile
     isAmmo.put(new Long(0x96), "ISSRTorpedo4 Ammo");
     isAmmo.put(new Long(0x97), "ISSRTorpedo2 Ammo");
     isAmmo.put(new Long(0x98), "ISSRTorpedo6 Ammo");
+    isAmmo.put(new Long(0x108), "ISTHBLBXAC2 Ammo");
+    isAmmo.put(new Long(0x109), "ISTHBLBXAC5 Ammo");
+    isAmmo.put(new Long(0x10A), "ISTHBLBXAC20 Ammo");
+    isAmmo.put(new Long(0x10B), "ISUltraAC2 (THB) Ammo");
+    isAmmo.put(new Long(0x10C), "ISUltraAC10 (THB) Ammo");
+    isAmmo.put(new Long(0x10D), "ISUltraAC20 (THB) Ammo");
+    isAmmo.put(new Long(0x121), "ISRotaryAC2 Ammo");
+    isAmmo.put(new Long(0x122), "ISRotaryAC5 Ammo");
+    isAmmo.put(new Long(0x123), "ISHeavyGauss Ammo");
 
     // clan criticals
     //
@@ -855,60 +854,6 @@ public class HmvFile
     clanEquipment.put(new Long(0xFD), "CLATM6");
     clanEquipment.put(new Long(0xFE), "CLATM9");
     clanEquipment.put(new Long(0xFF), "CLATM12");
-    clanEquipment.put(new Long(0x01f0), "CLLRM5 Ammo");
-    clanEquipment.put(new Long(0x01f1), "CLLRM10 Ammo");
-    clanEquipment.put(new Long(0x01f2), "CLLRM15 Ammo");
-    clanEquipment.put(new Long(0x01f3), "CLLRM20 Ammo");
-    clanEquipment.put(new Long(0x01ce), "CLAC2 Ammo");
-    clanEquipment.put(new Long(0x01d0), "CLAMS Ammo");
-    clanEquipment.put(new Long(0x01cf), "CLAC5 Ammo");
-    clanEquipment.put(new Long(0x01d1), "CLGauss Ammo");
-    clanEquipment.put(new Long(0x01d2), "CLLBXAC2 Ammo");
-    clanEquipment.put(new Long(0x01d3), "CLLBXAC5 Ammo");
-    clanEquipment.put(new Long(0x01d4), "CLLBXAC10 Ammo");
-    clanEquipment.put(new Long(0x01d5), "CLLBXAC20 Ammo");
-    clanEquipment.put(new Long(0x01d6), "CLMG Ammo (200)");
-    clanEquipment.put(new Long(0x01d7), "CLUltraAC2 Ammo");
-    clanEquipment.put(new Long(0x01d8), "CLUltraAC5 Ammo");
-    clanEquipment.put(new Long(0x01d9), "CLUltraAC10 Ammo");
-    clanEquipment.put(new Long(0x01da), "CLUltraAC20 Ammo");
-    clanEquipment.put(new Long(0x01db), "CLLRM5 Ammo");
-    clanEquipment.put(new Long(0x01dc), "CLLRM10 Ammo");
-    clanEquipment.put(new Long(0x01dd), "CLLRM15 Ammo");
-    clanEquipment.put(new Long(0x01de), "CLLRM20 Ammo");
-    clanEquipment.put(new Long(0x01df), "CLSRM2 Ammo");
-    clanEquipment.put(new Long(0x01e0), "CLSRM4 Ammo");
-    clanEquipment.put(new Long(0x01e1), "CLSRM6 Ammo");
-    clanEquipment.put(new Long(0x01e2), "CLStreakSRM2 Ammo");
-    clanEquipment.put(new Long(0x01e3), "CLStreakSRM4 Ammo");
-    clanEquipment.put(new Long(0x01e4), "CLStreakSRM6 Ammo");
-    clanEquipment.put(new Long(0x01e5), "CLArrowIV Ammo");
-    clanEquipment.put(new Long(0x01e9), "CLNarc Pods");
-    clanEquipment.put(new Long(0x0215), "CLFlamer Ammo");
-    clanEquipment.put(new Long(0x023d), "CLLightMG Ammo (200)");
-    clanEquipment.put(new Long(0x023e), "CLHeavyMG Ammo (100)");
-    clanEquipment.put(new Long(0x01f6), "CLVehicleFlamer Ammo");
-    clanEquipment.put(new Long(0x01f7), "CLLongTom Ammo");
-    clanEquipment.put(new Long(0x01f8), "CLSniper Ammo");
-    clanEquipment.put(new Long(0x01f9), "CLThumper Ammo");
-    clanEquipment.put(new Long(0x01fa), "CLLRTorpedo5 Ammo");
-    clanEquipment.put(new Long(0x01fb), "CLLRTorpedo10 Ammo");
-    clanEquipment.put(new Long(0x01fc), "CLLRTorpedo15 Ammo");
-    clanEquipment.put(new Long(0x01fd), "CLLRTorpedo20 Ammo");
-    clanEquipment.put(new Long(0x01fe), "CLSRTorpedo2 Ammo");
-    clanEquipment.put(new Long(0x01ff), "CLSRTorpedo4 Ammo");
-    clanEquipment.put(new Long(0x0200), "CLSRTorpedo6 Ammo");
-    clanEquipment.put(new Long(0x0224), "CLLRTorpedo15 Ammo");
-    clanEquipment.put(new Long(0x0225), "CLLRTorpedo20 Ammo");
-    clanEquipment.put(new Long(0x0222), "CLLRTorpedo5 Ammo");
-    clanEquipment.put(new Long(0x0223), "CLLRTorpedo10 Ammo");
-    clanEquipment.put(new Long(0x0227), "CLSRTorpedo4 Ammo");
-    clanEquipment.put(new Long(0x0226), "CLSRTorpedo2 Ammo");
-    clanEquipment.put(new Long(0x0228), "CLSRTorpedo6 Ammo");
-    clanEquipment.put(new Long(0x028c), "CLATM3 Ammo");
-    clanEquipment.put(new Long(0x028d), "CLATM6 Ammo");
-    clanEquipment.put(new Long(0x028e), "CLATM9 Ammo");
-    clanEquipment.put(new Long(0x028f), "CLATM12 Ammo");
 
     Hashtable clAmmo = new Hashtable();
     AMMO.put(HMVTechType.CLAN, clAmmo);
@@ -964,6 +909,8 @@ public class HmvFile
     Hashtable mixedEquipment = new Hashtable(isEquipment);
     EQUIPMENT.put(HMVTechType.MIXED, mixedEquipment);
     mixedEquipment.put(new Long(0x58), "CLERMicroLaser");
+    mixedEquipment.put(new Long(0x5E), "CLLightMG");
+    mixedEquipment.put(new Long(0x5F), "CLHeavyMG");
     mixedEquipment.put(new Long(0x64), "CLLightActiveProbe");
     mixedEquipment.put(new Long(0x65), "CLLightTAG");
     mixedEquipment.put(new Long(0xA7), "CLERLargeLaser");
@@ -983,7 +930,6 @@ public class HmvFile
     mixedEquipment.put(new Long(0xB7), "CLLBXAC5");
     mixedEquipment.put(new Long(0xB8), "CLLBXAC10");
     mixedEquipment.put(new Long(0xB9), "CLLBXAC20");
-
     mixedEquipment.put(new Long(0xBA), "CLMG");
     mixedEquipment.put(new Long(0xBB), "CLUltraAC2");
     mixedEquipment.put(new Long(0xBC), "CLUltraAC5");
@@ -1035,6 +981,8 @@ public class HmvFile
     //but ammo *seems* to use the same numbers as the weapon it goes with
     Hashtable mixedAmmo = new Hashtable(isAmmo);
     AMMO.put(HMVTechType.MIXED, mixedAmmo);
+    mixedAmmo.put(new Long(0x5E), "CLLightMG Ammo");
+    mixedAmmo.put(new Long(0x5F), "CLHeavyMG Ammo");
     mixedAmmo.put(new Long(0xB4), "CLAntiMissileSystem Ammo");
     mixedAmmo.put(new Long(0xB5), "CLGaussRifle Ammo");
     mixedAmmo.put(new Long(0xB6), "CLLBXAC2 Ammo");
@@ -1121,6 +1069,13 @@ public class HmvFile
     if (equipmentName != null)
     {
       equipmentType = EquipmentType.get(equipmentName);
+      
+      if(equipmentType == null) {
+          failedEquipment.add(equipmentName);
+      }
+    }
+    else {
+        failedEquipment.add("Unknown Equipment ("+Long.toHexString(equipment)+")");
     }
 
     return equipmentType;

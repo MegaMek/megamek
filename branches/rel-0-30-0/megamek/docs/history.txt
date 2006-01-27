@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.30.7-dev (cvs)
+v0.30.7 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java
 + Bug 1395708: MM locks up when using the Prototype weapons
 + Bug 1291856: mech display and minimap windows can be placed offscreen

@@ -16025,13 +16025,6 @@ System.out.println("In here!");
         // Round up at .5 points of damage.
         int toInf = Math.round( damage * percent );
 
-        // Exit if the infantry receive no points of damage.
-        if ( toInf == 0 ) {
-            r = new Report(6445);
-            vPhaseReport.addElement(r);
-            return;
-        }
-
         // Record if we find any infantry.
         boolean foundInfantry = false;
 
@@ -16048,28 +16041,34 @@ System.out.println("In here!");
                 // Is the entity is inside of the building
                 // (instead of just on top of it)?
                 if ( Compute.isInBuilding( game, entity, coords ) ) {
-
-                    // Yup.  Damage the entity.
-                    // Battle Armor units use 5 point clusters.
-                    r = new Report(6450);
-                    r.indent(2);
-                    r.subject = entity.getId();
-                    r.add(entity.getDisplayName());
-                    r.add(toInf);
-                    vPhaseReport.addElement(r);
-                    int remaining = toInf;
-                    int cluster = toInf;
-                    if ( entity instanceof BattleArmor ) {
-                        cluster = 5;
+                    
+                    // Report if the infantry receive no points of damage.
+                    if ( toInf == 0 ) {
+                        r = new Report(6445);
+                        vPhaseReport.addElement(r);
+                    } else {
+                        // Yup.  Damage the entity.
+                        // Battle Armor units use 5 point clusters.
+                        r = new Report(6450);
+                        r.indent(2);
+                        r.subject = entity.getId();
+                        r.add(entity.getDisplayName());
+                        r.add(toInf);
+                        vPhaseReport.addElement(r);
+                        int remaining = toInf;
+                        int cluster = toInf;
+                        if ( entity instanceof BattleArmor ) {
+                            cluster = 5;
+                        }
+                        while ( remaining > 0 ) {
+                            int next = Math.min( cluster, remaining );
+                            HitData hit = entity.rollHitLocation
+                                ( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
+                            vPhaseReport.addAll( damageEntity(entity, hit, next) );
+                            remaining -= next;
+                        }
+                        vPhaseReport.addElement(new Report(1210));
                     }
-                    while ( remaining > 0 ) {
-                        int next = Math.min( cluster, remaining );
-                        HitData hit = entity.rollHitLocation
-                            ( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
-                        vPhaseReport.addAll( damageEntity(entity, hit, next) );
-                        remaining -= next;
-                    }
-                    vPhaseReport.addElement(new Report(1210));
 
                 } // End infantry-inside-building
 

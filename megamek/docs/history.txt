@@ -6,6 +6,9 @@ v0.31.5-dev (CVS)
 + HMVFile now reports failed equipment
 + Fix some bugs in getMtf functionality.
 + Bug 1295062: Heavy Gauss PSR slightly off
++ Patch 1376607: Full Double Blind Message Filtering
+    Note: use Server#addReport() to add Reports instead of 
+    vPhaseReport.addElement() from now on.
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

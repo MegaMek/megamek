@@ -120,7 +120,7 @@ public class Report implements Serializable {
 
     /** The string that appears in the report to obscure certain
         information. */
-    private static final String OBSCURED_STRING = "???";
+    public static final String OBSCURED_STRING = "????";
 
     /** Number of spaces to use per indentation level. */
     private static final int DEFAULT_INDENTATION = 4;
@@ -212,7 +212,7 @@ public class Report implements Serializable {
      * @param data the String to be substituted
      */
     public void add(String data) {
-        add(data, false);
+        add(data, true);
     }
 
     /**

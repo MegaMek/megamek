@@ -80,6 +80,8 @@ public final class Player extends TurnOrdered
     
     private boolean admitsDefeat = false;
     
+    private Vector turnReports = new Vector();
+        
     public Vector getMinefields() {
         return visibleMinefields;
     }
@@ -179,6 +181,10 @@ public final class Player extends TurnOrdered
         return team;
     }
 
+    public Vector getTurnReport(){
+        return turnReports;
+    }
+    
     public void setTeam(int team) {
         this.team = team;
     }

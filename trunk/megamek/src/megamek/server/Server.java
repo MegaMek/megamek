@@ -6720,10 +6720,13 @@ public class Server implements Runnable {
           switch (ae.getWeightClass()) {
           case EntityWeightClass.WEIGHT_LIGHT:
               nMod = 2;
+              break;
           case EntityWeightClass.WEIGHT_MEDIUM:
               nMod = 1;
+              break;
           case EntityWeightClass.WEIGHT_HEAVY:
               nMod = 0;
+              break;
           default:
               nMod = -1;
           }

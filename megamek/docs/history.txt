@@ -1,5 +1,10 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.31.5-dev (CVS)
++ Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS
++ Added some missing level 3 equipment to HMVFile from HMPFile data
++ HMVFile now reports failed equipment
+
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java
 + Bug 1385829: Firing Phase player disconnected from server
@@ -48,9 +53,6 @@ v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug IS Vehicle flamer ammo didnt load from HMP files
 + Bug: Supercharger weight was rounded incorrectly.
 + Mech objects can now be output as mtf files.
-+ Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS
-+ Added some missing level 3 equipment to HMVFile from HMPFile data
-+ HMVFile now reports failed equipment
 
 v0.31.3 (2005-12-20, 16:30 GMT)
 + Bug 1357018: Added trim() to port string for parsing port number.

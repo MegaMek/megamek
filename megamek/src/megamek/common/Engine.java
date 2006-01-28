@@ -231,6 +231,8 @@ public class Engine implements Serializable
         }
     }
 
+    //Don't localize the marked strings below since they are used in mech
+    //file parsing.
     public String getEngineName()
     {
         StringBuffer sb = new StringBuffer();
@@ -240,21 +242,22 @@ public class Engine implements Serializable
         switch (engineType)
         {
             case COMBUSTION_ENGINE:
-                sb.append(Messages.getString("Engine.ICE"));
+                sb.append(" ICE"); //$NON-NLS-1$
                 break;
             case NORMAL_ENGINE:
+                sb.append(" Fusion"); //$NON-NLS-1$
                 break;
             case XL_ENGINE:
-                sb.append(Messages.getString("Engine.XL"));
+                sb.append(" XL"); //$NON-NLS-1$
                 break;
             case LIGHT_ENGINE:
-                sb.append(Messages.getString("Engine.Light"));
+                sb.append(" Light"); //$NON-NLS-1$
                 break;
             case XXL_ENGINE:
-                sb.append(Messages.getString("Engine.XXL"));
+                sb.append(" XXL"); //$NON-NLS-1$
                 break;
             case COMPACT_ENGINE:
-                sb.append(Messages.getString("Engine.Compact"));
+                sb.append(" Compact"); //$NON-NLS-1$
                 break;
             default:
                 return this.problem.toString();

@@ -2688,7 +2688,8 @@ public abstract class Mech
 
         Float tonnage = new Float(weight);
         sb.append( "Mass:" ).append( tonnage.intValue()).append( nl );
-        sb.append( "Engine:" ).append(getEngine().getShortEngineName() );
+        sb.append( "Engine:" ).append(getEngine().getEngineName() )
+            .append( " Engine" );
         sb.append(nl);
         sb.append( "Structure:" );
         sb.append( EquipmentType.getStructureTypeName(getStructureType()) );
@@ -2757,7 +2758,7 @@ public abstract class Mech
                 if (y < getNumberOfCriticals(l))
                     sb.append(decodeCritical(getCritical(l,y))).append(nl);
                 else
-                    sb.append("-Empty-").append(nl);
+                    sb.append(MtfFile.EMPTY).append(nl);
             }
             sb.append(nl);
         }
@@ -2767,7 +2768,7 @@ public abstract class Mech
 
     private String decodeCritical(CriticalSlot cs) {
         if (cs == null)
-            return "---";
+            return MtfFile.EMPTY;
         int type = cs.getType();
         int index = cs.getIndex();
         if (type == CriticalSlot.TYPE_SYSTEM) {

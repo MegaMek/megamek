@@ -4,6 +4,7 @@ v0.31.5-dev (CVS)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS
 + Added some missing level 3 equipment to HMVFile from HMPFile data
 + HMVFile now reports failed equipment
++ Fix some bugs in getMtf functionality.
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

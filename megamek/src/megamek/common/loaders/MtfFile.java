@@ -81,6 +81,8 @@ public class MtfFile implements IMechLoader {
     public static final int rearLocationOrder[] = { Mech.LOC_LT, Mech.LOC_RT,
                                                     Mech.LOC_CT };
 
+    public static final String EMPTY = "-Empty-";
+
     /** Creates new MtfFile */
     public MtfFile(InputStream is) throws EntityLoadingException {
         try {
@@ -158,11 +160,13 @@ public class MtfFile implements IMechLoader {
 
             r.close();
         } catch (IOException ex) {
+            ex.printStackTrace();
             throw new EntityLoadingException("I/O Error reading file");
         } catch (StringIndexOutOfBoundsException ex) {
             ex.printStackTrace();
             throw new EntityLoadingException("StringIndexOutOfBoundsException reading file (format error)");
         } catch (NumberFormatException ex) {
+            ex.printStackTrace();
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
         }
     }
@@ -310,11 +314,13 @@ public class MtfFile implements IMechLoader {
 
             return mech;
         } catch (NumberFormatException ex) {
+            ex.printStackTrace();
             throw new EntityLoadingException("NumberFormatException parsing file");
         } catch (NullPointerException ex) {
             ex.printStackTrace();
             throw new EntityLoadingException("NullPointerException parsing file");
         } catch (StringIndexOutOfBoundsException ex) {
+            ex.printStackTrace();
             throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");
         }
     }
@@ -427,12 +433,12 @@ public class MtfFile implements IMechLoader {
                         mech.addEquipment(etype, loc, rearMounted);
                     }
                 } else {
-                    if (!critName.equals("-Empty-")) {
+                    if (!critName.equals(MtfFile.EMPTY)) {
                         //Can't load this piece of equipment!
                         // Add it to the list so we can show the user.
                         mech.addFailedEquipment(critName);
                         // Make the failed equipment an empty slot
-                        critData[loc][i] = "-Empty-";
+                        critData[loc][i] = MtfFile.EMPTY;
                         // Compact criticals again
                         compactCriticals(mech, loc);
                         // Re-parse the same slot, since the compacting
@@ -470,14 +476,14 @@ public class MtfFile implements IMechLoader {
         }
         int firstEmpty = -1;
         for (int slot = 0; slot < mech.getNumberOfCriticals(loc); slot++) {
-            if (critData[loc][slot].equals("-Empty-")) {
+            if (critData[loc][slot].equals(MtfFile.EMPTY)) {
                 firstEmpty = slot;
             }
-            if (firstEmpty != -1 && !critData[loc][slot].equals("-Empty-")) {
+            if (firstEmpty != -1 && !critData[loc][slot].equals(MtfFile.EMPTY)) {
                 //move this to the first empty slot
                 critData[loc][firstEmpty] = critData[loc][slot];
                 //mark the old slot empty
-                critData[loc][slot] = "-Empty-";
+                critData[loc][slot] = MtfFile.EMPTY;
                 //restart just after the moved slot's new location
                 slot = firstEmpty;
                 firstEmpty = -1;

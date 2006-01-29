@@ -3524,8 +3524,10 @@ public class Server implements Runnable {
                             // Stay in the current hex and stop skidding.
                             break;
                         }
+                        IHex hex = game.getBoard().getHex(newPos);
+                        int terrainLevel = hex.ceiling() - hex.surface();
                         int newElevation=(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation,step.climbMode()));
-                        if(newElevation<=0) {                            
+                        if(newElevation<=terrainLevel) {                            
                             r = new Report(2105);
                             r.subject = entity.getId();
                             r.add(newPos.getBoardNum(), true);
@@ -3552,16 +3554,14 @@ public class Server implements Runnable {
                             }
                             curPos=newPos;
                             curVTOLElevation=newElevation;
-                            addReport(
-                                                  crashVTOL(((VTOL)entity),true,distance,curPos,curVTOLElevation,table));
-                            curVTOLElevation=0;
-                            IHex hex = game.getBoard().getHex(newPos);
+                            addReport(crashVTOL(((VTOL)entity),true,distance,curPos,curVTOLElevation,table));
+                            
                             if((hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE))
                                 || hex.containsTerrain(Terrains.WOODS)
                                 || hex.containsTerrain(Terrains.JUNGLE)) {
-                                addReport(
-                                                      destroyEntity(entity,"could not land in crash site"));
-                            } else {
+                                addReport(destroyEntity(entity,"could not land in crash site"));
+                            } else if(newElevation < hex.terrainLevel(Terrains.BLDG_ELEV)){
+                                addReport(destroyEntity(entity, "crashed into building"));
                             }
                         } else {
                             r = new Report(2110);
@@ -14643,6 +14643,9 @@ System.out.println("In here!");
             if (vCanSee.contains(e.getOwner()) || !e.isActive()) {
                 continue;
             }
+            if(e.isOffBoard()) {
+                continue; //Off board units should not spot on board units
+            }
             if (Compute.canSee(game, e, entity)) {
                 vCanSee.addElement(e.getOwner());
                 if (bTeamVision) {
@@ -14730,6 +14733,9 @@ System.out.println("In here!");
             }
             for (int y = 0; y < vMyEntities.size(); y++) {
                 Entity e2 = (Entity)vMyEntities.elementAt(y);
+                if(e2.isOffBoard()) {
+                    continue;
+                }
                 if (Compute.canSee(game, e2, e)) {
                     vCanSee.addElement(e);
                     break;

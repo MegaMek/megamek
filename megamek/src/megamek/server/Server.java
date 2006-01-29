@@ -3875,7 +3875,7 @@ public class Server implements Runnable {
             }
 
             // Handle non-infantry moving into a building.
-            int buildingMove = entity.checkMovementInBuilding(step, prevStep, curHex, prevHex);
+            int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             if (buildingMove > 0) {
 
                 // Get the building being exited.

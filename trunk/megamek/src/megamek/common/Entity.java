@@ -3558,9 +3558,11 @@ public abstract class Entity
      *  @return 0, no eligable building; 1, exiting; 2, entering; 3, both; 4, stepping on roof
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep,
-                                           IHex curHex, IHex prevHex) {
-        if(prevHex == curHex)
+                                           Coords curPos, Coords prevPos) {
+        if(prevPos.equals(curPos))
             return 0;
+        IHex curHex = game.getBoard().getHex(curPos);
+        IHex prevHex = game.getBoard().getHex(prevPos);
         // ineligable because of movement type or unit type
         if(this instanceof Infantry || this instanceof Protomech || step.getMovementType() == IEntityMovementType.MOVE_JUMP)
             return 0;

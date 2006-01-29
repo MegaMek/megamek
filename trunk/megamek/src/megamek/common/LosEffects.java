@@ -417,12 +417,12 @@ public class LosEffects {
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
-            targetInBuilding = Compute.isInBuilding(game, game.getBoard().getHex(ai.targetPos).floor(), ai.targetPos);
+            targetInBuilding = Compute.isInBuilding(game, ai.targetAbsHeight - game.getBoard().getHex(ai.targetPos).surface(), ai.targetPos);
         }
     
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
-        if ( targetInBuilding && Compute.isInBuilding( game, game.getBoard().getHex(ai.attackPos).floor(), ai.attackPos ) ) {
+        if ( targetInBuilding && Compute.isInBuilding( game, ai.attackAbsHeight - game.getBoard().getHex(ai.attackPos).surface(), ai.attackPos ) ) {
             los.setThruBldg( game.getBoard().getBuildingAt( in[0] ) );
         }
     
@@ -483,12 +483,12 @@ public class LosEffects {
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
-            targetInBuilding = Compute.isInBuilding(game, game.getBoard().getHex(ai.targetPos).floor(), ai.targetPos);
+            targetInBuilding = Compute.isInBuilding(game, ai.targetAbsHeight - game.getBoard().getHex(ai.targetPos).surface(), ai.targetPos);
         }
-
+    
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
-        if ( targetInBuilding && Compute.isInBuilding( game, game.getBoard().getHex(ai.attackPos).floor(), ai.attackPos ) ) {
+        if ( targetInBuilding && Compute.isInBuilding( game, ai.attackAbsHeight - game.getBoard().getHex(ai.attackPos).surface(), ai.attackPos ) ) {
             los.setThruBldg( game.getBoard().getBuildingAt( in[0] ) );
         }
 

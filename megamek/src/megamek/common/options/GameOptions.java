@@ -80,6 +80,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level3,"allow_level_3_units", false);
         addOption(level3,"allow_level_3_ammo", false);
         addOption(level3,"double_blind", false); //$NON-NLS-1$
+        addOption(level3,"supress_all_double_blind_messages", false); //$NON-NLS-1$
         addOption(level3,"dusk", false); //$NON-NLS-1$
         addOption(level3,"team_vision", true); //$NON-NLS-1$
         addOption(level3,"floating_crits", false); //$NON-NLS-1$

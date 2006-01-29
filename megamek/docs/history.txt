@@ -12,6 +12,8 @@ v0.31.5-dev (CVS)
 + Bug 1417988: full double blind causes NPE starting game
 + Bug 1410795: Unit on top of a building receive protection
 + Bug 1413027: PSR should not be required for turning in a building hex
++ Bug VTOL undamaged by sideslip into building
++ Bug Offboard artillery revealing enemy in double blind
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

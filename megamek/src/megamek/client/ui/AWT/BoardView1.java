@@ -4261,7 +4261,7 @@ public class BoardView1
     /* (non-Javadoc)
      * @see megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
-    public void boardChangedHex(BoardEvent b) {
+    public synchronized void boardChangedHex(BoardEvent b) {
         IHex hex = game.getBoard().getHex(b.getCoords());
         tileManager.clearHex(hex);
         tileManager.waitForHex(hex);

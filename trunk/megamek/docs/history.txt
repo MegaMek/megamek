@@ -14,6 +14,7 @@ v0.31.5-dev (CVS)
 + Bug 1413027: PSR should not be required for turning in a building hex
 + Bug VTOL undamaged by sideslip into building
 + Bug Offboard artillery revealing enemy in double blind
++ Bug 1409596: Engine explosion damage counts multiple times for 20+ damage PSR
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

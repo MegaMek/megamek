@@ -12672,7 +12672,6 @@ System.out.println("In here!");
 
                     while (damage > 0) {
                         int cluster = Math.min(5, damage);
-                        entity.damageThisPhase += cluster;
                         HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(en, entity));
                         vDesc.addAll( damageEntity(entity, hit, cluster));
                         damage -= cluster;

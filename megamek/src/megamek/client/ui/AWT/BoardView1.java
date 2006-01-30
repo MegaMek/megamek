@@ -4421,11 +4421,8 @@ public class BoardView1
     }
 
     public synchronized void WeaponSelected(MechDisplayEvent b) {
-        System.err.println("WeaponSelected");
         selectedEntity = b.getEntity();
         selectedWeapon = b.getEquip();
-        System.err.println(selectedEntity.getDisplayName());
-        System.err.println(selectedWeapon.getName());
         repaint(100);
     }
 

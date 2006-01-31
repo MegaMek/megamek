@@ -1821,8 +1821,8 @@ public abstract class Mech
                 // (extrapolated from rule intent - not covered in rules)
                 if ((loc != LOC_CT && loc != LOC_RLEG && loc != LOC_LLEG
                      && loc != LOC_HEAD) &&
-                    ((loc == LOC_RT || loc == LOC_LT) &&
-                     getEngine().getSideTorsoCriticalSlots().length < 3)) {
+                    !((loc == LOC_RT || loc == LOC_LT) &&
+                      getEngine().getSideTorsoCriticalSlots().length > 2)) {
                     continue;
                 }
              } else {

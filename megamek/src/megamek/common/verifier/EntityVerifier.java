@@ -212,6 +212,10 @@ public class EntityVerifier implements MechSummaryCache.Listener
                     i++;
                     entityName = args[i];
                 }
+            } else {
+                System.err.println("Error: Invalid argument.\n");
+                System.err.println("Usage:\n\tEntityVerifier [-file <FILENAME>]");
+                return;
             }
         }
 

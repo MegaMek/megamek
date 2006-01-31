@@ -368,8 +368,7 @@ public class Pilot
      * @return  <code>true</code> if the pilot has abandoned her vehicle,
      *          <code>false</code> if the pilot is still in the vehicle.
      */
-    public boolean isEjected()
-    {
+    public boolean isEjected() {
         return this.ejected;
     }
 
@@ -378,8 +377,7 @@ public class Pilot
      *
      * @param   abandoned the <code>boolean</code> value to set.
      */
-    public void setEjected( boolean abandoned )
-    {
+    public void setEjected( boolean abandoned ) {
         this.ejected = abandoned;
     }
 }

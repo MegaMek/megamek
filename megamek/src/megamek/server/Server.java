@@ -11742,8 +11742,7 @@ System.out.println("In here!");
                 Mech mech = (Mech)te;
                 if (mech.isAutoEject()) {
                     autoEject = true;
-                    vDesc.addAll(
-                                          ejectEntity(te, true));
+                    vDesc.addAll(ejectEntity(te, true));
                 }
             }
         }
@@ -13009,7 +13008,6 @@ System.out.println("In here!");
                         // third engine hit
                         vDesc.addAll(
                             destroyEntity(en, "engine destruction"));
-                        //TODO Add auto abandon code here also.
                         if (game.getOptions().booleanOption("auto_abandon_unit")) {
                             vDesc.addAll(abandonEntity(en));
                         }
@@ -17296,7 +17294,7 @@ System.out.println("In here!");
                     rollTarget.addModifier(targetHex.terrainLevel(Terrains.BLDG_ELEV), "landing in a building");
                 } else rollTarget.addModifier(-2, "landing in clear terrain");
             } else {
-                    rollTarget.addModifier(-2, "landing off the board");
+                rollTarget.addModifier(-2, "landing off the board");
             }
             if (autoEject) {
                 r = new Report(6395);
@@ -17346,7 +17344,7 @@ System.out.println("In here!");
             }
             if (entity.getCrew().isDoomed()) {
                 vDesc.addAll(
-                                      destroyEntity(pilot, "deadly ejection", false, false));
+                        destroyEntity(pilot, "deadly ejection", false, false));
             }
             else {
                 // Add the pilot as an infantry unit on the battlefield.

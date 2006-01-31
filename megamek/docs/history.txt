@@ -18,6 +18,7 @@ v0.31.5-dev (CVS)
 + Bug 1419144: BoardView1 deadlock
 + Bug 1415093: Hardened armor not loading correctly.
 + Bug 1412726: Some clan mechs have wrong BV
++ Bug: Hardened armor weight incorrect.  Also fixed GTR-1 data file.
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

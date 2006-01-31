@@ -16,6 +16,7 @@ v0.31.5-dev (CVS)
 + Bug Offboard artillery revealing enemy in double blind
 + Bug 1409596: Engine explosion damage counts multiple times for 20+ damage PSR
 + Bug 1419144: BoardView1 deadlock
++ Bug 1415093: Hardened armor not loading correctly.
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

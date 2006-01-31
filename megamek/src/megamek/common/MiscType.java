@@ -377,6 +377,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createFerroFibrousPrototype());
         EquipmentType.addType(createLightFerroFibrous());
         EquipmentType.addType(createHeavyFerroFibrous());
+        EquipmentType.addType(createHardened());
         EquipmentType.addType(createEndoSteelPrototype());
         EquipmentType.addType(createReinforcedStructure());
         EquipmentType.addType(createCompositeStructure());
@@ -1356,6 +1357,19 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        
+        return misc;
+    }
+
+    public static MiscType createHardened() {
+        MiscType misc = new MiscType();
+        
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HARDENED);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HARDENED));
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.bv = 0;
         
         return misc;
     }

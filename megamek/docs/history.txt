@@ -12,13 +12,14 @@ v0.31.5-dev (CVS)
 + Bug 1417988: full double blind causes NPE starting game
 + Bug 1410795: Unit on top of a building receive protection
 + Bug 1413027: PSR should not be required for turning in a building hex
-+ Bug VTOL undamaged by sideslip into building
-+ Bug Offboard artillery revealing enemy in double blind
++ Bug: VTOL undamaged by sideslip into building
++ Bug: Offboard artillery revealing enemy in double blind
 + Bug 1409596: Engine explosion damage counts multiple times for 20+ damage PSR
 + Bug 1419144: BoardView1 deadlock
 + Bug 1415093: Hardened armor not loading correctly.
 + Bug 1412726: Some clan mechs have wrong BV
 + Bug: Hardened armor weight incorrect.  Also fixed GTR-1 data file.
++ Bug 1420971 artillery home edge chooses "north" for SE and SW starts.
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

@@ -200,6 +200,22 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
                         case 8:
                             direction = IOffBoardDirections.WEST;
                             break;
+                        case 11:
+                        case 12:
+                        case 13:
+                            direction = IOffBoardDirections.NORTH;
+                            break;
+                        case 14:
+                            direction = IOffBoardDirections.EAST;
+                            break;
+                        case 15:
+                        case 16:
+                        case 17:
+                            direction = IOffBoardDirections.SOUTH;
+                            break;
+                        case 18:
+                            direction = IOffBoardDirections.WEST;
+                            break;
                     }
                     Enumeration thisPlayerArtyUnits = client.game.getSelectedEntities
                     ( new EntitySelector() {

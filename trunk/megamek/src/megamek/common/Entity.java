@@ -4717,12 +4717,12 @@ public abstract class Entity
     /**
      * Get the direction the board that the unit will be deployed.
      * If the unit is to be deployed onboard, the distance will be
-     * <code>Entity.NONE</code>, otherwise it will be one of the
+     * <code>IOffBoardDirections.NONE</code>, otherwise it will be one of the
      * values:<ul>
-     * <li><code>Entity.NORTH</code></li>
-     * <li><code>Entity.SOUTH</code></li>
-     * <li><code>Entity.EAST</code></li>
-     * <li><code>Entity.WEST</code></li>
+     * <li><code>IOffBoardDirections.NORTH</code></li>
+     * <li><code>IOffBoardDirections.SOUTH</code></li>
+     * <li><code>IOffBoardDirections.EAST</code></li>
+     * <li><code>IOffBoardDirections.WEST</code></li>
      * </ul>
      *
      * @return  the <code>int</code> direction from the board the unit will

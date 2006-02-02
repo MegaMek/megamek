@@ -28,6 +28,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
+import megamek.common.ArmlessMech;
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
@@ -427,9 +428,15 @@ public class HmpFile
     /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
     public Entity getEntity() throws EntityLoadingException {
         try {
-            Mech mech = (chassisType == ChassisType.QUADRAPED) ? (Mech) new QuadMech(
-                    gyroType, cockpitType)
-                    : (Mech) new BipedMech(gyroType, cockpitType);
+            Mech mech = null;
+            if(chassisType == ChassisType.QUADRAPED_OMNI
+                    ||chassisType == ChassisType.QUADRAPED) {
+                mech =  new QuadMech(gyroType, cockpitType);
+            } else if (chassisType == ChassisType.ARMLESS) {
+                mech =  new ArmlessMech(gyroType, cockpitType);
+            } else {
+                mech =  new BipedMech(gyroType, cockpitType);
+            }
 
             mech.setChassis(name);
             mech.setModel(model);
@@ -558,10 +565,13 @@ public class HmpFile
         setupCriticals(mech, rlCriticals, Mech.LOC_RLEG);
         compactCriticals(llCriticals);
         setupCriticals(mech, llCriticals, Mech.LOC_LLEG);
-        compactCriticals(raCriticals);
-        setupCriticals(mech, raCriticals, Mech.LOC_RARM);
-        compactCriticals(laCriticals);
-        setupCriticals(mech, laCriticals, Mech.LOC_LARM);
+        if(chassisType != ChassisType.ARMLESS) {
+            //HMP helpfully includes arm actuators in armless mechs
+            compactCriticals(raCriticals);
+            setupCriticals(mech, raCriticals, Mech.LOC_RARM);
+            compactCriticals(laCriticals);
+            setupCriticals(mech, laCriticals, Mech.LOC_LARM);
+        }
         compactCriticals(rtCriticals);
         setupCriticals(mech, rtCriticals, Mech.LOC_RT);
         compactCriticals(ltCriticals);

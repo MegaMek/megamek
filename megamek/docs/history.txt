@@ -20,6 +20,7 @@ v0.31.5-dev (CVS)
 + Bug 1412726: Some clan mechs have wrong BV
 + Bug: Hardened armor weight incorrect.  Also fixed GTR-1 data file.
 + Bug 1420971 artillery home edge chooses "north" for SE and SW starts.
++ Armless mechs
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

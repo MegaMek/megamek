@@ -240,6 +240,7 @@ class ArmorPanel  extends PicMap
     private VTOLMapSet vtol;
     private QuadMapSet quad;
     private GunEmplacementMapSet gunEmplacement;
+    private ArmlessMechMapSet armless;
     private int minTopMargin = 0;
     private int minLeftMargin = 0;
     private int minBottomMargin = 0;
@@ -266,6 +267,7 @@ class ArmorPanel  extends PicMap
         vtol = new VTOLMapSet(this);
         quad = new QuadMapSet(this);
         gunEmplacement = new GunEmplacementMapSet(this);
+        armless = new ArmlessMechMapSet(this);
     }
 
     public void onResize(){
@@ -290,6 +292,12 @@ class ArmorPanel  extends PicMap
         removeAll();
         if (en instanceof QuadMech) {
             ams = quad;
+            minLeftMargin = minMechLeftMargin;
+            minTopMargin = minMechTopMargin;
+            minBottomMargin = minMechBottomMargin;
+            minRightMargin = minMechRightMargin;
+        } else if (en instanceof ArmlessMech) {
+            ams = armless;
             minLeftMargin = minMechLeftMargin;
             minTopMargin = minMechTopMargin;
             minBottomMargin = minMechBottomMargin;

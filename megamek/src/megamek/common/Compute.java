@@ -2900,7 +2900,6 @@ public class Compute {
         }
 
         // Get the Hex at those coordinates.
-        final IHex curHex = game.getBoard().getHex(coords);
 
         return isInBuilding(game, entity.getElevation(), coords);
     }
@@ -2916,7 +2915,6 @@ public class Compute {
         }
 
         // Get the elevations occupied by the building.
-        int surface = curHex.surface();
         int bldgHeight = curHex.terrainLevel(Terrains.BLDG_ELEV);
         int basement = 0;
         if (curHex.containsTerrain(Terrains.BLDG_BASEMENT)) {
@@ -2924,8 +2922,8 @@ public class Compute {
         }
 
         // Return true if the entity is in the range of building elevations.
-        if (entityElev >= (surface - basement)
-                && entityElev < (surface + bldgHeight)) {
+        if (entityElev >= (-basement)
+                && entityElev < (bldgHeight)) {
             return true;
         }
 

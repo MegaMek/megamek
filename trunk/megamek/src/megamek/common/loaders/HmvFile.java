@@ -75,7 +75,7 @@ public class HmvFile
 
   private Hashtable equipment = new Hashtable();
 
-  private int troopSpace = 0;
+  private float troopSpace = 0;
   
   private String fluff;
   
@@ -267,38 +267,14 @@ public class HmvFile
       for ( int loop = 0; loop < bayCount; loop++ ) {
 
           // Read the size of this bay.
-          dis.skipBytes(2);
-          int baySizeCode = readUnsignedShort(dis);
-
-          // manufacturer name
+          //dis.skipBytes(2);
+          float baySize = readFloat(dis);        
+    
+          // bay name (this is free text, so we can't be certain if it is an infantry bay or something else)
           dis.skipBytes(readUnsignedShort(dis));
-
+    
           // Add the troopSpace of this bay to our running total.
-          switch ( baySizeCode ) {
-          case 0x3F80:  // 1 ton
-          case 0x4020:  // 1 ton???
-              troopSpace += 1;
-              break;
-          case 0x4040:  // 3 tons
-          case 0x4060:  // 3.5 tons
-              troopSpace += 3;
-              break;
-          case 0x4080:  // 4 tons
-              troopSpace += 4;
-              break;
-          case 0x40A0:  // 5 tons
-              troopSpace += 5;
-              break;
-          case 0x40C0:  // 6 tons
-              troopSpace += 6;
-              break;
-          case 0x40F0:  // 7.5 tons
-              troopSpace += 7;
-              break;
-          case 0x4100:  // 8 tons???
-              troopSpace += 8;
-              break;
-          }
+          troopSpace += baySize;
 
       } // Handle the next bay.
       
@@ -380,6 +356,17 @@ public class HmvFile
     return b1 + b2;
   }
 
+  /**
+   * Read a single precision float from a file in little endian format 
+   * @param dis
+   * @return
+   * @throws IOException
+   */
+  private float readFloat(DataInputStream dis) throws IOException {
+      int bits = dis.readInt();
+      return Float.intBitsToFloat(Integer.reverseBytes(bits));
+  }
+  
   /**
      * Determine if the buffer contains the "is omni" flag.
      *
@@ -494,8 +481,9 @@ public class HmvFile
             addEquipment(vehicle, HMVWeaponLocation.BODY, Tank.LOC_BODY);
 
             // Do we have any infantry/cargo bays?
-            if ( troopSpace > 0 ) {
-                vehicle.addTransporter( new TroopSpace( troopSpace ) );
+            int capacity = (int) Math.round(Math.floor(troopSpace));
+            if ( capacity > 0 ) {
+                vehicle.addTransporter( new TroopSpace( capacity ) );
             }
             
             addFailedEquipment(vehicle);

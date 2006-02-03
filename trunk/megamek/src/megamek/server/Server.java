@@ -14584,8 +14584,16 @@ System.out.println("In here!");
     }
 
     private void entityUpdate(int nEntityID, Vector movePath) {
+        Entity eTarget = game.getEntity(nEntityID);
+        if(eTarget == null) {
+            if(game.getOutOfGameEntity(nEntityID) != null) {
+                System.err.printf("S: attempted to send entity update for out of game entity, id was %d\n", nEntityID);
+            } else {
+                System.err.printf("S: attempted to send entity update for null entity, id was %d\n", nEntityID);
+            }
+            return; //do not send the update it will crash the client
+        }
         if (doBlind()) {
-            Entity eTarget = game.getEntity(nEntityID);
             Vector vPlayers = game.getPlayersVector();
             Vector vCanSee = whoCanSee(eTarget);
             // send an entity update to everyone who can see

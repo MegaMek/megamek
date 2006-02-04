@@ -6143,7 +6143,8 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.explosive = true;
         weapon.criticals = 2;
-        weapon.bv = 0;
+        weapon.bv = 15;
+        weapon.cost = 8500;
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
 
         return weapon;

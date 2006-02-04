@@ -26,6 +26,7 @@ v0.31.5-dev (CVS)
 + Prevent (&log) server from sending null entity packets to the client.
 + Hopalong's weapons patch (except phoenix, hawk and streak mrm missiles)
 + Bug 1421043: MASC psr roll not in phase report
++ BAP subtracts 1 from wood BTH mod
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

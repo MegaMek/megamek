@@ -976,23 +976,42 @@ public class Compute {
         } // End attacker-is-Protomech
 
         // Is the shoulder destroyed?
-        else if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                Mech.ACTUATOR_SHOULDER, weapon.getLocation()) > 0) {
-            mods.addModifier(4, "shoulder actuator destroyed");
-        } else {
-            // no shoulder hits, add other arm hits
-            int actuatorHits = 0;
-            if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mech.ACTUATOR_UPPER_ARM, weapon.getLocation()) > 0) {
-                actuatorHits++;
+        else {
+            // split weapons need to account for arm actuator hits, too
+            // see bug 1363690
+            // we don't need to specifically check for weapons split between
+            // torso and leg, because for those, the location stored in the
+            // Mounted is the leg.
+            int location = weapon.getLocation();
+            if (weapon.isSplit()) {
+                switch (location) {
+                    case Mech.LOC_LT:
+                        location = Mech.LOC_LARM;
+                        break;
+                    case Mech.LOC_RT:
+                        location = Mech.LOC_RARM;
+                        break;
+                    default:
+                }
             }
             if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mech.ACTUATOR_LOWER_ARM, weapon.getLocation()) > 0) {
-                actuatorHits++;
-            }
-            if (actuatorHits > 0) {
-                mods.addModifier(actuatorHits, actuatorHits
-                        + " destroyed arm actuators");
+                    Mech.ACTUATOR_SHOULDER, location) > 0) {
+                mods.addModifier(4, "shoulder actuator destroyed");
+            } else {
+                // no shoulder hits, add other arm hits
+                int actuatorHits = 0;
+                if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                        Mech.ACTUATOR_UPPER_ARM, location) > 0) {
+                    actuatorHits++;
+                }
+                if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                        Mech.ACTUATOR_LOWER_ARM, location) > 0) {
+                    actuatorHits++;
+                }
+                if (actuatorHits > 0) {
+                    mods.addModifier(actuatorHits, actuatorHits
+                            + " destroyed arm actuators");
+                }
             }
         }
 

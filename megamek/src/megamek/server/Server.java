@@ -7869,12 +7869,20 @@ public class Server implements Runnable {
                 sSalvoType = " missile(s) ";
                 // Get the damage from the linked ammo.
                 nDamPerHit = atype.getDamagePerShot();
+                if ((wtype.getAmmoType() == AmmoType.T_TBOLT5
+                        || wtype.getAmmoType() == AmmoType.T_TBOLT10
+                        || wtype.getAmmoType() == AmmoType.T_TBOLT15
+                        || wtype.getAmmoType() == AmmoType.T_TBOLT20
+                        ) && nRange <= wtype.getMinimumRange()) {
+                    nDamPerHit /= 2;
+                } 
             }
 
             if ( wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_LRM_STREAK ||
                  wtype.getAmmoType() == AmmoType.T_MRM ||
                  wtype.getAmmoType() == AmmoType.T_ATM ||
+                 wtype.getAmmoType() == AmmoType.T_EXLRM ||
                  wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER ) {
                 nCluster = 5;
             }

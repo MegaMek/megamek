@@ -530,8 +530,13 @@ public class Compute {
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         boolean isLRMInfantry = isWeaponInfantry
                 && wtype.getAmmoType() == AmmoType.T_LRM;
-        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype
-                .getAmmoType() == AmmoType.T_LRM_TORPEDO))
+        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM)
+                || (wtype.getAmmoType() == AmmoType.T_EXLRM)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT5) 
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT10)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT15)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT20)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
                 && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(
                 "maxtech_range");

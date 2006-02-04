@@ -172,7 +172,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
-        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
+        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) 
+                || (wtype.getAmmoType() == AmmoType.T_EXLRM)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT5) 
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT10)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT15)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT20)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
             && weapon.curMode().equals("Indirect");
         boolean isInferno =
             ( atype != null &&

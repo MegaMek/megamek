@@ -60,7 +60,13 @@ public class AmmoType extends EquipmentType {
     public static final int     T_LAC               = 35;
     public static final int     T_HEAVY_FLAMER      = 36;
     public static final int     T_COOLANT_POD       = 37; // not really ammo, but explodes and is depleted
-    public static final int     NUM_TYPES           = 38;
+    public static final int     T_EXLRM             = 38;
+    public static final int     T_TBOLT5            = 39;
+    public static final int     T_TBOLT10           = 40;
+    public static final int     T_TBOLT15           = 41;
+    public static final int     T_TBOLT20           = 42;
+    public static final int     T_RAIL_GUN          = 43;
+    public static final int     NUM_TYPES           = 44;
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
@@ -271,7 +277,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISLAC5Ammo());
         EquipmentType.addType(createISHeavyFlamerAmmo());
         EquipmentType.addType(createCoolantPod());
-
+        EquipmentType.addType(createISRailGunAmmo());
+        
         // Start of Level2 Ammo
         EquipmentType.addType(createISLB2XAmmo());
         EquipmentType.addType(createISLB5XAmmo());
@@ -324,6 +331,15 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISSRT2Ammo());
         EquipmentType.addType(createISSRT4Ammo());
         EquipmentType.addType(createISSRT6Ammo());
+        EquipmentType.addType(createISExtendedLRM5Ammo());
+        EquipmentType.addType(createISExtendedLRM10Ammo());
+        EquipmentType.addType(createISExtendedLRM15Ammo());
+        EquipmentType.addType(createISExtendedLRM20Ammo());
+        EquipmentType.addType(createISThunderbolt5Ammo());
+        EquipmentType.addType(createISThunderbolt10Ammo());
+        EquipmentType.addType(createISThunderbolt15Ammo());
+        EquipmentType.addType(createISThunderbolt20Ammo());
+
         base = createISLongTomAmmo();
         artyAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -3911,6 +3927,7 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
         ammo.name = "SRM 2 Ammo";
         ammo.setInternalName("BA-SRM2 Ammo");
+        ammo.addLookupName("BASRM-2 Ammo");
         ammo.addLookupName("BASRM2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
@@ -4436,7 +4453,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "BA SRM 6 Ammo";
         ammo.setInternalName("BA Ammo SRM-6");
         ammo.addLookupName("BASRM-6 Ammo");
-        ammo.addLookupName("BASRM-6 Ammo");
+        ammo.addLookupName("BASRM6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
@@ -4454,7 +4471,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "BA SRM 5 Ammo";
         ammo.setInternalName("BA Ammo SRM-5");
         ammo.addLookupName("BASRM-5 Ammo");
-        ammo.addLookupName("BASRM-5 Ammo");
+        ammo.addLookupName("BASRM5 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM;
@@ -4472,7 +4489,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "BA SRM 4 Ammo";
         ammo.setInternalName("BA Ammo SRM-4");
         ammo.addLookupName("BASRM-4 Ammo");
-        ammo.addLookupName("BASRM-4 Ammo");
+        ammo.addLookupName("BASRM4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM;
@@ -4490,7 +4507,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "BA SRM 3 Ammo";
         ammo.setInternalName("BA Ammo SRM-3");
         ammo.addLookupName("BASRM-3 Ammo");
-        ammo.addLookupName("BASRM-3 Ammo");
+        ammo.addLookupName("BASRM3 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM;
@@ -4508,7 +4525,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "BA SRM 1 Ammo";
         ammo.setInternalName("BA Ammo SRM-1");
         ammo.addLookupName("BASRM-1 Ammo");
-        ammo.addLookupName("BASRM-1 Ammo");
+        ammo.addLookupName("BASRM1 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_SRM;
@@ -4879,6 +4896,168 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createISExtendedLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "ExtendedLRM 5 Ammo";
+        ammo.setInternalName("IS Ammo ExtendedLRM-5");
+        ammo.addLookupName("ISExtendedLRM5 Ammo");
+        ammo.addLookupName("IS ExtendedLRM 5 Ammo");
+        ammo.addLookupName("ELRM-5 Ammo (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_EXLRM;
+        ammo.shots = 18;
+        ammo.bv = 7;
+        ammo.cost = 90000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISExtendedLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "ExtendedLRM 10 Ammo";
+        ammo.setInternalName("IS Ammo ExtendedLRM-10");
+        ammo.addLookupName("ISExtendedLRM10 Ammo");
+        ammo.addLookupName("IS ExtendedLRM 10 Ammo");
+        ammo.addLookupName("ELRM-10 Ammo (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_EXLRM;
+        ammo.shots = 9;
+        ammo.bv = 15;
+        ammo.cost = 90000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISExtendedLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "ExtendedLRM 15 Ammo";
+        ammo.setInternalName("IS Ammo ExtendedLRM-15");
+        ammo.addLookupName("ISExtendedLRM15 Ammo");
+        ammo.addLookupName("IS ExtendedLRM 15 Ammo");
+        ammo.addLookupName("ELRM-15 Ammo (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_EXLRM;
+        ammo.shots = 6;
+        ammo.bv = 22;
+        ammo.cost = 90000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISExtendedLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "ExtendedLRM 20 Ammo";
+        ammo.setInternalName("IS Ammo ExtendedLRM-20");
+        ammo.addLookupName("ISExtendedLRM20 Ammo");
+        ammo.addLookupName("IS ExtendedLRM 20 Ammo");
+        ammo.addLookupName("ELRM-20 Ammo (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_EXLRM;
+        ammo.shots = 4;
+        ammo.bv = 30;
+        ammo.cost = 90000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISThunderbolt5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Thunderbolt 5 Ammo";
+        ammo.setInternalName("IS Ammo Thunderbolt-5");
+        ammo.addLookupName("ISThunderbolt5 Ammo");
+        ammo.addLookupName("IS Thunderbolt 5 Ammo");
+        ammo.damagePerShot = 5;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_TBOLT5;
+        ammo.shots = 12;
+        ammo.bv = 8;
+        ammo.cost = 50000;
+
+        return ammo;
+    }
+    public static AmmoType createISThunderbolt10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Thunderbolt 10 Ammo";
+        ammo.setInternalName("IS Ammo Thunderbolt-10");
+        ammo.addLookupName("ISThunderbolt10 Ammo");
+        ammo.addLookupName("IS Thunderbolt 10 Ammo");
+        ammo.damagePerShot = 10;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_TBOLT10;
+        ammo.shots = 6;
+        ammo.bv = 16;
+        ammo.cost = 50000;
+
+        return ammo;
+    }
+    public static AmmoType createISThunderbolt15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Thunderbolt 15 Ammo";
+        ammo.setInternalName("IS Ammo Thunderbolt-15");
+        ammo.addLookupName("ISThunderbolt15 Ammo");
+        ammo.addLookupName("IS Thunderbolt 15 Ammo");
+        ammo.damagePerShot = 15;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_TBOLT15;
+        ammo.shots = 4;
+        ammo.bv = 26;
+        ammo.cost = 50000;
+
+        return ammo;
+    }
+    public static AmmoType createISThunderbolt20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Thunderbolt 20 Ammo";
+        ammo.setInternalName("IS Ammo Thunderbolt-20");
+        ammo.addLookupName("ISThunderbolt20 Ammo");
+        ammo.addLookupName("IS Thunderbolt 20 Ammo");
+        ammo.damagePerShot = 20;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_TBOLT20;
+        ammo.shots = 3;
+        ammo.bv = 35;
+        ammo.cost = 50000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISRailGunAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Rail Gun Ammo";
+        ammo.setInternalName("ISRailGun Ammo");
+        ammo.addLookupName("IS Rail Gun Ammo");
+        ammo.damagePerShot = 22;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_RAIL_GUN;
+        ammo.shots = 5;
+        ammo.bv = 51;
+        ammo.cost = 20000;
+
+        return ammo;
+    }
+
     public String toString() {
         return "Ammo: " + name;
     }
@@ -4887,6 +5066,8 @@ public class AmmoType extends EquipmentType {
 
         if (at != null &&
             (at.getAmmoType() == T_LRM ||
+             at.getAmmoType() == T_TBOLT20 ||
+             at.getAmmoType() == T_EXLRM ||
              at.getAmmoType() == T_MRM) &&
             at.getRackSize() >= 20 &&
             at.getMunitionType() == M_STANDARD) {

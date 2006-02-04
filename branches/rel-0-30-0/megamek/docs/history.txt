@@ -3,6 +3,7 @@
 v0.30.8-dev (CVS)
 + Bug 1295062: Heavy Gauss PSR slightly off
 + Bug 1424137: class cast exception targetting woods with IDF
++ Bug: Splittable Weapons act as if they were split when loaded from HMP.
 
 v0.30.7 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

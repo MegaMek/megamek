@@ -449,6 +449,8 @@ public class Mounted implements Serializable, RoundUpdated {
                 return 20;
             } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_LIGHT) {
                 return 16;
+            } else if (wtype.getAmmoType() == AmmoType.T_RAIL_GUN) {
+                return 22;
             } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
                 return 25;
             } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||

@@ -320,7 +320,18 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLAC2());
         EquipmentType.addType(createISLAC5());
         EquipmentType.addType(createISHeavyFlamer());
-
+        EquipmentType.addType(createISExtendedLRM5());
+        EquipmentType.addType(createISExtendedLRM10());
+        EquipmentType.addType(createISExtendedLRM15());
+        EquipmentType.addType(createISExtendedLRM20());
+        EquipmentType.addType(createISThunderbolt5());
+        EquipmentType.addType(createISThunderbolt10());
+        EquipmentType.addType(createISThunderbolt15());
+        EquipmentType.addType(createISThunderbolt20());
+        EquipmentType.addType(createISHERPPC());
+        EquipmentType.addType(createISSNPPC());
+        EquipmentType.addType(createISRailGun());
+        
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
         EquipmentType.addType(createCLERLargeLaser());
@@ -9370,8 +9381,318 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 20;
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
-        weapon.flags |= F_PLASMA_MFUK | F_ENERGY;
-        weapon.bv = 400;
+        weapon.flags |= F_PLASMA_MFUK | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 195;
+        weapon.cost = 300000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISExtendedLRM5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "ExtendedLRM 5";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS ExtendedLRM-5");
+        weapon.addLookupName("ISExtendedLRM5");
+        weapon.addLookupName("IS ExtendedLRM 5");
+        weapon.addLookupName("ELRM-5 (THB)");
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_EXLRM;
+        weapon.minimumRange = 10;
+        weapon.shortRange = 12;
+        weapon.mediumRange = 22;
+        weapon.longRange = 38;
+        weapon.extremeRange = 44;
+        weapon.tonnage = 6.0f;
+        weapon.criticals = 1;
+        weapon.bv = 59;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 110000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISExtendedLRM10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "ExtendedLRM 10";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS ExtendedLRM-10");
+        weapon.addLookupName("ISExtendedLRM10");
+        weapon.addLookupName("IS ExtendedLRM 10");
+        weapon.addLookupName("ELRM-10 (THB)");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_EXLRM;
+        weapon.minimumRange = 10;
+        weapon.shortRange = 12;
+        weapon.mediumRange = 22;
+        weapon.longRange = 38;
+        weapon.extremeRange = 44;
+        weapon.tonnage = 8.0f;
+        weapon.criticals = 4;
+        weapon.bv = 117;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 225000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISExtendedLRM15() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "ExtendedLRM 15";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS ExtendedLRM-15");
+        weapon.addLookupName("ISExtendedLRM15");
+        weapon.addLookupName("IS ExtendedLRM 15");
+        weapon.addLookupName("ELRM-15 (THB)");
+        weapon.heat = 8;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_EXLRM;
+        weapon.minimumRange = 10;
+        weapon.shortRange = 12;
+        weapon.mediumRange = 22;
+        weapon.longRange = 38;
+        weapon.extremeRange = 44;
+        weapon.tonnage = 12.0f;
+        weapon.criticals = 6;
+        weapon.bv = 177;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 350000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISExtendedLRM20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "ExtendedLRM 20";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS ExtendedLRM-20");
+        weapon.addLookupName("ISExtendedLRM20");
+        weapon.addLookupName("IS ExtendedLRM 20");
+        weapon.addLookupName("ELRM-20 (THB)");
+        weapon.heat = 10;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_EXLRM;
+        weapon.minimumRange = 10;
+        weapon.shortRange = 12;
+        weapon.mediumRange = 22;
+        weapon.longRange = 38;
+        weapon.extremeRange = 44;
+        weapon.tonnage = 18.0f;
+        weapon.criticals = 8;
+        weapon.bv = 236;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 450000;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISThunderbolt5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Thunderbolt 5";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS Thunderbolt-5");
+        weapon.addLookupName("ISThunderbolt5");
+        weapon.addLookupName("IS Thunderbolt 5");
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_TBOLT5;
+        weapon.minimumRange = 5;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.tonnage = 3.0f;
+        weapon.criticals = 1;
+        weapon.bv = 64;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 50000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISThunderbolt10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Thunderbolt 10";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS Thunderbolt-10");
+        weapon.addLookupName("ISThunderbolt10");
+        weapon.addLookupName("IS Thunderbolt 10");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_TBOLT10;
+        weapon.minimumRange = 5;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 2;
+        weapon.bv = 127;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 175000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISThunderbolt15() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Thunderbolt 15";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS Thunderbolt-15");
+        weapon.addLookupName("ISThunderbolt15");
+        weapon.addLookupName("IS Thunderbolt 15");
+        weapon.heat = 7;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_TBOLT15;
+        weapon.minimumRange = 5;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.tonnage = 11.0f;
+        weapon.criticals = 3;
+        weapon.bv = 229;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 325000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISThunderbolt20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Thunderbolt 20";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS Thunderbolt-20");
+        weapon.addLookupName("ISThunderbolt20");
+        weapon.addLookupName("IS Thunderbolt 20");
+        weapon.heat = 8;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_TBOLT20;
+        weapon.minimumRange = 5;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.tonnage = 15.0f;
+        weapon.criticals = 5;
+        weapon.bv = 305;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 450000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISHERPPC() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Kinslaughter H ERPPC";
+        weapon.setInternalName("ISHERPPC");
+        weapon.addLookupName("IS Kinslaughter H ERPPC");
+        weapon.heat = 13;
+        weapon.damage = 10;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 23;
+        weapon.extremeRange = 28;
+        weapon.waterShortRange = 4;
+        weapon.waterMediumRange = 10;
+        weapon.waterLongRange = 16;
+        weapon.waterExtremeRange = 20;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 3;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 228;
+        weapon.cost = 450000;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISSNPPC() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Snub Nosed Particle Cannon";
+        weapon.setInternalName("ISSNPPC");
+        weapon.addLookupName("ISSnubNosedPPC");
+        weapon.heat = 11;
+        weapon.damage = 10;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = 3;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.waterShortRange = 4;
+        weapon.waterMediumRange = 7;
+        weapon.waterLongRange = 10;
+        weapon.waterExtremeRange = 14;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 2;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 176;
+        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
+        weapon.cost = 400000;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISRailGun() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Rail Gun";
+        weapon.setInternalName("ISRailGun");
+        weapon.addLookupName("IS Rail Gun");
+        weapon.heat = 1;
+        weapon.damage = 22;
+        weapon.ammoType = AmmoType.T_RAIL_GUN;
+        weapon.minimumRange = 1;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 13;
+        weapon.longRange = 19;
+        weapon.extremeRange = 26;
+        weapon.tonnage = 18.0f;
+        weapon.criticals = 9;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        weapon.explosive = true;
+        weapon.bv = 411;
         weapon.cost = 300000;
 
         return weapon;

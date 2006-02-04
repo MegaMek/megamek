@@ -1404,10 +1404,10 @@ public class HmpFile
         clanCriticals.put(new Long(0xBA), "ISStreakSRM2");
         clanCriticals.put(new Long(0xBB), "ISStreakSRM4");
         clanCriticals.put(new Long(0xBC), "ISStreakSRM6");
-        clanCriticals.put(new Long(0xBD), "Thunderbolt-5");
-        clanCriticals.put(new Long(0xBE), "Thunderbolt-10");
-        clanCriticals.put(new Long(0xBF), "Thunderbolt-15");
-        clanCriticals.put(new Long(0xC0), "Thunderbolt-20");
+        clanCriticals.put(new Long(0xBD), "ISThunderbolt5");
+        clanCriticals.put(new Long(0xBE), "ISThunderbolt10");
+        clanCriticals.put(new Long(0xBF), "ISThunderbolt15");
+        clanCriticals.put(new Long(0xC0), "ISThunderbolt20");
 
         clanCriticals.put(new Long(0xC2), "ISAngelECMSuite");
         clanCriticals.put(new Long(0xC3), "ISBeagleActiveProbe");
@@ -1548,10 +1548,10 @@ public class HmpFile
         clanCriticals.put(new Long(0x024A), "ISStreakSRM2 Ammo");
         clanCriticals.put(new Long(0x024B), "ISStreakSRM4 Ammo");
         clanCriticals.put(new Long(0x024C), "ISStreakSRM6 Ammo");
-        clanCriticals.put(new Long(0x024D), "Thunderbolt-5 Ammo");
-        clanCriticals.put(new Long(0x024E), "Thunderbolt-10 Ammo");
-        clanCriticals.put(new Long(0x024F), "Thunderbolt-15 Ammo");
-        clanCriticals.put(new Long(0x0250), "Thunderbolt-20 Ammo");
+        clanCriticals.put(new Long(0x024D), "ISThunderbolt5 Ammo");
+        clanCriticals.put(new Long(0x024E), "ISThunderbolt10 Ammo");
+        clanCriticals.put(new Long(0x024F), "ISThunderbolt15 Ammo");
+        clanCriticals.put(new Long(0x0250), "ISThunderbolt20 Ammo");
 
         clanCriticals.put(new Long(0x0259), "ISNarc Pods");
 

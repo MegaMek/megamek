@@ -1569,7 +1569,12 @@ public class FiringDisplay
               case (AmmoType.T_BA_INFERNO) :
               case (AmmoType.T_LRM_TORPEDO_COMBO) :
               case (AmmoType.T_ATM) :
-              return false;
+              case (AmmoType.T_EXLRM) :
+              case (AmmoType.T_TBOLT5) :
+              case (AmmoType.T_TBOLT10) :
+              case (AmmoType.T_TBOLT15) :
+              case (AmmoType.T_TBOLT20) :
+                  return false;
             }
             if (((atype.getAmmoType() == AmmoType.T_AC_LBX)
                     || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))

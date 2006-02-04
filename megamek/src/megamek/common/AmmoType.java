@@ -576,9 +576,9 @@ public class AmmoType extends EquipmentType {
                                                    1, M_INFERNO, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Narc capable",
+        munitions.addElement( new MunitionMutator( "Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Artemis capable",
+        munitions.addElement( new MunitionMutator( "Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_IS_LEVEL_3 ) );
@@ -605,9 +605,9 @@ public class AmmoType extends EquipmentType {
                                                    1, M_INFERNO, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Narc capable",
+        munitions.addElement( new MunitionMutator( "(Clan) Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Artemis capable",
+        munitions.addElement( new MunitionMutator( "(Clan) Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
@@ -644,11 +644,11 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_ACTIVE, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Thunder-Vibrabomb",
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Narc capable",
+        munitions.addElement( new MunitionMutator( "Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Artemis capable",
+        munitions.addElement( new MunitionMutator( "Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Semi guided",
+        munitions.addElement( new MunitionMutator( "Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_IS_LEVEL_2) );
         munitions.addElement( new MunitionMutator( "Swarm",
                                                    1, M_SWARM, TechConstants.T_IS_LEVEL_2 ) );
@@ -687,11 +687,11 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_ACTIVE, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "(Clan) Thunder-Vibrabomb",
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Narc capable",
+        munitions.addElement( new MunitionMutator( "(Clan) Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Artemis capable",
+        munitions.addElement( new MunitionMutator( "(Clan) Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Semi guided",
+        munitions.addElement( new MunitionMutator( "(Clan) Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_CLAN_LEVEL_2) );
         munitions.addElement( new MunitionMutator( "(Clan) Swarm",
                                                    1, M_SWARM, TechConstants.T_CLAN_LEVEL_2 ) );

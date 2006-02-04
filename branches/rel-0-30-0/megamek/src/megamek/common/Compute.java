@@ -917,6 +917,7 @@ public class Compute {
      */
     private static boolean isFiringFromArmAlready(IGame game, int weaponId,
             final Entity attacker, int armLoc) {
+        int torsoLoc = Mech.getInnerLocation(armLoc);
         for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();
             if (!(o instanceof WeaponAttackAction)) {
@@ -928,9 +929,13 @@ public class Compute {
                     && prevAttack.getWeaponId() == weaponId) {
                 break;
             }
-            if (prevAttack.getEntityId() == attacker.getId()
+            if ( (prevAttack.getEntityId() == attacker.getId()
                     && attacker.getEquipment(prevAttack.getWeaponId())
-                            .getLocation() == armLoc) {
+                            .getLocation() == armLoc) ||
+                 (prevAttack.getEntityId() == attacker.getId()
+                    && attacker.getEquipment(prevAttack.getWeaponId())
+                            .getLocation() == torsoLoc
+                    && attacker.getEquipment(prevAttack.getWeaponId()).isSplit())) {
                 return true;
             }
         }

@@ -5,6 +5,8 @@ v0.30.8-dev (CVS)
 + Bug 1424137: class cast exception targetting woods with IDF
 + Bug: Splittable Weapons act as if they were split when loaded from HMP.
 + Bug 1363690: Weapons w/ split location should be affected by actuator hit
++ Bug: It was possible to fire with a torso/arm split weapon when prone and
+    firing from the other arm already.
 
 v0.30.7 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

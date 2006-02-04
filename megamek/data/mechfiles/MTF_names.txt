@@ -298,6 +298,7 @@ Inner Sphere Level 3 Tech:
   ISTBolt10
   ISTBolt15
   ISTBolt20
+  ISMagshotGR
   
 
   ISLAC2 Ammo
@@ -316,6 +317,7 @@ Inner Sphere Level 3 Tech:
   ISTBolt10 Ammo
   ISTBolt15 Ammo
   ISTBolt20 Ammo
+  ISMagshotGR Ammo
   
 
  Equipment:

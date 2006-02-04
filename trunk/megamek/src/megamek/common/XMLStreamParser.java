@@ -478,7 +478,7 @@ public class XMLStreamParser implements XMLResponder {
                           String adv = st.nextToken();
                           String advName = Pilot.parseAdvantageName(adv);
                           Object value = Pilot.parseAdvantageValue(adv);
-                          
+
                           try {
                               crew.getOptions().getOption(advName).setValue(value);
                           } catch ( Exception e ) {

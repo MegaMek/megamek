@@ -43,6 +43,14 @@ public class PilotOptions extends AbstractOptions implements Serializable {
         addOption(adv,"gunnery_ballistic", false); //$NON-NLS-1$
         addOption(adv,"iron_man", false); //$NON-NLS-1$
         addOption(adv,"ei_implant", false); //$NON-NLS-1$
+        addOption(adv,"edge", 0); //$NON-NLS-1$
+        
+        /* different edge triggers */
+        addOption(adv, "edge_when_headhit", false); //$NON-NLS-1$
+        addOption(adv, "edge_when_tac", false); //$NON-NLS-1$
+        addOption(adv, "edge_when_ko", false); //$NON-NLS-1$
+        addOption(adv, "edge_when_explosion", false); //$NON-NLS-1$
+        
     }
 
     /* (non-Javadoc)

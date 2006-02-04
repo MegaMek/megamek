@@ -4983,6 +4983,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo Thunderbolt-5");
         ammo.addLookupName("ISThunderbolt5 Ammo");
         ammo.addLookupName("IS Thunderbolt 5 Ammo");
+        ammo.addLookupName("ISTBolt5 Ammo");
         ammo.damagePerShot = 5;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_TBOLT5;
@@ -5000,6 +5001,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo Thunderbolt-10");
         ammo.addLookupName("ISThunderbolt10 Ammo");
         ammo.addLookupName("IS Thunderbolt 10 Ammo");
+        ammo.addLookupName("ISTBolt10 Ammo");
         ammo.damagePerShot = 10;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_TBOLT10;
@@ -5017,6 +5019,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo Thunderbolt-15");
         ammo.addLookupName("ISThunderbolt15 Ammo");
         ammo.addLookupName("IS Thunderbolt 15 Ammo");
+        ammo.addLookupName("ISTBolt15 Ammo");
         ammo.damagePerShot = 15;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_TBOLT15;
@@ -5034,6 +5037,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo Thunderbolt-20");
         ammo.addLookupName("ISThunderbolt20 Ammo");
         ammo.addLookupName("IS Thunderbolt 20 Ammo");
+        ammo.addLookupName("ISTBolt20 Ammo");
         ammo.damagePerShot = 20;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_TBOLT20;
@@ -5072,6 +5076,8 @@ public class AmmoType extends EquipmentType {
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_MAGSHOT;
         ammo.shots = 50;
+        ammo.bv = 2;
+        ammo.cost = 1000;
         return ammo;
     }
 

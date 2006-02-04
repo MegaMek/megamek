@@ -9566,6 +9566,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("IS Thunderbolt-10");
         weapon.addLookupName("ISThunderbolt10");
+        weapon.addLookupName("ISTBolt10");
         weapon.addLookupName("IS Thunderbolt 10");
         weapon.heat = 5;
         weapon.damage = DAMAGE_MISSILE;
@@ -9594,6 +9595,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("IS Thunderbolt-15");
         weapon.addLookupName("ISThunderbolt15");
+        weapon.addLookupName("ISTBolt15");
         weapon.addLookupName("IS Thunderbolt 15");
         weapon.heat = 7;
         weapon.damage = DAMAGE_MISSILE;
@@ -9622,6 +9624,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("IS Thunderbolt-20");
         weapon.addLookupName("ISThunderbolt20");
+        weapon.addLookupName("ISTBolt20");
         weapon.addLookupName("IS Thunderbolt 20");
         weapon.heat = 8;
         weapon.damage = DAMAGE_MISSILE;

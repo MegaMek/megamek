@@ -681,10 +681,13 @@ public class HmpFile
                                     // arcs
                                     m.setLocation(Mech.mostRestrictiveLoc(
                                             location, m.getLocation()));
+                                    // if we're in a new location, set the weapon as split
+                                    if (location != m.getLocation()) {
+                                        m.setSplit(true);
+                                    }
                                 } else {
                                     // make a new one
                                     m = new Mounted(mech, equipment);
-                                    m.setSplit(true);
                                     m.setFoundCrits(1);
                                     vSplitWeapons.addElement(m);
                                 }

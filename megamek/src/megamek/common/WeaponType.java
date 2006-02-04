@@ -331,7 +331,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISHERPPC());
         EquipmentType.addType(createISSNPPC());
         EquipmentType.addType(createISRailGun());
-        
+        EquipmentType.addType(createISMagshotGR());
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
         EquipmentType.addType(createCLERLargeLaser());
@@ -6123,7 +6123,32 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
 
         return weapon;
+
     }
+    public static WeaponType createISMagshotGR() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Magshot";
+        weapon.setInternalName("ISMagshotGR");
+        weapon.addLookupName("ISMagshotGR");
+        weapon.heat = 1;
+        weapon.damage = 2;
+        weapon.ammoType = AmmoType.T_MAGSHOT;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.5f;
+        weapon.explosive = true;
+        weapon.criticals = 2;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
     public static WeaponType createBAISMediumLaser() {
         WeaponType weapon = new WeaponType();
 

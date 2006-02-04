@@ -66,7 +66,9 @@ public class AmmoType extends EquipmentType {
     public static final int     T_TBOLT15           = 41;
     public static final int     T_TBOLT20           = 42;
     public static final int     T_RAIL_GUN          = 43;
-    public static final int     NUM_TYPES           = 44;
+    public static final int     T_MAGSHOT           = 44; // Magshot from TR3055U and S7 Pack
+    public static final int     NUM_TYPES           = 45;
+    
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
@@ -339,6 +341,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISThunderbolt10Ammo());
         EquipmentType.addType(createISThunderbolt15Ammo());
         EquipmentType.addType(createISThunderbolt20Ammo());
+        EquipmentType.addType(createISMagshotGRAmmo());
 
         base = createISLongTomAmmo();
         artyAmmos.addElement( base );
@@ -5057,6 +5060,21 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+
+    public static AmmoType createISMagshotGRAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Magshot GR Ammo";
+        ammo.setInternalName("ISMagshotGR Ammo");
+        ammo.addLookupName("IS Magshot GR Ammo");
+        ammo.damagePerShot = 2;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_MAGSHOT;
+        ammo.shots = 50;
+        return ammo;
+    }
+
 
     public String toString() {
         return "Ammo: " + name;

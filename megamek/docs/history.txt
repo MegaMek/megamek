@@ -34,6 +34,7 @@ v0.31.5-dev (CVS)
 + Bug: It was possible to fire with a torso/arm split weapon when prone and
     firing from the other arm already.
 + Patch 1400294: Edge
++ Magshot Gauss Rifle for Mechs from MapPack Solaris VII
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

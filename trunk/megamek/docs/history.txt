@@ -28,6 +28,7 @@ v0.31.5-dev (CVS)
 + Bug 1421043: MASC psr roll not in phase report
 + BAP subtracts 1 from wood BTH mod
 + Bug 1424137: class cast exception targetting woods with IDF
++ Bug 1424104: Some ammo types missing hyphens
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

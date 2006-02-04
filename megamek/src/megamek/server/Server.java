@@ -11630,28 +11630,46 @@ System.out.println("In here!");
             return false;
         }
         for (int hit = totalHits - rollsNeeded + 1; hit <= totalHits; hit++) {
-            int roll = Compute.d6(2);
-
-            if ( e.getCrew().getOptions().booleanOption("pain_resistance") )
-              roll = Math.min(12, roll + 1);
-
             int rollTarget = Compute.getConsciousnessNumber( hit );
-            Report r = new Report(6030);
-            r.subject = e.getId();
-            r.addDesc(e);
-            r.add(e.getCrew().getName());
-            r.add(rollTarget);
-            r.add(roll);
-            if (roll >= rollTarget) {
-                r.choose(true);
-            } else {
-                e.crew.setUnconscious(true);
-                e.crew.setKoThisRound(true);
-                r.choose(false);
+            boolean edgeUsed = false;
+            do {
+                if (edgeUsed)
+                    e.crew.decreaseEdge();
+                int roll = Compute.d6(2);
+                if ( e.getCrew().getOptions().booleanOption("pain_resistance") )
+                  roll = Math.min(12, roll + 1);
+                Report r = new Report(6030);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.add(e.getCrew().getName());
+                r.add(rollTarget);
+                r.add(roll);
+                if (roll >= rollTarget) {
+                    e.crew.setKoThisRound(false);
+                    r.choose(true);
+                } else {
+                    e.crew.setKoThisRound(true);
+                    r.choose(false);
+                    if (e.crew.hasEdgeRemaining()
+                            && e.crew.getOptions().booleanOption("edge_when_ko")) {
+                        edgeUsed = true;
+                        vPhaseReport.addElement(r);
+                        r = new Report(6520);
+                        r.subject = e.getId();
+                        r.addDesc(e);
+                        r.add(e.getCrew().getName());
+                        r.add(e.crew.getOptions().intOption("edge"));
+                    } // if
+                    //return true;
+                } // else
                 addReport(r);
+            } while (e.crew.hasEdgeRemaining() && e.crew.isKoThisRound()
+                    && e.crew.getOptions().booleanOption("edge_when_ko"));
+            // end of do-while
+            if (e.crew.isKoThisRound()) {
+                e.crew.setUnconscious(true);  
                 return true;
             }
-            addReport(r);
         }
         return true;
     }
@@ -11746,6 +11764,31 @@ System.out.println("In here!");
 
         Vector vDesc = new Vector();
         Report r;
+        int te_n = te.getId();
+        
+        // show Locations which have rerolled with Edge
+        HitData undoneLocation = hit.getUndoneLocation();
+        while (undoneLocation != null) {
+            r = new Report(6500);
+            r.subject = te_n;
+            r.indent(2);
+            r.newlines = 0;
+            r.addDesc(te);
+            r.add(te.getLocationAbbr(undoneLocation));
+            vDesc.addElement(r);            
+            undoneLocation = undoneLocation.getUndoneLocation();
+        } // while
+        // if edge was uses, give at end overview of remainings
+        if (hit.getUndoneLocation() != null) {
+            r = new Report(6510);
+            r.subject = te_n;
+            r.indent(2);
+            r.newlines = 0;
+            r.addDesc(te);
+            r.add(te.crew.getOptions().intOption("edge"));
+            vDesc.addElement(r);            
+        } // if
+        
         boolean autoEject = false;
         if (ammoExplosion) {
             if (te instanceof Mech) {
@@ -11762,7 +11805,6 @@ System.out.println("In here!");
         boolean wasDamageIS = false;
         boolean tookInternalDamage = damageIS;
         IHex te_hex = null;
-        int te_n = te.getId();
 
         boolean hardenedArmor = false;
         if ((te instanceof Mech)
@@ -13507,7 +13549,22 @@ System.out.println("In here!");
 
                 // Ignore empty or unhitable slots (this
                 // includes all previously hit slots).
+                
                 if (slot != null && slot.isHittable()) {
+                    // if explosive use edge
+                    if ((en instanceof Mech) 
+                       && ( en.crew.hasEdgeRemaining()
+                            && en.crew.getOptions().booleanOption("edge_when_explosion"))
+                       && en.getEquipment(slot.getIndex()).getType().isExplosive()) {
+                       en.crew.decreaseEdge();
+                       r = new Report(6530);
+                       r.subject = en.getId();
+                       r.indent(3);
+                       r.newlines = 0;
+                       r.add(en.crew.getOptions().intOption("edge"));
+                       vDesc.addElement(r);
+                       continue;
+                    }
                     vDesc.addAll( applyCriticalHit(en, loc, slot, true));
                     hits--;
                 }

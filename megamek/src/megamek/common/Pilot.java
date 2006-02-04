@@ -239,7 +239,8 @@ public class Pilot
 
             adv.append(option.getName());
             if (option.getType() == IOption.STRING ||
-                option.getType() == IOption.CHOICE) {
+                option.getType() == IOption.CHOICE ||
+                option.getType() == IOption.INTEGER ) {
                 adv.append(" ").append(option.stringValue());
             }
         }
@@ -263,8 +264,16 @@ public class Pilot
         int index = s.indexOf(" ");
         if (index == -1)
             return new Boolean(true);
-        else
-            return s.substring(index + 1,s.length());
+        else {
+            String t = s.substring(index + 1,s.length());
+            Object result;
+            try {
+                result = Integer.valueOf(t);
+            } catch (NumberFormatException e) {
+                result = t;
+            } // try-catch
+            return result;
+        } // else
     }
 
     public String getDesc() {
@@ -362,6 +371,15 @@ public class Pilot
         return 1;
     }
 
+    public boolean hasEdgeRemaining() {    
+        return (getOptions().intOption("edge") > 0); 
+    }
+    
+    public void decreaseEdge() {
+        IOption edgeOption = getOptions().getOption("edge");
+        edgeOption.setValue((Integer)edgeOption.getValue() - 1);
+    }
+    
     /**
      * Determine if this pilot has abandoned her vehicle.
      *

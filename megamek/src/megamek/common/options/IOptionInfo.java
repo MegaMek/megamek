@@ -27,6 +27,13 @@ public interface IOptionInfo {
     public abstract String getDisplayableName();
 
     /**
+     * Returns the user friendly name suitable for displaying in cases 
+     * where not only the Name but also it value is required (like edge).
+     * @return displayable name
+     */
+    public abstract String getDisplayableNameWithValue();
+
+    /**
      * Return verbose description of the option suitable for context help, 
      * tip etc. 
      * @return option description 

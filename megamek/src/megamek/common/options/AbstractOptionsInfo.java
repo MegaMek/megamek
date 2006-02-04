@@ -188,6 +188,10 @@ public class AbstractOptionsInfo implements IOptionsInfo {
             return getOptionDisplayableName(name);
         }
 
+        public String getDisplayableNameWithValue() {
+            return getOptionDisplayableName(name);
+        }
+
         public String getDescription() {
             return getOptionDescription(name);
         }

@@ -67,7 +67,12 @@ public class Option implements IOption, Serializable {
     public String getName() {
         return name;
     }
-
+    
+    public String getDisplayableNameWithValue() {
+        updateInfo();
+        return info.getDisplayableName() + (type == IOption.INTEGER ? " " + value : "");
+    }
+    
     public String getDisplayableName() {
         updateInfo();
         return info.getDisplayableName();
@@ -102,14 +107,18 @@ public class Option implements IOption, Serializable {
     
 
     public boolean booleanValue() {
-        if (type == CHOICE || type == STRING) {
-            if (value.equals("None") || value.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
-                return false;
-            } else {
-                return true;
-            }
+        if (type == INTEGER) {
+            return (Integer) value > 0;
         } else {
-            return ((Boolean)value).booleanValue();
+            if (type == CHOICE || type == STRING) {
+                if (value.equals("None") || value.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return ((Boolean)value).booleanValue();
+            }
         }
     }
 

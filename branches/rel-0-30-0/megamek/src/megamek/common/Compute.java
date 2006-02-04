@@ -455,7 +455,10 @@ public class Compute {
     public static Entity findSpotter(IGame game, Entity attacker,
             Targetable target) {
         Entity spotter = null;
-        int taggedBy = ((Entity)target).getTaggedBy();
+        int taggedBy = -1;
+        if (target instanceof Entity) {
+            taggedBy = ((Entity)target).getTaggedBy();
+        }
         ToHitData bestMods = new ToHitData(ToHitData.IMPOSSIBLE, "");
 
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {

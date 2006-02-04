@@ -2770,7 +2770,9 @@ public class Server implements Runnable {
         // check for MASC failure
         if (entity instanceof Mech) {
             Vector crits = new Vector();
-            if (((Mech)entity).checkForMASCFailure(md, vPhaseReport, crits)) {
+            Vector vReport = new Vector();
+            if (((Mech)entity).checkForMASCFailure(md, vReport, crits)) {
+                addReport(vReport);
                 CriticalSlot cs = null;
                 int loc = Entity.LOC_NONE;
                 for(Enumeration e = crits.elements();e.hasMoreElements();) {

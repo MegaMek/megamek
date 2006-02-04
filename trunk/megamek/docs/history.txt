@@ -25,6 +25,7 @@ v0.31.5-dev (CVS)
 + HMV loader support for arbritrary sized infantry bays (rounded down to 1 ton)
 + Prevent (&log) server from sending null entity packets to the client.
 + Hopalong's weapons patch (except phoenix, hawk and streak mrm missiles)
++ Bug 1421043: MASC psr roll not in phase report
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

@@ -1174,7 +1174,16 @@ public abstract class Mech
                         && isProne()) {
                     switch( roll ) {
                     case 2:
-                        return tac(table, side, Mech.LOC_CT, false);
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) 
+                            && !game.getOptions().booleanOption("no_tac")) {
+                            crew.decreaseEdge();
+                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
+                            return result;
+                        } // if
+                        else {
+                            return tac(table, side, Mech.LOC_CT, false);
+                        } // else
                     case 3:
                         return new HitData(Mech.LOC_RLEG);
                     case 4:
@@ -1192,12 +1201,30 @@ public abstract class Mech
                     case 11:
                         return new HitData(Mech.LOC_LLEG);
                     case 12:
-                        return new HitData(Mech.LOC_HEAD);
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        else {
+                            return new HitData(Mech.LOC_HEAD);
+                        } // else
                     }
                 } else {
                     switch( roll ) {
-                    case 2:
-                        return tac(table, side, Mech.LOC_CT, false);
+                    case 2: 
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
+                                && !game.getOptions().booleanOption("no_tac")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
+                            return result;
+                        } // if
+                        else {
+                            return tac(table, side, Mech.LOC_CT, false);
+                        } // else
                     case 3:
                     case 4:
                         return new HitData(Mech.LOC_RARM);
@@ -1215,7 +1242,16 @@ public abstract class Mech
                     case 11:
                         return new HitData(Mech.LOC_LARM);
                     case 12:
-                        return new HitData(Mech.LOC_HEAD);
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        else {
+                            return new HitData(Mech.LOC_HEAD);
+                        } // else
                     }
                 }
             }
@@ -1223,7 +1259,16 @@ public abstract class Mech
                 // normal left side hits
                 switch( roll ) {
                 case 2:
-                    return tac(table, side, Mech.LOC_LT, false);
+                    if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
+                            && !game.getOptions().booleanOption("no_tac")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(tac(table, side, Mech.LOC_LT, false));
+                        return result;
+                    } // if
+                    else {
+                        return tac(table, side, Mech.LOC_LT, false);
+                    } // else
                 case 3:
                     return new HitData(Mech.LOC_LLEG);
                 case 4:
@@ -1242,14 +1287,32 @@ public abstract class Mech
                 case 11:
                     return new HitData(Mech.LOC_RLEG);
                 case 12:
-                    return new HitData(Mech.LOC_HEAD);
+                    if (crew.hasEdgeRemaining() 
+                            && crew.getOptions().booleanOption("edge_when_headhit") ) {
+                        crew.decreaseEdge();
+                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                        return result;
+                    } // if
+                    else {
+                        return new HitData(Mech.LOC_HEAD);
+                    } // else
                 }
             }
             else if(side == ToHitData.SIDE_RIGHT) {
                 // normal right side hits
                 switch( roll ) {
                 case 2:
-                    return tac(table, side, Mech.LOC_RT, false);
+                    if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
+                            && !game.getOptions().booleanOption("no_tac")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(tac(table, side, Mech.LOC_RT, false));
+                        return result;
+                    } // if
+                    else {
+                        return tac(table, side, Mech.LOC_RT, false);
+                    } // else
                 case 3:
                     return new HitData(Mech.LOC_RLEG);
                 case 4:
@@ -1268,7 +1331,16 @@ public abstract class Mech
                 case 11:
                     return new HitData(Mech.LOC_LLEG);
                 case 12:
-                    return new HitData(Mech.LOC_HEAD);
+                    if (crew.hasEdgeRemaining() 
+                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                        return result;
+                    } // if
+                    else {
+                        return new HitData(Mech.LOC_HEAD);
+                    } // else
                 }
             }
             else if(side == ToHitData.SIDE_REAR) {
@@ -1277,7 +1349,16 @@ public abstract class Mech
                         && isProne()) {
                     switch( roll ) {
                     case 2:
-                        return tac(table, side, Mech.LOC_CT, true);
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
+                                && !game.getOptions().booleanOption("no_tac")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
+                            return result;
+                        } // if
+                        else {
+                            return tac(table, side, Mech.LOC_CT, true);
+                        } // else                                                                       
                     case 3:
                         return new HitData(Mech.LOC_RARM, true);
                     case 4:
@@ -1295,12 +1376,30 @@ public abstract class Mech
                     case 11:
                         return new HitData(Mech.LOC_LARM, true);
                     case 12:
-                        return new HitData(Mech.LOC_HEAD, true);
+                        if (crew.hasEdgeRemaining() 
+                                && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                            return result;
+                        } // if
+                        else {
+                            return new HitData(Mech.LOC_HEAD, true);
+                        } // else
                     }
                 } else {
                     switch( roll ) {
                     case 2:
-                        return tac(table, side, Mech.LOC_CT, true);
+                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
+                                && !game.getOptions().booleanOption("no_tac")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
+                            return result;
+                        } // if
+                        else {
+                            return tac(table, side, Mech.LOC_CT, true);
+                        } // else
                     case 3:
                     case 4:
                         return new HitData(Mech.LOC_RARM, true);
@@ -1318,7 +1417,16 @@ public abstract class Mech
                     case 11:
                         return new HitData(Mech.LOC_LARM, true);
                     case 12:
-                        return new HitData(Mech.LOC_HEAD, true);
+                        if (crew.hasEdgeRemaining() 
+                                && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                            return result;
+                        } // if
+                        else {
+                            return new HitData(Mech.LOC_HEAD, true);
+                        } // else
                     }
                 }
             }
@@ -1351,7 +1459,16 @@ public abstract class Mech
                 case 5:
                     return new HitData(Mech.LOC_RARM);
                 case 6:
-                    return new HitData(Mech.LOC_HEAD);
+                    if (crew.hasEdgeRemaining()
+                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                        return result;
+                    } // if
+                    else {
+                        return new HitData(Mech.LOC_HEAD);
+                    } // else
                 }
             }
             if(side == ToHitData.SIDE_LEFT) {
@@ -1366,7 +1483,16 @@ public abstract class Mech
                 case 5:
                     return new HitData(Mech.LOC_LARM);
                 case 6:
-                    return new HitData(Mech.LOC_HEAD);
+                    if (crew.hasEdgeRemaining()
+                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                        return result;
+                    } // if
+                    else {
+                        return new HitData(Mech.LOC_HEAD);
+                    } // else
                 }
             }
             if(side == ToHitData.SIDE_RIGHT) {
@@ -1381,7 +1507,16 @@ public abstract class Mech
                 case 5:
                     return new HitData(Mech.LOC_RARM);
                 case 6:
-                    return new HitData(Mech.LOC_HEAD);
+                    if (crew.hasEdgeRemaining() 
+                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                        return result;
+                    } // if
+                    else {
+                        return new HitData(Mech.LOC_HEAD);
+                    } // else
                 }
             }
             if(side == ToHitData.SIDE_REAR) {
@@ -1398,7 +1533,16 @@ public abstract class Mech
                 case 5:
                     return new HitData(Mech.LOC_RARM, true);
                 case 6:
-                    return new HitData(Mech.LOC_HEAD, true);
+                    if (crew.hasEdgeRemaining() 
+                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                        return result;
+                    } // if
+                    else {
+                        return new HitData(Mech.LOC_HEAD, true);
+                    } // else
                 }
             }
         }
@@ -1457,8 +1601,16 @@ public abstract class Mech
             // Swarm attack locations.
             switch( roll ) {
             case 2:
-                return new HitData(Mech.LOC_HEAD, false,
-                                   HitData.EFFECT_CRITICAL);
+                if (crew.hasEdgeRemaining() 
+                        && crew.getOptions().booleanOption("edge_when_headhit")) {
+                    crew.decreaseEdge();
+                    HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
+                    return result;
+                } // if
+                else {
+                    return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
+                } // else
             case 3:
                 return new HitData(Mech.LOC_CT, true,
                                    HitData.EFFECT_CRITICAL);
@@ -1487,8 +1639,16 @@ public abstract class Mech
                 return new HitData(Mech.LOC_CT, true,
                                    HitData.EFFECT_CRITICAL);
             case 12:
-                return new HitData(Mech.LOC_HEAD, false,
-                                   HitData.EFFECT_CRITICAL);
+                if (crew.hasEdgeRemaining()
+                        && crew.getOptions().booleanOption("edge_when_headhit")) {
+                    crew.decreaseEdge();
+                    HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
+                    return result;
+                } // if
+                else {
+                    return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
+                } // else
             }
         }
         if(table == ToHitData.HIT_ABOVE) {
@@ -1523,8 +1683,16 @@ public abstract class Mech
                 return new HitData( Mech.LOC_RARM,
                                     (side == ToHitData.SIDE_REAR)  );
             case 6:
-                return new HitData( Mech.LOC_HEAD,
-                                    (side == ToHitData.SIDE_REAR)  );
+                if (crew.hasEdgeRemaining() 
+                        && crew.getOptions().booleanOption("edge_when_headhit")) {
+                    crew.decreaseEdge();
+                    HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR)));
+                    return result;
+                } // if
+                else {
+                    return new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR));
+                } // else
             }
         }
         if(table == ToHitData.HIT_BELOW) {

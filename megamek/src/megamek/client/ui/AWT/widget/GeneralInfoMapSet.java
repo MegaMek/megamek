@@ -252,7 +252,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
             for (Enumeration advantages = en.crew.getAdvantages(); advantages.hasMoreElements();) {
                 IOption option = (IOption)advantages.nextElement();
                 if (option.booleanValue()) {
-                    advantagesR[i++].setString(option.getDisplayableName());
+                    advantagesR[i++].setString(option.getDisplayableNameWithValue());
                 }
             }
         }

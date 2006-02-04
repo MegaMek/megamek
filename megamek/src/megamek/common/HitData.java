@@ -36,6 +36,9 @@ public class HitData
     private int glancing = 0;
     private boolean fromFront = true; // True if attack came in through hex in
                                       // front of target
+    // in case of usage of Edge it is document what the previous location was
+    private HitData undoneLocation = null;
+    
     
     public HitData(int location) {
         this(location, false, EFFECT_NONE, false, 0);
@@ -123,4 +126,13 @@ public class HitData
     public boolean hitAimedLocation() {
         return hitAimedLocation;
     }
+
+    public HitData getUndoneLocation () {
+        return undoneLocation;
+    }
+    
+    public void setUndoneLocation(HitData previousLocation) {
+        undoneLocation = previousLocation;
+    }
+    
 }

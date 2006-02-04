@@ -29,6 +29,7 @@ v0.31.5-dev (CVS)
 + BAP subtracts 1 from wood BTH mod
 + Bug 1424137: class cast exception targetting woods with IDF
 + Bug 1424104: Some ammo types missing hyphens
++ Bug: Splittable Weapons act as if they were split when loaded from HMP.
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

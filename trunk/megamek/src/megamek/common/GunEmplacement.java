@@ -359,7 +359,7 @@ public class GunEmplacement extends Entity
      * Calculates the battle value of this emplacement
      */
     public int calculateBattleValue(boolean assumeLinkedC3) {
-        // XXX makig this up as I go along
+        // using structures BV rules from MaxTech
 
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
@@ -385,13 +385,13 @@ public class GunEmplacement extends Entity
         }
         dbv += dEquipmentBV;
         
-        dbv *= 0.02; // lowest for a vehicle is 0.4 (VTOL)
+        dbv *= 0.5; // structure modifier
         
         double weaponBV = 0;
         
         // figure out base weapon bv
-        double weaponsBVFront = 0;
-        double weaponsBVRear = 0;
+        //double weaponsBVFront = 0;
+        //double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
@@ -421,8 +421,13 @@ public class GunEmplacement extends Entity
                 dBV *= 1.2;
             }
             
-            weaponBV = dBV;
+            //if not turret mounted, 1/2 BV
+            if(mounted.getLocation() != LOC_TURRET)
+                dBV *= 0.5;
+            
+            weaponBV += dBV;
         }
+        obv += weaponBV;
         
         // add ammo bv
         double ammoBV = 0;
@@ -441,7 +446,7 @@ public class GunEmplacement extends Entity
 
             ammoBV += atype.getBV(this);
         }
-        weaponBV += ammoBV;
+        obv += ammoBV;
         
         // we get extra bv from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here.  could be better
@@ -452,7 +457,7 @@ public class GunEmplacement extends Entity
             (hasC3S() && C3Master > NONE) ||
             (hasC3i() && calculateFreeC3Nodes() < 5) ||
             assumeLinkedC3) {
-                xbv = Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear));
+                xbv = Math.round(0.35 * weaponBV);
         }
 
         // Possibly adjust for TAG and Arrow IV.
@@ -466,6 +471,9 @@ public class GunEmplacement extends Entity
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
 
+        // structure modifier
+        obv *= 0.44;
+        
         return (int)Math.round((dbv + obv + xbv) * pilotFactor);
     }
     

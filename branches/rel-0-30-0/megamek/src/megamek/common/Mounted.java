@@ -285,6 +285,7 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public void setShotsLeft(int shotsLeft) {
+        if (shotsLeft < 0) shotsLeft = 0;
         this.shotsLeft = shotsLeft;
     }
 

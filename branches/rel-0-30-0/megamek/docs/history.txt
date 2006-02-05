@@ -7,6 +7,7 @@ v0.30.8-dev (CVS)
 + Bug 1363690: Weapons w/ split location should be affected by actuator hit
 + Bug: It was possible to fire with a torso/arm split weapon when prone and
     firing from the other arm already.
++ Bug 1420876: rapidfire MG can fire when ammo is used up
 
 v0.30.7 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

@@ -35,6 +35,7 @@ v0.31.5-dev (CVS)
     firing from the other arm already.
 + Patch 1400294: Edge
 + Magshot Gauss Rifle for Mechs from MapPack Solaris VII
++ Bug 1424106: "All" unit type filter causes error
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

@@ -400,11 +400,11 @@ public class MechSelectorDialog
                          || nType == TechConstants.T_IS_LEVEL_2)
                         && ((et.getTechLevel() == TechConstants.T_IS_LEVEL_1)
                             || (et.getTechLevel() == TechConstants.T_IS_LEVEL_2))))) {
-                if ((UnitType.getTypeName(nUnitType).equals("Mek")
+                if (!(nUnitType == UnitType.SIZE) && ((UnitType.getTypeName(nUnitType).equals("Mek")
                      || UnitType.getTypeName(nUnitType).equals("Tank"))
                     && (et.hasFlag(WeaponType.F_PROTOMECH)
                         || et.hasFlag(WeaponType.F_INFANTRY)
-                        || et.hasFlag(WeaponType.F_BATTLEARMOR))) {
+                        || et.hasFlag(WeaponType.F_BATTLEARMOR)))) {
                     continue;
                 }
                 m_cWeapons1.add(et.getName());

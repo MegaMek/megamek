@@ -37,6 +37,7 @@ v0.31.5-dev (CVS)
 + Magshot Gauss Rifle for Mechs from MapPack Solaris VII
 + Bug 1424106: "All" unit type filter causes error
 + Bug 1420876: rapidfire MG can fire when ammo is used up
++ Bug 1424586: GE's need a proper BV
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

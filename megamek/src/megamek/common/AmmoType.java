@@ -275,8 +275,12 @@ public class AmmoType extends EquipmentType {
 
         // Level 3 Ammo
         // Note, some level 3 stuff is mixed into level 2.
-        EquipmentType.addType(createISLAC2Ammo());
-        EquipmentType.addType(createISLAC5Ammo());
+        base = createISLAC2Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
+        base = createISLAC5Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(createISHeavyFlamerAmmo());
         EquipmentType.addType(createCoolantPod());
         EquipmentType.addType(createISRailGunAmmo());
@@ -5212,6 +5216,7 @@ public class AmmoType extends EquipmentType {
             // Manipulate the base round's names, depending on ammoType.
             switch ( base.ammoType ) {
             case AmmoType.T_AC:
+            case AmmoType.T_LAC:
                 // Add the munition name to the beginning of the display name.
                 nameBuf = new StringBuffer( this.name );
                 nameBuf.append( " " );

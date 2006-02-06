@@ -275,9 +275,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     eistatus = 1;
             }
             
-            // if we have BAP, and there are woods in the way, and we are within
-            // BAP range, we reduce the BTH by 1
-            if (te != null && ae.hasBAP() &&
+            // if we have BAP with MaxTech rules, and there are woods in the 
+            // way, and we are within BAP range, we reduce the BTH by 1
+            if (game.getOptions().booleanOption("maxtech_bap") &&
+                    te != null && ae.hasBAP() &&
                     ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te) &&
                     !Compute.isAffectedByECM(ae,ae.getPosition(),te.getPosition()) &&
                     (game.getBoard().getHex(te.getPosition())

@@ -29,7 +29,7 @@ import megamek.common.*;
  * @author  Ben
  * @version 
  */
-public class ClubAttackAction extends AbstractAttackAction {
+public class ClubAttackAction extends PhysicalAttackAction {
     
     private Mounted club;
 
@@ -100,7 +100,6 @@ public class ClubAttackAction extends AbstractAttackAction {
      */
     public static ToHitData toHit(IGame game, int attackerId, Targetable target, Mounted club) {
         final Entity ae = game.getEntity(attackerId);
-        int targetId = Entity.NONE;
 
         // arguments legal?
         if (ae == null || target == null) {
@@ -113,21 +112,9 @@ public class ClubAttackAction extends AbstractAttackAction {
             throw new IllegalArgumentException("Club type is null");
         }
 
-        Entity te = null;
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
-            te = (Entity) target;
-            targetId = target.getTargetId();
-        }
-
-        // Can't target a transported entity.
-        if (te != null
-                && Entity.NONE != te.getTransportId()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
-        }
-
-        // can't target yourself
-        if (ae.equals(te)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
+        String impossible = toHitIsImpossible(game, ae, target);
+        if(impossible != null) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, impossible);
         }
 
         // non-mechs can't club
@@ -140,17 +127,6 @@ public class ClubAttackAction extends AbstractAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
         }
 
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
-        }
-
-        // Can't target a entity conducting a swarm attack.
-        if (te != null
-                && Entity.NONE != te.getSwarmTargetId()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
-        }
-
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
@@ -159,25 +135,9 @@ public class ClubAttackAction extends AbstractAttackAction {
         final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
                 && ((MiscType)club.getType()).hasSubType(MiscType.S_CLUB));
-        final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        Building bldg = null;
-        if ( targetInBuilding ) {
-            bldg = game.getBoard().getBuildingAt( te.getPosition() );
-        }
         
         ToHitData toHit;
 
-        // Can't target units in buildings (from the outside).
-        // TODO: you can target units from within the *same* building.
-        if ( targetInBuilding ) {
-            if ( !Compute.isInBuilding(game, ae) ) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
-            }
-            else if ( !game.getBoard().getBuildingAt( ae.getPosition() )
-                      .equals( bldg ) ) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
-            }
-        }
 
         if (bothArms) {
             // check if both arms are present & operational
@@ -222,19 +182,13 @@ public class ClubAttackAction extends AbstractAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Club is damaged");
         }
 
-        // check range
-        if (ae.getPosition().distance(target.getPosition()) > 1 ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
+        // check elevation (target must be within one level, except for VTOL)
+        int targetMaxElevation = attackerHeight;
+        if(target instanceof VTOL) {
+            targetMaxElevation ++;
         }
-
-        // check elevation (target must be within one level)
-        if (targetHeight < attackerElevation || targetElevation > attackerHeight) {
+        if (targetHeight < attackerElevation || targetElevation > targetMaxElevation) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
-        }
-
-        // can't physically attack mechs making dfa attacks
-        if ( te != null && te.isMakingDfa() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
         }
 
         // check facing
@@ -254,13 +208,6 @@ public class ClubAttackAction extends AbstractAttackAction {
              target instanceof GunEmplacement ) {
             return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
                                   "Targeting adjacent building." );
-        }
-
-        // Can't target woods or ignite a building with a physical.
-        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
-             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
-             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
-            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
         }
 
         //Set the base BTH
@@ -286,22 +233,7 @@ public class ClubAttackAction extends AbstractAttackAction {
 
         toHit = new ToHitData(base, "base");
 
-        // Battle Armor targets are hard for Meks and Tanks to hit.
-        if ( te instanceof BattleArmor ) {
-            toHit.addModifier( 1, "battle armor target" );
-        }
-
-        // attacker movement
-        toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
-
-        // target movement
-        toHit.append(Compute.getTargetMovementModifier(game, targetId));
-
-        // attacker terrain
-        toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
-
-        // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, te));
+        setCommonModifiers(toHit, game, ae, target);
 
         // damaged or missing actuators
         if (bothArms) {
@@ -326,42 +258,11 @@ public class ClubAttackAction extends AbstractAttackAction {
             }
         }
 
-        // target prone
-        if (te.isProne()) {
-            toHit.addModifier(-2, "target prone and adjacent");
-        }
-
-        // water partial cover?
-        if (te.height() > 0
-                && te.getElevation() == -1
-                && targHex.terrainLevel(Terrains.WATER) == te.height()) {
-            toHit.addModifier(3, "target has partial cover");
-        }
-
-        // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
-        // It gets a =4 penalty for being blind!
-        if (((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
-            if ((sensorHits + sensorHits2) == 3) {
-                toHit.addModifier(4, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
-            } else if (sensorHits == 2) {
-                toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
-            }
-        }
-
-        // target immobile
-        toHit.append(Compute.getImmobileMod(te));
-
-        toHit.append(nightModifiers(game, target, null, ae));
-
-        Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
-
         // elevation
         if (attackerElevation == targetElevation) {
             toHit.setHitTable(ToHitData.HIT_NORMAL);
         } else if (attackerElevation < targetElevation) {
-            if (te.height() == 0) {
+            if (target.getHeight() == 0) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);
@@ -371,7 +272,7 @@ public class ClubAttackAction extends AbstractAttackAction {
         }
 
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae,te));
+        toHit.setSideTable(Compute.targetSideTable(ae,target));
 
         // done!
         return toHit;

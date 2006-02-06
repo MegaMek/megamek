@@ -14,10 +14,7 @@
 
 package megamek.common.actions;
 
-import megamek.common.BattleArmor;
-import megamek.common.Building;
 import megamek.common.Compute;
-import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
@@ -26,14 +23,13 @@ import megamek.common.ILocationExposureStatus;
 import megamek.common.Mech;
 import megamek.common.Tank;
 import megamek.common.Targetable;
-import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
 /**
  * The attacker punches the target.
  */
 public class PunchAttackAction
-    extends AbstractAttackAction
+    extends PhysicalAttackAction
 {
     public static final int BOTH = 0;
     public static final int LEFT = 1;
@@ -71,18 +67,16 @@ public class PunchAttackAction
     public static ToHitData toHit(IGame game, int attackerId,
                                        Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
-        int targetId = Entity.NONE;
-        Entity te = null;
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
-            te = (Entity) target;
-            targetId = target.getTargetId();
-        }
         if (ae == null)
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
-        if (te == null)
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target a null entity!");
+        
+        String impossible = toHitIsImpossible(game, ae, target);
+        if(impossible != null) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "impossible");
+        }
+        
         IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(te.getPosition());
+        IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerHeight = ae.absHeight() + attHex.getElevation();
         final int targetElevation = target.getElevation() + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
@@ -90,11 +84,6 @@ public class PunchAttackAction
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         final int armArc = (arm == PunchAttackAction.RIGHT)
                            ? Compute.ARC_RIGHTARM : Compute.ARC_LEFTARM;
-        final boolean targetInBuilding = Compute.isInBuilding( game, te );
-        Building bldg = null;
-        if ( targetInBuilding ) {
-            bldg = game.getBoard().getBuildingAt( te.getPosition() );
-        }
         ToHitData toHit;
 
         // arguments legal?
@@ -105,29 +94,9 @@ public class PunchAttackAction
             throw new IllegalArgumentException("Attacker or target not valid");
         }
 
-        // can't target yourself
-        if (ae.equals(te)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
-        }
-
         // non-mechs can't punch
         if (!(ae instanceof Mech)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
-        }
-
-        // Can't target a transported entity.
-        if ( te != null && Entity.NONE != te.getTransportId() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
-        }
-
-        // Can't target a entity conducting a swarm attack.
-        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
-        }
-
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
         }
 
         //Quads can't punch
@@ -155,49 +124,29 @@ public class PunchAttackAction
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
         }
 
-        // check range
-        if (ae.getPosition().distance(target.getPosition()) > 1 ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
-        }
-
         // check elevation
         if (attackerHeight < targetElevation || attackerHeight > targetHeight) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
         }
 
-        // can't physically attack mechs making dfa attacks
-        if ( te != null && te.isMakingDfa() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
-        }
-
-        // Can't target units in buildings (from the outside).
-        if ( targetInBuilding ) {
-            if ( !Compute.isInBuilding(game, ae) ) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
-            }
-            else if ( !game.getBoard().getBuildingAt( ae.getPosition() )
-                      .equals( bldg ) ) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
-            }
-        }
-
-
         //Set the base BTH
-          int base = 4;
-
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
+        int base = 4;
+    
+        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
             base = ae.getCrew().getPiloting() - 1;
-          }
-
-          toHit = new ToHitData(base, "base");
-
+        }
+    
+        toHit = new ToHitData(base, "base");
+    
+        setCommonModifiers(toHit, game, ae, target);
+        
         // Prone Meks can only punch vehicles in the same hex.
         if (ae.isProne()) {
             // The Mek must have both arms, the target must
             // be a tank, and both must be in the same hex.
             if ( !ae.isLocationBad(Mech.LOC_RARM) &&
                  !ae.isLocationBad(Mech.LOC_LARM) &&
-                 te instanceof Tank &&
+                 target instanceof Tank &&
                  ae.getPosition().distance( target.getPosition() ) == 0 ) {
                 toHit.addModifier( 2, "attacker is prone" );
             } else {
@@ -218,31 +167,6 @@ public class PunchAttackAction
                                   "Targeting adjacent building." );
         }
 
-        // Can't target woods or ignite a building with a physical.
-        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
-             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
-             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
-            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
-        }
-
-        // Battle Armor targets are hard for Meks and Tanks to hit.
-        if ( te instanceof BattleArmor ) {
-            toHit.addModifier( 1, "battle armor target" );
-        }
-
-
-        // attacker movement
-        toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
-
-        // target movement
-        toHit.append(Compute.getTargetMovementModifier(game, targetId));
-
-        // attacker terrain
-        toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
-
-        // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, te));
-
         // damaged or missing actuators
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {
             toHit.addModifier(2, "Upper arm actuator destroyed");
@@ -254,40 +178,9 @@ public class PunchAttackAction
             toHit.addModifier(1, "Hand actuator missing or destroyed");
         }
 
-        // target prone
-        if (te.isProne()) {
-            toHit.addModifier(-2, "target prone and adjacent");
-        }
-
-        // water partial cover?
-        if (te.height() > 0
-                && te.getElevation() == -1
-                && targHex.terrainLevel(Terrains.WATER) == te.height()) {
-            toHit.addModifier(3, "target has partial cover");
-        }
-
-        toHit.append(nightModifiers(game, target, null, ae));
-        
-        // target immobile
-        toHit.append(Compute.getImmobileMod(te));
-
-        Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
-
-        // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
-        // It gets a =4 penalty for being blind!
-        if (((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
-            if ((sensorHits + sensorHits2) == 3) {
-                toHit.addModifier(4, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
-            } else if (sensorHits == 2) {
-                toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
-            }
-        }
-
         // elevation
         if (attackerHeight == targetElevation) {
-            if (te.height() == 0) {
+            if (target.getHeight() == 0) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);
@@ -297,7 +190,7 @@ public class PunchAttackAction
         }
 
         // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae,te));
+        toHit.setSideTable(Compute.targetSideTable(ae,target));
 
         // done!
         return toHit;

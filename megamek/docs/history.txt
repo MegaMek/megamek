@@ -39,6 +39,7 @@ v0.31.5-dev (CVS)
 + Bug 1420876: rapidfire MG can fire when ammo is used up
 + Bug 1424586: GE's need a proper BV
 + Bug 1424570: Light AC's need special munitions
++ Bug 1413335: physical attack vs building
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

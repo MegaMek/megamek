@@ -1956,7 +1956,7 @@ public class BoardView1
             message.append(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
                     mechInSecond ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
                     c2.getBoardNum()}));
-            if (!le.canSee()) {
+            if (le.isBlocked()) {
                 message.append(Messages.getString("BoardView1.LOSBlocked", new Object[]{ //$NON-NLS-1$
                     new Integer(c1.distance(c2))}));
             } else {

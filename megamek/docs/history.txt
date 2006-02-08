@@ -42,6 +42,8 @@ v0.31.5-dev (CVS)
 + Bug 1413335: physical attack vs building
 + Bug 1414795: remove underweight duplicate of Mantis VTOL
 + Protect MaxTech BAP rules by game option.
++ Bug 1415157: doubleblind not working correctly on disconnect
++ Bug 1297704: LOS tool not working correctly
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

@@ -187,6 +187,7 @@ public class LosEffects {
         if (null == ae.getPosition() || null == target.getPosition() || ae.isOffBoard()) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
+            los.hasLoS = false;
             return los;
         }
         
@@ -310,12 +311,14 @@ public class LosEffects {
         if (ai.attOffBoard) {
             LosEffects los = new LosEffects();
             los.blocked = true;
+            los.hasLoS = false;
             return los;
         }
         if (ai.attOnLand && ai.targetUnderWater ||
             ai.attUnderWater && ai.targetOnLand) {
             LosEffects los = new LosEffects();
             los.blocked = true;
+            los.hasLoS = false;
             return los;             
         }
 

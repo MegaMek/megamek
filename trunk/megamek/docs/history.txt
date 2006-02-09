@@ -47,6 +47,7 @@ v0.31.5-dev (CVS)
 + Bug: HMP Mechs with split weapons did not load correctly.
 + Show ECM bubbles on map
 + Bug 1427812: Thundergod mislabeled as Cerberus
++ Bug 1427926: Stealth BA can be secondary targets.
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

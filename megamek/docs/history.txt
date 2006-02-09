@@ -45,6 +45,7 @@ v0.31.5-dev (CVS)
 + Bug 1415157: doubleblind not working correctly on disconnect
 + Bug 1297704: LOS tool not working correctly
 + Bug: HMP Mechs with split weapons did not load correctly.
++ Show ECM bubbles on map
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

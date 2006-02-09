@@ -1098,7 +1098,7 @@ public class Compute {
         }
 
         // Stealthed Mechs can't be secondary targets (BMRr, pg. 147)
-        if ((target instanceof Entity) && ((Entity) target).isStealthActive()) {
+        if ((target instanceof Mech) && ((Entity) target).isStealthActive()) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                     "Can't target Mech with active stealth armor as secondary target");
         }

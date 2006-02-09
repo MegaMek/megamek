@@ -8,6 +8,7 @@ v0.30.8-dev (CVS)
 + Bug: It was possible to fire with a torso/arm split weapon when prone and
     firing from the other arm already.
 + Bug 1420876: rapidfire MG can fire when ammo is used up
++ Bug: HMP Mechs with split weapons not loading.
 
 v0.30.7 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

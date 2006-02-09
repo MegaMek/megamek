@@ -1539,7 +1539,7 @@ public abstract class Mech
         // spreadable or split equipment only gets added to 1 crit at a time, 
         // since we don't know how many are in this location
         int slots = mounted.getType().getCriticals(this);
-        if (mounted.getType().isSpreadable() || mounted.isSplit()) {
+        if (mounted.getType().isSpreadable() || mounted.isSplitable()) {
             slots = 1;
         }
         

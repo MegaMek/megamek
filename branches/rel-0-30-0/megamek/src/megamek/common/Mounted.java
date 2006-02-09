@@ -389,6 +389,11 @@ public class Mounted implements Serializable, RoundUpdated {
     public boolean isSplit() {
         return bSplit;
     }
+    
+    public boolean isSplitable() {
+        return (this.getType() instanceof WeaponType &&
+            this.getType().hasFlag(WeaponType.F_SPLITABLE));
+    }
 
     public void setSplit(boolean b) {
         bSplit = b;

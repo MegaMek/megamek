@@ -19,6 +19,7 @@ package megamek.client.ui.AWT;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -207,6 +208,9 @@ public class BoardView1
     //selected entity and weapon for artillery display
     private Entity selectedEntity = null;
     private Mounted selectedWeapon = null;
+    
+    //hexes with ECM effect
+    private Hashtable<Coords, Integer> ecmHexes = null;
 
     /**
      * Construct a new board view for the specified game
@@ -1133,6 +1137,14 @@ public class BoardView1
         if (tileManager.supersFor(hex) != null) {
             for (Iterator i = tileManager.supersFor(hex).iterator(); i.hasNext();){
                 scaledImage = getScaledImage((Image)i.next());
+                boardGraph.drawImage(scaledImage, drawX, drawY, this);
+            }
+        }
+        
+        if(ecmHexes != null) {
+            Integer tint = ecmHexes.get(c);
+            if(tint != null) {
+                scaledImage = getScaledImage(tileManager.getEcmShade(tint.intValue()));
                 boardGraph.drawImage(scaledImage, drawX, drawY, this);
             }
         }
@@ -4280,10 +4292,12 @@ public class BoardView1
     private GameListener gameListener = new GameListenerAdapter(){
         
         public void gameEntityNew(GameEntityNewEvent e) {
+            updateEcmList();
             redrawAllEntities();            
         }
 
         public void gameEntityRemove(GameEntityRemoveEvent e) {
+            updateEcmList();
             redrawAllEntities();            
         }
 
@@ -4292,6 +4306,7 @@ public class BoardView1
             if (mp != null && mp.size() > 0 && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);
             }else {
+                updateEcmList();
                 redrawEntity(e.getEntity());
             }
         }
@@ -4426,4 +4441,60 @@ public class BoardView1
         repaint(100);
     }
 
+    private class EcmBubble extends Coords {
+        int range;
+        int tint;
+        public EcmBubble(Coords c, int range, int tint) {
+            super(c);
+            this.range = range;
+            this.tint = tint;
+        }
+    }
+    
+    //This is expensive, so precalculate when entity changes
+    public void updateEcmList() {
+        ArrayList<EcmBubble> list = new ArrayList();
+        for(Enumeration e = game.getEntities();e.hasMoreElements();) {
+            Entity ent = (Entity)e.nextElement();
+            if(ent.getPosition() == null || !ent.isDeployed() || ent.isOffBoard()) {
+                continue;
+            }
+            int range = ent.getECMRange();
+            if(range != Entity.NONE) {
+                int tint = PlayerColors.getColorRGB(ent.getOwner().getColorIndex());
+                list.add(new EcmBubble(ent.getPosition(), range, tint));
+            }
+        }
+        Hashtable<Coords, Integer> table = new Hashtable();
+        for(EcmBubble b : list) {
+            Integer col = new Integer(b.tint);
+            for(int x=-b.range;x<=b.range;x++) {
+                for(int y=-b.range;y<=b.range;y++) {
+                    Coords c = new Coords(x+b.x,y+b.y);
+                    //clip rectangle to hexagon
+                    if(b.distance(c) <= b.range) {
+                        Integer tint = table.get(c); 
+                        if(tint == null) {
+                            table.put(c, col);
+                        } else if (tint.intValue() != b.tint) {
+                            int red1 = (tint.intValue() >> 16) & 0xff;
+                            int green1 = (tint.intValue() >> 8) & 0xff;
+                            int blue1 = tint.intValue() & 0xff;
+                            int red2 = (b.tint >> 16) & 0xff;
+                            int green2 = (b.tint >> 8) & 0xff;
+                            int blue2 = b.tint & 0xff;
+                            red1 = (red1 + red2) / 2;
+                            green1 = (green1 + green2) / 2;
+                            blue1 = (blue1 + blue2) / 2;
+                            table.put(c, new Integer((red1 << 16) | (green1 << 8) | blue1));
+                        }
+                    }
+                }
+            }
+        }
+        synchronized(this) {
+            ecmHexes = table;
+        }
+        repaint(100);
+    }
 }

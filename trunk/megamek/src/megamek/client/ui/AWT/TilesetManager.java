@@ -75,6 +75,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     private Image artilleryAutohit;
     private Image artilleryAdjusted;
     private Image artilleryIncoming;
+    private HashMap<Integer, Image> ecmShades = new HashMap();
     private static final String NIGHT_IMAGE_FILE = "data/images/hexes/transparent/night.png";
     private static final String ARTILLERY_AUTOHIT_IMAGE_FILE = "data/images/hexes/artyauto.gif";
     private static final String ARTILLERY_ADJUSTED_IMAGE_FILE = "data/images/hexes/artyadj.gif";
@@ -192,6 +193,43 @@ public class TilesetManager implements IPreferenceChangeListener {
         return nightFog;
     }
     
+    public Image getEcmShade(int tint) {
+        Image image = ecmShades.get(new Integer(tint));
+        if(image == null) {
+            Image iMech;
+            
+            iMech = nightFog;
+      
+            int[] pMech = new int[EntityImage.IMG_SIZE];
+            PixelGrabber pgMech = new PixelGrabber(iMech, 0, 0, EntityImage.IMG_WIDTH, EntityImage.IMG_HEIGHT, pMech, 0, EntityImage.IMG_WIDTH);
+      
+            try {
+                pgMech.grabPixels();
+            } catch (InterruptedException e) {
+                System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
+                return image;
+            }
+            if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
+                System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                return image;
+            }
+            
+            for (int i = 0; i < EntityImage.IMG_SIZE; i++) {
+              int pixel = pMech[i];
+              int alpha = (pixel >> 24) & 0xff;
+            
+              if (alpha != 0) {
+                int pixel1 = tint & 0xffffff;
+                pMech[i] = (alpha << 24) | pixel1;
+              }
+            }
+          
+            image = comp.createImage(new MemoryImageSource(EntityImage.IMG_WIDTH, EntityImage.IMG_HEIGHT, pMech, 0, EntityImage.IMG_WIDTH));
+            ecmShades.put(new Integer(tint), image);
+        }
+        return image;
+    }
+    
     public Image getArtilleryTarget(int which) {
         switch(which) {
             case ARTILLERY_AUTOHIT:
@@ -244,9 +282,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         minefieldSign = comp.getToolkit().getImage(Minefield.IMAGE_FILE);
         
         // load night overlay
-        if(game.getOptions().booleanOption("night_battle")) {
-            nightFog = comp.getToolkit().getImage(NIGHT_IMAGE_FILE);
-        }
+        nightFog = comp.getToolkit().getImage(NIGHT_IMAGE_FILE);
         
         //load artillery targets
         artilleryAutohit = comp.getToolkit().getImage(ARTILLERY_AUTOHIT_IMAGE_FILE);

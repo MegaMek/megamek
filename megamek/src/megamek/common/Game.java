@@ -1662,6 +1662,51 @@ public class Game implements Serializable, IGame
      * Used when, say, an entity dies mid-phase.
      */
     public void removeTurnFor(Entity entity) {
+        //If the game option "move multiple infantry per mech" is selected,
+        //then we might not need to remove a turn at all.
+        //A turn only needs to be removed when going from 4 inf (2 turns) to
+        //3 inf (1 turn)
+        if(getOptions().booleanOption("inf_move_multi")
+                && entity instanceof Infantry) {
+            if((getInfantryLeft(entity.getOwnerId()) 
+                    % getOptions().intOption("inf_proto_move_multi"))
+                    != 1) {
+                //exception, if the _next_ turn is an infantry turn, remove that
+                //contrived, but may come up e.g. one inf accidently kills another
+                if(hasMoreTurns()) {
+                    GameTurn nextTurn = (GameTurn)turnVector.elementAt(turnIndex + 1);
+                    if(nextTurn instanceof GameTurn.EntityClassTurn) {
+                        GameTurn.EntityClassTurn ect = (GameTurn.EntityClassTurn)nextTurn;
+                        if(ect.isValidClass(GameTurn.CLASS_INFANTRY) && 
+                                !ect.isValidClass(~GameTurn.CLASS_INFANTRY)) {
+                            turnVector.removeElementAt(turnIndex + 1);
+                        }
+                    }
+                }
+                return;
+            }
+        }
+        //Same thing but for protos
+        if(getOptions().booleanOption("protos_move_multi")
+                && entity instanceof Protomech) {
+            if((getProtomechsLeft(entity.getOwnerId()) 
+                    % getOptions().intOption("inf_proto_move_multi"))
+                    != 1) {
+                //exception, if the _next_ turn is an protomek turn, remove that
+                //contrived, but may come up e.g. one inf accidently kills another
+                if(hasMoreTurns()) {
+                    GameTurn nextTurn = (GameTurn)turnVector.elementAt(turnIndex + 1);
+                    if(nextTurn instanceof GameTurn.EntityClassTurn) {
+                        GameTurn.EntityClassTurn ect = (GameTurn.EntityClassTurn)nextTurn;
+                        if(ect.isValidClass(GameTurn.CLASS_PROTOMECH) && 
+                                !ect.isValidClass(~GameTurn.CLASS_PROTOMECH)) {
+                            turnVector.removeElementAt(turnIndex + 1);
+                        }
+                    }
+                }
+                return;
+            }
+        }
         for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
             GameTurn turn = (GameTurn)turnVector.elementAt(i);
             if (turn.isValidEntity(entity, this)) {

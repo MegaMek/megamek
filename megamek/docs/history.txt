@@ -48,6 +48,7 @@ v0.31.5-dev (CVS)
 + Show ECM bubbles on map
 + Bug 1427812: Thundergod mislabeled as Cerberus
 + Bug 1427926: Stealth BA can be secondary targets.
++ Bug 1428707: turn lost when loading infantry with inf_move_multi
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

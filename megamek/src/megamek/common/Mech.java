@@ -1885,7 +1885,6 @@ public abstract class Mech
         if(getEmptyCriticals(loc) < slots) {
             throw new LocationFullException(mounted.getName() + " does not fit in " + getLocationAbbr(loc) + " on " + getDisplayName() + "\n        free criticals in location: " + getEmptyCriticals(loc) + ", criticals needed: " + slots);
         }
-        
         // add it
         if (getEquipmentNum(mounted)==-1)
             super.addEquipment(mounted, loc, rearMounted);

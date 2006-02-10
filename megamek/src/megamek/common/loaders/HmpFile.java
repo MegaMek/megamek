@@ -666,7 +666,7 @@ public class HmpFile
                                     int nLoc = m.getLocation();
                                     if ((nLoc == location || location == Mech
                                             .getInnerLocation(nLoc))
-                                            && m.getType() == equipment) {
+                                            && m.getType().equals(equipment)) {
                                         bFound = true;
                                         break;
                                     }

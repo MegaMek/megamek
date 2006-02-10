@@ -117,6 +117,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"no_tac", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_immobile_vehicles", false); //$NON-NLS-1$
         addOption(ruleBreakers,"vehicles_can_eject", false); //$NON-NLS-1$
+        addOption(ruleBreakers,"individual_initiative", false); //$NON-NLS-1$
         addOption(ruleBreakers,"inf_move_even", false); //$NON-NLS-1$
         addOption(ruleBreakers,"inf_deploy_even", false); //$NON-NLS-1$
         addOption(ruleBreakers,"inf_move_later", false); //$NON-NLS-1$

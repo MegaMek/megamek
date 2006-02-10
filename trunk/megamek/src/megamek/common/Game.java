@@ -1688,7 +1688,8 @@ public class Game implements Serializable, IGame
         //A turn only needs to be removed when going from 4 inf (2 turns) to
         //3 inf (1 turn)
         if(getOptions().booleanOption("inf_move_multi")
-                && entity instanceof Infantry) {
+                && entity instanceof Infantry
+                && phase == PHASE_MOVEMENT) {
             if((getInfantryLeft(entity.getOwnerId()) 
                     % getOptions().intOption("inf_proto_move_multi"))
                     != 1) {
@@ -1709,7 +1710,8 @@ public class Game implements Serializable, IGame
         }
         //Same thing but for protos
         if(getOptions().booleanOption("protos_move_multi")
-                && entity instanceof Protomech) {
+                && entity instanceof Protomech
+                && phase == PHASE_MOVEMENT) {
             if((getProtomechsLeft(entity.getOwnerId()) 
                     % getOptions().intOption("inf_proto_move_multi"))
                     != 1) {

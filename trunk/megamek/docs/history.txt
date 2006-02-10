@@ -54,6 +54,7 @@ v0.31.5-dev (CVS)
 + Patch 1428586: GetAllEntites function in Game for MekWars cooperation.
 + Bug: Splitable weapons that are not split loaded multiple times in MTF files
 + Bug: Compact heatsinks not loaded from HMP files.
++ Bug: 1428707 should be for movement phase only
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

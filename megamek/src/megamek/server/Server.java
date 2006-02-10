@@ -1990,19 +1990,82 @@ public class Server implements Runnable {
      * Rolls initiative for all the players.
      */
     private void rollInitiative() {
-        // Roll for initative on the teams.
-        TurnOrdered.rollInitiative(game.getTeamsVector());
+        if(game.getOptions().booleanOption("individual_initiative")) {
+            TurnOrdered.rollInitiative(game.getEntitiesVector());
+        } else {
+            // Roll for initative on the teams.
+            TurnOrdered.rollInitiative(game.getTeamsVector());
+        }
 
         transmitAllPlayerUpdates();
     }
 
+    /**
+     * Determines the turn oder for a given phase (with individual init)
+     * @param phase the <code>int</code> id of the phase
+     */
+    private void determineTurnOrderIUI(int phase) {
+        for (Enumeration loop = game.getEntities(); loop.hasMoreElements();) {
+            final Entity entity = (Entity)loop.nextElement();
+            entity.resetOtherTurns();
+            if (entity.isSelectableThisTurn()) {
+                entity.incrementOtherTurns();
+            }
+        }
+        // Now, generate the global order of all teams' turns.
+        TurnVectors team_order = TurnOrdered.generateTurnOrder
+            ( game.getEntitiesVector(), game );
+
+        // See if there are any loaded units stranded on immobile transports.
+        Enumeration strandedUnits = game.getSelectedEntities
+            ( new EntitySelector() {
+                    public boolean accept( Entity entity ) {
+                        if ( Server.this.game.isEntityStranded(entity) )
+                            return true;
+                        return false;
+                    }
+                } );
+
+        // Now, we collect everything into a single vector.
+        Vector turns;
+
+        if ( strandedUnits.hasMoreElements() &&
+             game.getPhase() == IGame.PHASE_MOVEMENT ) {
+            // Add a game turn to unload stranded units, if this
+            //  is the movement phase.
+            turns = new Vector( team_order.getNormalTurns() +
+                                team_order.getEvenTurns() + 1);
+            turns.addElement( new GameTurn.UnloadStrandedTurn(strandedUnits) );
+        } else {
+            // No stranded units.
+            turns = new Vector( team_order.getNormalTurns() +
+                                team_order.getEvenTurns() );
+        }
+        
+        //add the turns (this is easy)
+        while(team_order.hasMoreElements()) {
+            Entity e = (Entity)team_order.nextElement();
+            if(e.isSelectableThisTurn())
+                turns.addElement(new GameTurn.SpecificEntityTurn(e.getOwnerId(), e.getId()));
+        }
+        
+        // set fields in game
+        game.setTurnVector(turns);
+        game.resetTurnIndex();
+
+        // send turns to all players
+        send(createTurnVectorPacket());
+    }
     /**
      * Determines the turn oder for a given phase
      * @param phase the <code>int</code> id of the phase
      */
     private void determineTurnOrder(int phase) {
 
-        // Determine whether infantry and/or Protomechs move
+        if(game.getOptions().booleanOption("individual_initiative")) {
+            determineTurnOrderIUI(phase);
+            return;
+        }
         // and/or deploy even according to game options.
         boolean infMoveEven =
             ( game.getOptions().booleanOption("inf_move_even") &&
@@ -2265,61 +2328,84 @@ public class Server implements Runnable {
             addReport(new Report(1210, Report.PUBLIC)); //newline
         }
 
-        for (Enumeration i = game.getTeams(); i.hasMoreElements();) {
-            final Team team = (Team)i.nextElement();
-
-            // If there is only one player, list them as the 'team', and
-            // use the team iniative
-            if (team.getSize() == 1) {
-                final Player player = (Player)team.getPlayers().nextElement();
-                r = new Report(1015, Report.PUBLIC);
-                r.add(player.getName());
-                r.add(team.getInitiative().toString());
-                addReport(r);
-            } else {
-                // Multiple players.  List the team, then break it down.
-                r = new Report(1015, Report.PUBLIC);
-                r.add(Player.teamNames[team.getId()]);
-                r.add(team.getInitiative().toString());
-                addReport(r);
-                for( Enumeration j = team.getPlayers(); j.hasMoreElements();) {
-                    final Player player = (Player)j.nextElement();
-                    r = new Report(1015, Report.PUBLIC);
-                    r.indent();
-                    r.add(player.getName());
-                    r.add(player.getInitiative().toString());
+        if(game.getOptions().booleanOption("individual_initiative")) {
+            r = new Report(1040, Report.PUBLIC);
+            addReport(r);
+            for(Enumeration<GameTurn> e = game.getTurns();e.hasMoreElements();) {
+                GameTurn t = e.nextElement();
+                if(t instanceof GameTurn.SpecificEntityTurn) {
+                    Entity entity = game.getEntity(((GameTurn.SpecificEntityTurn)t).getEntityNum());
+                    r = new Report(1045);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(entity.getInitiative().toString());
                     addReport(r);
+                } else {
+                    Player player = getPlayer( t.getPlayerNum() );
+                    if ( null != player ) {
+                        r = new Report(1050, Report.PUBLIC);
+                        r.add(player.getName());
+                        addReport(r);
+                    }                    
                 }
             }
-        }
-
-        // The turn order is different in movement phase
-        // if a player has any "even" moving units.
-        r = new Report(1020, Report.PUBLIC);
-
-        boolean firstTurn = true;
-        boolean hasEven = false;
-        for (Enumeration i = game.getTurns(); i.hasMoreElements();) {
-            GameTurn turn = (GameTurn)i.nextElement();
-            Player player = getPlayer( turn.getPlayerNum() );
-            if ( null != player ) {
-                r.add(player.getName());
-                firstTurn = false;
-                if (player.getEvenTurns() > 0)
-                    hasEven = true;
+        } else {
+            for (Enumeration i = game.getTeams(); i.hasMoreElements();) {
+                final Team team = (Team)i.nextElement();
+    
+                // If there is only one player, list them as the 'team', and
+                // use the team iniative
+                if (team.getSize() == 1) {
+                    final Player player = (Player)team.getPlayers().nextElement();
+                    r = new Report(1015, Report.PUBLIC);
+                    r.add(player.getName());
+                    r.add(team.getInitiative().toString());
+                    addReport(r);
+                } else {
+                    // Multiple players.  List the team, then break it down.
+                    r = new Report(1015, Report.PUBLIC);
+                    r.add(Player.teamNames[team.getId()]);
+                    r.add(team.getInitiative().toString());
+                    addReport(r);
+                    for( Enumeration j = team.getPlayers(); j.hasMoreElements();) {
+                        final Player player = (Player)j.nextElement();
+                        r = new Report(1015, Report.PUBLIC);
+                        r.indent();
+                        r.add(player.getName());
+                        r.add(player.getInitiative().toString());
+                        addReport(r);
+                    }
+                }
             }
-        }
-        r.newlines = 2;
-        addReport(r);
-        if (hasEven) {
-            r = new Report(1021, Report.PUBLIC);
-            if (game.getOptions().booleanOption("inf_deploy_even")
-                || game.getOptions().booleanOption("protos_deploy_even"))
-                r.choose(true);
-            else r.choose(false);
-            r.indent();
+    
+            // The turn order is different in movement phase
+            // if a player has any "even" moving units.
+            r = new Report(1020, Report.PUBLIC);
+    
+            boolean firstTurn = true;
+            boolean hasEven = false;
+            for (Enumeration i = game.getTurns(); i.hasMoreElements();) {
+                GameTurn turn = (GameTurn)i.nextElement();
+                Player player = getPlayer( turn.getPlayerNum() );
+                if ( null != player ) {
+                    r.add(player.getName());
+                    firstTurn = false;
+                    if (player.getEvenTurns() > 0)
+                        hasEven = true;
+                }
+            }
             r.newlines = 2;
             addReport(r);
+            if (hasEven) {
+                r = new Report(1021, Report.PUBLIC);
+                if (game.getOptions().booleanOption("inf_deploy_even")
+                    || game.getOptions().booleanOption("protos_deploy_even"))
+                    r.choose(true);
+                else r.choose(false);
+                r.indent();
+                r.newlines = 2;
+                addReport(r);
+            }
         }
         if (!abbreviatedReport) {
             //Wind direction and strength

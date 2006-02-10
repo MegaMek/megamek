@@ -28,7 +28,7 @@ import megamek.common.util.StringUtil;
  * Entity is a master class for basically anything on the board except
  * terrain.
  */
-public abstract class Entity
+public abstract class Entity extends TurnOrdered
     implements Serializable, Transporter, Targetable, RoundUpdated
 {
     public static final int        NONE                = -1;

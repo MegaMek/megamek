@@ -273,6 +273,12 @@ public interface IGame {
     public abstract int getEntitiesOwnedBy(Player player);
     
     /**
+     * Returns the number of entities owned by the player, regardless of
+     * their status.
+     */
+    public abstract int getAllEntitiesOwnedBy(Player player);
+    
+    /**
      * Returns the number of non-destroyed entityes owned by the player
      */
     public abstract int getLiveEntitiesOwnedBy(Player player);

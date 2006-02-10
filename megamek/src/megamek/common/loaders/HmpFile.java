@@ -805,6 +805,7 @@ public class HmpFile
         criticals.put(new Long(0x20), "Supercharger");
         criticals.put(new Long(0x21), "Light Ferro-Fibrous");
         criticals.put(new Long(0x22), "Heavy Ferro-Fibrous");
+        criticals.put(new Long(0x25), "IS2 Compact Heat Sinks");
         criticals.put(new Long(0x26), "CASE II");
         criticals.put(new Long(0x27), "Null Signature System");
         criticals.put(new Long(0x28), "Coolant Pod");

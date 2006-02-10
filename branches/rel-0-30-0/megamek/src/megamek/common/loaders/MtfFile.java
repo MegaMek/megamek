@@ -33,6 +33,7 @@ import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  *
@@ -349,7 +350,8 @@ public class MtfFile implements IMechLoader {
                             hSharedEquip.put(etype, m);
                         }
                     }
-                    else if (split) {
+                    else if (etype instanceof WeaponType &&
+                            etype.hasFlag(WeaponType.F_SPLITABLE)) {
                         // do we already have this one in this or an outer location?
                         Mounted m = null;
                         boolean bFound = false;
@@ -369,17 +371,17 @@ public class MtfFile implements IMechLoader {
                             }
                             // give the most restrictive location for arcs
                             m.setLocation(Mech.mostRestrictiveLoc(loc, m.getLocation()));
+                            if (loc != m.getLocation()) {
+                                m.setSplit(true);
+                            }
                         }
                         else {
                             // make a new one
                             m = new Mounted(mech, etype);
-                            m.setSplit(true);
                             m.setFoundCrits(1);
                             vSplitWeapons.addElement(m);
                         }
                         mech.addEquipment(m, loc, rearMounted);
-                        //mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                        //        mech.getEquipmentNum(m), etype.isHittable()));
                     }
                     else {
                         mech.addEquipment(etype, loc, rearMounted);

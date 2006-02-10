@@ -10,6 +10,7 @@ v0.30.8-dev (CVS)
 + Bug 1420876: rapidfire MG can fire when ammo is used up
 + Bug: HMP Mechs with split weapons not loading.
 + Bug 1427926: Stealth BA can be secondary targets.
++ Bug: Splitable weapons that are not split loaded multiple times in MTF files
 
 v0.30.7 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

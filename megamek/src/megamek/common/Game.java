@@ -420,6 +420,27 @@ public class Game implements Serializable, IGame
     }
 
     /**
+     * Returns the number of entities owned by the player, regardless of
+     * their status.
+     */
+    public int getAllEntitiesOwnedBy(Player player) {
+        int count = 0;
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if (entity.getOwner().equals(player)) {
+                count++;
+            }
+        }
+        for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if (entity.getOwner().equals(player)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
      * Returns the number of non-destroyed entityes owned by the player
      */
     public int getLiveEntitiesOwnedBy(Player player) {

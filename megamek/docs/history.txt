@@ -49,7 +49,9 @@ v0.31.5-dev (CVS)
 + Bug 1427812: Thundergod mislabeled as Cerberus
 + Bug 1427926: Stealth BA can be secondary targets.
 + Bug 1428707: turn lost when loading infantry with inf_move_multi
-+ Individual initiative game option *not compatible with other initiative options*
++ Individual initiative game option *not compatible with other
+     initiative options*
++ Patch 1428586: GetAllEntites function in Game for MekWars cooperation.
 
 v0.31.4 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

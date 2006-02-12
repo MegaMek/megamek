@@ -149,7 +149,7 @@ public interface IHex extends Cloneable{
     public abstract boolean containsTerrain(int type, int level);
 
     /**
-     * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the
+     * @return the level of the terrain specified, or ITerrain.LEVEL_NONE if the
      *         terrain is not present in the hex
      */
     public abstract int terrainLevel(int type);

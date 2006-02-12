@@ -369,11 +369,12 @@ public class MtfFile implements IMechLoader {
                             if (m.getFoundCrits() >= etype.getCriticals(mech)) {
                                 vSplitWeapons.removeElement(m);
                             }
-                            // give the most restrictive location for arcs
-                            m.setLocation(Mech.mostRestrictiveLoc(loc, m.getLocation()));
+                            // if we're in a new location, set the weapon as split
                             if (loc != m.getLocation()) {
                                 m.setSplit(true);
                             }
+                            // give the most restrictive location for arcs
+                            m.setLocation(Mech.mostRestrictiveLoc(loc, m.getLocation()));
                         }
                         else {
                             // make a new one

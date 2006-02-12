@@ -565,12 +565,12 @@ public class HmpFile
                   if (m.getFoundCrits() >= equipment.getCriticals(mech)) {
                     vSplitWeapons.removeElement(m);
                   }
-                  // give the most restrictive location for arcs
-                  m.setLocation(Mech.mostRestrictiveLoc(location, m.getLocation()));
                   // if we're in a new location, set the weapon as split
                   if (location != m.getLocation()) {
                       m.setSplit(true);
                   }
+                  // give the most restrictive location for arcs
+                  m.setLocation(Mech.mostRestrictiveLoc(location, m.getLocation()));
                 }
                 else {
                   // make a new one

@@ -11,6 +11,7 @@ v0.30.8-dev (CVS)
 + Bug: HMP Mechs with split weapons not loading.
 + Bug 1427926: Stealth BA can be secondary targets.
 + Bug: Splitable weapons that are not split loaded multiple times in MTF files
++ Bug 1429290, Patch 1429092: Mechs with split weapons are "illegal units"
 
 v0.30.7 (2006-01-27, 22:10 GMT)
 + Bug 1385381: incorrect code in MapSettings.java

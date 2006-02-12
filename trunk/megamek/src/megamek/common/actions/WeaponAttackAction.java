@@ -282,9 +282,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te) &&
                     !Compute.isAffectedByECM(ae,ae.getPosition(),te.getPosition()) &&
                     (game.getBoard().getHex(te.getPosition())
-                        .getTerrain(Terrains.WOODS).getLevel() > 0 ||
+                        .containsTerrain(Terrains.WOODS) ||
                      game.getBoard().getHex(te.getPosition())
-                        .getTerrain(Terrains.JUNGLE).getLevel() > 0 ||
+                        .containsTerrain(Terrains.JUNGLE) ||
                      los.getLightWoods() > 0 ||
                      los.getHeavyWoods() > 0 ||
                      los.getUltraWoods() > 0) ) {

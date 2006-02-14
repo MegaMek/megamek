@@ -275,22 +275,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     eistatus = 1;
             }
             
-            // if we have BAP with MaxTech rules, and there are woods in the 
-            // way, and we are within BAP range, we reduce the BTH by 1
-            if (game.getOptions().booleanOption("maxtech_bap") &&
-                    te != null && ae.hasBAP() &&
-                    ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te) &&
-                    !Compute.isAffectedByECM(ae,ae.getPosition(),te.getPosition()) &&
-                    (game.getBoard().getHex(te.getPosition())
-                        .containsTerrain(Terrains.WOODS) ||
-                     game.getBoard().getHex(te.getPosition())
-                        .containsTerrain(Terrains.JUNGLE) ||
-                     los.getLightWoods() > 0 ||
-                     los.getHeavyWoods() > 0 ||
-                     los.getUltraWoods() > 0) ) {
-                toHit.addModifier(-1, "target in/behind woods and attacker has BAP");
-            }
-
             losMods = los.losModifiers(game, eistatus);
         } else {
             los = LosEffects.calculateLos(game, spotter.getId(), target);
@@ -362,6 +346,24 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
         }
     
+        // if we have BAP with MaxTech rules, and there are woods in the 
+        // way, and we are within BAP range, we reduce the BTH by 1
+        if (game.getOptions().booleanOption("maxtech_bap") &&
+                !isIndirect &&
+                te != null && ae.hasBAP() &&
+                ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te) &&
+                !Compute.isAffectedByECM(ae,ae.getPosition(),te.getPosition()) &&
+                (game.getBoard().getHex(te.getPosition())
+                    .containsTerrain(Terrains.WOODS) ||
+                 game.getBoard().getHex(te.getPosition())
+                    .containsTerrain(Terrains.JUNGLE) ||
+                 los.getLightWoods() > 0 ||
+                 los.getHeavyWoods() > 0 ||
+                 los.getUltraWoods() > 0) ) {
+
+            toHit.addModifier(-1, "target in/behind woods and attacker has BAP");
+        }
+
         // Is the pilot a weapon specialist?
         if (ae.crew.getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
             toHit.addModifier( -2, "weapon specialist" );

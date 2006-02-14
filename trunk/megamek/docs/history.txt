@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.31.5-dev (CVS)
+v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS
 + Added some missing level 3 equipment to HMVFile from HMPFile data
 + HMVFile now reports failed equipment

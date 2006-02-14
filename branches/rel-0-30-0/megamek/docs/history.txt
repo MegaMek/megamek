@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.30.9-dev (CVS)
+
 v0.30.8 (2006-02-14, 14:19 GMT)
 + Bug 1295062: Heavy Gauss PSR slightly off
 + Bug 1424137: class cast exception targetting woods with IDF

@@ -49,7 +49,7 @@ import megamek.server.*;
 import megamek.test.*;
 
 public class MegaMek implements ActionListener {
-    public static String VERSION = "0.30.8-dev"; //$NON-NLS-1$
+    public static String VERSION = "0.30.8"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
 
     private static final NumberFormat commafy = NumberFormat.getInstance();

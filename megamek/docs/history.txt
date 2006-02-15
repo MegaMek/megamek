@@ -1,6 +1,9 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.31.6-dev (CVS)
++ Bug 1427812: Thundergod mislabeled as Cerberus
++ Bug with movement initiative report when non-canon deployment and movement
+    initiative options set.
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

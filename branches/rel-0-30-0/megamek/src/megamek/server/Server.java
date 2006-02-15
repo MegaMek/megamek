@@ -2286,8 +2286,9 @@ implements Runnable, ConnectionHandler {
         vPhaseReport.addElement(r);
         if (hasEven) {
             r = new Report(1021, Report.PUBLIC);
-            if (game.getOptions().booleanOption("inf_deploy_even")
-                || game.getOptions().booleanOption("protos_deploy_even"))
+            if ((game.getOptions().booleanOption("inf_deploy_even")
+                || game.getOptions().booleanOption("protos_deploy_even")) &&
+                !(game.getLastPhase() == IGame.PHASE_END_REPORT))
                 r.choose(true);
             else r.choose(false);
             r.indent();

@@ -1181,16 +1181,37 @@ Clan Foot Point (Laser)|Clan General|Infantry|2800
 Clan Foot Point (MG)|Clan General|Infantry|2800
 Clan Foot Point (Rifle)|Clan General|Infantry|2800
 Clan Foot Point (SRM)|Clan General|Infantry|2800
+Clan Foot Point (Inferno)|Clan General|Infantry|2800
 Clan Jump Point (Flamer)|Clan General|Infantry|2800
 Clan Jump Point (Laser)|Clan General|Infantry|2800
 Clan Jump Point (MG)|Clan General|Infantry|2800
 Clan Jump Point (Rifle)|Clan General|Infantry|2800
 Clan Jump Point (SRM)|Clan General|Infantry|2800
+Clan Jump Point (Inferno)|Clan General|Infantry|2800
 Clan Motorized Point (Flamer)|Clan General|Infantry|2800
 Clan Motorized Point (Laser)|Clan General|Infantry|2800
 Clan Motorized Point (MG)|Clan General|Infantry|2800
 Clan Motorized Point (Rifle)|Clan General|Infantry|2800
 Clan Motorized Point (SRM)|Clan General|Infantry|2800
+Clan Motorized Point (Inferno)|Clan General|Infantry|2800
+Clan Anti-Mech Foot Point (Flamer)|Clan General|Infantry|2800
+Clan Anti-Mech Foot Point (Laser)|Clan General|Infantry|2800
+Clan Anti-Mech Foot Point (MG)|Clan General|Infantry|2800
+Clan Anti-Mech Foot Point (Rifle)|Clan General|Infantry|2800
+Clan Anti-Mech Foot Point (SRM)|Clan General|Infantry|2800
+Clan Anti-Mech Foot Point (Inferno)|Clan General|Infantry|2800
+Clan Anti-Mech Jump Point (Flamer)|Clan General|Infantry|2800
+Clan Anti-Mech Jump Point (Laser)|Clan General|Infantry|2800
+Clan Anti-Mech Jump Point (MG)|Clan General|Infantry|2800
+Clan Anti-Mech Jump Point (Rifle)|Clan General|Infantry|2800
+Clan Anti-Mech Jump Point (SRM)|Clan General|Infantry|2800
+Clan Anti-Mech Jump Point (Inferno)|Clan General|Infantry|2800
+Clan Anti-Mech Motorized Point (Flamer)|Clan General|Infantry|2800
+Clan Anti-Mech Motorized Point (Laser)|Clan General|Infantry|2800
+Clan Anti-Mech Motorized Point (MG)|Clan General|Infantry|2800
+Clan Anti-Mech Motorized Point (Rifle)|Clan General|Infantry|2800
+Clan Anti-Mech Motorized Point (SRM)|Clan General|Infantry|2800
+Clan Anti-Mech Motorized Point (Inferno)|Clan General|Infantry|2800
 Clan Sylph|Cloud Cobra,Diamond Shark,Snow Raven|Infantry|3060
 Kage (Flamer)|Draconis Combine|Infantry|3056
 Kage (Laser)|Draconis Combine|Infantry|3056
@@ -1223,6 +1244,7 @@ Foot Platoon (LRM)|Inner Sphere General,Periphery General|Infantry|3057
 Foot Platoon (MG)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Foot Platoon (Rifle)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Foot Platoon (SRM)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Foot Platoon (Inferno)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 IS Standard (Flamer)|Inner Sphere General|Infantry|3052
 IS Standard (MG)|Inner Sphere General|Infantry|3052
 IS Standard (Laser)|Inner Sphere General|Infantry|3052
@@ -1233,12 +1255,35 @@ Jump Platoon (LRM)|Inner Sphere General,Periphery General|Infantry|3057
 Jump Platoon (MG)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Jump Platoon (Rifle)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Jump Platoon (SRM)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Jump Platoon (Inferno)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Motorized Platoon (Flamer)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Motorized Platoon (Laser)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Motorized Platoon (LRM)|Inner Sphere General,Periphery General|Infantry|3057
 Motorized Platoon (MG)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Motorized Platoon (Rifle)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Motorized Platoon (SRM)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Motorized Platoon (Inferno)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Foot Platoon (Flamer)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Foot Platoon (Laser)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Foot Platoon (LRM)|Inner Sphere General,Periphery General|Infantry|3057
+Anti-Mech Foot Platoon (MG)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Foot Platoon (Rifle)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Foot Platoon (SRM)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Foot Platoon (Inferno)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Jump Platoon (Flamer)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Jump Platoon (Laser)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Jump Platoon (LRM)|Inner Sphere General,Periphery General|Infantry|3057
+Anti-Mech Jump Platoon (MG)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Jump Platoon (Rifle)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Jump Platoon (SRM)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Jump Platoon (Inferno)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Motorized Platoon (Flamer)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Motorized Platoon (Laser)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Motorized Platoon (LRM)|Inner Sphere General,Periphery General|Infantry|3057
+Anti-Mech Motorized Platoon (MG)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Motorized Platoon (Rifle)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Motorized Platoon (SRM)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
+Anti-Mech Motorized Platoon (Inferno)|Inner Sphere General,Periphery General,SLDF 2750|Infantry|2400
 Fenrir (MG)|Lyran Alliance|Infantry|3060
 Fenrir (MPLAS)|Lyran Alliance|Infantry|3060
 Fenrir (SLAS)|Lyran Alliance|Infantry|3060

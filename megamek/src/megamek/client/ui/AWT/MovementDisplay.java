@@ -780,7 +780,8 @@ public class MovementDisplay
             // check for non-mech entering a fire
             if(curHex.containsTerrain(Terrains.FIRE)
                     && !(entity instanceof Mech)
-                    && entity.getElevation() <= 1
+                    && step.getElevation() <= 1
+                    && moveType != IEntityMovementType.MOVE_JUMP
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString("MovementDisplay.FireMoving", new Object[] {new Integer(8)}));
             }
@@ -788,12 +789,14 @@ public class MovementDisplay
             // check for magma
             int level = curHex.terrainLevel(Terrains.MAGMA);
             if(level == 1
-                    && entity.getElevation() <= 1
+                    && step.getElevation() == 0
+                    && moveType != IEntityMovementType.MOVE_JUMP
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaCrustMoving"));
             }
             else if(level == 2
-                    && entity.getElevation() <= 1
+                    && entity.getElevation() == 0
+                    && moveType != IEntityMovementType.MOVE_JUMP
                     && entity.getMovementMode() != IEntityMovementMode.HOVER
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));

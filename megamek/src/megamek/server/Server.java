@@ -13606,7 +13606,8 @@ System.out.println("In here!");
         else {
             // transfer criticals, if needed
             while (hits > 0 && en.canTransferCriticals(loc)
-                   && en.getTransferLocation(loc) != Entity.LOC_DESTROYED) {
+                   && en.getTransferLocation(loc) != Entity.LOC_DESTROYED
+                   && en.getTransferLocation(loc) != Entity.LOC_NONE) {
                 loc = en.getTransferLocation(loc);
                 r = new Report(6335);
                 r.subject = en.getId();

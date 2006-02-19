@@ -7,6 +7,7 @@ v0.31.6-dev (CVS)
 + Bug 1432484: TAC on RA of armless mech caused exception
 + Bug 1352552: Terrain Messages while Jumping
 + Bug 1410887: Anti-mech and inferno infantry should be canon
++ Bug 1434301: Split weapons not loading correctly from XML files.
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

@@ -3,6 +3,7 @@
 v0.30.9-dev (CVS)
 + Bug with movement initiative report when non-canon deployment and movement
     initiative options set.
++ Bug 1434301: Split weapons not loading correctly from XML files.
 
 v0.30.8 (2006-02-14, 14:19 GMT)
 + Bug 1295062: Heavy Gauss PSR slightly off

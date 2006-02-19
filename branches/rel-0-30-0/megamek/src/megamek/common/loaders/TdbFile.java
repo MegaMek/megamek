@@ -34,6 +34,7 @@ import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 import gd.xml.*;
 import gd.xml.tiny.*;
@@ -595,7 +596,8 @@ public class TdbFile implements IMechLoader {
                             hSharedEquip.put(etype, m);
                         }
                     }
-                    else if (split) {
+                    else if (etype instanceof WeaponType &&
+                            etype.hasFlag(WeaponType.F_SPLITABLE)) {                        
                         // do we already have this one in this or an outer location?
                         Mounted m = null;
                         boolean bFound = false;
@@ -613,13 +615,17 @@ public class TdbFile implements IMechLoader {
                             if (m.getFoundCrits() >= etype.getCriticals(mech)) {
                                 vSplitWeapons.removeElement(m);
                             }
+                            // if we're in a new location, set the
+                            // weapon as split
+                            if (loc != m.getLocation()) {
+                                m.setSplit(true);
+                            }
                             // give the most restrictive location for arcs
                             m.setLocation(Mech.mostRestrictiveLoc(loc, m.getLocation()));
                         }
                         else {
                             // make a new one
                             m = new Mounted(mech, etype);
-                            m.setSplit(true);
                             m.setFoundCrits(1);
                             vSplitWeapons.addElement(m);
                         }

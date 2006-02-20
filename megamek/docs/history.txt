@@ -9,6 +9,7 @@ v0.31.6-dev (CVS)
 + Bug 1410887: Anti-mech and inferno infantry should be canon
 + Bug 1434301: Split weapons not loading correctly from XML files.
 + Bug 1376291: weapons can target clear hexes
++ RFE 1434128: Override default hex tile setting (select the "simplified" tileset)
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

@@ -150,6 +150,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"quad_hit_location_plus", false); //$NON-NLS-1$
         addOption(ruleBreakers,"armed_mechwarriors", false); //$NON-NLS-1$
         addOption(ruleBreakers,"auto_abandon_unit", false); //$NON-NLS-1$
+        addOption(ruleBreakers,"no_ignite_clear", false); //$NON-NLS-1$
     }
 
     public Vector loadOptions(String password) {

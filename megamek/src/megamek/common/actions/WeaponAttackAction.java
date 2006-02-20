@@ -918,6 +918,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // only woods and buildings can be set intentionally on fire
         if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE
+                && game.getOptions().booleanOption("no_ignite_clear")
                 && !((game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.WOODS))
                     || (game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.JUNGLE))
                     || (game.getBoard().getHex(((HexTarget)target).getPosition()).containsTerrain(Terrains.BUILDING)))) {

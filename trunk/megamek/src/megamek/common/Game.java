@@ -1902,7 +1902,18 @@ public class Game implements Serializable, IGame
     }
 
     public void rollInitAndResolveTies() {
-        TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests);
+        if(getOptions().booleanOption("individual_initiative")) {
+            Vector<TurnOrdered> vRerolls = new Vector();
+            for(int i=0;i<entities.size();i++) {
+                Entity e = (Entity)entities.elementAt(i);
+                if(initiativeRerollRequests.contains(getTeamForPlayer(e.getOwner()))) {
+                    vRerolls.add(e);
+                }
+            }
+            TurnOrdered.rollInitAndResolveTies(entities, vRerolls);
+        } else {
+            TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests);
+        }
         initiativeRerollRequests.removeAllElements();
         
     }

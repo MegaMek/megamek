@@ -809,33 +809,16 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if (atype != null) {
                 munition = atype.getMunitionType();
             }
-            if (munition == AmmoType.M_FASCAM) {
-                if (ttype != Targetable.TYPE_HEX_FASCAM) {
-                    return new String("FASCAM ammo must be used with target hex (FASCAM)");
-                }
-            } else if (munition == AmmoType.M_INFERNO_IV) {
-                if (ttype != Targetable.TYPE_HEX_INFERNO_IV) {
-                    return new String("Inferno IV ammo must be used with target hex (Inferno IV)");
-                }
-            } else if (munition == AmmoType.M_VIBRABOMB_IV) {
-                if (ttype != Targetable.TYPE_HEX_VIBRABOMB_IV) {
-                    return new String("Vibrabomb IV ammo must be used with target hex (Vibrabomb IV)");
-                }
-            } else if (munition == AmmoType.M_HOMING) {
+            if (munition == AmmoType.M_HOMING) {
                 //target type checked later because its different for direct/indirect (BMRr p77 on board arrow IV)
                 isHoming = true;
-            } else
-            {
-                if (ttype != Targetable.TYPE_HEX_ARTILLERY && !isArtilleryFLAK) {
+            } 
+            else if (ttype != Targetable.TYPE_HEX_ARTILLERY && !isArtilleryFLAK) {
                     return new String("Weapon must make artillery attacks.");
-                }
             }
         } else {
             //weapon is not artillery
-            if (ttype == Targetable.TYPE_HEX_ARTILLERY || 
-                ttype == Targetable.TYPE_HEX_FASCAM ||
-                ttype == Targetable.TYPE_HEX_INFERNO_IV ||
-                ttype == Targetable.TYPE_HEX_VIBRABOMB_IV) {
+            if (ttype == Targetable.TYPE_HEX_ARTILLERY) {
                 return new String("Weapon can't make artillery attacks.");
             }
         }

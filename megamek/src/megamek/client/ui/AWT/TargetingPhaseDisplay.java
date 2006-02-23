@@ -821,6 +821,8 @@ public class TargetingPhaseDisplay
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
+            } else if (phase == IGame.PHASE_TARGETING) {
+                target(new HexTarget(b.getCoords(), ce().getGame().getBoard(), Targetable.TYPE_HEX_ARTILLERY));
             } else if (friendlyFire && client.game.getFirstEntity(b.getCoords()) != null) {
                 target(client.game.getFirstEntity(b.getCoords()));
             } else if ( client.game.getFirstEnemyEntity(b.getCoords(), ce()) != null) {

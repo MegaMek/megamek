@@ -526,10 +526,7 @@ public class MiniMap extends Canvas  {
         }
         if (attack instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction)attack;
-            if ((attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY 
-                        || attack.getTargetType() == Targetable.TYPE_HEX_FASCAM
-                        || attack.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV
-                        || attack.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV)
+            if ((attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
                     && waa.getEntity(m_game).getOwner().getId() != m_client.getLocalPlayer().getId()) {
                 return;
             }

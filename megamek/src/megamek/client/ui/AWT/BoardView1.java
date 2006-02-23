@@ -1834,10 +1834,7 @@ public class BoardView1
                 // use existing attack, but add this weapon
                 if (aa instanceof WeaponAttackAction) {
                     WeaponAttackAction waa = (WeaponAttackAction)aa;
-                    if ( aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY 
-                        && aa.getTargetType() != Targetable.TYPE_HEX_FASCAM
-                        && aa.getTargetType() != Targetable.TYPE_HEX_INFERNO_IV
-                        && aa.getTargetType() != Targetable.TYPE_HEX_VIBRABOMB_IV) {
+                    if ( aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                         sprite.addWeapon(waa);
                     } else if ( waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
                         sprite.addWeapon(waa);
@@ -1874,10 +1871,7 @@ public class BoardView1
         // don't add a sprite for an artillery attack made by the other player
         if (aa instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction)aa;
-            if ( aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY 
-                && aa.getTargetType() != Targetable.TYPE_HEX_FASCAM
-                && aa.getTargetType() != Targetable.TYPE_HEX_INFERNO_IV
-                && aa.getTargetType() != Targetable.TYPE_HEX_VIBRABOMB_IV) {
+            if ( aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                 attackSprites.addElement(new AttackSprite(aa));
             } else if ( waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
                 attackSprites.addElement(new AttackSprite(aa));

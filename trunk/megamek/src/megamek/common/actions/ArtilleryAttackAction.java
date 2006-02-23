@@ -38,8 +38,23 @@ implements Serializable
         this.firingCoords= coords;
         int distance = Compute.effectiveDistance
             (game, wr.waa.getEntity(game), wr.waa.getTarget(game));
-        // Two boards is one turn of flight time, except on the same sheet.
-        turnsTilHit = (distance<=17) ? 0 : ((distance/34)+1);
+        if(game.getOptions().booleanOption("maxtech_artillery")) {
+            if(distance <=17)
+                turnsTilHit = 0;
+            else if(distance <=(6*17))
+                turnsTilHit = 1;
+            else if(distance <=(14*17))
+                turnsTilHit = 2;
+            else if(distance <=(20*17))
+                turnsTilHit = 3;
+            else if(distance <=(25*17))
+                turnsTilHit = 4;
+            else 
+                turnsTilHit = 5;
+        } else {
+            // Two boards is one turn of flight time, except on the same sheet.
+            turnsTilHit = (distance<=17) ? 0 : ((distance/34)+1);
+        }
     }
     public void setWR(WeaponResult wr) {
         this.wr=wr;

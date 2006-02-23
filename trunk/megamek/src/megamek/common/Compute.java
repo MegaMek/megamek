@@ -15,6 +15,7 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
@@ -1394,10 +1395,7 @@ public class Compute {
                                 || t.getTargetType() == Targetable.TYPE_HEX_IGNITE
                                 || t.getTargetType() == Targetable.TYPE_HEX_BOMB
                                 || t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY
-                                || t.getTargetType() == Targetable.TYPE_HEX_FASCAM
-                                || t.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV
-                                || t.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV || t
-                                .getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
+                                || t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
                     if (woodsLevel == 1 && eistatus != 2) {
                         toHit.addModifier(1, woodsText);
                     } else if (woodsLevel > 1) {
@@ -1431,10 +1429,7 @@ public class Compute {
                             || t.getTargetType() == Targetable.TYPE_HEX_IGNITE
                             || t.getTargetType() == Targetable.TYPE_HEX_BOMB
                             || t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY
-                            || t.getTargetType() == Targetable.TYPE_HEX_FASCAM
-                            || t.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV
-                            || t.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV || t
-                            .getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
+                            || t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
                 if (woodsLevel == 1 && eistatus != 2) {
                     toHit.addModifier(1, woodsText);
                 } else if (woodsLevel > 1) {
@@ -2972,12 +2967,30 @@ public class Compute {
             scatterDistance = d6(1);
         }
 
-        for (int i = 0; i < scatterDistance; i++) {
-            coords = coords.translated(scatterDirection);
-        }
-        return coords;
+        return coords.translated(scatterDirection,scatterDistance);
     }
 
+    /**
+     * Gets a ring of hexes at a specified distance from the centre
+     * @param centre The centre point of the ring
+     * @param range The radius of the ring
+     */
+    public static ArrayList<Coords> coordsAtRange(Coords centre, int range) {
+        ArrayList<Coords> result = new ArrayList(range * 6);
+        if(range < 1) {
+            result.add(centre);
+            return result;
+        }
+        for(int dir=0;dir<6;dir++) {
+            Coords corner = centre.translated(dir,range);
+            for(int count=0;count<range;count++) {
+                result.add(corner);
+                corner = corner.translated((dir + 2) % 6);
+            }
+        }
+        return result;
+    }
+    
     /**
      * Gets a new target for a flight of swarm missiles that was just shot at an
      * entity and has missiles left

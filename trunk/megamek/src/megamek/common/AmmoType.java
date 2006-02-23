@@ -758,6 +758,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_VIBRABOMB_IV, TechConstants.T_IS_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Illumination",
                                                    1, M_FLARE, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.addElement( new MunitionMutator( "Cluster",
+                                                   1, M_CLUSTER, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -781,6 +783,10 @@ public class AmmoType extends EquipmentType {
                                                    1, M_INFERNO_IV, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
                                                    1, M_VIBRABOMB_IV, TechConstants.T_CLAN_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "Illumination",
+                1, M_FLARE, TechConstants.T_CLAN_LEVEL_3 ) );
+        munitions.addElement( new MunitionMutator( "Cluster",
+                1, M_CLUSTER, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -815,6 +821,10 @@ public class AmmoType extends EquipmentType {
                                                    1, M_HOMING, TechConstants.T_IS_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "Illumination",
                                                    1, M_FLARE, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.addElement( new MunitionMutator( "Cluster",
+                1, M_CLUSTER, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.addElement( new MunitionMutator( "Flechette",
+                1, M_FLECHETTE, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.

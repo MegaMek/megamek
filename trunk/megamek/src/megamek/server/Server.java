@@ -26,6 +26,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -4589,6 +4590,80 @@ public class Server implements Runnable {
         game.addFlare(flare);
     }
 
+    private void deliverArtillerySmoke(Coords coords) {
+        if(game.getOptions().booleanOption("maxtech_fire")) {
+            IHex h = game.getBoard().getHex(coords);
+            //Unless there is a heavy smoke in the hex already, add one.
+            if ( h.terrainLevel( Terrains.SMOKE ) < 2 ) {
+                Report r = new Report(5185, Report.PUBLIC);
+                r.indent(2);
+                r.add(coords.getBoardNum());
+                addReport(r);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 2));
+                sendChangedHex(coords);
+            }
+        }
+    }
+
+    private void deliverArtilleryInferno(Coords coords, int subjectId) {
+        IHex h = game.getBoard().getHex(coords);
+        Report r;
+        //Unless there is a fire in the hex already, start one.
+        if ( !h.containsTerrain( Terrains.FIRE ) ) {
+            r = new Report(3005);
+            r.subject = subjectId;
+            r.indent(2);
+            r.add(coords.getBoardNum());
+            addReport(r);
+            h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+        }
+        game.getBoard().addInfernoTo( coords, InfernoTracker.INFERNO_IV_ROUND, 1 );
+        sendChangedHex(coords);
+        for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+            Entity entity = (Entity)impactHexHits.nextElement();
+            entity.infernos.add( InfernoTracker.INFERNO_IV_ROUND, 1 );
+            //entity on fire now
+            r = new Report(3205);
+            r.indent(2);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(entity.infernos.getTurnsLeftToBurn());
+            addReport(r);
+        }
+        for(int dir=0;dir<=5;dir++) {
+            Coords tempcoords=coords.translated(dir);
+            if(!game.getBoard().contains(tempcoords)) {
+                continue;
+            }
+            if(coords.equals(tempcoords)) {
+                continue;
+            }
+            h = game.getBoard().getHex(tempcoords);
+            // Unless there is a fire in the hex already, start one.
+            if ( !h.containsTerrain( Terrains.FIRE ) ) {
+                r = new Report(3005);
+                r.subject = subjectId;
+                r.indent(2);
+                r.add(tempcoords.getBoardNum());
+                addReport(r);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+            }
+            game.getBoard().addInfernoTo( tempcoords, InfernoTracker.INFERNO_IV_ROUND, 1 );
+            sendChangedHex(tempcoords);
+            for (Enumeration splashHexHits = game.getEntities(tempcoords);splashHexHits.hasMoreElements();) {
+                Entity entity = (Entity)splashHexHits.nextElement();
+                entity.infernos.add( InfernoTracker.INFERNO_IV_ROUND, 1 );
+                //entity on fire
+                r = new Report(3205);
+                r.indent(2);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(entity.infernos.getTurnsLeftToBurn());
+                addReport(r);
+            }
+        }
+    }
+
     /**
      * When an entity enters a conventional or Thunder minefield.
      */
@@ -7147,91 +7222,8 @@ public class Server implements Runnable {
           }
           int nCluster = 5;
           Infantry ba = (Infantry)ae;
-          int ratedDamage = ba.getShootingStrength() * 2;
-          bldg = null;
-          bldg = game.getBoard().getBuildingAt(coords);
-          int bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
-          bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-          ratedDamage -= bldgAbsorbs;
-          if ((bldg != null) && (bldgAbsorbs > 0)) {
-              //building absorbs some of the damage
-              r = new Report(6435);
-              r.subject = subjectId;
-              r.add(bldgAbsorbs);
-              addReport(r);
-              Report buildingReport = damageBuilding( bldg, ratedDamage );
-              buildingReport.subject = subjectId;
-              addReport(buildingReport);
-          }
-
-          for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-              Entity entity = (Entity)impactHexHits.nextElement();
-              // only damage units that are on the ground
-              // TODO: check with the PM
-              if (entity.getElevation() > 0) {
-                  continue;
-              }
-              hits = ratedDamage;
-              
-              while (hits>0) {
-                  HitData hit = entity.rollHitLocation
-                      ( toHit.getHitTable(),
-                        toHit.getSideTable() );
-                  addReport( damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
-                  addNewLines();
-                  hits -= Math.min(nCluster,hits);
-              }
-          }
-          for(int dir=0;dir<=5;dir++) {
-              Coords tempcoords=coords.translated(dir);
-              if (!game.getBoard().contains(tempcoords)) {
-                  continue;
-              }
-              if (coords.equals(tempcoords)) {
-                  continue;
-              }
-              ratedDamage = ba.getShootingStrength();
-              bldg = null;
-              bldg = game.getBoard().getBuildingAt(tempcoords);
-              bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
-              bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-              ratedDamage -= bldgAbsorbs;
-              if ((bldg != null) && (bldgAbsorbs > 0)) {
-                  //building absorbs some of the damage
-                  r = new Report(6435);
-                  r.subject = subjectId;
-                  r.add(bldgAbsorbs);
-                  addReport(r);
-                  Report buildingReport = damageBuilding( bldg, ratedDamage );
-                  buildingReport.subject = subjectId;
-                  addReport(buildingReport);   
-              }
-              Enumeration splashHexHits = game.getEntities(tempcoords);
-              if (splashHexHits.hasMoreElements()) {
-                  r = new Report(3210);
-                  r.newlines = 0;
-                  r.subject = subjectId;
-                  r.add(tempcoords.getBoardNum());
-                  r.indent();
-                  addReport(r);
-              }
-              for (;splashHexHits.hasMoreElements();) {
-                  Entity entity = (Entity)splashHexHits.nextElement();
-                  // only damage units that are on the ground
-                  // TODO: check with the PM
-                  if (entity.getElevation() > 0) {
-                      continue;
-                  }
-                  hits = ratedDamage;
-                  while (hits>0) {
-                      HitData hit = entity.rollHitLocation
-                          ( toHit.getHitTable(),
-                            toHit.getSideTable());
-                      addReport( damageEntity(entity, hit, Math.min(nCluster, hits)));
-                      hits -= Math.min(nCluster,hits);
-                  }
-              }
-          }
+          int ratedDamage = ba.getShootingStrength();
+          artilleryDamageArea(coords, wr.artyAttackerCoords, atype, subjectId, ae, ratedDamage*2, ratedDamage);
           return !bMissed;          
       } //end ba-micro-bombs
 
@@ -7296,154 +7288,9 @@ public class Server implements Runnable {
           //}
           return !bMissed;
       }
-      // FASCAM Artillery
-      if (target.getTargetType() == Targetable.TYPE_HEX_FASCAM) {
-          Coords coords = target.getPosition();
-          if (!bMissed) {
-              r = new Report(3190);
-              r.subject = subjectId;
-              r.add(coords.getBoardNum(), true);
-              addReport(r);
-          }
-          else {
-              coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
-              if (game.getBoard().contains(coords)) {
-                  //misses and scatters to another hex
-                  r = new Report(3195);
-                  r.subject = subjectId;
-                  r.add(coords.getBoardNum(), true);
-                  addReport(r);
-              }
-              else {
-                  //misses and scatters off-board
-                  r = new Report(3200);
-                  r.subject = subjectId;
-                  addReport(r);
-                  return !bMissed;
-              }
-          }
-          if (game.getBoard().contains(coords)) {
-              deliverFASCAMMinefield(coords, ae.getOwner().getId());
-          }
-          return !bMissed;
-      }
-      // Vibrabomb-IV Artillery
-      if (target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV) {
-          Coords coords = target.getPosition();
-          if (!bMissed) {
-              r = new Report(3190);
-              r.subject = subjectId;
-              r.add(coords.getBoardNum());
-              addReport(r);
-          }
-          else {
-              coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
-              if (game.getBoard().contains(coords)) {
-                  //misses and scatters to another hex
-                  r = new Report(3195);
-                  r.subject = subjectId;
-                  r.add(coords.getBoardNum());
-                  addReport(r);
-              }
-              else {
-                  //misses and scatters off-board
-                  r = new Report(3200);
-                  r.subject = subjectId;
-                  addReport(r);
-              }
-          }
-          if (game.getBoard().contains(coords)) {
-              deliverThunderVibraMinefield(coords, ae.getOwner().getId(), 20,
-                                           wr.waa.getOtherAttackInfo());
-          }
-          return !bMissed;
-      }
-      // Inferno IV artillery
-      if (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV) {
-          Coords coords = target.getPosition();
-          if (!bMissed) {
-              r = new Report(3190);
-              r.subject = subjectId;
-              r.add(coords.getBoardNum());
-              addReport(r);
-          }
-          else {
-              coords = Compute.scatter(coords, (game.getOptions().booleanOption("margin_scatter_distance"))?(toHit.getValue()-wr.roll):-1);
-              if (game.getBoard().contains(coords)) {
-                  //misses and scatters to another hex
-                  r = new Report(3195);
-                  r.subject = subjectId;
-                  r.add(coords.getBoardNum(), true);
-                  addReport(r);
-              }
-              else {
-                  //misses and scatters off-board
-                  r = new Report(3200);
-                  r.subject = subjectId;
-                  addReport(r);
-                  return !bMissed;
-              }
-          }
-          IHex h = game.getBoard().getHex(coords);
-          //Unless there is a fire in the hex already, start one.
-          if ( !h.containsTerrain( Terrains.FIRE ) ) {
-              r = new Report(3005);
-              r.subject = subjectId;
-              r.indent(2);
-              r.add(coords.getBoardNum());
-              addReport(r);
-              h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-          }
-          game.getBoard().addInfernoTo( coords, InfernoTracker.INFERNO_IV_ROUND, 1 );
-          sendChangedHex(coords);
-          for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-              Entity entity = (Entity)impactHexHits.nextElement();
-              entity.infernos.add( InfernoTracker.INFERNO_IV_ROUND, 1 );
-              //entity on fire now
-              r = new Report(3205);
-              r.indent(2);
-              r.subject = entity.getId();
-              r.addDesc(entity);
-              r.add(entity.infernos.getTurnsLeftToBurn());
-              addReport(r);
-          }
-          for(int dir=0;dir<=5;dir++) {
-              Coords tempcoords=coords.translated(dir);
-              if(!game.getBoard().contains(tempcoords)) {
-                  continue;
-              }
-              if(coords.equals(tempcoords)) {
-                  continue;
-              }
-              h = game.getBoard().getHex(tempcoords);
-              // Unless there is a fire in the hex already, start one.
-              if ( !h.containsTerrain( Terrains.FIRE ) ) {
-                  r = new Report(3005);
-                  r.subject = subjectId;
-                  r.indent(2);
-                  r.add(tempcoords.getBoardNum());
-                  addReport(r);
-                  h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-              }
-              game.getBoard().addInfernoTo( tempcoords, InfernoTracker.INFERNO_IV_ROUND, 1 );
-              sendChangedHex(tempcoords);
-              for (Enumeration splashHexHits = game.getEntities(tempcoords);splashHexHits.hasMoreElements();) {
-                  Entity entity = (Entity)splashHexHits.nextElement();
-                  entity.infernos.add( InfernoTracker.INFERNO_IV_ROUND, 1 );
-                  //entity on fire
-                  r = new Report(3205);
-                  r.indent(2);
-                  r.subject = entity.getId();
-                  r.addDesc(entity);
-                  r.add(entity.infernos.getTurnsLeftToBurn());
-                  addReport(r);
-              }
-          }
-          return !bMissed;
-      }
       //special case artillery
-      if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY &&
-          !(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING)) { //when M_SMOKE implemented, change this to positive ID on M_STANDARD
+      if ((target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
+          && !(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING)) { 
           Coords coords = target.getPosition();
           if (!bMissed) {
               r = new Report(3190);
@@ -7469,113 +7316,46 @@ public class Server implements Runnable {
               }
           }
 
-          if (usesAmmo && atype.getMunitionType() == AmmoType.M_FLARE) {
-              int radius;
-              if(atype.getAmmoType() == AmmoType.T_ARROW_IV)
-                  radius = 4;
-              else if(atype.getAmmoType() == AmmoType.T_LONG_TOM)
-                  radius = 3;
-              else radius = Math.max(1,atype.getRackSize() / 5);
-                  deliverArtilleryFlare(coords,radius);
-              return !bMissed;
-          }
-
-          int nCluster = 5;
-
-          int ratedDamage = wtype.getRackSize();
-          bldg = null;
-          bldg = game.getBoard().getBuildingAt(coords);
-          int bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
-          bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-          ratedDamage -= bldgAbsorbs;
-          if ((bldg != null) && (bldgAbsorbs > 0)) {
-              //building absorbs some of the damage
-              r = new Report(6425);
-              r.subject = subjectId;
-              r.add(bldgAbsorbs);
-              addReport(r);
-              Report buildingReport = damageBuilding( bldg, ratedDamage );
-              buildingReport.subject = subjectId;
-              addReport(buildingReport);
-          }
-
-          for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-              Entity entity = (Entity)impactHexHits.nextElement();
-              hits = ratedDamage;
-
-              while(hits>0) {
-                  if (wr.artyAttackerCoords!=null) {
-                      toHit.setSideTable(entity.sideTable(wr.artyAttackerCoords));
-                  }
-                  if (entity.getMovementMode()==IEntityMovementMode.VTOL) {
-                      // VTOLs take no damage from normal artillery unless landed
-                      if (entity.getElevation()!=0) {
-                          break;
-                      }
-                  }
-                  HitData hit = entity.rollHitLocation
-                      ( toHit.getHitTable(),
-                        toHit.getSideTable(),
-                        wr.waa.getAimedLocation(),
-                        wr.waa.getAimingMode() );
-
-                  addReport( damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
-                  addNewLines();
-                  hits -= Math.min(nCluster,hits);
+          if (usesAmmo) {
+              //Check for various non-explosive types
+              if(atype.getMunitionType() == AmmoType.M_FLARE) {
+                  int radius;
+                  if(atype.getAmmoType() == AmmoType.T_ARROW_IV)
+                      radius = 4;
+                  else if(atype.getAmmoType() == AmmoType.T_LONG_TOM)
+                      radius = 3;
+                  else radius = Math.max(1,atype.getRackSize() / 5);
+                      deliverArtilleryFlare(coords,radius);
+                  return !bMissed;
+              }
+              if(atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
+                  deliverArtilleryInferno(coords, subjectId);
+                  return !bMissed;
+              }
+              if(atype.getMunitionType() == AmmoType.M_FASCAM) {
+                  deliverFASCAMMinefield(coords, ae.getOwner().getId());
+                  return !bMissed;
+              }
+              if(atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+                  deliverThunderVibraMinefield(coords, ae.getOwner().getId(), 20,
+                                               wr.waa.getOtherAttackInfo());
+                  return !bMissed;
+              }
+              if(atype.getMunitionType() == AmmoType.M_SMOKE) {
+                  deliverArtillerySmoke(coords);
+                  return !bMissed;
               }
           }
-        
-          for(int dir=0;dir<=5;dir++) {
-              Coords tempcoords=coords.translated(dir);
-              if (!game.getBoard().contains(tempcoords)) {
-                  continue;
-              }
-              if (coords.equals(tempcoords)) {
-                  continue;
-              }
 
-              ratedDamage = wtype.getRackSize()/2;
-              bldg = null;
-              bldg = game.getBoard().getBuildingAt(tempcoords);
-              bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
-              bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-              ratedDamage -= bldgAbsorbs;
-              if ((bldg != null) && (bldgAbsorbs > 0)) {
-                  //building absorbs some of the damage
-                  r = new Report(6425);
-                  r.subject = subjectId;
-                  r.add(bldgAbsorbs);
-                  addReport(r);
-                  Report buildingReport = damageBuilding( bldg, ratedDamage );
-                  buildingReport.subject = subjectId;
-                  addReport(buildingReport);
-              }
+          artilleryDamageArea(coords, wr.artyAttackerCoords, atype, subjectId, ae);
 
-              Enumeration splashHexHits = game.getEntities(tempcoords);
-              if (splashHexHits.hasMoreElements()) {
-                  r = new Report(3210);
-                  r.newlines = 0;
-                  r.subject = subjectId;
-                  r.add(tempcoords.getBoardNum());
-                  r.indent();
-                  addReport(r);
-              }
-              for(;splashHexHits.hasMoreElements();) {
-                  Entity entity = (Entity)splashHexHits.nextElement();
-                  hits = ratedDamage;
-                  while (hits>0) {
-                      HitData hit = entity.rollHitLocation
-                          ( toHit.getHitTable(),
-                            toHit.getSideTable(),
-                            wr.waa.getAimedLocation(),
-                            wr.waa.getAimingMode() );
-                      addReport( damageEntity(entity, hit, Math.min(nCluster, hits)));
-                      hits -= Math.min(nCluster,hits);
-                  }
-              }
-          }
           return !bMissed;
       } // End artillery
+      if(bMissed && usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING) {
+          //Arrow IV homing missed, splash the hex
+          artilleryDamageHex(target.getPosition(), wr.artyAttackerCoords, 5, atype, subjectId, ae, null);
+      }
+      
       int ammoUsage=0;
       int nDamPerHit = wtype.getDamage();
       if (bMissed) {
@@ -7706,7 +7486,7 @@ public class Server implements Runnable {
             // BMRr, pg. 77: If the spotting unit successfully designates the target but
             // the missile misses, it still detonates in the hex and causes 5
             // points of artillery damage each to all units in the target hex
-            if ( !targetInBuilding && !(usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING)) {
+            if ( !targetInBuilding) {
                 return !bMissed;
             }
         }
@@ -8986,56 +8766,7 @@ public class Server implements Runnable {
 
         //deal with splash damage from Arrow IV homing
         if(atype != null && atype.getMunitionType() == AmmoType.M_HOMING) {
-            Coords coords = target.getPosition();
-
-            
-            int ratedDamage = 5; //splash damage is 5 from all launchers
-            bldg = null;
-            bldg = game.getBoard().getBuildingAt(coords);
-            bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
-            bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-            ratedDamage -= bldgAbsorbs;
-            if ((bldg != null) && (bldgAbsorbs > 0)) {
-                //building absorbs some damage
-                r = new Report(6010);
-                if (entityTarget != null)
-                    r.subject = entityTarget.getId();
-                r.add(bldgAbsorbs);
-                addReport(r);
-                Report buildingReport = damageBuilding( bldg, ratedDamage );
-                buildingReport.indent(2);
-                if (entityTarget != null)
-                    buildingReport.subject = entityTarget.getId();
-                addReport(buildingReport);
-            }
-
-            if(ratedDamage > 0) {
-                for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-                    Entity entity = (Entity)impactHexHits.nextElement();
-
-                    if(!bMissed) {
-                        if (entity == entityTarget) continue; //don't splash the target unless missile missed
-                    }
-        
-                    if (wr.artyAttackerCoords != null) {
-                        toHit.setSideTable(entity.sideTable(wr.artyAttackerCoords));
-                    } 
-                    else if(entityTarget.getTaggedBy() != -1) {
-                        Entity tagger = game.getEntity(entityTarget.getTaggedBy());
-                        if(tagger != null) { 
-                            toHit.setSideTable(Compute.targetSideTable(tagger, entityTarget));
-                        }
-                    }
-                    HitData hit = entity.rollHitLocation
-                        ( toHit.getHitTable(),
-                          toHit.getSideTable(),
-                          wr.waa.getAimedLocation(),
-                          wr.waa.getAimingMode() );
-
-                    addReport(
-                                          damageEntity(entity, hit, ratedDamage, false, 0, false, true, throughFront));
-                }
-            }
+            artilleryDamageHex(target.getPosition(), wr.artyAttackerCoords, 5, atype, subjectId, ae, entityTarget);
         }
 
         addNewLines();
@@ -18184,6 +17915,184 @@ System.out.println("In here!");
             addReport(destroyEntity(en, "fell into magma", false, false));
         }
         addNewLines();
+    }
+    
+    /**
+     * Damage everything in a hex area-saturation style
+     */
+    void artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo, int subjectId, Entity killer, Entity exclude) {
+
+        IHex hex = game.getBoard().getHex(coords);
+        if(hex == null) return; //not on board.
+
+        Report r;
+
+        Building bldg = game.getBoard().getBuildingAt(coords);
+        int bldgAbsorbs = 0;
+        if(bldg != null) {
+            bldgAbsorbs = bldg.getPhaseCF() / 10;
+            if(!(ammo != null && ammo.getMunitionType() == AmmoType.M_FLECHETTE)) {
+                //damage the building
+                r = damageBuilding( bldg, damage );
+                r.subject = subjectId;
+                addReport(r);
+                addNewLines();
+            }
+        }
+
+        // get units in hex
+        for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+            Entity entity = (Entity)impactHexHits.nextElement();
+            int hits = damage;
+            ToHitData toHit = new ToHitData();
+            int cluster = 5;
+            
+            //Check: is entity excluded?
+            if(entity == exclude)
+                continue;
+
+            //Check: is entity inside building?
+            if(bldg != null &&
+               bldgAbsorbs > 0 &&
+               entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV)) {
+                cluster -= bldgAbsorbs;
+                if(entity instanceof Infantry) {
+                    continue; //took its damage already from building damage
+                }
+                else if(cluster <= 0) {
+                    //entity takes no damage
+                    r = new Report(6426);
+                    r.subject = subjectId;
+                    r.addDesc(entity);
+                    addReport(r);
+                    continue;
+                } else {
+                    r = new Report(6425);
+                    r.subject = subjectId;
+                    r.add(bldgAbsorbs);
+                    addReport(r);
+                }
+            }
+
+            //Check: is entity a VTOL in flight?
+            if (entity instanceof VTOL ||
+                entity.getMovementMode()==IEntityMovementMode.VTOL) {
+                // VTOLs take no damage from normal artillery unless landed
+                if (entity.getElevation()!=0
+                    && entity.getElevation()!=hex.terrainLevel(Terrains.BLDG_ELEV)
+                    && entity.getElevation()!=hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+                    continue;
+                }
+            }
+
+            //Work out hit table to use
+            if (attackSource!=null) {
+                toHit.setSideTable(entity.sideTable(attackSource));
+                if(ammo != null 
+                   && entity instanceof Mech
+                   && ammo.getMunitionType() == AmmoType.M_CLUSTER
+                   && attackSource.equals(coords)) {
+                    toHit.setHitTable(ToHitData.HIT_ABOVE);
+                }
+            }
+
+            //Entity/ammo specific damage modifiers
+            if(ammo != null) {
+                if(ammo.getMunitionType() == AmmoType.M_CLUSTER) {
+                    if(hex.containsTerrain(Terrains.FORTIFIED) 
+                            && entity instanceof Infantry
+                            && !(entity instanceof BattleArmor)) {
+                        hits *= 2;
+                    }
+                    if(hex.containsTerrain(Terrains.WOODS)
+                            || hex.containsTerrain(Terrains.JUNGLE)) {
+                        hits = (hits + 1) / 2;
+                    }
+                }
+                else if(ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+                    //wheeled and hover tanks take movement critical
+                    if(entity instanceof Tank &&
+                       (entity.getMovementMode() == IEntityMovementMode.WHEELED ||
+                        entity.getMovementMode() == IEntityMovementMode.HOVER)) {
+                        r = new Report(6480);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(toHit.getTableDesc());
+                        r.add(0);
+                        addReport(r);
+                        vehicleMotiveDamage((Tank)entity, 0);
+                        continue;
+                    }
+                    //non infantry are immune
+                    if(entity instanceof BattleArmor ||
+                       !(entity instanceof Infantry)) {
+                        continue;
+                    }
+                    if(hex.containsTerrain(Terrains.WOODS)
+                            || hex.containsTerrain(Terrains.JUNGLE)) {
+                        hits = (hits + 1) / 2;
+                    }
+                }
+            }
+
+            //Do the damage
+            addNewLines();
+            r = new Report(6480);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(toHit.getTableDesc());
+            r.add(hits);
+            addReport(r);
+            while(hits>0) {
+                HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+
+                addReport( damageEntity(entity, hit, Math.min(cluster, hits), false, 0, false, true, false));
+                hits -= Math.min(5,hits);
+            }
+            if(killer != null) {
+                creditKill(entity, killer);
+            }
+            addNewLines();
+        }
+    }
+    
+    void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer) {
+        int damage; 
+        int falloff=5;
+        if(ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+            damage = ammo.getRackSize() + 10;
+        } 
+        else if(ammo.getMunitionType() == AmmoType.M_CLUSTER) {
+            if(ammo.getAmmoType() == AmmoType.T_SNIPER)
+                damage = 15;
+            else
+                damage = ammo.getRackSize();
+            attackSource = centre;
+        }
+        else if(game.getOptions().booleanOption("maxtech_artillery")) {
+            //"standard" mutates into high explosive
+            if(ammo.getAmmoType() == AmmoType.T_LONG_TOM)
+                damage = 25;
+            else
+                damage = ammo.getRackSize() + 10;
+            falloff = 10;
+        }
+        else {
+            //level 2 ammo
+            damage = ammo.getRackSize();
+            falloff = (damage + 1) / 2;
+        }
+        artilleryDamageArea(centre, attackSource, ammo, subjectId, killer, damage, falloff);
+    }
+    
+    void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, int damage, int falloff) {
+        for(int ring=0;damage > 0;ring++,damage-=falloff) {
+            ArrayList<Coords> hexes = Compute.coordsAtRange(centre, ring);
+            for(Coords c : hexes) {
+                artilleryDamageHex(c, attackSource, damage, ammo, subjectId, killer, null);
+            }
+            attackSource = centre; // all splash comes from ground zero
+        }
     }
 }
 

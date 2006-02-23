@@ -962,25 +962,13 @@ public class ClientGUI
                         new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_BOMB)));
                     popup.add(
                         new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
-                    popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_FASCAM)));
-                    popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_INFERNO_IV)));
-                    popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_VIBRABOMB_IV)));
                     
                 }
                 if (h != null && curPanel instanceof TargetingPhaseDisplay) {
                     popup.add(
                         new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
-                    popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_FASCAM)));
-                    popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_INFERNO_IV)));
-                    popup.add(
-                        new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_VIBRABOMB_IV)));                }
+                }
             }
-
         }
     }
 

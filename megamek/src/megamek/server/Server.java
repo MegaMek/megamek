@@ -7776,7 +7776,16 @@ public class Server implements Runnable {
                         if ( ae instanceof Mech ) {
                             bMekStealthActive = ae.isStealthActive();
                         }
-                        bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
+                        //if the attacker is effected by ECM or the target is protected by ECM then
+                        //act as if effected.
+                        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition()) || 
+                                Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition()))
+                            bECMAffected = true;
+                        else if ( Compute.isProtectedByECM((Entity)target,target.getPosition(),ae.getPosition()) ||
+                                Compute.isProtectedByAngelECM((Entity)target,target.getPosition(),ae.getPosition()))
+                            bECMAffected = true;
+                        else
+                            bECMAffected = false;
                         bCheckedECM = true;
                     }
                     // also no artemis for IDF, and only use standard ammo (excepot for ATMs)
@@ -7801,7 +7810,17 @@ public class Server implements Runnable {
                         if ( ae instanceof Mech ) {
                             bMekStealthActive = ae.isStealthActive();
                         }
-                        bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
+                        
+                        //if the attacker is effected by ECM or the target is protected by ECM then
+                        //act as if effected.
+                        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition()) || 
+                                Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition()))
+                            bECMAffected = true;
+                        else if ( Compute.isProtectedByECM((Entity)target,target.getPosition(),ae.getPosition()) ||
+                                Compute.isProtectedByAngelECM((Entity)target,target.getPosition(),ae.getPosition()))
+                            bECMAffected = true;
+                        else
+                            bECMAffected = false;
                         bCheckedECM = true;
                     }
                     // only apply Narc bonus if we're not suffering ECM effect

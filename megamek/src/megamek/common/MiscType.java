@@ -786,6 +786,8 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 61;
+        misc.setModes(new String[] {"ECM", "ECCM"});
+        misc.setInstantModeSwitch(false);
         
         return misc;
     }
@@ -804,7 +806,9 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 61;
-        
+        misc.setModes(new String[] {"ECM", "ECCM"});
+        misc.setInstantModeSwitch(false);
+
         return misc;
     }
 
@@ -824,7 +828,9 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
-        
+        misc.setModes(new String[] {"ECM", "ECCM"});
+        misc.setInstantModeSwitch(false);
+
         return misc;
     }
 
@@ -844,7 +850,9 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
-        
+        misc.setModes(new String[] {"ECM", "ECCM"});
+        misc.setInstantModeSwitch(false);
+
         return misc;
     }
 
@@ -864,7 +872,9 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM | F_ANGEL_ECM;
         misc.bv = 100;
-        
+        misc.setModes(new String[] {"ECM", "ECCM"});
+        misc.setInstantModeSwitch(false);
+
         return misc;
     }
 
@@ -884,7 +894,9 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM | F_BAP;
         misc.bv = 73;
-        
+        misc.setModes(new String[] {"ECM", "ECCM"});
+        misc.setInstantModeSwitch(false);
+
         return misc;
     }
 
@@ -1226,7 +1238,9 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 0;
-        
+        misc.setModes(new String[] {"ECM", "ECCM"});
+        misc.setInstantModeSwitch(false);
+
         return misc;
     }
     public static MiscType createMimeticCamo() {

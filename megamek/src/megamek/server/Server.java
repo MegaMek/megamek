@@ -17539,13 +17539,13 @@ public class Server implements Runnable {
                 if (entity.isOffBoard()) {
                     return false;
                 }
-                // TODO : correctly handle bridges.
+                
                 if (entity instanceof Tank
                         && (entity.getPosition() != null)
                         && (entity.getMovementMode() == IEntityMovementMode.TRACKED
                         || entity.getMovementMode() == IEntityMovementMode.WHEELED )
                         && game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0
-                        &&!(game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.ICE))) {
+                        && entity.getElevation() < 0) {
                         return true;
                 }
                 return false;
@@ -17978,7 +17978,14 @@ public class Server implements Runnable {
     }
     
     /**
-     * Damage everything in a hex area-saturation style
+     * deal area saturation damage to an individual hex
+     * @param coords         The hex being hit
+     * @param attackSource   The location the attack came from.  For hit table resolution
+     * @param damage         Amount of damage to deal to each entity
+     * @param ammo           The ammo type being used
+     * @param subjectId      Subject for reports
+     * @param killer         Who should be credited with kills
+     * @param exclude        Entity that should take no damage (used for homing splash)
      */
     void artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo, int subjectId, Entity killer, Entity exclude) {
 
@@ -18116,6 +18123,14 @@ public class Server implements Runnable {
         }
     }
     
+    /**
+     * deal area saturation damage to the map, used for artillery
+     * @param centre         The hex on which damage is centred
+     * @param attackSource   The position the attack came from
+     * @param ammo           The ammo type doing the damage
+     * @param subjectId      Subject for reports
+     * @param killer         Who should be credited with kills
+     */
     void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer) {
         int damage; 
         int falloff=5;
@@ -18145,6 +18160,17 @@ public class Server implements Runnable {
         artilleryDamageArea(centre, attackSource, ammo, subjectId, killer, damage, falloff);
     }
     
+    /**
+     * Deals area-saturation damage to an area of the board.
+     * Used for artillery, bombs, or anything else with linear decreas in damage
+     * @param centre         The hex on which damage is centred
+     * @param attackSource   The position the attack came from
+     * @param ammo           The ammo type doing the damage
+     * @param subjectId      Subject for reports
+     * @param killer         Who should be credited with kills
+     * @param damage         Damage at ground zero
+     * @param falloff        Reduction in damage for each hex of distance
+     */
     void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, int damage, int falloff) {
         for(int ring=0;damage > 0;ring++,damage-=falloff) {
             ArrayList<Coords> hexes = Compute.coordsAtRange(centre, ring);

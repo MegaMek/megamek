@@ -11579,6 +11579,11 @@ public class Server implements Runnable {
         Vector vDesc = new Vector();
         Report r;
         int te_n = te.getId();
+        //This is good for shields if a shield absorps the hit it shouldn't
+        //effect the pilot.
+        boolean isHeadHit = (te instanceof Mech
+            && ((Mech)te).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED
+            && hit.getLocation() == Mech.LOC_HEAD);
         
         // show Locations which have rerolled with Edge
         HitData undoneLocation = hit.getUndoneLocation();
@@ -11802,6 +11807,33 @@ public class Server implements Runnable {
                 crits = 0;
             }
 
+            //here goes the fun :)
+            //Shields take damage first then cowls then armor whee
+            //Shield does not protect from ammo explosions or falls.
+            if ( !ammoExplosion && !hit.isFallDamage() && te.hasShield() ){
+                Mech me = (Mech)te;
+                int damageNew = me.shieldAbsorptionDamage(damage,hit.getLocation(),hit.isRear());
+                //if a shield absorbed the damage then lets tell the world about it.
+                if ( damageNew != damage){
+                    int damageDiff = damage - damageNew;
+                    damage = damageNew;
+                    
+                    r = new Report (3530);
+                    r.subject = te_n;
+                    r.indent(3);
+                    r.newlines=0;
+                    r.add(damageDiff);
+                    vDesc.addElement(r);
+                    
+                    if ( damage <= 0 ){
+                        crits = 0;
+                        specCrits = 0;
+                        isHeadHit = false;
+                    }
+                        
+                }
+            }
+            
             // Armored Cowl may absorb some damage from hit
             if (te instanceof Mech) {
                 Mech me = (Mech)te;
@@ -12335,9 +12367,7 @@ public class Server implements Runnable {
                 specCrits = 0;
             }
 
-            if (te instanceof Mech
-                    && ((Mech)te).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED
-                    && hit.getLocation() == Mech.LOC_HEAD) {
+            if (isHeadHit) {
                 Report.addNewline(vDesc);
                 vDesc.addAll( damageCrew(te, 1) );
             }
@@ -12921,7 +12951,13 @@ public class Server implements Runnable {
             r.add(mounted.getDesc());
             r.newlines = 0;
             vDesc.addElement(r);
-            mounted.setHit(true);
+            
+            //Shield objects are not useless when they take one crit.
+            //Shields can be critted and still usable.
+            if ( eqType instanceof MiscType && ((MiscType)eqType).isShield() )
+                mounted.setHit(false);
+            else
+                mounted.setHit(true);
 
             // If the item is the ECM suite of a Mek Stealth system
             // then it's destruction turns off the stealth.
@@ -14089,6 +14125,7 @@ public class Server implements Runnable {
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, table);
+            hit.makeFallDamage(true);
             addReport( damageEntity(entity, hit, cluster));
             damage -= cluster;
         }

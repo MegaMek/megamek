@@ -1286,6 +1286,9 @@ class SystemPanel
                     sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                     if (m.getType().hasModes()) {
                         sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+                        if ( m.getType() instanceof MiscType && ((MiscType)m.getType()).isShield() ) {
+                            sb.append(" "+((MiscType)m.getType()).getDamageAbsorption(en,loc)+"/"+((MiscType)m.getType()).getCurrentDamageCapacity(en,loc)+")");
+                        }
                     }
                     break;
                 }
@@ -1369,6 +1372,14 @@ class SystemPanel
             if (m != null && m.getType().hasModes()) {
                 int nMode = m_chMode.getSelectedIndex();
                 if (nMode >= 0) {
+                    
+                    if ( m.getType() instanceof MiscType 
+                            && ((MiscType)m.getType()).isShield()  
+                             && clientgui.getClient().game.getPhase() != IGame.PHASE_FIRING ){
+                        clientgui.systemMessage(Messages.getString("MechDisplay.ShieldModePhase",null));//$NON-NLS-1$
+                        return;
+                    }
+                        
                     m.setMode(nMode);                    
                     // send the event to the server
                     clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);

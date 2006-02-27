@@ -2316,6 +2316,199 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Does the mech have any shields
+     */
+    public boolean hasShield() {
+        //only mechs can have shields.
+        if ( !(this instanceof Mech) )
+            return false;
+        
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType &&((MiscType)type).isShield()) {
+                return type.getCurrentDamageCapacity(this,m.getLocation()) > 0;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check to see how many shields of a certian size a mek has.
+     * you can have up to shields per mech. However they can be of 
+     * different size and each size has its own draw backs.
+     * So check each size and add modifers based on the number shields of
+     * that size.
+     */
+    public int getNumberOfShields(int size) {
+        //only mechs can have shields.
+        if ( !(this instanceof Mech) )
+            return 0;
+        
+        int raShield = 0;
+        int laShield = 0;
+        
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_CLUB)
+                    && (type.hasSubType(size)) ) {
+                //ok so we have a shield of certain size. no which arm is it.
+                if ( m.getLocation() == Mech.LOC_RARM && type.getCurrentDamageCapacity(this,m.getLocation()) > 0 )
+                    raShield = 1;
+                if ( m.getLocation() == Mech.LOC_LARM && type.getCurrentDamageCapacity(this,m.getLocation()) > 0 )
+                    laShield = 1;
+                //break now.
+                if ( raShield > 0 && laShield > 0)
+                    return 2;
+            }
+        }
+        return raShield+laShield;
+    }
+
+    /**
+     * Does the mech have an active shield
+     * This should only be called after hasShield has been called.
+     */
+    public boolean hasActiveShield(int location, boolean rear) {
+        switch(location){
+        case Mech.LOC_CT:
+        case Mech.LOC_HEAD:
+            // no rear head location so must be rear CT which is not proected by
+            // any shield
+            if ( rear )
+                return false;
+            if ( hasActiveShield(Mech.LOC_LARM) || hasActiveShield(Mech.LOC_RARM) )
+                return true;
+            //else
+            return false;
+        case Mech.LOC_LARM:
+        case Mech.LOC_LT:
+        case Mech.LOC_LLEG:
+            return hasActiveShield(Mech.LOC_LARM);
+            default:
+                return hasActiveShield(Mech.LOC_RARM);
+        }
+    } 
+
+    /**
+     * Does the mech have an active shield
+     * This should only be called hasActiveShield(location,rear)
+     */
+    public boolean hasActiveShield(int location) {
+        
+        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+            return false;
+        
+        for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = this.getCritical(location,slot);
+            
+            if ( cs == null )
+                continue;
+            
+            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+                continue;
+            
+            if ( cs.isDamaged() )
+                continue;
+            
+            Mounted m = this.getEquipment(cs.getIndex());
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && ((MiscType)type).isShield()
+                    && m.curMode().equals(MiscType.S_ACTIVE_SHIELD) ) {
+                return type.getCurrentDamageCapacity(this,m.getLocation()) > 0;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Does the mech have a passive shield
+     * This should only be called after hasShield has been called.
+     */
+    public boolean hasPassiveShield(int location, boolean rear) {
+        switch(location){
+        //CT Head and legs are not protected by Passive shields.
+        case Mech.LOC_CT:
+        case Mech.LOC_HEAD:
+        case Mech.LOC_LLEG:
+        case Mech.LOC_RLEG:
+                return false;
+        case Mech.LOC_LARM:
+        case Mech.LOC_LT:
+            if ( rear )//only LT has a rear and passive does not protect that
+                return false;
+            return hasPassiveShield(Mech.LOC_LARM);
+            //RA RT
+            default:
+                if (rear)//only RT has a rear and passive does not protect that
+                    return false;
+                return hasPassiveShield(Mech.LOC_RARM);
+        }
+    } 
+
+    /**
+     * Does the mech have a passive shield
+     * This should only be called hasPassiveShield(location,rear)
+     */
+    public boolean hasPassiveShield(int location) {
+        
+        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+            return false;
+        
+        for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = this.getCritical(location,slot);
+            
+            if ( cs == null )
+                continue;
+            
+            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+                continue;
+            
+            if ( cs.isDamaged() )
+                continue;
+            
+            Mounted m = this.getEquipment(cs.getIndex());
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && ((MiscType)type).isShield()
+                    && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
+                return type.getCurrentDamageCapacity(this,m.getLocation()) > 0;
+            }
+        }
+        return false;
+    }
+    /**
+     * Does the mech have an shield in no defense mode
+     */
+    public boolean hasNoDefenseShield(int location) {
+        
+        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+            return false;
+        
+        for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = this.getCritical(location,slot);
+            
+            if ( cs == null )
+                continue;
+            
+            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+                continue;
+            
+            if ( cs.isDamaged() )
+                continue;
+            
+            Mounted m = this.getEquipment(cs.getIndex());
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && ((MiscType)type).isShield()
+                    && m.curMode().equals(MiscType.S_NO_SHIELD)) {
+                return type.getCurrentDamageCapacity(this,m.getLocation()) > 0;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveECM() {

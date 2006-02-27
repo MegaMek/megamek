@@ -713,6 +713,9 @@ public abstract class Mech
     public int getJumpMP() {
         int jump = 0;
 
+        if ( this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
+            return 0;
+
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
@@ -3195,7 +3198,98 @@ public abstract class Mech
             removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
         }
     }
+    
+    public int shieldAbsorptionDamage(int damage, int location, boolean rear){
+        int damageAbsorption = damage;
+        if ( this.hasActiveShield(location,rear) ){
+            switch(location){
+            case Mech.LOC_CT:
+            case Mech.LOC_HEAD:
+                if ( this.hasActiveShield(Mech.LOC_RARM) )
+                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM,damageAbsorption);
+                if ( this.hasActiveShield(Mech.LOC_LARM) )
+                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM,damageAbsorption);
+                break;
+            case Mech.LOC_LARM:
+            case Mech.LOC_LT:
+            case Mech.LOC_LLEG:
+                if ( this.hasActiveShield(Mech.LOC_LARM) )
+                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM,damageAbsorption);
+                break;
+                default:
+                    if ( this.hasActiveShield(Mech.LOC_RARM) )
+                        damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM,damageAbsorption);
+                break;
+            }
+        }
 
+        if ( this.hasPassiveShield(location,rear) ){
+            switch(location){
+            case Mech.LOC_LARM:
+            case Mech.LOC_LT:
+                if ( this.hasPassiveShield(Mech.LOC_LARM) )
+                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM,damageAbsorption);
+                break;
+            case Mech.LOC_RARM:
+            case Mech.LOC_RT:
+                if ( this.hasPassiveShield(Mech.LOC_RARM) )
+                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM,damageAbsorption);
+                break;
+                default:
+                    break;
+            }
+        }
+        if ( this.hasNoDefenseShield(location) ){
+            switch(location){
+            case Mech.LOC_LARM:
+                if ( this.hasNoDefenseShield(Mech.LOC_LARM) )
+                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM,damageAbsorption);
+                break;
+            case Mech.LOC_RARM:
+                if ( this.hasNoDefenseShield(Mech.LOC_RARM) )
+                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM,damageAbsorption);
+                break;
+                default:
+                    break;
+            }
+        }
+
+        return Math.max(0,damageAbsorption);
+    }
+
+    private int getAbsorptionRate(int location, int damage){ 
+        int rate = damage;
+        
+        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+            return rate;
+        
+        if ( damage <= 0 )
+            return 0;
+        
+        for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = this.getCritical(location,slot);
+            
+            if ( cs == null )
+                continue;
+            
+            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+                continue;
+            
+            if ( cs.isDamaged() )
+                continue;
+            
+            Mounted m = this.getEquipment(cs.getIndex());
+            
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && ((MiscType)type).isShield()) {
+                rate -= type.getDamageAbsorption(this,m.getLocation());
+                type.damageTaken++;
+                return Math.max(0,rate);
+            }
+        }
+
+        return rate;
+    }
 }
 
 

@@ -38,6 +38,7 @@ public class HitData
                                       // front of target
     // in case of usage of Edge it is document what the previous location was
     private HitData undoneLocation = null;
+    private boolean fallDamage = false; //did the damage come from a fall?
     
     
     public HitData(int location) {
@@ -133,6 +134,14 @@ public class HitData
     
     public void setUndoneLocation(HitData previousLocation) {
         undoneLocation = previousLocation;
+    }
+    
+    public void makeFallDamage(boolean fall){
+        this.fallDamage = fall;
+    }
+    
+    public boolean isFallDamage(){
+        return fallDamage;
     }
     
 }

@@ -114,6 +114,11 @@ public class BipedMech extends Mech {
             wmp -= actuatorHits;
         }
         
+        if ( hasShield() ){
+            wmp -= getNumberOfShields(MiscType.S_SHIELD_LARGE);
+            wmp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+        }
+
         // and we still need to factor in heat!
         wmp -= (heat / 5);
         

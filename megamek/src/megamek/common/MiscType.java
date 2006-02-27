@@ -86,6 +86,10 @@ public class MiscType extends EquipmentType {
     public static final int     S_CHAINSAW          = 0x00100000; // Miniatures Rulebook
     public static final int     S_ROCK_CUTTER       = 0x00200000; // Miniatures Rulebook; TODO
 
+    public static final String  S_ACTIVE_SHIELD     = "Active";
+    public static final String  S_PASSIVE_SHIELD    = "Passive";
+    public static final String  S_NO_SHIELD         = "None";
+
     // Secondary damage for hand weapons.
     // These are differentiated from Physical Weapons using the F_CLUB flag
     // because the following weapons are treated as a punch attack, while
@@ -123,6 +127,16 @@ public class MiscType extends EquipmentType {
 
     /** Creates new MiscType */
     public MiscType() {
+    }
+
+    public boolean isShield(){
+        if ( this.hasFlag(MiscType.F_CLUB)
+        && (this.hasSubType(MiscType.S_SHIELD_LARGE)
+        || this.hasSubType((MiscType.S_SHIELD_MEDIUM))
+        || this.hasSubType(MiscType.S_SHIELD_SMALL)) )
+            return true;
+        //else
+        return false;
     }
 
     public float getTonnage(Entity entity) {
@@ -401,6 +415,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType( createVibroShovel() );
         EquipmentType.addType( createDemolitionCharge() );
         EquipmentType.addType( createSuperCharger() );
+        EquipmentType.addType( createMediumShield() );
+        EquipmentType.addType( createSmallShield() );
+        EquipmentType.addType( createLargeShield() );
         
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -439,6 +456,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Jump Jet";
         misc.setInternalName(misc.name);
+        misc.addLookupName("JumpJet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.flags |= F_JUMP_JET;
@@ -1720,6 +1738,72 @@ public class MiscType extends EquipmentType {
         misc.toHitModifier = 1;
         misc.bv = 0;
         
+        return misc;
+    }
+
+    public static MiscType createSmallShield() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Small Shield";
+        misc.setInternalName(misc.getName());
+        misc.tonnage = 2;
+        misc.criticals = 3;
+        misc.cost = 50000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_SHIELD_SMALL;
+        misc.bv = 50;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD};
+        misc.setModes(modes);
+        misc.damageTaken = 0;
+        misc.baseDamageAbsorptionRate = 3;
+        misc.baseDamageCapacity = 11;
+        
+        return misc;
+    }
+
+    public static MiscType createMediumShield() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Medium Shield";
+        misc.setInternalName(misc.getName());
+        misc.tonnage = 4;
+        misc.criticals = 5;
+        misc.cost = 100000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_SHIELD_MEDIUM;
+        misc.bv = 135;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD};
+        misc.setModes(modes);
+        misc.damageTaken = 0;
+        misc.baseDamageAbsorptionRate = 5;
+        misc.baseDamageCapacity = 18;
+        
+        return misc;
+    }
+
+    public static MiscType createLargeShield() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Large Shield";
+        misc.setInternalName(misc.getName());
+        misc.tonnage = 6;
+        misc.criticals = 7;
+        misc.cost = 300000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_SHIELD_LARGE;
+        misc.bv = 263;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD};
+        misc.setModes(modes);
+        misc.damageTaken = 0;
+        misc.baseDamageAbsorptionRate = 7;
+        misc.baseDamageCapacity = 25;
+
         return misc;
     }
 

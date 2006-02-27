@@ -25,6 +25,7 @@ v0.31.6-dev (CVS)
 + Patch 1436340: Refactored TestBot a little bit and fixed a bug.
 + Patch 1439854: MapPack Solaris VII Shields
 + Patch 1438465: ECCM Patch
++ Bug 1438580: Tanks on bridges drown at end of physical phase
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

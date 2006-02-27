@@ -9,7 +9,7 @@ v0.31.6-dev (CVS)
 + Bug 1410887: Anti-mech and inferno infantry should be canon
 + Bug 1434301: Split weapons not loading correctly from XML files.
 + Bug 1376291: weapons can target clear hexes
-+ RFE 1434128: Override default hex tile setting (select the "simplified" tileset)
++ RFE 1434128: Override default hex tile setting (select "simplified" tileset)
 + Bug 1436078: Tactical genius + individual init
 + Bug 1433947: artillery is hitting vtols in flight
 + Bug 1424103: artillery doesn't specify hit table
@@ -17,10 +17,12 @@ v0.31.6-dev (CVS)
 + Bug 1424098: buildings absorb artillery damage incorrectly
 + Bug 1420967: artillery splash damage uses wrong hit table
 + Clicking a hex during targetting phase now targets the hex for artillery
-+ Removed target hex (fascam, inferno IV, vibrabomb-IV) types, use artillery target
++ Removed target hex (fascam, inferno IV, vibrabomb-IV) types, use artillery
+     target
 + Implemented maxtech artillery rules, and cluster/flechette ammunition.
 + Game option: "maxtech artillery", uses the improved flight times and damage.
 + Smoke artillery partially implemented, works with level 3 smoke only.
++ Patch 1436340: Refactored TestBot a little bit and fixed a bug.
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

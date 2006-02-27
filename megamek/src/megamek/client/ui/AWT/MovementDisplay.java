@@ -408,7 +408,6 @@ public class MovementDisplay
             return;
         }
 
-        Entity oldSelected = client.game.getEntity(cen);
         this.cen = en;
         clientgui.setSelectedEntityNum(en);
 
@@ -435,7 +434,6 @@ public class MovementDisplay
         boolean isMech      = (ce instanceof Mech);
         boolean isInfantry  = (ce instanceof Infantry);
         boolean isProtomech = (ce instanceof Protomech);
-        boolean isVTOL      = (ce instanceof VTOL);
         // ^-- I suppose these should really be methods, a-la Entity.canCharge(), Entity.canDFA()...
         
         setWalkEnabled(!ce.isImmobile() && ce.getWalkMP() > 0 && !ce.isStuck());
@@ -1179,11 +1177,13 @@ public class MovementDisplay
         boolean legalGear = ((gear == MovementDisplay.GEAR_LAND)
                                 || (gear == MovementDisplay.GEAR_TURN)
                                 || (gear == MovementDisplay.GEAR_BACKUP));
-        boolean vtolLoaded = false;
+        int unloadEl = cmd.getFinalElevation();
+        IHex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
+        boolean canUnloadHere = false;
         for (Enumeration e = loadedUnits.elements(); e.hasMoreElements(); ) {
             Entity en = (Entity)e.nextElement();
-            if (en.getMovementMode() == IEntityMovementMode.VTOL) {
-                vtolLoaded = true;
+            if(en.isElevationValid(unloadEl, hex)) {
+                canUnloadHere = true;
                 break;
             }
         }
@@ -1192,8 +1192,7 @@ public class MovementDisplay
         if ( !legalGear
                 || loadedUnits.size() == 0 
                 || cen == Entity.NONE
-                || (cmd.getFinalElevation() > 0
-                    && !vtolLoaded)) {
+                || (!canUnloadHere)) {
             setUnloadEnabled( false );
         } else {
             setUnloadEnabled( true );
@@ -1669,7 +1668,7 @@ public class MovementDisplay
         }
 
         // Show the choices to the player
-        // TODO : implement this function!!!
+
         int[] indexes = clientgui.doChoiceDialog( Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.title"),  //$NON-NLS-1$
                                                Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.message"), //$NON-NLS-1$
                                                names );

@@ -1342,6 +1342,11 @@ class SystemPanel
                 }
                 if (!m.isDestroyed() && m.getType().hasFlag(MiscType.F_STEALTH)) {
                     m_chMode.setEnabled(true);
+                }//if the maxtech eccm option is not set then the ECM should not show anything.
+                if (m.getType().hasFlag(MiscType.F_ECM)
+                    && !clientgui.getClient().game.getOptions().booleanOption("maxtech_eccm") ) {
+                    m_chMode.removeAll();
+                    return;
                 }
                 modeLabel.setEnabled(true);
                 m_chMode.removeAll();
@@ -1350,7 +1355,8 @@ class SystemPanel
                     m_chMode.add(em.getDisplayableName());
                 }
                 m_chMode.select(m.curMode().getDisplayableName());
-            } else {
+            }
+            else {
                 CriticalSlot cs = getSelectedCritical();
                 if(cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM) {
                     if(cs.getIndex() == Mech.SYSTEM_COCKPIT

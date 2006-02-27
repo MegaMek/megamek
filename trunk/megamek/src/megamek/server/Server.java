@@ -10493,60 +10493,57 @@ public class Server implements Runnable {
             // ack!  automatic death!  Tanks
             // suffer an ammo/power plant hit.
             // TODO : a Mech suffers a Head Blown Off crit.
-            addReport(
-                                  destroyEntity(te, "impossible displacement", (te instanceof Mech), (te instanceof Mech)));
+            addReport(destroyEntity(te, "impossible displacement", (te instanceof Mech), (te instanceof Mech)));
         }
         // HACK: to avoid automatic falls, displace from dest to dest
         doEntityDisplacement(ae, dest, dest, new PilotingRollData(ae.getId(), 4, "executed death from above"));
     }
 
+    /**
+     * Get the modifier for a Kick or Push PSR
+     * @param attacker The attacking <code>Entity></code>
+     * @param target   The target <code>Entity</code>
+     * @param def      The <code>int</code> default modifier 
+     * @return         The <code>int</code> modifier to the PSR 
+     */
     private int getKickPushPSRMod(Entity attacker, Entity target, int def) {
-      int mod = def;
-
-      if ( game.getOptions().booleanOption("maxtech_physical_psr") ) {
-        int attackerMod = 0;
-        int targetMod = 0;
-
-        switch ( attacker.getWeightClass() ) {
-          case EntityWeightClass.WEIGHT_LIGHT:
-            attackerMod = 1;
-            break;
-
-          case EntityWeightClass.WEIGHT_MEDIUM:
-            attackerMod = 2;
-            break;
-
-          case EntityWeightClass.WEIGHT_HEAVY:
-            attackerMod = 3;
-            break;
-
-          case EntityWeightClass.WEIGHT_ASSAULT:
-            attackerMod = 4;
-            break;
+        int mod = def;
+        
+        if ( game.getOptions().booleanOption("maxtech_physical_psr") ) {
+            int attackerMod = 0;
+            int targetMod = 0;
+            
+            switch ( attacker.getWeightClass() ) {
+            case EntityWeightClass.WEIGHT_LIGHT:
+                attackerMod = 1;
+                break;
+            case EntityWeightClass.WEIGHT_MEDIUM:
+                attackerMod = 2;
+                break;
+            case EntityWeightClass.WEIGHT_HEAVY:
+                attackerMod = 3;
+                break;
+            case EntityWeightClass.WEIGHT_ASSAULT:
+                attackerMod = 4;
+                break;
+            }
+            switch ( target.getWeightClass() ) {
+            case EntityWeightClass.WEIGHT_LIGHT:
+                targetMod = 1;
+                break;
+            case EntityWeightClass.WEIGHT_MEDIUM:
+                targetMod = 2;
+                break;
+            case EntityWeightClass.WEIGHT_HEAVY:
+                targetMod = 3;
+                break;
+            case EntityWeightClass.WEIGHT_ASSAULT:
+                targetMod = 4;
+                break;
+            }
+            mod = attackerMod - targetMod;
         }
-
-        switch ( target.getWeightClass() ) {
-          case EntityWeightClass.WEIGHT_LIGHT:
-            targetMod = 1;
-            break;
-
-          case EntityWeightClass.WEIGHT_MEDIUM:
-            targetMod = 2;
-            break;
-
-          case EntityWeightClass.WEIGHT_HEAVY:
-            targetMod = 3;
-            break;
-
-          case EntityWeightClass.WEIGHT_ASSAULT:
-            targetMod = 4;
-            break;
-        }
-
-        mod = attackerMod - targetMod;
-      }
-
-      return mod;
+        return mod;
     }
 
     /**
@@ -10857,7 +10854,6 @@ public class Server implements Runnable {
             boolean torsoMountedCockpit = ((Mech)entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED;
             if ((entity instanceof Mech)
                     && torsoMountedCockpit) {
-System.out.println("In here!");
                 lifeSupportCritCount = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                     Mech.SYSTEM_LIFE_SUPPORT,
                     Mech.LOC_RT);
@@ -10967,8 +10963,7 @@ System.out.println("In here!");
                     } else {
                         r.choose(false);
                         addReport(r);
-                        addReport(
-                                              oneCriticalEntity(entity, Compute.d6(2)));
+                        addReport(oneCriticalEntity(entity, Compute.d6(2)));
                         //add an empty report, for linebreaking
                         r = new Report(1210);
                         addReport(r);
@@ -11005,12 +11000,15 @@ System.out.println("In here!");
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 addReport(r);
-                addReport(
-                                      destroyEntity(entity, "heat/cold", false, false));
+                addReport(destroyEntity(entity, "heat/cold", false, false));
             }
         }
     }
 
+    /**
+     * Resolve Flaming Death for the given Entity
+     * @param entity The <code>Entity</code> that may experience flaming death.
+     */
     private void doFlamingDeath(Entity entity) {
         Report r;
         int boomroll = Compute.d6(2);
@@ -11062,8 +11060,8 @@ System.out.println("In here!");
     }
 
     /**
-     * Checks to see if any entity has takes 20 damage.  If so, they need a piloting
-     * skill roll.
+     * Checks to see if any entity has takes 20 damage.  If so, they need a
+     * piloting skill roll.
      */
     private void checkFor20Damage() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
@@ -11150,8 +11148,7 @@ System.out.println("In here!");
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 addReport(r);
-                addReport(
-                                      destroyEntity(entity, "being in a vacuum where it can't survive", true, true));
+                addReport(destroyEntity(entity, "being in a vacuum where it can't survive", true, true));
             }
         }
     }
@@ -11175,8 +11172,7 @@ System.out.println("In here!");
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 addReport(r);
-                addReport(
-                                      damageCrew(entity, 1));
+                addReport(damageCrew(entity, 1));
 
             }
         }
@@ -12690,8 +12686,7 @@ System.out.println("In here!");
                     r.newlines = 0;
                     vDesc.addElement(r);
                     if (vtol == null) {
-                        vDesc.addAll(
-                                              destroyEntity(en, "fuel tank explosion", false, false));
+                        vDesc.addAll(destroyEntity(en, "fuel tank explosion", false, false));
                     } else { //VTOL's explode and scatter burning fuel
                         Report.addNewline(vDesc);
                         //report problem: add 3 tabs
@@ -12706,8 +12701,7 @@ System.out.println("In here!");
                     vDesc.addElement(r);
                     boolean hasCASE = en.locationHasCase(Tank.LOC_BODY);
                     if (vtol == null) {
-                        vDesc.addAll(
-                                              destroyEntity(en, "power plant destruction", hasCASE, hasCASE));
+                        vDesc.addAll(destroyEntity(en, "power plant destruction", hasCASE, hasCASE));
                     } else { //VTOL's explode and scatter burning fuel
                         Report.addNewline(vDesc);
                         //report problem: add 3 tabs
@@ -12968,8 +12962,7 @@ System.out.println("In here!");
                 r.addDesc(en);
                 r.newlines = 0;
                 vDesc.addElement(r);
-                vDesc.addAll(
-                                      oneCriticalEntity(en, Compute.d6(2)));
+                vDesc.addAll(oneCriticalEntity(en, Compute.d6(2)));
             }
             en.hitThisRoundByAntiTSM = false;
         }
@@ -13003,7 +12996,19 @@ System.out.println("In here!");
         return crashVTOL(en, false, 0 , en.getPosition(),en.getElevation(),0);
     }
 
-    private Vector crashVTOL(VTOL en, boolean sideSlipCrash, int hexesMoved,Coords crashPos, int crashElevation,int impactSide) {
+    /**
+     * Crash a VTOL
+     * @param en             The <code>VTOL</code> to crash
+     * @param sideSlipCrash  A <code>boolean</code> value indicating wether this
+     *                       is a sideslip crash or not.
+     * @param hexesMoved     The <code>int</code> number of hexes moved.
+     * @param crashPos       The <code>Coords</code> of the crash
+     * @param crashElevation The <code>int</code> elevation of the VTOL
+     * @param impactSide     The <code>int</code> describing the side on which
+     *                       the VTOL falls
+     * @return               a <code>Vector</code> of Reports.
+     */
+    private Vector crashVTOL(VTOL en, boolean sideSlipCrash, int hexesMoved, Coords crashPos, int crashElevation,int impactSide) {
         Vector vDesc = new Vector();
         Report r;
 
@@ -13015,12 +13020,6 @@ System.out.println("In here!");
             r.addDesc(en);
             vDesc.addElement(r);
             int fall = crashElevation;
-/*
-            int fall=crashElevation- game.getBoard().getHex(crashPos).ceiling();
-            if(game.getBoard().getHex(crashPos).containsTerrain(Terrains.WOODS)) {
-                fall+=2;//HACK
-            }
-*/
             if(fall==0) {
                 //already on ground, no harm done
                 r = new Report(6265);
@@ -13169,6 +13168,11 @@ System.out.println("In here!");
 
     }
 
+    /**
+     * Explode a VTOL
+     * @param en  The <code>VTOL</code> to explode.
+     * @return a <code>Vector</code> of reports
+     */
     private Vector explodeVTOL(VTOL en) {
         Vector vDesc = new Vector();
         Report r;

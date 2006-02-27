@@ -29,10 +29,10 @@ Lot of people have contributed to the MegaMek project.
      Dirk Wilhelm <wayne07@users.sourceforge.net>
      David Smith <xylaan@users.sourceforge.net>
      David Taylor <dtaylor@swiftdsl.com.au>
-     Bj�rn Olsson <nalleolsson@users.sourceforge.net>
+     Björn Olsson <nalleolsson@users.sourceforge.net>
      Florian Stock <flolo@users.sourceforge.net>
      Patrick Johnmeyer <pineconius@users.sourceforge.net>
-     Alexander Sch�lling <schoelling@users.sourceforge.net>
+     Alexander Schölling <schoelling@users.sourceforge.net>
      Sebastian Brocks <beerockxs@users.sourceforge.net>
      Ecthellion <ecthellion@users.sourceforge.net>
      Jaxom Renard <jaxom_renard@users.sourceforge.net>
@@ -48,6 +48,7 @@ Lot of people have contributed to the MegaMek project.
      Steven Smolinski <stevens@users.sourceforge.net>
      Anton Sabadash <prophet_roshak@users.sourceforge.net>
      Michael Gratton <mjog@users.sourceforge.net>
+     Jeff Wang <swang30@users.sourceforge.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -73,7 +74,7 @@ Lot of people have contributed to the MegaMek project.
      coralbeach
      Robert Heath <blasty_mcnasty@users.sourceforge.net>
      Jacob Wall <lancemanprime@users.sourceforge.net>
-     Alexander Sch�lling <schoelling@users.sourceforge.net>
+     Alexander Schölling <schoelling@users.sourceforge.net>
      fastsammy <fastsammy@users.sourceforge.net>
 
   Updates to the Ant build file:
@@ -118,8 +119,8 @@ Lot of people have contributed to the MegaMek project.
      beretboy <dp777@users.sourceforge.net>
 
   Translations
-     J�rg Harder <joergharder@t-online.de>
-     Alexander Sch�lling <schoelling@users.sourceforge.net>
+     Jörg Harder <joergharder@t-online.de>
+     Alexander Schölling <schoelling@users.sourceforge.net>
      
   MegaMek Developers, Emeritus
      James Lacy <freakboy2571@users.sourceforge.net>

@@ -145,6 +145,11 @@ public class EquipmentType {
     protected static Vector allTypes;
     protected static Hashtable lookupHash;
 
+    //New stuff for shields
+    protected int baseDamageAbsorptionRate = 0;
+    protected int baseDamageCapacity = 0;
+    protected int damageTaken = 0;
+    
     /** Creates new EquipmentType */
     public EquipmentType() {
 
@@ -224,6 +229,90 @@ public class EquipmentType {
         return bv;
     }
 
+    /**
+     * Rules state that every time the shield takes a crit its damage absorption
+     * for each attack is reduced by 1. 
+     * Also for every Arm actuator critted damage absorption is reduced by 1
+     * and finally if the should is hit the damage absorption is reduced by 2
+     * making it possble to kill a shield before its gone through its full
+     * damage capacity.
+     * @param entity
+     * @param location
+     * @return
+     */
+    public int getDamageAbsorption(Entity entity, int location){
+        //Shields can only be used in arms so if you've got a shield in a location
+        //other then an arm your SOL --Torren.
+        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+            return 0;
+        
+        int base = baseDamageAbsorptionRate;
+        
+        for ( int slot = 0; slot < entity.getNumberOfCriticals(location); slot++){
+            CriticalSlot cs = entity.getCritical(location,slot);
+            
+            if ( cs == null )
+                continue;
+            
+            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+                continue;
+            
+            Mounted m = entity.getEquipment(cs.getIndex());
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType &&((MiscType)type).isShield()) {
+                if ( cs.isDamaged() )
+                    base--;
+            }
+        }
+            
+        if ( !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, location) )
+            base -= 2;
+        if ( !entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, location) )
+            base--;
+        if ( !entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, location) )
+            base--;
+        
+        return Math.max(0,base);
+    }
+    
+    /**
+     * Rules say every time a shield is critted it loses 5 points from its
+     * Damage Capacity. basically count down from the top then subtract the amount
+     * of damage its already take.
+     * The damage capacity is used to determine if the shield is still viable.
+     * @param entity
+     * @param location
+     * @return damage capacity(no less then 0)
+     */
+    public int getCurrentDamageCapacity(Entity entity, int location){
+        //Shields can only be used in arms so if you've got a shield in a location
+        //other then an arm your SOL --Torren.
+        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+            return 0;
+        
+        int base = baseDamageCapacity;
+
+        for ( int slot = 0; slot < entity.getNumberOfCriticals(location); slot++){
+            CriticalSlot cs = entity.getCritical(location,slot);
+            
+            if ( cs == null )
+                continue;
+            
+            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+                continue;
+            
+            Mounted m = entity.getEquipment(cs.getIndex());
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && ((MiscType)type).isShield()
+                    && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
+                if ( cs.isDamaged() )
+                    base -= 5;
+            }
+        }
+            
+        return Math.max(0,base-damageTaken);
+    }
+    
     /**
      * 
      * @return <code>true</code> if this type of equipment has set of modes

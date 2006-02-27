@@ -346,6 +346,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
         }
     
+        if ( ae.hasShield() ){
+            //active shield has already been checked as it makes shots impossible
+            //time to check passive defense and no defense
+
+            if ( ae.hasPassiveShield(weapon.getLocation(),weapon.isRearMounted()))
+                toHit.addModifier(+2, "weapon hampered by passive shield");
+            else if ( ae.hasNoDefenseShield(weapon.getLocation()))
+                toHit.addModifier(+1, "weapon hampered by shield");
+        }
         // if we have BAP with MaxTech rules, and there are woods in the 
         // way, and we are within BAP range, we reduce the BTH by 1
         if (game.getOptions().booleanOption("maxtech_bap") &&
@@ -741,6 +750,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
                               boolean isArtilleryDirect) {
         boolean isHoming = false;
         ToHitData toHit = null;
+
+        if ( ae.hasShield() && ae.hasActiveShield(weapon.getLocation(),weapon.isRearMounted()) )
+            return new String("Weapon blocked by active shield");
+
         // missing, breached or jammed weapons can't fire
         if (!weapon.canFire()) {
             return new String("Weapon is not in a state where it can be fired");

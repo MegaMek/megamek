@@ -2515,7 +2515,8 @@ public abstract class Entity extends TurnOrdered
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)) {
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
+                    && m.curMode().equals("ECM")) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
             }
         }
@@ -2529,7 +2530,46 @@ public abstract class Entity extends TurnOrdered
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)) {
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
+                    && m.curMode().equals("ECM")) {
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks to see if this entity has a functional ECM unit that
+     * is using ECCM.
+     * @return <code>true</code> if the entity has angelecm and it 
+     *         is in ECCM mode <code>false</code> if the entity does not have 
+     *         angel ecm or it is not in eccm mode or it is damaged.
+     */
+    public boolean hasActiveECCM() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
+                    && m.curMode().equals("ECCM")) {
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks to see if this unit has a functional AngelECM unit that
+     * is using ECCM.
+     * @return <code>true</code> if the entity has angelecm and it 
+     *         is in ECCM mode <code>false</code> if the entity does not have 
+     *         angel ecm or it is not in eccm mode or it is damaged.
+     */
+    public boolean hasActiveAngelECCM() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
+                    && m.curMode().equals("ECCM")) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
             }
         }

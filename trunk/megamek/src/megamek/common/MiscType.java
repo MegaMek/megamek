@@ -131,9 +131,9 @@ public class MiscType extends EquipmentType {
 
     public boolean isShield(){
         if ( this.hasFlag(MiscType.F_CLUB)
-        && (this.hasSubType(MiscType.S_SHIELD_LARGE)
-        || this.hasSubType((MiscType.S_SHIELD_MEDIUM))
-        || this.hasSubType(MiscType.S_SHIELD_SMALL)) )
+                && (this.hasSubType(MiscType.S_SHIELD_LARGE)
+                || this.hasSubType((MiscType.S_SHIELD_MEDIUM))
+                || this.hasSubType(MiscType.S_SHIELD_SMALL)) )
             return true;
         //else
         return false;

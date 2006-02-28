@@ -26,7 +26,9 @@ v0.31.6-dev (CVS)
 + Patch 1439854: MapPack Solaris VII Shields
 + Patch 1438465: ECCM Patch
 + Bug 1438580: Tanks on bridges drown at end of physical phase
-+ Bug 1436167  Unloading Battle Armour on top of buildings with VTOLs
++ Bug 1436167:  Unloading Battle Armour on top of buildings with VTOLs
++ Bug 1288101: VTOLs crash multiple times when movement system destroyed
++ artillery flak use artillery damage functions
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

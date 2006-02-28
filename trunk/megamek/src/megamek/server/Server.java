@@ -7102,99 +7102,7 @@ public class Server implements Runnable {
                   return !bMissed;
               }
           }
-          int nCluster = 5;
-
-          int ratedDamage = wtype.getRackSize();
-
-          for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-              Entity entity = (Entity)impactHexHits.nextElement();
-              hits = ratedDamage;
-
-              while(hits>0) {
-                  if (wr.artyAttackerCoords!=null) {
-                      toHit.setSideTable(entity.sideTable(wr.artyAttackerCoords));
-                  }
-                  // entites at a different altitude don't get damage
-                  if (entity.getElevation() != targEl) {
-                      r = new Report(3194);
-                      r.subject = entity.getId();
-                      r.addDesc(entity);
-                      addReport(r);
-                      continue;
-                  }
-                  HitData hit = entity.rollHitLocation
-                      ( toHit.getHitTable(),
-                        toHit.getSideTable(),
-                        wr.waa.getAimedLocation(),
-                        wr.waa.getAimingMode() );
-
-                  addReport( damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true, throughFront));
-                  addNewLines();
-                  hits -= Math.min(nCluster,hits);
-              }
-          }
-
-          for(int dir=0;dir<=5;dir++) {
-              Coords tempcoords=coords.translated(dir);
-              if (!game.getBoard().contains(tempcoords)) {
-                  continue;
-              }
-              if (coords.equals(tempcoords)) {
-                  continue;
-              }
-
-
-              ratedDamage = wtype.getRackSize()/2;
-              bldg = null;
-              bldg = game.getBoard().getBuildingAt(tempcoords);
-              // if building is lower than our flak rounds, don't damage it
-              if (bldg != null && game.getBoard().getHex(tempcoords).ceiling() < absEl) {
-                  bldg = null;
-              }
-              int bldgAbsorbs = (bldg != null)? bldg.getPhaseCF() / 10 : 0;
-              bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-              ratedDamage -= bldgAbsorbs;
-              if ((bldg != null) && (bldgAbsorbs > 0)) {
-                  //building absorbs some of the damage
-                  r = new Report(6425);
-                  r.subject = subjectId;
-                  r.add(bldgAbsorbs);
-                  addReport(r);
-                  Report buildingReport = damageBuilding( bldg, ratedDamage );
-                  buildingReport.subject = subjectId;
-                  addReport(buildingReport);
-              }
-
-              Enumeration splashHexHits = game.getEntities(tempcoords);
-              if (splashHexHits.hasMoreElements()) {
-                  r = new Report(3210);
-                  r.newlines = 0;
-                  r.subject = subjectId;
-                  r.add(tempcoords.getBoardNum());
-                  r.indent();
-                  addReport(r);
-              }
-              for (;splashHexHits.hasMoreElements();) {
-                  Entity entity = (Entity)splashHexHits.nextElement();
-                  hits = ratedDamage;
-                  if ((entity.getElevation() + game.getBoard().getHex(tempcoords).surface()) != absEl) {
-                      r = new Report(3194);
-                      r.subject = entity.getId();
-                      r.addDesc(entity);
-                      addReport(r);
-                      continue;
-                  }
-                  while (hits>0) {
-                      HitData hit = entity.rollHitLocation
-                          ( toHit.getHitTable(),
-                            toHit.getSideTable(),
-                            wr.waa.getAimedLocation(),
-                            wr.waa.getAimingMode() );
-                      addReport( damageEntity(entity, hit, Math.min(nCluster, hits)));
-                      hits -= Math.min(nCluster,hits);
-                  }
-              }
-          }
+          artilleryDamageArea(coords, wr.artyAttackerCoords, atype, subjectId, ae, true, absEl);
           return !bMissed;
       } // End artillery FLAK
       // special case BA micro bombs
@@ -7223,7 +7131,7 @@ public class Server implements Runnable {
           int nCluster = 5;
           Infantry ba = (Infantry)ae;
           int ratedDamage = ba.getShootingStrength();
-          artilleryDamageArea(coords, wr.artyAttackerCoords, atype, subjectId, ae, ratedDamage*2, ratedDamage);
+          artilleryDamageArea(coords, wr.artyAttackerCoords, atype, subjectId, ae, ratedDamage*2, ratedDamage, false, 0);
           return !bMissed;          
       } //end ba-micro-bombs
 
@@ -7347,13 +7255,13 @@ public class Server implements Runnable {
               }
           }
 
-          artilleryDamageArea(coords, wr.artyAttackerCoords, atype, subjectId, ae);
+          artilleryDamageArea(coords, wr.artyAttackerCoords, atype, subjectId, ae, false, 0);
 
           return !bMissed;
       } // End artillery
       if(bMissed && usesAmmo && atype.getMunitionType() == AmmoType.M_HOMING) {
           //Arrow IV homing missed, splash the hex
-          artilleryDamageHex(target.getPosition(), wr.artyAttackerCoords, 5, atype, subjectId, ae, null);
+          artilleryDamageHex(target.getPosition(), wr.artyAttackerCoords, 5, atype, subjectId, ae, null, false, 0);
       }
       
       int ammoUsage=0;
@@ -8785,7 +8693,7 @@ public class Server implements Runnable {
 
         //deal with splash damage from Arrow IV homing
         if(atype != null && atype.getMunitionType() == AmmoType.M_HOMING) {
-            artilleryDamageHex(target.getPosition(), wr.artyAttackerCoords, 5, atype, subjectId, ae, entityTarget);
+            artilleryDamageHex(target.getPosition(), wr.artyAttackerCoords, 5, atype, subjectId, ae, entityTarget, false, 0);
         }
 
         addNewLines();
@@ -13074,20 +12982,34 @@ public class Server implements Runnable {
             r.newlines = 0;
             r.addDesc(en);
             vDesc.addElement(r);
-            int fall = crashElevation;
+            int newElevation = 0;
+            IHex fallHex = game.getBoard().getHex(crashPos);
+
+            //May land on roof of building or bridge
+            if(fallHex.containsTerrain(Terrains.BLDG_ELEV))
+                newElevation = fallHex.terrainLevel(Terrains.BLDG_ELEV);
+            else if(fallHex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+                newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);
+                if(newElevation > crashElevation)
+                    newElevation = 0; //vtol was under bridge already
+            }
+
+            int fall = crashElevation - newElevation;
             if(fall==0) {
                 //already on ground, no harm done
                 r = new Report(6265);
                 r.subject = en.getId();
                 vDesc.addElement(r);
             } else {
+                //set elevation 1st to avoid multiple crashes
+                en.setElevation(newElevation);
+
                 //plummets to ground
                 r = new Report(6270);
                 r.subject = en.getId();
                 r.add(fall);
                 vDesc.addElement(r);
 
-                IHex fallHex = game.getBoard().getHex(crashPos);
                 // facing after fall
                 String side;
                 int table;
@@ -13113,27 +13035,29 @@ public class Server implements Runnable {
                         table = ToHitData.SIDE_FRONT;
                 }
 
-                boolean waterFall= fallHex.containsTerrain(Terrains.WATER);
-                if(waterFall && fallHex.containsTerrain(Terrains.ICE)) {
-                    int roll = Compute.d6(1);
-                    r = new Report(2118);
-                    r.subject = en.getId();
-                    r.add(en.getDisplayName(), true);
-                    r.add(roll);
-                    r.subject = en.getId();
-                    addReport(r);
-                    if(roll == 6) {
-                        resolveIceBroken(crashPos);
-                    } else {
-                        waterFall = false; //saved by ice
+                if(newElevation <= 0) {
+                    boolean waterFall= fallHex.containsTerrain(Terrains.WATER);
+                    if(waterFall && fallHex.containsTerrain(Terrains.ICE)) {
+                        int roll = Compute.d6(1);
+                        r = new Report(2118);
+                        r.subject = en.getId();
+                        r.add(en.getDisplayName(), true);
+                        r.add(roll);
+                        r.subject = en.getId();
+                        addReport(r);
+                        if(roll == 6) {
+                            resolveIceBroken(crashPos);
+                        } else {
+                            waterFall = false; //saved by ice
+                        }
                     }
-                }
-                if(waterFall) {
-                    //falls into water and is destroyed
-                    r = new Report(6275);
-                    r.subject = en.getId();
-                    vDesc.addElement(r);
-                    en.destroy("Fell into water",false, false);//not sure, is this salvagable?
+                    if(waterFall) {
+                        //falls into water and is destroyed
+                        r = new Report(6275);
+                        r.subject = en.getId();
+                        vDesc.addElement(r);
+                        en.destroy("Fell into water",false, false);//not sure, is this salvagable?
+                    }
                 }
 
                 // calculate damage for hitting the surface
@@ -13152,11 +13076,7 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
 
                 en.setFacing((en.getFacing() + (facing - 1)) % 6);
-                if (fallHex.terrainLevel(Terrains.WATER) > 0 && !fallHex.containsTerrain(Terrains.ICE)) {
-                    for (int loop=0; loop< en.locations();loop++){
-                        en.setLocationStatus(loop, ILocationExposureStatus.WET);
-                    }
-                }
+
                 boolean exploded=false;
     
                 // standard damage loop
@@ -13183,8 +13103,8 @@ public class Server implements Runnable {
                 }
 
                 //check for location exposure
-                doSetLocationsExposure(en, fallHex, false, 0);
-                en.setElevation(0);
+                doSetLocationsExposure(en, fallHex, false, newElevation);
+                
             }
         } else {
             en.setElevation(0);//considered landed in the hex.
@@ -17986,17 +17906,22 @@ public class Server implements Runnable {
      * @param subjectId      Subject for reports
      * @param killer         Who should be credited with kills
      * @param exclude        Entity that should take no damage (used for homing splash)
+     * @param flak           Flak, hits flying units only, instead of flyers being immune
+     * @param altitude       Absolute altitude for flak attack
      */
-    void artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo, int subjectId, Entity killer, Entity exclude) {
+    void artilleryDamageHex(Coords coords, Coords attackSource, int damage, AmmoType ammo, int subjectId, Entity killer, Entity exclude, boolean flak, int altitude) {
 
         IHex hex = game.getBoard().getHex(coords);
         if(hex == null) return; //not on board.
+
+        int flakElevation = altitude - hex.surface();
 
         Report r;
 
         Building bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = 0;
-        if(bldg != null) {
+        if(bldg != null
+           && !(flak && flakElevation > hex.terrainLevel(Terrains.BLDG_ELEV))) {
             bldgAbsorbs = bldg.getPhaseCF() / 10;
             if(!(ammo != null && ammo.getMunitionType() == AmmoType.M_FLECHETTE)) {
                 //damage the building
@@ -18005,6 +17930,14 @@ public class Server implements Runnable {
                 addReport(r);
                 addNewLines();
             }
+        }
+
+        if(flak
+           && (flakElevation <= 0
+               || flakElevation <= hex.terrainLevel(Terrains.BLDG_ELEV)
+               || flakElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
+            //Flak in this hex would only hit landed units
+            return;
         }
 
         // get units in hex
@@ -18041,14 +17974,25 @@ public class Server implements Runnable {
                 }
             }
 
-            //Check: is entity a VTOL in flight?
-            if (entity instanceof VTOL ||
-                entity.getMovementMode()==IEntityMovementMode.VTOL) {
-                // VTOLs take no damage from normal artillery unless landed
-                if (entity.getElevation()!=0
-                    && entity.getElevation()!=hex.terrainLevel(Terrains.BLDG_ELEV)
-                    && entity.getElevation()!=hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+            if(flak) {
+                //Check: is entity not a VTOL in flight
+                if (!(entity instanceof VTOL ||
+                    entity.getMovementMode()==IEntityMovementMode.VTOL)) {
                     continue;
+                }
+                //Check: is entity at correct elevation?
+                if(entity.getElevation() != flakElevation)
+                    continue;
+            } else {
+                //Check: is entity a VTOL in flight?
+                if (entity instanceof VTOL ||
+                    entity.getMovementMode()==IEntityMovementMode.VTOL) {
+                    // VTOLs take no damage from normal artillery unless landed
+                    if (entity.getElevation()!=0
+                        && entity.getElevation()!=hex.terrainLevel(Terrains.BLDG_ELEV)
+                        && entity.getElevation()!=hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+                        continue;
+                    }
                 }
             }
 
@@ -18130,8 +18074,10 @@ public class Server implements Runnable {
      * @param ammo           The ammo type doing the damage
      * @param subjectId      Subject for reports
      * @param killer         Who should be credited with kills
+     * @param flak           Flak, hits flying units only, instead of flyers being immune
+     * @param altitude       Absolute altitude for flak attack
      */
-    void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer) {
+    void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, boolean flak, int altitude) {
         int damage; 
         int falloff=5;
         if(ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
@@ -18157,7 +18103,7 @@ public class Server implements Runnable {
             damage = ammo.getRackSize();
             falloff = (damage + 1) / 2;
         }
-        artilleryDamageArea(centre, attackSource, ammo, subjectId, killer, damage, falloff);
+        artilleryDamageArea(centre, attackSource, ammo, subjectId, killer, damage, falloff, flak, altitude);
     }
     
     /**
@@ -18170,12 +18116,14 @@ public class Server implements Runnable {
      * @param killer         Who should be credited with kills
      * @param damage         Damage at ground zero
      * @param falloff        Reduction in damage for each hex of distance
+     * @param flak           Flak, hits flying units only, instead of flyers being immune
+     * @param altitude       Absolute altitude for flak attack
      */
-    void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, int damage, int falloff) {
+    void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, int damage, int falloff, boolean flak, int altitude) {
         for(int ring=0;damage > 0;ring++,damage-=falloff) {
             ArrayList<Coords> hexes = Compute.coordsAtRange(centre, ring);
             for(Coords c : hexes) {
-                artilleryDamageHex(c, attackSource, damage, ammo, subjectId, killer, null);
+                artilleryDamageHex(c, attackSource, damage, ammo, subjectId, killer, null, flak, altitude);
             }
             attackSource = centre; // all splash comes from ground zero
         }

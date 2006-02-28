@@ -59,7 +59,6 @@ public class MechFileParser {
             } catch(EntityLoadingException ele ){
                 throw new EntityLoadingException(ele.getMessage());
             } catch (NullPointerException npe){
-                System.err.println("Unable to load unit "+entryName+" from file "+f.getName());
                 throw new NullPointerException();
             }
             catch (Exception ex) {

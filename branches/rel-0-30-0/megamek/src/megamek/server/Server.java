@@ -12212,6 +12212,8 @@ implements Runnable, ConnectionHandler {
                 r.subject = en.getId();
                 vDesc.addElement(r);
             } else {
+                en.setElevation(0); //set 1st to avoid multiple crashes
+
                 //plummets to ground
                 r = new Report(6270);
                 r.subject = en.getId();
@@ -12301,7 +12303,6 @@ implements Runnable, ConnectionHandler {
 
                 //check for location exposure
                 doSetLocationsExposure(en, fallHex, false, 0);
-                en.setElevation(0);
             }
         } else {
             en.setElevation(0);//considered landed in the hex.

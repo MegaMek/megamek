@@ -19,6 +19,9 @@ import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -43,9 +46,6 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
-
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
 
 public class ClientGUI
     extends Panel
@@ -1324,15 +1324,57 @@ public class ClientGUI
                 bingClip.play();
             } else {
                 try {
-                    File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
+                    // Find the Sun-specific AudioStream class.
+                    Class streamClass
+                        = Class.forName( "sun.audio.AudioStream" );
+
+                    // Find the AudioStream ctor that takes an InputStream.
+                    Class[] classArgs = new Class[1];
+                    classArgs[0] = Class.forName( "java.io.InputStream" );
+                    Constructor streamCtor
+                        = streamClass.getDeclaredConstructor( classArgs );
+
+                    // Construct an AudioStream object that reads the
+                    // "bing" file.
+                    Object[] objArgs = new Object[1];
+                    File file = new File(
+                        GUIPreferences.getInstance().getSoundBingFilename() );
                     InputStream in = new FileInputStream(file);
-                    AudioStream bing = new AudioStream(in);
-                    AudioPlayer.player.start(bing);
+                    objArgs[0] = in;
+                    objArgs[0] = streamCtor.newInstance( objArgs );
+
+                    // Get the AudioPlayer class.
+                    Class playerClass
+                        = Class.forName( "sun.audio.AudioPlayer" );
+
+                    // Get the AudioPlayer.player static field.
+                    Field playerField
+                        = playerClass.getDeclaredField( "player" );
+
+                    // Execute the start() method of the static
+                    // AudioPlayer.player field on the newly-created
+                    // AudioStream object.
+                    classArgs[0] = streamClass;
+                    playerClass = playerField.getType();
+                    Method[] methods = playerClass.getMethods();
+                    Method start = null;
+                    for (int loop = 0; loop < methods.length; ++loop) 
+                        if (methods[loop].getName().equals( "start" ))
+                            start = methods[loop];
+                    start.invoke( playerField.get( null ), objArgs );
+
                 } catch (Exception err) {
+                    // Couldn't make the bing sound.  Stop trying.
+                    GUIPreferences.getInstance().setSoundMute( true );
+                    System.out.println
+                        ( "Could not make the 'bing' sound; muting sounds." );
                     err.printStackTrace();
                 }
-            }
-        }
+
+            } // End don't-have-AudioClip
+
+        } // End not-muted
+
     }
 
     protected GameListener gameListener = new GameListenerAdapter(){

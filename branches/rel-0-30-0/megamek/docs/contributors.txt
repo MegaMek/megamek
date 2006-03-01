@@ -52,6 +52,10 @@ Lot of people have contributed to the MegaMek project.
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
 
+  GNU Classpath Hackers who fixed up the GTK AWT peers:
+     Lillian Angel  <langel@redhat.com>
+     Thomas Fitzsimmons  <fitzsim@redhat.com>
+
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>
      Pierre Savard <xsurrealx@users.sourceforge.net>

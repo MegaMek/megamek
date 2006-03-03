@@ -85,7 +85,6 @@ public class PunchAttackAction
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         final int armArc = (arm == PunchAttackAction.RIGHT)
                            ? Compute.ARC_RIGHTARM : Compute.ARC_LEFTARM;
-        final boolean hasClaws = ((BipedMech)ae).hasClaw(armLoc);
 
         ToHitData toHit;
 
@@ -182,6 +181,7 @@ public class PunchAttackAction
         // Rules state +1 bth with claws and if claws are critted then you get
         // the normal +1 bth for missing hand actuator.
         // Damn if you do damned if you dont. --Torren.
+        final boolean hasClaws = ((BipedMech)ae).hasClaw(armLoc);
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc) && !hasClaws) {
             toHit.addModifier(1, "Hand actuator missing or destroyed");
         }

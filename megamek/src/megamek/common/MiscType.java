@@ -240,7 +240,7 @@ public class MiscType extends EquipmentType {
             return (float)Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (float)(Math.ceil(entity.getWeight() * entity.getOriginalJumpMP() / 10.0) / 2.0);
-        }else if (hasFlag(F_HAND_WEAPON)
+        } else if (hasFlag(F_HAND_WEAPON)
                 && hasSubType(S_CLAW)) {
             return (int)Math.ceil(entity.getWeight() / 15);
         }

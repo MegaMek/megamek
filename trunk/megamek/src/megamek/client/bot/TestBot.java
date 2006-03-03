@@ -262,6 +262,7 @@ public class TestBot extends BotClient {
         } else {
             move_array = new Object[] { self.current };
         }
+        System.out.println(String.format("%s has %d moves", self.getEntity().getShortName(), move_array.length));
         for (int i = 0; i < move_array.length; i++) {
             MoveOption option = (MoveOption) move_array[i];
             option.setState();

@@ -32,6 +32,9 @@ v0.31.6-dev (CVS)
 + Patch 1440745: S7 Claws
 + BattleMech HarJel system, from MapPack Solaris VII
 + Patch 1442366: Edge Bug fixed.
++ Bug: claws ClassCastException for non mechs
++ Bug: bot infinite loop deciding if push damage can break armour (100% cpu lockup)
++ more logging for bot
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

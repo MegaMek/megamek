@@ -73,9 +73,9 @@ public class MiscType extends EquipmentType {
     public static final int     S_DUAL_SAW          = 0x00000080; // Solaris 7                
     public static final int     S_FLAIL             = 0x00000100; // Solaris 7; TODO
     public static final int     S_PILE_DRIVER       = 0x00000200; // Solaris 7
-    public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7; TODO         
-    public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7; TODO
-    public static final int     S_SHIELD_LARGE      = 0x00001000; // Solaris 7; TODO
+    public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7;
+    public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7;
+    public static final int     S_SHIELD_LARGE      = 0x00001000; // Solaris 7;
     public static final int     S_LANCE             = 0x00002000; // Solaris 7; TODO
     public static final int     S_VIBRO_SMALL       = 0x00004000; // Solaris 7; TODO
     public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7; TODO
@@ -94,7 +94,8 @@ public class MiscType extends EquipmentType {
     // These are differentiated from Physical Weapons using the F_CLUB flag
     // because the following weapons are treated as a punch attack, while
     // the above weapons are treated as club or hatchet attacks.
-    public static final int     S_CLAW              = 0x00000001; // Solaris 7; TODO
+    // these are subtypes of F_HAND_WEAPON
+    public static final int     S_CLAW              = 0x00000001; // Solaris 7
     public static final int     S_MINING_DRILL      = 0x00000002; // Miniatures Rulebook; TODO
 
     // Secondary flags for tools
@@ -239,6 +240,9 @@ public class MiscType extends EquipmentType {
             return (float)Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (float)(Math.ceil(entity.getWeight() * entity.getOriginalJumpMP() / 10.0) / 2.0);
+        }else if (hasFlag(F_HAND_WEAPON)
+                && hasSubType(S_CLAW)) {
+            return (int)Math.ceil(entity.getWeight() / 15);
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -294,6 +298,9 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (entity instanceof QuadMech) ? 8 : 4; // all slots in all legs
+        } else if (hasFlag(F_HAND_WEAPON)
+                && hasSubType(S_CLAW)) {
+            return (int)Math.ceil(entity.getWeight() / 15);
         }
         // right, well I'll just guess then
         return 1;
@@ -335,6 +342,9 @@ public class MiscType extends EquipmentType {
             } else {
                 return fRearBV * 0.2 + fFrontBV * 0.1;
             }
+        } else if (hasFlag(F_HAND_WEAPON)
+                && hasSubType(S_CLAW)) {
+            return (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
         }
         // maybe it's 0
         return 0;
@@ -418,6 +428,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType( createMediumShield() );
         EquipmentType.addType( createSmallShield() );
         EquipmentType.addType( createLargeShield() );
+        EquipmentType.addType( createClaw() );
         
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -1311,6 +1322,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Null Signature System";
         misc.setInternalName(Mech.NULLSIG);
         misc.addLookupName("Null Signature System");
+        misc.addLookupName("NullSignatureSystem");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.hittable = true;
@@ -1776,6 +1788,27 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
+
+    /**
+     * Creates a claw MiscType Object
+     * @return MiscType
+     */
+    public static MiscType createClaw() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Claw";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_HAND_WEAPON;
+        misc.subType |= S_CLAW;
+        misc.bv = BV_VARIABLE;
+        
+        return misc;
+    }
+
 
     public static MiscType createMediumShield() {
         MiscType misc = new MiscType();

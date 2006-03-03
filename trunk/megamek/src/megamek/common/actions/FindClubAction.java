@@ -84,10 +84,11 @@ public class FindClubAction extends AbstractEntityAction {
         }
 
         // also, need shoulders and hands
+        // Claws can subtitue as hands --Torren
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
         || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
-        || !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
-        || !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+        || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((BipedMech)entity).hasClaw(Mech.LOC_RARM))
+        || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)  && !((BipedMech)entity).hasClaw(Mech.LOC_LARM)) ) {
             return false;
         }
 

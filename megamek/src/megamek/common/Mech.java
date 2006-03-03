@@ -3308,9 +3308,10 @@ public abstract class Mech
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
     public boolean hasHarJelIn(int loc) {
+        if (loc == Mech.LOC_HEAD) return false;
         for (Enumeration i = getEquipment(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getLocation() == loc && !mounted.isReady() &&
+            if (mounted.getLocation() == loc && mounted.isReady() &&
                     mounted.getType().hasFlag(MiscType.F_HARJEL)) {
                 return true;
             }

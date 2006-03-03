@@ -12880,11 +12880,18 @@ public class Server implements Runnable {
             vDesc.addElement(r);
             
             //Shield objects are not useless when they take one crit.
-            //Shields can be critted and still usable.
-            if ( eqType instanceof MiscType && ((MiscType)eqType).isShield() )
+            //Shields can be critted and still be usable.
+            if (eqType instanceof MiscType && ((MiscType)eqType).isShield())
                 mounted.setHit(false);
             else
                 mounted.setHit(true);
+            
+            if (eqType instanceof MiscType && eqType.hasFlag(MiscType.F_HARJEL)) {
+                r = new Report(6254);
+                r.subject = en.getId();
+                r.indent(2);
+                breachLocation(en, loc, null, true);
+            }
 
             // If the item is the ECM suite of a Mek Stealth system
             // then it's destruction turns off the stealth.
@@ -12905,8 +12912,7 @@ public class Server implements Runnable {
             // Equipment explosions are secondary effects and
             // do not occur when loading from a scenario.
             if ( secondaryEffects && eqType.isExplosive() && !hitBefore ) {
-                vDesc.addAll(
-                                      explodeEquipment(en, loc, mounted));
+                vDesc.addAll(explodeEquipment(en, loc, mounted));
             }
 
             // Make sure that ammo in this slot is exhaused.
@@ -13385,7 +13391,7 @@ public class Server implements Runnable {
      *          This value will be <code>null</code> if the check is the
      *          result of an attack, and non-null if it occurs during movement.
      */
-     private Vector breachCheck(Entity entity, int loc, IHex hex) {
+    private Vector breachCheck(Entity entity, int loc, IHex hex) {
         Vector vDesc = new Vector();
         Report r;
 
@@ -13395,6 +13401,15 @@ public class Server implements Runnable {
         }
 
         if (entity instanceof VTOL) {
+            return vDesc;
+        }
+        
+        // functional HarJel prevents breach
+        if (entity instanceof Mech && ((Mech)entity).hasHarJelIn(loc)) {
+            r = new Report(6342);
+            r.subject = entity.getId();
+            r.indent(3);
+            vDesc.addElement(r);
             return vDesc;
         }
 
@@ -13420,7 +13435,7 @@ public class Server implements Runnable {
                  || !(entity.getArmor(loc) > 0)
                  || !(entity instanceof Mech ? (entity.getArmor(loc,true)>0) :
                       true) ) {
-                vDesc.addAll( breachLocation(entity, loc, hex));
+                vDesc.addAll( breachLocation(entity, loc, hex, false));
             }
         }
         return vDesc;
@@ -13435,8 +13450,10 @@ public class Server implements Runnable {
      * @param   hex the <code>IHex</code> the enitity occupies when checking
      *          This value will be <code>null</code> if the check is the
      *          result of an attack, and non-null if it occurs during movement.
+     * @param   harJel a <code>boolean</code> value indicating if the uselessness
+     *          is the cause of a critically hit HarJel system
      */
-    private Vector breachLocation(Entity entity, int loc, IHex hex) {
+    private Vector breachLocation(Entity entity, int loc, IHex hex, boolean harJel) {
         Vector vDesc = new Vector();
         Report r;
 
@@ -13447,6 +13464,7 @@ public class Server implements Runnable {
         }
 
         r = new Report(6350);
+        if (harJel) r.messageId = 6351;
         r.subject = entity.getId();
         r.add(entity.getShortName());
         r.add(entity.getLocationAbbr(loc));

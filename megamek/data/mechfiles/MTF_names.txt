@@ -336,6 +336,11 @@ Inner Sphere Level 3 Tech:
   Mace (THB)
   Pile Driver
   Armored Cowl
+  IS HarJel
+  Large Shield
+  Medium Shield
+  Small Shield
+  Claw
   
 Clan Level 3 Tech:
  Weapons:
@@ -368,3 +373,4 @@ Clan Level 3 Tech:
   CLWatchdogECM
   CLAngelECMSuite
   Armored Cowl
+  Clan HarJel

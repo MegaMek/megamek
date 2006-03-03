@@ -1375,7 +1375,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns the amount of armor in the location hit.
+     * Returns the amount of armor in the location hit,
+     * or IArmorState.ARMOR_NA, or IArmorState.ARMOR_DESTROYED.
      */
     public int getArmor(HitData hit) {
         return getArmor(hit.getLocation(), hit.isRear());
@@ -1383,15 +1384,15 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns the amount of armor in the location specified,
-     * or ARMOR_NA, or ARMOR_DESTROYED.
+     * or IArmorState.ARMOR_NA, or IArmorState.ARMOR_DESTROYED.
      */
     public int getArmor(int loc, boolean rear) {
         return armor[loc];
     }
 
     /**
-     * Returns the original amount of armor in the location specified,
-     * or ARMOR_NA, or ARMOR_DESTROYED.  Only works on front locations.
+     * Returns the original amount of armor in the location specified.
+     * Only works on front locations.
      */
     public int getOArmor(int loc) {
         return getOArmor(loc, false);

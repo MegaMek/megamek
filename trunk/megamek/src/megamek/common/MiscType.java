@@ -61,6 +61,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_HAND_WEAPON       = 0x10000000;
     public static final int     F_COWL              = 0x20000000;
     public static final int     F_JUMP_BOOSTER      = 0x40000000;
+    public static final int     F_HARJEL            = 0x80000000;
     
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
@@ -345,6 +346,8 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_HAND_WEAPON)
                 && hasSubType(S_CLAW)) {
             return (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
+        } else if (hasFlag(F_HARJEL)) {
+            
         }
         // maybe it's 0
         return 0;
@@ -374,7 +377,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLMASC());
         EquipmentType.addType(createTSM());
         EquipmentType.addType(createC3S());
-        //EquipmentType.addType(createC3M());
         EquipmentType.addType(createC3I());
         EquipmentType.addType(createISArtemis());
         EquipmentType.addType(createCLArtemis());
@@ -420,31 +422,33 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createPileDriver());
         EquipmentType.addType(createArmoredCowl());
         EquipmentType.addType(createNullSignatureSystem());
-        EquipmentType.addType( createLightMinesweeper() );
-        EquipmentType.addType( createBridgeKit() );
-        EquipmentType.addType( createVibroShovel() );
-        EquipmentType.addType( createDemolitionCharge() );
-        EquipmentType.addType( createSuperCharger() );
-        EquipmentType.addType( createMediumShield() );
-        EquipmentType.addType( createSmallShield() );
-        EquipmentType.addType( createLargeShield() );
-        EquipmentType.addType( createClaw() );
+        EquipmentType.addType(createLightMinesweeper());
+        EquipmentType.addType(createBridgeKit());
+        EquipmentType.addType(createVibroShovel());
+        EquipmentType.addType(createDemolitionCharge());
+        EquipmentType.addType(createSuperCharger());
+        EquipmentType.addType(createMediumShield());
+        EquipmentType.addType(createSmallShield());
+        EquipmentType.addType(createLargeShield());
+        EquipmentType.addType(createClaw());
+        EquipmentType.addType(createCLHarJel());
+        EquipmentType.addType(createISHarJel());
         
         // Start BattleArmor equipment
-        EquipmentType.addType( createBABoardingClaw() );
-        EquipmentType.addType( createBAAssaultClaws() );
-        EquipmentType.addType( createBAFireResistantArmor() );
-        EquipmentType.addType( createBasicStealth() );
-        EquipmentType.addType( createStandardStealth() );
-        EquipmentType.addType( createImprovedStealth() );
-        EquipmentType.addType( createMine() );
-        EquipmentType.addType( createMinesweeper() );
-        EquipmentType.addType( createBAMagneticClamp() );
-        EquipmentType.addType( createSingleHexECM() );
-        EquipmentType.addType( createMimeticCamo() );
-        EquipmentType.addType( createSimpleCamo() );
-        EquipmentType.addType( createParafoil() );
-        EquipmentType.addType( createBASearchlight() );
+        EquipmentType.addType(createBABoardingClaw());
+        EquipmentType.addType(createBAAssaultClaws());
+        EquipmentType.addType(createBAFireResistantArmor());
+        EquipmentType.addType(createBasicStealth());
+        EquipmentType.addType(createStandardStealth());
+        EquipmentType.addType(createImprovedStealth());
+        EquipmentType.addType(createMine());
+        EquipmentType.addType(createMinesweeper());
+        EquipmentType.addType(createBAMagneticClamp());
+        EquipmentType.addType(createSingleHexECM());
+        EquipmentType.addType(createMimeticCamo());
+        EquipmentType.addType(createSimpleCamo());
+        EquipmentType.addType(createParafoil());
+        EquipmentType.addType(createBASearchlight());
     }
     
     public static MiscType createHeatSink() {
@@ -1851,6 +1855,42 @@ public class MiscType extends EquipmentType {
         misc.baseDamageAbsorptionRate = 7;
         misc.baseDamageCapacity = 25;
 
+        return misc;
+    }
+    
+    public static MiscType createCLHarJel() {
+        //TODO: make the verifier only accept this in non-head locations
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Clan HarJel";
+        misc.setInternalName(misc.getName());
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 120000;
+        misc.flags |= F_HARJEL;
+        // can't enter BV here, because it's location dependendent,
+        // and MiscType has no idea where a certain equipment may be
+        // mounted
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createISHarJel() {
+        //TODO: make the verifier only accept this in non-head locations
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "IS HarJel";
+        misc.setInternalName(misc.getName());
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 120000;
+        misc.flags |= F_HARJEL;
+        // can't enter BV here, because it's location dependendent,
+        // and MiscType has no idea where a certain equipment may be
+        // mounted
+        misc.bv = 0;
+        
         return misc;
     }
 

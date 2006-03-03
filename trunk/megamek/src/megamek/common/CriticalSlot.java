@@ -28,7 +28,7 @@ public class CriticalSlot
     private boolean                missing; // location destroyed
     private boolean                destroyed;
     private boolean                hittable; // false = hits rerolled
-    private boolean                useless; //true = breached
+    private boolean                breached; //true = breached
     private boolean                repairing = false; //true = currently being repaired
     
     
@@ -79,11 +79,11 @@ public class CriticalSlot
     }
 
     public boolean isBreached() {
-        return useless;
+        return breached;
     }
 
     public void setBreached(boolean breached) {
-        this.useless = breached;
+        this.breached = breached;
     }
 
     /**

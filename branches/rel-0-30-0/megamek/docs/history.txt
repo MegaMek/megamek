@@ -6,6 +6,7 @@ v0.30.9-dev (CVS)
 + Bug 1434301: Split weapons not loading correctly from XML files.
 + Bug 1288101: VTOLs crash multiple times when movement system destroyed
 + Use reflection to eliminate compile-time dependency on private Sun classes.
++ Bug: bot infinite loop deciding if push damage can break armour (100% cpu lockup)
 
 v0.30.8 (2006-02-14, 14:19 GMT)
 + Bug 1295062: Heavy Gauss PSR slightly off

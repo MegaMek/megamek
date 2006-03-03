@@ -551,6 +551,9 @@ public class PhysicalCalculator {
         // Set the base multiplier as 0.5 (good bonus for penetrating with a single hit)
         double base_multiplier = 0.5;
         
+        if(damage <= 0.0 || group <=0.0)
+            return final_multiplier;
+        
         // If the target is a Mech
         if (target instanceof Mech){
             // Create vector of body locations with targets current armor values

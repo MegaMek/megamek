@@ -31,6 +31,7 @@ v0.31.6-dev (CVS)
 + artillery flak use artillery damage functions
 + Patch 1440745: S7 Claws
 + BattleMech HarJel system, from MapPack Solaris VII
++ Patch 1442366: Edge Bug fixed.
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

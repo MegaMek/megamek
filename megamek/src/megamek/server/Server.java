@@ -13359,7 +13359,8 @@ public class Server implements Runnable {
                     if ((en instanceof Mech) 
                        && ( en.crew.hasEdgeRemaining()
                             && en.crew.getOptions().booleanOption("edge_when_explosion"))
-                       && en.getEquipment(slot.getIndex()).getType().isExplosive()) {
+                            && slot.getType() == CriticalSlot.TYPE_EQUIPMENT 
+                            && en.getEquipment(slot.getIndex()).getType().isExplosive()) {
                        en.crew.decreaseEdge();
                        r = new Report(6530);
                        r.subject = en.getId();

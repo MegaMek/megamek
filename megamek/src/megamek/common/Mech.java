@@ -2185,6 +2185,17 @@ public abstract class Mech
                     || mtype.hasFlag(MiscType.F_TARGCOMP)) //targ counted with weapons 
                 continue;
             oEquipmentBV += mtype.getBV(this);
+            // need to do this here, a MiscType does not know the location
+            // where it's mounted
+            if (mtype.hasFlag(MiscType.F_HARJEL)) {
+                if (this.getArmor(mounted.getLocation(), false) != IArmorState.ARMOR_DESTROYED) {
+                    oEquipmentBV += this.getArmor(mounted.getLocation());
+                }
+                if (this.hasRearArmor(mounted.getLocation())
+                        && this.getArmor(mounted.getLocation(), true) != IArmorState.ARMOR_DESTROYED) {
+                    oEquipmentBV += this.getArmor(mounted.getLocation(), true);
+                }
+            }
         }
         weaponBV += oEquipmentBV;
 
@@ -3289,6 +3300,22 @@ public abstract class Mech
         }
 
         return rate;
+    }
+    
+    /**
+     * Does this mech have an undamaged HarJel system in this location?
+     * @param loc the <code>int</code> location to check
+     * @return a <code>boolean</code> value indicating a present HarJel system
+     */
+    public boolean hasHarJelIn(int loc) {
+        for (Enumeration i = getEquipment(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getLocation() == loc && !mounted.isReady() &&
+                    mounted.getType().hasFlag(MiscType.F_HARJEL)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

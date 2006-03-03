@@ -346,8 +346,6 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_HAND_WEAPON)
                 && hasSubType(S_CLAW)) {
             return (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
-        } else if (hasFlag(F_HARJEL)) {
-            
         }
         // maybe it's 0
         return 0;

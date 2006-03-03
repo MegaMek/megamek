@@ -121,7 +121,7 @@ public class PhysicalDisplay
         butPush.setEnabled(false);
         butPush.setActionCommand(PHYSICAL_PUSH);
         
-        butClub = new Button(Messages.getString("PhysicalDisplay.Clusb")); //$NON-NLS-1$
+        butClub = new Button(Messages.getString("PhysicalDisplay.Club")); //$NON-NLS-1$
         butClub.addActionListener(this);
         butClub.setEnabled(false);
         butClub.setActionCommand(PHYSICAL_CLUB);
@@ -286,7 +286,7 @@ public class PhysicalDisplay
         butClub.setLabel(clubLabel);
 
         if ( (entity instanceof Mech) && !entity.isProne() && entity.getCrew().getOptions().booleanOption("dodge_maneuver") ) { //$NON-NLS-1$
-          setDodgeEnabled(true);
+            setDodgeEnabled(true);
         }
     }
     

@@ -14,6 +14,7 @@
 
 package megamek.common.actions;
 
+import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -84,6 +85,8 @@ public class PunchAttackAction
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         final int armArc = (arm == PunchAttackAction.RIGHT)
                            ? Compute.ARC_RIGHTARM : Compute.ARC_LEFTARM;
+        final boolean hasClaws = ((BipedMech)ae).hasClaw(armLoc);
+
         ToHitData toHit;
 
         // arguments legal?
@@ -174,9 +177,18 @@ public class PunchAttackAction
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
+        // Claws replace Actuators, but they are Equipment vs System as they
+        // take up multiple crits. 
+        // Rules state +1 bth with claws and if claws are critted then you get
+        // the normal +1 bth for missing hand actuator.
+        // Damn if you do damned if you dont. --Torren.
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc) && !hasClaws) {
             toHit.addModifier(1, "Hand actuator missing or destroyed");
         }
+        if (hasClaws) {
+            toHit.addModifier(1, "Using Claws");
+        }
+
 
         // elevation
         if (attackerHeight == targetElevation) {
@@ -203,6 +215,11 @@ public class PunchAttackAction
         final int armLoc = (arm == PunchAttackAction.RIGHT)
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         int damage = (int)Math.ceil(entity.getWeight() / 10.0);
+        
+        //Rules state tonnage/7 for claws
+        if ( ((BipedMech)entity).hasClaw(armLoc) )
+            damage = (int)Math.ceil(entity.getWeight() / 7.0);
+        
         float multiplier = 1.0f;
 
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {

@@ -285,5 +285,30 @@ public class BipedMech extends Mech {
         for(;((int)Math.round(weight*armorPerTon))<getTotalOArmor();weight+=.5) {}
         return weight;
     }
-        
+   
+    /**
+     * Check to see if a Biped mech has a claw in one of its arms
+     * @param location (LOC_RARM or LOC_LARM)
+     * @return True/False
+     */
+    public boolean hasClaw(int location){
+        //only arms have claws.
+        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+            return false;
+        for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = this.getCritical(location,slot);
+            
+            if ( cs == null )
+                continue;
+            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+                continue;
+            Mounted m = this.getEquipment(cs.getIndex());
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_HAND_WEAPON)
+                    && type.hasSubType(MiscType.S_CLAW)) {
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
+            }
+        }
+        return false;
+    }
 }

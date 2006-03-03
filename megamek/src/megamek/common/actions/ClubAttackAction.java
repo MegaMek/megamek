@@ -135,6 +135,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
                 && ((MiscType)club.getType()).hasSubType(MiscType.S_CLUB));
+        final boolean hasClaws = ( ((BipedMech)ae).hasClaw(Mech.LOC_RARM) || ((BipedMech)ae).hasClaw(Mech.LOC_LARM) );
         
         ToHitData toHit;
 
@@ -155,8 +156,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
                     || !ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
-                    || !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+            if ( (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
+                    || !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM))  && !hasClaws) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
             }
         } else {
@@ -172,7 +173,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, club.getLocation())) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, club.getLocation())) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, club.getLocation()) && !hasClaws) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
             }
         }
@@ -249,12 +250,19 @@ public class ClubAttackAction extends PhysicalAttackAction {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM)) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
             }
+            if (hasClaws) {
+                toHit.addModifier(2, "Mek has claws");
+            }
         } else {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club.getLocation())) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club.getLocation())) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
+            }
+            //Rules state +2 bth if your using a club with claws.
+            if (hasClaws) {
+                toHit.addModifier(2, "Mek has claws");
             }
         }
 

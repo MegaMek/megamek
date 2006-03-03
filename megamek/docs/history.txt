@@ -29,6 +29,7 @@ v0.31.6-dev (CVS)
 + Bug 1436167:  Unloading Battle Armour on top of buildings with VTOLs
 + Bug 1288101: VTOLs crash multiple times when movement system destroyed
 + artillery flak use artillery damage functions
++ Patch 1440745: S7 Claws
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

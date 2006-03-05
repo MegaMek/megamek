@@ -35,6 +35,7 @@ v0.31.6-dev (CVS)
 + Bug: claws ClassCastException for non mechs
 + Bug: bot infinite loop deciding if push damage can break armour (100% cpu lockup)
 + more logging for bot
++ Bug 1443288: lock up when targeting buildings
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

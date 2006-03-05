@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -19,6 +19,7 @@ import java.io.*;
 public class CriticalSlot
     implements Serializable
 {
+    static final long serialVersionUID = 4686375603180353161L;
     public final static int        TYPE_SYSTEM       = 0;
     public final static int        TYPE_EQUIPMENT    = 1;
     

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -41,6 +41,7 @@ import megamek.common.event.GameTurnChangeEvent;
  * Displays all the mapsheets in a scaled-down size.
  */
 public class MiniMap extends Canvas  {
+    static final long serialVersionUID = 6646726927776108087L;
 
     // these indices match those in Terrains.java, and are therefore sensitive to any changes there
 

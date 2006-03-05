@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -32,6 +32,7 @@ public class DeployMinefieldDisplay
     implements BoardViewListener,  ActionListener, DoneButtoned,
                KeyListener, GameListener, Distractable
 {
+    static final long serialVersionUID = 5354959385776390092L;
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

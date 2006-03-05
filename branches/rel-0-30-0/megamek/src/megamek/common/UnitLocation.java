@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -29,6 +29,7 @@ import java.io.Serializable;
  */
 public class UnitLocation implements Serializable
 {
+    static final long serialVersionUID = 3989732522854387850L;
     /** The entity ID of the unit at this location. */
     private final int entityId;
 

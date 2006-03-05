@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -31,6 +31,7 @@ import megamek.common.ToHitData;
 public class ProtomechPhysicalAttackAction
     extends AbstractAttackAction
 {
+    static final long serialVersionUID = 1432011536091665084L;
  
     public ProtomechPhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);

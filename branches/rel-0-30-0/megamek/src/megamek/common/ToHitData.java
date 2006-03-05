@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -21,6 +21,7 @@ import megamek.common.LosEffects;
  */
 public class ToHitData extends TargetRoll
 {
+    static final long serialVersionUID = 737321999301910678L;
     public static final int HIT_NORMAL      = 0;
     public static final int HIT_PUNCH       = 1;
     public static final int HIT_KICK        = 2;

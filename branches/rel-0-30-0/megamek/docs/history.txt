@@ -7,6 +7,18 @@ v0.30.9-dev (CVS)
 + Bug 1288101: VTOLs crash multiple times when movement system destroyed
 + Use reflection to eliminate compile-time dependency on private Sun classes.
 + Bug: bot infinite loop deciding if push damage can break armour (100% cpu lockup)
++ Added "serialVersionUID" to all serializable classes; "stable"
+  MegaMek builds should now interoperate regardless of the compiler
+  used to create them.
++ Added ".classpath" and ".project" files so that CVS checkouts
+  withing Eclipse will automatically be built; I do not run Eclipse,
+  so I refer all problems with them to Thomas Fitzsimmons.
++ Replaced the "collections.jar" we got from Sun with a file that was
+  built from GNU Classpath; it should be compatable in all ways except
+  for its license (GPL + exception allowing run-time linking against
+  proprietary code).
++ Updated copyrights on all modified files.
++ Cleared DOS carriage returns from all modified files.
 
 v0.30.8 (2006-02-14, 14:19 GMT)
 + Bug 1295062: Heavy Gauss PSR slightly off

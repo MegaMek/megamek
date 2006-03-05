@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -19,6 +19,7 @@ package megamek.common;
  */
 
 public class MechWarrior extends Infantry {
+    static final long serialVersionUID = 8301497337417519182L;
     
     private int originalRideId;
     private int originalRideExternalId;

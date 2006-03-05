@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -49,6 +49,7 @@ public class BoardView1
     extends Canvas
     implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener
 {
+    static final long serialVersionUID = 4033816411583326323L;
     private static final int        TRANSPARENT = 0xFFFF00FF;
 
     // the dimensions of megamek's hex images

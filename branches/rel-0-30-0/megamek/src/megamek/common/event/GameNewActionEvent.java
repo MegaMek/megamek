@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -22,6 +22,7 @@ import megamek.common.actions.EntityAction;
  * @see GameListener
  */
 public class GameNewActionEvent extends GameEvent {
+    static final long serialVersionUID = 928848699583079097L;
 
     protected EntityAction action; 
 

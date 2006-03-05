@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -27,6 +27,7 @@ import megamek.common.ToHitData;
  * The prone attacker thrashes at the target.
  */
 public class ThrashAttackAction extends AbstractAttackAction {
+    static final long serialVersionUID = -1527653560370040648L;
     
     public ThrashAttackAction(int entityId, int targetId) {
         super(entityId, targetId);

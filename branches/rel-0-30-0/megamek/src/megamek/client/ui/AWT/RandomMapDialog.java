@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -22,6 +22,7 @@ import java.awt.event.*;
 public class RandomMapDialog
     extends Dialog implements ActionListener, FocusListener
 {
+    static final long serialVersionUID = 7523248410132295536L;
     private static final String NONE   = Messages.getString("RandomMapDialog.elevNONE"); //$NON-NLS-1$
     private static final String LOW    = Messages.getString("RandomMapDialog.elevLow"); //$NON-NLS-1$
     private static final String MEDIUM = Messages.getString("RandomMapDialog.elevMedium"); //$NON-NLS-1$

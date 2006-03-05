@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -17,6 +17,7 @@ package megamek.common;
 import java.io.*;
 
 public class Minefield implements Serializable, Cloneable {
+    static final long serialVersionUID = -7448833390742514924L;
 
     public static final int TYPE_CONVENTIONAL = 0;
     public static final int TYPE_COMMAND_DETONATED = 1;

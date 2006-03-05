@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -872,6 +872,7 @@ public class MegaMek implements ActionListener {
  * here's a quick class for the host new game diaglogue box
  */
 class HostDialog extends Dialog implements ActionListener {
+    static final long serialVersionUID = 3783800280948677441L;
     public String name;
     public String serverPass;
     public int port;
@@ -1057,6 +1058,7 @@ class HostDialog extends Dialog implements ActionListener {
  * here's a quick class for the connect to game diaglogue box
  */
 class ConnectDialog extends Dialog implements ActionListener {
+    static final long serialVersionUID = 6013387359936787496L;
     public String name, serverAddr;
     public int port;
 
@@ -1169,6 +1171,7 @@ class ConnectDialog extends Dialog implements ActionListener {
  * Allow a user to set types and colors for scenario players
  */
 class ScenarioDialog extends Dialog implements ActionListener {
+    static final long serialVersionUID = 2639879665449578699L;
     public static final int T_ME = 0;
     public static final int T_HUMAN = 1;
     public static final int T_BOT = 2;

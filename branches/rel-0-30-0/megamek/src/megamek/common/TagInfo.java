@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -18,6 +18,7 @@ import java.io.Serializable;
 
 public class TagInfo implements Serializable
 {
+    static final long serialVersionUID = -8428068101269842100L;
     public int attackerId; //who fired the TAG
     public int targetId; //entity the tag was fired at
     public int priority; //how many homing missiles to grab at a time

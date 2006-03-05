@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -60,6 +60,7 @@ import megamek.common.Entity;
  * @since 0.30
  */
 public class Report implements Serializable {
+    static final long serialVersionUID = -7789000586128596855L;
     /* Note: some fields are marked transient because they are only
        used by the server (or only the client).  This shaves a few
        bytes off the packet size, helping the dial-up people :) */

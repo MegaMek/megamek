@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -31,6 +31,7 @@ public abstract class Mech
     extends Entity
     implements Serializable
 {
+    static final long serialVersionUID = 5645711617347235699L;
     public static final int      NUM_MECH_LOCATIONS = 8;
 
     // system designators for critical hits

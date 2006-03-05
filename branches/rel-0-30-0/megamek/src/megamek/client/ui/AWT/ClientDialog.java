@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004, 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -22,6 +22,7 @@ import java.awt.Frame;
  * A MegaMek Dialog box.
  */
 public class ClientDialog extends Dialog {
+    static final long serialVersionUID = -1640475498623472521L;
 
     private static final double TASKBAR_SIZE = .05;
     private static final int CONTAINER_BUFFER = 10;

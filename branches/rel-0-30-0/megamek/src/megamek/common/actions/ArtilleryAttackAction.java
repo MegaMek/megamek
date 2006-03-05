@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -24,6 +24,7 @@ import java.util.*;
 public class ArtilleryAttackAction
 implements Serializable
 {
+    static final long serialVersionUID = -7745755691004090816L;
     private WeaponResult wr;
     public int turnsTilHit;
     /** IDs of possible spotters, won't know until it lands. */

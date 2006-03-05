@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -47,6 +47,7 @@ import megamek.common.preference.PreferenceManager;
  */
 public class CustomMechDialog 
 extends ClientDialog implements ActionListener, DialogOptionListener { 
+    static final long serialVersionUID = -1189928572451455364L;
     
     private Label labName = new Label(Messages.getString("CustomMechDialog.labName"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldName = new TextField(20);

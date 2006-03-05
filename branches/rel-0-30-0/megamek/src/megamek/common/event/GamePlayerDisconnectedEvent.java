@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -20,6 +20,7 @@ import megamek.common.Player;
  * Instances of this class are sent when some Player disconnected
  */
 public class GamePlayerDisconnectedEvent extends GamePlayerEvent {
+    static final long serialVersionUID = -8555075206331285489L;
     
     /**
      * @param source

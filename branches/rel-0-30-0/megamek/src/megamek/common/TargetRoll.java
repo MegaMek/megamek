@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -33,6 +33,7 @@ import java.io.Serializable;
  * @version 
  */
 public class TargetRoll implements Serializable {
+    static final long serialVersionUID = -3257984933830217785L;
     
     public final static int IMPOSSIBLE          = Integer.MAX_VALUE;
     public final static int AUTOMATIC_FAIL      = Integer.MAX_VALUE - 1;

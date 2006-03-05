@@ -1,5 +1,5 @@
 /*
- * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
+ * MechSelectorDialog.java - Copyright (C) 2002,2004,2006 Josh Yockey
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -34,6 +34,7 @@ public class MechSelectorDialog
     extends Dialog implements ActionListener, ItemListener, KeyListener, 
     Runnable, WindowListener
 {
+    static final long serialVersionUID = 6756279105656037208L;
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
      

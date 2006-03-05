@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -27,6 +27,7 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
  */
 public class CommonAboutDialog extends Dialog
 {
+    static final long serialVersionUID = 4295988339023189039L;
     /**
      * We only need a single copy of the "about" title image that we share.
      */

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -30,6 +30,7 @@ import java.awt.*;
  * @author Slava Zipunov (zipp32)
  */
 public class StraightArrowPolygon extends Polygon{
+    static final long serialVersionUID = -4215154785852826620L;
 
     private Polygon hotArea = new Polygon();
     private Point startPoint;

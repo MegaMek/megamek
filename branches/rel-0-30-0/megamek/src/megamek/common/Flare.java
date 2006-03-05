@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -20,6 +20,7 @@ import java.io.Serializable;
 public class Flare 
 implements Serializable
 {
+    static final long serialVersionUID = 451911245389504483L;
     public Coords position;
     public int turnsToBurn;
     public int radius;

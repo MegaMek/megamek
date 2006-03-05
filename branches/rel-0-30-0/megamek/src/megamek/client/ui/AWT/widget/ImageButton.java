@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -28,6 +28,7 @@ import java.awt.Shape;
  * @author      James Damour
  */
 public class ImageButton extends SizedButton {
+    static final long serialVersionUID = 6321828904190965119L;
 
     /** The image that the button displays.
      */

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -22,6 +22,7 @@ import java.awt.event.*;
 public class LOSDialog
     extends Dialog implements ActionListener
 {
+    static final long serialVersionUID = -3684870439816367845L;
     private Button butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
 
     /**

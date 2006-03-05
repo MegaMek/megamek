@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -26,6 +26,7 @@ import java.io.*;
 */
 public final class Team extends TurnOrdered implements Serializable
 {
+    static final long serialVersionUID = 672112598991594281L;
     private Vector players = new Vector();
     private int id;
 

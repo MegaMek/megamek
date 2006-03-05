@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -23,6 +23,7 @@ import megamek.common.Coords;
  */
 public class BoardEvent extends java.util.EventObject
 {
+    static final long serialVersionUID = 6895134212472497607L;
     public static final int BOARD_NEW_BOARD = 0;
     public static final int BOARD_CHANGED_HEX = 1;
 

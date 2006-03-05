@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -22,6 +22,7 @@ package megamek.common.actions;
  */
 public class UnloadStrandedAction extends AbstractEntityAction
 {
+    static final long serialVersionUID = -8319076127334875298L;
     private int playerId;
     
     public UnloadStrandedAction(int playerId, int entityId) {

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -28,6 +28,7 @@ public class Protomech
     extends Entity
     implements Serializable
 {
+    static final long serialVersionUID = 3931052544394002196L;
     public static final int      NUM_PMECH_LOCATIONS = 6;
     public static final String[] LOCATION_NAMES = {"Head",
     "Torso", "Right Arm", "Left Arm", "Legs", "Main Gun"};

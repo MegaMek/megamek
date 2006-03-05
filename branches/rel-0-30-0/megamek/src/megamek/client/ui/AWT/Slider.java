@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -31,6 +31,7 @@ import java.awt.event.AdjustmentListener;
  * A simple prompt.
  */
 public class Slider extends Dialog implements ActionListener, AdjustmentListener {
+    static final long serialVersionUID = 6489454301676953500L;
 
     private Button butOk = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$

@@ -1,6 +1,6 @@
 /**
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -32,6 +32,7 @@ import megamek.common.preference.PreferenceManager;
  * Holds movement path for an entity.
  */
 public class MovePath implements Cloneable, Serializable {
+    static final long serialVersionUID = -7671081776653021993L;
     public static final int STEP_FORWARDS = 1;
     public static final int STEP_BACKWARDS = 2;
     public static final int STEP_TURN_LEFT = 3;

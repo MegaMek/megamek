@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -34,6 +34,7 @@ import megamek.common.ToHitData;
  * @version 1.0
  */
 public class Ruler extends Dialog implements BoardViewListener {
+    static final long serialVersionUID = 704013239167655138L;
    public static Color color1 = Color.cyan;
    public static Color color2 = Color.magenta;
 

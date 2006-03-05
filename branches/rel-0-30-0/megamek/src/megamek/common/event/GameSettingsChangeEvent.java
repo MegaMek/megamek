@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -18,6 +18,7 @@ package megamek.common.event;
  * Instances of this class are sent when Game settings are changed   
  */
 public class GameSettingsChangeEvent extends GameEvent {
+    static final long serialVersionUID = 7470732576407688193L;
     
     /**
      * 

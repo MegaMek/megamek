@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -38,6 +38,7 @@ import java.util.Vector;
 public class Coords
     implements Serializable
 {
+    static final long serialVersionUID = -4377536979929522637L;
     public static final double HEXSIDE = Math.PI / 3.0;
     
     public int            x;

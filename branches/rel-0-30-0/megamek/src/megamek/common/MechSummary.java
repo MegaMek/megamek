@@ -1,5 +1,5 @@
 /*
- * MechSummary.java - Copyright (C) 2002,2003,2004 Josh Yockey
+ * MechSummary.java - Copyright (C) 2002,2003,2004,2006 Josh Yockey
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -23,6 +23,7 @@
  
  public class MechSummary implements Serializable
  {
+    static final long serialVersionUID = -6635709122122038237L;
     private String m_sName;
     private String m_sChassis;
     private String m_sModel;

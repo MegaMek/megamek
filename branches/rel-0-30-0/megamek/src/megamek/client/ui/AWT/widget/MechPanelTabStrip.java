@@ -1,3 +1,17 @@
+/**
+ * MegaMek - Copyright (C) 2004,2006 Ben Mazur (bmazur@sev.org)
+ * 
+ *  This program is free software; you can redistribute it and/or modify it 
+ *  under the terms of the GNU General Public License as published by the Free 
+ *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful, but 
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *  for more details.
+ */
+
 package megamek.client.ui.AWT.widget;
 
 import java.awt.*;
@@ -5,6 +19,7 @@ import java.awt.event.*;
 import megamek.client.ui.AWT.MechDisplay;
 
 public class MechPanelTabStrip extends PicMap {
+    static final long serialVersionUID = 3500291122616266724L;
     
     private static final String IMAGE_DIR = "data/images/widgets";
 

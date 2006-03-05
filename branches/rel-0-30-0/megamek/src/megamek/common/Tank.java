@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -25,6 +25,7 @@ public class Tank
     extends Entity
     implements Serializable
 {
+    static final long serialVersionUID = -4213447243457654765L;
     private boolean m_bHasNoTurret = false;
     private boolean m_bTurretLocked = false;
     private int m_nTurretOffset = 0;

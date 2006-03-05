@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -29,6 +29,7 @@ import java.util.Enumeration;
  * A single step in the entity's movment.
  */
 public class MoveStep implements Serializable {
+    static final long serialVersionUID = 8610912205886227645L;
     private int type = 0;
     private int targetId = Entity.NONE;
     private int targetType = Targetable.TYPE_ENTITY;

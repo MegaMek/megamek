@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -25,6 +25,7 @@ import megamek.common.event.GamePlayerChangeEvent;
 public final class Player extends TurnOrdered
     implements Serializable
 {
+    static final long serialVersionUID = 6545367826571905191L;
     public static final int     PLAYER_NONE = -1;
     public static final int     TEAM_NONE = 0;
 

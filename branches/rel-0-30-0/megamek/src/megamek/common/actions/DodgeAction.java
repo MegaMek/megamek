@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -17,6 +17,7 @@ package megamek.common.actions;
 public class DodgeAction
     extends AbstractEntityAction
 {
+    static final long serialVersionUID = 918785289096319255L;
     public DodgeAction(int entityId) {
         super(entityId);
     }

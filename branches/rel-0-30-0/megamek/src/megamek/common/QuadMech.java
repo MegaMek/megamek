@@ -1,6 +1,6 @@
 /*
  * MegaMek - 
- *  Copyright (C) 2000-2002 
+ *  Copyright (C) 2000-2002, 2006
  *    Ben Mazur (bmazur@sev.org)
  *    Cord Awtry (kipsta@bs-interactive.com)
  * 
@@ -18,6 +18,7 @@ package megamek.common;
 
 public class QuadMech extends Mech
 {
+    static final long serialVersionUID = 244443721034620892L;
   public static final String[] LOCATION_NAMES = {"Head",
       "Center Torso", "Right Torso", "Left Torso", 
       "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg"};

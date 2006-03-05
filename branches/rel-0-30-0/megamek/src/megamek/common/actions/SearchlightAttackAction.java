@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -32,6 +32,7 @@ import megamek.common.Targetable;
 public class SearchlightAttackAction
     extends AbstractAttackAction
 {
+    static final long serialVersionUID = 6699459935811592434L;
     
     // default to attacking an entity
     public SearchlightAttackAction(int entityId, int targetId) {

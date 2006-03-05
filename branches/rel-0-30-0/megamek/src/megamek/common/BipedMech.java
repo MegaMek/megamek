@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- *  Copyright (C) 2000-2002
+ *  Copyright (C) 2000-2002,2006
  *    Ben Mazur (bmazur@sev.org)
  *    Cord Awtry (kipsta@bs-interactive.com)
  *
@@ -17,6 +17,7 @@
 package megamek.common;
 
 public class BipedMech extends Mech {
+    static final long serialVersionUID = 7095320944754307669L;
     public static final String[] LOCATION_NAMES = {"Head",
     "Center Torso", "Right Torso", "Left Torso",
     "Right Arm", "Left Arm", "Right Leg", "Left Leg"};

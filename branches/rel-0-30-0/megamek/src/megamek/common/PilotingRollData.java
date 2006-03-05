@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -16,6 +16,7 @@ package megamek.common;
 
 public class PilotingRollData extends TargetRoll
 {
+    static final long serialVersionUID = -8965684775619336323L;
     private int entityId;
     private boolean m_bCumulative = true;
     

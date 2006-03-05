@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -22,6 +22,7 @@ import megamek.common.*;
 public class PushAttackAction
     extends DisplacementAttackAction
 {
+    static final long serialVersionUID = 6878038939232914083L;
     public PushAttackAction(int entityId, int targetId, Coords targetPos) {
         super(entityId, targetId, targetPos);
     }

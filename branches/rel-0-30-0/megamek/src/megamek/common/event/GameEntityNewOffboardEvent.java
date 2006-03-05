@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -19,6 +19,7 @@ package megamek.common.event;
  * is added to game 
  */
 public class GameEntityNewOffboardEvent extends GameEvent {
+    static final long serialVersionUID = 8497680533582651572L;
     
     /**
      * 

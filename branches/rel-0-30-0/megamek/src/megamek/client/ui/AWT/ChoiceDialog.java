@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002, 2003, 2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -30,6 +30,7 @@ import java.awt.event.*;
 public class ChoiceDialog
     extends Dialog implements ActionListener
 {
+    static final long serialVersionUID = -5672829093914553736L;
     private boolean confirm = false;
 
     private Panel panButtons = new Panel();

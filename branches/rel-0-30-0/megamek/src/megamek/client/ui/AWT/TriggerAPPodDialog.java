@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -31,6 +31,7 @@ import megamek.common.actions.TriggerAPPodAction;
 public class TriggerAPPodDialog
     extends Dialog implements ActionListener
 {
+    static final long serialVersionUID = 161017051720020010L;
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private AdvancedLabel labMessage;
 

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -21,6 +21,7 @@ package megamek.common.event;
  * @see GameListener
  */
 public class GameEndEvent extends GameEvent {
+    static final long serialVersionUID = -8470655646019563063L;
 
     /**
      * @param source event source

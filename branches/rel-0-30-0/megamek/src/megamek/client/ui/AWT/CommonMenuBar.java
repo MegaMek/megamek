@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -27,6 +27,7 @@ import megamek.common.*;
  */
 public class CommonMenuBar extends MenuBar implements ActionListener, KeyListener
 {
+    static final long serialVersionUID = -6353790757052441834L;
     /**
      * The <code>Game</code> current selected.
      * This value may be <code>null</code>.

@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -28,6 +28,7 @@ import megamek.common.*;
  * of interface for special movement and firing actions.
  */
 public class MechDisplay extends BufferedPanel {
+    static final long serialVersionUID = 2603767380376184631L;
     // buttons & gizmos for top level
 
     MechPanelTabStrip tabStrip;
@@ -141,6 +142,7 @@ public class MechDisplay extends BufferedPanel {
  * battlefield.
  */
 class MovementPanel extends PicMap{
+    static final long serialVersionUID = -1084966780217173892L;
 
     private GeneralInfoMapSet gi;
 
@@ -188,6 +190,7 @@ class MovementPanel extends PicMap{
  */
 class ArmorPanel  extends PicMap
 {
+    static final long serialVersionUID = -2380081938224357434L;
     private TankMapSet tank;
     private MechMapSet mech;
     private InfantryMapSet infantry;
@@ -311,6 +314,7 @@ class ArmorPanel  extends PicMap
 class WeaponPanel extends BufferedPanel
     implements ItemListener
 {
+    static final long serialVersionUID = 5501778250997412167L;
     private static final String IMAGE_DIR = "data/images/widgets";
     
     public java.awt.List weaponList;
@@ -1013,6 +1017,8 @@ class SystemPanel
     extends BufferedPanel
     implements ItemListener, ActionListener
 {
+    static final long serialVersionUID = -665870781840465436L;
+
     private static final String IMAGE_DIR = "data/images/widgets";
     
     private static Object SYSTEM = new Object();
@@ -1402,6 +1408,7 @@ class ExtraPanel
     extends BufferedPanel
     implements ItemListener, ActionListener
 {
+    static final long serialVersionUID = 2818928116782299040L;
 
     private static final String IMAGE_DIR = "data/images/widgets";
     

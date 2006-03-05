@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -32,6 +32,7 @@ import megamek.common.*;
  * @author Ben Mazur
  */
 public class ChargeAttackAction extends DisplacementAttackAction {
+    static final long serialVersionUID = -3549351664290057785L;
 
     public ChargeAttackAction(Entity attacker, Targetable target) {
         this(attacker.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());

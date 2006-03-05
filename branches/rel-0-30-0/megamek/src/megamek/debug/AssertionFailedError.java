@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -18,6 +18,7 @@ package megamek.debug;
  * Thrown when an assertion failed.
  */
 public class AssertionFailedError extends Error {
+    static final long serialVersionUID = -6889087511944790249L;
 
     public AssertionFailedError () {
     }

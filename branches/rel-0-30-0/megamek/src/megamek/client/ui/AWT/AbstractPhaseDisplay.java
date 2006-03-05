@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -39,6 +39,7 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 public class AbstractPhaseDisplay extends Panel implements BoardViewListener, GameListener {
+    static final long serialVersionUID = -1299003414052911854L;
     
     //
     // BoardListener

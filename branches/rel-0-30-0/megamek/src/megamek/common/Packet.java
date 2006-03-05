@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -25,6 +25,7 @@ import java.util.zip.*;
  */
 public class Packet
 implements Serializable {
+    static final long serialVersionUID = 8447772137492214906L;
     public static final int        COMMAND_CLOSE_CONNECTION     = 0;
     public static final int        COMMAND_SERVER_GREETING      = 1;
     public static final int        COMMAND_CLIENT_NAME          = 2;

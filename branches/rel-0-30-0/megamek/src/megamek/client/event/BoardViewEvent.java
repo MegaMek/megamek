@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -25,6 +25,7 @@ import megamek.common.Entity;
  */
 public class BoardViewEvent extends java.util.EventObject
 {
+    static final long serialVersionUID = -4823618884833399318L;
     public static final int BOARD_HEX_CLICKED = 0;
     public static final int BOARD_HEX_DOUBLECLICKED = 1;
     public static final int BOARD_HEX_DRAGGED = 2;

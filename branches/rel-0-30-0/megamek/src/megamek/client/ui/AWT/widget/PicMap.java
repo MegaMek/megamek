@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2004,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -39,6 +39,7 @@ import java.util.*;
  * Within single layer elements are drawing in the order they added to PicMap.
  */
 public abstract class PicMap extends Component {
+    static final long serialVersionUID = -822818427765592128L;
     //Vector of Background Drawers
     private Vector bgDrawers = new Vector();
     // Group of other areas which does not implement PMHotArea or PMLAbel

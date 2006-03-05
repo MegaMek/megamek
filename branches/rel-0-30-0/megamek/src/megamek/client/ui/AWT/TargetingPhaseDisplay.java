@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -35,6 +35,7 @@ public class TargetingPhaseDisplay
     implements GameListener, ActionListener, DoneButtoned,
                KeyListener, ItemListener, BoardViewListener, Distractable
 {
+    static final long serialVersionUID = -5603309544287361458L;
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

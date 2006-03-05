@@ -7689,8 +7689,8 @@ public class Server implements Runnable {
                         if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition()) || 
                                 Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition()))
                             bECMAffected = true;
-                        else if ( Compute.isProtectedByECM((Entity)target,target.getPosition(),ae.getPosition()) ||
-                                Compute.isProtectedByAngelECM((Entity)target,target.getPosition(),ae.getPosition()))
+                        else if ( target.getTargetType() == Targetable.TYPE_ENTITY && (Compute.isProtectedByECM((Entity)target,target.getPosition(),ae.getPosition()) ||
+                                Compute.isProtectedByAngelECM((Entity)target,target.getPosition(),ae.getPosition())))
                             bECMAffected = true;
                         else
                             bECMAffected = false;
@@ -7724,8 +7724,8 @@ public class Server implements Runnable {
                         if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition()) || 
                                 Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition()))
                             bECMAffected = true;
-                        else if ( Compute.isProtectedByECM((Entity)target,target.getPosition(),ae.getPosition()) ||
-                                Compute.isProtectedByAngelECM((Entity)target,target.getPosition(),ae.getPosition()))
+                        else if (target.getTargetType() == Targetable.TYPE_ENTITY && ( Compute.isProtectedByECM((Entity)target,target.getPosition(),ae.getPosition()) ||
+                                Compute.isProtectedByAngelECM((Entity)target,target.getPosition(),ae.getPosition())))
                             bECMAffected = true;
                         else
                             bECMAffected = false;

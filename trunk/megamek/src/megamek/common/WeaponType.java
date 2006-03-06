@@ -27,38 +27,38 @@ public class WeaponType extends EquipmentType {
     public static final int     WEAPON_NA = Integer.MIN_VALUE;
 
     // weapon flags (note: many weapons can be identified by their ammo type)
-    public static final int     F_DIRECT_FIRE        = 0x00000001; // marks any weapon affected by a targetting computer
-    public static final int     F_FLAMER             = 0x00000002;
-    public static final int     F_LASER              = 0x00000004; // for eventual glazed armor purposes
-    public static final int     F_PPC                = 0x00000008; //              "
-    public static final int     F_AUTO_TARGET        = 0x00000010; // for weapons that target automatically (AMS)
-    public static final int     F_NO_FIRES           = 0x00000020; // cannot start fires
-    public static final int     F_PROTOMECH          = 0x00000040; //Protomech weapons, which need weird ammo stuff.
-    public static final int     F_SOLO_ATTACK        = 0x00000080; // must be only weapon attacking
-    public static final int     F_SPLITABLE          = 0x00000100; // Weapons that can be split between locations
-    public static final int     F_MG                 = 0x00000200; // MG; for rapid fire set up
-    public static final int     F_INFERNO            = 0x00000400; // Inferno weapon
-    public static final int     F_INFANTRY           = 0x00000800; // small calibre weapon, no ammo, damage based on # men shooting
-    public static final int     F_BATTLEARMOR        = 0x00001000; // multiple shots resolved in one to-hit (kinda like RAC, only not)
-    public static final int     F_DOUBLE_HITS        = 0x00002000; // two shots hit per one rolled
-    public static final int     F_MISSILE_HITS       = 0x00004000; // use missile rules or # of hits
-    public static final int     F_ONESHOT            = 0x00008000; //weapon is oneShot.
-    public static final int     F_ARTILLERY          = 0x00010000;
-    public static final int     F_BALLISTIC          = 0x00020000; // For Gunnery/Ballistic skill
-    public static final int     F_ENERGY             = 0x00040000; // For Gunnery/Energy skill
-    public static final int     F_MISSILE            = 0x00080000; // For Gunnery/Missile skill
-    public static final int     F_PLASMA             = 0x00100000; // For fires
-    public static final int     F_INCENDIARY_NEEDLES = 0x00200000; // For fires
-    public static final int     F_PROTOTYPE          = 0x00400000; // for war of 3039 prototype weapons
-    public static final int     F_HEATASDICE         = 0x00800000; // heat is listed in dice, not points
-    public static final int     F_AMS                = 0x01000000; // Weapon is an anti-missile system.
-    public static final int     F_BOOST_SWARM        = 0x02000000; // boost leg & swarm
-    public static final int     F_INFANTRY_ONLY      = 0x04000000; // only target infantry
-    public static final int     F_TAG                = 0x08000000; // Target acquisition gear
-    public static final int     F_C3M                = 0x10000000; // C3 Master with Target acquisition gear
-    public static final int     F_PLASMA_MFUK        = 0x20000000; // Plasma Rifle
+    public static final long     F_DIRECT_FIRE        = 0x000000001L; // marks any weapon affected by a targetting computer
+    public static final long     F_FLAMER             = 0x000000002L;
+    public static final long     F_LASER              = 0x000000004L; // for eventual glazed armor purposes
+    public static final long     F_PPC                = 0x000000008L; //              "
+    public static final long     F_AUTO_TARGET        = 0x000000010L; // for weapons that target automatically (AMS)
+    public static final long     F_NO_FIRES           = 0x000000020L; // cannot start fires
+    public static final long     F_PROTOMECH          = 0x000000040L; //Protomech weapons, which need weird ammo stuff.
+    public static final long     F_SOLO_ATTACK        = 0x000000080L; // must be only weapon attacking
+    public static final long     F_SPLITABLE          = 0x000000100L; // Weapons that can be split between locations
+    public static final long     F_MG                 = 0x000000200L; // MGL; for rapid fire set up
+    public static final long     F_INFERNO            = 0x000000400L; // Inferno weapon
+    public static final long     F_INFANTRY           = 0x000000800L; // small calibre weapon, no ammo, damage based on # men shooting
+    public static final long     F_BATTLEARMOR        = 0x000001000L; // multiple shots resolved in one to-hit (kinda like RAC, only not)
+    public static final long     F_DOUBLE_HITS        = 0x000002000L; // two shots hit per one rolled
+    public static final long     F_MISSILE_HITS       = 0x000004000L; // use missile rules or # of hits
+    public static final long     F_ONESHOT            = 0x000008000L; //weapon is oneShot.
+    public static final long     F_ARTILLERY          = 0x000010000L;
+    public static final long     F_BALLISTIC          = 0x000020000L; // For Gunnery/Ballistic skill
+    public static final long     F_ENERGY             = 0x000040000L; // For Gunnery/Energy skill
+    public static final long     F_MISSILE            = 0x000080000L; // For Gunnery/Missile skill
+    public static final long     F_PLASMA             = 0x000100000L; // For fires
+    public static final long     F_INCENDIARY_NEEDLES = 0x000200000L; // For fires
+    public static final long     F_PROTOTYPE          = 0x000400000L; // for war of 3039 prototype weapons
+    public static final long     F_HEATASDICE         = 0x000800000L; // heat is listed in dice, not points
+    public static final long     F_AMS                = 0x001000000L; // Weapon is an anti-missile system.
+    public static final long     F_BOOST_SWARM        = 0x002000000L; // boost leg & swarm
+    public static final long     F_INFANTRY_ONLY      = 0x004000000L; // only target infantry
+    public static final long     F_TAG                = 0x008000000L; // Target acquisition gear
+    public static final long     F_C3M                = 0x010000000L; // C3 Master with Target acquisition gear
+    public static final long     F_PLASMA_MFUK        = 0x020000000L; // Plasma Rifle
 
-    protected RangeType range;
+    protected RangeType rangeL;
     protected int   heat;
     protected int   damage;
     private int     rackSize; // or AC size, or whatever

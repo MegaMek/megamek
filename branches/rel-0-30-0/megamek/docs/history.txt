@@ -19,6 +19,8 @@ v0.30.9-dev (CVS)
   proprietary code).
 + Updated copyrights on all modified files.
 + Cleared DOS carriage returns from all modified files.
++ Set gridx and gridy in WeaponPanel (in MechDisplay.java) to prevent
+  layout problems using GNU Classpath.
 
 v0.30.8 (2006-02-14, 14:19 GMT)
 + Bug 1295062: Heavy Gauss PSR slightly off

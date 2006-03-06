@@ -124,7 +124,7 @@ public class EquipmentType {
     protected int       toHitModifier = 0;
     protected int       techLevel = TechConstants.T_TECH_UNKNOWN;
 
-    protected int       flags = 0;
+    protected long       flags = 0;
     protected int       subType = 0;
 
 
@@ -155,7 +155,7 @@ public class EquipmentType {
 
     }
 
-    public void setFlags(int inF) {
+    public void setFlags(long inF) {
         flags = inF;
     }
 
@@ -217,11 +217,11 @@ public class EquipmentType {
         return toHitModifier;
     }
     
-    public int getFlags() {
+    public long getFlags() {
         return flags;
     }
     
-    public boolean hasFlag(int flag) {
+    public boolean hasFlag(long flag) {
         return (flags & flag) != 0;
     }
 

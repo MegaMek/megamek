@@ -13404,15 +13404,6 @@ public class Server implements Runnable {
         if (entity instanceof VTOL) {
             return vDesc;
         }
-        
-        // functional HarJel prevents breach
-        if (entity instanceof Mech && ((Mech)entity).hasHarJelIn(loc)) {
-            r = new Report(6342);
-            r.subject = entity.getId();
-            r.indent(3);
-            vDesc.addElement(r);
-            return vDesc;
-        }
 
         // This handles both water and vacuum breaches.
         if (entity.getLocationStatus(loc) > ILocationExposureStatus.NORMAL) {
@@ -13422,6 +13413,14 @@ public class Server implements Runnable {
             if (entity.getArmor(loc) > 0 &&
                 (entity instanceof Mech ? (entity.getArmor(loc,true)>0) : true)
                 && null == hex) {
+                // functional HarJel prevents breach
+                if (entity instanceof Mech && ((Mech)entity).hasHarJelIn(loc)) {
+                    r = new Report(6342);
+                    r.subject = entity.getId();
+                    r.indent(3);
+                    vDesc.addElement(r);
+                    return vDesc;
+                }
                 breachroll = Compute.d6(2);
                 r = new Report(6345);
                 r.subject = entity.getId();
@@ -13436,6 +13435,14 @@ public class Server implements Runnable {
                  || !(entity.getArmor(loc) > 0)
                  || !(entity instanceof Mech ? (entity.getArmor(loc,true)>0) :
                       true) ) {
+                // functional HarJel prevents breach
+                if (entity instanceof Mech && ((Mech)entity).hasHarJelIn(loc)) {
+                    r = new Report(6342);
+                    r.subject = entity.getId();
+                    r.indent(3);
+                    vDesc.addElement(r);
+                    return vDesc;
+                }
                 vDesc.addAll( breachLocation(entity, loc, hex, false));
             }
         }

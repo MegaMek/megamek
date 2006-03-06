@@ -71,9 +71,9 @@ public class AmmoType extends EquipmentType {
     
 
     // ammo flags
-    public static final int     F_MG                = 0x0001;
-    public static final int     F_BATTLEARMOR       = 0x1000; // only used by BA squads
-    public static final int     F_PROTOMECH         = 0x0040; // only used by Protomechs
+    public static final long     F_MG                = 0x0001L;
+    public static final long     F_BATTLEARMOR       = 0x0002L; // only used by BA squads
+    public static final long     F_PROTOMECH         = 0x0004L; // only used by Protomechs
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"

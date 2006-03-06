@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -415,6 +415,7 @@ class WeaponPanel extends BufferedPanel
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(15, 9, 1, 9);
         c.weightx = 0.0;    c.weighty = 1.0;
+        c.gridx = 0; c.gridy = 0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         ((GridBagLayout)getLayout()).setConstraints(weaponList, c);
         add(weaponList);
@@ -431,12 +432,13 @@ class WeaponPanel extends BufferedPanel
         c.gridwidth = 1;
         c.weighty = 0.0;
         c.fill = GridBagConstraints.NONE;
+        c.gridx = 0; c.gridy = 1;
         ((GridBagLayout)getLayout()).setConstraints(wAmmo, c);
         add(wAmmo);
 
         c.insets = new Insets(1, 1, 1, 9);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.gridx = 1;
+        c.gridx = 1; c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         ((GridBagLayout)getLayout()).setConstraints(m_chAmmo, c);
         add(m_chAmmo);
@@ -447,7 +449,7 @@ class WeaponPanel extends BufferedPanel
         currentHeatBuildupR = new TransparentLabel("--", fm, clr, TransparentLabel.LEFT); //$NON-NLS-1$
 
         c.insets = new Insets(2, 9, 2, 1);
-        c.gridwidth = 2; c.gridx = 0;
+        c.gridwidth = 2; c.gridx = 0; c.gridy = 2;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
         ((GridBagLayout)getLayout()).setConstraints(currentHeatBuildupL, c);
@@ -474,7 +476,7 @@ class WeaponPanel extends BufferedPanel
          c.anchor = GridBagConstraints.CENTER;
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(2, 9, 1, 1);
-        c.gridwidth = 2; c.gridx = 0;
+        c.gridwidth = 2; c.gridx = 0; c.gridy = 3;
         ((GridBagLayout)getLayout()).setConstraints(wNameL, c);
         add(wNameL);
 

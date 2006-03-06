@@ -170,7 +170,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         if (entity instanceof Mech) {
             Mech mech = (Mech)entity;
             // Torso-mounted cockpits can't eject, so lets not bother showing this.
-            if (mech.getCockpitType() != mech.COCKPIT_TORSO_MOUNTED) {
+            if (mech.getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) {
                 c.gridwidth = 1;
                 c.anchor = GridBagConstraints.EAST;
                 gridbag.setConstraints(labAutoEject, c);

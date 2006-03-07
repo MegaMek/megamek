@@ -360,7 +360,8 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_FORWARDS :
             case MovePath.STEP_CHARGE :
             case MovePath.STEP_DFA :
-                // step forwards or backwards
+            case MovePath.STEP_SWIM:
+                 // step forwards or backwards
                 moveInDir(getFacing());
                 setThisStepBackwards(false);
                 compileMove(game, entity, prev);
@@ -966,6 +967,11 @@ public class MoveStep implements Serializable {
         }
 
         int tmpWalkMP = entity.getWalkMP();
+        
+        if ( parent.getEntity().getMovementMode() == IEntityMovementMode.BIPED_SWIM
+                || parent.getEntity().getMovementMode() == IEntityMovementMode.QUAD_SWIM )
+            tmpWalkMP = entity.getActiveUMUCount();
+        
         if ((parent.getEntity().getMovementMode() == IEntityMovementMode.VTOL)
                 && (getElevation() != 0)
                 && !(parent.getEntity() instanceof VTOL)) {
@@ -1207,14 +1213,18 @@ public class MoveStep implements Serializable {
         // Account for terrain, unless we're moving along a road.
         if (!isPavementStep) {
 
-            mp += destHex.movementCost(moveType);
+            if ( (moveType != IEntityMovementMode.BIPED_SWIM)
+                    && (moveType != IEntityMovementMode.QUAD_SWIM) )
+                mp += destHex.movementCost(moveType);
 
             // non-hovers, non-navals and non-VTOLs check for water depth and are affected by swamp
             if ((moveType != IEntityMovementMode.HOVER)
                     && (moveType != IEntityMovementMode.NAVAL)
                     && (moveType != IEntityMovementMode.HYDROFOIL)
                     && (moveType != IEntityMovementMode.SUBMARINE)
-                    && (moveType != IEntityMovementMode.VTOL)) {
+                    && (moveType != IEntityMovementMode.VTOL)
+                    && (moveType != IEntityMovementMode.BIPED_SWIM)
+                    && (moveType != IEntityMovementMode.QUAD_SWIM)) {
                 //no additional cost when moving on surface of ice.
                 if (!destHex.containsTerrain(Terrains.ICE) || nDestEl < destHex.surface()) {
                     if (destHex.terrainLevel(Terrains.WATER) == 1) {

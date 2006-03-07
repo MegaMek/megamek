@@ -40,6 +40,7 @@ v0.31.6-dev (CVS)
 + change EquipmentType flags to long, we ran out of flags for MiscType.
 + Set gridx and gridy in WeaponPanel (in MechDisplay.java) to prevent
   layout problems using GNU Classpath.
++ Patch 1444346: S7 UMU Equipment
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

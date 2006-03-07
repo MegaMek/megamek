@@ -423,6 +423,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLStreakLRM20OS());
         EquipmentType.addType(createCLLaserAMS());
         EquipmentType.addType(createCLPlasmaRifle());
+        EquipmentType.addType(createCLMagshotGR());
 
         //Protomech weapons
         EquipmentType.addType(createCLPROLRM1() );
@@ -6149,6 +6150,32 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+
+    public static WeaponType createCLMagshotGR() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "Magshot";
+        weapon.setInternalName("CLMagshotGR");
+        weapon.addLookupName("Clan Magshot Gauss Rifle");
+        weapon.heat = 1;
+        weapon.damage = 2;
+        weapon.ammoType = AmmoType.T_MAGSHOT;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.5f;
+        weapon.explosive = true;
+        weapon.criticals = 2;
+        weapon.bv = 15;
+        weapon.cost = 8500;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
 
     public static WeaponType createBAISMediumLaser() {
         WeaponType weapon = new WeaponType();

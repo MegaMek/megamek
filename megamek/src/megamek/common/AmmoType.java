@@ -435,6 +435,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLLRT18Ammo());
         EquipmentType.addType(createCLLRT19Ammo());
         EquipmentType.addType(createCLLRT20Ammo());
+        EquipmentType.addType(createCLMagshotGRAmmo());
         base = createCLLongTomAmmo();
         clanArtyAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -5095,6 +5096,21 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    public static AmmoType createCLMagshotGRAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Magshot GR Ammo";
+        ammo.setInternalName("CLMagshotGR Ammo");
+        ammo.addLookupName("Clan Magshot GR Ammo");
+        ammo.damagePerShot = 2;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_MAGSHOT;
+        ammo.shots = 50;
+        ammo.bv = 2;
+        ammo.cost = 1000;
+        return ammo;
+    }
 
     public String toString() {
         return "Ammo: " + name;

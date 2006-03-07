@@ -337,10 +337,11 @@ Inner Sphere Level 3 Tech:
   Pile Driver
   Armored Cowl
   IS HarJel
-  Large Shield
-  Medium Shield
-  Small Shield
-  Claw
+  IS Large Shield
+  IS Medium Shield
+  IS Small Shield
+  IS Claw
+  ISUnderwaterManeuveringUnit
   
 Clan Level 3 Tech:
  Weapons:
@@ -358,6 +359,8 @@ Clan Level 3 Tech:
   CLStreakLRM10
   CLStreakLRM15
   CLStreakLRM20
+  CLMagshotGR
+  
  Ammo:
   CLStreakLRM5 Ammo
   CLStreakLRM10 Ammo
@@ -367,6 +370,7 @@ Clan Level 3 Tech:
   CLRotaryAC5 Ammo
   CLRotaryAC10 Ammo
   CLRotaryAC20 Ammo
+  CLMagshotGR Ammo
  Equipment:
   CLLaser Heat Sink
   CLImprovedJump Jet
@@ -374,3 +378,8 @@ Clan Level 3 Tech:
   CLAngelECMSuite
   Armored Cowl
   Clan HarJel
+  CLUnderwaterManeuveringUnit
+  CLLargeShield
+  CLMediumShield
+  CLSmallShield
+  CLClaw

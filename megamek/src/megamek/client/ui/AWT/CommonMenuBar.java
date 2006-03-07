@@ -102,6 +102,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem moveLoad = null;
     private MenuItem moveUnload = null;
     private MenuItem moveJump = null;
+    private MenuItem moveSwim = null;
     private MenuItem moveBackUp = null;
     private MenuItem moveCharge = null;
     private MenuItem moveDFA = null;
@@ -333,6 +334,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 
         moveWalk = createMenuItem(menu, Messages.getString("CommonMenuBar.moveWalk"), MovementDisplay.MOVE_WALK, KeyEvent.VK_W); //$NON-NLS-1$
         moveJump = createMenuItem(menu, Messages.getString("CommonMenuBar.moveJump"), MovementDisplay.MOVE_JUMP, KeyEvent.VK_J); //$NON-NLS-1$
+        moveSwim = createMenuItem(menu, Messages.getString("CommonMenuBar.moveSwim"), MovementDisplay.MOVE_SWIM, KeyEvent.VK_S); //$NON-NLS-1$
         moveBackUp = createMenuItem(menu, Messages.getString("CommonMenuBar.moveBackUp"), MovementDisplay.MOVE_BACK_UP); //$NON-NLS-1$
         moveGetUp = createMenuItem(menu, Messages.getString("CommonMenuBar.moveGetUp"), MovementDisplay.MOVE_GET_UP); //$NON-NLS-1$
         moveGoProne = createMenuItem(menu, Messages.getString("CommonMenuBar.moveGoProne"), MovementDisplay.MOVE_GO_PRONE); //$NON-NLS-1$
@@ -734,6 +736,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     }
     public synchronized void setMoveJumpEnabled(boolean enabled) {
         moveJump.setEnabled(enabled);
+    }
+    public synchronized void setMoveSwimEnabled(boolean enabled) {
+        moveSwim.setEnabled(enabled);
     }
     public synchronized void setMoveLayMineEnabled(boolean enabled) {
         moveLayMine.setEnabled(enabled);

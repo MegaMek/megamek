@@ -719,7 +719,9 @@ public abstract class Entity extends TurnOrdered
     public int calcElevation(IHex current, IHex next, int assumedElevation, boolean climb) {
         int retVal = assumedElevation;
         if ((getMovementMode() == IEntityMovementMode.SUBMARINE)
-                || (getMovementMode() == IEntityMovementMode.VTOL)) {
+                || (getMovementMode() == IEntityMovementMode.VTOL)
+                || (getMovementMode() == IEntityMovementMode.QUAD_SWIM && hasUMU())
+                || (getMovementMode() == IEntityMovementMode.BIPED_SWIM&& hasUMU())) {
             retVal += current.surface();
             retVal -= next.surface();
         } else {
@@ -830,6 +832,8 @@ public abstract class Entity extends TurnOrdered
             }
             break;
         case IEntityMovementMode.SUBMARINE:
+        case IEntityMovementMode.BIPED_SWIM:
+        case IEntityMovementMode.QUAD_SWIM:
             minAlt = hex.floor();
             break;
         default:
@@ -856,6 +860,8 @@ public abstract class Entity extends TurnOrdered
             maxAlt = hex.surface() + 50;
             break;
         case IEntityMovementMode.SUBMARINE:
+        case IEntityMovementMode.BIPED_SWIM:
+        case IEntityMovementMode.QUAD_SWIM:
             maxAlt = hex.surface();
             break;
         default:
@@ -876,7 +882,9 @@ public abstract class Entity extends TurnOrdered
             } else {
                 return (assumedElevation <=50 && altitude >= hex.ceiling());
             }
-        } else if (getMovementMode() == IEntityMovementMode.SUBMARINE) {
+        } else if (getMovementMode() == IEntityMovementMode.SUBMARINE
+                || (getMovementMode() == IEntityMovementMode.QUAD_SWIM&& hasUMU())
+                || (getMovementMode() == IEntityMovementMode.BIPED_SWIM&& hasUMU())) {
             return (altitude >= hex.floor() && altitude <= hex.surface());
         } else if (getMovementMode() == IEntityMovementMode.HYDROFOIL
                 || getMovementMode() == IEntityMovementMode.NAVAL){
@@ -2510,6 +2518,60 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * This method checks to see if a unit has Underwater Maneuvering Units
+     * Only Battle Mechs may have UMU's
+     * @return <code>boolean</code> if the entity has usasble UMU crits.
+     */
+    public boolean hasUMU(){
+        
+        if ( !(this instanceof Mech) )
+            return false;
+        
+        int umuCount = getActiveUMUCount();
+        
+        return umuCount > 0;
+    }
+    
+    /**
+     * This counts the number of UMU's a Mech has that are still viable
+     * @return number <code>int</code>of useable UMU's
+     */
+    public int getActiveUMUCount(){
+        int count = 0;
+        
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_UMU)
+                    && !(m.isDestroyed() || m.isMissing() || m.isBreached()) ) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+    
+    /**
+     * This returns all UMU a mech has.
+     * @return <code>int</code>Total number of UMUs a mech has.
+     */
+    public int getAllUMUCount(){
+        int count = 0;
+        
+        if ( !(this instanceof Mech) )
+            return 0;
+        
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_UMU)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+    /**
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveECM() {
@@ -3409,8 +3471,10 @@ public abstract class Entity extends TurnOrdered
         case IEntityMovementMode.NONE:
             return "None";
         case IEntityMovementMode.BIPED:
+        case IEntityMovementMode.BIPED_SWIM:
             return "Biped";
         case IEntityMovementMode.QUAD:
+        case IEntityMovementMode.QUAD_SWIM:
             return "Quad";
         case IEntityMovementMode.TRACKED:
             return "Tracked";
@@ -3732,6 +3796,8 @@ public abstract class Entity extends TurnOrdered
             && getMovementMode() != IEntityMovementMode.NAVAL
             && getMovementMode() != IEntityMovementMode.HYDROFOIL
             && getMovementMode() != IEntityMovementMode.SUBMARINE
+            && getMovementMode() != IEntityMovementMode.BIPED_SWIM
+            && getMovementMode() != IEntityMovementMode.QUAD_SWIM
             && !isPavementStep) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER));
         } else {
@@ -3755,7 +3821,7 @@ public abstract class Entity extends TurnOrdered
             mod = 1;
         }
 
-        if (waterLevel > 0) {
+        if (waterLevel > 0 && !this.hasUMU()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), mod, "entering Depth "
                                              + waterLevel + " Water"));

@@ -5009,6 +5009,11 @@ public class Server implements Runnable {
     public void addMovementHeat() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
+            
+            if ( entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM
+                    || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM )
+                return;
+            
             // build up heat from movement
             if (entity.moved == IEntityMovementType.MOVE_NONE) {
                 entity.heatBuildup += entity.getStandingHeat();
@@ -11218,6 +11223,20 @@ public class Server implements Runnable {
         if ( !(entity instanceof Mech) || entity.isProne()) {
             return;
         }
+        
+        if ( entity.hasUMU() 
+                && game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)
+                && game.getBoard().getHex(entity.getPosition()).depth() > 1)
+            return;
+        
+        //Mech is floating in the water due to umus being dested now return them to the bottom
+        if( entity instanceof Mech 
+                && !entity.hasUMU() 
+                && game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)
+                && game.getBoard().getHex(entity.getPosition()).depth() > 1 ){
+            entity.setElevation(game.getBoard().getHex(entity.getPosition()).floor());
+       }
+        
         // add all cumulative rolls, count all rolls
         Vector rolls = new Vector();
         StringBuffer reasons = new StringBuffer();

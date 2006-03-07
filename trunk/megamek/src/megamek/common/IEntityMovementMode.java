@@ -32,4 +32,6 @@ public interface IEntityMovementMode {
     public static final int INF_LEG = 10;
     public static final int INF_MOTORIZED = 11;
     public static final int INF_JUMP = 12;
+    public static final int BIPED_SWIM = 13;
+    public static final int QUAD_SWIM = 14;
 }

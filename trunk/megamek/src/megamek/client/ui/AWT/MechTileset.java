@@ -134,7 +134,8 @@ public class MechTileset {
                 return default_assault;
             }
         }
-        if (entity.getMovementMode() == IEntityMovementMode.NAVAL) {
+        if (entity.getMovementMode() == IEntityMovementMode.NAVAL
+                || entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
             return default_naval;
         }
         if (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL) {

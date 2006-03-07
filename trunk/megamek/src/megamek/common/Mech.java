@@ -2328,11 +2328,16 @@ public abstract class Mech
             costs[i++] = 300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);
         }
         double jumpBaseCost = 200;
-        if (getJumpType() == Mech.JUMP_BOOSTER)
-            jumpBaseCost = 150;
-        else if (getJumpType() == Mech.JUMP_IMPROVED)
-            jumpBaseCost = 500;
-        costs[i++] = Math.pow(getOriginalJumpMP(),2.0)*weight*jumpBaseCost;
+        //You cannot have JJ's and UMU's on the same unit.
+        if (this.hasUMU()){
+            costs[i++] = Math.pow(getAllUMUCount(),2.0)*weight*jumpBaseCost;
+        } else {
+            if (getJumpType() == Mech.JUMP_BOOSTER)
+                jumpBaseCost = 150;
+            else if (getJumpType() == Mech.JUMP_IMPROVED)
+                jumpBaseCost = 500;
+            costs[i++] = Math.pow(getOriginalJumpMP(),2.0)*weight*jumpBaseCost;
+        }
         int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
         int sinkCost = hasDoubleHeatSinks()? 6000: 2000;
         costs[i++] = sinkCost*(heatSinks()-freeSinks);//cost of sinks

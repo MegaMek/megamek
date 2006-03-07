@@ -63,6 +63,7 @@ public class MovementDisplay
     public static final String    MOVE_LAY_MINE = "moveLayMine"; //$NON-NLS-1$
     public static final String    MOVE_HULL_DOWN = "moveHullDown"; //$NON-NLS-1$
     public static final String    MOVE_CLIMB_MODE = "moveClimbMode"; //$NON-NLS-1$
+    public static final String    MOVE_SWIM = "moveSwim"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -75,6 +76,7 @@ public class MovementDisplay
     private Button            butJump;
     private Button            butBackup;
     private Button            butTurn;
+    private Button            butSwim;
 
     private Button            butUp;
     private Button            butDown;
@@ -129,6 +131,7 @@ public class MovementDisplay
     public static final int        GEAR_CHARGE      = 3;
     public static final int        GEAR_DFA         = 4;
     public static final int        GEAR_TURN        = 5;
+    public static final int        GEAR_SWIM        = 6;
 
     /**
      * Creates and lays out a new movement phase display
@@ -164,6 +167,12 @@ public class MovementDisplay
         butJump.setEnabled(false);
         butJump.setActionCommand(MOVE_JUMP);
         butJump.addKeyListener(this);
+
+        butSwim = new Button(Messages.getString("MovementDisplay.butSwim")); //$NON-NLS-1$
+        butSwim.addActionListener(this);
+        butSwim.setEnabled(false);
+        butSwim.setActionCommand(MOVE_SWIM);
+        butSwim.addKeyListener(this);
 
         butBackup = new Button(Messages.getString("MovementDisplay.butBackup")); //$NON-NLS-1$
         butBackup.addActionListener(this);
@@ -388,7 +397,7 @@ public class MovementDisplay
             panButtons.add(butLayMine);
             panButtons.add(butHullDown);
             panButtons.add(butClimbMode);
-            panButtons.add(butSpace);
+            panButtons.add(butSwim);
             panButtons.add(butMore);
             
         }
@@ -438,6 +447,7 @@ public class MovementDisplay
         
         setWalkEnabled(!ce.isImmobile() && ce.getWalkMP() > 0 && !ce.isStuck());
         setJumpEnabled(!ce.isImmobile() && ce.getJumpMP() > 0 && !ce.isStuck());
+        setSwimEnabled(!ce.isImmobile() && ce.hasUMU() && client.game.getBoard().getHex(ce.getPosition()).containsTerrain(Terrains.WATER) );
         setBackUpEnabled(butWalk.isEnabled());
 
         setChargeEnabled(ce.canCharge());
@@ -456,7 +466,9 @@ public class MovementDisplay
         if(ce.getMovementMode() == IEntityMovementMode.HYDROFOIL
                 || ce.getMovementMode() == IEntityMovementMode.NAVAL
                 || ce.getMovementMode() == IEntityMovementMode.SUBMARINE
-                || ce.getMovementMode() == IEntityMovementMode.VTOL) {
+                || ce.getMovementMode() == IEntityMovementMode.VTOL
+                || ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM
+                || ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM) {
             butClimbMode.setEnabled(false);
         } else {
             butClimbMode.setEnabled(true);
@@ -562,6 +574,7 @@ public class MovementDisplay
         setUnloadEnabled(false);
         setClearEnabled(false);
         setHullDownEnabled(false);
+        setSwimEnabled(false);
     }
     /**
      * Clears out the curently selected movement data and
@@ -570,6 +583,11 @@ public class MovementDisplay
     private void clearAllMoves() {
         final Entity ce = ce();
         
+        //switch back from swimming to normal mode.
+        if ( ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM )
+            ce.setMovementMode(IEntityMovementMode.BIPED);
+        else if ( ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM )
+            ce.setMovementMode(IEntityMovementMode.QUAD);
         
         // clear board cursors
         clientgui.getBoardView().select(null);
@@ -674,6 +692,9 @@ public class MovementDisplay
 
         disableButtons();
         clientgui.bv.clearMovementData();
+        if ( ce().hasUMU() ){
+            client.sendUpdateEntity(ce());
+        }
         client.moveEntity(cen, md);
     }
 
@@ -971,6 +992,8 @@ public class MovementDisplay
             cmd.findPathTo(dest, MovePath.STEP_CHARGE);
         } else if (gear == GEAR_DFA) {
             cmd.findPathTo(dest, MovePath.STEP_DFA);
+        } else if (gear == GEAR_SWIM) {
+            cmd.findPathTo(dest, MovePath.STEP_SWIM);
         }
     }
 
@@ -1429,7 +1452,7 @@ public class MovementDisplay
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
         } else if (ev.getActionCommand().equals(MOVE_UNJAM)) {
-            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_CHARGE || gear == MovementDisplay.GEAR_DFA || cmd.getMpUsed() > ce.getWalkMP()) { // in the wrong gear
+            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_CHARGE || gear == MovementDisplay.GEAR_DFA || cmd.getMpUsed() > ce.getWalkMP() || gear == MovementDisplay.GEAR_SWIM) { // in the wrong gear
                 //clearAllMoves();
                 //gear = Compute.GEAR_LAND;
                 setUnjamEnabled(false);
@@ -1441,7 +1464,7 @@ public class MovementDisplay
         } else if (ev.getActionCommand().equals(MOVE_SEARCHLIGHT)) {
             cmd.addStep(MovePath.STEP_SEARCHLIGHT);
         } else if (ev.getActionCommand().equals(MOVE_WALK)) {
-            if (gear == MovementDisplay.GEAR_JUMP) {
+            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_SWIM) {
                 clearAllMoves();
             }
             gear = MovementDisplay.GEAR_LAND;
@@ -1453,6 +1476,13 @@ public class MovementDisplay
                 cmd.addStep(MovePath.STEP_START_JUMP);
             }
             gear = MovementDisplay.GEAR_JUMP;
+        } else if (ev.getActionCommand().equals(MOVE_SWIM)) {
+            if (gear != MovementDisplay.GEAR_SWIM) {
+                clearAllMoves();
+            }
+            //dcmd.addStep(MovePath.STEP_SWIM);
+            gear = MovementDisplay.GEAR_SWIM;
+            ce.setMovementMode((ce instanceof BipedMech)?IEntityMovementMode.BIPED_SWIM:IEntityMovementMode.QUAD_SWIM);
         } else if (ev.getActionCommand().equals(MOVE_TURN)) {
             gear = MovementDisplay.GEAR_TURN;
         } else if (ev.getActionCommand().equals(MOVE_BACK_UP)) {
@@ -1821,6 +1851,10 @@ public class MovementDisplay
     private void setJumpEnabled(boolean enabled) {
         butJump.setEnabled(enabled);
         clientgui.getMenuBar().setMoveJumpEnabled(enabled);
+    }
+    private void setSwimEnabled(boolean enabled) {
+        butSwim.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveSwimEnabled(enabled);
     }
     private void setBackUpEnabled(boolean enabled) {
         butBackup.setEnabled(enabled);

@@ -266,8 +266,10 @@ public class Compute {
                 && !(entity.getElevation() > destHex.surface())
                 && !(entity.getMovementMode() == IEntityMovementMode.HOVER
                         || entity.getMovementMode() == IEntityMovementMode.NAVAL
-                        || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL || entity
-                        .getMovementMode() == IEntityMovementMode.SUBMARINE)
+                        || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL 
+                        || entity.getMovementMode() == IEntityMovementMode.SUBMARINE
+                        || entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM
+                        || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM)
                 && destHex.terrainLevel(Terrains.WATER) > 0 && !isPavementStep) {
             return true;
         }
@@ -1183,6 +1185,10 @@ public class Compute {
             }
             return toHit;
         }
+
+        if ( entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM 
+                || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM )
+            return toHit;
 
         if (movement == IEntityMovementType.MOVE_WALK
                 || movement == IEntityMovementType.MOVE_VTOL_WALK) {

@@ -3471,6 +3471,7 @@ public class BoardView1
             // draw arrows and cost for the step
             switch (step.getType()) {
             case MovePath.STEP_FORWARDS :
+            case MovePath.STEP_SWIM :
             case MovePath.STEP_BACKWARDS :
             case MovePath.STEP_CHARGE :
             case MovePath.STEP_DFA :

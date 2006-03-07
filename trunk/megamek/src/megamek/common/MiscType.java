@@ -62,7 +62,8 @@ public class MiscType extends EquipmentType {
     public static final long     F_COWL              = 0x020000000L;
     public static final long     F_JUMP_BOOSTER      = 0x040000000L;
     public static final long     F_HARJEL            = 0x080000000L;
-    
+    public static final long     F_UMU               = 0x100000000L;
+
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
     public static final int     S_TREE_CLUB         = 0x00000002; // BMR
@@ -164,6 +165,14 @@ public class MiscType extends EquipmentType {
                 } else {
                     return 2.0f;
                 }
+            }
+        } else if (hasFlag(F_UMU)) {
+            if (entity.getWeight() <= 55.0) {
+                return 0.5f;
+            } else if (entity.getWeight() <= 85.0) {
+                return 1.0f;
+            } else {
+                return 2.0f;
             }
         } else if (hasFlag(F_CLUB)
                 && (hasSubType(S_HATCHET)
@@ -425,12 +434,18 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createVibroShovel());
         EquipmentType.addType(createDemolitionCharge());
         EquipmentType.addType(createSuperCharger());
-        EquipmentType.addType(createMediumShield());
-        EquipmentType.addType(createSmallShield());
-        EquipmentType.addType(createLargeShield());
-        EquipmentType.addType(createClaw());
+        EquipmentType.addType(createISMediumShield());
+        EquipmentType.addType(createISSmallShield());
+        EquipmentType.addType(createISLargeShield());
+        EquipmentType.addType(createISClaw());
         EquipmentType.addType(createCLHarJel());
         EquipmentType.addType(createISHarJel());
+        EquipmentType.addType(createCLMediumShield());
+        EquipmentType.addType(createCLSmallShield());
+        EquipmentType.addType(createCLLargeShield());
+        EquipmentType.addType(createCLClaw());
+        EquipmentType.addType(createISUMU());
+        EquipmentType.addType(createCLUMU());
         
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -1769,12 +1784,13 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createSmallShield() {
+    public static MiscType createISSmallShield() {
         MiscType misc = new MiscType();
         
         misc.techLevel = TechConstants.T_IS_LEVEL_3;
         misc.name = "Small Shield";
-        misc.setInternalName(misc.getName());
+        misc.setInternalName("ISSmallShield");
+        misc.addLookupName("Small Shield");
         misc.tonnage = 2;
         misc.criticals = 3;
         misc.cost = 50000;
@@ -1795,12 +1811,13 @@ public class MiscType extends EquipmentType {
      * Creates a claw MiscType Object
      * @return MiscType
      */
-    public static MiscType createClaw() {
+    public static MiscType createISClaw() {
         MiscType misc = new MiscType();
         
         misc.techLevel = TechConstants.T_IS_LEVEL_3;
         misc.name = "Claw";
-        misc.setInternalName(misc.name);
+        misc.setInternalName("ISClaw");
+        misc.addLookupName("Claw");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
@@ -1812,12 +1829,13 @@ public class MiscType extends EquipmentType {
     }
 
 
-    public static MiscType createMediumShield() {
+    public static MiscType createISMediumShield() {
         MiscType misc = new MiscType();
         
         misc.techLevel = TechConstants.T_IS_LEVEL_3;
         misc.name = "Medium Shield";
-        misc.setInternalName(misc.getName());
+        misc.setInternalName("ISMediumShield");
+        misc.addLookupName("Medium Shield");
         misc.tonnage = 4;
         misc.criticals = 5;
         misc.cost = 100000;
@@ -1834,12 +1852,104 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createLargeShield() {
+    public static MiscType createISLargeShield() {
         MiscType misc = new MiscType();
         
         misc.techLevel = TechConstants.T_IS_LEVEL_3;
         misc.name = "Large Shield";
-        misc.setInternalName(misc.getName());
+        misc.setInternalName("ISLargeShield");
+        misc.addLookupName("Large Shield");
+        misc.tonnage = 6;
+        misc.criticals = 7;
+        misc.cost = 300000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_SHIELD_LARGE;
+        misc.bv = 263;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD};
+        misc.setModes(modes);
+        misc.damageTaken = 0;
+        misc.baseDamageAbsorptionRate = 7;
+        misc.baseDamageCapacity = 25;
+
+        return misc;
+    }
+    
+    public static MiscType createCLSmallShield() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Small Shield";
+        misc.setInternalName("CLSmallShield");
+        misc.addLookupName("Clan Medium Shield");
+        misc.tonnage = 2;
+        misc.criticals = 3;
+        misc.cost = 50000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_SHIELD_SMALL;
+        misc.bv = 50;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD};
+        misc.setModes(modes);
+        misc.damageTaken = 0;
+        misc.baseDamageAbsorptionRate = 3;
+        misc.baseDamageCapacity = 11;
+        
+        return misc;
+    }
+
+    /**
+     * Creates a claw MiscType Object
+     * @return MiscType
+     */
+    public static MiscType createCLClaw() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Claw";
+        misc.setInternalName("CLClaw");
+        misc.addLookupName("Clan Claw");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_HAND_WEAPON;
+        misc.subType |= S_CLAW;
+        misc.bv = BV_VARIABLE;
+        
+        return misc;
+    }
+
+
+    public static MiscType createCLMediumShield() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Medium Shield";
+        misc.setInternalName("CLMediumShield");
+        misc.addLookupName("Clan Medium Shield");
+        misc.tonnage = 4;
+        misc.criticals = 5;
+        misc.cost = 100000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_SHIELD_MEDIUM;
+        misc.bv = 135;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD};
+        misc.setModes(modes);
+        misc.damageTaken = 0;
+        misc.baseDamageAbsorptionRate = 5;
+        misc.baseDamageCapacity = 18;
+        
+        return misc;
+    }
+
+    public static MiscType createCLLargeShield() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Large Shield";
+        misc.setInternalName("CLLargeShield");
+        misc.addLookupName("Clan Medium Shield");
         misc.tonnage = 6;
         misc.criticals = 7;
         misc.cost = 300000;
@@ -1887,6 +1997,36 @@ public class MiscType extends EquipmentType {
         // can't enter BV here, because it's location dependendent,
         // and MiscType has no idea where a certain equipment may be
         // mounted
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createISUMU() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "UMU";
+        misc.setInternalName("ISUMU");
+        misc.addLookupName("IS Underwater Maneuvering Unit");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.flags |= F_UMU;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createCLUMU() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "UMU";
+        misc.setInternalName("CLUMU");
+        misc.addLookupName("Clan Underwater Maneuvering Unit");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.flags |= F_UMU;
         misc.bv = 0;
         
         return misc;

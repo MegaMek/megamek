@@ -73,7 +73,7 @@ public class MiscType extends EquipmentType {
     public static final int     S_CLAW_THB          = 0x00000020; // Not used yet, but...  Hey, it's all for fun.
     public static final int     S_MACE              = 0x00000040; // Solaris 7
     public static final int     S_DUAL_SAW          = 0x00000080; // Solaris 7                
-    public static final int     S_FLAIL             = 0x00000100; // Solaris 7; TODO
+    public static final int     S_FLAIL             = 0x00000100; // Solaris 7;
     public static final int     S_PILE_DRIVER       = 0x00000200; // Solaris 7
     public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7;
     public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7;
@@ -82,7 +82,7 @@ public class MiscType extends EquipmentType {
     public static final int     S_VIBRO_SMALL       = 0x00004000; // Solaris 7; TODO
     public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7; TODO
     public static final int     S_VIBRO_LARGE       = 0x00010000; // Solaris 7; TODO
-    public static final int     S_WRECKING_BALL     = 0x00020000; // Solaris 7; TODO
+    public static final int     S_WRECKING_BALL     = 0x00020000; // Solaris 7;
     public static final int     S_BACKHOE           = 0x00040000; // Miniatures Rulebook
     public static final int     S_COMBINE           = 0x00080000; // Miniatures Rulebook; TODO
     public static final int     S_CHAINSAW          = 0x00100000; // Miniatures Rulebook
@@ -446,6 +446,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLClaw());
         EquipmentType.addType(createISUMU());
         EquipmentType.addType(createCLUMU());
+        EquipmentType.addType(createISFlail());
+        EquipmentType.addType(createCLFlail());
         
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -2029,6 +2031,74 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_UMU;
         misc.bv = 0;
         
+        return misc;
+    }
+
+    public static MiscType createISFlail() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Flail";
+        misc.setInternalName("IS Flail");
+        misc.addLookupName("Flail");
+        misc.tonnage = 5;
+        misc.criticals = 4;
+        misc.cost = 110000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_FLAIL;
+        misc.bv = 11;
+
+        return misc;
+    }
+
+    public static MiscType createCLFlail() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Flail";
+        misc.setInternalName("Clan Flail");
+        misc.addLookupName("CLFLail");
+        misc.tonnage = 5;
+        misc.criticals = 4;
+        misc.cost = 110000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_FLAIL;
+        misc.bv = 11;
+
+        return misc;
+    }
+
+    public static MiscType createISWreckingBall() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Wrecking Ball";
+        misc.setInternalName("IS Wrecking Ball");
+        misc.addLookupName("WreckingBall");
+        misc.tonnage = 4;
+        misc.criticals = 5;
+        misc.cost = 110000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_WRECKING_BALL;
+        misc.bv = 8;
+
+        return misc;
+    }
+
+    public static MiscType createCLWreckingBall() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Wrecking Ball";
+        misc.setInternalName("Clan Wrecking Ball");
+        misc.addLookupName("CLWrecking Ball");
+        misc.tonnage = 4;
+        misc.criticals = 5;
+        misc.cost = 110000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_WRECKING_BALL;
+        misc.bv = 8;
+
         return misc;
     }
 

@@ -68,12 +68,15 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (mType.hasSubType(MiscType.S_BACKHOE)) {
             // Backhoes have constant damage, not variable like most.
             nDamage = 6;
-        }
+        } else if (mType.isShield()) {
+            nDamage = mType.getDamageAbsorption(entity,club.getLocation());
+        } 
         // TSM doesn't apply to some weapons, including Saws.
         if (entity.heat >= 9
                 && !(mType.hasSubType(MiscType.S_DUAL_SAW)
                 || mType.hasSubType(MiscType.S_CHAINSAW)
-                || mType.hasSubType(MiscType.S_PILE_DRIVER))
+                || mType.hasSubType(MiscType.S_PILE_DRIVER)
+                || mType.isShield())
                 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
         }
@@ -136,6 +139,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
                 && ((MiscType)club.getType()).hasSubType(MiscType.S_CLUB));
         final boolean hasClaws = ( ((BipedMech)ae).hasClaw(Mech.LOC_RARM) || ((BipedMech)ae).hasClaw(Mech.LOC_LARM) );
+        final boolean shield = ((MiscType)club.getType()).isShield();
         
         ToHitData toHit;
 
@@ -160,6 +164,10 @@ public class ClubAttackAction extends PhysicalAttackAction {
                     || !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM))  && !hasClaws) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
             }
+        } else if (shield) {
+            if (!ae.hasPassiveShield(club.getLocation())) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Shield not in passive mode");
+            }
         } else {
             // check if arm is present
             if (ae.isLocationBad(club.getLocation())) {
@@ -179,7 +187,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // club must not be damaged
-        if (ae.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, ae.getEquipmentNum(club), club.getLocation()) > 0) {
+        if (!shield && ae.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT,
+                ae.getEquipmentNum(club), club.getLocation()) > 0) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Club is damaged");
         }
 
@@ -230,7 +239,14 @@ public class ClubAttackAction extends PhysicalAttackAction {
             base += 2;
         } else if (((MiscType)club.getType()).hasSubType(MiscType.S_PILE_DRIVER)) {
             base += 3;
+        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_SHIELD_LARGE)) {
+            base -= 3;
+        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_SHIELD_MEDIUM)) {
+            base -= 2;
+        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_SHIELD_SMALL)) {
+            base -= 1;
         }
+
 
         toHit = new ToHitData(base, "base");
 
@@ -268,10 +284,16 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // elevation
         if (attackerElevation == targetElevation) {
-            toHit.setHitTable(ToHitData.HIT_NORMAL);
+            if (shield)
+                toHit.setHitTable(ToHitData.HIT_PUNCH);
+            else
+                toHit.setHitTable(ToHitData.HIT_NORMAL);
         } else if (attackerElevation < targetElevation) {
             if (target.getHeight() == 0) {
-                toHit.setHitTable(ToHitData.HIT_NORMAL);
+                if (shield )
+                    toHit.setHitTable(ToHitData.HIT_PUNCH);
+                else
+                    toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);
             }

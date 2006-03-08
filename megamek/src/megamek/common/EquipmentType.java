@@ -264,12 +264,18 @@ public class EquipmentType {
                     base--;
             }
         }
-            
-        if ( !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, location) )
+
+        //Only damaged Actuators should effect the shields absorption rate
+        //Not missing ones.
+        if ( entity.hasSystem(Mech.ACTUATOR_SHOULDER, location)
+                && !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, location) )
             base -= 2;
-        if ( !entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, location) )
+
+        if ( entity.hasSystem(Mech.ACTUATOR_LOWER_ARM, location) 
+                && !entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, location) )
             base--;
-        if ( !entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, location) )
+        if ( entity.hasSystem(Mech.ACTUATOR_UPPER_ARM, location)
+                && !entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, location) )
             base--;
         
         return Math.max(0,base);

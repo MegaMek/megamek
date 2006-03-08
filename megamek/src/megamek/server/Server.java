@@ -9620,6 +9620,27 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
+        // Flail/Wrecking Ball auto misses on a 2 and hits themself.
+        if ((((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_FLAIL) ||
+                ((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_WRECKING_BALL))
+                && roll == 2) {
+            //miss
+            r = new Report(4035);
+            r.subject = ae.getId();
+            addReport(r);
+            ToHitData newToHit = new ToHitData(ToHitData.AUTOMATIC_SUCCESS,"hit with own flail/wrecking ball");
+            pr.damage /=2;
+            newToHit.setHitTable(ToHitData.HIT_NORMAL);
+            newToHit.setSideTable(ToHitData.SIDE_FRONT);
+            pr.toHit = newToHit;
+            pr.aaa.setTargetId(ae.getId());
+            pr.aaa.setTargetType(Targetable.TYPE_ENTITY);
+            pr.roll = Integer.MAX_VALUE;
+            resolveClubAttack(pr, ae.getId());
+            game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a flail/wrecking ball attack"));
+            return;
+        }
+
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             r = new Report(4075);
             r.subject = ae.getId();

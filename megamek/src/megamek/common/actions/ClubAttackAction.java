@@ -70,13 +70,17 @@ public class ClubAttackAction extends PhysicalAttackAction {
             nDamage = 6;
         } else if (mType.isShield()) {
             nDamage = mType.getDamageAbsorption(entity,club.getLocation());
-        } 
+        } else if (mType.hasSubType(MiscType.S_WRECKING_BALL)) {
+            // Wrecking Balls have constant damage, not variable like most.
+            nDamage = 8;
+        }
         // TSM doesn't apply to some weapons, including Saws.
         if (entity.heat >= 9
                 && !(mType.hasSubType(MiscType.S_DUAL_SAW)
                 || mType.hasSubType(MiscType.S_CHAINSAW)
                 || mType.hasSubType(MiscType.S_PILE_DRIVER)
-                || mType.isShield())
+                || mType.isShield()
+                || mType.hasSubType(MiscType.S_WRECKING_BALL))
                 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
         }
@@ -116,7 +120,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         String impossible = toHitIsImpossible(game, ae, target);
-        if(impossible != null) {
+        if (impossible != null) {
             return new ToHitData(ToHitData.IMPOSSIBLE, impossible);
         }
 
@@ -140,6 +144,13 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 && ((MiscType)club.getType()).hasSubType(MiscType.S_CLUB));
         final boolean hasClaws = ( ((BipedMech)ae).hasClaw(Mech.LOC_RARM) || ((BipedMech)ae).hasClaw(Mech.LOC_LARM) );
         final boolean shield = ((MiscType)club.getType()).isShield();
+        boolean needsHand = true;
+        
+        if (hasClaws
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_FLAIL))
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_WRECKING_BALL))) {
+            needsHand = false;
+        }
         
         ToHitData toHit;
 
@@ -161,12 +172,19 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder actuator destroyed");
             }
             if ( (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
-                    || !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM))  && !hasClaws) {
+                    || !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM))  && needsHand) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
             }
         } else if (shield) {
             if (!ae.hasPassiveShield(club.getLocation())) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Shield not in passive mode");
+            }
+        } else if (((MiscType)club.getType()).hasSubType(MiscType.S_FLAIL)){
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club.getLocation())) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Upper actuator destroyed");
+            }
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club.getLocation())) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Lower actuator destroyed");
             }
         } else {
             // check if arm is present
@@ -181,7 +199,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, club.getLocation())) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, club.getLocation()) && !hasClaws) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, club.getLocation()) && needsHand) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
             }
         }
@@ -231,11 +249,13 @@ public class ClubAttackAction extends PhysicalAttackAction {
         if (((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
             base -= 1;
         } else if ((((MiscType)club.getType()).hasSubType(MiscType.S_DUAL_SAW))
-                || (((MiscType)club.getType()).hasSubType(MiscType.S_CHAINSAW))) {
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_CHAINSAW))
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_FLAIL))) {
             base += 1;
         } else if ((((MiscType)club.getType()).hasSubType(MiscType.S_MACE_THB)) 
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_MACE))
-                || (((MiscType)club.getType()).hasSubType(MiscType.S_BACKHOE))) {
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_BACKHOE))
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_WRECKING_BALL))) {
             base += 2;
         } else if (((MiscType)club.getType()).hasSubType(MiscType.S_PILE_DRIVER)) {
             base += 3;

@@ -42,6 +42,8 @@ v0.31.6-dev (CVS)
   layout problems using GNU Classpath.
 + Patch 1444346: S7 UMU Equipment
 + S7 shield patch was missing changes to one file.
++ Patch 1445349: S7 Flail
++ Patch 1445360: S7 Wrecking Ball
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

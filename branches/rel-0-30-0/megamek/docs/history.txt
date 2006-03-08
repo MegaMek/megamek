@@ -11,7 +11,7 @@ v0.30.9-dev (CVS)
   MegaMek builds should now interoperate regardless of the compiler
   used to create them.
 + Added ".classpath" and ".project" files so that CVS checkouts
-  withing Eclipse will automatically be built; I do not run Eclipse,
+  within Eclipse will automatically be built; I do not run Eclipse,
   so I refer all problems with them to Thomas Fitzsimmons.
 + Replaced the "collections.jar" we got from Sun with a file that was
   built from GNU Classpath; it should be compatable in all ways except

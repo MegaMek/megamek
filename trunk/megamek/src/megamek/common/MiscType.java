@@ -73,16 +73,16 @@ public class MiscType extends EquipmentType {
     public static final int     S_CLAW_THB          = 0x00000020; // Not used yet, but...  Hey, it's all for fun.
     public static final int     S_MACE              = 0x00000040; // Solaris 7
     public static final int     S_DUAL_SAW          = 0x00000080; // Solaris 7                
-    public static final int     S_FLAIL             = 0x00000100; // Solaris 7;
+    public static final int     S_FLAIL             = 0x00000100; // Solaris 7
     public static final int     S_PILE_DRIVER       = 0x00000200; // Solaris 7
-    public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7;
-    public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7;
-    public static final int     S_SHIELD_LARGE      = 0x00001000; // Solaris 7;
+    public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7
+    public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7
+    public static final int     S_SHIELD_LARGE      = 0x00001000; // Solaris 7
     public static final int     S_LANCE             = 0x00002000; // Solaris 7; TODO
     public static final int     S_VIBRO_SMALL       = 0x00004000; // Solaris 7; TODO
     public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7; TODO
     public static final int     S_VIBRO_LARGE       = 0x00010000; // Solaris 7; TODO
-    public static final int     S_WRECKING_BALL     = 0x00020000; // Solaris 7;
+    public static final int     S_WRECKING_BALL     = 0x00020000; // Solaris 7
     public static final int     S_BACKHOE           = 0x00040000; // Miniatures Rulebook
     public static final int     S_COMBINE           = 0x00080000; // Miniatures Rulebook; TODO
     public static final int     S_CHAINSAW          = 0x00100000; // Miniatures Rulebook
@@ -446,6 +446,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLClaw());
         EquipmentType.addType(createISUMU());
         EquipmentType.addType(createCLUMU());
+        EquipmentType.addType(createISWreckingBall());
+        EquipmentType.addType(createCLWreckingBall());
         EquipmentType.addType(createISFlail());
         EquipmentType.addType(createCLFlail());
         

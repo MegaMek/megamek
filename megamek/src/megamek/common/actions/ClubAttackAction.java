@@ -73,14 +73,26 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (mType.hasSubType(MiscType.S_WRECKING_BALL)) {
             // Wrecking Balls have constant damage, not variable like most.
             nDamage = 8;
+        } else if ( mType.isVibroblade() ){
+            if ( club.curMode().equals("Active") ){
+                if ( mType.hasSubType(MiscType.S_VIBRO_LARGE) )
+                    nDamage = 14;
+                else if ( mType.hasSubType(MiscType.S_VIBRO_MEDIUM) )
+                    nDamage = 10;
+                else 
+                    nDamage = 7;
+            } else //when not active a vibro blade does normal sword damage
+                 nDamage = (int)(Math.ceil(entity.getWeight() / 10.0) + 1.0);
         }
+
         // TSM doesn't apply to some weapons, including Saws.
         if (entity.heat >= 9
                 && !(mType.hasSubType(MiscType.S_DUAL_SAW)
                 || mType.hasSubType(MiscType.S_CHAINSAW)
                 || mType.hasSubType(MiscType.S_PILE_DRIVER)
                 || mType.isShield()
-                || mType.hasSubType(MiscType.S_WRECKING_BALL))
+                || mType.hasSubType(MiscType.S_WRECKING_BALL)
+                || (mType.isVibroblade() && club.curMode().equals("Active")))
                 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
         }
@@ -148,7 +160,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
         
         if (hasClaws
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_FLAIL))
-                || (((MiscType)club.getType()).hasSubType(MiscType.S_WRECKING_BALL))) {
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_WRECKING_BALL))
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_LANCE))) {
             needsHand = false;
         }
         
@@ -246,7 +259,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // Various versions of physical weapons have different base bonuses and penalties.
-        if (((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)) {
+        if (((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)
+                || ((MiscType)club.getType()).isVibroblade()) {
             base -= 1;
         } else if ((((MiscType)club.getType()).hasSubType(MiscType.S_DUAL_SAW))
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_CHAINSAW))
@@ -254,6 +268,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
             base += 1;
         } else if ((((MiscType)club.getType()).hasSubType(MiscType.S_MACE_THB)) 
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_MACE))
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_BACKHOE))
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_LANCE))
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_BACKHOE))
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_WRECKING_BALL))) {
             base += 2;
@@ -292,13 +308,21 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club.getLocation())) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
+                if ( (((MiscType)club.getType()).hasSubType(MiscType.S_LANCE)) )
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Unable to use lance with upper arm actuator missing or destroyed");
             }
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club.getLocation())) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
+                if ( (((MiscType)club.getType()).hasSubType(MiscType.S_LANCE)) )
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Unable to use lance with lower arm actuator missing or destroyed");
             }
             //Rules state +2 bth if your using a club with claws.
             if (hasClaws) {
                 toHit.addModifier(2, "Mek has claws");
+            }
+            if ( (((MiscType)club.getType()).hasSubType(MiscType.S_LANCE))
+                    && (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club.getLocation()) 
+                            || !ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club.getLocation()))){
             }
         }
 

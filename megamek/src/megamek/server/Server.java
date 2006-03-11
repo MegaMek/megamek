@@ -9759,6 +9759,25 @@ public class Server implements Runnable {
             addReport(damageEntity(te, hit, damage, false, 0, false, false, throughFront));
         }
 
+        //On a roll of 10+ a lance hitting a mech/Vehicle can cause 1 point of internal damage
+        if ( te != null 
+                && ((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_LANCE)
+                && te.getArmor(hit) > 0) {
+                roll = Compute.d6(2);
+                //Pierce checking report
+                r = new Report(4021);
+                r.indent(2);
+                r.subject = ae.getId();
+                r.add(te.getLocationAbbr(hit));
+                r.add(roll);
+                r.newlines = 1;
+                addReport(r);
+                if ( roll >= 10 ){
+                    hit.makeGlancingBlow();
+                    addReport(damageEntity(te, hit, 1, false, 0, true, false, throughFront));
+                }
+        }
+        
         addNewLines();
 
         if (((MiscType)caa.getClub().getType()).hasSubType(MiscType.S_TREE_CLUB)) {
@@ -10597,6 +10616,23 @@ public class Server implements Runnable {
                 }
             }
             
+
+            //Check the mech for vibroblades if so then check to see if any
+            //are active and what heat they will produce.
+            if ( entity.hasVibroblades() ){
+                int vibroHeat = 0;
+                
+                vibroHeat = entity.getActiveVibrobladeHeat(Mech.LOC_RARM);
+                vibroHeat += entity.getActiveVibrobladeHeat(Mech.LOC_LARM);
+
+                if ( vibroHeat > 0 ){
+                    r = new Report(5017);
+                    r.subject = entity.getId();
+                    r.add(vibroHeat);
+                    addReport(r);   
+                    entity.heatBuildup += vibroHeat;
+                }
+            }
             // if heatbuildup is negative due to temperature, set it to 0
             // for prettier turnreports
             if (entity.heatBuildup < 0) {
@@ -12875,16 +12911,34 @@ public class Server implements Runnable {
                     }
                     break;
                 case Mech.SYSTEM_GYRO :
-                    if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                           Mech.SYSTEM_GYRO, loc) > 1) {
-                                // gyro destroyed
-                        game.addPSR( new PilotingRollData
-                            (en.getId(), PilotingRollData.AUTOMATIC_FAIL,
-                             3, "gyro destroyed") );
-                    } else {
-                                // first gyro hit
-                        game.addPSR( new PilotingRollData
-                            (en.getId(), 3, "gyro hit") );
+                    if ( en.getGyroType() != Mech.GYRO_HEAVY_DUTY ){
+                        if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                               Mech.SYSTEM_GYRO, loc) > 1) {
+                                    // gyro destroyed
+                            game.addPSR( new PilotingRollData
+                                (en.getId(), PilotingRollData.AUTOMATIC_FAIL,
+                                 3, "gyro destroyed") );
+                        } else {
+                                    // first gyro hit
+                            game.addPSR( new PilotingRollData
+                                (en.getId(), 3, "gyro hit") );
+                        }//No check against HD Gyros.
+                    }else{
+                        int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,Mech.SYSTEM_GYRO, loc); 
+                        if ( gyroHits > 2) {
+                            
+                            // gyro destroyed
+                            game.addPSR( new PilotingRollData (en.getId(), PilotingRollData.AUTOMATIC_FAIL,
+                              3, "gyro destroyed") );
+                        } else if ( gyroHits == 1 ){
+                            //first gyro hit
+                            game.addPSR( new PilotingRollData
+                                (en.getId(), 2, "gyro hit") );
+                        } else {
+                            // second gyro hit
+                            game.addPSR( new PilotingRollData
+                                (en.getId(), 3, "gyro hit") );
+                        }
                     }
                     break;
                 case Mech.ACTUATOR_UPPER_LEG :

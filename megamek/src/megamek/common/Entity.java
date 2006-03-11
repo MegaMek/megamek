@@ -2134,6 +2134,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Only Mechs have Gyros but this helps keep the code a bit cleaner.
+     * @return <code>-1</code>
+     */
+    public int getGyroType() {
+        return -1;
+    }
+
+    /**
      * Returns the number of operational critical slots of the specified type
      * in the location
      */
@@ -2324,6 +2332,23 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * Checks to see if this entity is wielding any vibroblades
+     * @return always returns <code>false</code> as Only biped mechs can wield vibroblades
+     */
+    public boolean hasVibroblades(){
+        return false;
+    }
+    
+    /**
+     * Checks to see if any heat is given off by an active vibro blade
+     * @param location
+     * @return always returns <code>0</code> as Only biped mechs can wield vibroblades
+     */
+    public int getActiveVibrobladeHeat(int location){
+        return 0;
+    }
+    
     /**
      * Does the mech have any shields
      */
@@ -3545,9 +3570,17 @@ public abstract class Entity extends TurnOrdered
             return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconscious");
         }
         // gyro operational?
-        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1
+                && getGyroType() != Mech.GYRO_HEAVY_DUTY) {
+                return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
         }
+        
+        //Takes 3+ hits to kill an HD Gyro.
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2
+                && getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+                return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
+        }
+        
         // both legs present?
         if ( this instanceof BipedMech ) {
           if ( ((BipedMech)this).countBadLegs() == 2 )
@@ -3618,8 +3651,12 @@ public abstract class Entity extends TurnOrdered
             && (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                              Mech.SYSTEM_GYRO,
                                              Mech.LOC_CT) > 0
-                || hasHipCrit())
-            ) {
+                  && getGyroType() != Mech.GYRO_HEAVY_DUTY)
+                || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                        Mech.SYSTEM_GYRO,
+                        Mech.LOC_CT) > 1 
+                    && getGyroType() == Mech.GYRO_HEAVY_DUTY)
+                || hasHipCrit()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "running with damaged hip actuator or gyro"));
         } else {
@@ -3637,8 +3674,14 @@ public abstract class Entity extends TurnOrdered
     public PilotingRollData checkLandingWithDamage() {
         PilotingRollData roll = getBasePilotingRoll();
 
-        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                                  Mech.LOC_CT) > 0
+        if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                                          Mech.SYSTEM_GYRO,
+                                          Mech.LOC_CT) > 0 
+             && getGyroType() != Mech.GYRO_HEAVY_DUTY)
+            || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                                            Mech.SYSTEM_GYRO,
+                                            Mech.LOC_CT) > 1 
+            && getGyroType() == Mech.GYRO_HEAVY_DUTY)
             || hasLegActuatorCrit()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg actuator or gyro"));

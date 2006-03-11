@@ -1388,6 +1388,13 @@ class SystemPanel
                         return;
                     }
                         
+                    if ( m.getType() instanceof MiscType 
+                            && ((MiscType)m.getType()).isVibroblade()  
+                             && clientgui.getClient().game.getPhase() != IGame.PHASE_PHYSICAL ){
+                        clientgui.systemMessage(Messages.getString("MechDisplay.VibrobladeModePhase",null));//$NON-NLS-1$
+                        return;
+                    }
+                        
                     m.setMode(nMode);                    
                     // send the event to the server
                     clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);

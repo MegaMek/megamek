@@ -311,4 +311,85 @@ public class BipedMech extends Mech {
         }
         return false;
     }
+    
+    /**
+     * Checks to see if this bipmech has any vibro blades on them.
+     * 
+     *  @return boolean <code>true</code> if the mech has vibroblades <code>false</code> if not.
+     */
+    public boolean hasVibroblades(){
+        int count = 0;
+        
+        if ( this.hasVibrobladesInLocation(Mech.LOC_RARM) )
+            count++;
+        if ( this.hasVibrobladesInLocation(Mech.LOC_LARM) )
+            count++;
+        
+        return count > 0;
+    }
+    
+    /**
+     * Checks to see if this bipedmech has a vibroblade in this location.
+     * @param location
+     * @return boolean <code>true</code> if the mech has vibroblades <code>false</code> if not.
+     */
+    public boolean hasVibrobladesInLocation(int location){
+        
+        //Only arms have VibroBlades.
+        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+            return false;
+
+        for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = this.getCritical(location,slot);
+            
+            if ( cs == null )
+                continue;
+            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+                continue;
+            Mounted m = this.getEquipment(cs.getIndex());
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && ((MiscType)type).isVibroblade()) {
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Checks for Active Vibroblades in <code>location</code> and returns the amount
+     * of heat genereated if active.
+     * @param location
+     * @return <code>int</code> amount of heat genereated by an active vibroblade.
+     */
+    public int getActiveVibrobladeHeat(int location){
+        //Only arms have VibroBlades.
+        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+            return 0;
+
+        for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = this.getCritical(location,slot);
+            
+            if ( cs == null )
+                continue;
+            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+                continue;
+            Mounted m = this.getEquipment(cs.getIndex());
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && ((MiscType)type).isVibroblade()
+                    && m.curMode().equals("Active")
+                    && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
+                MiscType blade = (MiscType)type;
+                if ( blade.hasSubType(MiscType.S_VIBRO_LARGE) )
+                    return 7;
+                if ( blade.hasSubType(MiscType.S_VIBRO_MEDIUM) )
+                    return 5;
+                //else
+                return 3;
+            }
+        }
+        
+        return 0;
+        
+    }
 }

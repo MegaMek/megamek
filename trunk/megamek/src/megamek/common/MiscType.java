@@ -78,7 +78,7 @@ public class MiscType extends EquipmentType {
     public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7
     public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7
     public static final int     S_SHIELD_LARGE      = 0x00001000; // Solaris 7
-    public static final int     S_LANCE             = 0x00002000; // Solaris 7; TODO
+    public static final int     S_LANCE             = 0x00002000; // Solaris 7; 
     public static final int     S_VIBRO_SMALL       = 0x00004000; // Solaris 7; TODO
     public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7; TODO
     public static final int     S_VIBRO_LARGE       = 0x00010000; // Solaris 7; TODO
@@ -142,6 +142,16 @@ public class MiscType extends EquipmentType {
         return false;
     }
 
+    public boolean isVibroblade(){
+        if ( this.hasFlag(MiscType.F_CLUB)
+                && (this.hasSubType(MiscType.S_VIBRO_LARGE)
+                || this.hasSubType((MiscType.S_VIBRO_MEDIUM))
+                || this.hasSubType(MiscType.S_VIBRO_SMALL)) )
+            return true;
+        //else
+        return false;
+    }
+
     public float getTonnage(Entity entity) {
         if (tonnage != TONNAGE_VARIABLE) {
             return tonnage;
@@ -178,6 +188,9 @@ public class MiscType extends EquipmentType {
                 && (hasSubType(S_HATCHET)
                 || hasSubType(S_MACE_THB))) {
             return (float)Math.ceil(entity.getWeight() / 15.0);
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_LANCE)) {
+                    return (float)Math.ceil(entity.getWeight() / 20.0);
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_SWORD)) {
             return (float)(Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
@@ -269,6 +282,9 @@ public class MiscType extends EquipmentType {
                 || hasSubType(S_MACE_THB))) {
             return (int)Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB)
+                && hasSubType(S_LANCE)) {
+            return (int)Math.ceil(entity.getWeight() / 20.0);
+        }else if (hasFlag(F_CLUB)
                 && hasSubType(S_MACE)) {
             return (int)Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_MASC)) {
@@ -327,6 +343,9 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_MACE_THB)) {
             return Math.ceil(entity.getWeight() / 5.0) * 1.5;
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_LANCE)) {
+            return Math.ceil(entity.getWeight() / 5.0) * 1.0;
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_MACE)) {
             return Math.ceil(entity.getWeight() / 4.0);
@@ -446,10 +465,18 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLClaw());
         EquipmentType.addType(createISUMU());
         EquipmentType.addType(createCLUMU());
+        EquipmentType.addType(createISLance());
+        EquipmentType.addType(createCLLance());
         EquipmentType.addType(createISWreckingBall());
         EquipmentType.addType(createCLWreckingBall());
         EquipmentType.addType(createISFlail());
         EquipmentType.addType(createCLFlail());
+        EquipmentType.addType(createISMediumVibroblade());
+        EquipmentType.addType(createISSmallVibroblade());
+        EquipmentType.addType(createISLargeVibroblade());
+        EquipmentType.addType(createCLMediumVibroblade());
+        EquipmentType.addType(createCLSmallVibroblade());
+        EquipmentType.addType(createCLLargeVibroblade());
         
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -1885,7 +1912,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
         misc.name = "Small Shield";
         misc.setInternalName("CLSmallShield");
-        misc.addLookupName("Clan Medium Shield");
+        misc.addLookupName("Clan Small Shield");
         misc.tonnage = 2;
         misc.criticals = 3;
         misc.cost = 50000;
@@ -1953,7 +1980,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
         misc.name = "Large Shield";
         misc.setInternalName("CLLargeShield");
-        misc.addLookupName("Clan Medium Shield");
+        misc.addLookupName("Clan Large Shield");
         misc.tonnage = 6;
         misc.criticals = 7;
         misc.cost = 300000;
@@ -2036,6 +2063,41 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createISLance() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Lance";
+        misc.setInternalName("IS Lance");
+        misc.addLookupName("ISLance");
+        misc.addLookupName("Lance");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_LANCE;
+        misc.bv = BV_VARIABLE;
+
+        return misc;
+    }
+
+    public static MiscType createCLLance() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Lance";
+        misc.setInternalName("Clan Lance");
+        misc.addLookupName("CLLance");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_LANCE;
+        misc.bv = BV_VARIABLE;
+
+        return misc;
+    }
+
     public static MiscType createISFlail() {
         MiscType misc = new MiscType();
 
@@ -2104,6 +2166,126 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createISSmallVibroblade() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Small Vibroblade";
+        misc.setInternalName("ISSmallVibroblade");
+        misc.addLookupName("Small Vibroblade");
+        misc.tonnage = 3;
+        misc.criticals = 1;
+        misc.cost = 150000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_VIBRO_SMALL;
+        misc.bv = 12;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "Inactive","Active"};
+        misc.setModes(modes);
+        
+        return misc;
+    }
+
+    public static MiscType createISMediumVibroblade() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Medium Vibroblade";
+        misc.setInternalName("ISMediumVibroblade");
+        misc.addLookupName("Medium Vibroblade");
+        misc.tonnage = 5;
+        misc.criticals = 2;
+        misc.cost = 400000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_VIBRO_MEDIUM;
+        misc.bv = 17;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "Inactive","Active"};
+        misc.setModes(modes);
+        
+        return misc;
+    }
+
+    public static MiscType createISLargeVibroblade() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Large Vibroblade";
+        misc.setInternalName("ISLargeVibroblade");
+        misc.addLookupName("Large Vibroblade");
+        misc.tonnage = 7;
+        misc.criticals = 4;
+        misc.cost = 750000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_VIBRO_LARGE;
+        misc.bv = 24;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "Inactive","Active"};
+        misc.setModes(modes);
+
+        return misc;
+    }
+    
+    public static MiscType createCLSmallVibroblade() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Small Vibroblade";
+        misc.setInternalName("CLSmallVibroblade");
+        misc.addLookupName("Clan Small Vibroblade");
+        misc.tonnage = 3;
+        misc.criticals = 1;
+        misc.cost = 150000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_VIBRO_SMALL;
+        misc.bv = 12;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "Inactive","Active"};
+        misc.setModes(modes);
+        
+        return misc;
+    }
+
+    public static MiscType createCLMediumVibroblade() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Medium Vibroblade";
+        misc.setInternalName("CLMediumVibroblade");
+        misc.addLookupName("Clan Medium Vibroblade");
+        misc.tonnage = 5;
+        misc.criticals = 2;
+        misc.cost = 400000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_VIBRO_MEDIUM;
+        misc.bv = 17;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "Inactive","Active"};
+        misc.setModes(modes);
+        
+        return misc;
+    }
+
+    public static MiscType createCLLargeVibroblade() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Large Vibroblade";
+        misc.setInternalName("CLLargeVibroblade");
+        misc.addLookupName("Clan Large Vibroblade");
+        misc.tonnage = 7;
+        misc.criticals = 4;
+        misc.cost = 750000;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_VIBRO_LARGE;
+        misc.bv = 24;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "Inactive","Active"};
+        misc.setModes(modes);
+
+        return misc;
+    }
+    
     public static MiscType createStandard() {
         //This is not really a single piece of equipment, it is used to
         // identify "standard" internal structure, armor, whatever.

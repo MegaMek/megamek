@@ -342,6 +342,9 @@ Inner Sphere Level 3 Tech:
   IS Small Shield
   IS Claw
   ISUnderwaterManeuveringUnit
+  ISFlail
+  ISWreckingBall
+  ISLance
   
 Clan Level 3 Tech:
  Weapons:
@@ -383,3 +386,6 @@ Clan Level 3 Tech:
   CLMediumShield
   CLSmallShield
   CLClaw
+  CLFlail
+  CLWreckingBall
+  CLLance

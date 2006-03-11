@@ -44,6 +44,9 @@ v0.31.6-dev (CVS)
 + S7 shield patch was missing changes to one file.
 + Patch 1445349: S7 Flail
 + Patch 1445360: S7 Wrecking Ball
++ Patch 1446780: S7 Vibroblades
++ Patch 1446679: S7 Lance 
++ Patch 1447385: Heavy Duty Gyro
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

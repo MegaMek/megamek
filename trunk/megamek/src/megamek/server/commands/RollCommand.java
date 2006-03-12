@@ -79,6 +79,6 @@ public class RollCommand extends ServerCommand {
                 diceBuffer.append(roll);
             }
         }
-        server.sendServerChat(server.getPlayer(connId).getName() + " has rolled " + diceBuffer + " for a total of " + total);
+        server.sendServerChat(server.getPlayer(connId).getName() + " has rolled " + diceBuffer + " for a total of " + total + ", using " + dice + "d" + sides);
     }
 }

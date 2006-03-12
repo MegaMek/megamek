@@ -1837,6 +1837,26 @@ public abstract class Mech
             case 90  : setInternal(3, 29, 19, 15, 19); break;
             case 95  : setInternal(3, 30, 20, 16, 20); break;
             case 100 : setInternal(3, 31, 21, 17, 21); break;
+            case 105 : setInternal(4, 32, 22, 17, 22); break;
+            case 110 : setInternal(4, 33, 23, 18, 23); break;
+            case 115 : setInternal(4, 35, 24, 19, 24); break;
+            case 120 : setInternal(4, 36, 25, 20, 25); break;
+            case 125 : setInternal(4, 38, 26, 21, 26); break;
+            case 130 : setInternal(4, 39, 27, 21, 27); break;
+            case 135 : setInternal(4, 41, 28, 22, 28); break;
+            case 140 : setInternal(4, 42, 29, 23, 29); break;
+            case 145 : setInternal(4, 44, 31, 24, 31); break;
+            case 150 : setInternal(4, 45, 32, 25, 32); break;
+            case 155 : setInternal(4, 47, 33, 26, 33); break;
+            case 160 : setInternal(4, 48, 34, 26, 34); break;
+            case 165 : setInternal(4, 50, 35, 27, 35); break;
+            case 170 : setInternal(4, 51, 36, 28, 36); break;
+            case 175 : setInternal(4, 53, 37, 29, 37); break;
+            case 180 : setInternal(4, 54, 38, 30, 38); break;
+            case 185 : setInternal(4, 56, 39, 31, 39); break;
+            case 190 : setInternal(4, 57, 40, 31, 40); break;
+            case 195 : setInternal(4, 59, 41, 32, 41); break;
+            case 200 : setInternal(4, 60, 42, 33, 42); break;
         }
     }
     

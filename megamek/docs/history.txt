@@ -47,6 +47,7 @@ v0.31.6-dev (CVS)
 + Patch 1446780: S7 Vibroblades
 + Patch 1446679: S7 Lance 
 + Patch 1447385: Heavy Duty Gyro
++ Patch 1436052: unofficial Super-Heavy 'Mech IS Values
 
 v0.31.5 (2006-02-14, 14:19 GMT)
 + Bug: more problems with HMV and ammo, typo in HMPFile for ISLaserAMS

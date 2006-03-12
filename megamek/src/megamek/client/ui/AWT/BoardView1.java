@@ -3948,7 +3948,8 @@ public class BoardView1
             final Entity entity = game.getEntity(attack.getEntityId());
             final WeaponType wtype = (WeaponType)entity.getEquipment(attack.getWeaponId()).getType();
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement( wtype.getName() + Messages.getString("BoardView1.needs") + roll ); //$NON-NLS-1$
+            final String table = attack.toHit(game).getTableDesc();
+            weaponDescs.addElement( wtype.getName() + Messages.getString("BoardView1.needs") + roll + " " + table ); //$NON-NLS-1$
         }
 
         public void addWeapon(KickAttackAction attack) {

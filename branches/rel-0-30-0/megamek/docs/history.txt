@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.30.9-dev (CVS)
+v0.30.9 (2006-03-12, 16:48 GMT)
 + Bug with movement initiative report when non-canon deployment and movement
     initiative options set.
 + Bug 1434301: Split weapons not loading correctly from XML files.

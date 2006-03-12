@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.31.7-dev (CVS)
+
 v0.31.6 (2006-03-12, 16:48 GMT)
 + Bug 1427812: Thundergod mislabeled as Cerberus
 + Bug with movement initiative report when non-canon deployment and movement

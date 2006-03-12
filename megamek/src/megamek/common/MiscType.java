@@ -78,10 +78,10 @@ public class MiscType extends EquipmentType {
     public static final int     S_SHIELD_SMALL      = 0x00000400; // Solaris 7
     public static final int     S_SHIELD_MEDIUM     = 0x00000800; // Solaris 7
     public static final int     S_SHIELD_LARGE      = 0x00001000; // Solaris 7
-    public static final int     S_LANCE             = 0x00002000; // Solaris 7; 
-    public static final int     S_VIBRO_SMALL       = 0x00004000; // Solaris 7; TODO
-    public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7; TODO
-    public static final int     S_VIBRO_LARGE       = 0x00010000; // Solaris 7; TODO
+    public static final int     S_LANCE             = 0x00002000; // Solaris 7 
+    public static final int     S_VIBRO_SMALL       = 0x00004000; // Solaris 7
+    public static final int     S_VIBRO_MEDIUM      = 0x00008000; // Solaris 7
+    public static final int     S_VIBRO_LARGE       = 0x00010000; // Solaris 7
     public static final int     S_WRECKING_BALL     = 0x00020000; // Solaris 7
     public static final int     S_BACKHOE           = 0x00040000; // Miniatures Rulebook
     public static final int     S_COMBINE           = 0x00080000; // Miniatures Rulebook; TODO

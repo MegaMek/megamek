@@ -2406,6 +2406,9 @@ public abstract class Entity extends TurnOrdered
      * This should only be called after hasShield has been called.
      */
     public boolean hasActiveShield(int location, boolean rear) {
+        if (!(this instanceof Mech)) {
+            return false;
+        }
         switch(location){
         case Mech.LOC_CT:
         case Mech.LOC_HEAD:
@@ -2421,14 +2424,14 @@ public abstract class Entity extends TurnOrdered
         case Mech.LOC_LT:
         case Mech.LOC_LLEG:
             return hasActiveShield(Mech.LOC_LARM);
-            default:
-                return hasActiveShield(Mech.LOC_RARM);
+        default:
+            return hasActiveShield(Mech.LOC_RARM);
         }
     } 
 
     /**
      * Does the mech have an active shield
-     * This should only be called hasActiveShield(location,rear)
+     * This should only be called by hasActiveShield(location,rear)
      */
     public boolean hasActiveShield(int location) {
         
@@ -2462,6 +2465,9 @@ public abstract class Entity extends TurnOrdered
      * This should only be called after hasShield has been called.
      */
     public boolean hasPassiveShield(int location, boolean rear) {
+        if (!(this instanceof Mech)) {
+            return false;
+        }
         switch(location){
         //CT Head and legs are not protected by Passive shields.
         case Mech.LOC_CT:
@@ -2475,16 +2481,16 @@ public abstract class Entity extends TurnOrdered
                 return false;
             return hasPassiveShield(Mech.LOC_LARM);
             //RA RT
-            default:
-                if (rear)//only RT has a rear and passive does not protect that
-                    return false;
-                return hasPassiveShield(Mech.LOC_RARM);
+        default:
+            if (rear)//only RT has a rear and passive does not protect that
+                return false;
+            return hasPassiveShield(Mech.LOC_RARM);
         }
     } 
 
     /**
      * Does the mech have a passive shield
-     * This should only be called hasPassiveShield(location,rear)
+     * This should only be called by hasPassiveShield(location,rear)
      */
     public boolean hasPassiveShield(int location) {
         

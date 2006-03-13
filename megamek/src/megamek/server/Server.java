@@ -6432,10 +6432,12 @@ public class Server implements Runnable {
 
                 Mounted counter = (Mounted)vCounters.elementAt(x);
                 Mounted mAmmo = counter.getLinked();
+                Entity ae = waa.getEntity(game);
                 if ((!(counter.getType() instanceof WeaponType))
                         || (!(counter.getType().hasFlag(WeaponType.F_AMS)))
                         || (!counter.isReady())
-                        || (counter.isMissing())) {
+                        || (counter.isMissing())
+                        || (ae.hasShield() && ae.hasActiveShield(counter.getLocation(), false))) {
                     continue;
                 }
                 // roll hits

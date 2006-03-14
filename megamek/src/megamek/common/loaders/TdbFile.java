@@ -396,7 +396,7 @@ public class TdbFile implements IMechLoader {
                 gyroType = "XL";
             else if (gyroType.equals("Heavy-Duty"))
                 gyroType = "Heavy Duty";
-            if (gyroType.equals("Torso-Mounted"))
+            if (cockpitType.equals("Torso-Mounted"))
                 cockpitType = "Torso Mounted";
             if (chassisConfig.equals("Quad")) {
                 mech = new QuadMech(gyroType, cockpitType);

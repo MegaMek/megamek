@@ -119,14 +119,14 @@ public class MiscType extends EquipmentType {
     public static final int     T_TARGSYS_MULTI_TRAC        = 6;
     public static final int     T_TARGSYS_MULTI_TRAC_II     = 7;
     public static final int     T_TARGSYS_HEAT_SEEKING_THB  = 8;
-    public static final String[] targSysNames = {"Standard Targetting System",
-                                                    "Targetting Computer",
-                                                    "Long-Range Targetting System",
-                                                    "Short-Range Targetting System",
-                                                    "Variable-Range Targetting System",
-                                                    "Anti-Air Targetting System",
-                                                    "Multi-Trac Targetting System",
-                                                    "Multi-Trac II Targetting System"};
+    public static final String[] targSysNames = {"Standard Targeting System",
+                                                    "Targeting Computer",
+                                                    "Long-Range Targeting System",
+                                                    "Short-Range Targeting System",
+                                                    "Variable-Range Taretting System",
+                                                    "Anti-Air Targeting System",
+                                                    "Multi-Trac Targeting System",
+                                                    "Multi-Trac II Targeting System"};
 
     /** Creates new MiscType */
     public MiscType() {

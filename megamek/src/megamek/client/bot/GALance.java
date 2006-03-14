@@ -20,16 +20,18 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class GALance extends GA {
 
-    protected Vector moves;
+    protected ArrayList moves;
     protected TestBot tb;
     protected Object[] enemy_array;
 
-    public GALance(TestBot tb, Vector moves, int population, int generations) {
+    public GALance(TestBot tb, ArrayList moves, int population, int generations) {
         super(moves.size(), population, .7, .05, generations, .5);
+        System.gc();
+        System.out.println("Generated move lance with population="+population+" and generations="+generations);
         this.tb = tb;
         this.moves = moves;
         this.enemy_array = tb.getEnemyEntities().toArray();
@@ -44,7 +46,7 @@ public class GALance extends GA {
             for (int i = 1; i < populationDim; i++) {
                 for (int iGene = 0; iGene < chromosomeDim; iGene++) {
                     (this.chromosomes[i]).genes[iGene] =
-                        Compute.randomInt(((MoveOption[]) (moves.elementAt(iGene))).length);
+                        Compute.randomInt(((MoveOption[]) (moves.get(iGene))).length);
                 }
                 this.chromosomes[i].fitness = getFitness(i);
             }
@@ -59,10 +61,10 @@ public class GALance extends GA {
 
     //now they have a hard-coded hoard metality
     protected double getFitness(int iChromIndex) {
-        Chromosome chromVector = this.chromosomes[iChromIndex];
-        Vector possible = new Vector();
+        Chromosome chrom = this.chromosomes[iChromIndex];
+        ArrayList possible = new ArrayList();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
-            possible.add(new MoveOption(((MoveOption[]) this.moves.elementAt(iGene))[chromVector.genes[iGene]]));
+            possible.add(new MoveOption(((MoveOption[]) this.moves.get(iGene))[chrom.genes[iGene]]));
         }
         Object[] move_array = possible.toArray();
         for (int e = 0; e < enemy_array.length; e++) { // for each enemy
@@ -101,13 +103,13 @@ public class GALance extends GA {
         double result = 0;
         for (int m = 0; m < move_array.length; m++) {
             MoveOption next = (MoveOption) move_array[m];
-            if (((MoveOption[]) moves.elementAt(m)).length > 1) {
-                MoveOption min = ((MoveOption[]) moves.elementAt(m))[0];
+            if (((MoveOption[]) moves.get(m)).length > 1) {
+                MoveOption min = ((MoveOption[]) moves.get(m))[0];
                 if (min.damage > 2 * next.damage && min.getUtility() < .5 * next.getUtility()) {
                     result += next.getCEntity().bv; //it is being endangered
                                                     // in the future
                     if (m > 0)
-                        chromVector.genes[m]--; //go so far as to mutate the
+                        chrom.genes[m]--; //go so far as to mutate the
                                                 // gene
                 }
             }
@@ -218,9 +220,9 @@ public class GALance extends GA {
 
     public MoveOption getResult() {
         Chromosome r = this.chromosomes[best];
-        Vector possible = new Vector();
+        ArrayList possible = new ArrayList();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
-            possible.add(new MoveOption(((MoveOption[]) this.moves.elementAt(iGene))[r.genes[iGene]]));
+            possible.add(new MoveOption(((MoveOption[]) this.moves.get(iGene))[r.genes[iGene]]));
         }
         Object[] move_array = possible.toArray();
         MoveOption result = null;
@@ -242,13 +244,13 @@ public class GALance extends GA {
         }
         int r1 = (c1.genes.length > 2) ? Compute.randomInt(c1.genes.length - 1) : 0;
         if (r1 % 2 == 1) {
-            c1.genes[r1] = Compute.randomInt(((MoveOption[]) this.moves.elementAt(r1)).length);
+            c1.genes[r1] = Compute.randomInt(((MoveOption[]) this.moves.get(r1)).length);
             return;
         }
         for (int i = 1; i < c1.genes.length; i++) {
             int iGene = (i + r1 - 1) % (c1.genes.length - 1);
-            if (((MoveOption[]) this.moves.elementAt(iGene)).length > 1) {
-                c1.genes[iGene] = Compute.randomInt(((MoveOption[]) this.moves.elementAt(iGene)).length);
+            if (((MoveOption[]) this.moves.get(iGene)).length > 1) {
+                c1.genes[iGene] = Compute.randomInt(((MoveOption[]) this.moves.get(iGene)).length);
                 return;
             }
         }

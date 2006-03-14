@@ -15,9 +15,22 @@
 
 package megamek.client.bot;
 
-import java.util.Enumeration;
-
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.IEntityMovementType;
+import megamek.common.IHex;
+import megamek.common.Mech;
+import megamek.common.Minefield;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.MovePath;
+import megamek.common.Protomech;
+import megamek.common.Terrains;
+import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.TorsoTwistAction;
@@ -26,6 +39,7 @@ import megamek.common.event.GamePlayerChatEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +53,6 @@ public class TestBot extends BotClient {
 
     public CEntity.Table centities = new CEntity.Table(this);
 
-    protected PhysicalCalculator pcalc = new PhysicalCalculator();
     protected ChatProcessor chatp = new ChatProcessor();
 
     public int ignore = 10;
@@ -58,7 +71,7 @@ public class TestBot extends BotClient {
     }
 
     public PhysicalOption calculatePhysicalTurn() {
-        return pcalc.calculatePhysicalTurn(this);
+        return PhysicalCalculator.calculatePhysicalTurn(this);
     }
 
     public MovePath calculateMoveTurn() {
@@ -79,15 +92,15 @@ public class TestBot extends BotClient {
         if (initiative == enemies_moved && old_moves != null) {
             min = this.old_moves.getResult();
             if (min == null
-                || !min.isMoveLegal()
-                || (min.isPhysical && centities.get(min.getPhysicalTargetId()).isPhysicalTarget)) {
+                    || !min.isMoveLegal()
+                    || (min.isPhysical && centities.get(min.getPhysicalTargetId()).isPhysicalTarget)) {
                 this.old_moves = null;
                 System.out.println("recalculating moves since the old move was invalid");
                 return calculateMoveTurn();
             }
         } else {
             enemies_moved = initiative;
-            Vector possible = new Vector();
+            ArrayList possible = new ArrayList();
 
             Enumeration e = game.getEntities();
 
@@ -98,7 +111,7 @@ public class TestBot extends BotClient {
                 if (entity.getPosition() == null || entity.isOffBoard()) {
                     continue;
                 }
-                
+
                 CEntity cen = centities.get(entity);
                 cen.refresh();
                 firstPass(cen);
@@ -147,9 +160,9 @@ public class TestBot extends BotClient {
                     min = lance.getResult();
                     this.old_moves = lance;
                 } else if (
-                    ((MoveOption[]) possible.elementAt(0)) != null
-                        && ((MoveOption[]) possible.elementAt(0)).length > 0) {
-                    min = ((MoveOption[]) possible.elementAt(0))[0];
+                        ((MoveOption[]) possible.get(0)) != null
+                        && ((MoveOption[]) possible.get(0)).length > 0) {
+                    min = ((MoveOption[]) possible.get(0))[0];
                 }
             }
         }
@@ -163,13 +176,12 @@ public class TestBot extends BotClient {
             if (en.getPosition() == null) {
                 continue;
             }
-            
+
             CEntity enemy = centities.get(en);
             int enemy_hit_arc =
-                CEntity.getThreatHitArc(
-                    enemy.current.getFinalCoords(),
-                    enemy.current.getFinalFacing(),
-                    min.getFinalCoords());
+                    CEntity.getThreatHitArc(enemy.current.getFinalCoords(),
+                            enemy.current.getFinalFacing(),
+                            min.getFinalCoords());
             MoveOption.DamageInfo di = (MoveOption.DamageInfo) min.damageInfos.get(enemy);
             if (di != null) {
                 enemy.expected_damage[enemy_hit_arc] += di.min_damage;
@@ -192,75 +204,142 @@ public class TestBot extends BotClient {
         
         // If this unit has a jammed RAC, and it has only walked,
         // add an unjam action
-        if (min != null){
-            if (min.getLastStep() != null){
-            if (min.getCEntity().entity.canUnjamRAC()){
-                if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK) ||
-                    (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) ||
-                    (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
-                    // Cycle through all available weapons, only unjam if the jam(med)
-                    // RACs count for a significant portion of possible damage
-                	int rac_damage = 0;
-                	int other_damage = 0;
-                    int clearance_range = 0;
-                    for (Enumeration mounted_weapons = min.getCEntity().entity.getWeapons();
-                        mounted_weapons.hasMoreElements();){
-                        WeaponType test_weapon = new WeaponType();
-                        Mounted equip = (Mounted) mounted_weapons.nextElement();
-                            
+        if (min != null) {
+            if (min.getLastStep() != null) {
+                if (min.getCEntity().entity.canUnjamRAC()) {
+                    if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK) ||
+                            (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) ||
+                            (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
+                        // Cycle through all available weapons, only unjam if the jam(med)
+                        // RACs count for a significant portion of possible damage
+                        int rac_damage = 0;
+                        int other_damage = 0;
+                        int clearance_range = 0;
+                        for (Enumeration mounted_weapons = min.getCEntity().entity.getWeapons();
+                             mounted_weapons.hasMoreElements();) {
+                            WeaponType test_weapon = new WeaponType();
+                            Mounted equip = (Mounted) mounted_weapons.nextElement();
+
                             test_weapon = (WeaponType) equip.getType();
-                            if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY) && 
-                                    (equip.isJammed() == true)){
-                                rac_damage = rac_damage + 4 *(test_weapon.getDamage());
+                            if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY) &&
+                                    (equip.isJammed() == true)) {
+                                rac_damage = rac_damage + 4 * (test_weapon.getDamage());
                             } else {
-                                if (equip.canFire()){
+                                if (equip.canFire()) {
                                     other_damage += test_weapon.getDamage();
-                                    if (test_weapon.getMediumRange() > clearance_range){
+                                    if (test_weapon.getMediumRange() > clearance_range) {
                                         clearance_range = test_weapon.getMediumRange();
                                     }
                                 }
                             }
-                    }
-                    // Even if the jammed RAC doesn't make up a significant portion
-                    // of the units damage, its still better to have it functional
-                    // If nothing is "close" then unjam anyways
-                    int check_range = 100;
-                    for (Enumeration unit_selection = game.getEntities(); 
-                        unit_selection.hasMoreElements();){
-                        Entity enemy = (Entity) unit_selection.nextElement();
-                        if ((min.getCEntity().entity.getPosition() != null) && 
-                                (enemy.getPosition() != null) && 
-                                (enemy.isEnemyOf(min.getCEntity().entity))){
-                            if (enemy.isVisibleToEnemy()){
-                                if (min.getCEntity().entity.getPosition().distance
-                                        (enemy.getPosition()) < check_range){
-                                    check_range = min.getCEntity().entity.getPosition().
-                                    distance(enemy.getPosition());
+                        }
+                        // Even if the jammed RAC doesn't make up a significant portion
+                        // of the units damage, its still better to have it functional
+                        // If nothing is "close" then unjam anyways
+                        int check_range = 100;
+                        for (Enumeration unit_selection = game.getEntities();
+                             unit_selection.hasMoreElements();) {
+                            Entity enemy = (Entity) unit_selection.nextElement();
+                            if ((min.getCEntity().entity.getPosition() != null) &&
+                                    (enemy.getPosition() != null) &&
+                                    (enemy.isEnemyOf(min.getCEntity().entity))) {
+                                if (enemy.isVisibleToEnemy()) {
+                                    if (min.getCEntity().entity.getPosition().distance
+                                            (enemy.getPosition()) < check_range) {
+                                        check_range = min.getCEntity().entity.getPosition().
+                                                distance(enemy.getPosition());
+                                    }
                                 }
                             }
                         }
+                        if ((rac_damage >= other_damage) || (check_range < clearance_range)) {
+                            min.addStep(MovePath.STEP_UNJAM_RAC);
+                        }
                     }
-                	if ((rac_damage >= other_damage) || (check_range < clearance_range)){
-                	    min.addStep(MovePath.STEP_UNJAM_RAC);
-                	}
                 }
             }
-            }
         }
-        
+
         return min;
     }
 
-    /***************************************************************************
+    public MoveOption[] calculateMove(Entity entity) {
+        ArrayList enemy_array = new ArrayList(game.getValidTargets(entity));
+        ArrayList<Entity> entities = new ArrayList<Entity>(game.getEntitiesVector());
+        CEntity self = centities.get(entity);
+        MoveOption[] move_array;
+        int friends = entities.size() - enemy_array.size();
+
+        move_array = secondPass(self, friends, enemy_array, entities);
+        //top balanced
+        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(1, 1), 50);
+        //top damage
+        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(.5, 1), 50);
+
+        move_array = thirdPass(self, enemy_array);
+
+        //top balanced
+        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(1, 1), 30);
+        //top damage
+        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(.5, 1), 30);
+
+        //reduce self threat, and add bonus for terrain
+        for (Iterator i = self.pass.values().iterator(); i.hasNext();) {
+            MoveOption option = (MoveOption) i.next();
+            option.setState();
+            option.self_damage *= .5;
+            option.self_threat *= .5;
+            //TODO: should scale to the unit bv
+            double terrain = 2 * ((double) Compute.getTargetTerrainModifier(game, option.getEntity()).getValue());
+            option.tv.add(terrain + " Terrain Adjusment " + "\n");
+            option.self_threat -= terrain;
+        }
+
+        move_array = fourthPass(self, enemy_array);
+        //top balanced
+        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(1, 1), 20);
+        //top damage
+        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(.5, 1), 20);
+
+        //reduce transient damage estimates
+        for (Iterator i = self.pass.values().iterator(); i.hasNext();) {
+            MoveOption option = (MoveOption) i.next();
+            option.self_threat *= .5;
+            option.self_damage *= .5;
+        }
+
+        move_array = fifthPass(self, enemy_array);
+
+        /***********************************************************************
+         * Return top twenty moves to the lance algorithm
+         **********************************************************************/
+        MoveOption[] result = new MoveOption[Math.min(move_array.length, 20)];
+        int offset = 0;
+        for (int i = 0; i < Math.min(move_array.length, 20); i++) {
+            MoveOption next = (MoveOption) move_array[i];
+            if (next.isPhysical && self.range_damages[CEntity.RANGE_SHORT] > 5 && next.doomed) {
+                if (offset + 20 < move_array.length) {
+                    next = (MoveOption) move_array[offset + 20];
+                    offset++;
+                }
+            }
+            result[i] = next;
+        }
+        return result;
+    }
+
+    /**
+     * ************************************************************************
      * first pass, filter moves based upon present case
-     **************************************************************************/
+     * ************************************************************************
+     */
     public void firstPass(CEntity self) {
         ArrayList enemies = getEnemyEntities();
-        Object[] move_array;
+        MoveOption[] move_array;
         if (self.getEntity().isSelectableThisTurn() && !self.moved) {
-            move_array = self.getAllMoves().values().toArray();
+            move_array = self.getAllMoves().values().toArray(new MoveOption[0]);
         } else {
-            move_array = new Object[] { self.current };
+            move_array = new MoveOption[]{self.current};
         }
         System.out.println(String.format("%s has %d moves", self.getEntity().getShortName(), move_array.length));
         for (int i = 0; i < move_array.length; i++) {
@@ -273,23 +352,21 @@ public class TestBot extends BotClient {
                 if (en.getPosition() == null) {
                     continue;
                 }
-                
+
                 CEntity enemy = centities.get(en);
                 int[] modifiers = option.getModifiers(enemy.getEntity());
                 if (modifiers[MoveOption.DEFENCE_MOD] == ToHitData.IMPOSSIBLE
-                    && modifiers[MoveOption.ATTACK_MOD] == ToHitData.IMPOSSIBLE) {
+                        && modifiers[MoveOption.ATTACK_MOD] == ToHitData.IMPOSSIBLE) {
                     continue;
                 }
                 int enemy_hit_arc =
-                    CEntity.getThreatHitArc(
-                        enemy.current.getFinalCoords(),
-                        enemy.current.getFinalFacing(),
-                        option.getFinalCoords());
+                        CEntity.getThreatHitArc(enemy.current.getFinalCoords(),
+                                enemy.current.getFinalFacing(),
+                                option.getFinalCoords());
                 int self_hit_arc =
-                    CEntity.getThreatHitArc(
-                        option.getFinalCoords(),
-                        option.getFinalFacing(),
-                        enemy.current.getFinalCoords());
+                        CEntity.getThreatHitArc(option.getFinalCoords(),
+                                option.getFinalFacing(),
+                                enemy.current.getFinalCoords());
                 if (!enemy.getEntity().isImmobile() && modifiers[MoveOption.DEFENCE_MOD] != ToHitData.IMPOSSIBLE) {
                     self.engaged = true;
                     int mod = modifiers[MoveOption.DEFENCE_MOD];
@@ -297,15 +374,13 @@ public class TestBot extends BotClient {
                     if (en.isSelectableThisTurn()) {
                         enemy.current.addStep(MovePath.STEP_TURN_RIGHT);
                         max =
-                            Math.max(
-                                option.getMaxModifiedDamage(enemy.current, mod + 1, modifiers[MoveOption.DEFENCE_PC]),
-                                max);
+                                Math.max(option.getMaxModifiedDamage(enemy.current, mod + 1, modifiers[MoveOption.DEFENCE_PC]),
+                                        max);
                         enemy.current.removeLastStep();
                         enemy.current.addStep(MovePath.STEP_TURN_LEFT);
                         max =
-                            Math.max(
-                                option.getMaxModifiedDamage(enemy.current, mod + 1, modifiers[MoveOption.DEFENCE_PC]),
-                                max);
+                                Math.max(option.getMaxModifiedDamage(enemy.current, mod + 1, modifiers[MoveOption.DEFENCE_PC]),
+                                        max);
                         //return to original facing
                         enemy.current.removeLastStep();
                     }
@@ -326,7 +401,7 @@ public class TestBot extends BotClient {
                     if (modifiers[MoveOption.ATTACK_MOD] != ToHitData.IMPOSSIBLE) {
                         self.engaged = true;
                         double max =
-                            enemy.current.getMaxModifiedDamage(option, modifiers[0], modifiers[MoveOption.ATTACK_PC]);
+                                enemy.current.getMaxModifiedDamage(option, modifiers[0], modifiers[MoveOption.ATTACK_PC]);
                         max = enemy.getThreatUtility(max, enemy_hit_arc);
                         MoveOption.DamageInfo di = option.getDamageInfo(enemy, true);
                         di.damage = max;
@@ -345,40 +420,34 @@ public class TestBot extends BotClient {
                                 if (option.isJumping()) {
                                     self.current.setState();
                                     toHit =
-                                        DfaAttackAction.toHit(game, option.getEntity().getId(), target.getEntity(), option);
+                                            DfaAttackAction.toHit(game, option.getEntity().getId(), target.getEntity(), option);
                                     damage = 2 * DfaAttackAction.getDamageFor(option.getEntity());
                                     self_threat =
-                                        option.getCEntity().getThreatUtility(
-                                            DfaAttackAction.getDamageTakenBy(option.getEntity()),
-                                    ToHitData.SIDE_REAR)
+                                            option.getCEntity().getThreatUtility(DfaAttackAction.getDamageTakenBy(option.getEntity()),
+                                                    ToHitData.SIDE_REAR)
                                             * Compute.oddsAbove(toHit.getValue())
                                             / 100;
                                     self_threat
-                                        += option.getCEntity().getThreatUtility(
-                                            .1 * self.getEntity().getWeight(),
-                                    ToHitData.SIDE_REAR);
+                                            += option.getCEntity().getThreatUtility(.1 * self.getEntity().getWeight(),
+                                                    ToHitData.SIDE_REAR);
                                     self_threat *= 100 / option.getCEntity().getEntity().getWeight();
                                 } else {
                                     self.current.setState();
                                     toHit =
-                                        new ChargeAttackAction(option.getEntity(), target.getEntity()).toHit(
-                                            game,
-                                            option);
+                                            new ChargeAttackAction(option.getEntity(), target.getEntity()).toHit(game,
+                                                    option);
                                     damage =
-                                        ChargeAttackAction.getDamageFor(
-                                            option.getEntity(),
-                                            option.getHexesMoved());
+                                            ChargeAttackAction.getDamageFor(option.getEntity(),
+                                                    option.getHexesMoved());
                                     self_threat =
-                                        option.getCEntity().getThreatUtility(
-                                            ChargeAttackAction.getDamageTakenBy(
-                                                option.getEntity(),
-                                                target.getEntity()),
-                                    ToHitData.SIDE_FRONT)
+                                            option.getCEntity().getThreatUtility(ChargeAttackAction.getDamageTakenBy(option.getEntity(),
+                                                    target.getEntity()),
+                                                    ToHitData.SIDE_FRONT)
                                             * (Compute.oddsAbove(toHit.getValue()) / 100);
                                     option.setState();
                                 }
                                 damage =
-                                    target.getThreatUtility(damage, toHit.getSideTable())
+                                        target.getThreatUtility(damage, toHit.getSideTable())
                                         * Compute.oddsAbove(toHit.getValue())
                                         / 100;
                                 //charging is a good tactic against larger
@@ -418,26 +487,21 @@ public class TestBot extends BotClient {
         filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(.5, 1), 100);
     }
 
-    public MoveOption[] calculateMove(Entity entity) {
-        java.util.Vector enemy_array = game.getValidTargets(entity);
-        java.util.Vector entities = game.getEntitiesVector();
-        CEntity self = centities.get(entity);
-        Object[] move_array;
-        int friends = entities.size() - enemy_array.size();
-
-        /***********************************************************************
-         * Second pass, combination moves/firing based only on the present
-         * case, since only one mech moves at a time
-         **********************************************************************/
-        move_array = self.pass.values().toArray();
+    /**
+     * ********************************************************************
+     * Second pass, combination moves/firing based only on the present
+     * case, since only one mech moves at a time
+     * ********************************************************************
+     */
+    private MoveOption[] secondPass(CEntity self, int friends, ArrayList enemy_array, ArrayList<Entity> entities) {
+        MoveOption[] move_array = self.pass.values().toArray(new MoveOption[0]);
         self.pass.clear();
         for (int j = 0; j < move_array.length && friends > 2; j++) {
             MoveOption option = (MoveOption) move_array[j];
             for (int e = 0; e < enemy_array.size(); e++) {
-                Entity en = (Entity) enemy_array.elementAt(e);
+                Entity en = (Entity) enemy_array.get(e);
                 CEntity enemy = centities.get(en);
-                for (Enumeration f = entities.elements(); f.hasMoreElements();) {
-                    Entity other = (Entity) f.nextElement();
+                for (Entity other : entities) {
                     if (other.isEnemyOf(self.entity)) {
                         continue;
                     }
@@ -454,15 +518,17 @@ public class TestBot extends BotClient {
                 }
             }
         }
-        //top balanced
-        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(1, 1), 50);
-        //top damage
-        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(.5, 1), 50);
-        /***********************************************************************
-         * third pass, (not so bad) oppurtunistic planner gives preference to
-         * good ranges/defensive positions based upon the mech characterization
-         **********************************************************************/
-        move_array = self.pass.values().toArray();
+        return move_array;
+    }
+
+    /**
+     * ********************************************************************
+     * third pass, (not so bad) oppurtunistic planner gives preference to
+     * good ranges/defensive positions based upon the mech characterization
+     * ********************************************************************
+     */
+    private MoveOption[] thirdPass(CEntity self, ArrayList enemy_array) {
+        MoveOption[] move_array = self.pass.values().toArray(new MoveOption[0]);
         self.pass.clear();
 
         for (int j = 0; j < move_array.length; j++) {
@@ -471,43 +537,41 @@ public class TestBot extends BotClient {
             double adjustment = 0;
             double temp_adjustment = 0;
             for (int e = 0; e < enemy_array.size(); e++) { // for each enemy
-                Entity en = (Entity) enemy_array.elementAt(e);
+                Entity en = (Entity) enemy_array.get(e);
                 CEntity enemy = centities.get(en);
                 int current_range = self.current.getFinalCoords().distance(enemy.current.getFinalCoords());
                 int range = option.getFinalCoords().distance(enemy.current.getFinalCoords());
                 if (range > self.long_range) {
                     temp_adjustment += (!(range < enemy.long_range) ? .5 : 1)
-                        * (1 + self.range_damages[self.range])
-                        * (Math.max(range - self.long_range - .5 * Math.max(self.jumpMP, .8 * self.runMP), 0));
+                            * (1 + self.range_damages[self.range])
+                            * (Math.max(range - self.long_range - .5 * Math.max(self.jumpMP, .8 * self.runMP), 0));
                 }
                 if ((self.range == CEntity.RANGE_SHORT && (current_range > 5 || range > 9))
-                    || (self.range_damages[CEntity.RANGE_SHORT] < 4 && current_range > 10)) {
+                        || (self.range_damages[CEntity.RANGE_SHORT] < 4 && current_range > 10)) {
                     temp_adjustment += ((enemy.range > CEntity.RANGE_SHORT) ? .5 : 1)
-                        * (Math.max(1 + self.range_damages[CEntity.RANGE_SHORT], 5))
-                        * Math.max(range - .5 * Math.max(self.jumpMP, .8 * self.runMP), 0);
+                            * (Math.max(1 + self.range_damages[CEntity.RANGE_SHORT], 5))
+                            * Math.max(range - .5 * Math.max(self.jumpMP, .8 * self.runMP), 0);
                 } else if (self.range == CEntity.RANGE_MEDIUM) {
                     temp_adjustment += ((current_range < 6 || current_range > 12) ? 1 : .25)
-                        * ((enemy.range > CEntity.RANGE_SHORT) ? .5 : 1)
-                        * (1 + self.range_damages[CEntity.RANGE_MEDIUM])
-                        * Math.abs(range - .5 * Math.max(self.jumpMP, .8 * self.runMP));
+                            * ((enemy.range > CEntity.RANGE_SHORT) ? .5 : 1)
+                            * (1 + self.range_damages[CEntity.RANGE_MEDIUM])
+                            * Math.abs(range - .5 * Math.max(self.jumpMP, .8 * self.runMP));
                 } else if (option.damage < .25 * self.range_damages[CEntity.RANGE_LONG]) {
                     temp_adjustment += ((range < 10) ? .25 : 1)
-                        * (Math.max(1 + self.range_damages[CEntity.RANGE_LONG], 3))
-                        * (1 / (1 + option.threat));
+                            * (Math.max(1 + self.range_damages[CEntity.RANGE_LONG], 3))
+                            * (1 / (1 + option.threat));
                 }
                 adjustment += Math.sqrt(temp_adjustment * enemy.bv / self.bv);
                 //I would always like to face the opponent
                 if (!(enemy.getEntity().isProne() || enemy.getEntity().isImmobile())
-                    && CEntity.getThreatHitArc(
-                        option.getFinalCoords(),
-                        option.getFinalFacing(),
-                        enemy.getEntity().getPosition())
+                        && CEntity.getThreatHitArc(option.getFinalCoords(),
+                                option.getFinalFacing(),
+                                enemy.getEntity().getPosition())
                         != ToHitData.SIDE_FRONT) {
                     int fa =
-                        CEntity.getFiringAngle(
-                            option.getFinalCoords(),
-                            option.getFinalFacing(),
-                            enemy.getEntity().getPosition());
+                            CEntity.getFiringAngle(option.getFinalCoords(),
+                                    option.getFinalFacing(),
+                                    enemy.getEntity().getPosition());
                     if (fa > 90 && fa < 270) {
                         int distance = option.getFinalCoords().distance(enemy.current.getFinalCoords());
                         double mod = 1;
@@ -515,9 +579,9 @@ public class TestBot extends BotClient {
                             mod = 2;
                         //big formula that says don't do it
                         mod *= ((Math.max(self.jumpMP, .8 * self.runMP) < 5) ? 2 : 1)
-                            * ((double) self.bv / (double) 50)
-                            * Math.sqrt(((double) self.bv) / enemy.bv)
-                            / ((double) distance / 6 + 1);
+                                * ((double) self.bv / (double) 50)
+                                * Math.sqrt(((double) self.bv) / enemy.bv)
+                                / ((double) distance / 6 + 1);
                         option.self_threat += mod;
                         option.tv.add(mod + " " + fa + " Back to enemy\n");
                     }
@@ -528,29 +592,29 @@ public class TestBot extends BotClient {
             //To a greedy bot, it always seems nice to stay in here...
             IHex h = game.getBoard().getHex(option.getFinalCoords());
             if (h.containsTerrain(Terrains.WATER)
-                && h.surface() > (self.getEntity().getElevation() + ((option.getFinalProne()) ? 0 : 1))) {
+                    && h.surface() > (self.getEntity().getElevation() + ((option.getFinalProne()) ? 0 : 1))) {
                 double mod = (self.getEntity().heat + option.getMovementheatBuildup() <= 7) ? 100 : 30;
                 adjustment += self.bv / mod;
             }
             //add them in now, then re-add them later
             if (self.range > CEntity.RANGE_SHORT) {
                 int ele_dif =
-                    game.getBoard().getHex(option.getFinalCoords()).getElevation()
+                        game.getBoard().getHex(option.getFinalCoords()).getElevation()
                         - game.getBoard().getHex(self.current.getFinalCoords()).getElevation();
                 adjustment -= (Math.max(ele_dif, 0) + 1)
-                    * ((double) Compute.getTargetTerrainModifier(game, option.getEntity()).getValue() + 1);
+                        * ((double) Compute.getTargetTerrainModifier(game, option.getEntity()).getValue() + 1);
             }
 
             //close the range if nothing else and healthy
             if (option.damage < .25 * self.range_damages[self.range] && adjustment < self.range_damages[self.range]) {
                 for (int e = 0; e < enemy_array.size(); e++) {
-                    Entity en = (Entity) enemy_array.elementAt(e);
+                    Entity en = (Entity) enemy_array.get(e);
                     CEntity enemy = centities.get(en);
                     int range = option.getFinalCoords().distance(enemy.current.getFinalCoords());
                     if (range > 5)
                         adjustment += Math.pow(self.overall_armor_percent, 2)
-                            * Math.sqrt((double) (range - 4) * enemy.bv / self.bv)
-                            / enemy_array.size();
+                                * Math.sqrt((double) (range - 4) * enemy.bv / self.bv)
+                                / enemy_array.size();
                 }
             }
 
@@ -561,37 +625,26 @@ public class TestBot extends BotClient {
             }
             option.tv.add(option.self_threat + " Initial Damage Adjustment " + "\n");
         }
-        //top balanced
-        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(1, 1), 30);
-        //top damage
-        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(.5, 1), 30);
 
-        //reduce self threat, and add bonus for terrain
-        for (Iterator i = self.pass.values().iterator(); i.hasNext();) {
-            MoveOption option = (MoveOption) i.next();
-            option.setState();
-            option.self_damage *= .5;
-            option.self_threat *= .5;
-            //TODO: should scale to the unit bv
-            double terrain = 2 * ((double) Compute.getTargetTerrainModifier(game, option.getEntity()).getValue());
-            option.tv.add(terrain + " Terrain Adjusment " + "\n");
-            option.self_threat -= terrain;
-        }
+        return move_array;
+    }
 
-        move_array = self.pass.values().toArray();
+    //pass should contains 30 ~ 60
+    /**
+     * ********************************************************************
+     * fourth pass, speculation on top moves use averaging to filter
+     * ********************************************************************
+     */
+    private MoveOption[] fourthPass(CEntity self, ArrayList enemy_array) {
+        MoveOption[] move_array = self.pass.values().toArray(new MoveOption[0]);
         self.pass.clear();
-
-        //pass should contains 30 ~ 60
-        /***********************************************************************
-         * fourth pass, speculation on top moves use averaging to filter
-         **********************************************************************/
         for (int e = 0; e < enemy_array.size(); e++) { // for each enemy
-            Entity en = (Entity) enemy_array.elementAt(e);
+            Entity en = (Entity) enemy_array.get(e);
             CEntity enemy = centities.get(en);
             //engage in speculation on "best choices" when you loose iniative
             if (enemy.canMove()) {
                 Object[] enemy_move_array = enemy.pass.values().toArray();
-                Vector to_check = new Vector();
+                ArrayList to_check = new ArrayList();
                 //check some enemy moves
                 for (int j = 0; j < move_array.length; j++) {
                     MoveOption option = null;
@@ -600,7 +653,7 @@ public class TestBot extends BotClient {
                     option.setState();
                     //check for damning hexes specifically
                     //could also look at intervening defensive
-                    Vector coord = new Vector();
+                    ArrayList coord = new ArrayList();
                     Coords back = option.getFinalCoords().translated((option.getFinalFacing() + 3) % 6);
                     coord.add(back);
                     coord.add(back.translated((option.getFinalFacing() + 2) % 6));
@@ -645,15 +698,13 @@ public class TestBot extends BotClient {
                         double max_damage = 0;
                         enemy_option.setState();
                         int enemy_hit_arc =
-                            CEntity.getThreatHitArc(
-                                enemy_option.getFinalCoords(),
-                                enemy_option.getFinalFacing(),
-                                option.getFinalCoords());
+                                CEntity.getThreatHitArc(enemy_option.getFinalCoords(),
+                                        enemy_option.getFinalFacing(),
+                                        option.getFinalCoords());
                         int self_hit_arc =
-                            CEntity.getThreatHitArc(
-                                enemy_option.getFinalCoords(),
-                                enemy_option.getFinalFacing(),
-                                option.getFinalCoords());
+                                CEntity.getThreatHitArc(enemy_option.getFinalCoords(),
+                                        enemy_option.getFinalFacing(),
+                                        option.getFinalCoords());
                         if (enemy_option.isJumping()) {
                             enemy_hit_arc = Compute.ARC_FORWARD;
                         }
@@ -662,31 +713,28 @@ public class TestBot extends BotClient {
                             self.engaged = true;
                             if (!enemy_option.isJumping()) {
                                 max_threat =
-                                    option.getMaxModifiedDamage(
-                                        enemy_option,
-                                        modifiers[1],
-                                        modifiers[MoveOption.DEFENCE_PC]);
+                                        option.getMaxModifiedDamage(enemy_option,
+                                                modifiers[1],
+                                                modifiers[MoveOption.DEFENCE_PC]);
                             } else {
                                 max_threat =
-                                    .8
-                                        * enemy.getModifiedDamage(
-                                            (modifiers[MoveOption.DEFENCE_PC] == 1) ? CEntity.TT : ToHitData.SIDE_FRONT,
-                                            enemy_option.getFinalCoords().distance(option.getFinalCoords()),
-                                            modifiers[1]);
+                                        .8
+                                        * enemy.getModifiedDamage((modifiers[MoveOption.DEFENCE_PC] == 1) ? CEntity.TT : ToHitData.SIDE_FRONT,
+                                                enemy_option.getFinalCoords().distance(option.getFinalCoords()),
+                                                modifiers[1]);
                             }
                             max_threat = self.getThreatUtility(max_threat, self_hit_arc);
                         }
                         if (modifiers[0] != ToHitData.IMPOSSIBLE) {
                             self.engaged = true;
                             max_damage =
-                                enemy_option.getMaxModifiedDamage(
-                                    option,
-                                    modifiers[0],
-                                    modifiers[MoveOption.ATTACK_PC]);
+                                    enemy_option.getMaxModifiedDamage(option,
+                                            modifiers[0],
+                                            modifiers[MoveOption.ATTACK_PC]);
                             max_damage = enemy.getThreatUtility(max_damage, enemy_hit_arc);
                             if (option.isPhysical) {
                                 if (centities.get(option.getPhysicalTargetId()).getEntity().getId()
-                                    == enemy.getEntity().getId()) {
+                                        == enemy.getEntity().getId()) {
                                     max_damage = option.getDamage(enemy);
                                 } else {
                                     max_damage = 0;
@@ -725,27 +773,20 @@ public class TestBot extends BotClient {
             }
             self.current.setState();
         } //--end move speculation
+        return move_array;
+    }
 
-        //top balanced
-        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(1, 1), 20);
-        //top damage
-        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(.5, 1), 20);
-
-        //reduce transient damage estimates
-        for (Iterator i = self.pass.values().iterator(); i.hasNext();) {
-            MoveOption option = (MoveOption) i.next();
-            option.self_threat *= .5;
-            option.self_damage *= .5;
-        }
-
-        move_array = self.pass.values().toArray();
+    //pass should now be 20 ~ 40
+    /**
+     * ********************************************************************
+     * fifth pass, final damage and threat approximation --prevents moves
+     * that from the previous pass would cause the mech to die
+     * ********************************************************************
+     */
+    private MoveOption[] fifthPass(CEntity self, ArrayList enemy_array) {
+        MoveOption[] move_array = self.pass.values().toArray(new MoveOption[0]);
         self.pass.clear();
 
-        //pass should now be 20 ~ 40
-        /***********************************************************************
-         * fourth pass, final damage and threat approximation --prevents moves
-         * that from the previous pass would cause the mech to die
-         **********************************************************************/
         if (self.engaged) {
             for (int j = 0; j < move_array.length; j++) {
                 MoveOption option = (MoveOption) move_array[j];
@@ -758,12 +799,11 @@ public class TestBot extends BotClient {
                 }
                 for (int e = 0; e < enemy_array.size(); e++) { // for each
                     // enemy
-                    Entity en = (Entity) enemy_array.elementAt(e);
+                    Entity en = (Entity) enemy_array.get(e);
                     CEntity enemy = centities.get(en);
                     if (!enemy.canMove()) {
-                        option.setThreat(
-                            enemy,
-                            (option.getThreat(enemy) + this.attackUtility(enemy.current, self)) / 2);
+                        option.setThreat(enemy,
+                                (option.getThreat(enemy) + this.attackUtility(enemy.current, self)) / 2);
                         option.tv.add(option.getThreat(enemy) + " Revised Threat " + e + " \n");
                         if (!option.isPhysical) {
                             if (temp != null) {
@@ -776,12 +816,12 @@ public class TestBot extends BotClient {
                             //this needs to be reworked
                             if (option.getFinalCoords().distance(enemy.current.getFinalCoords()) == 1) {
                                 PhysicalOption p =
-                                    pcalc.getBestPhysicalAttack(option.getEntity(), enemy.getEntity(), game);
+                                        PhysicalCalculator.getBestPhysicalAttack(option.getEntity(), enemy.getEntity(), game);
                                 if (p != null) {
                                     option.setDamage(enemy, option.getDamage(enemy) + p.expectedDmg);
                                     option.tv.add(p.expectedDmg + " Physical Damage " + e + " \n");
                                 }
-                                p = pcalc.getBestPhysicalAttack(enemy.getEntity(), option.getEntity(), game);
+                                p = PhysicalCalculator.getBestPhysicalAttack(enemy.getEntity(), option.getEntity(), game);
                                 if (p != null) {
                                     option.setThreat(enemy, option.getThreat(enemy) + .5 * p.expectedDmg);
                                     option.tv.add(.5 * p.expectedDmg + " Physical Threat " + e + " \n");
@@ -796,9 +836,8 @@ public class TestBot extends BotClient {
                         }
                     } else {
                         //get a more accurate estimate
-                        option.setDamage(
-                            enemy,
-                            option.getDamage(enemy) / Math.sqrt((double) enemy.bv / (double) self.bv));
+                        option.setDamage(enemy,
+                                option.getDamage(enemy) / Math.sqrt((double) enemy.bv / (double) self.bv));
                         option.damage = option.getDamage(enemy);
                     }
                 }
@@ -813,29 +852,13 @@ public class TestBot extends BotClient {
         Arrays.sort(move_array, new MoveOption.WeightedComparator(1, 1));
         self.current.setState();
 
-        /***********************************************************************
-         * Return top twenty moves to the lance algorithm
-         **********************************************************************/
-        MoveOption[] result = new MoveOption[Math.min(move_array.length, 20)];
-        int offset = 0;
-        for (int i = 0; i < Math.min(move_array.length, 20); i++) {
-            MoveOption next = (MoveOption) move_array[i];
-            if (next.isPhysical && self.range_damages[CEntity.RANGE_SHORT] > 5 && next.doomed) {
-                if (offset + 20 < move_array.length) {
-                    next = (MoveOption) move_array[offset + 20];
-                    offset++;
-                }
-            }
-            result[i] = next;
-        }
-        return result;
+        return move_array;
     }
 
-    private void filterMoves(
-        Object[] move_array,
-        MoveOption.Table pass,
-        MoveOption.WeightedComparator comp,
-        int filter) {
+    private void filterMoves(Object[] move_array,
+                             MoveOption.Table pass,
+                             MoveOption.WeightedComparator comp,
+                             int filter) {
         Arrays.sort(move_array, comp);
 
         //top 100 utility, mostly conservative
@@ -845,9 +868,9 @@ public class TestBot extends BotClient {
     }
 
     protected void initFiring() {
-        java.util.Vector entities = game.getEntitiesVector();
+        ArrayList entities = new ArrayList(game.getEntitiesVector());
         for (int i = 0; i < entities.size(); i++) {
-            Entity entity = (Entity) entities.elementAt(i);
+            Entity entity = (Entity) entities.get(i);
             CEntity centity = centities.get(entity);
             centity.reset();
             centity.enemy_num = i;
@@ -863,11 +886,11 @@ public class TestBot extends BotClient {
         }
     }
 
-    protected Vector calculateWeaponAttacks(Entity en, Mounted mw, boolean best_only) {
+    protected ArrayList calculateWeaponAttacks(Entity en, Mounted mw, boolean best_only) {
         int from = en.getId();
         int weaponID = en.getEquipmentNum(mw);
         int spin_mode = 0;
-        Vector result = new Vector();
+        ArrayList result = new ArrayList();
         Enumeration ents = game.getValidTargets(en).elements();
         WeaponAttackAction wep_test;
         WeaponType spinner;
@@ -876,7 +899,11 @@ public class TestBot extends BotClient {
         while (ents.hasMoreElements()) {
             Entity e = (Entity) ents.nextElement();
             CEntity enemy = centities.get(e);
+//            long entry = System.currentTimeMillis();
             ToHitData th = WeaponAttackAction.toHit(game, from, e, weaponID);
+//            long exit = System.currentTimeMillis();
+//            if (exit != entry)
+//                System.out.println("Weapon attack toHit took "+(exit-entry));
             if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
                 double expectedDmg;
 
@@ -886,7 +913,7 @@ public class TestBot extends BotClient {
                 spinner = (WeaponType) mw.getType();
                 if ((spinner.getAmmoType() == AmmoType.T_AC_ULTRA)
                         || (spinner.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
-                        || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)){
+                        || (spinner.getAmmoType() == AmmoType.T_AC_ROTARY)) {
                     spin_mode = Compute.spinUpCannon(game, wep_test);
                     super.sendModeChange(from, weaponID, spin_mode);
                 }
@@ -924,11 +951,11 @@ public class TestBot extends BotClient {
     public GAAttack bestAttack(MoveOption es, CEntity target, int search_level) {
         Entity en = es.getEntity();
         int attacks[] = new int[4];
-        Vector c = new Vector();
-        Vector front = new Vector();
-        Vector left = new Vector();
-        Vector right = new Vector();
-        Vector rear = new Vector();
+        ArrayList c = new ArrayList();
+        ArrayList front = new ArrayList();
+        ArrayList left = new ArrayList();
+        ArrayList right = new ArrayList();
+        ArrayList rear = new ArrayList();
         GAAttack result = null;
         int o_facing = en.getFacing();
         double front_la_dmg = 0;
@@ -937,11 +964,10 @@ public class TestBot extends BotClient {
         double left_ra_dmg = 0;
         double right_la_dmg = 0;
         double right_ra_dmg = 0;
-        PhysicalCalculator pc = new PhysicalCalculator();
         PhysicalOption best_front_po = new PhysicalOption(en);
         PhysicalOption best_left_po = new PhysicalOption(en);
         PhysicalOption best_right_po = new PhysicalOption(en);
-        
+
 
         // Get best physical attack
         for (Enumeration i = en.getWeapons(); i.hasMoreElements();) {
@@ -950,46 +976,47 @@ public class TestBot extends BotClient {
             // If this weapon is in the same arm as a
             // brush off attack skip to next weapon.
             c = this.calculateWeaponAttacks(en, mw, true);       
+
             // Get best physical attack
-            best_front_po = pc.getBestPhysical(en, game);
-            
+            best_front_po = PhysicalCalculator.getBestPhysical(en, game);
+
             if ((best_front_po != null) && (en instanceof Mech)) {
-                
+
                 // If this weapon is in the same arm as a brush off attack
                 // skip to next weapon
- 
-               if (((best_front_po.type == PhysicalOption.BRUSH_LEFT) || 
-                       (best_front_po.type == PhysicalOption.BRUSH_BOTH)) &&
-                       (mw.getLocation() == Mech.LOC_LARM)){
+
+                if (((best_front_po.type == PhysicalOption.BRUSH_LEFT) ||
+                        (best_front_po.type == PhysicalOption.BRUSH_BOTH)) &&
+                        (mw.getLocation() == Mech.LOC_LARM)) {
                     continue;
                 }
-               if (((best_front_po.type == PhysicalOption.BRUSH_RIGHT) || 
-                       (best_front_po.type == PhysicalOption.BRUSH_BOTH)) &&
-                       (mw.getLocation() == Mech.LOC_RARM)){
+                if (((best_front_po.type == PhysicalOption.BRUSH_RIGHT) ||
+                        (best_front_po.type == PhysicalOption.BRUSH_BOTH)) &&
+                        (mw.getLocation() == Mech.LOC_RARM)) {
                     continue;
                 }
-               
-               // Total the damage of all weapons fired from each arm
-               if (((best_front_po.type == PhysicalOption.PUNCH_LEFT) || 
-                       (best_front_po.type == PhysicalOption.PUNCH_BOTH)) &&
-                       (mw.getLocation() == Mech.LOC_LARM)){
-                   if (c.size() > 0){
-                       front_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
-                   }
-               }
-               if (((best_front_po.type == PhysicalOption.PUNCH_RIGHT) || 
-                       (best_front_po.type == PhysicalOption.PUNCH_BOTH)) &&
-                       (mw.getLocation() == Mech.LOC_RARM)){
-                   if (c.size() > 0){
-                       front_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
-                   }
-               }
+
+                // Total the damage of all weapons fired from each arm
+                if (((best_front_po.type == PhysicalOption.PUNCH_LEFT) ||
+                        (best_front_po.type == PhysicalOption.PUNCH_BOTH)) &&
+                        (mw.getLocation() == Mech.LOC_LARM)) {
+                    if (c.size() > 0) {
+                        front_la_dmg += ((AttackOption) c.get(c.size() - 2)).value;
+                    }
+                }
+                if (((best_front_po.type == PhysicalOption.PUNCH_RIGHT) ||
+                        (best_front_po.type == PhysicalOption.PUNCH_BOTH)) &&
+                        (mw.getLocation() == Mech.LOC_RARM)) {
+                    if (c.size() > 0) {
+                        front_ra_dmg += ((AttackOption) c.get(c.size() - 2)).value;
+                    }
+                }
                 // If this weapon is a push attack and an arm mounted
                 // weapon skip to next weapon
-                
-               if ((best_front_po.type == PhysicalOption.PUSH_ATTACK) && 
-                       ((mw.getLocation() == Mech.LOC_LARM) || 
-                               (mw.getLocation() == Mech.LOC_RARM))){
+
+                if ((best_front_po.type == PhysicalOption.PUSH_ATTACK) &&
+                        ((mw.getLocation() == Mech.LOC_LARM) ||
+                        (mw.getLocation() == Mech.LOC_RARM))) {
                     continue;
                 }
             }
@@ -1006,17 +1033,17 @@ public class TestBot extends BotClient {
                 c = this.calculateWeaponAttacks(en, mw, true);
                 if (c.size() > 0) {
                     // Get best physical attack
-                    best_left_po = pc.getBestPhysical(en, game);
+                    best_left_po = PhysicalCalculator.getBestPhysical(en, game);
                     if ((best_left_po != null) && (en instanceof Mech)) {
-                        if (((best_left_po.type == PhysicalOption.PUNCH_LEFT) || 
+                        if (((best_left_po.type == PhysicalOption.PUNCH_LEFT) ||
                                 (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
-                                (mw.getLocation() == Mech.LOC_LARM)){
-                            left_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                                (mw.getLocation() == Mech.LOC_LARM)) {
+                            left_la_dmg += ((AttackOption) c.get(c.size() - 2)).value;
                         }
-                        if (((best_left_po.type == PhysicalOption.PUNCH_RIGHT) || 
+                        if (((best_left_po.type == PhysicalOption.PUNCH_RIGHT) ||
                                 (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
-                                (mw.getLocation() == Mech.LOC_RARM)){
-                            left_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                                (mw.getLocation() == Mech.LOC_RARM)) {
+                            left_ra_dmg += ((AttackOption) c.get(c.size() - 2)).value;
                         }
                     }
                     left.add(c);
@@ -1026,17 +1053,17 @@ public class TestBot extends BotClient {
                 c = this.calculateWeaponAttacks(en, mw, true);
                 if (c.size() > 0) {
                     // Get best physical attack
-                    best_right_po = pc.getBestPhysical(en, game);
+                    best_right_po = PhysicalCalculator.getBestPhysical(en, game);
                     if ((best_right_po != null) && (en instanceof Mech)) {
-                        if (((best_right_po.type == PhysicalOption.PUNCH_LEFT) || 
+                        if (((best_right_po.type == PhysicalOption.PUNCH_LEFT) ||
                                 (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
-                                (mw.getLocation() == Mech.LOC_LARM)){
-                            right_la_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                                (mw.getLocation() == Mech.LOC_LARM)) {
+                            right_la_dmg += ((AttackOption) c.get(c.size() - 2)).value;
                         }
-                        if (((best_right_po.type == PhysicalOption.PUNCH_RIGHT) || 
+                        if (((best_right_po.type == PhysicalOption.PUNCH_RIGHT) ||
                                 (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
-                                (mw.getLocation() == Mech.LOC_RARM)){
-                            right_ra_dmg += ((AttackOption)c.elementAt(c.size()-2)).value;
+                                (mw.getLocation() == Mech.LOC_RARM)) {
+                            right_ra_dmg += ((AttackOption) c.get(c.size() - 2)).value;
                         }
                     }
                     right.add(c);
@@ -1054,8 +1081,10 @@ public class TestBot extends BotClient {
             }
             en.setSecondaryFacing(o_facing);
         }
+
         fireOrPhysicalCheck(best_front_po, en, front, front_la_dmg, front_ra_dmg);
-        Vector arcs = new Vector();
+
+        ArrayList arcs = new ArrayList();
         arcs.add(front);
         if (!es.getFinalProne() && en.canChangeSecondaryFacing()) {
             fireOrPhysicalCheck(best_left_po, en, left, left_la_dmg, left_ra_dmg);
@@ -1063,22 +1092,21 @@ public class TestBot extends BotClient {
             fireOrPhysicalCheck(best_right_po, en, right, right_la_dmg, right_ra_dmg);
             arcs.add(right);
             // Meks and protos can't twist all the way around.
-            if (!(en instanceof Mech) 
-                && !(en instanceof Protomech) ) {
+            if (!(en instanceof Mech)
+                    && !(en instanceof Protomech)) {
                 arcs.add(rear);
             }
         }
         for (int i = 0; i < arcs.size(); i++) {
-            Vector v = (Vector) arcs.elementAt(i);
+            ArrayList v = (ArrayList) arcs.get(i);
             if (v.size() > 0) {
                 GAAttack test =
-                    new GAAttack(
-                        this,
-                        centities.get(en),
-                        v,
-                        Math.max((v.size() + attacks[i]) * search_level, 20 * search_level),
-                        30 * search_level,
-                        en.isEnemyOf((Entity) getEntitiesOwned().get(0)));
+                        new GAAttack(this,
+                                centities.get(en),
+                                v,
+                                Math.max((v.size() + attacks[i]) * search_level, 20 * search_level),
+                                30 * search_level,
+                                en.isEnemyOf((Entity) getEntitiesOwned().get(0)));
                 test.setFiringArc(i);
                 test.evolve();
                 if (target != null) {
@@ -1086,15 +1114,15 @@ public class TestBot extends BotClient {
                         result = test;
                     }
                 } else if (
-                    result == null || test.getFittestChromosomesFitness() > result.getFittestChromosomesFitness()) {
+                        result == null || test.getFittestChromosomesFitness() > result.getFittestChromosomesFitness()) {
                     result = test;
                 }
             }
         }
         return result;
     }
+
     /**
-     *
      * If the best attack is a punch, then check each
      * punch damage against the weapons damage from the
      * appropriate arm; if the punch does more damage,
@@ -1107,52 +1135,52 @@ public class TestBot extends BotClient {
      * @param la_dmg
      * @param ra_dmg
      */
-    private void fireOrPhysicalCheck(PhysicalOption best_po, Entity entity, Vector attackOptions, double la_dmg, double ra_dmg) {
-        Vector c;
-        if ((best_po != null) && (entity instanceof Mech)){
+    private void fireOrPhysicalCheck(PhysicalOption best_po, Entity entity, ArrayList attackOptions, double la_dmg, double ra_dmg) {
+        ArrayList c;
+        if ((best_po != null) && (entity instanceof Mech)) {
             if (best_po.type == PhysicalOption.PUNCH_LEFT) {
-                if ((la_dmg < best_po.expectedDmg) && (attackOptions.size() > 0)){
-                    for (int i = 0; i < attackOptions.size(); i++){
-                        c = (Vector) attackOptions.elementAt(i);
-                        for (int j = 0; j < c.size(); j++){
-                           if (((AttackOption)c.elementAt(j)).weapon.getLocation() ==
-                               Mech.LOC_LARM){
-                               ((AttackOption)c.elementAt(j)).expected = 0;
-                               ((AttackOption)c.elementAt(j)).primary_expected = 0;
-                           }
+                if ((la_dmg < best_po.expectedDmg) && (attackOptions.size() > 0)) {
+                    for (int i = 0; i < attackOptions.size(); i++) {
+                        c = (ArrayList) attackOptions.get(i);
+                        for (int j = 0; j < c.size(); j++) {
+                            if (((AttackOption) c.get(j)).weapon.getLocation() ==
+                                    Mech.LOC_LARM) {
+                                ((AttackOption) c.get(j)).expected = 0;
+                                ((AttackOption) c.get(j)).primary_expected = 0;
+                            }
                         }
                     }
                 }
             }
             if (best_po.type == PhysicalOption.PUNCH_RIGHT) {
-                if ((ra_dmg < best_po.expectedDmg) && (attackOptions.size() > 0)){
-                    for (int i = 0; i < attackOptions.size(); i++){
-                        c = (Vector) attackOptions.elementAt(i);
-                        for (int j = 0; j < c.size(); j++){
-                           if (((AttackOption)c.elementAt(j)).weapon.getLocation() ==
-                               Mech.LOC_RARM){
-                               ((AttackOption)c.elementAt(j)).expected = 0;
-                               ((AttackOption)c.elementAt(j)).primary_expected = 0;
-                           }
+                if ((ra_dmg < best_po.expectedDmg) && (attackOptions.size() > 0)) {
+                    for (int i = 0; i < attackOptions.size(); i++) {
+                        c = (ArrayList) attackOptions.get(i);
+                        for (int j = 0; j < c.size(); j++) {
+                            if (((AttackOption) c.get(j)).weapon.getLocation() ==
+                                    Mech.LOC_RARM) {
+                                ((AttackOption) c.get(j)).expected = 0;
+                                ((AttackOption) c.get(j)).primary_expected = 0;
+                            }
                         }
                     }
                 }
             }
             if (best_po.type == PhysicalOption.PUNCH_BOTH) {
-                if (((la_dmg + ra_dmg) < best_po.expectedDmg) && (attackOptions.size() > 0)){
-                    for (int i = 0; i < attackOptions.size(); i++){
-                        c = (Vector) attackOptions.elementAt(i);
-                        for (int j = 0; j < c.size(); j++){
-                           if (((AttackOption)c.elementAt(j)).weapon.getLocation() ==
-                               Mech.LOC_LARM){
-                               ((AttackOption)c.elementAt(j)).expected = 0;
-                               ((AttackOption)c.elementAt(j)).primary_expected = 0;
-                           }
-                           if (((AttackOption)c.elementAt(j)).weapon.getLocation() ==
-                               Mech.LOC_RARM){
-                               ((AttackOption)c.elementAt(j)).expected = 0;
-                               ((AttackOption)c.elementAt(j)).primary_expected = 0;
-                           }
+                if (((la_dmg + ra_dmg) < best_po.expectedDmg) && (attackOptions.size() > 0)) {
+                    for (int i = 0; i < attackOptions.size(); i++) {
+                        c = (ArrayList) attackOptions.get(i);
+                        for (int j = 0; j < c.size(); j++) {
+                            if (((AttackOption) c.get(j)).weapon.getLocation() ==
+                                    Mech.LOC_LARM) {
+                                ((AttackOption) c.get(j)).expected = 0;
+                                ((AttackOption) c.get(j)).primary_expected = 0;
+                            }
+                            if (((AttackOption) c.get(j)).weapon.getLocation() ==
+                                    Mech.LOC_RARM) {
+                                ((AttackOption) c.get(j)).expected = 0;
+                                ((AttackOption) c.get(j)).primary_expected = 0;
+                            }
                         }
                     }
                 }
@@ -1176,7 +1204,7 @@ public class TestBot extends BotClient {
         int spin_mode = 0;
         double max = java.lang.Double.MIN_VALUE;
         int[] results = null;
-        Vector winner = null;
+        ArrayList winner = null;
         int arc = 0;
         WeaponType spinner;
 
@@ -1204,10 +1232,10 @@ public class TestBot extends BotClient {
         //maximum already selected (or default)
         Entity en = game.getEntity(best_entity);
         if (results != null) {
-            Entity primary_target = (Entity) game.getEntitiesVector().elementAt(results[results.length - 1]);
+            Entity primary_target = (Entity) game.getEntitiesVector().get(results[results.length - 1]);
             TreeMap tm = new TreeMap(new AttackOption.Sorter(centities.get(primary_target)));
             for (int i = 0; i < results.length - 1; i++) {
-                AttackOption a = (AttackOption) ((Vector) winner.elementAt(i)).elementAt(results[i]);
+                AttackOption a = (AttackOption) ((ArrayList) winner.get(i)).get(results[i]);
                 if (a.target != null) {
                     a.target.expected_damage[a.toHit.getSideTable()] += a.value;
                     a.target.hasTakenDamage = true;
@@ -1218,7 +1246,7 @@ public class TestBot extends BotClient {
             while (i.hasNext()) {
                 AttackOption a = (AttackOption) i.next();
                 WeaponAttackAction new_attack = new WeaponAttackAction(en.getId(), a.target.getEntity().getId(), en.getEquipmentNum(a.weapon));
-                if (en.getEquipment(new_attack.getWeaponId()).getLinked() != null){
+                if (en.getEquipment(new_attack.getWeaponId()).getLinked() != null) {
                     spinner = (WeaponType) a.weapon.getType();
 
 // If this is an ultra-cannon or rotary cannon, try to spin it up
@@ -1234,19 +1262,19 @@ public class TestBot extends BotClient {
                     Compute.getAmmoAdjDamage(game, new_attack);
 
                 }
-                av.addElement(new_attack);
-                
+                av.add(new_attack);
+
             }
         }
         switch (arc) {
-            case 1 :
-                av.insertElementAt(new TorsoTwistAction(en.getId(), (en.getFacing() + 5) % 6), 0);
+            case 1:
+                av.add(0, new TorsoTwistAction(en.getId(), (en.getFacing() + 5) % 6));
                 break;
-            case 2 :
-                av.insertElementAt(new TorsoTwistAction(en.getId(), (en.getFacing() + 1) % 6), 0);
+            case 2:
+                av.add(0, new TorsoTwistAction(en.getId(), (en.getFacing() + 1) % 6));
                 break;
-            case 3 :
-                av.insertElementAt(new TorsoTwistAction(en.getId(), (en.getFacing() + 3) % 6), 0);
+            case 3:
+                av.add(0, new TorsoTwistAction(en.getId(), (en.getFacing() + 3) % 6));
                 break;
         }
         sendAttackData(best_entity, av);
@@ -1260,16 +1288,16 @@ public class TestBot extends BotClient {
         this.old_moves = null;
         this.enemies_moved = 0;
         double max_modifier = 1.4;
-        java.util.Vector entities = game.getEntitiesVector();
+        ArrayList entities = new ArrayList(game.getEntitiesVector());
         double num_entities = Math.sqrt(entities.size()) / 100;
-        Vector friends = new Vector();
-        Vector foes = new Vector();
+        ArrayList friends = new ArrayList();
+        ArrayList foes = new ArrayList();
         double friend_sum = 0;
         double foe_sum = 0;
         double max_foe_bv = 0;
         CEntity max_foe = null;
         for (int i = 0; i < entities.size(); i++) {
-            Entity entity = (Entity) entities.elementAt(i);
+            Entity entity = (Entity) entities.get(i);
             CEntity centity = centities.get(entity);
             centity.enemy_num = i;
             double old_value = centity.bv * (centity.overall_armor_percent + 1);
@@ -1335,18 +1363,18 @@ public class TestBot extends BotClient {
         Iterator i = foes.iterator();
 
         if (friends.size() > 1) {
-            if ( Strategy.MainTarget == null
-                 || null == game.getEntity
-                 (Strategy.MainTarget.getEntity().getId()) ) {
+            if (Strategy.MainTarget == null
+                    || null == game.getEntity
+                    (Strategy.MainTarget.getEntity().getId())) {
                 Strategy.MainTarget = max_foe;
             }
             // TODO : Handle this better.
             if (null == Strategy.MainTarget)
                 System.err.println
-                    ( "TestBot#initMovement() - no main target for bot" );
+                        ("TestBot#initMovement() - no main target for bot");
             else if (null == Strategy.MainTarget.strategy)
                 System.err.println
-                    ( "TestBot#initMovement() - no strategy for main target" );
+                        ("TestBot#initMovement() - no strategy for main target");
             else {
                 Strategy.MainTarget.strategy.target += .2;
                 while (i.hasNext()) {
@@ -1354,9 +1382,9 @@ public class TestBot extends BotClient {
                     // good turn, keep up the work, but randomize to reduce
                     // predictability
                     if (friend_sum - foe_sum
-                        >= .9
-                        * (((Double) this.unit_values.getLast()).doubleValue()
-                           - ((Double) this.enemy_values.getLast()).doubleValue())) {
+                            >= .9
+                            * (((Double) this.unit_values.getLast()).doubleValue()
+                            - ((Double) this.enemy_values.getLast()).doubleValue())) {
                         if (Compute.randomInt(2) == 1) {
                             centity.strategy.target += .3;
                         }
@@ -1405,22 +1433,22 @@ public class TestBot extends BotClient {
         Coords pointing_to = new Coords();
         Entity test_ent;
         Enumeration weapons, ammo_slots, valid_attackers, equips;
-        
+
         int entNum = game.getFirstDeployableEntityNum();
         Coords[] cStart = getStartingCoordsArray();
         Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
 
-    // Now that we have a location to deploy to, get a direction
-    // Using average long range of deploying unit, point towards the largest cluster of enemies in range
+        // Now that we have a location to deploy to, get a direction
+        // Using average long range of deploying unit, point towards the largest cluster of enemies in range
 
         av_range = 0.0;
         weapon_count = 0;
         weapons = getEntity(entNum).getWeapons();
         while (weapons.hasMoreElements()) {
-            Mounted mounted = (Mounted)weapons.nextElement();
-            WeaponType wtype = (WeaponType)mounted.getType();
-            if ((wtype.getName() != "ATM 3") && (wtype.getName() != "ATM 6") && (wtype.getName() != "ATM 9") && (wtype.getName() != "ATM 12")){
-                if (getEntity(entNum).getC3Master() != null){
+            Mounted mounted = (Mounted) weapons.nextElement();
+            WeaponType wtype = (WeaponType) mounted.getType();
+            if ((wtype.getName() != "ATM 3") && (wtype.getName() != "ATM 6") && (wtype.getName() != "ATM 9") && (wtype.getName() != "ATM 12")) {
+                if (getEntity(entNum).getC3Master() != null) {
                     av_range += ((wtype.getLongRange()) * 1.25);
                 } else {
                     av_range += wtype.getLongRange();
@@ -1430,33 +1458,33 @@ public class TestBot extends BotClient {
         }
         ammo_slots = getEntity(entNum).getAmmo();
         while (ammo_slots.hasMoreElements()) {
-            Mounted mounted = (Mounted)ammo_slots.nextElement();
-            AmmoType atype = (AmmoType)mounted.getType();
-            if (atype.getAmmoType() == AmmoType.T_ATM){
+            Mounted mounted = (Mounted) ammo_slots.nextElement();
+            AmmoType atype = (AmmoType) mounted.getType();
+            if (atype.getAmmoType() == AmmoType.T_ATM) {
                 weapon_count = ++weapon_count;
                 av_range += 15.0;
                 if ((atype.getAmmoType() == AmmoType.T_ATM)
-                        && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE){
+                        && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
                     av_range -= 6;
                 }
                 if ((atype.getAmmoType() == AmmoType.T_ATM)
-                        && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE){
+                        && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
                     av_range += 12.0;
                 }
             }
         }
 
-        av_range = av_range/weapon_count;   
+        av_range = av_range / weapon_count;
 
         hex_count = 0;
         x_ave = 0;
         y_ave = 0;
         valid_attackers = game.getEntities();
-        while (valid_attackers.hasMoreElements()){
-            test_ent = (Entity)valid_attackers.nextElement();
-            if (test_ent.isDeployed()){
-                if (test_ent.isVisibleToEnemy()){
-                    if (cDeploy.distance(test_ent.getPosition()) <= (int) av_range){
+        while (valid_attackers.hasMoreElements()) {
+            test_ent = (Entity) valid_attackers.nextElement();
+            if (test_ent.isDeployed()) {
+                if (test_ent.isVisibleToEnemy()) {
+                    if (cDeploy.distance(test_ent.getPosition()) <= (int) av_range) {
                         hex_count++;
                         x_ave += test_ent.getPosition().x;
                         y_ave += test_ent.getPosition().y;
@@ -1464,8 +1492,8 @@ public class TestBot extends BotClient {
                 }
             }
         }
-        if (hex_count != 0){
-            pointing_to = new Coords((x_ave/hex_count),(y_ave/hex_count));
+        if (hex_count != 0) {
+            pointing_to = new Coords((x_ave / hex_count), (y_ave / hex_count));
         } else {
             pointing_to = new Coords(game.getBoard().getWidth() / 2, game.getBoard().getHeight() / 2);
         }
@@ -1473,11 +1501,11 @@ public class TestBot extends BotClient {
 
         // If unit has stealth armor, turn it on
         if (getEntity(entNum) instanceof Mech &&
-            getEntity(entNum).getArmorType() ==EquipmentType.T_ARMOR_STEALTH){
-            for ( equips = getEntity(entNum).getMisc(); equips.hasMoreElements(); ) {
+                getEntity(entNum).getArmorType() == EquipmentType.T_ARMOR_STEALTH) {
+            for (equips = getEntity(entNum).getMisc(); equips.hasMoreElements();) {
                 Mounted test_equip = (Mounted) equips.nextElement();
                 MiscType test_type = (MiscType) test_equip.getType();
-                if ( Mech.STEALTH.equals(test_type.getInternalName()) ) {
+                if (Mech.STEALTH.equals(test_type.getInternalName())) {
                     if (test_equip.curMode().getName() != "On") {
                         test_equip.setMode("On");
                         super.sendModeChange(entNum, getEntity(entNum).getEquipmentNum(test_equip), 1);
@@ -1492,35 +1520,33 @@ public class TestBot extends BotClient {
     }
 
 
-
-
     protected MovePath continueMovementFor(Entity entity) {
         return new MovePath(game, entity);
     }
 
-    protected java.util.Vector calculateMinefieldDeployment() {
-        java.util.Vector deployedMinefields = new java.util.Vector();
-  
-        deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFConventional(), 0);
-        deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFCommand(), 1);
-        deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFVibra(), 2);
+    protected Vector calculateMinefieldDeployment() {
+        Vector deployedMinefields = new Vector();
+
+        deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFConventional(), 0);
+        deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFCommand(), 1);
+        deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFVibra(), 2);
 
         return deployedMinefields;
     }
-    
-    protected java.util.Vector calculateArtyAutoHitHexes() {
-        java.util.Vector  artyAutoHitHexes = new java.util.Vector();
-        artyAutoHitHexes.insertElementAt(new Integer(this.getLocalPlayer().getId()), 0);
+
+    protected Vector calculateArtyAutoHitHexes() {
+        Vector artyAutoHitHexes = new Vector();
+        artyAutoHitHexes.add(new Integer(this.getLocalPlayer().getId()));
         return artyAutoHitHexes;
     }
 
-    protected java.util.Vector deployMinefields(java.util.Vector deployedMinefields, int number, int type) {
+    protected void deployMinefields(Vector deployedMinefields, int number, int type) {
         for (int i = 0; i < number; i++) {
             Coords coords = new Coords(Compute.randomInt(game.getBoard().getWidth()),
                     Compute.randomInt(game.getBoard().getHeight()));
 
             if (game.containsMinefield(coords)) {
-                Minefield mf = (Minefield) game.getMinefields(coords).elementAt(0);
+                Minefield mf = (Minefield) game.getMinefields(coords).get(0);
                 if (mf.getPlayerId() == getLocalPlayer().getId()) {
                     i--;
                     continue;
@@ -1535,9 +1561,8 @@ public class TestBot extends BotClient {
                 } else if (type == 2) {
                     mf = Minefield.createVibrabombMF(coords, getLocalPlayer().getId(), 20);
                 }
-                deployedMinefields.addElement(mf);
+                deployedMinefields.add(mf);
             }
         }
-        return deployedMinefields;
     }
 }

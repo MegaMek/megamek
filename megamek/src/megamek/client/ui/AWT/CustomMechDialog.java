@@ -1151,7 +1151,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
 
-            // Update the entity's targetting system type.
+            // Update the entity's targeting system type.
             if (!(entity.hasTargComp()) && (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_targsys"))) {
                 int targSysIndex = MiscType.T_TARGSYS_STANDARD;
                 if (choTargSys.getSelectedItem() != null)
@@ -1159,7 +1159,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 if (targSysIndex >= 0)
                     entity.setTargSysType(targSysIndex);
                 else {
-                    System.err.println("Illegal targetting system index: "+targSysIndex);
+                    System.err.println("Illegal targeting system index: "+targSysIndex);
                     entity.setTargSysType(MiscType.T_TARGSYS_STANDARD);
                 }
             }

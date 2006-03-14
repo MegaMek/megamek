@@ -509,7 +509,7 @@ public class TdbFile implements IMechLoader {
             // add any heat sinks not allocated
             mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
             
-            // set targetting system
+            // set targeting system
             if(targSysStr.startsWith("Long-Range")) {
                 mech.setTargSysType(MiscType.T_TARGSYS_LONGRANGE);
             } else if(targSysStr.startsWith("Short-Range")) {

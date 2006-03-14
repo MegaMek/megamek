@@ -681,7 +681,7 @@ public class Compute {
         int usingRange = Math.min(range, c3range);
 
         String targSysType = "";
-        // Get the targetting system type string ready, if necessary
+        // Get the targeting system type string ready, if necessary
         if ((ae.getTargSysType() == MiscType.T_TARGSYS_LONGRANGE)
                 && (ae.getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE)) {
             targSysType = " (w/"
@@ -696,7 +696,7 @@ public class Compute {
                 mods.addModifier(ae.getShortRangeModifier(), "short range"
                         + targSysType);
             } else if (range == RangeType.RANGE_MEDIUM) {
-                // Right now, the range-mod affecting targetting systems DON'T
+                // Right now, the range-mod affecting targeting systems DON'T
                 // affect medium range, so we won't add that here ever.
                 mods.addModifier(ae.getMediumRangeModifier(), "medium range");
             } else if (range == RangeType.RANGE_LONG) {

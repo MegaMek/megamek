@@ -7,6 +7,7 @@ v0.31.7-dev (CVS)
 + Bug 1448489: Torso Cockpits Do Not Load Right from XML Files 0.31.6
 + Patch 1447682: More AI Refactor/Optimization
 + allow trailing spaces in MTF critical slots.
++ Bug: Targeting misspelled as Targetting.
 
 v0.31.6 (2006-03-12, 16:48 GMT)
 + Bug 1427812: Thundergod mislabeled as Cerberus

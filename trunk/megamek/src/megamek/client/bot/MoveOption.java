@@ -71,9 +71,9 @@ public class MoveOption extends MovePath implements Cloneable {
         }
     }
 
-    public static class Table extends HashMap {
+    public static class Table extends HashMap<MovePath.Key, MoveOption> {
 
-        public void put(MovePath es) {
+        public void put(MoveOption es) {
             this.put(es.getKey(), es);
         }
 

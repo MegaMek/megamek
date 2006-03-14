@@ -200,7 +200,7 @@ public abstract class BotClient extends Client {
             } else if (game.getPhase() == IGame.PHASE_DEPLOY_MINEFIELDS) {
                 Vector mines = calculateMinefieldDeployment();
                 for (int i = 0; i < mines.size(); i++) {
-                    game.addMinefield((Minefield)mines.elementAt(i));
+                    game.addMinefield((Minefield)mines.get(i));
                 }
                 sendDeployMinefields(mines);
                 sendPlayerInfo();
@@ -318,8 +318,8 @@ public abstract class BotClient extends Client {
 
         Entity test_ent, deployed_ent;
 
-        Vector weapons = new Vector();
-        Vector valid_attackers = new Vector();
+        Vector weapons;
+        Vector valid_attackers;
         Enumeration ammo_slots;
 
         deployed_ent = getEntity(game.getFirstDeployableEntityNum());
@@ -713,7 +713,7 @@ public abstract class BotClient extends Client {
             Vector vCounters = waa.getCounterEquipment();
             if (vCounters != null) {
                 for (int x = 0; x < vCounters.size(); x++) {
-                    Mounted counter = (Mounted)vCounters.elementAt(x);
+                    Mounted counter = (Mounted)vCounters.get(x);
                     if (counter.getType() instanceof WeaponType &&
                             counter.getType().hasFlag(WeaponType.F_AMS)) {
                         float fAMS = 3.5f * ((WeaponType)counter.getType()).getDamage();
@@ -738,8 +738,6 @@ public abstract class BotClient extends Client {
      * If the unit has stealth armor, turning it off is probably a good
      *   idea if most of the enemy force is at 'short' range or if in danger
      *   of overheating
-     * @return the <code>int</code> ID of stealth armor mode, -1 if unit
-     *      is not equipped with stealth armor or armor is disabled
      */
 
     private void toggleStealth() {

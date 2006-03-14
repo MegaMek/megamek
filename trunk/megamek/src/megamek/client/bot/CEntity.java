@@ -34,12 +34,12 @@ import megamek.common.WeaponType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.HashMap;
 
 public class CEntity {
 
-    static class Table extends Hashtable {
+    static class Table extends HashMap {
 
         private TestBot tb;
 
@@ -512,13 +512,13 @@ public class CEntity {
                         || (next.getDistUtility() < discovered.get(next).getDistUtility())) {
                         discovered.put(next);
                         if (next.isJumping()) {
-                            MovePath left = (MoveOption) next.clone();
-                            MovePath right = (MoveOption) next.clone();
+                            MoveOption left = (MoveOption) next.clone();
+                            MoveOption right = (MoveOption) next.clone();
                             for (int turn = 0; turn < 2; turn++) {
                                 left.addStep(MovePath.STEP_TURN_LEFT);
                                 right.addStep(MovePath.STEP_TURN_RIGHT);
-                                discovered.put(((MovePath) left.clone()));
-                                discovered.put(((MovePath) right.clone()));
+                                discovered.put(((MoveOption) left.clone()));
+                                discovered.put(((MoveOption) right.clone()));
                             }
                             right.addStep(MovePath.STEP_TURN_RIGHT);
                             discovered.put(right);

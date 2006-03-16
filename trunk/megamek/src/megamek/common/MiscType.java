@@ -2298,10 +2298,10 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Buzzsaw");
         misc.tonnage = 4;
         misc.criticals = 2;
-        misc.cost = 100000;//TODO: Was not listed in Unbound need to research
+        misc.cost = 100000;//From the Ask the Writer Forum
         misc.flags |= F_CLUB;
         misc.subType |= S_BUZZSAW;
-        misc.bv = 7;//TODO: Was not Listed in Unbound need to research
+        misc.bv =67;//From the Ask the Writer Forum
         
         return misc;
     }
@@ -2315,10 +2315,10 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Buzzsaw");
         misc.tonnage = 4;
         misc.criticals = 2;
-        misc.cost = 100000;//TODO: Was not listed in Unbound need to research
+        misc.cost = 100000;//From the Ask the Writer Forum
         misc.flags |= F_CLUB;
         misc.subType |= S_BUZZSAW;
-        misc.bv = 7;//TODO: Was no Listed in Unbound need to research
+        misc.bv = 6;//From the Ask the Writer Forum
         
         return misc;
     }

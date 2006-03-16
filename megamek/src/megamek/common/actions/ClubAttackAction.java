@@ -73,6 +73,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (mType.hasSubType(MiscType.S_WRECKING_BALL)) {
             // Wrecking Balls have constant damage, not variable like most.
             nDamage = 8;
+        } else if (mType.hasSubType(MiscType.S_BUZZSAW)) {
+            // Wrecking Balls have constant damage, not variable like most.
+            nDamage = 0;
         } else if ( mType.isVibroblade() ){
             if ( club.curMode().equals("Active") ){
                 if ( mType.hasSubType(MiscType.S_VIBRO_LARGE) )
@@ -92,7 +95,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 || mType.hasSubType(MiscType.S_PILE_DRIVER)
                 || mType.isShield()
                 || mType.hasSubType(MiscType.S_WRECKING_BALL)
-                || (mType.isVibroblade() && club.curMode().equals("Active")))
+                || (mType.isVibroblade() && club.curMode().equals("Active"))
+                || mType.hasSubType(MiscType.S_BUZZSAW))
                 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
         }
@@ -161,7 +165,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
         if (hasClaws
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_FLAIL))
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_WRECKING_BALL))
-                || (((MiscType)club.getType()).hasSubType(MiscType.S_LANCE))) {
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_LANCE))
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_BUZZSAW))) {
             needsHand = false;
         }
         

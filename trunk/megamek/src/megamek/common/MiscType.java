@@ -87,6 +87,7 @@ public class MiscType extends EquipmentType {
     public static final int     S_COMBINE           = 0x00080000; // Miniatures Rulebook; TODO
     public static final int     S_CHAINSAW          = 0x00100000; // Miniatures Rulebook
     public static final int     S_ROCK_CUTTER       = 0x00200000; // Miniatures Rulebook; TODO
+    public static final int     S_BUZZSAW           = 0x00400000; // Unbound;
 
     public static final String  S_ACTIVE_SHIELD     = "Active";
     public static final String  S_PASSIVE_SHIELD    = "Passive";
@@ -477,6 +478,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLMediumVibroblade());
         EquipmentType.addType(createCLSmallVibroblade());
         EquipmentType.addType(createCLLargeVibroblade());
+        EquipmentType.addType(createISBuzzsaw());
+        EquipmentType.addType(createCLBuzzsaw());
         
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -2286,6 +2289,40 @@ public class MiscType extends EquipmentType {
         return misc;
     }
     
+    public static MiscType createISBuzzsaw() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Buzzsaw";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("IS Buzzsaw");
+        misc.tonnage = 4;
+        misc.criticals = 2;
+        misc.cost = 100000;//TODO: Was not listed in Unbound need to research
+        misc.flags |= F_CLUB;
+        misc.subType |= S_BUZZSAW;
+        misc.bv = 7;//TODO: Was not Listed in Unbound need to research
+        
+        return misc;
+    }
+
+    public static MiscType createCLBuzzsaw() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        misc.name = "Buzzsaw";
+        misc.setInternalName("CLBuzzsaw");
+        misc.addLookupName("Clan Buzzsaw");
+        misc.tonnage = 4;
+        misc.criticals = 2;
+        misc.cost = 100000;//TODO: Was not listed in Unbound need to research
+        misc.flags |= F_CLUB;
+        misc.subType |= S_BUZZSAW;
+        misc.bv = 7;//TODO: Was no Listed in Unbound need to research
+        
+        return misc;
+    }
+
     public static MiscType createStandard() {
         //This is not really a single piece of equipment, it is used to
         // identify "standard" internal structure, armor, whatever.

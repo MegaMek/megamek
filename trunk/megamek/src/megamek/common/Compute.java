@@ -1795,6 +1795,9 @@ public class Compute {
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
                 fDamage *= 2.0f;
             }
+            
+            // Cap damage to prevent run-away values
+            fDamage = Math.min(inf_attacker.getShootingStrength(),fDamage);
         }
         return fDamage;
     }

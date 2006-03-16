@@ -8,6 +8,8 @@ v0.31.7-dev (CVS)
 + Patch 1447682: More AI Refactor/Optimization
 + allow trailing spaces in MTF critical slots.
 + Bug: Targeting misspelled as Targetting.
++ Patch 1450943: Minor Bot patch: PBIs
++ Patch 1450899: Buzzsaw from Unbound
 
 v0.31.6 (2006-03-12, 16:48 GMT)
 + Bug 1427812: Thundergod mislabeled as Cerberus

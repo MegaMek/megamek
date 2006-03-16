@@ -9643,6 +9643,36 @@ public class Server implements Runnable {
             return;
         }
 
+        // Need to compute 2d6 damage. and add +3 heat build up.
+        if ( ((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_BUZZSAW)) {
+            
+            damage = Compute.d6(2);
+            ae.heatBuildup +=3;
+
+            // Buzzsaw's blade will shatter on a roll of 2.
+            if ( roll == 2 ) {
+                
+                Enumeration eqList = ae.getEquipment();
+                Mounted club = caa.getClub();
+
+                while ( eqList.hasMoreElements() ){
+                    Mounted eq = (Mounted)eqList.nextElement();
+                    if ( eq.getLocation() == club.getLocation()
+                            && eq.getType() instanceof MiscType
+                            && ((MiscType)eq.getType()).hasFlag(MiscType.F_CLUB)
+                            && ((MiscType)eq.getType()).hasSubType(MiscType.S_BUZZSAW)){
+                        eq.setDestroyed(true);
+                        break;
+                    }
+                }
+                r = new Report(4037);
+                r.subject = ae.getId();
+                addReport(r);
+                damage = 0;
+                return;
+            }
+        }
+
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             r = new Report(4075);
             r.subject = ae.getId();

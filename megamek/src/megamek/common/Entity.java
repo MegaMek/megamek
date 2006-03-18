@@ -2350,9 +2350,12 @@ public abstract class Entity extends TurnOrdered
     }
     
     /**
-     * Does the mech have any shields
+     * Does the mech have any shields. a mech can have up to 2 shields.
+     * @return <code>true</code> if <code>shieldCount</code> is greater then 0 else <code>false</code>
      */
     public boolean hasShield() {
+        int shieldCount = 0;
+        
         //only mechs can have shields.
         if ( !(this instanceof Mech) )
             return false;
@@ -2360,12 +2363,13 @@ public abstract class Entity extends TurnOrdered
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             EquipmentType type = m.getType();
-            if (type instanceof MiscType &&((MiscType)type).isShield()) {
-                return type.getCurrentDamageCapacity(this,m.getLocation()) > 0;
+            if (type instanceof MiscType &&((MiscType)type).isShield()
+                    && this.getInternal(m.getLocation()) > 0) {
+                shieldCount++;
             }
         }
 
-        return false;
+        return shieldCount > 0;
     }
 
     /**
@@ -2389,9 +2393,9 @@ public abstract class Entity extends TurnOrdered
             if (type instanceof MiscType && type.hasFlag(MiscType.F_CLUB)
                     && (type.hasSubType(size)) ) {
                 //ok so we have a shield of certain size. no which arm is it.
-                if ( m.getLocation() == Mech.LOC_RARM && type.getCurrentDamageCapacity(this,m.getLocation()) > 0 )
+                if ( m.getLocation() == Mech.LOC_RARM )
                     raShield = 1;
-                if ( m.getLocation() == Mech.LOC_LARM && type.getCurrentDamageCapacity(this,m.getLocation()) > 0 )
+                if ( m.getLocation() == Mech.LOC_LARM )
                     laShield = 1;
                 //break now.
                 if ( raShield > 0 && laShield > 0)
@@ -2570,6 +2574,9 @@ public abstract class Entity extends TurnOrdered
     public int getActiveUMUCount(){
         int count = 0;
         
+        if ( this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
+            return 0;
+
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             EquipmentType type = m.getType();
@@ -2592,6 +2599,9 @@ public abstract class Entity extends TurnOrdered
         if ( !(this instanceof Mech) )
             return 0;
         
+        if ( this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
+            return 0;
+
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             EquipmentType type = m.getType();

@@ -9794,7 +9794,8 @@ public class Server implements Runnable {
         //On a roll of 10+ a lance hitting a mech/Vehicle can cause 1 point of internal damage
         if ( te != null 
                 && ((MiscType)(caa.getClub().getType())).hasSubType(MiscType.S_LANCE)
-                && te.getArmor(hit) > 0) {
+                && te.getArmor(hit) > 0
+                && te.getArmorType() != MiscType.T_ARMOR_HARDENED) {
                 roll = Compute.d6(2);
                 //Pierce checking report
                 r = new Report(4021);

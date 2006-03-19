@@ -12,6 +12,7 @@ v0.31.7-dev (CVS)
 + Patch 1450899: Buzzsaw from Unbound
 + Patch 1452628: UMUs and Large shields.
 + Patch 1452629: Harded Armor and Lance Fix.
++ Bug 1450981: mek making PSR when standing still
 
 v0.31.6 (2006-03-12, 16:48 GMT)
 + Bug 1427812: Thundergod mislabeled as Cerberus

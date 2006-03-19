@@ -3662,17 +3662,14 @@ public abstract class Entity extends TurnOrdered
     public PilotingRollData checkRunningWithDamage(int overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll();
 
+        int gyroDamage = getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                Mech.SYSTEM_GYRO,
+                Mech.LOC_CT);
+        if(getGyroType() == Mech.GYRO_HEAVY_DUTY)
+            gyroDamage --; //HD gyro ignores 1st damage
         if (overallMoveType == IEntityMovementType.MOVE_RUN
             && !isProne()
-            && (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                             Mech.SYSTEM_GYRO,
-                                             Mech.LOC_CT) > 0
-                  && getGyroType() != Mech.GYRO_HEAVY_DUTY)
-                || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.SYSTEM_GYRO,
-                        Mech.LOC_CT) > 1 
-                    && getGyroType() == Mech.GYRO_HEAVY_DUTY)
-                || hasHipCrit()) {
+            && (gyroDamage > 0 || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "running with damaged hip actuator or gyro"));
         } else {

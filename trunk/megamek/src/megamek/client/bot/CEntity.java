@@ -14,8 +14,6 @@
  */
 package megamek.client.bot;
 
-import java.util.Enumeration;
-
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -265,12 +263,10 @@ public class CEntity {
             heat_mod = .35;
         int capacity = entity.getHeatCapacity();
         int heat_total = 0;
-        Enumeration weapons = entity.getWeapons();
         int num_weapons = 0;
         this.minRangeMods = new int[7];
-        while (weapons.hasMoreElements()) {
+        for(Mounted m : entity.getWeaponList()) {
             num_weapons++;
-            Mounted m = (Mounted) weapons.nextElement();
             int arc = entity.getWeaponArc(entity.getEquipmentNum(m));
             WeaponType weapon = (WeaponType) m.getType();
             final boolean usesAmmo = weapon.getAmmoType() != AmmoType.T_NA;

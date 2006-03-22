@@ -318,9 +318,7 @@ public abstract class BotClient extends Client {
 
         Entity test_ent, deployed_ent;
 
-        Vector weapons;
         Vector valid_attackers;
-        Enumeration ammo_slots;
 
         deployed_ent = getEntity(game.getFirstDeployableEntityNum());
 
@@ -422,9 +420,7 @@ public abstract class BotClient extends Client {
 
         av_range = 0.0;
         weapon_count = 0;
-        weapons = deployed_ent.getWeaponList();
-        for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for(Mounted mounted : deployed_ent.getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if ((wtype.getName() != "ATM 3") && (wtype.getName() != "ATM 6") && (wtype.getName() != "ATM 9") && (wtype.getName() != "ATM 12")){
                 if (deployed_ent.getC3Master() != null){
@@ -435,9 +431,7 @@ public abstract class BotClient extends Client {
                 weapon_count = ++weapon_count;
             }
         }
-        ammo_slots = deployed_ent.getAmmo();
-        while (ammo_slots.hasMoreElements()) {
-            Mounted mounted = (Mounted)ammo_slots.nextElement();
+        for(Mounted mounted : deployed_ent.getAmmo()) {
             AmmoType atype = (AmmoType)mounted.getType();
             if (atype.getAmmoType() == AmmoType.T_ATM){
                 weapon_count = ++weapon_count;
@@ -477,11 +471,7 @@ public abstract class BotClient extends Client {
             for (Enumeration i = valid_attackers.elements(); i.hasMoreElements();){
                 test_ent = (Entity)i.nextElement();
                 if (test_ent.isDeployed() == true && !test_ent.isOffBoard()){
-                    weapons = test_ent.getWeaponList();
-                    for (Enumeration j = weapons.elements(); j.hasMoreElements();) {
-
-                        Mounted mounted = (Mounted)j.nextElement();
-
+                    for(Mounted mounted : test_ent.getWeaponList()) {
                         test_attack = new WeaponAttackAction(test_ent.getId(), deployed_ent.getId(), test_ent.getEquipmentNum(mounted));
                         adjusted_damage = getDeployDamage(game, test_attack);
                         total_damage += adjusted_damage;
@@ -497,9 +487,7 @@ public abstract class BotClient extends Client {
             //      -> Conventional infantry ALWAYS come out on the short end of the stick in damage given/taken... solutions?   
 
             total_damage = 0.0;
-            weapons = deployed_ent.getWeaponList();
-            for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
-                Mounted mounted = (Mounted)i.nextElement();
+            for(Mounted mounted : deployed_ent.getWeaponList()) {
                 max_damage = 0.0;
                 for (Enumeration j = valid_attackers.elements(); j.hasMoreElements();){
                     test_ent = (Entity)j.nextElement();
@@ -710,7 +698,7 @@ public abstract class BotClient extends Client {
                 fHits = expectedHitsByRackSize[wt.getRackSize()];
             }
             // adjust for previous AMS
-            Vector vCounters = waa.getCounterEquipment();
+            ArrayList vCounters = waa.getCounterEquipment();
             if (vCounters != null) {
                 for (int x = 0; x < vCounters.size(); x++) {
                     Mounted counter = (Mounted)vCounters.get(x);
@@ -744,15 +732,14 @@ public abstract class BotClient extends Client {
 
         int total_bv, known_bv, known_range, known_count, trigger_range;
         int new_stealth = 1;
-        Enumeration equips, all_units;
+        Enumeration all_units;
         Entity test_ent;
 
         for (Enumeration i=game.getEntities(); i.hasMoreElements();){
             Entity check_ent = (Entity) i.nextElement();
             if ((check_ent.getOwnerId() == this.local_pn) && (check_ent instanceof Mech)){
                 if (((Mech)check_ent).hasStealth()){
-                    for ( equips = check_ent.getMisc(); equips.hasMoreElements(); ) {
-                        Mounted mEquip = (Mounted) equips.nextElement();
+                    for ( Mounted mEquip: check_ent.getMisc()) {
                         MiscType mtype = (MiscType) mEquip.getType();
                         if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {  
 

@@ -15,7 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Coords stores x and y values.  Since these are hexes,
@@ -92,7 +92,7 @@ public class Coords
      * 
      * @return the new coordinate, if the direction is valid;
      *  otherwise, a new copy of this coordinate.
-     * @param direction the direction.
+     * @param dir the direction.
      */
     public final Coords translated(int dir) {
         return new Coords(xInDir(x, y, dir), yInDir(x, y, dir));
@@ -336,11 +336,11 @@ public class Coords
      * Based off of some of the formulas at Amit's game programming site.
      * (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
      */
-    public static Coords[] intervening(Coords src, Coords dest) {
+    public static ArrayList<Coords> intervening(Coords src, Coords dest) {
         return intervening(src,dest,false);
     }
 
-    public static Coords[] intervening(Coords src, Coords dest, boolean split) {
+    public static ArrayList<Coords> intervening(Coords src, Coords dest, boolean split) {
         IdealHex iSrc = IdealHex.get(src);
         IdealHex iDest = IdealHex.get(dest);
     
@@ -354,18 +354,16 @@ public class Coords
         directions[1] = (centerDirection + 5) % 6;
         directions[0] = (centerDirection + 1) % 6;
     
-        Vector hexes = new Vector();
+        ArrayList<Coords> hexes = new ArrayList<Coords>();
         Coords current = src;
     
-        hexes.addElement(current);
+        hexes.add(current);
         while(!dest.equals(current)) {
             current = Coords.nextHex(current, iSrc, iDest, directions);
-            hexes.addElement(current);
+            hexes.add(current);
         }
     
-        Coords[] hexArray = new Coords[hexes.size()];
-        hexes.copyInto(hexArray);
-        return hexArray;
+        return hexes;
     }
 
     /**

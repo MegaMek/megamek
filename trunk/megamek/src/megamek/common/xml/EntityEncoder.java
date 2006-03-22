@@ -14,12 +14,32 @@
 
 package megamek.common.xml;
 
-import java.io.Writer;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Vector;
 import gd.xml.tiny.ParsedXML;
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
+import megamek.common.BipedMech;
+import megamek.common.Coords;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.GunEmplacement;
+import megamek.common.IArmorState;
+import megamek.common.IGame;
+import megamek.common.Infantry;
+import megamek.common.InfernoTracker;
+import megamek.common.Mech;
+import megamek.common.Mounted;
+import megamek.common.Pilot;
+import megamek.common.Player;
+import megamek.common.Protomech;
+import megamek.common.QuadMech;
+import megamek.common.Tank;
+import megamek.common.TechConstants;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Objects of this class can encode a <code>Entity</code> object as XML
@@ -37,9 +57,9 @@ public class EntityEncoder {
      *          This value must not be <code>null</code>.
      * @param   out - the <code>Writer</code> that will receive the XML.
      *          This value must not be <code>null</code>.
-     * @throws  <code>IllegalArgumentException</code> if the entity is
+     * @throws  IllegalArgumentException if the entity is
      *          <code>null</code>.
-     * @throws  <code>IOException</code> if there's any error on write.
+     * @throws  IOException if there's any error on write.
      */
     public static void encode( Entity entity, Writer out )
         throws IOException
@@ -278,13 +298,13 @@ public class EntityEncoder {
         out.write( "</entityData>" );
 
         // Encode this unit's equipment.
-        iter = entity.getEquipment();
-        if ( iter.hasMoreElements() ) {
+        Iterator iter2 = entity.getEquipment().iterator();
+        if ( iter2.hasNext() ) {
             out.write( "<entityEquipment>" );
             int index = 0;
-            while ( iter.hasMoreElements() ) {
+            while ( iter2.hasNext() ) {
                 substr = EntityEncoder.formatEquipment
-                    ( index, (Mounted) iter.nextElement(), entity );
+                    ( index, (Mounted) iter2.next(), entity );
                 if ( null != substr ) out.write( substr );
                 index++;
             }
@@ -528,11 +548,9 @@ public class EntityEncoder {
             // system slots, so we have to handle their ammo specially.
             if ( entity instanceof Tank ||
                  entity instanceof Protomech ) {
-                Enumeration ammo = entity.getAmmo();
-                while ( ammo.hasMoreElements() ) {
+                for (Mounted mount : entity.getAmmo()) {
 
                     // Is this ammo in the current location?
-                    Mounted mount = (Mounted) ammo.nextElement();
                     if ( mount.getLocation() == loc ) {
                         output.append( "<slot index=\"N/A\" type=\"" );
                         output.append( mount.getType().getInternalName() );
@@ -562,9 +580,9 @@ public class EntityEncoder {
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
      * @param   entity - the <code>Entity</code> the decoded object belongs to.
-     * @throws  <code>IllegalArgumentException</code> if the node is
+     * @throws  IllegalArgumentException if the node is
      *          <code>null</code>.
-     * @throws  <code>IllegalStateException</code> if the node does not
+     * @throws  IllegalStateException if the node does not
      *          contain a valid <code>Entity</code>.
      */
     private static void decodePilot( ParsedXML node, Entity entity ) {
@@ -578,9 +596,9 @@ public class EntityEncoder {
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
      * @param   entity - the <code>Entity</code> the decoded object belongs to.
-     * @throws  <code>IllegalArgumentException</code> if the node is
+     * @throws  IllegalArgumentException if the node is
      *          <code>null</code>.
-     * @throws  <code>IllegalStateException</code> if the node does not
+     * @throws  IllegalStateException if the node does not
      *          contain a valid <code>Entity</code>.
      */
     private static void decodeEntityEquipment( ParsedXML node, Entity entity ) {
@@ -594,9 +612,9 @@ public class EntityEncoder {
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
      * @param   entity - the <code>Entity</code> the decoded object belongs to.
-     * @throws  <code>IllegalArgumentException</code> if the node is
+     * @throws  IllegalArgumentException if the node is
      *          <code>null</code>.
-     * @throws  <code>IllegalStateException</code> if the node does not
+     * @throws  IllegalStateException if the node does not
      *          contain a valid <code>Entity</code>.
      */
     private static void decodeLocation( ParsedXML node, Entity entity ) {
@@ -610,9 +628,9 @@ public class EntityEncoder {
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
      * @param   entity - the <code>Entity</code> the decoded object belongs to.
-     * @throws  <code>IllegalArgumentException</code> if the node is
+     * @throws  IllegalArgumentException if the node is
      *          <code>null</code>.
-     * @throws  <code>IllegalStateException</code> if the node does not
+     * @throws  IllegalStateException if the node does not
      *          contain a valid <code>Entity</code>.
      */
     private static void decodeInferno( ParsedXML node, Entity entity ) {
@@ -697,9 +715,9 @@ public class EntityEncoder {
      *          This value must not be <code>null</code>.
      * @param   game - the <code>IGame</code> the decoded object belongs to.
      * @return  the <code>Entity</code> object based on the node.
-     * @throws  <code>IllegalArgumentException</code> if the node is
+     * @throws  IllegalArgumentException if the node is
      *          <code>null</code>.
-     * @throws  <code>IllegalStateException</code> if the node does not
+     * @throws  IllegalStateException if the node does not
      *          contain a valid <code>Entity</code>.
      */
     private static Entity decodeEntityData( ParsedXML node, IGame game ) {
@@ -838,9 +856,9 @@ public class EntityEncoder {
      *          This value must not be <code>null</code>.
      * @param   game - the <code>IGame</code> the decoded object belongs to.
      * @return  the <code>Entity</code> object based on the node.
-     * @throws  <code>IllegalArgumentException</code> if the node is
+     * @throws  IllegalArgumentException if the node is
      *          <code>null</code>.
-     * @throws  <code>IllegalStateException</code> if the node does not
+     * @throws  IllegalStateException if the node does not
      *          contain a valid <code>Entity</code>.
      */
     public static Entity decode( ParsedXML node, IGame game ) {

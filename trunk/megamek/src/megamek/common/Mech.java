@@ -18,12 +18,8 @@ package megamek.common;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.text.NumberFormat;
-import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.CriticalSlot;
-import megamek.common.LosEffects;
-import megamek.common.ToHitData;
 import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
@@ -134,6 +130,10 @@ public abstract class Mech
     public static final int         JUMP_BOOSTER = 3;
     public static final int         JUMP_DISPOSABLE = 4;
 
+    //Some "has" items only need be determined once
+    public static final int         HAS_FALSE = -1;
+    public static final int         HAS_UNKNOWN = 0;
+    public static final int         HAS_TRUE = 1;
     // rear armor
     private int[] rearArmor;
     private int[] orig_rearArmor;
@@ -151,6 +151,7 @@ public abstract class Mech
     private int cockpitType = COCKPIT_STANDARD;
     private boolean hasCowl = false;
     private int cowlArmor = 0;
+    private int hasLaserHeatSinks = HAS_UNKNOWN;
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
 
@@ -457,8 +458,7 @@ public abstract class Mech
         // Walk through the Mech's miscellaneous equipment before
         // we apply our parent class' newRound() functionality
         // because Mek Stealth is set by the Entity#newRound() method.
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : getMisc()) {
             MiscType mtype = (MiscType) m.getType();
 
             // Stealth can not be turned on if it's ECM is destroyed.
@@ -579,8 +579,8 @@ public abstract class Mech
     }
 
     public boolean hasMASC() {
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            MiscType mtype = (MiscType)((Mounted)i.nextElement()).getType();
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
             if (mtype.hasFlag(MiscType.F_MASC)) {
                 return true;
             }
@@ -589,8 +589,7 @@ public abstract class Mech
     }
 
     public Mounted getMASC() {
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted m = (Mounted)i.nextElement();
+        for (Mounted m : getMisc()) {
             MiscType mtype = (MiscType)m.getType();
             if (mtype.hasFlag(MiscType.F_MASC) && m.isReady()) {
                 return m;
@@ -605,8 +604,7 @@ public abstract class Mech
      *  engage the MASC system
      */
     public boolean hasArmedMASC() {
-        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : getEquipment()){
             if (!m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType &&
                 m.getType().hasFlag(MiscType.F_MASC)
                 && m.curMode().equals("Armed")) {
@@ -620,8 +618,7 @@ public abstract class Mech
      * Same
      */
     public boolean hasTSM() {
-        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : getEquipment()){
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TSM)) {
                 return true;
             }
@@ -630,8 +627,7 @@ public abstract class Mech
     }
 
     public boolean hasStealth() {
-        for ( Enumeration equips = getMisc(); equips.hasMoreElements(); ) {
-            Mounted mEquip = (Mounted) equips.nextElement();
+        for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
             if ( mtype.hasFlag(MiscType.F_STEALTH) ) {
                 // The Mek has Stealth Armor or null signature system.
@@ -716,8 +712,7 @@ public abstract class Mech
         if ( this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
             return 0;
 
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
                 jump++;
             } else if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER) && !mounted.isDestroyed() && !mounted.isBreached()) {
@@ -796,8 +791,7 @@ public abstract class Mech
     public int torsoJumpJets() {
         int jump = 0;
         
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()
             && locationIsTorso(mounted.getLocation())) {
                 jump++;
@@ -887,8 +881,7 @@ public abstract class Mech
      */
     public int heatSinks() {
         int sinks = 0;
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getMisc()) {
             EquipmentType etype= mounted.getType();
             if (etype.hasFlag(MiscType.F_HEAT_SINK)
             || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
@@ -904,18 +897,14 @@ public abstract class Mech
      */
     public int getHeatCapacity() {
         int capacity = 0;
-        int activeCount = getActiveSinks();
-        
-        for (Enumeration i = miscList.elements(); i.hasMoreElements() && activeCount > 0;) {
-            Mounted mounted = (Mounted)i.nextElement();
+
+        for (Mounted mounted : getMisc()) {
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
-                activeCount--;
             } else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-                activeCount--;
                 capacity += 2;
             }
         }
@@ -956,8 +945,7 @@ public abstract class Mech
         
         // okay, count leg sinks
         int sinksUnderwater = 0;
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getMisc()) {
             if (mounted.isDestroyed() || mounted.isBreached() || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
@@ -1868,8 +1856,7 @@ public abstract class Mech
         EquipmentType clCase = EquipmentType.get("CLCASE");
         for (int i = 0; i < locations(); i++) {
             explosiveFound=false;
-            for(Enumeration equip = getEquipment();equip.hasMoreElements();) {
-                Mounted m = (Mounted)equip.nextElement();
+            for (Mounted m : getEquipment()){
                 if(m.getType().isExplosive() && m.getLocation()==i) {
                     explosiveFound=true;
                 }
@@ -1967,8 +1954,7 @@ public abstract class Mech
 
         // add defensive equipment
         double dEquipmentBV = 0;
-        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getEquipment()){
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
@@ -1990,8 +1976,7 @@ public abstract class Mech
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
-        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getEquipment()){
             int loc = mounted.getLocation();
             EquipmentType etype = mounted.getType();
 
@@ -2055,8 +2040,7 @@ public abstract class Mech
         // total up maximum heat generated
         double maxumumHeatFront = 0;
         double maxumumHeatRear = 0;
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             double weaponHeat = wtype.getHeat();
             
@@ -2142,8 +2126,7 @@ public abstract class Mech
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             double dBV = wtype.getBV(this);
             
@@ -2192,8 +2175,7 @@ public abstract class Mech
         
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
         double oEquipmentBV = 0;
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getMisc()) {
             MiscType mtype = (MiscType)mounted.getType();
  
             // don't count destroyed equipment
@@ -2221,8 +2203,7 @@ public abstract class Mech
 
         // add ammo bv
         double ammoBV = 0;
-        for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType)mounted.getType();
 
             // don't count depleted ammo
@@ -2504,8 +2485,7 @@ public abstract class Mech
      */
     public boolean isStealthActive() {
         // Try to find a Mek Stealth system.
-        for ( Enumeration equips = getMisc(); equips.hasMoreElements(); ) {
-            Mounted mEquip = (Mounted) equips.nextElement();
+        for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
             if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {
                 if (mEquip.curMode().equals( "On" ) && hasActiveECM()) {
@@ -2599,8 +2579,7 @@ public abstract class Mech
     //gives total number of sinks
     public int getNumberOfSinks() {
         int sinks=0;
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getMisc()) {
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
@@ -2614,8 +2593,7 @@ public abstract class Mech
     }
     
     public boolean hasDoubleHeatSinks() {
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 return false;
             } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
@@ -2626,15 +2604,19 @@ public abstract class Mech
     }
     
     public boolean hasLaserHeatSinks() {
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
-                return false;
-            } else if (mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
-                return true;
+        if (hasLaserHeatSinks == HAS_UNKNOWN) {
+            for (Mounted mounted : getMisc()) {
+                if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+                    hasLaserHeatSinks = HAS_FALSE;
+                    break;
+                } else if (mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+                    hasLaserHeatSinks = HAS_TRUE;
+                    break;
+                }
             }
+            if (hasLaserHeatSinks == HAS_UNKNOWN) hasLaserHeatSinks = HAS_FALSE;
         }
-        return false;
+        return hasLaserHeatSinks == HAS_TRUE;
     }
     
     public void setActiveSinksNextRound(int sinks) {
@@ -3210,8 +3192,6 @@ public abstract class Mech
      * Remove all engine critical slots from the mek.
      * Note: This is part of the mek creation public API, and might not
      * be referenced by any MegaMek code.
-     *
-     * @return false if insufficient critical space
      */
     public void clearEngineCrits() {
         for (int i = 0; i < locations(); i++) {
@@ -3342,8 +3322,7 @@ public abstract class Mech
      */
     public boolean hasHarJelIn(int loc) {
         if (loc == Mech.LOC_HEAD) return false;
-        for (Enumeration i = getEquipment(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getEquipment()){
             if (mounted.getLocation() == loc && mounted.isReady() &&
                     mounted.getType().hasFlag(MiscType.F_HARJEL)) {
                 return true;

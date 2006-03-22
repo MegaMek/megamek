@@ -20,10 +20,19 @@
 
 package megamek.client.ui.AWT;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.GunEmplacement;
+import megamek.common.IArmorState;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.Mounted;
+import megamek.common.Protomech;
+import megamek.common.Tank;
+import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
-import megamek.common.*;
+import java.util.Enumeration;
 
 /**
  * A utility class for retrieving mech information in a formatted string.
@@ -213,9 +222,7 @@ public class MechView {
 
     private String getWeapons() {
         StringBuffer sWeapons = new StringBuffer();
-        Vector vWeapons = mech.getWeaponList();
-        for (int j = 0; j < vWeapons.size(); j++)       {
-            Mounted mounted = (Mounted) vWeapons.elementAt(j);
+        for (Mounted mounted : mech.getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
 
             sWeapons.append( mounted.getDesc() )
@@ -242,10 +249,8 @@ public class MechView {
     }
     
     private String getAmmo() {
-        Enumeration eAmmo = mech.getAmmo();
         StringBuffer sAmmo = new StringBuffer();
-        while (eAmmo.hasMoreElements()) {
-            Mounted mounted = (Mounted)eAmmo.nextElement();
+        for (Mounted mounted : mech.getAmmo()) {
             if (mounted.getLocation() != Entity.LOC_NONE) {
                 sAmmo.append( mounted.getDesc() )
                     .append( "  [" ) //$NON-NLS-1$
@@ -258,9 +263,7 @@ public class MechView {
 
     private String getMisc() {
         StringBuffer sMisc = new StringBuffer();
-        Enumeration eMisc = mech.getMisc();
-        while (eMisc.hasMoreElements()) {
-            Mounted mounted = (Mounted)eMisc.nextElement();
+        for (Mounted mounted: mech.getMisc()) {
             String name = mounted.getName();
             if (name.indexOf("Jump Jet") != -1 //$NON-NLS-1$ 
                     ||(name.indexOf("CASE") != -1 && mech.isClan()) //$NON-NLS-1$

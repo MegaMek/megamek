@@ -14,8 +14,7 @@
 
 package megamek.common;
 
-import java.io.*;
-import java.util.Enumeration;
+import java.io.Serializable;
 import java.util.Vector;
 
 /**
@@ -85,7 +84,7 @@ public class Infantry
      * Set up the damage array for this platoon for the given weapon type.
      *
      * @param   weapon - the type of weapon used by this platoon.
-     * @exception <code>IllegalArgumentException</code> if a bad weapon
+     * @exception IllegalArgumentException if a bad weapon
      *          type is passed.
      */
     private void setDamage( long weapon )
@@ -725,8 +724,7 @@ public class Infantry
         } // End not-anti-Mek
 
         // add BV of field guns
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for(Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if(!wtype.hasFlag(WeaponType.F_INFANTRY))
                 dBV += wtype.getBV(this);

@@ -215,10 +215,8 @@ public class TestBot extends BotClient {
                         int rac_damage = 0;
                         int other_damage = 0;
                         int clearance_range = 0;
-                        for (Enumeration mounted_weapons = min.getCEntity().entity.getWeapons();
-                             mounted_weapons.hasMoreElements();) {
+                        for (Mounted equip :min.getCEntity().entity.getWeaponList()) {
                             WeaponType test_weapon = new WeaponType();
-                            Mounted equip = (Mounted) mounted_weapons.nextElement();
 
                             test_weapon = (WeaponType) equip.getType();
                             if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY) &&
@@ -970,8 +968,7 @@ public class TestBot extends BotClient {
 
 
         // Get best physical attack
-        for (Enumeration i = en.getWeapons(); i.hasMoreElements();) {
-            Mounted mw = (Mounted) i.nextElement();
+        for (Mounted mw :en.getWeaponList()) {
 
             // If this weapon is in the same arm as a
             // brush off attack skip to next weapon.
@@ -1432,7 +1429,7 @@ public class TestBot extends BotClient {
 
         Coords pointing_to = new Coords();
         Entity test_ent;
-        Enumeration weapons, ammo_slots, valid_attackers, equips;
+        Enumeration valid_attackers;
 
         int entNum = game.getFirstDeployableEntityNum();
         Coords[] cStart = getStartingCoordsArray();
@@ -1443,9 +1440,7 @@ public class TestBot extends BotClient {
 
         av_range = 0.0;
         weapon_count = 0;
-        weapons = getEntity(entNum).getWeapons();
-        while (weapons.hasMoreElements()) {
-            Mounted mounted = (Mounted) weapons.nextElement();
+        for (Mounted mounted :getEntity(entNum).getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             if ((wtype.getName() != "ATM 3") && (wtype.getName() != "ATM 6") && (wtype.getName() != "ATM 9") && (wtype.getName() != "ATM 12")) {
                 if (getEntity(entNum).getC3Master() != null) {
@@ -1456,9 +1451,7 @@ public class TestBot extends BotClient {
                 weapon_count = ++weapon_count;
             }
         }
-        ammo_slots = getEntity(entNum).getAmmo();
-        while (ammo_slots.hasMoreElements()) {
-            Mounted mounted = (Mounted) ammo_slots.nextElement();
+        for (Mounted mounted :getEntity(entNum).getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
             if (atype.getAmmoType() == AmmoType.T_ATM) {
                 weapon_count = ++weapon_count;
@@ -1502,8 +1495,7 @@ public class TestBot extends BotClient {
         // If unit has stealth armor, turn it on
         if (getEntity(entNum) instanceof Mech &&
                 getEntity(entNum).getArmorType() == EquipmentType.T_ARMOR_STEALTH) {
-            for (equips = getEntity(entNum).getMisc(); equips.hasMoreElements();) {
-                Mounted test_equip = (Mounted) equips.nextElement();
+            for (Mounted test_equip : getEntity(entNum).getMisc()) {
                 MiscType test_type = (MiscType) test_equip.getType();
                 if (Mech.STEALTH.equals(test_type.getInternalName())) {
                     if (test_equip.curMode().getName() != "On") {

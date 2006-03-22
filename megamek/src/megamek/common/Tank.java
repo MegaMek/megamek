@@ -14,8 +14,7 @@
 
 package megamek.common;
 
-import java.io.*;
-import java.util.Enumeration;
+import java.io.Serializable;
 import java.util.Vector;
 
 /**
@@ -252,8 +251,7 @@ public class Tank
     public Mounted getMainWeapon() {
         double fBestBV = -1;
         Mounted mBest = null;
-        for (Enumeration e = getWeapons(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : getWeaponList()) {
             if (m.isDestroyed()) continue;
             
             double fValue = m.getType().getBV(this);
@@ -460,8 +458,7 @@ public class Tank
         
         // add defensive equipment
         double dEquipmentBV = 0;
-        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
@@ -508,8 +505,7 @@ public class Tank
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             double dBV = wtype.getBV(this);
 
@@ -552,8 +548,7 @@ public class Tank
         
         // add ammo bv
         double ammoBV = 0;
-        for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType)mounted.getType();
             
             // don't count depleted ammo
@@ -786,8 +781,7 @@ public class Tank
         int sinks=0;
         double turretWeight=0;
         double paWeight=0;
-        for (Enumeration i = getWeapons();i.hasMoreElements();) {
-            Mounted m = (Mounted) i.nextElement();
+        for (Mounted m : getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if(wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
                 sinks+=wt.getHeat();
@@ -849,8 +843,7 @@ public class Tank
     }
 
     public boolean doomedInVacuum() {
-        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : getEquipment()) {
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
                 return false;
             }

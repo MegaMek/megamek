@@ -20,22 +20,45 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-
 import megamek.client.Client;
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Entity;
+import megamek.common.EntitySelector;
+import megamek.common.EquipmentType;
+import megamek.common.IGame;
+import megamek.common.IOffBoardDirections;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.Pilot;
+import megamek.common.Player;
+import megamek.common.Protomech;
+import megamek.common.TechConstants;
+import megamek.common.WeaponType;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.PilotOptions;
+import megamek.common.preference.PreferenceManager;
 
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.Choice;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.ScrollPane;
+import java.awt.TextArea;
+import java.awt.TextField;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
-import java.util.Vector;
 import java.util.Hashtable;
-
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.IOption;
-import megamek.common.options.PilotOptions;
-import megamek.common.preference.PreferenceManager;
+import java.util.Vector;
 
 /**
  * A dialog that a player can use to customize his mech before battle.  
@@ -222,8 +245,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             refreshC3();
         }
         boolean eligibleForOffBoard = false;
-        for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : entity.getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
                 eligibleForOffBoard = true;
@@ -451,8 +473,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         GridBagConstraints gbc = new GridBagConstraints();
         
         int row = 0;
-        for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : entity.getWeaponList()) {
             WeaponType wtype = (WeaponType)m.getType();
             if (!wtype.hasFlag(WeaponType.F_MG)) {
                 continue;
@@ -471,8 +492,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         GridBagConstraints gbc = new GridBagConstraints();
         
         int row = 0;
-        for (Enumeration e = entity.getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : entity.getMisc()) {
             if (!m.getType().hasFlag((MiscType.F_MINE))) {
                 continue;
             }
@@ -492,8 +512,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         GridBagConstraints gbc = new GridBagConstraints();
         
         int row = 0;
-        for (Enumeration e = entity.getAmmo(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType)m.getType();
             Vector vTypes = new Vector();
             Vector vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
@@ -886,7 +905,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
             Hashtable uniqueWeapons = new Hashtable();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                Mounted m = (Mounted)entity.getWeaponList().elementAt(i);
+                Mounted m = (Mounted)entity.getWeaponList().get(i);
                 uniqueWeapons.put(m.getName(),new Boolean(true));
             }
             for (Enumeration e = uniqueWeapons.keys(); e.hasMoreElements(); ) {
@@ -1063,8 +1082,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
         if (actionEvent.getSource() == butOffBoardDistance) {
             int maxDistance = 19*17; // Long Tom
-            for (Enumeration i=entity.getWeapons(); i.hasMoreElements();) {
-                Mounted wep = (Mounted)i.nextElement();
+            for (Mounted wep : entity.getWeaponList()) {
                 EquipmentType e = wep.getType();
                 WeaponType w = (WeaponType)e;
                 if (w.hasFlag(WeaponType.F_ARTILLERY)) {

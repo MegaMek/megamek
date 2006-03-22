@@ -218,9 +218,7 @@ public class TestMech extends TestEntity {
             Vector unallocated, Vector allocation, Vector heatSinks)
     {
         int countInternalHeatSinks = 0;
-        for(Enumeration e = entity.getEquipment(); e.hasMoreElements(); )
-        {
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : entity.getEquipment()) {
             if (m.getLocation()==Entity.LOC_NONE)
             {
                 if (m.getType() instanceof AmmoType &&

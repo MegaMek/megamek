@@ -385,8 +385,7 @@ public class EquipmentType {
      * @param modeNum
      * @return mode number <code>modeNum</code> from the list of modes available
      * for this type of equipment.
-     * @see getModesCount
-     * @see hasModes  
+     * @see #hasModes()
      */
     public EquipmentMode getMode(int modeNum) {
         megamek.debug.Assert.assertTrue(modes != null && modeNum >= 0 && modeNum < modes.size());
@@ -538,9 +537,7 @@ public class EquipmentType {
             } else if(this.hasFlag(MiscType.F_TARGCOMP)) {
                 int tCompTons=0;
                 float fTons = 0.0f;
-                for (Enumeration i = entity.getWeapons(); i.hasMoreElements();)
-                {
-                    Mounted mo = (Mounted)i.nextElement();
+                for(Mounted mo : entity.getWeaponList()) {
                     WeaponType wt = (WeaponType)mo.getType();
                     if (wt.hasFlag(WeaponType.F_DIRECT_FIRE))
                     fTons += wt.getTonnage(entity);

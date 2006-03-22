@@ -129,11 +129,12 @@ public class MoveStep implements Serializable {
     
     /**
      * Create a step with the given mine to lay.
-     * 
+     *
+     * @param path  
      * @param type -
      *            should match one of the MovePath constants, but this is not
      *            currently checked.
-     * @param target -
+     * @param mineToLay -
      *            the <code>int</code> that is the id of the mine
      *            that should be laid in this step.
      */    
@@ -458,7 +459,8 @@ public class MoveStep implements Serializable {
     /**
      * Takes the given state as the previous state and sets flags from it.
      * 
-     * @param state
+     * @param game
+     * @param prev
      */
     public void copy(final IGame game, MoveStep prev) {
         if (prev == null) {
@@ -1368,9 +1370,8 @@ public class MoveStep implements Serializable {
 
         // mechs dumping ammo can't run
         boolean bDumping = false;
-        Enumeration iter = entity.getAmmo();
-        while ( iter.hasMoreElements() ) {
-            if (((Mounted) iter.nextElement()).isDumping()) {
+        for(Mounted mo : entity.getAmmo()) {
+            if (mo.isDumping()) {
                 bDumping = true;
                 break;
             }

@@ -325,7 +325,7 @@ public class Compute {
         final Entity entity = game.getEntity(entityId);
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
-        final Coords[] intervening = Coords.intervening(src, dest);
+        final ArrayList<Coords> intervening = Coords.intervening(src, dest);
         final int direction = src.direction(dest);
 
         // arguments valid?
@@ -351,8 +351,8 @@ public class Compute {
         }
 
         // can't go up more levels than normally possible
-        for (int i = 0; i < intervening.length; i++) {
-            final IHex hex = game.getBoard().getHex(intervening[i]);
+        for (Coords c : intervening) {
+            final IHex hex = game.getBoard().getHex(c);
             int change = entity.elevationOccupied(hex)
                     - entity.elevationOccupied(srcHex);
             if (change > entity.getMaxElevationChange()) {
@@ -1217,7 +1217,6 @@ public class Compute {
      */
     public static ToHitData getSpotterMovementModifier(IGame game,
             int entityId, int movement) {
-        final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
 
         if (movement == IEntityMovementType.MOVE_WALK
@@ -1687,10 +1686,10 @@ public class Compute {
 
             // adjust for previous AMS
             if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
-                Vector vCounters = waa.getCounterEquipment();
+                ArrayList vCounters = waa.getCounterEquipment();
                 if (vCounters != null) {
                     for (int x = 0; x < vCounters.size(); x++) {
-                        Mounted counter = (Mounted) vCounters.elementAt(x);
+                        Mounted counter = (Mounted) vCounters.get(x);
                         if (counter.getType() instanceof WeaponType
                                 && counter.getType().hasFlag(WeaponType.F_AMS)) {
                             float fAMS = 3.5f * ((WeaponType) counter.getType())
@@ -1815,16 +1814,11 @@ public class Compute {
         boolean no_bin = true;
         boolean multi_bin = false;
 
-        int bin_count = 0;
-        int weapon_count = 0;
-
         double ammo_multiple, ex_damage, max_damage;
-
-        Enumeration ammo_bin_list, target_weapons;
 
         Entity shooter, target;
 
-        Mounted abin, fabin, best_bin;
+        Mounted fabin, best_bin;
         AmmoType abin_type = new AmmoType();
         AmmoType fabin_type = new AmmoType();
         WeaponType wtype = new WeaponType();
@@ -1848,10 +1842,8 @@ public class Compute {
         // Get a list of ammo bins and the first valid bin
         fabin = null;
         best_bin = null;
-        ammo_bin_list = shooter.getAmmo();
 
-        while (ammo_bin_list.hasMoreElements()) {
-            abin = (Mounted) ammo_bin_list.nextElement();
+        for (Mounted abin : shooter.getAmmo()) {
             if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
                     abin)) {
                 if (abin.getShotsLeft() > 0) {
@@ -1868,15 +1860,12 @@ public class Compute {
         // To save processing time, lets see if we have more than one type of
         // bin
         // Thunder-type ammos and empty bins are excluded from the list
-        ammo_bin_list = shooter.getAmmo();
-        while (ammo_bin_list.hasMoreElements()) {
-            abin = (Mounted) ammo_bin_list.nextElement();
+        for (Mounted abin : shooter.getAmmo()) {
             if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
                     abin)) {
                 if (abin.getShotsLeft() > 0) {
                     abin_type = (AmmoType) abin.getType();
                     if (!AmmoType.canDeliverMinefield(abin_type)) {
-                        bin_count++;
                         no_bin = false;
                         if (abin_type.getMunitionType() != fabin_type
                                 .getMunitionType()) {
@@ -1909,12 +1898,8 @@ public class Compute {
                 max_damage = 0.0;
                 best_bin = fabin;
 
-                // Reload list of ammo bins
-                ammo_bin_list = shooter.getAmmo();
-
                 // For each valid ammo bin
-                while (ammo_bin_list.hasMoreElements()) {
-                    abin = (Mounted) ammo_bin_list.nextElement();
+                for (Mounted abin : shooter.getAmmo()) {
                     if (shooter.loadWeapon(shooter.getEquipment(atk
                             .getWeaponId()), abin)) {
                         if (abin.getShotsLeft() > 0) {
@@ -2063,13 +2048,8 @@ public class Compute {
                                             } else {
                                                 ex_damage = 0.5;
                                             }
-                                            target_weapons = target
-                                                    .getWeapons();
-                                            while (target_weapons
-                                                    .hasMoreElements()) {
-                                                target_weapon = (WeaponType) ((Mounted) target_weapons
-                                                        .nextElement())
-                                                        .getType();
+                                            for (Mounted weapon : shooter.getWeaponList()) {
+                                                target_weapon = (WeaponType) weapon.getType();
                                                 if ((target_weapon
                                                         .getAmmoType() == AmmoType.T_LRM)
                                                         || (target_weapon
@@ -2434,7 +2414,7 @@ public class Compute {
 
         // get intervening Coords. See the comments for intervening() and
         // losDivided()
-        Coords[] coords = Coords.intervening(a, b);
+        ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration ranges = vECMRanges.elements();
         for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
@@ -2444,8 +2424,8 @@ public class Compute {
 
             // loop through intervening hexes and see if any of them are within
             // range
-            for (int x = 0; x < coords.length; x++) {
-                int nDist = c.distance(coords[x]);
+            for (int x = 0; x < coords.size(); x++) {
+                int nDist = c.distance(coords.get(x));
 
                 if (nDist <= range){
                     ECCMCount++;
@@ -2524,7 +2504,7 @@ public class Compute {
 
         // get intervening Coords. See the comments for intervening() and
         // losDivided()
-        Coords[] coords = Coords.intervening(a, b);
+        ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration ranges = vECMRanges.elements();
         for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
@@ -2534,8 +2514,8 @@ public class Compute {
 
             // loop through intervening hexes and see if any of them are within
             // range
-            for (int x = 0; x < coords.length; x++) {
-                int nDist = c.distance(coords[x]);
+            for (int x = 0; x < coords.size(); x++) {
+                int nDist = c.distance(coords.get(x));
 
                 if (nDist <= range){
                     ECCMCount++;
@@ -2617,7 +2597,7 @@ public class Compute {
 
         // get intervening Coords. See the comments for intervening() and
         // losDivided()
-        Coords[] coords = Coords.intervening(a, b);
+        ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration ranges = vECMRanges.elements();
         for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
@@ -2627,8 +2607,8 @@ public class Compute {
 
             // loop through intervening hexes and see if any of them are within
             // range
-            for (int x = 0; x < coords.length; x++) {
-                int nDist = c.distance(coords[x]);
+            for (int x = 0; x < coords.size(); x++) {
+                int nDist = c.distance(coords.get(x));
 
                 if (nDist <= range){
                     ECCMCount--;
@@ -2702,7 +2682,7 @@ public class Compute {
 
         // get intervening Coords. See the comments for intervening() and
         // losDivided()
-        Coords[] coords = Coords.intervening(a, b);
+        ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration<Integer> ranges = vECMRanges.elements();
         for (Coords c : vEnemyCoords) {
@@ -2711,8 +2691,8 @@ public class Compute {
 
             // loop through intervening hexes and see if any of them are within
             // range
-            for (int x = 0; x < coords.length; x++) {
-                int nDist = c.distance(coords[x]);
+            for (int x = 0; x < coords.size(); x++) {
+                int nDist = c.distance(coords.get(x));
 
                 if (nDist <= range){
                     ECCMCount -=2;
@@ -2784,7 +2764,7 @@ public class Compute {
 
         // get intervening Coords. See the comments for intervening() and
         // losDivided()
-        Coords[] coords = Coords.intervening(a, b);
+        ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration ranges = vECMRanges.elements();
         for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
@@ -2794,8 +2774,8 @@ public class Compute {
 
             // loop through intervening hexes and see if any of them are within
             // range
-            for (int x = 0; x < coords.length; x++) {
-                int nDist = c.distance(coords[x]);
+            for (int x = 0; x < coords.size(); x++) {
+                int nDist = c.distance(coords.get(x));
 
                 if (nDist <= range){
                     ECCMCount++;
@@ -2867,7 +2847,7 @@ public class Compute {
 
         // get intervening Coords. See the comments for intervening() and
         // losDivided()
-        Coords[] coords = Coords.intervening(a, b);
+        ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration ranges = vECMRanges.elements();
         for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
@@ -2877,8 +2857,8 @@ public class Compute {
 
             // loop through intervening hexes and see if any of them are within
             // range
-            for (int x = 0; x < coords.length; x++) {
-                int nDist = c.distance(coords[x]);
+            for (int x = 0; x < coords.size(); x++) {
+                int nDist = c.distance(coords.get(x));
 
                 if (nDist <= range){
                     ECCMCount++;
@@ -2957,7 +2937,7 @@ public class Compute {
 
         // get intervening Coords. See the comments for intervening() and
         // losDivided()
-        Coords[] coords = Coords.intervening(a, b);
+        ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration ranges = vECMRanges.elements();
         for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
@@ -2967,8 +2947,8 @@ public class Compute {
 
             // loop through intervening hexes and see if any of them are within
             // range
-            for (int x = 0; x < coords.length; x++) {
-                int nDist = c.distance(coords[x]);
+            for (int x = 0; x < coords.size(); x++) {
+                int nDist = c.distance(coords.get(x));
 
                 if (nDist <= range){
                     ECCMCount--;
@@ -3048,7 +3028,7 @@ public class Compute {
 
         // get intervening Coords. See the comments for intervening() and
         // losDivided()
-        Coords[] coords = Coords.intervening(a, b);
+        ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration<Integer> ranges = vECMRanges.elements();
         for (Coords c : vEnemyCoords) {
@@ -3057,8 +3037,8 @@ public class Compute {
 
             // loop through intervening hexes and see if any of them are within
             // range
-            for (int x = 0; x < coords.length; x++) {
-                int nDist = c.distance(coords[x]);
+            for (int x = 0; x < coords.size(); x++) {
+                int nDist = c.distance(coords.get(x));
 
                 if (nDist <= range){
                     ECCMCount -=2;
@@ -3540,7 +3520,7 @@ public class Compute {
      * @param range The radius of the ring
      */
     public static ArrayList<Coords> coordsAtRange(Coords centre, int range) {
-        ArrayList<Coords> result = new ArrayList(range * 6);
+        ArrayList<Coords> result = new ArrayList<Coords>(range * 6);
         if(range < 1) {
             result.add(centre);
             return result;
@@ -3560,7 +3540,7 @@ public class Compute {
      * entity and has missiles left
      * 
      * @param game
-     * @param ae
+     * @param aeId
      *            The attacking <code>Entity</code>
      * @param te
      *            The <code>Entity</code> that was shot at.

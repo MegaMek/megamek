@@ -16,7 +16,6 @@ package megamek.common;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
@@ -40,9 +39,6 @@ public class Protomech
     private boolean bHasTorsoAGun;
     private boolean bHasTorsoBGun;
     //weapon indices
-    private int MainGunNum;
-    private int RArmGunNum;
-    private int LArmGunNum;
     private int TorsoAGunNum;
     private int TorsoBGunNum;
     // locations
@@ -219,7 +215,8 @@ public class Protomech
      */
     public int getCritsHit(int loc) {
         int count=0;
-        for(int i=0;i<this.getNumberOfCriticals(loc);i++) {
+         int numberOfCriticals = this.getNumberOfCriticals(loc);
+         for(int i=0;i<numberOfCriticals;i++) {
             CriticalSlot ccs = getCritical(loc, i);
             if ( ccs.isDamaged() || ccs.isBreached() ) {
                 count++;
@@ -533,10 +530,10 @@ public class Protomech
      * Sets the internal structure for the pmech.
      *
      * @param head head
-     * @param ct center torso
-     * @param t right/left torso
+     * @param torso center torso
      * @param arm right/left arm
-     * @param leg right/left leg
+     * @param legs right/left leg
+     * @param mainGun main gun
      */
     public  void setInternal(int head, int torso, int arm, int legs, int mainGun ) {
           initializeInternal(head, LOC_HEAD);
@@ -621,9 +618,8 @@ public class Protomech
                 {
                     bHasMainGun=true;
                     mounted.setLocation(loc, rearMounted);
-                    equipmentList.addElement(mounted);
-                    weaponList.addElement(mounted);
-                    MainGunNum=getEquipmentNum(mounted);
+                    equipmentList.add(mounted);
+                    weaponList.add(mounted);
                 }
                 break;
                 case LOC_LARM:
@@ -635,9 +631,8 @@ public class Protomech
                 {
                     bHasLArmGun=true;
                     mounted.setLocation(loc, rearMounted);
-                    equipmentList.addElement(mounted);
-                    weaponList.addElement(mounted);
-                    LArmGunNum=getEquipmentNum(mounted);
+                    equipmentList.add(mounted);
+                    weaponList.add(mounted);
                 }
                 break;
                 case LOC_RARM:
@@ -649,9 +644,8 @@ public class Protomech
                 {
                     bHasRArmGun=true;
                     mounted.setLocation(loc, rearMounted);
-                    equipmentList.addElement(mounted);
-                    weaponList.addElement(mounted);
-                    RArmGunNum=getEquipmentNum(mounted);
+                    equipmentList.add(mounted);
+                    weaponList.add(mounted);
                 }
                 break;
                 case LOC_TORSO:
@@ -665,8 +659,8 @@ public class Protomech
                     {
                     bHasTorsoBGun=true;
                     mounted.setLocation(loc, rearMounted);
-                    equipmentList.addElement(mounted);
-                    weaponList.addElement(mounted);
+                    equipmentList.add(mounted);
+                    weaponList.add(mounted);
                     TorsoBGunNum=getEquipmentNum(mounted);
                     }
                 }
@@ -674,8 +668,8 @@ public class Protomech
                     {
                     bHasTorsoAGun=true;
                     mounted.setLocation(loc, rearMounted);
-                    equipmentList.addElement(mounted);
-                    weaponList.addElement(mounted);
+                    equipmentList.add(mounted);
+                    weaponList.add(mounted);
                     TorsoAGunNum=getEquipmentNum(mounted);
                     }
                     break;
@@ -684,15 +678,6 @@ public class Protomech
             { super.addEquipment(mounted,loc,rearMounted);
         }
     }
-
-
-
-
-
-
-
-
-
 
      /**
      * Calculates the battle value of this pmech.  UNIMPLEMENTED and UNCOMPLETE.
@@ -718,8 +703,7 @@ public class Protomech
 
         // add defensive equipment
         double dEquipmentBV = 0;
-        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+         for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
@@ -748,8 +732,7 @@ public class Protomech
         // figure out base weapon bv
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             double dBV = wtype.getBV(this);
 
@@ -776,8 +759,7 @@ public class Protomech
 
         // add ammo bv
         double ammoBV = 0;
-        for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType)mounted.getType();
 
             // don't count depleted ammo

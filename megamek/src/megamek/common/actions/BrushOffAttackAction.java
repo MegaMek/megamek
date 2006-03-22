@@ -14,8 +14,6 @@
 
 package megamek.common.actions;
 
-import java.util.Enumeration;
-
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
@@ -73,7 +71,6 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * action is used to remove iNARC pods.
      *
      * @param   game - the <code>IGame</code> object containing all entities.
-     * @param   act - the <code>BrushOffAttackAction</code> for the attack.
      * @return  the <code>ToHitData</code> containing the target roll.
      */
     public ToHitData toHit(IGame game) {
@@ -201,8 +198,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         // If the target has Assault claws, give a 1 modifier.
         // We can stop looking when we find our first match.
     if (te != null) {
-        for ( Enumeration iter = te.getMisc(); iter.hasMoreElements(); ) {
-            Mounted mount = (Mounted) iter.nextElement();
+        for (Mounted mount : te.getMisc()) {
             EquipmentType equip = mount.getType();
             if ( BattleArmor.ASSAULT_CLAW.equals
                     (equip.getInternalName()) ) {

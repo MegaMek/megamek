@@ -15,7 +15,8 @@
 
 package megamek.common;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Represtents a set of handles on an OmniMech used by Battle Armor units
@@ -174,10 +175,10 @@ import java.util.*;
             // Walk through the unit's miscellaneous equipment.
             // Assume we don't find it.
             // Stop looking if we do find it.
-            Enumeration equipment = unit.getMisc();
+            Iterator equipment = unit.getMisc().iterator();
             result = false;
-            while ( !result && equipment.hasMoreElements() ) {
-                Mounted mount = (Mounted) equipment.nextElement();
+            while ( !result && equipment.hasNext() ) {
+                Mounted mount = (Mounted) equipment.next();
                 EquipmentType equip = mount.getType();
                 result = equip.getInternalName().equals
                     ( this.getBoardingEquipment() )
@@ -195,7 +196,7 @@ import java.util.*;
      * Load the given unit.  
      *
      * @param   unit - the <code>Entity</code> to be loaded.
-     * @exception - If the unit can't be loaded, an
+     * @exception IllegalArgumentException - If the unit can't be loaded, an
      *          <code>IllegalArgumentException</code> exception will be thrown.
      */
     public final void load( Entity unit ) throws IllegalArgumentException {
@@ -253,7 +254,7 @@ import java.util.*;
      *
      * @return A <code>String</code> meant for a human.
      *
-     * @see     megamek.common.BattleArmorHandles#getVacancyString()
+     * @see     megamek.common.BattleArmorHandles#getUnusedString()
      */
     public final String getUnusedString() {
         return this.getVacancyString( null != this.troopers );

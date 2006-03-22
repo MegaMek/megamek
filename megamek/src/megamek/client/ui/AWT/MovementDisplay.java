@@ -15,14 +15,36 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.common.*;
+import megamek.common.BipedMech;
+import megamek.common.Building;
+import megamek.common.BuildingTarget;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.EntitySelector;
+import megamek.common.GameTurn;
+import megamek.common.IEntityMovementMode;
+import megamek.common.IEntityMovementType;
+import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.Minefield;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.MovePath;
+import megamek.common.MoveStep;
+import megamek.common.PilotingRollData;
+import megamek.common.Protomech;
+import megamek.common.Tank;
+import megamek.common.TargetRoll;
+import megamek.common.Targetable;
+import megamek.common.Terrains;
+import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.event.GameListener;
@@ -30,6 +52,22 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
+
+import java.awt.Button;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class MovementDisplay
     extends StatusBarPhaseDisplay
@@ -1501,9 +1539,7 @@ public class MovementDisplay
             // Does the entity has a minesweeper?
             int clear = Minefield.CLEAR_NUMBER_INFANTRY;
             int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
-            Enumeration equip = ce.getMisc();
-            while ( equip.hasMoreElements() ) {
-                Mounted mounted = (Mounted) equip.nextElement();
+            for (Mounted mounted : ce.getMisc()) {
                 if ( mounted.getType().hasFlag(MiscType.F_TOOLS)
                      && mounted.getType().hasSubType(MiscType.S_MINESWEEPER) ) {
                     int sweeperType = mounted.getType().getToHitModifier();
@@ -1926,7 +1962,7 @@ public class MovementDisplay
     /**
      * Specify if the listener should be distracted.
      *
-     * @param   distract <code>true</code> if the listener should ignore events
+     * @param   distracted <code>true</code> if the listener should ignore events
      *          <code>false</code> if the listener should pay attention again.
      *          Events that occured while the listener was distracted NOT
      *          going to be processed.

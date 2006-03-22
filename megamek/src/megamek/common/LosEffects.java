@@ -20,6 +20,8 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
+
 /**
  * Keeps track of the cumulative effects of intervening terrain on LOS
  *
@@ -416,7 +418,7 @@ public class LosEffects {
      * add the effects of all those hexes.
      */
     private static LosEffects losStraight(IGame game, AttackInfo ai) {
-        Coords[] in = Coords.intervening(ai.attackPos, ai.targetPos);
+        ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos);
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
@@ -426,11 +428,11 @@ public class LosEffects {
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if ( targetInBuilding && Compute.isInBuilding( game, ai.attackAbsHeight - game.getBoard().getHex(ai.attackPos).surface(), ai.attackPos ) ) {
-            los.setThruBldg( game.getBoard().getBuildingAt( in[0] ) );
+            los.setThruBldg( game.getBoard().getBuildingAt( in.get(0) ) );
         }
     
-        for (int i = 0; i < in.length; i++) {
-            los.add( LosEffects.losForCoords(game, ai, in[i], los.getThruBldg()) );
+        for (Coords c : in) {
+            los.add( LosEffects.losForCoords(game, ai, c, los.getThruBldg()) );
         }
 
         if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
@@ -482,7 +484,7 @@ public class LosEffects {
      * what weapon is attacking.
      */
     private static LosEffects losDivided(IGame game, AttackInfo ai) {
-        Coords[] in = Coords.intervening(ai.attackPos, ai.targetPos, true);
+        ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos, true);
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
@@ -492,12 +494,12 @@ public class LosEffects {
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if ( targetInBuilding && Compute.isInBuilding( game, ai.attackAbsHeight - game.getBoard().getHex(ai.attackPos).surface(), ai.attackPos ) ) {
-            los.setThruBldg( game.getBoard().getBuildingAt( in[0] ) );
+            los.setThruBldg( game.getBoard().getBuildingAt( in.get(0)) );
         }
 
         // add non-divided line segments
-        for (int i = 3; i < in.length - 2; i += 3) {
-            los.add( losForCoords(game, ai, in[i], los.getThruBldg()) );
+        for (int i = 3; i < in.size() - 2; i += 3) {
+            los.add( losForCoords(game, ai, in.get(i), los.getThruBldg()) );
         }
 
         if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
@@ -510,10 +512,10 @@ public class LosEffects {
         }
 
         // go through divided line segments
-        for (int i = 1; i < in.length - 2; i += 3) {
+        for (int i = 1; i < in.size() - 2; i += 3) {
             // get effects of each side
-            LosEffects left = losForCoords( game, ai, in[i], los.getThruBldg());
-            LosEffects right = losForCoords( game, ai, in[i+1], los.getThruBldg());
+            LosEffects left = losForCoords( game, ai, in.get(i), los.getThruBldg());
+            LosEffects right = losForCoords( game, ai, in.get(i+1), los.getThruBldg());
     
             // If a target Entity is at a different elevation as its
             // attacker, and if the attack is through a building, the

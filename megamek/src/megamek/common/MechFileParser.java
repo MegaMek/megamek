@@ -14,14 +14,37 @@
 
 package megamek.common;
 
-import java.io.*;
+import megamek.common.loaders.BLKBattleArmorFile;
+import megamek.common.loaders.BLKGunEmplacementFile;
+import megamek.common.loaders.BLKInfantryFile;
+import megamek.common.loaders.BLKMechFile;
+import megamek.common.loaders.BLKProtoFile;
+import megamek.common.loaders.BLKTankFile;
+import megamek.common.loaders.BLKVTOLFile;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.loaders.HmpFile;
+import megamek.common.loaders.HmvFile;
+import megamek.common.loaders.IMechLoader;
+import megamek.common.loaders.MepFile;
+import megamek.common.loaders.MtfFile;
+import megamek.common.loaders.TdbFile;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.BuildingBlock;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.util.zip.*;
-import megamek.common.preference.PreferenceManager;
-
-import megamek.common.loaders.*;
-import megamek.common.util.BuildingBlock;
+import java.util.zip.ZipFile;
 
  /*
   * Switches between the various type-specific parsers depending on suffix
@@ -141,15 +164,13 @@ public class MechFileParser {
     private void postLoadInit(Entity ent) throws EntityLoadingException {
 
         // Walk through the list of equipment.
-        for (Enumeration e = ent.getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : ent.getMisc()) {
 
             // Link Artemis IV fire-control systems to their missle racks.
             if (m.getType().hasFlag(MiscType.F_ARTEMIS) && m.getLinked() == null) {
 
                 // link up to a weapon in the same location
-                for (Enumeration e2 = ent.getWeapons(); e2.hasMoreElements(); ) {
-                    Mounted mWeapon = (Mounted)e2.nextElement();
+                for (Mounted mWeapon : ent.getWeaponList()) {
                     WeaponType wtype = (WeaponType)mWeapon.getType();
 
                     // only srm and lrm are valid for artemis
@@ -184,8 +205,7 @@ public class MechFileParser {
                       m.getLinked() == null ) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
-                for ( Enumeration equips = ent.getMisc(); equips.hasMoreElements(); ) {
-                    Mounted mEquip = (Mounted) equips.nextElement();
+                for (Mounted mEquip : ent.getMisc()) {
                     MiscType mtype = (MiscType) mEquip.getType();
                     if ( mtype.hasFlag(MiscType.F_ECM) ) {
                         m.setLinked( mEquip );

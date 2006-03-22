@@ -238,11 +238,9 @@ public class EntityListFile {
             // system slots, so we have to handle the ammo specially.
             if ( entity instanceof Tank ||
                  entity instanceof Protomech ) {
-                Enumeration ammo = entity.getAmmo();
-                while ( ammo.hasMoreElements() ) {
+                for (Mounted mount : entity.getAmmo()) {
 
                     // Is this ammo in the current location?
-                    Mounted mount = (Mounted) ammo.nextElement();
                     if ( mount.getLocation() == loc ) {
                         thisLoc.append( formatSlot( "N/A",
                                                     mount,
@@ -336,7 +334,7 @@ public class EntityListFile {
      *          <code>Entity</code>s in the list will be written to the file.
      * @param   list - a <code>Vector</code> containing <code>Entity</code>s
      *          to be stored in a file.
-     * @exception <code>IOException</code> is thrown on any error.
+     * @exception IOException is thrown on any error.
      */
     public static void saveTo( String filePath, String fileName, Vector list )
         throws IOException {
@@ -468,7 +466,7 @@ public class EntityListFile {
      * @return  A <code>Vector</code> containing <code>Entity</code>s
      *          loaded from the file.  This vector may be empty, but
      *          it will not be <code>null</code>.
-     * @exception <code>IOException</code> is thrown on any error.
+     * @exception IOException is thrown on any error.
      */
     public static Vector loadFrom( String filePath, String fileName ) 
         throws IOException {

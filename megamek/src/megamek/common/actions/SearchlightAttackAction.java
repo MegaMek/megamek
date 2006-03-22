@@ -17,6 +17,7 @@ package megamek.common.actions;
 import java.util.Enumeration;
 
 import java.util.Vector;
+import java.util.ArrayList;
 
 import megamek.common.Coords;
 import megamek.common.Compute;
@@ -95,9 +96,9 @@ public class SearchlightAttackAction
         }
         attacker.setUsedSearchlight(true);
 
-        Coords[] in = Coords.intervening(apos, tpos); //nb includes attacker & target
-        for (int i = 0; i < in.length; i++) {
-            for (Enumeration e = game.getEntities(in[i]);e.hasMoreElements();) {
+        ArrayList<Coords> in = Coords.intervening(apos, tpos); //nb includes attacker & target
+        for (Coords c : in) {
+            for (Enumeration e = game.getEntities(c);e.hasMoreElements();) {
                 Entity en = (Entity)e.nextElement();
                 LosEffects los = LosEffects.calculateLos(game,getEntityId(),en);
                 if(los.canSee()) {
@@ -122,9 +123,9 @@ public class SearchlightAttackAction
         final Targetable target = getTarget(game);
         final Coords tpos = target.getPosition();
 
-        Coords[] in = Coords.intervening(apos, tpos); //nb includes attacker & target
-        for (int i = 0; i < in.length; i++) {
-            for (Enumeration e = game.getEntities(in[i]);e.hasMoreElements();) {
+        ArrayList<Coords> in = Coords.intervening(apos, tpos); //nb includes attacker & target
+        for (Coords c : in) {
+            for (Enumeration e = game.getEntities(c);e.hasMoreElements();) {
                 Entity en = (Entity)e.nextElement();
                 LosEffects los = LosEffects.calculateLos(game,getEntityId(),en);
                 if(los.canSee() && en.equals(who))

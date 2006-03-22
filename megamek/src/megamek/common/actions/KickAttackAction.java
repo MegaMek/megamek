@@ -14,8 +14,6 @@
 
 package megamek.common.actions;
 
-import java.util.Enumeration;
-
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -171,8 +169,7 @@ public class KickAttackAction extends PhysicalAttackAction
         }
 
         // check if attacker has fired leg-mounted weapons
-        for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound() && mounted.getLocation() == legLoc) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from leg this turn");
             }

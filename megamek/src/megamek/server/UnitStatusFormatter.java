@@ -15,9 +15,20 @@
 
 package megamek.server;
 
-import megamek.common.*;
+import megamek.common.BattleArmor;
+import megamek.common.CommonConstants;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.GunEmplacement;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.Mounted;
+import megamek.common.Protomech;
+import megamek.common.Tank;
 import megamek.common.util.StringUtil;
-import java.util.*;
 
 public abstract class UnitStatusFormatter {
     /**
@@ -82,11 +93,7 @@ public abstract class UnitStatusFormatter {
     private static String formatAmmo(Entity e)
     {
         StringBuffer sb = new StringBuffer(1024);
-        Mounted weap;
-
-        for (Enumeration en = e.getAmmo(); en.hasMoreElements(); )
-            {
-                weap = (Mounted)en.nextElement();
+        for (Mounted weap : e.getWeaponList()) {
                 sb.append(weap.getName());
                 sb.append(": ")
                     .append(weap.getShotsLeft())

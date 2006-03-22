@@ -308,8 +308,7 @@ public abstract class TestEntity implements TestEntityOption
                 return Math.round(getWeight() / 25.0f);
         } else if (mt.hasFlag(MiscType.F_TARGCOMP)) {
             float fTons = 0.0f;
-            for (Enumeration i = getEntity().getWeapons(); i.hasMoreElements();) {
-                Mounted mo = (Mounted)i.nextElement();
+            for (Mounted mo : getEntity().getWeaponList()) {
                 WeaponType wt = (WeaponType)mo.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE))
                     fTons += wt.getTonnage(getEntity());
@@ -327,8 +326,7 @@ public abstract class TestEntity implements TestEntityOption
 
     public float getWeightMiscEquip() {
         float weightSum = 0.0f;
-        for (Enumeration e = getEntity().getMisc(); e.hasMoreElements();) {
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
             weightSum += getWeightMiscEquip(mt);
         }
@@ -348,9 +346,7 @@ public abstract class TestEntity implements TestEntityOption
     public StringBuffer printMiscEquip(StringBuffer buff, int posLoc,
             int posWeight)
     {
-        for (Enumeration e = getEntity().getMisc(); e.hasMoreElements(); )
-        {
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
 
             if (m.getLocation()==Entity.LOC_NONE)
@@ -371,9 +367,7 @@ public abstract class TestEntity implements TestEntityOption
     public float getWeightWeapon()
     {
         float weight = 0.0f;
-        for (Enumeration e = getEntity().getWeapons(); e.hasMoreElements(); )
-        {
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : getEntity().getWeaponList()) {
             WeaponType mt = (WeaponType) m.getType();
             weight += mt.getTonnage(getEntity());
         }
@@ -393,9 +387,7 @@ public abstract class TestEntity implements TestEntityOption
     public StringBuffer printWeapon(StringBuffer buff, int posLoc,
             int posWeight)
     {
-        for (Enumeration e = getEntity().getWeapons(); e.hasMoreElements(); )
-        {
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : getEntity().getWeaponList()) {
             WeaponType mt = (WeaponType) m.getType();
 
             // Don't think this can happen, but ...
@@ -414,9 +406,7 @@ public abstract class TestEntity implements TestEntityOption
     public float getWeightAmmo()
     {
         float weight = 0.0f;
-        for (Enumeration e = getEntity().getAmmo(); e.hasMoreElements(); )
-        {
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : getEntity().getAmmo()) {
 
             // One Shot Ammo
             if (m.getLocation()==Entity.LOC_NONE)
@@ -440,9 +430,7 @@ public abstract class TestEntity implements TestEntityOption
 
     public StringBuffer printAmmo(StringBuffer buff, int posLoc, int posWeight)
     {
-        for (Enumeration e = getEntity().getAmmo(); e.hasMoreElements(); )
-        {
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : getEntity().getAmmo()) {
             AmmoType mt = (AmmoType) m.getType();
 
             // Don't think this can happen, but ...
@@ -527,9 +515,7 @@ public abstract class TestEntity implements TestEntityOption
         } else if (mt.hasFlag(MiscType.F_TARGCOMP))
         {
             float fTons = 0.0f;
-            for (Enumeration i = getEntity().getWeapons(); i.hasMoreElements(); )
-            {
-                 Mounted mo = (Mounted)i.nextElement();
+            for (Mounted mo : getEntity().getWeaponList()) {
                  WeaponType wt = (WeaponType)mo.getType();
                  if (wt.hasFlag(WeaponType.F_DIRECT_FIRE))
                      fTons += wt.getTonnage(getEntity());
@@ -640,10 +626,8 @@ public abstract class TestEntity implements TestEntityOption
     {
         boolean retVal = false;
         int eTechLevel = getEntity().getTechLevel();
-        for(Enumeration e = getEntity().getEquipment();
-                e.hasMoreElements(); )
-        {
-            EquipmentType nextE = ((Mounted)e.nextElement()).getType();
+        for (Mounted mounted : getEntity().getEquipment()) {
+            EquipmentType nextE = mounted.getType();
             if ((ignoreAmmo) && (nextE instanceof AmmoType)) {
                 continue;
             } else if (!(TechConstants.isLegal(eTechLevel, nextE.getTechLevel(), true))) {

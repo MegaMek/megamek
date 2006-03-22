@@ -14,18 +14,49 @@
  
 package megamek.client.ui.AWT;
  
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Hashtable;
-import java.util.Vector;
-
 import megamek.client.Client;
 import megamek.client.ui.AWT.widget.BufferedPanel;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
+import megamek.common.EquipmentType;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.MechSummaryComparator;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.TechConstants;
+import megamek.common.UnitType;
+import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
+
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.Choice;
+import java.awt.Cursor;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.List;
+import java.awt.Panel;
+import java.awt.Point;
+import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowListener;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
@@ -599,7 +630,7 @@ public class MechSelectorDialog
         if (weapon1 > -1) {
             weaponLine1Active = true;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().elementAt(i)).getType();
+                WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().get(i)).getType();
                 if (wt.getName().equals(m_cWeapons1.getSelectedItem())) {
                     count++;
                 }
@@ -616,7 +647,7 @@ public class MechSelectorDialog
         if (weapon2 > -1) {
             weaponLine2Active = true;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().elementAt(i)).getType();
+                WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().get(i)).getType();
                 if (wt.getName().equals(m_cWeapons2.getSelectedItem())) {
                     count++;
                 }
@@ -641,8 +672,8 @@ public class MechSelectorDialog
 
         count = 0;
         if (m_chkEquipment.getState()) {
-            for (Enumeration e = entity.getMisc(); e.hasMoreElements(); ) {
-                MiscType mt = (MiscType)((Mounted)e.nextElement()).getType();
+            for (Mounted m : entity.getMisc()) {
+                MiscType mt = (MiscType)m.getType();
                 if (mt.getName().equals(m_cEquipment.getSelectedItem())) {
                     count++;
                 }

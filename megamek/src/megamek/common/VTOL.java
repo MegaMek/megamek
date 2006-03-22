@@ -17,8 +17,6 @@
  */
 package megamek.common;
 
-import java.util.Enumeration;
-
 /**
  * @author Andrew Hunter
  * VTOLs are helicopters (more or less.)  They don't really work properly yet.  Don't use them.
@@ -92,8 +90,7 @@ public class VTOL extends Tank {
         
         // add defensive equipment
         double dEquipmentBV = 0;
-        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
@@ -127,8 +124,7 @@ public class VTOL extends Tank {
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             double dBV = wtype.getBV(this);
 
@@ -161,8 +157,7 @@ public class VTOL extends Tank {
                 weaponsBVFront += dBV;
             }
         }
-        for (Enumeration i=equipmentList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getEquipment()) {
             if (mounted.isDestroyed()) {
                 continue;
             }
@@ -186,8 +181,7 @@ public class VTOL extends Tank {
         
         // add ammo bv
         double ammoBV = 0;
-        for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType)mounted.getType();
             
             // don't count depleted ammo

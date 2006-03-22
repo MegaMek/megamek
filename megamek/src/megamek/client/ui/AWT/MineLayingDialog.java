@@ -14,14 +14,24 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Enumeration;
-import java.util.Vector;
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.common.Entity;
-import megamek.common.Mounted;
 import megamek.common.MiscType;
+import megamek.common.Mounted;
+
+import java.awt.Button;
+import java.awt.Choice;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Vector;
 
 /**
  * A dialog displayed to the player when they 
@@ -54,9 +64,7 @@ public class MineLayingDialog
         labMessage = new AdvancedLabel(Messages.getString("MineLayingDialog.selectMineToLay",new Object[]{entity.getDisplayName()})); //$NON-NLS-1$ 
 
         // Walk through the entity's misc equipment, looking for mines.
-        Enumeration equip = entity.getMisc();
-        while ( equip.hasMoreElements() ) {
-            Mounted mount = (Mounted) equip.nextElement();
+        for (Mounted mount : entity.getMisc()) {
 
             // Is this a Mine that can be layed?
             if ( mount.getType().hasFlag(MiscType.F_MINE) && mount.canFire() ) {

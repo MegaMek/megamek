@@ -14,8 +14,7 @@
 
 package megamek.common;
 
-import java.io.*;
-import java.util.Enumeration;
+import java.io.Serializable;
 
 /**
  * This class represents a squad or point of battle armor equiped infantry,
@@ -521,7 +520,7 @@ public class BattleArmor
     /**
      * Battle Armor units have no internals on their squad location.
      *
-     * @see     megamek.common.Infantry#getInternal( int, boolean )
+     * @see     megamek.common.Infantry#getInternal( int )
      */
     public int getInternal( int loc ) {
         if ( BattleArmor.LOC_SQUAD != loc ) {
@@ -533,7 +532,7 @@ public class BattleArmor
     /**
      * Battle Armor units have no internals on their squad location.
      *
-     * @see     megamek.common.Infantry#getOInternal( int, boolean )
+     * @see     megamek.common.Infantry#getOInternal( int )
      */
     public int getOInternal( int loc ) {
         if ( BattleArmor.LOC_SQUAD != loc ) {
@@ -653,8 +652,7 @@ public class BattleArmor
 
         // If we're equipped with a Magnetic Mine
         // launcher, turn it to single shot mode.
-        for (Enumeration e = this.getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for(Mounted m:getMisc()) {
             EquipmentType equip = m.getType();
             if ( BattleArmor.MINE_LAUNCHER.equals(equip.getInternalName()) ) {
                 m.setMode("Single");
@@ -708,14 +706,9 @@ public class BattleArmor
             }
 
             // As of 2003-01-03, only ammo burdens the jump
-            Enumeration iter = this.getAmmo();
-            Mounted mounted = null;
-            EquipmentType type = null;
-
             // Loop through the squad's equipment.
-            while ( iter.hasMoreElements() ) {
-                mounted = (Mounted) iter.nextElement();
-                type = mounted.getType();
+            for (Mounted mounted : this.getAmmo()) {
+                EquipmentType type = mounted.getType();
 
                 // Un-jettisoned ammo packs burden squads.
                 if ( mounted.getShotsLeft() > 0 &&
@@ -935,9 +928,7 @@ public class BattleArmor
     public int getVibroClawDamage() {
         if (vibroClawDamage < 0) {
             vibroClawDamage = 0;
-            Enumeration eW = getWeapons();
-            while (eW.hasMoreElements()) {
-                Mounted mounted = (Mounted)eW.nextElement();
+            for (Mounted mounted : getWeaponList()) {
                 if (mounted.getType().hasFlag(WeaponType.F_BOOST_SWARM)) {
                     vibroClawDamage = ((WeaponType)(mounted.getType())).getRackSize();
                     break;

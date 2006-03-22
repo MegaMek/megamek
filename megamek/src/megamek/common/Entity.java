@@ -15,14 +15,21 @@
 
 package megamek.common;
 
-import java.io.Serializable;
-import java.util.*;
-
-import megamek.common.Engine;
-import megamek.common.actions.*;
+import megamek.common.actions.ChargeAttackAction;
+import megamek.common.actions.DfaAttackAction;
+import megamek.common.actions.DisplacementAttackAction;
+import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * Entity is a master class for basically anything on the board except
@@ -135,10 +142,10 @@ public abstract class Entity extends TurnOrdered
     protected int               armorTechLevel = TechConstants.T_TECH_UNKNOWN;
     protected int               structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
 
-    protected Vector            equipmentList = new Vector();
-    protected Vector            weaponList = new Vector();
-    protected Vector            ammoList = new Vector();
-    protected Vector            miscList = new Vector();
+    protected ArrayList<Mounted>            equipmentList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted>            weaponList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted>            ammoList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted>            miscList = new ArrayList<Mounted>();
     
     protected Vector            pendingINarcPods = new Vector();
     protected Vector            iNarcPods = new Vector();
@@ -275,8 +282,7 @@ public abstract class Entity extends TurnOrdered
      */
     public void restore() {
         // restore all mounted equipments
-        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : equipmentList) {
             mounted.restore();
         }
     }
@@ -1066,7 +1072,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns the closest valid secondary facing to the given direction.
      *
-     * @returns the the closest valid secondary facing.
+     * @return the the closest valid secondary facing.
      */
     public abstract int clipSecondaryFacing(int dir);
 
@@ -1074,8 +1080,7 @@ public abstract class Entity extends TurnOrdered
      * Returns true if the entity has an RAC
      */
     public boolean hasRAC() {
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for(Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
                 return true;
@@ -1088,8 +1093,7 @@ public abstract class Entity extends TurnOrdered
      * Returns true if the entity has an RAC which is jammed and not destroyed
      */
     public boolean canUnjamRAC() {
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY && mounted.isJammed() && !mounted.isDestroyed()) {
                 return true;
@@ -1713,11 +1717,11 @@ public abstract class Entity extends TurnOrdered
         throws LocationFullException
     {
         mounted.setLocation(loc, rearMounted);
-        equipmentList.addElement(mounted);
+        equipmentList.add(mounted);
 
         // add it to the proper sub-list
         if (mounted.getType() instanceof WeaponType) {
-            weaponList.addElement(mounted);
+            weaponList.add(mounted);
             if(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
             }
@@ -1732,10 +1736,10 @@ public abstract class Entity extends TurnOrdered
             }
         }
         if (mounted.getType() instanceof AmmoType) {
-            ammoList.addElement(mounted);
+            ammoList.add(mounted);
         }
         if (mounted.getType() instanceof MiscType) {
-            miscList.addElement(mounted);
+            miscList.add(mounted);
         }
     }
 
@@ -1758,8 +1762,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns an enumeration of all equipment
      */
-    public Enumeration getEquipment() {
-        return equipmentList.elements();
+    public ArrayList<Mounted> getEquipment() {
+        return equipmentList;
     }
 
     /**
@@ -1767,7 +1771,7 @@ public abstract class Entity extends TurnOrdered
      */
     public Mounted getEquipment(int index) {
         try {
-            return (Mounted)equipmentList.elementAt(index);
+            return (Mounted)equipmentList.get(index);
         } catch (ArrayIndexOutOfBoundsException ex) {
             return null;
         }
@@ -1776,7 +1780,7 @@ public abstract class Entity extends TurnOrdered
     public EquipmentType getEquipmentType(CriticalSlot cs) {
         if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
             return null;
-        Mounted m = (Mounted)equipmentList.elementAt(cs.getIndex());
+        Mounted m = (Mounted)equipmentList.get(cs.getIndex());
         return m.getType();
     }
 
@@ -1790,8 +1794,7 @@ public abstract class Entity extends TurnOrdered
 
     public int getTotalAmmoOfType(EquipmentType et) {
         int totalShotsLeft = 0;
-        for (Enumeration j = getAmmo(); j.hasMoreElements();) {
-            Mounted amounted = (Mounted)j.nextElement();
+        for(Mounted amounted : getAmmo()) {
             if ( amounted.getType() == et && !amounted.isDumping() ) {
                 totalShotsLeft += amounted.getShotsLeft();
             }
@@ -1803,15 +1806,14 @@ public abstract class Entity extends TurnOrdered
      * Determine how much ammunition (of all munition types) remains
      * which is compatable with the given ammo.
      *
-     * @param   ammo - the <code>EquipmentType</code> of the ammo to be found.
+     * @param   et - the <code>EquipmentType</code> of the ammo to be found.
      *          This value may be <code>null</code>.
      * @return  the <code>int</code> count of the amount of shots of all
      *          munitions equivalent to the given ammo type.
      */
     public int getTotalMunitionsOfType(EquipmentType et) {
         int totalShotsLeft = 0;
-        for (Enumeration j = getAmmo(); j.hasMoreElements();) {
-            Mounted amounted = (Mounted)j.nextElement();
+        for(Mounted amounted : getAmmo()) {
             if ( amounted.getType().equals(et) && !amounted.isDumping() ) {
                 totalShotsLeft += amounted.getShotsLeft();
             }
@@ -1832,11 +1834,11 @@ public abstract class Entity extends TurnOrdered
     public abstract boolean isSecondaryArcWeapon(int weaponId);
 
 
-    public Enumeration getWeapons() {
-        return weaponList.elements();
+    public Iterator<Mounted> getWeapons() {
+        return weaponList.iterator();
     }
 
-    public Vector getWeaponList() {
+    public ArrayList<Mounted> getWeaponList() {
         return weaponList;
     }
 
@@ -1846,8 +1848,7 @@ public abstract class Entity extends TurnOrdered
      * @return the index number of the first available weapon, or -1 if none are ready.
      */
     public int getFirstWeapon() {
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getWeaponList()) {
             if (mounted.isReady()) {
                 return getEquipmentNum(mounted);
             }
@@ -1860,8 +1861,7 @@ public abstract class Entity extends TurnOrdered
      */
     public int getNextWeapon(int start) {
         boolean past = false;
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for(Mounted mounted : getWeaponList()) {
             //FIXME
             // Logic must be inserted here to NOT always skip AMS once the
             // MaxTech rule for firing AMSes is implemented.
@@ -1892,8 +1892,7 @@ public abstract class Entity extends TurnOrdered
      * Attempts to load all weapons with ammo
      */
     public void loadAllWeapons() {
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for(Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if (wtype.getAmmoType() != AmmoType.T_NA) {
                 loadWeapon(mounted);
@@ -1905,9 +1904,7 @@ public abstract class Entity extends TurnOrdered
      * Tries to load the specified weapon with the first available ammo
      */
     public void loadWeapon(Mounted mounted) {
-        WeaponType wtype = (WeaponType)mounted.getType();
-        for (Enumeration i = getAmmo(); i.hasMoreElements();) {
-            Mounted mountedAmmo = (Mounted)i.nextElement();
+        for(Mounted mountedAmmo : getAmmo()) {
             if (loadWeapon(mounted, mountedAmmo))
                 break;
         }
@@ -1918,9 +1915,7 @@ public abstract class Entity extends TurnOrdered
      * of the same munition type as currently in use.  If this fails, use first ammo.
      */
     public void loadWeaponWithSameAmmo(Mounted mounted) {
-        WeaponType wtype = (WeaponType)mounted.getType();
-        for (Enumeration i = getAmmo(); i.hasMoreElements();) {
-            Mounted mountedAmmo = (Mounted)i.nextElement();
+        for(Mounted mountedAmmo : getAmmo()) {
             if (loadWeaponWithSameAmmo(mounted, mountedAmmo))
                 return;
         }
@@ -1983,12 +1978,12 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
-    public Enumeration getAmmo() {
-        return ammoList.elements();
+    public ArrayList<Mounted> getAmmo() {
+        return ammoList;
     }
 
-    public Enumeration getMisc() {
-        return miscList.elements();
+    public ArrayList<Mounted> getMisc() {
+        return miscList;
     }
 
     /**
@@ -1996,20 +1991,18 @@ public abstract class Entity extends TurnOrdered
      * for removing broken tree clubs.
      */
     public void removeMisc(String toRemove) {
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for(Mounted mounted:getMisc()) {
             if (mounted.getName().equals(toRemove)) {
-                miscList.removeElement(mounted);
-                equipmentList.removeElement(mounted);
+                miscList.remove(mounted);
+                equipmentList.remove(mounted);
                 break;
             }
         }
     }
 
     public List<Mounted> getClubs() {
-        List<Mounted> rv = new ArrayList();
-        for(Enumeration<Mounted> i=getMisc();i.hasMoreElements();) {
-            Mounted m = i.nextElement();
+        List<Mounted> rv = new ArrayList<Mounted>();
+        for(Mounted m:getMisc()) {
             if(m.getType().hasFlag(MiscType.F_CLUB)) {
                 rv.add(m);
             }
@@ -2156,7 +2149,8 @@ public abstract class Entity extends TurnOrdered
     public int getGoodCriticals(int type, int index, int loc) {
         int operational = 0;
 
-        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+        int numberOfCriticals = getNumberOfCriticals(loc);
+        for (int i = 0; i < numberOfCriticals; i++) {
             CriticalSlot ccs = getCritical(loc, i);
 
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index
@@ -2173,7 +2167,8 @@ public abstract class Entity extends TurnOrdered
     public int getBadCriticals(int type, int index, int loc) {
         int hits = 0;
 
-        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+        int numberOfCriticals = getNumberOfCriticals(loc);
+        for (int i = 0; i < numberOfCriticals; i++) {
             CriticalSlot ccs = getCritical(loc, i);
 
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
@@ -2191,8 +2186,8 @@ public abstract class Entity extends TurnOrdered
      */
     public int getHitCriticals(int type, int index, int loc) {
         int hits = 0;
-
-        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+        int numCrits = getNumberOfCriticals(loc);
+        for (int i = 0; i < numCrits; i++) {
             CriticalSlot ccs = getCritical(loc, i);
 
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
@@ -2223,7 +2218,8 @@ public abstract class Entity extends TurnOrdered
      */
     public int getNumberOfCriticals(int type, int index, int loc) {
         int num = 0;
-        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+        int numCrits = getNumberOfCriticals(loc);
+        for (int i = 0; i < numCrits; i++) {
             CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
                 num++;
@@ -2238,7 +2234,8 @@ public abstract class Entity extends TurnOrdered
      */
     public int getNumberOfCriticals(EquipmentType etype, int loc) {
         int num = 0;
-        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+        int numberOfCriticals = getNumberOfCriticals(loc);
+        for (int i = 0; i < numberOfCriticals; i++) {
             CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && getEquipmentType(ccs) != null &&
                 getEquipmentType(ccs).equals(etype)) {
@@ -2254,7 +2251,8 @@ public abstract class Entity extends TurnOrdered
      */
     public int getNumberOfCriticals(EquipmentType etype) {
         int num = 0;
-        for (int l = 0; l < locations(); l++) {
+        int locations = locations();
+        for (int l = 0; l < locations; l++) {
             num += getNumberOfCriticals(etype, l);
         }
         return num;
@@ -2266,8 +2264,7 @@ public abstract class Entity extends TurnOrdered
      */
     public int getNumberOf(EquipmentType etype) {
         int total = 0;
-        for (int i = 0; i < equipmentList.size(); i++) {
-            Mounted m = (Mounted)(equipmentList.elementAt(i));
+        for (Mounted m : equipmentList){
             if (m.getType().equals(etype))
                 total++;
         }
@@ -2360,8 +2357,7 @@ public abstract class Entity extends TurnOrdered
         if ( !(this instanceof Mech) )
             return false;
         
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m:getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType &&((MiscType)type).isShield()
                     && this.getInternal(m.getLocation()) > 0) {
@@ -2387,8 +2383,7 @@ public abstract class Entity extends TurnOrdered
         int raShield = 0;
         int laShield = 0;
         
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for(Mounted m:getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_CLUB)
                     && (type.hasSubType(size)) ) {
@@ -2574,11 +2569,10 @@ public abstract class Entity extends TurnOrdered
     public int getActiveUMUCount(){
         int count = 0;
         
-        if ( this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
+        if (this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
             return 0;
 
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m:getMisc() ) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_UMU)
                     && !(m.isDestroyed() || m.isMissing() || m.isBreached()) ) {
@@ -2602,8 +2596,7 @@ public abstract class Entity extends TurnOrdered
         if ( this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
             return 0;
 
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m:getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_UMU)) {
                 count++;
@@ -2616,8 +2609,7 @@ public abstract class Entity extends TurnOrdered
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveECM() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
                     && m.curMode().equals("ECM")) {
@@ -2631,8 +2623,7 @@ public abstract class Entity extends TurnOrdered
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveAngelECM() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
                     && m.curMode().equals("ECM")) {
@@ -2650,8 +2641,7 @@ public abstract class Entity extends TurnOrdered
      *         angel ecm or it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveECCM() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
                     && m.curMode().equals("ECCM")) {
@@ -2669,8 +2659,7 @@ public abstract class Entity extends TurnOrdered
      *         angel ecm or it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveAngelECCM() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
                     && m.curMode().equals("ECCM")) {
@@ -2687,8 +2676,7 @@ public abstract class Entity extends TurnOrdered
      *          will be <code>Entity.NONE</code> if no ECM is active.
      */
     public int getAngelECMRange() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType
                     && type.hasFlag(MiscType.F_ECM)
@@ -2707,8 +2695,7 @@ public abstract class Entity extends TurnOrdered
      *          will be <code>Entity.NONE</code> if no ECM is active.
      */
     public int getECMRange() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             EquipmentType type = m.getType();
             if ( type instanceof MiscType && type.hasFlag(MiscType.F_ECM) &&
                  !m.isDestroyed() && !m.isMissing() ) {
@@ -2729,8 +2716,7 @@ public abstract class Entity extends TurnOrdered
      * WatchDog Clan Active or Light.
      */
     public boolean hasBAP() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_BAP)) {
                 return !(m.isDestroyed()||m.isMissing() || m.isBreached() || isShutDown() 
@@ -2748,8 +2734,7 @@ public abstract class Entity extends TurnOrdered
      *          will be <code>Entity.NONE</code> if no BAP is active.
      */
     public int getBAPRange() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             EquipmentType type = m.getType();
             if (type instanceof MiscType
                     && type.hasFlag(MiscType.F_BAP)
@@ -2773,8 +2758,7 @@ public abstract class Entity extends TurnOrdered
      * Returns wether or not this entity has a Targeting Computer.
      */
     public boolean hasTargComp() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
@@ -2796,8 +2780,7 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m: getMisc()) {
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP) && m.curMode().equals("Aimed shot")) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
@@ -2810,8 +2793,7 @@ public abstract class Entity extends TurnOrdered
 
     public boolean hasC3S() {
         if (isShutDown() || isOffBoard()) return false;
-        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : getEquipment()){
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3S)
                     && !m.isDestroyed() && !m.isBreached()) {
                 return true;
@@ -2822,8 +2804,7 @@ public abstract class Entity extends TurnOrdered
 
     public boolean hasC3M() {
         if (isShutDown() || isOffBoard()) return false;
-        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : getEquipment()){
             if (m.getType() instanceof WeaponType && m.getType().hasFlag(WeaponType.F_C3M)
                     && !m.isDestroyed() && !m.isBreached()) {
                 // If this unit is configured as a company commander,
@@ -2847,17 +2828,17 @@ public abstract class Entity extends TurnOrdered
 
         // Do we need to determine that there's no company command master?
         if ( C3CompanyMasterIndex == LOC_DESTROYED ) {
-            Enumeration e = getEquipment();
+            Iterator e = getEquipment().iterator();
             while ( C3CompanyMasterIndex == LOC_DESTROYED &&
-                    e.hasMoreElements() ) {
-                Mounted m = (Mounted)e.nextElement();
+                    e.hasNext() ) {
+                Mounted m = (Mounted)e.next();
                 if ( m.getType() instanceof WeaponType &&
                      m.getType().hasFlag(WeaponType.F_C3M) &&
                      !m.isDestroyed() && !m.isBreached() ) {
                     // Now look for the company command master.
                     while ( C3CompanyMasterIndex == LOC_DESTROYED &&
-                            e.hasMoreElements() ) {
-                        m = (Mounted)e.nextElement();
+                            e.hasNext() ) {
+                        m = (Mounted)e.next();
                         if ( m.getType() instanceof WeaponType &&
                              m.getType().hasFlag(WeaponType.F_C3M) &&
                              !m.isDestroyed() && !m.isBreached() ) {
@@ -2887,8 +2868,7 @@ public abstract class Entity extends TurnOrdered
 
     public boolean hasC3i() {
         if (isShutDown() || isOffBoard()) return false;
-        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : getEquipment()){
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3I)
                     && !m.isDestroyed() && !m.isBreached() ) {
                 return true;
@@ -3191,8 +3171,7 @@ public abstract class Entity extends TurnOrdered
      * Returns whether there is CASE protecting the location.
      */
     public boolean locationHasCase(int loc) {
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted: getMisc()) {
             if (mounted.getLocation() == loc
             && mounted.getType().hasFlag(MiscType.F_CASE)
             && !mounted.isDestroyed()) {
@@ -3247,8 +3226,8 @@ public abstract class Entity extends TurnOrdered
             pendingINarcPods = new Vector();
         }
 
-        for (Enumeration i = getEquipment(); i.hasMoreElements();) {
-            ((Mounted)i.nextElement()).newRound(roundNumber);
+        for (Mounted m : getEquipment()){
+            m.newRound(roundNumber);
         }
 
         // Update the inferno tracker.
@@ -3262,8 +3241,7 @@ public abstract class Entity extends TurnOrdered
      */
     public void applyDamage() {
         // mark all damaged equipment destroyed and empty
-        for (Enumeration i = getEquipment(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getEquipment()){
             if (mounted.isHit() || mounted.isMissing()) {
                 mounted.setShotsLeft(0);
                 mounted.setDestroyed(true);
@@ -3295,8 +3273,7 @@ public abstract class Entity extends TurnOrdered
      */
     public void reloadEmptyWeapons() {
         // try to reload weapons
-        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted) i.nextElement();
+        for(Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
 
             if (wtype.getAmmoType() != AmmoType.T_NA
@@ -3317,8 +3294,7 @@ public abstract class Entity extends TurnOrdered
      */
     public void assignAMS(Vector vAttacks) {
 
-        for (Enumeration e = getWeapons(); e.hasMoreElements(); ) {
-            Mounted weapon = (Mounted)e.nextElement();
+        for(Mounted weapon : getWeaponList()) {
             if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
                 if (!weapon.isReady() || weapon.isMissing()) {
                     continue;
@@ -4075,7 +4051,7 @@ public abstract class Entity extends TurnOrdered
      *          names of the <code>Transporter</code>s to be set for the
      *          <code>Entity</code>, separated by commas.  This value can
      *          be <code>null</code> or empty ("").
-     * @throws  <code>IllegalStateException</code> if any error occurs.
+     * @throws  IllegalStateException if any error occurs.
      */
     public static void decodeTransporters( Entity entity,
                                            String transporters )
@@ -4164,10 +4140,9 @@ public abstract class Entity extends TurnOrdered
      * Load the given unit.
      *
      * @param   unit - the <code>Entity</code> to be loaded.
-     * @exception - If the unit can't be loaded, an
-     *          <code>IllegalArgumentException</code> exception will be thrown.
+     * @throws  IllegalArgumentException If the unit can't be loaded
      */
-    public void load( Entity unit ) throws IllegalArgumentException {
+    public void load( Entity unit ) {
         // Walk through this entity's transport components;
         // find the one that can load the unit.
         // Stop looking after the first match.
@@ -4428,7 +4403,7 @@ public abstract class Entity extends TurnOrdered
      * Get the ID of the <code>Entity</code> that is the current target
      * of a swarm attack by this unit.
      *
-     * @param   id - the <code>int</code> ID of the swarm attack's target
+     * @return  the <code>int</code> ID of the swarm attack's target
      *          The ID may be invalid.  This value should be
      *          <code>Entity.NONE</code> if this unit is not swarming.
      */
@@ -4452,7 +4427,7 @@ public abstract class Entity extends TurnOrdered
      * Get the ID of the <code>Entity</code> that is attacking this unit with
      * a swarm attack.
      *
-     * @param   id - the <code>int</code> ID of the swarm attack's attacker
+     * @return  the <code>int</code> ID of the swarm attack's attacker
      *          The ID may be invalid.  This value should be
      *          <code>Entity.NONE</code> if this unit is not being swarmed.
      */
@@ -4471,8 +4446,7 @@ public abstract class Entity extends TurnOrdered
         boolean found = false;
 
         // Walk through the unit's ammo, stop when we find a match.
-        for (Enumeration j = getAmmo(); j.hasMoreElements() && !found;) {
-            Mounted amounted = (Mounted)j.nextElement();
+        for(Mounted amounted : getAmmo()) {
             AmmoType atype = (AmmoType)amounted.getType();
             if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_BA_INFERNO))
                     && atype.getMunitionType() == AmmoType.M_INFERNO
@@ -4809,8 +4783,7 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
-        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
-              Mounted mounted = (Mounted)i.nextElement();
+        for(Mounted mounted : getWeaponList()) {
               WeaponType wtype = (WeaponType)mounted.getType();
               if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isUsedThisRound()) {
                   return false; //no weapons fire if you fired TAG
@@ -4836,8 +4809,7 @@ public abstract class Entity extends TurnOrdered
      * Pretty much anybody's eligible for movement. If the game option
      * is toggled on, inactive and immobile entities are not eligible.
      * OffBoard units are always ineligible
-     * @param entity
-     * @return
+     * @return whether or not the entity is allowed to move
      */
     public boolean isEligibleForMovement() {
         // check if entity is offboard
@@ -4870,8 +4842,7 @@ public abstract class Entity extends TurnOrdered
         if (isOffBoard() || isAssaultDropInProgress()) {
             return false;
         }
-        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
-              Mounted mounted = (Mounted)i.nextElement();
+        for(Mounted mounted : getWeaponList()) {
               WeaponType wtype = (WeaponType)mounted.getType();
               if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()) {
                   return true;
@@ -4983,8 +4954,7 @@ public abstract class Entity extends TurnOrdered
         if(isAssaultDropInProgress()) {
             return false;
         }
-        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
-              Mounted mounted = (Mounted)i.nextElement();
+        for(Mounted mounted : getWeaponList()) {
               WeaponType wtype = (WeaponType)mounted.getType();
               if ((wtype != null) && (wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                   return true;
@@ -5033,7 +5003,7 @@ public abstract class Entity extends TurnOrdered
      * @param   direction the <code>int</code> direction from the board
      *          that the unit will be deployed; a valid value must be
      *          selected from: NONE, NORTH, SOUTH, EAST, or WEST.
-     * @throws  <code>IllegalArgumentException</code> if a negative distance,
+     * @throws  IllegalArgumentException if a negative distance,
      *          an invalid direction is selected, or the distance does not
      *          match the direction.
      */
@@ -5204,9 +5174,9 @@ public abstract class Entity extends TurnOrdered
     public void illuminateTarget (HexTarget target) {
         if (this.hasSpotlight && this.spotlightIsActive && target != null) {
             this.illuminated = true;
-            Coords[] in = Coords.intervening(this.getPosition(), target.getPosition());
-            for (int i = 0; i < in.length; i++) {
-                for (Enumeration e = game.getEntities(in[i]);e.hasMoreElements();) {
+            ArrayList<Coords> in = Coords.intervening(this.getPosition(), target.getPosition());
+            for (Coords c : in) {
+                for (Enumeration e = game.getEntities(c);e.hasMoreElements();) {
                     Entity en = (Entity)e.nextElement();
                     en.setIlluminated(true);
                 }
@@ -5370,8 +5340,8 @@ public abstract class Entity extends TurnOrdered
     public void setWeaponDestroyed (Mounted which) {
         if (weaponList.contains(which)) {
             which.setDestroyed(true);
-            weaponList.removeElement(which);
-            weaponList.addElement(which);
+            weaponList.remove(which);
+            weaponList.add(which);
         }
     }
 
@@ -5387,8 +5357,7 @@ public abstract class Entity extends TurnOrdered
 
     public int getWeaponsAndEquipmentCost() {
         int cost=0;
-        for (Enumeration i = equipmentList.elements();i.hasMoreElements();) {
-             Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getEquipment()){
              int itemCost=(int)mounted.getType().getCost();
              if(itemCost==EquipmentType.COST_VARIABLE) {
                 itemCost=mounted.getType().resolveVariableCost(this);
@@ -5431,8 +5400,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean hasTAG() {
-        for (Enumeration e = this.getWeapons(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for(Mounted m : getWeaponList()) {
             WeaponType equip = (WeaponType)(m.getType());
             if ((equip != null) && (equip.hasFlag(WeaponType.F_TAG))) {
                 return true;
@@ -5442,8 +5410,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean hasHomingRounds() {
-        for (Enumeration e = this.getAmmo(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for(Mounted m : getAmmo()) {
             AmmoType equip = (AmmoType)(m.getType());
             if (equip.getMunitionType() == AmmoType.M_HOMING) {
                 return true;
@@ -5531,8 +5498,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean usedTag() {
-        for(int i=0;i<weaponList.size();i++) {
-            Mounted weapon = (Mounted)weaponList.elementAt(i);
+        for(Mounted weapon : getWeaponList()) {
             WeaponType wtype = (WeaponType)weapon.getType();
             if(weapon.isUsedThisRound() && wtype.hasFlag(WeaponType.F_TAG)) {
                 return true;

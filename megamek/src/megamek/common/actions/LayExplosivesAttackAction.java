@@ -14,8 +14,6 @@
 
 package megamek.common.actions;
 
-import java.util.Enumeration;
-
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -71,8 +69,7 @@ public class LayExplosivesAttackAction extends AbstractAttackAction
         if(inf.turnsLayingExplosives > 0)
             return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "STOP: Expected Damage: "+getDamageFor(ae));
         boolean ok = false;
-        for(Enumeration<Mounted> e= ae.getMisc(); e.hasMoreElements();) {
-            Mounted m = e.nextElement();
+        for (Mounted m : ae.getMisc()) {
             if(m.getType().hasFlag(MiscType.F_TOOLS) && m.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
                 ok = true;
                 break;

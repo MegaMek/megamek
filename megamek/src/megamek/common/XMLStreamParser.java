@@ -14,14 +14,16 @@
 
 package megamek.common;
 
-import gd.xml.*;
-import java.io.*;
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
+import gd.xml.ParseException;
+import gd.xml.XMLParser;
+import gd.xml.XMLResponder;
+import megamek.common.loaders.EntityLoadingException;
 
-import megamek.common.loaders.*;
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * This class parses an XML input stream.  If the stream is well formed, no
@@ -92,8 +94,7 @@ public class XMLStreamParser implements XMLResponder {
             en.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
         }
         // equipment marked missing
-        for (Enumeration i = en.getEquipment(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : en.getEquipment()) {
             if (mounted.getLocation() == loc) {
                 mounted.setDestroyed(true);
             }
@@ -174,7 +175,7 @@ public class XMLStreamParser implements XMLResponder {
      * <code>Entity</code>s from a previously parsed stream will be discarded.
      *
      * @param   input - the <code>InputStream</code> to be parsed.
-     * @exception A <code>ParseException</code> is thrown if a fatal
+     * @exception ParseException is thrown if a fatal
      *          error occurs during parsing.  Typically, this only
      *          occurs when the XML is not well-formed.
      */
@@ -195,7 +196,7 @@ public class XMLStreamParser implements XMLResponder {
      * <code>Entity</code>s from a previously parsed stream will be discarded.
      *
      * @param   input - the <code>InputStream</code> to be parsed.
-     * @exception A <code>ParseException</code> is thrown if a fatal
+     * @exception ParseException is thrown if a fatal
      *          warning occurs during parsing.  Typically, this only
      *          occurs when the XML is not well-formed.
      */
@@ -801,13 +802,13 @@ public class XMLStreamParser implements XMLResponder {
                                 EquipmentType.get( type );
                             if ( newLoad instanceof AmmoType ) {
                                 int counter = -1;
-                                Enumeration ammo = entity.getAmmo();
-                                while ( ammo.hasMoreElements() &&
+                                Iterator<Mounted> ammo = entity.getAmmo().iterator();
+                                while ( ammo.hasNext() &&
                                         counter < this.locAmmoCount ) {
 
                                     // Is this mounted in the current location?
                                     Mounted mounted = 
-                                        (Mounted) ammo.nextElement();
+                                        (Mounted) ammo.next();
                                     if ( mounted.getLocation() == loc ) {
 
                                         // Increment the loop counter.

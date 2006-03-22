@@ -21,8 +21,6 @@
 
 package megamek.common;
 
-import java.util.Enumeration;
-
 /**
  *
  * @author  Ben
@@ -214,8 +212,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
-            for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
-                Mounted m = (Mounted)e.nextElement();
+            for (Mounted m : entity.getWeaponList()) {
                 WeaponType wt = (WeaponType)m.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     fTons += wt.getTonnage(entity);
@@ -298,8 +295,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
-            for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
-                Mounted m = (Mounted)e.nextElement();
+            for (Mounted m : entity.getWeaponList()) {
                 WeaponType wt = (WeaponType)m.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     fTons += wt.getTonnage(entity);
@@ -356,8 +352,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_TARGCOMP)) {
             // 20% of direct_fire weaponry BV (half for rear-facing)
             double fFrontBV = 0.0, fRearBV = 0.0;
-            for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
-                Mounted m = (Mounted)e.nextElement();
+            for (Mounted m : entity.getWeaponList()) {
                 WeaponType wt = (WeaponType)m.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     if (m.isRearMounted()) {

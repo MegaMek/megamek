@@ -14,15 +14,28 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Enumeration;
-import java.util.Vector;
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.common.Entity;
-import megamek.common.Mounted;
 import megamek.common.MiscType;
+import megamek.common.Mounted;
 import megamek.common.actions.TriggerAPPodAction;
+
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * A dialog displayed to the player when they have an opportunity to
@@ -90,9 +103,7 @@ public class TriggerAPPodDialog
         panPods.setLayout( new GridLayout(0, 1) );
 
         // Walk through the entity's misc equipment, looking for AP Pods.
-        Enumeration equip = entity.getMisc();
-        while ( equip.hasMoreElements() ) {
-            Mounted mount = (Mounted) equip.nextElement();
+        for(Mounted mount : entity.getMisc()){
 
             // Is this an AP Pod?
             if ( mount.getType().hasFlag( MiscType.F_AP_POD ) ) {

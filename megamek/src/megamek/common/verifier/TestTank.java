@@ -29,7 +29,6 @@ import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
 import megamek.common.VTOL;
 
-import java.util.Enumeration;
 import java.lang.StringBuffer;
 
 public class TestTank extends TestEntity
@@ -87,9 +86,7 @@ public class TestTank extends TestEntity
     public float getTankWeightTurret()
     {
         float weight = 0f;
-        for (Enumeration e = tank.getWeapons(); e.hasMoreElements(); )
-        {
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : tank.getWeaponList()) {
             if (m.getLocation()==Tank.LOC_TURRET)
                 weight += ((WeaponType) m.getType()).getTonnage(tank);
         }
@@ -113,9 +110,7 @@ public class TestTank extends TestEntity
         if (!engine.isFusion())
         {
             int weight = 0;
-            for (Enumeration e = tank.getWeapons(); e.hasMoreElements(); )
-            {   
-                Mounted m = (Mounted) e.nextElement();
+            for (Mounted m : tank.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_LASER) ||
                         wt.hasFlag(WeaponType.F_PPC))
@@ -139,9 +134,7 @@ public class TestTank extends TestEntity
     private int getTankCountHeatLaserWeapons()
     {
         int heat = 0; 
-        for (Enumeration e = tank.getWeapons(); e.hasMoreElements(); )
-        {   
-            Mounted m = (Mounted) e.nextElement();
+        for (Mounted m : tank.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC))
                 heat += wt.getHeat();

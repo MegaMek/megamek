@@ -20,8 +20,7 @@
 
 package megamek.common;
 
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.io.Serializable;
 
 /**
@@ -42,7 +41,7 @@ public class TargetRoll implements Serializable {
        wasn't needed after all. */
     public final static int CHECK_FALSE         = Integer.MIN_VALUE + 1;
     
-    private Vector modifiers = new Vector();
+    private ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
     
     private int total;
 
@@ -90,9 +89,8 @@ public class TargetRoll implements Serializable {
         boolean first = true;
         StringBuffer allDesc = new StringBuffer();
         
-        for (Enumeration e = getModifiers(); e.hasMoreElements();) {
-            Modifier modifier = (Modifier)e.nextElement();
-            
+        for (Modifier modifier : modifiers) {
+
             // check for break condition
             if (modifier.value == IMPOSSIBLE
                 || modifier.value == AUTOMATIC_FAIL 
@@ -120,23 +118,17 @@ public class TargetRoll implements Serializable {
      * Returns the first description found
      */
     public String getPlainDesc() {
-        for (Enumeration e = getModifiers(); e.hasMoreElements();) {
-            return ((Modifier)e.nextElement()).desc;
-        }
-        return "";
+        return modifiers.get(0).desc;
     }
     
     /**
      * Returns the last description found
      */
     public String getLastPlainDesc() {
-        Modifier last = (Modifier)modifiers.elementAt(modifiers.size() - 1);
+        Modifier last = modifiers.get(modifiers.size() - 1);
         return last.desc;
     }
-    
-    public Enumeration getModifiers() {
-        return modifiers.elements();
-    }
+
     
     public void addModifier(int value, String desc) {
         addModifier(new Modifier(value, desc));
@@ -146,7 +138,7 @@ public class TargetRoll implements Serializable {
         if (modifier.value == CHECK_FALSE) {
             removeAutos(true);
         }
-        modifiers.addElement(modifier);
+        modifiers.add(modifier);
         recalculate();
     }
     
@@ -157,8 +149,8 @@ public class TargetRoll implements Serializable {
         if (other == null) {
             return;
         }
-        for (Enumeration e = other.getModifiers(); e.hasMoreElements();) {
-            addModifier((Modifier)e.nextElement());
+        for (Modifier modifier:other.modifiers) {
+            addModifier(modifier);
         }
     }
     
@@ -178,17 +170,16 @@ public class TargetRoll implements Serializable {
      */
     
     public void removeAutos(boolean removeImpossibles) {
-        Vector toKeep = new Vector();
-        for (Enumeration e = getModifiers(); e.hasMoreElements();) {
-            Modifier modifier = (Modifier)e.nextElement();
+        ArrayList<Modifier> toKeep = new ArrayList<Modifier>();
+        for (Modifier modifier:modifiers) {
             if (!removeImpossibles) {
                 if (modifier.value != AUTOMATIC_FAIL && modifier.value != AUTOMATIC_SUCCESS) {
-                    toKeep.addElement(modifier);
+                    toKeep.add(modifier);
                 }
             } else if (modifier.value != AUTOMATIC_FAIL &&
                        modifier.value != AUTOMATIC_SUCCESS &&
                        modifier.value != IMPOSSIBLE) {
-                toKeep.addElement(modifier);
+                toKeep.add(modifier);
             }
         }
         modifiers = toKeep;
@@ -203,9 +194,7 @@ public class TargetRoll implements Serializable {
     private void recalculate() {
         total = 0;
         
-        for (Enumeration e = getModifiers(); e.hasMoreElements();) {
-            Modifier modifier = (Modifier)e.nextElement();
-            
+        for (Modifier modifier:modifiers) {
             // check for break condition
             if (modifier.value == IMPOSSIBLE
                 || modifier.value == AUTOMATIC_FAIL 

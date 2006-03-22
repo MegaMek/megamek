@@ -14,17 +14,72 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.Iterator;
-
-import megamek.client.Client;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
-import megamek.client.ui.AWT.widget.*;
-import megamek.common.*;
+import megamek.client.ui.AWT.widget.ArmlessMechMapSet;
+import megamek.client.ui.AWT.widget.BackGroundDrawer;
+import megamek.client.ui.AWT.widget.BattleArmorMapSet;
+import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.client.ui.AWT.widget.DisplayMapSet;
+import megamek.client.ui.AWT.widget.GeneralInfoMapSet;
+import megamek.client.ui.AWT.widget.GunEmplacementMapSet;
+import megamek.client.ui.AWT.widget.InfantryMapSet;
+import megamek.client.ui.AWT.widget.MechMapSet;
+import megamek.client.ui.AWT.widget.MechPanelTabStrip;
+import megamek.client.ui.AWT.widget.PMUtil;
+import megamek.client.ui.AWT.widget.PicMap;
+import megamek.client.ui.AWT.widget.ProtomechMapSet;
+import megamek.client.ui.AWT.widget.QuadMapSet;
+import megamek.client.ui.AWT.widget.TankMapSet;
+import megamek.client.ui.AWT.widget.TransparentLabel;
+import megamek.client.ui.AWT.widget.VTOLMapSet;
+import megamek.common.AmmoType;
+import megamek.common.ArmlessMech;
+import megamek.common.BattleArmor;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentMode;
+import megamek.common.EquipmentType;
+import megamek.common.GunEmplacement;
+import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.ILocationExposureStatus;
+import megamek.common.INarcPod;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.Player;
+import megamek.common.Protomech;
+import megamek.common.QuadMech;
+import megamek.common.Tank;
+import megamek.common.Terrains;
+import megamek.common.VTOL;
+import megamek.common.WeaponType;
+
+import java.awt.Button;
+import java.awt.CardLayout;
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.List;
+import java.awt.Rectangle;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Displays the info for a mech.  This is also a sort
@@ -43,7 +98,6 @@ public class MechDisplay extends BufferedPanel {
     public SystemPanel          sPan;
     public ExtraPanel           ePan;
     private ClientGUI           clientgui;
-    private Client              client;
 
     private Entity              currentlyDisplaying = null;
     private Vector              eventListeners = new Vector();
@@ -55,7 +109,6 @@ public class MechDisplay extends BufferedPanel {
         super(new GridBagLayout());
 
         this.clientgui = clientgui;
-        this.client = clientgui.getClient();
 
         tabStrip = new MechPanelTabStrip(this);
 
@@ -142,8 +195,6 @@ public class MechDisplay extends BufferedPanel {
      * Adds the specified mech display listener to receive
      * events from this view.
      * 
-     * @see BoardViewListener
-     *
      * @param listener the listener.
      */
     public void addMechDisplayListener(MechDisplayListener listener) {
@@ -385,7 +436,6 @@ class WeaponPanel extends BufferedPanel
 
     // I need to keep a pointer to the weapon list of the
     // currently selected mech.
-    private Vector weapons;
     private Vector vAmmo;
     private Entity entity;
     private ClientGUI client;
@@ -705,7 +755,6 @@ class WeaponPanel extends BufferedPanel
         IGame game = client.getClient().game;
 
         // update pointer to weapons
-        this.weapons = en.getWeaponList();
         this.entity = en;
 
         int currentHeatBuildup = en.heat // heat from last round
@@ -745,8 +794,8 @@ class WeaponPanel extends BufferedPanel
         m_chAmmo.removeAll();
         m_chAmmo.setEnabled(false);
 
-        for(int i = 0; i < weapons.size(); i++) {
-            Mounted mounted = (Mounted) weapons.elementAt(i);
+        for(int i = 0; i < entity.getWeaponList().size(); i++) {
+            Mounted mounted = (Mounted) entity.getWeaponList().get(i);
             WeaponType wtype = (WeaponType) mounted.getType();
             StringBuffer wn = new StringBuffer(mounted.getDesc());
             wn.append(" ["); //$NON-NLS-1$
@@ -832,7 +881,7 @@ class WeaponPanel extends BufferedPanel
             weaponList.select(-1);
             return;
         }
-        int index = weapons.indexOf(entity.getEquipment(wn));
+        int index = entity.getWeaponList().indexOf(entity.getEquipment(wn));
         weaponList.select(index);
         displaySelected();
     }
@@ -845,7 +894,7 @@ class WeaponPanel extends BufferedPanel
         if (selected == -1) {
             return -1;
         }
-        return entity.getEquipmentNum((Mounted)weapons.elementAt(selected));
+        return entity.getEquipmentNum((Mounted)entity.getWeaponList().get(selected));
     }
 
     /**
@@ -867,7 +916,7 @@ class WeaponPanel extends BufferedPanel
             wExtR.setText("---"); //$NON-NLS-1$
             return;
         }
-        Mounted mounted = (Mounted)weapons.elementAt(weaponList.getSelectedIndex());
+        Mounted mounted = (Mounted)entity.getWeaponList().get(weaponList.getSelectedIndex());
         WeaponType wtype = (WeaponType)mounted.getType();
         // update weapon display
         wNameR.setText(mounted.getDesc());
@@ -953,8 +1002,7 @@ class WeaponPanel extends BufferedPanel
             vAmmo = new Vector();
             int nCur = -1;
             int i = 0;
-            for (Enumeration j = entity.getAmmo(); j.hasMoreElements();) {
-                Mounted mountedAmmo = (Mounted)j.nextElement();
+            for (Mounted mountedAmmo :entity.getAmmo()) {
                 AmmoType atype = (AmmoType)mountedAmmo.getType();
                 if (mountedAmmo.isAmmoUsable() &&
                     atype.getAmmoType() == wtype.getAmmoType() &&
@@ -1055,7 +1103,7 @@ class WeaponPanel extends BufferedPanel
             if (n == -1) {
                 return;
             }
-            Mounted mWeap = (Mounted)weapons.elementAt(n);
+            Mounted mWeap = (Mounted)entity.getWeaponList().get(n);
             Mounted mAmmo = (Mounted)vAmmo.elementAt(m_chAmmo.getSelectedIndex());
             entity.loadWeapon(mWeap, mAmmo);
 
@@ -1089,8 +1137,6 @@ class SystemPanel
 {
     private static final String IMAGE_DIR = "data/images/widgets";
     
-    private static Object SYSTEM = new Object();
-
     private TransparentLabel locLabel, slotLabel, modeLabel;
     public java.awt.List slotList;
     public java.awt.List locList;
@@ -1222,10 +1268,8 @@ class SystemPanel
     public Mounted getSelectedEquipment() {
         if (en instanceof Tank) {
             if (en.hasTargComp()) {
-                Enumeration equip = en.getEquipment();
-                while (equip.hasMoreElements()) {
-                    Mounted m = (Mounted)equip.nextElement();
-                    if (m.getType() instanceof MiscType && 
+                for (Mounted m : en.getEquipment()) {
+                    if (m.getType() instanceof MiscType &&
                         m.getType().hasFlag(MiscType.F_TARGCOMP) ) {
                         return m;
                     }
@@ -1299,10 +1343,8 @@ class SystemPanel
         }
         if (en instanceof Tank || en instanceof GunEmplacement) {
             if (en.hasTargComp()) {
-                Enumeration equip = en.getEquipment();
-                while (equip.hasMoreElements()) {
-                    Mounted m = (Mounted)equip.nextElement();
-                    if (m.getType() instanceof MiscType && 
+                for (Mounted m : en.getEquipment()) {
+                    if (m.getType() instanceof MiscType &&
                         m.getType().hasFlag(MiscType.F_TARGCOMP) ) {
                         StringBuffer sb = new StringBuffer(32);
                         sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -1818,9 +1860,7 @@ class ExtraPanel
         }
 
         // Show jammed weapons.
-        Enumeration weaps = en.getWeapons();
-        while ( weaps.hasMoreElements() ) {
-            Mounted weapon = (Mounted) weaps.nextElement();
+        for (Mounted weapon :en.getWeaponList()) {
             if ( weapon.isJammed() ) {
                 buff = new StringBuffer( weapon.getName() );
                 buff.append( Messages.getString("MechDisplay.isJammed") ); //$NON-NLS-1$

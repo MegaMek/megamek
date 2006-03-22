@@ -15,9 +15,9 @@
 
 package megamek.common;
 
-import java.io.*;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.io.Serializable;
 
 
 /**
@@ -369,8 +369,7 @@ public class GunEmplacement extends Entity
         
         // add defensive equipment
         double dEquipmentBV = 0;
-        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
@@ -393,8 +392,7 @@ public class GunEmplacement extends Entity
         //double weaponsBVFront = 0;
         //double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             double dBV = wtype.getBV(this);
 
@@ -431,8 +429,7 @@ public class GunEmplacement extends Entity
         
         // add ammo bv
         double ammoBV = 0;
-        for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
+        for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType)mounted.getType();
             
             // don't count depleted ammo
@@ -575,8 +572,7 @@ public class GunEmplacement extends Entity
     }
 
     public boolean doomedInVacuum() {
-        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
+        for (Mounted m : getEquipment()) {
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
                 return false;
             }

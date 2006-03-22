@@ -19,14 +19,10 @@ package megamek.common;
  * in this class until Java 1.1 compatibility is abandoned or a
  * non-serialization based save feature is implemented.
  */
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
-
-import java.io.*;
-
-import megamek.common.actions.*;
-import megamek.common.event.GameNewActionEvent;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.LayMinefieldAction;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEndEvent;
@@ -37,6 +33,7 @@ import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameMapQueryEvent;
+import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
@@ -46,8 +43,12 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
-import megamek.common.TagInfo;
-import megamek.common.Flare;
+
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * The game class is the root of all data about the game in progress.
@@ -478,7 +479,6 @@ public class Game implements Serializable, IGame
      *  pilot special ability.
      */
     public boolean hasTacticalGenius(Player player) {
-        int count = 0;
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             if (entity.getCrew().getOptions().booleanOption("tactical_genius")
@@ -790,7 +790,7 @@ public class Game implements Serializable, IGame
      *
      * @param   vOutOfGame - the new <code>Vector</code> of dead or fled units.
      *          This value should <em>not</em> be <code>null</code>.
-     * @throws  <code>IllegalArgumentException</code> if the new list is
+     * @throws  IllegalArgumentException if the new list is
      *          <code>null</code>.
      */
     public void setOutOfGameEntitiesVector(Vector vOutOfGame) {
@@ -1752,8 +1752,6 @@ public class Game implements Serializable, IGame
         Entity          unit = null;
         boolean         result;
         Hashtable       playerFlags = null;
-        Enumeration     misc = null;
-        Mounted         equip = null;
         String          name = null;
 
         // Assume that we don't need new transporters.
@@ -1770,9 +1768,7 @@ public class Game implements Serializable, IGame
             if ( unit instanceof BattleArmor ) {
 
                 // Does the unit have a Magnetic Clamp?
-                misc = unit.getMisc();
-                while ( misc.hasMoreElements() ) {
-                    equip = (Mounted) misc.nextElement();
+                for (Mounted equip : unit.getMisc()) {
                     name = equip.getType().getInternalName();
                     if ( BattleArmor.MAGNETIC_CLAMP.equals( name ) ){
                         // The unit's player needs new transporters.
@@ -1897,7 +1893,7 @@ public class Game implements Serializable, IGame
 
     public void rollInitAndResolveTies() {
         if(getOptions().booleanOption("individual_initiative")) {
-            Vector<TurnOrdered> vRerolls = new Vector();
+            Vector<TurnOrdered> vRerolls = new Vector<TurnOrdered>();
             for(int i=0;i<entities.size();i++) {
                 Entity e = (Entity)entities.elementAt(i);
                 if(initiativeRerollRequests.contains(getTeamForPlayer(e.getOwner()))) {
@@ -2385,10 +2381,10 @@ public class Game implements Serializable, IGame
      */
     public Enumeration getNemesisTargets(Entity attacker, Coords target) {
         final Coords attackerPos = attacker.getPosition();
-        final Coords[] in = Coords.intervening(attackerPos, target);
+        final ArrayList<Coords> in = Coords.intervening(attackerPos, target);
         Vector nemesisTargets = new Vector();
-        for (int i = 0; i < in.length; i++) {
-            for (Enumeration e = getEntities(in[i]);e.hasMoreElements();) {
+        for (Coords c : in) {
+            for (Enumeration e = getEntities(c);e.hasMoreElements();) {
                 Entity entity = (Entity)e.nextElement();
                 if (entity.isINarcedWith(INarcPod.NEMESIS) &&
                      !entity.isEnemyOf(attacker)) {

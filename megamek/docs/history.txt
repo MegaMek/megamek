@@ -15,6 +15,7 @@ v0.31.7-dev (CVS)
 + Bug 1450981: mek making PSR when standing still
 + Bug 1448511: NoSuchMethodError with java 1.4
 + Patch 1452887: Entity Vectors to ArrayLists
++ Bug: Shield damage capacity was calculated wrong for passive shields
 
 v0.31.6 (2006-03-12, 16:48 GMT)
 + Bug 1427812: Thundergod mislabeled as Cerberus

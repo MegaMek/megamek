@@ -309,13 +309,11 @@ public class EquipmentType {
             
             Mounted m = entity.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType)type).isShield()
-                    && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
+            if (type instanceof MiscType && ((MiscType)type).isShield()) {
                 if ( cs.isDamaged() )
                     base -= 5;
             }
         }
-            
         return Math.max(0,base-damageTaken);
     }
     

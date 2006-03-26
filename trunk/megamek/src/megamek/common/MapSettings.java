@@ -184,6 +184,8 @@ public class MapSettings implements Serializable {
     private int cityMaxFloors = 6;
     private int cityDensity = 75;
     
+    private int invertNegativeTerrain = 0;
+    
     /** end Map Generator Parameters */
 
     /** Creates new MapSettings */
@@ -207,6 +209,7 @@ public class MapSettings implements Serializable {
         this.boardsSelected = (Vector)other.getBoardsSelectedVector().clone();
         this.boardsAvailable = (Vector)other.getBoardsAvailableVector().clone();
 
+        this.invertNegativeTerrain = other.getInvertNegativeTerrain();
         this.hilliness = other.getHilliness();
         this.cliffs = other.getCliffs();
         this.range = other.getRange();
@@ -577,6 +580,7 @@ public class MapSettings implements Serializable {
             (this.boardHeight != other.getBoardHeight()) ||
             (this.mapWidth != other.getMapWidth()) ||
             (this.mapHeight != other.getMapHeight()) ||
+            (this.invertNegativeTerrain != other.getInvertNegativeTerrain()) ||
             (this.hilliness != other.getHilliness()) ||
             (this.cliffs != other.getCliffs()) ||
             (this.range != other.getRange()) ||
@@ -648,6 +652,7 @@ public class MapSettings implements Serializable {
         return new MapSettings(this);
     }
 
+    public int getInvertNegativeTerrain() { return invertNegativeTerrain; }
     public int getHilliness() { return hilliness; }
     public int getCliffs() { return cliffs; }
     public int getRange() { return range; }
@@ -819,8 +824,8 @@ public class MapSettings implements Serializable {
     
     /** set the Parameters for the Map Generator 
      */
-     public void setCliffParam(int prob) { cliffs = prob; }
-     
+    public void setCliffParam(int prob) { cliffs = prob; }   
+    
     /** set the Parameters for the Map Generator 
     */
     public void setCraterParam(int prob, int minCrat,
@@ -832,6 +837,11 @@ public class MapSettings implements Serializable {
         minRadius = minRad;
         maxRadius = maxRad;
     }
+    
+    /** set the Parameters for the Map Generator 
+     */
+    public void setInvertNegativeTerrain(int invert) { invertNegativeTerrain = invert; }
+    
     
     /** 
      * set Map generator parameters
@@ -877,6 +887,7 @@ public class MapSettings implements Serializable {
             saveParameter( output, "THEME", theme);
             
             // elevation params
+            saveParameter( output, "INVERTNEGATIVETERRAIN", invertNegativeTerrain);
             saveParameter( output, "HILLYNESS", hilliness);
             saveParameter( output, "HILLELEVATIONRANGE", range);
             saveParameter( output, "HILLINVERTPROB", probInvert);
@@ -1029,6 +1040,7 @@ public class MapSettings implements Serializable {
         if(key.equals("THEME")) theme = param;
         
         // elevation params
+        else if(key.equals("INVERTNEGATIVETERRAIN")) invertNegativeTerrain = Integer.valueOf(param);
         else if(key.equals("HILLYNESS")) hilliness = Integer.valueOf(param);
         else if(key.equals("HILLELEVATIONRANGE")) range = Integer.valueOf(param);
         else if(key.equals("HILLINVERTPROB")) probInvert = Integer.valueOf(param);

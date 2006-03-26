@@ -44,6 +44,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
+import megamek.common.IOffBoardDirections;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.InfernoTracker;
@@ -2808,6 +2809,17 @@ public class Server implements Runnable {
             r = new Report(2005, Report.PUBLIC);
             r.addDesc(entity);
             addReport(r);
+            Coords pos = entity.getPosition();
+            int fleeDirection;
+            if (pos.x == 0) {
+                fleeDirection = IOffBoardDirections.WEST;
+            } else if (pos.y == 0) {
+                fleeDirection = IOffBoardDirections.SOUTH;
+            } else if (pos.x == game.getBoard().getWidth()) {
+                fleeDirection = IOffBoardDirections.EAST;
+            } else {
+                fleeDirection = IOffBoardDirections.NORTH;
+            }
 
             // Is the unit carrying passengers?
             final Vector passengers = entity.getLoadedUnits();
@@ -2820,6 +2832,7 @@ public class Server implements Runnable {
                     r.indent();
                     r.addDesc(passenger);
                     addReport(r);
+                    passenger.setRetreatedDirection(fleeDirection);
                     game.removeEntity( passenger.getId(),
                             IEntityRemovalConditions.REMOVE_IN_RETREAT );
                     send( createRemoveEntityPacket(passenger.getId(),
@@ -2839,6 +2852,8 @@ public class Server implements Runnable {
                 if (mw.isCaptured()) {
                     r = new Report(2015);
                     condition = IEntityRemovalConditions.REMOVE_CAPTURED;
+                } else {
+                    mw.setRetreatedDirection(fleeDirection);
                 }
                 game.removeEntity( mw.getId(), condition );
                 send( createRemoveEntityPacket(mw.getId(), condition) );
@@ -2872,6 +2887,7 @@ public class Server implements Runnable {
                 send( createRemoveEntityPacket(swarmerId,
                         IEntityRemovalConditions.REMOVE_CAPTURED) );
             }
+            entity.setRetreatedDirection(fleeDirection);
             game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT );
             send( createRemoveEntityPacket(entity.getId(),
                     IEntityRemovalConditions.REMOVE_IN_RETREAT) );

@@ -127,6 +127,7 @@ public abstract class Entity extends TurnOrdered
     private int                 killerId = Entity.NONE;
     private int                 offBoardDistance = 0;
     private int                 offBoardDirection = IOffBoardDirections.NONE;
+    private int                 retreatedDirection = IOffBoardDirections.NONE;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -5658,5 +5659,19 @@ public abstract class Entity extends TurnOrdered
             else
                 return false;
         }
+    }
+
+    /**
+     * @return Returns the retreatedDirection.
+     */
+    public int getRetreatedDirection() {
+        return retreatedDirection;
+    }
+
+    /**
+     * @param retreatedDirection The retreatedDirection to set.
+     */
+    public void setRetreatedDirection(int retreatedDirection) {
+        this.retreatedDirection = retreatedDirection;
     }
 }

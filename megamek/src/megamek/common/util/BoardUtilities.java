@@ -272,7 +272,21 @@ public class BoardUtilities {
         for(int i=0; i<buildings.size();i++){
             placeBuilding(result, (BuildingTemplate)(buildings.elementAt(i)));
         }
+        // invert negative terrain?
+        if (mapSettings.getInvertNegativeTerrain() == 1) {
+            invertNegativeTerrain(result);
+        }
         return result;
+    }
+    
+    private static void invertNegativeTerrain(IBoard board) {
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++ ) {
+                IHex hex = board.getHex(x , y);
+                if (hex.getElevation() < 0)
+                    hex.setElevation(hex.getElevation() * -1);
+            }            
+        }
     }
     
     private static void placeBuilding(IBoard board, BuildingTemplate building) {

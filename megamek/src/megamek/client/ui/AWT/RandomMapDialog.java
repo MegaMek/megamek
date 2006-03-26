@@ -94,6 +94,7 @@ public class RandomMapDialog
     private SimpleLine slBoardSize = null;
     private SimpleLine slCraters = null;
     private SimpleLine slCity = null;
+    private SimpleLine slInvertNegative = null;
 
     private SimpleLine slElevationAd = null;
     private SimpleLine slWoodsAd = null;
@@ -109,12 +110,16 @@ public class RandomMapDialog
     private SimpleLine slBoardSizeAd = null;
     private SimpleLine slCratersAd = null;
     private SimpleLine slCityAd = null;
+    private SimpleLine slInvertNegativeAd = null;
     
     private TextField texTheme;
 
     /** how much hills there should be, Range 0..100 */
     private Label labHilliness;
     private TextField texHilliness;
+    /** invert negative terrain? 1 yes, 0 no */
+    private Label labInvertNegative = null;
+    private TextField texInvertNegative = null;
     /** Maximum level of the map */
     private Label labRange;
     private TextField texRange;
@@ -434,6 +439,9 @@ public class RandomMapDialog
             addLabelTextField(labCityCF, texCityMinCF, texCityMaxCF, "-");
             addLabelTextField(labCityFloors, texCityMinFloors, texCityMaxFloors, "-");
             addLabelTextField(labCityDensity, texCityDensity);
+            
+            addSeparator(slInvertNegativeAd);
+            addLabelTextField(labInvertNegative, texInvertNegative);
         }
         scrAll.add(panOptions);
         
@@ -732,6 +740,9 @@ public class RandomMapDialog
         texCityMaxFloors = new TextField(2);
         texCityDensity = new TextField(2);
         
+        labInvertNegative = new Label(Messages.getString("RandomMapDialog.labInvertNegative"), Label.LEFT); //$NON-NLS-1$
+        texInvertNegative = new TextField(1);
+        
         /** Algorithm */
         labAlgorithmToUse = new Label(Messages.getString("RandomMapDialog.labAlgorithmToUse"), Label.LEFT); //$NON-NLS-1$
         texAlgorithmToUse = new TextField(2);
@@ -750,6 +761,7 @@ public class RandomMapDialog
         slBoardSizeAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slCratersAd = new SimpleLine(ADVANCED_LINE_WIDTH);
         slCityAd = new SimpleLine(ADVANCED_LINE_WIDTH);
+        slInvertNegativeAd = new SimpleLine(ADVANCED_LINE_WIDTH);
 
     }
     
@@ -902,6 +914,7 @@ public class RandomMapDialog
         texFxMod.setText(new Integer(mapSettings.getFxMod()).toString());
         
         choCity.select(mapSettings.getCityType());
+        texInvertNegative.setText(new Integer(mapSettings.getInvertNegativeTerrain()).toString());
         texCityBlocks.setText(new Integer(mapSettings.getCityBlocks()).toString());
         texCityMinCF.setText(new Integer(mapSettings.getCityMinCF()).toString());
         texCityMaxCF.setText(new Integer(mapSettings.getCityMaxCF()).toString());

@@ -1122,6 +1122,7 @@ public class BoardView1
 
         int level = hex.getElevation();
         int depth = hex.depth();
+        int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
 
         // offset drawing point
         
@@ -1166,34 +1167,36 @@ public class BoardView1
                     font_hexnum,
                     boardGraph);
         }
-        // level | depth
-        if (level != 0 && depth == 0 && zoomIndex > 3) {
-            drawCenteredString(
-                    Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
-                    drawX,
-                    drawY + (int)(70*scale),
-                    font_elev,
-                    boardGraph);
-        } else if (depth != 0 && level == 0  && zoomIndex > 3 ) {
-            drawCenteredString(
-                    Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
-                    drawX,
-                    drawY + (int)(70*scale),
-                    font_elev,
-                    boardGraph);
-        } else if (level != 0 && depth != 0  && zoomIndex > 3) {
-            drawCenteredString(
+        // draw terrain level / water depth / building height
+        if (zoomIndex > 3) {
+            int ypos = 70;
+            if(level != 0) {
+                drawCenteredString(
                         Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
-                    drawX,
-                    drawY + (int)(60*scale),
-                    font_elev,
-                    boardGraph);
+                        drawX,
+                        drawY + (int)(ypos*scale),
+                        font_elev,
+                        boardGraph);
+                ypos -= 10;
+            }
+            if(depth != 0) {
                 drawCenteredString(
                         Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
-                    drawX,
-                    drawY + (int)(70*scale),
-                    font_elev,
-                    boardGraph);
+                        drawX,
+                        drawY + (int)(ypos*scale),
+                        font_elev,
+                        boardGraph);
+                ypos -= 10;
+            }
+            if(height > 0) {
+                drawCenteredString(
+                        Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
+                        drawX,
+                        drawY + (int)(ypos*scale),
+                        font_elev,
+                        boardGraph);
+                ypos -= 10;
+            }
         }
         
         // draw elevation borders

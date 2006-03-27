@@ -98,8 +98,8 @@ public class BuildingTarget implements Targetable {
         // one Level high buildings in a woods hex.
         IHex targetHex = board.getHex( this.position );
         this.elevation = targetHex.getElevation();
-        this.height = Math.max(targetHex.terrainLevel( Terrains.BLDG_ELEV ),
-                targetHex.terrainLevel(Terrains.BRIDGE_ELEV)) - 1;
+        this.height = Math.max(targetHex.terrainLevel( Terrains.BLDG_ELEV ) - 1,
+                targetHex.terrainLevel(Terrains.BRIDGE_ELEV));
     }
 
 

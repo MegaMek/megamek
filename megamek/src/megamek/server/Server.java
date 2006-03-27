@@ -3096,6 +3096,8 @@ public class Server implements Runnable {
             curPos = step.getPosition();
             if(moveType != IEntityMovementType.MOVE_JUMP || entity.getJumpType() != Mech.JUMP_BOOSTER)
                 curFacing = step.getFacing();
+            //check if a building PSR will be needed later, before setting the new elevation
+            int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             curVTOLElevation = step.getElevation();
             //set elevation in case of collapses
             entity.setElevation(step.getElevation());
@@ -4065,7 +4067,6 @@ public class Server implements Runnable {
             }
 
             // Handle non-infantry moving into a building.
-            int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
             if (buildingMove > 0) {
 
                 // Get the building being exited.

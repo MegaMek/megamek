@@ -19,6 +19,8 @@ v0.31.7-dev (CVS)
 + RFE 1458778: Negative terrain inversion option for RMG
 + Track which board-direction a unit retreated to, for MekWars tracking.
 + RFE 1458261: show building height in the hex
++ Bug: Building targets 1 level taller than they should be
++ Bug: PSR made for stepping off building as 1st step
 
 v0.31.6 (2006-03-12, 16:48 GMT)
 + Bug 1427812: Thundergod mislabeled as Cerberus

@@ -99,7 +99,7 @@ public class BuildingTarget implements Targetable {
         IHex targetHex = board.getHex( this.position );
         this.elevation = targetHex.getElevation();
         this.height = Math.max(targetHex.terrainLevel( Terrains.BLDG_ELEV ),
-                targetHex.terrainLevel(Terrains.BRIDGE_ELEV));
+                targetHex.terrainLevel(Terrains.BRIDGE_ELEV)) - 1;
     }
 
 

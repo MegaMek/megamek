@@ -425,12 +425,13 @@ public class BattleArmor
 
         // Pick a new random number if that trooper is dead or never existed.
         // Remember that there's one more location than the number of troopers.
-        // In www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,
-        // pg. 25, Randall Bills says "previously destroyed refers to a
-        // previous turn and/or phase" for rolling hits on a squad
+        // In http://forums.classicbattletech.com/index.php/topic,43203.0.html,
+        // "previously destroyed includes the current phase" for rolling hits on a squad,
+        // modifying previous ruling in the AskThePM FAQ.
         while ( loc >= this.locations() ||
                 IArmorState.ARMOR_NA == this.getInternal(loc) ||
-                IArmorState.ARMOR_DESTROYED == this.getInternal(loc) ) {
+                IArmorState.ARMOR_DESTROYED == this.getInternal(loc) ||
+                (IArmorState.ARMOR_DOOMED == this.getInternal(loc) && !isDoomed())) {
             loc = Compute.d6();
         }
 

@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Enumeration;
 import java.util.Vector;
 
 /**
@@ -79,6 +80,13 @@ public class Infantry
     protected int       runMP = 1;
 
     public int turnsLayingExplosives = -1;    
+    
+    public static final int DUG_IN_NONE = 0;
+    public static final int DUG_IN_WORKING = 1; //no protection, can't attack
+    public static final int DUG_IN_COMPLETE = 2; //protected, restricted arc
+    public static final int DUG_IN_FORTIFYING1 = 3; //no protection, can't attack
+    public static final int DUG_IN_FORTIFYING2 = 4; //no protection, can't attack
+    private int dugIn = DUG_IN_NONE;
     
     /**
      * Set up the damage array for this platoon for the given weapon type.
@@ -207,9 +215,9 @@ public class Infantry
     }
 
     /**
-     * Infantry can face freely
+     * Infantry can face freely (except when dug in)
      */
-    public boolean canChangeSecondaryFacing() { return true; }
+    public boolean canChangeSecondaryFacing() { return (dugIn == DUG_IN_NONE); }
 
     /**
      * Infantry can face freely
@@ -537,14 +545,15 @@ public class Infantry
      * But field guns are set up to a facing
      */
     public int getWeaponArc(int wn) { 
-        if(this instanceof BattleArmor)
+        if(this instanceof BattleArmor && dugIn == DUG_IN_NONE)
             return Compute.ARC_360; 
         Mounted mounted = getEquipment(wn);
         WeaponType wtype = (WeaponType)mounted.getType();
-        if(wtype.hasFlag(WeaponType.F_INFANTRY)
+        if((wtype.hasFlag(WeaponType.F_INFANTRY)
              || wtype.getInternalName() == LEG_ATTACK
              || wtype.getInternalName() == SWARM_MEK
              || wtype.getInternalName() == STOP_SWARM)
+             && dugIn == DUG_IN_NONE)
             return Compute.ARC_360; 
         else
             return Compute.ARC_FORWARD;
@@ -921,6 +930,10 @@ public class Infantry
     public boolean isEligibleFor(int phase) {
         if(turnsLayingExplosives > 0 && phase != IGame.PHASE_PHYSICAL)
             return false;
+        if(dugIn != DUG_IN_COMPLETE
+        		&& dugIn != DUG_IN_NONE) {
+        	return false;
+        }
         return super.isEligibleFor(phase);
     }
 
@@ -929,6 +942,13 @@ public class Infantry
             turnsLayingExplosives++;
             if(!(Compute.isInBuilding(game, this)))
                 turnsLayingExplosives = -1; //give up if no longer in a building
+        }
+        if(dugIn != DUG_IN_COMPLETE
+        		&& dugIn != DUG_IN_NONE) {
+        	dugIn++;
+        	if(dugIn > DUG_IN_FORTIFYING2) {
+        		dugIn = DUG_IN_NONE;
+        	}
         }
         super.newRound(roundNumber);
     }
@@ -951,4 +971,11 @@ public class Infantry
         return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
     }
 
+    public void setDugIn(int i) {
+    	dugIn = i;
+    }
+    
+    public int getDugIn() {
+    	return dugIn;
+    }
 } // End class Infantry

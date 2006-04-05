@@ -2012,6 +2012,27 @@ public abstract class Entity extends TurnOrdered
     }
     
     /**
+     * Check if the entity has an arbritrary type of misc
+     * equipment
+     * @param flag		A MiscType.F_XXX
+     * @param secondary A MiscType.S_XXX or -1 for don't care
+     * @return true if at least one ready item.
+     */
+    public boolean hasWorkingMisc(long flag, int secondary) {
+    	for (Mounted m : miscList) {
+    		if(m.getType() instanceof MiscType &&
+    				m.isReady()) {
+    			MiscType type = (MiscType)m.getType();
+    			if(type.hasFlag(flag) &&
+    					(secondary == -1 || 
+    							type.hasSubType(secondary)))
+    				return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    /**
      * Returns the amount of heat that the entity can sink each
      * turn.
      */

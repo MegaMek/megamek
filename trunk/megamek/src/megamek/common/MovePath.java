@@ -59,6 +59,8 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_CLIMB_MODE_ON = 25;
     public static final int STEP_CLIMB_MODE_OFF = 26;
     public static final int STEP_SWIM = 27;
+    public static final int STEP_DIG_IN = 28;
+    public static final int STEP_FORTIFY = 29;
 
     public static class Key {
         private Coords coords;

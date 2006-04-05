@@ -3143,7 +3143,7 @@ public class BoardView1
 
             // draw facing
             graph.setColor(Color.white);
-            if (entity.getFacing() != -1 && !(entity instanceof Infantry)) {
+            if (entity.getFacing() != -1 && !(entity instanceof Infantry && ((Infantry)entity).getDugIn() == Infantry.DUG_IN_NONE)) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 
@@ -3268,6 +3268,23 @@ public class BoardView1
                 graph.drawString("D", 40, 71); //$NON-NLS-1$
                 graph.setColor(Color.black);
                 graph.drawString("D", 39, 70); //$NON-NLS-1$            	
+            }
+            else if (entity instanceof Infantry) {
+            	int dig = ((Infantry)entity).getDugIn();
+            	if(dig == Infantry.DUG_IN_COMPLETE) {
+                    // draw "D"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString("D", 40, 71); //$NON-NLS-1$
+                    graph.setColor(Color.black);
+                    graph.drawString("D", 39, 70); //$NON-NLS-1$            		
+            	}
+            	else if(dig != Infantry.DUG_IN_NONE) {
+                    // draw "W"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString("W", 40, 71); //$NON-NLS-1$
+                    graph.setColor(Color.black);
+                    graph.drawString("W", 39, 70); //$NON-NLS-1$            		
+            	}
             }
 
             //Lets draw our armor and internal status bars
@@ -3497,6 +3514,8 @@ public class BoardView1
             case MovePath.STEP_GO_PRONE:
             case MovePath.STEP_HULL_DOWN:
             case MovePath.STEP_DOWN:
+            case MovePath.STEP_DIG_IN:
+            case MovePath.STEP_FORTIFY:
                 // draw arrow indicating dropping prone
                 // also doubles as the descent indication
                 Polygon downPoly = movementPolys[7];

@@ -568,6 +568,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
             losMods = los.losModifiers(game, eistatus);
         }
 
+        if(target instanceof Infantry && !wtype.hasFlag(WeaponType.F_FLAMER)) {
+        	if(targHex.containsTerrain(Terrains.FORTIFIED)
+            || ((Infantry)target).getDugIn() == Infantry.DUG_IN_COMPLETE) {
+    			toHit.addModifier(2, "infantry dug in");
+    		}
+        }
+        
         // add in LOS mods that we've been keeping
         toHit.append(losMods);
         

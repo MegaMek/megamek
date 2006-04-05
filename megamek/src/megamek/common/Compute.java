@@ -1457,11 +1457,6 @@ public class Compute {
             // flag for vtols and such
             return toHit;
         }
-
-        if(hex.containsTerrain(Terrains.FORTIFIED) &&
-        		entityTarget instanceof Infantry) {
-        	toHit.addModifier(2, "infantry dug in");
-        }
         
         // -1 bonus only against BattleMechs in water!
         if (hex.terrainLevel(Terrains.WATER) > 0

@@ -66,7 +66,9 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 public class MovementDisplay
@@ -102,6 +104,8 @@ public class MovementDisplay
     public static final String    MOVE_HULL_DOWN = "moveHullDown"; //$NON-NLS-1$
     public static final String    MOVE_CLIMB_MODE = "moveClimbMode"; //$NON-NLS-1$
     public static final String    MOVE_SWIM = "moveSwim"; //$NON-NLS-1$
+    public static final String    MOVE_DIG_IN = "moveDigIn"; //$NON-NLS-1$
+    public static final String    MOVE_FORTIFY = "moveFortify"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -146,7 +150,16 @@ public class MovementDisplay
 
     private Button            butClimbMode;
 
+    private Button            butDigIn;
+    private Button            butFortify;
+    
     private int               buttonLayout;
+    
+    //order of buttons for various entity types
+    private ArrayList<Button> buttonsMech;
+    private ArrayList<Button> buttonsTank;
+    private ArrayList<Button> buttonsVtol;
+    private ArrayList<Button> buttonsInf;
 
     // let's keep track of what we're moving, too
     private int                cen = Entity.NONE;    // current entity number
@@ -330,9 +343,122 @@ public class MovementDisplay
         butClimbMode.setActionCommand(MOVE_CLIMB_MODE);
         butClimbMode.addKeyListener(this);
         
+        butDigIn = new Button(Messages.getString("MovementDisplay.butDigIn")); //$NON-NLS-1$
+        butDigIn.addActionListener(this);
+        butDigIn.setEnabled(false);
+        butDigIn.setActionCommand(MOVE_DIG_IN);
+        butDigIn.addKeyListener(this);
+        
+        butFortify = new Button(Messages.getString("MovementDisplay.butFortify")); //$NON-NLS-1$
+        butFortify.addActionListener(this);
+        butFortify.setEnabled(false);
+        butFortify.setActionCommand(MOVE_FORTIFY);
+        butFortify.addKeyListener(this);
+        
         butSpace = new Button(".");
         butSpace.setEnabled(false);
         butSpace.addKeyListener(this);
+        
+        //add buttons to the lists, except space, more & next
+        buttonsMech = new ArrayList(22);
+        buttonsMech.add(butWalk);
+        buttonsMech.add(butJump);
+        buttonsMech.add(butBackup);
+        buttonsMech.add(butTurn);
+        buttonsMech.add(butUp);
+        buttonsMech.add(butDown);
+        buttonsMech.add(butCharge);
+        buttonsMech.add(butDfa);
+        buttonsMech.add(butLoad);
+        buttonsMech.add(butUnload);
+        buttonsMech.add(butClimbMode);
+        buttonsMech.add(butSearchlight);
+        buttonsMech.add(butHullDown);
+        buttonsMech.add(butSwim);
+        buttonsMech.add(butEject);
+        buttonsMech.add(butFlee);
+        buttonsMech.add(butRAC);
+        //these are last, they won't be used by mechs
+        buttonsMech.add(butDigIn);
+        buttonsMech.add(butFortify);
+        buttonsMech.add(butLayMine);
+        buttonsMech.add(butLower);
+        buttonsMech.add(butRaise);
+
+        buttonsTank = new ArrayList(22);
+        buttonsTank.add(butWalk);
+        buttonsTank.add(butBackup);
+        buttonsTank.add(butTurn);
+        buttonsTank.add(butLoad);
+        buttonsTank.add(butUnload);
+        buttonsTank.add(butCharge);
+        buttonsTank.add(butClimbMode);
+        buttonsTank.add(butSearchlight);
+        buttonsTank.add(butHullDown);
+        buttonsTank.add(butSwim);
+        buttonsTank.add(butEject);
+        buttonsTank.add(butFlee);
+        buttonsTank.add(butRAC);
+        buttonsTank.add(butLayMine);
+        //these are last, they won't be used by tanks
+        buttonsTank.add(butDfa);
+        buttonsTank.add(butUp);
+        buttonsTank.add(butDown);
+        buttonsTank.add(butJump);
+        buttonsTank.add(butDigIn);
+        buttonsTank.add(butFortify);
+        buttonsTank.add(butLower);
+        buttonsTank.add(butRaise);
+
+        buttonsVtol = new ArrayList(22);
+        buttonsVtol.add(butWalk);
+        buttonsVtol.add(butBackup);
+        buttonsVtol.add(butLower);
+        buttonsVtol.add(butRaise);
+        buttonsVtol.add(butTurn);
+        buttonsVtol.add(butLoad);
+        buttonsVtol.add(butUnload);
+        buttonsVtol.add(butSearchlight);
+        buttonsVtol.add(butEject);
+        buttonsVtol.add(butFlee);
+        buttonsVtol.add(butRAC);
+        //these are last, they won't be used by vtol
+        buttonsVtol.add(butHullDown);
+        buttonsVtol.add(butLayMine);
+        buttonsVtol.add(butSwim);
+        buttonsVtol.add(butClimbMode);
+        buttonsVtol.add(butCharge);
+        buttonsVtol.add(butDfa);
+        buttonsVtol.add(butUp);
+        buttonsVtol.add(butDown);
+        buttonsVtol.add(butJump);
+        buttonsVtol.add(butDigIn);
+        buttonsVtol.add(butFortify);
+
+        buttonsInf = new ArrayList(22);
+        buttonsInf.add(butWalk);
+        buttonsInf.add(butJump);
+        buttonsInf.add(butLower);
+        buttonsInf.add(butRaise);
+        buttonsInf.add(butTurn);
+        buttonsInf.add(butClimbMode);
+        buttonsInf.add(butSearchlight);
+        buttonsInf.add(butEject);
+        buttonsInf.add(butFlee);
+        buttonsInf.add(butRAC);
+        buttonsInf.add(butLayMine);
+        buttonsInf.add(butSwim);
+        buttonsInf.add(butDigIn);
+        buttonsInf.add(butFortify);
+        //these are last, they won't be used by infantry
+        buttonsInf.add(butLoad);
+        buttonsInf.add(butUnload);
+        buttonsInf.add(butBackup);
+        buttonsInf.add(butHullDown);
+        buttonsInf.add(butCharge);
+        buttonsInf.add(butDfa);
+        buttonsInf.add(butUp);
+        buttonsInf.add(butDown);
 
         // layout button grid
         panButtons = new Panel();
@@ -377,68 +503,39 @@ public class MovementDisplay
         panButtons.removeAll();
         panButtons.setLayout(new GridLayout(0, 8));
 
-        if ((buttonLayout == 1)
-                && !(butCharge.isEnabled()
-                || butDfa.isEnabled()
-                || butDown.isEnabled()
-                || butFlee.isEnabled()
-                || butEject.isEnabled()))
-            buttonLayout = 2;
-        if ((buttonLayout == 2)
-                && !(butLoad.isEnabled()
-                || butUnload.isEnabled()
-                || butRAC.isEnabled()
-                || butClear.isEnabled()
-                || butSearchlight.isEnabled()))
-            buttonLayout = 3;
-        if ((buttonLayout == 3)
-                && !(butRaise.isEnabled()
-                || butLower.isEnabled()
-                || butLayMine.isEnabled()
-                || butHullDown.isEnabled()
-                || butClimbMode.isEnabled()))
-            buttonLayout = 0;
-        switch (buttonLayout) {
-        case 0 :
-            panButtons.add(butNext);
-            panButtons.add(butWalk);
-            panButtons.add(butJump);
-            panButtons.add(butBackup);
-            panButtons.add(butTurn);
-            panButtons.add(butUp);
-            panButtons.add(butMore);
-//             panButtons.add(butDone);
-            break;
-        case 1 :
-            panButtons.add(butNext);
-            panButtons.add(butCharge);
-            panButtons.add(butDfa);
-            panButtons.add(butDown);
-            panButtons.add(butFlee);
-            panButtons.add(butEject);
-            panButtons.add(butMore);
-//             panButtons.add(butDone);
-            break;
-        case 2:
-            panButtons.add(butNext);
-            panButtons.add(butLoad);
-            panButtons.add(butUnload);
-            panButtons.add(butRAC);
-            panButtons.add(butClear);
-            panButtons.add(butSearchlight);
-            panButtons.add(butMore);
-//             panButtons.add(butDone);
-            break;
-        case 3:
-            panButtons.add(butRaise);
-            panButtons.add(butLower);
-            panButtons.add(butLayMine);
-            panButtons.add(butHullDown);
-            panButtons.add(butClimbMode);
-            panButtons.add(butSwim);
-            panButtons.add(butMore);
-            
+        //choose button order based on entity type
+        ArrayList<Button> buttonList = buttonsMech;
+        final Entity ce = ce();
+        if(ce != null) {
+        	if(ce instanceof Infantry)
+        		buttonList = buttonsInf;
+        	else if(ce instanceof VTOL)
+        		buttonList = buttonsVtol;
+        	else if(ce instanceof Tank)
+        		buttonList = buttonsTank;
         }
+        //should this layout be skipped? (if nothing enabled)
+        boolean ok = false;
+        while(!ok && buttonLayout != 0) {
+        	for(int i = buttonLayout * 6;i<(buttonLayout+1)*6 && i<buttonList.size();i++) {
+        		if(buttonList.get(i).isEnabled()) {
+        			ok = true;
+        			break;
+        		}
+        	}
+        	if(!ok) {
+	        	//skip as nothing was enabled
+	        	buttonLayout++;
+	        	if(buttonLayout*6 >= buttonList.size())
+	        		buttonLayout = 0;
+        	}
+        }
+
+        panButtons.add(butNext);
+        for(int i=buttonLayout*6;i<(buttonLayout+1)*6 && i<buttonList.size();i++) {
+        	panButtons.add(buttonList.get(i));
+        }
+        panButtons.add(butMore);
 
         validate();
     }
@@ -512,6 +609,13 @@ public class MovementDisplay
             butClimbMode.setEnabled(true);
         }
 
+        if(ce instanceof Infantry) {
+        	butDigIn.setEnabled(true);
+        	butFortify.setEnabled(true);
+        } else {
+        	butDigIn.setEnabled(false);
+        	butFortify.setEnabled(false);
+        }
         setTurnEnabled(!ce.isImmobile() && 
                 !ce.isStuck() &&
                 (ce.getWalkMP() > 0 || ce.getJumpMP() > 0));
@@ -536,6 +640,16 @@ public class MovementDisplay
         updateLoadButtons();
         updateElevationButtons();
         
+        if(isInfantry && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL))
+        	butFortify.setEnabled(true);
+        else
+        	butFortify.setEnabled(false);
+        
+        if(isInfantry && client.game.getOptions().booleanOption("maxtech_dig_in"))
+        	butDigIn.setEnabled(true);
+        else
+        	butDigIn.setEnabled(false);
+        
         setLayMineEnabled(ce.canLayMine());
 
         setFleeEnabled(ce.canFlee());
@@ -548,7 +662,7 @@ public class MovementDisplay
                     && ((Mech)ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED
                     && ce.isActive());
         }
-        
+        setupButtonPanel();
     }
 
     /**
@@ -1671,6 +1785,14 @@ public class MovementDisplay
                 cmd.addStep(MovePath.STEP_LAY_MINE, i);
                 moveTo(cmd);
             }
+        } else if (ev.getActionCommand().equals(MOVE_DIG_IN)) {
+        	cmd.addStep(MovePath.STEP_DIG_IN);
+            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.repaint();
+        } else if (ev.getActionCommand().equals(MOVE_FORTIFY)) {
+        	cmd.addStep(MovePath.STEP_FORTIFY);
+            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.repaint();
         }
 
         updateProneButtons();

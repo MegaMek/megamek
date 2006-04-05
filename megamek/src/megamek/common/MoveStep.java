@@ -74,6 +74,7 @@ public class MoveStep implements Serializable {
     private boolean isPavementStep;
     private boolean isRunProhibited = false;
     private boolean isStackingViolation = false;
+    private boolean isDiggingIn = false;
     private MovePath parent = null;
 
     /**
@@ -904,7 +905,33 @@ public class MoveStep implements Serializable {
 
         // guilty until proven innocent
         movementType = IEntityMovementType.MOVE_ILLEGAL;
-
+        
+        if(prev.isDiggingIn) {
+        	isDiggingIn = true;
+        	if(type != MovePath.STEP_TURN_LEFT
+        	&& type != MovePath.STEP_TURN_RIGHT) {
+        		return; //can't move when digging in
+        	}
+        	movementType = IEntityMovementType.MOVE_LEGAL;
+        }
+        else if (type == MovePath.STEP_DIG_IN || 
+        		type == MovePath.STEP_FORTIFY) {
+    		if(!isInfantry
+    			|| !isFirstStep()) {
+    				return; //can't dig in
+    			}
+    		Infantry inf = (Infantry)entity;
+    		if(inf.getDugIn() != Infantry.DUG_IN_NONE
+    			&& inf.getDugIn() != Infantry.DUG_IN_COMPLETE) {
+    			return; //already dug in
+    		}
+    		if(game.getBoard().getHex(curPos).containsTerrain(Terrains.FORTIFIED)) {
+    			return; //already fortified - pointless
+    		}
+        	isDiggingIn = true;
+    		movementType = IEntityMovementType.MOVE_LEGAL;        	
+        }
+        
         // check to see if it's trying to flee and can legally do so.
         if (type == MovePath.STEP_FLEE
                 && entity.canFlee()) {

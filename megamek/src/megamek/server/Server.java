@@ -1562,6 +1562,7 @@ public class Server implements Runnable {
                 resolveCrewWakeUp();
                 resolveMechWarriorPickUp();
                 resolveVeeINarcPodRemoval();
+                resolveFortify();
                 checkForObservers();
                 entityAllUpdate();
                 break;
@@ -3090,6 +3091,27 @@ public class Server implements Runnable {
                     return;
                 }
                 break;
+            }
+            
+            //check for dig in or fortify
+            if(entity instanceof Infantry) {
+            	Infantry inf = (Infantry)entity;
+	            if(step.getType() == MovePath.STEP_DIG_IN) {
+            		inf.setDugIn(Infantry.DUG_IN_WORKING);
+	            	continue;
+	            }
+	            else if(step.getType() == MovePath.STEP_FORTIFY) {
+	            	if(!entity.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
+	            		sendServerChat(entity.getDisplayName() + " failed to fortify because it is missing suitable equipment");
+	            	}
+            		inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
+	            	continue;
+	            }
+	            else if(step.getType() != MovePath.STEP_TURN_LEFT &&
+	            		step.getType() != MovePath.STEP_TURN_RIGHT) {
+	            	//other movement clears dug in status
+	            	inf.setDugIn(Infantry.DUG_IN_NONE);
+	            }
             }
 
             // set last step parameters
@@ -11751,7 +11773,7 @@ public class Server implements Runnable {
         }
 
         // Is the infantry in the open?
-        if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() ) {
+        if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() && ((Infantry)te).getDugIn() != Infantry.DUG_IN_COMPLETE) {
             te_hex = game.getBoard().getHex( te.getPosition() );
             if ( te_hex != null &&
                  !te_hex.containsTerrain( Terrains.WOODS ) &&
@@ -18296,6 +18318,49 @@ public class Server implements Runnable {
             }
             attackSource = centre; // all splash comes from ground zero
         }
+    }
+    
+    /**
+     * Resolve any Infantry units which are fortifying hexes
+     *
+     */
+    void resolveFortify() {
+    	Enumeration<Entity> entities = game.getEntities();
+    	Report r;
+    	while(entities.hasMoreElements())
+    	{
+    		Entity ent = entities.nextElement();
+    		if(ent instanceof Infantry) {
+    			Infantry inf = (Infantry)ent;
+    			int dig = inf.getDugIn();
+    			if(dig == Infantry.DUG_IN_WORKING) {
+    				r = new Report(5300);
+    				r.addDesc(inf);
+    				r.subject = inf.getId();
+    				addReport(r);
+    			}
+    			else if(dig==Infantry.DUG_IN_FORTIFYING2) {
+    				Coords c = inf.getPosition();
+    				r = new Report(5305);
+    				r.addDesc(inf);
+    				r.add(c.getBoardNum());
+    				r.subject = inf.getId();
+    				addReport(r);
+            		//fortification complete - add to map
+            		IHex hex = game.getBoard().getHex(c);
+            		hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FORTIFIED, 1));
+            		sendChangedHex(c);
+            		//Clear the dig in for any units in same hex, since they get it for free by fort
+            		for(Enumeration<Entity> e = game.getEntities(c); e.hasMoreElements();) {
+            			Entity ent2 = e.nextElement();
+            			if(ent2 instanceof Infantry) {
+            				Infantry inf2 = (Infantry)ent;
+            				inf2.setDugIn(Infantry.DUG_IN_NONE);
+            			}
+            		}
+    			}
+    		}
+    	}
     }
 }
 

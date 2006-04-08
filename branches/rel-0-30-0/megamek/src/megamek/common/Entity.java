@@ -2021,7 +2021,7 @@ public abstract class Entity
             Mounted m = (Mounted)e.nextElement();
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown() || this.getCrew().isUnconscious());
             }
         }
         return false;

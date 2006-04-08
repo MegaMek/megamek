@@ -2635,7 +2635,7 @@ public abstract class Entity extends TurnOrdered
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
                     && m.curMode().equals("ECM")) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown() || this.getCrew().isUnconscious());
             }
         }
         return false;
@@ -2667,7 +2667,7 @@ public abstract class Entity extends TurnOrdered
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
                     && m.curMode().equals("ECCM")) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown() || this.getCrew().isUnconscious());
             }
         }
         return false;

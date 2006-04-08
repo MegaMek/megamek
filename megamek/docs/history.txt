@@ -27,6 +27,7 @@ v0.31.7-dev (CVS)
 + Fortify ability for engineers, with vibroshovels (declare move phase)
 + Order of buttons in move phase depends on unit type,
   e.g. VTOL see the go up/down buttons on the 1st page
++ Bug: EC(C)M was working when pilot is unconscious.
 
 v0.31.6 (2006-03-12, 16:48 GMT)
 + Bug 1427812: Thundergod mislabeled as Cerberus

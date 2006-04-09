@@ -3806,14 +3806,15 @@ public abstract class Entity extends TurnOrdered
      *  now includes the level 3 terains which can bog down
      */
     public PilotingRollData checkSwampMove(MoveStep step, IHex curHex,
-            Coords lastPos, Coords curPos) {
+            Coords lastPos, Coords curPos, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll();
         //DO NOT add terrain modifier, or the example in maxtech would have the wrong target number
 
         if (!lastPos.equals(curPos)
             && step.getMovementType() != IEntityMovementType.MOVE_JUMP
             && (this.getMovementMode() != IEntityMovementMode.HOVER) 
-            && (this.getMovementMode() != IEntityMovementMode.VTOL)) {
+            && (this.getMovementMode() != IEntityMovementMode.VTOL)
+            && !isPavementStep) {
             // non-hovers need a simple PSR
             if (curHex.containsTerrain(Terrains.SWAMP)) {
                 // append the reason modifier
@@ -3839,8 +3840,7 @@ public abstract class Entity extends TurnOrdered
      *  returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkWaterMove(MoveStep step, IHex curHex,
-                                           Coords lastPos, Coords curPos,
-                                           boolean isPavementStep) {
+                                           Coords lastPos, Coords curPos, boolean isPavementStep) {
         if (curHex.terrainLevel(Terrains.WATER) > 0
             && step.getElevation() < 0
             && !lastPos.equals(curPos)

@@ -98,6 +98,7 @@ public class BoardUtilities {
                 mapSettings.getBoardHeight(),
                 mapSettings.getRange() + 1, 
                 mapSettings.getProbInvert(),
+                mapSettings.getInvertNegativeTerrain(),
                 elevationMap,
                 mapSettings.getAlgorithmToUse());
         
@@ -272,21 +273,7 @@ public class BoardUtilities {
         for(int i=0; i<buildings.size();i++){
             placeBuilding(result, (BuildingTemplate)(buildings.elementAt(i)));
         }
-        // invert negative terrain?
-        if (mapSettings.getInvertNegativeTerrain() == 1) {
-            invertNegativeTerrain(result);
-        }
         return result;
-    }
-    
-    private static void invertNegativeTerrain(IBoard board) {
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++ ) {
-                IHex hex = board.getHex(x , y);
-                if (hex.getElevation() < 0)
-                    hex.setElevation(hex.getElevation() * -1);
-            }            
-        }
     }
     
     private static void placeBuilding(IBoard board, BuildingTemplate building) {
@@ -836,10 +823,11 @@ public class BoardUtilities {
      * @param height The Height of the map.
      * @param range Max difference betweenn highest and lowest level.
      * @param invertProb Probability for the invertion of the map (0..100)
+     * @param invertNegate If 1, invert negative hexes, else do nothing
      * @param elevationMap here is the result stored
      */
     public static void generateElevation(int hilliness, int width, int height,
-            int range, int invertProb,
+            int range, int invertProb, int invertNegative,
             int elevationMap[][], int algorithm) {
         int minLevel = 0;
         int maxLevel = range;
@@ -904,7 +892,16 @@ public class BoardUtilities {
                 }
             }
         }
-        
+        // invert negative terrain?
+        if (invertNegative == 1) {
+            for (int w=0; w<width; w++)   {
+                for (int h=0; h<height; h++) {
+                    if (elevationMap[w][h] < 0) {
+                        elevationMap[w][h] *= -1;
+                    }
+                }
+            }
+        }
     }
 
     /**

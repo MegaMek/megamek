@@ -29,6 +29,7 @@ v0.31.7-dev (CVS)
   e.g. VTOL see the go up/down buttons on the 1st page
 + Bug: EC(C)M was working when pilot is unconscious.
 + In RMG, invert negative terrain before placing lakes etc.
++ Bug: getting stuck in a swamp was not checking for road movement.
 
 v0.31.6 (2006-03-12, 16:48 GMT)
 + Bug 1427812: Thundergod mislabeled as Cerberus

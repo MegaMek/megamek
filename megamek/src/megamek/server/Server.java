@@ -3570,7 +3570,7 @@ public class Server implements Runnable {
 
                         // is the next hex a swamp?
                         rollTarget = entity.checkSwampMove(step, nextHex,
-                                                              curPos, nextPos);
+                                                              curPos, nextPos, isPavementStep);
                         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                             if (!doSkillCheckWhileMoving(entity, curPos,
                                                    nextPos, rollTarget, false)){
@@ -3831,7 +3831,7 @@ public class Server implements Runnable {
             }
 
             // check if we've moved into a swamp
-            rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos);
+            rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 if (!doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
                                          false)){
@@ -3939,8 +3939,7 @@ public class Server implements Runnable {
             }
 
             // check if we've moved into water
-            rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos,
-                                               isPavementStep);
+            rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Swarmers need special handling.
                 final int swarmerId = entity.getSwarmAttackerId();

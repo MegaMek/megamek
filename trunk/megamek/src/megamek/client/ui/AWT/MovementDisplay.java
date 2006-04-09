@@ -941,8 +941,7 @@ public class MovementDisplay
             }
             
             // check if we've moved into water
-            rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos,
-                                               isPavementStep);
+            rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 nagReport.append(addNag(rollTarget));
             }
@@ -982,7 +981,7 @@ public class MovementDisplay
             }
             
             // check if we've moved into swamp
-            rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos);
+            rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 nagReport.append(addNag(rollTarget));
             }

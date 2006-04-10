@@ -74,7 +74,7 @@ public class QuadMech extends Mech
                 if ( !isLocationBad(i) ) {
                     if ( legHasHipCrit(i) ) {
                         hipHits++;
-                        if (!game.getOptions().booleanOption("maxtech_leg_damage")) {
+                        if (game == null || !game.getOptions().booleanOption("maxtech_leg_damage")) {
                             continue;
                         }
                     }
@@ -97,7 +97,7 @@ public class QuadMech extends Mech
         
         if ( wmp > 0 ) {
             if (hipHits>0) {
-                if (game.getOptions().booleanOption("maxtech_leg_damage")) {
+                if (game != null && game.getOptions().booleanOption("maxtech_leg_damage")) {
                    wmp = wmp - (2 * hipHits);
                 } else {
                     for (int i = 0; i < hipHits; i++) {

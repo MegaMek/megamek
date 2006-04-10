@@ -89,7 +89,7 @@ public class BipedMech extends Mech {
                 if ( !isLocationBad(i) ) {
                     if ( legHasHipCrit(i) ) {
                         hipHits++;
-                        if (!game.getOptions().booleanOption("maxtech_leg_damage")) {
+                        if (game == null || !game.getOptions().booleanOption("maxtech_leg_damage")) {
                             continue;
                         }
                     }
@@ -105,7 +105,7 @@ public class BipedMech extends Mech {
             wmp = (legsDestroyed == 1) ? 1 : 0;
         } else {
             if(hipHits > 0) {
-               if (game.getOptions().booleanOption("maxtech_leg_damage")) {
+               if (game != null && game.getOptions().booleanOption("maxtech_leg_damage")) {
                  wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
                } else {
                  wmp = (hipHits == 1) ? (int) Math.ceil( wmp / 2.0) : 0;

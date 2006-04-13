@@ -5409,6 +5409,7 @@ public class Server implements Runnable {
         r.addDesc(entity);
         r.add(fallElevation);
         r.add(dest.getBoardNum(), true);
+        r.newlines = 0;
         addReport(r);
 
         // if hex was empty, deal damage and we're done
@@ -5428,7 +5429,7 @@ public class Server implements Runnable {
             // determine to-hit number
             ToHitData toHit = new ToHitData(7, "base");
             if (affaTarget instanceof Tank ) {
-                toHit = new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target is a Tank");
+                toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Target is a Tank");
             } else {
                 toHit.append(Compute.getTargetMovementModifier(game, affaTarget.getId()));
                 toHit.append(Compute.getTargetTerrainModifier(game, affaTarget));
@@ -5437,13 +5438,20 @@ public class Server implements Runnable {
             if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL) {
                 // collision roll
                 final int diceRoll = Compute.d6(2);
-                r = new Report(2215);
-                r.subject = entity.getId();
-                r.add(toHit.getValue());
-                r.add(diceRoll);
+                if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+                    r = new Report(2212);
+                    r.add(toHit.getValue());
+                    r.indent();
+                } else {
+                    r = new Report(2215);
+                    r.subject = entity.getId();
+                    r.add(toHit.getValue());
+                    r.add(diceRoll);
+                    r.newlines = 0;
+                    r.indent();
+                }
+                addReport(r);
                 if (diceRoll >= toHit.getValue()) {
-                    r.choose(true);
-                    addReport(r);
                     // deal damage to target
                     int damage = Compute.getAffaDamageFor(entity);
                     r = new Report(2220);
@@ -5454,8 +5462,7 @@ public class Server implements Runnable {
                     while (damage > 0) {
                         int cluster = Math.min(5, damage);
                         HitData hit = affaTarget.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
-                        addReport(
-                                              damageEntity(affaTarget, hit, cluster));
+                        addReport(damageEntity(affaTarget, hit, cluster));
                         damage -= cluster;
                     }
                     addNewLines();
@@ -5480,18 +5487,14 @@ public class Server implements Runnable {
                             // ack!  automatic death!  Tanks
                             // suffer an ammo/power plant hit.
                             // TODO : a Mech suffers a Head Blown Off crit.
-                            addReport(
-                                                  destroyEntity(affaTarget, "impossible displacement", violation instanceof Mech, violation instanceof Mech));
+                            addReport(destroyEntity(affaTarget, "impossible displacement", violation instanceof Mech, violation instanceof Mech));
                         }
                     }
                     return;
-                } else {
-                    r.choose(false);
-                    addReport(r);
                 }
             } else {
                 //automatic miss
-                r = new Report(2225);
+                r = new Report(2213);
                 r.add(toHit.getDesc());
                 addReport(r);
             }

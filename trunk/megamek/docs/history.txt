@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.31.8-dev (CVS)
+
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.
 + RFE 1443180: show target arc when firing weapons

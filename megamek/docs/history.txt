@@ -15,7 +15,7 @@ v0.31.7 (2006-04-13, 13:30 GMT)
 + Patch 1452628: UMUs and Large shields.
 + Patch 1452629: Harded Armor and Lance Fix.
 + Bug 1450981: mek making PSR when standing still
-+ Bug 1448511: NoSuchMethodError with java 1.4
++ Bug 1448611: NoSuchMethodError with java 1.4
 + Patch 1452887: Entity Vectors to ArrayLists
 + Bug: Shield damage capacity was calculated wrong for passive shields
 + RFE 1458778: Negative terrain inversion option for RMG

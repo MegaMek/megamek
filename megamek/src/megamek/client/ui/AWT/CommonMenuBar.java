@@ -32,7 +32,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
      * This value may be <code>null</code>.
      */
     private IGame game = null;
-    private boolean isJ2RE;
 
     private MenuItem fileGameNew = null;
     private MenuItem fileGameOpen = null;
@@ -163,14 +162,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         // *** Create the File menu.
         menu = new Menu( Messages.getString("CommonMenuBar.FileMenu") ); //$NON-NLS-1$
         this.add( menu );
-
-        Properties p = System.getProperties();
-        String javaVersion = p.getProperty( "java.version" ); //$NON-NLS-1$
-        if ( javaVersion.length() < 3 || javaVersion.charAt(2) == '1' ){
-            isJ2RE = false;
-        } else {
-            isJ2RE = true;
-        }
         
         // Create the Game sub-menu.
         submenu = new Menu( Messages.getString("CommonMenuBar.GameMenu") ); //$NON-NLS-1$
@@ -553,13 +544,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
                 fileBoardSaveAsImage.setEnabled( true );
             }
             viewMiniMap.setEnabled( true );
-            if ( isJ2RE ){
-                viewZoomIn.setEnabled( true );
-                viewZoomOut.setEnabled( true );
-            } else {
-                viewZoomIn.setEnabled( false);
-                viewZoomOut.setEnabled( false );
-            }
+            viewZoomIn.setEnabled( true );
+            viewZoomOut.setEnabled( true );
         }
         // If we don't have a board we can't view the mini map.
         else {
@@ -611,13 +597,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
                   this.phase == IGame.PHASE_DEPLOYMENT ) {
             viewLOSSetting.setEnabled( true );
             viewMiniMap.setEnabled( true );
-            if ( isJ2RE == true ){
-                viewZoomIn.setEnabled( true );
-                viewZoomOut.setEnabled( true );
-            } else {
-                viewZoomIn.setEnabled( false );
-                viewZoomOut.setEnabled( false );
-            }
+            viewZoomIn.setEnabled( true );
+            viewZoomOut.setEnabled( true );
             viewUnitOverview.setEnabled( true );
             viewPlayerList.setEnabled( true );
         }

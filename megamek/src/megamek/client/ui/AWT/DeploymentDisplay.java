@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -183,6 +183,11 @@ public class DeploymentDisplay
             System.err.println("DeploymentDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
+        
+        // remove C3 sprites from earlier here, or we might crash when
+        // trying to draw a c3 sprite belonging to the previously selected,
+        // but not deployed entity
+        clientgui.bv.clearC3Networks();        
 
         this.cen = en;
         clientgui.setSelectedEntityNum(en);

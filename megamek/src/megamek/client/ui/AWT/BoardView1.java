@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -15,7 +15,6 @@
 
 package megamek.client.ui.AWT;
 
-// Defines Iterator class for JDK v1.1
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;

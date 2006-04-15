@@ -93,13 +93,16 @@ public class BuildingTarget implements Targetable {
         }
         this.name = buff.toString();
 
-        // Get the height of the hex.
-        // Note, this doesn't equal "ceiling()" for
-        // one Level high buildings in a woods hex.
+        //Bottom of building is at ground level, top of building is at BLDG_ELEV.
+        //Note that height of 0 is a single story building.
+        //Bridges are always height 0, and the BRIDGE_ELEV indicates the elevation
         IHex targetHex = board.getHex( this.position );
-        this.elevation = targetHex.getElevation();
-        this.height = Math.max(targetHex.terrainLevel( Terrains.BLDG_ELEV ) - 1,
-                targetHex.terrainLevel(Terrains.BRIDGE_ELEV));
+        elevation = Math.max(-targetHex.depth(), targetHex.terrainLevel(Terrains.BRIDGE_ELEV));
+        height = targetHex.terrainLevel( Terrains.BLDG_ELEV );
+        if(height <= 0)
+            height = 0;
+        else
+            height--;
     }
 
 

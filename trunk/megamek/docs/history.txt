@@ -4,6 +4,7 @@ v0.31.8-dev (CVS)
 + Bug 1467018: c3i can crash the map on deployment
 + Bug 1468738: Accidential DFA on tanks MISSES
 + Bug 1470202: Cannot kick buildings
++ Make tab names in the chatlounge clearer.
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

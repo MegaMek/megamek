@@ -681,7 +681,13 @@ public class TdbFile implements IMechLoader {
                                 m.setSplit(true);
                             }
                             // give the most restrictive location for arcs
-                            m.setLocation(Mech.mostRestrictiveLoc(loc, m.getLocation()));
+                            int help=m.getLocation();
+                            m.setLocation(Mech.mostRestrictiveLoc(
+                                    loc, help));
+                            if (loc!=help) {
+                                m.setSecondLocation(Mech.leastRestrictiveLoc(
+                                    loc, help));
+                            }
                         }
                         else {
                             // make a new one

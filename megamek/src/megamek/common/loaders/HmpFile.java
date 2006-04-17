@@ -684,8 +684,13 @@ public class HmpFile
                                     }
                                     // give the most restrictive location for
                                     // arcs
+                                    int help=m.getLocation();
                                     m.setLocation(Mech.mostRestrictiveLoc(
-                                            location, m.getLocation()));
+                                            location, help));
+                                    if (loc!=help) {
+                                        m.setSecondLocation(Mech.leastRestrictiveLoc(
+                                            location, help));
+                                    }
                                 } else {
                                     // make a new one
                                     m = new Mounted(mech, equipment);

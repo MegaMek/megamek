@@ -254,6 +254,16 @@ public abstract class Mech
         }
     }
 
+    public static int leastRestrictiveLoc(int location1, int location2) {
+        if (location1==location2) {
+            return location2;
+        } else if (Mech.restrictScore(location1) >= Mech.restrictScore(location2)) {
+            return location2;
+        } else {
+            return location1;
+        }
+    }
+    
     /**
      * Helper function designed to give relative restrictiveness of locations.
      * Used for finding the most restrictive firing arc for a weapon.

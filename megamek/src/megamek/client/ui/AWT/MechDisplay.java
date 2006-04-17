@@ -800,6 +800,10 @@ class WeaponPanel extends BufferedPanel
             StringBuffer wn = new StringBuffer(mounted.getDesc());
             wn.append(" ["); //$NON-NLS-1$
             wn.append(en.getLocationAbbr(mounted.getLocation()));
+            if (mounted.isSplit()) {
+                wn.append("/"); //$NON-NLS-1$
+                wn.append(en.getLocationAbbr(mounted.getSecondLocation()));
+            }
             wn.append("]"); //$NON-NLS-1$
             // determine shots left & total shots left
             if (wtype.getAmmoType() != AmmoType.T_NA

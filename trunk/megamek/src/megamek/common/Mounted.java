@@ -62,6 +62,7 @@ public class Mounted implements Serializable, RoundUpdated {
     // handle split weapons
     private boolean bSplit = false;
     private int nFoundCrits = 0;
+    private int secondLocation = 0;
     
     // mine type
     private int mineType = MINE_NONE;
@@ -387,6 +388,13 @@ public class Mounted implements Serializable, RoundUpdated {
         return location;
     }
 
+    public int getSecondLocation() {
+        if (bSplit) {
+            return secondLocation;
+        }
+        return -1;
+    }
+    
     public boolean isRearMounted() {
         return rearMounted;
     }
@@ -395,11 +403,20 @@ public class Mounted implements Serializable, RoundUpdated {
         setLocation(location, false);
     }
 
+    public void setSecondLocation(int location) {
+        setSecondLocation(location, false);
+    }
+    
     public void setLocation(int location, boolean rearMounted) {
         this.location = location;
         this.rearMounted = rearMounted;
     }
 
+    public void setSecondLocation(int location, boolean rearMounted) {
+        this.secondLocation = location;
+        this.rearMounted = rearMounted;
+    }
+    
     public Mounted getLinked() {
         return linked;
     }

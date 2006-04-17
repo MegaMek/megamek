@@ -227,8 +227,12 @@ public class MechView {
 
             sWeapons.append( mounted.getDesc() )
                 .append( "  [" ) //$NON-NLS-1$
-                .append( mech.getLocationAbbr(mounted.getLocation()) )
-                .append( "]" ); //$NON-NLS-1$
+                .append( mech.getLocationAbbr(mounted.getLocation()) );
+            if (mounted.isSplit()) {
+                sWeapons.append("/") // $NON-NLS-1$
+                    .append(mech.getLocationAbbr(mounted.getSecondLocation()));
+            }
+            sWeapons.append( "]" ); //$NON-NLS-1$
             if (mech.isClan() && 
                 mounted.getType().getInternalName().substring(0,2).equals("IS")) { //$NON-NLS-1$
                 sWeapons.append(Messages.getString("MechView.IS")); //$NON-NLS-1$

@@ -687,7 +687,7 @@ public class HmpFile
                                     int help=m.getLocation();
                                     m.setLocation(Mech.mostRestrictiveLoc(
                                             location, help));
-                                    if (loc!=help) {
+                                    if (location!=help) {
                                         m.setSecondLocation(Mech.leastRestrictiveLoc(
                                             location, help));
                                     }

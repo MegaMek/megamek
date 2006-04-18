@@ -240,7 +240,8 @@ public class MoveOption extends MovePath implements Cloneable {
             || isInfantry
             || isProtomech
             || ( isClan
-                 && game.getOptions().booleanOption("no_clan_physical") )) { //$NON-NLS-1$
+                 && game.getOptions().booleanOption("no_clan_physical") 
+                 && getEntity().getSwarmAttackerId()==Entity.NONE)) { //$NON-NLS-1$
             return false;
         }
         Enumeration e = game.getEntities(last.getPosition());

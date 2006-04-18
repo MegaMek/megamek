@@ -7,6 +7,7 @@ v0.31.8-dev (CVS)
 + Make tab names in the chatlounge clearer.
 + Make main menu button names more newbie-friendly
 + Bug 1469940: Split critical locations showing wrong firing location
++ RFE 1463286: Clan physical attacks -- allow brushing off.
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

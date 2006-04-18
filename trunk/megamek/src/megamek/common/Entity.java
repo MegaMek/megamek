@@ -5363,8 +5363,6 @@ public abstract class Entity extends TurnOrdered
     public void setWeaponDestroyed (Mounted which) {
         if (weaponList.contains(which)) {
             which.setDestroyed(true);
-            weaponList.remove(which);
-            weaponList.add(which);
         }
     }
 

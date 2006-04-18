@@ -12,7 +12,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.client.ui.swing;
 
 import megamek.MegaMek;
@@ -35,8 +34,13 @@ import megamek.common.preference.PreferenceManager;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
-import java.awt.BorderLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
 import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Component;
@@ -50,12 +54,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import java.awt.MediaTracker;
-import javax.swing.JPanel;
 import java.awt.SystemColor;
-import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -69,9 +69,7 @@ import java.util.Locale;
 import java.util.Vector;
 
 public class MegaMekGUI implements IMegaMekGUI {
-    
-    public Frame frame;
-
+    public JFrame frame;
     public Client client = null;
     public Server server = null;
     private CommonAboutDialog about = null;
@@ -80,11 +78,10 @@ public class MegaMekGUI implements IMegaMekGUI {
     private CommonSettingsDialog setdlg = null;
 
     public MegaMekGUI() {
-    
     }
 
     public void start(String[] args) {
-        createGUI();        
+        createGUI();
     }
 
     /**
@@ -92,18 +89,15 @@ public class MegaMekGUI implements IMegaMekGUI {
      * specified frame.
      */
     private void createGUI() {
-        this.frame = new Frame("MegaMek"); //$NON-NLS-1$
+        this.frame = new JFrame("MegaMek"); //$NON-NLS-1$
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 quit();
             }
         });
-
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
-
         frame.setIconImage(frame.getToolkit().getImage("data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
-
         CommonMenuBar menuBar = new CommonMenuBar();
         menuBar.addActionListener(actionListener);
         frame.setMenuBar(menuBar);
@@ -112,9 +106,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         // set visible on middle of screen
         Dimension screenSize = frame.getToolkit().getScreenSize();
         frame.pack();
-        frame.setLocation(
-            screenSize.width / 2 - frame.getSize().width / 2,
-            screenSize.height / 2 - frame.getSize().height / 2);
+        frame.setLocation(screenSize.width / 2 - frame.getSize().width / 2,
+                screenSize.height / 2 - frame.getSize().height / 2);
 
         // Apparently, the MSJDK doesn't handle the menu bar very well,
         //  so we'll try this hack.
@@ -131,16 +124,14 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         // tell the user about the readme...
         if (true == GUIPreferences.getInstance().getNagForReadme()) {
-            ConfirmDialog confirm = new ConfirmDialog(frame, 
-                    Messages.getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$ 
+            ConfirmDialog confirm = new ConfirmDialog(frame,
+                    Messages.getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$
                     Messages.getString("MegaMek.welcome.message"), //$NON-NLS-1$
                     true);
             confirm.setVisible(true);
-
             if (!confirm.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForReadme(false);
             }
-
             if (confirm.getAnswer()) {
                 showHelp();
             }
@@ -153,33 +144,25 @@ public class MegaMekGUI implements IMegaMekGUI {
     public void showMainMenu() {
         JButton hostB, connectB, botB, editB, scenB, loadB, quitB;
         JLabel labVersion = new JLabel();
-
         labVersion.setText(Messages.getString("MegaMek.Version") + MegaMek.VERSION); //$NON-NLS-1$
-
         hostB = new JButton(Messages.getString("MegaMek.hostNewGame.label")); //$NON-NLS-1$
         hostB.setActionCommand("fileGameNew"); //$NON-NLS-1$
         hostB.addActionListener(actionListener);
-
         scenB = new JButton(Messages.getString("MegaMek.hostScenario.label")); //$NON-NLS-1$
         scenB.setActionCommand("fileGameScenario"); //$NON-NLS-1$
         scenB.addActionListener(actionListener);
-
         loadB = new JButton(Messages.getString("MegaMek.hostSavedGame.label")); //$NON-NLS-1$
         loadB.setActionCommand("fileGameOpen"); //$NON-NLS-1$
         loadB.addActionListener(actionListener);
-
         connectB = new JButton(Messages.getString("MegaMek.Connect.label")); //$NON-NLS-1$
         connectB.setActionCommand("fileGameConnect"); //$NON-NLS-1$
         connectB.addActionListener(actionListener);
-
         botB = new JButton(Messages.getString("MegaMek.ConnectAsBot.label")); //$NON-NLS-1$
         botB.setActionCommand("fileGameConnectBot"); //$NON-NLS-1$
         botB.addActionListener(actionListener);
-
         editB = new JButton(Messages.getString("MegaMek.MapEditor.label")); //$NON-NLS-1$
         editB.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         editB.addActionListener(actionListener);
-
         quitB = new JButton(Messages.getString("MegaMek.Quit.label")); //$NON-NLS-1$
         quitB.setActionCommand("quit"); //$NON-NLS-1$
         quitB.addActionListener(actionListener);
@@ -193,7 +176,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         try {
             tracker.waitForID(0);
         } catch (InterruptedException e) {
-            
         }
         // make splash image panel
         BufferedPanel panTitle = new BufferedPanel();
@@ -205,29 +187,24 @@ public class MegaMekGUI implements IMegaMekGUI {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         frame.setLayout(gridbag);
-
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(4, 4, 1, 1);
         c.ipadx = 10;
         c.ipady = 5;
-
         c.gridx = 0;
         c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
-
         c.gridwidth = 1;
         c.gridheight = 8;
         addBag(panTitle, gridbag, c);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = .05;
         c.weighty = 1.0;
         c.gridx = 1;
         c.gridheight = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-
         c.gridy = 0;
         addBag(labVersion, gridbag, c);
         c.gridy++;
@@ -244,7 +221,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         addBag(editB, gridbag, c);
         c.gridy++;
         addBag(quitB, gridbag, c);
-
         frame.validate();
     }
 
@@ -285,7 +261,6 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     public void host() {
         HostDialog hd;
-
         hd = new HostDialog(frame);
         hd.setVisible(true);
         // verify dialog data
@@ -346,14 +321,11 @@ public class MegaMekGUI implements IMegaMekGUI {
         client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
-
         if (!client.connect()) {
         }
-
         launch(gui.getFrame());
-
         Vector changedOptions = server.getGame().getOptions().loadOptions(hd.serverPass);
-        if ( changedOptions.size() > 0 ) {
+        if (changedOptions.size() > 0) {
             client.sendGameOptions(hd.serverPass, changedOptions);
         }
         optdlg = null;
@@ -380,7 +352,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         if (fd.getFile() == null) {
             return;
         }
-
         HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
         if (hd.name == null || hd.serverPass == null || hd.port == 0) {
@@ -412,10 +383,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
-
         if (!client.connect()) {
         }
-
         optdlg = null;
         launch(gui.getFrame());
     }
@@ -451,7 +420,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         // get player types and colors set
         Player[] pa = new Player[g.getPlayersVector().size()];
         g.getPlayersVector().copyInto(pa);
-
         ScenarioDialog sd = new ScenarioDialog(frame, pa);
         sd.setVisible(true);
         if (!sd.bSet) {
@@ -498,12 +466,10 @@ public class MegaMekGUI implements IMegaMekGUI {
             client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
             gui = new ClientGUI(client);
             gui.initialize();
-
             if (!client.connect()) {
             }
-
             Vector changedOptions = server.getGame().getOptions().loadOptions(hd.serverPass);
-            if ( changedOptions.size() > 0 ) {
+            if (changedOptions.size() > 0) {
                 client.sendGameOptions(hd.serverPass, changedOptions);
             }
 
@@ -518,11 +484,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
                 BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
                 c.game.addGameListener(new BotGUI(c));
-
                 if (!c.connect()) {
                 }
-
-                c.retrieveServerInfo(); 
+                c.retrieveServerInfo();
             }
         }
 
@@ -531,12 +495,11 @@ public class MegaMekGUI implements IMegaMekGUI {
         if (!hasSlot) {
             Enumeration pE = server.getGame().getPlayers();
             while (pE.hasMoreElements()) {
-                Player tmpP = (Player)pE.nextElement();
+                Player tmpP = (Player) pE.nextElement();
                 if (tmpP.getName().equals(sd.localName))
                     tmpP.setObserver(true);
             }
         }
-
         launch(gui.getFrame());
     }
 
@@ -545,7 +508,6 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     public void connect() {
         ConnectDialog cd;
-
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
@@ -572,9 +534,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         gui.initialize();
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
-            error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(
-                cd.port).append(
-                ".");
+            error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(cd.port).append(".");
             new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
             frame.setVisible(false);
             client.die();
@@ -584,7 +544,6 @@ public class MegaMekGUI implements IMegaMekGUI {
 
     public void connectBot() {
         ConnectDialog cd;
-
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
@@ -607,14 +566,12 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         // initialize game
         client = new TestBot(cd.name, cd.serverAddr, cd.port);
-        client.game.addGameListener(new BotGUI((BotClient)client));
+        client.game.addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
-            error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(
-                cd.port).append(
-                ".");
+            error.append("Error: could not connect to server at ").append(cd.serverAddr).append(":").append(cd.port).append(".");
             new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
             frame.setVisible(false);
             client.die();
@@ -695,6 +652,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             public void windowClosing(WindowEvent e) {
                 unlaunch();
             }
+
             public void windowClosed(WindowEvent e) {
                 unlaunch();
             }
@@ -716,7 +674,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         frame.setVisible(true);
 
         //just to free some memory
-        client = null;        
+        client = null;
         System.gc();
         System.runFinalization();
     }
@@ -776,103 +734,87 @@ class HostDialog extends Dialog implements ActionListener {
     public boolean register;
     public String metaserver;
     public int goalPlayers;
-
     protected JLabel yourNameL, serverPassL, portL;
     protected JTextField yourNameF, serverPassF, portF;
     protected JCheckBox registerC;
-    protected JLabel     metaserverL;
+    protected JLabel metaserverL;
     protected JTextField metaserverF;
-    protected JLabel     goalL;
+    protected JLabel goalL;
     protected JTextField goalF;
     protected JButton okayB, cancelB;
 
     public HostDialog(Frame frame) {
         super(frame, Messages.getString("MegaMek.HostDialog.title"), true); //$NON-NLS-1$
-
         yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), JLabel.RIGHT); //$NON-NLS-1$
         serverPassL = new JLabel(Messages.getString("MegaMek.serverPassL"), JLabel.RIGHT); //$NON-NLS-1$
         portL = new JLabel(Messages.getString("MegaMek.portL"), JLabel.RIGHT); //$NON-NLS-1$
-
         yourNameF = new JTextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
         serverPassF = new JTextField(PreferenceManager.getClientPreferences().getLastServerPass(), 16);
         serverPassF.addActionListener(this);
         portF = new JTextField(PreferenceManager.getClientPreferences().getLastServerPort() + "", 4); //$NON-NLS-1$
         portF.addActionListener(this);
- 
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         metaserver = cs.getMetaServerName();
-        metaserverL = new JLabel (Messages.getString("MegaMek.metaserverL"), JLabel.RIGHT); //$NON-NLS-1$
-        metaserverF = new JTextField (metaserver);
-        metaserverL.setEnabled (register);
-        metaserverF.setEnabled (register);
-
+        metaserverL = new JLabel(Messages.getString("MegaMek.metaserverL"), JLabel.RIGHT); //$NON-NLS-1$
+        metaserverF = new JTextField(metaserver);
+        metaserverL.setEnabled(register);
+        metaserverF.setEnabled(register);
         int goalNumber = cs.getGoalPlayers();
-        goalL = new JLabel (Messages.getString("MegaMek.goalL"), JLabel.RIGHT); //$NON-NLS-1$
-        goalF = new JTextField (Integer.toString(goalNumber), 2);
-        goalL.setEnabled (register);
-        goalF.setEnabled (register);
-
-        registerC = new JCheckBox (Messages.getString("MegaMek.registerC")); //$NON-NLS-1$
+        goalL = new JLabel(Messages.getString("MegaMek.goalL"), JLabel.RIGHT); //$NON-NLS-1$
+        goalF = new JTextField(Integer.toString(goalNumber), 2);
+        goalL.setEnabled(register);
+        goalF.setEnabled(register);
+        registerC = new JCheckBox(Messages.getString("MegaMek.registerC")); //$NON-NLS-1$
         register = false;
-        registerC.setSelected (register);
-        registerC.addItemListener( new ItemListener() {
-                public void itemStateChanged (ItemEvent event) {
-                    boolean state = false;
-                    if (ItemEvent.SELECTED == event.getStateChange()) {
-                        state = true;
-                    }
-                    metaserverL.setEnabled (state);
-                    metaserverF.setEnabled (state);
-                    goalL.setEnabled (state);
-                    goalF.setEnabled (state);
+        registerC.setSelected(register);
+        registerC.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                boolean state = false;
+                if (ItemEvent.SELECTED == event.getStateChange()) {
+                    state = true;
                 }
-            });
-
+                metaserverL.setEnabled(state);
+                metaserverF.setEnabled(state);
+                goalL.setEnabled(state);
+                goalF.setEnabled(state);
+            }
+        });
         okayB = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         okayB.setActionCommand("done"); //$NON-NLS-1$
         okayB.addActionListener(this);
         okayB.setSize(80, 24);
-
         cancelB = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
         cancelB.setActionCommand("cancel"); //$NON-NLS-1$
         cancelB.addActionListener(this);
         cancelB.setSize(80, 24);
-
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-
         c.fill = GridBagConstraints.NONE;
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.insets = new Insets(5, 5, 5, 5);
-
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(yourNameL, c);
         add(yourNameL);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(yourNameF, c);
         add(yourNameF);
-
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(serverPassL, c);
         add(serverPassL);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(serverPassF, c);
         add(serverPassF);
-
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(portL, c);
         add(portL);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(portF, c);
@@ -911,16 +853,13 @@ class HostDialog extends Dialog implements ActionListener {
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(okayB, c);
         add(okayB);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(cancelB, c);
         add(cancelB);
-
         pack();
         setResizable(false);
-        setLocation(
-            frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-            frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
+                frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -930,8 +869,8 @@ class HostDialog extends Dialog implements ActionListener {
                 serverPass = serverPassF.getText();
                 register = registerC.isSelected();
                 metaserver = metaserverF.getText();
-                port = Integer.parseInt (portF.getText());
-                goalPlayers = Integer.parseInt (goalF.getText());
+                port = Integer.parseInt(portF.getText());
+                goalPlayers = Integer.parseInt(goalF.getText());
             } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage());
                 port = 2346;
@@ -943,9 +882,9 @@ class HostDialog extends Dialog implements ActionListener {
             PreferenceManager.getClientPreferences().setLastServerPass(serverPass);
             PreferenceManager.getClientPreferences().setLastServerPort(port);
             PreferenceManager.getClientPreferences().setValue("megamek.megamek.metaservername", //$NON-NLS-1$
-                                        metaserver);
+                    metaserver);
             PreferenceManager.getClientPreferences().setValue("megamek.megamek.goalplayers", //$NON-NLS-1$
-                                        Integer.toString (goalPlayers));
+                    Integer.toString(goalPlayers));
         }
         setVisible(false);
     }
@@ -957,90 +896,73 @@ class HostDialog extends Dialog implements ActionListener {
 class ConnectDialog extends Dialog implements ActionListener {
     public String name, serverAddr;
     public int port;
-
     protected JLabel yourNameL, serverAddrL, portL;
     protected JTextField yourNameF, serverAddrF, portF;
     protected JButton okayB, cancelB;
 
     public ConnectDialog(Frame frame) {
         super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true); //$NON-NLS-1$
-
         yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), JLabel.RIGHT); //$NON-NLS-1$
         serverAddrL = new JLabel(Messages.getString("MegaMek.serverAddrL"), JLabel.RIGHT); //$NON-NLS-1$
         portL = new JLabel(Messages.getString("MegaMek.portL"), JLabel.RIGHT); //$NON-NLS-1$
-
         yourNameF = new JTextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
         serverAddrF = new JTextField(PreferenceManager.getClientPreferences().getLastConnectAddr(), 16);
         serverAddrF.addActionListener(this);
         portF = new JTextField(PreferenceManager.getClientPreferences().getLastConnectPort() + "", 4); //$NON-NLS-1$
         portF.addActionListener(this);
-
         okayB = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         okayB.setActionCommand("done"); //$NON-NLS-1$
         okayB.addActionListener(this);
         okayB.setSize(80, 24);
-
         cancelB = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
         cancelB.setActionCommand("cancel"); //$NON-NLS-1$
         cancelB.addActionListener(this);
         cancelB.setSize(80, 24);
-
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-
         c.fill = GridBagConstraints.NONE;
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.insets = new Insets(5, 5, 5, 5);
-
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(yourNameL, c);
         add(yourNameL);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(yourNameF, c);
         add(yourNameF);
-
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(serverAddrL, c);
         add(serverAddrL);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(serverAddrF, c);
         add(serverAddrF);
-
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(portL, c);
         add(portL);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(portF, c);
         add(portF);
-
         c.ipadx = 20;
         c.ipady = 5;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(okayB, c);
         add(okayB);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(cancelB, c);
         add(cancelB);
-
         pack();
         setResizable(false);
-        setLocation(
-            frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-            frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
+                frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -1049,7 +971,6 @@ class ConnectDialog extends Dialog implements ActionListener {
                 name = yourNameF.getText();
                 serverAddr = serverAddrF.getText();
                 port = Integer.decode(portF.getText().trim()).intValue();
-
             } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage());
             }
@@ -1070,18 +991,16 @@ class ScenarioDialog extends Dialog implements ActionListener {
     public static final int T_ME = 0;
     public static final int T_HUMAN = 1;
     public static final int T_BOT = 2;
-
     private Player[] m_players;
     private JLabel[] m_labels;
     private Choice[] m_typeChoices;
     private ImageButton[] m_camoButtons;
     private Frame m_frame;
-
-    /** The camo selection dialog.
+    /**
+     * The camo selection dialog.
      */
     private CamoChoiceDialog camoDialog;
     private ItemListener prevListener = null;
-
     public boolean bSet = false;
     public int[] playerTypes;
     public String localName = ""; //$NON-NLS-1$
@@ -1094,21 +1013,16 @@ class ScenarioDialog extends Dialog implements ActionListener {
         m_labels = new JLabel[pa.length];
         m_typeChoices = new Choice[pa.length];
         m_camoButtons = new ImageButton[pa.length];
-
         playerTypes = new int[pa.length];
-
         for (int x = 0; x < pa.length; x++) {
             final Player curPlayer = m_players[x];
             curPlayer.setColorIndex(x);
-
             m_labels[x] = new JLabel(pa[x].getName(), JLabel.LEFT);
-
             m_typeChoices[x] = new Choice();
             m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.me")); //$NON-NLS-1$
             m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
             m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
             final Color defaultBackground = m_typeChoices[x].getBackground();
-
             m_camoButtons[x] = new ImageButton();
             final ImageButton curButton = m_camoButtons[x];
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn")); //$NON-NLS-1$
@@ -1124,6 +1038,7 @@ class ScenarioDialog extends Dialog implements ActionListener {
                 private final ImageButton button = curButton;
                 private final Color background = defaultBackground;
                 private final Player player = curPlayer;
+
                 public void actionPerformed(ActionEvent e) {
                     if (null != prevListener) {
                         dialog.removeItemListener(prevListener);
@@ -1140,9 +1055,7 @@ class ScenarioDialog extends Dialog implements ActionListener {
                     dialog.setVisible(true);
                 }
             });
-
         }
-
         setLayout(new BorderLayout());
         JPanel choicePanel = new JPanel();
         choicePanel.setLayout(new GridLayout(pa.length + 1, 0));
@@ -1157,7 +1070,6 @@ class ScenarioDialog extends Dialog implements ActionListener {
             choicePanel.add(m_camoButtons[x]);
         }
         add(choicePanel, BorderLayout.CENTER);
-
         JPanel butPanel = new JPanel();
         butPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         JButton bOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -1171,9 +1083,8 @@ class ScenarioDialog extends Dialog implements ActionListener {
         add(butPanel, BorderLayout.SOUTH);
         pack();
         setResizable(false);
-        setLocation(
-            frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-            frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
+                frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {

@@ -4898,7 +4898,8 @@ public abstract class Entity extends TurnOrdered
 
         // check game options
         if (game.getOptions().booleanOption("no_clan_physical") &&
-            isClan()) {
+            isClan() &&
+            getSwarmAttackerId()==NONE) {
             return false;
         }
         if (!game.getOptions().booleanOption("skip_ineligable_physical")) {

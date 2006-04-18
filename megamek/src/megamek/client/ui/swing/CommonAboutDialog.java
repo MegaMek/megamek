@@ -11,7 +11,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.widget.AdvancedLabel;
@@ -19,9 +18,9 @@ import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.BufferedPanel;
 
 import javax.swing.JButton;
-import java.awt.Dialog;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -33,11 +32,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Date;
 
+import static megamek.MegaMek.TIMESTAMP;
+import static megamek.MegaMek.VERSION;
+
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
  */
-public class CommonAboutDialog extends Dialog
-{
+public class CommonAboutDialog extends JDialog {
     /**
      * We only need a single copy of the "about" title image that we share.
      */
@@ -46,23 +47,22 @@ public class CommonAboutDialog extends Dialog
     /**
      * Get the single title image in a threadsafe way.
      *
-     * @param   frame - a <code>Frame</code> object to instantiate the image.
-     * @return  the title <code>Image</code> common to all "about" dialogs.
-     *          This value should <b>not</b> be <code>null</code>.
+     * @param frame - a <code>JFrame</code> object to instantiate the image.
+     * @return the title <code>Image</code> common to all "about" dialogs.
+     *         This value should <b>not</b> be <code>null</code>.
      */
-    private static synchronized Image getTitleImage( Frame frame ) {
-
+    private static synchronized Image getTitleImage(JFrame frame) {
         // Have we loaded our image yet?
-        if ( imgTitleImage == null ) {
+        if (imgTitleImage == null) {
             // Nope.  Load it.
             Image image = frame.getToolkit().getImage
-                ( "data/images/misc/megamek-splash2.gif" ); //$NON-NLS-1$
-            MediaTracker tracker = new MediaTracker( frame );
-            tracker.addImage( image, 0 );
+                    ("data/images/misc/megamek-splash2.gif"); //$NON-NLS-1$
+            MediaTracker tracker = new MediaTracker(frame);
+            tracker.addImage(image, 0);
             try {
-                tracker.waitForID( 0 );
+                tracker.waitForID(0);
                 imgTitleImage = image;
-            } catch ( InterruptedException exp ) {
+            } catch (InterruptedException exp) {
                 exp.printStackTrace();
             }
         } // End load-imgTitleImage
@@ -74,96 +74,90 @@ public class CommonAboutDialog extends Dialog
     /**
      * Create an "about" dialog for MegaMek.
      *
-     * @param   frame - the parent <code>Frame</code> for this dialog.
+     * @param frame - the parent <code>JFrame</code> for this dialog.
      */
-    public CommonAboutDialog( Frame frame ) {
+    public CommonAboutDialog(JFrame frame) {
         // Construct the superclass.
-        super( frame, Messages.getString("CommonAboutDialog.title") ); //$NON-NLS-1$
+        super(frame, Messages.getString("CommonAboutDialog.title")); //$NON-NLS-1$
 
         // Make sure we close at the appropriate times.
-        this.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    quit();
-                }
-            } );
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                quit();
+            }
+        });
 
         // Make a splash image panel.
         BufferedPanel panTitle = new BufferedPanel();
-        Image imgSplash = CommonAboutDialog.getTitleImage( frame );
-        BackGroundDrawer bgdTitle = new BackGroundDrawer( imgSplash );
+        Image imgSplash = CommonAboutDialog.getTitleImage(frame);
+        BackGroundDrawer bgdTitle = new BackGroundDrawer(imgSplash);
         panTitle.addBgDrawer(bgdTitle);
-        panTitle.setPreferredSize( imgSplash.getWidth(null), 
-                                   imgSplash.getHeight(null) );
+        panTitle.setPreferredSize(imgSplash.getWidth(null),
+                imgSplash.getHeight(null));
 
         // Make a label containing the version of this app.
         StringBuffer buff = new StringBuffer();
-        buff.append( Messages.getString("CommonAboutDialog.version") ) //$NON-NLS-1$
-            .append( megamek.MegaMek.VERSION )
-            .append( Messages.getString("CommonAboutDialog.timestamp") ) //$NON-NLS-1$
-            .append( new Date(megamek.MegaMek.TIMESTAMP).toString() )
-            .append( Messages.getString("CommonAboutDialog.javaVendor") ) //$NON-NLS-1$
-            .append( System.getProperty("java.vendor") ) //$NON-NLS-1$
-            .append( Messages.getString("CommonAboutDialog.javaVersion") ) //$NON-NLS-1$
-            .append( System.getProperty("java.version") ); //$NON-NLS-1$
-        AdvancedLabel lblVersion = new AdvancedLabel( buff.toString() );
-
+        buff.append(Messages.getString("CommonAboutDialog.version"))//$NON-NLS-1$
+                .append(VERSION)
+                .append(Messages.getString("CommonAboutDialog.timestamp"))//$NON-NLS-1$
+                .append(new Date(TIMESTAMP).toString())
+                .append(Messages.getString("CommonAboutDialog.javaVendor"))//$NON-NLS-1$
+                .append(System.getProperty("java.vendor"))//$NON-NLS-1$
+                .append(Messages.getString("CommonAboutDialog.javaVersion"))//$NON-NLS-1$
+                .append(System.getProperty("java.version")); //$NON-NLS-1$
+        AdvancedLabel lblVersion = new AdvancedLabel(buff.toString());
         AdvancedLabel lblCopyright = new AdvancedLabel(Messages.getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
         AdvancedLabel lblAbout = new AdvancedLabel(Messages.getString("CommonAboutDialog.about")); //$NON-NLS-1$
 
         // Add a "Close" button.
-        JButton butClose = new JButton( Messages.getString("CommonAboutDialog.Close") ); //$NON-NLS-1$
-        butClose.addActionListener( new ActionListener() {
-                public void actionPerformed( ActionEvent event ) {
-                    quit();
-                }
-            } );
+        JButton butClose = new JButton(Messages.getString("CommonAboutDialog.Close")); //$NON-NLS-1$
+        butClose.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                quit();
+            }
+        });
 
         // Layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        this.setLayout(gridbag);
-
+        setLayout(gridbag);
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTH;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         c.insets = new Insets(4, 4, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.ipadx = 10;    c.ipady = 5;
+        c.ipadx = 10;
+        c.ipady = 5;
         c.gridx = 0;
-
         c.gridy = 0;
-        this.add(panTitle, c);
-
+        add(panTitle, c);
         c.weighty = 1.0;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 1;
-        this.add(lblVersion, c);
-
+        add(lblVersion, c);
         c.gridy = 2;
-        this.add(lblCopyright, c);
-
+        add(lblCopyright, c);
         c.gridy = 3;
-        this.add(lblAbout, c);
-
+        add(lblAbout, c);
         c.gridy = 4;
-        this.add(butClose, c);
+        add(butClose, c);
 
         // Place this dialog on middle of screen.
         Dimension screenSize = frame.getToolkit().getScreenSize();
-        this.pack();
-        this.setLocation(
-            screenSize.width / 2 - this.getSize().width / 2,
-            screenSize.height / 2 - this.getSize().height / 2);
+        pack();
+        setLocation(screenSize.width / 2 - getSize().width / 2,
+                screenSize.height / 2 - getSize().height / 2);
 
         // Stop allowing resizing.
-        this.setResizable( false );
+        setResizable(false);
     }
 
     /**
      * Close this dialog.
      */
-    /* package */ void quit() {
-        this.setVisible(false);
+    /* package */
+    void quit() {
+        setVisible(false);
     }
-
 }

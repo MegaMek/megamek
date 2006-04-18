@@ -6,6 +6,7 @@ v0.31.8-dev (CVS)
 + Bug 1470202: Cannot kick buildings
 + Make tab names in the chatlounge clearer.
 + Make main menu button names more newbie-friendly
++ Bug 1469940: Split critical locations showing wrong firing location
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.
@@ -38,7 +39,6 @@ v0.31.7 (2006-04-13, 13:30 GMT)
 + In RMG, invert negative terrain before placing lakes etc.
 + Bug: getting stuck in a swamp was not checking for road movement.
 + Patch 1459736: Initial Swing update.
-+ Bug 1469940: Split critical locations showing wrong firing location
 
 v0.31.6 (2006-03-12, 16:48 GMT)
 + Bug 1427812: Thundergod mislabeled as Cerberus

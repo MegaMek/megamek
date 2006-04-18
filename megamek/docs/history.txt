@@ -8,6 +8,8 @@ v0.31.8-dev (CVS)
 + Make main menu button names more newbie-friendly
 + Bug 1469940: Split critical locations showing wrong firing location
 + RFE 1463286: Clan physical attacks -- allow brushing off.
++ Bug 1459060: removed iterator modification
++ migrated various AWT fixes from last month to Swing fixes 
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

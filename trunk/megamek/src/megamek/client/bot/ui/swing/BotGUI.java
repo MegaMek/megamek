@@ -1,16 +1,11 @@
 package megamek.client.bot.ui.swing;
 
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.io.File;
-
 import megamek.client.bot.BotClient;
 import megamek.client.bot.Messages;
 import megamek.client.ui.swing.CommonHelpDialog;
 import megamek.client.ui.swing.ConfirmDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.IGame;
-import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEndEvent;
@@ -20,6 +15,7 @@ import megamek.common.event.GameEntityNewOffboardEvent;
 import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameMapQueryEvent;
+import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
@@ -29,10 +25,14 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
+import javax.swing.JFrame;
+import java.awt.Dimension;
+import java.io.File;
+
 public class BotGUI implements GameListener {
 
     private BotClient bot;
-    private Frame frame = new Frame();
+    private JFrame frame = new JFrame();
     private static boolean WarningShown;
 
     public BotGUI(BotClient bot) {
@@ -55,9 +55,8 @@ public class BotGUI implements GameListener {
             String body = Messages.getString("BotGUI.notifyOfBot.message"); //$NON-NLS-1$
             Dimension screenSize = frame.getToolkit().getScreenSize();
             frame.pack();
-            frame.setLocation(
-                screenSize.width / 2 - frame.getSize().width / 2,
-                screenSize.height / 2 - frame.getSize().height / 2);
+            frame.setLocation(screenSize.width / 2 - frame.getSize().width / 2,
+                    screenSize.height / 2 - frame.getSize().height / 2);
             ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);
             confirm.setVisible(true);
 

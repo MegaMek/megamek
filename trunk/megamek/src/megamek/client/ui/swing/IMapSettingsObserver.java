@@ -18,10 +18,10 @@
  */
 
 package megamek.client.ui.swing;
+
 import megamek.common.MapSettings;
 
 /**
- *
  * @author ShaneK
  */
 public interface IMapSettingsObserver {

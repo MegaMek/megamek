@@ -21,10 +21,6 @@ import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.client.ui.swing.widget.AdvancedLabel;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.BufferedPanel;
-import megamek.client.ui.swing.widget.ImageButton;
 import megamek.common.IGame;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
@@ -34,8 +30,10 @@ import megamek.common.preference.PreferenceManager;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,11 +42,9 @@ import java.awt.BorderLayout;
 import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -67,6 +63,8 @@ import java.io.FilenameFilter;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Vector;
+
+import static megamek.common.Compute.d6;
 
 public class MegaMekGUI implements IMegaMekGUI {
     public JFrame frame;
@@ -89,7 +87,7 @@ public class MegaMekGUI implements IMegaMekGUI {
      * specified frame.
      */
     private void createGUI() {
-        this.frame = new JFrame("MegaMek"); //$NON-NLS-1$
+        frame = new JFrame("MegaMek"); //$NON-NLS-1$
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 quit();
@@ -123,7 +121,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         frame.setVisible(true);
 
         // tell the user about the readme...
-        if (true == GUIPreferences.getInstance().getNagForReadme()) {
+        if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame,
                     Messages.getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$
                     Messages.getString("MegaMek.welcome.message"), //$NON-NLS-1$
@@ -178,15 +176,13 @@ public class MegaMekGUI implements IMegaMekGUI {
         } catch (InterruptedException e) {
         }
         // make splash image panel
-        BufferedPanel panTitle = new BufferedPanel();
-        BackGroundDrawer bgdTitle = new BackGroundDrawer(imgSplash);
-        panTitle.addBgDrawer(bgdTitle);
-        panTitle.setPreferredSize(imgSplash.getWidth(null), imgSplash.getHeight(null));
+        ImageIcon icon = new ImageIcon(imgSplash);
+        JLabel panTitle = new JLabel(icon);
 
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        frame.setLayout(gridbag);
+        frame.getContentPane().setLayout(gridbag);
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(4, 4, 1, 1);
         c.ipadx = 10;
@@ -314,7 +310,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // kick off a RNG check
-        megamek.common.Compute.d6();
+        d6();
         // start server
         server = new Server(hd.serverPass, hd.port);
         // initialize client
@@ -372,7 +368,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // kick off a RNG check
-        megamek.common.Compute.d6();
+        d6();
         // start server
         server = new Server(hd.serverPass, hd.port);
         if (!server.loadGame(new File(fd.getDirectory(), fd.getFile()))) {
@@ -453,7 +449,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // kick off a RNG check
-        megamek.common.Compute.d6();
+        d6();
         // start server
         server = new Server(hd.serverPass, hd.port);
         server.setGame(g);
@@ -461,7 +457,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // apply any scenario damage
         sl.applyDamage(server);
         ClientGUI gui = null;
-        if (sd.localName != "") { //$NON-NLS-1$
+        if (!sd.localName.equals("")) { //$NON-NLS-1$
             // initialize game
             client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
             gui = new ClientGUI(client);
@@ -590,29 +586,29 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     private void showAbout() {
         // Do we need to create the "about" dialog?
-        if (this.about == null) {
-            this.about = new CommonAboutDialog(this.frame);
+        if (about == null) {
+            about = new CommonAboutDialog(frame);
         }
 
         // Show the about dialog.
-        this.about.setVisible(true);
+        about.setVisible(true);
     }
 
     /**
      * Called when the user selects the "Help->Contents" menu item.
      */
     private void showHelp() {
-        if (this.help == null) {
-            help = showHelp(this.frame, "readme"); //$NON-NLS-1$
+        if (help == null) {
+            help = showHelp(frame, "readme"); //$NON-NLS-1$
         }
         // Show the help dialog.
-        this.help.setVisible(true);
+        help.setVisible(true);
     }
 
     /**
      * display the filename in a CommonHelpDialog
      */
-    private static CommonHelpDialog showHelp(Frame frame, String filename) {
+    private static CommonHelpDialog showHelp(JFrame frame, String filename) {
         Locale l = Locale.getDefault();
         File helpfile = new File(filename + "-" + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$ //$NON-NLS-2$
         if (!helpfile.exists()) {
@@ -626,12 +622,12 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     private void showSettings() {
         // Do we need to create the "settings" dialog?
-        if (this.setdlg == null) {
-            this.setdlg = new CommonSettingsDialog(this.frame);
+        if (setdlg == null) {
+            setdlg = new CommonSettingsDialog(frame);
         }
 
         // Show the settings dialog.
-        this.setdlg.setVisible(true);
+        setdlg.setVisible(true);
     }
 
     /**
@@ -646,7 +642,7 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Hides this window for later.  Listens to the frame until it closes,
      * then calls unlaunch().
      */
-    private void launch(Frame launched) {
+    private void launch(JFrame launched) {
         // listen to new frame
         launched.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -727,7 +723,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 /**
  * here's a quick class for the host new game diaglogue box
  */
-class HostDialog extends Dialog implements ActionListener {
+class HostDialog extends JDialog implements ActionListener {
     public String name;
     public String serverPass;
     public int port;
@@ -743,7 +739,7 @@ class HostDialog extends Dialog implements ActionListener {
     protected JTextField goalF;
     protected JButton okayB, cancelB;
 
-    public HostDialog(Frame frame) {
+    public HostDialog(JFrame frame) {
         super(frame, Messages.getString("MegaMek.HostDialog.title"), true); //$NON-NLS-1$
         yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), JLabel.RIGHT); //$NON-NLS-1$
         serverPassL = new JLabel(Messages.getString("MegaMek.serverPassL"), JLabel.RIGHT); //$NON-NLS-1$
@@ -893,14 +889,14 @@ class HostDialog extends Dialog implements ActionListener {
 /**
  * here's a quick class for the connect to game diaglogue box
  */
-class ConnectDialog extends Dialog implements ActionListener {
+class ConnectDialog extends JDialog implements ActionListener {
     public String name, serverAddr;
     public int port;
     protected JLabel yourNameL, serverAddrL, portL;
     protected JTextField yourNameF, serverAddrF, portF;
     protected JButton okayB, cancelB;
 
-    public ConnectDialog(Frame frame) {
+    public ConnectDialog(JFrame frame) {
         super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true); //$NON-NLS-1$
         yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), JLabel.RIGHT); //$NON-NLS-1$
         serverAddrL = new JLabel(Messages.getString("MegaMek.serverAddrL"), JLabel.RIGHT); //$NON-NLS-1$
@@ -987,15 +983,15 @@ class ConnectDialog extends Dialog implements ActionListener {
 /**
  * Allow a user to set types and colors for scenario players
  */
-class ScenarioDialog extends Dialog implements ActionListener {
+class ScenarioDialog extends JDialog implements ActionListener {
     public static final int T_ME = 0;
     public static final int T_HUMAN = 1;
     public static final int T_BOT = 2;
     private Player[] m_players;
     private JLabel[] m_labels;
     private Choice[] m_typeChoices;
-    private ImageButton[] m_camoButtons;
-    private Frame m_frame;
+    private JButton[] m_camoButtons;
+    private JFrame m_frame;
     /**
      * The camo selection dialog.
      */
@@ -1005,14 +1001,14 @@ class ScenarioDialog extends Dialog implements ActionListener {
     public int[] playerTypes;
     public String localName = ""; //$NON-NLS-1$
 
-    public ScenarioDialog(Frame frame, Player[] pa) {
+    public ScenarioDialog(JFrame frame, Player[] pa) {
         super(frame, Messages.getString("MegaMek.ScenarioDialog.title"), true); //$NON-NLS-1$
         m_frame = frame;
         camoDialog = new CamoChoiceDialog(frame);
         m_players = pa;
         m_labels = new JLabel[pa.length];
         m_typeChoices = new Choice[pa.length];
-        m_camoButtons = new ImageButton[pa.length];
+        m_camoButtons = new JButton[pa.length];
         playerTypes = new int[pa.length];
         for (int x = 0; x < pa.length; x++) {
             final Player curPlayer = m_players[x];
@@ -1023,10 +1019,10 @@ class ScenarioDialog extends Dialog implements ActionListener {
             m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
             m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
             final Color defaultBackground = m_typeChoices[x].getBackground();
-            m_camoButtons[x] = new ImageButton();
-            final ImageButton curButton = m_camoButtons[x];
+            m_camoButtons[x] = new JButton();
+            final JButton curButton = m_camoButtons[x];
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn")); //$NON-NLS-1$
-            curButton.setPreferredSize(84, 72);
+            curButton.setPreferredSize(new Dimension(84, 72));
             curButton.setBackground(PlayerColors.getColor(x));
             curButton.setActionCommand("camo"); //$NON-NLS-1$
 
@@ -1035,7 +1031,7 @@ class ScenarioDialog extends Dialog implements ActionListener {
             // button's player, and add a new listener.
             curButton.addActionListener(new ActionListener() {
                 private final CamoChoiceDialog dialog = camoDialog;
-                private final ImageButton button = curButton;
+                private final JButton button = curButton;
                 private final Color background = defaultBackground;
                 private final Player player = curPlayer;
 
@@ -1059,7 +1055,7 @@ class ScenarioDialog extends Dialog implements ActionListener {
         setLayout(new BorderLayout());
         JPanel choicePanel = new JPanel();
         choicePanel.setLayout(new GridLayout(pa.length + 1, 0));
-        choicePanel.add(new AdvancedLabel(Messages.getString("MegaMek.ScenarioDialog.pNameType"))); //$NON-NLS-1$
+        choicePanel.add(new JLabel(Messages.getString("MegaMek.ScenarioDialog.pNameType"))); //$NON-NLS-1$
         choicePanel.add(new JLabel(Messages.getString("MegaMek.ScenarioDialog.Camo"))); //$NON-NLS-1$
         for (int x = 0; x < pa.length; x++) {
             JPanel typePanel = new JPanel();

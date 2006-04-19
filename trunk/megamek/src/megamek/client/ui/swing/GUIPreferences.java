@@ -39,19 +39,19 @@ public class GUIPreferences extends PreferenceStoreProxy {
     shields new users from unecessary complication.
     */
     public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
-    public static final String ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE="AdvancedChatLoungeTabFontSize";
+    public static final String ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE = "AdvancedChatLoungeTabFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE =
-        "AdvancedMechDisplayArmorLargeFontSize";
+            "AdvancedMechDisplayArmorLargeFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE =
-        "AdvancedMechDisplayArmorMediumFontSize";
+            "AdvancedMechDisplayArmorMediumFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE =
-        "AdvancedMechDisplayArmorSmallFontSize";
+            "AdvancedMechDisplayArmorSmallFontSize";
     public static final String ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE =
-        "AdvancedMechDisplayLargeFontSize";
+            "AdvancedMechDisplayLargeFontSize";
     public static final String ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE =
-        "AdvancedMechDisplayMediumFontSize";
+            "AdvancedMechDisplayMediumFontSize";
     public static final String ADVANCED_MECH_DISPLAY_WRAP_LENGTH =
-        "AdvancedMechDisplayWrapLength";
+            "AdvancedMechDisplayWrapLength";
     public static final String ADVANCED_MOVE_DEFAULT_COLOR = "AdvancedMoveDefaultColor";
     public static final String ADVANCED_MOVE_ILLEGAL_COLOR = "AdvancedMoveIllegalColor";
     public static final String ADVANCED_MOVE_JUMP_COLOR = "AdvancedMoveJumpColor";
@@ -64,7 +64,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_TRANSLUCENT_HIDDEN_UNITS = "AdvancedTranslucentHiddenUnits";
     /* --End advanced settings-- */
 
-    public static final String ALWAYS_RIGHT_CLICK_SCROLL="AlwaysRightClickScroll";
+    public static final String ALWAYS_RIGHT_CLICK_SCROLL = "AlwaysRightClickScroll";
     public static final String AUTO_EDGE_SCROLL = "AutoEdgeScroll";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
@@ -90,8 +90,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     //public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
-    public static final String MINI_REPORT_SIZE_HEIGHT="MiniReportSizeHeight";
-    public static final String MINI_REPORT_SIZE_WIDTH="MiniReportSizeWidth";
+    public static final String MINI_REPORT_SIZE_HEIGHT = "MiniReportSizeHeight";
+    public static final String MINI_REPORT_SIZE_WIDTH = "MiniReportSizeWidth";
     public static final String MINIMAP_COLOURS = "MinimapColours";
     public static final String MINIMAP_ENABLED = "MinimapEnabled";
     public static final String MINIMAP_POS_X = "MinimapPosX";
@@ -100,7 +100,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
     public static final String NAG_FOR_BOT_README = "NagForBotReadme";
-    public static final String NAG_FOR_MAP_ED_README="NagForMapEdReadme";
+    public static final String NAG_FOR_MAP_ED_README = "NagForMapEdReadme";
     public static final String NAG_FOR_MASC = "NagForMASC";
     public static final String NAG_FOR_NO_ACTION = "NagForNoAction";
     public static final String NAG_FOR_PSR = "NagForPSR";
@@ -126,9 +126,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String LOS_MECH_IN_FIRST = "LOSMechInFirst";
     public static final String LOS_MECH_IN_SECOND = "LOSMechInSecond";
     public static final String SHOW_MAPSHEETS = "ShowMapsheets";
-    
+
     protected static GUIPreferences instance = new GUIPreferences();
-    
+
     public static GUIPreferences getInstance() {
         return instance;
     }
@@ -148,9 +148,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MOVE_DEFAULT_COLOR, "cyan");
         setDefault(ADVANCED_MOVE_ILLEGAL_COLOR, "darkGray");
         setDefault(ADVANCED_MOVE_JUMP_COLOR, "red");
-        setDefault(ADVANCED_MOVE_MASC_COLOR, new Color(255,140,0));
+        setDefault(ADVANCED_MOVE_MASC_COLOR, new Color(255, 140, 0));
         setDefault(ADVANCED_MOVE_RUN_COLOR, "yellow");
-        setDefault(ADVANCED_MOVE_BACK_COLOR, new Color(255,255,0));
+        setDefault(ADVANCED_MOVE_BACK_COLOR, new Color(255, 255, 0));
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 100);
         store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
         setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
@@ -171,7 +171,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_INCLUDE_LEVEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
-        store.setDefault(MINIMAP_COLOURS,"defaultminimap.txt");
+        store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
         store.setDefault(MINIMUM_SIZE_WIDTH, 120);
@@ -196,11 +196,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MAPHEX_POPUP, true);
         store.setDefault(SHOW_MOVE_STEP, true);
         store.setDefault(SHOW_WRECKS, true);
-        store.setDefault(SOUND_BING_FILENAME,"data/sounds/call.wav");
+        store.setDefault(SOUND_BING_FILENAME, "data/sounds/call.wav");
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
-        store.setDefault(SHOW_MAPSHEETS, false);    
+        store.setDefault(SHOW_MAPSHEETS, false);
     }
 
     public void setDefault(String name, Color color) {
@@ -222,7 +222,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getAutoEndFiring() {
         return store.getBoolean(AUTO_END_FIRING);
     }
-    
+
     public boolean getAutoDeclareSearchlight() {
         return store.getBoolean(AUTO_DECLARE_SEARCHLIGHT);
     }
@@ -238,7 +238,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getCtlScroll() {
         return store.getBoolean(CTL_SCROLL);
     }
-    
+
     public int getDisplayPosX() {
         return store.getInt(DISPLAY_POS_X);
     }
@@ -298,6 +298,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getMechSelectorShowAdvanced() {
         return store.getBoolean(MECH_SELECTOR_SHOW_ADVANCED);
     }
+
     /*
     public int getMechSelectorSizeHeight() {
         return store.getInt(MECH_SELECTOR_SIZE_HEIGHT);
@@ -448,17 +449,17 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public boolean getMechInFirst() {
-        return store.getBoolean(LOS_MECH_IN_FIRST);        
+        return store.getBoolean(LOS_MECH_IN_FIRST);
     }
 
     public boolean getMechInSecond() {
-        return store.getBoolean(LOS_MECH_IN_SECOND);        
+        return store.getBoolean(LOS_MECH_IN_SECOND);
     }
 
     public boolean getShowMapsheets() {
         return store.getBoolean(SHOW_MAPSHEETS);
     }
-    
+
     public void setAlwaysRightClickScroll(boolean state) {
         store.setValue(ALWAYS_RIGHT_CLICK_SCROLL, state);
     }
@@ -470,11 +471,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setAutoEndFiring(boolean state) {
         store.setValue(AUTO_END_FIRING, state);
     }
-    
+
     public void setAutoDeclareSearchlight(boolean state) {
         store.setValue(AUTO_DECLARE_SEARCHLIGHT, state);
     }
-    
+
     public void setChatloungeTabs(boolean state) {
         store.setValue(CHAT_LOUNGE_TABS, state);
     }
@@ -542,6 +543,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setMechSelectorShowAdvanced(boolean showAdvanced) {
         store.setValue(MECH_SELECTOR_SHOW_ADVANCED, showAdvanced);
     }
+
     /*
     public void setMechSelectorSizeHeight(int i) {
         store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i);
@@ -672,18 +674,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setMechInFirst(boolean b) {
-        store.setValue(LOS_MECH_IN_FIRST, b);        
+        store.setValue(LOS_MECH_IN_FIRST, b);
     }
-    
+
     public void setMechInSecond(boolean b) {
-        store.setValue(LOS_MECH_IN_SECOND, b);        
+        store.setValue(LOS_MECH_IN_SECOND, b);
     }
 
     public void setShowMapsheets(boolean b) {
         store.setValue(SHOW_MAPSHEETS, b);
     }
 
-    protected ColorParser p = new ColorParser();    
+    protected ColorParser p = new ColorParser();
 
     protected String getColorString(Color color) {
         StringBuffer b = new StringBuffer();
@@ -701,7 +703,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
             }
         }
         return Color.black;
-   
+
     }
 
 }

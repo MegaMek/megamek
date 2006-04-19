@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.client.ui.swing.widget.BufferedPanel;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -42,6 +41,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,10 +50,8 @@ import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FileDialog;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -102,9 +100,9 @@ public class ClientGUI
     private ChatterBox cb;
     public BoardView1 bv;
     private JPanel scroller;
-    public Dialog mechW;
+    public JDialog mechW;
     public MechDisplay mechD;
-    public Dialog minimapW;
+    public JDialog minimapW;
     public MiniMap minimap;
     public PopupMenu popup = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
     private UnitOverview uo;
@@ -253,7 +251,7 @@ public class ClientGUI
      */
     private void layoutFrame() {
         frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
-        frame.setLayout(new BorderLayout());
+        frame.getContentPane().setLayout(new BorderLayout());
         frame.add(this, BorderLayout.CENTER);
         frame.validate();
     }
@@ -315,7 +313,7 @@ public class ClientGUI
         bv.add(popup);
         Dimension screenSize = frame.getToolkit().getScreenSize();
         int x, y, h, w;
-        mechW = new Dialog(frame, Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
+        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
         x = GUIPreferences.getInstance().getDisplayPosX();
         y = GUIPreferences.getInstance().getDisplayPosY();
         h = GUIPreferences.getInstance().getDisplaySizeHeight();
@@ -358,7 +356,7 @@ public class ClientGUI
         // end kenn
 
         // minimap
-        minimapW = new Dialog(frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
+        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
         x = GUIPreferences.getInstance().getMinimapPosX();
         y = GUIPreferences.getInstance().getMinimapPosY();
         try {
@@ -1273,7 +1271,7 @@ public class ClientGUI
     /**
      * @return the frame this client is displayed in
      */
-    public Frame getFrame() {
+    public JFrame getFrame() {
         return frame;
     }
 
@@ -1288,12 +1286,12 @@ public class ClientGUI
     }
 
     // Loads a preview image of the unit into the BufferedPanel.
-    public void loadPreviewImage(BufferedPanel bp, Entity entity) {
+    public void loadPreviewImage(JLabel bp, Entity entity) {
         Player player = client.game.getPlayer(entity.getOwnerId());
         loadPreviewImage(bp, entity, player);
     }
 
-    public void loadPreviewImage(BufferedPanel bp, Entity entity, Player player) {
+    public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
         Image camo = bv.getTilesetManager().getPlayerCamo(player);
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);

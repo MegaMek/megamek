@@ -133,10 +133,9 @@ public interface IBoardView {
     /**
      * Adds the specified board view listener to receive
      * events from this view.
-     * 
-     * @see BoardViewListener
      *
      * @param listener the board listener.
+     * @see BoardViewListener
      */
     public abstract void addBoardViewListener(BoardViewListener listener);
 

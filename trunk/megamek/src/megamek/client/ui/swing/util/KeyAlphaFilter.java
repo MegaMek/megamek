@@ -20,14 +20,13 @@ import java.awt.image.RGBImageFilter;
  * Filters the pixels in the image by making all pixels that are the designated
  * "key" color transparent.
  */
-public class KeyAlphaFilter extends RGBImageFilter
-{
+public class KeyAlphaFilter extends RGBImageFilter {
     private int keyColor;
-    
+
     public KeyAlphaFilter(int keyColor) {
         this.keyColor = keyColor;
     }
-    
+
     public int filterRGB(int x, int y, int RGB) {
         if (RGB == keyColor) {
             return 0;

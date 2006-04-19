@@ -17,35 +17,33 @@ package megamek.client.ui.swing.util;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
-
-
 /**
  * @author pjm1
- *
- * TODO As soon as we get a stable release and we can upgrade to 1.5 this class should be replaced
- * with a LinkedHashMap<Hex, Image> and LinkedHashMap<Hex,List<Image>> and the 
- * methods should be reworked to have that take care of all the LRU removal.
+ *         <p/>
+ *         TODO As soon as we get a stable release and we can upgrade to 1.5 this class should be replaced
+ *         with a LinkedHashMap<Hex, Image> and LinkedHashMap<Hex,List<Image>> and the
+ *         methods should be reworked to have that take care of all the LRU removal.
  */
 public class ImageCache {
-    
+
     public static int MAX_SIZE = 500;
     private int maxSize;
     private Hashtable cache;
     private LinkedList lru = new LinkedList();
-    
+
     public ImageCache() {
         cache = new Hashtable(MAX_SIZE * 5 / 4, .75f);
         maxSize = MAX_SIZE;
     }
-    
+
     public ImageCache(int max) {
         cache = new Hashtable(max * 5 / 4, .75f);
         maxSize = max;
     }
-    
+
     public synchronized Object put(Object key, Object value) {
-        if ((key == null) || (value == null)) return null;  
-        
+        if ((key == null) || (value == null)) return null;
+
         if (cache.containsKey(key)) {
             lru.remove(key);
         } else {
@@ -56,10 +54,10 @@ public class ImageCache {
         }
         lru.addLast(key);
         cache.put(key, value);
-        
+
         return value;
     }
-    
+
     public synchronized Object get(Object key) {
         if (!cache.containsKey(key)) return null;
         lru.remove(key);

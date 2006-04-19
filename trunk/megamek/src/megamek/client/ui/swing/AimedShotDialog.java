@@ -16,20 +16,19 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import java.awt.Dialog;
-import java.awt.Frame;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.JLabel;
-import javax.swing.ButtonGroup;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 
 public class AimedShotDialog
-    extends Dialog
-{
+        extends JDialog {
     private JButton butNoAim = new JButton(Messages.getString("AimedShotDialog.dontAim")); //$NON-NLS-1$
 
     /**
@@ -38,30 +37,30 @@ public class AimedShotDialog
     private IndexedCheckbox[] checkboxes = null;
     private boolean[] enabled = null;
 
-    public AimedShotDialog(Frame parent, String title, String message,
-                        String[] choices, boolean[] enabled, int selectedIndex,
-                        boolean locked, ItemListener il, ActionListener al)
-    {
+    public AimedShotDialog(JFrame parent, String title, String message,
+                           String[] choices, boolean[] enabled, int selectedIndex,
+                           boolean locked, ItemListener il, ActionListener al) {
         super(parent, title, false);
         super.setResizable(false);
-        
+
         this.enabled = enabled;
 
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);
 
         GridBagConstraints c = new GridBagConstraints();
-        
+
         JLabel labMessage = new JLabel(message, JLabel.LEFT);
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.gridwidth = 0;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-        
+
         ButtonGroup radioGroup = new ButtonGroup();
-        checkboxes = new IndexedCheckbox[ choices.length ];
-        
+        checkboxes = new IndexedCheckbox[choices.length];
+
         for (int i = 0; i < choices.length; i++) {
             boolean even = (i & 1) == 0;
             checkboxes[i] = new IndexedCheckbox(choices[i], (i == selectedIndex), radioGroup, i);
@@ -83,10 +82,10 @@ public class AimedShotDialog
         butNoAim.requestFocus();
 
         pack();
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
+                parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
     }
-    
+
     public void setEnableAll(boolean enableAll) {
         for (int i = 0; i < checkboxes.length; i++) {
             if (enableAll) {
@@ -97,4 +96,4 @@ public class AimedShotDialog
         }
     }
 
-} 
+}

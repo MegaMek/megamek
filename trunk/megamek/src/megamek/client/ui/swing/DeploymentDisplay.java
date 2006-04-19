@@ -620,10 +620,10 @@ public class DeploymentDisplay
     /**
      * Specify if the listener should be distracted.
      *
-     * @param distract <code>true</code> if the listener should ignore events
-     *                 <code>false</code> if the listener should pay attention again.
-     *                 Events that occured while the listener was distracted NOT
-     *                 going to be processed.
+     * @param distracted <code>true</code> if the listener should ignore events
+     *                   <code>false</code> if the listener should pay attention again.
+     *                   Events that occured while the listener was distracted NOT
+     *                   going to be processed.
      */
     public void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);

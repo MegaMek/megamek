@@ -21,40 +21,39 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
+public class PMSimpleLabel implements PMLabel {
 
-public class PMSimpleLabel  implements PMLabel{
-  
-     // The String to display.
-     String string;
-     // The position of the label
-     int x = 0;
-     int y = 0;
-     // The width and height of the label
-     int width;
-     int height;
-     // The descent of the label
-     int descent;
-     // Color to draw the label with.
-     Color color;
-     // Font and Fontmetrics for the label
-     Font f;
-     FontMetrics fm;
-     
-     boolean visible = true;
+    // The String to display.
+    String string;
+    // The position of the label
+    int x = 0;
+    int y = 0;
+    // The width and height of the label
+    int width;
+    int height;
+    // The descent of the label
+    int descent;
+    // Color to draw the label with.
+    Color color;
+    // Font and Fontmetrics for the label
+    Font f;
+    FontMetrics fm;
 
-     /*
-      * Create the label with the specified string, font and color
-      */
-     public PMSimpleLabel(String s, FontMetrics fm, Color c){
+    boolean visible = true;
+
+    /*
+     * Create the label with the specified string, font and color
+     */
+    public PMSimpleLabel(String s, FontMetrics fm, Color c) {
         string = s;
         this.fm = fm;
         width = fm.stringWidth(string);
         height = fm.getHeight();
         descent = fm.getMaxDescent();
         color = c;
-     }
-     
-    public void setString(String s){
+    }
+
+    public void setString(String s) {
         string = s;
         // The width use to just be the stringWidth, but this
         //  sometimes caused cropping when setString was called.
@@ -62,67 +61,65 @@ public class PMSimpleLabel  implements PMLabel{
         //  may be incorrect.  In fact, this whole fix is
         //  basically a kludge, since I don't know why it
         //  is needed.
-        width = (int)Math.ceil(fm.stringWidth(string) * 1.4);
+        width = (int) Math.ceil(fm.stringWidth(string) * 1.4);
         height = fm.getHeight();
         descent = fm.getMaxDescent();
     }
 
-
-     /*
-      * Set the color of the label of the font.
-      */
-     public void setColor(Color c) {
+    /*
+     * Set the color of the label of the font.
+     */
+    public void setColor(Color c) {
         color = c;
-     }
+    }
 
-     /*
-      * translate the coordinates of the label.
-      */
-     public void moveTo(int x, int y) {
-          this.x = x;
-          this.y = y;
-     }
-     
-     public void translate(int x, int y){
-          this.x += x;
-          this.y += y;
-     }
+    /*
+     * translate the coordinates of the label.
+     */
+    public void moveTo(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
-     /*
-      * Draw the label.
-      */
-     public void drawInto(Graphics g) {
-         if(!visible) return;
-         Font font = g.getFont();
-         Color temp = g.getColor();
-         g.setColor(color);
-         g.setFont(fm.getFont());
-         g.drawString(string, x, y);
-         g.setColor(temp);
-         g.setFont(font);
-     }
-     
-     public void setVisible(boolean v){
-         visible = v;
-     }
-     
-     public Rectangle getBounds(){
-         return new Rectangle(x, y - height +  descent, width, height);
-     }
+    public void translate(int x, int y) {
+        this.x += x;
+        this.y += y;
+    }
 
-     /*
-      * Returns the size of the label
-      */
-     public Dimension getSize() {
-         return new Dimension(width, height);
-     }
+    /*
+     * Draw the label.
+     */
+    public void drawInto(Graphics g) {
+        if (!visible) return;
+        Font font = g.getFont();
+        Color temp = g.getColor();
+        g.setColor(color);
+        g.setFont(fm.getFont());
+        g.drawString(string, x, y);
+        g.setColor(temp);
+        g.setFont(font);
+    }
 
-     /*
-      * Returns the descent of the label.
-      */
-     public int getDescent() {
-         return descent;
-     }
-     
-     
+    public void setVisible(boolean v) {
+        visible = v;
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y - height + descent, width, height);
+    }
+
+    /*
+     * Returns the size of the label
+     */
+    public Dimension getSize() {
+        return new Dimension(width, height);
+    }
+
+    /*
+     * Returns the descent of the label.
+     */
+    public int getDescent() {
+        return descent;
+    }
+
 }

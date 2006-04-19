@@ -24,12 +24,13 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.List;
-import javax.swing.JPanel;
-import java.awt.TextArea;
-import javax.swing.JTextField;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -40,59 +41,63 @@ import java.awt.event.KeyListener;
  */
 public class ChatterBox implements KeyListener {
     public Client client;
-    
-    public String[]            chatBuffer;
-    
-    // AWT components
+
+    public String[] chatBuffer;
+
     public JPanel chatPanel;
-    private TextArea            chatArea;
-    private List                playerList;
-    private JTextField           inputField;
-    private JButton              butDone;
+    private JTextArea chatArea;
+    private List playerList;
+    private JTextField inputField;
+    private JButton butDone;
 
     public ChatterBox(ClientGUI clientgui) {
-        this.client = clientgui.getClient();
-        client.game.addGameListener(new GameListenerAdapter(){
+        client = clientgui.getClient();
+        client.game.addGameListener(new GameListenerAdapter() {
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 chatArea.append("\n" + e.getMessage()); //$NON-NLS-1$
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
+
             public void gamePlayerChange(GamePlayerChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
+
             public void gameTurnChange(GameTurnChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
+
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
+
             public void gameEntityNew(GameEntityNewEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
+
             public void gameEntityRemove(GameEntityRemoveEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
         });
-        
-        chatArea = new TextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
+
+        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40); //$NON-NLS-1$
         chatArea.setEditable(false);
         playerList = new List(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
         inputField = new JTextField();
         inputField.addKeyListener(this);
-        butDone = new JButton( Messages.getString("ChatterBox.ImDone") ); //$NON-NLS-1$
-        butDone.setEnabled( false );
+        butDone = new JButton(Messages.getString("ChatterBox.ImDone")); //$NON-NLS-1$
+        butDone.setEnabled(false);
 
         chatPanel = new JPanel(new BorderLayout());
 
-        JPanel subPanel = new JPanel( new BorderLayout() );
-        subPanel.add(chatArea, BorderLayout.CENTER);
+        JPanel subPanel = new JPanel(new BorderLayout());
+        subPanel.add(new JScrollPane(chatArea), BorderLayout.CENTER);
         subPanel.add(playerList, BorderLayout.WEST);
         subPanel.add(inputField, BorderLayout.SOUTH);
         chatPanel.add(subPanel, BorderLayout.CENTER);
-        chatPanel.add(butDone, BorderLayout.EAST );
-        
+        chatPanel.add(butDone, BorderLayout.EAST);
+
     }
-    
+
     /**
      * Tries to scroll down to the end of the box
      */
@@ -103,7 +108,7 @@ public class ChatterBox implements KeyListener {
             chatArea.setCaretPosition(last);
         }
     }
-        
+
     /**
      * Returns the "box" component with all teh stuff
      */
@@ -114,34 +119,36 @@ public class ChatterBox implements KeyListener {
     /**
      * Display a system message in the chat box.
      *
-     * @param   message the <code>String</code> message to be shown.
+     * @param message the <code>String</code> message to be shown.
      */
-    public void systemMessage( String message ) {
+    public void systemMessage(String message) {
         chatArea.append("\nMegaMek: " + message); //$NON-NLS-1$
     }
 
     /**
      * Replace the "Done" button in the chat box.
      *
-     * @param   button the <code>JButton</code> that should be used for "Done".
+     * @param button the <code>JButton</code> that should be used for "Done".
      */
-    public void setDoneButton( JButton button ) {
-        chatPanel.remove( butDone );
+    public void setDoneButton(JButton button) {
+        chatPanel.remove(butDone);
         butDone = button;
-        chatPanel.add( butDone, BorderLayout.EAST );
+        chatPanel.add(butDone, BorderLayout.EAST);
     }
-    
+
     //
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if(ev.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
             client.sendChat(inputField.getText());
             inputField.setText(""); //$NON-NLS-1$
         }
     }
+
     public void keyReleased(KeyEvent ev) {
     }
+
     public void keyTyped(KeyEvent ev) {
     }
 

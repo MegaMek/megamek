@@ -28,8 +28,10 @@ import megamek.common.util.BoardUtilities;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -40,17 +42,16 @@ import java.awt.Choice;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.List;
 import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -67,7 +68,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
 
 public class BoardEditor extends Container implements ItemListener,
         ActionListener, DocumentListener, IMapSettingsObserver {
@@ -88,7 +88,7 @@ public class BoardEditor extends Container implements ItemListener,
     private JButton butElevUp;
     private JButton butElevDown;
     private JLabel labTerrain;
-    private java.awt.List lisTerrain;
+    private List lisTerrain;
     private JButton butDelTerrain;
     private JPanel panTerrainType;
     private Choice choTerrainType;
@@ -109,7 +109,7 @@ public class BoardEditor extends Container implements ItemListener,
     private JButton butBoardSave, butBoardSaveAs;
     private JButton butBoardSaveAsImage;
     private JButton butMiniMap;
-    private Dialog minimapW;
+    private JDialog minimapW;
     private MiniMap minimap;
     private MapSettings mapSettings = new MapSettings();
 
@@ -117,10 +117,11 @@ public class BoardEditor extends Container implements ItemListener,
      * Creates and lays out a new Board Editor frame.
      */
     public BoardEditor() {
+        super();
         try {
             bv = new BoardView1(game, frame);
         } catch (IOException e) {
-            new AlertDialog(frame, Messages.getString("BoardEditor.FatalError"), Messages.getString("BoardEditor.CouldntInitialize") + e); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(frame, Messages.getString("BoardEditor.CouldntInitialize") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         }
         bv.addBoardViewListener(new BoardViewListenerAdapter() {
@@ -159,7 +160,7 @@ public class BoardEditor extends Container implements ItemListener,
      */
     private void setupFrame() {
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
-        frame.setLayout(new BorderLayout());
+        frame.getContentPane().setLayout(new BorderLayout());
 
         // Create a scroll bars to surround the board view.
         JPanel scrollPane = new JPanel();
@@ -213,7 +214,7 @@ public class BoardEditor extends Container implements ItemListener,
         butElevDown = new JButton(Messages.getString("BoardEditor.butElevDown")); //$NON-NLS-1$
         butElevDown.addActionListener(this);
         labTerrain = new JLabel(Messages.getString("BoardEditor.labTerrain"), JLabel.LEFT); //$NON-NLS-1$
-        lisTerrain = new java.awt.List(6);
+        lisTerrain = new List(6);
         lisTerrain.addItemListener(this);
         refreshTerrainList();
         butDelTerrain = new JButton(Messages.getString("BoardEditor.butDelTerrain")); //$NON-NLS-1$
@@ -302,12 +303,12 @@ public class BoardEditor extends Container implements ItemListener,
         c.weighty = 0.0;
         //        addBag(labBoard, gridbag, c);
         addBag(panButtons, gridbag, c);
-        minimapW = new Dialog(frame, Messages.getString("BoardEditor.minimapW"), false); //$NON-NLS-1$
+        minimapW = new JDialog(frame, Messages.getString("BoardEditor.minimapW"), false); //$NON-NLS-1$
         minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY());
         try {
             minimap = new MiniMap(minimapW, game, bv);
         } catch (IOException e) {
-            new AlertDialog(frame, Messages.getString("BoardEditor.FatalError"), Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(frame, Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         }
         minimapW.add(minimap);
@@ -501,7 +502,7 @@ public class BoardEditor extends Container implements ItemListener,
             boardSaveAsImage();
             return;
         }
-        Dialog waitD = new Dialog(this.frame, Messages.getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
+        JDialog waitD = new JDialog(frame, Messages.getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
         waitD.add(new JLabel(Messages.getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
         waitD.setSize(250, 130);
         // move to middle of screen
@@ -612,9 +613,9 @@ public class BoardEditor extends Container implements ItemListener,
     // ItemListener
     //
     public void itemStateChanged(ItemEvent ie) {
-        if (ie.getSource() == lisTerrain) {
+        if (ie.getSource().equals(lisTerrain)) {
             refreshTerrainFromList();
-        } else if (ie.getSource() == cheRoadsAutoExit) {
+        } else if (ie.getSource().equals(cheRoadsAutoExit)) {
             // Set the new value for the option, and refrest the board.
             board.setRoadsAutoExit(cheRoadsAutoExit.isSelected());
             bv.updateBoard();
@@ -626,7 +627,7 @@ public class BoardEditor extends Container implements ItemListener,
     // TextListener
     //
     public void changedUpdate(DocumentEvent te) {
-        if (te.getDocument() == texElev.getDocument()) {
+        if (te.getDocument().equals(texElev.getDocument())) {
             int value;
             try {
                 value = Integer.parseInt(texElev.getText());
@@ -637,7 +638,7 @@ public class BoardEditor extends Container implements ItemListener,
                 curHex.setElevation(value);
                 repaintWorkingHex();
             }
-        } else if (te.getDocument() == texTheme.getDocument()) {
+        } else if (te.getDocument().equals(texTheme.getDocument())) {
             curHex.setTheme(texTheme.getText());
             repaintWorkingHex();
         }
@@ -648,12 +649,12 @@ public class BoardEditor extends Container implements ItemListener,
      */
     private void showAbout() {
         // Do we need to create the "about" dialog?
-        if (this.about == null) {
-            this.about = new CommonAboutDialog(this.frame);
+        if (about == null) {
+            about = new CommonAboutDialog(frame);
         }
 
         // Show the about dialog.
-        this.about.setVisible(true);
+        about.setVisible(true);
     }
 
     /**
@@ -661,13 +662,13 @@ public class BoardEditor extends Container implements ItemListener,
      */
     private void showHelp() {
         // Do we need to create the "help" dialog?
-        if (this.help == null) {
+        if (help == null) {
             File helpfile = new File("docs", "editor-readme.txt"); //$NON-NLS-1$
-            this.help = new CommonHelpDialog(this.frame, helpfile);
+            help = new CommonHelpDialog(frame, helpfile);
         }
 
         // Show the help dialog.
-        this.help.setVisible(true);
+        help.setVisible(true);
     }
 
     /**
@@ -675,61 +676,61 @@ public class BoardEditor extends Container implements ItemListener,
      */
     private void showSettings() {
         // Do we need to create the "settings" dialog?
-        if (this.setdlg == null) {
-            this.setdlg = new CommonSettingsDialog(this.frame);
+        if (setdlg == null) {
+            setdlg = new CommonSettingsDialog(frame);
         }
 
         // Show the settings dialog.
-        this.setdlg.setVisible(true);
+        setdlg.setVisible(true);
     }
 
     //
     // ActionListener
     //
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getActionCommand().equalsIgnoreCase("fileBoardNew")) { //$NON-NLS-1$
+        if ("fileBoardNew".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardNew();
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardOpen")) { //$NON-NLS-1$
+        } else if ("fileBoardOpen".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardLoad();
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSave")) { //$NON-NLS-1$
+        } else if ("fileBoardSave".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardSave();
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAs")) { //$NON-NLS-1$
+        } else if ("fileBoardSaveAs".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardSaveAs();
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAsImage")) { //$NON-NLS-1$
+        } else if ("fileBoardSaveAsImage".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardSaveAsImage();
-        } else if (ae.getSource() == butDelTerrain && lisTerrain.getSelectedItem() != null) {
+        } else if (ae.getSource().equals(butDelTerrain) && lisTerrain.getSelectedItem() != null) {
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(lisTerrain.getSelectedItem());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();
-        } else if (ae.getSource() == butAddTerrain) {
+        } else if (ae.getSource().equals(butAddTerrain)) {
             addSetTerrain();
-        } else if (ae.getSource() == butElevUp && curHex.getElevation() < 9) {
+        } else if (ae.getSource().equals(butElevUp) && curHex.getElevation() < 9) {
             curHex.setElevation(curHex.getElevation() + 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
             repaintWorkingHex();
-        } else if (ae.getSource() == butElevDown && curHex.getElevation() > -5) {
+        } else if (ae.getSource().equals(butElevDown) && curHex.getElevation() > -5) {
             curHex.setElevation(curHex.getElevation() - 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
             repaintWorkingHex();
-        } else if (ae.getSource() == butTerrExits) {
+        } else if (ae.getSource().equals(butTerrExits)) {
             ExitsDialog ed = new ExitsDialog(frame);
             cheTerrExitSpecified.setSelected(true);
             ed.setExits(Integer.parseInt(texTerrExits.getText()));
             ed.setVisible(true);
             texTerrExits.setText(Integer.toString(ed.getExits()));
             addSetTerrain();
-        } else if (ae.getActionCommand().equalsIgnoreCase("viewMiniMap")) { //$NON-NLS-1$
+        } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             toggleMap();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_IN)) {
             bv.zoomIn();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_OUT)) {
             bv.zoomOut();
-        } else if (ae.getActionCommand().equalsIgnoreCase("helpAbout")) { //$NON-NLS-1$
+        } else if ("helpAbout".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             showAbout();
-        } else if (ae.getActionCommand().equalsIgnoreCase("helpContents")) { //$NON-NLS-1$
+        } else if ("helpContents".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             showHelp();
-        } else if (ae.getActionCommand().equalsIgnoreCase("viewClientSettings")) { //$NON-NLS-1$
+        } else if ("viewClientSettings".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             showSettings();
         }
     }
@@ -747,7 +748,7 @@ public class BoardEditor extends Container implements ItemListener,
      * component form
      */
     private class HexCanvas extends Canvas {
-        public HexCanvas() {
+        HexCanvas() {
             super();
             setSize(72, 72);
         }
@@ -761,8 +762,8 @@ public class BoardEditor extends Container implements ItemListener,
                 TilesetManager tm = bv.getTilesetManager();
                 g.drawImage(tm.baseFor(curHex), 0, 0, this);
                 if (tm.supersFor(curHex) != null) {
-                    for (Iterator i = tm.supersFor(curHex).iterator(); i.hasNext();) {
-                        g.drawImage((Image) i.next(), 0, 0, this);
+                    for (final Object newVar : tm.supersFor(curHex)) {
+                        g.drawImage((Image) newVar, 0, 0, this);
                         g.drawString(Messages.getString("BoardEditor.SUPER"), 0, 10); //$NON-NLS-1$
                     }
                 }
@@ -777,7 +778,7 @@ public class BoardEditor extends Container implements ItemListener,
     /**
      * @return the frame this is displayed in
      */
-    public Frame getFrame() {
+    public JFrame getFrame() {
         return frame;
     }
 
@@ -797,13 +798,13 @@ public class BoardEditor extends Container implements ItemListener,
 /**
  * a quick class for the new map diaglogue box
  */
-class BoardNewDialog extends Dialog implements ActionListener {
+class BoardNewDialog extends JDialog implements ActionListener {
     public int xvalue, yvalue;
     protected JLabel labWidth, labHeight;
     protected JTextField texWidth, texHeight;
     protected JButton butOkay, butCancel;
 
-    public BoardNewDialog(Frame frame, String[] hexList, int hexSelected) {
+    BoardNewDialog(JFrame frame, String[] hexList, int hexSelected) {
         super(frame, Messages.getString("BoardEditor.SetDimentions"), true); //$NON-NLS-1$
         xvalue = 0;
         yvalue = 0;
@@ -852,7 +853,7 @@ class BoardNewDialog extends Dialog implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == butOkay) {
+        if (e.getSource().equals(butOkay)) {
             try {
                 xvalue = Integer.decode(texWidth.getText()).intValue();
                 yvalue = Integer.decode(texHeight.getText()).intValue();
@@ -860,7 +861,7 @@ class BoardNewDialog extends Dialog implements ActionListener {
                 System.err.println(ex.getMessage());
             }
             setVisible(false);
-        } else if (e.getSource() == butCancel) {
+        } else if (e.getSource().equals(butCancel)) {
             setVisible(false);
         }
     }
@@ -877,7 +878,7 @@ class BoardNewDialog extends Dialog implements ActionListener {
 /**
  * A dialog of which exits are connected for terrain.
  */
-class ExitsDialog extends Dialog implements ActionListener {
+class ExitsDialog extends JDialog implements ActionListener {
     private JCheckBox cheExit0 = new JCheckBox("0"); //$NON-NLS-1$
     private JCheckBox cheExit1 = new JCheckBox("1"); //$NON-NLS-1$
     private JCheckBox cheExit2 = new JCheckBox("2"); //$NON-NLS-1$
@@ -892,7 +893,7 @@ class ExitsDialog extends Dialog implements ActionListener {
     private JPanel panExits = new JPanel(new BorderLayout());
     private JButton butDone = new JButton(Messages.getString("BoardEditor.Done")); //$NON-NLS-1$
 
-    public ExitsDialog(Frame frame) {
+    ExitsDialog(JFrame frame) {
         super(frame, Messages.getString("BoardEditor.SetExits"), true); //$NON-NLS-1$
         setResizable(false);
         butDone.addActionListener(this);
@@ -935,7 +936,7 @@ class ExitsDialog extends Dialog implements ActionListener {
         return exits;
     }
 
-    public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+    public void actionPerformed(ActionEvent actionEvent) {
         setVisible(false);
     }
 }

@@ -14,18 +14,17 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.widget.AdvancedLabel;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -37,8 +36,8 @@ import java.awt.event.WindowEvent;
  * A simple yes/no confirmation dialog.
  */
 public class ConfirmDialog
-    extends Dialog implements ActionListener {
-    
+        extends JDialog implements ActionListener {
+
     private GridBagLayout gridbag = new GridBagLayout();
     private GridBagConstraints c = new GridBagConstraints();
 
@@ -54,57 +53,59 @@ public class ConfirmDialog
 
     private Component firstFocusable;
 
-
-  /** Creates a new dialog window that lets the user answer Yes or No,
-    * with the Yes button pre-focused
-    *
-    * @param   title            a title for the dialog window
-    * @param   question         the text of the dialog
-    */
-    public ConfirmDialog(Frame p, String title, String question) {
+    /**
+     * Creates a new dialog window that lets the user answer Yes or No,
+     * with the Yes button pre-focused
+     *
+     * @param title    a title for the dialog window
+     * @param question the text of the dialog
+     */
+    public ConfirmDialog(JFrame p, String title, String question) {
         this(p, title, question, false);
     }
 
-
-  /** Creates a new dialog window that lets the user answer Yes or No,
-    * with either the Yes or No button pre-focused
-    *
-    * @param   title            a title for the dialog window
-    * @param   question         the text of the dialog
-    * @param   defButton        set it to 'n' to make the No button pre-focused (Yes button is focused by default)
-    */
-    public ConfirmDialog(Frame p, String title, String question, char defButton) {
+    /**
+     * Creates a new dialog window that lets the user answer Yes or No,
+     * with either the Yes or No button pre-focused
+     *
+     * @param title     a title for the dialog window
+     * @param question  the text of the dialog
+     * @param defButton set it to 'n' to make the No button pre-focused (Yes button is focused by default)
+     */
+    public ConfirmDialog(JFrame p, String title, String question, char defButton) {
         this(p, title, question, false, defButton);
     }
 
-  /** Creates a new dialog window that lets the user answer Yes or No,
-    * with an optional checkbox to specify future behaviour,
-    * and the Yes button pre-focused
-    *
-    * @param   title            a title for the dialog window
-    * @param   question         the text of the dialog
-    * @param   includeCheckbox  whether the dialog includes a "bother me" checkbox for the user to tick
-    */
-    public ConfirmDialog(Frame p, String title, String question, boolean includeCheckbox) {
+    /**
+     * Creates a new dialog window that lets the user answer Yes or No,
+     * with an optional checkbox to specify future behaviour,
+     * and the Yes button pre-focused
+     *
+     * @param title           a title for the dialog window
+     * @param question        the text of the dialog
+     * @param includeCheckbox whether the dialog includes a "bother me" checkbox for the user to tick
+     */
+    public ConfirmDialog(JFrame p, String title, String question, boolean includeCheckbox) {
         this(p, title, question, includeCheckbox, 'y');
     }
 
-  /** Creates a new dialog window that lets the user answer Yes or No,
-    * with an optional checkbox to specify future behaviour,
-    * and either the Yes or No button pre-focused
-    *
-    * @param   title            a title for the dialog window
-    * @param   question         the text of the dialog
-    * @param   includeCheckbox  whether the dialog includes a "bother me" checkbox for the user to tick
-    * @param   defButton        set it to 'n' to make the No button pre-focused (Yes button is focused by default)
-    */
-    public ConfirmDialog(Frame p, String title, String question, boolean includeCheckbox, char defButton) {
+    /**
+     * Creates a new dialog window that lets the user answer Yes or No,
+     * with an optional checkbox to specify future behaviour,
+     * and either the Yes or No button pre-focused
+     *
+     * @param title           a title for the dialog window
+     * @param question        the text of the dialog
+     * @param includeCheckbox whether the dialog includes a "bother me" checkbox for the user to tick
+     * @param defButton       set it to 'n' to make the No button pre-focused (Yes button is focused by default)
+     */
+    public ConfirmDialog(JFrame p, String title, String question, boolean includeCheckbox, char defButton) {
         super(p, title, true);
 
-        if ('n'==defButton) {
+        if ('n' == defButton) {
             defaultButton = butNo;
         }
-        
+
         super.setResizable(false);
         useCheckbox = includeCheckbox;
 
@@ -115,7 +116,7 @@ public class ConfirmDialog
     }
 
     private void addQuestion(String question) {
-        AdvancedLabel questionLabel = new AdvancedLabel(question);
+        JTextArea questionLabel = new JTextArea(question);
         c.gridheight = 2;
         c.insets = new Insets(5, 5, 5, 5);
         gridbag.setConstraints(questionLabel, c);
@@ -129,7 +130,7 @@ public class ConfirmDialog
 
         if (useCheckbox) {
             botherCheckbox = new JCheckBox(Messages.getString("ConfirmDialog.dontBother")); //$NON-NLS-1$
-        
+
             c.gridy = y++;
             gridbag.setConstraints(botherCheckbox, c);
             add(botherCheckbox);
@@ -142,7 +143,8 @@ public class ConfirmDialog
         GridBagConstraints bc = new GridBagConstraints();
         panButtons.setLayout(buttonGridbag);
         bc.insets = new Insets(5, 5, 5, 5);
-        bc.ipadx = 20;    bc.ipady = 5;
+        bc.ipadx = 20;
+        bc.ipady = 5;
         buttonGridbag.setConstraints(butYes, bc);
         panButtons.add(butYes);
         buttonGridbag.setConstraints(butNo, bc);
@@ -154,38 +156,38 @@ public class ConfirmDialog
         add(panButtons);
     }
 
-    private void finishSetup(Frame p) {
+    private void finishSetup(JFrame p) {
         addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    setVisible(false);
-                }
-            });
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
 
         pack();
-        
+
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth() ) {
+        if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
             updateSize = true;
         }
-        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
-            size.height = GUIPreferences.getInstance().getMinimumSizeHeight(); 
+        if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
+            size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
             updateSize = true;
         }
-        if ( updateSize ) {
-            setSize( size );
+        if (updateSize) {
+            setSize(size);
             size = getSize();
         }
-        setLocation(p.getLocation().x + p.getSize().width/2 - size.width/2,
-                    p.getLocation().y + p.getSize().height/2 - size.height/2);
+        setLocation(p.getLocation().x + p.getSize().width / 2 - size.width / 2,
+                p.getLocation().y + p.getSize().height / 2 - size.height / 2);
 
 
         // work out which component will get the focus in the window
         if (useCheckbox) {
-            firstFocusable=botherCheckbox;
+            firstFocusable = botherCheckbox;
         } else {
-            firstFocusable=butYes;
+            firstFocusable = butYes;
         }
         // we'd like the default button to have focus, but that can only be done on displayed
         // dialogs in Windows. So, this rather elaborate setup: as soon as the first focusable
@@ -197,13 +199,14 @@ public class ConfirmDialog
                 public void focusGained(FocusEvent e) {
                     defaultButton.requestFocus();
                 }
+
                 public void focusLost(FocusEvent e) {
                     firstFocusable.removeFocusListener(this); // refers to listener
                 }
             });
         }
     }
-    
+
     public boolean getAnswer() {
         return confirmation;
     }
@@ -216,11 +219,11 @@ public class ConfirmDialog
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource() == butYes) {
+        if (actionEvent.getSource().equals(butYes)) {
             confirmation = true;
-        } else if (actionEvent.getSource() == butNo) {
+        } else if (actionEvent.getSource().equals(butNo)) {
             confirmation = false;
         }
-        this.setVisible(false);
+        setVisible(false);
     }
 }

@@ -385,6 +385,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (ae.crew.getOptions().booleanOption("gunnery_missile") && wtype.hasFlag(WeaponType.F_MISSILE) ) {
             toHit.addModifier ( -1, "Gunnery/Missile" );
         }
+
+        // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
+        // It gets a =4 penalty for being blind!
+        if (((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+            if (sensorHits == 2) {
+                toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
+            }
+        }
         
         // Do we use Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected && atype != null
@@ -753,6 +762,16 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if ( ae.hasShield() && ae.hasActiveShield(weapon.getLocation(),weapon.isRearMounted()) ) {
             return "Weapon blocked by active shield";
         }
+        // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
+        // It gets a =4 penalty for being blind!
+        if (((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+            if ((sensorHits + sensorHits2) == 3) {
+                return "Sensors Completely Destroyed for Torso-Mounted Cockpit";
+            }
+        }
+
 
         // missing, breached or jammed weapons can't fire
         if (!weapon.canFire()) {

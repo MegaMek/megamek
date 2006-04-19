@@ -13,13 +13,12 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.widget.AdvancedLabel;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.BufferedPanel;
-
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -88,12 +87,10 @@ public class CommonAboutDialog extends JDialog {
         });
 
         // Make a splash image panel.
-        BufferedPanel panTitle = new BufferedPanel();
         Image imgSplash = CommonAboutDialog.getTitleImage(frame);
-        BackGroundDrawer bgdTitle = new BackGroundDrawer(imgSplash);
-        panTitle.addBgDrawer(bgdTitle);
-        panTitle.setPreferredSize(imgSplash.getWidth(null),
-                imgSplash.getHeight(null));
+        JLabel panTitle = new JLabel(new ImageIcon(imgSplash));
+        panTitle.setPreferredSize(new Dimension(imgSplash.getWidth(null),
+                imgSplash.getHeight(null)));
 
         // Make a label containing the version of this app.
         StringBuffer buff = new StringBuffer();
@@ -105,9 +102,9 @@ public class CommonAboutDialog extends JDialog {
                 .append(System.getProperty("java.vendor"))//$NON-NLS-1$
                 .append(Messages.getString("CommonAboutDialog.javaVersion"))//$NON-NLS-1$
                 .append(System.getProperty("java.version")); //$NON-NLS-1$
-        AdvancedLabel lblVersion = new AdvancedLabel(buff.toString());
-        AdvancedLabel lblCopyright = new AdvancedLabel(Messages.getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
-        AdvancedLabel lblAbout = new AdvancedLabel(Messages.getString("CommonAboutDialog.about")); //$NON-NLS-1$
+        JTextArea lblVersion = new JTextArea(buff.toString());
+        JTextArea lblCopyright = new JTextArea(Messages.getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
+        JTextArea lblAbout = new JTextArea(Messages.getString("CommonAboutDialog.about")); //$NON-NLS-1$
 
         // Add a "Close" button.
         JButton butClose = new JButton(Messages.getString("CommonAboutDialog.Close")); //$NON-NLS-1$

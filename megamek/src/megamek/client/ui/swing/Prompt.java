@@ -14,21 +14,21 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.Frame;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
  * A simple prompt.
  */
-public class Prompt extends Dialog implements ActionListener {
+public class Prompt extends JDialog implements ActionListener {
 
     private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
@@ -36,7 +36,7 @@ public class Prompt extends Dialog implements ActionListener {
     private JLabel lblText = new JLabel();
     private boolean ok = false;
 
-    public Prompt(Frame parent, String title, String question, String default_text, int size) {
+    public Prompt(JFrame parent, String title, String question, String default_text, int size) {
         super(parent, title, true);
         super.setResizable(false);
 
@@ -58,18 +58,17 @@ public class Prompt extends Dialog implements ActionListener {
         p.add(butCancel);
         add(p, BorderLayout.SOUTH);
         pack();
-        setLocation(
-            parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
-            parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
+                parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
     }
-    
+
     public boolean showDialog() {
         setVisible(true);
         return ok;
     }
 
     public void actionPerformed(ActionEvent evt) {
-        ok = evt.getSource() == butOk;
+        ok = evt.getSource().equals(butOk);
         setVisible(false);
         dispose();
     }

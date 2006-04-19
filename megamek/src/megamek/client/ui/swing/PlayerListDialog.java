@@ -18,9 +18,9 @@ import megamek.client.Client;
 import megamek.common.Player;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,48 +29,50 @@ import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 
 public class PlayerListDialog
-    extends Dialog implements ActionListener
-{
-    private JButton butClose   = new JButton(Messages.getString("PlayerListDialog.Close")); //$NON-NLS-1$
-    private List   playerList = new List();
-    
+        extends JDialog implements ActionListener {
+    private JButton butClose = new JButton(Messages.getString("PlayerListDialog.Close")); //$NON-NLS-1$
+    private List playerList = new List();
+
     private Client client;
-    
-    public PlayerListDialog(Frame parent, Client client) {
+
+    public PlayerListDialog(JFrame parent, Client client) {
         super(parent, Messages.getString("PlayerListDialog.title"), false); //$NON-NLS-1$
         this.client = client;
-        
+
         butClose.addActionListener(this);
         
         // layout
         setLayout(new BorderLayout());
-        
+
         add(playerList, BorderLayout.NORTH);
         add(butClose, BorderLayout.SOUTH);
-        
+
         refreshPlayerList();
-       
+
         addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) { setVisible(false); }
-    });
-        
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
+
         pack();
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
+                parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
-        this.setVisible(false);
+        setVisible(false);
     }
+
     /**
      * Refreshes the player list component with information
      * from the game object.
      */
     public static void refreshPlayerList(List playerList, Client client) {
         playerList.removeAll();
-        for(Enumeration e = client.getPlayers(); e.hasMoreElements();) {
-            final Player player = (Player)e.nextElement();
+        for (Enumeration e = client.getPlayers(); e.hasMoreElements();) {
+            final Player player = (Player) e.nextElement();
             StringBuffer playerDisplay = new StringBuffer(player.getName());
             if (player.isGhost()) {
                 playerDisplay.append(" ["); //$NON-NLS-1$
@@ -88,7 +90,7 @@ public class PlayerListDialog
             playerList.add(playerDisplay.toString());
         }
     }
-    
+
     public void refreshPlayerList() {
         refreshPlayerList(playerList, client);
     }

@@ -11,9 +11,9 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
- 
+
 package megamek.client.ui.swing;
- 
+
 import megamek.client.Client;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
@@ -24,22 +24,24 @@ import megamek.common.LocationFullException;
 import megamek.common.MechSummary;
 import megamek.common.TechConstants;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.Choice;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
 import java.awt.Point;
-import java.awt.TextArea;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -55,15 +57,16 @@ import java.util.Vector;
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
  */
-public class CustomBattleArmorDialog 
-    extends Dialog implements ActionListener, ItemListener, KeyListener, 
-    Runnable, DocumentListener, WindowListener {
+
+public class CustomBattleArmorDialog
+        extends JDialog implements ActionListener, ItemListener, KeyListener,
+        Runnable, DocumentListener, WindowListener {
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
-     
+
     // these indices should match up with the static values in the MechSummaryComparator
-    private String[] m_saSorts = { Messages.getString("MechSelectorDialog.0"), Messages.getString("MechSelectorDialog.1"), Messages.getString("MechSelectorDialog.2"), Messages.getString("MechSelectorDialog.3"), Messages.getString("MechSelectorDialog.4"), Messages.getString("MechSelectorDialog.5") }; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-    
+    private String[] m_saSorts = {Messages.getString("MechSelectorDialog.0"), Messages.getString("MechSelectorDialog.1"), Messages.getString("MechSelectorDialog.2"), Messages.getString("MechSelectorDialog.3"), Messages.getString("MechSelectorDialog.4"), Messages.getString("MechSelectorDialog.5")}; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+
     private MechSummary[] m_mechsCurrent;
     private Client m_client;
     private ClientGUI m_clientgui;
@@ -128,7 +131,7 @@ public class CustomBattleArmorDialog
     private JLabel m_labelPlayer = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelPlayer"), JLabel.RIGHT);
     private Choice m_chPlayer = new Choice();
 
-    private TextArea m_BAView = new TextArea("",18,25,TextArea.SCROLLBARS_BOTH);
+    private JTextArea m_BAView = new JTextArea("", 18, 25);
 
     private String invalidReason = null;
     private int stateMenPerSquad = 1;
@@ -179,7 +182,7 @@ public class CustomBattleArmorDialog
     private static final int[][] ARMOR_TYPE_WEIGHT = {{50, 40, 100, 55, 100, 60, 60, 0, 50},
                                                       {25, 0, 0, 30, 0, 35, 35, 30, 0}};
 
-    private static final int[] ARMOR_TYPE_SLOTS = {0,5,4,3,4,4,5,5,5};
+    private static final int[] ARMOR_TYPE_SLOTS = {0, 5, 4, 3, 4, 4, 5, 5, 5};
 
     private static final int[] ARMOR_TYPE_COSTS = {10000,
                                                    12500,
@@ -201,19 +204,19 @@ public class CustomBattleArmorDialog
                                                         "Fire Resistant",
                                                         "Mimetic"};
 
-    private static final int[] GROUND_MP_WEIGHT = {25,30,40,80,160};
+    private static final int[] GROUND_MP_WEIGHT = {25, 30, 40, 80, 160};
 
-    private static final int[][] JUMP_MP_LIMITS = {{3,3,3,2,2},
-                                                   {7,6,5,0,0},
-                                                   {5,5,4,3,2}};
+    private static final int[][] JUMP_MP_LIMITS = {{3, 3, 3, 2, 2},
+                                                   {7, 6, 5, 0, 0},
+                                                   {5, 5, 4, 3, 2}};
 
-    private static final int[][] JUMP_MP_WEIGHT = {{25,25,50,125,250},
-                                                   {30,40,60,0,0},
-                                                   {45,45,85,160,250}};
+    private static final int[][] JUMP_MP_WEIGHT = {{25, 25, 50, 125, 250},
+                                                   {30, 40, 60, 0, 0},
+                                                   {45, 45, 85, 160, 250}};
 
-    private static final int[][] JUMP_MP_COST = {{50000,50000,75000,150000,300000},
-                                                 {50000,50000,100000,0,0},
-                                                 {50000,50000,75000,100000,150000}};
+    private static final int[][] JUMP_MP_COST = {{50000, 50000, 75000, 150000, 300000},
+                                                 {50000, 50000, 100000, 0, 0},
+                                                 {50000, 50000, 75000, 100000, 150000}};
 
     private static final int[] MANIPULATOR_TYPE_WEIGHT = {0,
                                                           0,
@@ -240,9 +243,9 @@ public class CustomBattleArmorDialog
                                                          500,
                                                          2500};
 
-    public static final int[] ARM_MAX_SLOTS = {2,2,3,3,4};
-    public static final int[] TORSO_MAX_SLOTS = {2,4,4,6,8};
-    public static final int[] QUAD_MAX_SLOTS = {0,5,7,9,11};
+    public static final int[] ARM_MAX_SLOTS = {2, 2, 3, 3, 4};
+    public static final int[] TORSO_MAX_SLOTS = {2, 4, 4, 6, 8};
+    public static final int[] QUAD_MAX_SLOTS = {0, 5, 7, 9, 11};
 
     public static final int LOCATION_ALLOWED_ANY = 0;
     public static final int LOCATION_ALLOWED_TORSO = 1;
@@ -263,7 +266,7 @@ public class CustomBattleArmorDialog
         gl.setRows(0);
         m_pParams.setLayout(gl);
 
-        GridLayout tmpGL = new GridLayout(1,2);
+        GridLayout tmpGL = new GridLayout(1, 2);
         JPanel tmpP = new JPanel();
         tmpP.setLayout(tmpGL);
         tmpP.add(m_labelBAName);
@@ -306,7 +309,7 @@ public class CustomBattleArmorDialog
         tmpP.add(m_chGroundMP);
         m_pParams.add(tmpP);
 
-        tmpGL = new GridLayout(1,3);
+        tmpGL = new GridLayout(1, 3);
         tmpP = new JPanel();
         tmpP.setLayout(tmpGL);
         m_cbJumpQuery.addItemListener(this);
@@ -322,7 +325,7 @@ public class CustomBattleArmorDialog
         m_cbgJumpType.add(m_cbVTOLQuery);
         m_cbgJumpType.add(m_cbUMUQuery);
 
-        tmpGL = new GridLayout(1,2);
+        tmpGL = new GridLayout(1, 2);
         tmpP = new JPanel();
         tmpP.setLayout(tmpGL);
         tmpP.add(m_labelJumpValue);
@@ -358,7 +361,7 @@ public class CustomBattleArmorDialog
         tmpP.add(m_chRightManipulator);
         m_pParams.add(tmpP);
 
-        tmpGL = new GridLayout(1,3);
+        tmpGL = new GridLayout(1, 3);
         tmpP = new JPanel();
         tmpP.setLayout(tmpGL);
         tmpP.add(m_labelTorsoEquipment);
@@ -367,7 +370,7 @@ public class CustomBattleArmorDialog
         tmpP.add(m_buttonAddTorso);
         m_pParams.add(tmpP);
 
-        tmpGL = new GridLayout(1,3);
+        tmpGL = new GridLayout(1, 3);
         tmpP = new JPanel();
         tmpP.setLayout(tmpGL);
         tmpP.add(m_labelRightArmEquipment);
@@ -376,7 +379,7 @@ public class CustomBattleArmorDialog
         tmpP.add(m_buttonAddRightArm);
         m_pParams.add(tmpP);
 
-        tmpGL = new GridLayout(1,3);
+        tmpGL = new GridLayout(1, 3);
         tmpP = new JPanel();
         tmpP.setLayout(tmpGL);
         tmpP.add(m_labelLeftArmEquipment);
@@ -385,7 +388,7 @@ public class CustomBattleArmorDialog
         tmpP.add(m_buttonAddLeftArm);
         m_pParams.add(tmpP);
 
-        tmpGL = new GridLayout(1,3);
+        tmpGL = new GridLayout(1, 3);
         tmpP = new JPanel();
         tmpP.setLayout(tmpGL);
         tmpP.add(m_labelTorsoCurrentEquipment);
@@ -394,7 +397,7 @@ public class CustomBattleArmorDialog
         tmpP.add(m_buttonRemoveTorso);
         m_pParams.add(tmpP);
 
-        tmpGL = new GridLayout(1,3);
+        tmpGL = new GridLayout(1, 3);
         tmpP = new JPanel();
         tmpP.setLayout(tmpGL);
         tmpP.add(m_labelRightArmCurrentEquipment);
@@ -403,7 +406,7 @@ public class CustomBattleArmorDialog
         tmpP.add(m_buttonRemoveRightArm);
         m_pParams.add(tmpP);
 
-        tmpGL = new GridLayout(1,3);
+        tmpGL = new GridLayout(1, 3);
         tmpP = new JPanel();
         tmpP.setLayout(tmpGL);
         tmpP.add(m_labelLeftArmCurrentEquipment);
@@ -427,7 +430,7 @@ public class CustomBattleArmorDialog
         setLayout(new BorderLayout());
         add(m_pLeft, BorderLayout.WEST);
         m_BAView.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        add(m_BAView, BorderLayout.CENTER);
+        add(new JScrollPane(m_BAView), BorderLayout.CENTER);
 
         setSize(800, 450);
         setLocation(computeDesiredLocation());
@@ -477,7 +480,7 @@ public class CustomBattleArmorDialog
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
         for (Iterator i = m_clientgui.getBots().values().iterator(); i.hasNext();) {
-            m_chPlayer.addItem(((Client)i.next()).getName());
+            m_chPlayer.addItem(((Client) i.next()).getName());
         }
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);
@@ -548,7 +551,7 @@ public class CustomBattleArmorDialog
         m_chArmorType.select(0);
 
         // Next we populate the manipulator choicees.
-        for (int x=0; x<BattleArmor.MANIPULATOR_TYPE_STRINGS.length; x++) {
+        for (int x = 0; x < BattleArmor.MANIPULATOR_TYPE_STRINGS.length; x++) {
             m_chLeftManipulator.add(BattleArmor.MANIPULATOR_TYPE_STRINGS[x]);
             m_chRightManipulator.add(BattleArmor.MANIPULATOR_TYPE_STRINGS[x]);
         }
@@ -570,8 +573,8 @@ public class CustomBattleArmorDialog
         String value = m_chTorsoEquipment.getSelectedItem();
         m_chTorsoEquipment.removeAll();
         Object[] tmpE = equipmentTypes.toArray();
-        for (int x=0; x<tmpE.length; x++) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE[x]);
+        for (int x = 0; x < tmpE.length; x++) {
+            BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE[x]);
             if (((tmpBAE.techBase == TECH_BASE_BOTH)
                     || (tmpBAE.techBase == stateTechBase))
                     && !(hasConflictFlag(tmpBAE.conflictFlag))
@@ -586,8 +589,8 @@ public class CustomBattleArmorDialog
         m_chRightArmEquipment.removeAll();
         if (stateChassisType != CHASSIS_TYPE_QUAD) {
             tmpE = equipmentTypes.toArray();
-            for (int x=0; x<tmpE.length; x++) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE[x]);
+            for (int x = 0; x < tmpE.length; x++) {
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE[x]);
                 if (((tmpBAE.techBase == TECH_BASE_BOTH)
                         || (tmpBAE.techBase == stateTechBase))
                         && !(hasConflictFlag(tmpBAE.conflictFlag))
@@ -603,8 +606,8 @@ public class CustomBattleArmorDialog
         m_chLeftArmEquipment.removeAll();
         if (stateChassisType != CHASSIS_TYPE_QUAD) {
             tmpE = equipmentTypes.toArray();
-            for (int x=0; x<tmpE.length; x++) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE[x]);
+            for (int x = 0; x < tmpE.length; x++) {
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE[x]);
                 if (((tmpBAE.techBase == TECH_BASE_BOTH)
                         || (tmpBAE.techBase == stateTechBase))
                         && !(hasConflictFlag(tmpBAE.conflictFlag))
@@ -620,7 +623,7 @@ public class CustomBattleArmorDialog
         if (leftArmEquipment != null) {
             Enumeration tmpEE = leftArmEquipment.elements();
             while (tmpEE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpEE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpEE.nextElement());
                 m_chLeftArmCurrentEquipment.add(tmpBAE.name);
             }
         }
@@ -628,7 +631,7 @@ public class CustomBattleArmorDialog
         if (rightArmEquipment != null) {
             Enumeration tmpEE = rightArmEquipment.elements();
             while (tmpEE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpEE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpEE.nextElement());
                 m_chRightArmCurrentEquipment.add(tmpBAE.name);
             }
         }
@@ -636,7 +639,7 @@ public class CustomBattleArmorDialog
         if (torsoEquipment != null) {
             Enumeration tmpEE = torsoEquipment.elements();
             while (tmpEE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpEE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpEE.nextElement());
                 m_chTorsoCurrentEquipment.add(tmpBAE.name);
             }
         }
@@ -675,10 +678,10 @@ public class CustomBattleArmorDialog
     private void updateJumpMPChoices() {
         int tmp = m_chJumpValue.getSelectedIndex();
         m_chJumpValue.removeAll();
-        for (int x=0; x<=JUMP_MP_LIMITS[stateJumpType][stateWeightClass]; x++)
+        for (int x = 0; x <= JUMP_MP_LIMITS[stateJumpType][stateWeightClass]; x++)
             m_chJumpValue.add(Integer.toString(x));
         if (tmp >= m_chJumpValue.getItemCount()) {
-            m_chJumpValue.select(m_chJumpValue.getItemCount()-1);
+            m_chJumpValue.select(m_chJumpValue.getItemCount() - 1);
             stateJumpMP = m_chJumpValue.getSelectedIndex();
         } else {
             m_chJumpValue.select(tmp);
@@ -716,7 +719,7 @@ public class CustomBattleArmorDialog
             }
         }
         if (tmp >= m_chArmorValue.getItemCount()) {
-            m_chArmorValue.select(m_chArmorValue.getItemCount()-1);
+            m_chArmorValue.select(m_chArmorValue.getItemCount() - 1);
             stateArmorValue = m_chArmorValue.getSelectedIndex();
         } else {
             m_chArmorValue.select(tmp);
@@ -724,10 +727,10 @@ public class CustomBattleArmorDialog
     }
 
     private Point computeDesiredLocation() {
-        int desiredX = m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2;
+        int desiredX = m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
         if (desiredX < 0)
             desiredX = 0;
-        int desiredY = m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2;
+        int desiredY = m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
         if (desiredY < 0)
             desiredY = 0;
         return new Point(desiredX, desiredY);
@@ -745,7 +748,7 @@ public class CustomBattleArmorDialog
             resetState();
             return;
         } else if (ae.getSource() == m_buttonAddTorso) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chTorsoEquipment.getSelectedItem())));
+            BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (equipmentTypes.get(equipmentNames.indexOf(m_chTorsoEquipment.getSelectedItem())));
             if (torsoEquipment == null)
                 torsoEquipment = new Vector();
             torsoEquipment.add(tmpBAE);
@@ -760,7 +763,7 @@ public class CustomBattleArmorDialog
             // Nothing else in actionPerformed will matter, so lets move on!
             return;
         } else if (ae.getSource() == m_buttonAddRightArm) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chRightArmEquipment.getSelectedItem())));
+            BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (equipmentTypes.get(equipmentNames.indexOf(m_chRightArmEquipment.getSelectedItem())));
             if (rightArmEquipment == null)
                 rightArmEquipment = new Vector();
             rightArmEquipment.add(tmpBAE);
@@ -775,7 +778,7 @@ public class CustomBattleArmorDialog
             // Nothing else in actionPerformed will matter, so lets move on!
             return;
         } else if (ae.getSource() == m_buttonAddLeftArm) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chLeftArmEquipment.getSelectedItem())));
+            BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (equipmentTypes.get(equipmentNames.indexOf(m_chLeftArmEquipment.getSelectedItem())));
             if (leftArmEquipment == null)
                 leftArmEquipment = new Vector();
             leftArmEquipment.add(tmpBAE);
@@ -794,7 +797,7 @@ public class CustomBattleArmorDialog
                 String removeItem = m_chTorsoCurrentEquipment.getSelectedItem();
                 Enumeration tmpE = torsoEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if (tmpBAE.name.equals(removeItem)) {
                         torsoEquipment.remove(tmpBAE);
                         break;
@@ -817,7 +820,7 @@ public class CustomBattleArmorDialog
                 String removeItem = m_chRightArmCurrentEquipment.getSelectedItem();
                 Enumeration tmpE = rightArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if (tmpBAE.name.equals(removeItem)) {
                         rightArmEquipment.remove(tmpBAE);
                         break;
@@ -840,7 +843,7 @@ public class CustomBattleArmorDialog
                 String removeItem = m_chLeftArmCurrentEquipment.getSelectedItem();
                 Enumeration tmpE = leftArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if (tmpBAE.name.equals(removeItem)) {
                         leftArmEquipment.remove(tmpBAE);
                         break;
@@ -861,7 +864,7 @@ public class CustomBattleArmorDialog
         } else if ((ae.getSource() == m_bPick) || (ae.getSource() == m_bPickClose)) {
             // Here, we need to add the current BA as a new entity, if it can legally do so...
             if (!isValid()) {
-                new megamek.client.ui.swing.AlertDialog(m_clientgui.frame, "Can't do that!", "You can't add an invalid unit.").setVisible(true);
+                JOptionPane.showMessageDialog(m_clientgui.frame, "You can't add an invalid unit.", "Can't do that!", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             try {
@@ -869,7 +872,7 @@ public class CustomBattleArmorDialog
                 Client c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
                     String name = m_chPlayer.getSelectedItem();
-                    c = (Client)m_clientgui.getBots().get(name);
+                    c = (Client) m_clientgui.getBots().get(name);
                 }
                 if (c == null) {
                     c = m_client;
@@ -1007,6 +1010,7 @@ public class CustomBattleArmorDialog
     }
 
     private static final String SPACES = "                        ";
+
     private String makeLength(String s, int nLength) {
         if (s.length() == nLength) {
             return s;
@@ -1019,7 +1023,7 @@ public class CustomBattleArmorDialog
 
     public void keyPressed(java.awt.event.KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-            ActionEvent event = new ActionEvent(m_bPick, ActionEvent.ACTION_PERFORMED,"");
+            ActionEvent event = new ActionEvent(m_bPick, ActionEvent.ACTION_PERFORMED, "");
             actionPerformed(event);
         }
     }
@@ -1037,27 +1041,27 @@ public class CustomBattleArmorDialog
     //
     public void windowActivated(java.awt.event.WindowEvent windowEvent) {
         // Do nothing.
-    }    
+    }
 
     public void windowClosed(java.awt.event.WindowEvent windowEvent) {
         // Do nothing.
-    }    
+    }
 
     public void windowClosing(java.awt.event.WindowEvent windowEvent) {
         this.setVisible(false);
-    }    
+    }
 
     public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
         // Do nothing.
-    }    
+    }
 
     public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
         // Do nothing.
-    }    
+    }
 
     public void windowIconified(java.awt.event.WindowEvent windowEvent) {
         // Do nothing.
-    }    
+    }
 
     public void windowOpened(java.awt.event.WindowEvent windowEvent) {
         // Do nothing.
@@ -1200,7 +1204,7 @@ public class CustomBattleArmorDialog
         if (torsoEquipment != null) {
             Enumeration tmpE = torsoEquipment.elements();
             while (tmpE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                 retVal.append(tmpBAE.getDescription());
                 retVal.append("\n");
             }
@@ -1208,7 +1212,7 @@ public class CustomBattleArmorDialog
         if (rightArmEquipment != null) {
             Enumeration tmpE = rightArmEquipment.elements();
             while (tmpE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                 retVal.append(tmpBAE.getDescription());
                 retVal.append("\n");
             }
@@ -1216,7 +1220,7 @@ public class CustomBattleArmorDialog
         if (leftArmEquipment != null) {
             Enumeration tmpE = leftArmEquipment.elements();
             while (tmpE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                 retVal.append(tmpBAE.getDescription());
                 retVal.append("\n");
             }
@@ -1262,21 +1266,21 @@ public class CustomBattleArmorDialog
         if (leftArmEquipment != null) {
             Enumeration tmpE = leftArmEquipment.elements();
             while (tmpE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                 stateCurrentWeight += tmpBAE.weight;
             }
         }
         if (rightArmEquipment != null) {
             Enumeration tmpE = rightArmEquipment.elements();
             while (tmpE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                 stateCurrentWeight += tmpBAE.weight;
             }
         }
         if (torsoEquipment != null) {
             Enumeration tmpE = torsoEquipment.elements();
             while (tmpE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                 stateCurrentWeight += tmpBAE.weight;
             }
         }
@@ -1317,7 +1321,7 @@ public class CustomBattleArmorDialog
         if (ARMOR_TYPE_WEIGHT[stateTechBase][stateArmorType] == 0) {
             // For now, we allow selection of illegal armor types...
             // And include this slightly cludgy way of detecting illegal armor/tech base pairings.
-            invalidReason = ARMOR_TYPE_STRINGS[stateArmorType]+" Armor not legal for chosen tech base.";
+            invalidReason = ARMOR_TYPE_STRINGS[stateArmorType] + " Armor not legal for chosen tech base.";
             return false;
         }
 
@@ -1350,22 +1354,22 @@ public class CustomBattleArmorDialog
                 int totalSlots = 0;
                 Enumeration tmpE = torsoEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     totalSlots += tmpBAE.slots;
                 }
-                if (totalSlots > (QUAD_MAX_SLOTS[stateWeightClass]-ARMOR_TYPE_SLOTS[stateArmorType])) {
+                if (totalSlots > (QUAD_MAX_SLOTS[stateWeightClass] - ARMOR_TYPE_SLOTS[stateArmorType])) {
                     invalidReason = "Unit is using more slots than are available.";
                     return false;
                 }
             }
         } else {
             // Here, we have to check all three locations individually.
-            int totalFreeSlots = (2*ARM_MAX_SLOTS[stateWeightClass])+TORSO_MAX_SLOTS[stateWeightClass];
+            int totalFreeSlots = (2 * ARM_MAX_SLOTS[stateWeightClass]) + TORSO_MAX_SLOTS[stateWeightClass];
             if (leftArmEquipment != null) {
                 int totalSlots = 0;
                 Enumeration tmpE = leftArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     totalSlots += tmpBAE.slots;
                 }
                 if (totalSlots > ARM_MAX_SLOTS[stateWeightClass]) {
@@ -1378,7 +1382,7 @@ public class CustomBattleArmorDialog
                 int totalSlots = 0;
                 Enumeration tmpE = rightArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     totalSlots += tmpBAE.slots;
                 }
                 if (totalSlots > ARM_MAX_SLOTS[stateWeightClass]) {
@@ -1391,7 +1395,7 @@ public class CustomBattleArmorDialog
                 int totalSlots = 0;
                 Enumeration tmpE = torsoEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     totalSlots += tmpBAE.slots;
                 }
                 if (totalSlots > TORSO_MAX_SLOTS[stateWeightClass]) {
@@ -1419,7 +1423,7 @@ public class CustomBattleArmorDialog
                 int totalWeapons = 0;
                 Enumeration tmpE = torsoEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON)
                             || (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON_AP))
                         totalWeapons++;
@@ -1435,7 +1439,7 @@ public class CustomBattleArmorDialog
                 int totalAMWeapons = 0;
                 Enumeration tmpE = torsoEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
                         totalAMWeapons++;
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON_AP) {
@@ -1456,7 +1460,7 @@ public class CustomBattleArmorDialog
                 int totalAMWeapons = 0;
                 Enumeration tmpE = rightArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
                         totalWeapons++;
                         totalAMWeapons++;
@@ -1477,7 +1481,7 @@ public class CustomBattleArmorDialog
                 int totalAMWeapons = 0;
                 Enumeration tmpE = leftArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
                         totalWeapons++;
                         totalAMWeapons++;
@@ -1542,7 +1546,7 @@ public class CustomBattleArmorDialog
     }
 
     public static int getArmorWeight(int techBase, int armorType, int armorValue) {
-        return armorValue*ARMOR_TYPE_WEIGHT[techBase][armorType];
+        return armorValue * ARMOR_TYPE_WEIGHT[techBase][armorType];
     }
 
     public int getGroundMPWeight() {
@@ -1550,7 +1554,7 @@ public class CustomBattleArmorDialog
     }
 
     public static int getGroundMPWeight(int chassisType, int weightClass, int groundMP) {
-        return (groundMP-(chassisType==CHASSIS_TYPE_BIPED?1:2))*GROUND_MP_WEIGHT[weightClass];
+        return (groundMP - (chassisType == CHASSIS_TYPE_BIPED ? 1 : 2)) * GROUND_MP_WEIGHT[weightClass];
     }
 
     public int getJumpMPWeight() {
@@ -1558,11 +1562,11 @@ public class CustomBattleArmorDialog
     }
 
     public static int getJumpMPWeight(int jumpStatus, int weightClass, int jumpMP) {
-        return jumpMP*JUMP_MP_WEIGHT[jumpStatus][weightClass];
+        return jumpMP * JUMP_MP_WEIGHT[jumpStatus][weightClass];
     }
 
     public int getManipulatorWeight() {
-        return MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeLeft]+MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight];
+        return MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeLeft] + MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight];
     }
 
     public int calcSuitBV() {
@@ -1573,7 +1577,7 @@ public class CustomBattleArmorDialog
         // Add armor defensive BV value
         // This is armor value times armor BV.
         // Currently, all armor is BV 2 except fire resistant.
-        dBV += (stateArmorValue*(stateArmorType==7?3:2));
+        dBV += (stateArmorValue * (stateArmorType == 7 ? 3 : 2));
 
         // Add 1 if the suit mounts ECM.
         //FIXME
@@ -1596,7 +1600,7 @@ public class CustomBattleArmorDialog
             jumpMod = 1;
         if (stateJumpType != JUMP_TYPE_UMU)
             jumpMod += 1;
-        float bestMod = (groundMod>jumpMod?groundMod:jumpMod);
+        float bestMod = (groundMod > jumpMod ? groundMod : jumpMod);
         // Next, add any potential stealth bonus from armor
         if ((stateArmorType == 8) // Mimetic Armor
                 || (stateArmorType == 6)) // Improved Stealth Armor
@@ -1640,7 +1644,7 @@ public class CustomBattleArmorDialog
         //FIXME
 
         // Modify by the BA's speed factor...
-        int speedFactor = Math.max(stateGroundMP,getTotalJumpMP());
+        int speedFactor = Math.max(stateGroundMP, getTotalJumpMP());
         float speedFactorMult = 0;
         switch (speedFactor) {
             case 1:
@@ -1682,13 +1686,13 @@ public class CustomBattleArmorDialog
         }
         oBV *= speedFactorMult;
 
-        int retVal = Math.round(dBV+oBV);
+        int retVal = Math.round(dBV + oBV);
 
         return retVal;
     }
 
     public int calcSquadBV() {
-        return calcSuitBV()*stateMenPerSquad;
+        return calcSuitBV() * stateMenPerSquad;
     }
 
     public int calcSuitCost() {
@@ -1714,13 +1718,13 @@ public class CustomBattleArmorDialog
 
         // Motice Systems Cost
         // First, ground MP: currently all 25,000 per MP
-        retVal += (stateGroundMP-(stateChassisType==CHASSIS_TYPE_BIPED?1:2))*25000;
+        retVal += (stateGroundMP - (stateChassisType == CHASSIS_TYPE_BIPED ? 1 : 2)) * 25000;
         // Second, Jump/VTOL/UMU movement.
         // Varies by weight.
-        retVal += stateJumpMP*JUMP_MP_COST[stateJumpType][stateWeightClass];
+        retVal += stateJumpMP * JUMP_MP_COST[stateJumpType][stateWeightClass];
 
         // Armor Cost
-        retVal += (ARMOR_TYPE_COSTS[stateArmorType]*stateArmorValue);
+        retVal += (ARMOR_TYPE_COSTS[stateArmorType] * stateArmorValue);
 
         // Manipulators
         retVal += MANIPULATOR_TYPE_COSTS[stateManipulatorTypeLeft];
@@ -1744,7 +1748,7 @@ public class CustomBattleArmorDialog
     }
 
     public int calcSquadCost() {
-        return calcSuitCost()*stateMenPerSquad;
+        return calcSuitCost() * stateMenPerSquad;
     }
 
     public BattleArmor getEntity() {
@@ -1836,7 +1840,7 @@ public class CustomBattleArmorDialog
             if (leftArmEquipment != null) {
                 Enumeration tmpE = leftArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) || (tmpBAE.internalType == EQUIPMENT_TYPE_AMMO)) {
                         retVal.addEquipment(EquipmentType.get(tmpBAE.weaponTypeName), BattleArmor.LOC_SQUAD);
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_OTHER) {
@@ -1848,7 +1852,7 @@ public class CustomBattleArmorDialog
             if (rightArmEquipment != null) {
                 Enumeration tmpE = rightArmEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) || (tmpBAE.internalType == EQUIPMENT_TYPE_AMMO)) {
                         retVal.addEquipment(EquipmentType.get(tmpBAE.weaponTypeName), BattleArmor.LOC_SQUAD);
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_OTHER) {
@@ -1860,7 +1864,7 @@ public class CustomBattleArmorDialog
             if (torsoEquipment != null) {
                 Enumeration tmpE = torsoEquipment.elements();
                 while (tmpE.hasMoreElements()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) || (tmpBAE.internalType == EQUIPMENT_TYPE_AMMO)) {
                         retVal.addEquipment(EquipmentType.get(tmpBAE.weaponTypeName), BattleArmor.LOC_SQUAD);
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_OTHER) {
@@ -1885,7 +1889,7 @@ public class CustomBattleArmorDialog
         if (torsoEquipment != null) {
             Enumeration tmpE = torsoEquipment.elements();
             while (tmpE.hasMoreElements()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(tmpE.nextElement());
+                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.nextElement());
                 if (tmpBAE.hasConflictFlag(F_CONFLICT_JUMP_GEAR)) {
                     retVal++;
                 }
@@ -1948,7 +1952,7 @@ public class CustomBattleArmorDialog
                 // A pair of basic manipulators allow anti-'Mech attacks.
                 return true;
             }
-    
+
             if ((stateWeightClass <= WEIGHT_CLASS_LIGHT)
                     && (stateManipulatorTypeLeft == BattleArmor.MANIPULATOR_ARMORED_GLOVE)
                     && (stateManipulatorTypeRight == BattleArmor.MANIPULATOR_ARMORED_GLOVE)) {
@@ -2176,7 +2180,7 @@ createBASRM6Ammo()
         }
 
         public int compareTo(Object o) {
-            return name.compareTo(((BattleArmorEquipment)o).name);
+            return name.compareTo(((BattleArmorEquipment) o).name);
         }
 
         public boolean hasConflictFlag(int testFlags) {

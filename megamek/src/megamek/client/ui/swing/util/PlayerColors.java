@@ -19,12 +19,12 @@ import megamek.common.Player;
 import java.awt.Color;
 
 public class PlayerColors {
-    
-    public static final String  colorNames[] = Player.colorNames;
+
+    public static final String colorNames[] = Player.colorNames;
 
     protected static final int colorRGBs[] = {0x8686BF, 0xF2F261, 0xCC6666,
-            0x87BF86, 0xFFFFFF, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE, 0x98816B,
-            0x800080};
+                                              0x87BF86, 0xFFFFFF, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE, 0x98816B,
+                                              0x800080};
 
     public static Color getColor(int colorIndex) {
         return new Color(colorRGBs[colorIndex]);
@@ -33,5 +33,5 @@ public class PlayerColors {
     public static int getColorRGB(int colorIndex) {
         return colorRGBs[colorIndex];
     }
-    
+
 }

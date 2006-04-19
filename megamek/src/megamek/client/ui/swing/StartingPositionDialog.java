@@ -28,12 +28,14 @@ import megamek.common.IStartingPositions;
 import megamek.common.Player;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.List;
-import javax.swing.JPanel;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -42,9 +44,9 @@ import java.util.Enumeration;
 /**
  * The starting position dialog allows the player to select a starting position.
  *
- * @author  Ben
+ * @author Ben
  */
-public class StartingPositionDialog extends java.awt.Dialog implements ActionListener {
+public class StartingPositionDialog extends JDialog implements ActionListener {
 
     private Client client;
     private ClientGUI clientgui;
@@ -58,12 +60,14 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
 
     private List lisStartList = new List(5);
 
-    /** Creates a new instance of StartingPositionDialog */
+    /**
+     * Creates a new instance of StartingPositionDialog
+     */
     public StartingPositionDialog(ClientGUI clientgui) {
         super(clientgui.frame, Messages.getString("StartingPositionDialog.title"), true); //$NON-NLS-1$
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         this.clientgui = clientgui;
-        
+
         lisStartList.setEnabled(false);
 
         setupStartGrid();
@@ -72,7 +76,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        this.setLayout(gridbag);
+        setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(4, 4, 4, 4);
@@ -80,27 +84,26 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
         c.weighty = 1.0;
         c.gridwidth = 1;
         gridbag.setConstraints(panStartButtons, c);
-        this.add(panStartButtons);
+        add(panStartButtons);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(lisStartList, c);
-        this.add(lisStartList);
+        add(lisStartList);
 
         c.fill = GridBagConstraints.VERTICAL;
         gridbag.setConstraints(panButtons, c);
-        this.add(panButtons);
+        add(panButtons);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
         });
-        
+
         pack();
         setResizable(false);
-        setLocation(
-            clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2 - getSize().width / 2,
-            clientgui.frame.getLocation().y + clientgui.frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2 - getSize().width / 2,
+                clientgui.frame.getLocation().y + clientgui.frame.getSize().height / 2 - getSize().height / 2);
     }
 
     private void setupStartGrid() {
@@ -159,31 +162,31 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
         }
     }
 
-    public void actionPerformed(java.awt.event.ActionEvent ev) {
+    public void actionPerformed(ActionEvent ev) {
         for (int i = 0; i < 11; i++) {
-            if (ev.getSource() == butStartPos[i]) {
+            if (ev.getSource().equals(butStartPos[i])) {
                 if (client.game.getOptions().booleanOption("double_blind") &&
-                    client.game.getOptions().booleanOption("exclusive_db_deployment")) {
+                        client.game.getOptions().booleanOption("exclusive_db_deployment")) {
                     if (i == 0) {
-                        clientgui.doAlertDialog("Starting Position not allowed","In Double Blind play, you cannot choose 'Any' as starting position.");
+                        clientgui.doAlertDialog("Starting Position not allowed", "In Double Blind play, you cannot choose 'Any' as starting position.");
                         return;
                     }
-                    for (Enumeration e = client.game.getPlayers();e.hasMoreElements();) {
-                        Player player = (Player)e.nextElement();
+                    for (Enumeration e = client.game.getPlayers(); e.hasMoreElements();) {
+                        Player player = (Player) e.nextElement();
                         if (player.getStartingPos() == 0) {
                             continue;
                         }
                         // check for overlapping starting directions
                         if ((player.getStartingPos() == i ||
-                            player.getStartingPos()+1 == i ||
-                            player.getStartingPos()-1 == i) &&
-                            player.getId() != client.getLocalPlayer().getId() ) {
-                           clientgui.doAlertDialog("Must choose exclusive deployment zone","When using double blind, each player needs to have an exclusive deployment zone.");
-                           return;
+                                player.getStartingPos() + 1 == i ||
+                                player.getStartingPos() - 1 == i) &&
+                                player.getId() != client.getLocalPlayer().getId()) {
+                            clientgui.doAlertDialog("Must choose exclusive deployment zone", "When using double blind, each player needs to have an exclusive deployment zone.");
+                            return;
                         }
                     }
                 }
-                if(client.game.getOptions().booleanOption("deep_deployment") && i > 0 && i <= 9)
+                if (client.game.getOptions().booleanOption("deep_deployment") && i > 0 && i <= 9)
                     i += 10;
                 client.getLocalPlayer().setStartingPos(i);
                 client.sendPlayerInfo();
@@ -192,7 +195,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
                 // selected home edge.
                 if (client.game.getOptions().booleanOption("set_arty_player_homeedge")) { //$NON-NLS-1$
                     int direction = IOffBoardDirections.NONE;
-                    switch(i) {
+                    switch (i) {
                         case 0:
                             break;
                         case 1:
@@ -229,13 +232,13 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
                             break;
                     }
                     Enumeration thisPlayerArtyUnits = client.game.getSelectedEntities
-                    ( new EntitySelector() {
-                            public boolean accept( Entity entity ) {
-                                if ( entity.getOwnerId() == client.getLocalPlayer().getId() )
-                                    return true;
-                                return false;
-                            }
-                        } );
+                            (new EntitySelector() {
+                                public boolean accept(Entity entity) {
+                                    if (entity.getOwnerId() == client.getLocalPlayer().getId())
+                                        return true;
+                                    return false;
+                                }
+                            });
                     while (thisPlayerArtyUnits.hasMoreElements()) {
                         Entity entity = (Entity) thisPlayerArtyUnits.nextElement();
                         if (entity.getOffBoardDirection() != IOffBoardDirections.NONE) {
@@ -249,7 +252,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
         }
         setVisible(false);
     }
-    
+
     public void setClient(Client client) {
         this.client = client;
     }

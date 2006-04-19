@@ -1,4 +1,3 @@
-
 /**
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
@@ -26,6 +25,8 @@ import java.util.Vector;
 
 public interface DisplayMapSet {
     public PMAreasGroup getContentGroup();
+
     public Vector getBackgroundDrawers();
+
     public void setEntity(Entity e);
 }

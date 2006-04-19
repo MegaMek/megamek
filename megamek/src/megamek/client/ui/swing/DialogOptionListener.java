@@ -11,8 +11,8 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
- 
- /**
+
+/**
  * DialogOptionListener.java
  *
  * @author Cord Awtry
@@ -22,9 +22,9 @@ package megamek.client.ui.swing;
 
 import megamek.common.options.IOption;
 
-public interface DialogOptionListener
-{
-  public void showDescFor(IOption option);
-  public void optionClicked(DialogOptionComponent comp, IOption option, boolean state);
+public interface DialogOptionListener {
+    public void showDescFor(IOption option);
+
+    public void optionClicked(DialogOptionComponent comp, IOption option, boolean state);
 }
 

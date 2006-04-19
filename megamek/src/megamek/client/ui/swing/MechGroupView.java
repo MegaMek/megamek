@@ -19,12 +19,12 @@ import megamek.client.Client;
 import megamek.common.Entity;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.List;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -41,64 +41,65 @@ import java.awt.event.WindowEvent;
  * @since 0.31
  */
 public class MechGroupView
-    extends Dialog
-    implements ActionListener, ItemListener {
+        extends JDialog
+        implements ActionListener, ItemListener {
 
     List entities = new List(20);
     JButton closeButton = new JButton(Messages.getString("Close"));
-    TextArea ta = new TextArea();
+    JTextArea ta = new JTextArea();
 
     Client client;
     int[] entityArray;
 
-    MechGroupView(Frame frame, Client c, int[] eA) {
+    MechGroupView(JFrame frame, Client c, int[] eA) {
         super(frame, Messages.getString("MechGroupView.title"));
         client = c;
         entityArray = eA;
 
-        for (int i = 0; i < entityArray.length; i ++) {
+        for (int i = 0; i < entityArray.length; i++) {
             Entity entity = client.game.getEntity(entityArray[i]);
             // Handle the "Blind Drop" option.
             if (entity == null)
                 continue;
             if (!entity.getOwner().equals(client.getLocalPlayer())
-                && client.game.getOptions().booleanOption("blind_drop")
-                && !client.game.getOptions().booleanOption("real_blind_drop")) {
+                    && client.game.getOptions().booleanOption("blind_drop")
+                    && !client.game.getOptions().booleanOption("real_blind_drop")) {
                 entities.add(ChatLounge.formatUnit(entity, true));
             } else if (entity.getOwner().equals(client.getLocalPlayer())
-                       || (!client.game.getOptions().booleanOption("blind_drop")
-                           && !client.game.getOptions().booleanOption("real_blind_drop"))) {
+                    || (!client.game.getOptions().booleanOption("blind_drop")
+                    && !client.game.getOptions().booleanOption("real_blind_drop"))) {
                 entities.add(ChatLounge.formatUnit(entity, false));
             }
         }
-        this.setLayout(new BorderLayout());
-        this.add(entities, BorderLayout.WEST);
-        this.add(closeButton, BorderLayout.SOUTH);
+        setLayout(new BorderLayout());
+        add(entities, BorderLayout.WEST);
+        add(closeButton, BorderLayout.SOUTH);
 
         ta.setEditable(false);
         ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        this.add(ta, BorderLayout.CENTER);
+        add(ta, BorderLayout.CENTER);
 
         entities.addItemListener(this);
         closeButton.addActionListener(this);
 
-        this.setSize(550,600);
-        this.setLocation(
-            frame.getLocation().x + frame.getSize().width / 2 - this.getSize().width / 2,
-            frame.getLocation().y + frame.getSize().height / 10);
-        this.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    e.getWindow().setVisible(false);}});
+        setSize(550, 600);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
+                frame.getLocation().y + frame.getSize().height / 10);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                e.getWindow().setVisible(false);
+            }
+        });
     }
 
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() == closeButton) {
-            this.setVisible(false);
+        if (ae.getSource().equals(closeButton)) {
+            setVisible(false);
         }
     }
 
     public void itemStateChanged(ItemEvent ie) {
-        if (ie.getSource() == entities) {
+        if (ie.getSource().equals(entities)) {
             int selected = entities.getSelectedIndex();
             if (selected == -1) {
                 ta.setText("");

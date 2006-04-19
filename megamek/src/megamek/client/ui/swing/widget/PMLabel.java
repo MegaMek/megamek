@@ -21,10 +21,14 @@ package megamek.client.ui.swing.widget;
 import java.awt.Color;
 import java.awt.Dimension;
 
-public interface PMLabel extends PMElement{
+public interface PMLabel extends PMElement {
     public Dimension getSize();
+
     public int getDescent();
+
     public void moveTo(int x, int y);
+
     public void setColor(Color c);
-    public void setString(String s);    
+
+    public void setString(String s);
 }

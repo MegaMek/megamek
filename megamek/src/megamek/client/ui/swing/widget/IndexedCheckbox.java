@@ -11,21 +11,21 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
- 
+
 package megamek.client.ui.swing.widget;
 
-import javax.swing.JCheckBox;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 
 public class IndexedCheckbox extends JCheckBox {
     private int index;
-    
+
     public IndexedCheckbox(String label, boolean state, ButtonGroup group, int index) {
         super(label, state);
         group.add(this);
         this.index = index;
     }
-    
+
     public int getIndex() {
         return index;
     }

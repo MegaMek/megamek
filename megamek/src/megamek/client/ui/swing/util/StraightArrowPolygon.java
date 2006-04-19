@@ -12,16 +12,15 @@
  *  for more details.
  */
 
-
 package megamek.client.ui.swing.util;
+
 import java.awt.Point;
 import java.awt.Polygon;
-
 
 /**
  * This class calculates and stores points of polygon shaped as straight arrow.
  * Minimum required arguments are two Point elements - start and end of arrow.
- *
+ * <p/>
  * Special feature of this class is last boolean argument. It defines if it will
  * be full shaped arrow or left half only.
  * Private Polygon hotArea contains same points as an arrow itself except when arrow
@@ -30,7 +29,7 @@ import java.awt.Polygon;
  *
  * @author Slava Zipunov (zipp32)
  */
-public class StraightArrowPolygon extends Polygon{
+public class StraightArrowPolygon extends Polygon {
 
     private Polygon hotArea = new Polygon();
     private Point startPoint;
@@ -41,15 +40,18 @@ public class StraightArrowPolygon extends Polygon{
     private int tailWidth = 3;
     private int tailLength = 0;
     private boolean halved = false;
-    /** Most extencive constructor with all paremeters given */
-    public StraightArrowPolygon (Point startPoint,
-                          Point endPoint,
-                          int headLength,
-                          int headWidth,
-                          int arrowWidthAtHead,
-                          int tailWidth,
-                          int tailLength,
-                          boolean halved){
+
+    /**
+     * Most extencive constructor with all paremeters given
+     */
+    public StraightArrowPolygon(Point startPoint,
+                                Point endPoint,
+                                int headLength,
+                                int headWidth,
+                                int arrowWidthAtHead,
+                                int tailWidth,
+                                int tailLength,
+                                boolean halved) {
         super();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -61,8 +63,10 @@ public class StraightArrowPolygon extends Polygon{
         buildPointsArrays();
     }
 
-    /** Short constructor. Two points and boolean value. */
-    public StraightArrowPolygon(Point startPoint, Point endPoint, boolean halved){
+    /**
+     * Short constructor. Two points and boolean value.
+     */
+    public StraightArrowPolygon(Point startPoint, Point endPoint, boolean halved) {
         super();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -70,8 +74,10 @@ public class StraightArrowPolygon extends Polygon{
         buildPointsArrays();
     }
 
-    /** One more constructor */
-    public StraightArrowPolygon(Point startPoint, Point endPoint, int width, boolean halved){
+    /**
+     * One more constructor
+     */
+    public StraightArrowPolygon(Point startPoint, Point endPoint, int width, boolean halved) {
         super();
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -82,60 +88,64 @@ public class StraightArrowPolygon extends Polygon{
         buildPointsArrays();
     }
 
-   /** I know, it is annoying, but another constructor */
-   public StraightArrowPolygon (Point startPoint, Point endPoint, int width, int headWidth, boolean halved){
-       super();
-       this.startPoint = startPoint;
-       this.endPoint = endPoint;
-       this.headWidth = headWidth;
-       this.arrowWidthAtHead = width;
-       this.tailWidth = width;
-       this.halved = halved;
-       buildPointsArrays();
-   }
+    /**
+     * I know, it is annoying, but another constructor
+     */
+    public StraightArrowPolygon(Point startPoint, Point endPoint, int width, int headWidth, boolean halved) {
+        super();
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+        this.headWidth = headWidth;
+        this.arrowWidthAtHead = width;
+        this.tailWidth = width;
+        this.halved = halved;
+        buildPointsArrays();
+    }
 
-   /** Calculating and adding points to Polygon class. Some trigonometry. */
-   private void buildPointsArrays(){
-       int dX = endPoint.x - startPoint.x;
-       int dY = endPoint.y - startPoint.y;
-       double arrowLength =  Math.sqrt(dX*dX + dY*dY);
-       double sin = dY/arrowLength;
-       double cos = dX/arrowLength;
-       this.addPoint(startPoint.x ,startPoint.y);
-       this.addPoint( (int) Math.round(startPoint.x + tailWidth*sin - tailLength*cos),(int) Math.round(startPoint.y - tailWidth*cos - tailLength*sin));
-       this.addPoint( (int) Math.round(endPoint.x - headLength*cos + arrowWidthAtHead*sin), (int) Math.round(endPoint.y - headLength*sin - arrowWidthAtHead*cos));
-       this.addPoint( (int) Math.round(endPoint.x - headLength*cos + headWidth*sin),(int) Math.round(endPoint.y - headLength*sin - headWidth*cos));
-       this.addPoint( endPoint.x, endPoint.y);
-       if(! halved){
-           this.addPoint( (int) Math.round(endPoint.x - headLength*cos - headWidth*sin) ,(int) Math.round( endPoint.y - headLength*sin + headWidth*cos));
-           this.addPoint( (int) Math.round(endPoint.x - headLength*cos - arrowWidthAtHead*sin), (int) Math.round(endPoint.y - headLength*sin + arrowWidthAtHead*cos));
-           this.addPoint( (int) Math.round(startPoint.x - tailWidth*sin - tailLength*cos), (int) Math.round(startPoint.y + tailWidth*cos - tailLength*sin));
-       }
-       hotArea.addPoint(startPoint.x ,startPoint.y);
-       hotArea.addPoint( (int) Math.round(startPoint.x + tailWidth*sin - tailLength*cos),(int) Math.round(startPoint.y - tailWidth*cos - tailLength*sin));
-       hotArea.addPoint( (int) Math.round(endPoint.x - headLength*cos + arrowWidthAtHead*sin), (int) Math.round(endPoint.y - headLength*sin - arrowWidthAtHead*cos));
-       hotArea.addPoint( (int) Math.round(endPoint.x - headLength*cos + headWidth*sin),(int) Math.round(endPoint.y - headLength*sin - headWidth*cos));
-       hotArea.addPoint( endPoint.x, endPoint.y);
-       hotArea.addPoint( (int) Math.round(endPoint.x - headLength*cos - headWidth*sin) ,(int) Math.round( endPoint.y - headLength*sin + headWidth*cos));
-       hotArea.addPoint( (int) Math.round(endPoint.x - headLength*cos - arrowWidthAtHead*sin), (int) Math.round(endPoint.y - headLength*sin + arrowWidthAtHead*cos));
-       hotArea.addPoint( (int) Math.round(startPoint.x - tailWidth*sin - tailLength*cos), (int) Math.round(startPoint.y + tailWidth*cos - tailLength*sin));
-   }
+    /**
+     * Calculating and adding points to Polygon class. Some trigonometry.
+     */
+    private void buildPointsArrays() {
+        int dX = endPoint.x - startPoint.x;
+        int dY = endPoint.y - startPoint.y;
+        double arrowLength = Math.sqrt(dX * dX + dY * dY);
+        double sin = dY / arrowLength;
+        double cos = dX / arrowLength;
+        this.addPoint(startPoint.x, startPoint.y);
+        this.addPoint((int) Math.round(startPoint.x + tailWidth * sin - tailLength * cos), (int) Math.round(startPoint.y - tailWidth * cos - tailLength * sin));
+        this.addPoint((int) Math.round(endPoint.x - headLength * cos + arrowWidthAtHead * sin), (int) Math.round(endPoint.y - headLength * sin - arrowWidthAtHead * cos));
+        this.addPoint((int) Math.round(endPoint.x - headLength * cos + headWidth * sin), (int) Math.round(endPoint.y - headLength * sin - headWidth * cos));
+        this.addPoint(endPoint.x, endPoint.y);
+        if (!halved) {
+            this.addPoint((int) Math.round(endPoint.x - headLength * cos - headWidth * sin), (int) Math.round(endPoint.y - headLength * sin + headWidth * cos));
+            this.addPoint((int) Math.round(endPoint.x - headLength * cos - arrowWidthAtHead * sin), (int) Math.round(endPoint.y - headLength * sin + arrowWidthAtHead * cos));
+            this.addPoint((int) Math.round(startPoint.x - tailWidth * sin - tailLength * cos), (int) Math.round(startPoint.y + tailWidth * cos - tailLength * sin));
+        }
+        hotArea.addPoint(startPoint.x, startPoint.y);
+        hotArea.addPoint((int) Math.round(startPoint.x + tailWidth * sin - tailLength * cos), (int) Math.round(startPoint.y - tailWidth * cos - tailLength * sin));
+        hotArea.addPoint((int) Math.round(endPoint.x - headLength * cos + arrowWidthAtHead * sin), (int) Math.round(endPoint.y - headLength * sin - arrowWidthAtHead * cos));
+        hotArea.addPoint((int) Math.round(endPoint.x - headLength * cos + headWidth * sin), (int) Math.round(endPoint.y - headLength * sin - headWidth * cos));
+        hotArea.addPoint(endPoint.x, endPoint.y);
+        hotArea.addPoint((int) Math.round(endPoint.x - headLength * cos - headWidth * sin), (int) Math.round(endPoint.y - headLength * sin + headWidth * cos));
+        hotArea.addPoint((int) Math.round(endPoint.x - headLength * cos - arrowWidthAtHead * sin), (int) Math.round(endPoint.y - headLength * sin + arrowWidthAtHead * cos));
+        hotArea.addPoint((int) Math.round(startPoint.x - tailWidth * sin - tailLength * cos), (int) Math.round(startPoint.y + tailWidth * cos - tailLength * sin));
+    }
 
-   public boolean contains(int x, int y){
-           return hotArea.contains(x, y);
-   }
+    public boolean contains(int x, int y) {
+        return hotArea.contains(x, y);
+    }
 
-   public boolean contains(Point p){
-           return hotArea.contains(p);
-   }
+    public boolean contains(Point p) {
+        return hotArea.contains(p);
+    }
 
-   public boolean contains(double x, double y){
-           return hotArea.contains((int)Math.round(x), (int)Math.round(y));
-   }
+    public boolean contains(double x, double y) {
+        return hotArea.contains((int) Math.round(x), (int) Math.round(y));
+    }
 
-   public void translate(int deltaX, int deltaY){
-           super.translate(deltaX, deltaY);
-           hotArea.translate(deltaX, deltaY);
-   }
+    public void translate(int deltaX, int deltaY) {
+        super.translate(deltaX, deltaY);
+        hotArea.translate(deltaX, deltaY);
+    }
 
 }

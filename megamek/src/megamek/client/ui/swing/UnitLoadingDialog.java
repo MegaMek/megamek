@@ -21,13 +21,13 @@ package megamek.client.ui.swing;
 
 import megamek.common.MechSummaryCache;
 
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GridLayout;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 
-public class UnitLoadingDialog extends Dialog {
+public class UnitLoadingDialog extends JDialog {
 
     private JLabel lLoading = new JLabel(Messages.getString("UnitLoadingDialog.LoadingUnits")); //$NON-NLS-1$
     private JLabel lSpacer = new JLabel();
@@ -42,10 +42,10 @@ public class UnitLoadingDialog extends Dialog {
     // Setting this too low causes noticeable loading delays.
     private static final int UPDATE_FREQUENCY = 50;
 
-    public UnitLoadingDialog(Frame frame) {
-        super(frame,Messages.getString("UnitLoadingDialog.pleaseWait")); //$NON-NLS-1$
+    public UnitLoadingDialog(JFrame frame) {
+        super(frame, Messages.getString("UnitLoadingDialog.pleaseWait")); //$NON-NLS-1$
 
-        setLayout(new GridLayout(4,2));
+        setLayout(new GridLayout(4, 2));
         add(lLoading);
         add(lSpacer);
 
@@ -58,13 +58,12 @@ public class UnitLoadingDialog extends Dialog {
         add(lZipText);
         add(lZipCount);
 
-        setSize(250,130);
+        setSize(250, 130);
         // move to middle of screen
         Dimension screenSize = frame.getToolkit().getScreenSize();
-        setLocation(
-            screenSize.width / 2 - getSize().width / 2,
-            screenSize.height / 2 - getSize().height / 2);
-        
+        setLocation(screenSize.width / 2 - getSize().width / 2,
+                screenSize.height / 2 - getSize().height / 2);
+
         Runnable r = new Runnable() {
             public void run() {
                 while (!MechSummaryCache.getInstance().isInitialized()) {
@@ -72,7 +71,7 @@ public class UnitLoadingDialog extends Dialog {
                     try {
                         Thread.sleep(UPDATE_FREQUENCY);
                     } catch (Exception e) {
-                        
+
                     }
                 }
             }
@@ -80,10 +79,10 @@ public class UnitLoadingDialog extends Dialog {
         Thread t = new Thread(r, "Unit Loader"); //$NON-NLS-1$
         t.start();
     }
-    
+
     private void updateCounts() {
         lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance().getCacheCount()));
         lFileCount.setText(String.valueOf(MechSummaryCache.getInstance().getFileCount()));
         lZipCount.setText(String.valueOf(MechSummaryCache.getInstance().getZipCount()));
-    }    
+    }
 }

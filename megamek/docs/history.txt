@@ -11,6 +11,7 @@ v0.31.8-dev (CVS)
 + Bug 1459060: removed iterator modification
 + migrated various AWT fixes from last month to Swing fixes
 + JDialog, JFrame, JTextArea moved swingized 
++ Bug: 3 Sensorhits on a torsomounted cockpit forbid all attacks
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

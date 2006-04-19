@@ -244,7 +244,7 @@ public class PushAttackAction
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
-                toHit.addModifier(4, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
                 toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }

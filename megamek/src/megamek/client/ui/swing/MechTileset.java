@@ -41,11 +41,10 @@ import java.util.HashMap;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
- * with the appropriate image.  It requires data/images/units/mechset.txt, 
+ * with the appropriate image.  It requires data/images/units/mechset.txt,
  * the format of which is explained in that file.
  *
- * @author  Ben
- * @version
+ * @author Ben
  */
 public class MechTileset {
     private String LIGHT_STRING = "default_light"; //$NON-NLS-1$
@@ -66,7 +65,7 @@ public class MechTileset {
     private String BA_STRING = "default_ba"; //$NON-NLS-1$
     private String PROTO_STRING = "default_proto"; //$NON-NLS-1$
     private String GUN_EMPLACEMENT_STRING = "default_gun_emplacement"; //$NON-NLS-1$
-    
+
     private MechEntry default_light;
     private MechEntry default_medium;
     private MechEntry default_heavy;
@@ -85,17 +84,19 @@ public class MechTileset {
     private MechEntry default_ba;
     private MechEntry default_proto;
     private MechEntry default_gun_emplacement;
-    
+
     private HashMap exact = new HashMap();
     private HashMap chassis = new HashMap();
-    
+
     private String dir;
 
-    /** Creates new MechTileset */
+    /**
+     * Creates new MechTileset
+     */
     public MechTileset(String dir) {
         this.dir = dir;
     }
-    
+
     public Image imageFor(Entity entity, Component comp) {
         MechEntry entry = entryFor(entity);
         if (entry.getImage() == null) {
@@ -103,25 +104,25 @@ public class MechTileset {
         }
         return entry.getImage();
     }
-    
+
     /**
      * Returns the MechEntry corresponding to the entity
      */
     private MechEntry entryFor(Entity entity) {
         // first, check for exact matches
         if (exact.containsKey(entity.getShortNameRaw().toUpperCase())) {
-            return (MechEntry)exact.get(entity.getShortNameRaw().toUpperCase());
+            return (MechEntry) exact.get(entity.getShortNameRaw().toUpperCase());
         }
         
         // next, chassis matches
         if (chassis.containsKey(entity.getChassis().toUpperCase())) {
-            return (MechEntry)chassis.get(entity.getChassis().toUpperCase());
+            return (MechEntry) chassis.get(entity.getChassis().toUpperCase());
         }
         
         // last, the generic model
         return genericFor(entity);
     }
-    
+
     public MechEntry genericFor(Entity entity) {
         if (entity instanceof BattleArmor) {
             return default_ba;
@@ -160,12 +161,14 @@ public class MechTileset {
                     return default_tracked_heavy;
                 } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
                     return default_tracked_assault;
-                } else return default_tracked;
+                } else
+                    return default_tracked;
             }
             if (entity.getMovementMode() == IEntityMovementMode.WHEELED) {
                 if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
                     return default_wheeled_heavy;
-                } else return default_wheeled;
+                } else
+                    return default_wheeled;
             }
             if (entity.getMovementMode() == IEntityMovementMode.HOVER) {
                 return default_hover;
@@ -173,7 +176,7 @@ public class MechTileset {
             if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
                 return default_vtol;
             }
-        }            
+        }
         if (entity instanceof GunEmplacement) {
             return default_gun_emplacement;
         }
@@ -181,7 +184,7 @@ public class MechTileset {
         //TODO: better exception?
         throw new IndexOutOfBoundsException("can't find an image for that mech"); //$NON-NLS-1$
     }
-    
+
     public void loadFromFile(String filename) throws IOException {
         // make inpustream for board
         Reader r = new BufferedReader(new FileReader(dir + filename));
@@ -191,37 +194,36 @@ public class MechTileset {
         st.commentChar('#');
         st.quoteChar('"');
         st.wordChars('_', '_');
-        while(st.nextToken() != StreamTokenizer.TT_EOF) {
+        while (st.nextToken() != StreamTokenizer.TT_EOF) {
             String name = null;
             String imageName = null;
-            if ( st.ttype == StreamTokenizer.TT_WORD
-                 && st.sval.equalsIgnoreCase("include") ) { //$NON-NLS-1$
+            if (st.ttype == StreamTokenizer.TT_WORD
+                    && st.sval.equalsIgnoreCase("include")) { //$NON-NLS-1$
                 st.nextToken();
                 name = st.sval;
-                System.out.print( "Loading more unit images from " ); //$NON-NLS-1$
-                System.out.print( name );
-                System.out.println( "..." ); //$NON-NLS-1$
+                System.out.print("Loading more unit images from "); //$NON-NLS-1$
+                System.out.print(name);
+                System.out.println("..."); //$NON-NLS-1$
                 try {
                     this.loadFromFile(name);
-                System.out.print( "... finished " ); //$NON-NLS-1$
-                System.out.print( name );
-                System.out.println( "." ); //$NON-NLS-1$
+                    System.out.print("... finished "); //$NON-NLS-1$
+                    System.out.print(name);
+                    System.out.println("."); //$NON-NLS-1$
+                } catch (IOException ioerr) {
+                    System.out.print("... failed: "); //$NON-NLS-1$
+                    System.out.print(ioerr.getMessage());
+                    System.out.println("."); //$NON-NLS-1$
                 }
-                catch (IOException ioerr) {
-                    System.out.print( "... failed: " ); //$NON-NLS-1$
-                    System.out.print( ioerr.getMessage() );
-                    System.out.println( "." ); //$NON-NLS-1$
-                }
-            } else if ( st.ttype == StreamTokenizer.TT_WORD
-                        && st.sval.equalsIgnoreCase("chassis") ) { //$NON-NLS-1$
+            } else if (st.ttype == StreamTokenizer.TT_WORD
+                    && st.sval.equalsIgnoreCase("chassis")) { //$NON-NLS-1$
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
                 imageName = st.sval;
                 // add to list
                 chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
-            } else if ( st.ttype == StreamTokenizer.TT_WORD
-                        && st.sval.equalsIgnoreCase("exact") ) { //$NON-NLS-1$
+            } else if (st.ttype == StreamTokenizer.TT_WORD
+                    && st.sval.equalsIgnoreCase("exact")) { //$NON-NLS-1$
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
@@ -231,27 +233,27 @@ public class MechTileset {
             }
         }
         r.close();
-        
-        default_light = (MechEntry)exact.get(LIGHT_STRING.toUpperCase());
-        default_medium = (MechEntry)exact.get(MEDIUM_STRING.toUpperCase());
-        default_heavy = (MechEntry)exact.get(HEAVY_STRING.toUpperCase());
-        default_assault = (MechEntry)exact.get(ASSAULT_STRING.toUpperCase());
-        default_quad = (MechEntry)exact.get(QUAD_STRING.toUpperCase());
-        default_tracked = (MechEntry)exact.get(TRACKED_STRING.toUpperCase());
-        default_tracked_heavy = (MechEntry)exact.get(TRACKED_HEAVY_STRING.toUpperCase());
-        default_tracked_assault = (MechEntry)exact.get(TRACKED_ASSAULT_STRING.toUpperCase());
-        default_wheeled = (MechEntry)exact.get(WHEELED_STRING.toUpperCase());
-        default_wheeled_heavy = (MechEntry)exact.get(WHEELED_HEAVY_STRING.toUpperCase());
-        default_hover = (MechEntry)exact.get(HOVER_STRING.toUpperCase());
-        default_naval = (MechEntry)exact.get(NAVAL_STRING.toUpperCase());
-        default_hydrofoil = (MechEntry)exact.get(HYDROFOIL_STRING.toUpperCase());
-        default_vtol = (MechEntry)exact.get(VTOL_STRING.toUpperCase());
-        default_inf = (MechEntry)exact.get(INF_STRING.toUpperCase());
-        default_ba = (MechEntry)exact.get(BA_STRING.toUpperCase());
-        default_proto = (MechEntry)exact.get(PROTO_STRING.toUpperCase());
-        default_gun_emplacement = (MechEntry)exact.get(GUN_EMPLACEMENT_STRING.toUpperCase());
+
+        default_light = (MechEntry) exact.get(LIGHT_STRING.toUpperCase());
+        default_medium = (MechEntry) exact.get(MEDIUM_STRING.toUpperCase());
+        default_heavy = (MechEntry) exact.get(HEAVY_STRING.toUpperCase());
+        default_assault = (MechEntry) exact.get(ASSAULT_STRING.toUpperCase());
+        default_quad = (MechEntry) exact.get(QUAD_STRING.toUpperCase());
+        default_tracked = (MechEntry) exact.get(TRACKED_STRING.toUpperCase());
+        default_tracked_heavy = (MechEntry) exact.get(TRACKED_HEAVY_STRING.toUpperCase());
+        default_tracked_assault = (MechEntry) exact.get(TRACKED_ASSAULT_STRING.toUpperCase());
+        default_wheeled = (MechEntry) exact.get(WHEELED_STRING.toUpperCase());
+        default_wheeled_heavy = (MechEntry) exact.get(WHEELED_HEAVY_STRING.toUpperCase());
+        default_hover = (MechEntry) exact.get(HOVER_STRING.toUpperCase());
+        default_naval = (MechEntry) exact.get(NAVAL_STRING.toUpperCase());
+        default_hydrofoil = (MechEntry) exact.get(HYDROFOIL_STRING.toUpperCase());
+        default_vtol = (MechEntry) exact.get(VTOL_STRING.toUpperCase());
+        default_inf = (MechEntry) exact.get(INF_STRING.toUpperCase());
+        default_ba = (MechEntry) exact.get(BA_STRING.toUpperCase());
+        default_proto = (MechEntry) exact.get(PROTO_STRING.toUpperCase());
+        default_gun_emplacement = (MechEntry) exact.get(GUN_EMPLACEMENT_STRING.toUpperCase());
     }
-    
+
     /**
      * Stores the name, image file name, and image (once loaded) for a mech or
      * other entity
@@ -260,21 +262,21 @@ public class MechTileset {
         private String name;
         private String imageFile;
         private Image image;
-        
+
         public MechEntry(String name, String imageFile) {
             this.name = name;
             this.imageFile = imageFile;
             this.image = null;
         }
-        
+
         public String getName() {
             return name;
         }
-        
+
         public Image getImage() {
             return image;
         }
-        
+
         public void loadImage(Component comp) {
             //            System.out.println("loading mech image...");
             image = comp.getToolkit().getImage(dir + imageFile);

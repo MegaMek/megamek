@@ -77,6 +77,8 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.awt.Adjustable;
 import java.awt.AlphaComposite;
 import java.awt.Canvas;
@@ -84,7 +86,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -150,7 +151,7 @@ public class BoardView1
     private Font font_elev = FONT_9;
     private Font font_minefield = FONT_12;
     private IGame game;
-    private Frame frame;
+    private JFrame frame;
     private Point mousePos = new Point();
     private Rectangle view = new Rectangle();
     private Point offset = new Point();
@@ -242,14 +243,14 @@ public class BoardView1
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(IGame game, Frame frame) throws java.io.IOException {
+    public BoardView1(IGame game, JFrame frame) throws java.io.IOException {
         this(game, frame, null);
     }
 
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(IGame game, Frame frame, ClientGUI clientgui) throws java.io.IOException {
+    public BoardView1(IGame game, JFrame frame, ClientGUI clientgui) throws java.io.IOException {
         //TODO please eliminate the usage of the clientgui
         this.clientgui = clientgui;
         this.game = game;
@@ -630,7 +631,7 @@ public class BoardView1
     /**
      * Draws a sprite, if it is in the current view
      */
-    private final void drawSprite(Sprite sprite) {
+    private void drawSprite(Sprite sprite) {
         if (view.intersects(sprite.getBounds()) &&
                 !sprite.hidden) {
             final int drawX = sprite.getBounds().x - view.x;
@@ -696,7 +697,7 @@ public class BoardView1
         private Image base;
         private Dimension bounds;
 
-        public ScaledCacheKey(Image base, Dimension bounds) {
+        ScaledCacheKey(Image base, Dimension bounds) {
             this.bounds = bounds;
             this.base = base;
         }
@@ -1222,7 +1223,7 @@ public class BoardView1
      * transitive, that is, if a line is drawn in one direction, it should be
      * drawn in the opposite direction as well.
      */
-    private final boolean drawElevationLine(Coords src, int direction) {
+    private boolean drawElevationLine(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
         return destHex != null && srcHex.floor() != destHex.floor();
@@ -1925,10 +1926,7 @@ public class BoardView1
                     message.append(Messages.getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
                 }
             }
-            AlertDialog alert = new AlertDialog(frame,
-                    Messages.getString("BoardView1.LOSTitle"), //$NON-NLS-1$
-                    message.toString(), false);
-            alert.setVisible(true);
+            JOptionPane.showMessageDialog(frame, message.toString(), Messages.getString("BoardView1.LOSTitle"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -2481,7 +2479,7 @@ public class BoardView1
         private String[] tipStrings;
         private Dimension size;
 
-        public TooltipCanvas(String[] tipStrings) {
+        TooltipCanvas(String[] tipStrings) {
             this.tipStrings = tipStrings;
 
             // setup
@@ -2619,7 +2617,7 @@ public class BoardView1
         private Color color;
         private Coords hexLoc;
 
-        public CursorSprite(Color color) {
+        CursorSprite(Color color) {
             this.color = color;
             this.bounds = new Rectangle(hexPoly.getBounds().width + 1,
                     hexPoly.getBounds().height + 1);
@@ -2669,7 +2667,7 @@ public class BoardView1
         private Rectangle entityRect;
         private Rectangle modelRect;
 
-        public GhostEntitySprite(Entity entity) {
+        GhostEntitySprite(Entity entity) {
             this.entity = entity;
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
@@ -2736,7 +2734,7 @@ public class BoardView1
         private Rectangle entityRect;
         private Rectangle modelRect;
 
-        public MovingEntitySprite(Entity entity, Coords position, int facing) {
+        MovingEntitySprite(Entity entity, Coords position, int facing) {
             this.entity = entity;
             this.facing = facing;
             String shortName = entity.getShortName();
@@ -2792,7 +2790,7 @@ public class BoardView1
         private Rectangle entityRect;
         private Rectangle modelRect;
 
-        public WreckSprite(Entity entity) {
+        WreckSprite(Entity entity) {
             this.entity = entity;
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
@@ -2894,7 +2892,7 @@ public class BoardView1
         private Rectangle entityRect;
         private Rectangle modelRect;
 
-        public EntitySprite(Entity entity) {
+        EntitySprite(Entity entity) {
             this.entity = entity;
             String shortName = entity.getShortName();
             if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
@@ -3002,7 +3000,7 @@ public class BoardView1
 
             // draw facing
             graph.setColor(Color.white);
-            if (entity.getFacing() != -1 && !(entity instanceof Infantry) && ((Infantry) entity).getDugIn() == Infantry.DUG_IN_NONE) {
+            if (entity.getFacing() != -1 && !(entity instanceof Infantry && ((Infantry) entity).getDugIn() == Infantry.DUG_IN_NONE)) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 
@@ -3283,7 +3281,7 @@ public class BoardView1
     private class StepSprite extends Sprite {
         private MoveStep step;
 
-        public StepSprite(MoveStep step) {
+        StepSprite(MoveStep step) {
             this.step = step;
 
             // step is the size of the hex that this step is in
@@ -3533,7 +3531,7 @@ public class BoardView1
         protected Entity entityM;
         Color spriteColor;
 
-        public C3Sprite(Entity e, Entity m) {
+        C3Sprite(Entity e, Entity m) {
             this.entityE = e;
             this.entityM = m;
             this.entityId = e.getId();
@@ -3643,7 +3641,7 @@ public class BoardView1
         private final Entity ae;
         private final Targetable target;
 
-        public AttackSprite(AttackAction attack) {
+        AttackSprite(AttackAction attack) {
             this.attacks.addElement(attack);
             this.entityId = attack.getEntityId();
             this.targetType = attack.getTargetType();
@@ -4288,7 +4286,7 @@ public class BoardView1
         int range;
         int tint;
 
-        public EcmBubble(Coords c, int range, int tint) {
+        EcmBubble(Coords c, int range, int tint) {
             super(c);
             this.range = range;
             this.tint = tint;

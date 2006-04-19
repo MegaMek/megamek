@@ -25,36 +25,37 @@ import java.awt.image.RGBImageFilter;
 
 /**
  * Filters an image by rotating it.  The image is rotated around its center.
- *
+ * <p/>
  * TODO: This could be optimized... oh, um... everywhere.  It was pretty late
- *  at night when I programmed most of this.
+ * at night when I programmed most of this.
  *
- * @author  Ben
- * @version 
+ * @author Ben
  */
 public class RotateFilter extends RGBImageFilter {
-    
-    private static final int  ALPHA_CLIP = 144;
-    
+
+    private static final int ALPHA_CLIP = 144;
+
     private double angle;
     private double sin;
     private double cos;
-    
+
     private int width;
     private int height;
     private double cx;
     private double cy;
     private int[] raster;
-    
+
     private int count = 0;
 
-    /** Creates new RotateFilter1 */
+    /**
+     * Creates new RotateFilter1
+     */
     public RotateFilter(double angle) {
-  this.angle = angle;
-  this.sin = Math.sin(angle);
-  this.cos = Math.cos(angle);
+        this.angle = angle;
+        this.sin = Math.sin(angle);
+        this.cos = Math.cos(angle);
     }
-    
+
     /**
      * Store the dimensions, when set.
      */
@@ -64,9 +65,9 @@ public class RotateFilter extends RGBImageFilter {
         cx = width / 2.0;
         cy = height / 2.0;
         raster = new int[width * height];
-  consumer.setDimensions(width, height);
+        consumer.setDimensions(width, height);
     }
-    
+
     /**
      * Don't filter, just store.
      */
@@ -74,22 +75,22 @@ public class RotateFilter extends RGBImageFilter {
         raster[y * width + x] = rgb;
         return rgb;
     }
-    
+
     /**
      * Here's where we do the work.
      */
     public void imageComplete(int status) {
-  if (status == IMAGEERROR || status == IMAGEABORTED) {
-      consumer.imageComplete(status);
-      return;
-  }
+        if (status == IMAGEERROR || status == IMAGEABORTED) {
+            consumer.imageComplete(status);
+            return;
+        }
         // filter everything
         rotate();
         // done!
         consumer.setPixels(0, 0, width, height, ColorModel.getRGBdefault(), raster, 0, width);
-  consumer.imageComplete(status);
+        consumer.imageComplete(status);
     }
-    
+
     /**
      * Rotate all pixels.
      */
@@ -102,7 +103,7 @@ public class RotateFilter extends RGBImageFilter {
         }
         raster = newpixels;
     }
-    
+
     /**
      * Returns the "destination image" pixel
      */
@@ -112,10 +113,10 @@ public class RotateFilter extends RGBImageFilter {
 
         double rx = cos * tx - sin * ty;
         double ry = cos * ty + sin * tx;
-        
+
         return pixelBilinear(rx + cx, ry + cy);
     }
-    
+
     /**
      * Returns a pixel from the source image
      */
@@ -126,59 +127,59 @@ public class RotateFilter extends RGBImageFilter {
             return raster[y * width + x];
         }
     }
-    
+
     private final int alpha(int pix) {
         return (pix >> 24) & 0xff;
     }
-    
+
     private final int blue(int pix) {
         return pix & 0xff;
     }
-    
+
     private final int red(int pix) {
         return (pix >> 16) & 0xff;
     }
-    
+
     private final int green(int pix) {
         return (pix >> 8) & 0xff;
     }
-    
+
     private final int combine(int alpha, int red, int green, int blue) {
         return (alpha > ALPHA_CLIP ? 0xFF000000 : 0) | (red << 16) | (green << 8) | (blue);
     }
-    
+
     /**
-     * Get the bilinearly calculated pixel at the coordinates.  
+     * Get the bilinearly calculated pixel at the coordinates.
      * Lazy black & white mode.
      */
     private int pixelBilinear(double x, double y) {
-        int fx = (int)Math.floor(x);
-        int fy = (int)Math.floor(y);
-        
-        int alpha0 = alpha(pixel(fx,   fy));
-        int alpha1 = alpha(pixel(fx+1, fy));
-        int alpha2 = alpha(pixel(fx,   fy+1));
-        int alpha3 = alpha(pixel(fx+1, fy+1));
+        int fx = (int) Math.floor(x);
+        int fy = (int) Math.floor(y);
+
+        int alpha0 = alpha(pixel(fx, fy));
+        int alpha1 = alpha(pixel(fx + 1, fy));
+        int alpha2 = alpha(pixel(fx, fy + 1));
+        int alpha3 = alpha(pixel(fx + 1, fy + 1));
         
         // don't bother calculating transparent pixels
         if (alpha0 == 0 && alpha1 == 0 && alpha2 == 0 && alpha3 == 0) {
             return 0;
         }
 
-        int red0 = red(pixel(fx,   fy));
-        int red1 = red(pixel(fx+1, fy));
-        int red2 = red(pixel(fx,   fy+1));
-        int red3 = red(pixel(fx+1, fy+1));
+        int red0 = red(pixel(fx, fy));
+        int red1 = red(pixel(fx + 1, fy));
+        int red2 = red(pixel(fx, fy + 1));
+        int red3 = red(pixel(fx + 1, fy + 1));
 
-        int green0 = green(pixel(fx,   fy));
-        int green1 = green(pixel(fx+1, fy));
-        int green2 = green(pixel(fx,   fy+1));
-        int green3 = green(pixel(fx+1, fy+1));
+        int green0 = green(pixel(fx, fy));
+        int green1 = green(pixel(fx + 1, fy));
+        int green2 = green(pixel(fx, fy + 1));
+        int green3 = green(pixel(fx + 1, fy + 1));
 
-        int blue0 = blue(pixel(fx,   fy));
-        int blue1 = blue(pixel(fx+1, fy));
-        int blue2 = blue(pixel(fx,   fy+1));
-        int blue3 = blue(pixel(fx+1, fy+1));
+        int blue0 = blue(pixel(fx, fy));
+        int blue1 = blue(pixel(fx + 1, fy));
+        int blue2 = blue(pixel(fx, fy + 1));
+        int blue3 = blue(pixel(fx + 1, fy + 1));
 
         double xv = x - fx;
         double yv = y - fy;
@@ -186,14 +187,14 @@ public class RotateFilter extends RGBImageFilter {
         double mul0 = (1.0 - xv) * (1.0 - yv);
         double mul1 = xv * (1.0 - yv);
         double mul2 = (1.0 - xv) * yv;
-        double mul3 = xv * yv;        
-                
-        int alpha = (int)Math.round(mul0*alpha0 + mul1*alpha1 + mul2*alpha2 + mul3*alpha3);
-        int blue = (int)Math.round(mul0*blue0 + mul1*blue1 + mul2*blue2 + mul3*blue3);
-        int red = (int)Math.round(mul0*red0 + mul1*red1 + mul2*red2 + mul3*red3);
-        int green = (int)Math.round(mul0*green0 + mul1*green1 + mul2*green2 + mul3*green3);
-        
+        double mul3 = xv * yv;
+
+        int alpha = (int) Math.round(mul0 * alpha0 + mul1 * alpha1 + mul2 * alpha2 + mul3 * alpha3);
+        int blue = (int) Math.round(mul0 * blue0 + mul1 * blue1 + mul2 * blue2 + mul3 * blue3);
+        int red = (int) Math.round(mul0 * red0 + mul1 * red1 + mul2 * red2 + mul3 * red3);
+        int green = (int) Math.round(mul0 * green0 + mul1 * green1 + mul2 * green2 + mul3 * green3);
+
         return combine(alpha, red, green, blue);
     }
-    
+
 }

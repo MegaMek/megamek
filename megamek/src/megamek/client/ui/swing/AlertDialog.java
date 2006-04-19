@@ -14,12 +14,11 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.widget.AdvancedLabel;
-
 import javax.swing.JButton;
-import java.awt.Dialog;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,105 +32,114 @@ import java.awt.event.WindowEvent;
  * the dialog go away.
  */
 public class AlertDialog
-    extends Dialog implements ActionListener
-{
+        extends JDialog implements ActionListener {
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private AdvancedLabel labMessage;
-    
-    public AlertDialog(Frame parent, String title,
+    private JTextArea labMessage;
+
+    public AlertDialog(JFrame parent, String title,
                        String message, boolean modal) {
         super(parent, title, modal);
-        
-        labMessage = new AdvancedLabel(message);
+
+        labMessage = new JTextArea(message);
         butOkay.addActionListener(this);
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-            
-        c.weightx = 1.0;    c.weighty = 1.0;
+
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.fill = GridBagConstraints.VERTICAL;
-        c.ipadx = 20;    c.ipady = 5;
+        c.ipadx = 20;
+        c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
         add(butOkay);
-        
+
         addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) { setVisible(false); }
-    });
-        
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
+
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth() ) {
+        if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
-        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+        if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
-        if ( updateSize ) {
-            setSize( size );
+        if (updateSize) {
+            setSize(size);
             size = getSize();
         }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2 - size.width / 2,
+                parent.getLocation().y + parent.getSize().height / 2 - size.height / 2);
     }
 
-    public AlertDialog(Frame parent, String title, String message) {
+    public AlertDialog(JFrame parent, String title, String message) {
         super(parent, title, true);
-        
-        labMessage = new AdvancedLabel(message);
+
+        labMessage = new JTextArea(message);
         butOkay.addActionListener(this);
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-            
-        c.weightx = 1.0;    c.weighty = 1.0;
+
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.fill = GridBagConstraints.VERTICAL;
-        c.ipadx = 20;    c.ipady = 5;
+        c.ipadx = 20;
+        c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
         add(butOkay);
-        
+
         addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) { setVisible(false); }
-    });
-        
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
+
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth() ) {
+        if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
-        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+        if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
-        if ( updateSize ) {
-            setSize( size );
+        if (updateSize) {
+            setSize(size);
             size = getSize();
         }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2 - size.width / 2,
+                parent.getLocation().y + parent.getSize().height / 2 - size.height / 2);
     }
-    
+
     public void actionPerformed(ActionEvent e) {
-        this.setVisible(false);
+        setVisible(false);
     }
 }

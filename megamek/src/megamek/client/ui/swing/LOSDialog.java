@@ -14,15 +14,15 @@
 
 package megamek.client.ui.swing;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import java.awt.Dialog;
-import java.awt.Frame;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.JLabel;
-import javax.swing.ButtonGroup;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -32,9 +32,9 @@ import java.awt.event.WindowEvent;
 
 // Allows the player to select the type of entity in the hexes used
 // by the LOS tool.
+
 public class LOSDialog
-    extends Dialog implements ActionListener
-{
+        extends JDialog implements ActionListener {
     private JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
 
     /**
@@ -43,15 +43,15 @@ public class LOSDialog
     private JCheckBox[] checkboxes1 = null;
     private JCheckBox[] checkboxes2 = null;
 
-    public LOSDialog(Frame parent, boolean mechInFirst, boolean mechInSecond) {
+    public LOSDialog(JFrame parent, boolean mechInFirst, boolean mechInSecond) {
         super(parent, Messages.getString("LOSDialog.title"), true); //$NON-NLS-1$
         super.setResizable(false);
 
         // closing the window is the same as hitting butOK
         addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    actionPerformed(new ActionEvent(butOK,ActionEvent.ACTION_PERFORMED,butOK.getText()));
-                }
+            public void windowClosing(WindowEvent e) {
+                actionPerformed(new ActionEvent(butOK, ActionEvent.ACTION_PERFORMED, butOK.getText()));
+            }
         });
 
         GridBagLayout gridbag = new GridBagLayout();
@@ -60,15 +60,16 @@ public class LOSDialog
         GridBagConstraints c = new GridBagConstraints();
 
         JLabel labMessage = new JLabel(Messages.getString("LOSDialog.inFirstHex"), JLabel.LEFT); //$NON-NLS-1$
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.gridwidth = 0;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-        
+
         ButtonGroup radioGroup1 = new ButtonGroup();
         checkboxes1 = new JCheckBox[2];
-        
+
         checkboxes1[0] = new JCheckBox(Messages.getString("LOSDialog.Mech"), mechInFirst); //$NON-NLS-1$
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
@@ -84,15 +85,16 @@ public class LOSDialog
         add(checkboxes1[1]);
 
         labMessage = new JLabel(Messages.getString("LOSDialog.InSecondHex"), JLabel.LEFT); //$NON-NLS-1$
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.gridwidth = 0;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-        
+
         ButtonGroup radioGroup2 = new ButtonGroup();
         checkboxes2 = new JCheckBox[2];
-        
+
         checkboxes2[0] = new JCheckBox(Messages.getString("LOSDialog.Mech"), mechInSecond); //$NON-NLS-1$
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
@@ -116,8 +118,8 @@ public class LOSDialog
 
         pack();
 
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
+                parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
 
         // we'd like the OK button to have focus, but that can only be done on displayed
         // dialogs in Windows. So, this rather elaborate setup: as soon as the first focusable
@@ -127,6 +129,7 @@ public class LOSDialog
             public void focusGained(FocusEvent e) {
                 butOK.requestFocus();
             }
+
             public void focusLost(FocusEvent e) {
                 checkboxes1[0].removeFocusListener(this); // refers to listener
             }
@@ -134,14 +137,14 @@ public class LOSDialog
     }
 
     public void actionPerformed(ActionEvent e) {
-        this.setVisible(false);
+        setVisible(false);
     }
 
     public boolean getMechInFirst() {
-        return this.checkboxes1[0].isSelected() == true;
+        return checkboxes1[0].isSelected();
     }
 
     public boolean getMechInSecond() {
-        return this.checkboxes2[0].isSelected() == true;
+        return checkboxes2[0].isSelected();
     }
 } 

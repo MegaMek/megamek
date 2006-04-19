@@ -14,26 +14,27 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.widget.AdvancedLabel;
 import megamek.common.Entity;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.actions.TriggerAPPodAction;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import java.awt.Dialog;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import javax.swing.JButton;
-import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -42,15 +43,18 @@ import java.util.Vector;
  * trigger an Anti-Personell Pod on one of their units.
  */
 public class TriggerAPPodDialog
-    extends Dialog implements ActionListener
-{
+        extends JDialog implements ActionListener {
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private AdvancedLabel labMessage;
+    private JTextArea labMessage;
 
-    /** The <code>FirePodTracker</code>s for the entity's active AP Pods. */
-    private Vector trackers = new Vector();
+    /**
+     * The <code>FirePodTracker</code>s for the entity's active AP Pods.
+     */
+    private ArrayList<TriggerPodTracker> trackers = new ArrayList<TriggerPodTracker>();
 
-    /** The <code>int</code> ID of the entity that can fire AP Pods. */
+    /**
+     * The <code>int</code> ID of the entity that can fire AP Pods.
+     */
     private int entityId = Entity.NONE;
 
     /**
@@ -58,14 +62,20 @@ public class TriggerAPPodDialog
      */
     private class TriggerPodTracker {
 
-        /** The equipment number of the AP Pod that this is listening to. */
+        /**
+         * The equipment number of the AP Pod that this is listening to.
+         */
         private int podNum = Entity.NONE;
 
-        /** The <code>JCheckBox</code> being tracked. */
+        /**
+         * The <code>JCheckBox</code> being tracked.
+         */
         private JCheckBox checkbox = null;
 
-        /** Create a tracker. */
-        public TriggerPodTracker( JCheckBox box, int pod ) {
+        /**
+         * Create a tracker.
+         */
+        public TriggerPodTracker(JCheckBox box, int pod) {
             podNum = pod;
             checkbox = box;
         }
@@ -75,59 +85,62 @@ public class TriggerAPPodDialog
          *
          * @return <code>true</code> if the pod should be triggered.
          */
-        public boolean isTriggered() { return checkbox.isSelected(); }
+        public boolean isTriggered() {
+            return checkbox.isSelected();
+        }
 
         /**
          * Get the equipment number of this AP Pod.
          *
          * @return the <code>int</code> of the pod.
          */
-        public int getNum() { return podNum; }
+        public int getNum() {
+            return podNum;
+        }
     }
 
     /**
      * Display a dialog that shows the AP Pods on the entity, and allows
      * the player to fire any active pods.
      *
-     * @param   parent the <code>Frame</code> parent of this dialog
-     * @param   entity the <code>Entity</code> that can fire AP Pods.
+     * @param parent the <code>Frame</code> parent of this dialog
+     * @param entity the <code>Entity</code> that can fire AP Pods.
      */
-    public TriggerAPPodDialog( Frame parent, Entity entity ) {
+    public TriggerAPPodDialog(JFrame parent, Entity entity) {
         super(parent, Messages.getString("TriggerAPPodDialog.title"), true); //$NON-NLS-1$
-        this.entityId = entity.getId();
+        entityId = entity.getId();
 
-        labMessage = new AdvancedLabel(Messages.getString("TriggerAPPodDialog.selectPodsToTrigger",new Object[]{entity.getDisplayName()})); //$NON-NLS-1$ 
+        labMessage = new JTextArea(Messages.getString("TriggerAPPodDialog.selectPodsToTrigger", new Object[]{entity.getDisplayName()})); //$NON-NLS-1$
 
         // AP Pod checkbox panel.
         JPanel panPods = new JPanel();
-        panPods.setLayout( new GridLayout(0, 1) );
+        panPods.setLayout(new GridLayout(0, 1));
 
         // Walk through the entity's misc equipment, looking for AP Pods.
-        for(Mounted mount : entity.getMisc()){
+        for (Mounted mount : entity.getMisc()) {
 
             // Is this an AP Pod?
-            if ( mount.getType().hasFlag( MiscType.F_AP_POD ) ) {
+            if (mount.getType().hasFlag(MiscType.F_AP_POD)) {
 
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();
-                message.append( entity.getLocationName(mount.getLocation()) )
-                    .append( " " ) //$NON-NLS-1$
-                    .append( mount.getName() );
-                JCheckBox pod = new JCheckBox( message.toString() );
-                panPods.add( pod );
+                message.append(entity.getLocationName(mount.getLocation()))
+                        .append(" ")//$NON-NLS-1$
+                        .append(mount.getName());
+                JCheckBox pod = new JCheckBox(message.toString());
+                panPods.add(pod);
 
                 // Can the entity fire the pod?
                 if (mount.canFire()) {
                     // Yup.  Add a traker for this pod.
                     TriggerPodTracker tracker = new TriggerPodTracker
-                        ( pod, entity.getEquipmentNum( mount ) );
-                    trackers.addElement( tracker );
-                }
-                else {
+                            (pod, entity.getEquipmentNum(mount));
+                    trackers.add(tracker);
+                } else {
                     // Nope.  Disable the checkbox.
-                    pod.setEnabled( false );
+                    pod.setEnabled(false);
                 }
-                
+
             } // End found-AP-Pod
 
         } // Look at the next piece of equipment.
@@ -139,67 +152,70 @@ public class TriggerAPPodDialog
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-            
+
         gridbag.setConstraints(panPods, c);
         add(panPods);
 
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.fill = GridBagConstraints.VERTICAL;
-        c.ipadx = 20;    c.ipady = 5;
+        c.ipadx = 20;
+        c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
         add(butOkay);
-        
+
         addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) { setVisible(false); }
-    });
-        
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
+
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
+        if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
-        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+        if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
-        if ( updateSize ) {
-            setSize( size );
+        if (updateSize) {
+            setSize(size);
             size = getSize();
         }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2 - size.width / 2,
+                parent.getLocation().y + parent.getSize().height / 2 - size.height / 2);
     }
-    
+
     public void actionPerformed(ActionEvent e) {
-        this.setVisible(false);
+        setVisible(false);
     }
 
     /**
      * Get the trigger actions that the user selected.
      *
-     * @return  the <code>Enumeration</code> of <code>TriggerAPPodAction</code>
-     *          objects that match the user's selections.
+     * @return the <code>Enumeration</code> of <code>TriggerAPPodAction</code>
+     *         objects that match the user's selections.
      */
     public Enumeration getActions() {
         Vector temp = new Vector();
 
         // Walk through the list of AP Pod trackers.
-        Enumeration pods = trackers.elements();
-        while ( pods.hasMoreElements() ) {
-            TriggerPodTracker pod = (TriggerPodTracker) pods.nextElement();
+        for (TriggerPodTracker pod : trackers) {
 
             // Should we create an action for this pod?
-            if ( pod.isTriggered() ) {
-                temp.addElement( new TriggerAPPodAction
-                                 ( entityId, pod.getNum() ) );
+            if (pod.isTriggered()) {
+                temp.addElement(new TriggerAPPodAction
+                        (entityId, pod.getNum()));
             }
         }
 

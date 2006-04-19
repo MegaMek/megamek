@@ -28,86 +28,81 @@ import java.awt.Polygon;
 import java.util.Vector;
 
 /**
- * Class which keeps set of all areas required to 
+ * Class which keeps set of all areas required to
  * represent Tank unit in MechDsiplay.ArmorPanel class.
  */
-
-
 
 public class VTOLMapSet implements DisplayMapSet {
 
     private static final String IMAGE_DIR = "data/images/widgets";
-    
+
     private Component comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[16];
     private PMSimpleLabel[] labels = new PMSimpleLabel[22];
     private PMValueLabel[] vLabels = new PMValueLabel[16];
-    private Vector  bgDrawers = new Vector();
+    private Vector bgDrawers = new Vector();
     private PMAreasGroup content = new PMAreasGroup();
-  
+
     private static final int INT_STR_OFFSET = 8;
     //Polygons for all areas
-    private Polygon frontArmor = new Polygon(new int[]{30,60,90,120},
-                                             new int[]{30,0,0,30},
-                                             4);
+    private Polygon frontArmor = new Polygon(new int[]{30, 60, 90, 120},
+            new int[]{30, 0, 0, 30},
+            4);
     //front internal structure
-    private Polygon frontIS = new Polygon(new int[]{30,120,90,60},
-                                          new int[]{30,30,45,45},
-                                          4);
+    private Polygon frontIS = new Polygon(new int[]{30, 120, 90, 60},
+            new int[]{30, 30, 45, 45},
+            4);
     //Left armor
-    private Polygon leftArmor1 = new Polygon(new int[]{30,30,60,60},
-                                             new int[]{75,30,45,75},
-                                             4);  
-    private Polygon leftArmor2 = new Polygon(new int[]{30,30,60,60},
-                                             new int[]{135,90,90,150},
-                                             4);
+    private Polygon leftArmor1 = new Polygon(new int[]{30, 30, 60, 60},
+            new int[]{75, 30, 45, 75},
+            4);
+    private Polygon leftArmor2 = new Polygon(new int[]{30, 30, 60, 60},
+            new int[]{135, 90, 90, 150},
+            4);
     //Left internal structure
-    private Polygon leftIS1 = new Polygon(new int[]{60,60,75,75},
-                                          new int[]{75,45,45,75},
-                                          4);
-    private Polygon leftIS2 = new Polygon(new int[]{60,60,75,75},
-                                          new int[]{150,90,90,150},
-                                          4);
+    private Polygon leftIS1 = new Polygon(new int[]{60, 60, 75, 75},
+            new int[]{75, 45, 45, 75},
+            4);
+    private Polygon leftIS2 = new Polygon(new int[]{60, 60, 75, 75},
+            new int[]{150, 90, 90, 150},
+            4);
     //Right armor
-    private Polygon rightArmor1 = new Polygon(new int[]{90,90,120,120},
-                                              new int[]{75,45,30,75},
-                                              4);
-    private Polygon rightArmor2 = new Polygon(new int[]{90,90,120,120},
-                                              new int[]{150,90,90,135},
-                                              4);
+    private Polygon rightArmor1 = new Polygon(new int[]{90, 90, 120, 120},
+            new int[]{75, 45, 30, 75},
+            4);
+    private Polygon rightArmor2 = new Polygon(new int[]{90, 90, 120, 120},
+            new int[]{150, 90, 90, 135},
+            4);
     //Right internal structure
-    private Polygon rightIS1 = new Polygon(new int[]{75,75,90,90},
-                                           new int[]{75,45,45,75},
-                                           4);
-    private Polygon rightIS2 = new Polygon(new int[]{75,75,90,90},
-                                           new int[]{150,90,90,150},
-                                           4);
+    private Polygon rightIS1 = new Polygon(new int[]{75, 75, 90, 90},
+            new int[]{75, 45, 45, 75},
+            4);
+    private Polygon rightIS2 = new Polygon(new int[]{75, 75, 90, 90},
+            new int[]{150, 90, 90, 150},
+            4);
     //Rear armor
-    private Polygon rearArmor = new Polygon(new int[]{67,67,83,83},
-                                            new int[]{180,150,150,180},
-                                            4);
+    private Polygon rearArmor = new Polygon(new int[]{67, 67, 83, 83},
+            new int[]{180, 150, 150, 180},
+            4);
     //Rear internal structure
-    private Polygon rearIS = new Polygon(new int[]{67,67,83,83},
-                                         new int[]{240,180,180,240},
-                                         4);
+    private Polygon rearIS = new Polygon(new int[]{67, 67, 83, 83},
+            new int[]{240, 180, 180, 240},
+            4);
     //Rotor armor
-    private Polygon rotorArmor1 = new Polygon(new int[]{0,0,45,45},
-                                               new int[]{90,75,75,90},
-                                               4);
-    private Polygon rotorArmor2 = new Polygon(new int[]{105,105,150,150},
-                                               new int[]{90,75,75,90},
-                                               4);
+    private Polygon rotorArmor1 = new Polygon(new int[]{0, 0, 45, 45},
+            new int[]{90, 75, 75, 90},
+            4);
+    private Polygon rotorArmor2 = new Polygon(new int[]{105, 105, 150, 150},
+            new int[]{90, 75, 75, 90},
+            4);
     //Rotor internal structure
-    private Polygon rotorIS = new Polygon(new int[]{45,45,105,105},
-                                           new int[]{90,75,75,90},
-                                           4);
+    private Polygon rotorIS = new Polygon(new int[]{45, 45, 105, 105},
+            new int[]{90, 75, 75, 90},
+            4);
 
-    
-    private static final Font       FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
-    private static final Font       FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
- 
-  
-  
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
+
     public VTOLMapSet(Component c) {
         comp = c;
         setAreas();
@@ -116,66 +111,96 @@ public class VTOLMapSet implements DisplayMapSet {
         translateAreas();
         setContent();
     }
-  
+
     public void setRest() {
     }
-  
+
     public PMAreasGroup getContentGroup() {
         return content;
     }
-    
+
     public Vector getBackgroundDrawers() {
         return bgDrawers;
     }
-    
+
     public void setEntity(Entity e) {
         VTOL t = (VTOL) e;
         int a = 1;
         int a0 = 1;
         int x = 0;
-        for(int i = 1; i <= 8; i++) {
+        for (int i = 1; i <= 8; i++) {
             switch (i) {
-                case 1: x = 1; break;
-                case 2: x = 2; break;
-                case 3: x = 2; break;
-                case 4: x = 3; break;
-                case 5: x = 3; break;
-                case 6: x = 4; break;
-                case 7: x = 5; break;
-                case 8: x = 5; break;
+                case 1:
+                    x = 1;
+                    break;
+                case 2:
+                    x = 2;
+                    break;
+                case 3:
+                    x = 2;
+                    break;
+                case 4:
+                    x = 3;
+                    break;
+                case 5:
+                    x = 3;
+                    break;
+                case 6:
+                    x = 4;
+                    break;
+                case 7:
+                    x = 5;
+                    break;
+                case 8:
+                    x = 5;
+                    break;
             }
             a = t.getArmor(x);
             a0 = t.getOArmor(x);
             vLabels[i].setValue(t.getArmorString(x));
-            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a / (double) a0);
         }
-        for(int i = 9; i <= 15; i++) {
+        for (int i = 9; i <= 15; i++) {
             switch (i) {
-                case 9: x = 1; break;
-                case 10: x = 2; break;
-                case 11: x = 2; break;
-                case 12: x = 3; break;
-                case 13: x = 3; break;
-                case 14: x = 4; break;
-                case 15: x = 5; break;
+                case 9:
+                    x = 1;
+                    break;
+                case 10:
+                    x = 2;
+                    break;
+                case 11:
+                    x = 2;
+                    break;
+                case 12:
+                    x = 3;
+                    break;
+                case 13:
+                    x = 3;
+                    break;
+                case 14:
+                    x = 4;
+                    break;
+                case 15:
+                    x = 5;
+                    break;
             }
             a = t.getInternal(x);
             a0 = t.getOInternal(x);
             vLabels[i].setValue(t.getInternalString(x));
-            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a / (double) a0);
         }
     }
-    
+
     private void setContent() {
-        for(int i = 1; i <= 15; i++) {
+        for (int i = 1; i <= 15; i++) {
             content.addArea(areas[i]);
             content.addArea(vLabels[i]);
         }
-        for(int i = 1; i <= 21; i++) {
+        for (int i = 1; i <= 21; i++) {
             content.addArea(labels[i]);
         }
     }
-  
+
     private void setAreas() {
         areas[1] = new PMSimplePolygonArea(frontArmor);
         areas[2] = new PMSimplePolygonArea(rightArmor1);
@@ -193,36 +218,36 @@ public class VTOLMapSet implements DisplayMapSet {
         areas[14] = new PMSimplePolygonArea(rearIS);
         areas[15] = new PMSimplePolygonArea(rotorIS);
     }
-  
+
     private void setLabels() {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
     
         //Labels for Front view
-        labels[1] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontArmor"), fm, Color.black,68,20); //$NON-NLS-1$
-        labels[2] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"), fm, Color.black,44,50); //$NON-NLS-1$
-        labels[3] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"), fm, Color.black,44,100); //$NON-NLS-1$
-        labels[4] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"), fm, Color.black,104,50); //$NON-NLS-1$
-        labels[5] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"), fm, Color.black,104,100); //$NON-NLS-1$
-        labels[6] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor1"), fm, Color.black,76,185); //$NON-NLS-1$
-        labels[7] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor2"), fm, Color.black,76,195); //$NON-NLS-1$
-        labels[8] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"), fm, Color.black,18,82); //$NON-NLS-1$
-        labels[9] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"), fm, Color.black,123,82); //$NON-NLS-1$
-        labels[10] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontIS"), fm, Color.black,68,35); //$NON-NLS-1$
-        labels[11] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"), fm, Color.black,68,48); //$NON-NLS-1$
-        labels[12] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"), fm, Color.black,68,57); //$NON-NLS-1$
-        labels[13] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"), fm, Color.black,68,100); //$NON-NLS-1$
-        labels[14] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"), fm, Color.black,68,110); //$NON-NLS-1$
-        labels[15] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"), fm, Color.black,84,48); //$NON-NLS-1$
-        labels[16] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"), fm, Color.black,84,57); //$NON-NLS-1$
-        labels[17] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"), fm, Color.black,84,100); //$NON-NLS-1$
-        labels[18] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"), fm, Color.black,84,110); //$NON-NLS-1$
-        labels[19] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS1"), fm, Color.black,76,152); //$NON-NLS-1$
-        labels[20] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS2"), fm, Color.black,76,161); //$NON-NLS-1$
-        labels[21] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorIS"), fm, Color.black,73,82); //$NON-NLS-1$
+        labels[1] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontArmor"), fm, Color.black, 68, 20); //$NON-NLS-1$
+        labels[2] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"), fm, Color.black, 44, 50); //$NON-NLS-1$
+        labels[3] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"), fm, Color.black, 44, 100); //$NON-NLS-1$
+        labels[4] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"), fm, Color.black, 104, 50); //$NON-NLS-1$
+        labels[5] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"), fm, Color.black, 104, 100); //$NON-NLS-1$
+        labels[6] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor1"), fm, Color.black, 76, 185); //$NON-NLS-1$
+        labels[7] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor2"), fm, Color.black, 76, 195); //$NON-NLS-1$
+        labels[8] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"), fm, Color.black, 18, 82); //$NON-NLS-1$
+        labels[9] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"), fm, Color.black, 123, 82); //$NON-NLS-1$
+        labels[10] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontIS"), fm, Color.black, 68, 35); //$NON-NLS-1$
+        labels[11] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"), fm, Color.black, 68, 48); //$NON-NLS-1$
+        labels[12] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"), fm, Color.black, 68, 57); //$NON-NLS-1$
+        labels[13] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"), fm, Color.black, 68, 100); //$NON-NLS-1$
+        labels[14] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"), fm, Color.black, 68, 110); //$NON-NLS-1$
+        labels[15] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"), fm, Color.black, 84, 48); //$NON-NLS-1$
+        labels[16] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"), fm, Color.black, 84, 57); //$NON-NLS-1$
+        labels[17] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"), fm, Color.black, 84, 100); //$NON-NLS-1$
+        labels[18] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"), fm, Color.black, 84, 110); //$NON-NLS-1$
+        labels[19] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS1"), fm, Color.black, 76, 152); //$NON-NLS-1$
+        labels[20] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS2"), fm, Color.black, 76, 161); //$NON-NLS-1$
+        labels[21] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorIS"), fm, Color.black, 73, 82); //$NON-NLS-1$
     
         //Value labels for all parts of mek
         //front 
-        fm = comp.getFontMetrics(FONT_VALUE);   
+        fm = comp.getFontMetrics(FONT_VALUE);
         vLabels[1] = WidgetUtils.createValueLabel(101, 22, "", fm); //$NON-NLS-1$ Front
         vLabels[2] = WidgetUtils.createValueLabel(44, 65, "", fm); //$NON-NLS-1$ LS
         vLabels[3] = WidgetUtils.createValueLabel(44, 115, "", fm); //$NON-NLS-1$ LS
@@ -239,66 +264,66 @@ public class VTOLMapSet implements DisplayMapSet {
         vLabels[14] = WidgetUtils.createValueLabel(76, 172, "", fm); //$NON-NLS-1$ Rear
         vLabels[15] = WidgetUtils.createValueLabel(98, 83, "", fm); //$NON-NLS-1$ Rotor
     }
-    
+
     private void setBackGround() {
-        Image tile = comp.getToolkit().getImage(IMAGE_DIR+"/tile.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
+        Image tile = comp.getToolkit().getImage(IMAGE_DIR + "/tile.gif"); //$NON-NLS-1$
+        PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-        b = BackGroundDrawer.TILING_HORIZONTAL | 
-            BackGroundDrawer.VALIGN_TOP;
-        tile = comp.getToolkit().getImage(IMAGE_DIR+"/h_line.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));                
-        
-        b = BackGroundDrawer.TILING_HORIZONTAL | 
-            BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage(IMAGE_DIR+"/h_line.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-        b = BackGroundDrawer.TILING_VERTICAL | 
-            BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(IMAGE_DIR+"/v_line.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-        b = BackGroundDrawer.TILING_VERTICAL | 
-            BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(IMAGE_DIR+"/v_line.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-        b = BackGroundDrawer.NO_TILING | 
-            BackGroundDrawer.VALIGN_TOP |
-            BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(IMAGE_DIR+"/tl_corner.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-        b = BackGroundDrawer.NO_TILING | 
-            BackGroundDrawer.VALIGN_BOTTOM |
-            BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(IMAGE_DIR+"/bl_corner.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-        b = BackGroundDrawer.NO_TILING | 
-            BackGroundDrawer.VALIGN_TOP |
-            BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(IMAGE_DIR+"/tr_corner.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
-        
-        b = BackGroundDrawer.NO_TILING | 
-            BackGroundDrawer.VALIGN_BOTTOM |
-            BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(IMAGE_DIR+"/br_corner.gif"); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.TILING_HORIZONTAL |
+                BackGroundDrawer.VALIGN_TOP;
+        tile = comp.getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.TILING_HORIZONTAL |
+                BackGroundDrawer.VALIGN_BOTTOM;
+        tile = comp.getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.TILING_VERTICAL |
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = comp.getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.TILING_VERTICAL |
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING |
+                BackGroundDrawer.VALIGN_TOP |
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = comp.getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING |
+                BackGroundDrawer.VALIGN_BOTTOM |
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = comp.getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING |
+                BackGroundDrawer.VALIGN_TOP |
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING |
+                BackGroundDrawer.VALIGN_BOTTOM |
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
-    
+
     private void translateAreas() {
     }
 }

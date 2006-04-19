@@ -26,8 +26,8 @@ public interface DoneButtoned {
     /**
      * Retrieve the "Done" button of this object.
      *
-     * @return  the <code>javax.swing.JButton</code> that activates this
-     *          object's "Done" action.
+     * @return the <code>javax.swing.JButton</code> that activates this
+     *         object's "Done" action.
      */
     public JButton getDoneButton();
 }

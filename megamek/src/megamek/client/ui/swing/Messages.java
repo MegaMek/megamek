@@ -36,16 +36,17 @@ public class Messages {
             return '!' + key + '!';
         }
     }
+
     /**
      * Returns the formatted message for the given key in
-     * the resource bundle. 
+     * the resource bundle.
      *
-     * @param key the resource name
+     * @param key  the resource name
      * @param args the message arguments
      * @return the string
-     */ 
+     */
     public static String getString(String key, Object[] args) {
-        return MessageFormat.format(getString(key),args);
+        return MessageFormat.format(getString(key), args);
     }
-    
+
 }

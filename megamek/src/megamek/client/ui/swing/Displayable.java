@@ -19,14 +19,22 @@ import java.awt.Graphics;
 import java.awt.Point;
 
 public interface Displayable {
-    
+
     public void draw(Graphics graph, Dimension size);
+
     public void setIdleTime(long timeIdle, boolean add);
+
     public boolean isHit(Point p, Dimension size);
+
     public boolean isMouseOver(Point p, Dimension size);
+
     public boolean isDragged(Point p, Dimension size);
+
     public boolean isBeingDragged();
+
     public boolean isSliding();
+
     public boolean slide();
+
     public boolean isReleased();
 }

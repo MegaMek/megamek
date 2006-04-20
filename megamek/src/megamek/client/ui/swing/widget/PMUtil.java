@@ -15,21 +15,17 @@
 package megamek.client.ui.swing.widget;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Image;
 import java.awt.MediaTracker;
-import java.awt.Window;
 
 /**
  * Set of usefull function.
  */
-
 public final class PMUtil {
 
     /**
      * Ensures that Images is completely loaded
      */
-
     public static boolean setImage(Image im, Component c) {
         boolean b = true;
         MediaTracker mt = new MediaTracker(c);
@@ -44,20 +40,6 @@ public final class PMUtil {
             System.out.println("Could Not load Image."); //$NON-NLS-1$
             b = false;
         }
-
         return b;
     }
-
-    /**
-     * Returns Window class that contains given component
-     */
-
-    public static Window getParentWindow(Component c) {
-        Container container = c.getParent();
-        while (!(container instanceof Window) || (container == null)) {
-            container = container.getParent();
-        }
-        return (Window) container;
-    }
-
 }

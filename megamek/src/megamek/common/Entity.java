@@ -592,7 +592,7 @@ public abstract class Entity extends TurnOrdered
     public void setProne(boolean prone) {
         this.prone = prone;
         if(prone) {
-        	hullDown = false;
+            hullDown = false;
         }
     }
 
@@ -2014,22 +2014,22 @@ public abstract class Entity extends TurnOrdered
     /**
      * Check if the entity has an arbritrary type of misc
      * equipment
-     * @param flag		A MiscType.F_XXX
+     * @param flag      A MiscType.F_XXX
      * @param secondary A MiscType.S_XXX or -1 for don't care
      * @return true if at least one ready item.
      */
     public boolean hasWorkingMisc(long flag, int secondary) {
-    	for (Mounted m : miscList) {
-    		if(m.getType() instanceof MiscType &&
-    				m.isReady()) {
-    			MiscType type = (MiscType)m.getType();
-    			if(type.hasFlag(flag) &&
-    					(secondary == -1 || 
-    							type.hasSubType(secondary)))
-    				return true;
-    		}
-    	}
-    	return false;
+        for (Mounted m : miscList) {
+            if(m.getType() instanceof MiscType &&
+                    m.isReady()) {
+                MiscType type = (MiscType)m.getType();
+                if(type.hasFlag(flag) &&
+                        (secondary == -1 || 
+                                type.hasSubType(secondary)))
+                    return true;
+            }
+        }
+        return false;
     }
     
     /**
@@ -3637,8 +3637,8 @@ public abstract class Entity extends TurnOrdered
         }
 
         if(isHullDown()) {
-        	roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "getting up from hull down");
-        	return roll;
+            roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "getting up from hull down");
+            return roll;
         }
         
         if (!needsRollToStand() && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
@@ -5590,7 +5590,7 @@ public abstract class Entity extends TurnOrdered
     }
     
     public boolean canGoHullDown () {
-    	return false;
+        return false;
     }
     
     public boolean canAssaultDrop() {

@@ -34,6 +34,7 @@ public class Tank
     private boolean m_bImmobileHit = false;
     private int burningLocations = 0;
     private int movementDamage = 0;
+    private boolean infernoFire = false;
     
     // locations
     public static final int        LOC_BODY               = 0;
@@ -855,13 +856,18 @@ public class Tank
     	return game.getOptions().booleanOption("hull_down");
     }
     
-    public void setOnFire() {
+    public void setOnFire(boolean inferno) {
+        infernoFire |= inferno;
         burningLocations = (1<<locations()) - 1;
         extinguishLocation(LOC_BODY);
     }
     
     public boolean isOnFire() {
         return (burningLocations != 0) || infernos.isStillBurning();
+    }
+    
+    public boolean isInfernoFire() {
+        return infernoFire;
     }
     
     public boolean isLocationBurning(int location) {
@@ -872,6 +878,12 @@ public class Tank
     public void extinguishLocation(int location) {
         int flag = ~(1<<location);
         burningLocations &= flag;
+    }
+    
+    public void extinguishAll() {
+        burningLocations = 0;
+        infernoFire = false;
+        infernos.clear();
     }
     
     public void addMovementDamage(int level) {

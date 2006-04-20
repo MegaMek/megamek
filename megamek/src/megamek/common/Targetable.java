@@ -24,6 +24,7 @@ public interface Targetable
     public static final int TYPE_MINEFIELD_CLEAR      = 5;
     public static final int TYPE_MINEFIELD_DELIVER    = 6;
     public static final int TYPE_HEX_ARTILLERY        = 7;
+    public static final int TYPE_HEX_EXTINGUISH       = 8;
     public static final int TYPE_INARC_POD            = 11;
     public static final int TYPE_SEARCHLIGHT          = 12;
     public static final int TYPE_FLARE_DELIVER        = 13;

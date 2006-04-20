@@ -57,6 +57,7 @@ public class WeaponType extends EquipmentType {
     public static final long     F_TAG                = 0x008000000L; // Target acquisition gear
     public static final long     F_C3M                = 0x010000000L; // C3 Master with Target acquisition gear
     public static final long     F_PLASMA_MFUK        = 0x020000000L; // Plasma Rifle
+    public static final long     F_EXTINGUISHER       = 0x040000000L; // Fire extinguisher
 
     protected RangeType rangeL;
     protected int   heat;
@@ -332,6 +333,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISSNPPC());
         EquipmentType.addType(createISRailGun());
         EquipmentType.addType(createISMagshotGR());
+        EquipmentType.addType(createFireExtinguisher());
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
         EquipmentType.addType(createCLERLargeLaser());
@@ -614,10 +616,10 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange =4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_FLAMER | F_ENERGY;
+        weapon.flags |= F_FLAMER | F_BALLISTIC;
         weapon.bv = 5;
         weapon.cost = 7500;
-        String[] modes = { "Damage", "Heat" };
+        String[] modes = { "Damage", "Heat", "Cool" };
         weapon.setModes(modes);
 
         return weapon;
@@ -3325,9 +3327,9 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_FLAMER | F_ENERGY;
+        weapon.flags |= F_FLAMER | F_BALLISTIC;
         weapon.bv = 5;
-        String[] modes = { "Damage", "Heat" };
+        String[] modes = { "Damage", "Heat", "Cool" };
         weapon.setModes(modes);
         weapon.cost = 7500;
 
@@ -9400,9 +9402,9 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 8;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
-        weapon.flags |= F_FLAMER | F_ENERGY;
+        weapon.flags |= F_FLAMER | F_BALLISTIC;
         weapon.bv = 20;
-        String[] modes = {"Damage", "Heat"};
+        String[] modes = {"Damage", "Heat", "Cool"};
         weapon.setModes(modes);
         weapon.cost = 20000;
 
@@ -9750,6 +9752,28 @@ public class WeaponType extends EquipmentType {
         weapon.explosive = true;
         weapon.bv = 411;
         weapon.cost = 300000;
+
+        return weapon;
+    }
+
+    public static WeaponType createFireExtinguisher() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Fire Extinguisher";
+        weapon.setInternalName(weapon.name);
+        weapon.heat = 0;
+        weapon.damage = 0;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 1;
+        weapon.longRange = 1; // No long range.
+        weapon.extremeRange = 1; // No Extreme Range
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES | F_EXTINGUISHER;
+        weapon.bv = 0; // ???
 
         return weapon;
     }

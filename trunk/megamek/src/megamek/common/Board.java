@@ -701,6 +701,14 @@ public class Board implements Serializable, IBoard {
         tracker.add( round, hits );
 
     }
+    
+    public void removeInfernoFrom(Coords coords) {
+        // Do nothing if the coords aren't on this board.
+        if ( !this.contains( coords ) ) {
+            return;
+        }
+        infernos.remove(coords);
+    }
 
     /**
      * Determine if the given coordinates has a burning inferno.

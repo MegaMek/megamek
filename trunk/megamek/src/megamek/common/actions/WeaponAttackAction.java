@@ -340,7 +340,22 @@ public class WeaponAttackAction extends AbstractAttackAction {
         } else {
             toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
         }
-    
+
+        //Engineer's fire extinguisher has fixed to hit number,
+        //Note that coolant trucks make a regular attack.
+        if(wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
+            toHit = new ToHitData(8, "fire extinguisher");
+            if(target instanceof Entity && ((Entity)target).infernos.isStillBurning()
+                    || target instanceof Tank && ((Tank)target).isInfernoFire()) {
+                toHit.addModifier(2, "inferno fire");
+            }
+            if(Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()
+               && game.getBoard().isInfernoBurning(target.getPosition())) {
+                    toHit.addModifier(2, "inferno fire");
+            }
+            return toHit;
+        }
+
         if ( ae.hasShield() ){
             //active shield has already been checked as it makes shots impossible
             //time to check passive defense and no defense
@@ -388,7 +403,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
             if (sensorHits == 2) {
                 toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
@@ -578,19 +593,19 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         if(target instanceof Infantry && !wtype.hasFlag(WeaponType.F_FLAMER)) {
-        	if(targHex.containsTerrain(Terrains.FORTIFIED)
+            if(targHex.containsTerrain(Terrains.FORTIFIED)
             || ((Infantry)target).getDugIn() == Infantry.DUG_IN_COMPLETE) {
-    			toHit.addModifier(2, "infantry dug in");
-    		}
+                toHit.addModifier(2, "infantry dug in");
+            }
         }
         
         // add in LOS mods that we've been keeping
         toHit.append(losMods);
         
         if (te != null && te.isHullDown()
-        	&& (te instanceof Mech && los.getTargetCover() > LosEffects.COVER_NONE
-    			|| te instanceof Tank && targHex.containsTerrain(Terrains.FORTIFIED) && te.sideTable(ae.getPosition()) == ToHitData.SIDE_FRONT)) {
-        	toHit.addModifier(2, "Hull down target");
+            && (te instanceof Mech && los.getTargetCover() > LosEffects.COVER_NONE
+                || te instanceof Tank && targHex.containsTerrain(Terrains.FORTIFIED) && te.sideTable(ae.getPosition()) == ToHitData.SIDE_FRONT)) {
+            toHit.addModifier(2, "Hull down target");
         }
     
         // secondary targets modifier,
@@ -764,7 +779,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
         // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
@@ -905,6 +920,34 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return "Target is swarming a Mek.";
         }
+        
+        //"Cool" mode for vehicle flamer requires coolant system
+        boolean vf_cool = false;
+        if(atype != null 
+                && wtype.hasFlag(WeaponType.F_FLAMER)
+                && weapon.curMode().equals("Cool")) {
+            vf_cool = true;
+            if(!ae.hasWorkingMisc(MiscType.F_COOLANT_SYSTEM,-1)) {
+                return "Vehicle does not have a working coolant system";
+            }
+        }
+
+        if(Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {
+            if(!wtype.hasFlag(WeaponType.F_EXTINGUISHER)
+                    && !vf_cool) {
+                return "Weapon can't put out fires";
+            }
+            IHex hexTarget = game.getBoard().getHex(target.getPosition()); 
+            if(!hexTarget.containsTerrain(Terrains.FIRE)) {
+                return "Target is not on fire.";
+            }
+        }
+        else if(wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
+            if(!((target instanceof Tank && ((Tank)target).isOnFire())
+                || (target instanceof Entity && ((Entity)target).infernos.getTurnsLeftToBurn() > 0))) {
+                return "Target is not on fire.";
+            }
+        }
     
         // can't target non-wood hexes for clearing (except thin ice)
         if (Targetable.TYPE_HEX_CLEAR == target.getTargetType()) {
@@ -926,8 +969,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
     
         // Some weapons can't cause fires, but Infernos always can.
-        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno &&
-             Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
+        if ( (vf_cool || wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)
+            && Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
             return "Weapon can not cause fires.";
         }
 

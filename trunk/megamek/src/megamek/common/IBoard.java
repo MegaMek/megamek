@@ -186,6 +186,13 @@ public interface IBoard {
      *          <code>IllegalArgumentException</code> will be thrown.
      */
     public abstract void addInfernoTo(Coords coords, InfernoTracker.Inferno round, int hits);
+
+    /**
+     * Extinguish inferno at the target hex.
+     *
+     * @param   coords - the <code>Coords</code> of the hit.
+     */
+    public abstract void removeInfernoFrom(Coords coords);
     
     /**
      * Determine if the given coordinates has a burning inferno.

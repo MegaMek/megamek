@@ -3266,24 +3266,24 @@ public class BoardView1
                 graph.setColor(Color.darkGray);
                 graph.drawString("D", 40, 71); //$NON-NLS-1$
                 graph.setColor(Color.black);
-                graph.drawString("D", 39, 70); //$NON-NLS-1$            	
+                graph.drawString("D", 39, 70); //$NON-NLS-1$                
             }
             else if (entity instanceof Infantry) {
-            	int dig = ((Infantry)entity).getDugIn();
-            	if(dig == Infantry.DUG_IN_COMPLETE) {
+                int dig = ((Infantry)entity).getDugIn();
+                if(dig == Infantry.DUG_IN_COMPLETE) {
                     // draw "D"
                     graph.setColor(Color.darkGray);
                     graph.drawString("D", 40, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
-                    graph.drawString("D", 39, 70); //$NON-NLS-1$            		
-            	}
-            	else if(dig != Infantry.DUG_IN_NONE) {
+                    graph.drawString("D", 39, 70); //$NON-NLS-1$                    
+                }
+                else if(dig != Infantry.DUG_IN_NONE) {
                     // draw "W"
                     graph.setColor(Color.darkGray);
                     graph.drawString("W", 40, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
-                    graph.drawString("W", 39, 70); //$NON-NLS-1$            		
-            	}
+                    graph.drawString("W", 39, 70); //$NON-NLS-1$                    
+                }
             }
 
             //Lets draw our armor and internal status bars

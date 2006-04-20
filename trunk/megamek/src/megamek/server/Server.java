@@ -3095,23 +3095,23 @@ public class Server implements Runnable {
             
             //check for dig in or fortify
             if(entity instanceof Infantry) {
-            	Infantry inf = (Infantry)entity;
-	            if(step.getType() == MovePath.STEP_DIG_IN) {
-            		inf.setDugIn(Infantry.DUG_IN_WORKING);
-	            	continue;
-	            }
-	            else if(step.getType() == MovePath.STEP_FORTIFY) {
-	            	if(!entity.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
-	            		sendServerChat(entity.getDisplayName() + " failed to fortify because it is missing suitable equipment");
-	            	}
-            		inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
-	            	continue;
-	            }
-	            else if(step.getType() != MovePath.STEP_TURN_LEFT &&
-	            		step.getType() != MovePath.STEP_TURN_RIGHT) {
-	            	//other movement clears dug in status
-	            	inf.setDugIn(Infantry.DUG_IN_NONE);
-	            }
+                Infantry inf = (Infantry)entity;
+                if(step.getType() == MovePath.STEP_DIG_IN) {
+                    inf.setDugIn(Infantry.DUG_IN_WORKING);
+                    continue;
+                }
+                else if(step.getType() == MovePath.STEP_FORTIFY) {
+                    if(!entity.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
+                        sendServerChat(entity.getDisplayName() + " failed to fortify because it is missing suitable equipment");
+                    }
+                    inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
+                    continue;
+                }
+                else if(step.getType() != MovePath.STEP_TURN_LEFT &&
+                        step.getType() != MovePath.STEP_TURN_RIGHT) {
+                    //other movement clears dug in status
+                    inf.setDugIn(Infantry.DUG_IN_NONE);
+                }
             }
 
             // set last step parameters
@@ -7608,6 +7608,59 @@ public class Server implements Runnable {
             return !bMissed;
         }
 
+        // special case fire extinguishing
+        boolean vf_cool = (wtype.hasFlag(WeaponType.F_FLAMER)
+                && wtype.hasModes()
+                && weapon.curMode().equals("Cool"));
+        if (wtype.hasFlag(WeaponType.F_EXTINGUISHER)
+                || vf_cool) {
+            if(!bMissed) {
+                r = new Report(2270);
+                r.subject = subjectId;
+                r.newlines = 0;
+                addReport(r);
+                if(Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {
+                    r = new Report(3540);
+                    r.subject = subjectId;
+                    r.add(target.getPosition().getBoardNum());
+                    r.indent(3);
+                    addReport(r);
+                    game.getBoard().getHex(target.getPosition()).removeTerrain(Terrains.FIRE);
+                    sendChangedHex(target.getPosition());
+                    game.getBoard().removeInfernoFrom(target.getPosition());
+                }
+                else if(target instanceof Entity) {
+                    if(entityTarget.infernos.isStillBurning()
+                            || (target instanceof Tank && ((Tank)target).isOnFire())) {
+                        r = new Report(3550);
+                        r.subject = subjectId;
+                        r.addDesc(entityTarget);
+                        r.newlines = 0;
+                        r.indent(3);
+                        addReport(r);
+                    }
+                    entityTarget.infernos.clear();
+                    if(target instanceof Tank) {
+                        for(int i=0;i<entityTarget.locations();i++)
+                            ((Tank)target).extinguishAll();
+                    }
+                    //coolant also reduces heat of mechs
+                    if(target instanceof Mech
+                       && vf_cool) {
+                        int nDamage = nDamPerHit * hits;
+                        r = new Report(3400);
+                        r.subject = subjectId;
+                        r.indent(2);
+                        r.add(nDamage);
+                        r.choose(false);
+                        addReport(r);
+                        entityTarget.heatBuildup -= nDamage;
+                        hits = 0;
+                    }
+                }
+            }
+            return !bMissed;
+        }
         // yeech.  handle damage. . different weapons do this in very different ways
         int nCluster = 1, nSalvoBonus = 0;
         boolean bSalvo = false;
@@ -8581,6 +8634,7 @@ public class Server implements Runnable {
                 r.subject = subjectId;
                 r.indent(2);
                 r.add(nDamage);
+                r.choose(true);
                 r.newlines = 0;
                 addReport(r);
                 entityTarget.heatBuildup += nDamage;
@@ -17825,7 +17879,7 @@ public class Server implements Runnable {
                     r.subject = tank.getId();
                     r.indent(3);
                     addReport(r);
-                    tank.setOnFire();
+                    tank.setOnFire(inferno);
                 }
             }
         }
@@ -18327,42 +18381,42 @@ public class Server implements Runnable {
      *
      */
     void resolveFortify() {
-    	Enumeration<Entity> entities = game.getEntities();
-    	Report r;
-    	while(entities.hasMoreElements())
-    	{
-    		Entity ent = entities.nextElement();
-    		if(ent instanceof Infantry) {
-    			Infantry inf = (Infantry)ent;
-    			int dig = inf.getDugIn();
-    			if(dig == Infantry.DUG_IN_WORKING) {
-    				r = new Report(5300);
-    				r.addDesc(inf);
-    				r.subject = inf.getId();
-    				addReport(r);
-    			}
-    			else if(dig==Infantry.DUG_IN_FORTIFYING2) {
-    				Coords c = inf.getPosition();
-    				r = new Report(5305);
-    				r.addDesc(inf);
-    				r.add(c.getBoardNum());
-    				r.subject = inf.getId();
-    				addReport(r);
-            		//fortification complete - add to map
-            		IHex hex = game.getBoard().getHex(c);
-            		hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FORTIFIED, 1));
-            		sendChangedHex(c);
-            		//Clear the dig in for any units in same hex, since they get it for free by fort
-            		for(Enumeration<Entity> e = game.getEntities(c); e.hasMoreElements();) {
-            			Entity ent2 = e.nextElement();
-            			if(ent2 instanceof Infantry) {
-            				Infantry inf2 = (Infantry)ent;
-            				inf2.setDugIn(Infantry.DUG_IN_NONE);
-            			}
-            		}
-    			}
-    		}
-    	}
+        Enumeration<Entity> entities = game.getEntities();
+        Report r;
+        while(entities.hasMoreElements())
+        {
+            Entity ent = entities.nextElement();
+            if(ent instanceof Infantry) {
+                Infantry inf = (Infantry)ent;
+                int dig = inf.getDugIn();
+                if(dig == Infantry.DUG_IN_WORKING) {
+                    r = new Report(5300);
+                    r.addDesc(inf);
+                    r.subject = inf.getId();
+                    addReport(r);
+                }
+                else if(dig==Infantry.DUG_IN_FORTIFYING2) {
+                    Coords c = inf.getPosition();
+                    r = new Report(5305);
+                    r.addDesc(inf);
+                    r.add(c.getBoardNum());
+                    r.subject = inf.getId();
+                    addReport(r);
+                    //fortification complete - add to map
+                    IHex hex = game.getBoard().getHex(c);
+                    hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FORTIFIED, 1));
+                    sendChangedHex(c);
+                    //Clear the dig in for any units in same hex, since they get it for free by fort
+                    for(Enumeration<Entity> e = game.getEntities(c); e.hasMoreElements();) {
+                        Entity ent2 = e.nextElement();
+                        if(ent2 instanceof Infantry) {
+                            Infantry inf2 = (Infantry)ent;
+                            inf2.setDugIn(Infantry.DUG_IN_NONE);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

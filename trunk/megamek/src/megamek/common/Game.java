@@ -1038,6 +1038,8 @@ public class Game implements Serializable, IGame
             case Targetable.TYPE_HEX_BOMB :
             case Targetable.TYPE_MINEFIELD_DELIVER :
             case Targetable.TYPE_FLARE_DELIVER :
+            case Targetable.TYPE_HEX_EXTINGUISH :
+            case Targetable.TYPE_HEX_ARTILLERY:
                 return new HexTarget(HexTarget.idToCoords(nID), board, nType);
             case Targetable.TYPE_BUILDING :
             case Targetable.TYPE_BLDG_IGNITE :
@@ -1045,8 +1047,6 @@ public class Game implements Serializable, IGame
                     ( BuildingTarget.idToCoords(nID), board, nType );
             case Targetable.TYPE_MINEFIELD_CLEAR :
                 return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
-            case Targetable.TYPE_HEX_ARTILLERY:
-                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
             case Targetable.TYPE_INARC_POD:
                 return INarcPod.idToInstance( nID );
             default :

@@ -78,6 +78,9 @@ public class HexTarget implements Targetable
         case (Targetable.TYPE_HEX_ARTILLERY) :
             name = Messages.getString("HexTarget.Artillery");
             break;
+        case Targetable.TYPE_HEX_EXTINGUISH:
+            name = Messages.getString("HexTarget.Extinguish");
+            break;
         }
         return "Hex: " + m_coords.getBoardNum() + name;
     }

@@ -354,8 +354,8 @@ public class VTOL extends Tank {
         return true;
     }
     
-    public void setOnFire() {
-        super.setOnFire();
+    public void setOnFire(boolean inferno) {
+        super.setOnFire(inferno);
         extinguishLocation(LOC_ROTOR);
     }
 }

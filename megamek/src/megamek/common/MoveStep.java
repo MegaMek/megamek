@@ -191,7 +191,7 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_DOWN :
                 return "D";
             case MovePath.STEP_HULL_DOWN :
-            	return "HullDown";
+                return "HullDown";
             case MovePath.STEP_CLIMB_MODE_ON:
                 return "CM+";
             case MovePath.STEP_CLIMB_MODE_OFF:
@@ -287,7 +287,7 @@ public class MoveStep implements Serializable {
                 && entity.getMovementMode() != IEntityMovementMode.HOVER
                 && entity.getMovementMode() != IEntityMovementMode.NAVAL
                 && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
-                && entity.getMovementMode() != IEntityMovementMode.SUBMARINE
+                && !(elevation == 0 && entity.getMovementMode() == IEntityMovementMode.SUBMARINE) //sub can't flank underwater
                 && entity.getMovementMode() != IEntityMovementMode.VTOL) {
             setRunProhibited(true);
         }
@@ -411,8 +411,8 @@ public class MoveStep implements Serializable {
                 setMp(1);
                 break;
             case MovePath.STEP_HULL_DOWN :
-            	setMp(2);
-            	break;
+                setMp(2);
+                break;
             case MovePath.STEP_CLIMB_MODE_ON:
                 setClimbMode(true);
                 break;
@@ -907,29 +907,29 @@ public class MoveStep implements Serializable {
         movementType = IEntityMovementType.MOVE_ILLEGAL;
         
         if(prev.isDiggingIn) {
-        	isDiggingIn = true;
-        	if(type != MovePath.STEP_TURN_LEFT
-        	&& type != MovePath.STEP_TURN_RIGHT) {
-        		return; //can't move when digging in
-        	}
-        	movementType = IEntityMovementType.MOVE_LEGAL;
+            isDiggingIn = true;
+            if(type != MovePath.STEP_TURN_LEFT
+            && type != MovePath.STEP_TURN_RIGHT) {
+                return; //can't move when digging in
+            }
+            movementType = IEntityMovementType.MOVE_LEGAL;
         }
         else if (type == MovePath.STEP_DIG_IN || 
-        		type == MovePath.STEP_FORTIFY) {
-    		if(!isInfantry
-    			|| !isFirstStep()) {
-    				return; //can't dig in
-    			}
-    		Infantry inf = (Infantry)entity;
-    		if(inf.getDugIn() != Infantry.DUG_IN_NONE
-    			&& inf.getDugIn() != Infantry.DUG_IN_COMPLETE) {
-    			return; //already dug in
-    		}
-    		if(game.getBoard().getHex(curPos).containsTerrain(Terrains.FORTIFIED)) {
-    			return; //already fortified - pointless
-    		}
-        	isDiggingIn = true;
-    		movementType = IEntityMovementType.MOVE_LEGAL;        	
+                type == MovePath.STEP_FORTIFY) {
+            if(!isInfantry
+                || !isFirstStep()) {
+                    return; //can't dig in
+                }
+            Infantry inf = (Infantry)entity;
+            if(inf.getDugIn() != Infantry.DUG_IN_NONE
+                && inf.getDugIn() != Infantry.DUG_IN_COMPLETE) {
+                return; //already dug in
+            }
+            if(game.getBoard().getHex(curPos).containsTerrain(Terrains.FORTIFIED)) {
+                return; //already fortified - pointless
+            }
+            isDiggingIn = true;
+            movementType = IEntityMovementType.MOVE_LEGAL;          
         }
         
         // check to see if it's trying to flee and can legally do so.
@@ -1133,10 +1133,10 @@ public class MoveStep implements Serializable {
         // only standing quads may go hull down
         if (stepType == MovePath.STEP_HULL_DOWN) {
             if((isProne() || isHullDown()  || !(entity instanceof QuadMech || entity instanceof Tank) || entity.isStuck())) {
-            	movementType = IEntityMovementType.MOVE_ILLEGAL;
+                movementType = IEntityMovementType.MOVE_ILLEGAL;
             }
             if(entity instanceof Tank && !(game.getBoard().getHex(curPos).containsTerrain(Terrains.FORTIFIED))) {
-            	movementType = IEntityMovementType.MOVE_ILLEGAL;
+                movementType = IEntityMovementType.MOVE_ILLEGAL;
             }
         }
 
@@ -1203,8 +1203,8 @@ public class MoveStep implements Serializable {
             setProne(false);
             setHullDown(false);
         } else if (stepType == MovePath.STEP_HULL_DOWN) {
-        	setProne(false);
-        	setHullDown(true);
+            setProne(false);
+            setHullDown(true);
         }
     }
 

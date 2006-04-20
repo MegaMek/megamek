@@ -549,6 +549,7 @@ public class Infantry
         Mounted mounted = getEquipment(wn);
         WeaponType wtype = (WeaponType)mounted.getType();
         if((wtype.hasFlag(WeaponType.F_INFANTRY)
+             || wtype.hasFlag(WeaponType.F_EXTINGUISHER)
              || wtype.getInternalName() == LEG_ATTACK
              || wtype.getInternalName() == SWARM_MEK
              || wtype.getInternalName() == STOP_SWARM)

@@ -962,7 +962,11 @@ public class ClientGUI
                         new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_BOMB)));
                     popup.add(
                         new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
-                    
+                    if(client.game.getOptions().booleanOption("fire")
+                            && h.containsTerrain(Terrains.FIRE)) {
+                        popup.add(new TargetMenuItem(
+                            new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_EXTINGUISH)));
+                    }
                 }
                 if (h != null && curPanel instanceof TargetingPhaseDisplay) {
                     popup.add(

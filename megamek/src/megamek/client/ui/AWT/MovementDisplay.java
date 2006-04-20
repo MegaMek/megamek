@@ -145,7 +145,7 @@ public class MovementDisplay
     
     private Button            butLayMine;
     
-    private Button			  butHullDown;
+    private Button            butHullDown;
 
     private Button            butClimbMode;
 
@@ -506,33 +506,33 @@ public class MovementDisplay
         ArrayList<Button> buttonList = buttonsMech;
         final Entity ce = ce();
         if(ce != null) {
-        	if(ce instanceof Infantry)
-        		buttonList = buttonsInf;
-        	else if(ce instanceof VTOL)
-        		buttonList = buttonsVtol;
-        	else if(ce instanceof Tank)
-        		buttonList = buttonsTank;
+            if(ce instanceof Infantry)
+                buttonList = buttonsInf;
+            else if(ce instanceof VTOL)
+                buttonList = buttonsVtol;
+            else if(ce instanceof Tank)
+                buttonList = buttonsTank;
         }
         //should this layout be skipped? (if nothing enabled)
         boolean ok = false;
         while(!ok && buttonLayout != 0) {
-        	for(int i = buttonLayout * 6;i<(buttonLayout+1)*6 && i<buttonList.size();i++) {
-        		if(buttonList.get(i).isEnabled()) {
-        			ok = true;
-        			break;
-        		}
-        	}
-        	if(!ok) {
-	        	//skip as nothing was enabled
-	        	buttonLayout++;
-	        	if(buttonLayout*6 >= buttonList.size())
-	        		buttonLayout = 0;
-        	}
+            for(int i = buttonLayout * 6;i<(buttonLayout+1)*6 && i<buttonList.size();i++) {
+                if(buttonList.get(i).isEnabled()) {
+                    ok = true;
+                    break;
+                }
+            }
+            if(!ok) {
+                //skip as nothing was enabled
+                buttonLayout++;
+                if(buttonLayout*6 >= buttonList.size())
+                    buttonLayout = 0;
+            }
         }
 
         panButtons.add(butNext);
         for(int i=buttonLayout*6;i<(buttonLayout+1)*6 && i<buttonList.size();i++) {
-        	panButtons.add(buttonList.get(i));
+            panButtons.add(buttonList.get(i));
         }
         panButtons.add(butMore);
 
@@ -609,11 +609,11 @@ public class MovementDisplay
         }
 
         if(ce instanceof Infantry) {
-        	butDigIn.setEnabled(true);
-        	butFortify.setEnabled(true);
+            butDigIn.setEnabled(true);
+            butFortify.setEnabled(true);
         } else {
-        	butDigIn.setEnabled(false);
-        	butFortify.setEnabled(false);
+            butDigIn.setEnabled(false);
+            butFortify.setEnabled(false);
         }
         setTurnEnabled(!ce.isImmobile() && 
                 !ce.isStuck() &&
@@ -640,14 +640,14 @@ public class MovementDisplay
         updateElevationButtons();
         
         if(isInfantry && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL))
-        	butFortify.setEnabled(true);
+            butFortify.setEnabled(true);
         else
-        	butFortify.setEnabled(false);
+            butFortify.setEnabled(false);
         
         if(isInfantry && client.game.getOptions().booleanOption("maxtech_dig_in"))
-        	butDigIn.setEnabled(true);
+            butDigIn.setEnabled(true);
         else
-        	butDigIn.setEnabled(false);
+            butDigIn.setEnabled(false);
         
         setLayMineEnabled(ce.canLayMine());
 
@@ -1784,11 +1784,11 @@ public class MovementDisplay
                 moveTo(cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_DIG_IN)) {
-        	cmd.addStep(MovePath.STEP_DIG_IN);
+            cmd.addStep(MovePath.STEP_DIG_IN);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_FORTIFY)) {
-        	cmd.addStep(MovePath.STEP_FORTIFY);
+            cmd.addStep(MovePath.STEP_FORTIFY);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
         }

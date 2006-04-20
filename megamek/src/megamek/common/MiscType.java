@@ -61,6 +61,7 @@ public class MiscType extends EquipmentType {
     public static final long     F_JUMP_BOOSTER      = 0x040000000L;
     public static final long     F_HARJEL            = 0x080000000L;
     public static final long     F_UMU               = 0x100000000L;
+    public static final long     F_COOLANT_SYSTEM    = 0x200000000L;
 
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
@@ -475,6 +476,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLLargeVibroblade());
         EquipmentType.addType(createISBuzzsaw());
         EquipmentType.addType(createCLBuzzsaw());
+        EquipmentType.addType(createCoolantSystem());
         
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -2316,6 +2318,22 @@ public class MiscType extends EquipmentType {
         misc.bv = 6;//From the Ask the Writer Forum
         
         return misc;
+    }
+    
+    public static MiscType createCoolantSystem() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Coolant System";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 9;
+        misc.criticals = 2;
+        misc.cost = 90000;
+        misc.flags |= F_COOLANT_SYSTEM;
+        misc.bv = 15;
+        
+        return misc;
+        
     }
 
     public static MiscType createStandard() {

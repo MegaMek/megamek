@@ -703,7 +703,7 @@ public class MovementDisplay
         if (cmd.length() == 0) {
             clearAllMoves();
         } else {
-            clientgui.bv.drawMovementData(ce(), cmd);
+            clientgui.bv.drawMovementData(cmd);
 
             // Set the button's label to "Done"
             // if the entire move is impossible.
@@ -1091,12 +1091,12 @@ public class MovementDisplay
                 // either turn or move
                 if (ce != null) {
                     currentMove(b.getCoords());
-                    clientgui.bv.drawMovementData(ce, cmd);
+                    clientgui.bv.drawMovementData(cmd);
                 }
             }
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             Coords moveto = b.getCoords();
-            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.drawMovementData(cmd);
             clientgui.getBoardView().select(b.getCoords());
             if (shiftheld || gear == MovementDisplay.GEAR_TURN) {
                 butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
@@ -1567,7 +1567,7 @@ public class MovementDisplay
             if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                 cmd.addStep(MovePath.STEP_GET_UP);
             }
-            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.drawMovementData(cmd);
             clientgui.bv.repaint();
             butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_GO_PRONE)) {
@@ -1575,7 +1575,7 @@ public class MovementDisplay
             if (!cmd.getFinalProne()) {
                 cmd.addStep(MovePath.STEP_GO_PRONE);
             }
-            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.drawMovementData(cmd);
             clientgui.bv.repaint();
             butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_HULL_DOWN)) {
@@ -1583,7 +1583,7 @@ public class MovementDisplay
             if (!cmd.getFinalHullDown()) {
                 cmd.addStep(MovePath.STEP_HULL_DOWN);
             }
-            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.drawMovementData(cmd);
             clientgui.bv.repaint();
             butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_FLEE) && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"), Messages.getString("MovementDisplay.EscapeDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -1619,7 +1619,7 @@ public class MovementDisplay
             }
             if (other != null) {
                 cmd.addStep(MovePath.STEP_LOAD);
-                clientgui.bv.drawMovementData(ce, cmd);
+                clientgui.bv.drawMovementData(cmd);
                 clientgui.bv.repaint();
                 gear = MovementDisplay.GEAR_LAND;
             } //else - didn't find a unit to load
@@ -1628,16 +1628,16 @@ public class MovementDisplay
             Entity other = getUnloadedUnit();
             if (other != null) {
                 cmd.addStep(MovePath.STEP_UNLOAD, other);
-                clientgui.bv.drawMovementData(ce, cmd);
+                clientgui.bv.drawMovementData(cmd);
                 clientgui.bv.repaint();
             } //else - Player canceled the unload.
         } else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION)) {
             cmd.addStep(MovePath.STEP_UP);
-            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.drawMovementData(cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION)) {
             cmd.addStep(MovePath.STEP_DOWN);
-            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.drawMovementData(cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_CLIMB_MODE)) {
             MoveStep ms = cmd.getLastStep();
@@ -1647,7 +1647,7 @@ public class MovementDisplay
                 cmd.addStep(MovePath.STEP_CLIMB_MODE_OFF);
             else
                 cmd.addStep(MovePath.STEP_CLIMB_MODE_ON);
-            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.drawMovementData(cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_LAY_MINE)) {
             clearAllMoves();
@@ -1773,7 +1773,7 @@ public class MovementDisplay
                 // switch to turning
                 //clientgui.bv.clearMovementData();
                 currentMove(clientgui.getBoardView().getLastCursor());
-                clientgui.bv.drawMovementData(ce, cmd);
+                clientgui.bv.drawMovementData(cmd);
             }
         }
         
@@ -1789,7 +1789,7 @@ public class MovementDisplay
             Coords curPos = cmd.getFinalCoords();
             Coords target = curPos.translated(dir);
             currentMove(target);
-            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.drawMovementData(cmd);
         }
     }
 
@@ -1804,7 +1804,7 @@ public class MovementDisplay
                 // switch to movement
                 clientgui.bv.clearMovementData();
                 currentMove(clientgui.getBoardView().getLastCursor());
-                clientgui.bv.drawMovementData(ce(), cmd);
+                clientgui.bv.drawMovementData(cmd);
             }
         }
     }

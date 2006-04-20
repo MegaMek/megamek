@@ -117,7 +117,6 @@ public class BoardEditor extends Container implements ItemListener,
      * Creates and lays out a new Board Editor frame.
      */
     public BoardEditor() {
-        super();
         try {
             bv = new BoardView1(game, frame);
         } catch (IOException e) {
@@ -141,7 +140,7 @@ public class BoardEditor extends Container implements ItemListener,
         setupEditorPanel();
         setupFrame();
         frame.setVisible(true);
-        if (true == GUIPreferences.getInstance().getNagForMapEdReadme()) {
+        if (GUIPreferences.getInstance().getNagForMapEdReadme()) {
             String title = Messages.getString("BoardEditor.readme.title"); //$NON-NLS-1$
             String body = Messages.getString("BoardEditor.readme.message"); //$NON-NLS-1$
             ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);
@@ -170,11 +169,11 @@ public class BoardEditor extends Container implements ItemListener,
         scrollPane.add(bv, BorderLayout.CENTER);
         scrollPane.add(vertical, BorderLayout.EAST);
         scrollPane.add(horizontal, BorderLayout.SOUTH);
-        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
         // Assign the scrollbars to the board viewer.
         bv.setScrollbars(vertical, horizontal);
-        frame.add(this, BorderLayout.EAST);
+        frame.getContentPane().add(this, BorderLayout.EAST);
         menuBar.addActionListener(this);
         frame.setMenuBar(menuBar);
         frame.setBackground(SystemColor.menu);
@@ -412,7 +411,7 @@ public class BoardEditor extends Container implements ItemListener,
      */
     public void boardNewXX() {
         // display new board dialog
-        BoardNewDialog bnd = new BoardNewDialog(frame, lisTerrain.getItems(), lisTerrain.getSelectedIndex());
+        BoardNewDialog bnd = new BoardNewDialog(frame);
         bnd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         bnd.setVisible(true);
         if (bnd.getX() > 0 || bnd.getY() > 0) {
@@ -749,7 +748,6 @@ public class BoardEditor extends Container implements ItemListener,
      */
     private class HexCanvas extends Canvas {
         HexCanvas() {
-            super();
             setSize(72, 72);
         }
 
@@ -761,6 +759,7 @@ public class BoardEditor extends Container implements ItemListener,
             if (curHex != null) {
                 TilesetManager tm = bv.getTilesetManager();
                 g.drawImage(tm.baseFor(curHex), 0, 0, this);
+                g.setColor(getForeground());
                 if (tm.supersFor(curHex) != null) {
                     for (final Object newVar : tm.supersFor(curHex)) {
                         g.drawImage((Image) newVar, 0, 0, this);
@@ -804,7 +803,7 @@ class BoardNewDialog extends JDialog implements ActionListener {
     protected JTextField texWidth, texHeight;
     protected JButton butOkay, butCancel;
 
-    BoardNewDialog(JFrame frame, String[] hexList, int hexSelected) {
+    BoardNewDialog(JFrame frame) {
         super(frame, Messages.getString("BoardEditor.SetDimentions"), true); //$NON-NLS-1$
         xvalue = 0;
         yvalue = 0;

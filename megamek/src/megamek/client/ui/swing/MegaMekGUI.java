@@ -174,6 +174,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         try {
             tracker.waitForID(0);
         } catch (InterruptedException e) {
+            //really should never come here
         }
         // make splash image panel
         ImageIcon icon = new ImageIcon(imgSplash);
@@ -260,7 +261,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         hd = new HostDialog(frame);
         hd.setVisible(true);
         // verify dialog data
-        if (hd.name == null || hd.serverPass == null || hd.port == 0) {
+        if (hd.playerName == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
 
@@ -298,7 +299,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = hd.name.toCharArray();
+        char[] nameChars = hd.playerName.toCharArray();
         for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -314,7 +315,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // start server
         server = new Server(hd.serverPass, hd.port);
         // initialize client
-        client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
+        client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
         if (!client.connect()) {
@@ -350,13 +351,13 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
         HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
-        if (hd.name == null || hd.serverPass == null || hd.port == 0) {
+        if (hd.playerName == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = hd.name.toCharArray();
+        char[] nameChars = hd.playerName.toCharArray();
         for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -376,7 +377,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             server = null;
             return;
         }
-        client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
+        client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
         if (!client.connect()) {
@@ -430,14 +431,14 @@ public class MegaMekGUI implements IMegaMekGUI {
         hd.yourNameF.setText(sd.localName);
         hd.setVisible(true);
         // verify dialog data
-        if (hd.name == null || hd.serverPass == null || hd.port == 0) {
+        if (hd.playerName == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
-        sd.localName = hd.name;
+        sd.localName = hd.playerName;
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = hd.name.toCharArray();
+        char[] nameChars = hd.playerName.toCharArray();
         for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -459,7 +460,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         ClientGUI gui = null;
         if (!sd.localName.equals("")) { //$NON-NLS-1$
             // initialize game
-            client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
+            client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
             gui = new ClientGUI(client);
             gui.initialize();
             if (!client.connect()) {
@@ -507,13 +508,13 @@ public class MegaMekGUI implements IMegaMekGUI {
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
-        if (cd.name == null || cd.serverAddr == null || cd.port == 0) {
+        if (cd.playerName == null || cd.serverAddr == null || cd.port == 0) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = cd.name.toCharArray();
+        char[] nameChars = cd.playerName.toCharArray();
         for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -525,7 +526,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // initialize game
-        client = new Client(cd.name, cd.serverAddr, cd.port);
+        client = new Client(cd.playerName, cd.serverAddr, cd.port);
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
         if (!client.connect()) {
@@ -543,13 +544,13 @@ public class MegaMekGUI implements IMegaMekGUI {
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
-        if (cd.name == null || cd.serverAddr == null || cd.port == 0) {
+        if (cd.playerName == null || cd.serverAddr == null || cd.port == 0) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = cd.name.toCharArray();
+        char[] nameChars = cd.playerName.toCharArray();
         for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -561,7 +562,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // initialize game
-        client = new TestBot(cd.name, cd.serverAddr, cd.port);
+        client = new TestBot(cd.playerName, cd.serverAddr, cd.port);
         client.game.addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
@@ -578,7 +579,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
-        frame.add(comp);
+        frame.getContentPane().add(comp);
     }
 
     /**
@@ -633,7 +634,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     /**
      * Called when the quit buttons is pressed or the main menu is closed.
      */
-    private void quit() {
+    private static void quit() {
         PreferenceManager.getInstance().save();
         System.exit(0);
     }
@@ -724,7 +725,7 @@ public class MegaMekGUI implements IMegaMekGUI {
  * here's a quick class for the host new game diaglogue box
  */
 class HostDialog extends JDialog implements ActionListener {
-    public String name;
+    public String playerName;
     public String serverPass;
     public int port;
     public boolean register;
@@ -861,7 +862,7 @@ class HostDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (!e.getActionCommand().equals("cancel")) { //$NON-NLS-1$
             try {
-                name = yourNameF.getText();
+                playerName = yourNameF.getText();
                 serverPass = serverPassF.getText();
                 register = registerC.isSelected();
                 metaserver = metaserverF.getText();
@@ -874,7 +875,7 @@ class HostDialog extends JDialog implements ActionListener {
             }
 
             // update settings
-            PreferenceManager.getClientPreferences().setLastPlayerName(name);
+            PreferenceManager.getClientPreferences().setLastPlayerName(playerName);
             PreferenceManager.getClientPreferences().setLastServerPass(serverPass);
             PreferenceManager.getClientPreferences().setLastServerPort(port);
             PreferenceManager.getClientPreferences().setValue("megamek.megamek.metaservername", //$NON-NLS-1$
@@ -890,7 +891,7 @@ class HostDialog extends JDialog implements ActionListener {
  * here's a quick class for the connect to game diaglogue box
  */
 class ConnectDialog extends JDialog implements ActionListener {
-    public String name, serverAddr;
+    public String playerName, serverAddr;
     public int port;
     protected JLabel yourNameL, serverAddrL, portL;
     protected JTextField yourNameF, serverAddrF, portF;
@@ -964,7 +965,7 @@ class ConnectDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (!e.getActionCommand().equals("cancel")) { //$NON-NLS-1$
             try {
-                name = yourNameF.getText();
+                playerName = yourNameF.getText();
                 serverAddr = serverAddrF.getText();
                 port = Integer.decode(portF.getText().trim()).intValue();
             } catch (NumberFormatException ex) {
@@ -972,7 +973,7 @@ class ConnectDialog extends JDialog implements ActionListener {
             }
 
             // update settings
-            PreferenceManager.getClientPreferences().setLastPlayerName(name);
+            PreferenceManager.getClientPreferences().setLastPlayerName(playerName);
             PreferenceManager.getClientPreferences().setLastConnectAddr(serverAddr);
             PreferenceManager.getClientPreferences().setLastConnectPort(port);
         }

@@ -14,6 +14,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.BuildingTarget;
@@ -64,6 +65,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -72,7 +74,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -129,7 +131,7 @@ public class ClientGUI
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private Hashtable mainNames = new Hashtable();
+    private HashMap mainNames = new HashMap();
     /**
      * The <code>JPanel</code> containing the main display area.
      */
@@ -141,7 +143,7 @@ public class ClientGUI
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private Hashtable secondaryNames = new Hashtable();
+    private HashMap secondaryNames = new HashMap();
     /**
      * The <code>JPanel</code> containing the secondary display area.
      */
@@ -153,7 +155,7 @@ public class ClientGUI
     /**
      * Map phase component names to phase component objects.
      */
-    private Hashtable phaseComponents = new Hashtable();
+    private HashMap phaseComponents = new HashMap();
     //TODO: there's a better place for this
     private Map bots = new TreeMap(StringUtil.stringComparator());
     /**
@@ -176,7 +178,7 @@ public class ClientGUI
         JPanel panDisplay = new JPanel(new BorderLayout());
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
-        this.add(panDisplay, BorderLayout.CENTER);
+        add(panDisplay, BorderLayout.CENTER);
     }
 
     public IBoardView getBoardView() {
@@ -209,6 +211,8 @@ public class ClientGUI
             case KeyEvent.VK_PAGE_UP:
                 bv.zoomOut();
                 break;
+            default:
+                //pass it on
         }
     }
 
@@ -224,14 +228,14 @@ public class ClientGUI
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        this.cb.systemMessage(message);
+        cb.systemMessage(message);
     }
 
     /**
      * Initializes a number of things about this frame.
      */
     private void initializeFrame() {
-        this.frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
+        frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         menuBar.setGame(client.game);
         frame.setMenuBar(menuBar);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
@@ -252,7 +256,7 @@ public class ClientGUI
     private void layoutFrame() {
         frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
         frame.getContentPane().setLayout(new BorderLayout());
-        frame.add(this, BorderLayout.CENTER);
+        frame.getContentPane().add(this, BorderLayout.CENTER);
         frame.validate();
     }
 
@@ -265,7 +269,7 @@ public class ClientGUI
      * <code>Client</code> is created.
      */
     public void initialize() {
-        menuBar = new CommonMenuBar(this.getClient());
+        menuBar = new CommonMenuBar(getClient());
         initializeFrame();
         try {
             client.game.addGameListener(gameListener);
@@ -338,7 +342,7 @@ public class ClientGUI
         // added by kenn
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
-        ruler = new Ruler(frame, this.client, bv);
+        ruler = new Ruler(frame, client, bv);
         x = GUIPreferences.getInstance().getRulerPosX();
         y = GUIPreferences.getInstance().getRulerPosY();
         h = GUIPreferences.getInstance().getRulerSizeHeight();
@@ -379,7 +383,7 @@ public class ClientGUI
         minimapW.addKeyListener(this);
         minimapW.add(minimap);
         cb = new ChatterBox(this);
-        this.add(cb.getComponent(), BorderLayout.SOUTH);
+        add(cb.getComponent(), BorderLayout.SOUTH);
         client.changePhase(IGame.PHASE_UNKNOWN);
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         customBADialog = new CustomBattleArmorDialog(this, unitLoadingDialog);
@@ -393,7 +397,7 @@ public class ClientGUI
      * @return the <code>CommonMenuBar</code> of this client.
      */
     public CommonMenuBar getMenuBar() {
-        return this.menuBar;
+        return menuBar;
     }
 
     /**
@@ -401,12 +405,12 @@ public class ClientGUI
      */
     private void showAbout() {
         // Do we need to create the "about" dialog?
-        if (this.about == null) {
-            this.about = new CommonAboutDialog(this.frame);
+        if (about == null) {
+            about = new CommonAboutDialog(frame);
         }
 
         // Show the about dialog.
-        this.about.setVisible(true);
+        about.setVisible(true);
     }
 
     /**
@@ -421,7 +425,7 @@ public class ClientGUI
      */
     protected void setHelpFileName(String fileName) {
         if (null != fileName) {
-            this.helpFileName = fileName;
+            helpFileName = fileName;
         }
     }
 
@@ -432,11 +436,11 @@ public class ClientGUI
      */
     public void showHelp() {
         // Do we need to create the "help" dialog?
-        if (this.help == null) {
-            this.help = new CommonHelpDialog(this.frame, new File(helpFileName));
+        if (help == null) {
+            help = new CommonHelpDialog(frame, new File(helpFileName));
         }
         // Show the help dialog.
-        this.help.setVisible(true);
+        help.setVisible(true);
     }
 
     /**
@@ -444,12 +448,12 @@ public class ClientGUI
      */
     private void showSettings() {
         // Do we need to create the "settings" dialog?
-        if (this.setdlg == null) {
-            this.setdlg = new CommonSettingsDialog(this.frame);
+        if (setdlg == null) {
+            setdlg = new CommonSettingsDialog(frame);
         }
 
         // Show the settings dialog.
-        this.setdlg.setVisible(true);
+        setdlg.setVisible(true);
     }
 
     /**
@@ -581,9 +585,9 @@ public class ClientGUI
     public void die() {
         //Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
-        Enumeration names = phaseComponents.keys();
-        while (names.hasMoreElements()) {
-            Component component = (Component) phaseComponents.get(names.nextElement());
+        Iterator names = phaseComponents.keySet().iterator();
+        while (names.hasNext()) {
+            Component component = (Component) phaseComponents.get(names.next());
             if (component instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
@@ -682,12 +686,12 @@ public class ClientGUI
         }
         if (curPanel instanceof DoneButtoned) {
             JButton done = ((DoneButtoned) curPanel).getDoneButton();
-            this.cb.setDoneButton(done);
+            cb.setDoneButton(done);
             done.setVisible(true);
         }
 
         // Make the new panel the focus, if the Client option says so
-        if (GUIPreferences.getInstance().getFocus() && !(client instanceof megamek.client.bot.TestBot)) curPanel.requestFocus();
+        if (GUIPreferences.getInstance().getFocus() && !(client instanceof TestBot)) curPanel.requestFocus();
     }
 
     private Component initializePanel(int phase) {
@@ -723,8 +727,8 @@ public class ClientGUI
                 component = new SelectArtyAutoHitHexDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
-                    panMain.add(main, this.scroller);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(main, scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -732,8 +736,8 @@ public class ClientGUI
                 component = new DeployMinefieldDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
-                    panMain.add(main, this.scroller);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(main, scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -741,8 +745,8 @@ public class ClientGUI
                 component = new DeploymentDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
-                    panMain.add(main, this.scroller);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(main, scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -751,8 +755,8 @@ public class ClientGUI
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "TargetingPhaseDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
-                    panMain.add(main, this.scroller);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(main, scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -760,8 +764,8 @@ public class ClientGUI
                 component = new MovementDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "MovementDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
-                    panMain.add(main, this.scroller);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(main, scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -770,8 +774,8 @@ public class ClientGUI
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "OffboardDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
-                    panMain.add(main, this.scroller);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(main, scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -779,8 +783,8 @@ public class ClientGUI
                 component = new FiringDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "FiringDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
-                    panMain.add(main, this.scroller);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(main, scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -788,8 +792,8 @@ public class ClientGUI
                 component = new PhysicalDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "PhysicalDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
-                    panMain.add(main, this.scroller);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(main, scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -965,6 +969,10 @@ public class ClientGUI
                     popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_BOMB)));
                     popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
                 }
+                if (client.game.getOptions().booleanOption("fire")
+                        && h.containsTerrain(Terrains.FIRE)) {
+                    popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_EXTINGUISH)));
+                }
                 if (h != null && curPanel instanceof TargetingPhaseDisplay) {
                     popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
                 }
@@ -1038,22 +1046,22 @@ public class ClientGUI
         return confirm;
     }
 
-    public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseClicked(MouseEvent mouseEvent) {
     }
 
-    public void mouseEntered(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseEntered(MouseEvent mouseEvent) {
     }
 
-    public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseExited(MouseEvent mouseEvent) {
     }
 
-    public void mousePressed(java.awt.event.MouseEvent mouseEvent) {
+    public void mousePressed(MouseEvent mouseEvent) {
         if (mouseEvent.isPopupTrigger()) {
             showBoardPopup(mouseEvent.getPoint());
         }
     }
 
-    public void mouseReleased(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseReleased(MouseEvent mouseEvent) {
         if (mouseEvent.isPopupTrigger()) {
             showBoardPopup(mouseEvent.getPoint());
         }
@@ -1173,30 +1181,30 @@ public class ClientGUI
     //
     // WindowListener
     //
-    public void windowActivated(java.awt.event.WindowEvent windowEvent) {
+    public void windowActivated(WindowEvent windowEvent) {
     }
 
-    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+    public void windowClosed(WindowEvent windowEvent) {
     }
 
-    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-        if (windowEvent.getWindow() == minimapW) {
+    public void windowClosing(WindowEvent windowEvent) {
+        if (windowEvent.getWindow().equals(minimapW)) {
             setMapVisible(false);
-        } else if (windowEvent.getWindow() == mechW) {
+        } else if (windowEvent.getWindow().equals(mechW)) {
             setDisplayVisible(false);
         }
     }
 
-    public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
+    public void windowDeactivated(WindowEvent windowEvent) {
     }
 
-    public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
+    public void windowDeiconified(WindowEvent windowEvent) {
     }
 
-    public void windowIconified(java.awt.event.WindowEvent windowEvent) {
+    public void windowIconified(WindowEvent windowEvent) {
     }
 
-    public void windowOpened(java.awt.event.WindowEvent windowEvent) {
+    public void windowOpened(WindowEvent windowEvent) {
     }
 
     /**
@@ -1213,7 +1221,7 @@ public class ClientGUI
             addActionListener(this);
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+        public void actionPerformed(ActionEvent actionEvent) {
             setDisplayVisible(true);
             mechD.displayEntity(entity);
         }
@@ -1233,7 +1241,7 @@ public class ClientGUI
             addActionListener(this);
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+        public void actionPerformed(ActionEvent actionEvent) {
             if (curPanel instanceof MovementDisplay) {
                 ((MovementDisplay) curPanel).selectEntity(entity.getId());
             } else if (curPanel instanceof FiringDisplay) {
@@ -1257,7 +1265,7 @@ public class ClientGUI
             addActionListener(this);
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+        public void actionPerformed(ActionEvent actionEvent) {
             if (curPanel instanceof FiringDisplay) {
                 ((FiringDisplay) curPanel).target(target);
             } else if (curPanel instanceof PhysicalDisplay) {
@@ -1321,7 +1329,7 @@ public class ClientGUI
 
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             boolean showRerollButton = false;
-            
+
             //This is a really lame place for this, but I couldn't find a
             //better one without making massive changes (which didn't seem
             //worth it for one little feature).
@@ -1393,7 +1401,7 @@ public class ClientGUI
                 }
             } else {
                 //Continued movement after getting up
-                if (!(client instanceof megamek.client.bot.TestBot))
+                if (!(client instanceof TestBot))
                     doAlertDialog("Movement Report", e.getReport());
             }
         }

@@ -17,6 +17,7 @@ v0.31.8-dev (CVS)
 + Coolant System (fire extinguish / cool mode for veh. flamers)
 + JWindow swingized, JWindow/JFrame .add() and .setLayout() need to be converted
     to .getContentPane().blah, migrated coolant system fix to swing.
++ Heavy infantry
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

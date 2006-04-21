@@ -12107,7 +12107,22 @@ public class Server implements Runnable {
                     damage /= 2;
                     damage += tmpDamageHold % 2;
                 }
-
+                else if (isPlatoon) {
+                    //infantry armour works differently
+                    int armor = te.getArmor(hit);
+                    int men = te.getInternal(hit);
+                    tmpDamageHold = damage % 2;
+                    damage /= 2;
+                    if(tmpDamageHold == 1 && armor >= men) {
+                        //extra 1 point of damage to armor
+                        tmpDamageHold = damage;
+                        damage ++;
+                    } else {
+                        //extra 0 or 1 point of damage to men
+                        tmpDamageHold += damage;
+                    }
+                    
+                }
                 if (te.getArmor(hit) > damage) {
                     // armor absorbs all damage
                     te.setArmor(te.getArmor(hit) - damage, hit);
@@ -12160,6 +12175,9 @@ public class Server implements Runnable {
                     if (hardenedArmor) {
                         damage *= 2;
                         damage -= tmpDamageHold % 2;
+                    }
+                    else if (isPlatoon) {
+                        damage = tmpDamageHold;
                     }
                 }
             }

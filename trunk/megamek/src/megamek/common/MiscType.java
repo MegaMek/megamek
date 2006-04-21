@@ -100,11 +100,12 @@ public class MiscType extends EquipmentType {
     public static final int     S_CLAW              = 0x00000001; // Solaris 7
     public static final int     S_MINING_DRILL      = 0x00000002; // Miniatures Rulebook; TODO
 
-    // Secondary flags for tools
+    // Secondary flags for infantry tools
     public static final int     S_VIBROSHOVEL       = 0x00000001; // can fortify hexes
     public static final int     S_DEMOLITION_CHARGE = 0x00000002; // can demolish buildings
     public static final int     S_BRIDGE_KIT        = 0x00000004; // can build a bridge
     public static final int     S_MINESWEEPER       = 0x00000008; // can clear mines
+    public static final int     S_HEAVY_ARMOR       = 0x00000010; 
 
     // Secondary flags for MASC
     public static final int     S_SUPERCHARGER      = 0x00000001;
@@ -477,6 +478,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISBuzzsaw());
         EquipmentType.addType(createCLBuzzsaw());
         EquipmentType.addType(createCoolantSystem());
+        EquipmentType.addType(createHeavyArmor());
         
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -2333,7 +2335,22 @@ public class MiscType extends EquipmentType {
         misc.bv = 15;
         
         return misc;
+    }
+
+    public static MiscType createHeavyArmor() {
+        MiscType misc = new MiscType();
         
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Heavy Armor";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 100000;
+        misc.flags |= F_TOOLS;
+        misc.subType = S_HEAVY_ARMOR;
+        misc.bv = 15;
+        
+        return misc;
     }
 
     public static MiscType createStandard() {

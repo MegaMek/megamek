@@ -87,10 +87,10 @@ public class CityBuilder {
         else
             return new Vector();
         
-        return placeBuildings(board);
+        return placeBuildings(board,new Double(0.3));
     }
 
-    public Vector placeBuildings(IBoard board) {
+    public Vector placeBuildings(IBoard board, double falloff) {
             
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
@@ -98,6 +98,8 @@ public class CityBuilder {
         HashSet<Coords> buildingUsed = new HashSet<Coords>();
         
         Vector coordList = new Vector();
+        
+        Coords centre = new Coords(width/2,height/2);
         
         for ( int x = 0; x < width; x++){
             for ( int y = 0; y < height; y++ ){
@@ -110,13 +112,20 @@ public class CityBuilder {
                     continue;
                 }
                 
-                if(Compute.randomInt(100) > mapSettings.getCityDensity()) {
+                int localdensity = mapSettings.getCityDensity();
+                if(falloff > 0)
+                {
+                    int distance = coord.distance(centre);
+                    localdensity = (int)(mapSettings.getCityDensity() - (falloff*distance*distance));
+                }
+                
+                if(Compute.randomInt(100) > localdensity) {
                     continue; //empty lot
                 }
                 coordList = new Vector();
                 coordList.add(coord);
                 buildingUsed.add(coord);
-                while(Compute.randomInt(100) < mapSettings.getCityDensity()) {
+                while(Compute.randomInt(100) < localdensity) {
                     //try to make a bigger building!
                     int dir = Compute.randomInt(6);
                     Coords next = coord.translated(dir);

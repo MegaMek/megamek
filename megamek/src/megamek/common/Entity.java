@@ -1504,6 +1504,8 @@ public abstract class Entity extends TurnOrdered
      * Returns the percent of the armor remaining
      */
     public double getArmorRemainingPercent() {
+        if(getTotalOArmor() == 0)
+            return IArmorState.ARMOR_NA;
         return ((double)getTotalArmor() / (double)getTotalOArmor());
     }
 

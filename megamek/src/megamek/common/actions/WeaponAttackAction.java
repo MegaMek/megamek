@@ -675,6 +675,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (isHaywireINarced) {
             toHit.addModifier(1, "iNarc Haywire pod");
         }
+        
+        //Heavy infantry have +1 penalty
+        if(ae instanceof Infantry && ae.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
+            toHit.addModifier(1, "Heavy Armor");
+        }
     
         // add targeting computer (except with LBX cluster ammo)
         if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP &&

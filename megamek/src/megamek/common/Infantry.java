@@ -365,37 +365,6 @@ public class Infantry
     protected boolean isPlatoon() { return true; }
 
     /**
-     * Infantry platoons *have* no armor (that's why they're PBI :).
-     */
-    public int getArmor( int loc, boolean rear ) {
-        if ( !this.isPlatoon() ) {
-            return super.getArmor( loc, rear );
-        }
-        return IArmorState.ARMOR_NA;
-    }
-
-    /**
-     * Infantry platoons *have* no armor (that's why they're PBI :).
-     */
-    public int getOArmor( int loc, boolean rear ) {
-        if ( !this.isPlatoon() ) {
-            return super.getOArmor( loc, rear );
-        }
-        return IArmorState.ARMOR_NA;
-    }
-
-    /**
-     * Infantry platoons *have* no armor (that's why they're PBI :).
-     */
-    public double getArmorRemainingPercent() {
-        if ( !this.isPlatoon() ) {
-            return super.getArmorRemainingPercent();
-        }
-        return IArmorState.ARMOR_NA;
-    }
-
-
-    /**
      * Returns the number of men left in the platoon, or IArmorState.ARMOR_DESTROYED.
      */
     public int getInternal( int loc ) {
@@ -441,6 +410,10 @@ public class Infantry
       public void initializeInternal(int val, int loc) {
         this.menStarting = val;
         this.menShooting = val;
+        if(hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR))
+            initializeArmor(val,loc);
+        else
+            initializeArmor(IArmorState.ARMOR_NA, loc);
         super.initializeInternal( val, loc );
       }
 

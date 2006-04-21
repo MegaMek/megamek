@@ -94,9 +94,10 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("jumpingMP"))
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
 
+        loadEquipment(t, "Platoon", Infantry.LOC_INFANTRY);
+
         t.autoSetInternal();
         
-        loadEquipment(t, "Platoon", Infantry.LOC_INFANTRY);
         return t;        
     }
     

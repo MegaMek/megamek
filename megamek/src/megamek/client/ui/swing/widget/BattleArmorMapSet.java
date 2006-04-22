@@ -19,8 +19,8 @@ import megamek.client.ui.swing.Messages;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 
+import javax.swing.JComponent;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -41,7 +41,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
     //Images that shows how much armor + 1 internal damage left.
     private Image[] armorImage = new Image[5];
     //Reference to Component (required for Image handling)
-    private Component comp;
+    private JComponent comp;
     //Set of areas to show BA figures
     private PMPicArea[] unitAreas = new PMPicArea[5];
     //Set of areas to show BA armor left
@@ -61,7 +61,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
     /**
      * This constructor have to be called anly from addNotify() method
      */
-    public BattleArmorMapSet(Component c) {
+    public BattleArmorMapSet(JComponent c) {
         comp = c;
         setAreas();
         setBackGround();

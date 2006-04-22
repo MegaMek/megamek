@@ -19,8 +19,8 @@ import megamek.client.ui.swing.Messages;
 import megamek.common.Entity;
 import megamek.common.VTOL;
 
+import javax.swing.JComponent;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
@@ -36,7 +36,7 @@ public class VTOLMapSet implements DisplayMapSet {
 
     private static final String IMAGE_DIR = "data/images/widgets";
 
-    private Component comp;
+    private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[16];
     private PMSimpleLabel[] labels = new PMSimpleLabel[22];
     private PMValueLabel[] vLabels = new PMValueLabel[16];
@@ -103,7 +103,7 @@ public class VTOLMapSet implements DisplayMapSet {
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
-    public VTOLMapSet(Component c) {
+    public VTOLMapSet(JComponent c) {
         comp = c;
         setAreas();
         setLabels();

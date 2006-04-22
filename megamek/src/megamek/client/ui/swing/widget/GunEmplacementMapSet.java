@@ -20,8 +20,8 @@ import megamek.client.ui.swing.Messages;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 
+import javax.swing.JComponent;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
@@ -34,7 +34,7 @@ import java.util.Vector;
  */
 public class GunEmplacementMapSet implements DisplayMapSet {
 
-    private Component comp;
+    private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
     private PMSimpleLabel[] labels = new PMSimpleLabel[5];
     private PMValueLabel[] vLabels = new PMValueLabel[5];
@@ -54,7 +54,7 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
-    public GunEmplacementMapSet(Component c) {
+    public GunEmplacementMapSet(JComponent c) {
         comp = c;
         setAreas();
         setLabels();

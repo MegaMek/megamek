@@ -73,13 +73,6 @@ public class BufferedPanel extends JPanel implements ComponentListener {
     }
 
     /**
-     * overriden to eliminate flicker.
-     */
-    public void update(Graphics g) {
-        paint(g);
-    }
-
-    /**
      * Paint the panel. Must call super.paint() from any subclass that
      * wished to override this to ensure any contained lightweight components
      * get repainted.
@@ -87,7 +80,7 @@ public class BufferedPanel extends JPanel implements ComponentListener {
      * @param g - the <code>Graphics</code> to draw onto.
      *          This value may be <code>null</code>.
      */
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         // No Graphics, no painting.
         if (null == g) {
             return;
@@ -107,7 +100,7 @@ public class BufferedPanel extends JPanel implements ComponentListener {
             bgd.drawInto(offG, getSize().width, getSize().height);
         }
         // Let the parent panel repaint the components inside.
-        super.paint(offG);
+        super.paintComponent(offG);
         // draw the off-screen image to the sreen.
         g.drawImage(offScr, 0, 0, null);
 

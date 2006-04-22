@@ -14,21 +14,22 @@
 
 package megamek.client.ui.swing.widget;
 
-import java.awt.Canvas;
+import javax.swing.JComponent;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 
-public class SimpleLine extends Canvas {
+public class SimpleLine extends JComponent {
 
     private int h = 2;
     private int w;
 
     public SimpleLine(int width) {
         w = width;
-        setSize(w, h);
+        setPreferredSize(new Dimension(w, h));
     }
 
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         g.setColor(Color.gray);
         g.drawLine(0, 0, w, 0);
         g.setColor(Color.white);

@@ -22,13 +22,14 @@ import megamek.common.IGame;
 import megamek.common.Minefield;
 import megamek.common.Player;
 import megamek.common.event.GameListener;
+import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -86,7 +87,7 @@ public class DeployMinefieldDisplay
      */
     public DeployMinefieldDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         client.game.addGameListener(this);
 
         //Listener is added in the ClientGUI#switchPanel
@@ -170,7 +171,7 @@ public class DeployMinefieldDisplay
         addKeyListener(this);
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -267,7 +268,7 @@ public class DeployMinefieldDisplay
             }
             client.game.addMinefield(mf);
             deployedMinefields.addElement(mf);
-            clientgui.bv.update(clientgui.bv.getGraphics());
+            clientgui.bv.repaint();
         }
 
         if (p.getNbrMFConventional() == 0 &&
@@ -298,7 +299,7 @@ public class DeployMinefieldDisplay
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -322,7 +323,7 @@ public class DeployMinefieldDisplay
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -336,10 +337,10 @@ public class DeployMinefieldDisplay
         }
     }
 
-    public void gamePhaseChange(GameTurnChangeEvent e) {
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -358,7 +359,7 @@ public class DeployMinefieldDisplay
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -428,7 +429,7 @@ public class DeployMinefieldDisplay
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
+        return distracted.isIgnoringEvents();
     }
 
     /**

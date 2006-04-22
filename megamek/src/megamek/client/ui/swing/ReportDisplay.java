@@ -21,13 +21,13 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JViewport;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -130,7 +130,7 @@ public class ReportDisplay
 
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -334,7 +334,7 @@ public class ReportDisplay
      * @return the <code>Component</code> which is displayed in the
      *         secondary section during this phase.
      */
-    public Component getSecondaryDisplay() {
+    public JComponent getSecondaryDisplay() {
         return panStatus;
     }
 

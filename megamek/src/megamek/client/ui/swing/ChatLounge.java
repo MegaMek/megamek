@@ -42,6 +42,8 @@ import megamek.common.util.DistractableAdapter;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,8 +52,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.awt.Choice;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -65,6 +65,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -91,7 +92,7 @@ public class ChatLounge
     private List lisPlayerInfo;
 
     private JLabel labTeam;
-    private Choice choTeam;
+    private JComboBox choTeam;
 
     private JLabel labCamo;
     private JButton butCamo;
@@ -167,8 +168,7 @@ public class ChatLounge
      * Creates a new chat lounge for the client.
      */
     public ChatLounge(ClientGUI clientgui) {
-        super();
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         this.clientgui = clientgui;
 
         // Create a tabbed panel to hold our components.
@@ -251,7 +251,7 @@ public class ChatLounge
         validate();
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
@@ -278,7 +278,7 @@ public class ChatLounge
                 if (c instanceof BotClient) {
                     butRemoveBot.setEnabled(true);
                 }
-                choTeam.select(c.getLocalPlayer().getTeam());
+                choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
             }
         });
 
@@ -294,7 +294,7 @@ public class ChatLounge
         labTeam = new JLabel(Messages.getString("ChatLounge.labTeam"), JLabel.RIGHT); //$NON-NLS-1$
         labCamo = new JLabel(Messages.getString("ChatLounge.labCamo"), JLabel.RIGHT); //$NON-NLS-1$
 
-        choTeam = new Choice();
+        choTeam = new JComboBox();
         choTeam.addItemListener(this);
         setupTeams();
 
@@ -529,7 +529,7 @@ public class ChatLounge
         lisBoardsSelected.removeAll();
         int index = 0;
         for (Enumeration i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add((index++) + ": " + (String) i.nextElement()); //$NON-NLS-1$
+            lisBoardsSelected.add((index++) + ": " + i.nextElement()); //$NON-NLS-1$
         }
     }
 
@@ -562,8 +562,8 @@ public class ChatLounge
 
         // Should we display the panels in tabs?
         if (GUIPreferences.getInstance().getChatLoungeTabs()) {
-            this.panTabs.add("Select Units", panMain); //$NON-NLS-1$
-            this.panTabs.add("Configure Game", panTop); //$NON-NLS-1$
+            panTabs.add("Select Units", panMain); //$NON-NLS-1$
+            panTabs.add("Configure Game", panTop); //$NON-NLS-1$
         } else {
             c.weighty = 0.0;
             gridbag.setConstraints(panTop, c);
@@ -914,7 +914,7 @@ public class ChatLounge
     }
 
     public static String formatUnit(Entity entity, boolean blindDrop) {
-        String value = new String();
+        String value = "";
 
         // Reset the tree strings.
         String strTreeSet = ""; //$NON-NLS-1$
@@ -1106,12 +1106,12 @@ public class ChatLounge
     private void setupTeams() {
         choTeam.removeAll();
         for (int i = 0; i < Player.MAX_TEAMS; i++) {
-            choTeam.add(Player.teamNames[i]);
+            choTeam.addItem(Player.teamNames[i]);
         }
         if (null != client.getLocalPlayer()) {
-            choTeam.select(client.getLocalPlayer().getTeam());
+            choTeam.setSelectedIndex(client.getLocalPlayer().getTeam());
         } else {
-            choTeam.select(0);
+            choTeam.setSelectedIndex(0);
         }
     }
 
@@ -1119,7 +1119,7 @@ public class ChatLounge
      * Highlight the team the player is playing on.
      */
     private void refreshTeams() {
-        choTeam.select(client.getLocalPlayer().getTeam());
+        choTeam.setSelectedIndex(client.getLocalPlayer().getTeam());
     }
 
     /**
@@ -1207,12 +1207,12 @@ public class ChatLounge
         // When we customize a single entity's C3 network setting,
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
-        Vector c3members = new Vector();
+        ArrayList<Entity> c3members = new ArrayList<Entity>();
         Enumeration playerUnits = c.game.getPlayerEntities(c.getLocalPlayer()).elements();
         while (playerUnits.hasMoreElements()) {
             Entity unit = (Entity) playerUnits.nextElement();
             if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
-                c3members.addElement(unit);
+                c3members.add(unit);
             }
         }
 
@@ -1228,9 +1228,7 @@ public class ChatLounge
             // Do we need to update the members of our C3 network?
             if ((c3master != null && !c3master.equals(entity.getC3Master()))
                     || (c3master == null && entity.getC3Master() != null)) {
-                playerUnits = c3members.elements();
-                while (playerUnits.hasMoreElements()) {
-                    Entity unit = (Entity) playerUnits.nextElement();
+                for (Entity unit : c3members) {
                     c.sendUpdateEntity(unit);
                 }
             }
@@ -1299,7 +1297,7 @@ public class ChatLounge
     //
     public void gamePlayerChange(GamePlayerChangeEvent e) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         refreshDoneButton();
@@ -1312,7 +1310,7 @@ public class ChatLounge
 
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         if (client.game.getPhase() == IGame.PHASE_LOUNGE) {
@@ -1331,7 +1329,7 @@ public class ChatLounge
 
     public void gameEntityNew(GameEntityNewEvent e) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         refreshEntities();
@@ -1340,7 +1338,7 @@ public class ChatLounge
 
     public void gameEntityRemove(GameEntityRemoveEvent e) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         refreshEntities();
@@ -1349,7 +1347,7 @@ public class ChatLounge
 
     public void gameSettingsChange(GameSettingsChangeEvent e) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         refreshGameSettings();
@@ -1366,22 +1364,22 @@ public class ChatLounge
     public void itemStateChanged(ItemEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        if (ev.getSource() == choTeam) {
+        if (ev.getSource().equals(choTeam)) {
             changeTeam(choTeam.getSelectedIndex());
-        } else if (ev.getSource() == chkBV || ev.getSource() == chkTons || ev.getSource() == chkCost) {
+        } else if (ev.getSource().equals(chkBV) || ev.getSource().equals(chkTons) || ev.getSource().equals(chkCost)) {
             refreshBVs();
-            if (ev.getSource() == chkBV) {
+            if (ev.getSource().equals(chkBV)) {
                 labBVs.setText(Messages.getString("ChatLounge.labBVs.BV"));
-            } else if (ev.getSource() == chkTons) {
+            } else if (ev.getSource().equals(chkTons)) {
                 labBVs.setText(Messages.getString("ChatLounge.labBVs.Tons"));
             } else {
                 labBVs.setText(Messages.getString("ChatLounge.labBVs.Cost"));
             }
-        } else if (ev.getSource() == lisEntities) {
+        } else if (ev.getSource().equals(lisEntities)) {
             boolean selected = lisEntities.getSelectedIndex() != -1;
             butCustom.setEnabled(selected);
 
@@ -1405,11 +1403,11 @@ public class ChatLounge
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        if (ev.getSource() == butDone) {
+        if (ev.getSource().equals(butDone)) {
 
             // enforce exclusive deployment zones in double blind
             if (client.game.getOptions().booleanOption("double_blind") &&
@@ -1453,13 +1451,13 @@ public class ChatLounge
             for (Iterator i = clientgui.getBots().values().iterator(); i.hasNext();) {
                 ((Client) i.next()).sendDone(done);
             }
-        } else if (ev.getSource() == butLoad) {
+        } else if (ev.getSource().equals(butLoad)) {
             loadMech();
-        } else if (ev.getSource() == butLoadCustomBA) {
+        } else if (ev.getSource().equals(butLoadCustomBA)) {
             loadCustomBA();
-        } else if (ev.getSource() == butCustom || ev.getSource() == lisEntities) {
+        } else if (ev.getSource().equals(butCustom) || ev.getSource().equals(lisEntities)) {
             customizeMech();
-        } else if (ev.getSource() == butDelete) {
+        } else if (ev.getSource().equals(butDelete)) {
             // delete mech
             Entity e = client.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
             Client c = (Client) clientgui.getBots().get(e.getOwner().getName());
@@ -1469,7 +1467,7 @@ public class ChatLounge
             if (lisEntities.getSelectedIndex() != -1) {
                 c.sendDeleteEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
             }
-        } else if (ev.getSource() == butDeleteAll) {
+        } else if (ev.getSource().equals(butDeleteAll)) {
             // Build a Vector of this player's entities.
             Vector currentUnits = client.game.getPlayerEntities(client.getLocalPlayer());
 
@@ -1479,11 +1477,11 @@ public class ChatLounge
                 final Entity entity = (Entity) entities.nextElement();
                 client.sendDeleteEntity(entity.getId());
             }
-        } else if (ev.getSource() == butChangeBoard || ev.getSource() == lisBoardsSelected) {
+        } else if (ev.getSource().equals(butChangeBoard) || ev.getSource().equals(lisBoardsSelected)) {
             // board settings
             clientgui.getBoardSelectionDialog().update(client.getMapSettings(), true);
             clientgui.getBoardSelectionDialog().setVisible(true);
-        } else if (ev.getSource() == butOptions) {
+        } else if (ev.getSource().equals(butOptions)) {
             // Make sure the game options dialog is editable.
             if (!clientgui.getGameOptionsDialog().isEditable()) {
                 clientgui.getGameOptionsDialog().setEditable(true);
@@ -1491,7 +1489,7 @@ public class ChatLounge
             // Display the game options dialog.
             clientgui.getGameOptionsDialog().update(client.game.getOptions());
             clientgui.getGameOptionsDialog().setVisible(true);
-        } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
+        } else if (ev.getSource().equals(butChangeStart) || ev.getSource().equals(lisStarts)) {
             clientgui.getStartingPositionDialog().update();
             Client c = getPlayerListSelected(lisStarts);
             if (c == null) {
@@ -1500,23 +1498,23 @@ public class ChatLounge
             }
             clientgui.getStartingPositionDialog().setClient(c);
             clientgui.getStartingPositionDialog().setVisible(true);
-        } else if (ev.getSource() == butMechReadout) {
+        } else if (ev.getSource().equals(butMechReadout)) {
             mechReadout();
-        } else if (ev.getSource() == butViewGroup) {
+        } else if (ev.getSource().equals(butViewGroup)) {
             viewGroup();
-        } else if (ev.getSource() == butLoadList) {
+        } else if (ev.getSource().equals(butLoadList)) {
             // Allow the player to replace their current
             // list of entities with a list from a file.
             clientgui.loadListFile();
-        } else if (ev.getSource() == butSaveList) {
+        } else if (ev.getSource().equals(butSaveList)) {
             // Allow the player to save their current
             // list of entities to a file.
             clientgui.saveListFile(client.game.getPlayerEntities(client.getLocalPlayer()));
-        } else if (ev.getSource() == butMinefield) {
+        } else if (ev.getSource().equals(butMinefield)) {
             updateMinefield();
-        } else if (ev.getSource() == butCamo) {
+        } else if (ev.getSource().equals(butCamo)) {
             camoDialog.setVisible(true);
-        } else if (ev.getSource() == butAddBot) {
+        } else if (ev.getSource().equals(butAddBot)) {
             String name = name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
             Prompt p = new Prompt(clientgui.frame, Messages.getString("ChatLounge.ChooseBotName"), Messages.getString("ChatLounge.Name"), name, 15); //$NON-NLS-1$ //$NON-NLS-2$
             if (!p.showDialog()) {
@@ -1536,9 +1534,9 @@ public class ChatLounge
             }
             c.retrieveServerInfo();
             clientgui.getBots().put(name, c);
-        } else if (ev.getSource() == butRemoveBot) {
+        } else if (ev.getSource().equals(butRemoveBot)) {
             Client c = getPlayerListSelected(lisPlayerInfo);
-            if (c == null || c == client) {
+            if (c == null || c.equals(client)) {
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBo")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
@@ -1565,7 +1563,7 @@ public class ChatLounge
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
+        return distracted.isIgnoringEvents();
     }
 
     /**
@@ -1604,7 +1602,7 @@ public class ChatLounge
      * @return the <code>Component</code> which is displayed in the
      *         secondary section during this phase.
      */
-    public Component getSecondaryDisplay() {
+    public JComponent getSecondaryDisplay() {
         return labStatus;
     }
 

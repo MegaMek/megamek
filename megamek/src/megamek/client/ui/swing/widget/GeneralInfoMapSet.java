@@ -24,8 +24,8 @@ import megamek.common.Mech;
 import megamek.common.Tank;
 import megamek.common.options.IOption;
 
+import javax.swing.JComponent;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
@@ -41,7 +41,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private static final String IMAGE_DIR = "data/images/widgets";
 
     private static String STAR3 = "***";  //$NON-NLS-1$
-    private Component comp;
+    private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
     weightL, bvL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
@@ -58,7 +58,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     /**
      * This constructor have to be called anly from addNotify() method
      */
-    public GeneralInfoMapSet(Component c) {
+    public GeneralInfoMapSet(JComponent c) {
         comp = c;
         setAreas();
         setBackGround();
@@ -189,7 +189,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         advantagesR = new PMSimpleLabel[24];
         for (int i = 0; i < advantagesR.length; i++) {
-            advantagesR[i] = createLabel(new Integer(i).toString(), fm, pilotL.getSize().width + 10, getNewYCoord());
+            advantagesR[i] = createLabel(Integer.toString(i), fm, pilotL.getSize().width + 10, getNewYCoord());
             content.addArea(advantagesR[i]);
         }
         //DO NOT PLACE ANY MORE LABELS BELOW HERE.  They will get
@@ -371,7 +371,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             buildingHeightR.setVisible(false);
         }
 
-        bvR.setString(new Integer(en.calculateBattleValue()).toString());
+        bvR.setString(Integer.toString(en.calculateBattleValue()));
     }
 
     public PMAreasGroup getContentGroup() {

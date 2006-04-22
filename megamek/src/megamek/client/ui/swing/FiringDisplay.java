@@ -52,9 +52,8 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -101,7 +100,7 @@ public class FiringDisplay
     public Client client;
     private ClientGUI clientgui;
     // buttons
-    private Container panButtons;
+    private JComponent panButtons;
 
     private JButton butFire;
     private JButton butTwist;
@@ -148,7 +147,7 @@ public class FiringDisplay
      * for the specified client.
      */
     public FiringDisplay(ClientGUI clientgui) {
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         this.clientgui = clientgui;
         client.game.addGameListener(this);
 
@@ -278,7 +277,7 @@ public class FiringDisplay
 
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -326,7 +325,7 @@ public class FiringDisplay
 
         if (client.game.getEntity(en) != null) {
 
-            this.cen = en;
+            cen = en;
             clientgui.setSelectedEntityNum(en);
 
             // If the selected entity is not on the board, use the next one.
@@ -339,7 +338,7 @@ public class FiringDisplay
                      nextId = client.getNextEntityNum(nextId)) {
 
                     if (null != client.game.getEntity(nextId).getPosition()) {
-                        this.cen = nextId;
+                        cen = nextId;
                         break;
                     }
 
@@ -485,7 +484,7 @@ public class FiringDisplay
             clientgui.systemMessage(Messages.getString("FiringDisplay.willSwitch", new Object[]{m.getName(), m.pendingMode().getDisplayableName()})); //$NON-NLS-1$
         }
 
-        this.updateTarget();
+        updateTarget();
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(wn);
     }
@@ -500,7 +499,7 @@ public class FiringDisplay
 
         Vector vec = client.game.getValidTargets(ce());
         Comparator sortComp = new Comparator() {
-            public int compare(java.lang.Object x, java.lang.Object y) {
+            public int compare(Object x, Object y) {
                 Entity entX = (Entity) x;
                 Entity entY = (Entity) y;
 
@@ -560,13 +559,13 @@ public class FiringDisplay
             return;
 
         // HACK : don't show the choice dialog.
-        this.showTargetChoice = false;
+        showTargetChoice = false;
 
         clientgui.bv.centerOnHex(targ.getPosition());
         clientgui.getBoardView().select(targ.getPosition());
 
         // HACK : show the choice dialog again.
-        this.showTargetChoice = true;
+        showTargetChoice = true;
         target(targ);
     }
 
@@ -899,7 +898,7 @@ public class FiringDisplay
      * Targets something
      */
     void target(Targetable t) {
-        this.target = t;
+        target = t;
         ash.setAimingMode();
         updateTarget();
         ash.showDialog();
@@ -1020,7 +1019,7 @@ public class FiringDisplay
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1053,15 +1052,15 @@ public class FiringDisplay
     public void hexSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
             // HACK : sometimes we don't show the target choice window
             Targetable targ = null;
-            if (this.showTargetChoice)
-                targ = this.chooseTarget(b.getCoords());
+            if (showTargetChoice)
+                targ = chooseTarget(b.getCoords());
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
@@ -1077,7 +1076,7 @@ public class FiringDisplay
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1096,7 +1095,7 @@ public class FiringDisplay
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1114,7 +1113,7 @@ public class FiringDisplay
     //
     public void actionPerformed(ActionEvent ev) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1125,7 +1124,7 @@ public class FiringDisplay
             return;
         }
 
-        if (ev.getSource() == butDone) {
+        if (ev.getSource().equals(butDone)) {
             ready();
         } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) { //$NON-NLS-1$
             // Make sure the game options dialog is not editable.
@@ -1249,7 +1248,7 @@ public class FiringDisplay
     public void keyPressed(KeyEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1293,7 +1292,7 @@ public class FiringDisplay
     public void keyReleased(KeyEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1311,11 +1310,11 @@ public class FiringDisplay
     public void itemStateChanged(ItemEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        if (ev.getItemSelectable() == clientgui.mechD.wPan.weaponList) {
+        if (ev.getItemSelectable().equals(clientgui.mechD.wPan.weaponList)) {
             // update target data in weapon display
             updateTarget();
         }
@@ -1325,7 +1324,7 @@ public class FiringDisplay
     public void finishedMovingUnits(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1338,7 +1337,7 @@ public class FiringDisplay
     public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1597,8 +1596,8 @@ public class FiringDisplay
             AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
             // Leg and swarm attacks can't be aimed.
-            if (wtype.getInternalName() == Infantry.LEG_ATTACK ||
-                    wtype.getInternalName() == Infantry.SWARM_MEK) {
+            if (wtype.getInternalName().equals(Infantry.LEG_ATTACK) ||
+                    wtype.getInternalName().equals(Infantry.SWARM_MEK)) {
                 return false;
             }
             switch (aimingMode) {
@@ -1671,16 +1670,16 @@ public class FiringDisplay
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
+        return distracted.isIgnoringEvents();
     }
 
     /**
      * Specify if the listener should be distracted.
      *
-     * @param distract <code>true</code> if the listener should ignore events
-     *                 <code>false</code> if the listener should pay attention again.
-     *                 Events that occured while the listener was distracted NOT
-     *                 going to be processed.
+     * @param distracted <code>true</code> if the listener should ignore events
+     *                   <code>false</code> if the listener should pay attention again.
+     *                   Events that occured while the listener was distracted NOT
+     *                   going to be processed.
      */
     public void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);
@@ -1759,7 +1758,7 @@ public class FiringDisplay
                             Messages.getString("FiringDisplay.ChooseTargetDialog.message", new Object[]{pos.getBoardNum()}), //$NON-NLS-1$
                             names);
             choiceDialog.setVisible(true);
-            if (choiceDialog.getAnswer() == true) {
+            if (choiceDialog.getAnswer()) {
                 choice = (Targetable) targets.elementAt
                         (choiceDialog.getChoice());
             }

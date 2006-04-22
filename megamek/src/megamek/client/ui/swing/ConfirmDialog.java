@@ -16,11 +16,11 @@ package megamek.client.ui.swing;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -51,7 +51,7 @@ public class ConfirmDialog
 
     private boolean confirmation = false;
 
-    private Component firstFocusable;
+    private JComponent firstFocusable;
 
     /**
      * Creates a new dialog window that lets the user answer Yes or No,

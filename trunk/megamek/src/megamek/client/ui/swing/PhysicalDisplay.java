@@ -45,9 +45,8 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -88,7 +87,7 @@ public class PhysicalDisplay
     private Client client;
 
     // buttons
-    private Container panButtons;
+    private JComponent panButtons;
 
     private JButton butPunch;
     private JButton butKick;
@@ -238,7 +237,7 @@ public class PhysicalDisplay
 
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -1208,10 +1207,10 @@ public class PhysicalDisplay
     /**
      * Specify if the listener should be distracted.
      *
-     * @param distract <code>true</code> if the listener should ignore events
-     *                 <code>false</code> if the listener should pay attention again.
-     *                 Events that occured while the listener was distracted NOT
-     *                 going to be processed.
+     * @param distracted <code>true</code> if the listener should ignore events
+     *                   <code>false</code> if the listener should pay attention again.
+     *                   Events that occured while the listener was distracted NOT
+     *                   going to be processed.
      */
     public void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);

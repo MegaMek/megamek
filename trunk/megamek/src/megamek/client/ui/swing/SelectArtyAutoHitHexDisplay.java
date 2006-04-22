@@ -27,8 +27,8 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -69,7 +69,7 @@ public class SelectArtyAutoHitHexDisplay
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         client.game.addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
@@ -118,7 +118,7 @@ public class SelectArtyAutoHitHexDisplay
         addKeyListener(this);
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -175,7 +175,7 @@ public class SelectArtyAutoHitHexDisplay
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -199,7 +199,7 @@ public class SelectArtyAutoHitHexDisplay
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -215,7 +215,7 @@ public class SelectArtyAutoHitHexDisplay
 
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -234,7 +234,7 @@ public class SelectArtyAutoHitHexDisplay
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -280,16 +280,16 @@ public class SelectArtyAutoHitHexDisplay
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
+        return distracted.isIgnoringEvents();
     }
 
     /**
      * Specify if the listener should be distracted.
      *
-     * @param distract <code>true</code> if the listener should ignore events
-     *                 <code>false</code> if the listener should pay attention again.
-     *                 Events that occured while the listener was distracted NOT
-     *                 going to be processed.
+     * @param distracted <code>true</code> if the listener should ignore events
+     *                   <code>false</code> if the listener should pay attention again.
+     *                   Events that occured while the listener was distracted NOT
+     *                   going to be processed.
      */
     public void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);

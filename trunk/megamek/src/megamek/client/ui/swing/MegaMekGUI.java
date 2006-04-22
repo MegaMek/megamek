@@ -33,17 +33,18 @@ import megamek.server.Server;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
-import java.awt.Choice;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -59,7 +60,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Vector;
@@ -329,24 +329,21 @@ public class MegaMekGUI implements IMegaMekGUI {
     }
 
     public void loadGame() {
-        FileDialog fd = new FileDialog(frame, Messages.getString("MegaMek.SaveGameDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
-        fd.setDirectory("savegames"); //$NON-NLS-1$
-        // limit file-list to savedgames only
-        fd.setFilenameFilter(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return (null != name && name.endsWith(".sav")); //$NON-NLS-1$
+        JFileChooser fc = new JFileChooser("savegames");
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("MegaMek.SaveGameDialog.title"));
+        fc.setFileFilter(new FileFilter() {
+            public boolean accept(File dir) {
+                return (null != dir.getName() && dir.getName().endsWith(".sav")); //$NON-NLS-1$
+            }
+
+            public String getDescription() {
+                return ".sav";
             }
         });
-        //Using the FilenameFilter class would be the appropriate way to
-        // filter for certain extensions, but it's broken under windoze.  See
-        // http://developer.java.sun.com/developer/bugParade/bugs/4031440.html
-        // for details.  The hack below is better than nothing.
-        //New note: Since we have a dedicated save dir now, I'm commenting
-        // this out.
-        //fd.setFile("*.sav"); //$NON-NLS-1$
-
-        fd.setVisible(true);
-        if (fd.getFile() == null) {
+        int returnVal = fc.showOpenDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
+            // I want a file, y'know!
             return;
         }
         HostDialog hd = new HostDialog(frame);
@@ -372,7 +369,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         d6();
         // start server
         server = new Server(hd.serverPass, hd.port);
-        if (!server.loadGame(new File(fd.getDirectory(), fd.getFile()))) {
+        if (!server.loadGame(fc.getSelectedFile())) {
             new AlertDialog(frame, Messages.getString("MegaMek.LoadGameAlert.title"), Messages.getString("MegaMek.LoadGameAlert.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
             server = null;
             return;
@@ -390,22 +387,25 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Host a game constructed from a scenario file
      */
     public void scenario() {
-        FileDialog fd = new FileDialog(frame, Messages.getString("MegaMek.SelectScenarioDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
-        fd.setDirectory("data" + File.separatorChar + "scenarios"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        // the filter doesn't seem to do anything in windows.  oh well
-        FilenameFilter ff = new FilenameFilter() {
-            public boolean accept(File f, String s) {
-                return s.endsWith(".mms"); //$NON-NLS-1$
+        JFileChooser fc = new JFileChooser("data" + File.separatorChar + "scenarios");
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("MegaMek.SelectScenarioDialog.title"));
+        fc.setFileFilter(new FileFilter() {
+            public boolean accept(File dir) {
+                return (null != dir.getName() && dir.getName().endsWith(".mms")); //$NON-NLS-1$
             }
-        };
-        fd.setFilenameFilter(ff);
-        fd.setFile("*.mms"); //see comment above for load game dialog //$NON-NLS-1$
-        fd.setVisible(true);
-        if (fd.getFile() == null) {
+
+            public String getDescription() {
+                return ".mms";
+            }
+        });
+        int returnVal = fc.showOpenDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
+            // I want a file, y'know!
             return;
         }
-        ScenarioLoader sl = new ScenarioLoader(new File(fd.getDirectory(), fd.getFile()));
+
+        ScenarioLoader sl = new ScenarioLoader(fc.getSelectedFile());
         IGame g = null;
         try {
             g = sl.createGame();
@@ -577,7 +577,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         client.retrieveServerInfo();
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         frame.getContentPane().add(comp);
     }
@@ -990,7 +990,7 @@ class ScenarioDialog extends JDialog implements ActionListener {
     public static final int T_BOT = 2;
     private Player[] m_players;
     private JLabel[] m_labels;
-    private Choice[] m_typeChoices;
+    private JComboBox[] m_typeChoices;
     private JButton[] m_camoButtons;
     private JFrame m_frame;
     /**
@@ -1008,17 +1008,17 @@ class ScenarioDialog extends JDialog implements ActionListener {
         camoDialog = new CamoChoiceDialog(frame);
         m_players = pa;
         m_labels = new JLabel[pa.length];
-        m_typeChoices = new Choice[pa.length];
+        m_typeChoices = new JComboBox[pa.length];
         m_camoButtons = new JButton[pa.length];
         playerTypes = new int[pa.length];
         for (int x = 0; x < pa.length; x++) {
             final Player curPlayer = m_players[x];
             curPlayer.setColorIndex(x);
             m_labels[x] = new JLabel(pa[x].getName(), JLabel.LEFT);
-            m_typeChoices[x] = new Choice();
-            m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.me")); //$NON-NLS-1$
-            m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
-            m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
+            m_typeChoices[x] = new JComboBox();
+            m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.me")); //$NON-NLS-1$
+            m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
+            m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
             final Color defaultBackground = m_typeChoices[x].getBackground();
             m_camoButtons[x] = new JButton();
             final JButton curButton = m_camoButtons[x];

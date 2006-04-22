@@ -19,8 +19,8 @@ import megamek.client.ui.swing.Messages;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 
+import javax.swing.JComponent;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -38,7 +38,7 @@ public class InfantryMapSet implements DisplayMapSet {
     //Picture to represent single trooper
     private Image infImage;
     //Reference to Component class required to handle images and fonts
-    private Component comp;
+    private JComponent comp;
     // Assuming that it will be no more that 28 men in platoon
     private PMPicArea[] areas = new PMPicArea[28];
     // Main areas group that will be passing to PicMap
@@ -50,7 +50,7 @@ public class InfantryMapSet implements DisplayMapSet {
 
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorMediumFontSize")); //$NON-NLS-1$
 
-    public InfantryMapSet(Component c) {
+    public InfantryMapSet(JComponent c) {
         comp = c;
         setAreas();
         setBackGround();

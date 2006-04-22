@@ -27,7 +27,7 @@ import megamek.common.ITerrain;
 import megamek.common.Terrains;
 import megamek.common.util.StringUtil;
 
-import java.awt.Component;
+import javax.swing.JComponent;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.io.BufferedReader;
@@ -38,6 +38,8 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import java.util.Vector;
 
 /**
  * Matches each hex with an appropriate image.
@@ -71,7 +73,7 @@ public class HexTileset {
      * Any terrain left is used to match a base image for the hex.  This time,
      * a match can be any value, and the first, best image is used.
      */
-    public synchronized Object[] assignMatch(IHex hex, Component comp) {
+    public synchronized Object[] assignMatch(IHex hex, JComponent comp) {
         IHex hexCopy = hex.duplicate();
         List supers = supersFor(hexCopy, comp);
         Image base = baseFor(hexCopy, comp);
@@ -80,7 +82,7 @@ public class HexTileset {
         return pair;
     }
 
-    public synchronized Image getBase(IHex hex, Component comp) {
+    public synchronized Image getBase(IHex hex, JComponent comp) {
         Object[] pair = (Object[]) hexToImageCache.get(hex);
         if (pair == null) {
             pair = assignMatch(hex, comp);
@@ -88,7 +90,7 @@ public class HexTileset {
         return (Image) pair[0];
     }
 
-    public synchronized List getSupers(IHex hex, Component comp) {
+    public synchronized List getSupers(IHex hex, JComponent comp) {
         Object[] pair = (Object[]) hexToImageCache.get(hex);
         if (pair == null) {
             pair = assignMatch(hex, comp);
@@ -102,7 +104,7 @@ public class HexTileset {
      * elements from the tileset hex are removed from the hex.  Thus you want
      * to pass a copy of the original to this function.
      */
-    private List supersFor(IHex hex, Component comp) {
+    private List supersFor(IHex hex, JComponent comp) {
         ArrayList matches = new ArrayList();
         
         // find superimposed image matches
@@ -127,7 +129,7 @@ public class HexTileset {
      * Returns the best matching base image for this hex.  This works best if
      * any terrain with a "super" image is removed.
      */
-    private Image baseFor(IHex hex, Component comp) {
+    private Image baseFor(IHex hex, JComponent comp) {
         HexEntry bestMatch = null;
         double match = -1;
 
@@ -203,7 +205,7 @@ public class HexTileset {
     /**
      * Initializes all the images in this tileset and adds them to the tracker
      */
-    public void loadAllImages(Component comp, MediaTracker tracker) {
+    public void loadAllImages(JComponent comp, MediaTracker tracker) {
         for (Iterator i = bases.iterator(); i.hasNext();) {
             HexEntry entry = (HexEntry) i.next();
             if (entry.getImage() == null) {
@@ -241,7 +243,7 @@ public class HexTileset {
     /**
      * Loads the image for this hex.
      */
-    public void loadHexImage(IHex hex, Component comp, MediaTracker tracker) {
+    public void loadHexImage(IHex hex, JComponent comp, MediaTracker tracker) {
 
     }
 
@@ -349,14 +351,14 @@ public class HexTileset {
         private IHex hex;
         private String imageFile;
         private Image image;
-        private java.util.Vector images;
-        private java.util.Vector filenames;
-        private java.util.Random r;
+        private Vector images;
+        private Vector filenames;
+        private Random r;
 
         public HexEntry(IHex hex, String imageFile) {
             this.hex = hex;
             this.imageFile = imageFile;
-            r = new java.util.Random();
+            r = new Random();
             filenames = StringUtil.splitString(imageFile, ";"); //$NON-NLS-1$
         }
 
@@ -372,7 +374,7 @@ public class HexTileset {
             return "data/images/hexes/" + imageFile; //$NON-NLS-1$
         }
 
-        public Image getImage(Component comp) {
+        public Image getImage(JComponent comp) {
             if (images == null) {
                 loadImage(comp);
             }
@@ -389,8 +391,8 @@ public class HexTileset {
 */
         }
 
-        public void loadImage(Component comp) {
-            images = new java.util.Vector();
+        public void loadImage(JComponent comp) {
+            images = new Vector();
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = (String) filenames.elementAt(i);
                 images.addElement(comp.getToolkit().getImage("data/images/hexes/" + filename)); //$NON-NLS-1$

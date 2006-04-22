@@ -39,8 +39,8 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import java.awt.Component;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.image.FilteredImageSource;
@@ -64,7 +64,7 @@ import java.util.List;
  */
 public class TilesetManager implements IPreferenceChangeListener {
     // component to load images to
-    private Component comp;
+    private JComponent comp;
 
     // keep tracking of loading images
     private MediaTracker tracker;
@@ -101,7 +101,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     /**
      * Creates new TilesetManager
      */
-    public TilesetManager(Component comp) throws IOException {
+    public TilesetManager(JComponent comp) throws IOException {
         this.comp = comp;
         tracker = new MediaTracker(comp);
         try {
@@ -259,14 +259,14 @@ public class TilesetManager implements IPreferenceChangeListener {
     }
 
     /**
-     * @returns true if we're in the process of loading some images
+     * @return true if we're in the process of loading some images
      */
     public boolean isStarted() {
         return started;
     }
 
     /**
-     * @returns true if we're done loading images
+     * @return true if we're done loading images
      */
     public synchronized boolean isLoaded() {
         if (!loaded) {
@@ -360,6 +360,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         try {
             loadTracker.waitForID(0);
         } catch (InterruptedException e) {
+            //should never come here
 
         }
         bp.setIcon(new ImageIcon(preview));
@@ -457,17 +458,17 @@ public class TilesetManager implements IPreferenceChangeListener {
         private Image camo;
         private Image[] facings = new Image[6];
         private Image[] wreckFacings = new Image[6];
-        private Component comp;
+        private JComponent comp;
 
         private static final int IMG_WIDTH = 84;
         private static final int IMG_HEIGHT = 72;
         private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
 
-        public EntityImage(Image base, int tint, Image camo, Component comp) {
+        public EntityImage(Image base, int tint, Image camo, JComponent comp) {
             this(base, null, tint, camo, comp);
         }
 
-        public EntityImage(Image base, Image wreck, int tint, Image camo, Component comp) {
+        public EntityImage(Image base, Image wreck, int tint, Image camo, JComponent comp) {
             this.base = base;
             this.tint = tint;
             this.camo = camo;

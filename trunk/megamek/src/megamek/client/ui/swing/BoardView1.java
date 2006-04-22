@@ -77,6 +77,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JWindow;
@@ -122,7 +123,7 @@ import java.util.Vector;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public final class BoardView1
-        extends Canvas
+        extends JComponent
         implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener, MechDisplayListener, IPreferenceChangeListener {
     private static final int TRANSPARENT = 0xFFFF00FF;
     // the dimensions of megamek's hex images
@@ -436,20 +437,14 @@ public final class BoardView1
         repaint();
     }
 
-    public void paint(Graphics g) {
-        update(g);
-    }
-
-    /**
-     * Draw the screen!
-     */
-    public synchronized void update(Graphics g) {
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         // Limit our size to the viewport of the scroll pane.
         final Dimension size = getSize();
         //         final long startTime = System.currentTimeMillis(); // commentme
 
         // Make sure our scrollbars have the right sizes.
-        // N.B. A buggy Sun implementation makes me to do this here instead 
+        // N.B. A buggy Sun implementation makes me to do this here instead
         // of updateBoardSize() (which is where *I* think it belongs).
         if (null != vScrollbar) {
             vScrollbar.setVisibleAmount(size.height);
@@ -484,7 +479,7 @@ public final class BoardView1
             backImage = createImage(backSize.width, backSize.height);
             backGraph = backImage.getGraphics();
         }
-        
+
         // make sure board rectangle contains our current view rectangle
         if (boardImage == null || !boardRect.union(view).equals(boardRect)) {
             updateBoardImage();
@@ -502,7 +497,7 @@ public final class BoardView1
 
         // Minefield signs all over the place!
         drawMinefields();
-        
+
         // Artillery targets
         drawArtilleryHexes();
 

@@ -42,17 +42,18 @@ import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -71,7 +72,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -109,7 +109,7 @@ public class ClientGUI
     public PopupMenu popup = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
     private UnitOverview uo;
     public Ruler ruler; // added by kenn
-    protected Component curPanel;
+    protected JComponent curPanel;
     public ChatLounge chatlounge = null;
     // some dialogs...
     private BoardSelectionDialog boardSelectionDialog;
@@ -121,8 +121,8 @@ public class ClientGUI
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
      */
-    private FileDialog dlgLoadList = null;
-    private FileDialog dlgSaveList = null;
+    private JFileChooser dlgLoadList = null;
+    private JFileChooser dlgSaveList = null;
     public Client client;
     /**
      * Cache for the "bing" soundclip.
@@ -492,22 +492,26 @@ public class ClientGUI
      */
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equalsIgnoreCase("fileGameSave")) { //$NON-NLS-1$
-            FileDialog fd = new FileDialog(frame, Messages.getString("ClientGUI.FileSaveDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
-            fd.setDirectory("."); //$NON-NLS-1$
-            // limit file-list to savedgames only
-            fd.setFilenameFilter(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".sav")); //$NON-NLS-1$
+            JFileChooser fc = new JFileChooser(".");
+            fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+            fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
+            fc.setFileFilter(new FileFilter() {
+                public boolean accept(File dir) {
+                    return (null != dir.getName() && dir.getName().endsWith(".sav")); //$NON-NLS-1$
+                }
+
+                public String getDescription() {
+                    return ".sav";
                 }
             });
-            //Using the FilenameFilter class would be the appropriate way to
-            // filter for certain extensions, but it's broken under windoze.  See
-            // http://developer.java.sun.com/developer/bugParade/bugs/4031440.html
-            // for details.  The hack below is better than nothing.
-            fd.setFile("*.sav"); //$NON-NLS-1$
-            fd.setVisible(true);
-            if (null != fd.getFile()) {
-                client.sendChat("/save " + fd.getFile()); //$NON-NLS-1$
+
+            int returnVal = fc.showOpenDialog(frame);
+            if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
+                // I want a file, y'know!
+                return;
+            }
+            if (null != fc.getSelectedFile()) {
+                client.sendChat("/save " + fc.getSelectedFile()); //$NON-NLS-1$
             }
         }
         if (event.getActionCommand().equalsIgnoreCase("helpAbout")) { //$NON-NLS-1$
@@ -587,7 +591,7 @@ public class ClientGUI
         boolean reportHandled = false;
         Iterator names = phaseComponents.keySet().iterator();
         while (names.hasNext()) {
-            Component component = (Component) phaseComponents.get(names.next());
+            JComponent component = (JComponent) phaseComponents.get(names.next());
             if (component instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
@@ -667,7 +671,7 @@ public class ClientGUI
 
         // Get the new panel.
         String name = String.valueOf(phase);
-        curPanel = (Component) phaseComponents.get(name);
+        curPanel = (JComponent) phaseComponents.get(name);
         if (null == curPanel) {
             curPanel = initializePanel(phase);
         }
@@ -694,10 +698,10 @@ public class ClientGUI
         if (GUIPreferences.getInstance().getFocus() && !(client instanceof TestBot)) curPanel.requestFocus();
     }
 
-    private Component initializePanel(int phase) {
+    private JComponent initializePanel(int phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
-        Component component = null;
+        JComponent component = null;
         String secondary = null;
         String main = null;
         switch (phase) {
@@ -811,7 +815,7 @@ public class ClientGUI
             case IGame.PHASE_END_REPORT:
             case IGame.PHASE_VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
-                component = (Component) phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
+                component = (JComponent) phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
                 if (null == component) {
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(IGame.PHASE_INITIATIVE_REPORT);
@@ -832,7 +836,7 @@ public class ClientGUI
         return component;
     }
 
-    protected void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    protected void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
@@ -1078,35 +1082,34 @@ public class ClientGUI
     protected void loadListFile() {
         // Build the "load unit" dialog, if necessary.
         if (null == dlgLoadList) {
-            dlgLoadList = new FileDialog(frame, Messages.getString("ClientGUI.openUnitListFileDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
+            dlgLoadList = new JFileChooser(".");
+            dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+            dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
+            dlgLoadList.setFileFilter(new FileFilter() {
+                public boolean accept(File dir) {
+                    return (null != dir.getName() && dir.getName().endsWith(".mul")); //$NON-NLS-1$
+                }
 
-            // Add a filter for MUL files
-            dlgLoadList.setFilenameFilter(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".mul")); //$NON-NLS-1$
+                public String getDescription() {
+                    return ".mul";
                 }
             });
+        }
+        // Default to the player's name.
+        dlgLoadList.setSelectedFile(new File(client.getLocalPlayer().getName() + ".mul")); //$NON-NLS-1$
 
-            // use base directory by default
-            dlgLoadList.setDirectory("."); //$NON-NLS-1$
-
-            // Default to the player's name.
-            //dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );
-            // Instead, use setFile as a windoze hack, see Server.java
-            //  (search for "setFile") for details.
-            dlgLoadList.setFile("*.mul"); //$NON-NLS-1$
+        int returnVal = dlgLoadList.showOpenDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || dlgSaveList.getSelectedFile() == null) {
+            // I want a file, y'know!
+            return;
         }
 
-        // Display the "load unit" dialog.
-        dlgLoadList.setVisible(true);
-
         // Did the player select a file?
-        String unitPath = dlgLoadList.getDirectory();
-        String unitFile = dlgLoadList.getFile();
+        File unitFile = dlgLoadList.getSelectedFile();
         if (null != unitFile) {
             try {
                 // Read the units from the file.
-                Vector loadedUnits = EntityListFile.loadFrom(unitPath, unitFile);
+                Vector loadedUnits = EntityListFile.loadFrom(unitFile);
 
                 // Add the units from the file.
                 for (Enumeration iter = loadedUnits.elements(); iter.hasMoreElements();) {
@@ -1141,36 +1144,43 @@ public class ClientGUI
 
         // Build the "save unit" dialog, if necessary.
         if (null == dlgSaveList) {
-            dlgSaveList = new FileDialog(frame, Messages.getString("ClientGUI.saveUnitListFileDialog.title"), FileDialog.SAVE); //$NON-NLS-1$
+            dlgSaveList = new JFileChooser(".");
+            dlgSaveList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+            dlgSaveList.setDialogTitle(Messages.getString("ClientGUI.saveUnitListFileDialog.title"));
+            dlgSaveList.setFileFilter(new FileFilter() {
+                public boolean accept(File dir) {
+                    return (null != dir.getName() && dir.getName().endsWith(".mul")); //$NON-NLS-1$
+                }
 
-            // Add a filter for MUL files
-            dlgSaveList.setFilenameFilter(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return (null != name && name.endsWith(".mul")); //$NON-NLS-1$
+                public String getDescription() {
+                    return ".mul";
                 }
             });
+        }
+        // Default to the player's name.
+        dlgSaveList.setSelectedFile(new File(client.getLocalPlayer().getName() + ".mul")); //$NON-NLS-1$
 
-            // use base directory by default
-            dlgSaveList.setDirectory("."); //$NON-NLS-1$
-
-            // Default to the player's name.
-            dlgSaveList.setFile(client.getLocalPlayer().getName() + ".mul"); //$NON-NLS-1$
+        int returnVal = dlgSaveList.showSaveDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || dlgSaveList.getSelectedFile() == null) {
+            // I want a file, y'know!
+            return;
         }
 
-        // Display the "save unit" dialog.
-        dlgSaveList.setVisible(true);
-
         // Did the player select a file?
-        String unitPath = dlgSaveList.getDirectory();
-        String unitFile = dlgSaveList.getFile();
+        File unitFile = dlgSaveList.getSelectedFile();
         if (null != unitFile) {
-            if (!(unitFile.toLowerCase().endsWith(".mul") //$NON-NLS-1$
-                    || unitFile.toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
-                unitFile += ".mul"; //$NON-NLS-1$
+            if (!(unitFile.getName().toLowerCase().endsWith(".mul") //$NON-NLS-1$
+                    || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+                try {
+                    unitFile = new File(unitFile.getCanonicalPath() + ".mul"); //$NON-NLS-1$
+                } catch (IOException ie) {
+                    //nothing needs to be done here
+                    return;
+                }
             }
             try {
                 // Save the player's entities to the file.
-                EntityListFile.saveTo(unitPath, unitFile, unitList);
+                EntityListFile.saveTo(unitFile, unitList);
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$

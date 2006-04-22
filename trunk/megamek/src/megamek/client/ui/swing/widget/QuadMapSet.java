@@ -19,8 +19,8 @@ import megamek.client.ui.swing.Messages;
 import megamek.common.Entity;
 import megamek.common.Mech;
 
+import javax.swing.JComponent;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -55,7 +55,7 @@ public class QuadMapSet implements DisplayMapSet {
     //Main areas group that keeps everything in itself and is passed to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
     //Reference to Component class (need to manage images and fonts)
-    private Component comp;
+    private JComponent comp;
 
     //Points for build hot areas (may be too heavy, think of to load from exteranl file)
     //Mek armor - Front
@@ -127,7 +127,7 @@ public class QuadMapSet implements DisplayMapSet {
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
-    public QuadMapSet(Component c) {
+    public QuadMapSet(JComponent c) {
         comp = c;
         setAreas();
         setLabels();

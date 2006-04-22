@@ -19,8 +19,8 @@ import megamek.client.ui.swing.Messages;
 import megamek.common.Entity;
 import megamek.common.Tank;
 
+import javax.swing.JComponent;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
@@ -35,7 +35,7 @@ public class TankMapSet implements DisplayMapSet {
 
     private static final String IMAGE_DIR = "data/images/widgets";
 
-    private Component comp;
+    private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[12];
     private PMSimpleLabel[] labels = new PMSimpleLabel[12];
     private PMValueLabel[] vLabels = new PMValueLabel[12];
@@ -88,7 +88,7 @@ public class TankMapSet implements DisplayMapSet {
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
-    public TankMapSet(Component c) {
+    public TankMapSet(JComponent c) {
         comp = c;
         setAreas();
         setLabels();

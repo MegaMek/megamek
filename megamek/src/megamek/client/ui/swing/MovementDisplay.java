@@ -53,8 +53,8 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -435,7 +435,7 @@ public class MovementDisplay
         addKeyListener(this);
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -1748,8 +1748,8 @@ public class MovementDisplay
     //
     public void keyPressed(KeyEvent ev) {
         final Entity ce = ce();
-        
-        
+
+
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

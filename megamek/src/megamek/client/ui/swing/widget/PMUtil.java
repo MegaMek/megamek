@@ -14,7 +14,7 @@
 
 package megamek.client.ui.swing.widget;
 
-import java.awt.Component;
+import javax.swing.JComponent;
 import java.awt.Image;
 import java.awt.MediaTracker;
 
@@ -26,7 +26,7 @@ public final class PMUtil {
     /**
      * Ensures that Images is completely loaded
      */
-    public static boolean setImage(Image im, Component c) {
+    public static boolean setImage(Image im, JComponent c) {
         boolean b = true;
         MediaTracker mt = new MediaTracker(c);
         mt.addImage(im, 0);

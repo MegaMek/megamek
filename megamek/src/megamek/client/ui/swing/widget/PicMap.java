@@ -14,8 +14,8 @@
 
 package megamek.client.ui.swing.widget;
 
+import javax.swing.JComponent;
 import java.awt.AWTEvent;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -48,7 +48,7 @@ import java.util.Vector;
  * </ul>
  * Within single layer elements are drawing in the order they added to PicMap.
  */
-public abstract class PicMap extends Component {
+public abstract class PicMap extends JComponent {
     //Vector of Background Drawers
     private Vector bgDrawers = new Vector();
     // Group of other areas which does not implement PMHotArea or PMLAbel
@@ -227,11 +227,7 @@ public abstract class PicMap extends Component {
         }
     }
 
-    public void update(Graphics g) {
-        paint(g);
-    }
-
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         if (bgIsOpaque) {
             //If we want to use buffering Component will be with opaque background
             g.drawImage(offScr, 0, 0, null);
@@ -338,12 +334,12 @@ public abstract class PicMap extends Component {
         switch (e.getID()) {
             case MouseEvent.MOUSE_MOVED:
                 PMHotArea ha = getAreaUnder(e.getX(), e.getY());
-                if (ha != activeHotArea) {
+                if (!ha.equals(activeHotArea)) {
                     if (activeHotArea != null) activeHotArea.onMouseExit(e);
                     activeHotArea = ha;
                     if (ha != null) {
                         ha.onMouseOver(e);
-                        this.setCursor(ha.getCursor());
+                        setCursor(ha.getCursor());
                     } else {
                         setCursor(Cursor.getDefaultCursor());
                     }

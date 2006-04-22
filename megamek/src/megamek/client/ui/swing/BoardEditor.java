@@ -28,7 +28,10 @@ import megamek.common.util.BoardUtilities;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,13 +39,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Choice;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -64,12 +65,11 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class BoardEditor extends Container implements ItemListener,
+public class BoardEditor extends JComponent implements ItemListener,
         ActionListener, DocumentListener, IMapSettingsObserver {
     private JFrame frame = new JFrame();
     private Game game = new Game();
@@ -80,7 +80,8 @@ public class BoardEditor extends Container implements ItemListener,
     private CommonHelpDialog help = null;
     private CommonSettingsDialog setdlg = null;
     private IHex curHex = new Hex();
-    private String curpath, curfile, curfileImage;
+    private File curfileImage;
+    private File curfile;
     // buttons and labels and such:
     private HexCanvas canHex;
     private JLabel labElev;
@@ -91,7 +92,7 @@ public class BoardEditor extends Container implements ItemListener,
     private List lisTerrain;
     private JButton butDelTerrain;
     private JPanel panTerrainType;
-    private Choice choTerrainType;
+    private JComboBox choTerrainType;
     private JTextField texTerrainLevel;
     private JPanel panTerrExits;
     private JCheckBox cheTerrExitSpecified;
@@ -218,10 +219,11 @@ public class BoardEditor extends Container implements ItemListener,
         refreshTerrainList();
         butDelTerrain = new JButton(Messages.getString("BoardEditor.butDelTerrain")); //$NON-NLS-1$
         butDelTerrain.addActionListener(this);
-        choTerrainType = new Choice();
+        String[] terrainArray = new String[Terrains.SIZE - 1];
         for (int i = 1; i < Terrains.SIZE; i++) {
-            choTerrainType.add(Terrains.getName(i));
+            terrainArray[i - 1] = Terrains.getName(i);
         }
+        choTerrainType = new JComboBox(terrainArray);
         texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
         butAddTerrain.addActionListener(this);
@@ -371,7 +373,7 @@ public class BoardEditor extends Container implements ItemListener,
      * terrain input fields
      */
     private ITerrain enteredTerrain() {
-        int type = Terrains.getType(choTerrainType.getSelectedItem());
+        int type = Terrains.getType((String) choTerrainType.getSelectedItem());
         int level = Integer.parseInt(texTerrainLevel.getText());
         boolean exitsSpecified = cheTerrExitSpecified.isSelected();
         int exits = Integer.parseInt(texTerrExits.getText());
@@ -395,7 +397,7 @@ public class BoardEditor extends Container implements ItemListener,
     private void refreshTerrainFromList() {
         ITerrain terrain = Terrains.getTerrainFactory().createTerrain(lisTerrain.getSelectedItem());
         terrain = curHex.getTerrain(terrain.getType());
-        choTerrainType.select(Terrains.getName(terrain.getType()));
+        choTerrainType.setSelectedItem(Terrains.getName(terrain.getType()));
         texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
         cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
         texTerrExits.setText(Integer.toString(terrain.getExits()));
@@ -420,7 +422,6 @@ public class BoardEditor extends Container implements ItemListener,
                 newHexes[i] = new Hex();
             }
             board.newData(bnd.getX(), bnd.getY(), newHexes);
-            curpath = null;
             curfile = null;
             frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
             menuBar.setBoard(true);
@@ -432,7 +433,6 @@ public class BoardEditor extends Container implements ItemListener,
         rmd.setVisible(true);
         board = BoardUtilities.generateRandom(mapSettings);
         game.setBoard(board);
-        curpath = null;
         curfile = null;
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
         menuBar.setBoard(true);
@@ -443,19 +443,27 @@ public class BoardEditor extends Container implements ItemListener,
     }
 
     public void boardLoad() {
-        FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.loadBoard"), FileDialog.LOAD); //$NON-NLS-1$
-        fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
-        fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        fd.setVisible(true);
-        if (fd.getFile() == null) {
+        JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
+        fc.setFileFilter(new FileFilter() {
+            public boolean accept(File dir) {
+                return (null != dir.getName() && dir.getName().endsWith(".board")); //$NON-NLS-1$
+            }
+
+            public String getDescription() {
+                return ".board";
+            }
+        });
+        int returnVal = fc.showOpenDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
             // I want a file, y'know!
             return;
         }
-        curpath = fd.getDirectory();
-        curfile = fd.getFile();
+        curfile = fc.getSelectedFile();
         // load!
         try {
-            InputStream is = new FileInputStream(new File(curpath, curfile));
+            InputStream is = new FileInputStream(fc.getSelectedFile());
             // tell the board to load!
             board.load(is);
             // okay, done!
@@ -482,7 +490,7 @@ public class BoardEditor extends Container implements ItemListener,
         }
         // save!
         try {
-            OutputStream os = new FileOutputStream(new File(curpath, curfile));
+            OutputStream os = new FileOutputStream(curfile);
             // tell the board to save!
             board.save(os);
             // okay, done!
@@ -540,20 +548,33 @@ public class BoardEditor extends Container implements ItemListener,
      * saves the board to the file.
      */
     public void boardSaveAs() {
-        FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.saveBoardAs"), FileDialog.SAVE); //$NON-NLS-1$
-        fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
-        fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        fd.setVisible(true);
-        if (fd.getFile() == null) {
+        JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
+        fc.setFileFilter(new FileFilter() {
+            public boolean accept(File dir) {
+                return (null != dir.getName() && dir.getName().endsWith(".board")); //$NON-NLS-1$
+            }
+
+            public String getDescription() {
+                return ".board";
+            }
+        });
+        int returnVal = fc.showSaveDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
             // I want a file, y'know!
             return;
         }
-        curpath = fd.getDirectory();
-        curfile = fd.getFile();
+        curfile = fc.getSelectedFile();
 
         // make sure the file ends in board
-        if (!curfile.toLowerCase().endsWith(".board")) { //$NON-NLS-1$
-            curfile += ".board"; //$NON-NLS-1$
+        if (!curfile.getName().toLowerCase().endsWith(".board")) { //$NON-NLS-1$
+            try {
+                curfile = new File(curfile.getCanonicalPath() + ".board"); //$NON-NLS-1$
+            } catch (IOException ie) {
+                //failure!
+                return;
+            }
         }
         frame.setTitle(Messages.getString("BoardEditor.title0") + curfile); //$NON-NLS-1$
         boardSave();
@@ -565,44 +586,44 @@ public class BoardEditor extends Container implements ItemListener,
      * for printing boards.
      */
     public void boardSaveAsImage() {
-        FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.saveAsImage"), FileDialog.SAVE); //$NON-NLS-1$
-        //        fd.setDirectory("data" + File.separator + "boards");
-        fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        JFileChooser fc = new JFileChooser(".");
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
+        fc.setFileFilter(new FileFilter() {
+            public boolean accept(File dir) {
+                return (null != dir.getName() && dir.getName().endsWith(".png")); //$NON-NLS-1$
+            }
 
-        // Add a filter for PNG files
-        fd.setFilenameFilter(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return (null != name && name.endsWith(".png")); //$NON-NLS-1$
+            public String getDescription() {
+                return ".png";
             }
         });
-
-        // use base directory by default
-        fd.setDirectory("."); //$NON-NLS-1$
-
         // Default to the board's name (if it has one).
         String fileName = null;
         if (null != curfile && curfile.length() > 0) {
-            fileName = curfile.toUpperCase();
+            fileName = curfile.getName().toUpperCase();
             if (fileName.endsWith(".BOARD")) { //$NON-NLS-1$
                 int length = fileName.length();
                 fileName = fileName.substring(0, length - 6);
             }
             fileName = fileName.toLowerCase() + ".png"; //$NON-NLS-1$
-            fd.setFile(fileName);
+            fc.setSelectedFile(new File(fileName));
         }
-
-        // Open the dialog and wait for it's return.
-        fd.setVisible(true);
-        if (fd.getFile() == null) {
+        int returnVal = fc.showSaveDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
             // I want a file, y'know!
             return;
         }
-        curpath = fd.getDirectory();
-        curfileImage = fd.getFile();
+        curfileImage = fc.getSelectedFile();
 
-        // make sure the file ends in board
-        if (!curfileImage.toLowerCase().endsWith(".png")) { //$NON-NLS-1$
-            curfileImage += ".png"; //$NON-NLS-1$
+        // make sure the file ends in png
+        if (!curfileImage.getName().toLowerCase().endsWith(".png")) { //$NON-NLS-1$
+            try {
+                curfileImage = new File(curfileImage.getCanonicalPath() + ".png"); //$NON-NLS-1$
+            } catch (IOException ie) {
+                //failure!
+                return;
+            }
         }
         frame.setTitle(Messages.getString("BoardEditor.title0") + curfileImage); //$NON-NLS-1$
         boardSaveImage();

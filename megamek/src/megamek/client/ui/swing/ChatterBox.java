@@ -24,12 +24,12 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.List;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -112,7 +112,7 @@ public class ChatterBox implements KeyListener {
     /**
      * Returns the "box" component with all teh stuff
      */
-    public Component getComponent() {
+    public JComponent getComponent() {
         return chatPanel;
     }
 

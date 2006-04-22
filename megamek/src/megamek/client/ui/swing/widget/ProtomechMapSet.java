@@ -18,8 +18,8 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Entity;
 import megamek.common.Protomech;
 
+import javax.swing.JComponent;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
@@ -63,21 +63,18 @@ public class ProtomechMapSet implements DisplayMapSet {
             20);
 
     //Reference to Component (required for Image handling)
-    private Component comp;
+    private JComponent comp;
     //Content group which will be sent to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
     //Set of Backgrpund drawers which will be sent to PicMap component
     private Vector bgDrawers = new Vector();
 
-    private int stepY = 53;
-
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
     /**
      * This constructor have to be called anly from addNotify() method
      */
-    public ProtomechMapSet(Component c) {
+    public ProtomechMapSet(JComponent c) {
         comp = c;
         setAreas();
         setBackGround();

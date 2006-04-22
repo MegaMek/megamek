@@ -28,8 +28,8 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -82,7 +82,7 @@ public class DeploymentDisplay
      */
     public DeploymentDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         client.game.addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
         setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
@@ -165,7 +165,7 @@ public class DeploymentDisplay
         addKeyListener(this);
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -185,7 +185,7 @@ public class DeploymentDisplay
         // trying to draw a c3 sprite belonging to the previously selected,
         // but not deployed entity
         clientgui.bv.clearC3Networks();
-        this.cen = en;
+        cen = en;
         clientgui.setSelectedEntityNum(en);
         setTurnEnabled(true);
         butDone.setEnabled(false);
@@ -322,7 +322,7 @@ public class DeploymentDisplay
         clientgui.bv.markDeploymentHexesFor(null);
         client.game.removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-        this.removeAll();
+        removeAll();
     }
 
     public void gameTurnChange(GameTurnChangeEvent e) {
@@ -342,7 +342,7 @@ public class DeploymentDisplay
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         DeploymentDisplay.this.clientgui.bv.markDeploymentHexesFor(null);
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         if (client.game.getPhase() == IGame.PHASE_DEPLOYMENT) {
@@ -355,7 +355,7 @@ public class DeploymentDisplay
     //
     public void hexMoused(BoardViewEvent b) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
@@ -407,7 +407,7 @@ public class DeploymentDisplay
     //
     public void actionPerformed(ActionEvent ev) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         if (statusBarActionPerformed(ev, client))
@@ -416,7 +416,7 @@ public class DeploymentDisplay
             // odd...
             return;
         }
-        if (ev.getSource() == butDone) {
+        if (ev.getSource().equals(butDone)) {
             deploy();
         } else if (ev.getActionCommand().equals(DEPLOY_NEXT)) {
             ce().setPosition(null);
@@ -458,7 +458,7 @@ public class DeploymentDisplay
                                 Messages.getString("DeploymentDisplay.loadUnitDialog.message", new Object[]{ce().getShortName(), ce().getUnusedString()}), //$NON-NLS-1$
                                 names);
                 choiceDialog.setVisible(true);
-                if (choiceDialog.getAnswer() == true) {
+                if (choiceDialog.getAnswer()) {
                     other = (Entity) choices.elementAt(choiceDialog.getChoice());
                     // Please note, the Server may never get this load order.
                     ce().load(other);
@@ -488,7 +488,7 @@ public class DeploymentDisplay
                                 Messages.getString("DeploymentDisplay.unloadUnitDialog.message", new Object[]{ce().getShortName(), ce().getUnusedString()}), //$NON-NLS-1$
                                 names);
                 choiceDialog.setVisible(true);
-                if (choiceDialog.getAnswer() == true) {
+                if (choiceDialog.getAnswer()) {
                     other = (Entity) choices.elementAt(choiceDialog.getChoice());
                     // Please note, the Server never got this load order.
                     if (ce().unload(other)) {
@@ -542,7 +542,7 @@ public class DeploymentDisplay
     // Selected a unit in the unit overview.
     public void unitSelected(BoardViewEvent b) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
         Entity e = client.game.getEntity(b.getEntityId());
@@ -614,7 +614,7 @@ public class DeploymentDisplay
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
+        return distracted.isIgnoringEvents();
     }
 
     /**

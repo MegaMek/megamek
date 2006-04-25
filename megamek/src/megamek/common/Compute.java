@@ -22,12 +22,14 @@ import java.util.Vector;
 
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.LayExplosivesAttackAction;
 import megamek.common.actions.ProtomechPhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.ThrashAttackAction;
+import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 
 /**
@@ -3310,6 +3312,9 @@ public class Compute {
 
         if(LayExplosivesAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
             return true;
+        
+        if(TripAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
 
         for(Iterator<Mounted> clubs = game.getEntity(entityId).getClubs().iterator();clubs.hasNext();) {
             Mounted club = clubs.next();
@@ -3319,6 +3324,13 @@ public class Compute {
                     return true;
             }
         }
+
+        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.BOTH).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
 
         return false;
     }

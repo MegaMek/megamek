@@ -4901,6 +4901,7 @@ public abstract class Entity extends TurnOrdered
         // check game options
         if (game.getOptions().booleanOption("no_clan_physical") &&
             isClan() &&
+            !hasINarcPodsAttached() &&
             getSwarmAttackerId()==NONE) {
             return false;
         }

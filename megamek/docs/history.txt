@@ -19,6 +19,7 @@ v0.31.8-dev (CVS)
     to .getContentPane().blah, migrated coolant system fix to swing.
 + Heavy infantry
 + FileChooser migrated, Choice, ScrollPane and others in the process
++ MaxTech new physical attacks: Jump Jet attack and Trip
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

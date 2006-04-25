@@ -90,6 +90,7 @@ import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.LayExplosivesAttackAction;
 import megamek.common.actions.LayMinefieldAction;
@@ -99,6 +100,7 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
 import megamek.common.actions.ThrashAttackAction;
+import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.TriggerAPPodAction;
 import megamek.common.actions.UnjamAction;
@@ -9296,6 +9298,177 @@ public class Server implements Runnable {
     }
 
     /**
+     * Handle a kick attack
+     */
+    private void resolveJumpJetAttack(PhysicalResult pr, int lastEntityId) {
+        JumpJetAttackAction kaa = (JumpJetAttackAction)pr.aaa;
+        final Entity ae = game.getEntity(kaa.getEntityId());
+        final Targetable target = game.getTarget(kaa.getTargetType(), kaa.getTargetId());
+        Entity te = null;
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity)target;
+        }
+        boolean throughFront = true;
+        if (te!=null) {
+            throughFront = Compute.isThroughFrontHex(game, kaa.getEntityId(), te);
+        }
+        String legName=null;
+        switch(kaa.getLeg()) {
+            case JumpJetAttackAction.LEFT:
+                legName = "Left leg";
+                break;
+            case JumpJetAttackAction.RIGHT:
+                legName = "Right leg";
+                break;
+            default:
+                legName = "Both legs";
+                break;
+        }
+
+        Report r;
+
+        // get damage, ToHitData and roll from the PhysicalResult
+        int damage = pr.damage;
+        final ToHitData toHit = pr.toHit;
+        int roll = pr.roll;
+        final boolean targetInBuilding = Compute.isInBuilding( game, te );
+        final boolean glancing = game.getOptions().booleanOption("maxtech_glancing_blows") && roll == toHit.getValue();
+
+        // Which building takes the damage?
+        Building bldg = game.getBoard().getBuildingAt( target.getPosition() );
+
+        if (lastEntityId != ae.getId()) {
+            //who is making the attacks
+            r = new Report(4005);
+            r.subject = ae.getId();
+            r.addDesc(ae);
+            addReport(r);
+        }
+
+        r = new Report(4290);
+        r.subject = ae.getId();
+        r.indent();
+        r.add(legName);
+        r.add(target.getDisplayName());
+        r.newlines = 0;
+        addReport(r);
+
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            r = new Report(4075);
+            r.subject = ae.getId();
+            r.add(toHit.getDesc());
+            addReport(r);
+            return;
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            r = new Report(4080);
+            r.subject = ae.getId();
+            r.add(toHit.getDesc());
+            r.newlines = 0;
+            addReport(r);
+            roll = Integer.MAX_VALUE;
+        } else {
+            r = new Report(4025);
+            r.subject = ae.getId();
+            r.add(toHit.getValue());
+            r.add(roll);
+            r.newlines = 0;
+            addReport(r);
+            if (glancing) {
+                r = new Report(4030);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                addReport(r);
+            }
+        }
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            // miss
+            r = new Report(4035);
+            r.subject = ae.getId();
+            addReport(r);
+
+            // If the target is in a building, the building absorbs the damage.
+            if ( targetInBuilding && bldg != null ) {
+
+                damage += pr.damageRight;
+                // Only report if damage was done to the building.
+                if ( damage > 0 ) {
+                    Report buildingReport = damageBuilding( bldg, damage );
+                    buildingReport.indent();
+                    buildingReport.subject = ae.getId();
+                    addReport(buildingReport);
+                }
+
+            }
+            return;
+        }
+
+        // Targeting a building.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+
+            damage += pr.damageRight;
+            // The building takes the full brunt of the attack.
+            r = new Report(4040);
+            r.subject = ae.getId();
+            addReport(r);
+            Report buildingReport = damageBuilding( bldg, damage );
+            buildingReport.indent();
+            buildingReport.subject = ae.getId();
+            addReport(buildingReport);
+
+            // Damage any infantry in the hex.
+            damageInfantryIn( bldg, damage );
+
+            // And we're done!
+            return;
+        }
+
+        r = new Report(4040);
+        r.subject = ae.getId();
+        r.newlines = 0;
+        addReport(r);
+
+        for(int leg=0;leg<2;leg++) {
+            if(leg==1) {
+                damage = pr.damageRight;
+                if(damage == 0) break;
+            }
+            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+    
+            // The building shields all units from a certain amount of damage.
+            // The amount is based upon the building's CF at the phase's start.
+            if ( targetInBuilding && bldg != null ) {
+                int bldgAbsorbs = (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
+                int toBldg = Math.min( bldgAbsorbs, damage );
+                damage -= toBldg;
+                addNewLines();
+                Report buildingReport = damageBuilding( bldg, toBldg );
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
+    
+            // A building may absorb the entire shot.
+            if ( damage == 0 ) {
+                r = new Report(4050);
+                r.subject = ae.getId();
+                r.add(te.getShortName());
+                r.add(te.getOwner().getName());
+                r.newlines = 0;
+                addReport(r);
+            } else {
+                if (glancing) {
+                    damage = (int)Math.floor(damage/2.0);
+                }
+                addReport(damageEntity(te, hit, damage, false, 0, false, false, throughFront));
+            }
+        }
+
+        addNewLines();
+    }
+
+    /**
      * Handle a Protomech physicalattack
      */
 
@@ -9440,7 +9613,7 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            addReport(damageEntity(te, hit, damage));
+            addReport(damageEntity(te, hit, damage,false,0,false,false,throughFront));
         }
 
         addNewLines();
@@ -10076,6 +10249,71 @@ public class Server implements Runnable {
             game.addPSR(pushPRD);
         }
 
+        addNewLines();
+    }
+
+    /**
+     * Handle a trip attack
+     */
+    private void resolveTripAttack(PhysicalResult pr, int lastEntityId) {
+        final TripAttackAction paa = (TripAttackAction)pr.aaa;
+        final Entity ae = game.getEntity(paa.getEntityId());
+        // PLEASE NOTE: buildings are *never* the target of a "push".
+        final Entity te = game.getEntity(paa.getTargetId());
+        // get roll and ToHitData from the PhysicalResult
+        int roll = pr.roll;
+        final ToHitData toHit = pr.toHit;
+        Report r;
+
+        if (lastEntityId != paa.getEntityId()) {
+            //who is making the attack
+            r = new Report(4005);
+            r.subject = ae.getId();
+            r.addDesc(ae);
+            addReport(r);
+        }
+
+        r = new Report(4280);
+        r.subject = ae.getId();
+        r.indent();
+        r.addDesc(te);
+        r.newlines = 0;
+        addReport(r);
+
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            r = new Report(4285);
+            r.subject = ae.getId();
+            r.add(toHit.getDesc());
+            addReport(r);
+            return;
+        }
+
+        // report the roll
+        r = new Report(4025);
+        r.subject = ae.getId();
+        r.add(toHit.getValue());
+        r.add(roll);
+        r.newlines = 0;
+        addReport(r);
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            //miss
+            r = new Report(4035);
+            r.subject = ae.getId();
+            addReport(r);
+            return;
+        }
+
+        // we hit...
+        PilotingRollData pushPRD = new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was tripped");
+        pushPRD.setCumulative(false); // see Bug# 811987 for more info
+
+        game.addPSR(pushPRD);
+        
+        r = new Report(4040);
+        r.subject = ae.getId();
+        addReport(r);
         addNewLines();
     }
 
@@ -17210,6 +17448,9 @@ public class Server implements Runnable {
         } else if (aaa instanceof PushAttackAction) {
             PushAttackAction paa = (PushAttackAction)aaa;
             toHit = paa.toHit(game);
+        } else if (aaa instanceof TripAttackAction) {
+            TripAttackAction paa = (TripAttackAction)aaa;
+            toHit = paa.toHit(game);
         } else if (aaa instanceof LayExplosivesAttackAction) {
             LayExplosivesAttackAction leaa = (LayExplosivesAttackAction)aaa;
             toHit = leaa.toHit(game);
@@ -17218,6 +17459,17 @@ public class Server implements Runnable {
             ThrashAttackAction taa = (ThrashAttackAction)aaa;
             toHit = taa.toHit(game);
             damage = ThrashAttackAction.getDamageFor(ae);
+        } else if (aaa instanceof JumpJetAttackAction) {
+            JumpJetAttackAction jaa = (JumpJetAttackAction)aaa;
+            toHit = jaa.toHit(game);
+            if(jaa.getLeg() == JumpJetAttackAction.BOTH) {
+                damage = JumpJetAttackAction.getDamageFor(ae, JumpJetAttackAction.LEFT);
+                pr.damageRight = JumpJetAttackAction.getDamageFor(ae, JumpJetAttackAction.LEFT);
+            } else {
+                damage = JumpJetAttackAction.getDamageFor(ae, jaa.getLeg());
+                pr.damageRight = 0;
+            }
+            ae.heatBuildup += (damage + pr.damageRight)/3;
         }
         pr.toHit = toHit;
         pr.damage = damage;
@@ -17284,6 +17536,12 @@ public class Server implements Runnable {
             cen = aaa.getEntityId();
         }  else if (aaa instanceof LayExplosivesAttackAction) {
             resolveLayExplosivesAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof TripAttackAction) {
+            resolveTripAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof JumpJetAttackAction) {
+            resolveJumpJetAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
             // hmm, error.

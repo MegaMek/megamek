@@ -31,6 +31,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.DodgeAction;
+import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.LayExplosivesAttackAction;
 import megamek.common.actions.ProtomechPhysicalAttackAction;
@@ -38,6 +39,7 @@ import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.ThrashAttackAction;
+import megamek.common.actions.TripAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -76,6 +78,8 @@ public class PhysicalDisplay
     public static final String PHYSICAL_THRASH = "thrash"; //$NON-NLS-1$
     public static final String PHYSICAL_DODGE = "dodge"; //$NON-NLS-1$
     public static final String PHYSICAL_PUSH = "push"; //$NON-NLS-1$
+    public static final String PHYSICAL_TRIP = "trip"; //$NON-NLS-1$
+    public static final String PHYSICAL_JUMPJET = "jumpjet"; //$NON-NLS-1$
     public static final String PHYSICAL_NEXT = "next"; //$NON-NLS-1$
     public static final String PHYSICAL_PROTO = "protoPhysical"; //$NON-NLS-1$
     public static final String PHYSICAL_SEARCHLIGHT = "fireSearchlight"; //$NON-NLS-1$
@@ -92,6 +96,8 @@ public class PhysicalDisplay
     private JButton butPunch;
     private JButton butKick;
     private JButton butPush;
+    private JButton butTrip;
+    private JButton butJumpJet;
     private JButton butClub;
     private JButton butBrush;
     private JButton butThrash;
@@ -152,6 +158,15 @@ public class PhysicalDisplay
         butPush.setEnabled(false);
         butPush.setActionCommand(PHYSICAL_PUSH);
 
+        butTrip = new JButton(Messages.getString("PhysicalDisplay.Trip")); //$NON-NLS-1$
+        butTrip.addActionListener(this);
+        butTrip.setEnabled(false);
+        butTrip.setActionCommand(PHYSICAL_TRIP);
+        
+        butJumpJet = new JButton(Messages.getString("PhysicalDisplay.JumpJet")); //$NON-NLS-1$
+        butJumpJet.addActionListener(this);
+        butJumpJet.setEnabled(false);
+        butJumpJet.setActionCommand(PHYSICAL_JUMPJET);
         butClub = new JButton(Messages.getString("PhysicalDisplay.Club")); //$NON-NLS-1$
         butClub.addActionListener(this);
         butClub.setEnabled(false);
@@ -254,7 +269,7 @@ public class PhysicalDisplay
                 panButtons.add(butKick);
                 panButtons.add(butPush);
                 panButtons.add(butClub);
-                panButtons.add(butSpace);
+                panButtons.add(butTrip);
                 panButtons.add(butMore);
 //             panButtons.add(butDone);
                 break;
@@ -265,6 +280,7 @@ public class PhysicalDisplay
                 panButtons.add(butProto);
                 panButtons.add(butSearchlight);
                 panButtons.add(butExplosives);
+                panButtons.add(butJumpJet);
                 panButtons.add(butMore);
 //             panButtons.add(butDone);
                 break;
@@ -365,6 +381,8 @@ public class PhysicalDisplay
         setKickEnabled(false);
         setPunchEnabled(false);
         setPushEnabled(false);
+        setTripEnabled(false);
+        setJumpJetEnabled(false);
         setClubEnabled(false);
         setBrushOffEnabled(false);
         setThrashEnabled(false);
@@ -536,7 +554,63 @@ public class PhysicalDisplay
             ready();
         }
     }
+    private void trip() {
+        ToHitData toHit = TripAttackAction.toHit(client.game, cen, target);
+        String title = Messages.getString("PhysicalDisplay.TripDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.TripDialog.message", new Object[]{ //$NON-NLS-1$
+                toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())),toHit.getDesc()});
+        if (clientgui.doYesNoDialog( title, message)){
+            disableButtons();
+            // declare searchlight, if possible
+            if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
 
+            attacks.addElement(new TripAttackAction(cen, target.getTargetType(), target.getTargetId()));
+            ready();
+        }
+    }
+    
+    private void jumpjetatt() {
+        ToHitData toHit;
+        int leg;
+        int damage;
+        if(ce().isProne()) {
+            toHit = JumpJetAttackAction.toHit(client.game, cen, target, JumpJetAttackAction.BOTH);
+            leg = JumpJetAttackAction.BOTH;
+            damage = JumpJetAttackAction.getDamageFor(ce(), JumpJetAttackAction.BOTH);
+        } else {
+            ToHitData left = JumpJetAttackAction.toHit(client.game, cen, target, JumpJetAttackAction.LEFT);
+            ToHitData right = JumpJetAttackAction.toHit(client.game, cen, target, JumpJetAttackAction.RIGHT);
+            int d_left = JumpJetAttackAction.getDamageFor(ce(), JumpJetAttackAction.LEFT);
+            int d_right = JumpJetAttackAction.getDamageFor(ce(), JumpJetAttackAction.RIGHT);
+            if(d_left * Compute.oddsAbove(left.getValue()) > 
+               d_right * Compute.oddsAbove(right.getValue())) {
+                toHit = left;
+                leg = JumpJetAttackAction.LEFT;
+                damage = d_left;
+            } else {
+                toHit = right;
+                leg = JumpJetAttackAction.RIGHT;
+                damage = d_right;
+            }
+        }
+         
+        String title = Messages.getString("PhysicalDisplay.JumpJetDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.JumpJetDialog.message", new Object[]{ //$NON-NLS-1$
+                toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())),toHit.getDesc(),damage});
+        if (clientgui.doYesNoDialog( title, message)){
+            disableButtons();
+            // declare searchlight, if possible
+            if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
+
+            attacks.addElement(new JumpJetAttackAction(cen, target.getTargetType(), target.getTargetId(), leg));
+            ready();
+        }
+    }
+    
     private Mounted chooseClub() {
         java.util.List<Mounted> clubs = ce().getClubs();
         if (clubs.size() == 1)
@@ -832,6 +906,22 @@ public class PhysicalDisplay
                         (client.game, cen, target);
                 setPushEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
                 
+                // how about trip?
+                ToHitData trip = TripAttackAction.toHit
+                   (client.game, cen, target);
+                setTripEnabled(trip.getValue() != ToHitData.IMPOSSIBLE);
+                
+                // how about JJ?
+                ToHitData jjl = JumpJetAttackAction.toHit
+                   (client.game, cen, target, JumpJetAttackAction.LEFT);
+                ToHitData jjr = JumpJetAttackAction.toHit
+                (client.game, cen, target, JumpJetAttackAction.RIGHT);
+                ToHitData jjb = JumpJetAttackAction.toHit
+                (client.game, cen, target, JumpJetAttackAction.BOTH);
+                setJumpJetEnabled(!(jjl.getValue() == ToHitData.IMPOSSIBLE
+                            && jjr.getValue() == ToHitData.IMPOSSIBLE
+                            && jjb.getValue() == ToHitData.IMPOSSIBLE));
+                
                 // clubbing?
                 boolean canClub = false;
                 for (Iterator<Mounted> clubs = ce().getClubs().iterator(); clubs.hasNext();) {
@@ -869,6 +959,7 @@ public class PhysicalDisplay
         } else {
             setPunchEnabled(false);
             setPushEnabled(false);
+            setTripEnabled(false);
             setKickEnabled(false);
             setClubEnabled(false);
             setBrushOffEnabled(false);
@@ -1062,6 +1153,10 @@ public class PhysicalDisplay
             kick();
         } else if (ev.getActionCommand().equals(PHYSICAL_PUSH)) {
             push();
+        } else if (ev.getActionCommand().equals(PHYSICAL_TRIP)) {
+            trip();
+        } else if (ev.getActionCommand().equals(PHYSICAL_JUMPJET)) {
+            jumpjetatt();
         } else if (ev.getActionCommand().equals(PHYSICAL_CLUB)) {
             club();
         } else if (ev.getActionCommand().equals(PHYSICAL_BRUSH_OFF)) {
@@ -1159,7 +1254,12 @@ public class PhysicalDisplay
         butPush.setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalPushEnabled(enabled);
     }
-
+    public void setTripEnabled(boolean enabled) {
+        butTrip.setEnabled(enabled);
+    }
+    public void setJumpJetEnabled(boolean enabled) {
+        butJumpJet.setEnabled(enabled);
+    }
     public void setClubEnabled(boolean enabled) {
         butClub.setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalClubEnabled(enabled);

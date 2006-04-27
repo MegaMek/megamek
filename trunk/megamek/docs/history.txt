@@ -20,6 +20,8 @@ v0.31.8-dev (CVS)
 + Heavy infantry
 + FileChooser migrated, Choice, ScrollPane and others in the process
 + MaxTech new physical attacks: Jump Jet attack and Trip
++ MaxTech new physical attack : grapple
++ Remember last entity target in firing phase
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

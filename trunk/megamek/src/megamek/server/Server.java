@@ -81,6 +81,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
+import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.ClearMinefieldAction;
@@ -90,6 +91,7 @@ import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.LayExplosivesAttackAction;
@@ -5876,6 +5878,26 @@ public class Server implements Runnable {
 
                 } // End check-for-available-ap-pod
             }
+            
+            //If attacker breaks grapple, defender may counter
+            if(ea instanceof BreakGrappleAttackAction) {
+                final BreakGrappleAttackAction bgaa = (BreakGrappleAttackAction)ea;
+                final Mech att = (Mech)(game.getEntity(bgaa.getEntityId()));
+                if(att.isGrappleAttacker()) {
+                    final Mech def = (Mech)(game.getEntity(bgaa.getTargetId()));
+                    //Remove existing break grapple by defender (if exists)
+                    if(def.isDone()) {
+                        game.removeActionsFor(def.getId());
+                    } else {
+                        game.removeTurnFor(def);
+                        def.setDone(true);
+                    }
+                    //Add a turn to declare counterattack
+                    game.insertNextTurn(new GameTurn.CounterGrappleTurn
+                            (def.getOwnerId(), def.getId()));
+                    send(createTurnVectorPacket());
+                }
+            }
 
             // The equipment type of a club needs to be restored.
             if (ea instanceof ClubAttackAction) {
@@ -6768,8 +6790,8 @@ public class Server implements Runnable {
       if (ae == null) {
           ae = game.getOutOfGameEntity( wr.waa.getEntityId() );
       }
-      final Targetable target = game.getTarget(wr.waa.getTargetType(),
-                                               wr.waa.getTargetId());
+      Targetable target = game.getTarget(wr.waa.getTargetType(),
+                                         wr.waa.getTargetId());
       Report r;
       boolean throughFront;
       if (target instanceof Mech) {
@@ -6875,6 +6897,11 @@ public class Server implements Runnable {
           if (usesAmmo && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
               isNemesisConfusable = true;
           }
+      }
+      
+      //set last target
+      if(entityTarget != null) {
+          ae.setLastTarget(entityTarget.getId());
       }
 
       if (lastEntityId != ae.getId()) {
@@ -7115,6 +7142,39 @@ public class Server implements Runnable {
 
       // do we hit?
       boolean bMissed = wr.roll < toHit.getValue();
+      
+      //If target is grappled, miss could result in friendly fire
+      if(bMissed && 
+              target instanceof Mech
+              && ((Mech)target).getGrappled() != Entity.NONE) {
+          int newId = ((Mech)target).getGrappled();
+          Entity newEntity = game.getEntity(newId);
+          toHit.addModifier(-1, "friendly fire");
+          r = new Report(3555);
+          r.subject = newId;
+          r.addDesc(newEntity);
+          r.newlines = 0;
+          addReport(r);
+          wr.roll = Compute.d6(2);
+          r = new Report(3150);
+          r.subject = newId;
+          r.add(toHit.getValueAsString());
+          r.newlines = 0;
+          addReport(r);
+          r = new Report(3155);
+          r.subject = newId;
+          r.add(wr.roll);
+          r.newlines = 0;
+          addReport(r);
+          if(wr.roll >= toHit.getValue()) {
+              //Hit, change targets
+              target = newEntity;
+              entityTarget = newEntity;
+              subjectId = newId;
+              bMissed = false;
+          }
+      }
+      
       if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
           if (wr.roll == toHit.getValue()) {
               bGlancing = true;
@@ -10258,7 +10318,7 @@ public class Server implements Runnable {
     private void resolveTripAttack(PhysicalResult pr, int lastEntityId) {
         final TripAttackAction paa = (TripAttackAction)pr.aaa;
         final Entity ae = game.getEntity(paa.getEntityId());
-        // PLEASE NOTE: buildings are *never* the target of a "push".
+        // PLEASE NOTE: buildings are *never* the target of a "trip".
         final Entity te = game.getEntity(paa.getTargetId());
         // get roll and ToHitData from the PhysicalResult
         int roll = pr.roll;
@@ -10314,6 +10374,253 @@ public class Server implements Runnable {
         r = new Report(4040);
         r.subject = ae.getId();
         addReport(r);
+        addNewLines();
+    }
+
+    /**
+     * Handle a grapple attack
+     */
+    private void resolveGrappleAttack(PhysicalResult pr, int lastEntityId) {
+        final GrappleAttackAction paa = (GrappleAttackAction)pr.aaa;
+        final Mech ae = (Mech)game.getEntity(paa.getEntityId());
+        // PLEASE NOTE: buildings are *never* the target of a "push".
+        final Mech te = (Mech)game.getEntity(paa.getTargetId());
+        // get roll and ToHitData from the PhysicalResult
+        int roll = pr.roll;
+        final ToHitData toHit = pr.toHit;
+        Report r;
+        
+        //same method as push, for counterattacks
+        if (pr.pushBackResolved) {
+            return;
+        }
+
+        if(te.getGrappled() != Entity.NONE ||
+                ae.getGrappled() != Entity.NONE) {
+            toHit.addModifier(ToHitData.IMPOSSIBLE, "Already Grappled");
+        }
+
+        if (lastEntityId != paa.getEntityId()) {
+            //who is making the attack
+            r = new Report(4005);
+            r.subject = ae.getId();
+            r.addDesc(ae);
+            addReport(r);
+        }
+
+        r = new Report(4295);
+        r.subject = ae.getId();
+        r.indent();
+        r.addDesc(te);
+        r.newlines = 0;
+        addReport(r);
+
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            r = new Report(4300);
+            r.subject = ae.getId();
+            r.add(toHit.getDesc());
+            addReport(r);
+            return;
+        }
+
+        // report the roll
+        r = new Report(4025);
+        r.subject = ae.getId();
+        r.add(toHit.getValue());
+        r.add(roll);
+        r.newlines = 0;
+        addReport(r);
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            //miss
+            r = new Report(4035);
+            r.subject = ae.getId();
+            addReport(r);
+            return;
+        }
+
+        // we hit...
+        ((Mech)ae).setGrappled(te.getId(), true);
+        ((Mech)te).setGrappled(ae.getId(), false);
+        Coords pos = te.getPosition();
+        ae.setPosition(pos);
+        ae.setElevation(te.getElevation());
+        te.setFacing((ae.getFacing() + 3) % 6);
+        doSetLocationsExposure(ae, game.getBoard().getHex(pos), false, ae.getElevation());
+        
+        r = new Report(4040);
+        r.subject = ae.getId();
+        addReport(r);
+        addNewLines();
+    }
+
+    /**
+     * Handle a break grapple attack
+     */
+    private void resolveBreakGrappleAttack(PhysicalResult pr, int lastEntityId) {
+        final BreakGrappleAttackAction paa = (BreakGrappleAttackAction)pr.aaa;
+        final Mech ae = (Mech)game.getEntity(paa.getEntityId());
+        // PLEASE NOTE: buildings are *never* the target of a "push".
+        final Mech te = (Mech)game.getEntity(paa.getTargetId());
+        // get roll and ToHitData from the PhysicalResult
+        int roll = pr.roll;
+        final ToHitData toHit = pr.toHit;
+        Report r;
+        
+        if (lastEntityId != paa.getEntityId()) {
+            //who is making the attack
+            r = new Report(4005);
+            r.subject = ae.getId();
+            r.addDesc(ae);
+            addReport(r);
+        }
+
+        r = new Report(4305);
+        r.subject = ae.getId();
+        r.indent();
+        r.addDesc(te);
+        r.newlines = 0;
+        addReport(r);
+
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            r = new Report(4310);
+            r.subject = ae.getId();
+            r.add(toHit.getDesc());
+            addReport(r);
+            return;
+        }
+
+        if(toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            r = new Report(4320);
+            r.subject = ae.getId();
+            r.add(toHit.getDesc());
+            addReport(r);
+        } else {
+            // report the roll
+            r = new Report(4025);
+            r.subject = ae.getId();
+            r.add(toHit.getValue());
+            r.add(roll);
+            r.newlines = 0;
+            addReport(r);
+    
+            // do we hit?
+            if (roll < toHit.getValue()) {
+                //miss
+                r = new Report(4035);
+                r.subject = ae.getId();
+                addReport(r);
+                return;
+            }
+    
+            //hit
+            r = new Report(4040);
+            r.subject = ae.getId();
+            addReport(r);
+        }
+
+        // is there a counterattack?
+        PhysicalResult targetGrappleResult = null;
+        for (Enumeration i = physicalResults.elements(); i.hasMoreElements();) {
+            PhysicalResult tpr = (PhysicalResult)i.nextElement();
+            if (tpr.aaa.getEntityId() == te.getId() &&
+                tpr.aaa instanceof GrappleAttackAction &&
+                tpr.aaa.getTargetId() == ae.getId() ) {
+                targetGrappleResult = tpr;
+                break;
+            }
+        }
+        
+        if(targetGrappleResult != null) {
+            targetGrappleResult.pushBackResolved = true;
+            //counterattack
+            r = new Report(4315);
+            r.subject = te.getId();
+            r.newlines = 0;
+            r.addDesc(te);
+            addReport(r);
+            
+            // report the roll
+            r = new Report(4025);
+            r.subject = te.getId();
+            r.add(targetGrappleResult.toHit.getValue());
+            r.add(targetGrappleResult.roll);
+            r.newlines = 0;
+            addReport(r);
+
+            // do we hit?
+            if (roll < toHit.getValue()) {
+                //miss
+                r = new Report(4035);
+                r.subject = ae.getId();
+                addReport(r);
+            } else {
+                //hit
+                r = new Report(4040);
+                r.subject = ae.getId();
+                addReport(r);
+                
+                //exchange attacker and defender
+                ae.setGrappled(te.getId(), false);
+                te.setGrappled(ae.getId(), true);
+
+                return;
+            }
+        }
+
+        //score the adjacent hexes
+        Coords hexes[] = new Coords[6];
+        int scores[] = new int[6];
+        
+        IHex curHex = game.getBoard().getHex(ae.getPosition());
+        for(int i=0;i<6;i++) {
+            hexes[i] = ae.getPosition().translated(i);
+            scores[i] = 0;
+            IHex hex = game.getBoard().getHex(hexes[i]);
+            if(hex.containsTerrain(Terrains.MAGMA))
+                scores[i] += 10;
+            if(hex.containsTerrain(Terrains.WATER))
+                scores[i] += hex.terrainLevel(Terrains.WATER);
+            if(curHex.surface() - hex.surface() >= 2)
+                scores[i] += 2 * (curHex.surface() - hex.surface());
+        }
+        
+        int bestScore = 99999;
+        int best = 0;
+        int worstScore = -99999;
+        int worst = 0;
+        
+        for(int i=0;i<6;i++) {
+            if(bestScore > scores[i]) {
+                best = i;
+                bestScore = scores[i];
+            }
+            if(worstScore < scores[i]) {
+                worst = i;
+                worstScore = scores[i];
+            }
+        }
+
+        //attacker doesnt fall, unless off a cliff
+        if(ae.isGrappleAttacker()) {
+            //move self to least dangerous hex
+            PilotingRollData psr = ae.getBasePilotingRoll();
+            psr.addModifier(PilotingRollData.AUTOMATIC_SUCCESS, "break grapple");
+            doEntityDisplacement(ae, ae.getPosition(), hexes[best], psr);
+            ae.setFacing(hexes[best].direction(te.getPosition()));
+        } else {
+            //move enemy to most dangerous hex
+            PilotingRollData psr = te.getBasePilotingRoll();
+            psr.addModifier(PilotingRollData.AUTOMATIC_SUCCESS, "break grapple");
+            doEntityDisplacement(te, te.getPosition(), hexes[worst], psr);
+            te.setFacing(hexes[worst].direction(ae.getPosition()));
+        }
+        
+        // grapple is broken
+        ae.setGrappled(Entity.NONE, false);
+        te.setGrappled(Entity.NONE, false);
+        
         addNewLines();
     }
 
@@ -14278,6 +14585,20 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
                 entityUpdate( swarmedId );
             }
+            
+            //If in a grapple, release both mechs
+            if(entity instanceof Mech) {
+                Mech mech = (Mech)entity;
+                int grappler = mech.getGrappled();
+                if(grappler != Entity.NONE) {
+                    mech.setGrappled(Entity.NONE, false);
+                    Entity e = game.getEntity(grappler);
+                    if(e != null && e instanceof Mech) {
+                        ((Mech)e).setGrappled(Entity.NONE, false);
+                    }
+                    entityUpdate(grappler);
+                }
+            }
 
         } // End entity-not-already-destroyed.
 
@@ -17470,6 +17791,12 @@ public class Server implements Runnable {
                 pr.damageRight = 0;
             }
             ae.heatBuildup += (damage + pr.damageRight)/3;
+        } else if (aaa instanceof GrappleAttackAction) {
+            GrappleAttackAction taa = (GrappleAttackAction)aaa;
+            toHit = taa.toHit(game);
+        } else if (aaa instanceof BreakGrappleAttackAction) {
+            BreakGrappleAttackAction taa = (BreakGrappleAttackAction)aaa;
+            toHit = taa.toHit(game);
         }
         pr.toHit = toHit;
         pr.damage = damage;
@@ -17542,6 +17869,12 @@ public class Server implements Runnable {
             cen = aaa.getEntityId();
         } else if (aaa instanceof JumpJetAttackAction) {
             resolveJumpJetAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof GrappleAttackAction) {
+            resolveGrappleAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof BreakGrappleAttackAction) {
+            resolveBreakGrappleAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
             // hmm, error.

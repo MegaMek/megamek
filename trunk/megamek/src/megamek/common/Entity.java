@@ -261,6 +261,7 @@ public abstract class Entity extends TurnOrdered
     private int assaultDropInProgress = 0;
     private boolean climbMode = false; //save climb mode from turn to turn for convenience 
     
+    protected int lastTarget = Entity.NONE;
     
     /**
      * Generates a new, blank, entity.
@@ -5696,5 +5697,13 @@ public abstract class Entity extends TurnOrdered
      */
     public void setRetreatedDirection(int retreatedDirection) {
         this.retreatedDirection = retreatedDirection;
+    }
+    
+    public void setLastTarget(int id) {
+        lastTarget = id;
+    }
+    
+    public int getLastTarget() {
+        return lastTarget;
     }
 }

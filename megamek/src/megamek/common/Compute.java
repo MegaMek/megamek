@@ -20,8 +20,10 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.LayExplosivesAttackAction;
@@ -154,7 +156,8 @@ public class Compute {
 
                 // If the entering entity is a mech,
                 // then any other mech in the hex is a violation.
-                if (isMech && (inHex instanceof Mech)) {
+                // Unless grappled
+                if (isMech && (inHex instanceof Mech) && ((Mech)inHex).getGrappled() != entering.getId()) {
                     return inHex;
                 }
 
@@ -658,7 +661,8 @@ public class Compute {
             return new ToHitData(ToHitData.AUTOMATIC_FAIL,
                     "Target out of range");
         }
-        if (distance == 0 && !isAttackerInfantry) {
+        if (distance == 0 && !isAttackerInfantry
+                && !(ae instanceof Mech && ((Mech)ae).getGrappled() == target.getTargetId())) {
             return new ToHitData(ToHitData.AUTOMATIC_FAIL,
                     "Only infantry shoot at zero range");
         }
@@ -2180,6 +2184,8 @@ public class Compute {
     public static boolean isInArc(IGame game, int attackerId, int weaponId,
             Targetable t) {
         Entity ae = game.getEntity(attackerId);
+        if(ae instanceof Mech && ((Mech)ae).getGrappled() == t.getTargetId())
+            return true;
         int facing = ae.isSecondaryArcWeapon(weaponId) ? ae
                 .getSecondaryFacing() : ae.getFacing();
         return isInArc(ae.getPosition(), facing, t.getPosition(), ae
@@ -3314,6 +3320,12 @@ public class Compute {
             return true;
         
         if(TripAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+
+        if(GrappleAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+            return true;
+
+        if(BreakGrappleAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
             return true;
 
         for(Iterator<Mounted> clubs = game.getEntity(entityId).getClubs().iterator();clubs.hasNext();) {

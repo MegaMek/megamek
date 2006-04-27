@@ -76,6 +76,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if (Entity.NONE != te.getSwarmTargetId()) {
                 return "Target is swarming a Mek.";
             }
+            
+            if(ae instanceof Mech && ((Mech)ae).getGrappled() != Entity.NONE) {
+                return "Locked in Grapple";
+            }
 
             //target unit in building checks
             final boolean targetInBuilding = Compute.isInBuilding(game, te);

@@ -139,6 +139,29 @@ public class GameTurn implements Serializable {
         }
     }
 
+    /**
+     * A type of game turn that allows only one specific entity to 
+     * counterattack a break grapple by original attacker
+     */
+    public static class CounterGrappleTurn extends SpecificEntityTurn {
+        
+        public CounterGrappleTurn(int playerId, int entityId) {
+            super(playerId, entityId);
+        }
+
+        /**
+         * Returns true if the entity matches this game turn, even if the
+         * entity has declared an action.
+         */
+        public boolean isValidEntity(Entity entity, IGame game) {
+            final boolean oldDone = entity.done;
+            entity.done = false;
+            final boolean result = super.isValidEntity( entity, game );
+            entity.done = oldDone;
+            return result;
+        }
+    }
+
     /** The constant to represent Infantry (and Battle Armor) entities. */
     public static final int CLASS_INFANTRY      = 1;
 

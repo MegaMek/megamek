@@ -46,6 +46,7 @@ public class PhysicalDisplay
     public static final String PHYSICAL_DODGE = "dodge"; //$NON-NLS-1$
     public static final String PHYSICAL_PUSH = "push"; //$NON-NLS-1$
     public static final String PHYSICAL_TRIP = "trip"; //$NON-NLS-1$
+    public static final String PHYSICAL_GRAPPLE = "grapple"; //$NON-NLS-1$
     public static final String PHYSICAL_JUMPJET = "jumpjet"; //$NON-NLS-1$
     public static final String PHYSICAL_NEXT = "next"; //$NON-NLS-1$
     public static final String PHYSICAL_PROTO = "protoPhysical"; //$NON-NLS-1$
@@ -64,6 +65,7 @@ public class PhysicalDisplay
     private Button            butKick;
     private Button            butPush;
     private Button            butTrip;
+    private Button            butGrapple;
     private Button            butJumpJet;
     private Button            butClub;
     private Button            butBrush;
@@ -129,6 +131,11 @@ public class PhysicalDisplay
         butTrip.addActionListener(this);
         butTrip.setEnabled(false);
         butTrip.setActionCommand(PHYSICAL_TRIP);
+        
+        butGrapple = new Button(Messages.getString("PhysicalDisplay.Grapple")); //$NON-NLS-1$
+        butGrapple.addActionListener(this);
+        butGrapple.setEnabled(false);
+        butGrapple.setActionCommand(PHYSICAL_GRAPPLE);
         
         butJumpJet = new Button(Messages.getString("PhysicalDisplay.JumpJet")); //$NON-NLS-1$
         butJumpJet.addActionListener(this);
@@ -235,6 +242,7 @@ public class PhysicalDisplay
             panButtons.add(butPush);
             panButtons.add(butClub);
             panButtons.add(butTrip);
+            panButtons.add(butGrapple);
             panButtons.add(butMore);
 //             panButtons.add(butDone);
             break;
@@ -269,6 +277,14 @@ public class PhysicalDisplay
         Entity entity = ce();
         
         target(null);
+        if(entity instanceof Mech) {
+            int grapple = ((Mech)entity).getGrappled();
+            if(grapple != Entity.NONE) {
+                Entity t = client.game.getEntity(grapple);
+                if(t != null)
+                    target(t);
+            }            
+        }
         clientgui.getBoardView().highlight(ce().getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
@@ -309,11 +325,19 @@ public class PhysicalDisplay
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        target(null);
-        selectEntity(client.getFirstEntityNum());
-        setNextEnabled(true);
-        butDone.setEnabled(true);
-        butMore.setEnabled(true);
+        // There's special processing for countering break grapple.
+        if ( client.game.getTurn() instanceof GameTurn.CounterGrappleTurn) {
+            disableButtons();
+            selectEntity(((GameTurn.CounterGrappleTurn)client.game.getTurn()).getEntityNum());
+            grapple(true);
+            ready();
+        } else {
+            target(null);
+            selectEntity(client.getFirstEntityNum());
+            setNextEnabled(true);
+            butDone.setEnabled(true);
+            butMore.setEnabled(true);
+        }
         clientgui.setDisplayVisible(true);
         clientgui.getBoardView().select(null);
     }
@@ -347,6 +371,7 @@ public class PhysicalDisplay
         setPunchEnabled(false);
         setPushEnabled(false);
         setTripEnabled(false);
+        setGrappleEnabled(false);
         setJumpJetEnabled(false);
         setClubEnabled(false);
         setBrushOffEnabled(false);
@@ -537,6 +562,57 @@ public class PhysicalDisplay
             }
 
             attacks.addElement(new TripAttackAction(cen, target.getTargetType(), target.getTargetId()));
+            ready();
+        }
+    }
+    
+    /**
+     * Grapple that target!
+     */
+    private void doGrapple() {
+        if(((Mech)ce()).getGrappled() == Entity.NONE)
+            grapple(false);
+        else
+            breakGrapple();
+    }
+    
+    private void grapple(boolean counter) {
+        ToHitData toHit = GrappleAttackAction.toHit(client.game, cen, target);
+        String title = Messages.getString("PhysicalDisplay.GrappleDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.GrappleDialog.message", new Object[]{ //$NON-NLS-1$
+                toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())),toHit.getDesc()});
+        if(counter) {
+            message = Messages.getString("PhysicalDisplay.CounterGrappleDialog.message", new Object[]{ //$NON-NLS-1$
+                    target.getDisplayName(), 
+                    toHit.getValueAsString(), 
+                    new Double(Compute.oddsAbove(toHit.getValue())),
+                    toHit.getDesc()});
+        }
+        if (clientgui.doYesNoDialog( title, message)){
+            disableButtons();
+            // declare searchlight, if possible
+            if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
+
+            attacks.addElement(new GrappleAttackAction(cen, target.getTargetType(), target.getTargetId()));
+            ready();
+        }
+    }
+    
+    private void breakGrapple() {
+        ToHitData toHit = BreakGrappleAttackAction.toHit(client.game, cen, target);
+        String title = Messages.getString("PhysicalDisplay.BreakGrappleDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
+        String message = Messages.getString("PhysicalDisplay.BreakGrappleDialog.message", new Object[]{ //$NON-NLS-1$
+                toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())),toHit.getDesc()});
+        if (clientgui.doYesNoDialog( title, message)){
+            disableButtons();
+            // declare searchlight, if possible
+            if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
+
+            attacks.addElement(new BreakGrappleAttackAction(cen, target.getTargetType(), target.getTargetId()));
             ready();
         }
     }
@@ -882,6 +958,14 @@ public class PhysicalDisplay
                    (client.game, cen, target);
                 setTripEnabled(trip.getValue() != ToHitData.IMPOSSIBLE);
                 
+                // how about grapple?
+                ToHitData grap = GrappleAttackAction.toHit
+                   (client.game, cen, target);
+                ToHitData bgrap = BreakGrappleAttackAction.toHit
+                (client.game, cen, target);
+                setGrappleEnabled(grap.getValue() != ToHitData.IMPOSSIBLE
+                        || bgrap.getValue() != ToHitData.IMPOSSIBLE);
+                
                 // how about JJ?
                 ToHitData jjl = JumpJetAttackAction.toHit
                    (client.game, cen, target, JumpJetAttackAction.LEFT);
@@ -931,6 +1015,7 @@ public class PhysicalDisplay
             setPunchEnabled(false);
             setPushEnabled(false);
             setTripEnabled(false);
+            setGrappleEnabled(false);
             setJumpJetEnabled(false);
             setKickEnabled(false);
             setClubEnabled(false);
@@ -1125,6 +1210,8 @@ public class PhysicalDisplay
             push();
         } else if (ev.getActionCommand().equals(PHYSICAL_TRIP)) {
             trip();
+        } else if (ev.getActionCommand().equals(PHYSICAL_GRAPPLE)) {
+            doGrapple();
         } else if (ev.getActionCommand().equals(PHYSICAL_JUMPJET)) {
             jumpjetatt();
         } else if (ev.getActionCommand().equals(PHYSICAL_CLUB)) {
@@ -1224,6 +1311,9 @@ public class PhysicalDisplay
     }
     public void setTripEnabled(boolean enabled) {
         butTrip.setEnabled(enabled);
+    }
+    public void setGrappleEnabled(boolean enabled) {
+        butGrapple.setEnabled(enabled);
     }
     public void setJumpJetEnabled(boolean enabled) {
         butJumpJet.setEnabled(enabled);

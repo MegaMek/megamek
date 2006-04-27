@@ -152,6 +152,10 @@ public abstract class Mech
     private boolean hasCowl = false;
     private int cowlArmor = 0;
     private int hasLaserHeatSinks = HAS_UNKNOWN;
+    
+    // For grapple attacks
+    private int grappled_id = Entity.NONE;
+    private boolean isGrappleAttacker = false;
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
 
@@ -3339,6 +3343,26 @@ public abstract class Mech
             }
         }
         return false;
+    }
+    
+    public void setGrappled(int id, boolean attacker) {
+        grappled_id = id;
+        isGrappleAttacker = attacker;
+    }
+    
+    public boolean isGrappleAttacker() {
+        return isGrappleAttacker;
+    }
+    
+    public int getGrappled() {
+        return grappled_id;
+    }
+    
+    public boolean isEligibleForMovement() {
+        if(grappled_id != Entity.NONE) {
+            return false;
+        }
+        return super.isEligibleForMovement();
     }
 }
 

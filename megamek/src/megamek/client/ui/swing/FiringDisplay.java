@@ -354,7 +354,16 @@ public class FiringDisplay
 
             } // End ce()-not-on-board
 
-            target(null);
+            int lastTarget = ce().getLastTarget();
+            if(ce() instanceof Mech) {
+                int grapple = ((Mech)ce()).getGrappled();
+                if(grapple != Entity.NONE) {
+                    lastTarget = grapple;
+                }            
+            }
+            Entity t = client.game.getEntity(lastTarget);
+            target(t);
+
             clientgui.getBoardView().highlight(ce().getPosition());
             clientgui.getBoardView().select(null);
             clientgui.getBoardView().cursor(null);

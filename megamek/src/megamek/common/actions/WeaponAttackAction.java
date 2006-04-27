@@ -748,6 +748,23 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit.setSideTable( Compute.targetSideTable(ae, target) );
         }
         
+        
+        //deal with grapples
+        if(target instanceof Mech) {
+            int grapple = ((Mech)target).getGrappled();
+            if(grapple != Entity.NONE) {
+                if(grapple == ae.getId())
+                    toHit.addModifier(-4, "target grappled");
+                else if(!exchangeSwarmTarget)
+                    toHit.addModifier(1, "CQC, possible friendly fire");
+                else {
+                    //this -1 cancels the original +1
+                    toHit.addModifier(-1, "friendly fire");
+                    return toHit;
+                }
+            }
+        }
+
         // remove old target movement and terrain mods,
         // add those for new target.
         if (exchangeSwarmTarget) {
@@ -1218,6 +1235,23 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if (isHoming) {
                 if(ttype != Targetable.TYPE_HEX_ARTILLERY) {
                     return "Off board homing shot must target a map sheet";
+                }
+            }
+        }
+        
+        if(ae instanceof Mech) {
+            int grapple = ((Mech)ae).getGrappled();
+            if(grapple != Entity.NONE) {
+                if(grapple != target.getTargetId()) {
+                    return "Can only attack grappled mech";
+                }
+                int loc = weapon.getLocation();
+                if((loc != Mech.LOC_CT
+                        && loc != Mech.LOC_LT
+                        && loc != Mech.LOC_RT
+                        && loc != Mech.LOC_HEAD)
+                        || weapon.isRearMounted()) {
+                    return "Can only fire head and front torso weapons when grappled";
                 }
             }
         }

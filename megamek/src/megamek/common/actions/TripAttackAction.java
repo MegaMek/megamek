@@ -17,14 +17,10 @@ package megamek.common.actions;
 import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
-import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 

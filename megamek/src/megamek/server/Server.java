@@ -1608,11 +1608,36 @@ public class Server implements Runnable {
             case IGame.PHASE_FIRING :
             case IGame.PHASE_PHYSICAL :
             case IGame.PHASE_TARGETING:
-            case IGame.PHASE_OFFBOARD :
                 return game.hasMoreTurns();
+            case IGame.PHASE_OFFBOARD :
+                return isOffboardPlayable();
             default :
                 return true;
         }
+    }
+    
+    /** Skip offboard phase, if there is no 
+     *  homing / semiguided ammo in play
+     */
+    private boolean isOffboardPlayable() {
+        if(!game.hasMoreTurns())
+            return false;
+        for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
+            Entity entity = (Entity)e.nextElement();
+            for(Mounted m : entity.getAmmo()) {
+                AmmoType atype = (AmmoType)m.getType();
+                if(atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+                    return true;
+                }
+                if((atype.getAmmoType() == AmmoType.T_ARROW_IV
+                        || atype.getAmmoType() == AmmoType.T_LONG_TOM
+                        || atype.getAmmoType() == AmmoType.T_SNIPER)
+                        && atype.getMunitionType() == AmmoType.M_HOMING) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

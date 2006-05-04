@@ -17612,11 +17612,13 @@ public class Server implements Runnable {
                         // If the shot missed, but was adjusted by a
                         // spotter, future shots are more likely to hit.
                         else if (null != bestSpotter) {
-                            artyAttacker.aTracker.setModifier
-                                ( weapon,
-                                  artyAttacker.aTracker.getModifier
-                                  ( weapon, targetPos ) - 1,
-                                  targetPos );
+                            int curmod = artyAttacker.aTracker.getModifier( weapon, targetPos );
+                            if(curmod != ToHitData.AUTOMATIC_SUCCESS) {
+                                artyAttacker.aTracker.setModifier
+                                    ( weapon,
+                                      curmod - 1,
+                                      targetPos );
+                            }
                         }
 
                     } // End artyAttacker-alive

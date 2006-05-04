@@ -24,6 +24,7 @@ v0.31.8-dev (CVS)
 + Remember last entity target in firing phase
 + RFE 1468188: skip offboard phase (TAG) unless at least one unit
   carries semiguided LRM or homing artillery ammunition
++ Bug 1478478: artillery shooting at previously hit hex can't target hex
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

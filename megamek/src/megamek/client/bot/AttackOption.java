@@ -52,8 +52,8 @@ public class AttackOption extends ToHitData {
     public double odds; // secondary odds
     public double primary_odds; // primary odds
     public int heat;
-    public double expected;
-    public double primary_expected;
+    public double expected; // damage adjusted by secondary to-hit odds
+    public double primary_expected; // damage aadjusted by primary to-hit odds
     public int ammoLeft = -1; //-1 doesn't use ammo
 
     public AttackOption(CEntity target, Mounted weapon, double value, ToHitData toHit) {
@@ -63,11 +63,23 @@ public class AttackOption extends ToHitData {
         this.value = value;
         if (target != null) {
             WeaponType w = (WeaponType) weapon.getType();
+            
+            // As a primary attack.  Damage is already odds-adjusted.
             this.primary_odds = Compute.oddsAbove(toHit.getValue()) / 100.0;
-            this.odds = Compute.oddsAbove(toHit.getValue() + 1) / 100.0;
+            this.primary_expected = this.value;
+            
+            // As a secondary attack.  Raw damage is extracted, then adjusted
+            // for secondary to-hit odds.  Since units with active Stealth armor
+            // cannot be secondary targets, chances of hitting are 0.
+            
+            if (target.getEntity().isStealthActive()){
+                this.odds = 0.0;
+            } else {
+                this.odds = Compute.oddsAbove(toHit.getValue() + 1) / 100.0;
+            }
             this.heat = w.getHeat();
-            this.expected = this.odds * this.value;
-            this.primary_expected = this.primary_odds * this.value;
+            this.expected = this.value/this.primary_odds;
+            this.expected = this.expected * this.odds;
             final boolean isInfantryWeapon = ((w.getFlags() & WeaponType.F_INFANTRY) == WeaponType.F_INFANTRY);
             final boolean usesAmmo = (!isInfantryWeapon && w.getAmmoType() != AmmoType.T_NA);
             final Mounted ammo = usesAmmo ? weapon.getLinked() : null;

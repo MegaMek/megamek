@@ -20,6 +20,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.IAimingModes;
 import megamek.common.IEntityMovementType;
 import megamek.common.IHex;
 import megamek.common.Mech;
@@ -1242,7 +1243,9 @@ public class TestBot extends BotClient {
             Iterator i = tm.values().iterator();
             while (i.hasNext()) {
                 AttackOption a = (AttackOption) i.next();
+                
                 WeaponAttackAction new_attack = new WeaponAttackAction(en.getId(), a.target.getEntity().getId(), en.getEquipmentNum(a.weapon));
+               
                 if (en.getEquipment(new_attack.getWeaponId()).getLinked() != null) {
                     spinner = (WeaponType) a.weapon.getType();
 
@@ -1262,6 +1265,13 @@ public class TestBot extends BotClient {
                 av.add(new_attack);
 
             }
+            
+            // Use the attack options and weapon attack actions to determine the best aiming point
+            
+            if (av.size() > 0){
+                getAimPoint(tm, av);
+            }
+
         }
         switch (arc) {
             case 1:
@@ -1557,4 +1567,462 @@ public class TestBot extends BotClient {
             }
         }
     }
+    
+    // Calculate the best location to aim at on a target Mech.  Attack options must match
+    // 1:1 with WeaponAttackActions in Vector.
+    
+    private void getAimPoint(TreeMap attack_tree, Vector atk_action_list){
+        
+        if (attack_tree == null || atk_action_list == null){
+            return;
+        }
+        
+        WeaponAttackAction aimed_attack;
+        AttackOption current_option;
+        
+        Vector target_id_list;  // List of viable aimed-shot targets
+        
+        // Adjusted damages
+        double base_damage, base_odds;
+        double refactored_damage, refactored_head;
+        
+        // Armor values
+        // Order is: head, ct, lt, rt, la, ra, ll, rl
+        double[] values = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        
+        // Internal structure values
+        // Order is: head, ct, lt, rt, la, ra, ll, rl
+        double[] is_values = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        
+        // Fitness values
+        // Order is: head, ct, lt, rt, la, ra, ll, rl
+        double[] fitness = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        
+        // Counters for armor penetration
+        // Order is: head, ct, lt, rt, la, ra, ll, rl
+        int[] pen_counters = {0, 0, 0, 0, 0, 0, 0, 0};
+        
+        int attacker_id, test_target;
+        int action_index = 0;
+        
+        // Base to-hit
+        int base_to_hit;
+        
+        // Best locations to aim for
+        int best_loc, best_loc_head;
+        
+        boolean has_tcomp, imob_target, rear_shot;
+        boolean is_primary_target;
+        
+        // Get the attacker
+        
+        attacker_id = ((WeaponAttackAction) atk_action_list.get(0)).getEntityId();
+        
+        // Check to see if the attacker has a tcomp
+        
+        has_tcomp = game.getEntity(attacker_id).hasTargComp();
+        
+        // For each attack action
+        
+        target_id_list = new Vector();
+        for (Iterator i = atk_action_list.iterator(); i.hasNext();){
+        
+            // Get the target entity id
+            
+            test_target = ((WeaponAttackAction) i.next()).getTargetId();
+        
+            // If the target is a Mech
+            
+            if (game.getEntity(test_target) instanceof Mech){ 
+        
+                // If the target is officially immobile or if the attacker has a tcomp
+                
+                if ((has_tcomp == true) | (game.getEntity(test_target).isImmobile())){
+                    if (!target_id_list.contains(test_target)){
+                        target_id_list.add(test_target);
+                    }
+                }
+            }
+        }
+        
+        // For each valid target
+        
+        is_primary_target = true;
+        for (Iterator i = target_id_list.iterator(); i.hasNext();){
+        
+            // Set the current target
+            
+            test_target = (Integer) i.next();
+            imob_target = game.getEntity(test_target).isImmobile();
+            
+            // Get the targets aspect ratio
+            
+            rear_shot = false;
+            for (Iterator j = attack_tree.values().iterator(); j.hasNext();){
+                current_option = (AttackOption) j.next();
+                if (current_option.target.getEntity().getId() == test_target){
+                    int attack_direction = current_option.toHit.getSideTable();
+                    if (attack_direction == ToHitData.SIDE_REAR){
+                        rear_shot = true;
+                    } else {
+                        rear_shot = false;
+                    }
+                    break;
+                }
+            }
+        
+            // Get the armor values for the target and make them negative (count up)
+            
+            values[0] = game.getEntity(test_target).getArmor(Mech.LOC_HEAD);
+            values[1] = game.getEntity(test_target).getArmor(Mech.LOC_CT, rear_shot);
+            values[2] = game.getEntity(test_target).getArmor(Mech.LOC_LT, rear_shot);
+            values[3] = game.getEntity(test_target).getArmor(Mech.LOC_RT, rear_shot);
+            values[4] = game.getEntity(test_target).getArmor(Mech.LOC_LARM);
+            values[5] = game.getEntity(test_target).getArmor(Mech.LOC_RARM);
+            values[6] = game.getEntity(test_target).getArmor(Mech.LOC_LLEG);
+            values[7] = game.getEntity(test_target).getArmor(Mech.LOC_RLEG);
+            
+            // Get the internals for the target
+            
+            is_values[0] = game.getEntity(test_target).getInternal(Mech.LOC_HEAD);
+            is_values[1] = game.getEntity(test_target).getInternal(Mech.LOC_CT);
+            is_values[2] = game.getEntity(test_target).getInternal(Mech.LOC_LT);
+            is_values[3] = game.getEntity(test_target).getInternal(Mech.LOC_RT);
+            is_values[4] = game.getEntity(test_target).getInternal(Mech.LOC_LARM);
+            is_values[5] = game.getEntity(test_target).getInternal(Mech.LOC_RARM);
+            is_values[6] = game.getEntity(test_target).getInternal(Mech.LOC_LLEG);
+            is_values[7] = game.getEntity(test_target).getInternal(Mech.LOC_RLEG);
+            
+            // Reset the fitness array
+            for (int arr_index = 0; arr_index < 8; arr_index++){
+                fitness[arr_index] = 0.0;
+            }
+        
+            // Reset the penetration counter
+            
+            for (int arr_index = 0; arr_index < 8; arr_index++){
+                pen_counters [arr_index] = 0;
+            }
+        
+            // For each attack option
+            
+            action_index = 0;
+            refactored_damage = 0.0;
+            refactored_head = 0.0;
+            
+            best_loc = Mech.LOC_CT;
+            best_loc_head = Mech.LOC_CT;
+            for (Iterator j = attack_tree.values().iterator(); j.hasNext();){
+        
+                // If the target of the attack option is the current target
+                
+                current_option = (AttackOption) j.next();
+                if (test_target == current_option.target.getEntity().getId()){
+        
+                    // Get the weapon
+                    
+                    Mounted test_weapon = current_option.weapon;
+        
+                    // If the weapon is not LBX cannon or LBX cannon loaded with slug
+                    
+                    boolean direct_fire = true;
+                    if (((WeaponType) test_weapon.getType()).hasFlag(WeaponType.F_DIRECT_FIRE) == false){
+                        direct_fire = false;
+                    }
+                    if( (((WeaponType) test_weapon.getType()).getAmmoType() == AmmoType.T_AC_LBX) ||
+                            (((WeaponType) test_weapon.getType()).getAmmoType() == AmmoType.T_AC_LBX)){
+                        if (((AmmoType)test_weapon.getLinked().getType()).getAmmoType() == AmmoType.M_CLUSTER){
+                            direct_fire = false;
+                        }
+                    }
+        
+                    // If the weapon is direct fire
+                    
+                    if (direct_fire == true){
+    
+                        // Get the expected damage, to-hit number, and odds (0-1) of hitting
+                        
+                        base_damage = is_primary_target ? current_option.primary_expected:current_option.expected;
+                        base_to_hit = is_primary_target ? current_option.toHit.getValue():current_option.toHit.getValue()+1;
+                        base_odds = is_primary_target ? current_option.primary_odds:current_option.odds;
+                        base_damage = base_odds == 0.0 ? 0.0 : base_damage/base_odds;
+    
+                        // If the target is mobile, only a tcomp can make an aimed shot
+                        
+                        if (!imob_target & has_tcomp){
+
+                            // Refactor the expected damage to account for increased to-hit number
+
+                            refactored_head = 0.0;
+                            if (base_to_hit + 4 <= 12){
+                                refactored_damage = base_damage * (Compute.oddsAbove(base_to_hit + 4)/100.0);
+                                ((WeaponAttackAction) atk_action_list.get(action_index)).setAimingMode(IAimingModes.AIM_MODE_TARG_COMP);
+                                // Consider that a regular shot has a roughly 20% chance of hitting the same location
+                                // Use the better of the regular shot or aimed shot
+                                if (0.2 * base_damage * (Compute.oddsAbove(base_to_hit)/100.0) > refactored_damage){
+                                    refactored_damage = 0.2 * base_damage * (Compute.oddsAbove(base_to_hit)/100.0);
+                                    ((WeaponAttackAction) atk_action_list.get(action_index)).setAimingMode(IAimingModes.AIM_MODE_NONE);
+                                }
+                            } else {
+                                refactored_damage = 0.0;
+                                ((WeaponAttackAction) atk_action_list.get(action_index)).setAimingMode(IAimingModes.AIM_MODE_NONE);
+                            }
+                            
+                        }
+    
+                        // If the target is immobile, the shot will always be aimed
+                        
+                        if (imob_target){
+    
+                            // If the attacker has a tcomp, consider both options: immobile aim, tcomp aim
+                            
+                            if (has_tcomp){
+    
+                                // Refactor the expected damage to account for increased to-hit number of the tcomp
+                                
+                                refactored_damage = base_damage * (Compute.oddsAbove(base_to_hit + 4)/100.0);
+                                refactored_head = 0.0;
+                                ((WeaponAttackAction) atk_action_list.get(action_index)).setAimingMode(IAimingModes.AIM_MODE_TARG_COMP);
+                                
+                                // Check against immobile aim mode w/tcomp assist
+                                if (0.50 * base_damage * (Compute.oddsAbove(base_to_hit)/100.0) > refactored_damage){
+                                    refactored_damage = 0.50 * base_damage * (Compute.oddsAbove(base_to_hit)/100.0);
+                                    refactored_head = 0.50 * base_damage * (Compute.oddsAbove(base_to_hit+7)/100.0);
+                                    ((WeaponAttackAction) atk_action_list.get(action_index)).setAimingMode(IAimingModes.AIM_MODE_IMMOBILE);
+                                }
+                                
+                            } else {
+    
+                            // If the attacker doesn't have a tcomp, settle for immobile aim
+                                
+                                refactored_damage = 0.50 * base_damage * (Compute.oddsAbove(base_to_hit)/100.0);
+                                refactored_head = 0.50 * base_damage * (Compute.oddsAbove(base_to_hit+7)/100.0);
+                                ((WeaponAttackAction) atk_action_list.get(action_index)).setAimingMode(IAimingModes.AIM_MODE_IMMOBILE);
+    
+                            }
+                        }
+                        
+                        // Count the refactored damage off each location.  Count hits to IS.
+                        // Ignore locations that have been previously destroyed
+                        
+                        for (int arr_index = 0; arr_index < 8; arr_index++){
+                            if (arr_index == 0){
+                               values[arr_index] -= refactored_head;
+                            } else {
+                                values[arr_index] -= refactored_damage;
+                            }
+                            if (values[arr_index] < 0 & is_values[arr_index] > 0){
+                                is_values[arr_index] += values[arr_index];
+                                values[arr_index] = 0;
+                                pen_counters[arr_index]++;
+                            }
+                        }
+                    }
+        
+                // End if (AttackAction against current target)
+                    
+                }
+                
+                action_index++;
+            
+            }
+            
+            double loc_mod;
+            for (int arr_index = 0; arr_index < 8; arr_index++){
+                loc_mod = 0.0;
+                
+            // If any location has had its armor stripped but is not destroyed,
+            // criticals may result
+                
+                if (values[arr_index] <= 0 & is_values[arr_index] > 0){
+                    switch (arr_index) {
+                        case 0 : // Head hits are very good, pilot damage and critical systems
+                            fitness[arr_index] = 4.0 * pen_counters[arr_index];
+                            fitness[arr_index] += getAimModifier(test_target, Mech.LOC_HEAD);
+                            break;
+                        case 1 : // CT hits are good, chances at hitting gyro, engine
+                            fitness[arr_index] = 3.0 * pen_counters[arr_index];
+                            fitness[arr_index] += getAimModifier(test_target, Mech.LOC_CT);
+                            break;
+                        case 2 : // Side torso hits are good, equipment hits and ammo slots
+                            loc_mod = getAimModifier(test_target, Mech.LOC_LT);
+                            fitness[arr_index] =  2.0 * pen_counters[arr_index];
+                            fitness[arr_index] += loc_mod;
+                            break;
+                        case 3 :
+                            loc_mod = getAimModifier(test_target, Mech.LOC_RT);
+                            fitness[arr_index] =  2.0 * pen_counters[arr_index];
+                            fitness[arr_index] += loc_mod;
+                            break;
+                        case 6 : // Leg hits are good, reduces target mobility
+                            loc_mod = getAimModifier(test_target, Mech.LOC_LLEG);
+                            fitness[arr_index] =  2.0 * pen_counters[arr_index];
+                            fitness[arr_index] += loc_mod;
+                            break;
+                        case 7 :
+                            loc_mod = getAimModifier(test_target, Mech.LOC_RLEG);
+                            fitness[arr_index] =  2.0 * pen_counters[arr_index];
+                            fitness[arr_index] += loc_mod;
+                            break;
+                        case 4 : // Arm hits might damage some weapons, but not the best option
+                            loc_mod = getAimModifier(test_target, Mech.LOC_LARM);
+                            fitness[arr_index] =  pen_counters[arr_index];
+                            fitness[arr_index] += loc_mod;
+                            break;
+                        case 5 :
+                            loc_mod = getAimModifier(test_target, Mech.LOC_RARM);
+                            fitness[arr_index] = pen_counters[arr_index];
+                            fitness[arr_index] += loc_mod;
+                    }
+                }
+
+                // If any location has been destroyed, adjust the location value relative to its value
+                        
+                if (is_values[arr_index] <= 0 & pen_counters[arr_index] > 0){
+            
+                    switch (arr_index) {
+                        case 0 : // Destroying the head is a hard kill and gets rid of the pilot, too
+                            fitness[arr_index] += 3 * getAimModifier(test_target, Mech.LOC_HEAD);
+                            break;
+                        case 1 : // Destroying the CT is a hard kill
+                            fitness[arr_index] += 2 * getAimModifier(test_target, Mech.LOC_CT);
+                            break;
+                        case 2 : // Destroying a side torso could be a soft kill or cripple
+                            fitness[arr_index] += 1.5 * getAimModifier(test_target, Mech.LOC_LT);;
+                            break;
+                        case 3 : 
+                            fitness[arr_index] += 1.5 * getAimModifier(test_target, Mech.LOC_RT);
+                            break;
+                        case 6 : // Destroying a leg is a mobility kill
+                            fitness[arr_index] += 1.5 * getAimModifier(test_target, Mech.LOC_LLEG);
+                            break;
+                        case 7 :
+                            fitness[arr_index] += 1.5 *  getAimModifier(test_target, Mech.LOC_RLEG);
+                            break;
+                        case 4 : // Destroying an arm can cripple a Mech, but not the best option
+                            fitness[arr_index] += getAimModifier(test_target, Mech.LOC_LARM);
+                            break;
+                        case 5 : 
+                            fitness[arr_index] += getAimModifier(test_target, Mech.LOC_RARM);
+                            break;
+                           
+                    }
+                }
+                
+            }
+            
+            // Get the best target location, including the head
+
+            refactored_damage = fitness[1];
+            for (int arr_index = 0; arr_index < 8; arr_index++){
+                if (fitness[arr_index] > refactored_damage){
+                    refactored_damage = fitness[arr_index];
+                    switch (arr_index) {
+                        case 0 :
+                            best_loc_head = Mech.LOC_HEAD;
+                            break;
+                        case 2 : // case 1 is CT, which was initialized as default
+                            best_loc_head = Mech.LOC_LT;
+                        case 3 :
+                            best_loc_head = Mech.LOC_RT;
+                            break;
+                        case 4 :
+                            best_loc_head = Mech.LOC_LARM;
+                            break;
+                        case 5 :
+                            best_loc_head = Mech.LOC_RARM;
+                            break;
+                        case 6 :
+                            best_loc_head = Mech.LOC_LLEG;
+                            break;
+                        case 7 :
+                            best_loc_head = Mech.LOC_RLEG;
+                            break;
+                        default :
+                            best_loc_head = Mech.LOC_CT;
+                    }
+                }
+            }
+            
+            // Get the best target location, not including the head
+            int temp_index = 1;
+            refactored_damage = fitness[1];
+            for (int arr_index = 2; arr_index < 8; arr_index++){
+                if (fitness[arr_index] > refactored_damage){
+                    refactored_damage = fitness[arr_index];
+                    temp_index = arr_index;
+                    switch (arr_index) {
+                        case 2 : // case 1 is CT, which was set as default
+                            best_loc = Mech.LOC_LT;
+                        case 3 :
+                            best_loc = Mech.LOC_RT;
+                            break;
+                        case 4 :
+                            best_loc = Mech.LOC_LARM;
+                            break;
+                        case 5 :
+                            best_loc = Mech.LOC_RARM;
+                            break;
+                        case 6 :
+                            best_loc = Mech.LOC_LLEG;
+                            break;
+                        case 7 :
+                            best_loc = Mech.LOC_RLEG;
+                            break;
+                        default :
+                            best_loc = Mech.LOC_CT;
+                    }
+                }
+            }
+            
+            // For all weapon attack actions
+            
+            for (Iterator j = atk_action_list.iterator(); j.hasNext();){
+                aimed_attack = (WeaponAttackAction) j.next();
+            
+                // If the target of the action is the current target
+                
+                if (aimed_attack.getTargetId() == test_target){
+            
+                    // If the weapon aim mode is set to use a tcomp
+                    
+                    if (aimed_attack.getAimingMode() == IAimingModes.AIM_MODE_TARG_COMP){
+            
+                        // If the location is at least close to being breached or the target is immobile
+                        
+                        if (values[temp_index] <= Compute.randomInt(5)){
+                            aimed_attack.setAimedLocation(best_loc);
+                        } else {
+                            aimed_attack.setAimingMode(IAimingModes.AIM_MODE_NONE);
+                            aimed_attack.setAimedLocation(Mech.LOC_NONE);
+                        }
+                        
+                    }
+            
+                    // If the weapon aim mode is set for immobile aim
+                    
+                    if (aimed_attack.getAimingMode() == IAimingModes.AIM_MODE_IMMOBILE){
+                        aimed_attack.setAimedLocation(best_loc_head);
+                    }
+                    
+                }
+                
+            }
+         
+            // Any targets after this are secondary targets.  Use secondary odds and damage.
+            
+            is_primary_target = false;
+        }
+    }
+    
+    private double getAimModifier (int target_id, int location){
+        
+        double loc_total;
+        
+        // TODO: change the factor of 0.1 to float depending on critical item type
+        
+        loc_total = 0.1 * game.getEntity(target_id).getHittableCriticals(location);
+        
+        return loc_total;
+    }   
 }

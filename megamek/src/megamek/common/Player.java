@@ -61,6 +61,8 @@ public final class Player extends TurnOrdered
     
     // hexes that are automatically hit by artillery
     private Vector artyAutoHitHexes = new Vector();
+    
+    private int initialBV;
 
     /**
      * The "no camo" category.
@@ -337,5 +339,28 @@ public final class Player extends TurnOrdered
             // A player can't be on two teams.
         }
         return false;
+    }
+
+    /**
+     * @return The combined Battle Value of all the player's current assets.
+     */
+    public int getBV() {
+        Enumeration survivors = game.getEntities();
+        int bv = 0;
+
+        while ( survivors.hasMoreElements() ) {
+            Entity entity = (Entity) survivors.nextElement();
+            if ( entity.getOwner() == this )
+                bv += entity.calculateBattleValue();
+        }
+        return bv;
+    }
+    
+    public void setInitialBV() {
+        this.initialBV = getBV();
+    }
+    
+    public int getInitialBV() {
+        return initialBV;
     }
 }

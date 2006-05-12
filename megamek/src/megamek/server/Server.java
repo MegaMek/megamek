@@ -1097,6 +1097,19 @@ public class Server implements Runnable {
             r.add(game.getVictoryTeam());
         }
         addReport(r);
+        
+        //Show player BVs
+        Enumeration players = game.getPlayers();
+        while ( players.hasMoreElements() ) {
+            Player player = (Player) players.nextElement();
+            r = new Report();
+            r.type = Report.PUBLIC;
+            r.messageId = 7016;
+            r.add(player.getName());
+            r.add(player.getBV());
+            r.add(player.getInitialBV());
+            addReport(r);
+        }
 
         //List the survivors
         Enumeration survivors = game.getEntities();
@@ -1648,6 +1661,7 @@ public class Server implements Runnable {
         switch (phase) {
             case IGame.PHASE_EXCHANGE :
                 resetPlayersDone();
+                calculatePlayerBVs();
                 // Build teams vector
                 game.setupTeams();
                 applyBoardSettings();
@@ -1675,6 +1689,11 @@ public class Server implements Runnable {
                 if (game.getOptions().booleanOption("paranoid_autosave")) autoSave();
                 break;
         }
+    }
+    
+    private void calculatePlayerBVs() {
+        for ( Enumeration players = game.getPlayers(); players.hasMoreElements(); )
+            ((Player) players.nextElement()).setInitialBV();
     }
 
     /**

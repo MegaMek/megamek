@@ -27,6 +27,7 @@ v0.31.8-dev (CVS)
 + Bug 1478478: artillery shooting at previously hit hex can't target hex
 + Patch 1478781: Various Bot patches
 + Patch 1478358: Start/finish BV for victory report
++ Bug 1486403: grapple class cast exception
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

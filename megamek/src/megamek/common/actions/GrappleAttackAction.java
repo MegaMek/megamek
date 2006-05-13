@@ -67,15 +67,15 @@ public class GrappleAttackAction extends PhysicalAttackAction
         //final int attackerHeight = attackerElevation + ae.getHeight();
         final int targetElevation = target.getElevation() + targHex.getElevation();
         //final int targetHeight = targetElevation + target.getHeight();
-        final boolean counter = ((Mech)ae).getGrappled() != Entity.NONE
-                                && !((Mech)ae).isGrappleAttacker();
-
         ToHitData toHit;
 
         // non-mechs can't grapple or be grappled
         if (!(ae instanceof BipedMech) || !(target instanceof Mech)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Only biped mechs can trip other mechs");
         }
+
+        final boolean counter = ((Mech)ae).getGrappled() != Entity.NONE
+        && !((Mech)ae).isGrappleAttacker();
 
         // requires 2 good arms
         if (ae.isLocationBad(Mech.LOC_LARM)

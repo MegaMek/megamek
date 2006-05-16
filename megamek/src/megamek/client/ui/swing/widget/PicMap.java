@@ -334,7 +334,7 @@ public abstract class PicMap extends JComponent {
         switch (e.getID()) {
             case MouseEvent.MOUSE_MOVED:
                 PMHotArea ha = getAreaUnder(e.getX(), e.getY());
-                if (!ha.equals(activeHotArea)) {
+                if ((ha == null && activeHotArea != null)  || (ha != null && !ha.equals(activeHotArea))) {
                     if (activeHotArea != null) activeHotArea.onMouseExit(e);
                     activeHotArea = ha;
                     if (ha != null) {

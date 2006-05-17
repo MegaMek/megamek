@@ -141,6 +141,9 @@ public class HmpFile
     private int cockpitType = Mech.COCKPIT_STANDARD;
     private int targSys = 0;
     private int jjType;
+    
+    private int atmCounter = 0;
+    private int lbxCounter = 0;
 
     public HmpFile(InputStream is)
     /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
@@ -580,6 +583,30 @@ public class HmpFile
         setupCriticals(mech, ctCriticals, Mech.LOC_CT);
         setupCriticals(mech, headCriticals, Mech.LOC_HEAD);
     }
+    
+    private String mutateLBXAmmo(String crit) {
+        if((crit.startsWith("CLLBX") || crit.startsWith("ISLBX"))
+                && crit.endsWith("Ammo")) {
+            lbxCounter ++;
+            if(lbxCounter % 2 == 1) {
+                return crit.substring(0,crit.indexOf("Ammo")) + "CL Ammo";
+            }
+        }
+        return crit;
+    }
+
+    private String mutateATMAmmo(String crit) {
+        if(crit.startsWith("CLATM") && crit.endsWith("Ammo")) {
+            atmCounter ++;
+            if(atmCounter % 3 == 2) {
+                return crit.substring(0,crit.indexOf("Ammo")) + "HE Ammo";
+            }
+            else if(atmCounter % 3 == 0) {
+                return crit.substring(0,crit.indexOf("Ammo")) + "ER Ammo";
+            }
+        }
+        return crit;
+    }
 
     private void setupCriticals(Mech mech, long[] criticals, int location)
             throws EntityLoadingException {
@@ -591,7 +618,7 @@ public class HmpFile
             if (mech.getCritical(location, i) == null) {
                 long critical = crits[i];
                 String criticalName = getCriticalName(critical);
-
+                
                 if (isFusionEngine(critical)) {
                     mech.setCritical(location, i, new CriticalSlot(
                             CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
@@ -867,7 +894,9 @@ public class HmpFile
         criticals.put(new Long(0x126), "CLRotaryAC10");
         criticals.put(new Long(0x127), "CLRotaryAC20");
         criticals.put(new Long(0x128), "CLPlasmaRifle");
-
+        criticals.put(new Long(0x129), "ISRocketLauncher10");
+        criticals.put(new Long(0x12A), "ISRocketLauncher15");
+        criticals.put(new Long(0x12B), "ISRocketLauncher20");
         criticals.put(new Long(0x12C), "Mortar/1 (THB)");
         criticals.put(new Long(0x12D), "Mortar/2 (THB)");
         criticals.put(new Long(0x12E), "Mortar/4 (THB)");
@@ -1146,10 +1175,6 @@ public class HmpFile
         isCriticals.put(new Long(0x11E), "ISTHBBloodhoundActiveProbe");
 
         isCriticals.put(new Long(0x123), "ISHeavyGaussRifle");
-
-        isCriticals.put(new Long(0x129), "ISRocketLauncher10");
-        isCriticals.put(new Long(0x12A), "ISRocketLauncher15");
-        isCriticals.put(new Long(0x12B), "ISRocketLauncher20");
 
         isCriticals.put(new Long(0x01CE), "ISAC2 Ammo");
         isCriticals.put(new Long(0x01CF), "ISAC5 Ammo");
@@ -1443,7 +1468,10 @@ public class HmpFile
         clanCriticals.put(new Long(0xD6), "ISLongTomArtillery");
         clanCriticals.put(new Long(0xD7), "ISSniperArtillery");
         clanCriticals.put(new Long(0xD8), "ISThumperArtillery");
-
+        clanCriticals.put(new Long(0xD9), "ISMRM10");
+        clanCriticals.put(new Long(0xDA), "ISMRM20");
+        clanCriticals.put(new Long(0xDB), "ISMRM30");
+        clanCriticals.put(new Long(0xDC), "ISMRM40");
         clanCriticals.put(new Long(0xDD), "Grenade Launcher");
         clanCriticals.put(new Long(0xDE), "ISMRM10 (OS)");
         clanCriticals.put(new Long(0xDF), "ISMRM20 (OS)");
@@ -1569,6 +1597,11 @@ public class HmpFile
         clanCriticals.put(new Long(0x0266), "ISLongTomArtillery Ammo");
         clanCriticals.put(new Long(0x0267), "ISSniperArtillery Ammo");
         clanCriticals.put(new Long(0x0268), "ISThumperArtillery Ammo");
+        clanCriticals.put(new Long(0x0269), "ISMRM10 Ammo");
+        clanCriticals.put(new Long(0x026A), "ISMRM20 Ammo");
+        clanCriticals.put(new Long(0x026B), "ISMRM30 Ammo");
+        clanCriticals.put(new Long(0x026C), "ISMRM40 Ammo");
+
 
         clanCriticals.put(new Long(0x0272), "ISLRTorpedo15 Ammo");
         clanCriticals.put(new Long(0x0273), "ISLRTorpedo20 Ammo");
@@ -1577,6 +1610,41 @@ public class HmpFile
         clanCriticals.put(new Long(0x0276), "ISSRTorpedo4 Ammo");
         clanCriticals.put(new Long(0x0277), "ISSRTorpedo2 Ammo");
         clanCriticals.put(new Long(0x0278), "ISSRTorpedo6 Ammo");
+        
+        //special for ammo mutator
+        //28c-28f = atm
+        criticals.put(new Long(0x10000028cL), "CLATM3 ER Ammo");
+        criticals.put(new Long(0x20000028cL), "CLATM3 HE Ammo");
+        criticals.put(new Long(0x10000028dL), "CLATM6 ER Ammo");
+        criticals.put(new Long(0x20000028dL), "CLATM6 HE Ammo");
+        criticals.put(new Long(0x10000028eL), "CLATM9 ER Ammo");
+        criticals.put(new Long(0x20000028eL), "CLATM9 HE Ammo");
+        criticals.put(new Long(0x10000028fL), "CLATM12 ER Ammo");
+        criticals.put(new Long(0x20000028fL), "CLATM12 HE Ammo");
+        //1db-1de = is
+        //1d2-1d5 = cl
+        //298-299 = thb
+        //22B-22E = IS on clan
+        //246-249 = clan on IS
+        isCriticals.put(new Long(0x1000001dbL), "ISLBXAC2 CL Ammo");
+        isCriticals.put(new Long(0x1000001dcL), "ISLBXAC5 CL Ammo");
+        isCriticals.put(new Long(0x1000001ddL), "ISLBXAC10 CL Ammo");
+        isCriticals.put(new Long(0x1000001deL), "ISLBXAC20 CL Ammo");
+        isCriticals.put(new Long(0x100000246L), "CLLBXAC2 CL Ammo");
+        isCriticals.put(new Long(0x100000247L), "CLLBXAC5 CL Ammo");
+        isCriticals.put(new Long(0x100000248L), "CLLBXAC10 CL Ammo");
+        isCriticals.put(new Long(0x100000249L), "CLLBXAC20 CL Ammo");
+        clanCriticals.put(new Long(0x10000022bL), "ISLBXAC2 CL Ammo");
+        clanCriticals.put(new Long(0x10000022cL), "ISLBXAC5 CL Ammo");
+        clanCriticals.put(new Long(0x10000022dL), "ISLBXAC10 CL Ammo");
+        clanCriticals.put(new Long(0x10000022eL), "ISLBXAC20 CL Ammo");
+        clanCriticals.put(new Long(0x1000001d2L), "CLLBXAC2 CL Ammo");
+        clanCriticals.put(new Long(0x1000001d3L), "CLLBXAC5 CL Ammo");
+        clanCriticals.put(new Long(0x1000001d4L), "CLLBXAC10 CL Ammo");
+        clanCriticals.put(new Long(0x1000001d5L), "CLLBXAC20 CL Ammo");
+        criticals.put(new Long(0x100000298L), "ISLBXAC2 Ammo (THB)");
+        criticals.put(new Long(0x100000299L), "ISLBXAC5 Ammo (THB)");
+        criticals.put(new Long(0x10000029AL), "ISLBXAC20 Ammo (THB)");
     }
 
     private String getCriticalName(long critical) {
@@ -1648,6 +1716,11 @@ public class HmpFile
 
         if (critName == null && critical.longValue() == 0)
             return "-Empty-";
+        
+        if(ammoCount > 0) {
+            critName = mutateLBXAmmo(critName);
+            critName = mutateATMAmmo(critName);
+        }
 
         return critName;
     }

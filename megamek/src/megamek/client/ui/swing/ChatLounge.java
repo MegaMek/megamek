@@ -46,6 +46,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
@@ -1516,15 +1517,12 @@ public class ChatLounge
             camoDialog.setVisible(true);
         } else if (ev.getSource().equals(butAddBot)) {
             String name = name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
-            Prompt p = new Prompt(clientgui.frame, Messages.getString("ChatLounge.ChooseBotName"), Messages.getString("ChatLounge.Name"), name, 15); //$NON-NLS-1$ //$NON-NLS-2$
-            if (!p.showDialog()) {
-                return;
-            }
-            if (p.getText().trim().equals("")) { //$NON-NLS-1$
+            name = JOptionPane.showInputDialog(clientgui.frame, Messages.getString("ChatLounge.Name"),
+                    Messages.getString("ChatLounge.ChooseBotName"), JOptionPane.QUESTION_MESSAGE);
+            if (name.trim().equals("")) {
                 name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
-            } else {
-                name = p.getText();
             }
+
             BotClient c = new TestBot(name, client.getHost(), client.getPort());
             c.game.addGameListener(new BotGUI(c));
             try {

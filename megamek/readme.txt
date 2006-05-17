@@ -170,13 +170,17 @@ River - chance to have a river running across the map
 Road - chance to have a single road running across the map
 Craters - chance for craters, also the size and number.  Good for a "moonscape" map
 City:
-HUB - roads wander out from the centre with plenty of twists and turns. A common pattern for older european cities. 
-GRID - vertical and horizontal roads divide the city into rectangular blocks. A pattern common in newer cities, especially in north america and asia. 
+HUB - roads wander out from the centre with plenty of twists and turns. A common
+        pattern for older european cities.
+GRID - vertical and horizontal roads divide the city into rectangular blocks. A pattern
+        common in newer cities, especially in north america and asia.
 METRO - a grid with roads forming a diagonal X from the centre as well. 
 
-Water and swamp will affect the city plan, as the builders will have to make bridges to cross it or just give up and stop the road at the edge. 
+Water and swamp will affect the city plan, as the builders will have to make bridges to
+        cross it or just give up and stop the road at the edge.
 Mountain tops (4+ height) are expensive to build on, so they will only build in the valleys. 
-Other terrain will just be bulldozed in the name of progress, though you may find a few hexes left between buildings.  
+Other terrain will just be bulldozed in the name of progress, though you may find a few
+        hexes left between buildings.  
 
 There is also a "advanced" button, which lets you fine-tune the map to your liking.
 See the "advanced map settings" section near the end of this file

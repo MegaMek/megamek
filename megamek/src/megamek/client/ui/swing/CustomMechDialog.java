@@ -43,22 +43,24 @@ import megamek.common.preference.PreferenceManager;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import java.awt.Choice;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.ScrollPane;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -79,14 +81,14 @@ public class CustomMechDialog
     private JLabel labPiloting = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), JLabel.RIGHT); //$NON-NLS-1$
     private JTextField fldPiloting = new JTextField(3);
     private JLabel labC3 = new JLabel(Messages.getString("CustomMechDialog.labC3"), JLabel.RIGHT); //$NON-NLS-1$
-    private Choice choC3 = new Choice();
+    private JComboBox choC3 = new JComboBox();
     private int[] entityCorrespondance;
     private JLabel labCallsign = new JLabel(Messages.getString("CustomMechDialog.labCallsign"), JLabel.CENTER); //$NON-NLS-1$
     private JLabel labUnitNum = new JLabel(Messages.getString("CustomMechDialog.labUnitNum"), JLabel.CENTER); //$NON-NLS-1$
-    private Choice choUnitNum = new Choice();
-    private Vector entityUnitNum = new Vector();
+    private JComboBox choUnitNum = new JComboBox();
+    private ArrayList entityUnitNum = new ArrayList();
     private JLabel labDeployment = new JLabel(Messages.getString("CustomMechDialog.labDeployment"), JLabel.RIGHT); //$NON-NLS-1$
-    private Choice choDeployment = new Choice();
+    private JComboBox choDeployment = new JComboBox();
     private JLabel labAutoEject = new JLabel(Messages.getString("CustomMechDialog.labAutoEject"), JLabel.RIGHT); //$NON-NLS-1$
     private JCheckBox chAutoEject = new JCheckBox();
     private JLabel labSearchlight = new JLabel(Messages.getString("CustomMechDialog.labSearchlight"), JLabel.RIGHT); //$NON-NLS-1$
@@ -95,13 +97,13 @@ public class CustomMechDialog
     private JLabel labOffBoard = new JLabel(Messages.getString("CustomMechDialog.labOffBoard"), JLabel.RIGHT); //$NON-NLS-1$
     private JCheckBox chOffBoard = new JCheckBox();
     private JLabel labOffBoardDirection = new JLabel(Messages.getString("CustomMechDialog.labOffBoardDirection"), JLabel.RIGHT); //$NON-NLS-1$
-    private Choice choOffBoardDirection = new Choice();
+    private JComboBox choOffBoardDirection = new JComboBox();
     private JLabel labOffBoardDistance = new JLabel(Messages.getString("CustomMechDialog.labOffBoardDistance"), JLabel.RIGHT); //$NON-NLS-1$
     private JTextField fldOffBoardDistance = new JTextField(4);
     private JButton butOffBoardDistance = new JButton("0");
 
     private JLabel labTargSys = new JLabel(Messages.getString("CustomMechDialog.labTargSys"), JLabel.RIGHT);
-    private Choice choTargSys = new Choice();
+    private JComboBox choTargSys = new JComboBox();
 
     private JPanel panButtons = new JPanel();
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -109,26 +111,26 @@ public class CustomMechDialog
     private JButton butNext = new JButton(Messages.getString("Next"));
     private JButton butPrev = new JButton(Messages.getString("Previous"));
 
-    private Vector m_vMunitions = new Vector();
+    private ArrayList m_vMunitions = new ArrayList();
     private JPanel panMunitions = new JPanel();
-    private Vector m_vMGs = new Vector();
+    private ArrayList m_vMGs = new ArrayList();
     private JPanel panRapidfireMGs = new JPanel();
-    private Vector m_vMines = new Vector();
+    private ArrayList m_vMines = new ArrayList();
     private JPanel panMines = new JPanel();
 
     private Entity entity;
-    private boolean okay = false;
+    private boolean okay;
     private ClientGUI clientgui;
     private Client client;
 
     private PilotOptions options;
 
-    private Vector optionComps = new Vector();
+    private ArrayList optionComps = new ArrayList();
 
     private JPanel panOptions = new JPanel();
-    private ScrollPane scrOptions = new ScrollPane();
+    private JScrollPane scrOptions;
 
-    private ScrollPane scrAll = new ScrollPane();
+    private JScrollPane scrAll;
 
     private JTextArea texDesc = new JTextArea(Messages.getString("CustomMechDialog.texDesc"), 3, 35); //$NON-NLS-1$
 
@@ -147,7 +149,7 @@ public class CustomMechDialog
         this.entity = entity;
         this.clientgui = clientgui;
         this.client = client;
-        this.options = entity.getCrew().getOptions();
+        options = entity.getCrew().getOptions();
         this.editable = editable;
 
         texDesc.setEditable(false);
@@ -222,7 +224,7 @@ public class CustomMechDialog
         refreshDeployment();
 
         if (clientgui.getClient().game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
-            scrOptions.add(panOptions);
+            scrOptions = new JScrollPane(panOptions);
 
             c.weightx = 1.0;
             c.weighty = 1.0;
@@ -276,15 +278,15 @@ public class CustomMechDialog
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(choOffBoardDirection, c);
-            choOffBoardDirection.add(Messages.getString("CustomMechDialog.North")); //$NON-NLS-1$
-            choOffBoardDirection.add(Messages.getString("CustomMechDialog.South")); //$NON-NLS-1$
-            choOffBoardDirection.add(Messages.getString("CustomMechDialog.East")); //$NON-NLS-1$
-            choOffBoardDirection.add(Messages.getString("CustomMechDialog.West")); //$NON-NLS-1$
+            choOffBoardDirection.addItem(Messages.getString("CustomMechDialog.North")); //$NON-NLS-1$
+            choOffBoardDirection.addItem(Messages.getString("CustomMechDialog.South")); //$NON-NLS-1$
+            choOffBoardDirection.addItem(Messages.getString("CustomMechDialog.East")); //$NON-NLS-1$
+            choOffBoardDirection.addItem(Messages.getString("CustomMechDialog.West")); //$NON-NLS-1$
             direction = entity.getOffBoardDirection();
             if (IOffBoardDirections.NONE == direction) {
                 direction = IOffBoardDirections.NORTH;
             }
-            choOffBoardDirection.select(direction);
+            choOffBoardDirection.setSelectedIndex(direction);
             tempPanel.add(choOffBoardDirection);
 
             c.gridwidth = 1;
@@ -309,15 +311,15 @@ public class CustomMechDialog
 
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
-            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_STANDARD));
-            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_LONGRANGE));
-            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_SHORTRANGE));
-            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_ANTI_AIR));
+            choTargSys.addItem(MiscType.getTargetSysName(MiscType.T_TARGSYS_STANDARD));
+            choTargSys.addItem(MiscType.getTargetSysName(MiscType.T_TARGSYS_LONGRANGE));
+            choTargSys.addItem(MiscType.getTargetSysName(MiscType.T_TARGSYS_SHORTRANGE));
+            choTargSys.addItem(MiscType.getTargetSysName(MiscType.T_TARGSYS_ANTI_AIR));
 //            choTargSys.add(MiscType.getTargetSysName(MiscType.T_TARGSYS_MULTI_TRAC));
             gridbag.setConstraints(choTargSys, c);
             tempPanel.add(choTargSys);
 
-            choTargSys.select(MiscType.getTargetSysName(entity.getTargSysType()));
+            choTargSys.setSelectedItem(MiscType.getTargetSysName(entity.getTargSysType()));
         }
 
         if (entity instanceof Protomech) {
@@ -413,9 +415,9 @@ public class CustomMechDialog
 
         fldName.setText(entity.getCrew().getName());
         fldName.addActionListener(this);
-        fldGunnery.setText(new Integer(entity.getCrew().getGunnery()).toString());
+        fldGunnery.setText(Integer.toString(entity.getCrew().getGunnery()));
         fldGunnery.addActionListener(this);
-        fldPiloting.setText(new Integer(entity.getCrew().getPiloting()).toString());
+        fldPiloting.setText(Integer.toString(entity.getCrew().getPiloting()));
         fldPiloting.addActionListener(this);
 
         if (!editable) {
@@ -434,10 +436,10 @@ public class CustomMechDialog
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
         }
-        scrAll.add(tempPanel);
+        scrAll = new JScrollPane(tempPanel);
 
         // add the scrollable panel
-        this.add(scrAll);
+        getContentPane().add(scrAll);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -489,7 +491,7 @@ public class CustomMechDialog
             RapidfireMGPanel rmp = new RapidfireMGPanel(m);
             gbl.setConstraints(rmp, gbc);
             panRapidfireMGs.add(rmp);
-            m_vMGs.addElement(rmp);
+            m_vMGs.add(rmp);
         }
     }
 
@@ -508,7 +510,7 @@ public class CustomMechDialog
             MineChoicePanel mcp = new MineChoicePanel(m);
             gbl.setConstraints(mcp, gbc);
             panMines.add(mcp);
-            m_vMines.addElement(mcp);
+            m_vMines.add(mcp);
         }
     }
 
@@ -521,7 +523,7 @@ public class CustomMechDialog
         int row = 0;
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
-            Vector vTypes = new Vector();
+            ArrayList vTypes = new ArrayList();
             Vector vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
             if (vAllTypes == null) {
                 continue;
@@ -614,7 +616,7 @@ public class CustomMechDialog
                         atCheck.getRackSize() == at.getRackSize() &&
                         !atCheck.hasFlag(AmmoType.F_BATTLEARMOR) &&
                         atCheck.getTonnage(entity) == at.getTonnage(entity)) {
-                    vTypes.addElement(atCheck);
+                    vTypes.add(atCheck);
                 }
             }
             if (vTypes.size() < 2 && !client.game.getOptions().booleanOption("lobby_ammo_dump")) { //$NON-NLS-1$
@@ -623,7 +625,7 @@ public class CustomMechDialog
 
             gbc.gridy = row++;
             // Protomechs need special choice panels.
-            MunitionChoicePanel mcp = null;
+            MunitionChoicePanel mcp;
             if (entity instanceof Protomech) {
                 mcp = new ProtomechMunitionChoicePanel(m, vTypes);
             } else {
@@ -631,23 +633,23 @@ public class CustomMechDialog
             }
             gbl.setConstraints(mcp, gbc);
             panMunitions.add(mcp);
-            m_vMunitions.addElement(mcp);
+            m_vMunitions.add(mcp);
         }
     }
 
     class MineChoicePanel extends JPanel {
-        private Choice m_choice;
+        private JComboBox m_choice;
         private Mounted m_mounted;
 
-        public MineChoicePanel(Mounted m) {
+        MineChoicePanel(Mounted m) {
             m_mounted = m;
-            m_choice = new Choice();
-            m_choice.add(Messages.getString("CustomMechDialog.Conventional")); //$NON-NLS-1$
-            m_choice.add(Messages.getString("CustomMechDialog.Vibrabomb")); //$NON-NLS-1$
+            m_choice = new JComboBox();
+            m_choice.addItem(Messages.getString("CustomMechDialog.Conventional")); //$NON-NLS-1$
+            m_choice.addItem(Messages.getString("CustomMechDialog.Vibrabomb")); //$NON-NLS-1$
             //m_choice.add("Messages.getString("CustomMechDialog.Command-detonated")); //$NON-NLS-1$
             int loc;
             loc = m.getLocation();
-            String sDesc = "(" + entity.getLocationAbbr(loc) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            String sDesc = '(' + entity.getLocationAbbr(loc) + ')'; //$NON-NLS-1$ //$NON-NLS-2$
             JLabel lLoc = new JLabel(sDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
@@ -661,7 +663,7 @@ public class CustomMechDialog
             c.gridy = 0;
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(m_choice, c);
-            m_choice.select(m.getMineType());
+            m_choice.setSelectedIndex(m.getMineType());
             add(m_choice);
         }
 
@@ -675,24 +677,24 @@ public class CustomMechDialog
     }
 
     class MunitionChoicePanel extends JPanel {
-        private Vector m_vTypes;
-        private Choice m_choice;
+        private ArrayList m_vTypes;
+        private JComboBox m_choice;
         private Mounted m_mounted;
 
-        protected JLabel labDump = new JLabel(Messages.getString("CustomMechDialog.labDump")); //$NON-NLS-1$
-        protected JCheckBox chDump = new JCheckBox();
+        JLabel labDump = new JLabel(Messages.getString("CustomMechDialog.labDump")); //$NON-NLS-1$
+        JCheckBox chDump = new JCheckBox();
 
-        public MunitionChoicePanel(Mounted m, Vector vTypes) {
+        MunitionChoicePanel(Mounted m, ArrayList vTypes) {
             m_vTypes = vTypes;
             m_mounted = m;
             AmmoType curType = (AmmoType) m.getType();
-            m_choice = new Choice();
-            Enumeration e = m_vTypes.elements();
-            for (int x = 0; e.hasMoreElements(); x++) {
-                AmmoType at = (AmmoType) e.nextElement();
-                m_choice.add(at.getName());
+            m_choice = new JComboBox();
+            Iterator e = m_vTypes.iterator();
+            for (int x = 0; e.hasNext(); x++) {
+                AmmoType at = (AmmoType) e.next();
+                m_choice.addItem(at.getName());
                 if (at.getMunitionType() == curType.getMunitionType()) {
-                    m_choice.select(x);
+                    m_choice.setSelectedIndex(x);
                 }
             }
             int loc;
@@ -703,7 +705,7 @@ public class CustomMechDialog
             } else {
                 loc = m.getLocation();
             }
-            String sDesc = "(" + entity.getLocationAbbr(loc) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            String sDesc = '(' + entity.getLocationAbbr(loc) + ')'; //$NON-NLS-1$ //$NON-NLS-2$
             JLabel lLoc = new JLabel(sDesc);
             GridBagLayout g = new GridBagLayout();
             setLayout(g);
@@ -734,7 +736,7 @@ public class CustomMechDialog
 
         public void applyChoice() {
             int n = m_choice.getSelectedIndex();
-            AmmoType at = (AmmoType) m_vTypes.elementAt(n);
+            AmmoType at = (AmmoType) m_vTypes.get(n);
             m_mounted.changeAmmoType(at);
             if (chDump.isSelected()) {
                 m_mounted.setShotsLeft(0);
@@ -774,7 +776,7 @@ public class CustomMechDialog
         private final float m_origShotsLeft;
         private final AmmoType m_origAmmo;
 
-        public ProtomechMunitionChoicePanel(Mounted m, Vector vTypes) {
+        ProtomechMunitionChoicePanel(Mounted m, ArrayList vTypes) {
             super(m, vTypes);
             m_origAmmo = (AmmoType) m.getType();
             m_origShotsLeft = m.getShotsLeft();
@@ -800,9 +802,9 @@ public class CustomMechDialog
     class RapidfireMGPanel extends JPanel {
         private Mounted m_mounted;
 
-        protected JCheckBox chRapid = new JCheckBox();
+        JCheckBox chRapid = new JCheckBox();
 
-        public RapidfireMGPanel(Mounted m) {
+        RapidfireMGPanel(Mounted m) {
             m_mounted = m;
             int loc = m.getLocation();
             String sDesc = Messages.getString("CustomMechDialog.switchToRapidFire", new Object[]{entity.getLocationAbbr(loc)}); //$NON-NLS-1$
@@ -833,28 +835,28 @@ public class CustomMechDialog
         }
     }
 
-    public void disableMunitionEditing() {
+    private void disableMunitionEditing() {
         for (int i = 0; i < m_vMunitions.size(); i++) {
-            ((MunitionChoicePanel) m_vMunitions.elementAt(i)).setEnabled(false);
+            ((MunitionChoicePanel) m_vMunitions.get(i)).setEnabled(false);
         }
     }
 
-    public void disableMGSetting() {
+    private void disableMGSetting() {
         for (int i = 0; i < m_vMGs.size(); i++) {
-            ((RapidfireMGPanel) m_vMGs.elementAt(i)).setEnabled(false);
+            ((RapidfireMGPanel) m_vMGs.get(i)).setEnabled(false);
         }
     }
 
-    public void disableMineSetting() {
+    private void disableMineSetting() {
         for (int i = 0; i < m_vMines.size(); i++) {
-            ((MineChoicePanel) m_vMines.elementAt(i)).setEnabled(false);
+            ((MineChoicePanel) m_vMines.get(i)).setEnabled(false);
         }
     }
 
-    public void setOptions() {
+    private void setOptions() {
         IOption option;
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent) i.nextElement();
+        for (final Object newVar : optionComps) {
+            DialogOptionComponent comp = (DialogOptionComponent) newVar;
             option = comp.getOption();
             if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) { //NON-NLS-$1
                 entity.getCrew().getOptions().getOption(option.getName()).setValue("None"); //NON-NLS-$1
@@ -863,19 +865,9 @@ public class CustomMechDialog
         }
     }
 
-    public void resetOptions() {
-        IOption option;
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent) i.nextElement();
-            option = comp.getOption();
-            option.setValue(false);
-            entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
-        }
-    }
-
     public void refreshOptions() {
         panOptions.removeAll();
-        optionComps = new Vector();
+        optionComps = new ArrayList();
 
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -912,15 +904,15 @@ public class CustomMechDialog
     private void addOption(IOption option, GridBagLayout gridbag, GridBagConstraints c, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this, option, editable);
 
-        if (option.getName().equals("weapon_specialist")) { //$NON-NLS-1$
+        if ("weapon_specialist".equals(option.getName())) { //$NON-NLS-1$
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
-            Hashtable uniqueWeapons = new Hashtable();
+            HashMap uniqueWeapons = new HashMap();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                Mounted m = (Mounted) entity.getWeaponList().get(i);
-                uniqueWeapons.put(m.getName(), new Boolean(true));
+                Mounted m = entity.getWeaponList().get(i);
+                uniqueWeapons.put(m.getName(), Boolean.valueOf(true));
             }
-            for (Enumeration e = uniqueWeapons.keys(); e.hasMoreElements();) {
-                optionComp.addValue((String) e.nextElement());
+            for (final Object newVar : uniqueWeapons.keySet()) {
+                optionComp.addValue((String) newVar);
             }
             optionComp.setSelected(option.stringValue());
         }
@@ -928,7 +920,7 @@ public class CustomMechDialog
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);
 
-        optionComps.addElement(optionComp);
+        optionComps.add(optionComp);
     }
 
     public void showDescFor(IOption option) {
@@ -946,16 +938,16 @@ public class CustomMechDialog
 
     private void refreshDeployment() {
         choDeployment.removeAll();
-        choDeployment.add(Messages.getString("CustomMechDialog.StartOfGame")); //$NON-NLS-1$
+        choDeployment.addItem(Messages.getString("CustomMechDialog.StartOfGame")); //$NON-NLS-1$
 
         if (entity.getDeployRound() < 1)
-            choDeployment.select(0);
+            choDeployment.setSelectedIndex(0);
 
         for (int i = 1; i <= 15; i++) {
-            choDeployment.add(Messages.getString("CustomMechDialog.AfterRound") + i); //$NON-NLS-1$
+            choDeployment.addItem(Messages.getString("CustomMechDialog.AfterRound") + i); //$NON-NLS-1$
 
             if (entity.getDeployRound() == i)
-                choDeployment.select(i);
+                choDeployment.setSelectedIndex(i);
         }
     }
 
@@ -965,31 +957,31 @@ public class CustomMechDialog
         entityCorrespondance = new int[client.game.getNoOfEntities() + 2];
 
         if (entity.hasC3i()) {
-            choC3.add(Messages.getString("CustomMechDialog.CreateNewNetwork")); //$NON-NLS-1$
-            if (entity.getC3Master() == null) choC3.select(listIndex);
+            choC3.addItem(Messages.getString("CustomMechDialog.CreateNewNetwork")); //$NON-NLS-1$
+            if (entity.getC3Master() == null) choC3.setSelectedIndex(listIndex);
             entityCorrespondance[listIndex++] = entity.getId();
         } else if (entity.hasC3MM()) {
             int mNodes = entity.calculateFreeC3MNodes();
             int sNodes = entity.calculateFreeC3Nodes();
 
-            choC3.add(Messages.getString("CustomMechDialog.setCompanyMaster", new Object[]{new Integer(mNodes), new Integer(sNodes)})); //$NON-NLS-1$
+            choC3.addItem(Messages.getString("CustomMechDialog.setCompanyMaster", new Object[]{new Integer(mNodes), new Integer(sNodes)})); //$NON-NLS-1$
 
-            if (entity.C3MasterIs(entity)) choC3.select(listIndex);
+            if (entity.C3MasterIs(entity)) choC3.setSelectedIndex(listIndex);
             entityCorrespondance[listIndex++] = entity.getId();
 
-            choC3.add(Messages.getString("CustomMechDialog.setIndependentMaster", new Object[]{new Integer(sNodes)})); //$NON-NLS-1$
-            if (entity.getC3Master() == null) choC3.select(listIndex);
+            choC3.addItem(Messages.getString("CustomMechDialog.setIndependentMaster", new Object[]{new Integer(sNodes)})); //$NON-NLS-1$
+            if (entity.getC3Master() == null) choC3.setSelectedIndex(listIndex);
             entityCorrespondance[listIndex++] = -1;
 
         } else if (entity.hasC3M()) {
             int nodes = entity.calculateFreeC3Nodes();
 
-            choC3.add(Messages.getString("CustomMechDialog.setCompanyMaster1", new Object[]{new Integer(nodes)})); //$NON-NLS-1$
-            if (entity.C3MasterIs(entity)) choC3.select(listIndex);
+            choC3.addItem(Messages.getString("CustomMechDialog.setCompanyMaster1", new Object[]{new Integer(nodes)})); //$NON-NLS-1$
+            if (entity.C3MasterIs(entity)) choC3.setSelectedIndex(listIndex);
             entityCorrespondance[listIndex++] = entity.getId();
 
-            choC3.add(Messages.getString("CustomMechDialog.setIndependentMaster", new Object[]{new Integer(nodes)})); //$NON-NLS-1$
-            if (entity.getC3Master() == null) choC3.select(listIndex);
+            choC3.addItem(Messages.getString("CustomMechDialog.setIndependentMaster", new Object[]{new Integer(nodes)})); //$NON-NLS-1$
+            if (entity.getC3Master() == null) choC3.setSelectedIndex(listIndex);
             entityCorrespondance[listIndex++] = -1;
 
         }
@@ -1018,19 +1010,19 @@ public class CustomMechDialog
             }
             if (e.hasC3i()) {
                 if (entity.onSameC3NetworkAs(e)) {
-                    choC3.add(Messages.getString("CustomMechDialog.join1", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1)})); //$NON-NLS-1$
-                    choC3.select(listIndex);
+                    choC3.addItem(Messages.getString("CustomMechDialog.join1", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1)})); //$NON-NLS-1$
+                    choC3.setSelectedIndex(listIndex);
                 } else {
-                    choC3.add(Messages.getString("CustomMechDialog.join2", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes)})); //$NON-NLS-1$
+                    choC3.addItem(Messages.getString("CustomMechDialog.join2", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes)})); //$NON-NLS-1$
                 }
                 entityCorrespondance[listIndex++] = e.getId();
             } else if (e.C3MasterIs(e) && e.hasC3MM()) {
                 // Company masters with 2 computers can have
                 // *both* sub-masters AND slave units.
-                choC3.add(Messages.getString("CustomMechDialog.connect2", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes)})); //$NON-NLS-1$
+                choC3.addItem(Messages.getString("CustomMechDialog.connect2", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes)})); //$NON-NLS-1$
                 entityCorrespondance[listIndex] = e.getId();
                 if (entity.C3MasterIs(e)) {
-                    choC3.select(listIndex);
+                    choC3.setSelectedIndex(listIndex);
                 }
                 listIndex++;
             } else if (e.C3MasterIs(e) != entity.hasC3M()) {
@@ -1038,11 +1030,11 @@ public class CustomMechDialog
                 // not main masters likewise, if we're a master unit, we can
                 // only connect to main master units, not sub-masters.
             } else if (entity.C3MasterIs(e)) {
-                choC3.add(Messages.getString("CustomMechDialog.connect1", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1)})); //$NON-NLS-1$
-                choC3.select(listIndex);
+                choC3.addItem(Messages.getString("CustomMechDialog.connect1", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1)})); //$NON-NLS-1$
+                choC3.setSelectedIndex(listIndex);
                 entityCorrespondance[listIndex++] = e.getId();
             } else {
-                choC3.add(Messages.getString("CustomMechDialog.connect2", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes)})); //$NON-NLS-1$
+                choC3.addItem(Messages.getString("CustomMechDialog.connect2", new Object[]{e.getDisplayName(), e.getC3NetId(), new Integer(nodes)})); //$NON-NLS-1$
                 entityCorrespondance[listIndex++] = e.getId();
             }
         }
@@ -1057,17 +1049,17 @@ public class CustomMechDialog
     private void refreshUnitNum(Enumeration others) {
         // Clear the list of old values
         choUnitNum.removeAll();
-        entityUnitNum.removeAllElements();
+        entityUnitNum.clear();
 
         // Make an entry for "no change".
-        choUnitNum.add(Messages.getString("CustomMechDialog.doNotSwapUnits")); //$NON-NLS-1$
-        entityUnitNum.addElement(this.entity);
+        choUnitNum.addItem(Messages.getString("CustomMechDialog.doNotSwapUnits")); //$NON-NLS-1$
+        entityUnitNum.add(entity);
 
         // Walk through the other entities.
         while (others.hasMoreElements()) {
             // Track the position of the next other entity.
             final Entity other = (Entity) others.nextElement();
-            entityUnitNum.addElement(other);
+            entityUnitNum.add(other);
 
             // Show the other entity's name and callsign.
             StringBuffer callsign = new StringBuffer(other.getDisplayName());
@@ -1077,13 +1069,13 @@ public class CustomMechDialog
                     .append('-')
                     .append(other.getId())
                     .append(')');
-            choUnitNum.add(callsign.toString());
+            choUnitNum.addItem(callsign.toString());
         }
-        choUnitNum.select(0);
+        choUnitNum.setSelectedIndex(0);
     }
 
-    public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-        if (actionEvent.getSource() == butOffBoardDistance) {
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(butOffBoardDistance)) {
             int maxDistance = 19 * 17; // Long Tom
             for (Mounted wep : entity.getWeaponList()) {
                 EquipmentType e = wep.getType();
@@ -1104,7 +1096,7 @@ public class CustomMechDialog
             // butOffBoardDistance.addActionListener(this);
             return;
         }
-        if (actionEvent.getSource() != butCancel) {
+        if (!actionEvent.getSource().equals(butCancel)) {
             // get values
             String name = fldName.getText();
             int gunnery;
@@ -1173,7 +1165,7 @@ public class CustomMechDialog
             if (!(entity.hasTargComp()) && (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_targsys"))) {
                 int targSysIndex = MiscType.T_TARGSYS_STANDARD;
                 if (choTargSys.getSelectedItem() != null)
-                    targSysIndex = MiscType.getTargetSysType(choTargSys.getSelectedItem());
+                    targSysIndex = MiscType.getTargetSysType((String) choTargSys.getSelectedItem());
                 if (targSysIndex >= 0)
                     entity.setTargSysType(targSysIndex);
                 else {
@@ -1186,10 +1178,10 @@ public class CustomMechDialog
             // entities and send an update packet for the other entity.
             if (!entityUnitNum.isEmpty() &&
                     choUnitNum.getSelectedIndex() > 0) {
-                Entity other = (Entity) this.entityUnitNum.elementAt
+                Entity other = (Entity) entityUnitNum.get
                         (choUnitNum.getSelectedIndex());
-                char temp = this.entity.getUnitNumber();
-                this.entity.setUnitNumber(other.getUnitNumber());
+                char temp = entity.getUnitNumber();
+                entity.setUnitNumber(other.getUnitNumber());
                 other.setUnitNumber(temp);
                 client.sendUpdateEntity(other);
             }
@@ -1198,16 +1190,16 @@ public class CustomMechDialog
             entity.setDeployRound(choDeployment.getSelectedIndex());
 
             // update munitions selections
-            for (Enumeration e = m_vMunitions.elements(); e.hasMoreElements();) {
-                ((MunitionChoicePanel) e.nextElement()).applyChoice();
+            for (final Object newVar2 : m_vMunitions) {
+                ((MunitionChoicePanel) newVar2).applyChoice();
             }
             // update MG rapid fire settings
-            for (Enumeration e = m_vMGs.elements(); e.hasMoreElements();) {
-                ((RapidfireMGPanel) e.nextElement()).applyChoice();
+            for (final Object newVar1 : m_vMGs) {
+                ((RapidfireMGPanel) newVar1).applyChoice();
             }
             // update mines setting
-            for (Enumeration e = m_vMines.elements(); e.hasMoreElements();) {
-                ((MineChoicePanel) e.nextElement()).applyChoice();
+            for (final Object newVar : m_vMines) {
+                ((MineChoicePanel) newVar).applyChoice();
             }
             // update searchlight setting
             entity.setSpotlight(chSearchlight.isSelected());
@@ -1217,11 +1209,11 @@ public class CustomMechDialog
             okay = true;
             clientgui.chatlounge.refreshEntities();
         }
-        this.setVisible(false);
+        setVisible(false);
         Entity nextOne = null;
-        if (actionEvent.getSource() == butPrev) {
+        if (actionEvent.getSource().equals(butPrev)) {
             nextOne = getNextEntity(false);
-        } else if (actionEvent.getSource() == butNext) {
+        } else if (actionEvent.getSource().equals(butNext)) {
             nextOne = getNextEntity(true);
         }
         if (nextOne != null) {
@@ -1235,13 +1227,13 @@ public class CustomMechDialog
         boolean rbd = game.getOptions().booleanOption("real_blind_drop"); //$NON-NLS-1$
         Player p = client.getLocalPlayer();
 
-        Entity nextOne = null;
+        Entity nextOne;
         if (forward) {
             nextOne = game.getNextEntityFromList(entity);
         } else {
             nextOne = game.getPreviousEntityFromList(entity);
         }
-        while (nextOne != entity && nextOne != null) {
+        while (nextOne != null && !nextOne.equals(entity)) {
             if (nextOne.getOwner().equals(p) || !(bd || rbd)) {
                 return nextOne;
             }

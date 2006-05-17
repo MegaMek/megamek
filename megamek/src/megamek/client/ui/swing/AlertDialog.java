@@ -17,7 +17,7 @@ package megamek.client.ui.swing;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -34,19 +34,21 @@ import java.awt.event.WindowEvent;
 public class AlertDialog
         extends JDialog implements ActionListener {
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JTextArea labMessage;
+    private JTextPane labMessage;
 
     public AlertDialog(JFrame parent, String title,
                        String message, boolean modal) {
         super(parent, title, modal);
 
-        labMessage = new JTextArea(message);
+        labMessage = new JTextPane();
+        labMessage.setEditable(false);
+        labMessage.setText(message);
         butOkay.addActionListener(this);
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
@@ -54,7 +56,7 @@ public class AlertDialog
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
-        add(labMessage);
+        getContentPane().add(labMessage);
 
         c.weightx = 1.0;
         c.weighty = 1.0;
@@ -62,7 +64,7 @@ public class AlertDialog
         c.ipadx = 20;
         c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
-        add(butOkay);
+        getContentPane().add(butOkay);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -91,13 +93,15 @@ public class AlertDialog
     public AlertDialog(JFrame parent, String title, String message) {
         super(parent, title, true);
 
-        labMessage = new JTextArea(message);
+        labMessage = new JTextPane();
+        labMessage.setEditable(false);
+        labMessage.setText(message);
         butOkay.addActionListener(this);
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
@@ -105,7 +109,7 @@ public class AlertDialog
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
-        add(labMessage);
+        getContentPane().add(labMessage);
 
         c.weightx = 1.0;
         c.weighty = 1.0;
@@ -113,7 +117,7 @@ public class AlertDialog
         c.ipadx = 20;
         c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
-        add(butOkay);
+        getContentPane().add(butOkay);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {

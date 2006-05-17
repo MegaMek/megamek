@@ -19,10 +19,10 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.Choice;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -47,8 +47,8 @@ public class MineLayingDialog
     /**
      * The <code>int</code> ID of the entity that lays the mine.
      */
-    private Entity entity = null;
-    private Choice chMines = new Choice();
+    private Entity entity;
+    private JComboBox chMines = new JComboBox();
     private ArrayList<Mounted> vMines = new ArrayList<Mounted>();
 
     /**
@@ -72,9 +72,9 @@ public class MineLayingDialog
 
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(" ")//$NON-NLS-1$
+                        .append(' ')//$NON-NLS-1$
                         .append(mount.getDesc());
-                chMines.add(message.toString());
+                chMines.addItem(message.toString());
                 vMines.add(mount);
 
             } // End found-mine
@@ -96,14 +96,14 @@ public class MineLayingDialog
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
-        add(labMessage);
+        getContentPane().add(labMessage);
 
         gridbag.setConstraints(chMines, c);
-        add(chMines);
+        getContentPane().add(chMines);
 
         // Allow the player to confirm or abort the choice.
-        add(butOkay);
-        add(butCancel);
+        getContentPane().add(butOkay);
+        getContentPane().add(butCancel);
         butOkay.requestFocus();
 
         addWindowListener(new WindowAdapter() {

@@ -29,6 +29,7 @@ v0.31.8-dev (CVS)
 + Patch 1478358: Start/finish BV for victory report
 + Bug 1486403: grapple class cast exception
 + Fixed NPE in processMouseMotionEvent in the swing version of the PicMap.java
++ Migrated Choice -> JComboBox, deleted Prompt (replaced with JOptionPane)
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

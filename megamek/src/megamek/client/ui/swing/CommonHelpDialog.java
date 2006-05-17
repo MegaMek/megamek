@@ -17,10 +17,10 @@ package megamek.client.ui.swing;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -59,9 +59,10 @@ public class CommonHelpDialog extends JDialog {
         // Create the help dialog.
         setLayout(new BorderLayout());
         lblHelp = new JTextArea(Messages.getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
-        ScrollPane scroll = new ScrollPane();
-        scroll.add(lblHelp);
-        add(scroll, BorderLayout.CENTER);
+        lblHelp.setEditable(false);
+        lblHelp.setOpaque(false);
+        JScrollPane scroll = new JScrollPane(lblHelp);
+        getContentPane().add(scroll, BorderLayout.CENTER);
 
         // Add a "Close" button.
         JButton butClose = new JButton(Messages.getString("CommonHelpDialog.Close")); //$NON-NLS-1$
@@ -70,7 +71,7 @@ public class CommonHelpDialog extends JDialog {
                 quit();
             }
         });
-        add(butClose, BorderLayout.SOUTH);
+        getContentPane().add(butClose, BorderLayout.SOUTH);
 
         // Make the window half the screensize by default.
         Dimension screenSize = frame.getToolkit().getScreenSize();

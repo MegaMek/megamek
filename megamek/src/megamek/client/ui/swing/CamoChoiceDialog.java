@@ -21,12 +21,12 @@ import megamek.common.util.DirectoryItems;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.Choice;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -73,7 +73,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     /**
      * The menu containing the category names.
      */
-    private Choice categories;
+    private JComboBox categories;
 
     /**
      * The list containing the item names.
@@ -134,8 +134,8 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         // If this is the "no camos" category, then
         // fill the item list with the colors.
         if (Player.NO_CAMO.equals(category)) {
-            for (int color = 0; color < Player.colorNames.length; color++) {
-                items.add(Player.colorNames[color]);
+            for (String color : Player.colorNames) {
+                items.add(color);
             }
         }
 
@@ -259,7 +259,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         });
         
         // Use a border layout.
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
 
         // Create a pulldown menu for the categories.
         JPanel panel = new JPanel();
@@ -267,7 +267,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         panel.setLayout(new GridBagLayout());
         GridBagConstraints layout = new GridBagConstraints();
         layout.anchor = GridBagConstraints.CENTER;
-        categories = new Choice();
+        categories = new JComboBox();
         panel.add(categories, layout);
 
         // Fill the pulldown.  Include the "no camo" category.
@@ -301,7 +301,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
 
         // Create a list to hold the items in the category.
         items = new List(15);
-        this.add(items, BorderLayout.CENTER);
+        getContentPane().add(items, BorderLayout.CENTER);
 
         // Update the "select new camo" when an item is selected.
         items.addItemListener(this);
@@ -310,7 +310,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         // Use a grid bag layout.
         panel = new JPanel();
         panel.setLayout(new GridBagLayout());
-        this.add(panel, BorderLayout.EAST);
+        getContentPane().add(panel, BorderLayout.EAST);
         layout = new GridBagConstraints();
         layout.anchor = GridBagConstraints.EAST;
         layout.gridx = 0;
@@ -386,7 +386,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         fillList(Player.NO_CAMO);
 
         // Perform the initial layout.
-        this.pack();
+        pack();
     }
 
     /**
@@ -399,7 +399,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     public void actionPerformed(ActionEvent event) {
 
         // Did the worker change their selection?
-        String curCat = categories.getSelectedItem();
+        String curCat = (String) categories.getSelectedItem();
         String curItem = items.getSelectedItem();
         if (!curCat.equals(prevCat) || !curItem.equals(prevItem)) {
 
@@ -411,7 +411,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
 
                 // Get the Image.
                 Image image = null;
-                Image[] array = (Image[]) this.getSelectedObjects();
+                Image[] array = (Image[]) getSelectedObjects();
                 if (null != array) image = array[0];
 
                 // Create an ItemEvent for the change.
@@ -443,7 +443,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     public void itemStateChanged(ItemEvent event) {
 
         // Get the category and the index of the selected item.
-        String curCat = categories.getSelectedItem();
+        String curCat = (String) categories.getSelectedItem();
 
         // If a "no camo" item is selected, clear the image.
         if (Player.NO_CAMO.equals(curCat)) {
@@ -461,8 +461,12 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         // Clear the background and try to set the camo image.
         try {
             select.setBackground(categories.getBackground());
-            select.setIcon(new ImageIcon((Image) camos.getItem
-                    (curCat, items.getSelectedItem())));
+            Image img = (Image) camos.getItem(curCat, items.getSelectedItem());
+            if (img != null) {
+                select.setIcon(new ImageIcon(img));
+            } else {
+                select.setIcon(null);
+            }
         } catch (Exception err) {
             // Print the stack trace and display the message.
             err.printStackTrace();
@@ -487,7 +491,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     public Object[] getSelectedObjects() {
 
         // Update the prev selection.
-        setPrevSelection(categories.getSelectedItem(),
+        setPrevSelection((String) categories.getSelectedItem(),
                 items.getSelectedItem());
 
         // Return a null if the "no camo" category is selected.
@@ -578,7 +582,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     public void setCategory(String category) {
 
         // Get the current selection.
-        String cur = categories.getSelectedItem();
+        String cur = (String) categories.getSelectedItem();
 
         // Do nothing, if the request is for the selected item.
         if (!cur.equals(category)) {
@@ -587,10 +591,10 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
             for (int loop = 0; loop < categories.getItemCount(); loop++) {
 
                 // Did we find it?
-                if (categories.getItem(loop).equals(category)) {
+                if (categories.getItemAt(loop).equals(category)) {
 
                     // Select this position.
-                    categories.select(loop);
+                    categories.setSelectedIndex(loop);
 
                     // Fill the list.
                     fillList(category);
@@ -654,12 +658,11 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     public void setVisible(boolean visible) {
 
         // Make sure the "keep" button is set correctly.
-        setPrevSelection(categories.getSelectedItem(),
+        setPrevSelection((String) categories.getSelectedItem(),
                 items.getSelectedItem());
 
         // Make sure the "select" button is set correctly.
-        itemStateChanged(new ItemEvent(items, 0, items.getSelectedItem(),
-                ItemEvent.SELECTED));
+        itemStateChanged(new ItemEvent(items, 0, items.getSelectedItem(), ItemEvent.SELECTED));
 
         // Now show the dialog.
         super.setVisible(visible);

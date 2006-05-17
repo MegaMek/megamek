@@ -103,8 +103,11 @@ public class CommonAboutDialog extends JDialog {
                 .append(Messages.getString("CommonAboutDialog.javaVersion"))//$NON-NLS-1$
                 .append(System.getProperty("java.version")); //$NON-NLS-1$
         JTextArea lblVersion = new JTextArea(buff.toString());
+        lblVersion.setEditable(false);
         JTextArea lblCopyright = new JTextArea(Messages.getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
+        lblCopyright.setEditable(false);
         JTextArea lblAbout = new JTextArea(Messages.getString("CommonAboutDialog.about")); //$NON-NLS-1$
+        lblAbout.setEditable(false);
 
         // Add a "Close" button.
         JButton butClose = new JButton(Messages.getString("CommonAboutDialog.Close")); //$NON-NLS-1$
@@ -117,7 +120,7 @@ public class CommonAboutDialog extends JDialog {
         // Layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTH;
         c.weightx = 0.0;
@@ -128,17 +131,17 @@ public class CommonAboutDialog extends JDialog {
         c.ipady = 5;
         c.gridx = 0;
         c.gridy = 0;
-        add(panTitle, c);
+        getContentPane().add(panTitle, c);
         c.weighty = 1.0;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 1;
-        add(lblVersion, c);
+        getContentPane().add(lblVersion, c);
         c.gridy = 2;
-        add(lblCopyright, c);
+        getContentPane().add(lblCopyright, c);
         c.gridy = 3;
         add(lblAbout, c);
         c.gridy = 4;
-        add(butClose, c);
+        getContentPane().add(butClose, c);
 
         // Place this dialog on middle of screen.
         Dimension screenSize = frame.getToolkit().getScreenSize();

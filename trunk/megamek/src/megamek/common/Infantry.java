@@ -410,13 +410,9 @@ public class Infantry
       public void initializeInternal(int val, int loc) {
         this.menStarting = val;
         this.menShooting = val;
-        if(hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR))
-            initializeArmor(val,loc);
-        else
-            initializeArmor(IArmorState.ARMOR_NA, loc);
         super.initializeInternal( val, loc );
       }
-
+      
     /**
      * Set the men in the platoon to the appropriate value for the 
      * platoon's movement type.
@@ -442,6 +438,10 @@ public class Infantry
         default:
             throw new IllegalArgumentException
                 ( "Unknown movement type: " + this.getMovementMode() );
+        }
+        
+        if(hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
+            initializeArmor( getOInternal(LOC_INFANTRY), LOC_INFANTRY );
         }
         return;
     }

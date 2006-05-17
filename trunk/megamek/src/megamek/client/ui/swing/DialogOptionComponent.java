@@ -24,12 +24,14 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.awt.Choice;
+import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Serializable;
 
@@ -37,17 +39,17 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
     IOption option;
 
     private JCheckBox checkbox;
-    private Choice choice;
+    private JComboBox choice;
     private JTextField textField;
     private JLabel label;
-    private DialogOptionListener parent;
+    private DialogOptionListener dialogOptionListener;
 
     public DialogOptionComponent(DialogOptionListener parent, IOption option) {
         this(parent, option, true);
     }
 
     public DialogOptionComponent(DialogOptionListener parent, IOption option, boolean editable) {
-        this.parent = parent;
+        dialogOptionListener = parent;
         this.option = option;
 
         addMouseListener(this);
@@ -65,7 +67,7 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
 
                 break;
             case IOption.CHOICE:
-                choice = new Choice();
+                choice = new JComboBox();
 
                 choice.addMouseListener(this);
                 label = new JLabel(option.getDisplayableName());
@@ -106,7 +108,7 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
     public Object getValue() {
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                return new Boolean(checkbox.isSelected());
+                return Boolean.valueOf(checkbox.isSelected());
             case IOption.INTEGER:
                 return Integer.valueOf(textField.getText());
             case IOption.FLOAT:
@@ -151,11 +153,11 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
     }
 
     public void setSelected(String value) {
-        choice.select(value);
+        choice.setSelectedItem(value);
     }
 
     public void addValue(String value) {
-        choice.add(value);
+        choice.addItem(value);
     }
 
     public void resetToDefault() {
@@ -164,7 +166,7 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
                 checkbox.setSelected(((Boolean) option.getDefault()).booleanValue());
                 break;
             case IOption.CHOICE:
-                choice.select(0); //Assume first choice is always default
+                choice.setSelectedIndex(0); //Assume first choice is always default
                 break;
             default :
                 textField.setText(String.valueOf(option.getDefault()));
@@ -179,24 +181,24 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
         return new BasicOption(option.getName(), getValue());
     }
 
-    public void mousePressed(java.awt.event.MouseEvent mouseEvent) {
+    public void mousePressed(MouseEvent mouseEvent) {
     }
 
-    public void mouseEntered(java.awt.event.MouseEvent mouseEvent) {
-        parent.showDescFor(option);
+    public void mouseEntered(MouseEvent mouseEvent) {
+        dialogOptionListener.showDescFor(option);
     }
 
-    public void mouseReleased(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseReleased(MouseEvent mouseEvent) {
     }
 
-    public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseClicked(MouseEvent mouseEvent) {
     }
 
-    public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseExited(MouseEvent mouseEvent) {
     }
 
-    public void itemStateChanged(java.awt.event.ItemEvent itemEvent) {
-        parent.optionClicked(this, option, checkbox.isSelected());
+    public void itemStateChanged(ItemEvent itemEvent) {
+        dialogOptionListener.optionClicked(this, option, checkbox.isSelected());
     }
 
     private static class BasicOption implements IBasicOption, Serializable {

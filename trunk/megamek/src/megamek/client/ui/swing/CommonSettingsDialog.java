@@ -19,18 +19,18 @@ import megamek.common.preference.PreferenceManager;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.awt.Choice;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.List;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -46,7 +46,6 @@ import java.util.Comparator;
 
 public class CommonSettingsDialog extends ClientDialog
         implements ActionListener, ItemListener, FocusListener {
-    private ScrollPane scrolledPane = new ScrollPane();
     private JTabbedPane panTabs;
 
     private JCheckBox minimapEnabled;
@@ -60,7 +59,7 @@ public class CommonSettingsDialog extends ClientDialog
     private JCheckBox soundMute;
     private JCheckBox showMapHexPopup;
     private JTextField tooltipDelay;
-    private Choice unitStartChar;
+    private JComboBox unitStartChar;
     private JTextField maxPathfinderTime;
     private JCheckBox getFocus;
 
@@ -78,7 +77,7 @@ public class CommonSettingsDialog extends ClientDialog
     private JTextField stampFormat;
     private JCheckBox defaultAutoejectDisabled;
     private JCheckBox showUnitId;
-    private Choice locale;
+    private JComboBox displayLocale;
     private JCheckBox chatloungeTabs;
 
     private JCheckBox showMapsheets;
@@ -87,7 +86,7 @@ public class CommonSettingsDialog extends ClientDialog
     private int keysIndex = 0;
     private JTextField value;
 
-    private Choice tileSetChoice;
+    private JComboBox tileSetChoice;
     private File[] tileSets;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
@@ -106,12 +105,12 @@ public class CommonSettingsDialog extends ClientDialog
 
         panTabs = new JTabbedPane();
         JPanel settingsPanel = getSettingsPanel();
-        scrolledPane.add(settingsPanel);
-        panTabs.add("Main", scrolledPane);
+        JScrollPane scroll = new JScrollPane(settingsPanel);
+        panTabs.add("Main", scroll);
         panTabs.add("Advanced", getAdvancedSettingsPanel());
         setLayout(new BorderLayout());
-        add(panTabs, BorderLayout.CENTER);
-        add(getButtonsPanel(), BorderLayout.SOUTH);
+        getContentPane().add(panTabs, BorderLayout.CENTER);
+        getContentPane().add(getButtonsPanel(), BorderLayout.SOUTH);
 
         // Close this dialog when the window manager says to.
         addWindowListener(new WindowAdapter() {
@@ -126,7 +125,7 @@ public class CommonSettingsDialog extends ClientDialog
         // Make the thing wide enough so a horizontal scrollbar isn't
         //  necessary.  I'm not sure why the extra hardcoded 10 pixels
         //  is needed, maybe it's a ms windows thing.
-        setLocationAndSize(settingsPanel.getPreferredSize().width + scrolledPane.getInsets().right + 10, settingsPanel.getPreferredSize().height);
+        setLocationAndSize(settingsPanel.getPreferredSize().width + scroll.getInsets().right + 20, settingsPanel.getPreferredSize().height);
     }
 
     private JPanel getButtonsPanel() {
@@ -201,8 +200,7 @@ public class CommonSettingsDialog extends ClientDialog
         tempPanel.add(panSetting);
 
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        unitStartChar
-                = new Choice();
+        unitStartChar = new JComboBox();
         // Add option for "A, B, C, D..."
         unitStartChar.addItem("\u0041, \u0042, \u0043, \u0044..."); //$NON-NLS-1$
         // Add option for "ALPHA, BETA, GAMMA, DELTA..."
@@ -250,7 +248,7 @@ public class CommonSettingsDialog extends ClientDialog
 
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.tileset"))); //$NON-NLS-1$
-        tileSetChoice = new Choice();
+        tileSetChoice = new JComboBox();
         panSetting.add(tileSetChoice);
         tempPanel.add(panSetting);
 
@@ -270,13 +268,15 @@ public class CommonSettingsDialog extends ClientDialog
 
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.stampFormat"))); //$NON-NLS-1$
-        stampFormat
-                = new JTextField(15);
+        stampFormat = new JTextField(15);
         panSetting.add(stampFormat);
         tempPanel.add(panSetting);
 
         // scrolling options
-        tempPanel.add(new JTextArea(Messages.getString("CommonSettingsDialog.mapScrollText"))); //$NON-NLS-1$
+        JTextArea ta = new JTextArea(Messages.getString("CommonSettingsDialog.mapScrollText"));
+        ta.setEditable(false);
+        ta.setOpaque(false);
+        tempPanel.add(ta); //$NON-NLS-1$
 
         rightDragScroll
                 = new JCheckBox(Messages.getString("CommonSettingsDialog.rightDragScroll")); //$NON-NLS-1$
@@ -305,15 +305,15 @@ public class CommonSettingsDialog extends ClientDialog
         panSetting.add(scrollSensitivity);
         tempPanel.add(panSetting);
 
-        //locale settings
+        //displayLocale settings
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.locale"))); //$NON-NLS-1$
-        //        locale = new JTextField(8);
-        locale = new Choice();
-        locale.add(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
-        locale.add(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
-        locale.add(Messages.getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
-        panSetting.add(locale);
+        //        displayLocale = new JTextField(8);
+        displayLocale = new JComboBox();
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
+        panSetting.add(displayLocale);
         tempPanel.add(panSetting);
 
         //chatloungtab setting
@@ -350,11 +350,11 @@ public class CommonSettingsDialog extends ClientDialog
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
 
         // Select the correct char set (give a nice default to start).
-        unitStartChar.select(0);
+        unitStartChar.setSelectedIndex(0);
         for (int loop = 0; loop < unitStartChar.getItemCount(); loop++) {
-            if (unitStartChar.getItem(loop).charAt(0) ==
+            if (((String) unitStartChar.getItemAt(loop)).charAt(0) ==
                     PreferenceManager.getClientPreferences().getUnitStartChar()) {
-                unitStartChar.select(loop);
+                unitStartChar.setSelectedIndex(loop);
                 break;
             }
         }
@@ -385,7 +385,7 @@ public class CommonSettingsDialog extends ClientDialog
             index = 1;
         if (cs.getLocaleString().startsWith("ru"))
             index = 2;
-        locale.select(index);
+        displayLocale.setSelectedIndex(index);
 
         chatloungeTabs.setSelected(gs.getChatLoungeTabs());
 
@@ -403,9 +403,9 @@ public class CommonSettingsDialog extends ClientDialog
         tileSetChoice.removeAll();
         for (int i = 0; i < tileSets.length; i++) {
             String name = tileSets[i].getName();
-            tileSetChoice.add(name.substring(0, name.length() - 8));
+            tileSetChoice.addItem(name.substring(0, name.length() - 8));
             if (name.equals(cs.getMapTileset()))
-                tileSetChoice.select(i);
+                tileSetChoice.setSelectedIndex(i);
         }
 
         getFocus.setSelected(gs.getFocus());
@@ -437,7 +437,7 @@ public class CommonSettingsDialog extends ClientDialog
         gs.setSoundMute(soundMute.isSelected());
         gs.setShowMapHexPopup(showMapHexPopup.isSelected());
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
-        cs.setUnitStartChar(unitStartChar.getSelectedItem().charAt(0));
+        cs.setUnitStartChar(((String) unitStartChar.getSelectedItem()).charAt(0));
 
         gs.setRightDragScroll(rightDragScroll.isSelected());
         gs.setCtlScroll(ctlScroll.isSelected());
@@ -459,7 +459,7 @@ public class CommonSettingsDialog extends ClientDialog
         cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
         cs.setShowUnitId(showUnitId.isSelected());
 
-        cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[locale.getSelectedIndex()]);
+        cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
 
         gs.setChatloungeTabs(chatloungeTabs.isSelected());
         gs.setShowMapsheets(showMapsheets.isSelected());

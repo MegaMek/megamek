@@ -939,6 +939,7 @@ public class Client {
                 break;
             case Packet.COMMAND_SEND_SAVEGAME:
                 String sFinalFile = (String)c.getObject(0);
+                String localFile = "savegames" + File.separator + sFinalFile;                
                 try {
                     File sDir = new File("savegames");
                     if (!sDir.exists()) {
@@ -949,7 +950,7 @@ public class Client {
                 }
                 try {
                     ObjectOutputStream oos = new ObjectOutputStream(
-                        new FileOutputStream(sFinalFile));
+                        new FileOutputStream(localFile));
                     oos.writeObject(c.getObject(1));
                     oos.flush();
                     oos.close();

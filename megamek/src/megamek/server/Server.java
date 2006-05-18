@@ -814,8 +814,8 @@ public class Server implements Runnable {
         if (!sFinalFile.endsWith(".sav")) {
             sFinalFile = sFile + ".sav";
         }
-        sFinalFile = "savegames" + File.separator + sFinalFile;
-        File f = new File(sFinalFile);
+        String localFile = "savegames" + File.separator + sFinalFile;
+        File f = new File(localFile);
         try {
             ObjectInputStream ois = new ObjectInputStream(
                 new FileInputStream(f));

@@ -400,11 +400,11 @@ public class ClientGUI
         minimap.addKeyListener(this);
         h = minimap.getSize().height;
         w = minimap.getSize().width;
-        if (x + w > screenSize.width) {
-            x = 0;
+        if ((x + 10) >= screenSize.width || (x + w) < 10) {
+            x = screenSize.width - w;
         }
-        if (y + h > screenSize.height) {
-            y = 0;
+        if ((y +10 ) > screenSize.height || (y + h)  < 10 ) {
+            y = screenSize.height - h;
         }
         minimapW.setLocation(x, y);
         minimapW.addWindowListener(this);

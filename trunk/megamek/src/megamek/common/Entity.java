@@ -570,6 +570,15 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Returns true if this entity could potentially be loaded
+     * (did not move from starting hex)
+     */
+    public boolean isLoadableThisTurn() {
+        return (delta_distance == 0) && (conveyance == Entity.NONE) &&
+            !this.unloadedThisTurn && !isClearingMinefield();
+    }
+
+    /**
      * Determine if this <code>Entity</code> was unloaded previously this turn.
      *
      * @return  <code>true</code> if this entity was unloaded for any reason

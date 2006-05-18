@@ -1375,7 +1375,7 @@ public class MoveStep implements Serializable {
                     }
 
                     // The other unit should be able to have a turn.
-                    if (!other.isSelectableThisTurn()) {
+                    if (!other.isLoadableThisTurn()) {
                         return false;
                     }
 

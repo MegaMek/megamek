@@ -33,6 +33,9 @@ v0.31.8-dev (CVS)
 + Bug: BA armor not loading
 + HMP loader auto split ammo type for LBX and ATM
 + HMP loader a couple of missing mixed tech weapon entries
++ Units that did not leave their hex can now be loaded, solving the
+  problem of loading units under non standard initiative schemes in
+  a way consistent with the BMR.
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

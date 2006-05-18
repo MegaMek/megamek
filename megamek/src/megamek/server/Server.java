@@ -2595,10 +2595,12 @@ public class Server implements Runnable {
      */
     private void loadUnit( Entity loader, Entity unit ) {
 
-        // Remove the *last* friendly turn (removing the *first* penalizes
-        // the opponent too much, and re-calculating moves is too hard).
-        game.removeTurnFor(unit);
-        send(createTurnVectorPacket());
+        if(!unit.isDone()) {
+            // Remove the *last* friendly turn (removing the *first* penalizes
+            // the opponent too much, and re-calculating moves is too hard).
+            game.removeTurnFor(unit);
+            send(createTurnVectorPacket());
+        }
 
         // Load the unit.
         loader.load( unit );
@@ -4092,7 +4094,7 @@ public class Server implements Runnable {
                         // The moving unit should be able to load the other
                         // unit and the other should be able to have a turn.
                         if ( !entity.canLoad(loaded) ||
-                             !loaded.isSelectableThisTurn() ) {
+                             !loaded.isLoadableThisTurn() ) {
                             // Something is fishy in Denmark.
                             System.err.println( entity.getShortName() +
                                                 " can not load " +

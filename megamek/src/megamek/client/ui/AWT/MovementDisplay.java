@@ -1388,7 +1388,7 @@ public class MovementDisplay
                     // then enable the "Load" button.
                     if ( ce.getWalkMP() > 0
                             && ce.canLoad(other)
-                            && other.isSelectableThisTurn()) {
+                            && other.isLoadableThisTurn()) {
                         setLoadEnabled(true);
                         isGood = true;
                     }

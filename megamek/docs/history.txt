@@ -37,6 +37,7 @@ v0.31.8-dev (CVS)
   problem of loading units under non standard initiative schemes in
   a way consistent with the BMR.
 + Bug 1478482: /localsave does not save in savegame dir
++ Fixed minor Choice -> JComboBox migration bug
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

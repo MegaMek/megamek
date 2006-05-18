@@ -337,7 +337,7 @@ public class MechSelectorDialog
 
     private void updatePlayerChoice() {
         String lastChoice = (String) m_chPlayer.getSelectedItem();
-        m_chPlayer.removeAll();
+        m_chPlayer.removeAllItems();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
         for (Iterator i = m_clientgui.getBots().values().iterator(); i.hasNext();) {

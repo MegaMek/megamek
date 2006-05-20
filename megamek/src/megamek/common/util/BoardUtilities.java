@@ -119,6 +119,25 @@ public class BoardUtilities {
             }
         }
         
+        int peaks = mapSettings.getMountainPeaks();
+        while(peaks > 0) {
+            peaks--;
+            int mountainHeight = mapSettings.getMountainHeightMin() + 
+            Compute.randomInt(1 + mapSettings.getMountainHeightMax() - 
+                    mapSettings.getMountainHeightMin());
+            int mountainWidth = mapSettings.getMountainWidthMin() + 
+            Compute.randomInt(1 + mapSettings.getMountainWidthMax() - 
+                    mapSettings.getMountainWidthMin());
+            int mapWidth = result.getWidth();
+            int mapHeight = result.getHeight();
+            
+            //put the peak somewhere in the middle of the map...
+            Coords peak = new Coords(mapWidth/4 + Compute.randomInt((mapWidth+1)/2),
+                    mapHeight/4 + Compute.randomInt((mapHeight+1)/2));
+            
+            generateMountain(result, mountainWidth, peak, mountainHeight, mapSettings.getMountainStyle());            
+        }
+        
         if(mapSettings.getCliffs() > 0) {
             addCliffs(result, mapSettings.getCliffs());
         }
@@ -902,6 +921,61 @@ public class BoardUtilities {
                 }
             }
         }
+    }
+    
+    public static void generateMountain(IBoard board, int width,
+            Coords centre, int height, int capStyle) {
+        final int mapW = board.getWidth();
+        final int mapH = board.getHeight();
+        
+        ITerrainFactory tf = Terrains.getTerrainFactory();
+        
+        for(int x=0;x<mapW;x++) {
+            for(int y=0;y<mapH;y++) {
+                Coords c = new Coords(x,y);
+                int distance = c.distance(centre);
+                int elev = (100 * height * (width - distance))/width;
+                elev = (elev / 100) + (Compute.randomInt(100) < (elev % 100) ? 1 : 0);
+                
+                IHex hex = board.getHex(c);
+                
+                if(elev >= height - 2) {
+                    switch(capStyle) {
+                    case MapSettings.MOUNTAIN_SNOWCAPPED:
+                        hex.setTheme("snow");
+                        break;
+                    case MapSettings.MOUNTAIN_VOLCANO_ACTIVE:
+                    case MapSettings.MOUNTAIN_VOLCANO_DORMANT:
+                        hex.setTheme("lunar");
+                        break;
+                    }
+                }
+                if(elev == height) {
+                    //for volcanoes, invert the peak
+                    switch(capStyle) {
+                    case MapSettings.MOUNTAIN_VOLCANO_ACTIVE:
+                        hex.removeAllTerrains();
+                        hex.addTerrain(tf.createTerrain(Terrains.MAGMA,2));
+                        elev -= 2;
+                        break;
+                    case MapSettings.MOUNTAIN_VOLCANO_DORMANT:
+                        hex.removeAllTerrains();
+                        hex.addTerrain(tf.createTerrain(Terrains.MAGMA,1));
+                        elev -= 2;
+                        break;
+                    case MapSettings.MOUNTAIN_VOLCANO_EXTINCT:
+                        hex.setTheme("lunar");
+                        elev -= 2;
+                        break;
+                    }
+                }
+                
+                if(hex.getElevation() < elev)
+                    hex.setElevation(elev);
+            }
+        }
+        
+        
     }
 
     /**

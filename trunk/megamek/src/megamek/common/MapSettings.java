@@ -35,6 +35,12 @@ public class MapSettings implements Serializable {
     public static final String BOARD_SURPRISE = "[SURPRISE]";
     public static final String BOARD_GENERATED = "[GENERATED]";    
     
+    public static final int MOUNTAIN_PLAIN = 0;
+    public static final int MOUNTAIN_VOLCANO_EXTINCT = 1;
+    public static final int MOUNTAIN_VOLCANO_DORMANT = 2;
+    public static final int MOUNTAIN_VOLCANO_ACTIVE = 3;
+    public static final int MOUNTAIN_SNOWCAPPED = 4;
+    
     private int boardWidth = 16;
     private int boardHeight = 17;
     private int mapWidth = 1;
@@ -186,6 +192,13 @@ public class MapSettings implements Serializable {
     
     private int invertNegativeTerrain = 0;
     
+    private int mountainPeaks = 0;
+    private int mountainWidthMin = 7;
+    private int mountainWidthMax = 20;
+    private int mountainHeightMin = 5;
+    private int mountainHeightMax = 8;
+    private int mountainStyle = MOUNTAIN_PLAIN;
+    
     /** end Map Generator Parameters */
 
     /** Creates new MapSettings */
@@ -210,6 +223,12 @@ public class MapSettings implements Serializable {
         this.boardsAvailable = (Vector)other.getBoardsAvailableVector().clone();
 
         this.invertNegativeTerrain = other.getInvertNegativeTerrain();
+        this.mountainHeightMin = other.getMountainHeightMin();
+        this.mountainHeightMax = other.getMountainHeightMax();
+        this.mountainPeaks = other.getMountainPeaks();
+        this.mountainStyle = other.getMountainStyle();
+        this.mountainWidthMin = other.getMountainWidthMin();
+        this.mountainWidthMax = other.getMountainWidthMax();
         this.hilliness = other.getHilliness();
         this.cliffs = other.getCliffs();
         this.range = other.getRange();
@@ -640,6 +659,12 @@ public class MapSettings implements Serializable {
             (this.probFreeze != other.getProbFreeze()) ||
             (this.probDrought != other.getProbDrought()) ||
             (this.algorithmToUse != other.getAlgorithmToUse()) ||
+            (this.mountainHeightMin != other.getMountainHeightMin()) ||
+            (this.mountainHeightMax != other.getMountainHeightMax()) ||
+            (this.mountainPeaks != other.getMountainPeaks()) ||
+            (this.mountainStyle != other.getMountainStyle()) ||
+            (this.mountainWidthMin != other.getMountainWidthMin()) ||
+            (this.mountainWidthMax != other.getMountainWidthMax()) ||
             (this.boardBuildings != other.getBoardBuildings())) {
             return false;
         } else { 
@@ -723,6 +748,13 @@ public class MapSettings implements Serializable {
     public int getCityMinFloors() {return cityMinFloors;}
     public int getCityMaxFloors() {return cityMaxFloors;}
     public int getCityDensity() {return cityDensity;}
+
+    public int getMountainHeightMin() {return mountainHeightMin;}
+    public int getMountainHeightMax() {return mountainHeightMax;}
+    public int getMountainPeaks() {return mountainPeaks;}
+    public int getMountainStyle() {return mountainStyle;}
+    public int getMountainWidthMin() {return mountainWidthMin;}
+    public int getMountainWidthMax() {return mountainWidthMax;}
 
     /** set the Parameters for the Map Generator 
     */
@@ -873,6 +905,21 @@ public class MapSettings implements Serializable {
         this.cityDensity = cityDensity;
     }
     
+    public void setMountainParams(
+            int mountainPeaks,
+            int mountainWidthMin,
+            int mountainWidthMax,
+            int mountainHeightMin,
+            int mountainHeightMax,
+            int mountainStyle) {
+        this.mountainHeightMax = mountainHeightMax;
+        this.mountainHeightMin = mountainHeightMin;
+        this.mountainWidthMin = mountainWidthMin;
+        this.mountainWidthMax = mountainWidthMax;
+        this.mountainPeaks = mountainPeaks;
+        this.mountainStyle = mountainStyle;
+    }
+    
     //note the format is intended to be interoperable with mekwars' existing terrain.xml format
     public void save(OutputStream os) {
         try {
@@ -973,6 +1020,14 @@ public class MapSettings implements Serializable {
             saveParameter( output, "MAXCF", cityMaxCF);
             saveParameter( output, "MINFLOORS", cityMinFloors);
             saveParameter( output, "MAXFLOORS", cityMaxFloors);
+            
+            // mountain
+            saveParameter( output, "MOUNTPEAKS", mountainPeaks);
+            saveParameter( output, "MOUNTWIDTHMIN", mountainWidthMin);
+            saveParameter( output, "MOUNTWIDTHMAX", mountainWidthMax);
+            saveParameter( output, "MOUNTHEIGHTMIN", mountainHeightMin);
+            saveParameter( output, "MOUNTHEIGHTMAX", mountainHeightMax);
+            saveParameter( output, "MOUNTSTYLE", mountainStyle);
 
             // Finish writing.
             output.write( "</ENVIRONMENT>" ); //$NON-NLS-1$
@@ -1126,6 +1181,14 @@ public class MapSettings implements Serializable {
         else if(key.equals("MAXCF")) cityMaxCF = Integer.valueOf(param);
         else if(key.equals("MINFLOORS")) cityMinFloors = Integer.valueOf(param);
         else if(key.equals("MAXFLOORS")) cityMaxFloors = Integer.valueOf(param);
+        
+        // mountain
+        else if(key.equals("MOUNTPEAKS")) mountainPeaks = Integer.valueOf(param);
+        else if(key.equals("MOUNTWIDTHMIN")) mountainWidthMin = Integer.valueOf(param);
+        else if(key.equals("MOUNTWIDTHMAX")) mountainWidthMax = Integer.valueOf(param);
+        else if(key.equals("MOUNTHEIGHTMIN")) mountainHeightMin = Integer.valueOf(param);
+        else if(key.equals("MOUNTHEIGHTMAX")) mountainHeightMax = Integer.valueOf(param);
+        else if(key.equals("MOUNTSTYLE")) mountainStyle = Integer.valueOf(param);
     }
     
     void loadStringParameter( ParsedXML node, String param, String value) {

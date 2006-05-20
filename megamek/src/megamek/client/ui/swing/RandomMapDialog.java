@@ -83,6 +83,7 @@ public class RandomMapDialog
     private JComboBox choSwamp;
     private JComboBox choCraters;
     private JComboBox choCity;
+    private JComboBox choMountain;
 
     private JLabel labElevation;
     private JLabel labCliffs;
@@ -99,6 +100,7 @@ public class RandomMapDialog
     private JLabel labTheme;
     private JLabel labCraters;
     private JLabel labCity;
+    private JLabel labMountain = null;
 
     private SimpleLine slElevation;
     private SimpleLine slCliffs;
@@ -115,7 +117,7 @@ public class RandomMapDialog
     private SimpleLine slBoardSize;
     private SimpleLine slCraters;
     private SimpleLine slCity;
-    private SimpleLine slInvertNegative;
+    private SimpleLine slMountain;
 
     private SimpleLine slElevationAd;
     private SimpleLine slWoodsAd;
@@ -300,6 +302,17 @@ public class RandomMapDialog
     private JTextField texCityMaxFloors;
     private JTextField texCityDensity;
 
+    //Mountain
+    private JLabel labMountainPeaks;
+    private JLabel labMountainHeight;
+    private JLabel labMountainWidth;
+    private JLabel labMountainStyle;
+    private JTextField texMountainPeaks;
+    private JTextField texMountainStyle;
+    private JTextField texMountainHeightMin;
+    private JTextField texMountainHeightMax;
+    private JTextField texMountainWidthMin;
+    private JTextField texMountainWidthMax;
     /**
      * Algorithm
      */
@@ -448,6 +461,7 @@ public class RandomMapDialog
             addOption(labRubble, choRubble, slRubble);
             addOption(labFortified, choFortified, slFortified);
             addOption(labCity, choCity, slCity);
+            addOption(labMountain, choMountain, slMountain);
 
         } else {
 
@@ -460,6 +474,10 @@ public class RandomMapDialog
             addLabelTextField(labProbInvert, texProbInvert);
             addLabelTextField(labAlgorithmToUse, texAlgorithmToUse);
             addLabelTextField(labCliffsAd, texCliffs);
+            addLabelTextField(labMountainPeaks, texMountainPeaks);
+            addLabelTextField(labMountainStyle, texMountainStyle);
+            addLabelTextField(labMountainHeight, texMountainHeightMin, texMountainHeightMax, "-");
+            addLabelTextField(labMountainWidth, texMountainWidthMin, texMountainWidthMax, "-");
 
             addSeparator(slElevationAd);
 
@@ -656,6 +674,10 @@ public class RandomMapDialog
         choCity.addItem("GRID");
         choCity.addItem("METRO");
         slCity = new SimpleLine(NORMAL_LINE_WIDTH);
+        labMountain = new JLabel(Messages.getString("RandomMapDialog.labMountain"), JLabel.LEFT); //$NON-NLS-1$
+        choMountain = new JComboBox();
+        fillChoice(choMountain);
+        slMountain = new SimpleLine(NORMAL_LINE_WIDTH);
 
         // Advanced setting components...
         labTheme = new JLabel(Messages.getString("RandomMapDialog.labTheme"), JLabel.LEFT);
@@ -675,6 +697,24 @@ public class RandomMapDialog
         texCliffs = new JTextField(2);
         texCliffs.addFocusListener(this);
 
+        //mountain
+        labMountainHeight = new JLabel(Messages.getString("RandomMapDialog.labMountainHeight"), JLabel.LEFT); //$NON-NLS-1$
+        labMountainWidth = new JLabel(Messages.getString("RandomMapDialog.labMountainWidth"), JLabel.LEFT); //$NON-NLS-1$
+        labMountainPeaks = new JLabel(Messages.getString("RandomMapDialog.labMountainPeaks"), JLabel.LEFT); //$NON-NLS-1$
+        labMountainStyle = new JLabel(Messages.getString("RandomMapDialog.labMountainStyle"), JLabel.LEFT); //$NON-NLS-1$
+        texMountainPeaks = new JTextField(2);
+        texMountainPeaks.addFocusListener(this);
+        texMountainHeightMin = new JTextField(2);
+        texMountainHeightMin.addFocusListener(this);
+        texMountainHeightMax = new JTextField(2);
+        texMountainHeightMax.addFocusListener(this);
+        texMountainWidthMin = new JTextField(2);
+        texMountainWidthMin.addFocusListener(this);
+        texMountainWidthMax = new JTextField(2);
+        texMountainWidthMax.addFocusListener(this);
+        texMountainStyle = new JTextField(2);
+        texMountainStyle.addFocusListener(this);
+        
         /** how much Lakes at least */
         labWaterSpots = new JLabel(Messages.getString("RandomMapDialog.labWaterSpots"), JLabel.LEFT); //$NON-NLS-1$
         texMinWaterSpots = new JTextField(2);
@@ -1020,6 +1060,12 @@ public class RandomMapDialog
         texCityMaxFloors.setText(Integer.toString(mapSettings.getCityMaxFloors()));
         texCityDensity.setText(Integer.toString(mapSettings.getCityDensity()));
 
+        texMountainPeaks.setText(Integer.toString(mapSettings.getMountainPeaks()));
+        texMountainStyle.setText(Integer.toString(mapSettings.getMountainStyle()));
+        texMountainHeightMin.setText(Integer.toString(mapSettings.getMountainHeightMin()));
+        texMountainHeightMax.setText(Integer.toString(mapSettings.getMountainHeightMax()));
+        texMountainWidthMin.setText(Integer.toString(mapSettings.getMountainHeightMin()));
+        texMountainWidthMax.setText(Integer.toString(mapSettings.getMountainHeightMax()));
         texAlgorithmToUse.setText(Integer.toString(mapSettings.getAlgorithmToUse()));
     }
 
@@ -1047,6 +1093,8 @@ public class RandomMapDialog
         int cityMinFloors = 1;
         int cityMaxFloors = 6;
         int cityDensity = 75;
+        int mountainPeaks,mountainHeightMin,mountainHeightMax;
+        int mountainStyle,mountainWidthMin,mountainWidthMax;
 
         try {
             boardWidth = Integer.parseInt(texBoardWidth.getText());
@@ -1122,6 +1170,13 @@ public class RandomMapDialog
                 cityMinFloors = Integer.parseInt(texCityMinFloors.getText());
                 cityMaxFloors = Integer.parseInt(texCityMaxFloors.getText());
                 cityDensity = Integer.parseInt(texCityDensity.getText());
+                mountainHeightMin = Integer.parseInt(texMountainHeightMin.getText());
+                mountainHeightMax = Integer.parseInt(texMountainHeightMax.getText());
+                mountainWidthMin = Integer.parseInt(texMountainWidthMin.getText());
+                mountainWidthMax = Integer.parseInt(texMountainWidthMax.getText());
+                mountainStyle = Integer.parseInt(texMountainStyle.getText());
+                mountainPeaks = Integer.parseInt(texMountainPeaks.getText());
+                
             } catch (NumberFormatException ex) {
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.OnlyIntegersWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
@@ -1398,7 +1453,11 @@ public class RandomMapDialog
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.DensityOutOfRangeWarn")).setVisible(true); //$NON-NLS-1$
                 return false;
             }
-
+            
+            if (mountainWidthMin < 1 || mountainWidthMax < mountainWidthMin) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MountainWidthOutOfRange")).setVisible(true); //$NON-NLS-1$
+            }
+            
         } else {
             String s = (String) choElevation.getSelectedItem();
             if (s.equals(NONE)) {
@@ -1655,6 +1714,38 @@ public class RandomMapDialog
                 minCraters = 6;
                 maxCraters = 14;
             }
+            
+            s = (String)choMountain.getSelectedItem();
+            if(s.equals(NONE)) {
+                mountainPeaks = 0;
+                mountainHeightMin = 4;
+                mountainHeightMax = 6;
+                mountainWidthMin = 7;
+                mountainWidthMax = 10;
+                mountainStyle = 0;
+            } else if (s.equals(LOW)) {
+                mountainPeaks = 1;
+                mountainHeightMin = 4;
+                mountainHeightMax = 6;
+                mountainWidthMin = 7;
+                mountainWidthMax = 10;
+                mountainStyle = 0;
+            } else if (s.equals(MEDIUM)) {
+                mountainPeaks = 2;
+                mountainHeightMin = 6;
+                mountainHeightMax = 8;
+                mountainWidthMin = 7;
+                mountainWidthMax = 10;
+                mountainStyle = 0;
+            } else {
+                mountainPeaks = 3;
+                mountainHeightMin = 8;
+                mountainHeightMax = 10;
+                mountainWidthMin = 9;
+                mountainWidthMax = 14;
+                mountainStyle = MapSettings.MOUNTAIN_SNOWCAPPED;
+            }
+            
             cityBlocks = 16;
             cityMinCF = 10;
             cityMaxCF = 100;
@@ -1703,6 +1794,12 @@ public class RandomMapDialog
                 cityMinFloors,
                 cityMaxFloors,
                 cityDensity);
+        mapSettings.setMountainParams(mountainPeaks,
+                mountainWidthMin,
+                mountainWidthMax,
+                mountainHeightMin,
+                mountainHeightMax,
+                mountainStyle);
 
         mapSettings.setTheme(theme);
 

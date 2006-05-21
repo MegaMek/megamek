@@ -189,6 +189,7 @@ public class MapSettings implements Serializable {
     private int cityMinFloors = 1;
     private int cityMaxFloors = 6;
     private int cityDensity = 75;
+    private int townSize = 60;
     
     private int invertNegativeTerrain = 0;
     
@@ -748,6 +749,7 @@ public class MapSettings implements Serializable {
     public int getCityMinFloors() {return cityMinFloors;}
     public int getCityMaxFloors() {return cityMaxFloors;}
     public int getCityDensity() {return cityDensity;}
+    public int getTownSize() {return townSize;}
 
     public int getMountainHeightMin() {return mountainHeightMin;}
     public int getMountainHeightMax() {return mountainHeightMax;}
@@ -895,7 +897,8 @@ public class MapSettings implements Serializable {
             int cityMaxCF,
             int cityMinFloors,
             int cityMaxFloors,
-            int cityDensity) {
+            int cityDensity,
+            int townSize) {
         this.cityBlocks = cityBlocks;
         this.cityType = cityType;
         this.cityMinCF = cityMinCF;
@@ -903,6 +906,7 @@ public class MapSettings implements Serializable {
         this.cityMinFloors = cityMinFloors;
         this.cityMaxFloors = cityMaxFloors;
         this.cityDensity = cityDensity;
+        this.townSize = townSize;
     }
     
     public void setMountainParams(
@@ -1020,6 +1024,7 @@ public class MapSettings implements Serializable {
             saveParameter( output, "MAXCF", cityMaxCF);
             saveParameter( output, "MINFLOORS", cityMinFloors);
             saveParameter( output, "MAXFLOORS", cityMaxFloors);
+            saveParameter( output, "TOWNSIZE", townSize);
             
             // mountain
             saveParameter( output, "MOUNTPEAKS", mountainPeaks);
@@ -1181,6 +1186,7 @@ public class MapSettings implements Serializable {
         else if(key.equals("MAXCF")) cityMaxCF = Integer.valueOf(param);
         else if(key.equals("MINFLOORS")) cityMinFloors = Integer.valueOf(param);
         else if(key.equals("MAXFLOORS")) cityMaxFloors = Integer.valueOf(param);
+        else if(key.equals("TOWNSIZE")) townSize = Integer.valueOf(param);
         
         // mountain
         else if(key.equals("MOUNTPEAKS")) mountainPeaks = Integer.valueOf(param);

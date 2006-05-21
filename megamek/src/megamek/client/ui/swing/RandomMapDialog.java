@@ -295,12 +295,14 @@ public class RandomMapDialog
     private JLabel labCityCF;
     private JLabel labCityFloors;
     private JLabel labCityDensity;
+    private JLabel labTownSize;
     private JTextField texCityBlocks;
     private JTextField texCityMinCF;
     private JTextField texCityMaxCF;
     private JTextField texCityMinFloors;
     private JTextField texCityMaxFloors;
     private JTextField texCityDensity;
+    private JTextField texTownSize;
 
     //Mountain
     private JLabel labMountainPeaks;
@@ -550,6 +552,7 @@ public class RandomMapDialog
             addLabelTextField(labCityCF, texCityMinCF, texCityMaxCF, "-");
             addLabelTextField(labCityFloors, texCityMinFloors, texCityMaxFloors, "-");
             addLabelTextField(labCityDensity, texCityDensity);
+            addLabelTextField(labTownSize, texTownSize);
 
             addSeparator(slInvertNegativeAd);
             addLabelTextField(labInvertNegative, texInvertNegative);
@@ -673,6 +676,7 @@ public class RandomMapDialog
         choCity.addItem("HUB");
         choCity.addItem("GRID");
         choCity.addItem("METRO");
+        choCity.addItem("TOWN");
         slCity = new SimpleLine(NORMAL_LINE_WIDTH);
         labMountain = new JLabel(Messages.getString("RandomMapDialog.labMountain"), JLabel.LEFT); //$NON-NLS-1$
         choMountain = new JComboBox();
@@ -866,12 +870,14 @@ public class RandomMapDialog
         labCityCF = new JLabel(Messages.getString("RandomMapDialog.labCityCF"), JLabel.LEFT);
         labCityFloors = new JLabel(Messages.getString("RandomMapDialog.labCityFloors"), JLabel.LEFT);
         labCityDensity = new JLabel(Messages.getString("RandomMapDialog.labCityDensity"), JLabel.LEFT);
+        labTownSize = new JLabel(Messages.getString("RandomMapDialog.labTownSize"), JLabel.LEFT);
         texCityBlocks = new JTextField(2);
         texCityMinCF = new JTextField(2);
         texCityMaxCF = new JTextField(2);
         texCityMinFloors = new JTextField(2);
         texCityMaxFloors = new JTextField(2);
         texCityDensity = new JTextField(2);
+        texTownSize = new JTextField(2);
 
         labInvertNegative = new JLabel(Messages.getString("RandomMapDialog.labInvertNegative"), JLabel.LEFT); //$NON-NLS-1$
         texInvertNegative = new JTextField(1);
@@ -1059,6 +1065,7 @@ public class RandomMapDialog
         texCityMinFloors.setText(Integer.toString(mapSettings.getCityMinFloors()));
         texCityMaxFloors.setText(Integer.toString(mapSettings.getCityMaxFloors()));
         texCityDensity.setText(Integer.toString(mapSettings.getCityDensity()));
+        texTownSize.setText(Integer.toString(mapSettings.getTownSize()));
 
         texMountainPeaks.setText(Integer.toString(mapSettings.getMountainPeaks()));
         texMountainStyle.setText(Integer.toString(mapSettings.getMountainStyle()));
@@ -1093,6 +1100,7 @@ public class RandomMapDialog
         int cityMinFloors = 1;
         int cityMaxFloors = 6;
         int cityDensity = 75;
+        int townSize = 60;
         int mountainPeaks,mountainHeightMin,mountainHeightMax;
         int mountainStyle,mountainWidthMin,mountainWidthMax;
 
@@ -1752,6 +1760,7 @@ public class RandomMapDialog
             cityMinFloors = 1;
             cityMaxFloors = 6;
             cityDensity = 75;
+            townSize = 60;
             algorithmToUse = 0;
             probInvert = 0;
             fxmod = 0;
@@ -1762,6 +1771,11 @@ public class RandomMapDialog
         }
 
         cityType = (String) choCity.getSelectedItem();
+        if(!advanced && cityType.equals("TOWN")) {
+            cityBlocks = 3;
+            cityMaxCF = 50;
+            cityMaxFloors = 3;
+        }
 
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setElevationParams(hilliness, range, probInvert);
@@ -1793,7 +1807,8 @@ public class RandomMapDialog
                 cityMaxCF,
                 cityMinFloors,
                 cityMaxFloors,
-                cityDensity);
+                cityDensity,
+                townSize);
         mapSettings.setMountainParams(mountainPeaks,
                 mountainWidthMin,
                 mountainWidthMax,

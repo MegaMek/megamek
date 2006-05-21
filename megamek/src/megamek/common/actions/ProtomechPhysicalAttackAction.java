@@ -66,24 +66,29 @@ public class ProtomechPhysicalAttackAction
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
+        // arguments legal?
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
+        }
+
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
-        final int attackerElevation = ae.getElevation();
-        final int targetHeight = target.absHeight();
-        final int targetElevation = target.getElevation();
+        final IHex attHex = game.getBoard().getHex(ae.getPosition());
+        final IHex targHex = game.getBoard().getHex(target.getPosition());
+        if(attHex == null || targHex == null) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "off board");
+        }
+        final int attackerElevation = ae.getElevation() + attHex.getElevation();
+        final int targetHeight = target.absHeight() + targHex.getElevation();
+        final int targetElevation = target.getElevation() + targHex.getElevation();
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
         Building bldg = null;
         if ( targetInBuilding ) {
             bldg = game.getBoard().getBuildingAt( te.getPosition() );
         }
         ToHitData toHit;
-
-        // arguments legal?
-        if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
-        }
 
         // can't target yourself
         if (ae.equals(te)) {
@@ -188,7 +193,6 @@ public class ProtomechPhysicalAttackAction
         }
 
         // water partial cover?
-        IHex targHex = game.getBoard().getHex(te.getPosition());
         if (te.height() > 0
                 && te.getElevation() == -1
                 && targHex.terrainLevel(Terrains.WATER) == te.height()) {

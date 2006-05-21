@@ -84,13 +84,15 @@ public class CityBuilder {
             buildMetroCity(width,height);
         else if ( cityType.equalsIgnoreCase("GRID"))
             buildGridCity(width,height,(roads+5) / 6);
+        else if ( cityType.equalsIgnoreCase("TOWN"))
+            return buildTown(width,height,roads,mapSettings.getTownSize());
         else
             return new Vector();
         
-        return placeBuildings(board,new Double(0.3));
+        return placeBuildings(0);
     }
 
-    public Vector placeBuildings(IBoard board, double falloff) {
+    public Vector placeBuildings(int radius) {
             
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
@@ -100,6 +102,7 @@ public class CityBuilder {
         Vector coordList = new Vector();
         
         Coords centre = new Coords(width/2,height/2);
+        double falloff = (double)mapSettings.getCityDensity() / (double)(radius*radius);
         
         for ( int x = 0; x < width; x++){
             for ( int y = 0; y < height; y++ ){
@@ -113,7 +116,7 @@ public class CityBuilder {
                 }
                 
                 int localdensity = mapSettings.getCityDensity();
-                if(falloff > 0)
+                if(radius > 0)
                 {
                     int distance = coord.distance(centre);
                     localdensity = (int)(mapSettings.getCityDensity() - (falloff*distance*distance));
@@ -185,6 +188,11 @@ public class CityBuilder {
         }
     }
     
+    private Vector buildTown(int maxX, int maxY, int roads, int size) {
+        buildHubCity(maxX,maxY,roads * size / 100);
+        return placeBuildings(Math.min(maxX,maxY) * size / 200);
+    }
+    
     private void buildHubCity(int maxX, int maxY,int roads){
         int midX = maxX/2;
         int midY = maxY/2;
@@ -200,7 +208,7 @@ public class CityBuilder {
         directions.add(E);
         directions.add(W);
         
-        roads = Math.max(roads,8);
+        roads = Math.max(roads,4);
         cityPlan.add(new Coords(midX,midY));
  
         int x=0;

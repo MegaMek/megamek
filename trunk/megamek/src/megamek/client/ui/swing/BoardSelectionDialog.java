@@ -90,7 +90,7 @@ public class BoardSelectionDialog
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
-    private boolean bDelayedSingleSelect = false;
+    private boolean bDelayedSingleSelect;
 
     /**
      * Creates new BoardSelectionDialog
@@ -113,7 +113,7 @@ public class BoardSelectionDialog
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(4, 4, 4, 4);
@@ -121,22 +121,22 @@ public class BoardSelectionDialog
         c.weighty = 1.0;
         c.gridwidth = 1;
         gridbag.setConstraints(panMapSize, c);
-        add(panMapSize);
+        getContentPane().add(panMapSize);
 
         gridbag.setConstraints(panBoardsSelected, c);
-        add(panBoardsSelected);
+        getContentPane().add(panBoardsSelected);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         gridbag.setConstraints(butChange, c);
-        add(butChange);
+        getContentPane().add(butChange);
 
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(panBoardsAvailable, c);
-        add(panBoardsAvailable);
+        getContentPane().add(panBoardsAvailable);
 
         gridbag.setConstraints(panButtons, c);
-        add(panButtons);
+        getContentPane().add(panButtons);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -297,7 +297,7 @@ public class BoardSelectionDialog
         lisBoardsSelected.removeAll();
         int index = 0;
         for (Enumeration i = mapSettings.getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add((index++) + ": " + i.nextElement()); //$NON-NLS-1$
+            lisBoardsSelected.add(index++ + ": " + i.nextElement()); //$NON-NLS-1$
         }
         lisBoardsSelected.select(0);
         refreshSelectAllCheck();
@@ -396,7 +396,7 @@ public class BoardSelectionDialog
     /**
      * Checks and sends the new map settings to the server
      */
-    public void send() {
+    private void send() {
         // check that they haven't modified the map size settings
         if (!texBoardWidth.getText().equals(Integer.toString(mapSettings.getBoardWidth()))
                 || !texBoardHeight.getText().equals(Integer.toString(mapSettings.getBoardHeight()))

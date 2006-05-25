@@ -47,7 +47,7 @@ import java.awt.event.WindowEvent;
  */
 public class ChoiceDialog
         extends JDialog implements ActionListener {
-    private boolean confirm = false;
+    private boolean confirm;
 
     private JPanel panButtons = new JPanel();
     private JButton butSelectAll = new JButton(Messages.getString("ChoiceDialog.SelectAll")); //$NON-NLS-1$
@@ -58,27 +58,25 @@ public class ChoiceDialog
     /**
      * The checkboxes for available choices.
      */
-    private AbstractButton[] checkboxes = null;
+    private AbstractButton[] checkboxes;
 
     /**
      * Create and initialize the dialog.
      *
      * @param parent   - the <code>Frame</code> that is locked by this dialog.
-     * @param title    - the title <code>String</code> for this dialog.
      * @param question - <code>String</code> displayed above the choices.
      *                 The question string is tokenised on "\n".
      * @param choices  - an array of <code>String</code>s to be displayed.
      * @param isSingle - a <code>boolean</code> that identifies whether the
      *                 dialog is supposed to be a single choice dialog or support
-     *                 multiple choices.
      */
-    private void initialize(JFrame parent, String title,
+    private void initialize(JFrame parent,
                             String question, String[] choices,
                             boolean isSingle) {
         super.setResizable(false);
 
         GridBagLayout gridbag = new GridBagLayout();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = 1;
@@ -91,7 +89,7 @@ public class ChoiceDialog
 
         c.gridy = 0;
         c.insets = new Insets(0, 5, 0, 5);
-        add(new JScrollPane(message), c);
+        getContentPane().add(new JScrollPane(message), c);
 
         // Do we have any choices?
         if (choices != null && choices.length > 0) {
@@ -117,33 +115,33 @@ public class ChoiceDialog
                 JPanel scrollee = new JPanel(new GridBagLayout());
                 scrollee.add(choiceArea, center);
                 scroller.add(scrollee);
-                add(scroller, c);
+                getContentPane().add(scroller, c);
 
                 // Restore the saved value of c.fill.
                 c.fill = saveFill;
 
             } else {
-                add(choiceArea, c);
+                getContentPane().add(choiceArea, c);
             }
 
             // Single choice dialogs use radio buttons.
-            this.checkboxes = new JCheckBox[choices.length];
+            checkboxes = new JCheckBox[choices.length];
             if (isSingle) {
                 ButtonGroup radioGroup = new ButtonGroup();
                 for (int loop = 0; loop < choices.length; loop++) {
-                    this.checkboxes[loop] = new JRadioButton(choices[loop],
-                            (loop == 0));
-                    radioGroup.add(this.checkboxes[loop]);
-                    choiceArea.add(this.checkboxes[loop]);
+                    checkboxes[loop] = new JRadioButton(choices[loop],
+                            loop == 0);
+                    radioGroup.add(checkboxes[loop]);
+                    choiceArea.add(checkboxes[loop]);
                 }
             }
 
             // All others use check boxes.
             else {
                 for (int loop = 0; loop < choices.length; loop++) {
-                    this.checkboxes[loop] = new JCheckBox(choices[loop],
-                            (loop == 0));
-                    choiceArea.add(this.checkboxes[loop]);
+                    checkboxes[loop] = new JCheckBox(choices[loop],
+                            loop == 0);
+                    choiceArea.add(checkboxes[loop]);
                 }
 
                 // If this is not a single-choice dialog, place the
@@ -156,7 +154,7 @@ public class ChoiceDialog
                 butSelectAll.addActionListener(this);
                 panAllButtons.add(butClearAll);
                 butClearAll.addActionListener(this);
-                add(panAllButtons, center);
+                getContentPane().add(panAllButtons, center);
             }
 
         } // End have-choices
@@ -165,7 +163,7 @@ public class ChoiceDialog
         setupButtons();
         c.gridy++;
         c.insets = new Insets(5, 5, 5, 5);
-        add(panButtons, c);
+        getContentPane().add(panButtons, c);
         butOK.requestFocus();
 
         addWindowListener(new WindowAdapter() {
@@ -234,7 +232,7 @@ public class ChoiceDialog
                  String question, String[] choices,
                  boolean isSingle) {
         super(parent, title, true);
-        this.initialize(parent, title, question, choices, isSingle);
+        initialize(parent, question, choices, isSingle);
     }
 
     /**
@@ -251,28 +249,28 @@ public class ChoiceDialog
     public ChoiceDialog(JFrame parent, String title,
                         String question, String[] choices) {
         super(parent, title, true);
-        this.initialize(parent, title, question, choices, false);
+        initialize(parent, question, choices, false);
     }
 
     public void actionPerformed(ActionEvent e) {
         // No choices, no selection.
-        if (this.checkboxes == null) {
+        if (checkboxes == null) {
             confirm = false;
-            this.setVisible(false);
-        } else if (e.getSource() == butSelectAll) {
-            for (int index = 0; index < this.checkboxes.length; index++) {
-                this.checkboxes[index].setSelected(true);
+            setVisible(false);
+        } else if (e.getSource().equals(butSelectAll)) {
+            for (final AbstractButton newVar : checkboxes) {
+                newVar.setSelected(true);
             }
-        } else if (e.getSource() == butClearAll) {
-            for (int index = 0; index < this.checkboxes.length; index++) {
-                this.checkboxes[index].setSelected(false);
+        } else if (e.getSource().equals(butClearAll)) {
+            for (final AbstractButton newVar : checkboxes) {
+                newVar.setSelected(false);
             }
-        } else if (e.getSource() == butOK) {
+        } else if (e.getSource().equals(butOK)) {
             confirm = true;
-            this.setVisible(false);
+            setVisible(false);
         } else {
             confirm = false;
-            this.setVisible(false);
+            setVisible(false);
         }
     }
 
@@ -284,7 +282,7 @@ public class ChoiceDialog
      *         did not select a choice, or if no choices were available.
      */
     public boolean getAnswer() {
-        return (null != this.getChoices());
+        return getChoices() != null;
     }
 
     /**
@@ -300,22 +298,22 @@ public class ChoiceDialog
         int[] retval = null;
 
         // Did the player make a choice?
-        if (null != this.checkboxes && this.confirm) {
+        if (checkboxes != null && confirm) {
 
             // Make a temporary array that can hold all answers.
-            int[] temp = new int[this.checkboxes.length];
+            int[] temp = new int[checkboxes.length];
 
             // Fill the temporary array.
             int index = 0;
-            for (int loop = 0; loop < this.checkboxes.length; loop++) {
-                if (this.checkboxes[loop].isSelected() == true) {
+            for (int loop = 0; loop < checkboxes.length; loop++) {
+                if (checkboxes[loop].isSelected()) {
                     temp[index] = loop;
                     index++;
                 }
             }
 
             // Do we need to shrink the array?
-            if (this.checkboxes.length == index) {
+            if (checkboxes.length == index) {
                 // No, the player selected all choices.
                 retval = temp;
             } else if (index > 0) {

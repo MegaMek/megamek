@@ -40,10 +40,10 @@ public class MiniReportDisplay extends JDialog
         taData = new JTextArea(sReport, 20, 48);
         taData.setEditable(false);
 
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
 
-        add(BorderLayout.SOUTH, butOkay);
-        add(BorderLayout.CENTER, taData);
+        getContentPane().add(BorderLayout.SOUTH, butOkay);
+        getContentPane().add(BorderLayout.CENTER, taData);
         setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(), GUIPreferences.getInstance().getMiniReportSizeHeight());
         doLayout();
         setLocation(GUIPreferences.getInstance().getMiniReportPosX(), GUIPreferences.getInstance().getMiniReportPosY());

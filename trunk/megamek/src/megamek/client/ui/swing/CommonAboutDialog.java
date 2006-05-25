@@ -41,7 +41,7 @@ public class CommonAboutDialog extends JDialog {
     /**
      * We only need a single copy of the "about" title image that we share.
      */
-    private static Image imgTitleImage = null;
+    private static Image imgTitleImage;
 
     /**
      * Get the single title image in a threadsafe way.
@@ -87,7 +87,7 @@ public class CommonAboutDialog extends JDialog {
         });
 
         // Make a splash image panel.
-        Image imgSplash = CommonAboutDialog.getTitleImage(frame);
+        Image imgSplash = getTitleImage(frame);
         JLabel panTitle = new JLabel(new ImageIcon(imgSplash));
         panTitle.setPreferredSize(new Dimension(imgSplash.getWidth(null),
                 imgSplash.getHeight(null)));
@@ -139,7 +139,7 @@ public class CommonAboutDialog extends JDialog {
         c.gridy = 2;
         getContentPane().add(lblCopyright, c);
         c.gridy = 3;
-        add(lblAbout, c);
+        getContentPane().add(lblAbout, c);
         c.gridy = 4;
         getContentPane().add(butClose, c);
 
@@ -157,7 +157,7 @@ public class CommonAboutDialog extends JDialog {
      * Close this dialog.
      */
     /* package */
-    void quit() {
+    private void quit() {
         setVisible(false);
     }
 }

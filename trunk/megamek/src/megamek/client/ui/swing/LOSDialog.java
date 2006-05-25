@@ -40,8 +40,8 @@ public class LOSDialog
     /**
      * The checkboxes for available choices.
      */
-    private JCheckBox[] checkboxes1 = null;
-    private JCheckBox[] checkboxes2 = null;
+    private JCheckBox[] checkboxes1;
+    private JCheckBox[] checkboxes2;
 
     public LOSDialog(JFrame parent, boolean mechInFirst, boolean mechInSecond) {
         super(parent, Messages.getString("LOSDialog.title"), true); //$NON-NLS-1$
@@ -55,7 +55,7 @@ public class LOSDialog
         });
 
         GridBagLayout gridbag = new GridBagLayout();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -65,7 +65,7 @@ public class LOSDialog
         c.gridwidth = 0;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMessage, c);
-        add(labMessage);
+        getContentPane().add(labMessage);
 
         ButtonGroup radioGroup1 = new ButtonGroup();
         checkboxes1 = new JCheckBox[2];
@@ -75,14 +75,14 @@ public class LOSDialog
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(checkboxes1[0], c);
         radioGroup1.add(checkboxes1[0]);
-        add(checkboxes1[0]);
+        getContentPane().add(checkboxes1[0]);
 
         checkboxes1[1] = new JCheckBox(Messages.getString("LOSDialog.NonMech"), !mechInFirst); //$NON-NLS-1$
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(checkboxes1[1], c);
         radioGroup1.add(checkboxes1[1]);
-        add(checkboxes1[1]);
+        getContentPane().add(checkboxes1[1]);
 
         labMessage = new JLabel(Messages.getString("LOSDialog.InSecondHex"), JLabel.LEFT); //$NON-NLS-1$
         c.weightx = 1.0;
@@ -90,7 +90,7 @@ public class LOSDialog
         c.gridwidth = 0;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMessage, c);
-        add(labMessage);
+        getContentPane().add(labMessage);
 
         ButtonGroup radioGroup2 = new ButtonGroup();
         checkboxes2 = new JCheckBox[2];
@@ -100,21 +100,21 @@ public class LOSDialog
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(checkboxes2[0], c);
         radioGroup2.add(checkboxes2[0]);
-        add(checkboxes2[0]);
+        getContentPane().add(checkboxes2[0]);
 
         checkboxes2[1] = new JCheckBox(Messages.getString("LOSDialog.NonMech"), !mechInSecond); //$NON-NLS-1$
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(checkboxes2[1], c);
         radioGroup2.add(checkboxes2[1]);
-        add(checkboxes2[1]);
+        getContentPane().add(checkboxes2[1]);
 
         butOK.addActionListener(this);
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(5, 0, 5, 0);
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(butOK, c);
-        add(butOK);
+        getContentPane().add(butOK);
 
         pack();
 

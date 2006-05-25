@@ -14,16 +14,60 @@
 
 package megamek.client.ui.AWT;
 
-import java.util.Iterator;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
 import keypoint.PngEncoder;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
-import megamek.common.*;
+import megamek.common.Coords;
+import megamek.common.Game;
+import megamek.common.Hex;
+import megamek.common.IBoard;
+import megamek.common.IHex;
+import megamek.common.ITerrain;
+import megamek.common.MapSettings;
+import megamek.common.Terrains;
 import megamek.common.util.BoardUtilities;
+
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Canvas;
+import java.awt.Checkbox;
+import java.awt.Choice;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dialog;
+import java.awt.FileDialog;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.Scrollbar;
+import java.awt.SystemColor;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
 
 public class BoardEditor extends Container implements ItemListener,
         ActionListener, TextListener, IMapSettingsObserver {
@@ -810,176 +854,4 @@ public class BoardEditor extends Container implements ItemListener,
     public void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
     }
-}
-
-/**
- * a quick class for the new map diaglogue box
- */
-class BoardNewDialog extends Dialog implements ActionListener {
-    public int            xvalue, yvalue;
-    
-    protected Label        labWidth, labHeight;
-    protected TextField    texWidth, texHeight;
-    protected Button        butOkay, butCancel;
-    
-    public BoardNewDialog(Frame frame, String[] hexList, int hexSelected) {
-        super(frame, Messages.getString("BoardEditor.SetDimentions"), true); //$NON-NLS-1$
-        
-        xvalue = 0;
-        yvalue = 0;
-        
-        labWidth = new Label(Messages.getString("BoardEditor.labWidth"), Label.RIGHT); //$NON-NLS-1$
-        labHeight = new Label(Messages.getString("BoardEditor.labHeight"), Label.RIGHT); //$NON-NLS-1$
-        
-        texWidth = new TextField("16", 2); //$NON-NLS-1$
-        texHeight = new TextField("17", 2); //$NON-NLS-1$
-        
-        butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
-        butOkay.setActionCommand("done"); //$NON-NLS-1$
-        butOkay.addActionListener(this);
-        butOkay.setSize(80, 24);
-
-        butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
-        butCancel.setActionCommand("cancel"); //$NON-NLS-1$
-        butCancel.addActionListener(this);
-        butCancel.setSize(80, 24);
-
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-
-        c.fill = GridBagConstraints.NONE;
-        c.weightx = 0.0;    c.weighty = 0.0;
-        c.insets = new Insets(5, 5, 1, 1);
-        
-        gridbag.setConstraints(labWidth, c);
-        add(labWidth);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(texWidth, c);
-        add(texWidth);
-        
-        c.gridwidth = GridBagConstraints.RELATIVE;
-        gridbag.setConstraints(labHeight, c);
-        add(labHeight);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(texHeight, c);
-        add(texHeight);
-        
-        c.ipadx = 20;    c.ipady = 5;
-        c.gridwidth = GridBagConstraints.RELATIVE;
-        gridbag.setConstraints(butOkay, c);
-        add(butOkay);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(butCancel, c);
-        add(butCancel);
-        
-        pack();
-        setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
-    }
-    
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == butOkay) {
-            try {
-                xvalue = Integer.decode(texWidth.getText()).intValue();
-                yvalue = Integer.decode(texHeight.getText()).intValue();
-            } catch(NumberFormatException ex) {
-                System.err.println(ex.getMessage());
-            }
-            setVisible(false);
-        } else if (e.getSource() == butCancel) {
-            setVisible(false);
-        }
-    }
-    
-    public int getX() {
-        return xvalue;
-    }
-    
-    public int getY() {
-        return yvalue;
-    }
-}
-
-/**
- * A dialog of which exits are connected for terrain.
- */
-class ExitsDialog extends Dialog implements ActionListener
-{
-    private Checkbox    cheExit0 = new Checkbox("0"); //$NON-NLS-1$
-    private Checkbox    cheExit1 = new Checkbox("1"); //$NON-NLS-1$
-    private Checkbox    cheExit2 = new Checkbox("2"); //$NON-NLS-1$
-    private Checkbox    cheExit3 = new Checkbox("3"); //$NON-NLS-1$
-    private Checkbox    cheExit4 = new Checkbox("4"); //$NON-NLS-1$
-    private Checkbox    cheExit5 = new Checkbox("5"); //$NON-NLS-1$
-    
-    private Label       labBlank = new Label(""); //$NON-NLS-1$
-    
-    private Panel       panNorth = new Panel(new GridBagLayout());
-    private Panel       panSouth = new Panel(new GridBagLayout());
-    private Panel       panWest = new Panel(new BorderLayout());
-    private Panel       panEast = new Panel(new BorderLayout());
-    
-    private Panel       panExits = new Panel(new BorderLayout());
-    
-    private Button      butDone = new Button(Messages.getString("BoardEditor.Done")); //$NON-NLS-1$
-    
-    public ExitsDialog(Frame frame) {
-        super(frame, Messages.getString("BoardEditor.SetExits"), true); //$NON-NLS-1$
-        setResizable(false);
-        
-        butDone.addActionListener(this);
-        
-        panNorth.add(cheExit0);
-        panSouth.add(cheExit3);
-        
-        panWest.add(cheExit5, BorderLayout.NORTH);
-        panWest.add(cheExit4, BorderLayout.SOUTH);
-        
-        panEast.add(cheExit1, BorderLayout.NORTH);
-        panEast.add(cheExit2, BorderLayout.SOUTH);
-        
-        panExits.add(panNorth, BorderLayout.NORTH);
-        panExits.add(panWest, BorderLayout.WEST);
-        panExits.add(labBlank, BorderLayout.CENTER);
-        panExits.add(panEast, BorderLayout.EAST);
-        panExits.add(panSouth, BorderLayout.SOUTH);
-        
-        setLayout(new BorderLayout());
-        
-        add(panExits, BorderLayout.CENTER);
-        add(butDone, BorderLayout.SOUTH);
-        
-        pack();
-        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
-    }
-    
-    public void setExits(int exits) {
-        cheExit0.setState((exits & 1) != 0); 
-        cheExit1.setState((exits & 2) != 0); 
-        cheExit2.setState((exits & 4) != 0); 
-        cheExit3.setState((exits & 8) != 0); 
-        cheExit4.setState((exits & 16) != 0); 
-        cheExit5.setState((exits & 32) != 0); 
-    }
-    
-    public int getExits() {
-        int exits = 0;
-        exits |= cheExit0.getState() ? 1 : 0;
-        exits |= cheExit1.getState() ? 2 : 0;
-        exits |= cheExit2.getState() ? 4 : 0;
-        exits |= cheExit3.getState() ? 8 : 0;
-        exits |= cheExit4.getState() ? 16 : 0;
-        exits |= cheExit5.getState() ? 32 : 0;
-        return exits;
-    }
-    
-    public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-        setVisible(false);
-    }    
 }

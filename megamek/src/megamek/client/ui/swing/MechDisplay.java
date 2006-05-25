@@ -401,7 +401,7 @@ public class MechDisplay extends BufferedPanel {
      * This class contains the all the gizmos for firing the
      * mech's weapons.
      */
-    private class WeaponPanel extends BufferedPanel
+    public class WeaponPanel extends BufferedPanel
             implements ItemListener {
         private static final String IMAGE_DIR = "data/images/widgets";
 

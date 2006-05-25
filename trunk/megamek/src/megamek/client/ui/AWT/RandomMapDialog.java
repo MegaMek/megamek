@@ -308,7 +308,10 @@ public class RandomMapDialog
             fd.setFilenameFilter(new FilenameFilter() { public boolean accept(File f, String s) {return s.endsWith(".xml"); } });
             fd.setModal(true);
             fd.setVisible(true);
-            File f = new File(fd.getFile());
+            String filename = fd.getDirectory() + File.separator + fd.getFile();
+            if(!filename.contains("."))
+                filename = filename + ".xml";
+            File f = new File(filename);
             try {
                 mapSettings.save(new FileOutputStream(f));
             } catch (Exception ex) {
@@ -320,7 +323,7 @@ public class RandomMapDialog
             fd.setFilenameFilter(new FilenameFilter() { public boolean accept(File f, String s) {return s.endsWith(".xml"); } });
             fd.setModal(true);
             fd.setVisible(true);
-            File f = new File(fd.getFile());
+            File f = new File(fd.getDirectory() + File.separator + fd.getFile());
             try {
                 mapSettings.load(new FileInputStream(f));
             } catch (Exception ex) {
@@ -1007,6 +1010,7 @@ public class RandomMapDialog
         int townSize = 60;
         int mountainPeaks,mountainHeightMin,mountainHeightMax;
         int mountainStyle,mountainWidthMin,mountainWidthMax;
+        int invertNegative = 0;
 
         try {
             boardWidth = Integer.parseInt(texBoardWidth.getText());
@@ -1088,6 +1092,7 @@ public class RandomMapDialog
                 mountainWidthMax = Integer.parseInt(texMountainWidthMax.getText());
                 mountainStyle = Integer.parseInt(texMountainStyle.getText());
                 mountainPeaks = Integer.parseInt(texMountainPeaks.getText());
+                invertNegative = Integer.parseInt(texInvertNegative.getText());
                 
                 } catch (NumberFormatException ex) {
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.OnlyIntegersWarn")).show(); //$NON-NLS-1$
@@ -1366,8 +1371,9 @@ public class RandomMapDialog
                 return false;
             }
             
-            if (mountainWidthMin < 1 || mountainWidthMax < mountainWidthMin) {
-                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MountainWidthOutOfRange")).setVisible(true); //$NON-NLS-1$
+            if ((mountainWidthMin < 1 || mountainWidthMax < mountainWidthMin)
+                    && mountainPeaks > 0) {
+                new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MountainWidthOutOfRangeWarn")).setVisible(true); //$NON-NLS-1$
             }
             
         } else {
@@ -1719,6 +1725,7 @@ public class RandomMapDialog
                 mountainHeightMin,
                 mountainHeightMax,
                 mountainStyle);
+        mapSettings.setInvertNegativeTerrain(invertNegative);
         
         mapSettings.setTheme(theme);
         

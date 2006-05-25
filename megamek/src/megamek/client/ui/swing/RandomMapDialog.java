@@ -1103,6 +1103,7 @@ public class RandomMapDialog
         int townSize = 60;
         int mountainPeaks,mountainHeightMin,mountainHeightMax;
         int mountainStyle,mountainWidthMin,mountainWidthMax;
+        int invertNegative=0;
 
         try {
             boardWidth = Integer.parseInt(texBoardWidth.getText());
@@ -1184,6 +1185,7 @@ public class RandomMapDialog
                 mountainWidthMax = Integer.parseInt(texMountainWidthMax.getText());
                 mountainStyle = Integer.parseInt(texMountainStyle.getText());
                 mountainPeaks = Integer.parseInt(texMountainPeaks.getText());
+                invertNegative = Integer.parseInt(texInvertNegative.getText());
                 
             } catch (NumberFormatException ex) {
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.OnlyIntegersWarn")).setVisible(true); //$NON-NLS-1$
@@ -1462,7 +1464,8 @@ public class RandomMapDialog
                 return false;
             }
             
-            if (mountainWidthMin < 1 || mountainWidthMax < mountainWidthMin) {
+            if ((mountainWidthMin < 1 || mountainWidthMax < mountainWidthMin)
+                    && mountainPeaks > 0) {
                 new AlertDialog(frame, INVALID_SETTING, Messages.getString("RandomMapDialog.MountainWidthOutOfRange")).setVisible(true); //$NON-NLS-1$
             }
             
@@ -1815,6 +1818,7 @@ public class RandomMapDialog
                 mountainHeightMin,
                 mountainHeightMax,
                 mountainStyle);
+        mapSettings.setInvertNegativeTerrain(invertNegative);
 
         mapSettings.setTheme(theme);
 

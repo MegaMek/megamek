@@ -44,20 +44,20 @@ public class MechGroupView
         extends JDialog
         implements ActionListener, ItemListener {
 
-    List entities = new List(20);
-    JButton closeButton = new JButton(Messages.getString("Close"));
-    JTextArea ta = new JTextArea();
+    private List entities = new List(20);
+    private JButton closeButton = new JButton(Messages.getString("Close"));
+    private JTextArea ta = new JTextArea();
 
-    Client client;
-    int[] entityArray;
+    private Client client;
+    private int[] entityArray;
 
     MechGroupView(JFrame frame, Client c, int[] eA) {
         super(frame, Messages.getString("MechGroupView.title"));
         client = c;
         entityArray = eA;
 
-        for (int i = 0; i < entityArray.length; i++) {
-            Entity entity = client.game.getEntity(entityArray[i]);
+        for (final int newVar : entityArray) {
+            Entity entity = client.game.getEntity(newVar);
             // Handle the "Blind Drop" option.
             if (entity == null)
                 continue;
@@ -71,13 +71,13 @@ public class MechGroupView
                 entities.add(ChatLounge.formatUnit(entity, false));
             }
         }
-        setLayout(new BorderLayout());
-        add(entities, BorderLayout.WEST);
-        add(closeButton, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(entities, BorderLayout.WEST);
+        getContentPane().add(closeButton, BorderLayout.SOUTH);
 
         ta.setEditable(false);
         ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        add(ta, BorderLayout.CENTER);
+        getContentPane().add(ta, BorderLayout.CENTER);
 
         entities.addItemListener(this);
         closeButton.addActionListener(this);

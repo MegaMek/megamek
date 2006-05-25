@@ -44,6 +44,7 @@ v0.31.8-dev (CVS)
 + Bug: load and save map settings ignoring directory selection
 + Bug: invert negative terrain option in dialog ignored
 + Bug: mountain width checked when no mountains
++ Lots of JDialogs were not using getContentPane().add and .setLayout()
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

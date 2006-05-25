@@ -88,7 +88,7 @@ public class MineLayingDialog
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
@@ -138,7 +138,7 @@ public class MineLayingDialog
     }
 
     public boolean getAnswer() {
-        return (okay);
+        return okay;
     }
 
     /**

@@ -49,7 +49,7 @@ public class ConfirmDialog
     private JButton butNo = new JButton(Messages.getString("No")); //$NON-NLS-1$
     private JButton defaultButton = butYes;
 
-    private boolean confirmation = false;
+    private boolean confirmation;
 
     private JComponent firstFocusable;
 
@@ -62,18 +62,6 @@ public class ConfirmDialog
      */
     public ConfirmDialog(JFrame p, String title, String question) {
         this(p, title, question, false);
-    }
-
-    /**
-     * Creates a new dialog window that lets the user answer Yes or No,
-     * with either the Yes or No button pre-focused
-     *
-     * @param title     a title for the dialog window
-     * @param question  the text of the dialog
-     * @param defButton set it to 'n' to make the No button pre-focused (Yes button is focused by default)
-     */
-    public ConfirmDialog(JFrame p, String title, String question, char defButton) {
-        this(p, title, question, false, defButton);
     }
 
     /**
@@ -99,10 +87,10 @@ public class ConfirmDialog
      * @param includeCheckbox whether the dialog includes a "bother me" checkbox for the user to tick
      * @param defButton       set it to 'n' to make the No button pre-focused (Yes button is focused by default)
      */
-    public ConfirmDialog(JFrame p, String title, String question, boolean includeCheckbox, char defButton) {
+    private ConfirmDialog(JFrame p, String title, String question, boolean includeCheckbox, char defButton) {
         super(p, title, true);
 
-        if ('n' == defButton) {
+        if (defButton == 'n') {
             defaultButton = butNo;
         }
 
@@ -120,7 +108,7 @@ public class ConfirmDialog
         c.gridheight = 2;
         c.insets = new Insets(5, 5, 5, 5);
         gridbag.setConstraints(questionLabel, c);
-        add(questionLabel);
+        getContentPane().add(questionLabel);
     }
 
     private void addInputs() {
@@ -133,7 +121,7 @@ public class ConfirmDialog
 
             c.gridy = y++;
             gridbag.setConstraints(botherCheckbox, c);
-            add(botherCheckbox);
+            getContentPane().add(botherCheckbox);
         }
 
         butYes.addActionListener(this);
@@ -153,7 +141,7 @@ public class ConfirmDialog
         c.gridy = y;
 
         gridbag.setConstraints(panButtons, c);
-        add(panButtons);
+        getContentPane().add(panButtons);
     }
 
     private void finishSetup(JFrame p) {

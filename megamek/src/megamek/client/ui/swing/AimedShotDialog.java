@@ -34,8 +34,8 @@ public class AimedShotDialog
     /**
      * The checkboxes for available choices.
      */
-    private IndexedCheckbox[] checkboxes = null;
-    private boolean[] enabled = null;
+    private IndexedCheckbox[] checkboxes;
+    private boolean[] boxEnabled;
 
     public AimedShotDialog(JFrame parent, String title, String message,
                            String[] choices, boolean[] enabled, int selectedIndex,
@@ -43,10 +43,10 @@ public class AimedShotDialog
         super(parent, title, false);
         super.setResizable(false);
 
-        this.enabled = enabled;
+        boxEnabled = enabled;
 
         GridBagLayout gridbag = new GridBagLayout();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -56,14 +56,14 @@ public class AimedShotDialog
         c.gridwidth = 0;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMessage, c);
-        add(labMessage);
+        getContentPane().add(labMessage);
 
         ButtonGroup radioGroup = new ButtonGroup();
         checkboxes = new IndexedCheckbox[choices.length];
 
         for (int i = 0; i < choices.length; i++) {
             boolean even = (i & 1) == 0;
-            checkboxes[i] = new IndexedCheckbox(choices[i], (i == selectedIndex), radioGroup, i);
+            checkboxes[i] = new IndexedCheckbox(choices[i], i == selectedIndex, radioGroup, i);
             checkboxes[i].addItemListener(il);
             checkboxes[i].setEnabled(enabled[i] && !locked);
             c.gridwidth = even ? 1 : GridBagConstraints.REMAINDER;
@@ -89,7 +89,7 @@ public class AimedShotDialog
     public void setEnableAll(boolean enableAll) {
         for (int i = 0; i < checkboxes.length; i++) {
             if (enableAll) {
-                checkboxes[i].setEnabled(enabled[i]);
+                checkboxes[i].setEnabled(boxEnabled[i]);
             } else {
                 checkboxes[i].setEnabled(false);
             }

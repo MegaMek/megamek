@@ -70,7 +70,7 @@ public class TriggerAPPodDialog
         /**
          * The <code>JCheckBox</code> being tracked.
          */
-        private JCheckBox checkbox = null;
+        private JCheckBox checkbox;
 
         /**
          * Create a tracker.
@@ -125,7 +125,7 @@ public class TriggerAPPodDialog
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
-                        .append(" ")//$NON-NLS-1$
+                        .append(' ')//$NON-NLS-1$
                         .append(mount.getName());
                 JCheckBox pod = new JCheckBox(message.toString());
                 panPods.add(pod);
@@ -151,7 +151,7 @@ public class TriggerAPPodDialog
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
@@ -159,10 +159,10 @@ public class TriggerAPPodDialog
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
-        add(labMessage);
+        getContentPane().add(labMessage);
 
         gridbag.setConstraints(panPods, c);
-        add(panPods);
+        getContentPane().add(panPods);
 
         c.weightx = 1.0;
         c.weighty = 1.0;
@@ -170,7 +170,7 @@ public class TriggerAPPodDialog
         c.ipadx = 20;
         c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
-        add(butOkay);
+        getContentPane().add(butOkay);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {

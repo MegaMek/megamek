@@ -36,8 +36,10 @@ public class Slider extends JDialog implements ActionListener, AdjustmentListene
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
     private Scrollbar value;
     private JLabel lblText = new JLabel();
-    private boolean ok = false;
-    private JLabel minText = new JLabel(), maxText = new JLabel(), curText = new JLabel();
+    private boolean ok;
+    private JLabel minText = new JLabel();
+    private JLabel maxText = new JLabel();
+    private JLabel curText = new JLabel();
 
     public Slider(JFrame parent, String title, String question, int defaultValue, int min, int max) {
         super(parent, title, true);
@@ -46,12 +48,12 @@ public class Slider extends JDialog implements ActionListener, AdjustmentListene
         value = new Scrollbar(Scrollbar.HORIZONTAL, defaultValue, 1, min, max + 1);
         value.addAdjustmentListener(this);
 
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
         JPanel qp = new JPanel();
         qp.setLayout(new BorderLayout());
         lblText.setText(question);
         qp.add(lblText, BorderLayout.NORTH);
-        add(qp, BorderLayout.NORTH);
+        getContentPane().add(qp, BorderLayout.NORTH);
 
         JPanel sp1 = new JPanel();
         sp1.setLayout(new FlowLayout());
@@ -62,7 +64,7 @@ public class Slider extends JDialog implements ActionListener, AdjustmentListene
         sp1.add(value);
         sp1.add(maxText);
         sp1.add(curText);
-        add(sp1, BorderLayout.CENTER);
+        getContentPane().add(sp1, BorderLayout.CENTER);
 
         JPanel p = new JPanel();
         p.setLayout(new FlowLayout());
@@ -70,7 +72,7 @@ public class Slider extends JDialog implements ActionListener, AdjustmentListene
         p.add(butOk);
         butCancel.addActionListener(this);
         p.add(butCancel);
-        add(p, BorderLayout.SOUTH);
+        getContentPane().add(p, BorderLayout.SOUTH);
         pack();
         setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
                 parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
@@ -82,7 +84,7 @@ public class Slider extends JDialog implements ActionListener, AdjustmentListene
     }
 
     public void actionPerformed(ActionEvent evt) {
-        ok = evt.getSource() == butOk;
+        ok = evt.getSource().equals(butOk);
         setVisible(false);
         dispose();
     }

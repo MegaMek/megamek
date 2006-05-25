@@ -41,6 +41,9 @@ v0.31.8-dev (CVS)
 + mountains RMG option
 + Bug proto-physical attack didnt consider terrain height
 + Town RMG option - MapSettings interface compat break.
++ Bug: load and save map settings ignoring directory selection
++ Bug: invert negative terrain option in dialog ignored
++ Bug: mountain width checked when no mountains
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

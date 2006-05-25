@@ -45,6 +45,8 @@ v0.31.8-dev (CVS)
 + Bug: invert negative terrain option in dialog ignored
 + Bug: mountain width checked when no mountains
 + Lots of JDialogs were not using getContentPane().add and .setLayout()
++ Refactor: Cleared off multiple UI classes in the same file by inner classing
+  panels and externalising dialogs 
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

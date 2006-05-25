@@ -40,23 +40,23 @@ public class UnitLoadingDialog extends JDialog {
 
     // Determines how often to update the loading dialog.
     // Setting this too low causes noticeable loading delays.
-    private static final int UPDATE_FREQUENCY = 50;
+    private static final long UPDATE_FREQUENCY = 50;
 
     public UnitLoadingDialog(JFrame frame) {
         super(frame, Messages.getString("UnitLoadingDialog.pleaseWait")); //$NON-NLS-1$
 
-        setLayout(new GridLayout(4, 2));
-        add(lLoading);
-        add(lSpacer);
+        getContentPane().setLayout(new GridLayout(4, 2));
+        getContentPane().add(lLoading);
+        getContentPane().add(lSpacer);
 
-        add(lCacheText);
-        add(lCacheCount);
+        getContentPane().add(lCacheText);
+        getContentPane().add(lCacheCount);
 
-        add(lFileText);
-        add(lFileCount);
+        getContentPane().add(lFileText);
+        getContentPane().add(lFileCount);
 
-        add(lZipText);
-        add(lZipCount);
+        getContentPane().add(lZipText);
+        getContentPane().add(lZipCount);
 
         setSize(250, 130);
         // move to middle of screen
@@ -70,8 +70,8 @@ public class UnitLoadingDialog extends JDialog {
                     updateCounts();
                     try {
                         Thread.sleep(UPDATE_FREQUENCY);
-                    } catch (Exception e) {
-
+                    } catch (InterruptedException e) {
+                        //not supposed to come here
                     }
                 }
             }

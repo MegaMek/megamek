@@ -59,24 +59,24 @@ public class Ruler extends JDialog implements BoardViewListener {
     private BoardView1 bv;
     private boolean flip;
 
-    JPanel panel1 = new JPanel();
-    GridBagLayout gridBagLayout1 = new GridBagLayout();
-    JButton butFlip = new JButton();
-    JLabel jLabel1 = new JLabel();
-    JTextField tf_start = new JTextField();
-    JLabel jLabel2 = new JLabel();
-    JTextField tf_end = new JTextField();
-    JLabel jLabel3 = new JLabel();
-    JTextField tf_distance = new JTextField();
-    JLabel jLabel4 = new JLabel();
-    JTextField tf_los1 = new JTextField();
-    JLabel jLabel5 = new JLabel();
-    JTextField tf_los2 = new JTextField();
-    JButton butClose = new JButton();
-    JLabel heightLabel1 = new JLabel();
-    JTextField height1 = new JTextField();
-    JLabel heightLabel2 = new JLabel();
-    JTextField height2 = new JTextField();
+    private JPanel panel1 = new JPanel();
+    private GridBagLayout gridBagLayout1 = new GridBagLayout();
+    private JButton butFlip = new JButton();
+    private JLabel jLabel1 = new JLabel();
+    private JTextField tf_start = new JTextField();
+    private JLabel jLabel2 = new JLabel();
+    private JTextField tf_end = new JTextField();
+    private JLabel jLabel3 = new JLabel();
+    private JTextField tf_distance = new JTextField();
+    private JLabel jLabel4 = new JLabel();
+    private JTextField tf_los1 = new JTextField();
+    private JLabel jLabel5 = new JLabel();
+    private JTextField tf_los2 = new JTextField();
+    private JButton butClose = new JButton();
+    private JLabel heightLabel1 = new JLabel();
+    private JTextField height1 = new JTextField();
+    private JLabel heightLabel2 = new JLabel();
+    private JTextField height2 = new JTextField();
 
     public Ruler(JFrame f, Client c, BoardView1 b) {
         super(f, Messages.getString("Ruler.title"), false); //$NON-NLS-1$
@@ -94,18 +94,18 @@ public class Ruler extends JDialog implements BoardViewListener {
 
         try {
             jbInit();
-            add(panel1);
+            getContentPane().add(panel1);
             pack();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    void jbInit() throws Exception {
+    private void jbInit() {
         butFlip.setText(Messages.getString("Ruler.flip")); //$NON-NLS-1$
         butFlip.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                butFlip_actionPerformed(e);
+                butFlip_actionPerformed();
             }
         });
         panel1.setLayout(gridBagLayout1);
@@ -129,7 +129,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         butClose.setText(Messages.getString("Ruler.Close")); //$NON-NLS-1$
         butClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                butClose_actionPerformed(e);
+                butClose_actionPerformed();
             }
         });
         heightLabel1.setText(Messages.getString("Ruler.Height1")); //$NON-NLS-1$
@@ -137,7 +137,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         height1.setText("1"); //$NON-NLS-1$
         height1.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                height1_keyReleased(e);
+                height1_keyReleased();
             }
         });
         height1.setColumns(5);
@@ -146,7 +146,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         height2.setText("1"); //$NON-NLS-1$
         height2.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                height2_keyReleased(e);
+                height2_keyReleased();
             }
         });
         height2.setColumns(5);
@@ -270,33 +270,17 @@ public class Ruler extends JDialog implements BoardViewListener {
         super.processWindowEvent(e);
     }
 
-    void cancel() {
+    private void cancel() {
         dispose();
-        butClose_actionPerformed(null);
+        butClose_actionPerformed();
     }
 
-    public Coords getStart() {
-        return start;
-    }
-
-    public void setStart(Coords start) {
-        this.start = start;
-    }
-
-    public void setEnd(Coords end) {
-        this.end = end;
-    }
-
-    public Coords getEnd() {
-        return end;
-    }
-
-    public void clear() {
+    private void clear() {
         start = null;
         end = null;
     }
 
-    public void addPoint(Coords c) {
+    private void addPoint(Coords c) {
         if (start == null) {
             start = c;
 
@@ -314,16 +298,18 @@ public class Ruler extends JDialog implements BoardViewListener {
         }
     }
 
-    public void setText() {
+    private void setText() {
         int h1 = 1, h2 = 1;
         try {
             h1 = Integer.parseInt(height1.getText());
         } catch (NumberFormatException e) {
+            //leave at default value
         }
 
         try {
             h2 = Integer.parseInt(height2.getText());
         } catch (NumberFormatException e) {
+            //leave at default value
         }
 
         String toHit1 = "", toHit2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -367,7 +353,7 @@ public class Ruler extends JDialog implements BoardViewListener {
      * @param h2
      * @return
      */
-    LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1, int h2) {
+    private LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1, int h2) {
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = c1;
         ai.targetPos = c2;
@@ -376,18 +362,6 @@ public class Ruler extends JDialog implements BoardViewListener {
         ai.attackAbsHeight = client.game.getBoard().getHex(c1).floor() + h1;
         ai.targetAbsHeight = client.game.getBoard().getHex(c2).floor() + h2;
         return ai;
-    }
-
-    public boolean valid() {
-        return (start != null) && (end != null);
-    }
-
-    public void setDistance(int distance) {
-        this.distance = distance;
-    }
-
-    public int getDistance() {
-        return distance;
     }
 
     public void hexMoused(BoardViewEvent b) {
@@ -420,7 +394,7 @@ public class Ruler extends JDialog implements BoardViewListener {
 
     }
 
-    void butFlip_actionPerformed(ActionEvent e) {
+    private void butFlip_actionPerformed() {
         flip = !flip;
 
         if (startColor.equals(color1)) {
@@ -440,27 +414,21 @@ public class Ruler extends JDialog implements BoardViewListener {
         bv.drawRuler(start, end, startColor, endColor);
     }
 
-    void butClose_actionPerformed(ActionEvent e) {
+    private void butClose_actionPerformed() {
         clear();
         setVisible(false);
 
         bv.drawRuler(start, end, startColor, endColor);
     }
 
-    void height1_keyReleased(KeyEvent e) {
+    private void height1_keyReleased() {
         setText();
         setVisible(true);
     }
 
-    void height2_keyReleased(KeyEvent e) {
+    private void height2_keyReleased() {
         setText();
         setVisible(true);
-    }
-
-    public void boardChangedEntity(BoardViewEvent b) {
-    }
-
-    public void boardNewAttack(BoardViewEvent a) {
     }
 
     /* (non-Javadoc)

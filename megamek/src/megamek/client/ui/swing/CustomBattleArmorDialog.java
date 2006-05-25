@@ -161,11 +161,11 @@ public class CustomBattleArmorDialog
     private static final int JUMP_TYPE_VTOL = 1;
     private static final int JUMP_TYPE_UMU = 2;
 
-    public static int EQUIPMENT_TYPE_WEAPON = 0;
-    public static int EQUIPMENT_TYPE_WEAPON_AP = 1;
-    public static int EQUIPMENT_TYPE_PREPROCESS = 2;
-    public static int EQUIPMENT_TYPE_AMMO = 3;
-    public static int EQUIPMENT_TYPE_OTHER = 4;
+    private static int EQUIPMENT_TYPE_WEAPON = 0;
+    private static int EQUIPMENT_TYPE_WEAPON_AP = 1;
+    private static int EQUIPMENT_TYPE_PREPROCESS = 2;
+    private static int EQUIPMENT_TYPE_AMMO = 3;
+    private static int EQUIPMENT_TYPE_OTHER = 4;
 
     private static final int[][] ARMOR_TYPE_WEIGHT = {{50, 40, 100, 55, 100, 60, 60, 0, 50},
                                                       {25, 0, 0, 30, 0, 35, 35, 30, 0}};
@@ -231,17 +231,17 @@ public class CustomBattleArmorDialog
                                                          500,
                                                          2500};
 
-    public static final int[] ARM_MAX_SLOTS = {2, 2, 3, 3, 4};
-    public static final int[] TORSO_MAX_SLOTS = {2, 4, 4, 6, 8};
-    public static final int[] QUAD_MAX_SLOTS = {0, 5, 7, 9, 11};
+    private static final int[] ARM_MAX_SLOTS = {2, 2, 3, 3, 4};
+    private static final int[] TORSO_MAX_SLOTS = {2, 4, 4, 6, 8};
+    private static final int[] QUAD_MAX_SLOTS = {0, 5, 7, 9, 11};
 
-    public static final int LOCATION_ALLOWED_ANY = 0;
-    public static final int LOCATION_ALLOWED_TORSO = 1;
-    public static final int LOCATION_ALLOWED_ARM = 2;
+    private static final int LOCATION_ALLOWED_ANY = 0;
+    private static final int LOCATION_ALLOWED_TORSO = 1;
+    private static final int LOCATION_ALLOWED_ARM = 2;
 
     private static final int F_CONFLICT_JUMP_GEAR = 0x00000001;
 
-    public CustomBattleArmorDialog(ClientGUI cl, UnitLoadingDialog uld) {
+    public CustomBattleArmorDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("CustomBattleArmorDialog.title"), true);
         m_client = cl.getClient();
         m_clientgui = cl;
@@ -414,10 +414,10 @@ public class CustomBattleArmorDialog
         m_pLeft.add(m_pParams, BorderLayout.CENTER);
         m_pLeft.add(m_pButtons, BorderLayout.SOUTH);
 
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
         getContentPane().add(m_pLeft, BorderLayout.WEST);
         m_BAView.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        add(new JScrollPane(m_BAView), BorderLayout.CENTER);
+        getContentPane().add(new JScrollPane(m_BAView), BorderLayout.CENTER);
 
         setSize(800, 450);
         setLocation(computeDesiredLocation());
@@ -984,7 +984,7 @@ public class CustomBattleArmorDialog
         previewBA();
     }
 
-    void previewBA() {
+    private void previewBA() {
         String preview = generateBattleArmorPreview();
         m_BAView.setEditable(false);
         m_BAView.setText(preview);
@@ -1041,7 +1041,7 @@ public class CustomBattleArmorDialog
         m_bPickClose.setEnabled(true);
     }
 
-    public String generateBattleArmorPreview() {
+    private String generateBattleArmorPreview() {
         StringBuffer retVal = new StringBuffer("");
         if (isValid()) {
             retVal.append(">>>");
@@ -1215,7 +1215,7 @@ public class CustomBattleArmorDialog
         return retVal.toString();
     }
 
-    public void calcCurrentWeight() {
+    private void calcCurrentWeight() {
         stateCurrentWeight = 0;
 
         // Add in the chassis weight.
@@ -1472,11 +1472,11 @@ public class CustomBattleArmorDialog
         return true;
     }
 
-    public int getChassisWeight() {
+    private int getChassisWeight() {
         return getChassisWeight(stateWeightClass, stateTechBase);
     }
 
-    public static int getChassisWeight(int weightClass, int techBase) {
+    private static int getChassisWeight(int weightClass, int techBase) {
         if (techBase == TECH_BASE_IS) {
             // Inner Sphere tech base.
             switch (weightClass) {
@@ -1510,35 +1510,35 @@ public class CustomBattleArmorDialog
         return 0;
     }
 
-    public int getArmorWeight() {
+    private int getArmorWeight() {
         return getArmorWeight(stateTechBase, stateArmorType, stateArmorValue);
     }
 
-    public static int getArmorWeight(int techBase, int armorType, int armorValue) {
+    private static int getArmorWeight(int techBase, int armorType, int armorValue) {
         return armorValue * ARMOR_TYPE_WEIGHT[techBase][armorType];
     }
 
-    public int getGroundMPWeight() {
+    private int getGroundMPWeight() {
         return getGroundMPWeight(stateChassisType, stateWeightClass, stateGroundMP);
     }
 
-    public static int getGroundMPWeight(int chassisType, int weightClass, int groundMP) {
+    private static int getGroundMPWeight(int chassisType, int weightClass, int groundMP) {
         return (groundMP - (chassisType == CHASSIS_TYPE_BIPED ? 1 : 2)) * GROUND_MP_WEIGHT[weightClass];
     }
 
-    public int getJumpMPWeight() {
+    private int getJumpMPWeight() {
         return getJumpMPWeight(stateJumpType, stateWeightClass, stateJumpMP);
     }
 
-    public static int getJumpMPWeight(int jumpStatus, int weightClass, int jumpMP) {
+    private static int getJumpMPWeight(int jumpStatus, int weightClass, int jumpMP) {
         return jumpMP * JUMP_MP_WEIGHT[jumpStatus][weightClass];
     }
 
-    public int getManipulatorWeight() {
+    private int getManipulatorWeight() {
         return MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeLeft] + MANIPULATOR_TYPE_WEIGHT[stateManipulatorTypeRight];
     }
 
-    public int calcSuitBV() {
+    private int calcSuitBV() {
         // Defensive BV Value...
         // Starts at 1.5, for some reason.
         float dBV = 1.5f;
@@ -1660,11 +1660,11 @@ public class CustomBattleArmorDialog
         return retVal;
     }
 
-    public int calcSquadBV() {
+    private int calcSquadBV() {
         return calcSuitBV() * stateMenPerSquad;
     }
 
-    public int calcSuitCost() {
+    private int calcSuitCost() {
         float retVal = 0;
 
         // Chassis Cost
@@ -1716,11 +1716,11 @@ public class CustomBattleArmorDialog
         return Math.round(retVal);
     }
 
-    public int calcSquadCost() {
+    private int calcSquadCost() {
         return calcSuitCost() * stateMenPerSquad;
     }
 
-    public BattleArmor getEntity() {
+    private BattleArmor getEntity() {
         BattleArmor retVal = new BattleArmor();
 
         // Set the name.
@@ -1850,7 +1850,7 @@ public class CustomBattleArmorDialog
         return retVal;
     }
 
-    public int getTotalJumpMP() {
+    private int getTotalJumpMP() {
         int retVal = stateJumpMP;
 
         // Add any jump MP bonus for equipment...
@@ -1868,7 +1868,7 @@ public class CustomBattleArmorDialog
         return retVal;
     }
 
-    public boolean canDoAntiMech() {
+    private boolean canDoAntiMech() {
         if (stateChassisType == CHASSIS_TYPE_QUAD) {
             // Quads can never do anti-'Mech attacks.
             return false;
@@ -1909,7 +1909,7 @@ public class CustomBattleArmorDialog
         return false;
     }
 
-    public boolean canMountMech() {
+    private boolean canMountMech() {
         // Anything capable of leg/swarm attacks can also ride an OmniMech.
         if (canDoAntiMech())
             return true;
@@ -1947,7 +1947,7 @@ public class CustomBattleArmorDialog
         previewBA();
     }
 
-    protected class BattleArmorEquipment implements Comparable {
+    class BattleArmorEquipment implements Comparable {
         // WeaponType/EquipmentType fields
         String name;
         String weaponTypeName;
@@ -1980,11 +1980,11 @@ public class CustomBattleArmorDialog
             // The default values are acceptable.
         }
 
-        BattleArmorEquipment(String inN, String inWTN, int inW, int inC, double inBV, int inIT, int inS, int inTB, int inAL) {
-            this(inN, inWTN, inW, inC, inBV, inIT, inS, inTB, inAL, 0);
+        BattleArmorEquipment(String inN, String inWTN, int inW, int inIT, int inS, int inTB, int inAL) {
+            this(inN, inWTN, inW, inIT, inS, inTB, inAL, 0);
         }
 
-        BattleArmorEquipment(String inN, String inWTN, int inW, int inC, double inBV, int inIT, int inS, int inTB, int inAL, int inCF) {
+        BattleArmorEquipment(String inN, String inWTN, int inW, int inIT, int inS, int inTB, int inAL, int inCF) {
             name = inN;
             weaponTypeName = inWTN;
             weight = inW;
@@ -2002,43 +2002,43 @@ public class CustomBattleArmorDialog
             equipmentNames = new ArrayList();
 
             // Weapons
-            new BattleArmorEquipment("Support Machine Gun", "BA-Machine Gun", 100, 5000, 5, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Light Recoilless Rifle", "BA-Light Recoilless Rifle", 175, 1000, 12, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Medium Recoilless Rifle", "BA-Medium Recoilless Rifle", 250, 3000, 19, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Heavy Recoilless Rifle", "BA-Heavy Recoilless Rifle", 325, 5000, 22, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Heavy Flamer", "BA-Flamer", 150, 7500, 6, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Semi-Portable Support Pulse Laser", "BA-Clan Micro Pulse Laser", 160, 12500, 12, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Support Laser", "BA-Small Laser", 200, 11250, 9, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("ER Support Laser", "BA-Clan ER Small Laser", 250, 11250, 31, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Bearhunter Superheavy AC", "BA-Bearhunter Superheavy AC", 150, 11250, 4, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("David Light Gauss Rifle", "BA-ISDavidLightGauss", 100, 22500, 7, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("King David Light Gauss Rifle", "BA-King David Light Gauss Rifle", 275, 30000, 7, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Firedrake Support Needler", "BA-Firedrake Incendiary Needler", 50, 1500, 2, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Man-Portable Plasma Rifle", "BA-Plasma Rifle", 300, 28000, 12, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Magshot Gauss Rifle", "BAMagshotGR", 175, 8500, 15, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Grand Mauler Gauss Cannonr", "BA-ISGrandMauler", 125, 5500, 6, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Tsunami Heavy Gauss Rifle", "BA-ISTsunamiHeavyGaussRifle", 125, 5000, 6, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Semi-Portable Autocannon", "BA-HeavyMG", 150, 7500, 6, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Semi-Portable Machine Gun", "BA-LightMG", 75, 5000, 5, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Support Machine Gun", "BA-Machine Gun", 100, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Light Recoilless Rifle", "BA-Light Recoilless Rifle", 175, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Medium Recoilless Rifle", "BA-Medium Recoilless Rifle", 250, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Heavy Recoilless Rifle", "BA-Heavy Recoilless Rifle", 325, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Heavy Flamer", "BA-Flamer", 150, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Semi-Portable Support Pulse Laser", "BA-Clan Micro Pulse Laser", 160, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Support Laser", "BA-Small Laser", 200, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("ER Support Laser", "BA-Clan ER Small Laser", 250, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Bearhunter Superheavy AC", "BA-Bearhunter Superheavy AC", 150, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("David Light Gauss Rifle", "BA-ISDavidLightGauss", 100, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("King David Light Gauss Rifle", "BA-King David Light Gauss Rifle", 275, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Firedrake Support Needler", "BA-Firedrake Incendiary Needler", 50, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Man-Portable Plasma Rifle", "BA-Plasma Rifle", 300, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Magshot Gauss Rifle", "BAMagshotGR", 175, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Grand Mauler Gauss Cannonr", "BA-ISGrandMauler", 125, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Tsunami Heavy Gauss Rifle", "BA-ISTsunamiHeavyGaussRifle", 125, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_IS, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Semi-Portable Autocannon", "BA-HeavyMG", 150, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Semi-Portable Machine Gun", "BA-LightMG", 75, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
 
-            new BattleArmorEquipment("Advanced SRM 1 Launcher", "Clan Advanced SRM-1", 60, 15000, 15, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 2 Launcher", "Clan Advanced SRM-2", 90, 30000, 30, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 3 Launcher", "Clan Advanced SRM-3", 120, 45000, 45, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 4 Launcher", "Clan Advanced SRM-4", 150, 60000, 60, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 5 Launcher", "Clan Advanced SRM-5", 180, 75000, 75, EQUIPMENT_TYPE_WEAPON, 4, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 6 Launcher", "Clan Advanced SRM-6", 210, 90000, 90, EQUIPMENT_TYPE_WEAPON, 4, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 1 Launcher", "Clan Advanced SRM-1", 60, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 2 Launcher", "Clan Advanced SRM-2", 90, EQUIPMENT_TYPE_WEAPON, 2, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 3 Launcher", "Clan Advanced SRM-3", 120, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 4 Launcher", "Clan Advanced SRM-4", 150, EQUIPMENT_TYPE_WEAPON, 3, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 5 Launcher", "Clan Advanced SRM-5", 180, EQUIPMENT_TYPE_WEAPON, 4, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 6 Launcher", "Clan Advanced SRM-6", 210, EQUIPMENT_TYPE_WEAPON, 4, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
 
             // Ammunition
-            new BattleArmorEquipment("Advanced SRM 1 Ammo", "BAAdvancedSRM1 Ammo", 10, 500, 0.02, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 2 Ammo", "BAAdvancedSRM2 Ammo", 20, 1000, 0.08, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 3 Ammo", "BAAdvancedSRM3 Ammo", 30, 1500, 0.18, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 4 Ammo", "BAAdvancedSRM4 Ammo", 40, 2000, 0.32, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 5 Ammo", "BAAdvancedSRM5 Ammo", 50, 2500, 0.5, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
-            new BattleArmorEquipment("Advanced SRM 6 Ammo", "BAAdvancedSRM6 Ammo", 60, 3000, 0.72, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 1 Ammo", "BAAdvancedSRM1 Ammo", 10, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 2 Ammo", "BAAdvancedSRM2 Ammo", 20, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 3 Ammo", "BAAdvancedSRM3 Ammo", 30, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 4 Ammo", "BAAdvancedSRM4 Ammo", 40, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 5 Ammo", "BAAdvancedSRM5 Ammo", 50, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
+            new BattleArmorEquipment("Advanced SRM 6 Ammo", "BAAdvancedSRM6 Ammo", 60, EQUIPMENT_TYPE_AMMO, 1, TECH_BASE_CLAN, LOCATION_ALLOWED_ANY);
 
             // Equipment
-            new BattleArmorEquipment("Jump Booster", null, 125, 75000, 0, EQUIPMENT_TYPE_PREPROCESS, 2, TECH_BASE_BOTH, LOCATION_ALLOWED_TORSO, F_CONFLICT_JUMP_GEAR);
-            new BattleArmorEquipment("Partial Wing", null, 200, 50000, 0, EQUIPMENT_TYPE_PREPROCESS, 1, TECH_BASE_IS, LOCATION_ALLOWED_TORSO, F_CONFLICT_JUMP_GEAR);
+            new BattleArmorEquipment("Jump Booster", null, 125, EQUIPMENT_TYPE_PREPROCESS, 2, TECH_BASE_BOTH, LOCATION_ALLOWED_TORSO, F_CONFLICT_JUMP_GEAR);
+            new BattleArmorEquipment("Partial Wing", null, 200, EQUIPMENT_TYPE_PREPROCESS, 1, TECH_BASE_IS, LOCATION_ALLOWED_TORSO, F_CONFLICT_JUMP_GEAR);
 
 /* More stuff to add!
 // Weapons

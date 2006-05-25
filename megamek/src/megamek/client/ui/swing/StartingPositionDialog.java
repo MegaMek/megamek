@@ -76,7 +76,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(4, 4, 4, 4);
@@ -84,15 +84,15 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         c.weighty = 1.0;
         c.gridwidth = 1;
         gridbag.setConstraints(panStartButtons, c);
-        add(panStartButtons);
+        getContentPane().add(panStartButtons);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(lisStartList, c);
-        add(lisStartList);
+        getContentPane().add(lisStartList);
 
         c.fill = GridBagConstraints.VERTICAL;
         gridbag.setConstraints(panButtons, c);
-        add(panButtons);
+        getContentPane().add(panButtons);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -230,6 +230,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                         case 18:
                             direction = IOffBoardDirections.WEST;
                             break;
+                        default:
                     }
                     Enumeration thisPlayerArtyUnits = client.game.getSelectedEntities
                             (new EntitySelector() {

@@ -42,10 +42,10 @@ public class PlayerListDialog
         butClose.addActionListener(this);
         
         // layout
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
 
-        add(playerList, BorderLayout.NORTH);
-        add(butClose, BorderLayout.SOUTH);
+        getContentPane().add(playerList, BorderLayout.NORTH);
+        getContentPane().add(butClose, BorderLayout.SOUTH);
 
         refreshPlayerList();
 
@@ -77,21 +77,21 @@ public class PlayerListDialog
             if (player.isGhost()) {
                 playerDisplay.append(" ["); //$NON-NLS-1$
                 playerDisplay.append(Messages.getString("PlayerListDialog.player_ghost")); //$NON-NLS-1$
-                playerDisplay.append("]"); //$NON-NLS-1$
+                playerDisplay.append(']'); //$NON-NLS-1$
             } else if (player.isObserver()) {
                 playerDisplay.append(" [");                 //$NON-NLS-1$
                 playerDisplay.append(Messages.getString("PlayerListDialog.player_observer")); //$NON-NLS-1$
-                playerDisplay.append("]"); //$NON-NLS-1$
+                playerDisplay.append(']'); //$NON-NLS-1$
             } else if (player.isDone()) {
                 playerDisplay.append(" (");                 //$NON-NLS-1$
                 playerDisplay.append(Messages.getString("PlayerListDialog.player_done")); //$NON-NLS-1$
-                playerDisplay.append(")"); //$NON-NLS-1$
+                playerDisplay.append(')'); //$NON-NLS-1$
             }
             playerList.add(playerDisplay.toString());
         }
     }
 
-    public void refreshPlayerList() {
+    private void refreshPlayerList() {
         refreshPlayerList(playerList, client);
     }
 }

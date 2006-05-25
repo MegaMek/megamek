@@ -56,9 +56,9 @@ public class UnitFailureDialog extends JDialog
         reasonTextArea.setEditable(false);
         failedList.addItemListener(this);
 
-        setLayout(new BorderLayout());
-        add(failedList, BorderLayout.NORTH);
-        add(new JScrollPane(reasonTextArea), BorderLayout.CENTER);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(failedList, BorderLayout.NORTH);
+        getContentPane().add(new JScrollPane(reasonTextArea), BorderLayout.CENTER);
 
         setSize(400, 300);
         setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
@@ -67,7 +67,7 @@ public class UnitFailureDialog extends JDialog
         JButton okButton = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         okButton.addActionListener(this);
 
-        add(okButton, BorderLayout.SOUTH);
+        getContentPane().add(okButton, BorderLayout.SOUTH);
 
         while (failedUnits.hasMoreElements()) {
             failedList.add(failedUnits.nextElement().toString());

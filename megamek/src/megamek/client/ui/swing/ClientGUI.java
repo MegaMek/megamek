@@ -93,10 +93,10 @@ public class ClientGUI
     // a frame, to show stuff in
     public JFrame frame;
     // A menu bar to contain all actions.
-    protected CommonMenuBar menuBar = null;
-    private CommonAboutDialog about = null;
-    private CommonHelpDialog help = null;
-    private CommonSettingsDialog setdlg = null;
+    protected CommonMenuBar menuBar;
+    private CommonAboutDialog about;
+    private CommonHelpDialog help;
+    private CommonSettingsDialog setdlg;
     private String helpFileName = "readme.txt"; //$NON-NLS-1$
     // keep me
     private ChatterBox cb;
@@ -106,11 +106,11 @@ public class ClientGUI
     public MechDisplay mechD;
     public JDialog minimapW;
     public MiniMap minimap;
-    public PopupMenu popup = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
+    private PopupMenu popup = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
     private UnitOverview uo;
-    public Ruler ruler; // added by kenn
+    private Ruler ruler; // added by kenn
     protected JComponent curPanel;
-    public ChatLounge chatlounge = null;
+    public ChatLounge chatlounge;
     // some dialogs...
     private BoardSelectionDialog boardSelectionDialog;
     private GameOptionsDialog gameOptionsDialog;
@@ -121,13 +121,13 @@ public class ClientGUI
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
      */
-    private JFileChooser dlgLoadList = null;
-    private JFileChooser dlgSaveList = null;
-    public Client client;
+    private JFileChooser dlgLoadList;
+    private JFileChooser dlgSaveList;
+    private Client client;
     /**
      * Cache for the "bing" soundclip.
      */
-    AudioClip bingClip = null;
+    private AudioClip bingClip;
     /**
      * Map each phase to the name of the card for the main display area.
      */
@@ -161,7 +161,7 @@ public class ClientGUI
     /**
      * Current Selected entity
      */
-    int selectedEntityNum = Entity.NONE;
+    private int selectedEntityNum = Entity.NONE;
 
     /**
      * Construct a client which will display itself in a new frame.  It will
@@ -188,7 +188,7 @@ public class ClientGUI
     /*
      * Try to load the "bing" sound clip.
      */
-    public void loadSoundClip() {
+    private void loadSoundClip() {
         if (GUIPreferences.getInstance().getSoundBingFilename() == null)
             return;
         try {
@@ -283,9 +283,8 @@ public class ClientGUI
             Scrollbar horizontal = new Scrollbar(Scrollbar.HORIZONTAL);
             scroller.add(bv, BorderLayout.CENTER);
             // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
-            if (System.getProperty
-                    ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
-                    ("false")) { //$NON-NLS-1$
+            if ("false".equals(System.getProperty
+                    ("megamek.client.clientgui.hidescrollbars", "false"))) { //$NON-NLS-1$
                 // Assign the scrollbars to the board viewer.
                 scroller.add(vertical, BorderLayout.EAST);
                 scroller.add(horizontal, BorderLayout.SOUTH);
@@ -316,7 +315,10 @@ public class ClientGUI
         bv.addKeyListener(this);
         bv.add(popup);
         Dimension screenSize = frame.getToolkit().getScreenSize();
-        int x, y, h, w;
+        int x;
+        int y;
+        int h;
+        int w;
         mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
         x = GUIPreferences.getInstance().getDisplayPosX();
         y = GUIPreferences.getInstance().getDisplayPosY();
@@ -386,7 +388,7 @@ public class ClientGUI
         add(cb.getComponent(), BorderLayout.SOUTH);
         client.changePhase(IGame.PHASE_UNKNOWN);
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
-        customBADialog = new CustomBattleArmorDialog(this, unitLoadingDialog);
+        customBADialog = new CustomBattleArmorDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
         new Thread(customBADialog, "Custom Battle Armor Dialog").start();
     }
@@ -414,27 +416,11 @@ public class ClientGUI
     }
 
     /**
-     * Change the default help file name for this client.
-     * <p/>
-     * This method should only be called by the constructor
-     * of subclasses.
-     *
-     * @param fileName the <code>String</code> name of the help file
-     *                 for this <code>Client</code> subclass.  This value should
-     *                 not be <code>null</code>.
-     */
-    protected void setHelpFileName(String fileName) {
-        if (null != fileName) {
-            helpFileName = fileName;
-        }
-    }
-
-    /**
      * Called when the user selects the "Help->Contents" menu item.
      * <p/>
      * This method can be called by subclasses.
      */
-    public void showHelp() {
+    private void showHelp() {
         // Do we need to create the "help" dialog?
         if (help == null) {
             help = new CommonHelpDialog(frame, new File(helpFileName));
@@ -491,13 +477,13 @@ public class ClientGUI
      * Implement the <code>ActionListener</code> interface.
      */
     public void actionPerformed(ActionEvent event) {
-        if (event.getActionCommand().equalsIgnoreCase("fileGameSave")) { //$NON-NLS-1$
+        if ("fileGameSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             JFileChooser fc = new JFileChooser(".");
             fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
             fc.setFileFilter(new FileFilter() {
                 public boolean accept(File dir) {
-                    return (null != dir.getName() && dir.getName().endsWith(".sav")); //$NON-NLS-1$
+                    return (dir.getName() != null && dir.getName().endsWith(".sav")); //$NON-NLS-1$
                 }
 
                 public String getDescription() {
@@ -510,26 +496,26 @@ public class ClientGUI
                 // I want a file, y'know!
                 return;
             }
-            if (null != fc.getSelectedFile()) {
+            if (fc.getSelectedFile() != null) {
                 client.sendChat("/save " + fc.getSelectedFile()); //$NON-NLS-1$
             }
         }
-        if (event.getActionCommand().equalsIgnoreCase("helpAbout")) { //$NON-NLS-1$
+        if ("helpAbout".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showAbout();
         }
-        if (event.getActionCommand().equalsIgnoreCase("helpContents")) { //$NON-NLS-1$
+        if ("helpContents".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showHelp();
         }
-        if (event.getActionCommand().equalsIgnoreCase("viewClientSettings")) { //$NON-NLS-1$
+        if ("viewClientSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showSettings();
         }
-        if (event.getActionCommand().equalsIgnoreCase("viewGameOptions")) { //$NON-NLS-1$
+        if ("viewGameOptions".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showOptions();
         }
-        if (event.getActionCommand().equalsIgnoreCase("viewPlayerList")) { //$NON-NLS-1$
+        if ("viewPlayerList".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showPlayerList();
         }
-        if (event.getActionCommand().equalsIgnoreCase("viewRoundReport")) { //$NON-NLS-1$
+        if ("viewRoundReport".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showRoundReport();
         }
         if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
@@ -550,7 +536,7 @@ public class ClientGUI
     /**
      * Saves the current settings to the cfg file.
      */
-    public void saveSettings() {
+    private void saveSettings() {
         // save frame location
         GUIPreferences.getInstance().setWindowPosX(frame.getLocation().x);
         GUIPreferences.getInstance().setWindowPosY(frame.getLocation().y);
@@ -586,7 +572,7 @@ public class ClientGUI
     /**
      * Shuts down threads and sockets
      */
-    public void die() {
+    private void die() {
         //Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         Iterator names = phaseComponents.keySet().iterator();
@@ -672,7 +658,7 @@ public class ClientGUI
         // Get the new panel.
         String name = String.valueOf(phase);
         curPanel = (JComponent) phaseComponents.get(name);
-        if (null == curPanel) {
+        if (curPanel == null) {
             curPanel = initializePanel(phase);
         }
         cardsMain.show(panMain, mainNames.get(name).toString());
@@ -701,9 +687,9 @@ public class ClientGUI
     private JComponent initializePanel(int phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
-        JComponent component = null;
-        String secondary = null;
-        String main = null;
+        JComponent component;
+        String secondary;
+        String main;
         switch (phase) {
             case IGame.PHASE_LOUNGE:
                 component = new ChatLounge(this);
@@ -816,7 +802,7 @@ public class ClientGUI
             case IGame.PHASE_VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
                 component = (JComponent) phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
-                if (null == component) {
+                if (component == null) {
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(IGame.PHASE_INITIATIVE_REPORT);
                 }
@@ -841,7 +827,7 @@ public class ClientGUI
         add(comp);
     }
 
-    protected void showBoardPopup(Point point) {
+    private void showBoardPopup(Point point) {
         if (!bv.mayDrawPopup())
             return;
         fillPopup(bv.getCoordsAt(point));
@@ -868,7 +854,7 @@ public class ClientGUI
     /**
      * Toggles the entity display window
      */
-    public void toggleDisplay() {
+    private void toggleDisplay() {
         mechW.setVisible(!mechW.isVisible());
         if (mechW.isVisible()) {
             frame.requestFocus();
@@ -885,7 +871,7 @@ public class ClientGUI
         }
     }
 
-    public void toggleUnitOverview() {
+    private void toggleUnitOverview() {
         uo.setVisible(!uo.isVisible());
         bv.repaint();
     }
@@ -894,7 +880,7 @@ public class ClientGUI
      * Toggles the minimap window
      * Also, toggles the minimap enabled setting
      */
-    public void toggleMap() {
+    private void toggleMap() {
         if (minimapW.isVisible()) {
             GUIPreferences.getInstance().setMinimapEnabled(false);
         } else {
@@ -909,14 +895,14 @@ public class ClientGUI
     /**
      * Sets the visibility of the minimap window
      */
-    public void setMapVisible(boolean visible) {
+    private void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
         if (visible) {
             frame.requestFocus();
         }
     }
 
-    protected void fillPopup(Coords coords) {
+    private void fillPopup(Coords coords) {
         popup.removeAll();
 
         // add select options
@@ -1081,13 +1067,13 @@ public class ClientGUI
      */
     protected void loadListFile() {
         // Build the "load unit" dialog, if necessary.
-        if (null == dlgLoadList) {
+        if (dlgLoadList == null) {
             dlgLoadList = new JFileChooser(".");
             dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
             dlgLoadList.setFileFilter(new FileFilter() {
                 public boolean accept(File dir) {
-                    return (null != dir.getName() && dir.getName().endsWith(".mul")); //$NON-NLS-1$
+                    return (dir.getName() != null && dir.getName().endsWith(".mul")); //$NON-NLS-1$
                 }
 
                 public String getDescription() {
@@ -1106,7 +1092,7 @@ public class ClientGUI
 
         // Did the player select a file?
         File unitFile = dlgLoadList.getSelectedFile();
-        if (null != unitFile) {
+        if (unitFile != null) {
             try {
                 // Read the units from the file.
                 Vector loadedUnits = EntityListFile.loadFrom(unitFile);
@@ -1138,18 +1124,18 @@ public class ClientGUI
      */
     protected void saveListFile(Vector unitList) {
         // Handle empty lists.
-        if (null == unitList || unitList.isEmpty()) {
+        if (unitList == null || unitList.isEmpty()) {
             return;
         }
 
         // Build the "save unit" dialog, if necessary.
-        if (null == dlgSaveList) {
+        if (dlgSaveList == null) {
             dlgSaveList = new JFileChooser(".");
             dlgSaveList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             dlgSaveList.setDialogTitle(Messages.getString("ClientGUI.saveUnitListFileDialog.title"));
             dlgSaveList.setFileFilter(new FileFilter() {
                 public boolean accept(File dir) {
-                    return (null != dir.getName() && dir.getName().endsWith(".mul")); //$NON-NLS-1$
+                    return (dir.getName() != null && dir.getName().endsWith(".mul")); //$NON-NLS-1$
                 }
 
                 public String getDescription() {
@@ -1168,7 +1154,7 @@ public class ClientGUI
 
         // Did the player select a file?
         File unitFile = dlgSaveList.getSelectedFile();
-        if (null != unitFile) {
+        if (unitFile != null) {
             if (!(unitFile.getName().toLowerCase().endsWith(".mul") //$NON-NLS-1$
                     || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
                 try {
@@ -1226,7 +1212,7 @@ public class ClientGUI
         public ViewMenuItem(Entity entity) {
             super(Messages.getString("ClientGUI.viewMenuItem")
                     + entity.getDisplayName()
-                    + (entity.isDone() ? " (" + Messages.getString("ClientGUI.doneMenuItem").trim() + ")" : "")); //$NON-NLS-1$
+                    + (entity.isDone() ? " (" + Messages.getString("ClientGUI.doneMenuItem").trim() + ')' : "")); //$NON-NLS-1$
             this.entity = entity;
             addActionListener(this);
         }
@@ -1295,7 +1281,7 @@ public class ClientGUI
 
     // Shows a dialg where the player can select the entity types
     // used in the LOS tool.
-    public void showLOSSettingDialog() {
+    private void showLOSSettingDialog() {
         GUIPreferences gp = GUIPreferences.getInstance();
         LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp.getMechInSecond());
         ld.setVisible(true);
@@ -1318,14 +1304,14 @@ public class ClientGUI
     /**
      * Make a "bing" sound.
      */
-    public void bing() {
+    private void bing() {
         if (!GUIPreferences.getInstance().getSoundMute()
-                && null != bingClip) {
+                && bingClip != null) {
             bingClip.play();
         }
     }
 
-    protected GameListener gameListener = new GameListenerAdapter() {
+    private GameListener gameListener = new GameListenerAdapter() {
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             AlertDialog alert = new AlertDialog(frame, Messages.getString("ClientGUI.Disconnected.title"), Messages.getString("ClientGUI.Disconnected.message")); //$NON-NLS-1$ //$NON-NLS-2$
             alert.setVisible(true);

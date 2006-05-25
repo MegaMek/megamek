@@ -76,9 +76,9 @@ public class BoardEditor extends JComponent implements ItemListener,
     private IBoard board = game.getBoard();
     private BoardView1 bv;
     private CommonMenuBar menuBar = new CommonMenuBar();
-    private CommonAboutDialog about = null;
-    private CommonHelpDialog help = null;
-    private CommonSettingsDialog setdlg = null;
+    private CommonAboutDialog about;
+    private CommonHelpDialog help;
+    private CommonSettingsDialog setdlg;
     private IHex curHex = new Hex();
     private File curfileImage;
     private File curfile;
@@ -325,7 +325,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Apply the current Hex to the Board at the specified
      * location.
      */
-    public void paintHex(Coords c) {
+    private void paintHex(Coords c) {
         board.setHex(c, curHex.duplicate());
     }
 
@@ -334,7 +334,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      *
      * @param hex hex to set.
      */
-    public void setCurrentHex(IHex hex) {
+    private void setCurrentHex(IHex hex) {
         curHex = hex.duplicate();
         texElev.setText(Integer.toString(curHex.getElevation()));
         refreshTerrainList();
@@ -358,7 +358,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     /**
      * Refreshes the terrain list to match the current hex
      */
-    public void refreshTerrainList() {
+    private void refreshTerrainList() {
         lisTerrain.removeAll();
         for (int i = 0; i < Terrains.SIZE; i++) {
             ITerrain terrain = curHex.getTerrain(i);
@@ -483,7 +483,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      * stored; if not, calls "save as"; otherwise, saves
      * the board to the specified file.
      */
-    public void boardSave() {
+    private void boardSave() {
         if (curfile == null) {
             boardSaveAs();
             return;
@@ -504,7 +504,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     /**
      * Saves the board in PNG image format.
      */
-    public void boardSaveImage() {
+    private void boardSaveImage() {
         if (curfileImage == null) {
             boardSaveAsImage();
             return;
@@ -547,7 +547,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Opens a file dialog box to select a file to save as;
      * saves the board to the file.
      */
-    public void boardSaveAs() {
+    private void boardSaveAs() {
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
@@ -585,7 +585,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      * saves the board to the file as an image.  Useful
      * for printing boards.
      */
-    public void boardSaveAsImage() {
+    private void boardSaveAsImage() {
         JFileChooser fc = new JFileChooser(".");
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
@@ -599,7 +599,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             }
         });
         // Default to the board's name (if it has one).
-        String fileName = null;
+        String fileName;
         if (null != curfile && curfile.length() > 0) {
             fileName = curfile.getName().toUpperCase();
             if (fileName.endsWith(".BOARD")) { //$NON-NLS-1$
@@ -806,11 +806,11 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Toggles the minimap window
      * Also, toggles the minimap enabled setting
      */
-    public void toggleMap() {
+    private void toggleMap() {
         setMapVisible(!minimapW.isVisible());
     }
 
-    public void setMapVisible(boolean visible) {
+    private void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
     }
 }
@@ -819,10 +819,14 @@ public class BoardEditor extends JComponent implements ItemListener,
  * a quick class for the new map diaglogue box
  */
 class BoardNewDialog extends JDialog implements ActionListener {
-    public int xvalue, yvalue;
-    protected JLabel labWidth, labHeight;
-    protected JTextField texWidth, texHeight;
-    protected JButton butOkay, butCancel;
+    private int xvalue;
+    private int yvalue;
+    private JLabel labWidth;
+    private JLabel labHeight;
+    private JTextField texWidth;
+    private JTextField texHeight;
+    private JButton butOkay;
+    private JButton butCancel;
 
     BoardNewDialog(JFrame frame) {
         super(frame, Messages.getString("BoardEditor.SetDimentions"), true); //$NON-NLS-1$
@@ -842,30 +846,30 @@ class BoardNewDialog extends JDialog implements ActionListener {
         butCancel.setSize(80, 24);
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        getContentPane().setLayout(gridbag);
         c.fill = GridBagConstraints.NONE;
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.insets = new Insets(5, 5, 1, 1);
         gridbag.setConstraints(labWidth, c);
-        add(labWidth);
+        getContentPane().add(labWidth);
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(texWidth, c);
-        add(texWidth);
+        getContentPane().add(texWidth);
         c.gridwidth = GridBagConstraints.RELATIVE;
         gridbag.setConstraints(labHeight, c);
-        add(labHeight);
+        getContentPane().add(labHeight);
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(texHeight, c);
-        add(texHeight);
+        getContentPane().add(texHeight);
         c.ipadx = 20;
         c.ipady = 5;
         c.gridwidth = GridBagConstraints.RELATIVE;
         gridbag.setConstraints(butOkay, c);
-        add(butOkay);
+        getContentPane().add(butOkay);
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butCancel, c);
-        add(butCancel);
+        getContentPane().add(butCancel);
         pack();
         setResizable(false);
         setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
@@ -928,9 +932,9 @@ class ExitsDialog extends JDialog implements ActionListener {
         panExits.add(labBlank, BorderLayout.CENTER);
         panExits.add(panEast, BorderLayout.EAST);
         panExits.add(panSouth, BorderLayout.SOUTH);
-        setLayout(new BorderLayout());
-        add(panExits, BorderLayout.CENTER);
-        add(butDone, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(panExits, BorderLayout.CENTER);
+        getContentPane().add(butDone, BorderLayout.SOUTH);
         pack();
         setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
                 frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);

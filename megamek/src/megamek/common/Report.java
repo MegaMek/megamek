@@ -344,7 +344,7 @@ public class Report implements Serializable {
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Error: Report#getText --> Array Index out of Bounds Exception (index: " + index + ") for a report with ID " + this.messageId + ".  Maybe Report#add wasn't called enough times for the amount of tags in the message?");
-            return "[Reporting Error: see MegaMek.log for details]";
+            return "[Reporting Error: see megameklog.txt for details]";
         }
     }
 

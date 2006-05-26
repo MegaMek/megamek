@@ -48,6 +48,7 @@ v0.31.8-dev (CVS)
 + Refactor: Cleared off multiple UI classes in the same file by inner classing
   panels and externalising dialogs
 + Typo in above refactor... 
++ Don't refer to megamek.log in report error, but to megameklog.txt
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

@@ -135,7 +135,7 @@ Inner Sphere Level 2 Tech: [Note: All IS Level 1 tech is present in IS
 
  Equipment:
   ISCASE
-  ISGaurdianECM
+  ISGuardianECM
   ISArtemisIV
   ISMASC
   ISBeagleActiveProbe

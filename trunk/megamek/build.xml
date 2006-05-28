@@ -27,7 +27,7 @@
   <property name="cvsbuilddir" value="${cvsmaindir}/${builddir}"/>
   
   <!-- cvsroot used for cvs authentification --> 
-  <property name="cvsroot" value=":pserver:anonymous@cvs-pserver.sourceforge.net:80/cvsroot/megamek" />
+  <property name="cvsroot" value=":pserver:anonymous@megamek.cvs.sourceforge.net:/cvsroot/megamek" />
   
   <property name="timestampfile" value="${logdir}/timestamp"/>
   <property name="TinyXMLsrc" value="TinyXML07-src.zip" />

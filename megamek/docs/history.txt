@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.31.8-dev (CVS)
+v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment
 + Bug 1468738: Accidential DFA on tanks MISSES
 + Bug 1470202: Cannot kick buildings

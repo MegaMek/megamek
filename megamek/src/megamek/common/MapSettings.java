@@ -40,6 +40,7 @@ public class MapSettings implements Serializable {
     public static final int MOUNTAIN_VOLCANO_DORMANT = 2;
     public static final int MOUNTAIN_VOLCANO_ACTIVE = 3;
     public static final int MOUNTAIN_SNOWCAPPED = 4;
+    public static final int MOUNTAIN_LAKE = 5;
     
     private int boardWidth = 16;
     private int boardHeight = 17;

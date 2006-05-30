@@ -49,6 +49,7 @@ v0.31.8 (2006-05-28, 16:58 GMT)
   panels and externalising dialogs
 + Typo in above refactor... 
 + Don't refer to megamek.log in report error, but to megameklog.txt
++ Patch 1495220: mountain lakes
 
 v0.31.7 (2006-04-13, 13:30 GMT)
 + RFE 1443896: Roll command - show what dice were rolled.

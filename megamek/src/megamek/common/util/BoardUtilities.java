@@ -948,6 +948,15 @@ public class BoardUtilities {
                     case MapSettings.MOUNTAIN_VOLCANO_DORMANT:
                         hex.setTheme("lunar");
                         break;
+                    case MapSettings.MOUNTAIN_LAKE:
+                        int lake = (width/4);
+                        int depth = ((lake - distance) +1);
+                        if(depth < 1) {  //eliminates depth 0 water
+                        	depth = 1;
+                        }
+                        hex.addTerrain(tf.createTerrain(Terrains.WATER,(depth)));
+                        elev -= (Math.abs(lake - elev) -1);
+                        break;    
                     }
                 }
                 if(elev == height) {

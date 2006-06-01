@@ -15528,15 +15528,16 @@ public class Server implements Runnable {
         }
         Entity entity = game.getEntity(r.subject);
         Player owner = null;
-        if (entity != null)
+        if (entity != null) {
             owner = entity.getOwner();
+            //off board (Artillery) units get treated as public messages
+            if ( entity.isOffBoard() )
+                return r;
+        }
         if (!omitCheck && (entity == null || owner == null)) {
             System.err.println("Error: Attempting to filter a Report object that is not public but has a subject (" + entity + ") with owner (" + owner + ").\n\tmessageId: " + r.messageId);
             return r;
         }
-        //off board (Artillery) units get treated as public messages
-        if ( entity.isOffBoard() )
-            return r;
         Report copy = new Report(r);
         for (int j = 0; j < copy.dataCount(); j++) {
             if (omitCheck || !canSee(p, entity)) {

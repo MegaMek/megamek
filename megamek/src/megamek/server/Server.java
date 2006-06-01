@@ -9805,6 +9805,7 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.indent();
         r.add(target.getDisplayName());
+        r.add(armName);
         r.newlines = 0;
         addReport(r);
 

@@ -4,6 +4,7 @@ v0.31.9 (CVS)
 + Bug 1497813: NPE on player reconnect
 + Bug 1496668: Plasma Rifle Subtracts heat instead of dealing heat.
 + Bug 1487415: A Bug With Water/Buildings/Skidding
++ Bug 1483413: Stealth armor bug
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

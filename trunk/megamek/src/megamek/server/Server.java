@@ -8767,6 +8767,7 @@ public class Server implements Runnable {
                     r.subject = subjectId;
                     r.indent(2);
                     r.add(5);
+                    r.choose(true);
                     r.newlines = 0;
                     addReport(r);
                     entityTarget.heatBuildup += 5;

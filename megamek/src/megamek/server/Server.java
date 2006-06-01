@@ -3174,7 +3174,7 @@ public class Server implements Runnable {
             //set elevation in case of collapses
             entity.setElevation(step.getElevation());
 
-            final IHex curHex = game.getBoard().getHex(curPos);
+            IHex curHex = game.getBoard().getHex(curPos);
 
             // check for automatic unstick
             if(entity.canUnstickByJumping() && entity.isStuck() && moveType == IEntityMovementType.MOVE_JUMP) {
@@ -3208,7 +3208,8 @@ public class Server implements Runnable {
                     int    skidDistance = 0;
                     Enumeration targets = null;
                     Entity target = null;
-                    int    curElevation;
+                    int    curAltitude;
+                    int    nextAltitude;
                     int    nextElevation;
                     int skidDirection = prevFacing;
 
@@ -3284,33 +3285,50 @@ public class Server implements Runnable {
                             break;
                         }
 
-                        // Hovercraft can "skid" over water.
-                        // all units can skid over ice.
-                        // TODO: allow entities to occupy different levels of
-                        //       buildings.
-                        curElevation = curHex.floor();
-                        nextElevation = nextHex.floor();
-                        if ( entity instanceof Tank &&
-                             entity.getMovementMode() ==
-                             IEntityMovementMode.HOVER ) {
-                            if ( curHex.containsTerrain(Terrains.WATER) ) {
-                                curElevation = curHex.surface();
+                        // By default, the unit is going to fall to the floor of the next hex
+                        curAltitude = entity.getElevation() + curHex.getElevation();
+                        nextAltitude = nextHex.floor();
+                        
+                        // Is there a building to "catch" the unit?
+                        if(nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
+                            //unit will land on the roof, if at a higher level,
+                            //otherwise it will skid through the wall onto the same floor.
+                            nextAltitude = Math.min(curAltitude, 
+                                    nextHex.getElevation() + 
+                                    nextHex.terrainLevel(Terrains.BLDG_ELEV));
+                        }
+                        // Is there a bridge to "catch" the unit?
+                        if(nextHex.containsTerrain(Terrains.BRIDGE)) {
+                            //unit will land on the bridge, if at a higher level,
+                            //and the bridge exits towards the current hex,
+                            //otherwise the bridge has no effect
+                            int exitDir = (skidDirection + 3) % 6;
+                            exitDir = 1<<exitDir;
+                            if((nextHex.getTerrain(Terrains.BRIDGE).getExits() & exitDir) == exitDir) {
+                                nextAltitude = Math.min(curAltitude,Math.max(nextAltitude, 
+                                        nextHex.getElevation() + 
+                                        nextHex.terrainLevel(Terrains.BRIDGE_ELEV)));
                             }
-                            if ( nextHex.containsTerrain(Terrains.WATER) ) {
-                                nextElevation += nextHex.surface();
-                            }
-                        } else {
-                            if(curHex.containsTerrain(Terrains.ICE)) {
-                                curElevation = curHex.surface();
-                            }
-                            if(nextHex.containsTerrain(Terrains.ICE)) {
-                                nextElevation = nextHex.surface();
+                        }
+                        if(nextAltitude <= nextHex.surface() && curAltitude >= curHex.surface()) {
+                            // Hovercraft can "skid" over water.
+                            // all units can skid over ice.
+                            if ( entity instanceof Tank &&
+                                 entity.getMovementMode() ==
+                                 IEntityMovementMode.HOVER ) {
+                                if ( nextHex.containsTerrain(Terrains.WATER) ) {
+                                    nextAltitude = nextHex.surface();
+                                }
+                            } else {
+                                if(nextHex.containsTerrain(Terrains.ICE)) {
+                                    nextAltitude = nextHex.surface();
+                                }
                             }
                         }
 
                         // BMRr pg. 22 - Can't skid uphill,
                         //      but can skid downhill.
-                        if ( curElevation < nextElevation ) {
+                        if ( curAltitude < nextAltitude ) {
                             r = new Report(2045);
                             r.subject = entity.getId();
                             r.indent();
@@ -3321,28 +3339,40 @@ public class Server implements Runnable {
                             break;
                         }
 
-                        // Have skidding units suffer falls.
-                        else if ( curElevation > nextElevation + 1 ) {
+                        // Have skidding units suffer falls (off a cliff).
+                        else if ( curAltitude > nextAltitude + 1 ) {
                             doEntityFallsInto( entity, curPos, nextPos,
                                                entity.getBasePilotingRoll() );
                             doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
                             // Stay in the current hex and stop skidding.
                             break;
                         }
+                        
+                        //The elevation the skidding unit will occupy in next hex
+                        nextElevation = nextAltitude - nextHex.surface();
 
                         // Get any building in the hex.
-                        Building bldg = game.getBoard().getBuildingAt(nextPos);
+                        Building bldg = null;
+                        if(nextElevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)) {
+                            //We will only run into the building if its at a higher level,
+                            //otherwise we skid over the roof
+                            bldg = game.getBoard().getBuildingAt(nextPos);
+                        }
                         boolean bldgSuffered = false;
                         boolean stopTheSkid = false;
                         // Does the next hex contain an entities?
                         // ASSUMPTION: hurt EVERYONE in the hex.
-                        // TODO: allow entities to occupy different levels of
-                        //       buildings, and only skid into a single level.
                         targets = game.getEntities( nextPos );
                         if ( targets.hasMoreElements()) {
                             boolean skidChargeHit = false;
                             while ( targets.hasMoreElements() ) {
                                 target = (Entity) targets.nextElement();
+                                
+                                if(target.getElevation() > nextElevation + entity.getHeight()
+                                        || target.absHeight() < nextElevation) {
+                                    //target is not in the way
+                                    continue;
+                                }
 
                                 // TODO : allow ready targets to move out of way
 
@@ -3359,15 +3389,10 @@ public class Server implements Runnable {
                                          || entity.getMovementMode() == IEntityMovementMode.NAVAL
                                          || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL)
                                          && 0 < nextHex.terrainLevel(Terrains.WATER)
-                                         && target.getElevation() < 0) {
-                                        if ( 2 <= nextHex.terrainLevel(Terrains.WATER) ||
-                                             target.isProne() ) {
-                                            // Hovercraft/Naval Craft can't hit the Mek.
-                                            continue;
-                                        }
-                                        else {
-                                            toHit.setHitTable(ToHitData.HIT_PUNCH);
-                                        }
+                                         && target.getElevation() == -1
+                                         && !target.isProne()) {
+                                        //surface vessel striking a half-submerged mech
+                                        toHit.setHitTable(ToHitData.HIT_PUNCH);
                                     } else if ( entity.getHeight() <
                                                 target.getHeight() ) {
                                         toHit.setHitTable(ToHitData.HIT_KICK);
@@ -3419,6 +3444,7 @@ public class Server implements Runnable {
                                         r.subject = entity.getId();
                                         addReport(r);
                                     } else {
+                                        //TODO: this is the place where the target gets a chance to move away
                                         // Resolve the charge.
                                         resolveChargeDamage
                                             (entity, target, toHit, skidDirection);
@@ -3520,9 +3546,6 @@ public class Server implements Runnable {
                         }
 
                         // Handle the building in the hex.
-                        // TODO : BMRr pg. 22, only count buildings that are
-                        //      higher than our starting terrain height.
-                        // TODO: allow units to skid on top of buildings.
                         if ( bldg != null ) {
 
                             // Report that the entity has entered the bldg.
@@ -3581,6 +3604,19 @@ public class Server implements Runnable {
                         if ( stopTheSkid ) {
                             break;
                         }
+                        
+                        // Update entity position and elevation
+                        entity.setPosition(nextPos);
+                        entity.setElevation(nextElevation);
+                        doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
+                        
+                        //Check for collapse of any building the entity might be on
+                        Building roof = game.getBoard().getBuildingAt(nextPos);
+                        if(roof != null) {
+                            if(checkForCollapse(roof, game.getPositionMap()))
+                                break; //stop skidding if the building collapsed
+                        }
+                        
                         // is the next hex a rubble hex?
                         rollTarget = entity.checkRubbleMove(step, nextHex,
                                                 curPos, nextPos);
@@ -3594,7 +3630,8 @@ public class Server implements Runnable {
                         }
 
                         //check for breaking magma crust
-                        if(curHex.terrainLevel(Terrains.MAGMA) == 1) {
+                        if(nextHex.terrainLevel(Terrains.MAGMA) == 1
+                                && nextElevation == 0) {
                             int roll = Compute.d6(1);
                             r = new Report(2395);
                             r.addDesc(entity);
@@ -3602,8 +3639,8 @@ public class Server implements Runnable {
                             r.subject = entity.getId();
                             addReport(r);
                             if(roll == 6) {
-                                curHex.removeTerrain(Terrains.MAGMA);
-                                curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
+                                nextHex.removeTerrain(Terrains.MAGMA);
+                                nextHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
                                 sendChangedHex(curPos);
                                 for(Enumeration e=game.getEntities(curPos);e.hasMoreElements();) {
                                     Entity en = (Entity)e.nextElement();
@@ -3614,7 +3651,8 @@ public class Server implements Runnable {
                         }
 
                         //check for entering liquid magma
-                        if(curHex.terrainLevel(Terrains.MAGMA) == 2) {
+                        if(nextHex.terrainLevel(Terrains.MAGMA) == 2
+                                && nextElevation == 0) {
                             doMagmaDamage(entity, false);
                         }
 
@@ -3634,9 +3672,8 @@ public class Server implements Runnable {
                         }
 
                         // Update the position and keep skidding.
-                        entity.setPosition( nextPos );
-                        doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
                         curPos = nextPos;
+                        curHex = nextHex;
                         r = new Report(2085);
                         r.subject = entity.getId();
                         r.indent();

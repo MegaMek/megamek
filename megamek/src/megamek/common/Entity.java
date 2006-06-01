@@ -3013,11 +3013,14 @@ public abstract class Entity extends TurnOrdered
 
     public Entity getC3Top() {
         Entity m = this;
-        while ((m.getC3Master() != null)
-                && !m.getC3Master().equals(m)
-                && m.getC3Master().hasC3()
-                && !(Compute.isAffectedByECM(m, m.getPosition(), m.getC3Master().getPosition()))) {
-            m = m.getC3Master();
+        Entity master = m.getC3Master();
+        while ((master != null)
+                && !master.equals(m)
+                && master.hasC3()
+                && !(Compute.isAffectedByECM(m, m.getPosition(), master.getPosition()))
+                && !(Compute.isAffectedByECM(master, master.getPosition(), master.getPosition()))) {
+            m = master;
+            master = m.getC3Master();
         }
         return m;
     }
@@ -3191,7 +3194,8 @@ public abstract class Entity extends TurnOrdered
         // C3i is easy - if they both have C3i, and their net ID's match, they're on the same network!
         if (hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
             // check for ECM interference
-            return !(Compute.isAffectedByECM(e, e.getPosition(), getPosition()));
+            return !(Compute.isAffectedByECM(e, e.getPosition(), getPosition()))
+                && !(Compute.isAffectedByECM(this, getPosition(), getPosition()));
         }
 
         // simple sanity check - do they both have C3, and are they both on the same network?

@@ -1735,7 +1735,8 @@ public final class BoardView1
             if (eMaster.getPosition() == null) return;
 
             // ECM cuts off the network
-            if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())) {
+            if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())
+                    &&!Compute.isAffectedByECM(eMaster, eMaster.getPosition(), eMaster.getPosition())) {
                 C3Sprites.add(new C3Sprite(e, e.getC3Master()));
             }
         }

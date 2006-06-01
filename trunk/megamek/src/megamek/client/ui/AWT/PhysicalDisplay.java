@@ -781,7 +781,7 @@ public class PhysicalDisplay
         // Build the rest of the warning string.
         // Use correct text when the target is an iNarc pod.
         if (Targetable.TYPE_INARC_POD == target.getTargetType()) {
-            warn.append(Messages.getString("PhysicalDisplay.brushOff1")); //$NON-NLS-1$
+            warn.append(Messages.getString("PhysicalDisplay.brushOff1",new Object[]{target})); //$NON-NLS-1$
         }
         else {
             warn.append(Messages.getString("PhysicalDisplay.brushOff2")); //$NON-NLS-1$

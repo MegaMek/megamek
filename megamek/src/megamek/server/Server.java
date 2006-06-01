@@ -14465,7 +14465,8 @@ public class Server implements Runnable {
         }
         // equipment marked missing
         for (Mounted mounted : en.getEquipment()) {
-            if (mounted.getLocation() == loc) {
+            if (mounted.getLocation() == loc
+                    && mounted.getType().isHittable()) {
                 mounted.setMissing(true);
             }
         }

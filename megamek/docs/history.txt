@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.31.9 (CVS)
 + Bug 1497813: NPE on player reconnect
++ Bug 1496668: Plasma Rifle Subtracts heat instead of dealing heat.
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

@@ -17,11 +17,12 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.common.Player;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import java.awt.BorderLayout;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -31,7 +32,7 @@ import java.util.Enumeration;
 public class PlayerListDialog
         extends JDialog implements ActionListener {
     private JButton butClose = new JButton(Messages.getString("PlayerListDialog.Close")); //$NON-NLS-1$
-    private List playerList = new List();
+    private JList playerList = new JList(new DefaultListModel());
 
     private Client client;
 
@@ -69,8 +70,8 @@ public class PlayerListDialog
      * Refreshes the player list component with information
      * from the game object.
      */
-    public static void refreshPlayerList(List playerList, Client client) {
-        playerList.removeAll();
+    public static void refreshPlayerList(JList playerList, Client client) {
+        ((DefaultListModel) playerList.getModel()).removeAllElements();
         for (Enumeration e = client.getPlayers(); e.hasMoreElements();) {
             final Player player = (Player) e.nextElement();
             StringBuffer playerDisplay = new StringBuffer(player.getName());
@@ -87,7 +88,7 @@ public class PlayerListDialog
                 playerDisplay.append(Messages.getString("PlayerListDialog.player_done")); //$NON-NLS-1$
                 playerDisplay.append(')'); //$NON-NLS-1$
             }
-            playerList.add(playerDisplay.toString());
+            ((DefaultListModel) playerList.getModel()).addElement(playerDisplay.toString());
         }
     }
 

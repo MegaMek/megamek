@@ -22,15 +22,18 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -45,7 +48,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class CommonSettingsDialog extends ClientDialog
-        implements ActionListener, ItemListener, FocusListener {
+        implements ActionListener, ItemListener, FocusListener, ListSelectionListener {
     private JTabbedPane panTabs;
 
     private JCheckBox minimapEnabled;
@@ -82,7 +85,7 @@ public class CommonSettingsDialog extends ClientDialog
 
     private JCheckBox showMapsheets;
 
-    private List keys;
+    private JList keys;
     private int keysIndex = 0;
     private JTextField value;
 
@@ -498,13 +501,8 @@ public class CommonSettingsDialog extends ClientDialog
         if (source.equals(keepGameLog)) {
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             //gameLogMaxSize.setEnabled(keepGameLog.isSelected());
-        }
-        if (source.equals(stampFilenames)) {
+        } else if (source.equals(stampFilenames)) {
             stampFormat.setEnabled(stampFilenames.isSelected());
-        }
-        if (event.getSource().equals(keys) && event.getStateChange() == ItemEvent.SELECTED) {
-            value.setText(GUIPreferences.getInstance().getString("Advanced" + keys.getSelectedItem()));
-            keysIndex = keys.getSelectedIndex();
         }
     }
 
@@ -512,13 +510,12 @@ public class CommonSettingsDialog extends ClientDialog
     }
 
     public void focusLost(FocusEvent e) {
-        GUIPreferences.getInstance().setValue("Advanced" + keys.getItem(keysIndex), value.getText());
+        GUIPreferences.getInstance().setValue("Advanced" + keys.getModel().getElementAt(keysIndex), value.getText());
     }
 
     private JPanel getAdvancedSettingsPanel() {
         JPanel p = new JPanel();
 
-        keys = new List(10, false);
         String[] s = GUIPreferences.getInstance().getAdvancedProperties();
         //You would think that a simple "Arrays.sort(s)" would work below,
         // but it does not.  Something funky is going on with the
@@ -533,9 +530,11 @@ public class CommonSettingsDialog extends ClientDialog
             }
         });
         for (int i = 0; i < s.length; i++) {
-            keys.add(s[i].substring(s[i].indexOf("Advanced") + 8, s[i].length()));
+            s[i] = s[i].substring(s[i].indexOf("Advanced") + 8, s[i].length());
         }
-        keys.addItemListener(this);
+        keys = new JList(s);
+        keys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        keys.addListSelectionListener(this);
         p.add(keys);
 
         value = new JTextField(10);
@@ -543,5 +542,12 @@ public class CommonSettingsDialog extends ClientDialog
         p.add(value);
 
         return p;
+    }
+
+    public void valueChanged(ListSelectionEvent event) {
+        if (event.getSource().equals(keys)) {
+            value.setText(GUIPreferences.getInstance().getString("Advanced" + keys.getSelectedValue()));
+            keysIndex = keys.getSelectedIndex();
+        }
     }
 }

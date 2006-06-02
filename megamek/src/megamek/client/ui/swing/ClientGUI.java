@@ -48,6 +48,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -60,7 +61,6 @@ import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.PopupMenu;
-import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -101,7 +101,7 @@ public class ClientGUI
     // keep me
     private ChatterBox cb;
     public BoardView1 bv;
-    private JPanel scroller;
+    private JScrollPane scroller;
     public JDialog mechW;
     public MechDisplay mechD;
     public JDialog minimapW;
@@ -277,19 +277,8 @@ public class ClientGUI
             bv = new BoardView1(client.game, frame, this);
 
             // Place the board viewer in a set of scrollbars.
-            scroller = new JPanel();
-            scroller.setLayout(new BorderLayout());
-            Scrollbar vertical = new Scrollbar(Scrollbar.VERTICAL);
-            Scrollbar horizontal = new Scrollbar(Scrollbar.HORIZONTAL);
-            scroller.add(bv, BorderLayout.CENTER);
-            // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
-            if ("false".equals(System.getProperty
-                    ("megamek.client.clientgui.hidescrollbars", "false"))) { //$NON-NLS-1$
-                // Assign the scrollbars to the board viewer.
-                scroller.add(vertical, BorderLayout.EAST);
-                scroller.add(horizontal, BorderLayout.SOUTH);
-                bv.setScrollbars(vertical, horizontal);
-            }
+            scroller = new JScrollPane(bv);
+            bv.setScrollbars(scroller.getVerticalScrollBar(), scroller.getHorizontalScrollBar());
         } catch (IOException e) {
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
@@ -377,7 +366,7 @@ public class ClientGUI
         if ((x + 10) >= screenSize.width || (x + w) < 10) {
             x = screenSize.width - w;
         }
-        if ((y +10 ) > screenSize.height || (y + h)  < 10 ) {
+        if ((y + 10) > screenSize.height || (y + h) < 10) {
             y = screenSize.height - h;
         }
         minimapW.setLocation(x, y);

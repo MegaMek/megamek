@@ -42,6 +42,8 @@ import megamek.common.util.DistractableAdapter;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -66,23 +68,23 @@ TargetingDisplay is too easy to confuse with something else*/
 public class TargetingPhaseDisplay
         extends StatusBarPhaseDisplay
         implements GameListener, ActionListener, DoneButtoned,
-        KeyListener, ItemListener, BoardViewListener, Distractable {
+        KeyListener, ItemListener, BoardViewListener, Distractable, ListSelectionListener {
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
     // Action command names
-    public static final String FIRE_FIRE = "fireFire"; //$NON-NLS-1$
-    public static final String FIRE_MODE = "fireMode"; //$NON-NLS-1$
-    public static final String FIRE_FLIP_ARMS = "fireFlipArms"; //$NON-NLS-1$
-    public static final String FIRE_NEXT = "fireNext"; //$NON-NLS-1$
-    public static final String FIRE_NEXT_TARG = "fireNextTarg"; //$NON-NLS-1$
-    public static final String FIRE_SKIP = "fireSkip"; //$NON-NLS-1$
-    public static final String FIRE_TWIST = "fireTwist"; //$NON-NLS-1$
-    public static final String FIRE_CANCEL = "fireCancel"; //$NON-NLS-1$
-    public static final String FIRE_SEARCHLIGHT = "fireSearchlight"; //$NON-NLS-1$
+    private static final String FIRE_FIRE = "fireFire"; //$NON-NLS-1$
+    private static final String FIRE_MODE = "fireMode"; //$NON-NLS-1$
+    private static final String FIRE_FLIP_ARMS = "fireFlipArms"; //$NON-NLS-1$
+    private static final String FIRE_NEXT = "fireNext"; //$NON-NLS-1$
+    private static final String FIRE_NEXT_TARG = "fireNextTarg"; //$NON-NLS-1$
+    private static final String FIRE_SKIP = "fireSkip"; //$NON-NLS-1$
+    private static final String FIRE_TWIST = "fireTwist"; //$NON-NLS-1$
+    private static final String FIRE_CANCEL = "fireCancel"; //$NON-NLS-1$
+    private static final String FIRE_SEARCHLIGHT = "fireSearchlight"; //$NON-NLS-1$
 
     // parent game
-    public ClientGUI clientgui;
+    private ClientGUI clientgui;
     private Client client;
 
     // buttons
@@ -99,8 +101,6 @@ public class TargetingPhaseDisplay
     private JButton butDone;
     private JButton butSearchlight;
 
-    private int buttonLayout;
-
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE;        // current entity number
     private Targetable target;        // target
@@ -114,9 +114,8 @@ public class TargetingPhaseDisplay
 
     private final int phase;
 
-    private Entity[] visibleTargets = null;
+    private Entity[] visibleTargets;
     private int lastTargetID = -1;
-    private boolean showTargetChoice = true;
 
     /**
      * Creates and lays out a new targeting phase display
@@ -184,7 +183,6 @@ public class TargetingPhaseDisplay
 
         // layout button grid
         panButtons = new JPanel();
-        buttonLayout = 0;
         setupButtonPanel();
 
         // layout screen
@@ -233,7 +231,7 @@ public class TargetingPhaseDisplay
         addKeyListener(this);
 
         // mech display.
-        clientgui.mechD.wPan.weaponList.addItemListener(this);
+        clientgui.mechD.wPan.weaponList.addListSelectionListener(this);
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
     }
 
@@ -247,20 +245,14 @@ public class TargetingPhaseDisplay
         panButtons.removeAll();
         panButtons.setLayout(new GridLayout(0, 8));
 
-        switch (buttonLayout) {
-            case 0:
-                panButtons.add(butNext);
-                panButtons.add(butFire);
-                panButtons.add(butSkip);
-                panButtons.add(butNextTarg);
-                panButtons.add(butFlipArms);
-                panButtons.add(butTwist);
-                panButtons.add(butFireMode);
-                panButtons.add(butSearchlight);
-                // panButtons.add(butDone);
-                break;
-
-        }
+        panButtons.add(butNext);
+        panButtons.add(butFire);
+        panButtons.add(butSkip);
+        panButtons.add(butNextTarg);
+        panButtons.add(butFlipArms);
+        panButtons.add(butTwist);
+        panButtons.add(butFireMode);
+        panButtons.add(butSearchlight);
 
         validate();
     }
@@ -268,7 +260,7 @@ public class TargetingPhaseDisplay
     /**
      * Selects an entity, by number, for movement.
      */
-    public void selectEntity(int en) {
+    private void selectEntity(int en) {
         // clear any previously considered attacks
         if (en != cen) {
             clearAttacks();
@@ -486,7 +478,7 @@ public class TargetingPhaseDisplay
         // and add it into the game, temporarily
         client.game.addAction(saa);
         clientgui.bv.addAttack(saa);
-        clientgui.bv.repaint(100);
+        clientgui.bv.repaint(100L);
         clientgui.minimap.drawMap();
 
         //refresh weapon panel, as bth will have changed
@@ -519,7 +511,7 @@ public class TargetingPhaseDisplay
                 ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
             Mounted ammoMount = mounted.getLinked();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
-            if (((AmmoType) (ammoMount.getType())).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+            if (((AmmoType) ammoMount.getType()).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
@@ -532,7 +524,7 @@ public class TargetingPhaseDisplay
         // and add it into the game, temporarily
         client.game.addAction(waa);
         clientgui.bv.addAttack(waa);
-        clientgui.bv.repaint(100);
+        clientgui.bv.repaint(100L);
         clientgui.minimap.drawMap();
 
         // set the weapon as used
@@ -604,7 +596,7 @@ public class TargetingPhaseDisplay
         // remove temporary attacks from game & board
         client.game.removeActionsFor(cen);
         clientgui.bv.removeAttacksFor(cen);
-        clientgui.bv.repaint(100);
+        clientgui.bv.repaint(100L);
 
     }
 
@@ -737,9 +729,10 @@ public class TargetingPhaseDisplay
                 int rangeToX = ce().getPosition().distance(entX.getPosition());
                 int rangeToY = ce().getPosition().distance(entY.getPosition());
 
-                if (rangeToX == rangeToY) return ((entX.getId() < entY.getId()) ? -1 : 1);
+                if (rangeToX == rangeToY)
+                    return entX.getId() < entY.getId() ? -1 : 1;
 
-                return ((rangeToX < rangeToY) ? -1 : 1);
+                return rangeToX < rangeToY ? -1 : 1;
             }
         };
 
@@ -790,13 +783,11 @@ public class TargetingPhaseDisplay
             return;
         
         // HACK : don't show the choice dialog.
-        showTargetChoice = false;
 
         clientgui.bv.centerOnHex(targ.getPosition());
         clientgui.getBoardView().select(targ.getPosition());
         
         // HACK : show the choice dialog again.
-        showTargetChoice = true;
         target(targ);
     }
 
@@ -1085,10 +1076,6 @@ public class TargetingPhaseDisplay
             return;
         }
 
-        if (ev.getItemSelectable().equals(clientgui.mechD.wPan.weaponList)) {
-            // update target data in weapon display
-            updateTarget();
-        }
     }
 
     // board view listener
@@ -1163,7 +1150,13 @@ public class TargetingPhaseDisplay
     public void removeAllListeners() {
         client.game.removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-        clientgui.mechD.wPan.weaponList.removeItemListener(this);
+        clientgui.mechD.wPan.weaponList.removeListSelectionListener(this);
     }
 
+    public void valueChanged(ListSelectionEvent event) {
+        if (event.getSource().equals(clientgui.mechD.wPan.weaponList)) {
+            // update target data in weapon display
+            updateTarget();
+        }
+    }
 }

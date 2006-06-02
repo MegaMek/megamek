@@ -54,6 +54,8 @@ import megamek.common.util.DistractableAdapter;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -75,19 +77,17 @@ import java.util.Vector;
 public class FiringDisplay
         extends StatusBarPhaseDisplay
         implements BoardViewListener, GameListener, ActionListener, DoneButtoned,
-        KeyListener, ItemListener, Distractable {
+        KeyListener, ItemListener, Distractable, ListSelectionListener {
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
     private static final int NUM_BUTTON_LAYOUTS = 2;
 
-    // Action command names
-    public static final String FIRE_AIM = "fireAim"; //$NON-NLS-1$
     public static final String FIRE_FIND_CLUB = "fireFindClub"; //$NON-NLS-1$
     public static final String FIRE_FIRE = "fireFire"; //$NON-NLS-1$
     public static final String FIRE_MODE = "fireMode"; //$NON-NLS-1$
     public static final String FIRE_FLIP_ARMS = "fireFlipArms"; //$NON-NLS-1$
-    public static final String FIRE_MORE = "fireMore"; //$NON-NLS-1$
+    private static final String FIRE_MORE = "fireMore"; //$NON-NLS-1$
     public static final String FIRE_NEXT = "fireNext"; //$NON-NLS-1$
     public static final String FIRE_NEXT_TARG = "fireNextTarg"; //$NON-NLS-1$
     public static final String FIRE_SKIP = "fireSkip"; //$NON-NLS-1$
@@ -97,7 +97,7 @@ public class FiringDisplay
     public static final String FIRE_SEARCHLIGHT = "fireSearchlight"; //$NON-NLS-1$
 
     // parent game
-    public Client client;
+    private Client client;
     private ClientGUI clientgui;
     // buttons
     private JComponent panButtons;
@@ -270,7 +270,7 @@ public class FiringDisplay
         addKeyListener(this);
         
         // mech display.
-        clientgui.mechD.wPan.weaponList.addItemListener(this);
+        clientgui.mechD.wPan.weaponList.addListSelectionListener(this);
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
 
         ash = new AimedShotHandler();
@@ -330,14 +330,14 @@ public class FiringDisplay
 
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.
-            if (null == ce().getPosition()) {
+            if (ce().getPosition() == null) {
 
                 // Walk through the list of entities for this player.
                 for (int nextId = client.getNextEntityNum(en);
                      nextId != en;
                      nextId = client.getNextEntityNum(nextId)) {
 
-                    if (null != client.game.getEntity(nextId).getPosition()) {
+                    if (client.game.getEntity(nextId).getPosition() != null) {
                         cen = nextId;
                         break;
                     }
@@ -345,7 +345,7 @@ public class FiringDisplay
                 } // Check the player's next entity.
 
                 // We were *supposed* to have found an on-board entity.
-                if (null == ce().getPosition()) {
+                if (ce().getPosition() == null) {
                     System.err.println
                             ("FiringDisplay: could not find an on-board entity: " + //$NON-NLS-1$
                             en);
@@ -355,11 +355,11 @@ public class FiringDisplay
             } // End ce()-not-on-board
 
             int lastTarget = ce().getLastTarget();
-            if(ce() instanceof Mech) {
-                int grapple = ((Mech)ce()).getGrappled();
-                if(grapple != Entity.NONE) {
+            if (ce() instanceof Mech) {
+                int grapple = ((Mech) ce()).getGrappled();
+                if (grapple != Entity.NONE) {
                     lastTarget = grapple;
-                }            
+                }
             }
             Entity t = client.game.getEntity(lastTarget);
             target(t);
@@ -405,7 +405,7 @@ public class FiringDisplay
 
         // There's special processing for triggering AP Pods.
         if (client.game.getTurn() instanceof GameTurn.TriggerAPPodTurn &&
-                null != ce()) {
+                ce() != null) {
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog
                     (clientgui.getFrame(), ce());
@@ -431,9 +431,9 @@ public class FiringDisplay
     private void endMyTurn() {
         // end my turn, then.
         Entity next = client.game.getNextEntity(client.game.getTurnIndex());
-        if (IGame.PHASE_FIRING == client.game.getPhase()
-                && null != next
-                && null != ce()
+        if (client.game.getPhase() == IGame.PHASE_FIRING
+                && next != null
+                && ce() != null
                 && next.getOwnerId() != ce().getOwnerId()) {
             clientgui.setDisplayVisible(false);
         }
@@ -472,7 +472,7 @@ public class FiringDisplay
         int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
 
         // Do nothing we have no unit selected.
-        if (null == ce()) {
+        if (ce() == null) {
             return;
         }
 
@@ -547,7 +547,7 @@ public class FiringDisplay
      * Get the next target. Return null if we don't have any targets.
      */
     private Entity getNextTarget() {
-        if (null == visibleTargets)
+        if (visibleTargets == null)
             return null;
 
         lastTargetID++;
@@ -564,7 +564,7 @@ public class FiringDisplay
     private void jumpToNextTarget() {
         Entity targ = getNextTarget();
 
-        if (null == targ)
+        if (targ == null)
             return;
 
         // HACK : don't show the choice dialog.
@@ -714,7 +714,7 @@ public class FiringDisplay
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
                 target.getTargetId(), weaponNum);
 
-        if (null != mounted.getLinked() &&
+        if (mounted.getLinked() != null &&
                 ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
@@ -980,7 +980,7 @@ public class FiringDisplay
     private void torsoTwist(Coords target) {
         int direction = ce().getFacing();
 
-        if (null != target)
+        if (target != null)
             direction = ce().clipSecondaryFacing(ce().getPosition().direction(target));
 
         if (direction != ce().getSecondaryFacing()) {
@@ -1135,7 +1135,7 @@ public class FiringDisplay
 
         if (ev.getSource().equals(butDone)) {
             ready();
-        } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) { //$NON-NLS-1$
+        } else if ("viewGameOptions".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
             // Make sure the game options dialog is not editable.
             if (clientgui.getGameOptionsDialog().isEditable()) {
                 clientgui.getGameOptionsDialog().setEditable(false);
@@ -1166,7 +1166,7 @@ public class FiringDisplay
             // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getActionCommand().equals(FIRE_MODE)) {
             changeMode();
-        } else if ((ev.getActionCommand().equalsIgnoreCase("changeSinks"))
+        } else if (("changeSinks".equalsIgnoreCase(ev.getActionCommand()))
                 || (ev.getActionCommand().equals(FIRE_CANCEL))) {
             clearAttacks();
             clientgui.getBoardView().select(null);
@@ -1322,11 +1322,6 @@ public class FiringDisplay
         if (isIgnoringEvents()) {
             return;
         }
-
-        if (ev.getItemSelectable().equals(clientgui.mechD.wPan.weaponList)) {
-            // update target data in weapon display
-            updateTarget();
-        }
     }
 
     // board view listener
@@ -1361,6 +1356,13 @@ public class FiringDisplay
             if (e.isDeployed()) {
                 clientgui.bv.centerOnHex(e.getPosition());
             }
+        }
+    }
+
+    public void valueChanged(ListSelectionEvent event) {
+        if (event.getSource().equals(clientgui.mechD.wPan.weaponList)) {
+            // update target data in weapon display
+            updateTarget();
         }
     }
 
@@ -1561,7 +1563,7 @@ public class FiringDisplay
             allowAim = ((target != null) && ce().hasAimModeTargComp() && target instanceof Mech);
             if (allowAim) {
                 if (lockedLocation) {
-                    allowAim = ((Entity) target).equals(lockedTarget);
+                    allowAim = target.equals(lockedTarget);
                     if (allowAim) {
                         aimingMode = IAimingModes.AIM_MODE_TARG_COMP;
                         return;
@@ -1710,7 +1712,7 @@ public class FiringDisplay
     public void removeAllListeners() {
         client.game.removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-        clientgui.mechD.wPan.weaponList.removeItemListener(this);
+        clientgui.mechD.wPan.weaponList.removeListSelectionListener(this);
     }
 
     /**
@@ -1723,7 +1725,7 @@ public class FiringDisplay
         boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
-        Enumeration choices = null;
+        Enumeration choices;
         
         // Get the available choices, depending on friendly fire
         if (friendlyFire) {

@@ -16,14 +16,12 @@ package megamek.client.ui.swing.widget;
 
 import javax.swing.JPanel;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.LayoutManager;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * BufferedPanel required for use PicMap with AWT. To avoid
@@ -34,11 +32,9 @@ import java.util.Vector;
 public class BufferedPanel extends JPanel implements ComponentListener {
 
     //Vector of Background Drawers
-    private Vector bgDrawers = new Vector();
-    private Dimension preferredSize = new Dimension();
+    private ArrayList<BackGroundDrawer> bgDrawers = new ArrayList<BackGroundDrawer>();
 
     public BufferedPanel() {
-        super();
         addComponentListener(this);
     }
 
@@ -53,27 +49,11 @@ public class BufferedPanel extends JPanel implements ComponentListener {
      */
 
     public void addBgDrawer(BackGroundDrawer bd) {
-        bgDrawers.addElement(bd);
+        bgDrawers.add(bd);
     }
 
     /**
-     * Removes Background drawer from panel.
-     */
-
-    public void removeBgDrawer(BackGroundDrawer bd) {
-        bgDrawers.removeElement(bd);
-    }
-
-    /**
-     * Removes all Background drawers from panel.
-     */
-
-    public void removeBgDrawers() {
-        bgDrawers.removeAllElements();
-    }
-
-    /**
-     * Paint the panel. Must call super.paint() from any subclass that
+     * Paint the panel. Must call super.paintComponent() from any subclass that
      * wished to override this to ensure any contained lightweight components
      * get repainted.
      *
@@ -82,7 +62,7 @@ public class BufferedPanel extends JPanel implements ComponentListener {
      */
     public void paintComponent(Graphics g) {
         // No Graphics, no painting.
-        if (null == g) {
+        if (g == null) {
             return;
         }
         // create an off-screen image
@@ -94,9 +74,7 @@ public class BufferedPanel extends JPanel implements ComponentListener {
         // Clear the panel as needed 
         clearGraphics(offG);
         //Draw background
-        Enumeration iter = bgDrawers.elements();
-        while (iter.hasMoreElements()) {
-            BackGroundDrawer bgd = (BackGroundDrawer) iter.nextElement();
+        for (BackGroundDrawer bgd : bgDrawers) {
             bgd.drawInto(offG, getSize().width, getSize().height);
         }
         // Let the parent panel repaint the components inside.
@@ -132,17 +110,4 @@ public class BufferedPanel extends JPanel implements ComponentListener {
     public void componentHidden(ComponentEvent e) {
         repaint();
     }
-
-    public Dimension getPreferredSize() {
-        return preferredSize;
-    }
-
-    public void setPreferredSize(Dimension dimension) {
-        preferredSize = dimension;
-    }
-
-    public void setPreferredSize(int width, int height) {
-        setPreferredSize(new Dimension(width, height));
-    }
-
 }

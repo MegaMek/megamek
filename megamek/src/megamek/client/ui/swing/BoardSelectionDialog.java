@@ -23,25 +23,25 @@ package megamek.client.ui.swing;
 import megamek.common.Board;
 import megamek.common.MapSettings;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.List;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
@@ -50,7 +50,7 @@ import java.util.Enumeration;
  * @author Ben
  */
 public class BoardSelectionDialog
-        extends JDialog implements ActionListener, ItemListener, KeyListener, IMapSettingsObserver {
+        extends JDialog implements ActionListener, IMapSettingsObserver, ListSelectionListener {
     private ClientGUI client;
     private MapSettings mapSettings;
 
@@ -68,19 +68,19 @@ public class BoardSelectionDialog
     private JTextField texMapWidth = new JTextField(2);
     private JTextField texMapHeight = new JTextField(2);
 
-    private ScrollPane scrMapButtons = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+    private JScrollPane scrMapButtons;
     private JPanel panMapButtons = new JPanel();
 
     private JPanel panBoardsSelected = new JPanel();
     private JLabel labBoardsSelected = new JLabel(Messages.getString("BoardSelectionDialog.MapsSelected"), JLabel.CENTER); //$NON-NLS-1$
-    private List lisBoardsSelected = new List(10);
+    private JList lisBoardsSelected = new JList(new DefaultListModel());
     private JCheckBox chkSelectAll = new JCheckBox(Messages.getString("BoardSelectionDialog.SelectAll")); //$NON-NLS-1$
 
     private JButton butChange = new JButton("<<"); //$NON-NLS-1$
 
     private JPanel panBoardsAvailable = new JPanel();
     private JLabel labBoardsAvailable = new JLabel(Messages.getString("BoardSelectionDialog.mapsAvailable"), JLabel.CENTER); //$NON-NLS-1$
-    private List lisBoardsAvailable = new List(10);
+    private JList lisBoardsAvailable = new JList(new DefaultListModel());
     private JCheckBox chkRotateBoard = new JCheckBox(Messages.getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
 
     private JPanel panButtons = new JPanel();
@@ -89,8 +89,6 @@ public class BoardSelectionDialog
     private JLabel labButtonSpace = new JLabel("", JLabel.CENTER); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-
-    private boolean bDelayedSingleSelect;
 
     /**
      * Creates new BoardSelectionDialog
@@ -154,11 +152,11 @@ public class BoardSelectionDialog
      * Set up the map size panel
      */
     private void setupMapSize() {
+        scrMapButtons = new JScrollPane(panMapButtons);
+
         refreshMapSize();
         refreshMapButtons();
 
-        scrMapButtons.add(panMapButtons);
-        
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -205,25 +203,26 @@ public class BoardSelectionDialog
 
     private void setupSelected() {
         refreshBoardsSelected();
-        lisBoardsSelected.addItemListener(this);
-        lisBoardsSelected.addKeyListener(this);
-        chkSelectAll.addItemListener(this);
+        lisBoardsSelected.addListSelectionListener(this);
+        lisBoardsSelected.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        chkSelectAll.addActionListener(this);
 
         panBoardsSelected.setLayout(new BorderLayout());
 
         panBoardsSelected.add(labBoardsSelected, BorderLayout.NORTH);
-        panBoardsSelected.add(lisBoardsSelected, BorderLayout.CENTER);
+        panBoardsSelected.add(new JScrollPane(lisBoardsSelected), BorderLayout.CENTER);
         panBoardsSelected.add(chkSelectAll, BorderLayout.SOUTH);
     }
 
     private void setupAvailable() {
         refreshBoardsAvailable();
-        lisBoardsAvailable.addActionListener(this);
+        lisBoardsAvailable.addListSelectionListener(this);
+        lisBoardsAvailable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         panBoardsAvailable.setLayout(new BorderLayout());
 
         panBoardsAvailable.add(labBoardsAvailable, BorderLayout.NORTH);
-        panBoardsAvailable.add(lisBoardsAvailable, BorderLayout.CENTER);
+        panBoardsAvailable.add(new JScrollPane(lisBoardsAvailable), BorderLayout.CENTER);
         panBoardsAvailable.add(chkRotateBoard, BorderLayout.SOUTH);
     }
 
@@ -294,23 +293,25 @@ public class BoardSelectionDialog
     }
 
     private void refreshBoardsSelected() {
-        lisBoardsSelected.removeAll();
+        ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
         for (Enumeration i = mapSettings.getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add(index++ + ": " + i.nextElement()); //$NON-NLS-1$
+            ((DefaultListModel) lisBoardsSelected.getModel()).addElement(index++ + ": " + i.nextElement()); //$NON-NLS-1$
         }
-        lisBoardsSelected.select(0);
+        lisBoardsSelected.setSelectedIndex(0);
         refreshSelectAllCheck();
     }
 
     private void refreshSelectAllCheck() {
-        chkSelectAll.setSelected(lisBoardsSelected.getSelectedIndexes().length == lisBoardsSelected.getItemCount());
+        boolean newVal = lisBoardsSelected.getSelectedIndices().length == lisBoardsSelected.getModel().getSize();
+        if (chkSelectAll.isSelected() != newVal)
+            chkSelectAll.setSelected(newVal);
     }
 
     private void refreshBoardsAvailable() {
-        lisBoardsAvailable.removeAll();
+        ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();
         for (Enumeration i = mapSettings.getBoardsAvailable(); i.hasMoreElements();) {
-            lisBoardsAvailable.add((String) i.nextElement());
+            ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(i.nextElement());
         }
     }
 
@@ -318,7 +319,7 @@ public class BoardSelectionDialog
      * Changes all selected boards to be the specified board
      */
     private void change(String board) {
-        int[] selected = lisBoardsSelected.getSelectedIndexes();
+        int[] selected = lisBoardsSelected.getSelectedIndices();
         for (final int newVar : selected) {
             String name = board;
             if (!MapSettings.BOARD_RANDOM.equals(name) &&
@@ -326,10 +327,10 @@ public class BoardSelectionDialog
                     chkRotateBoard.isSelected()) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
-            lisBoardsSelected.replaceItem(newVar + ": " + name, newVar); //$NON-NLS-1$
+            ((DefaultListModel) lisBoardsSelected.getModel()).setElementAt(newVar + ": " + name, newVar); //$NON-NLS-1$
             mapSettings.getBoardsSelectedVector().setElementAt(name, newVar);
-            lisBoardsSelected.select(newVar);
         }
+        lisBoardsSelected.setSelectedIndices(selected);
     }
 
     /**
@@ -369,11 +370,11 @@ public class BoardSelectionDialog
         refreshMapSize();
         refreshMapButtons();
 
-        lisBoardsSelected.removeAll();
-        lisBoardsSelected.add(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
+        ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
+        ((DefaultListModel) lisBoardsSelected.getModel()).addElement(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
-        lisBoardsAvailable.removeAll();
-        lisBoardsAvailable.add(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
+        ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();
+        ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
         client.getClient().sendMapQuery(mapSettings);
     }
@@ -419,7 +420,7 @@ public class BoardSelectionDialog
 
         if (e.getSource().equals(butChange) || e.getSource().equals(lisBoardsAvailable)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
-                change(lisBoardsAvailable.getSelectedItem());
+                change((String) lisBoardsAvailable.getSelectedValue());
             }
         } else if (e.getSource().equals(butUpdate)) {
             apply();
@@ -429,30 +430,17 @@ public class BoardSelectionDialog
             setVisible(false);
         } else if (e.getSource().equals(butRandomMap)) {
             randomMapDialog.setVisible(true);
-        }
-    }
-
-    public void itemStateChanged(ItemEvent itemEvent) {
-        if (itemEvent.getSource().equals(chkSelectAll)) {
-            lisBoardsSelected.setMultipleMode(chkSelectAll.isSelected());
-            for (int i = 0; i < lisBoardsSelected.getItemCount(); i++) {
-                if (chkSelectAll.isSelected()) {
-                    lisBoardsSelected.select(i);
-                } else {
-                    lisBoardsSelected.deselect(i);
-                }
+        } else if (e.getSource().equals(chkSelectAll)) {
+            if (!chkSelectAll.isSelected()) {
+                lisBoardsSelected.setSelectedIndex(0);
+                refreshSelectAllCheck();
+                return;
             }
-        } else if (itemEvent.getSource().equals(lisBoardsSelected)) {
-//            System.out.println(itemEvent.paramString());
-//            System.out.flush();
-//            final int[] selected = lisBoardsSelected.getSelectedIndexes();
-//            for (int i = 0; i < selected.length; i++) {
-//                lisBoardsSelected.deselect(selected[i]);
-//            }
-            if (bDelayedSingleSelect) {
-                lisBoardsSelected.setMultipleMode(false);
+            int[] selected = new int[lisBoardsSelected.getModel().getSize()];
+            for (int i = 0; i < lisBoardsSelected.getModel().getSize(); i++) {
+                selected[i] = i;
             }
-            refreshSelectAllCheck();
+            lisBoardsSelected.setSelectedIndices(selected);
         }
     }
 
@@ -461,42 +449,18 @@ public class BoardSelectionDialog
         refreshMapSize();
         refreshMapButtons();
 
-        lisBoardsSelected.removeAll();
-        lisBoardsSelected.add(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
+        ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
+        ((DefaultListModel) lisBoardsSelected.getModel()).addElement(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
-        lisBoardsAvailable.removeAll();
-        lisBoardsAvailable.add(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
+        ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();
+        ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
         client.getClient().sendMapQuery(mapSettings);
     }
 
-    /**
-     * I hate AWT. -jy
-     * This is a hacked up version of a simple select list that supports
-     * holding control down to select multiple items.  AWT Lists don't
-     * support this natively.
-     * <p/>
-     * The trick is to turn on multiple mode on the list if the user presses
-     * control.  But we can't turn multi mode off as soon as they release, or
-     * any existing multi-select will be wiped out.  Instead we set a flag
-     * to indicate any later selection should trigger a set to single-select
-     */
-
-    public void keyPressed(KeyEvent ev) {
-        if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
-            System.out.println("Multiple on!"); //$NON-NLS-1$
-            lisBoardsSelected.setMultipleMode(true);
-            bDelayedSingleSelect = false;
+    public void valueChanged(ListSelectionEvent event) {
+        if (event.getSource().equals(lisBoardsSelected)) {
+            refreshSelectAllCheck();
         }
-    }
-
-    public void keyReleased(KeyEvent ev) {
-        if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
-            System.out.println("Multiple off!"); //$NON-NLS-1$
-            bDelayedSingleSelect = true;
-        }
-    }
-
-    public void keyTyped(KeyEvent arg0) {
     }
 }

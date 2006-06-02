@@ -6,7 +6,8 @@ v0.31.9 (CVS)
 + Bug 1487415: A Bug With Water/Buildings/Skidding
 + Bug 1483413: Stealth armor bug
 + Bug 1475493: I Narc ECM not working
-+ Bug: reporting errors when brushing off iNarc pods
++ Bug 1471684: reporting errors when brushing off
++ Bug 1451176: Streak LRMs cause NullPointerException
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

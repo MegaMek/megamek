@@ -6928,11 +6928,6 @@ public class Server implements Runnable {
       boolean bSwarmI = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SWARM_I;
       boolean isIndirect = (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                                && weapon.curMode().equals("Indirect");
-      boolean isHotLoaded = (wtype.getAmmoType() == AmmoType.T_LRM ||
-              wtype.getAmmoType() == AmmoType.T_LRM_STREAK ||
-              wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO ||
-              wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)
-               && weapon.curMode().equals("Hot Load");
       boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
       if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
           !game.getOptions().booleanOption("indirect_always_possible") &&

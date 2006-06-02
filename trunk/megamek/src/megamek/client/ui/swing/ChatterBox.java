@@ -23,14 +23,15 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.awt.List;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -40,13 +41,11 @@ import java.awt.event.KeyListener;
  * one that it will gladly supply.
  */
 public class ChatterBox implements KeyListener {
-    public Client client;
+    private Client client;
 
-    public String[] chatBuffer;
-
-    public JPanel chatPanel;
+    private JPanel chatPanel;
     private JTextArea chatArea;
-    private List playerList;
+    private JList playerList;
     private JTextField inputField;
     private JButton butDone;
 
@@ -54,7 +53,7 @@ public class ChatterBox implements KeyListener {
         client = clientgui.getClient();
         client.game.addGameListener(new GameListenerAdapter() {
             public void gamePlayerChat(GamePlayerChatEvent e) {
-                chatArea.append("\n" + e.getMessage()); //$NON-NLS-1$
+                chatArea.append('\n' + e.getMessage()); //$NON-NLS-1$
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
 
@@ -81,7 +80,8 @@ public class ChatterBox implements KeyListener {
 
         chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40); //$NON-NLS-1$
         chatArea.setEditable(false);
-        playerList = new List(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
+        playerList = new JList(new DefaultListModel());
+        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
         inputField = new JTextField();
         inputField.addKeyListener(this);
         butDone = new JButton(Messages.getString("ChatterBox.ImDone")); //$NON-NLS-1$

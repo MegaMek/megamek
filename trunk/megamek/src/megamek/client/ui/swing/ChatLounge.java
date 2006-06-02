@@ -40,18 +40,22 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -59,7 +63,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -76,7 +79,7 @@ import java.util.Vector;
 
 public class ChatLounge
         extends AbstractPhaseDisplay
-        implements ActionListener, ItemListener, BoardViewListener, GameListener, DoneButtoned, Distractable {
+        implements ActionListener, ItemListener, BoardViewListener, GameListener, DoneButtoned, Distractable, ListSelectionListener {
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
@@ -90,7 +93,7 @@ public class ChatLounge
     // buttons & such
     private JPanel panPlayerInfo;
     private JLabel labPlayerInfo;
-    private List lisPlayerInfo;
+    private JList lisPlayerInfo;
 
     private JLabel labTeam;
     private JComboBox choTeam;
@@ -100,7 +103,7 @@ public class ChatLounge
 
     private JPanel panMinefield;
     private JLabel labMinefield;
-    private List lisMinefield;
+    private JList lisMinefield;
     private JLabel labConventional;
     private JLabel labCommandDetonated;
     private JLabel labVibrabomb;
@@ -113,7 +116,7 @@ public class ChatLounge
 
     private JLabel labBoardSize;
     private JLabel labMapSize;
-    private List lisBoardsSelected;
+    private JList lisBoardsSelected;
     private JButton butChangeBoard;
     private JPanel panBoardSettings;
 
@@ -128,17 +131,17 @@ public class ChatLounge
     private JButton butCustom;
     private JButton butMechReadout;
     private JButton butViewGroup;
-    private List lisEntities;
+    private JList lisEntities;
     private int[] entityCorrespondance;
     private JPanel panEntities;
 
     private JLabel labStarts;
-    private List lisStarts;
+    private JList lisStarts;
     private JPanel panStarts;
     private JButton butChangeStart;
 
     private JLabel labBVs;
-    private List lisBVs;
+    private JList lisBVs;
     private ButtonGroup bvCbg;
     private JRadioButton chkBV;
     private JRadioButton chkTons;
@@ -158,7 +161,7 @@ public class ChatLounge
     private JButton butAddBot;
     private JButton butRemoveBot;
 
-    MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
+    private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         public void doneLoading() {
             butLoad.setEnabled(true);
             butLoadCustomBA.setEnabled(true);
@@ -194,7 +197,7 @@ public class ChatLounge
         } catch (Exception exp) {
             exp.printStackTrace();
         }
-        if (null == font) {
+        if (font == null) {
             System.err.println("Couldn't find the new font for the 'Done' button."); //$NON-NLS-1$
         } else {
             butDone.setFont(font);
@@ -267,21 +270,8 @@ public class ChatLounge
 
         labPlayerInfo = new JLabel(Messages.getString("ChatLounge.labPlayerInfo")); //$NON-NLS-1$
 
-        lisPlayerInfo = new List(5);
-        lisPlayerInfo.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                butRemoveBot.setEnabled(false);
-                Client c = getPlayerListSelected(lisPlayerInfo);
-                if (c == null) {
-                    lisPlayerInfo.select(-1);
-                    return;
-                }
-                if (c instanceof BotClient) {
-                    butRemoveBot.setEnabled(true);
-                }
-                choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
-            }
-        });
+        lisPlayerInfo = new JList(new DefaultListModel());
+        lisPlayerInfo.addListSelectionListener(this);
 
         butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot")); //$NON-NLS-1$
         butAddBot.setActionCommand("add_bot"); //$NON-NLS-1$
@@ -309,7 +299,7 @@ public class ChatLounge
 
         // If we have a camo pattern, use it.  Otherwise set a background.
         Image[] images = (Image[]) camoDialog.getSelectedObjects();
-        if (null != images) {
+        if (images != null) {
             butCamo.setIcon(new ImageIcon(images[0]));
         } else {
             butCamo.setBackground(PlayerColors.getColor(player.getColorIndex()));
@@ -381,7 +371,7 @@ public class ChatLounge
 
         labMinefield = new JLabel(Messages.getString("ChatLounge.labMinefield")); //$NON-NLS-1$
 
-        lisMinefield = new List(2);
+        lisMinefield = new JList(new DefaultListModel());
 
         labConventional = new JLabel(Messages.getString("ChatLounge.labConventional"), JLabel.RIGHT); //$NON-NLS-1$
         labCommandDetonated = new JLabel(Messages.getString("ChatLounge.labCommandDetonated"), JLabel.RIGHT); //$NON-NLS-1$
@@ -481,8 +471,8 @@ public class ChatLounge
         labBoardSize = new JLabel(Messages.getString("ChatLounge.labBoardSize"), JLabel.CENTER); //$NON-NLS-1$
         labMapSize = new JLabel(Messages.getString("ChatLounge.labMapSize"), JLabel.CENTER); //$NON-NLS-1$
 
-        lisBoardsSelected = new List(5);
-        lisBoardsSelected.addActionListener(this);
+        lisBoardsSelected = new JList(new DefaultListModel());
+        lisBoardsSelected.addListSelectionListener(this);
 
         butChangeBoard = new JButton(Messages.getString("ChatLounge.butChangeBoard")); //$NON-NLS-1$
         butChangeBoard.setActionCommand("change_board"); //$NON-NLS-1$
@@ -527,10 +517,10 @@ public class ChatLounge
                 new Object[]{new Integer(client.getMapSettings().getMapWidth()),
                              new Integer(client.getMapSettings().getMapHeight())}));
 
-        lisBoardsSelected.removeAll();
+        ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
         for (Enumeration i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add((index++) + ": " + i.nextElement()); //$NON-NLS-1$
+            ((DefaultListModel) lisBoardsSelected.getModel()).addElement((index++) + ": " + i.nextElement()); //$NON-NLS-1$
         }
     }
 
@@ -606,9 +596,8 @@ public class ChatLounge
      * Sets up the entities panel
      */
     private void setupEntities() {
-        lisEntities = new List(10);
-        lisEntities.addActionListener(this);
-        lisEntities.addItemListener(this);
+        lisEntities = new JList(new DefaultListModel());
+        lisEntities.addListSelectionListener(this);
 
         butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList")); //$NON-NLS-1$
         butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
@@ -630,7 +619,7 @@ public class ChatLounge
         butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
 
         Font font = new Font("sanserif", Font.BOLD, 18); //$NON-NLS-1$
-        if (null == font) {
+        if (font == null) {
             System.err.println("Couldn't find the new font for the 'Add a Unit' button."); //$NON-NLS-1$
         } else {
             butLoad.setFont(font);
@@ -731,7 +720,7 @@ public class ChatLounge
     private void setupBVs() {
         labBVs = new JLabel(Messages.getString("ChatLounge.labBVs.BV"), JLabel.CENTER); //$NON-NLS-1$
 
-        lisBVs = new List(5);
+        lisBVs = new JList(new DefaultListModel());
 
         panBVs = new JPanel();
 
@@ -785,8 +774,7 @@ public class ChatLounge
     private void setupStarts() {
         labStarts = new JLabel(Messages.getString("ChatLounge.labStarts"), JLabel.CENTER); //$NON-NLS-1$
 
-        lisStarts = new List(5);
-        lisStarts.addActionListener(this);
+        lisStarts = new JList(new DefaultListModel());
 
         butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
         butChangeStart.addActionListener(this);
@@ -828,7 +816,7 @@ public class ChatLounge
      * Refreshes the entities from the client
      */
     public void refreshEntities() {
-        lisEntities.removeAll();
+        ((DefaultListModel) lisEntities.getModel()).removeAllElements();
         int listIndex = 0;
         boolean localUnits = false;
         entityCorrespondance = new int[client.game.getNoOfEntities()];
@@ -891,12 +879,12 @@ public class ChatLounge
                     && client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                     && !client.game.getOptions().booleanOption("real_blind_drop")) { //$NON-NLS-1$
 
-                lisEntities.add(ChatLounge.formatUnit(entity, true));
+                ((DefaultListModel) lisEntities.getModel()).addElement(formatUnit(entity, true));
                 entityCorrespondance[listIndex++] = entity.getId();
             } else if (entity.getOwner().equals(client.getLocalPlayer())
                     || (!client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                     && !client.game.getOptions().booleanOption("real_blind_drop"))) { //$NON-NLS-1$
-                lisEntities.add(ChatLounge.formatUnit(entity, false));
+                ((DefaultListModel) lisEntities.getModel()).addElement(formatUnit(entity, false));
                 entityCorrespondance[listIndex++] = entity.getId();
             }
         }
@@ -906,7 +894,7 @@ public class ChatLounge
         butSaveList.setEnabled(localUnits);
         butDeleteAll.setEnabled(localUnits);
 
-        butViewGroup.setEnabled(lisEntities.getItemCount() != 0);
+        butViewGroup.setEnabled(lisEntities.getModel().getSize() != 0);
 
         // Disable the "must select" buttons.
         butCustom.setEnabled(false);
@@ -915,7 +903,7 @@ public class ChatLounge
     }
 
     public static String formatUnit(Entity entity, boolean blindDrop) {
-        String value = "";
+        String value;
 
         // Reset the tree strings.
         String strTreeSet = ""; //$NON-NLS-1$
@@ -944,7 +932,7 @@ public class ChatLounge
         int crewAdvCount = entity.getCrew().countAdvantages();
 
         if (blindDrop) {
-            String unitClass = ""; //$NON-NLS-1$
+            String unitClass; //$NON-NLS-1$
             if (entity instanceof Infantry) {
                 unitClass = Messages.getString("ChatLounge.0"); //$NON-NLS-1$
             } else if (entity instanceof Protomech) {
@@ -985,7 +973,7 @@ public class ChatLounge
      * Refreshes the player info
      */
     private void refreshPlayerInfo() {
-        lisPlayerInfo.removeAll();
+        ((DefaultListModel) lisPlayerInfo.getModel()).removeAllElements();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player) i.nextElement();
             if (player != null) {
@@ -995,13 +983,13 @@ public class ChatLounge
 
                 String plyrCamo = player.getCamoFileName();
 
-                if ((null == plyrCamo) || Player.NO_CAMO.equals(plyrCamo)) {
+                if ((plyrCamo == null) || Player.NO_CAMO.equals(plyrCamo)) {
                     pi.append(", ").append(Player.colorNames[player.getColorIndex()]); //$NON-NLS-1$
                 } else {
                     pi.append(", ").append(player.getCamoFileName()); //$NON-NLS-1$
                 }
 
-                lisPlayerInfo.add(pi.toString());
+                ((DefaultListModel) lisPlayerInfo.getModel()).addElement(pi.toString());
             }
         }
     }
@@ -1010,7 +998,7 @@ public class ChatLounge
      * Refreshes the minefield
      */
     private void refreshMinefield() {
-        lisMinefield.removeAll();
+        ((DefaultListModel) lisMinefield.getModel()).removeAllElements();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player) i.nextElement();
             if (player != null) {
@@ -1020,7 +1008,7 @@ public class ChatLounge
                 pi.append(player.getNbrMFCommand()).append("/"); //$NON-NLS-1$
                 pi.append(player.getNbrMFVibra());
 
-                lisMinefield.add(pi.toString());
+                ((DefaultListModel) lisMinefield.getModel()).addElement(pi.toString());
             }
         }
         int nbr = client.getLocalPlayer().getNbrMFConventional();
@@ -1040,7 +1028,7 @@ public class ChatLounge
         final boolean useBv = chkBV.isSelected();
         final boolean useCost = chkCost.isSelected();
 
-        lisBVs.removeAll();
+        ((DefaultListModel) lisBVs.getModel()).removeAllElements();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player) i.nextElement();
             if (player == null) {
@@ -1060,11 +1048,11 @@ public class ChatLounge
                 }
             }
             if (useBv) {
-                lisBVs.add(player.getName() + Messages.getString("ChatLounge.BV") + (int) playerValue); //$NON-NLS-1$
+                ((DefaultListModel) lisBVs.getModel()).addElement(player.getName() + Messages.getString("ChatLounge.BV") + (int) playerValue); //$NON-NLS-1$
             } else if (useCost) {
-                lisBVs.add(player.getName() + Messages.getString("ChatLounge.Cost") + (int) playerValue);
+                ((DefaultListModel) lisBVs.getModel()).addElement(player.getName() + Messages.getString("ChatLounge.Cost") + (int) playerValue);
             } else {
-                lisBVs.add(player.getName() + Messages.getString("ChatLounge.Tons") + playerValue); //$NON-NLS-1$
+                ((DefaultListModel) lisBVs.getModel()).addElement(player.getName() + Messages.getString("ChatLounge.Tons") + playerValue); //$NON-NLS-1$
             }
         }
     }
@@ -1075,7 +1063,7 @@ public class ChatLounge
         String curItem = client.getLocalPlayer().getCamoFileName();
 
         // If the player has no camo selected, show his color.
-        if (null == curItem) {
+        if (curItem == null) {
             curCat = Player.NO_CAMO;
             curItem = Player.colorNames[client.getLocalPlayer().getColorIndex()];
         }
@@ -1089,14 +1077,14 @@ public class ChatLounge
      * Refreshes the starting positions
      */
     private void refreshStarts() {
-        lisStarts.removeAll();
+        ((DefaultListModel) lisStarts.getModel()).removeAllElements();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
             Player player = (Player) i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
                 ssb.append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
-                lisStarts.add(ssb.toString());
+                ((DefaultListModel) lisStarts.getModel()).addElement(ssb.toString());
             }
         }
     }
@@ -1109,7 +1097,7 @@ public class ChatLounge
         for (int i = 0; i < Player.MAX_TEAMS; i++) {
             choTeam.addItem(Player.teamNames[i]);
         }
-        if (null != client.getLocalPlayer()) {
+        if (client.getLocalPlayer() != null) {
             choTeam.setSelectedIndex(client.getLocalPlayer().getTeam());
         } else {
             choTeam.setSelectedIndex(0);
@@ -1139,7 +1127,7 @@ public class ChatLounge
     /**
      * Change local player team.
      */
-    public void changeTeam(int team) {
+    private void changeTeam(int team) {
         Client c = getPlayerListSelected(lisPlayerInfo);
         if (c != null && c.getLocalPlayer().getTeam() != team) {
             c.getLocalPlayer().setTeam(team);
@@ -1188,7 +1176,7 @@ public class ChatLounge
      * Pop up the customize mech dialog
      */
 
-    public void customizeMech() {
+    private void customizeMech() {
         if (lisEntities.getSelectedIndex() == -1) {
             return;
         }
@@ -1198,7 +1186,7 @@ public class ChatLounge
 
     public void customizeMech(Entity entity) {
         boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
-        Client c = null;
+        Client c;
         if (editable) {
             c = (Client) clientgui.getBots().get(entity.getOwner().getName());
         } else {
@@ -1239,7 +1227,7 @@ public class ChatLounge
     /**
      * Pop up the view mech dialog
      */
-    public void mechReadout() {
+    private void mechReadout() {
         if (lisEntities.getSelectedIndex() == -1) {
             return;
         }
@@ -1281,15 +1269,15 @@ public class ChatLounge
     /**
      * Pop up the dialog to load a mech
      */
-    public void loadMech() {
+    private void loadMech() {
         clientgui.getMechSelectorDialog().setVisible(true);
     }
 
-    public void loadCustomBA() {
+    private void loadCustomBA() {
         clientgui.getCustomBADialog().setVisible(true);
     }
 
-    public void viewGroup() {
+    private void viewGroup() {
         new MechGroupView(clientgui.getFrame(), client, entityCorrespondance).setVisible(true);
     }
 
@@ -1380,20 +1368,6 @@ public class ChatLounge
             } else {
                 labBVs.setText(Messages.getString("ChatLounge.labBVs.Cost"));
             }
-        } else if (ev.getSource().equals(lisEntities)) {
-            boolean selected = lisEntities.getSelectedIndex() != -1;
-            butCustom.setEnabled(selected);
-
-            // Handle "Blind drop" option.
-            if (selected && client.game.getOptions().booleanOption("blind_drop")) { //$NON-NLS-1$
-                Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
-                butMechReadout.setEnabled(entity.getOwner().equals(client.getLocalPlayer()));
-                butCustom.setEnabled(entity.getOwner().equals(client.getLocalPlayer()));
-            } else {
-                butMechReadout.setEnabled(selected);
-            }
-
-            butDelete.setEnabled(selected);
         }
 
     }
@@ -1516,11 +1490,11 @@ public class ChatLounge
         } else if (ev.getSource().equals(butCamo)) {
             camoDialog.setVisible(true);
         } else if (ev.getSource().equals(butAddBot)) {
-            String name = name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
+            String name; //$NON-NLS-1$
             name = JOptionPane.showInputDialog(clientgui.frame, Messages.getString("ChatLounge.Name"),
                     Messages.getString("ChatLounge.ChooseBotName"), JOptionPane.QUESTION_MESSAGE);
-            if (name.trim().equals("")) {
-                name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
+            if ("".equals(name.trim())) {
+                name = "Bot" + lisPlayerInfo.getModel().getSize(); //$NON-NLS-1$
             }
 
             BotClient c = new TestBot(name, client.getHost(), client.getPort());
@@ -1543,11 +1517,11 @@ public class ChatLounge
         }
     }
 
-    private Client getPlayerListSelected(List l) {
+    private Client getPlayerListSelected(JList l) {
         if (l.getSelectedIndex() == -1) {
             return client;
         }
-        String name = l.getSelectedItem().substring(0, Math.max(0, l.getSelectedItem().indexOf(" :"))); //$NON-NLS-1$
+        String name = ((String) l.getSelectedValue()).substring(0, Math.max(0, ((String) l.getSelectedValue()).indexOf(" :"))); //$NON-NLS-1$
         BotClient c = (BotClient) clientgui.getBots().get(name);
         if (c == null && client.getName().equals(name)) {
             return client;
@@ -1611,4 +1585,32 @@ public class ChatLounge
         MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
     }
 
+    public void valueChanged(ListSelectionEvent event) {
+        if (event.getSource().equals(butRemoveBot)) {
+            butRemoveBot.setEnabled(false);
+            Client c = getPlayerListSelected(lisPlayerInfo);
+            if (c == null) {
+                lisPlayerInfo.setSelectedIndex(-1);
+                return;
+            }
+            if (c instanceof BotClient) {
+                butRemoveBot.setEnabled(true);
+            }
+            choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
+        } else if (event.getSource().equals(lisEntities)) {
+            boolean selected = lisEntities.getSelectedIndex() != -1;
+            butCustom.setEnabled(selected);
+
+            // Handle "Blind drop" option.
+            if (selected && client.game.getOptions().booleanOption("blind_drop")) { //$NON-NLS-1$
+                Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+                butMechReadout.setEnabled(entity.getOwner().equals(client.getLocalPlayer()));
+                butCustom.setEnabled(entity.getOwner().equals(client.getLocalPlayer()));
+            } else {
+                butMechReadout.setEnabled(selected);
+            }
+
+            butDelete.setEnabled(selected);
+        }
+    }
 }

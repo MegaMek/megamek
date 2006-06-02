@@ -19,9 +19,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -34,7 +34,7 @@ public class Slider extends JDialog implements ActionListener, AdjustmentListene
 
     private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-    private Scrollbar value;
+    private JScrollBar value;
     private JLabel lblText = new JLabel();
     private boolean ok;
     private JLabel minText = new JLabel();
@@ -45,7 +45,7 @@ public class Slider extends JDialog implements ActionListener, AdjustmentListene
         super(parent, title, true);
         super.setResizable(false);
 
-        value = new Scrollbar(Scrollbar.HORIZONTAL, defaultValue, 1, min, max + 1);
+        value = new JScrollBar(JScrollBar.HORIZONTAL, defaultValue, 1, min, max + 1);
         value.addAdjustmentListener(this);
 
         getContentPane().setLayout(new BorderLayout());

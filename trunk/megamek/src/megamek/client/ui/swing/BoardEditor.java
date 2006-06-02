@@ -26,6 +26,7 @@ import megamek.common.MapSettings;
 import megamek.common.Terrains;
 import megamek.common.util.BoardUtilities;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -34,16 +35,19 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -52,8 +56,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.List;
-import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -69,7 +71,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class BoardEditor extends JComponent implements ItemListener,
+public class BoardEditor extends JComponent implements ItemListener, ListSelectionListener,
         ActionListener, DocumentListener, IMapSettingsObserver {
     private JFrame frame = new JFrame();
     private Game game = new Game();
@@ -89,7 +91,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JButton butElevUp;
     private JButton butElevDown;
     private JLabel labTerrain;
-    private List lisTerrain;
+    private JList lisTerrain;
     private JButton butDelTerrain;
     private JPanel panTerrainType;
     private JComboBox choTerrainType;
@@ -106,8 +108,10 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JLabel blankL;
     private JLabel labBoard;
     private JPanel panButtons;
-    private JButton butBoardNew, butBoardLoad;
-    private JButton butBoardSave, butBoardSaveAs;
+    private JButton butBoardNew;
+    private JButton butBoardLoad;
+    private JButton butBoardSave;
+    private JButton butBoardSaveAs;
     private JButton butBoardSaveAsImage;
     private JButton butMiniMap;
     private JDialog minimapW;
@@ -163,17 +167,11 @@ public class BoardEditor extends JComponent implements ItemListener,
         frame.getContentPane().setLayout(new BorderLayout());
 
         // Create a scroll bars to surround the board view.
-        JPanel scrollPane = new JPanel();
-        scrollPane.setLayout(new BorderLayout());
-        Scrollbar vertical = new Scrollbar(Scrollbar.VERTICAL);
-        Scrollbar horizontal = new Scrollbar(Scrollbar.HORIZONTAL);
-        scrollPane.add(bv, BorderLayout.CENTER);
-        scrollPane.add(vertical, BorderLayout.EAST);
-        scrollPane.add(horizontal, BorderLayout.SOUTH);
+        JScrollPane scrollPane = new JScrollPane(bv);
+        bv.setScrollbars(scrollPane.getVerticalScrollBar(), scrollPane.getHorizontalScrollBar());
         frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
         // Assign the scrollbars to the board viewer.
-        bv.setScrollbars(vertical, horizontal);
         frame.getContentPane().add(this, BorderLayout.EAST);
         menuBar.addActionListener(this);
         frame.setMenuBar(menuBar);
@@ -185,10 +183,6 @@ public class BoardEditor extends JComponent implements ItemListener,
         } else {
             frame.setSize(800, 600);
         }
-
-        // Give the scrollbars large initial values.
-        horizontal.setVisibleAmount(frame.getSize().width);
-        vertical.setVisibleAmount(frame.getSize().height);
 
         // when frame is closing, just hide it
         frame.addWindowListener(new WindowAdapter() {
@@ -214,8 +208,9 @@ public class BoardEditor extends JComponent implements ItemListener,
         butElevDown = new JButton(Messages.getString("BoardEditor.butElevDown")); //$NON-NLS-1$
         butElevDown.addActionListener(this);
         labTerrain = new JLabel(Messages.getString("BoardEditor.labTerrain"), JLabel.LEFT); //$NON-NLS-1$
-        lisTerrain = new List(6);
-        lisTerrain.addItemListener(this);
+        lisTerrain = new JList(new DefaultListModel());
+        lisTerrain.addListSelectionListener(this);
+        lisTerrain.setVisibleRowCount(6);
         refreshTerrainList();
         butDelTerrain = new JButton(Messages.getString("BoardEditor.butDelTerrain")); //$NON-NLS-1$
         butDelTerrain.addActionListener(this);
@@ -277,10 +272,11 @@ public class BoardEditor extends JComponent implements ItemListener,
         setLayout(gridbag);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.0;
-        c.weighty = 0.0;
         c.insets = new Insets(4, 4, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weighty = 1.0;
         addBag(canHex, gridbag, c);
+        c.weighty = 0.0;
         c.gridwidth = 1;
         addBag(labElev, gridbag, c);
         addBag(butElevUp, gridbag, c);
@@ -288,7 +284,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(texElev, gridbag, c);
         addBag(labTerrain, gridbag, c);
-        addBag(lisTerrain, gridbag, c);
+        addBag(new JScrollPane(lisTerrain), gridbag, c);
         addBag(butDelTerrain, gridbag, c);
         addBag(panTerrainType, gridbag, c);
         addBag(panTerrExits, gridbag, c);
@@ -316,7 +312,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         setMapVisible(true);
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
@@ -338,8 +334,8 @@ public class BoardEditor extends JComponent implements ItemListener,
         curHex = hex.duplicate();
         texElev.setText(Integer.toString(curHex.getElevation()));
         refreshTerrainList();
-        if (lisTerrain.getItemCount() > 0) {
-            lisTerrain.select(0);
+        if (lisTerrain.getModel().getSize() > 0) {
+            lisTerrain.setSelectedIndex(0);
             refreshTerrainFromList();
         }
         texTheme.setText(curHex.getTheme());
@@ -359,11 +355,11 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Refreshes the terrain list to match the current hex
      */
     private void refreshTerrainList() {
-        lisTerrain.removeAll();
+        ((DefaultListModel) lisTerrain.getModel()).removeAllElements();
         for (int i = 0; i < Terrains.SIZE; i++) {
             ITerrain terrain = curHex.getTerrain(i);
             if (terrain != null) {
-                lisTerrain.add(terrain.toString());
+                ((DefaultListModel) lisTerrain.getModel()).addElement(terrain.toString());
             }
         }
     }
@@ -395,37 +391,13 @@ public class BoardEditor extends JComponent implements ItemListener,
      * terrain in the list.
      */
     private void refreshTerrainFromList() {
-        ITerrain terrain = Terrains.getTerrainFactory().createTerrain(lisTerrain.getSelectedItem());
+        if (lisTerrain.getSelectedIndex() == -1) return;
+        ITerrain terrain = Terrains.getTerrainFactory().createTerrain((String) lisTerrain.getSelectedValue());
         terrain = curHex.getTerrain(terrain.getType());
         choTerrainType.setSelectedItem(Terrains.getName(terrain.getType()));
         texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
         cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
         texTerrExits.setText(Integer.toString(terrain.getExits()));
-    }
-
-    /**
-     * Initialize a new data set in the current board.
-     * <p/>
-     * If hexes are loaded, brings up a dialog box requesting
-     * width and height and default hex.  If height and width
-     * are valid, creates new board data and fills it with the
-     * selected hex.
-     */
-    public void boardNewXX() {
-        // display new board dialog
-        BoardNewDialog bnd = new BoardNewDialog(frame);
-        bnd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        bnd.setVisible(true);
-        if (bnd.getX() > 0 || bnd.getY() > 0) {
-            IHex[] newHexes = new IHex[bnd.getX() * bnd.getY()];
-            for (int i = 0; i < newHexes.length; i++) {
-                newHexes[i] = new Hex();
-            }
-            board.newData(bnd.getX(), bnd.getY(), newHexes);
-            curfile = null;
-            frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
-            menuBar.setBoard(true);
-        }
     }
 
     public void boardNew() {
@@ -448,7 +420,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
         fc.setFileFilter(new FileFilter() {
             public boolean accept(File dir) {
-                return (null != dir.getName() && dir.getName().endsWith(".board")); //$NON-NLS-1$
+                return null != dir.getName() && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
             public String getDescription() {
@@ -553,7 +525,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
         fc.setFileFilter(new FileFilter() {
             public boolean accept(File dir) {
-                return (null != dir.getName() && dir.getName().endsWith(".board")); //$NON-NLS-1$
+                return null != dir.getName() && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
             public String getDescription() {
@@ -591,7 +563,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
         fc.setFileFilter(new FileFilter() {
             public boolean accept(File dir) {
-                return (null != dir.getName() && dir.getName().endsWith(".png")); //$NON-NLS-1$
+                return null != dir.getName() && dir.getName().endsWith(".png"); //$NON-NLS-1$
             }
 
             public String getDescription() {
@@ -600,7 +572,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         });
         // Default to the board's name (if it has one).
         String fileName;
-        if (null != curfile && curfile.length() > 0) {
+        if (curfile != null && curfile.length() > 0) {
             fileName = curfile.getName().toUpperCase();
             if (fileName.endsWith(".BOARD")) { //$NON-NLS-1$
                 int length = fileName.length();
@@ -633,9 +605,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     // ItemListener
     //
     public void itemStateChanged(ItemEvent ie) {
-        if (ie.getSource().equals(lisTerrain)) {
-            refreshTerrainFromList();
-        } else if (ie.getSource().equals(cheRoadsAutoExit)) {
+        if (ie.getSource().equals(cheRoadsAutoExit)) {
             // Set the new value for the option, and refrest the board.
             board.setRoadsAutoExit(cheRoadsAutoExit.isSelected());
             bv.updateBoard();
@@ -718,8 +688,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             boardSaveAs();
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardSaveAsImage();
-        } else if (ae.getSource().equals(butDelTerrain) && lisTerrain.getSelectedItem() != null) {
-            ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(lisTerrain.getSelectedItem());
+        } else if (ae.getSource().equals(butDelTerrain) && lisTerrain.getSelectedValue() != null) {
+            ITerrain toRemove = Terrains.getTerrainFactory().createTerrain((String) lisTerrain.getSelectedValue());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();
@@ -763,20 +733,23 @@ public class BoardEditor extends JComponent implements ItemListener,
         changedUpdate(event);
     }
 
+    public void valueChanged(ListSelectionEvent event) {
+        if (event.getSource().equals(lisTerrain)) {
+            refreshTerrainFromList();
+        }
+    }
+
     /**
      * Displays the currently selected hex picture, in
      * component form
      */
-    private class HexCanvas extends Canvas {
+    private class HexCanvas extends JPanel {
         HexCanvas() {
-            setSize(72, 72);
+            setPreferredSize(new Dimension(90, 90));
         }
 
-        public void paint(Graphics g) {
-            update(g);
-        }
-
-        public void update(Graphics g) {
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
             if (curHex != null) {
                 TilesetManager tm = bv.getTilesetManager();
                 g.drawImage(tm.baseFor(curHex), 0, 0, this);

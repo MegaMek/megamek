@@ -27,14 +27,15 @@ import megamek.common.IOffBoardDirections;
 import megamek.common.IStartingPositions;
 import megamek.common.Player;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -58,7 +59,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     private JPanel panStartButtons = new JPanel();
     private JButton[] butStartPos = new JButton[11];
 
-    private List lisStartList = new List(5);
+    private JList lisStartList = new JList(new DefaultListModel());
 
     /**
      * Creates a new instance of StartingPositionDialog
@@ -150,14 +151,14 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     }
 
     public void update() {
-        lisStartList.removeAll();
+        ((DefaultListModel) lisStartList.getModel()).removeAllElements();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
             Player player = (Player) i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
                 ssb.append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
-                lisStartList.add(ssb.toString());
+                ((DefaultListModel) lisStartList.getModel()).addElement(ssb.toString());
             }
         }
     }

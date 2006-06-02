@@ -9,6 +9,9 @@ v0.31.9 (CVS)
 + Bug 1471684: reporting errors when brushing off
 + Bug 1451176: Streak LRMs cause NullPointerException
 + Bug 1446033: Maxtech damage PSR not showing the weight class modifier
++ Migrated List -> JList, Scrollbar -> JScrollBar, ScrollPane -> JSCrollPane
+    BoardView1 scrolling is screwed up, still need to fix, removed useless
+    BoardComponent 
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

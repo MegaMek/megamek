@@ -80,6 +80,7 @@ import megamek.common.preference.PreferenceManager;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
 import javax.swing.JWindow;
 import java.awt.Adjustable;
 import java.awt.AlphaComposite;
@@ -95,7 +96,6 @@ import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.AdjustmentEvent;
@@ -114,7 +114,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
@@ -160,8 +159,8 @@ public final class BoardView1
     private final Point offset = new Point();
     private Dimension boardSize;
     // scrolly stuff:
-    private Scrollbar vScrollbar = null;
-    private Scrollbar hScrollbar = null;
+    private JScrollBar vScrollbar = null;
+    private JScrollBar hScrollbar = null;
     private boolean isScrolling = false;
     private final Point scroll = new Point();
     private boolean initCtlScroll;
@@ -206,11 +205,8 @@ public final class BoardView1
     private Player m_plDeployer = null;
     // should be able to turn it off(board editor)
     private boolean useLOSTool = true;
-    // Initial scale factor for sprites and map
-    private boolean hasZoomed = false;
     private int zoomIndex;
     private float scale;
-    private final Hashtable scaledImageCache = new Hashtable();
     // Displayables (Chat box, etc.)
     private final Vector displayables = new Vector();
     // Move units step by step
@@ -291,7 +287,6 @@ public final class BoardView1
             isJ2RE = true;
             zoomIndex = GUIPreferences.getInstance().getMapZoomIndex();
             checkZoomIndex();
-            hasZoomed = true;
         }
         scale = ZOOM_FACTORS[zoomIndex];
         updateFontSizes();
@@ -401,17 +396,13 @@ public final class BoardView1
         displayables.addElement(disp);
     }
 
-    public void removeDisplayable(Displayable disp) {
-        displayables.removeElement(disp);
-    }
-
     /**
      * Specify the scrollbars that control this view's positioning.
      *
      * @param vertical   - the vertical <code>Scrollbar</code>
      * @param horizontal - the horizontal <code>Scrollbar</code>
      */
-    public void setScrollbars(Scrollbar vertical, Scrollbar horizontal) {
+    public void setScrollbars(JScrollBar vertical, JScrollBar horizontal) {
         vScrollbar = vertical;
         hScrollbar = horizontal;
 
@@ -446,13 +437,13 @@ public final class BoardView1
         // Make sure our scrollbars have the right sizes.
         // N.B. A buggy Sun implementation makes me to do this here instead
         // of updateBoardSize() (which is where *I* think it belongs).
-        if (null != vScrollbar) {
+        if (vScrollbar != null) {
             vScrollbar.setVisibleAmount(size.height);
             vScrollbar.setBlockIncrement(size.height);
             vScrollbar.setUnitIncrement((int) (scale * HEX_H / 2.0));
             vScrollbar.setMaximum(boardSize.height);
         }
-        if (null != hScrollbar) {
+        if (hScrollbar != null) {
             hScrollbar.setVisibleAmount(size.width);
             hScrollbar.setBlockIncrement(size.width);
             hScrollbar.setUnitIncrement((int) (scale * HEX_W / 2.0));
@@ -562,7 +553,6 @@ public final class BoardView1
             Graphics tmpGraphics = tmpImage.getGraphics();
             tmpGraphics.drawImage(backImage, offset.x, offset.y, this);
             g.drawImage(tmpImage, 0, 0, this);
-            hasZoomed = false;
         } else {
             g.drawImage(backImage, offset.x, offset.y, this);
         }
@@ -683,36 +673,6 @@ public final class BoardView1
 
     private static Rectangle getImageBounds(Image im) {
         return new Rectangle(-im.getWidth(null) / 2, -im.getHeight(null) / 2, im.getWidth(null), im.getHeight(null));
-    }
-
-    /**
-     * The key assigned to each scaled and cached image. Enables easy
-     * retrieval from the hash table.
-     */
-    private static final class ScaledCacheKey {
-        private final Image base;
-        private final Dimension bounds;
-
-        ScaledCacheKey(Image base, Dimension bounds) {
-            this.bounds = bounds;
-            this.base = base;
-        }
-
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ScaledCacheKey)) return false;
-            final ScaledCacheKey scaledCacheKey = (ScaledCacheKey) o;
-            if (!base.equals(scaledCacheKey.base)) return false;
-            if (!bounds.equals(scaledCacheKey.bounds)) return false;
-            return true;
-        }
-
-        public int hashCode() {
-            int result;
-            result = base.hashCode();
-            result = 29 * result + bounds.hashCode();
-            return result;
-        }
     }
 
     /**
@@ -1644,7 +1604,7 @@ public final class BoardView1
     }
 
     public void centerOnHex(Coords c) {
-        if (null == c) return;
+        if (c == null) return;
         scroll.setLocation(getHexLocation(c));
         scroll.translate((int) (42 * scale) - (view.width / 2), (int) (36 * scale) - (view.height / 2));
         isScrolling = false;
@@ -1681,7 +1641,7 @@ public final class BoardView1
                     //Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
-                    ((Sprite) pathSprites.get(pathSprites.size() - 1)).hidden = true;
+                    pathSprites.get(pathSprites.size() - 1).hidden = true;
                 }
                 pathSprites.add(new StepSprite(step));
             }
@@ -1736,7 +1696,7 @@ public final class BoardView1
 
             // ECM cuts off the network
             if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())
-                    &&!Compute.isAffectedByECM(eMaster, eMaster.getPosition(), eMaster.getPosition())) {
+                    && !Compute.isAffectedByECM(eMaster, eMaster.getPosition(), eMaster.getPosition())) {
                 C3Sprites.add(new C3Sprite(e, e.getC3Master()));
             }
         }
@@ -1986,10 +1946,10 @@ public final class BoardView1
         }
 
         // Update our scroll bars.
-        if (null != vScrollbar) {
+        if (vScrollbar != null) {
             vScrollbar.setValue(scroll.y);
         }
-        if (null != hScrollbar) {
+        if (hScrollbar != null) {
             hScrollbar.setValue(scroll.x);
         }
     }
@@ -2216,7 +2176,7 @@ public final class BoardView1
     public void mousePressed(MouseEvent me) {
         scrolled = false; // not scrolled yet
         Point point = me.getPoint();
-        if (null == point) {
+        if (point == null) {
             return;
         }
         oldMousePosition = point;
@@ -2303,7 +2263,7 @@ public final class BoardView1
     public void mouseDragged(MouseEvent me) {
         isTipPossible = false;
         Point point = me.getPoint();
-        if (null == point) {
+        if (point == null) {
             return;
         }
         for (int i = 0; i < displayables.size(); i++) {
@@ -2350,7 +2310,7 @@ public final class BoardView1
 
     public void mouseMoved(MouseEvent me) {
         Point point = me.getPoint();
-        if (null == point) {
+        if (point == null) {
             return;
         }
         for (int i = 0; i < displayables.size(); i++) {
@@ -2402,26 +2362,6 @@ public final class BoardView1
             zoomIndex--;
             zoom();
         }
-    }
-
-    /**
-     * zoomIndex is a reference to a static array of scale factors.
-     * The index ranges from 0 to 9 and by default is set to 7 which corresponds
-     * to a scale of 1.0 (draws megamek images at normal size).  To zoom out the
-     * index needs to be set to a lower value.  To zoom in make it larger.
-     * If only zooming a step at a time use the zoomIn and zoomOut methods instead.
-     *
-     * @param zoomIndex
-     */
-    public void setZoomIndex(int zoomIndex) {
-        if (isJ2RE == true) {
-            this.zoomIndex = zoomIndex;
-            zoom();
-        }
-    }
-
-    public int getZoomIndex() {
-        return zoomIndex;
     }
 
     private void checkZoomIndex() {
@@ -2588,23 +2528,6 @@ public final class BoardView1
             }
         }
 
-        /**
-         * Returns true if the point is inside this sprite.  Uses board
-         * coordinates, not screen coordinates.   By default, just checks our
-         * bounding rectangle, though some sprites override this for a smaller
-         * sensitive area.
-         */
-        public boolean isInside(Point point) {
-            return bounds.contains(point);
-        }
-
-        /**
-         * Since most sprites being drawn correspond to something in the game,
-         * this returns a little info for a tooltip.
-         */
-        private String[] getTooltip() {
-            return null;
-        }
     }
 
     /**
@@ -2845,7 +2768,7 @@ public final class BoardView1
 
             // Draw wreck image,if we've got one.
             Image wreck = tileManager.wreckMarkerFor(entity);
-            if (null != wreck) {
+            if (wreck != null) {
                 graph.drawImage(wreck, 0, 0, this);
             }
 
@@ -2871,12 +2794,6 @@ public final class BoardView1
                             new KeyAlphaFilter(TRANSPARENT)));
         }
 
-        /**
-         * Overrides to provide for a smaller sensitive area.
-         */
-        public boolean isInside(Point point) {
-            return false;
-        }
     }
 
     /**
@@ -2969,7 +2886,9 @@ public final class BoardView1
             graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
 
             // draw box with shortName
-            Color text, bkgd, bord;
+            Color text;
+            Color bkgd;
+            Color bord;
             if (entity.isDone()) {
                 text = Color.lightGray;
                 bkgd = Color.darkGray;
@@ -3071,7 +2990,7 @@ public final class BoardView1
             }
 
             // If this unit is being swarmed or is swarming another, say so.
-            if (Entity.NONE != entity.getSwarmAttackerId()) {
+            if (entity.getSwarmAttackerId() != Entity.NONE) {
                 // draw "SWARMED"
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("BoardView1.SWARMED"), 17, 22); //$NON-NLS-1$
@@ -3197,7 +3116,7 @@ public final class BoardView1
         /**
          * Overrides to provide for a smaller sensitive area.
          */
-        public boolean isInside(Point point) {
+        private boolean isInside(Point point) {
             return entityRect.contains(point.x + view.x - offset.x,
                     point.y + view.y - offset.y);
         }
@@ -3606,13 +3525,6 @@ public final class BoardView1
             g.drawPolygon(drawPoly);
         }
 
-        /**
-         * Return true if the point is inside our polygon
-         */
-        public boolean isInside(Point point) {
-            return C3Poly.contains(point.x + view.x - bounds.x - offset.x,
-                    point.y + view.y - bounds.y - offset.y);
-        }
     }
 
     /**
@@ -3772,7 +3684,7 @@ public final class BoardView1
         /**
          * Return true if the point is inside our polygon
          */
-        public boolean isInside(Point point) {
+        private boolean isInside(Point point) {
             return attackPoly.contains(point.x + view.x - bounds.x - offset.x,
                     point.y + view.y - bounds.y - offset.y);
         }

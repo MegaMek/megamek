@@ -21,14 +21,15 @@ import megamek.common.Entity;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -42,9 +43,9 @@ import java.awt.event.WindowEvent;
  */
 public class MechGroupView
         extends JDialog
-        implements ActionListener, ItemListener {
+        implements ActionListener, ListSelectionListener {
 
-    private List entities = new List(20);
+    private JList entities = new JList();
     private JButton closeButton = new JButton(Messages.getString("Close"));
     private JTextArea ta = new JTextArea();
 
@@ -55,6 +56,8 @@ public class MechGroupView
         super(frame, Messages.getString("MechGroupView.title"));
         client = c;
         entityArray = eA;
+        String[] entityStrings = new String[entityArray.length];
+        int index = 0;
 
         for (final int newVar : entityArray) {
             Entity entity = client.game.getEntity(newVar);
@@ -64,13 +67,14 @@ public class MechGroupView
             if (!entity.getOwner().equals(client.getLocalPlayer())
                     && client.game.getOptions().booleanOption("blind_drop")
                     && !client.game.getOptions().booleanOption("real_blind_drop")) {
-                entities.add(ChatLounge.formatUnit(entity, true));
+                entityStrings[index++] = ChatLounge.formatUnit(entity, true);
             } else if (entity.getOwner().equals(client.getLocalPlayer())
-                    || (!client.game.getOptions().booleanOption("blind_drop")
-                    && !client.game.getOptions().booleanOption("real_blind_drop"))) {
-                entities.add(ChatLounge.formatUnit(entity, false));
+                    || !client.game.getOptions().booleanOption("blind_drop") && !client.game.getOptions().booleanOption("real_blind_drop")) {
+                entityStrings[index++] = ChatLounge.formatUnit(entity, false);
             }
         }
+        entities = new JList(entityStrings);
+        entities.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(entities, BorderLayout.WEST);
         getContentPane().add(closeButton, BorderLayout.SOUTH);
@@ -79,7 +83,7 @@ public class MechGroupView
         ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
         getContentPane().add(ta, BorderLayout.CENTER);
 
-        entities.addItemListener(this);
+        entities.addListSelectionListener(this);
         closeButton.addActionListener(this);
 
         setSize(550, 600);
@@ -98,8 +102,8 @@ public class MechGroupView
         }
     }
 
-    public void itemStateChanged(ItemEvent ie) {
-        if (ie.getSource().equals(entities)) {
+    public void valueChanged(ListSelectionEvent event) {
+        if (event.getSource().equals(entities)) {
             int selected = entities.getSelectedIndex();
             if (selected == -1) {
                 ta.setText("");
@@ -113,5 +117,4 @@ public class MechGroupView
             }
         }
     }
-
 }

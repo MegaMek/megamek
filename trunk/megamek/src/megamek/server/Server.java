@@ -11855,6 +11855,10 @@ public class Server implements Runnable {
                           weightMod = -2;
                           break;
                       }
+                      if(weightMod > 0)
+                          reportStr.append(", weight class modifier +").append(weightMod);
+                      else
+                          reportStr.append(", weight class modifier ").append(weightMod);
 
                       PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod + weightMod, reportStr.toString());
                       damPRD.setCumulative(false);  // see Bug# 811987 for more info
@@ -12080,7 +12084,7 @@ public class Server implements Runnable {
             // found a roll, add it
             rolls.addElement(modifier);
             if (reasons.length() > 0) {
-                reasons.append(", ");
+                reasons.append("; ");
             }
             reasons.append(modifier.getPlainDesc());
             // only cumulative rolls get added to the base roll

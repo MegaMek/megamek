@@ -8,6 +8,7 @@ v0.31.9 (CVS)
 + Bug 1475493: I Narc ECM not working
 + Bug 1471684: reporting errors when brushing off
 + Bug 1451176: Streak LRMs cause NullPointerException
++ Bug 1446033: Maxtech damage PSR not showing the weight class modifier
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

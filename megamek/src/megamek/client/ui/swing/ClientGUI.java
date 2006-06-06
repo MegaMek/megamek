@@ -49,6 +49,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.filechooser.FileFilter;
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -58,9 +60,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.MenuItem;
 import java.awt.Point;
-import java.awt.PopupMenu;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -106,7 +106,7 @@ public class ClientGUI
     public MechDisplay mechD;
     public JDialog minimapW;
     public MiniMap minimap;
-    private PopupMenu popup = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
+    private JPopupMenu popup = new JPopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
     private UnitOverview uo;
     private Ruler ruler; // added by kenn
     protected JComponent curPanel;
@@ -237,7 +237,7 @@ public class ClientGUI
     private void initializeFrame() {
         frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         menuBar.setGame(client.game);
-        frame.setMenuBar(menuBar);
+        frame.setJMenuBar(menuBar);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
             frame.setLocation(GUIPreferences.getInstance().getWindowPosX(), GUIPreferences.getInstance().getWindowPosY());
             frame.setSize(GUIPreferences.getInstance().getWindowSizeWidth(), GUIPreferences.getInstance().getWindowSizeHeight());
@@ -820,7 +820,7 @@ public class ClientGUI
         if (!bv.mayDrawPopup())
             return;
         fillPopup(bv.getCoordsAt(point));
-        if (popup.getItemCount() > 0) {
+        if (popup.getSubElements().length > 0) {
             popup.show(bv, point.x, point.y);
         }
     }
@@ -903,7 +903,7 @@ public class ClientGUI
                 }
             }
         }
-        if (popup.getItemCount() > 0) {
+        if (popup.getSubElements().length > 0) {
             popup.addSeparator();
         }
 
@@ -915,7 +915,7 @@ public class ClientGUI
 
         // add target options
         if (canTargetEntities()) {
-            if (popup.getItemCount() > 0) {
+            if (popup.getSubElements().length > 0) {
                 popup.addSeparator();
             }
             for (Enumeration i = client.game.getEntities(coords); i.hasMoreElements();) {
@@ -1195,7 +1195,7 @@ public class ClientGUI
     /**
      * A menu item that lives to view an entity.
      */
-    private class ViewMenuItem extends MenuItem implements ActionListener {
+    private class ViewMenuItem extends JMenuItem implements ActionListener {
         Entity entity;
 
         public ViewMenuItem(Entity entity) {
@@ -1217,7 +1217,7 @@ public class ClientGUI
      * this during movement, firing & physical phases.  (Deployment would
      * just be silly.)
      */
-    private class SelectMenuItem extends MenuItem implements ActionListener {
+    private class SelectMenuItem extends JMenuItem implements ActionListener {
         Entity entity;
 
         public SelectMenuItem(Entity entity) {
@@ -1241,7 +1241,7 @@ public class ClientGUI
      * A menu item that will target an entity, provided that it's sensible to
      * do so
      */
-    private class TargetMenuItem extends MenuItem implements ActionListener {
+    private class TargetMenuItem extends JMenuItem implements ActionListener {
         Targetable target;
 
         public TargetMenuItem(Targetable t) {
@@ -1325,8 +1325,6 @@ public class ClientGUI
             // Swap to this phase's panel.
             switchPanel(client.game.getPhase());
             
-            // Hide tooltip (thanks Thrud Cowslayer, C.O.R.E, and others for helping test this! :)
-            bv.hideTooltip();
             
             // Handle phase-specific items.
             switch (e.getNewPhase()) {

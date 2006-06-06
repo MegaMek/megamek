@@ -18,6 +18,7 @@ import megamek.client.ui.swing.util.ColorParser;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 
+import javax.swing.ToolTipManager;
 import java.awt.Color;
 
 public class GUIPreferences extends PreferenceStoreProxy {
@@ -655,6 +656,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setTooltipDelay(int i) {
         store.setValue(TOOLTIP_DELAY, i);
+        ToolTipManager.sharedInstance().setInitialDelay(i);
     }
 
     public void setWindowPosX(int i) {

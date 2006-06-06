@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.ToolTipManager;
 import javax.swing.filechooser.FileFilter;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -74,6 +75,7 @@ public class MegaMekGUI implements IMegaMekGUI {
      * specified frame.
      */
     private void createGUI() {
+        ToolTipManager.sharedInstance().setInitialDelay(GUIPreferences.getInstance().getTooltipDelay());
         frame = new JFrame("MegaMek"); //$NON-NLS-1$
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -85,7 +87,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         frame.setIconImage(frame.getToolkit().getImage("data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
         CommonMenuBar menuBar = new CommonMenuBar();
         menuBar.addActionListener(actionListener);
-        frame.setMenuBar(menuBar);
+        frame.setJMenuBar(menuBar);
         showMainMenu();
 
         // set visible on middle of screen

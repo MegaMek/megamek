@@ -141,8 +141,6 @@ public class MechDisplay extends JPanel {
 
         ((CardLayout) displayP.getLayout()).show(displayP, "movement"); //$NON-NLS-1$
         //tabStrip.setTab(0);
-        
-        clientgui.mechW.addKeyListener(clientgui.menuBar);
     }
 
     private void addBag(JComponent comp, GridBagConstraints c) {
@@ -453,7 +451,6 @@ public class MechDisplay extends JPanel {
             // weapon list
             weaponList = new JList(new DefaultListModel());
             weaponList.addListSelectionListener(this);
-            weaponList.addKeyListener(clientgui.menuBar);
 
             // layout main panel
             GridBagConstraints c = new GridBagConstraints();
@@ -475,7 +472,6 @@ public class MechDisplay extends JPanel {
             wAmmo.setOpaque(true);
             m_chAmmo = new JComboBox();
             m_chAmmo.addItemListener(this);
-            m_chAmmo.addKeyListener(clientgui.menuBar);
 
             c.insets = new Insets(1, 9, 1, 1);
 
@@ -723,7 +719,6 @@ public class MechDisplay extends JPanel {
             // to-hit text
             toHitText = new JTextArea("", 2, 20); //$NON-NLS-1$
             toHitText.setEditable(false);
-            toHitText.addKeyListener(clientgui.menuBar);
 
             c.insets = new Insets(1, 9, 15, 9);
             c.gridx = 0;
@@ -1204,24 +1199,19 @@ public class MechDisplay extends JPanel {
 
             locList = new JList(new DefaultListModel());
             locList.addListSelectionListener(this);
-            locList.addKeyListener(clientgui.menuBar);
 
             slotList = new JList(new DefaultListModel());
             slotList.addListSelectionListener(this);
-            slotList.addKeyListener(clientgui.menuBar);
-            //slotList.setEnabled(false);
 
             m_chMode = new JComboBox();
             m_chMode.addItem("   "); //$NON-NLS-1$
             m_chMode.setEnabled(false);
             m_chMode.addItemListener(this);
-            m_chMode.addKeyListener(clientgui.menuBar);
 
             m_bDumpAmmo = new JButton(Messages.getString("MechDisplay.m_bDumpAmmo")); //$NON-NLS-1$
             m_bDumpAmmo.setEnabled(false);
             m_bDumpAmmo.setActionCommand("dump"); //$NON-NLS-1$
             m_bDumpAmmo.addActionListener(this);
-            m_bDumpAmmo.addKeyListener(clientgui.menuBar);
 
             modeLabel = new JLabel(Messages.getString("MechDisplay.modeLabel"), JLabel.RIGHT); //$NON-NLS-1$
             modeLabel.setOpaque(true);
@@ -1645,7 +1635,6 @@ public class MechDisplay extends JPanel {
             narcLabel.setOpaque(false);
 
             narcList = new JList(new DefaultListModel());
-            narcList.addKeyListener(clientgui.menuBar);
 
             // transport stuff
             //unusedL = new JLabel( "Unused Space:", JLabel.CENTER );
@@ -1655,21 +1644,18 @@ public class MechDisplay extends JPanel {
             unusedL.setOpaque(false);
             unusedR = new JTextArea("", 2, 25); //$NON-NLS-1$
             unusedR.setEditable(false);
-            unusedR.addKeyListener(clientgui.menuBar);
 
             carrysL = new JLabel
                     (Messages.getString("MechDisplay.Carryng"), JLabel.CENTER); //$NON-NLS-1$
             carrysL.setOpaque(false);
             carrysR = new JTextArea("", 4, 25); //$NON-NLS-1$
             carrysR.setEditable(false);
-            carrysR.addKeyListener(clientgui.menuBar);
 
             sinksL = new JLabel
                     (Messages.getString("MechDisplay.activeSinksLabel"), JLabel.CENTER);
             sinksL.setOpaque(false);
             sinksR = new JTextArea("", 2, 25);
             sinksR.setEditable(false);
-            sinksR.addKeyListener(clientgui.menuBar);
 
             sinks2B = new JButton(Messages.getString("MechDisplay.configureActiveSinksLabel"));
             sinks2B.setActionCommand("changeSinks");
@@ -1680,7 +1666,6 @@ public class MechDisplay extends JPanel {
             heatL.setOpaque(false);
             heatR = new JTextArea("", 4, 25); //$NON-NLS-1$
             heatR.setEditable(false);
-            heatR.addKeyListener(clientgui.menuBar);
 
             targSysL = new JLabel((Messages.getString("MechDisplay.TargSysLabel")).concat(" "), JLabel.CENTER);
             targSysL.setOpaque(false);

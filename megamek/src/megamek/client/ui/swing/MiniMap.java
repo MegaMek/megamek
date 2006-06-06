@@ -150,9 +150,6 @@ public class MiniMap extends Canvas {
         this(d, c.getClient().game, bview);
         clientgui = c;
 
-        c.minimapW.addKeyListener(c.menuBar);
-        addKeyListener(c.menuBar);
-
         // this may come in useful later...
         m_client = c.getClient();
     }

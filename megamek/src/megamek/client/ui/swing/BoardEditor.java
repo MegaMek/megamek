@@ -174,7 +174,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         // Assign the scrollbars to the board viewer.
         frame.getContentPane().add(this, BorderLayout.EAST);
         menuBar.addActionListener(this);
-        frame.setMenuBar(menuBar);
+        frame.setJMenuBar(menuBar);
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {

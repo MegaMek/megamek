@@ -82,9 +82,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JWindow;
+import javax.swing.ToolTipManager;
 import java.awt.Adjustable;
 import java.awt.AlphaComposite;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -96,7 +96,6 @@ import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -305,6 +304,9 @@ public final class BoardView1
         for (int i = 0; i < scaledImageCaches.length; i++) {
             scaledImageCaches[i] = new ImageCache();
         }
+        setToolTipText("");
+        System.out.println("ToolTip delay is set at: "+ToolTipManager.sharedInstance().getInitialDelay());
+
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
     }
 
@@ -1225,47 +1227,10 @@ public final class BoardView1
     }
 
     /**
-     * Shows the tooltip thinger
-     */
-    private void showTooltip() {
-        try {
-            final Point tipLoc = new Point(getLocationOnScreen());
-            // retrieve tip text
-            String[] tipText = getTipText(mousePos);
-            if (tipText == null) {
-                return;
-            }
-
-            // update tip text
-            tipWindow.removeAll();
-            tipWindow.getContentPane().add(new TooltipCanvas(tipText));
-            tipWindow.pack();
-            tipLoc.translate(mousePos.x, mousePos.y + 20);
-
-            // adjust horizontal location for the tipWindow if it goes off the frame
-            if (frame.getLocation().x + frame.getSize().width < tipLoc.x + tipWindow.getSize().width + 10) {
-                if (frame.getSize().width > tipWindow.getSize().width) {
-                    // bound it by the right edge of the frame
-                    tipLoc.x -= tipLoc.x + tipWindow.getSize().width + 10 - frame.getSize().width - frame.getLocation().x;
-                } else {
-                    // too big to fit, left justify to the frame (roughly).
-                    // how do I extract the first term of HEX_SIZE to use here?--LDE
-                    tipLoc.x = getLocationOnScreen().x + hex_size.width;
-                }
-            }
-
-            // set tip location
-            tipWindow.setLocation(tipLoc);
-            tipWindow.setVisible(true);
-        } catch (Exception e) {
-            tipWindow = new JWindow(frame);
-        }
-    }
-
-    /**
      * The text to be displayed when the mouse is at a certain point
      */
-    private String[] getTipText(Point point) {
+    public String getToolTipText(MouseEvent me) {
+        Point point = me.getPoint();
         int stringsSize = 0;
         IHex mhex = null;
 
@@ -1455,35 +1420,13 @@ public final class BoardView1
                 strings[stringsIndex] = Messages.getString("BoardView1.ArtilleryAdjustment", new Object[]{new Integer(amod)});
             }
         }
-        return strings;
-    }
 
-    /**
-     * Hides the tooltip thinger
-     */
-    public void hideTooltip() {
-        tipWindow.setVisible(false);
-    }
-
-    /**
-     * Returns true if the tooltip is showing
-     */
-    private boolean isTipShowing() {
-        return tipWindow.isShowing();
-    }
-
-    /**
-     * Checks if the mouse has been idling for a while and if so, shows the
-     * tooltip window
-     */
-    private void checkTooltip() {
-        if (isTipShowing()) {
-            if (!isTipPossible) {
-                hideTooltip();
-            }
-        } else if (isTipPossible && System.currentTimeMillis() - lastIdle > GUIPreferences.getInstance().getTooltipDelay()) {
-            showTooltip();
+        StringBuffer buf = new StringBuffer();
+        for (String aString : strings ) {
+            buf.append(aString);
+            buf.append('\n');
         }
+        return buf.toString();
     }
 
     private void redrawMovingEntity(Entity entity, Coords position, int facing) {
@@ -2153,9 +2096,7 @@ public final class BoardView1
                 initCtlScroll = true;
                 break;
         }
-        if (isTipShowing()) {
-            hideTooltip();
-        }
+
         lastIdle = System.currentTimeMillis();
         checkScrollBounds();
         repaint();
@@ -2217,9 +2158,7 @@ public final class BoardView1
         } else {
             isScrolling = false; //activate scrolling
         }
-        if (isTipShowing()) {
-            hideTooltip();
-        }
+
         mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiers());
     }
 
@@ -2324,9 +2263,7 @@ public final class BoardView1
             }
         }
         mousePos = point;
-        if (isTipShowing()) {
-            hideTooltip();
-        }
+
         if (ctlKeyHeld && GUIPreferences.getInstance().getCtlScroll()) {
             if (initCtlScroll) {
                 previousMouseX = me.getX();
@@ -2404,47 +2341,6 @@ public final class BoardView1
             font_elev = FONT_9;
             font_hexnum = FONT_9;
             font_minefield = FONT_9;
-        }
-    }
-
-    /**
-     * Displays a bit of text in a box.
-     * <p/>
-     * TODO: make multi-line
-     */
-    private final class TooltipCanvas extends Canvas {
-        private final String[] tipStrings;
-        private final Dimension size;
-
-        TooltipCanvas(String[] tipStrings) {
-            this.tipStrings = tipStrings;
-
-            // setup
-            setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-            setBackground(SystemColor.info);
-            setForeground(SystemColor.infoText);
-
-            // determine size
-            final FontMetrics fm = getFontMetrics(getFont());
-            int width = 0;
-            for (int i = 0; i < tipStrings.length; i++) {
-                if (fm.stringWidth(tipStrings[i]) > width) {
-                    width = fm.stringWidth(tipStrings[i]);
-                }
-            }
-            size = new Dimension(width + 5, fm.getAscent() * tipStrings.length + 4);
-            setSize(size);
-        }
-
-        public void paint(Graphics g) {
-            final FontMetrics fm = getFontMetrics(getFont());
-            g.setColor(getBackground());
-            g.fillRect(0, 0, size.width, size.height);
-            g.setColor(getForeground());
-            g.drawRect(0, 0, size.width - 1, size.height - 1);
-            for (int i = 0; i < tipStrings.length; i++) {
-                g.drawString(tipStrings[i], 2, (i + 1) * fm.getAscent());
-            }
         }
     }
 
@@ -4173,7 +4069,6 @@ public final class BoardView1
                 if (backSize != null) {
                     redraw = redraw || doMoveUnits(currentTime - lastTime);
                     redraw = redraw || doScroll();
-                    checkTooltip();
                 } else {
                     repaint(100);
                 }

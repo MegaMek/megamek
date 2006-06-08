@@ -1853,6 +1853,8 @@ public class Server implements Runnable {
                 changePhase(IGame.PHASE_FIRING);
                 break;
             case IGame.PHASE_END :
+                // remove any entities that died in the heat/end phase before check for victory
+                resetEntityPhase(IGame.PHASE_END);
                 // check phase report
                 //HACK: hardcoded message ID check
                 if (vPhaseReport.size() > 3

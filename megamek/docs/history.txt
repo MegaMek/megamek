@@ -16,6 +16,7 @@ v0.31.9 (CVS)
 + Bug 1502289: prone mechs can charge
 + Bug 1448481: Units on bridge over lava still suffer damage 0.31.6
 + Bug 1433738: unable to load same team units
++ Bug 1438656: MM Reports victory before last end phase
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

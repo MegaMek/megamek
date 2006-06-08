@@ -8938,6 +8938,12 @@ public class Server implements Runnable {
                         }
                         addReport(
                                               damageEntity(entityTarget, hit, nDamage, false, 4, false, false, throughFront));
+                    } else if(wtype.hasFlag(WeaponType.F_INCENDIARY_NEEDLES)) {
+                        //firedrake needler
+                        if (bGlancing) {
+                            hit.makeGlancingBlow();
+                        }
+                        addReport(damageEntity(entityTarget, hit, nDamage, false, 5, false, false, throughFront));
                     } else {
                         if (usesAmmo
                                 && atype.getAmmoType() == AmmoType.T_AC
@@ -8971,6 +8977,15 @@ public class Server implements Runnable {
         }
 
         addNewLines();
+        
+        if(wtype.hasFlag(WeaponType.F_INCENDIARY_NEEDLES)) {
+            //Firedrake needler sets the hex on fire as well
+            tryIgniteHex(entityTarget.getPosition(),
+                    ae.getId(),
+                    false,
+                    wtype.getFireTN(),
+                    true);
+        }
 
         if (swarmMissilesNowLeft > 0 && entityTarget != null) {
             Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, wr.waa.getWeaponId());
@@ -12556,6 +12571,16 @@ public class Server implements Runnable {
                 damage += 2;
             }
             break;
+        case 5:
+            //Firedrake needler does 0 damage to armoured target
+            if (!isPlatoon) {
+                damage = 0;
+                r = new Report(6540);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                vDesc.addElement(r);
+            }
 
         default:
             // We can ignore this.

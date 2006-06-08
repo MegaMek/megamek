@@ -7965,7 +7965,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("BA-Firedrake Incendiary Needler");
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
-        weapon.rackSize = 0;
+        weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;

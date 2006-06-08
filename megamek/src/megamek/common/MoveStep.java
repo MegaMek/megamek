@@ -1010,7 +1010,7 @@ public class MoveStep implements Serializable {
         if (!parent.isJumping()
             && !entity.isStuck()
             && tmpWalkMP > 0
-            && getMpUsed() > 0
+            && getMp() > 0
             && (!(isProne() || isHullDown())
                 || parent.contains(MovePath.STEP_GET_UP)
                 || stepType == MovePath.STEP_TURN_LEFT
@@ -1138,6 +1138,13 @@ public class MoveStep implements Serializable {
             if(entity instanceof Tank && !(game.getBoard().getHex(curPos).containsTerrain(Terrains.FORTIFIED))) {
                 movementType = IEntityMovementType.MOVE_ILLEGAL;
             }
+        }
+        
+        // initially prone mechs can't charge
+        if((stepType == MovePath.STEP_CHARGE
+                || stepType == MovePath.STEP_DFA) 
+                && entity.isProne()) {
+            movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
         // check if this movement is illegal for reasons other than points

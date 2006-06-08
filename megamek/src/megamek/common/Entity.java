@@ -4698,12 +4698,12 @@ public abstract class Entity extends TurnOrdered
 
     /** Whether this type of unit can perform charges */
     public boolean canCharge() {
-        return !isImmobile() && getWalkMP() > 0 && !isStuck();
+        return !isImmobile() && getWalkMP() > 0 && !isStuck() && !isProne();
     }
 
     /** Whether this type of unit can perform DFA attacks */
     public boolean canDFA() {
-        return !isImmobile() && getJumpMP() > 0 && !isStuck();
+        return !isImmobile() && getJumpMP() > 0 && !isStuck() && !isProne();
     }
     
     boolean isUsingManAce() {

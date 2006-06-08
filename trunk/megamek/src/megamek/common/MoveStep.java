@@ -1373,7 +1373,7 @@ public class MoveStep implements Serializable {
 
                 // Is the other unit friendly and not the current entity?
                 other = (Entity) entities.nextElement();
-                if (entity.getOwner() == other.getOwner()
+                if (!entity.getOwner().isEnemyOf(other.getOwner())
                     && !entity.equals(other)) {
 
                     // The moving unit should be able to load the other unit.

@@ -3936,8 +3936,9 @@ public class Server implements Runnable {
             IHex lastHex = game.getBoard().getHex(lastPos);
             if (entity instanceof Mech) {
                 if ( !lastPos.equals(curPos)
-                    && (lastHex.containsTerrain(Terrains.FIRE)
-                            || lastHex.containsTerrain(Terrains.MAGMA))
+                    && prevStep != null
+                    && ((lastHex.containsTerrain(Terrains.FIRE) && prevStep.getElevation() <=1)
+                            || (lastHex.containsTerrain(Terrains.MAGMA) && prevStep.getElevation() == 0))
                     && ( step.getMovementType() != IEntityMovementType.MOVE_JUMP
                          // Bug #828741 -- jumping bypasses fire, but not on the first step
                          //   getMpUsed -- total MP used to this step
@@ -11375,14 +11376,15 @@ public class Server implements Runnable {
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
             if (entityHex != null) {
-                if (entityHex.terrainLevel(Terrains.FIRE) == 2) {
+                if (entityHex.terrainLevel(Terrains.FIRE) == 2
+                        && entity.getElevation() <=1) {
                     entity.heatBuildup += 5;
                     r = new Report(5030);
                     r.subject = entity.getId();
                     addReport(r);
                 }
                 int magma = entityHex.terrainLevel(Terrains.MAGMA);
-                if(magma > 0) {
+                if(magma > 0 && entity.getElevation() == 0) {
                     entity.heatBuildup += 5 * magma;
                     r = new Report(5032);
                     r.subject = entity.getId();

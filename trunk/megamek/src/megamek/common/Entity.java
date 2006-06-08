@@ -3830,6 +3830,7 @@ public abstract class Entity extends TurnOrdered
             && step.getMovementType() != IEntityMovementType.MOVE_JUMP
             && (this.getMovementMode() != IEntityMovementMode.HOVER) 
             && (this.getMovementMode() != IEntityMovementMode.VTOL)
+            && step.getElevation() == 0
             && !isPavementStep) {
             // non-hovers need a simple PSR
             if (curHex.containsTerrain(Terrains.SWAMP)) {

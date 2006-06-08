@@ -14,6 +14,7 @@ v0.31.9 (CVS)
     BoardComponent
 + Migrated Menu/MenuItem/Menubar, Tooltip, PopupMenu 
 + Bug 1502289: prone mechs can charge
++ Bug 1448481: Units on bridge over lava still suffer damage 0.31.6
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

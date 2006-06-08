@@ -4158,8 +4158,8 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
-        // one can only load one's own units!
-        if (unit.getOwnerId() == this.getOwnerId()) {
+        // one can only load one's own team's units!
+        if (!unit.isEnemyOf(this)) {
             // Walk through this entity's transport components;
             // if one of them can load the unit, we can.
             Enumeration iter = this.transports.elements();

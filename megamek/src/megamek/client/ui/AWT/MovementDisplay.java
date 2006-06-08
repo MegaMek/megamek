@@ -1381,7 +1381,7 @@ public class MovementDisplay
             while (entities.hasMoreElements()) {
                 // Is the other unit friendly and not the current entity?
                 other = (Entity)entities.nextElement();
-                if (ce.getOwner() == other.getOwner()
+                if (!ce.getOwner().isEnemyOf(other.getOwner())
                         && !ce.equals(other)) {
                     // Yup. If the current entity has at least 1 MP, if it can
                     // transport the other unit, and if the other hasn't moved
@@ -1729,7 +1729,7 @@ public class MovementDisplay
                 client.game.getEntities( ce.getPosition() );
             while ( entities.hasMoreElements() ) {
                 other = (Entity)entities.nextElement();
-                if ( ce.getOwner() == other.getOwner() &&
+                if ( !ce.getOwner().isEnemyOf(other.getOwner()) &&
                      !ce.equals(other) ) {
                     loadedUnits.addElement( other );
                     break;

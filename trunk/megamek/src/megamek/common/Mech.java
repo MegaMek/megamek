@@ -2052,11 +2052,17 @@ public abstract class Mech
         
         
         // total up maximum heat generated
-        double maxumumHeatFront = 0;
-        double maxumumHeatRear = 0;
+        double maximumHeatFront = 0;
+        double maximumHeatRear = 0;
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             double weaponHeat = wtype.getHeat();
+            
+            // only count non-damaged equipment
+            if (mounted.isMissing() || mounted.isHit() ||
+            		mounted.isDestroyed() || mounted.isBreached()) {
+            	continue;
+            }
             
             // Bug #1112073 says not to count RocketLaunchers.
             if (wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER) {
@@ -2080,12 +2086,12 @@ public abstract class Mech
             }
             
             if (mounted.isRearMounted()) {
-                maxumumHeatRear += weaponHeat;
+                maximumHeatRear += weaponHeat;
             } else {
-                maxumumHeatFront += weaponHeat;
+                maximumHeatFront += weaponHeat;
             }
         }
-        double maximumHeat = Math.max(maxumumHeatFront, maxumumHeatRear);
+        double maximumHeat = Math.max(maximumHeatFront, maximumHeatRear);
         if (getJumpMP() > 0) {
             maximumHeat += Math.max(3, getJumpMP());
         } else {

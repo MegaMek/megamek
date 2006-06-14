@@ -1010,11 +1010,11 @@ public class MoveStep implements Serializable {
         if (!parent.isJumping()
             && !entity.isStuck()
             && tmpWalkMP > 0
-            && getMp() > 0
+            && (getMp() > 0
+                    || stepType == MovePath.STEP_TURN_LEFT
+                    || stepType == MovePath.STEP_TURN_RIGHT)
             && (!(isProne() || isHullDown())
-                || parent.contains(MovePath.STEP_GET_UP)
-                || stepType == MovePath.STEP_TURN_LEFT
-                || stepType == MovePath.STEP_TURN_RIGHT)) {
+                || parent.contains(MovePath.STEP_GET_UP))) {
 
             if (getMpUsed() <= tmpWalkMP) {
                 if (parent.getEntity().getMovementMode() == IEntityMovementMode.VTOL &&

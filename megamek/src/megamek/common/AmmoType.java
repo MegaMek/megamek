@@ -67,7 +67,10 @@ public class AmmoType extends EquipmentType {
     public static final int     T_TBOLT20           = 42;
     public static final int     T_RAIL_GUN          = 43;
     public static final int     T_MAGSHOT           = 44; // Magshot from TR3055U and S7 Pack
-    public static final int     NUM_TYPES           = 45;
+    public static final int     T_PXLRM             = 45;
+    public static final int     T_HSRM              = 46;
+    public static final int     T_MRM_STREAK        = 47;
+    public static final int     NUM_TYPES           = 48;
     
 
     // ammo flags
@@ -281,6 +284,12 @@ public class AmmoType extends EquipmentType {
         base = createISLAC5Ammo();
         acAmmos.add(base);
         EquipmentType.addType(base);
+        base = createISLAC10Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
+        base = createISLAC20Ammo();
+        acAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(createISHeavyFlamerAmmo());
         EquipmentType.addType(createCoolantPod());
         EquipmentType.addType(createISRailGunAmmo());
@@ -309,6 +318,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISTHBUltra20Ammo());
         EquipmentType.addType(createISRotary2Ammo());
         EquipmentType.addType(createISRotary5Ammo());
+        EquipmentType.addType(createISRotary10Ammo());
+        EquipmentType.addType(createISRotary20Ammo());
         EquipmentType.addType(createISGaussAmmo());
         EquipmentType.addType(createISLTGaussAmmo());
         EquipmentType.addType(createISHVGaussAmmo());
@@ -346,6 +357,17 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISThunderbolt15Ammo());
         EquipmentType.addType(createISThunderbolt20Ammo());
         EquipmentType.addType(createISMagshotGRAmmo());
+        EquipmentType.addType(createISPXLRM5Ammo());
+        EquipmentType.addType(createISPXLRM10Ammo());
+        EquipmentType.addType(createISPXLRM15Ammo());
+        EquipmentType.addType(createISPXLRM20Ammo());
+        EquipmentType.addType(createISHawkSRM2Ammo());
+        EquipmentType.addType(createISHawkSRM4Ammo());
+        EquipmentType.addType(createISHawkSRM6Ammo());
+        EquipmentType.addType(createISStreakMRM10Ammo());
+        EquipmentType.addType(createISStreakMRM20Ammo());
+        EquipmentType.addType(createISStreakMRM30Ammo());
+        EquipmentType.addType(createISStreakMRM40Ammo());
 
         base = createISLongTomAmmo();
         artyAmmos.addElement( base );
@@ -1759,6 +1781,40 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 31;
         ammo.cost = 12000;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISRotary10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Rotary AC/10 Ammo";
+        ammo.setInternalName("ISRotaryAC10 Ammo");
+        ammo.addLookupName("IS Rotary AC/10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_AC_ROTARY;
+        ammo.shots = 10;
+        ammo.bv = 37;
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISRotary20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Rotary AC/20 Ammo";
+        ammo.setInternalName("ISRotaryAC20 Ammo");
+        ammo.addLookupName("IS Rotary AC/20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_AC_ROTARY;
+        ammo.shots = 5;
+        ammo.bv = 59;
+        ammo.cost = 80000;
 
         return ammo;
     }
@@ -4875,6 +4931,41 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    public static AmmoType createISLAC10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LAC/10 Ammo";
+        ammo.setInternalName("IS Ammo LAC/10");
+        ammo.addLookupName("ISLAC10 Ammo");
+        ammo.addLookupName("IS Light Autocannon/10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LAC;
+        ammo.shots = 10;
+        ammo.bv = 9;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISLAC20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "LAC/20 Ammo";
+        ammo.setInternalName("IS Ammo LAC/20");
+        ammo.addLookupName("ISLAC20 Ammo");
+        ammo.addLookupName("IS Light Autocannon/20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LAC;
+        ammo.shots = 5;
+        ammo.bv = 15;
+        ammo.cost = 20000;
+
+        return ammo;
+    }
     public static AmmoType createISHeavyFlamerAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -5112,6 +5203,194 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+
+    public static AmmoType createISPXLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Phoenix LRM 5 Ammo";
+        ammo.setInternalName("ISPhoenixLRM5 Ammo");
+        ammo.addLookupName("ISPhoenix LRM 5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_PXLRM;
+        ammo.shots = 12;
+        ammo.bv = 7;
+        ammo.cost = 60000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISPXLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Phoenix LRM 10 Ammo";
+        ammo.setInternalName("ISPhoenixLRM10 Ammo");
+        ammo.addLookupName("ISPhoenix LRM 10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_PXLRM;
+        ammo.shots = 6;
+        ammo.bv = 14;
+        ammo.cost = 60000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISPXLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Phoenix LRM 15 Ammo";
+        ammo.setInternalName("ISPhoenixLRM15 Ammo");
+        ammo.addLookupName("ISPhoenix LRM 15 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_PXLRM;
+        ammo.shots = 4;
+        ammo.bv = 21;
+        ammo.cost = 60000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISPXLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Phoenix LRM 20 Ammo";
+        ammo.setInternalName("ISPhoenixLRM20 Ammo");
+        ammo.addLookupName("ISPhoenix LRM 20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_PXLRM;
+        ammo.shots = 3;
+        ammo.bv = 28;
+        ammo.cost = 60000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISHawkSRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Hawk SRM 2 Ammo";
+        ammo.setInternalName("ISHawkSRM2 Ammo");
+        ammo.addLookupName("IS Hawk SRM 2 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_HSRM;
+        ammo.shots = 25;
+        ammo.bv = 4;
+        ammo.cost = 52000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISHawkSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Hawk SRM 4 Ammo";
+        ammo.setInternalName("ISHawkSRM4 Ammo");
+        ammo.addLookupName("IS Hawk SRM 4 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_HSRM;
+        ammo.shots = 13;
+        ammo.bv = 6;
+        ammo.cost = 52000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISHawkSRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Hawk SRM 6 Ammo";
+        ammo.setInternalName("ISHawkSRM6 Ammo");
+        ammo.addLookupName("IS Hawk SRM 6 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_HSRM;
+        ammo.shots = 8;
+        ammo.bv = 10;
+        ammo.cost = 52000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISStreakMRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Streak MRM 10 Ammo";
+        ammo.setInternalName("IS Streak MRM 10 Ammo");
+        ammo.addLookupName("ISStreakMRM10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_MRM_STREAK;
+        ammo.shots = 24;
+        ammo.bv = 11;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISStreakMRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Streak MRM 20 Ammo";
+        ammo.setInternalName("IS Streak MRM 20 Ammo");
+        ammo.addLookupName("ISStreakMRM20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_MRM_STREAK;
+        ammo.shots = 12;
+        ammo.bv = 22;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISStreakMRM30Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Streak MRM 30 Ammo";
+        ammo.setInternalName("IS Streak MRM 30 Ammo");
+        ammo.addLookupName("ISStreakMRM30 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 30;
+        ammo.ammoType = AmmoType.T_MRM_STREAK;
+        ammo.shots = 8;
+        ammo.bv = 33;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISStreakMRM40Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Streak MRM 40 Ammo";
+        ammo.setInternalName("IS Streak MRM 40 Ammo");
+        ammo.addLookupName("ISStreakMRM40 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 40;
+        ammo.ammoType = AmmoType.T_MRM_STREAK;
+        ammo.shots = 6;
+        ammo.bv = 44;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
     public String toString() {
         return "Ammo: " + name;
     }
@@ -5122,6 +5401,8 @@ public class AmmoType extends EquipmentType {
             (at.getAmmoType() == T_LRM ||
              at.getAmmoType() == T_TBOLT20 ||
              at.getAmmoType() == T_EXLRM ||
+             at.getAmmoType() == T_PXLRM ||
+             at.getAmmoType() == T_MRM_STREAK ||
              at.getAmmoType() == T_MRM) &&
             at.getRackSize() >= 20 &&
             at.getMunitionType() == M_STANDARD) {

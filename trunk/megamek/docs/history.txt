@@ -20,6 +20,7 @@ v0.31.9 (CVS)
 + Bug 1431994: Firedrake needler doesn't damage infantry
 + Modified the static maps which have bridges to use actual bridges.
 + Don't count destroyed weapons for heat curve in Mech BV calculation
++ Bug 1505555: Unable to standup and turn
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

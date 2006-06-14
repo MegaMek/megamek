@@ -180,7 +180,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 || wtype.getAmmoType() == AmmoType.T_TBOLT10
                 || wtype.getAmmoType() == AmmoType.T_TBOLT15
                 || wtype.getAmmoType() == AmmoType.T_TBOLT20
-                || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO
+                || wtype.getAmmoType() == AmmoType.T_PXLRM)
             && weapon.curMode().equals("Indirect");
         boolean isInferno =
             atype != null && (atype.getAmmoType() == AmmoType.T_SRM || atype.getAmmoType() == AmmoType.T_BA_INFERNO) && atype.getMunitionType() == AmmoType.M_INFERNO ||

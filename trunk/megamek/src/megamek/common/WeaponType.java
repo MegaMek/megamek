@@ -334,6 +334,26 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISRailGun());
         EquipmentType.addType(createISMagshotGR());
         EquipmentType.addType(createFireExtinguisher());
+        
+        EquipmentType.addType(createISLightPPC()); //guessed from fluff
+        EquipmentType.addType(createISHeavyPPC()); //guessed from fluff
+        EquipmentType.addType(createISRAC10()); //MFUK
+        EquipmentType.addType(createISRAC20()); //MFUK
+        EquipmentType.addType(createISLAC10()); //MFUK
+        EquipmentType.addType(createISLAC20()); //MFUK
+        EquipmentType.addType(createISStreakMRM10());//guessed from fluff
+        EquipmentType.addType(createISStreakMRM20());//guessed from fluff
+        EquipmentType.addType(createISStreakMRM30());//guessed from fluff
+        EquipmentType.addType(createISStreakMRM40());//guessed from fluff
+        EquipmentType.addType(createISHawkSRM2()); //guessed from fluff
+        EquipmentType.addType(createISHawkSRM4()); //guessed from fluff
+        EquipmentType.addType(createISHawkSRM6()); //guessed from fluff
+        EquipmentType.addType(createISPXLRM5()); //guessed from fluff
+        EquipmentType.addType(createISPXLRM10()); //guessed from fluff
+        EquipmentType.addType(createISPXLRM15()); //guessed from fluff
+        EquipmentType.addType(createISPXLRM20()); //guessed from fluff
+
+        
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
         EquipmentType.addType(createCLERLargeLaser());
@@ -9774,6 +9794,479 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES | F_EXTINGUISHER;
         weapon.bv = 0; // ???
+
+        return weapon;
+    }
+
+    public static WeaponType createISHeavyPPC() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Heavy Particle Cannon";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISHeavyPPC");
+        weapon.addLookupName("ISHPPC");
+        weapon.heat = 15;
+        weapon.damage = 15;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = 3;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.waterShortRange = 4;
+        weapon.waterMediumRange = 7;
+        weapon.waterLongRange = 10;
+        weapon.waterExtremeRange = 14;
+        weapon.tonnage = 10.0f;
+        weapon.criticals = 6;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 316;
+        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
+        weapon.cost = 300000;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISLightPPC() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Light Particle Cannon";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISLightPPC");
+        weapon.addLookupName("ISLPPC");
+        weapon.heat = 5;
+        weapon.damage = 5;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = 3;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.extremeRange = 24;
+        weapon.waterShortRange = 4;
+        weapon.waterMediumRange = 7;
+        weapon.waterLongRange = 10;
+        weapon.waterExtremeRange = 14;
+        weapon.tonnage = 4.0f;
+        weapon.criticals = 2;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.bv = 88;
+        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
+        weapon.cost = 100000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISRAC10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Rotary AC/10";
+        weapon.setInternalName("ISRotaryAC10");
+        weapon.addLookupName("IS Rotary AC/10");
+        weapon.heat = 3;
+        weapon.damage = 10;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_AC_ROTARY;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 16.0f;
+        weapon.criticals = 12;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 296;
+        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        weapon.setModes(modes);
+
+        // explosive when jammed
+        weapon.explosive = true;
+        weapon.cost = 450000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISRAC20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Rotary AC/20";
+        weapon.setInternalName("ISRotaryAC20");
+        weapon.addLookupName("IS Rotary AC/20");
+        weapon.heat = 7;
+        weapon.damage = 20;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_AC_ROTARY;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 18.0f;
+        weapon.criticals = 14;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
+        weapon.bv = 474;
+        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        weapon.setModes(modes);
+
+        // explosive when jammed
+        weapon.explosive = true;
+        weapon.cost = 800000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLAC10() {
+        WeaponType weapon = new WeaponType();
+    
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Light Auto Cannon/10";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS Light AutoCannon/10");
+        weapon.addLookupName("ISLAC10");
+        weapon.addLookupName("IS Light Autocannon/10");
+        weapon.heat = 3;
+        weapon.damage = 10;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_LAC;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 8.0f;
+        weapon.criticals = 4;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 74;
+        weapon.cost = 225000;
+    
+        return weapon;
+    }
+    
+    public static WeaponType createISLAC20() {
+        WeaponType weapon = new WeaponType();
+    
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Light Auto Cannon/20";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS Light Auto Cannon/20");
+        weapon.addLookupName("ISLAC20");
+        weapon.addLookupName("IS Light Autocannon/20");
+        weapon.heat = 7;
+        weapon.damage = 20;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LAC;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 9.0f;
+        weapon.criticals = 6;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.bv = 118;
+        weapon.cost = 325000;
+    
+        return weapon;
+    }
+    public static WeaponType createISStreakMRM10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Streak MRM 10";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("StreakMRM-10");
+        weapon.addLookupName("ISStreakMRM10");
+        weapon.addLookupName("IS Streak MRM 10");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = 1;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_MRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 4.5f;
+        weapon.criticals = 2;
+        weapon.bv = 88;
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 100000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISStreakMRM20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Streak MRM 20";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("StreakMRM-20");
+        weapon.addLookupName("ISStreakMRM20");
+        weapon.addLookupName("IS Streak MRM 20");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = 1;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_MRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 10.5f;
+        weapon.criticals = 3;
+        weapon.bv = 177;
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 250000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISStreakMRM30() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Streak MRM 30";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("StreakMRM-30");
+        weapon.addLookupName("ISStreakMRM30");
+        weapon.addLookupName("IS Streak MRM 30");
+        weapon.heat = 10;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = 1;
+        weapon.rackSize = 30;
+        weapon.ammoType = AmmoType.T_MRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 15.0f;
+        weapon.criticals = 6;
+        weapon.bv = 265;
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 450000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISStreakMRM40() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Streak MRM 40";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("StreakMRM-40");
+        weapon.addLookupName("ISStreakMRM40");
+        weapon.addLookupName("IS Streak MRM 40");
+        weapon.heat = 12;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = 1;
+        weapon.rackSize = 40;
+        weapon.ammoType = AmmoType.T_MRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 18.0f;
+        weapon.criticals = 8;
+        weapon.bv = 353;
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 700000;
+
+        return weapon;
+    }
+    
+    public static WeaponType createISHawkSRM2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Hawk SRM 2";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISHawkSRM2");
+        weapon.addLookupName("IS Hawk SRM 2");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_HSRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_MISSILE;
+        weapon.bv = 28;
+        weapon.cost = 20000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISHawkSRM4() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Hawk SRM 4";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISHawkSRM4");
+        weapon.addLookupName("IS Hawk SRM 4");
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_HSRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_MISSILE;
+        weapon.bv = 52;
+        weapon.cost = 120000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISHawkSRM6() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Hawk SRM 6";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISHawkSRM6");
+        weapon.addLookupName("IS Hawk SRM 6");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_HSRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 3.0f;
+        weapon.criticals = 2;
+        weapon.flags |= F_NO_FIRES | F_MISSILE;
+        weapon.bv = 79;
+        weapon.cost = 160000;
+        
+        return weapon;
+    }
+
+    public static WeaponType createISPXLRM5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Phoenix LRM 5";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISPhoenixLRM5");
+        weapon.addLookupName("IS Phoenix LRM 5");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = -1;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_PXLRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.bv = 56;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 60000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISPXLRM10() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Phoenix LRM 10";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISPhoenixLRM10");
+        weapon.addLookupName("IS Phoenix LRM 10");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = -1;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_PXLRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 5.0f;
+        weapon.criticals = 2;
+        weapon.bv = 111;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 200000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISPXLRM15() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Phoenix LRM 15";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISPhoenixLRM15");
+        weapon.addLookupName("IS Phoenix LRM 15");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = -1;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_PXLRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 3;
+        weapon.bv = 167;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 350000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISPXLRM20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Phoenix LRM 20";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("ISPhoenixLRM20");
+        weapon.addLookupName("IS Phoenix LRM 20");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = -1;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_PXLRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 10.0f;
+        weapon.criticals = 5;
+        weapon.bv = 223;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 500000;
 
         return weapon;
     }

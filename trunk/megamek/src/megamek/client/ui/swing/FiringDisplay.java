@@ -1639,6 +1639,9 @@ public class FiringDisplay
                             case (AmmoType.T_TBOLT10):
                             case (AmmoType.T_TBOLT15):
                             case (AmmoType.T_TBOLT20):
+                            case AmmoType.T_PXLRM:
+                            case AmmoType.T_HSRM:
+                            case AmmoType.T_MRM_STREAK:
                                 return false;
                         }
                         if (((atype.getAmmoType() == AmmoType.T_AC_LBX)

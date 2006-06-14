@@ -1594,8 +1594,9 @@ public class Compute {
             } else {
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
             }
-            if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK)
-                    || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)
+            if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK
+                    || wt.getAmmoType() == AmmoType.T_MRM_STREAK
+                    || wt.getAmmoType() == AmmoType.T_LRM_STREAK)
                     && !Compute.isAffectedByAngelECM(attacker, attacker
                             .getPosition(), waa.getTarget(g).getPosition())) {
                 fHits = wt.getRackSize();

@@ -6573,7 +6573,10 @@ public class Server implements Runnable {
 
         // if the shot is possible and not a streak miss
         // and not a nemesis-confused shot, add heat and use ammo
-        streakMiss = (wtype.getAmmoType() == AmmoType.T_SRM_STREAK || wtype.getAmmoType() == AmmoType.T_LRM_STREAK) && wr.roll < wr.toHit.getValue();
+        streakMiss = (wtype.getAmmoType() == AmmoType.T_SRM_STREAK
+                || wtype.getAmmoType() == AmmoType.T_MRM_STREAK
+                || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
+                && wr.roll < wr.toHit.getValue();
         if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE
                 && (!streakMiss || Compute.isAffectedByAngelECM(ae, ae.getPosition(), waa.getTarget(game).getPosition()))
                 && !waa.isNemesisConfused()) {
@@ -7531,6 +7534,7 @@ public class Server implements Runnable {
                 }
             }
             if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK
+                    || wtype.getAmmoType() == AmmoType.T_MRM_STREAK
                     || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
                     && !isAngelECMAffected) {
                 //no lock
@@ -7585,7 +7589,10 @@ public class Server implements Runnable {
             // and any building is safe from damage.
             if ( usesAmmo && wr.amsShotDownTotal >= maxMissiles
                     || toHit.getValue() == TargetRoll.AUTOMATIC_FAIL
-                    || (wtype.getAmmoType() == AmmoType.T_SRM_STREAK || wtype.getAmmoType() == AmmoType.T_LRM_STREAK) && !isAngelECMAffected) {
+                    || ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK
+                            || wtype.getAmmoType() == AmmoType.T_MRM_STREAK
+                            || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
+                            && !isAngelECMAffected)) {
                 return !bMissed;
             }
             // If we're using swarm munition, set the number of missiles that
@@ -7829,7 +7836,10 @@ public class Server implements Runnable {
        }
         // All shots fired by a Streak SRM weapon, during
         // a Mech Swarm hit, or at an adjacent building.
-        if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK || wtype.getAmmoType() == AmmoType.T_LRM_STREAK) && !isAngelECMAffected
+        if (((wtype.getAmmoType() == AmmoType.T_SRM_STREAK
+                || wtype.getAmmoType() == AmmoType.T_MRM_STREAK
+                || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
+                && !isAngelECMAffected)
                 || wtype.getAmmoType() == AmmoType.T_NARC
                 || ae.getSwarmTargetId() == wr.waa.getTargetId()
                 || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE || target.getTargetType() == Targetable.TYPE_BUILDING) && ae.getPosition().distance(target.getPosition()) <= 1) {
@@ -7943,8 +7953,10 @@ public class Server implements Runnable {
             if ( wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_LRM_STREAK ||
                  wtype.getAmmoType() == AmmoType.T_MRM ||
+                 wtype.getAmmoType() == AmmoType.T_MRM_STREAK ||
                  wtype.getAmmoType() == AmmoType.T_ATM ||
                  wtype.getAmmoType() == AmmoType.T_EXLRM ||
+                 wtype.getAmmoType() == AmmoType.T_PXLRM ||
                  wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER ) {
                 nCluster = 5;
             }

@@ -1021,6 +1021,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS LRT-5");
         weapon.addLookupName("ISLRTorpedo5");
         weapon.addLookupName("IS LRT 5");
+        weapon.addLookupName("ISLRT5");
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -1053,6 +1054,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS LRT-10");
         weapon.addLookupName("ISLRTorpedo10");
         weapon.addLookupName("IS LRT 10");
+        weapon.addLookupName("ISLRT10");
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 10;
@@ -1085,6 +1087,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS LRT-15");
         weapon.addLookupName("ISLRTorpedo15");
         weapon.addLookupName("IS LRT 15");
+        weapon.addLookupName("ISLRT15");
         weapon.heat = 5;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 15;
@@ -1117,6 +1120,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS LRT-20");
         weapon.addLookupName("ISLRTorpedo20");
         weapon.addLookupName("IS LRT 20");
+        weapon.addLookupName("ISLRT20");
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;
@@ -1261,6 +1265,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS OS LRT-5");
         weapon.addLookupName("ISLRTorpedo5 (OS)");
         weapon.addLookupName("IS LRTorpedo 5 (OS)");
+        weapon.addLookupName("ISLRT5 (OS)");
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -1293,6 +1298,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS OS LRTorpedo-10");
         weapon.addLookupName("ISLRTorpedo10 (OS)");
         weapon.addLookupName("IS LRTorpedo 10 (OS)");
+        weapon.addLookupName("ISLRT10 (OS)");
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 10;
@@ -1325,6 +1331,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS OS LRTorpedo-15");
         weapon.addLookupName("ISLRTorpedo15 (OS)");
         weapon.addLookupName("IS LRTorpedo 15 (OS)");
+        weapon.addLookupName("ISLRT15 (OS)");
         weapon.heat = 5;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 15;
@@ -1357,6 +1364,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS OS LRTorpedo-20");
         weapon.addLookupName("ISLRTorpedo20 (OS)");
         weapon.addLookupName("IS LRTorpedo 20 (OS)");
+        weapon.addLookupName("ISLRT20 (OS)");
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;
@@ -2488,6 +2496,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("ISSRTorpedo2 (OS)"); //mtf
         weapon.addLookupName("IS SRT 2 (OS)");  //tdb
         weapon.addLookupName("OS SRT-2");  //mep
+        weapon.addLookupName("ISSRT2 (OS)");
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
@@ -2600,6 +2609,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("ISSRTorpedo4 (OS)"); //mtf
         weapon.addLookupName("IS SRTorpedo 4 (OS)");  //tdb
         weapon.addLookupName("OS SRTorpedo-4");  //mep
+        weapon.addLookupName("ISSRT4 (OS)");
         weapon.heat = 3;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
@@ -2711,6 +2721,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("ISSRTorpedo6 (OS)"); //mtf
         weapon.addLookupName("IS SRTorpedo 6 (OS)");  //tdb
         weapon.addLookupName("OS SRTorpedo-6");  //mep
+        weapon.addLookupName("ISSRT6 (OS)");
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
@@ -3527,6 +3538,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLLRTorpedo5");
         weapon.addLookupName("Clan LRTorpedo-5");
         weapon.addLookupName("Clan LRTorpedo 5");
+        weapon.addLookupName("CLLRT5");
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -3558,6 +3570,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLLRTorpedo10");
         weapon.addLookupName("Clan LRTorpedo-10");
         weapon.addLookupName("Clan LRTorpedo 10");
+        weapon.addLookupName("CLLRT10");
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 10;
@@ -3589,6 +3602,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLLRTorpedo15");
         weapon.addLookupName("Clan LRTorpedo-15");
         weapon.addLookupName("Clan LRTorpedo 15");
+        weapon.addLookupName("CLLRT15");
         weapon.heat = 5;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 15;
@@ -3620,6 +3634,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLLRTorpedo20");
         weapon.addLookupName("Clan LRTorpedo-20");
         weapon.addLookupName("Clan LRTorpedo 20");
+        weapon.addLookupName("CLLRT20");
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;
@@ -3651,6 +3666,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLLRTorpedo5 (OS)");
         weapon.addLookupName("Clan OS LRTorpedo-5");
         weapon.addLookupName("Clan LRTorpedo 5 (OS)");
+        weapon.addLookupName("CLLRT5 (OS)");
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -3682,6 +3698,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLLRTorpedo10 (OS)");
         weapon.addLookupName("Clan OS LRTorpedo-10");
         weapon.addLookupName("Clan LTorpedoM 10 (OS)");
+        weapon.addLookupName("CLLRT10 (OS)");
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 10;
@@ -3713,6 +3730,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLLRTorpedo15 (OS)");
         weapon.addLookupName("Clan OS LRTorpedo-15");
         weapon.addLookupName("Clan LRTorpedo 15 (OS)");
+        weapon.addLookupName("CLLRT15 (OS)");
         weapon.heat = 5;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 15;
@@ -3744,6 +3762,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLLRTorpedo20 (OS)");
         weapon.addLookupName("Clan OS LRTorpedo-20");
         weapon.addLookupName("Clan LRTorpedo 20 (OS)");
+        weapon.addLookupName("CLLRT20 (OS)");
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;
@@ -3775,6 +3794,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLSRTorpedo2");
         weapon.addLookupName("Clan SRTorpedo-2");
         weapon.addLookupName("Clan SRTorpedo 2");
+        weapon.addLookupName("CLSRT2");
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
@@ -3805,6 +3825,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLSRTorpedo4");
         weapon.addLookupName("Clan SRTorpedo-4");
         weapon.addLookupName("Clan SRTorpedo 4");
+        weapon.addLookupName("CLSRT4");
         weapon.heat = 3;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
@@ -3835,6 +3856,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLSRTorpedo6");
         weapon.addLookupName("Clan SRTorpedo-6");
         weapon.addLookupName("Clan SRTorpedo 6");
+        weapon.addLookupName("CLSRT6");
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
@@ -3865,6 +3887,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLSRTorpedo2 (OS)");
         weapon.addLookupName("Clan OS SRTorpedo-2");
         weapon.addLookupName("Clan SRTorpedo 2 (OS)");
+        weapon.addLookupName("CLSRT2 (OS)");
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
@@ -3895,6 +3918,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLSRTorpedo4 (OS)");
         weapon.addLookupName("Clan OS SRTorpedo-4");
         weapon.addLookupName("Clan SRTorpedo 4 (OS)");
+        weapon.addLookupName("CLSRT4 (OS)");
         weapon.heat = 3;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
@@ -3925,6 +3949,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLSRTorpedo6 (OS)");
         weapon.addLookupName("Clan OS SRTorpedo-6");
         weapon.addLookupName("Clan SRTorpedo 6 (OS)");
+        weapon.addLookupName("CLSRT6 (OS)");
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;

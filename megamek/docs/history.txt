@@ -23,6 +23,8 @@ v0.31.9 (CVS)
 + Bug 1505555: Unable to standup and turn
 + Hopalong's weapon patches
 + Patch 1464393: Torpedo AddLookUpName Additions (from battlemaster)
++ Patch 1488173: Bot AI fix: secondary targets (from dgorsman)
++ patch 1496212: Bot AI upgrade: CEntity.java (from dgorsman)
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

@@ -23,6 +23,7 @@ import megamek.common.EquipmentType;
 import megamek.common.IAimingModes;
 import megamek.common.IEntityMovementType;
 import megamek.common.IHex;
+import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
@@ -889,12 +890,13 @@ public class TestBot extends BotClient {
         int from = en.getId();
         int weaponID = en.getEquipmentNum(mw);
         int spin_mode = 0;
+        int starg_mod;
         ArrayList result = new ArrayList();
         Enumeration ents = game.getValidTargets(en).elements();
         WeaponAttackAction wep_test;
         WeaponType spinner;
         AttackOption a = null;
-        AttackOption max = new AttackOption(null, null, 0, null);
+        AttackOption max = new AttackOption(null, null, 0, null, 1);
         while (ents.hasMoreElements()) {
             Entity e = (Entity) ents.nextElement();
             CEntity enemy = centities.get(e);
@@ -921,8 +923,40 @@ public class TestBot extends BotClient {
                 // calling for expected damage on each type; best type by damage is loaded
 
                 expectedDmg = Compute.getAmmoAdjDamage(game, wep_test);
+                
+                // Get the secondary target modifier for this weapon/target combo
+                
+                starg_mod = 1;
+                
+                if (en.getFacing() != -1){
+                    if (en.canChangeSecondaryFacing()){
+                        
+                        if (!Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), e.getPosition(), Compute.ARC_FORWARD)){
+                            starg_mod = 2;
+                        }
+                    } else {
+                        if (!Compute.isInArc(en.getPosition(), en.getFacing(), e.getPosition(), Compute.ARC_FORWARD)){
+                            starg_mod = 2;
+                        }
+                        
+                    }
+                }
+                
+                // If the attacker is Mech, it may mount a specialty targeting system
+                if (en instanceof Mech){
+                    // Multi-trac I/II have no secondary target penalties
+                    if (en.getTargSysType() == MiscType.T_TARGSYS_MULTI_TRAC | 
+                            en.getTargSysType() == MiscType.T_TARGSYS_MULTI_TRAC_II){
+                        starg_mod = 0;
+                    }
+                }
+                
+                // For good measure, infantry cannot attack multiple targets
+                if (en instanceof Infantry){
+                    starg_mod = 13;
+                }
 
-                a = new AttackOption(enemy, mw, expectedDmg, th);
+                a = new AttackOption(enemy, mw, expectedDmg, th, starg_mod);
                 if (a.value > max.value) {
                     if (best_only) {
                         max = a;
@@ -938,7 +972,7 @@ public class TestBot extends BotClient {
             result.add(max);
         }
         if (result.size() > 0) {
-            result.add(new AttackOption(null, mw, 0, null));
+            result.add(new AttackOption(null, mw, 0, null, 1));
         }
         return result;
     }

@@ -22,6 +22,7 @@ v0.31.9 (CVS)
 + Don't count destroyed weapons for heat curve in Mech BV calculation
 + Bug 1505555: Unable to standup and turn
 + Hopalong's weapon patches
++ Patch 1464393: Torpedo AddLookUpName Additions (from battlemaster)
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

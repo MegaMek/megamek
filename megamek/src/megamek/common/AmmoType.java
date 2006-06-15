@@ -1158,6 +1158,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo LRTorpedo-5");
         ammo.addLookupName("ISLRTorpedo5 Ammo");
         ammo.addLookupName("IS LRTorpedo 5 Ammo");
+        ammo.addLookupName("ISLRT5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
@@ -1176,6 +1177,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo LRTorpedo-10");
         ammo.addLookupName("ISLRTorpedo10 Ammo");
         ammo.addLookupName("IS LRTorpedo 10 Ammo");
+        ammo.addLookupName("ISLRT10 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
@@ -1194,6 +1196,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo LRTorpedo-15");
         ammo.addLookupName("ISLRTorpedo15 Ammo");
         ammo.addLookupName("IS LRv 15 Ammo");
+        ammo.addLookupName("ISLRT15 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
@@ -1212,6 +1215,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo LRTorpedo-20");
         ammo.addLookupName("ISLRTorpedo20 Ammo");
         ammo.addLookupName("IS LRTorpedo 20 Ammo");
+        ammo.addLookupName("ISLRT20 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
@@ -1230,6 +1234,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo SRTorpedo-2");
         ammo.addLookupName("ISSRTorpedo2 Ammo");
         ammo.addLookupName("IS SRTorpedo 2 Ammo");
+        ammo.addLookupName("ISSRT2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;
@@ -1248,6 +1253,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo SRTorpedo-4");
         ammo.addLookupName("ISSRTorpedo4 Ammo");
         ammo.addLookupName("IS SRTorpedo 4 Ammo");
+        ammo.addLookupName("ISSRT4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;
@@ -1266,6 +1272,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo SRTorpedo-6");
         ammo.addLookupName("ISSRTorpedo6 Ammo");
         ammo.addLookupName("IS SRTorpedo 6 Ammo");
+        ammo.addLookupName("ISSRT6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;
@@ -2722,6 +2729,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan Ammo LRTorpedo-5");
         ammo.addLookupName("CLLRTorpedo5 Ammo");
         ammo.addLookupName("Clan LRTorpedo 5 Ammo");
+        ammo.addLookupName("CLLRT5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
@@ -2808,6 +2816,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan Ammo LRTorpedo-10");
         ammo.addLookupName("CLLRTorpedo10 Ammo");
         ammo.addLookupName("Clan LRTorpedo 10 Ammo");
+        ammo.addLookupName("CLLRT10 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
@@ -2894,6 +2903,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan Ammo LRTorpedo-15");
         ammo.addLookupName("CLLRTorpedo15 Ammo");
         ammo.addLookupName("Clan LRTorpedo 15 Ammo");
+        ammo.addLookupName("CLLRT15 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
@@ -2980,6 +2990,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan Ammo LRTorpedo-20");
         ammo.addLookupName("CLLRTorpedo20 Ammo");
         ammo.addLookupName("Clan LRTorpedo 20 Ammo");
+        ammo.addLookupName("CLLRT20 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
@@ -3464,6 +3475,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan Ammo SRTorpedo-2");
         ammo.addLookupName("CLSRTorpedo2 Ammo");
         ammo.addLookupName("Clan SRTorpedo 2 Ammo");
+        ammo.addLookupName("CLSRT2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;
@@ -3499,6 +3511,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan Ammo SRTorpedo-4");
         ammo.addLookupName("CLSRTorpedo4 Ammo");
         ammo.addLookupName("Clan SRTorpedo 4 Ammo");
+        ammo.addLookupName("CLSRT4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;
@@ -3534,6 +3547,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan Ammo SRTorpedo-6");
         ammo.addLookupName("CLSRTorpedo6 Ammo");
         ammo.addLookupName("Clan SRTorpedo 6 Ammo");
+        ammo.addLookupName("CLSRT6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;

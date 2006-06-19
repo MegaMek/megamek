@@ -1490,9 +1490,13 @@ public class ChatLounge
         } else if (ev.getSource().equals(butCamo)) {
             camoDialog.setVisible(true);
         } else if (ev.getSource().equals(butAddBot)) {
-            String name; //$NON-NLS-1$
-            name = JOptionPane.showInputDialog(clientgui.frame, Messages.getString("ChatLounge.Name"),
-                    Messages.getString("ChatLounge.ChooseBotName"), JOptionPane.QUESTION_MESSAGE);
+            String name = "Bot" + lisPlayerInfo.getModel().getSize(); //$NON-NLS-1$
+            name = (String)JOptionPane.showInputDialog(clientgui.frame, Messages.getString("ChatLounge.Name"),
+                    Messages.getString("ChatLounge.ChooseBotName"), JOptionPane.QUESTION_MESSAGE,
+                    null, null, name);
+            if (name == null){
+                return;
+            }
             if ("".equals(name.trim())) {
                 name = "Bot" + lisPlayerInfo.getModel().getSize(); //$NON-NLS-1$
             }

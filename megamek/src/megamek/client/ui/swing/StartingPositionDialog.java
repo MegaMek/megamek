@@ -20,18 +20,6 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.IOffBoardDirections;
-import megamek.common.IStartingPositions;
-import megamek.common.Player;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -41,6 +29,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import megamek.client.Client;
+import megamek.common.Entity;
+import megamek.common.EntitySelector;
+import megamek.common.IOffBoardDirections;
+import megamek.common.IStartingPositions;
+import megamek.common.Player;
 
 /**
  * The starting position dialog allows the player to select a starting position.
@@ -79,19 +81,21 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
         getContentPane().setLayout(gridbag);
 
-        c.fill = GridBagConstraints.BOTH;
+        c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(4, 4, 4, 4);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
         c.gridwidth = 1;
         gridbag.setConstraints(panStartButtons, c);
         getContentPane().add(panStartButtons);
 
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(lisStartList, c);
-        getContentPane().add(lisStartList);
+        JScrollPane sp = new JScrollPane(lisStartList); 
+        gridbag.setConstraints(sp, c);
+        getContentPane().add(sp);
 
-        c.fill = GridBagConstraints.VERTICAL;
+        c.fill = GridBagConstraints.NONE;
         gridbag.setConstraints(panButtons, c);
         getContentPane().add(panButtons);
 

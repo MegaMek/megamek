@@ -1613,8 +1613,18 @@ public class ChatLounge
             } else {
                 butMechReadout.setEnabled(selected);
             }
-
             butDelete.setEnabled(selected);
+        } else if (event.getSource() == lisPlayerInfo) {
+            butRemoveBot.setEnabled(false);
+            Client c = getPlayerListSelected(lisPlayerInfo);
+            if (c == null) {
+                lisPlayerInfo.setSelectedIndex(-1);
+                return;
+            }
+            if (c instanceof BotClient) {
+                butRemoveBot.setEnabled(true);
+            } 
+            choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());            
         }
     }
 }

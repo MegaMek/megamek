@@ -4371,8 +4371,8 @@ public class BoardView1
     };
 
     private synchronized void boardChanged() {
-        boardImage = null;
-        boardGraph = null;
+//        boardImage = null;
+//        boardGraph = null;
         redrawAllEntities();        
     }
 

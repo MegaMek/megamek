@@ -27,6 +27,7 @@ v0.31.9 (CVS)
 + patch 1496212: Bot AI upgrade: CEntity.java (from dgorsman)
 + Fixed minor bugs (adding Bots) in the swing version of the ChatLounge
 + Patch 1277708: Draw optimization
++ Fixed layout in the swing version of the StartingPositionDialog
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

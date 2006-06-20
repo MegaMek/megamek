@@ -28,6 +28,7 @@ v0.31.9 (CVS)
 + Fixed minor bugs (adding Bots) in the swing version of the ChatLounge
 + Patch 1277708: Draw optimization
 + Fixed layout in the swing version of the StartingPositionDialog
++ Fixed minor porting bug in the swing version of the ChatLounge
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

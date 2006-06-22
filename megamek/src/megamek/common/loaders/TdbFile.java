@@ -744,7 +744,7 @@ public class TdbFile implements IMechLoader {
         }
         int firstEmpty = -1;
         for (int slot = 0; slot < mech.getNumberOfCriticals(loc); slot++) {
-            if (critData[loc][slot][0].equals("Empty")) {
+            if (firstEmpty == -1 && critData[loc][slot][0].equals("Empty")) {
                 firstEmpty = slot;
             }
             if (firstEmpty != -1 && !critData[loc][slot][0].equals("Empty")) {

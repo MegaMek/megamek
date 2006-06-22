@@ -179,11 +179,6 @@ public abstract class BotClient extends Client {
                 }
                 moveEntity(mp.getEntity().getId(), mp);
             } else if (game.getPhase() == IGame.PHASE_FIRING) {
-                if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
-                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
-                    MovePath mp = continueMovementFor(game.getEntity(turn.getEntityNum()));
-                    moveEntity(mp.getEntity().getId(), mp);
-                }
                 calculateFiringTurn();
             } else if (game.getPhase() == IGame.PHASE_PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();

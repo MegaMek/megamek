@@ -1557,7 +1557,128 @@ public class TestBot extends BotClient {
 
 
     protected MovePath continueMovementFor(Entity entity) {
-        return new MovePath(game, entity);
+        System.out.println("Contemplating movement of " + entity.getShortName() + " " + entity.getId());
+        CEntity cen = centities.get(entity);
+        cen.refresh();
+        firstPass(cen);
+        
+        Object[] enemy_array = this.getEnemyEntities().toArray();
+        MoveOption result[]=calculateMove(entity);
+        MoveOption min = null;
+        ArrayList<MoveOption[]> possible = new ArrayList<MoveOption[]>();
+        boolean short_circuit = false;
+        
+        if (result.length < 6) {
+            min = result.length > 0 ? (MoveOption) result[0] : null;
+            short_circuit = true;
+        }
+        possible.add(result);
+
+        //should ignore mechs that are not engaged
+        //and only do the below when there are 2 or mechs left to move
+        if (!short_circuit) {
+            if (this.getEntitiesOwned().size() > 1) {
+                GALance lance = new GALance(this, possible, 50, 80);
+                lance.evolve();
+                min = lance.getResult();
+                this.old_moves = lance;
+            } else if (
+                    ((MoveOption[]) possible.get(0)) != null
+                    && ((MoveOption[]) possible.get(0)).length > 0) {
+                min = ((MoveOption[]) possible.get(0))[0];
+            }
+        }
+        if (min == null) {
+            min = new MoveOption(game, centities.get(getFirstEntityNum()));
+        }
+
+        for (int d = 0; d < enemy_array.length; d++) {
+            Entity en = (Entity) enemy_array[d];
+            
+            // ignore loaded units
+            if (en.getPosition() == null) {
+                continue;
+            }
+
+            CEntity enemy = centities.get(en);
+            int enemy_hit_arc =
+                    CEntity.getThreatHitArc(enemy.current.getFinalCoords(),
+                            enemy.current.getFinalFacing(),
+                            min.getFinalCoords());
+            MoveOption.DamageInfo di = (MoveOption.DamageInfo) min.damageInfos.get(enemy);
+            if (di != null) {
+                enemy.expected_damage[enemy_hit_arc] += di.min_damage;
+            }
+            if (enemy.expected_damage[enemy_hit_arc] > 0) {
+                enemy.hasTakenDamage = true;
+            }
+        }
+        if (min.isPhysical) {
+            centities.get(min.getPhysicalTargetId()).isPhysicalTarget = true;
+        }
+        System.out.println(min);
+        min.getCEntity().current = min;
+        min.getCEntity().last = min;
+        this.my_mechs_moved++;
+        min.getCEntity().moved = true;
+
+        // If this unit has a jammed RAC, and it has only walked,
+        // add an unjam action
+        if (min != null) {
+            if (min.getLastStep() != null) {
+                if (min.getCEntity().entity.canUnjamRAC()) {
+                    if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK) ||
+                            (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) ||
+                            (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
+                        // Cycle through all available weapons, only unjam if the jam(med)
+                        // RACs count for a significant portion of possible damage
+                        int rac_damage = 0;
+                        int other_damage = 0;
+                        int clearance_range = 0;
+                        for (Mounted equip :min.getCEntity().entity.getWeaponList()) {
+                            WeaponType test_weapon = new WeaponType();
+
+                            test_weapon = (WeaponType) equip.getType();
+                            if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY) &&
+                                    (equip.isJammed() == true)) {
+                                rac_damage = rac_damage + 4 * (test_weapon.getDamage());
+                            } else {
+                                if (equip.canFire()) {
+                                    other_damage += test_weapon.getDamage();
+                                    if (test_weapon.getMediumRange() > clearance_range) {
+                                        clearance_range = test_weapon.getMediumRange();
+                                    }
+                                }
+                            }
+                        }
+                        // Even if the jammed RAC doesn't make up a significant portion
+                        // of the units damage, its still better to have it functional
+                        // If nothing is "close" then unjam anyways
+                        int check_range = 100;
+                        for (Enumeration unit_selection = game.getEntities();
+                             unit_selection.hasMoreElements();) {
+                            Entity enemy = (Entity) unit_selection.nextElement();
+                            if ((min.getCEntity().entity.getPosition() != null) &&
+                                    (enemy.getPosition() != null) &&
+                                    (enemy.isEnemyOf(min.getCEntity().entity))) {
+                                if (enemy.isVisibleToEnemy()) {
+                                    if (min.getCEntity().entity.getPosition().distance
+                                            (enemy.getPosition()) < check_range) {
+                                        check_range = min.getCEntity().entity.getPosition().
+                                                distance(enemy.getPosition());
+                                    }
+                                }
+                            }
+                        }
+                        if ((rac_damage >= other_damage) || (check_range < clearance_range)) {
+                            min.addStep(MovePath.STEP_UNJAM_RAC);
+                        }
+                    }
+                }
+            }
+        }
+
+        return min;
     }
 
     protected Vector calculateMinefieldDeployment() {

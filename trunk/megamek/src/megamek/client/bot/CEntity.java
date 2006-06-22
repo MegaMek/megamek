@@ -842,7 +842,7 @@ public class CEntity {
             for (int j = 1; j < 2; j++) {
                 MoveOption.Key key = new MoveOption.Key(dest, i, j);
                 MoveOption es = null;
-                if ((es = (MoveOption) moves.get(key)) != null) {
+                if ((es = (MoveOption) getAllMoves().get(key)) != null) {
                     result.add(es);
                 }
             }

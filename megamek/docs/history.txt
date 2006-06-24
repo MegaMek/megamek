@@ -31,6 +31,7 @@ v0.31.9 (CVS)
 + Fixed minor porting bug in the swing version of the ChatLounge
 + Bug 1510342: Improved JJ MP Calculated Wrong
 + Taught the bot how to play under individual initiative
++ MechDisplayEvent.getWeaponId() returned entityId
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

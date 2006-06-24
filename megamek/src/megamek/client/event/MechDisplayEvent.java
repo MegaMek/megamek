@@ -67,7 +67,7 @@ public class MechDisplayEvent extends java.util.EventObject
      *         applicable; -1 otherwise.
      */
     public int getWeaponId() {
-        return entityId;
+        return weaponId;
     }
 
     /**

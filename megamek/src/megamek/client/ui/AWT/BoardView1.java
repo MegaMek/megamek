@@ -3394,6 +3394,14 @@ public class BoardView1
                     .append( ");" ) //$NON-NLS-1$
                     .append( Messages.getString("BoardView1.Heat") ) //$NON-NLS-1$
                     .append( entity.heat );
+                if (entity.isCharging()) {
+                    buffer.append(" ") //$NON-NLS-1$
+                        .append( Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
+                }
+                if (entity.isMakingDfa()) {
+                    buffer.append(" ") //$NON-NLS-1$
+                        .append( Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
+                }
             } else {
                 if (ge.hasTurret() && ge.isTurretLocked()) {
                     buffer.append(Messages.getString("BoardView1.TurretLocked"));

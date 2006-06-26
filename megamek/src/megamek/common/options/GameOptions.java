@@ -54,7 +54,6 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base,"skip_ineligable_firing", false); //$NON-NLS-1$
         addOption(base,"skip_ineligable_physical", true); //$NON-NLS-1$
         addOption(base,"push_off_board", true); //$NON-NLS-1$
-        addOption(base,"check_victory", true); //$NON-NLS-1$
         addOption(base,"rng_type", 1); //$NON-NLS-1$
         addOption(base,"team_initiative", true);  //$NON-NLS-1$
         addOption(base,"is_eq_limits", true);  //$NON-NLS-1$
@@ -65,6 +64,14 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base,"deep_deployment", false); //$NON-NLS-1$
         addOption(base,"restrict_game_commands", false); //$NON-NLS-1$
         
+        OptionGroup victory = addGroup("victory"); //$NON-NLS-1$
+        addOption(victory,"check_victory", true); //$NON-NLS-1$
+        addOption(victory,"achieve_conditions", 1); //$NON-NLS-1$
+        addOption(victory,"use_bv_destroyed", false); //$NON-NLS-1$
+        addOption(victory,"bv_destroyed_percent", 100); //$NON-NLS-1$
+        addOption(victory,"use_bv_ratio", false); //$NON-NLS-1$
+        addOption(victory,"bv_ratio_percent", 300); //$NON-NLS-1$
+
         OptionGroup level2 = addGroup("level2"); //$NON-NLS-1$
         addOption(level2,"flamer_heat", true); //$NON-NLS-1$
         addOption(level2,"fire", true); //$NON-NLS-1$
@@ -75,7 +82,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level2,"vacuum", false); //$NON-NLS-1$
         addOption(level2,"night_battle", false); //$NON-NLS-1$
         addOption(level2,"assault_drop", false); //$NON-NLS-1$
-
+        
         OptionGroup level3 = addGroup("level3"); //$NON-NLS-1$
         addOption(level3,"allow_level_3_units", false);
         addOption(level3,"allow_level_3_ammo", false);

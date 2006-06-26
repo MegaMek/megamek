@@ -153,8 +153,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -1855,6 +1857,7 @@ public class Server implements Runnable {
             case IGame.PHASE_END :
                 // remove any entities that died in the heat/end phase before check for victory
                 resetEntityPhase(IGame.PHASE_END);
+                boolean victory = victory(); //note this may add reports
                 // check phase report
                 //HACK: hardcoded message ID check
                 if (vPhaseReport.size() > 3
@@ -1867,7 +1870,7 @@ public class Server implements Runnable {
                     addReport(new Report(1205, Report.PUBLIC));
                     game.addReports(vPhaseReport);
                     sendReport();
-                    if (victory()) {
+                    if (victory) {
                         changePhase(IGame.PHASE_VICTORY);
                     } else {
                         changePhase(IGame.PHASE_INITIATIVE);
@@ -2097,6 +2100,118 @@ public class Server implements Runnable {
             // team victory
             game.setVictoryPlayerId(Player.PLAYER_NONE);
             game.setVictoryTeam(lastTeam);
+            return true;
+        }
+        
+        //now check for detailed victory conditions...
+        Hashtable<Integer,Integer> winPlayers = new Hashtable<Integer,Integer>();
+        Hashtable<Integer,Integer> winTeams = new Hashtable<Integer,Integer>();
+        
+        //BV related victory conditions
+        if(game.getOptions().booleanOption("use_bv_destroyed")
+                || game.getOptions().booleanOption("use_bv_ratio")) {
+            HashSet<Integer> doneTeams = new HashSet<Integer>();
+            for(Enumeration e = game.getPlayers();e.hasMoreElements();) {
+                Player player = (Player)e.nextElement();
+                int fbv = 0;
+                int ebv = 0;
+                int eibv = 0;
+                int team = player.getTeam();
+                if(team != Player.TEAM_NONE) {
+                    if(doneTeams.contains(team))
+                        continue; //skip if already
+                    doneTeams.add(team);
+                }
+                
+                for(Enumeration f = game.getPlayers();f.hasMoreElements();) {
+                    Player other = (Player)f.nextElement();
+                    if(other.isEnemyOf(player)) {
+                        ebv += other.getBV();
+                        eibv += other.getInitialBV();
+                    } else {
+                        fbv += other.getBV();
+                    }
+                }
+                
+                if(game.getOptions().booleanOption("use_bv_ratio")) {
+                    if(ebv == 0 || (100*fbv)/ebv >= game.getOptions().intOption("bv_ratio_percent")) {
+                        Report r = new Report(7100);
+                        if(team == Player.TEAM_NONE) {
+                            r.add(player.getName());
+                            Integer vc=winPlayers.get(player.getId());
+                            if(vc==null)vc = new Integer(0);
+                            winPlayers.put(player.getId(),vc + 1);
+                        } else {
+                            r.add("Team "+team);
+                            Integer vc=winTeams.get(team);
+                            if(vc==null)vc = new Integer(0);
+                            winTeams.put(team,vc + 1);
+                        }
+                        r.add(ebv==0?9999:(100*fbv)/ebv);
+                        addReport(r);
+                    }
+                }
+                if(game.getOptions().booleanOption("use_bv_destroyed")) {
+                    if((ebv * 100) / eibv <=
+                        100 - game.getOptions().intOption("bv_destroyed_percent")) {
+                        Report r = new Report(7105);
+                        if(team == Player.TEAM_NONE) {
+                            r.add(player.getName());
+                            Integer vc=winPlayers.get(player.getId());
+                            if(vc==null)vc = new Integer(0);
+                            winPlayers.put(player.getId(),vc + 1);
+                        } else {
+                            r.add("Team "+team);
+                            Integer vc=winTeams.get(team);
+                            if(vc==null)vc = new Integer(0);
+                            winTeams.put(team,vc + 1);
+                        }
+                        r.add(100-((ebv*100)/eibv));
+                        addReport(r);
+                    }
+                }
+            }
+        }
+        
+        //Any winners?
+        int wonPlayer = Player.PLAYER_NONE;
+        int wonTeam = Player.TEAM_NONE;
+        boolean draw = false;
+        for(Map.Entry<Integer,Integer> e : winPlayers.entrySet()) {
+            if(e.getValue() >= game.getOptions().intOption("achieve_conditions")) {
+                if(wonPlayer != Player.PLAYER_NONE)
+                    draw = true;
+                wonPlayer = e.getKey();
+                Report r = new Report(7200);
+                r.add(game.getPlayer(wonPlayer).getName());
+                addReport(r);
+            }
+        }
+        for(Map.Entry<Integer,Integer> e : winTeams.entrySet()) {
+            if(e.getValue() >= game.getOptions().intOption("achieve_conditions")) {
+                if(wonTeam != Player.TEAM_NONE || wonPlayer != Player.PLAYER_NONE)
+                    draw = true;
+                wonTeam = e.getKey();
+                Report r = new Report(7200);
+                r.add("Team "+wonTeam);
+                addReport(r);
+            }
+        }
+        if(draw) {
+            game.setVictoryPlayerId(Player.PLAYER_NONE);
+            game.setVictoryTeam(Player.TEAM_NONE);
+            return true;
+        }
+        if(wonPlayer != Player.PLAYER_NONE) {
+            //individual victory
+            game.setVictoryPlayerId(winPlayers.keys().nextElement());
+            game.setVictoryTeam(Player.TEAM_NONE);
+            return true;
+        }
+        if(wonTeam != Player.TEAM_NONE) {
+            //team victory
+            game.setVictoryPlayerId(Player.PLAYER_NONE);
+            game.setVictoryTeam(wonTeam);
             return true;
         }
 

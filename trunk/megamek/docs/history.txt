@@ -33,6 +33,7 @@ v0.31.9 (CVS)
 + Taught the bot how to play under individual initiative
 + MechDisplayEvent.getWeaponId() returned entityId
 + Show execution of charge/dfa on unit tooltip
++ Victory condition game options (% enemy BV destroyed and BV ratio)
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

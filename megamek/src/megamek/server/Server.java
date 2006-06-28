@@ -9071,6 +9071,12 @@ public class Server implements Runnable {
                             hit.makeGlancingBlow();
                         }
                         addReport(damageEntity(entityTarget, hit, nDamage, false, 5, false, false, throughFront));
+                    } else if(wtype.hasFlag(WeaponType.F_SINGLE_TARGET) && game.getOptions().booleanOption("maxtech_infantry_damage")) {
+                        //single target weapon, do less damage vs inf
+                        if (bGlancing) {
+                            hit.makeGlancingBlow();
+                        }
+                        addReport(damageEntity(entityTarget, hit, nDamage, false, 6, false, false, throughFront));
                     } else {
                         if (usesAmmo
                                 && atype.getAmmoType() == AmmoType.T_AC
@@ -9404,7 +9410,11 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            addReport(damageEntity(te, hit, damage, false, 0, false, false, throughFront));
+            int damageType = 0;
+            if(game.getOptions().booleanOption("maxtech_infantry_damage")) {
+                damageType = 6;
+            }
+            addReport(damageEntity(te, hit, damage, false, damageType, false, false, throughFront));
         }
 
         addNewLines();
@@ -9569,7 +9579,11 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            addReport(damageEntity(te, hit, damage, false, 0, false, false, throughFront));
+            int damageType = 0;
+            if(game.getOptions().booleanOption("maxtech_infantry_damage")) {
+                damageType = 6;
+            }
+            addReport(damageEntity(te, hit, damage, false, damageType, false, false, throughFront));
         }
 
         if (te.getMovementMode() == IEntityMovementMode.BIPED || te.getMovementMode() == IEntityMovementMode.QUAD) {
@@ -10366,7 +10380,11 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
-            addReport(damageEntity(te, hit, damage, false, 0, false, false, throughFront));
+            int damageType = 0;
+            if(game.getOptions().booleanOption("maxtech_infantry_damage")) {
+                damageType = 6;
+            }
+            addReport(damageEntity(te, hit, damage, false, damageType, false, false, throughFront));
         }
 
         //On a roll of 10+ a lance hitting a mech/Vehicle can cause 1 point of internal damage
@@ -12607,6 +12625,7 @@ public class Server implements Runnable {
         if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() && ((Infantry)te).getDugIn() != Infantry.DUG_IN_COMPLETE) {
             te_hex = game.getBoard().getHex( te.getPosition() );
             if ( te_hex != null &&
+                 bFrag != 6 &&
                  !te_hex.containsTerrain( Terrains.WOODS ) &&
                  !te_hex.containsTerrain( Terrains.JUNGLE ) &&
                  !te_hex.containsTerrain( Terrains.ROUGH ) &&
@@ -12707,6 +12726,15 @@ public class Server implements Runnable {
                 r.indent(2);
                 r.newlines = 0;
                 vDesc.addElement(r);
+            }
+        case 6:
+            if(isPlatoon) {
+                if(damage >= 10)
+                    damage = 2;
+                else
+                    damage = 1;
+                if(te.getArmor(hit) > 0)
+                    damage *= 2; //these hits are unaffected by heavy armour.
             }
 
         default:

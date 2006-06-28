@@ -58,6 +58,7 @@ public class WeaponType extends EquipmentType {
     public static final long     F_C3M                = 0x010000000L; // C3 Master with Target acquisition gear
     public static final long     F_PLASMA_MFUK        = 0x020000000L; // Plasma Rifle
     public static final long     F_EXTINGUISHER       = 0x040000000L; // Fire extinguisher
+    public static final long     F_SINGLE_TARGET      = 0x080000000L; // Does less damage to PBI in maxtech rules
 
     protected RangeType rangeL;
     protected int   heat;
@@ -667,7 +668,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 12;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY ;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 124;
         weapon.cost = 100000;
 
@@ -696,7 +697,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 8;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 46;
         weapon.cost = 40000;
 
@@ -725,7 +726,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 3;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 9;
         weapon.cost = 11250;
 
@@ -754,7 +755,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 14;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
-        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 176;
         weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
         weapon.cost = 200000;
@@ -1664,7 +1665,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 20;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
-        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 229;
         weapon.cost = 300000;
 
@@ -1692,7 +1693,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 18;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 163;
         weapon.cost = 200000;
 
@@ -1720,7 +1721,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 10;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 62;
         weapon.cost = 80000;
 
@@ -1748,7 +1749,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 17;
         weapon.cost = 11250;
 
@@ -2127,7 +2128,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 30;
         weapon.tonnage = 15.0f;
         weapon.criticals = 7;
-        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
         weapon.explosive = true;
         weapon.bv = 321;
         weapon.cost = 300000;
@@ -2152,7 +2153,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 34;
         weapon.tonnage = 12.0f;
         weapon.criticals = 5;
-        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
         weapon.explosive = true;
         weapon.bv = 159;
         weapon.cost = 275000;
@@ -2177,7 +2178,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 26;
         weapon.tonnage = 18.0f;
         weapon.criticals = 11;
-        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SPLITABLE;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SPLITABLE | F_SINGLE_TARGET;
         weapon.explosive = true;
         weapon.bv = 346;
         weapon.cost = 500000;
@@ -3195,7 +3196,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 20;
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
-        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 412;
         weapon.cost = 300000;
 
@@ -3223,7 +3224,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 20;
         weapon.tonnage = 4.0f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 249;
         weapon.cost = 200000;
 
@@ -3251,7 +3252,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 14;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 108;
         weapon.cost = 80000;
 
@@ -3279,7 +3280,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 31;
         weapon.cost = 11250;
 
@@ -3307,7 +3308,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 7;
         weapon.cost = 10000;
 
@@ -3390,7 +3391,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 12;
         weapon.tonnage = 4.0f;
         weapon.criticals = 3;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 243;
         weapon.cost = 250000;
 
@@ -3419,7 +3420,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 8;
         weapon.tonnage = 1.0f;
         weapon.criticals = 2;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 76;
         weapon.cost = 100000;
 
@@ -3448,7 +3449,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 15;
         weapon.cost = 20000;
 
@@ -4671,7 +4672,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 30;
         weapon.tonnage = 12.0f;
         weapon.criticals = 6;
-        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
         weapon.explosive = true;
         weapon.bv = 321;
         weapon.cost = 300000;
@@ -5810,7 +5811,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_LASER | F_NO_FIRES | F_ENERGY;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_LASER | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
 
         return weapon;
     }
@@ -5832,7 +5833,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 0;
 
         return weapon;
@@ -5978,7 +5979,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 4; // No Extreme Range
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 0;
 
         return weapon;
@@ -6028,7 +6029,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 0;
 
         return weapon;
@@ -6168,7 +6169,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
 
         return weapon;
 
@@ -6193,7 +6194,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 15;
         weapon.cost = 8500;
-        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
 
         return weapon;
     }
@@ -6218,7 +6219,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 15;
         weapon.cost = 8500;
-        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
 
         return weapon;
     }
@@ -6242,7 +6243,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 12;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 0;
 
         return weapon;
@@ -6265,7 +6266,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 0;
 
         return weapon;
@@ -6310,7 +6311,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY;
+        weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 0;
 
         return weapon;
@@ -8068,7 +8069,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
 
         return weapon;
     }
@@ -8191,7 +8192,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_PPC | F_BATTLEARMOR | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_PPC | F_BATTLEARMOR | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
 
         return weapon;
     }
@@ -8315,7 +8316,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 30;
         weapon.tonnage = 15.0f;
         weapon.criticals = 8;
-        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_PROTOTYPE;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_PROTOTYPE | F_SINGLE_TARGET;
         weapon.explosive = true;
         weapon.bv = 321;
         weapon.cost = 300000;
@@ -8345,7 +8346,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.toHitModifier = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_PROTOTYPE;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_ENERGY | F_PROTOTYPE | F_SINGLE_TARGET;
         weapon.bv = 163;
         weapon.cost = 200000;
 
@@ -8645,7 +8646,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 0;
 
         return weapon;
@@ -8674,7 +8675,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 2;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 0;
 
         return weapon;
@@ -8699,7 +8700,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_LASER | F_ENERGY;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_LASER | F_ENERGY | F_SINGLE_TARGET;
 
         return weapon;
     }
@@ -8752,7 +8753,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
 
         return weapon;
     }
@@ -8776,7 +8777,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
 
         return weapon;
     }
@@ -9369,7 +9370,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
 
         return weapon;
     
@@ -9740,7 +9741,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 20;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
-        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 228;
         weapon.cost = 450000;
 
@@ -9768,7 +9769,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 14;
         weapon.tonnage = 7.0f;
         weapon.criticals = 2;
-        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 176;
         weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
         weapon.cost = 400000;
@@ -9793,7 +9794,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 26;
         weapon.tonnage = 18.0f;
         weapon.criticals = 9;
-        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
         weapon.explosive = true;
         weapon.bv = 411;
         weapon.cost = 300000;
@@ -9845,7 +9846,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 14;
         weapon.tonnage = 10.0f;
         weapon.criticals = 6;
-        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 316;
         weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
         weapon.cost = 300000;
@@ -9875,7 +9876,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterExtremeRange = 14;
         weapon.tonnage = 4.0f;
         weapon.criticals = 2;
-        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
+        weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 88;
         weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
         weapon.cost = 100000;

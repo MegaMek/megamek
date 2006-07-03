@@ -2036,14 +2036,15 @@ public class Server implements Runnable {
                 }
             }
 
+            if (forceVictory) {
+                return true;
+            }
+
             for (int i = 0; i < players.size(); i++) {
                 Player player = (Player) players.elementAt(i);
                 player.setAdmitsDefeat(false);
             }
 
-            if (forceVictory) {
-                return true;
-            }
             cancelVictory();
         }
 

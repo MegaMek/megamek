@@ -57,6 +57,7 @@ import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.ProtomechPhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
@@ -106,6 +107,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
@@ -115,7 +118,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Vector;
 
 /**
@@ -148,7 +150,6 @@ public final class BoardView1
     private static final Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
     private static final Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
     private Dimension hex_size = null;
-    private final boolean isJ2RE;
     private Font font_hexnum = FONT_10;
     private Font font_elev = FONT_9;
     private Font font_minefield = FONT_12;
@@ -260,34 +261,18 @@ public final class BoardView1
         redrawWorker.start();
         addKeyListener(this);
         addMouseListener(this);
-        addMouseMotionListener(this);
-        /* MouseWheelListener isn't a v1.3.1 API **
-        try{
-            addMouseWheelListener( new MouseWheelListener(){
-                public void mouseWheelMoved(MouseWheelEvent we){
-                    if (we.getWheelRotation() > 0){
-                            zoomIn();
-                    } else {
-                            zoomOut();
-                    }
+        addMouseWheelListener( new MouseWheelListener(){
+            public void mouseWheelMoved(MouseWheelEvent we){
+                if (we.getWheelRotation() > 0){
+                        zoomIn();
+                } else {
+                        zoomOut();
                 }
-            });
-        } catch ( Throwable error ){
-            System.out.println("Mouse wheel not supported by this jvm");
-        }
-        /* MouseWheelListener isn't a v1.3.1 API */
+            }
+        });
         
-        // only use scaling if we're using Java 2, otherwise we get memory leaks etc.
-        Properties p = System.getProperties();
-        String javaVersion = p.getProperty("java.version"); //$NON-NLS-1$
-        if (javaVersion.charAt(2) == '1') {
-            isJ2RE = false;
-            zoomIndex = BASE_ZOOM_INDEX;
-        } else {
-            isJ2RE = true;
-            zoomIndex = GUIPreferences.getInstance().getMapZoomIndex();
-            checkZoomIndex();
-        }
+        zoomIndex = GUIPreferences.getInstance().getMapZoomIndex();
+        checkZoomIndex();
         scale = ZOOM_FACTORS[zoomIndex];
         updateFontSizes();
         updateBoardSize();
@@ -1739,17 +1724,11 @@ public final class BoardView1
                 addAttack((AttackAction) ea);
             }
         }
-
-        /*
-         * TODO the condition game.getPhase() == ... is the fix for bug 1242303. Is it correct?
-         * Show charging only in the movement phase
-         */
-        if (game.getPhase() == IGame.PHASE_MOVEMENT) {
-            for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
-                EntityAction ea = (EntityAction) i.nextElement();
-                if (ea instanceof AttackAction) {
-                    addAttack((AttackAction) ea);
-                }
+        
+        for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
+            EntityAction ea = (EntityAction) i.nextElement();
+            if (ea instanceof PhysicalAttackAction) {
+                addAttack((AttackAction) ea);
             }
         }
     }
@@ -2286,20 +2265,16 @@ public final class BoardView1
      * Increases zoomIndex and refreshes the map.
      */
     public void zoomIn() {
-        if (isJ2RE == true) {
-            zoomIndex++;
-            zoom();
-        }
+        zoomIndex++;
+        zoom();
     }
 
     /**
      * Decreases zoomIndex and refreshes the map.
      */
     public void zoomOut() {
-        if (isJ2RE == true) {
-            zoomIndex--;
-            zoom();
-        }
+        zoomIndex--;
+        zoom();
     }
 
     private void checkZoomIndex() {
@@ -2411,7 +2386,7 @@ public final class BoardView1
                 } else {
                     tmpImage = getScaledImage(image);
                 }
-                if (makeTranslucent && isJ2RE) {
+                if (makeTranslucent) {
                     Graphics2D g2 = (Graphics2D) g;
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                     g2.drawImage(tmpImage, x, y, observer);

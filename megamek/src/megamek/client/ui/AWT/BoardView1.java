@@ -47,8 +47,6 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
-import java.util.Properties;
-
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
@@ -87,7 +85,6 @@ public class BoardView1
     private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
 
     private Dimension       hex_size = null;
-    private boolean         isJ2RE;
     
     private Font       font_hexnum          = FONT_10;
     private Font       font_elev        = FONT_9;
@@ -235,34 +232,19 @@ public class BoardView1
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-        /* MouseWheelListener isn't a v1.3.1 API **
-        try{
-            addMouseWheelListener( new MouseWheelListener(){
-                public void mouseWheelMoved(MouseWheelEvent we){
-                    if (we.getWheelRotation() > 0){
-                            zoomIn();
-                    } else {
-                            zoomOut();
-                    }
+        addMouseWheelListener( new MouseWheelListener(){
+            public void mouseWheelMoved(MouseWheelEvent we){
+                if (we.getWheelRotation() > 0){
+                        zoomIn();
+                } else {
+                        zoomOut();
                 }
-            });
-        } catch ( Throwable error ){
-            System.out.println("Mouse wheel not supported by this jvm");
-        }
-        /* MouseWheelListener isn't a v1.3.1 API */
+            }
+        });
         
-        // only use scaling if we're using Java 2, otherwise we get memory leaks etc.
-        Properties p = System.getProperties();
-        String javaVersion = p.getProperty( "java.version" ); //$NON-NLS-1$
-        if ( javaVersion.charAt(2) == '1' ){
-            isJ2RE = false;
-            zoomIndex = BASE_ZOOM_INDEX;
-        } else {
-            isJ2RE = true;
-            zoomIndex = GUIPreferences.getInstance().getMapZoomIndex();
-            checkZoomIndex();
-            hasZoomed = true;
-        }
+        zoomIndex = GUIPreferences.getInstance().getMapZoomIndex();
+        checkZoomIndex();
+        hasZoomed = true;
         scale = ZOOM_FACTORS[ zoomIndex ];
         
         updateFontSizes();
@@ -1908,17 +1890,10 @@ public class BoardView1
                 addAttack((AttackAction)ea);
             }
         }
-
-        /*
-         * TODO the condition game.getPhase() == ... is the fix for bug 1242303. Is it correct?
-         * Show charging only in the movement phase
-         */
-        if (game.getPhase() == IGame.PHASE_MOVEMENT) {
-            for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
-                EntityAction ea = (EntityAction)i.nextElement();
-                if (ea instanceof AttackAction) {
-                    addAttack((AttackAction)ea);
-                }
+        for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
+               EntityAction ea = (EntityAction)i.nextElement();
+            if (ea instanceof PhysicalAttackAction) {
+                addAttack((AttackAction)ea);
             }
         }
     }
@@ -2495,10 +2470,8 @@ public class BoardView1
      * 
      */
     public void zoomIn(){
-        if ( isJ2RE == true ){
-            zoomIndex++;
-            zoom();
-        }
+        zoomIndex++;
+        zoom();
     }
 
     /**
@@ -2506,11 +2479,9 @@ public class BoardView1
      *
      */
     public void zoomOut(){
-        if ( isJ2RE == true ){
-            zoomIndex--;
-            zoom();
-        }
-        }
+        zoomIndex--;
+        zoom();
+    }
 
     /**
      * zoomIndex is a reference to a static array of scale factors.
@@ -2522,10 +2493,8 @@ public class BoardView1
      * @param zoomIndex
      */
     public void setZoomIndex( int zoomIndex ){
-        if ( isJ2RE == true ){
-            this.zoomIndex = zoomIndex;
-            zoom();
-        }
+        this.zoomIndex = zoomIndex;
+        zoom();
     }
 
     public int getZoomIndex(){
@@ -2692,7 +2661,7 @@ public class BoardView1
                 } else {
                     tmpImage = getScaledImage(image);
                 }
-                if (makeTranslucent && isJ2RE) {
+                if (makeTranslucent) {
                     Graphics2D g2 = (Graphics2D) g;
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                     g2.drawImage(tmpImage, x, y, observer);

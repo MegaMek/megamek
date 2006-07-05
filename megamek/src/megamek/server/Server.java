@@ -12128,8 +12128,8 @@ public class Server implements Runnable {
     }
     void resolvePilotingRolls( Entity entity, boolean moving,
                                Coords src, Coords dest ) {
-        // dead units don't need to.
-        if ( entity.isDoomed() || entity.isDestroyed() ) {
+        // dead and undeployed and offboard units don't need to.
+        if ( entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed()) {
             return;
         }
         Report r;

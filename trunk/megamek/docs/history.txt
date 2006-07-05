@@ -37,6 +37,7 @@ v0.31.9 (CVS)
 + RFE: maxtech infantry damage
 + Bug 1515671: /victory and /defeat does not end game
 + Show Charges and DFAs in the firing phase.
++ Bug 1517652: don't NPE with delayed deployment.
 
 
 v0.31.8 (2006-05-28, 16:58 GMT)

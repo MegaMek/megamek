@@ -14235,8 +14235,11 @@ public class Server implements Runnable {
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
             } else {
                 game.getBoard().addInfernoTo(pos, InfernoTracker.STANDARD_ROUND, 1);
-                ((InfernoTracker)game.getBoard().getInfernos().get(pos)).setTurnsLeftToBurn(game.getBoard().getInfernoBurnTurns(pos)-game.getBoard().getInfernoIVBurnTurns(pos)-2);  //massive hack
+                ((InfernoTracker)game.getBoard().getInfernos().get(pos)).setTurnsLeftToBurn(game.getBoard().getInfernoBurnTurns(pos)-2);  //massive hack
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+                sendChangedHex(pos);
             }
+            destroyEntity(en, "crashed and burned", false, false);
         }
 
         return vDesc;
@@ -18417,6 +18420,10 @@ public class Server implements Runnable {
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected( true );
+        if(entity instanceof VTOL)
+        {
+            vDesc.addAll(crashVTOL((VTOL)entity));
+        }
         vDesc.addAll(
             destroyEntity(entity, "ejection", true, true));
 

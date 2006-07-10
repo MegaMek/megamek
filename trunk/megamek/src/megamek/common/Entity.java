@@ -1051,7 +1051,8 @@ public abstract class Entity extends TurnOrdered
      */
     public void setFacing(int facing) {
         this.facing = facing;
-        game.processGameEvent(new GameEntityChangeEvent(this, this));
+        if (game != null)
+            game.processGameEvent(new GameEntityChangeEvent(this, this));
     }
 
     /**

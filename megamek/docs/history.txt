@@ -42,6 +42,7 @@ v0.31.9 (CVS)
 + Bug 1519734: Ejected VTOLs Listed as Salvage
 + Bug: VTOL explosion not starting fires in open hexes correctly
 + Bug 1519666: Facing ignored in Scenario
++ Bug: Wrong information on failed PSR after thrashing attack
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

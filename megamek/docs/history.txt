@@ -39,6 +39,9 @@ v0.31.9 (CVS)
 + Show Charges and DFAs in the firing phase.
 + Bug 1517652: don't NPE with delayed deployment.
 + Warhawk C corrected (removed lower arm actuator)
++ Bug 1519734: Ejected VTOLs Listed as Salvage
++ Bug: VTOL explosion not starting fires in open hexes correctly
+
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

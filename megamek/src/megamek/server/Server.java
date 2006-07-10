@@ -10157,7 +10157,6 @@ public class Server implements Runnable {
         final int diceRoll = Compute.d6(2);
         r = new Report(2190);
         r.subject = ae.getId();
-        r.addDesc(ae);
         r.add(rollData.getValueAsString());
         r.add(rollData.getDesc());
         r.add(diceRoll);

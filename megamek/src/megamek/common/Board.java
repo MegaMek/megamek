@@ -755,6 +755,9 @@ public class Board implements Serializable, IBoard {
             if ( tracker.isStillBurning() ) {
                 result = true;
             }
+            else {
+                infernos.remove(coords);
+            }
         }
 
         return result;

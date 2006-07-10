@@ -11890,7 +11890,7 @@ public class Server implements Runnable {
                     } else {
                         r.choose(false);
                         addReport(r);
-                        addReport(oneCriticalEntity(entity, Compute.d6(2)));
+                        addReport(oneCriticalEntity(entity, Compute.randomInt(8)));
                         //add an empty report, for linebreaking
                         r = new Report(1210);
                         addReport(r);

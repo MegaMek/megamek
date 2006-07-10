@@ -390,17 +390,17 @@ public class ScenarioLoader
                     Integer.parseInt(st.nextToken())));
             try {
                 String direction = st.nextToken();
-                if (direction == "N") {
+                if (direction.equalsIgnoreCase("N")) {
                     e.setFacing(0);
-                } else if (direction == "NW") {
+                } else if (direction.equalsIgnoreCase("NW")) {
                     e.setFacing(5);
-                } else if (direction == "SW") {
+                } else if (direction.equalsIgnoreCase("SW")) {
                     e.setFacing(4);
-                } else if (direction == "S") {
+                } else if (direction.equalsIgnoreCase("S")) {
                     e.setFacing(3);
-                } else if (direction == "SE") {
+                } else if (direction.equalsIgnoreCase("SE")) {
                     e.setFacing(2);
-                }  else if (direction == "NE") {
+                }  else if (direction.equalsIgnoreCase("NE")) {
                     e.setFacing(1);
                 }
                 int x = Integer.parseInt(st.nextToken())-1;

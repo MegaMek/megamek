@@ -41,7 +41,7 @@ v0.31.9 (CVS)
 + Warhawk C corrected (removed lower arm actuator)
 + Bug 1519734: Ejected VTOLs Listed as Salvage
 + Bug: VTOL explosion not starting fires in open hexes correctly
-
++ Bug 1519666: Facing ignored in Scenario
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

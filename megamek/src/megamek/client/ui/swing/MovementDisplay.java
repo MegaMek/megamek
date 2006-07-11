@@ -1243,6 +1243,7 @@ public class MovementDisplay
 
     private synchronized void updateLoadButtons() {
         final Entity ce = ce();
+        if(null==ce) return;
         boolean legalGear = ((gear == MovementDisplay.GEAR_LAND)
                 || (gear == MovementDisplay.GEAR_TURN)
                 || (gear == MovementDisplay.GEAR_BACKUP));

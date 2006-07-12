@@ -911,14 +911,18 @@ public abstract class Mech
      */
     public int getHeatCapacity() {
         int capacity = 0;
-
+        int activeCount = getActiveSinks();
+        
         for (Mounted mounted : getMisc()) {
+            if(activeCount <= 0) break;
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
+                activeCount--;
             } else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                activeCount--;
                 capacity += 2;
             }
         }

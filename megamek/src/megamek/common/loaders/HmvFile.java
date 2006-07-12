@@ -28,10 +28,12 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IEntityMovementMode;
+import megamek.common.Mounted;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
 import megamek.common.VTOL;
+import megamek.common.WeaponType;
 
 /**
  * Based on the hmpread.c program and the MtfFile object.  This class
@@ -52,7 +54,7 @@ public class HmvFile
   private HMVTechType techType;
 
   private HMVTechType engineTechType;
-  private HMVTechType heatSinkTechType;
+  private HMVTechType baseTechType;
   private HMVTechType targetingComputerTechType;
   private HMVTechType armorTechType;
 
@@ -72,6 +74,8 @@ public class HmvFile
   private int leftArmor;
   private int rightArmor;
   private int rearArmor;
+  
+  private int artemisType;
 
   private Hashtable equipment = new Hashtable();
 
@@ -129,17 +133,27 @@ public class HmvFile
 
       techType = HMVTechType.getType(readUnsignedShort(dis));
 
+      if(techType.equals(HMVTechType.MIXED)) {
+          //THESE ARE GUESSES.  Need example hmv files to verify.
+          baseTechType = HMVTechType.getType(readUnsignedShort(dis));
+          engineTechType = HMVTechType.getType(readUnsignedShort(dis));
+          targetingComputerTechType = HMVTechType.getType(readUnsignedShort(dis));
+          armorTechType = HMVTechType.getType(readUnsignedShort(dis));
+      } else if (techType.equals(HMVTechType.CLAN)) {
+          engineTechType = HMVTechType.CLAN;
+          baseTechType = HMVTechType.CLAN;
+          targetingComputerTechType = HMVTechType.CLAN;
+          armorTechType = HMVTechType.CLAN;          
+      } else {
+          engineTechType = HMVTechType.INNER_SPHERE;
+          baseTechType = HMVTechType.INNER_SPHERE;
+          targetingComputerTechType = HMVTechType.INNER_SPHERE;
+          armorTechType = HMVTechType.INNER_SPHERE;
+      }
+
       // ??
       dis.skipBytes(4);
       
-      if(techType.equals(HMVTechType.MIXED)) {
-          //THESE ARE GUESSES.  Need example hmv files to verify.
-          engineTechType = HMVTechType.getType(readUnsignedShort(dis));
-          heatSinkTechType = HMVTechType.getType(readUnsignedShort(dis));
-          targetingComputerTechType = HMVTechType.getType(readUnsignedShort(dis));
-          armorTechType = HMVTechType.getType(readUnsignedShort(dis));
-      }
-
       engineRating = readUnsignedShort(dis);
       engineType = HMVEngineType.getType(readUnsignedShort(dis));
 
@@ -278,7 +292,46 @@ public class HmvFile
 
       } // Handle the next bay.
       
-      dis.skipBytes(28);
+      dis.skipBytes(12);
+      int CASE = readUnsignedShort(dis);
+      if(CASE == 0xFFFF) {
+          if(techType.equals(HMVTechType.INNER_SPHERE))
+              addEquipmentType(EquipmentType.get("ISCASE"),1,HMVWeaponLocation.REAR);
+          else
+              addEquipmentType(EquipmentType.get("CLCASE"),1,HMVWeaponLocation.REAR);
+      }
+      int targetingComp = readUnsignedShort(dis);
+      if(targetingComp == 1) {
+          if(targetingComputerTechType.equals(HMVTechType.CLAN))
+              addEquipmentType(EquipmentType.get("CLTargeting Computer"), 1, HMVWeaponLocation.BODY);
+          else
+              addEquipmentType(EquipmentType.get("ISTargeting Computer"), 1, HMVWeaponLocation.BODY);
+      }
+
+      artemisType = readUnsignedShort(dis);
+      // the artemis is a bit field: 1 = SRM artemis IV, 2 = LRM artemis IV, 
+      // 4 = SRM artemis V, 8 = LRM artemis V
+      dis.skipBytes(4);
+      int VTOLoptions = readUnsignedShort(dis);
+      //Yuck, a decimal field: 10 = main/tail, 20 = dual, 30 = coax rotors
+      //100 = beagle/clan AP, 200 = bloodhound/light AP, 300 = c3 slave mast mount
+      int mastEq = VTOLoptions / 100;
+      int rotorType = VTOLoptions % 100;
+      //Mast mounted equipment is not supported - put it in the rotor and hope for the best
+      if(mastEq == 1) {
+          if(baseTechType.equals(HMVTechType.CLAN))
+              addEquipmentType(EquipmentType.get("CLActiveProbe"),1,HMVWeaponLocation.TURRET);
+          else
+              addEquipmentType(EquipmentType.get("BeagleActiveProbe"),1,HMVWeaponLocation.TURRET);
+      } else if (mastEq == 2) {
+          if(baseTechType.equals(HMVTechType.CLAN))
+              addEquipmentType(EquipmentType.get("CLLightActiveProbe"),1,HMVWeaponLocation.TURRET);
+          else
+              addEquipmentType(EquipmentType.get("BloodhoundActiveProbe"),1,HMVWeaponLocation.TURRET);
+      } else if (mastEq == 3) {
+          addEquipmentType(EquipmentType.get("ISC3SlaveUnit"),1,HMVWeaponLocation.TURRET);
+      }
+      dis.skipBytes(4);
 
       int fluffSize = 0;
       fluff = "Overview:\n\r";
@@ -525,7 +578,44 @@ public class HmvFile
 
         for (int i = 0; i < count.intValue(); i++)
         {
-          tank.addEquipment(equipmentType, location);
+          Mounted weapon = tank.addEquipment(equipmentType, location);
+          
+          //Add artemis?
+          //Note this is done here because SRM without artemis and LRM with artemis
+          //can be in the same location on a tank. (and might be mislinked)
+          if(artemisType != 0 && equipmentType instanceof WeaponType) {
+              String artemis = null;
+              int ammoType = ((WeaponType)equipmentType).getAmmoType();
+              if(ammoType == AmmoType.T_LRM) {
+                  if((artemisType & 2) == 2) {
+                      artemis="ArtemisIV";
+                  }
+                  else if((artemisType & 8) == 8) {
+                      artemis="ArtemisV";
+                  }
+              }
+              else if(ammoType == AmmoType.T_SRM) {
+                  if((artemisType & 1) == 1) {
+                      artemis="ArtemisIV";
+                  }
+                  else if((artemisType & 4) == 4) {
+                      artemis="ArtemisV";
+                  }
+              }
+              if(artemis != null) {
+                  EquipmentType artEq;
+                  if(equipmentType.getTechLevel() == TechConstants.T_CLAN_LEVEL_2
+                          || equipmentType.getTechLevel() == TechConstants.T_CLAN_LEVEL_3) {
+                      artEq = EquipmentType.get("CL"+artemis);
+                  } else {
+                      artEq = EquipmentType.get("IS"+artemis);
+                  }
+                  if(artEq != null) {
+                      Mounted fcs = tank.addEquipment(artEq, location);
+                      fcs.setLinked(weapon);
+                  }
+              }
+          }
         }
       }
     }
@@ -966,6 +1056,11 @@ public class HmvFile
     mixedEquipment.put(new Long(0xF5), "CLHeavyMediumLaser");
     mixedEquipment.put(new Long(0xF6), "CLHeavySmallLaser");
 
+    mixedEquipment.put(new Long(0xFC), "CLATM3");
+    mixedEquipment.put(new Long(0xFD), "CLATM6");
+    mixedEquipment.put(new Long(0xFE), "CLATM9");
+    mixedEquipment.put(new Long(0xFF), "CLATM12");
+    
     //but ammo *seems* to use the same numbers as the weapon it goes with
     Hashtable mixedAmmo = new Hashtable(isAmmo);
     AMMO.put(HMVTechType.MIXED, mixedAmmo);

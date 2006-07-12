@@ -46,6 +46,7 @@ v0.31.9 (CVS)
 + Bug: With MT Heat Rules, sometimes there were no critical hits due to heat
   even when there should have been one
 + Bug 1520633: HeatSink Cutoff Not working
++ Bug 1452190: HMVee files missing equipment with MM
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

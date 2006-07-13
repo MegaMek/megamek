@@ -738,7 +738,8 @@ class Armor
             int totalOArmor, float roundWeight)
     {
         float points = totalOArmor;
-        if (armorType==EquipmentType.T_ARMOR_FERRO_FIBROUS)
+        if (armorType==EquipmentType.T_ARMOR_FERRO_FIBROUS
+          ||armorType==EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO)
         {
             if ((armorFlags & CLAN_ARMOR) != 0)
                 points /= 1.2f;

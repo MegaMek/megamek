@@ -2720,6 +2720,7 @@ implements Runnable, ConnectionHandler {
         boolean firstStep;
         boolean wasProne;
         boolean fellDuringMovement;
+        boolean turnOver;
         int prevFacing = curFacing;
         IHex prevHex = null;
         final boolean isInfantry = (entity instanceof Infantry);
@@ -2752,6 +2753,7 @@ implements Runnable, ConnectionHandler {
         // iterate through steps
         firstStep = true;
         fellDuringMovement = false;
+        turnOver = false;
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
 
@@ -3373,6 +3375,7 @@ implements Runnable, ConnectionHandler {
 
                     entity.moved = moveType;
                     fellDuringMovement = true;
+                    turnOver = true;
                     distance = entity.delta_distance;
                     break;
 
@@ -3450,6 +3453,7 @@ implements Runnable, ConnectionHandler {
                             Server.combineVectors(vPhaseReport,
                                                   crashVTOL(((VTOL)entity),true,distance,curPos,curVTOLElevation,table));
                             curVTOLElevation=0;
+                            turnOver = true;
                             if(game.getBoard().getHex(newPos).containsTerrain(Terrains.WATER) || game.getBoard().getHex(newPos).containsTerrain(Terrains.WOODS)) {
                                 Server.combineVectors(vPhaseReport,
                                                       destroyEntity(entity,"could not land in crash site"));
@@ -3938,7 +3942,7 @@ implements Runnable, ConnectionHandler {
         doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation());
 
         // should we give another turn to the entity to keep moving?
-        if (fellDuringMovement && entity.mpUsed < entity.getRunMP()
+        if (fellDuringMovement && !turnOver && entity.mpUsed < entity.getRunMP()
         && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
@@ -12358,7 +12362,10 @@ implements Runnable, ConnectionHandler {
             } else {
                 game.getBoard().addInfernoTo(pos, InfernoTracker.STANDARD_ROUND, 1);
                 ((InfernoTracker)(game.getBoard().getInfernos().get(pos))).setTurnsLeftToBurn(game.getBoard().getInfernoBurnTurns(pos)-game.getBoard().getInfernoIVBurnTurns(pos)-2);  //massive hack
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+                sendChangedHex(pos);
             }
+            destroyEntity(en, "crashed and burned", false, false);
         }
 
         return vDesc;
@@ -16681,6 +16688,10 @@ implements Runnable, ConnectionHandler {
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected( true );
+        if(entity instanceof VTOL)
+        {
+            vDesc.addAll(crashVTOL((VTOL)entity));
+        }
         Server.combineVectors(vDesc,
             destroyEntity(entity, "ejection", true, true));
 

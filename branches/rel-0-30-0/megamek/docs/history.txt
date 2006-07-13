@@ -3,6 +3,10 @@ VERSION HISTORY:
 v0.30.10 (CVS)
 + Bug: ECM was working when pilot is unconscious.
 + Bug 1452190: HMVee files missing equipment with MM
++ Bug 1519734: Ejected VTOLs Listed as Salvage
++ Bug: VTOL explosion not starting fires in open hexes correctly
++ Bug 1375466: VTOL Crash Errors.
++ Bug 1297802: Movement after skid
 
 v0.30.9 (2006-03-12, 16:48 GMT)
 + Bug with movement initiative report when non-canon deployment and movement

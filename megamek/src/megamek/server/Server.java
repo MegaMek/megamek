@@ -3105,6 +3105,7 @@ public class Server implements Runnable {
         boolean firstStep;
         boolean wasProne;
         boolean fellDuringMovement;
+        boolean turnOver;
         int prevFacing = curFacing;
         IHex prevHex = null;
         final boolean isInfantry = entity instanceof Infantry;
@@ -3157,6 +3158,7 @@ public class Server implements Runnable {
         // iterate through steps
         firstStep = true;
         fellDuringMovement = false;
+        turnOver = false;
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
 
@@ -3897,6 +3899,7 @@ public class Server implements Runnable {
 
                     entity.moved = moveType;
                     fellDuringMovement = true;
+                    turnOver = true;
                     distance = entity.delta_distance;
                     break;
 
@@ -3974,6 +3977,7 @@ public class Server implements Runnable {
                             curPos=newPos;
                             curVTOLElevation=newElevation;
                             addReport(crashVTOL((VTOL) entity,true,distance,curPos,curVTOLElevation,table));
+                            turnOver = true;
 
                             if(hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
                                 || hex.containsTerrain(Terrains.WOODS)
@@ -4626,7 +4630,7 @@ public class Server implements Runnable {
         doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation());
 
         // should we give another turn to the entity to keep moving?
-        if (fellDuringMovement && entity.mpUsed < entity.getRunMP()
+        if (fellDuringMovement && !turnOver && entity.mpUsed < entity.getRunMP()
         && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);

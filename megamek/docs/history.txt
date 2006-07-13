@@ -41,6 +41,7 @@ v0.31.9 (CVS)
 + Warhawk C corrected (removed lower arm actuator)
 + Bug 1519734: Ejected VTOLs Listed as Salvage
 + Bug: VTOL explosion not starting fires in open hexes correctly
++ Bug 1375466: VTOL Crash Errors.
 + Bug 1519666: Facing ignored in Scenario
 + Bug: Wrong information on failed PSR after thrashing attack
 + Bug: With MT Heat Rules, sometimes there were no critical hits due to heat
@@ -48,6 +49,7 @@ v0.31.9 (CVS)
 + Bug 1520633: HeatSink Cutoff Not working
 + Bug 1452190: HMVee files missing equipment with MM
 + Bug 1515056: FF Prototype Armor has incorrect weight
++ Bug 1297802: Movement after skid
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

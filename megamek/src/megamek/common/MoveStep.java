@@ -1010,11 +1010,15 @@ public class MoveStep implements Serializable {
         if (!parent.isJumping()
             && !entity.isStuck()
             && tmpWalkMP > 0
-            && (getMp() > 0
-                    || stepType == MovePath.STEP_TURN_LEFT
-                    || stepType == MovePath.STEP_TURN_RIGHT)
-            && (!(isProne() || isHullDown())
-                || parent.contains(MovePath.STEP_GET_UP))) {
+            && getMp() > 0) {
+            // Prone mechs can only spend MP to turn or get up
+            if(stepType != MovePath.STEP_TURN_LEFT
+                && stepType != MovePath.STEP_TURN_RIGHT
+                && stepType != MovePath.STEP_GET_UP
+                && (isProne() || isHullDown())) {
+                    movementType = IEntityMovementType.MOVE_ILLEGAL;
+                    return;
+                }
 
             if (getMpUsed() <= tmpWalkMP) {
                 if (parent.getEntity().getMovementMode() == IEntityMovementMode.VTOL &&
@@ -1055,6 +1059,13 @@ public class MoveStep implements Serializable {
                 entity.gotPavementBonus = true;
             }
         }
+        // Free facing changes are legal
+        if((stepType==MovePath.STEP_TURN_LEFT
+                || stepType==MovePath.STEP_TURN_RIGHT)
+                && getMp() == 0) {
+            movementType = IEntityMovementType.MOVE_LEGAL;
+        }
+            
         // Mechs with busted Gyro may make only one facing change
         if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                    Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1

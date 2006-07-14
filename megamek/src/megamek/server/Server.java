@@ -6658,30 +6658,31 @@ public class Server implements Runnable {
         WeaponResult wr = new WeaponResult();
         wr.waa = waa;
 
-        // has this weapon fired already?
-        if (weapon.isUsedThisRound()) {
-            wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon has already been used this round");
-            return wr;
+        if(!waa.isNemesisConfused() && !waa.isSwarmingMissiles()) {
+            // has this weapon fired already?
+            if (weapon.isUsedThisRound()) {
+                wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon has already been used this round");
+                return wr;
+            }
+            // is the weapon functional?
+            if (weapon.isDestroyed()) {
+                wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon was destroyed in a previous round");
+                return wr;
+            }
+            // is it jammed?
+            if (weapon.isJammed()) {
+                wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon is jammed");
+                return wr;
+            }
+            // make sure ammo is loaded
+            if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isDumping())) {
+                ae.loadWeaponWithSameAmmo(weapon);
+                ammo = weapon.getLinked();
+            }
+    
+            // store the ammo type for later use (needed for artillery attacks)
+            waa.setAmmoId(ae.getEquipmentNum(ammo));
         }
-        // is the weapon functional?
-        if (weapon.isDestroyed()) {
-            wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon was destroyed in a previous round");
-            return wr;
-        }
-        // is it jammed?
-        if (weapon.isJammed()) {
-            wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon is jammed");
-            return wr;
-        }
-        // make sure ammo is loaded
-        if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isDumping())) {
-            ae.loadWeaponWithSameAmmo(weapon);
-            ammo = weapon.getLinked();
-        }
-
-        // store the ammo type for later use (needed for artillery attacks)
-        waa.setAmmoId(ae.getEquipmentNum(ammo));
-
         // compute to-hit
         wr.toHit = waa.toHit(game);
 
@@ -6692,14 +6693,14 @@ public class Server implements Runnable {
         wr.roll = Compute.d6(2);
 
         // if the shot is possible and not a streak miss
-        // and not a nemesis-confused shot, add heat and use ammo
+        // and not a nemesis-confused or swarm secondary shot, add heat and use ammo
         streakMiss = (wtype.getAmmoType() == AmmoType.T_SRM_STREAK
                 || wtype.getAmmoType() == AmmoType.T_MRM_STREAK
                 || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
                 && wr.roll < wr.toHit.getValue();
         if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE
                 && (!streakMiss || Compute.isAffectedByAngelECM(ae, ae.getPosition(), waa.getTarget(game).getPosition()))
-                && !waa.isNemesisConfused()) {
+                && !waa.isNemesisConfused() && !waa.isSwarmingMissiles()) {
             wr = addHeatUseAmmoFor(waa, wr);
         }
 
@@ -7171,6 +7172,7 @@ public class Server implements Runnable {
               WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
                   entity.getTargetId(), wr.waa.getWeaponId());
               newWaa.setNemesisConfused(true);
+              newWaa.setAmmoId(wr.waa.getAmmoId());
               WeaponResult newWr = preTreatWeaponAttack(newWaa);
               // attack the new target, and if we hit it, return;
               if (resolveWeaponAttack(newWr, ae.getId(), true)) return true;

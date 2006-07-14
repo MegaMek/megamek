@@ -39,6 +39,7 @@ import megamek.common.MechWarrior;
 import megamek.common.MinefieldTarget;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
+import megamek.common.RangeType;
 import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -146,7 +147,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * To-hit number for attacker firing a weapon at the target.
      */
     private static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget, Entity oldTarget) {
+        final Entity ae = game.getEntity(attackerId);
+        final Mounted weapon = ae.getEquipment(weaponId);
+        final WeaponType wtype = (WeaponType)weapon.getType();
         if (exchangeSwarmTarget) {
+            // Quick check, is the new target out of range for the weapon?
+            if(RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(),
+                    game.getOptions().booleanOption("maxtech_range")) == RangeType.RANGE_OUT) {
+                return new ToHitData(ToHitData.AUTOMATIC_FAIL, "swarm target out of range");
+            }
             // this is a swarm attack against a new target
             // first, exchange old and new targets to get all mods
             // as if firing against old target.
@@ -156,13 +165,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
             target = oldTarget;
             oldTarget = (Entity)tempTarget;
         }
-        final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
-        final Mounted weapon = ae.getEquipment(weaponId);
-        final WeaponType wtype = (WeaponType)weapon.getType();
         boolean isAttackerInfantry = ae instanceof Infantry;
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
@@ -812,7 +818,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
 
         // missing, breached or jammed weapons can't fire
-        if (!weapon.canFire()) {
+        if (!weapon.canFire() && !exchangeSwarmTarget) {
             return "Weapon is not in a state where it can be fired";
         }
 

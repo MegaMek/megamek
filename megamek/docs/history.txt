@@ -54,6 +54,7 @@ v0.31.9 (CVS)
 + Bug 1521802: Swarm LRM can't jump to out of range targets
 + Bug 1522579: prone mechs can't turn
 + Bug 1304304: mapchoice dialog regression wrt selecting boards
++ Bug 1457544: LOS issues with indirect fire and clearing woods
 
 v0.31.8 (2006-05-28, 16:58 GMT)
 + Bug 1467018: c3i can crash the map on deployment

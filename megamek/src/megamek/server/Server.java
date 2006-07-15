@@ -7056,15 +7056,6 @@ public class Server implements Runnable {
       boolean isIndirect = (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                                && weapon.curMode().equals("Indirect");
       boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
-      if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
-          !game.getOptions().booleanOption("indirect_always_possible") &&
-          LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
-          r = new Report(3470);
-          r.subject = subjectId;
-          r.addDesc(ae);
-          addReport(r);
-          return false;
-      }
       boolean bGlancing = false; // For Glancing Hits Rule
       int swarmMissilesNowLeft = 0;
       int hits = 1, glancingMissileMod = 0;

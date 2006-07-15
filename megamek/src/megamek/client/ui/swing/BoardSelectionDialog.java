@@ -441,6 +441,13 @@ public class BoardSelectionDialog
                 selected[i] = i;
             }
             lisBoardsSelected.setSelectedIndices(selected);
+        } else {
+            try {
+                int board = Integer.parseInt(e.getActionCommand());
+                this.lisBoardsSelected.setSelectedIndex(board);
+            } catch (NumberFormatException n) {
+            } catch (ArrayIndexOutOfBoundsException a) {
+            }
         }
     }
 

@@ -404,6 +404,13 @@ public class BoardSelectionDialog
             this.setVisible(false);
         } else if (e.getSource() == butRandomMap) {
             randomMapDialog.setVisible(true);
+        } else {
+            try {
+                int board = Integer.parseInt(e.getActionCommand());
+                this.lisBoardsSelected.select(board);
+            } catch (NumberFormatException n) {
+            } catch (ArrayIndexOutOfBoundsException a) {
+            }
         } 
     }
 

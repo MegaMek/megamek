@@ -9,6 +9,7 @@ v0.30.10 (CVS)
 + Bug 1297802: Movement after skid
 + Bug 1521855: swarm LRM can hit with too many missiles
 + Bug 1521802: Swarm LRM can't jump to out of range targets
++ Bug 1304304: mapchoice dialog regression wrt selecting boards
 
 v0.30.9 (2006-03-12, 16:48 GMT)
 + Bug with movement initiative report when non-canon deployment and movement

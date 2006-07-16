@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.30.10 (CVS)
+v0.30.10 (2006-07-15, 17:15 GMT+2)
 + Bug: ECM was working when pilot is unconscious.
 + Bug 1452190: HMVee files missing equipment with MM
 + Bug 1519734: Ejected VTOLs Listed as Salvage

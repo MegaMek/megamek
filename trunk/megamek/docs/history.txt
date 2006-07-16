@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.31.9 (CVS)
+v0.31.9 (2006-07-15, 17:15 GMT+2)
 + Bug 1497813: NPE on player reconnect
 + Bug 1496668: Plasma Rifle Subtracts heat instead of dealing heat.
 + Bug 1487415: A Bug With Water/Buildings/Skidding

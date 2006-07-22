@@ -1063,7 +1063,10 @@ public class MoveStep implements Serializable {
         if((stepType==MovePath.STEP_TURN_LEFT
                 || stepType==MovePath.STEP_TURN_RIGHT)
                 && getMp() == 0) {
-            movementType = IEntityMovementType.MOVE_LEGAL;
+            if(prev == null)
+                movementType = IEntityMovementType.MOVE_WALK;
+            else
+                movementType = prev.movementType;
         }
             
         // Mechs with busted Gyro may make only one facing change

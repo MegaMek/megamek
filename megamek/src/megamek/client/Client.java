@@ -780,7 +780,7 @@ public class Client {
      * send the message to the server
      */
     protected void send(Packet packet) {        
-        connection.sendNow(packet);
+        connection.send(packet);
     }
 
     protected void handlePacket(Packet c) {

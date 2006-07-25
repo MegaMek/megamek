@@ -271,28 +271,15 @@ public abstract class Connection {
      * Adds a packet to the send queue to be send on a seperate thread.
      */
     public void send(Packet packet) {
-        sendQueue.addPacket(packet);
+        sendQueue.addPacket(new SendPacket(packet));
     }
 
     /**
      * Send packet now; This is the blocking call.
      */
-    public synchronized void sendNow(Packet packet) {
-        boolean zipped = false;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        OutputStream out;
+    public synchronized void sendNow(SendPacket packet) {
         try {
-            if (zipData && packet.getData() != null) {
-                out = new GZIPOutputStream(bos);
-                zipped = true;
-            } else {
-                out = bos;                            
-            }
-            marshaller.marshall(packet, out);
-            out.close();
-            byte[] data = bos.toByteArray();
-            sendNetworkPacket(data, zipped);
-            bytesSent += data.length;
+            sendNetworkPacket(packet.getData(), packet.isCompressed());
             debugLastFewCommandsSent.push(packet.getCommand());
         } catch (Exception e) {
             e.printStackTrace();
@@ -347,23 +334,13 @@ public abstract class Connection {
      * @param ex <code>Exception</code>
      * @param packet <code>Packet</code>
      */
-    protected void reportSendException(Exception ex, Packet packet) {
-        StringBuffer message = new StringBuffer();
-        reportSendException(ex, packet, message);
-        System.err.println(message);
-    }
-
-    /**
-     * Reports send exception
-     * @param ex <code>Exception</code>
-     * @param packet <code>Packet</code>
-     */
-    protected void reportSendException(Exception ex, Packet packet, StringBuffer buffer) {
-        buffer.append(getConnectionTypeAbbrevation());
-        buffer.append(" error sending command #").append(packet.getCommand()); //$NON-NLS-1$
-        buffer.append(": ").append(ex.getMessage()); //$NON-NLS-1$
-        buffer.append('\n'); //$NON-NLS-1$
-        reportLastCommands(buffer);
+    protected void reportSendException(Exception ex, SendPacket packet) {
+        System.err.print(getConnectionTypeAbbrevation());
+        System.err.print(" error sending command #");
+        System.err.print(packet.getCommand()); //$NON-NLS-1$
+        System.err.print(": ");
+        System.err.println(ex.getMessage()); //$NON-NLS-1$
+        reportLastCommands();
     }
 
     /**
@@ -381,20 +358,20 @@ public abstract class Connection {
      * @param ex <code>Exception</code>
      */
     protected void reportReceiveException(Exception ex, StringBuffer buffer) {
-        buffer.append(getConnectionTypeAbbrevation());
-        buffer.append(" error reading command: ").append(ex.getMessage()); //$NON-NLS-1$
-        buffer.append('\n'); //$NON-NLS-1$
-        reportLastCommands(buffer);
+        System.err.print(getConnectionTypeAbbrevation());
+        System.err.print(" error reading command: ");
+        System.err.println(ex.getMessage()); //$NON-NLS-1$
+        reportLastCommands();
     }
 
     /**
      * Appends the last commands sent/received to the given <code>StringBuffer</code>
      * @param buffer <code>StringBuffer</code> to add the report to 
      */
-    protected void reportLastCommands(StringBuffer buffer) {
-        reportLastCommands(buffer, true);
-        buffer.append('\n'); //$NON-NLS-1$
-        reportLastCommands(buffer, false);
+    protected void reportLastCommands() {
+        reportLastCommands(true);
+        System.err.println();
+        reportLastCommands(false);
     }
 
     /**
@@ -403,10 +380,14 @@ public abstract class Connection {
      * @param buffer <code>StringBuffer</code> to add the report to
      * @param sent indicates which commands (sent/received) should be reported
      */
-    protected void reportLastCommands(StringBuffer buffer, boolean sent) {
+    protected void reportLastCommands(boolean sent) {
         CircularIntegerBuffer buf = sent?debugLastFewCommandsSent:debugLastFewCommandsReceived;
-        buffer.append("    Last ").append(buf.length()).append(" commands that were "); //$NON-NLS-1$ //$NON-NLS-2$
-        buffer.append(sent?"sent":"received").append(" (oldest first): ").append(buf); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+        System.err.print("    Last "); //$NON-NLS-1$
+        System.err.print(buf.length());
+        System.err.print(" commands that were "); //$NON-NLS-1$ 
+        System.err.print(sent?"sent":"received"); //$NON-NLS-1$
+        System.err.print(" (oldest first): "); //$NON-NLS-1$
+        System.err.println(buf); 
     }
 
     /**
@@ -484,7 +465,7 @@ public abstract class Connection {
         Runnable senderRunable = new Runnable() {
             public void run() {
                 while (sender == Thread.currentThread()) {
-                    Packet packet = sendQueue.getPacket();
+                    SendPacket packet = sendQueue.getPacket();
                     if (packet != null) {
                         try {
                             processPacket(packet);
@@ -496,7 +477,7 @@ public abstract class Connection {
                 }
             }
 
-            protected void processPacket(Packet packet) throws Exception {
+            protected void processPacket(SendPacket packet) throws Exception {
                 sendNow(packet);
             }
         };        
@@ -522,10 +503,10 @@ public abstract class Connection {
     
     private static class SendQueue {
 
-        private Vector queue = new Vector();
+        private Vector<SendPacket> queue = new Vector();
         private boolean finished = false;
 
-        public synchronized void addPacket(Packet packet) {
+        public synchronized void addPacket(SendPacket packet) {
             queue.addElement(packet);
             notifyAll();
         }
@@ -540,8 +521,8 @@ public abstract class Connection {
          * Waits for a packet to appear in the queue and then returns it.
          * @return the first available packet in the queue
          */
-        public synchronized Packet getPacket() {
-            Packet packet = null;
+        public synchronized SendPacket getPacket() {
+            SendPacket packet = null;
             while (!hasPending() && !finished) {
                 try {
                     wait();
@@ -549,7 +530,7 @@ public abstract class Connection {
                 }
             }
             if (!finished) {
-                packet = (Packet)queue.elementAt(0);
+                packet = queue.elementAt(0);
                 queue.removeElementAt(0);
             }
             return packet;
@@ -583,6 +564,44 @@ public abstract class Connection {
                 l.packetReceived((PacketReceivedEvent)event);
                 break;                
             }
+        }
+    }
+    
+    private class SendPacket implements INetworkPacket {
+        byte[] data;
+        boolean zipped = false;
+        int command;
+        public SendPacket(Packet packet) {
+            command = packet.getCommand();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            OutputStream out;
+            try {
+                if (zipData && packet.getData() != null) {
+                    out = new GZIPOutputStream(bos);
+                    zipped = true;
+                } else {
+                    out = bos;                            
+                }
+                marshaller.marshall(packet, out);
+                out.close();
+                data = bos.toByteArray();
+                bytesSent += data.length;
+                debugLastFewCommandsSent.push(packet.getCommand());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        public int getMarshallingType() {
+            return marshallingType;
+        }
+        public byte[] getData() {
+            return data;
+        }
+        public boolean isCompressed() {
+            return zipped;
+        }
+        public int getCommand() {
+            return command;
         }
     }
 

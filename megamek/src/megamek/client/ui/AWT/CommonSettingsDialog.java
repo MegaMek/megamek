@@ -68,6 +68,7 @@ public class CommonSettingsDialog extends ClientDialog
     private Checkbox    chatloungeTabs;
 
     private Checkbox    showMapsheets;
+    private Checkbox    mouseWheelZoom;
 
     private List        keys;
     private int         keysIndex = 0;
@@ -151,6 +152,10 @@ public class CommonSettingsDialog extends ClientDialog
             = new Checkbox( Messages.getString("CommonSettingsDialog.nagForMASC") ); //$NON-NLS-1$
         tempPanel.add( nagForMASC );
         
+        mouseWheelZoom
+            = new Checkbox( Messages.getString("CommonSettingsDialog.mouseWheelZoom") ); //$NON-NLS-1$
+        tempPanel.add( mouseWheelZoom );
+    
         nagForPSR
             = new Checkbox( Messages.getString("CommonSettingsDialog.nagForPSR") ); //$NON-NLS-1$
         tempPanel.add( nagForPSR );
@@ -332,6 +337,7 @@ public class CommonSettingsDialog extends ClientDialog
         soundMute.setState( gs.getSoundMute() );
         showMapHexPopup.setState( gs.getShowMapHexPopup() );
         tooltipDelay.setText( Integer.toString(gs.getTooltipDelay() ) );
+        mouseWheelZoom.setState( gs.getMouseWheelZoom());
 
         // Select the correct char set (give a nice default to start).
         unitStartChar.select(0);
@@ -428,6 +434,7 @@ public class CommonSettingsDialog extends ClientDialog
         gs.setAlwaysRightClickScroll(alwaysRightClickScroll.getState());
         gs.setAutoEdgeScroll(autoEdgeScroll.getState());
         gs.setScrollSensitivity(Integer.parseInt(scrollSensitivity.getText()) );
+        gs.setMouseWheelZoom(mouseWheelZoom.getState());
 
         cs.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
 

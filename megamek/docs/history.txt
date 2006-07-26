@@ -3,6 +3,8 @@ VERSION HISTORY:
 v0.31.10 (CVS)
 + Bug 1524826: No heat while jumping
 + Bug 1418618: heat ammoeplosion autoejection crash
++ Client setting to enable mouse wheel zoom.
+  Default is off, because of bug 1528962 and conflict with ruler
 
 v0.31.9 (2006-07-15, 17:15 GMT+2)
 + Bug 1497813: NPE on player reconnect

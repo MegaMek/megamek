@@ -150,6 +150,22 @@ public class JumpJetAttackAction extends PhysicalAttackAction
             || (ae.isLocationBad(kickLegs[1]) && (leg == BOTH || leg == RIGHT))) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Leg missing");
         }
+        
+        // check if attacker even has jump jets!
+        for(Mounted m : ae.getMisc()) {
+            boolean hasJJ=false;
+            int loc = m.getLocation();
+            if(m.getType().hasFlag(MiscType.F_JUMP_JET) 
+                    && m.isReady()
+                    && ((loc == kickLegs[0] && (leg == BOTH || leg == LEFT))
+                      ||(loc == kickLegs[1] && (leg == BOTH || leg == RIGHT)))) {
+                hasJJ = true;
+                break;
+            }
+            if(!hasJJ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Jump jets missing or destroyed");
+            }
+        }
 
         // check if attacker has fired leg-mounted weapons
         for (Mounted mounted : ae.getWeaponList()) {

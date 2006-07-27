@@ -1195,6 +1195,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
 
             // Set the entity's deployment round.
+            //entity.setDeployRound((choDeployment.getSelectedIndex() == 0?0:choDeployment.getSelectedIndex()+1));
             entity.setDeployRound(choDeployment.getSelectedIndex());
 
             // update munitions selections

@@ -363,7 +363,7 @@ public class ScenarioLoader
                         throw new Exception("Can not combine a starting position of 'any' with delayed deployment.");
                       }
                       
-                      System.out.println(e.getDisplayName() + " will be deployed after round " + round);
+                      System.out.println(e.getDisplayName() + " will be deployed before round " + round);
                       e.setDeployRound(round);
                     }
                   }

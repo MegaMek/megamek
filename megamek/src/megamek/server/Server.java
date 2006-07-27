@@ -1739,7 +1739,11 @@ public class Server implements Runnable {
                     p.adjustStartingPosForReinforcements();
                 }
 
-                changePhase(IGame.PHASE_INITIATIVE);
+                if ( game.getRoundCount() < 1) {
+                    changePhase(IGame.PHASE_INITIATIVE);
+                } else {
+                    changePhase(IGame.PHASE_TARGETING);
+                }
                 break;
             case IGame.PHASE_INITIATIVE :
                 game.addReports(vPhaseReport);

@@ -6,8 +6,9 @@ v0.31.10 (CVS)
 + Client setting to enable mouse wheel zoom.
   Default is off, because of bug 1528962 and conflict with ruler
 + Bug: JJ attack possible without JJ for 0 damage
-+ Bug: Delayed Deployment causes skipping of other phases.
++ Bug 1449364: Delayed Deployment causes skipping of other phases.
 + Bug: Delayed deployment says "after" but deploys "before" the round.
++ Bug 1530481: Flail dealing wrong damage
 
 v0.31.9 (2006-07-15, 17:15 GMT+2)
 + Bug 1497813: NPE on player reconnect

@@ -39,6 +39,7 @@ public class MiniReportDisplay extends JDialog
         butOkay.addActionListener(this);
         taData = new JTextArea(sReport, 20, 48);
         taData.setEditable(false);
+        taData.setOpaque(false);
 
         getContentPane().setLayout(new BorderLayout());
 

@@ -32,31 +32,7 @@ import megamek.client.ui.swing.widget.ProtomechMapSet;
 import megamek.client.ui.swing.widget.QuadMapSet;
 import megamek.client.ui.swing.widget.TankMapSet;
 import megamek.client.ui.swing.widget.VTOLMapSet;
-import megamek.common.AmmoType;
-import megamek.common.ArmlessMech;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentMode;
-import megamek.common.EquipmentType;
-import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.INarcPod;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Player;
-import megamek.common.Protomech;
-import megamek.common.QuadMech;
-import megamek.common.Tank;
-import megamek.common.Terrains;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
+import megamek.common.*;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -1644,18 +1620,21 @@ public class MechDisplay extends JPanel {
             unusedL.setOpaque(false);
             unusedR = new JTextArea("", 2, 25); //$NON-NLS-1$
             unusedR.setEditable(false);
+            unusedR.setOpaque(false);
 
             carrysL = new JLabel
                     (Messages.getString("MechDisplay.Carryng"), JLabel.CENTER); //$NON-NLS-1$
             carrysL.setOpaque(false);
             carrysR = new JTextArea("", 4, 25); //$NON-NLS-1$
             carrysR.setEditable(false);
+            carrysR.setOpaque(false);
 
             sinksL = new JLabel
                     (Messages.getString("MechDisplay.activeSinksLabel"), JLabel.CENTER);
             sinksL.setOpaque(false);
             sinksR = new JTextArea("", 2, 25);
             sinksR.setEditable(false);
+            sinksR.setOpaque(false);
 
             sinks2B = new JButton(Messages.getString("MechDisplay.configureActiveSinksLabel"));
             sinks2B.setActionCommand("changeSinks");
@@ -1666,6 +1645,7 @@ public class MechDisplay extends JPanel {
             heatL.setOpaque(false);
             heatR = new JTextArea("", 4, 25); //$NON-NLS-1$
             heatR.setEditable(false);
+            heatR.setOpaque(false);
 
             targSysL = new JLabel((Messages.getString("MechDisplay.TargSysLabel")).concat(" "), JLabel.CENTER);
             targSysL.setOpaque(false);

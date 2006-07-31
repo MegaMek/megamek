@@ -85,6 +85,7 @@ public class ChoiceDialog
         // Display the question in a scrollable, uneditable area.
         JTextArea message = new JTextArea(question, 5, 50);
         message.setEditable(false);
+        message.setOpaque(false);
 
         c.gridy = 0;
         c.insets = new Insets(0, 5, 0, 5);

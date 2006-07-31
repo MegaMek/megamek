@@ -90,6 +90,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         scrOptions = new JScrollPane(panOptions);
 
         texDesc.setEditable(false);
+        texDesc.setOpaque(false);
 
         setupButtons();
         setupPassword();

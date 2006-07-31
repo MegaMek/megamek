@@ -210,6 +210,8 @@ public class MechSelectorDialog
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(m_pLeft, BorderLayout.CENTER);
         m_mechView.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
+        m_mechView.setEditable(false);
+        m_mechView.setOpaque(false);
         getContentPane().add(m_mechView, BorderLayout.EAST);
 
         //clearMechPreview();

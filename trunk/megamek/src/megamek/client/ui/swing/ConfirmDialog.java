@@ -105,6 +105,8 @@ public class ConfirmDialog
 
     private void addQuestion(String question) {
         JTextArea questionLabel = new JTextArea(question);
+        questionLabel.setEditable(false);
+        questionLabel.setOpaque(false);
         c.gridheight = 2;
         c.insets = new Insets(5, 5, 5, 5);
         gridbag.setConstraints(questionLabel, c);

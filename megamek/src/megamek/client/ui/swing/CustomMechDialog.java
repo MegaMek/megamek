@@ -45,6 +45,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -1107,24 +1108,24 @@ public class CustomMechDialog
                 gunnery = Integer.parseInt(fldGunnery.getText());
                 piloting = Integer.parseInt(fldPiloting.getText());
             } catch (NumberFormatException e) {
-                new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterValidSkills")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterValidSkills"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             
             // keep these reasonable, please
             if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 7) {
-                new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterSkillsBetween0_7")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterSkillsBetween0_7"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             if (chOffBoard.isSelected()) {
                 try {
                     offBoardDistance = distance;
                 } catch (NumberFormatException e) {
-                    new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterValidSkills")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                    JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterValidSkills"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
                 if (offBoardDistance < 17) {
-                    new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.OffboardDistance")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                    JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.OffboardDistance"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
                 entity.setOffBoard(offBoardDistance,

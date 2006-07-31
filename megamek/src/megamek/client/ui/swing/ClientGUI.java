@@ -47,10 +47,11 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -985,8 +986,7 @@ public class ClientGUI
      * Pops up a dialog box showing an alert
      */
     public void doAlertDialog(String title, String message) {
-        AlertDialog alert = new AlertDialog(frame, title, message);
-        alert.setVisible(true);
+        JOptionPane.showMessageDialog(frame, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -1302,8 +1302,7 @@ public class ClientGUI
 
     private GameListener gameListener = new GameListenerAdapter() {
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
-            AlertDialog alert = new AlertDialog(frame, Messages.getString("ClientGUI.Disconnected.title"), Messages.getString("ClientGUI.Disconnected.message")); //$NON-NLS-1$ //$NON-NLS-2$
-            alert.setVisible(true);
+            JOptionPane.showMessageDialog(frame, Messages.getString("ClientGUI.Disconnected.message"), Messages.getString("ClientGUI.Disconnected.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             frame.setVisible(false);
             die();
         }

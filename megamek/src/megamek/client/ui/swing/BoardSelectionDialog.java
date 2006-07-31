@@ -29,6 +29,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -350,13 +351,13 @@ public class BoardSelectionDialog
             mapWidth = Integer.parseInt(texMapWidth.getText());
             mapHeight = Integer.parseInt(texMapHeight.getText());
         } catch (NumberFormatException ex) {
-            new AlertDialog(client.frame, Messages.getString("BoardSelectionDialog.InvalidMapSize"), Messages.getString("BoardSelectionDialog.InvalidNumberOfmaps")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(client.frame, Messages.getString("BoardSelectionDialog.InvalidNumberOfmaps"), Messages.getString("BoardSelectionDialog.InvalidMapSize"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         // check settings
         if (boardHeight <= 0 || boardHeight <= 0 || mapWidth <= 0 || mapHeight <= 0) {
-            new AlertDialog(client.frame, Messages.getString("BoardSelectionDialog.InvalidMapSize"), Messages.getString("BoardSelectionDialog.MapSizeMustBeGreateter0")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(client.frame, Messages.getString("BoardSelectionDialog.MapSizeMustBeGreateter0"), Messages.getString("BoardSelectionDialog.InvalidMapSize"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -403,12 +404,12 @@ public class BoardSelectionDialog
                 || !texBoardHeight.getText().equals(Integer.toString(mapSettings.getBoardHeight()))
                 || !texMapWidth.getText().equals(Integer.toString(mapSettings.getMapWidth()))
                 || !texMapHeight.getText().equals(Integer.toString(mapSettings.getMapHeight()))) {
-            new AlertDialog(client.frame, Messages.getString("BoardSelectionDialog.UpdateMapSize.title"), Messages.getString("BoardSelectionDialog.UpdateMapSize.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(client.frame, Messages.getString("BoardSelectionDialog.UpdateMapSize.message"), Messages.getString("BoardSelectionDialog.UpdateMapSize.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (mapSettings.getBoardsAvailableVector().size() <= 0) {
-            new AlertDialog(client.frame, Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.title"), Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(client.frame, Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.message"), Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 

@@ -1155,14 +1155,12 @@ public class ChatLounge
                 nbrVibra = Integer.parseInt(vibra);
             }
         } catch (NumberFormatException e) {
-            AlertDialog ad = new AlertDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.title"), Messages.getString("ChatLounge.MinefieldAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
-            ad.setVisible(true);
+            JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.message"), Messages.getString("ChatLounge.MinefieldAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
         if (nbrConv < 0 || nbrCmd < 0 || nbrVibra < 0) {
-            AlertDialog ad = new AlertDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.title"), Messages.getString("ChatLounge.MinefieldAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
-            ad.setVisible(true);
+            JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.message"), Messages.getString("ChatLounge.MinefieldAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         Client c = getPlayerListSelected(lisMinefield);
@@ -1491,10 +1489,10 @@ public class ChatLounge
             camoDialog.setVisible(true);
         } else if (ev.getSource().equals(butAddBot)) {
             String name = "Bot" + lisPlayerInfo.getModel().getSize(); //$NON-NLS-1$
-            name = (String)JOptionPane.showInputDialog(clientgui.frame, Messages.getString("ChatLounge.Name"),
+            name = (String) JOptionPane.showInputDialog(clientgui.frame, Messages.getString("ChatLounge.Name"),
                     Messages.getString("ChatLounge.ChooseBotName"), JOptionPane.QUESTION_MESSAGE,
                     null, null, name);
-            if (name == null){
+            if (name == null) {
                 return;
             }
             if ("".equals(name.trim())) {
@@ -1623,8 +1621,8 @@ public class ChatLounge
             }
             if (c instanceof BotClient) {
                 butRemoveBot.setEnabled(true);
-            } 
-            choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());            
+            }
+            choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
         }
     }
 }

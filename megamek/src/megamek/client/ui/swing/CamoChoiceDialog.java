@@ -27,6 +27,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -225,10 +226,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
             } catch (Exception err) {
                 // Print the stack trace and display the message.
                 err.printStackTrace();
-                AlertDialog dlg = new AlertDialog
-                        (frame, Messages.getString("CamoChoiceDialog.error_getting_camo"), err.getMessage()); //$NON-NLS-1$
-                dlg.setVisible(true);
-                dlg.dispose();
+                JOptionPane.showMessageDialog(frame, err.getMessage(), Messages.getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         }
     }
@@ -488,10 +486,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         } catch (Exception err) {
             // Print the stack trace and display the message.
             err.printStackTrace();
-            AlertDialog dlg = new AlertDialog
-                    (frame, Messages.getString("CamoChoiceDialog.error_getting_camo"), err.getMessage()); //$NON-NLS-1$
-            dlg.setVisible(true);
-            dlg.dispose();
+            JOptionPane.showMessageDialog(frame, err.getMessage(), Messages.getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
     }
 
@@ -526,10 +521,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         } catch (Exception err) {
             // Print the stack trace and display the message.
             err.printStackTrace();
-            AlertDialog dlg = new AlertDialog
-                    (frame, Messages.getString("CamoChoiceDialog.error_getting_camo"), err.getMessage()); //$NON-NLS-1$
-            dlg.setVisible(true);
-            dlg.dispose();
+            JOptionPane.showMessageDialog(frame, err.getMessage(), Messages.getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
         if (image == null) return null;
 

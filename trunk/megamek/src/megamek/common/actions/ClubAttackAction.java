@@ -58,6 +58,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
             nDamage = (int)Math.floor(entity.getWeight() / 4.0);
         } else if (mType.hasSubType(MiscType.S_PILE_DRIVER)) {
             // Pile Drivers have constant damage, not variable like most.
+            nDamage = 10;
+        } else if (mType.hasSubType(MiscType.S_FLAIL)) {
+            // Flails have constant damage, not variable like most.
             nDamage = 9;
         } else if (mType.hasSubType(MiscType.S_DUAL_SAW)) {
             // Saws have constant damage, not variable like most.
@@ -74,8 +77,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
             // Wrecking Balls have constant damage, not variable like most.
             nDamage = 8;
         } else if (mType.hasSubType(MiscType.S_BUZZSAW)) {
-            // Wrecking Balls have constant damage, not variable like most.
-            nDamage = 0;
+            // buzzsaw does 2d6 damage, not weight dependant
+            nDamage = Compute.d6(2);
         } else if ( mType.isVibroblade() ){
             if ( club.curMode().equals("Active") ){
                 if ( mType.hasSubType(MiscType.S_VIBRO_LARGE) )
@@ -95,6 +98,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 || mType.hasSubType(MiscType.S_PILE_DRIVER)
                 || mType.isShield()
                 || mType.hasSubType(MiscType.S_WRECKING_BALL)
+                || mType.hasSubType(MiscType.S_FLAIL)
                 || (mType.isVibroblade() && club.curMode().equals("Active"))
                 || mType.hasSubType(MiscType.S_BUZZSAW))
                 && ((Mech)entity).hasTSM()) {

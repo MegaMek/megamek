@@ -29,6 +29,7 @@ import megamek.common.util.DistractableAdapter;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -386,10 +387,9 @@ public class DeploymentDisplay
         } else if (!(client.game.getBoard().isLegalDeployment(moveto, ce().getOwner())
                 || assaultDropPreference)
                 || ce().isHexProhibited(client.game.getBoard().getHex(moveto))) {
-            AlertDialog dlg = new AlertDialog(clientgui.frame,
-                    Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
-                    Messages.getString("DeploymentDisplay.cantDeployInto", new Object[]{ce().getShortName(), moveto.getBoardNum()})); //$NON-NLS-1$
-            dlg.setVisible(true);
+            JOptionPane.showMessageDialog(clientgui.frame,
+                    Messages.getString("DeploymentDisplay.cantDeployInto", new Object[]{ce().getShortName(), moveto.getBoardNum()}), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
+                    , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             return;
         } else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
             // check if deployed unit violates stacking
@@ -467,10 +467,9 @@ public class DeploymentDisplay
                 }
             } // End have-choices
             else {
-                AlertDialog alert = new AlertDialog(clientgui.frame,
-                        Messages.getString("DeploymentDisplay.allertDialog1.title"), //$NON-NLS-1$
-                        Messages.getString("DeploymentDisplay.allertDialog1.message", new Object[]{ce().getShortName()})); //$NON-NLS-1$
-                alert.setVisible(true);
+                JOptionPane.showMessageDialog(clientgui.frame,
+                        Messages.getString("DeploymentDisplay.allertDialog1.message", new Object[]{ce().getShortName()}), Messages.getString("DeploymentDisplay.allertDialog1.title") //$NON-NLS-1$
+                        , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } // End load-unit
         else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
@@ -503,10 +502,7 @@ public class DeploymentDisplay
                 }
             } // End have-choices
             else {
-                AlertDialog alert = new AlertDialog(clientgui.frame,
-                        Messages.getString("DeploymentDisplay.allertDialog2.title"), //$NON-NLS-1$
-                        Messages.getString("DeploymentDisplay.allertDialog2.message", new Object[]{ce().getShortName()})); //$NON-NLS-1$
-                alert.setVisible(true);
+                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("DeploymentDisplay.allertDialog2.message", new Object[]{ce().getShortName()}), Messages.getString("DeploymentDisplay.allertDialog2.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } // End unload-unit
         else if (ev.getActionCommand().equals(DEPLOY_REMOVE)) {

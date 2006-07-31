@@ -1,22 +1,23 @@
 package megamek.client.ui.swing;
 
-import megamek.common.Player;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.common.Player;
 
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
-import java.awt.event.ActionEvent;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -127,7 +128,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                 playerTypes[x] = m_typeChoices[x].getSelectedIndex();
                 if (playerTypes[x] == T_ME) {
                     if (bMeSet) {
-                        new AlertDialog(m_frame, Messages.getString("MegaMek.ScenarioErrorAllert.title"), Messages.getString("MegaMek.ScenarioErrorAllert.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        JOptionPane.showMessageDialog(m_frame, Messages.getString("MegaMek.ScenarioErrorAllert.message"), Messages.getString("MegaMek.ScenarioErrorAllert.title"), JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     bMeSet = true;

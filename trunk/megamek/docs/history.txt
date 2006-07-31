@@ -11,6 +11,7 @@ v0.31.10 (CVS)
 + Bug 1530481: Flail dealing wrong damage
 + RFE: attack arrow transparency
   (you can set 0-clear - 128-default - 255-solid in advanced options)
++ AlerDialog -> JOptionPane.showMessageDialog
 
 v0.31.9 (2006-07-15, 17:15 GMT+2)
 + Bug 1497813: NPE on player reconnect

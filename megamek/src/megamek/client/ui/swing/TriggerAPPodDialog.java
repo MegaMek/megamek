@@ -111,6 +111,8 @@ public class TriggerAPPodDialog
         entityId = entity.getId();
 
         labMessage = new JTextArea(Messages.getString("TriggerAPPodDialog.selectPodsToTrigger", new Object[]{entity.getDisplayName()})); //$NON-NLS-1$
+        labMessage.setEditable(false);
+        labMessage.setOpaque(false);
 
         // AP Pod checkbox panel.
         JPanel panPods = new JPanel();

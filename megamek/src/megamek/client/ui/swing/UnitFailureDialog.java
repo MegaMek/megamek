@@ -60,6 +60,7 @@ public class UnitFailureDialog extends JDialog
         failedList = new JList(failed);
 
         reasonTextArea.setEditable(false);
+        reasonTextArea.setOpaque(false);
         failedList.addListSelectionListener(this);
 
         getContentPane().setLayout(new BorderLayout());

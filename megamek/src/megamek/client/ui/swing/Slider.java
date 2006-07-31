@@ -19,22 +19,22 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 
 /**
  * A simple prompt.
  */
-public class Slider extends JDialog implements ActionListener, AdjustmentListener {
+public class Slider extends JDialog implements ActionListener, ChangeListener {
 
     private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-    private JScrollBar value;
+    private JSlider value;
     private JLabel lblText = new JLabel();
     private boolean ok;
     private JLabel minText = new JLabel();
@@ -45,8 +45,7 @@ public class Slider extends JDialog implements ActionListener, AdjustmentListene
         super(parent, title, true);
         super.setResizable(false);
 
-        value = new JScrollBar(JScrollBar.HORIZONTAL, defaultValue, 1, min, max + 1);
-        value.addAdjustmentListener(this);
+        value = new JSlider(JSlider.HORIZONTAL, defaultValue, min, max + 1);
 
         getContentPane().setLayout(new BorderLayout());
         JPanel qp = new JPanel();
@@ -93,11 +92,7 @@ public class Slider extends JDialog implements ActionListener, AdjustmentListene
         return value.getValue();
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.AdjustmentListener#adjustmentValueChanged(java.awt.event.AdjustmentEvent)
-     */
-    public void adjustmentValueChanged(AdjustmentEvent arg0) {
+    public void stateChanged(ChangeEvent event) {
         curText.setText(String.valueOf(value.getValue()));
     }
-
 }

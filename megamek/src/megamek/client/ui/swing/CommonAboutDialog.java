@@ -104,10 +104,13 @@ public class CommonAboutDialog extends JDialog {
                 .append(System.getProperty("java.version")); //$NON-NLS-1$
         JTextArea lblVersion = new JTextArea(buff.toString());
         lblVersion.setEditable(false);
+        lblVersion.setOpaque(false);
         JTextArea lblCopyright = new JTextArea(Messages.getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
         lblCopyright.setEditable(false);
+        lblCopyright.setOpaque(false);
         JTextArea lblAbout = new JTextArea(Messages.getString("CommonAboutDialog.about")); //$NON-NLS-1$
         lblAbout.setEditable(false);
+        lblAbout.setOpaque(false);
 
         // Add a "Close" button.
         JButton butClose = new JButton(Messages.getString("CommonAboutDialog.Close")); //$NON-NLS-1$

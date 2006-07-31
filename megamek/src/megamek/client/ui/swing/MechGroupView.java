@@ -80,6 +80,7 @@ public class MechGroupView
         getContentPane().add(closeButton, BorderLayout.SOUTH);
 
         ta.setEditable(false);
+        ta.setOpaque(false);
         ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
         getContentPane().add(ta, BorderLayout.CENTER);
 

@@ -219,6 +219,7 @@ public class ReportDisplay
             //add the new current phase tab
             ta = new JTextArea(phaseText, 40, 25);
             ta.setEditable(false);
+            ta.setOpaque(false);
             JScrollPane sp = new JScrollPane(ta);
             vTextArea.add(sp);
             tabs.add("Phase", sp);

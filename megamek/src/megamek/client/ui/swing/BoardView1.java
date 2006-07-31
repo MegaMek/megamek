@@ -263,10 +263,12 @@ public final class BoardView1
         addMouseListener(this);
         addMouseWheelListener( new MouseWheelListener(){
             public void mouseWheelMoved(MouseWheelEvent we){
-                if (we.getWheelRotation() > 0){
-                        zoomIn();
-                } else {
-                        zoomOut();
+                if(GUIPreferences.getInstance().getMouseWheelZoom()) {
+                    if (we.getWheelRotation() > 0){
+                            zoomIn();
+                    } else {
+                            zoomOut();
+                    }
                 }
             }
         });

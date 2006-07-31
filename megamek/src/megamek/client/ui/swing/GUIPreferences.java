@@ -63,6 +63,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_DARKEN_MAP_AT_NIGHT = "AdvancedDarkenMapAtNight";
     public static final String ADVANCED_MAPSHEET_COLOR = "AdvancedMapsheetColor";
     public static final String ADVANCED_TRANSLUCENT_HIDDEN_UNITS = "AdvancedTranslucentHiddenUnits";
+    public static final String ADVANCED_ATTACK_ARROW_TRANSPARENCY = "AdvancedAttackArrowTransparency";
     /* --End advanced settings-- */
 
     public static final String ALWAYS_RIGHT_CLICK_SCROLL = "AlwaysRightClickScroll";
@@ -100,6 +101,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINIMAP_ZOOM = "MinimapZoom";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
+    public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";
     public static final String NAG_FOR_BOT_README = "NagForBotReadme";
     public static final String NAG_FOR_MAP_ED_README = "NagForMapEdReadme";
     public static final String NAG_FOR_MASC = "NagForMASC";
@@ -156,6 +158,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
         setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
         store.setDefault(ADVANCED_TRANSLUCENT_HIDDEN_UNITS, true);
+        store.setDefault(ADVANCED_ATTACK_ARROW_TRANSPARENCY, 0x80);
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
@@ -180,6 +183,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_POS_Y, 150);
         store.setDefault(MINI_REPORT_SIZE_HEIGHT, 300);
         store.setDefault(MINI_REPORT_SIZE_WIDTH, 400);
+        store.setDefault(MOUSE_WHEEL_ZOOM, false);
         store.setDefault(NAG_FOR_BOT_README, true);
         store.setDefault(NAG_FOR_MAP_ED_README, true);
         store.setDefault(NAG_FOR_MASC, true);
@@ -353,6 +357,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(MINI_REPORT_SIZE_WIDTH);
     }
 
+    public boolean getMouseWheelZoom() {
+        return store.getBoolean(MOUSE_WHEEL_ZOOM);
+    }
+    
     public boolean getNagForBotReadme() {
         return store.getBoolean(NAG_FOR_BOT_README);
     }
@@ -584,6 +592,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMiniReportSizeWidth(int i) {
         store.setValue(MINI_REPORT_SIZE_WIDTH, i);
+    }
+    
+    public void setMouseWheelZoom(boolean b) {
+        store.setValue(MOUSE_WHEEL_ZOOM, b);
     }
 
     public void setNagForBotReadme(boolean b) {

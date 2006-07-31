@@ -62,6 +62,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_DARKEN_MAP_AT_NIGHT = "AdvancedDarkenMapAtNight";
     public static final String ADVANCED_MAPSHEET_COLOR = "AdvancedMapsheetColor";
     public static final String ADVANCED_TRANSLUCENT_HIDDEN_UNITS = "AdvancedTranslucentHiddenUnits";
+    public static final String ADVANCED_ATTACK_ARROW_TRANSPARENCY = "AdvancedAttackArrowTransparency";
     /* --End advanced settings-- */
 
     public static final String ALWAYS_RIGHT_CLICK_SCROLL="AlwaysRightClickScroll";
@@ -156,6 +157,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
         setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
         store.setDefault(ADVANCED_TRANSLUCENT_HIDDEN_UNITS, true);
+        store.setDefault(ADVANCED_ATTACK_ARROW_TRANSPARENCY, 0x80);
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);

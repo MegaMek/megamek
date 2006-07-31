@@ -17,6 +17,7 @@ package megamek.client.ui.AWT.util;
 import java.awt.Color;
 
 import megamek.common.Player;
+import megamek.client.ui.AWT.GUIPreferences;
 
 public class PlayerColors {
     
@@ -27,7 +28,9 @@ public class PlayerColors {
             0x800080};
 
     public static Color getColor(int colorIndex) {
-        return new Color(colorRGBs[colorIndex]);
+        int colour = colorRGBs[colorIndex];
+        int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+        return new Color(colour | (transparency << 24), true);
     }
 
     public static int getColorRGB(int colorIndex) {

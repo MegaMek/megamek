@@ -62,6 +62,7 @@ public class MiscType extends EquipmentType {
     public static final long     F_HARJEL            = 0x080000000L;
     public static final long     F_UMU               = 0x100000000L;
     public static final long     F_COOLANT_SYSTEM    = 0x200000000L;
+    public static final long     F_SPIKES            = 0x400000000L;
 
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
@@ -479,6 +480,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLBuzzsaw());
         EquipmentType.addType(createCoolantSystem());
         EquipmentType.addType(createHeavyArmor());
+        EquipmentType.addType(createSpikes());
         
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -495,6 +497,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createSimpleCamo());
         EquipmentType.addType(createParafoil());
         EquipmentType.addType(createBASearchlight());
+        
     }
     
     public static MiscType createHeatSink() {
@@ -2333,6 +2336,21 @@ public class MiscType extends EquipmentType {
         misc.cost = 90000;
         misc.flags |= F_COOLANT_SYSTEM;
         misc.bv = 15;
+        
+        return misc;
+    }
+
+    public static MiscType createSpikes() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.name = "Spikes";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 90000;
+        misc.flags |= F_SPIKES;
+        misc.bv = 3;
         
         return misc;
     }

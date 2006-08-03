@@ -9412,6 +9412,20 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
+            if (damage >= 1 && te.hasWorkingMisc(MiscType.F_SPIKES,-1,hit.getLocation())) {
+                r = new Report(4330);
+                r.indent(2);
+                r.newlines = 0;
+                r.subject = ae.getId();
+                addReport(r);
+                damage = Math.max(1, damage - 4);
+                HitData ahit;
+                if(paa.getArm() == PunchAttackAction.LEFT)
+                    ahit = new HitData(Mech.LOC_LARM);
+                else
+                    ahit = new HitData(Mech.LOC_RARM);
+                addReport(damageEntity(ae,ahit,2,false,0,false,false,false));
+            }
             int damageType = 0;
             if(game.getOptions().booleanOption("maxtech_infantry_damage")) {
                 damageType = 6;
@@ -9580,6 +9594,37 @@ public class Server implements Runnable {
         } else {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
+            }
+            if (damage >= 1 && te.hasWorkingMisc(MiscType.F_SPIKES,-1,hit.getLocation())) {
+                r = new Report(4330);
+                r.indent(2);
+                r.newlines = 0;
+                r.subject = ae.getId();
+                addReport(r);
+                damage = Math.max(1, damage - 4);
+                HitData ahit;
+                switch(kaa.getLeg()) {
+                case KickAttackAction.LEFT:
+                    if(ae instanceof QuadMech)
+                        ahit = new HitData(Mech.LOC_LARM);
+                    else
+                        ahit = new HitData(Mech.LOC_LLEG);
+                    break;
+                case KickAttackAction.RIGHT:
+                    if(ae instanceof QuadMech)
+                        ahit = new HitData(Mech.LOC_RARM);
+                    else
+                        ahit = new HitData(Mech.LOC_RLEG);
+                    break;
+                case KickAttackAction.LEFTMULE:
+                    ahit = new HitData(Mech.LOC_LLEG);
+                    break;
+                case KickAttackAction.RIGHTMULE:
+                default:
+                    ahit = new HitData(Mech.LOC_RLEG);
+                    break;
+                }
+                addReport(damageEntity(ae,ahit,2,false,0,false,false,false));
             }
             int damageType = 0;
             if(game.getOptions().booleanOption("maxtech_infantry_damage")) {
@@ -10381,6 +10426,21 @@ public class Server implements Runnable {
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
+            if (damage >= 1 && te.hasWorkingMisc(MiscType.F_SPIKES,-1,hit.getLocation())) {
+                r = new Report(4330);
+                r.indent(2);
+                r.newlines = 0;
+                r.subject = ae.getId();
+                addReport(r);
+                damage = Math.max(1, damage - 4);
+                int loc = caa.getClub().getLocation();
+                if(loc == Entity.LOC_NONE) {
+                    addReport(damageEntity(ae,new HitData(Mech.LOC_LARM),1,false,0,false,false,false));
+                    addReport(damageEntity(ae,new HitData(Mech.LOC_RARM),1,false,0,false,false,false));
+                } else {
+                    addReport(damageEntity(ae,new HitData(loc),2,false,0,false,false,false));
+                }
+            }
             int damageType = 0;
             if(game.getOptions().booleanOption("maxtech_infantry_damage")) {
                 damageType = 6;
@@ -11083,13 +11143,60 @@ public class Server implements Runnable {
 
         Report r;
 
+        //damage to attacker
+        r = new Report(4240);
+        r.subject = ae.getId();
+        r.add(damageTaken);
+        r.newlines = 0;
+        addReport(r);
+        
+        //work out which locations have spikes
+        int[] spikes = new int[ae.locations()];
+        for(int i=0;i<ae.locations();i++)
+            spikes[i]=0;
+        for(Mounted m:ae.getMisc()) {
+            if(m.getLocation() != Entity.LOC_NONE &&
+                    m.getType().hasFlag(MiscType.F_SPIKES))
+                spikes[m.getLocation()] = 1;
+        }
+        int spikeDamage = 0;
+        
+        while (damageTaken > 0) {
+            int cluster = Math.min(5, damageTaken);
+            HitData hit = ae.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            if(spikes[hit.getLocation()] == 1) {
+                r = new Report(4335);
+                r.indent(2);
+                r.newlines = 0;
+                r.subject = ae.getId();
+                addReport(r);
+                spikes[hit.getLocation()] = 0;
+                spikeDamage += 2;
+            }
+            addReport(damageEntity(ae, hit, cluster, false, 0, false, false, throughFront));
+            damageTaken -= cluster;
+        }
 
+        //Damage to target
+        damage += spikeDamage;
         r = new Report(4230);
         r.subject = ae.getId();
         r.add(damage);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         addReport(r);
+        
+        //work out which locations have spikes
+        spikes = new int[te.locations()];
+        for(int i=0;i<te.locations();i++)
+            spikes[i]=0;
+        for(Mounted m:te.getMisc()) {
+            if(m.getLocation() != Entity.LOC_NONE &&
+                    m.getType().hasFlag(MiscType.F_SPIKES))
+                spikes[m.getLocation()] = 1;
+        }
+        spikeDamage = 0;
+
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             damage -= cluster;
@@ -11112,24 +11219,25 @@ public class Server implements Runnable {
                 addReport(r);
             } else {
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                addReport(
-                                      damageEntity(te, hit, cluster, false, 0, false, false, throughFront));
+                if(spikes[hit.getLocation()] == 1) {
+                    r = new Report(4330);
+                    r.indent(2);
+                    r.newlines = 0;
+                    r.subject = ae.getId();
+                    addReport(r);
+                    spikes[hit.getLocation()] = 0;
+                    cluster = 1;
+                    spikeDamage += 2;
+                }
+                addReport(damageEntity(te, hit, cluster, false, 0, false, false, throughFront));
             }
         }
-
-        //damage to attacker
-        r = new Report(4240);
-        r.subject = ae.getId();
-        r.add(damageTaken);
-        r.newlines = 0;
-        addReport(r);
-        while (damageTaken > 0) {
-            int cluster = Math.min(5, damageTaken);
-            HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            addReport(
-                                      damageEntity(ae, hit, cluster));
-            damageTaken -= cluster;
-        }
+        //finally apply spike damage to attacker
+        if(ae instanceof Mech)
+            addReport(damageEntity(ae, new HitData(Mech.LOC_CT), spikeDamage, false, 0, false, false, throughFront));
+        else if(ae instanceof Tank)
+            addReport(damageEntity(ae, new HitData(Tank.LOC_FRONT), spikeDamage, false, 0, false, false, throughFront));
+        
         // move attacker and target, if possible
         Coords src = te.getPosition();
         Coords dest = src.translated(direction);
@@ -11358,12 +11466,47 @@ public class Server implements Runnable {
             r.add(toHit.getTableDesc());
             r.newlines = 0;
             addReport(r);
+            
+            //work out which locations have spikes
+            int[] spikes = new int[te.locations()];
+            for(int i=0;i<te.locations();i++)
+                spikes[i]=0;
+            for(Mounted m:te.getMisc()) {
+                if(m.getLocation() != Entity.LOC_NONE &&
+                        m.getType().hasFlag(MiscType.F_SPIKES))
+                    spikes[m.getLocation()] = 1;
+            }
+            int spikeDamage = 0;
+            
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                addReport(
-                                      damageEntity(te, hit, cluster, false, 0, false, false, throughFront));
-                damage -= cluster;
+                if(spikes[hit.getLocation()] == 1) {
+                    r = new Report(4330);
+                    r.indent(2);
+                    r.newlines = 0;
+                    r.subject = ae.getId();
+                    addReport(r);
+                    cluster = 1;
+                    spikes[hit.getLocation()] = 0;
+                    spikeDamage += 2;
+                }
+                addReport(damageEntity(te, hit, cluster, false, 0, false, false, throughFront));
+                damage -= 5;
+            }
+            
+            if(spikeDamage > 0) {
+                if(ae instanceof QuadMech) {
+                    addReport(damageEntity(ae,new HitData(Mech.LOC_LARM),(spikeDamage + 2)/4,false,0,false,false,false));
+                    addReport(damageEntity(ae,new HitData(Mech.LOC_RARM),(spikeDamage + 2)/4,false,0,false,false,false));
+                    if(spikeDamage>2) {
+                        addReport(damageEntity(ae,new HitData(Mech.LOC_LLEG),spikeDamage/4,false,0,false,false,false));
+                        addReport(damageEntity(ae,new HitData(Mech.LOC_RLEG),spikeDamage/4,false,0,false,false,false));
+                    }
+                } else {
+                    addReport(damageEntity(ae,new HitData(Mech.LOC_LLEG),spikeDamage/2,false,0,false,false,false));
+                    addReport(damageEntity(ae,new HitData(Mech.LOC_RLEG),spikeDamage/2,false,0,false,false,false));
+                }
             }
         }
 

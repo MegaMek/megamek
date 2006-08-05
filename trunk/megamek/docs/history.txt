@@ -14,7 +14,7 @@ v0.31.10 (CVS)
 + AlerDialog -> JOptionPane.showMessageDialog
 + swapped one JScrollBar to the more appropriate JSlider, made sure all
     TextArea are opaque and editable as appropriate.
-+ Solaris 7 spikes.
++ Solaris 7 spikes. 
 
 v0.31.9 (2006-07-15, 17:15 GMT+2)
 + Bug 1497813: NPE on player reconnect

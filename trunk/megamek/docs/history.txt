@@ -17,6 +17,7 @@ v0.31.10 (CVS)
 + swapped one JScrollBar to the more appropriate JSlider, made sure all
     TextArea are opaque and editable as appropriate.
 + Solaris 7 spikes.
++ Bug: lots of Weapons erroneously counted as HarJel.
 
 v0.31.9 (2006-07-15, 17:15 GMT+2)
 + Bug 1497813: NPE on player reconnect

@@ -12007,7 +12007,6 @@ public class Server implements Runnable {
                 r = new Report(5080);
                 r.subject = entity.getId();
                 r.addDesc(entity);
-                r.newlines = 0;
                 addReport(r);
                 addReport( destroyEntity(entity, "crew death", true));
             }
@@ -19052,7 +19051,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * make sure all teh new lines that where added to the old vPhaseReport
+     * make sure all the new lines that were added to the old vPhaseReport
      * get added to all of the players filters
      */
     private void addNewLines(){

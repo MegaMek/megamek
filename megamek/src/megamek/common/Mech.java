@@ -834,7 +834,8 @@ public abstract class Mech
      * Return the height of this mech above the terrain.
      */
     public int height() {
-        return isProne() ? 0 : 1;
+        IHex posHex = game.getBoard().getHex(getPosition());
+        return (isProne() || ((posHex != null) && (posHex.containsTerrain(Terrains.BUILDING)))) ? 0 : 1;
     }
     
     /**

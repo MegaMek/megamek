@@ -9369,6 +9369,7 @@ public class Server implements Runnable {
             addReport(r);
             Report buildingReport = damageBuilding( bldg, damage );
             buildingReport.indent();
+            buildingReport.newlines = 1;
             buildingReport.subject = ae.getId();
             addReport(buildingReport);
 

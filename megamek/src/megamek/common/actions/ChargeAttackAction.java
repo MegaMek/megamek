@@ -76,13 +76,14 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             targetId = target.getTargetId();
         }
         IHex attHex = game.getBoard().getHex(src);
-        IHex targHex = game.getBoard().getHex(te.getPosition());
+        IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = elevation + attHex.getElevation();
         final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = target.getElevation() + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
         Building bldg = game.getBoard().getBuildingAt( this.getTargetPos() );
         ToHitData toHit = null;
+        boolean targIsBuilding = (getTargetType() == Targetable.TYPE_BUILDING);
 
         // can't target yourself
         if (ae.equals(te)) {
@@ -153,7 +154,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // Can't target units in buildings (from the outside).
-        if (null != bldg) {
+        if ((null != bldg) && (!targIsBuilding)) {
             if (!Compute.isInBuilding(game, ae)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building");
             } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(bldg)) {

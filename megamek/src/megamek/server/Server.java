@@ -11003,7 +11003,7 @@ public class Server implements Runnable {
             return;
         }
 
-        if (te.isProne()) {
+        if ((te != null) && (te.isProne())) {
             r = new Report(4205);
             r.subject = ae.getId();
             r.indent();

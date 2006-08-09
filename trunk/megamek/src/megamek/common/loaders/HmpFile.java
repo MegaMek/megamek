@@ -444,7 +444,7 @@ public class HmpFile
             mech.setChassis(name);
             mech.setModel(model);
             mech.setYear(year);
-
+System.out.println(name+" "+model+" "+year);
             mech.setFluff(fluff);
 
             mech.setOmni(chassisType == ChassisType.BIPED_OMNI
@@ -1735,19 +1735,21 @@ public class HmpFile
      * will cause the file crits and MegaMek's crits to become out of sync.
      */
     private void compactCriticals(long[] criticals) {
-        int firstEmpty = -1;
-        for (int slot = 0; slot < criticals.length; slot++) {
-            if (criticals[slot] == 0) {
-                firstEmpty = slot;
-            }
-            if (firstEmpty != -1 && criticals[slot] != 0) {
-                // move this to the first empty slot
-                criticals[firstEmpty] = criticals[slot];
-                // mark the old slot empty
-                criticals[slot] = 0;
-                // restart just after the moved slot's new location
-                slot = firstEmpty;
-                firstEmpty = -1;
+        for (int x = 0; x < criticals.length; x++) {
+            int firstEmpty = -1;
+            for (int slot = 0; slot < criticals.length; slot++) {
+                if (criticals[slot] == 0) {
+                    firstEmpty = slot;
+                }
+                if (firstEmpty != -1 && criticals[slot] != 0) {
+                    // move this to the first empty slot
+                    criticals[firstEmpty] = criticals[slot];
+                    // mark the old slot empty
+                    criticals[slot] = 0;
+                    // restart just after the moved slot's new location
+                    slot = firstEmpty;
+                    firstEmpty = -1;
+                }
             }
         }
     }

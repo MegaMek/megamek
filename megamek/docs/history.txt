@@ -22,6 +22,7 @@ v0.31.10 (2006-08-11, 17:00 GMT+2)
 + Bug 1535114: Loads weapons wrong in some cases with spaces in crit list.
 + Bug 1537164: Fixed multiple Charge NPEs against building.
 + Bug 1495133: 'Mechs now height 0 if in the same hex as a building.
++ Bug 1474146: C3i 'Mechs now correctly interact with ECM.
 
 v0.31.9 (2006-07-15, 17:15 GMT+2)
 + Bug 1497813: NPE on player reconnect

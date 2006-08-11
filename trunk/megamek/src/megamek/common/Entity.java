@@ -3218,7 +3218,7 @@ public abstract class Entity extends TurnOrdered
         // C3i is easy - if they both have C3i, and their net ID's match, they're on the same network!
         if (hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
             // check for ECM interference
-            return !(Compute.isAffectedByECM(e, e.getPosition(), getPosition()))
+            return !(Compute.isAffectedByECM(e, e.getPosition(), e.getPosition()))
                 && !(Compute.isAffectedByECM(this, getPosition(), getPosition()));
         }
 

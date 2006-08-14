@@ -3378,6 +3378,3 @@ public abstract class Mech
         return super.isEligibleForMovement();
     }
 }
-
-
-

@@ -513,7 +513,7 @@ public class ChatLounge
         labBoardSize.setText(Messages.getString("ChatLounge.BoardSize", //$NON-NLS-1$
                 new Object[]{new Integer(client.getMapSettings().getBoardWidth()),
                              new Integer(client.getMapSettings().getBoardHeight())}));
-        labMapSize.setText(Messages.getString("ChatLounge.BoardSize", //$NON-NLS-1$
+        labMapSize.setText(Messages.getString("ChatLounge.MapSize", //$NON-NLS-1$
                 new Object[]{new Integer(client.getMapSettings().getMapWidth()),
                              new Integer(client.getMapSettings().getMapHeight())}));
 

@@ -360,6 +360,12 @@ public class MechSummaryCache {
                 if (f.getName().toLowerCase().endsWith(".log")) {
                     continue;
                 }
+                if (f.getName().toLowerCase().endsWith(".svn-base")) {
+                    continue;
+                }
+                if (f.getName().toLowerCase().endsWith(".svn-work")) {
+                    continue;
+                }
                 if (f.getName().equals("UnitVerifierOptions.xml")) {
                     continue;
                 }

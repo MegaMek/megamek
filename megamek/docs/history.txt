@@ -7,6 +7,8 @@ v0.31.11-dev (SVN)
 + Bug 1539802: Fixed it so it loads FF and ES for TDB mixed-tech units.
 + Bug 1540146: Engine explosions not checked for doomed mechs
 + Added optional turn limit.
++ Bug 1433393: Gray Death now correctly loaded as level 3.
++ Battle Armor BLK loader now more correctly loads levels.
 
 v0.31.10 (2006-08-11, 17:00 GMT+2)
 + Fixed a few spelling errors in a Server.java comment

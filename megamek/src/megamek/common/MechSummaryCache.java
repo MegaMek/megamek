@@ -346,6 +346,9 @@ public class MechSummaryCache {
                         // Mechs in this directory are ignored because
                         //  they have features not implemented in MM yet.
                         continue;
+                    } else if (f.getName().toLowerCase().equals("_svn")) {
+                        // This is a Subversion work directory.  Lets ignore it.
+                        continue;
                     }
                     // recursion is fun
                     bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f);

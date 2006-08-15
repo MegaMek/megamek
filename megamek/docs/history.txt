@@ -10,6 +10,7 @@ v0.31.11-dev (SVN)
 + Bug 1433393: Gray Death now correctly loaded as level 3.
 + Battle Armor BLK loader now more correctly loads levels.
 + Bug 1433405: Nighthawks moved to CE infantry zip file.
++ Make the unit loader ignore _svn directories.
 
 v0.31.10 (2006-08-11, 17:00 GMT+2)
 + Fixed a few spelling errors in a Server.java comment

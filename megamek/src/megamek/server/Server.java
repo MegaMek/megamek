@@ -13556,14 +13556,15 @@ public class Server implements Runnable {
                 && !(en instanceof BipedMech)) {
             return false;
         }
-        if(en.isDoomed() || en.isDestroyed())
+        if(en.isDestroyed())
             return false;
         Mech mech = (Mech)en;
 
+        if(en.rolledForEngineExplosion)
+            return false;
         //ICE can always explode and roll every time hit
         if (mech.getEngine().isFusion()
                 && (!game.getOptions().booleanOption("engine_explosions")
-                    || en.rolledForEngineExplosion
                     || en.engineHitsThisRound < 2) )
             return false;
         int explosionBTH = 12;
@@ -13599,15 +13600,18 @@ public class Server implements Runnable {
         r.add(explosionBTH);
         r.add(explosionRoll);
         vDesc.addElement(r);
-        en.rolledForEngineExplosion = true;
 
         if ( !didExplode ) {
             //whew!
+            if (mech.getEngine().isFusion())
+                en.rolledForEngineExplosion = true;
+            //fusion engines only roll 1/phase but ICE roll every time damaged
             r = new Report(6160);
             r.subject = en.getId();
             r.indent(2);
             vDesc.addElement(r);
         } else {
+            en.rolledForEngineExplosion = true;
             r = new Report(6165, Report.PUBLIC);
             r.subject = en.getId();
             r.indent(2);

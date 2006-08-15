@@ -84,6 +84,8 @@ public class HmvFile
   private String fluff;
   
   private List<String> failedEquipment = new ArrayList();
+  
+  private boolean hasTurret = false;
 
   public HmvFile(InputStream is)
     throws EntityLoadingException
@@ -167,6 +169,9 @@ public class HmvFile
 
       turretArmor = readUnsignedShort(dis);
 
+      if (turretArmor > 0)
+        hasTurret = true;
+
       // internal structure again ??
       dis.skipBytes(2);
 
@@ -214,6 +219,8 @@ public class HmvFile
 
         HMVWeaponLocation weaponLocation =
           HMVWeaponLocation.getType(readUnsignedShort(dis));
+        if (weaponLocation == HMVWeaponLocation.TURRET)
+            hasTurret = true;
 
         int weaponAmmo = readUnsignedShort(dis);
 
@@ -508,7 +515,7 @@ public class HmvFile
             vehicle.setOriginalJumpMP(jumpMP);
 
             // hmmm...
-            vehicle.setHasNoTurret(turretArmor == 0);
+            vehicle.setHasNoTurret(!hasTurret);
 
             vehicle.autoSetInternal();
             vehicle.setArmorType(armorType.toString());

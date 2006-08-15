@@ -2052,7 +2052,7 @@ public class Server implements Runnable {
             cancelVictory();
         }
 
-        if (!game.getOptions().booleanOption("check_victory")) {
+        if (!game.gameTimerIsExpired() && !game.getOptions().booleanOption("check_victory")) {
             return false;
         }
 
@@ -2217,6 +2217,14 @@ public class Server implements Runnable {
             //team victory
             game.setVictoryPlayerId(Player.PLAYER_NONE);
             game.setVictoryTeam(wonTeam);
+            return true;
+        }
+
+        // If noone has won...
+        if (game.gameTimerIsExpired()) {
+            game.setVictoryPlayerId(Player.PLAYER_NONE);
+            game.setVictoryTeam(Player.TEAM_NONE);
+
             return true;
         }
 

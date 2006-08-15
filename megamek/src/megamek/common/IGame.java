@@ -1119,4 +1119,6 @@ public interface IGame {
      * (called at end of turn)
      */
     public abstract Vector ageFlares();
+
+    public abstract boolean gameTimerIsExpired();
 }

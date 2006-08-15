@@ -608,14 +608,15 @@ public class Compute {
         }
         // allow naval units to target underwater units,
         // torpedo tubes are mounted underwater
-        if ((targetUnderwater || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO || wtype
-                .getAmmoType() == AmmoType.T_SRM_TORPEDO)
+        if ((targetUnderwater || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO
+                || wtype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
                 && UnitType.determineUnitTypeCode(ae) == UnitType.NAVAL) {
             weaponUnderwater = true;
             weaponRanges = wtype.getWRanges();
         }
         // allow ice to be cleared from below
-        if(targHex.containsTerrain(Terrains.WATER) && target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+        if(targHex.containsTerrain(Terrains.WATER)
+                && target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
             targetInPartialWater = true;
         }
 

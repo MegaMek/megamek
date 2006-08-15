@@ -46,7 +46,7 @@ public class LosEffects {
         public int targetAbsHeight;
         public int attackHeight;
         public int targetHeight;
-        public int minimumWaterDepth = -1;
+        int minimumWaterDepth = -1;
     }
 
     //                                                  MAXTECH             BMR
@@ -72,12 +72,23 @@ public class LosEffects {
     int targetCover = COVER_NONE;  // that means partial cover
     int attackerCover = COVER_NONE;  // ditto
     Building thruBldg = null;
-    
+    int minimumWaterDepth = -1;
+
     /** Creates a new instance of LosEffects */
     public LosEffects() {
 
     }
-    
+
+    public int getMinimumWaterDepth()
+    {
+        return minimumWaterDepth;
+    }
+
+    public void setMinimumWaterDepth(int inVal)
+    {
+        minimumWaterDepth = inVal;
+    }
+
     public void add(LosEffects other) {
         this.blocked |= other.blocked;
         this.infProtected |= other.infProtected;
@@ -273,6 +284,7 @@ public class LosEffects {
                     targetHex.terrainLevel(Terrains.WATER));
 
         LosEffects finalLoS = calculateLos(game, ai);
+        finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
         finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.lightWoods + finalLoS.lightSmoke) + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2) + (finalLoS.ultraWoods * 3) < 3;
         
         /*
@@ -305,7 +317,7 @@ public class LosEffects {
             if(probeRange==8 || !(te.isStealthActive()))
                 finalLoS.hasLoS = true;
         }
-            
+
         return finalLoS;
     }
 

@@ -12,6 +12,7 @@ v0.31.11-dev (SVN)
 + Bug 1433405: Nighthawks moved to CE infantry zip file.
 + Make the unit loader ignore _svn directories.
 + Bug: Fixed HMVFile so it now detects zero-armor turrets.
++ Bug 1282055: No more jumping torpedos.
 
 v0.31.10 (2006-08-11, 17:00 GMT+2)
 + Fixed a few spelling errors in a Server.java comment

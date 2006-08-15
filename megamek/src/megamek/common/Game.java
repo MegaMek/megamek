@@ -2597,4 +2597,8 @@ public class Game implements Serializable, IGame
         processGameEvent(new GameBoardChangeEvent(this));
         return reports;
     }
+
+    public boolean gameTimerIsExpired() {
+        return ((getOptions().booleanOption("use_game_turn_limit")) && (getRoundCount() == getOptions().intOption("game_turn_limit")));
+    }
 }

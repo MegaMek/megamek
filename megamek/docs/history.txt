@@ -4,6 +4,7 @@ v0.31.11-dev (SVN)
 + Corrected map size label message reference.
 + Excluded SVN files from data load to avoid larger numbers of errors.
 + Corrected capitalization of MaxTech in several places.
++ 1539802: Fixed it so it loads FF and ES for TDB mixed-tech units.
 
 v0.31.10 (2006-08-11, 17:00 GMT+2)
 + Fixed a few spelling errors in a Server.java comment

@@ -280,6 +280,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
             
             losMods = los.losModifiers(game, eistatus);
+            if ((atype != null)
+                    && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                    || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO))
+                    && (los.getMinimumWaterDepth() < 1)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Torpedos must follow water their entire LOS");
+            }
         } else {
             los = LosEffects.calculateLos(game, spotter.getId(), target);
             // do not count attacker partial cover in indirect fire

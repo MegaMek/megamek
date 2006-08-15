@@ -8077,6 +8077,7 @@ public class Server implements Runnable {
 
             if ( wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_LRM_STREAK ||
+                 wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO ||
                  wtype.getAmmoType() == AmmoType.T_MRM ||
                  wtype.getAmmoType() == AmmoType.T_MRM_STREAK ||
                  wtype.getAmmoType() == AmmoType.T_ATM ||

@@ -15,7 +15,13 @@ v0.31.11-dev (SVN)
 + Bug 1282055: No more jumping torpedos.
 + Bug: Long Range Torpedos now hit in clusters of 5.
 + Bug: Fixed a number of BV Calc errors for vehicles.
-+ Corrected both Sea Skimmer version Speeds
++ Corrected both Sea Skimmer version Speeds.
++ Corrected Mantis VTOL Unit File.
++ Corrected Cavalry VTOL (Infantry variant) unit file.
++ Corrected Sprint VTOL (Troop Transport variant) unit file.
++ Corrected Warrior 8-7C VTOL unit file.
++ Corrected loading error for zero-equipment BLK vehicles.
++ Corrected BV Calc for Clan Active Probes on VTOLs.
 
 v0.31.10 (2006-08-11, 17:00 GMT+2)
 + Fixed a few spelling errors in a Server.java comment

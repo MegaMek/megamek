@@ -1248,7 +1248,7 @@ public class Compute {
 
         if (attacker.getCrew().getOptions().booleanOption("melee_specialist")
                 && attacker instanceof Mech
-                && getTargetMovementModifier(game, target.getId()).getValue() > 0) {
+                && getAttackerMovementModifier(game, attacker.getId()).getValue() > 0) {
             toHit.addModifier(-1, "melee specialist");
         }
 

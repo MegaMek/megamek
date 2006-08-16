@@ -45,20 +45,22 @@ public class BLKFile {
             prefix = "IS ";
         }
 
-        for (int x = 0; x < saEquip.length; x++) {
-            String equipName = saEquip[x].trim();
-            EquipmentType etype = EquipmentType.get(equipName);
-
-            if (etype == null) {
-                // try w/ prefix
-                etype = EquipmentType.get(prefix + equipName);
-            }
-
-            if (etype != null) {
-                try {
-                    t.addEquipment(etype, nLoc);
-                } catch (LocationFullException ex) {
-                    throw new EntityLoadingException(ex.getMessage());
+        if (saEquip[0] != null) {
+            for (int x = 0; x < saEquip.length; x++) {
+                String equipName = saEquip[x].trim();
+                EquipmentType etype = EquipmentType.get(equipName);
+    
+                if (etype == null) {
+                    // try w/ prefix
+                    etype = EquipmentType.get(prefix + equipName);
+                }
+    
+                if (etype != null) {
+                    try {
+                        t.addEquipment(etype, nLoc);
+                    } catch (LocationFullException ex) {
+                        throw new EntityLoadingException(ex.getMessage());
+                    }
                 }
             }
         }

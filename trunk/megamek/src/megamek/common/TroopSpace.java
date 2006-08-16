@@ -33,12 +33,12 @@ public final class TroopSpace implements Transporter {
     /**
      * The total amount of space available for troops.
      */
-    /* package */ int totalSpace;
+    /* package */ double totalSpace;
 
     /**
      * The current amount of space available for troops.
      */
-    /* package */ int currentSpace;
+    /* package */ double currentSpace;
 
     /* ### I don't think that I need this code ### *#/
     /**
@@ -91,7 +91,7 @@ public final class TroopSpace implements Transporter {
      *
      * @param   space - The weight of troops (in tons) this space can carry.
      */
-    public TroopSpace( int space ) {
+    public TroopSpace( double space ) {
         this.totalSpace = space;
         this.currentSpace = space;
     }
@@ -116,7 +116,7 @@ public final class TroopSpace implements Transporter {
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        else if ( this.currentSpace < (int)unit.getWeight() ) {
+        else if ( this.currentSpace < (double)unit.getWeight() ) {
             result = false;
         }
 

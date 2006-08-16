@@ -167,6 +167,9 @@ public class VTOL extends Tank {
             if (mounted.getName().equals("Active Probe")) {
                 weaponsBVFront += 12;
             }
+            if (mounted.getName().equals("Clan Active Probe")) {
+                weaponsBVFront += 12;
+            }
             if (mounted.getName().equals("Light Active Probe")) {
                 weaponsBVFront += 7;
             }
@@ -203,7 +206,7 @@ public class VTOL extends Tank {
         speedFactor++;
         speedFactor = Math.pow(speedFactor, 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
-        
+
         obv = weaponBV * speedFactor;
 
         // we get extra bv from c3 networks. a valid network requires at least 2 members

@@ -453,10 +453,10 @@ public class Tank
         
         // total armor points
         dbv += getTotalArmor();
-        
+
         // total internal structure        
-        dbv += getTotalInternal() / 2;
-        
+        dbv += ((double)getTotalInternal()) / 2.0;
+
         // add defensive equipment
         double dEquipmentBV = 0;
         for (Mounted mounted : getEquipment()) {
@@ -473,7 +473,7 @@ public class Tank
             }
         }
         dbv += dEquipmentBV;
-        
+
         double typeModifier;
         switch (getMovementMode()) {
             case IEntityMovementMode.TRACKED:
@@ -485,7 +485,12 @@ public class Tank
             case IEntityMovementMode.HOVER:
                 typeModifier = 0.6;
                 break;
-            // vtol and naval to come
+            case IEntityMovementMode.VTOL:
+                typeModifier = 0.4;
+                break;
+            case IEntityMovementMode.NAVAL:
+                typeModifier = 0.5;
+                break;
             default:
                 typeModifier = 0.5;
         }
@@ -501,7 +506,7 @@ public class Tank
         dbv *= tmmFactors[tmmRan];
         
         double weaponBV = 0;
-        
+
         // figure out base weapon bv
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
@@ -564,14 +569,20 @@ public class Tank
             ammoBV += atype.getBV(this);
         }
         weaponBV += ammoBV;
-        
+
         // adjust further for speed factor
+        double[] speedFactorTable = {0.44,0.54,0.65,0.77,0.88,1,1.12,1.24,1.37,
+                                     1.5,1.63,1.76,1.89,2.02,2.16,2.3,2.44,2.58,
+                                     2.72,2.86,3,3.15,3.29,3.44,3.59,3.74};
+        double speedFactor = speedFactorTable[getOriginalRunMP()];
+        /* Vehicles don't use the same speed factor calc as 'Mechs!
         double speedFactor = getOriginalRunMP() - 5;
         speedFactor /= 10;
         speedFactor++;
         speedFactor = Math.pow(speedFactor, 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
-        
+        */
+
         obv = weaponBV * speedFactor;
 
         // we get extra bv from c3 networks. a valid network requires at least 2 members
@@ -593,7 +604,7 @@ public class Tank
         if (getsHomingBVPenalty()) {
             dbv += 200;
         }
-        
+
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
 

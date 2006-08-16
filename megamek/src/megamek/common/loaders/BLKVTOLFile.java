@@ -38,7 +38,6 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
     }
       
     public Entity getEntity() throws EntityLoadingException {
-    
         VTOL t = new VTOL();
         
         if (!dataFile.exists("Name")) throw new EntityLoadingException("Could not find name block.");
@@ -48,7 +47,6 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         } else {
              t.setModel("");
         }
-       
         
         if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
         t.setYear(dataFile.getDataAsInt("year")[0]);
@@ -97,7 +95,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         }
         if (nMotion == -1) throw new EntityLoadingException("Invalid movment type: " + sMotion);
         t.setMovementMode(nMotion);
-        
+
         if ( dataFile.exists("transporters")) {
         String[] transporters = dataFile.getDataAsString("transporters");
         // Walk the array of transporters.
@@ -105,10 +103,9 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         // TroopSpace:
         if ( transporters[index].startsWith( "TroopSpace:", 0 ) ) {
             // Everything after the ':' should be the space's size.
-                    Double fsize = new Double
-            ( transporters[index].substring(11) );
+                    Double fsize = new Double( transporters[index].substring(11) );
                     int size = fsize.intValue();
-            t.addTransporter( new TroopSpace(size) );
+            t.addTransporter( new TroopSpace(fsize.doubleValue()) );
         }
 
         } // Handle the next transportation component.

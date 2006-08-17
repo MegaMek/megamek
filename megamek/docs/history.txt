@@ -23,6 +23,7 @@ v0.31.11-dev (SVN)
 + Corrected loading error for zero-equipment BLK vehicles.
 + Corrected BV Calc for Clan Active Probes on VTOLs.
 + Bug: melee specialist reduces attacker movement mod not targets
++ Added TW_BMR_Differences.txt
 
 v0.31.10 (2006-08-11, 17:00 GMT+2)
 + Fixed a few spelling errors in a Server.java comment

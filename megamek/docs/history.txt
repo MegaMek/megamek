@@ -1,6 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.31.11-dev (SVN)
+v0.31.12 (SVN)
+
+v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected map size label message reference.
 + Excluded SVN files from data load to avoid larger numbers of errors.
 + Corrected capitalization of MaxTech in several places.

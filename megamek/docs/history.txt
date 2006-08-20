@@ -26,6 +26,7 @@ v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected BV Calc for Clan Active Probes on VTOLs.
 + Bug: melee specialist reduces attacker movement mod not targets
 + Added TW_BMR_Differences.txt
++ Bug 1412726: Corrected behavior of light engines, CASE and ammo for BV.
 
 v0.31.10 (2006-08-11, 17:00 GMT+2)
 + Fixed a few spelling errors in a Server.java comment

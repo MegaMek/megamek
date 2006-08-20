@@ -2021,7 +2021,7 @@ public abstract class Mech
                 }
              } else {
                 // inner sphere with XL or XXL counts everywhere
-                if (getEngine().getSideTorsoCriticalSlots().length == 0) {
+                if (getEngine().getSideTorsoCriticalSlots().length <= 2) {
                     // without XL or XXL, only count torsos if not CASEed,
                     // and arms if arm & torso not CASEed
                     if ((loc == LOC_RT || loc == LOC_LT) && locationHasCase(loc)) {
@@ -2054,8 +2054,7 @@ public abstract class Mech
             ammoPenalty += 20.0 * tonnage;
         }
         dbv = Math.max(1, dbv - ammoPenalty);
-        
-        
+
         // total up maximum heat generated
         double maximumHeatFront = 0;
         double maximumHeatRear = 0;
@@ -2199,7 +2198,7 @@ public abstract class Mech
             weaponBV += weaponsBVRear;
             weaponBV += (weaponsBVFront * 0.5);
         }
-        
+
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
         double oEquipmentBV = 0;
         for (Mounted mounted : getMisc()) {
@@ -2251,14 +2250,14 @@ public abstract class Mech
             ammoBV += atype.getBV(this);
         }
         weaponBV += ammoBV;
-        
+
         // adjust for heat efficiency
         if (maximumHeat > getHeatCapacity()) {
             double x = (getHeatCapacity() * weaponBV) / maximumHeat;
             double y = (weaponBV - x) / 2;
             weaponBV = x + y;
         }
-        
+
         // adjust further for speed factor
         double speedFactor = getOriginalRunMPwithoutMASC() + getOriginalJumpMP() - 5;
         // +1 for MASC or TSM, you may not have both
@@ -2277,9 +2276,8 @@ public abstract class Mech
             speedFactor += 0.2;
         }
         */
-
         obv = weaponBV * speedFactor;
-        
+
         // we get extra bv from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here.  could be better
         // also, each 'has' loops through all equipment.  inefficient to do it 3 times
@@ -2309,7 +2307,8 @@ public abstract class Mech
             pilotFactor -= 0.05; // Small cockpits piloting treated as 1 level worse.
         }
 
-        return (int)Math.round((dbv + obv + xbv) * pilotFactor);
+        int retVal = (int)Math.round((dbv + obv + xbv) * pilotFactor);
+        return retVal;
     }
 
     public double getCost() {

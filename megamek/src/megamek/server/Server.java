@@ -9428,6 +9428,7 @@ public class Server implements Runnable {
                 r.newlines = 0;
                 r.subject = ae.getId();
                 addReport(r);
+                checkBreakSpikes(te, hit.getLocation());
                 damage = Math.max(1, damage - 4);
                 HitData ahit;
                 if(paa.getArm() == PunchAttackAction.LEFT)
@@ -9611,6 +9612,7 @@ public class Server implements Runnable {
                 r.newlines = 0;
                 r.subject = ae.getId();
                 addReport(r);
+                checkBreakSpikes(te, hit.getLocation());
                 damage = Math.max(1, damage - 4);
                 HitData ahit;
                 switch(kaa.getLeg()) {
@@ -10442,6 +10444,7 @@ public class Server implements Runnable {
                 r.newlines = 0;
                 r.subject = ae.getId();
                 addReport(r);
+                checkBreakSpikes(te, hit.getLocation());
                 damage = Math.max(1, damage - 4);
                 int loc = caa.getClub().getLocation();
                 if(loc == Entity.LOC_NONE) {
@@ -11181,6 +11184,7 @@ public class Server implements Runnable {
                 r.subject = ae.getId();
                 addReport(r);
                 spikes[hit.getLocation()] = 0;
+                checkBreakSpikes(ae, hit.getLocation());
                 spikeDamage += 2;
             }
             addReport(damageEntity(ae, hit, cluster, false, 0, false, false, throughFront));
@@ -11236,6 +11240,7 @@ public class Server implements Runnable {
                     r.subject = ae.getId();
                     addReport(r);
                     spikes[hit.getLocation()] = 0;
+                    checkBreakSpikes(te, hit.getLocation());
                     cluster = 1;
                     spikeDamage += 2;
                 }
@@ -11499,6 +11504,7 @@ public class Server implements Runnable {
                     addReport(r);
                     cluster = 1;
                     spikes[hit.getLocation()] = 0;
+                    checkBreakSpikes(te, hit.getLocation());
                     spikeDamage += 2;
                 }
                 addReport(damageEntity(te, hit, cluster, false, 0, false, false, throughFront));
@@ -19460,6 +19466,31 @@ public class Server implements Runnable {
                         }
                     }
                 }
+            }
+        }
+    }
+    
+    private void checkBreakSpikes(Entity e, int loc)
+    {
+        int roll = Compute.d6(2);
+        Report r;
+        if(roll < 9) {
+            r = new Report(4445);
+            r.newlines = 0;
+            r.add(roll);
+            r.subject = e.getId();
+            addReport(r);
+            return;
+        }
+        r = new Report(4440);
+        r.newlines = 0;
+        r.add(roll);
+        r.subject = e.getId();
+        addReport(r);
+        for(Mounted m: e.getMisc()) {
+            if(m.getType().hasFlag(MiscType.F_SPIKES)
+                    && m.getLocation() == loc) {
+                m.setHit(true);
             }
         }
     }

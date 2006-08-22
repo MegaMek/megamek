@@ -232,7 +232,11 @@ public class VTOL extends Tank {
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
 
-        return (int)Math.round((dbv + obv + xbv) * pilotFactor);
+        //return (int)Math.round((dbv + obv + xbv) * pilotFactor);
+        int finalBV = (int)Math.round(dbv + obv + xbv);
+
+        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        return retVal;
     }
 
     /* (non-Javadoc)

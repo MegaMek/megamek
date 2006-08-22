@@ -2307,7 +2307,9 @@ public abstract class Mech
             pilotFactor -= 0.05; // Small cockpits piloting treated as 1 level worse.
         }
 
-        int retVal = (int)Math.round((dbv + obv + xbv) * pilotFactor);
+        int finalBV = (int)Math.round(dbv + obv + xbv);
+
+        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
         return retVal;
     }
 

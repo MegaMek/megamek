@@ -795,7 +795,11 @@ public class Protomech
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
 
-        return (int)Math.round((dbv + obv) * pilotFactor);
+        //return (int)Math.round((dbv + obv) * pilotFactor);
+        int finalBV = (int)Math.round(dbv + obv);
+
+        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        return retVal;
     }
 
     public Vector victoryReport() {

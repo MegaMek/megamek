@@ -59,6 +59,9 @@ public class GunEmplacement extends Entity
         // not actually specfied defaults, but hey, it seems reasonable
         setTurret(false);
         initTurretArmor(0);
+        initializeInternal(IArmorState.ARMOR_NA, LOC_NORTH);
+        initializeInternal(IArmorState.ARMOR_NA, LOC_EAST);
+        initializeInternal(IArmorState.ARMOR_NA, LOC_WEST);
     }
 
     public boolean hasTurret() { 
@@ -94,12 +97,12 @@ public class GunEmplacement extends Entity
         initializeArmor(cf, GunEmplacement.LOC_BUILDING);
         setArmorType(EquipmentType.T_ARMOR_STANDARD);
         setArmorTechLevel(TechConstants.T_IS_LEVEL_1);
-        initializeInternal(0, LOC_BUILDING);
+        initializeInternal(IArmorState.ARMOR_NA, LOC_BUILDING);
     }
     
     public void initTurretArmor(int af) {
         initializeArmor(af, GunEmplacement.LOC_TURRET);
-        initializeInternal(0, LOC_TURRET);
+        initializeInternal(IArmorState.ARMOR_NA, LOC_TURRET);
     }
 
     public int getCurrentTurretArmor() {

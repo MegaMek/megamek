@@ -471,7 +471,11 @@ public class GunEmplacement extends Entity
         // structure modifier
         obv *= 0.44;
         
-        return (int)Math.round((dbv + obv + xbv) * pilotFactor);
+        //return (int)Math.round((dbv + obv + xbv) * pilotFactor);
+        int finalBV = (int)Math.round(dbv + obv + xbv);
+
+        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        return retVal;
     }
     
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {

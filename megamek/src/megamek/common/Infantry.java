@@ -725,10 +725,11 @@ public class Infantry
 
         // adjust for crew
         double pilotFactor = crew.getBVSkillMultiplier();
-        dBV = dBV * pilotFactor;
 
-        return (int)Math.round(dBV);
+        int finalBV = (int)Math.round(dBV);
 
+        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        return retVal;
     } // End public int calculateBattleValue()
 
     public Vector victoryReport() {

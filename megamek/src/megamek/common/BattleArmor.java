@@ -638,9 +638,11 @@ public class BattleArmor
 
         // Adjust BV for crew skills.
         double pilotFactor = crew.getBVSkillMultiplier();
-        bv = pilotFactor * bv;
 
-        return (int)Math.round(bv);
+        int finalBV = (int)Math.round(bv);
+
+        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        return retVal;
     }
 
     /**

@@ -571,6 +571,9 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 if ( !clientgui.getClient().game.getOptions().booleanOption("clan_ignore_eq_limits") //$NON-NLS-1$
                      && entity.isClan()
                      && ( muniType == AmmoType.M_SEMIGUIDED ||
+                          muniType == AmmoType.M_SWARM_I ||
+                          muniType == AmmoType.M_FLARE ||
+                          muniType == AmmoType.M_FRAGMENTATION ||
                           muniType == AmmoType.M_THUNDER_AUGMENTED ||
                           muniType == AmmoType.M_THUNDER_INFERNO   ||
                           muniType == AmmoType.M_THUNDER_VIBRABOMB ||

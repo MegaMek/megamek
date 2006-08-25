@@ -6,6 +6,7 @@ v0.31.12 (SVN)
 + Bug: fixed spikes break rolls
 + Bug 1424574: GE's not saved as MUL's properly
 + Added wood hex images as default for jungles (better than nothing!)
++ Added woods and jungle to tool-tip to help avoid confusion in multiple cases
 
 v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected map size label message reference.

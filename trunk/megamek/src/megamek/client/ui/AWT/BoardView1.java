@@ -1359,12 +1359,17 @@ public class BoardView1
         }
 
         // If the hex contains a building or rubble, make more space.
+        // Also if it contains woods or jungle.
         if ( mhex != null ) {
-            if(mhex.containsTerrain(Terrains.RUBBLE))
+            if (mhex.containsTerrain(Terrains.RUBBLE))
                 stringsSize ++;
-            if(mhex.containsTerrain(Terrains.BUILDING))
+            if (mhex.containsTerrain(Terrains.BUILDING))
                 stringsSize ++;
-            if(mhex.containsTerrain(Terrains.BRIDGE)) 
+            if (mhex.containsTerrain(Terrains.BRIDGE)) 
+                stringsSize ++;
+            if (mhex.containsTerrain(Terrains.JUNGLE)) 
+                stringsSize ++;
+            else if (mhex.containsTerrain(Terrains.WOODS)) 
                 stringsSize ++;
         }
 
@@ -1393,6 +1398,30 @@ public class BoardView1
             strings[stringsIndex] = Messages.getString("BoardView1.Hex") + mcoords.getBoardNum() //$NON-NLS-1$
                 + Messages.getString("BoardView1.level") + mhex.getElevation(); //$NON-NLS-1$
             stringsIndex += 1;
+
+            if (mhex.containsTerrain(Terrains.JUNGLE)) {
+                int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
+                if (ttl == 1)
+                    strings[stringsIndex] = "Light Jungle";
+                else if (ttl == 2)
+                    strings[stringsIndex] = "Heavy Jungle";
+                else if (ttl == 3)
+                    strings[stringsIndex] = "Ultra-Heavy Jungle";
+                else
+                    strings[stringsIndex] = "Jungle";
+                stringsIndex += 1;
+            } else if (mhex.containsTerrain(Terrains.WOODS)) {
+                int ttl = mhex.getTerrain(Terrains.WOODS).getLevel();
+                if (ttl == 1)
+                    strings[stringsIndex] = "Light Woods";
+                else if (ttl == 2)
+                    strings[stringsIndex] = "Heavy Woods";
+                else if (ttl == 3)
+                    strings[stringsIndex] = "Ultra-Heavy Woods";
+                else
+                    strings[stringsIndex] = "Woods";
+                stringsIndex += 1;
+            }
 
             // Do we have rubble?
             if ( mhex.containsTerrain(Terrains.RUBBLE) ) {
